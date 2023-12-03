@@ -33,8 +33,9 @@ TEST(MaterialPropertyLib, Linear)
         y_ref * (1 + m * (variable_array.temperature - x_ref)),
         1.e-10);
     ASSERT_EQ(std::get<double>(linear_property.dValue(
-                  variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                  pos, time, dt)),
+                  variable_array,
+                  MaterialPropertyLib::Variable::liquid_phase_pressure, pos,
+                  time, dt)),
               0.0);
     ASSERT_NEAR(std::get<double>(linear_property.dValue(
                     variable_array, MaterialPropertyLib::Variable::temperature,

@@ -60,7 +60,7 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
     auto const& gas_phase = medium->phase("Gas");
 
     MaterialPropertyLib::VariableArray variable_array;
-    variable_array.phase_pressure = pressure_norm;
+    variable_array.gas_phase_pressure = pressure_norm;
     variable_array.temperature = temperature_norm;
     variable_array.molar_mass = molar_mass_air;
 
@@ -81,14 +81,17 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
     auto const d_rho_dp =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
-                variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                pos, time, dt);
+                variable_array,
+                MaterialPropertyLib::Variable::gas_phase_pressure, pos, time,
+                dt);
 
     auto const d_rho2_dp2 =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template d2Value<double>(
-                variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                MaterialPropertyLib::Variable::phase_pressure, pos, time, dt);
+                variable_array,
+                MaterialPropertyLib::Variable::gas_phase_pressure,
+                MaterialPropertyLib::Variable::gas_phase_pressure, pos, time,
+                dt);
 
     auto const d_rho2_dT2 =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
@@ -100,12 +103,14 @@ TEST(MaterialPropertyLib, IdealGasLawOfPurePhase)
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template d2Value<double>(
                 variable_array, MaterialPropertyLib::Variable::temperature,
-                MaterialPropertyLib::Variable::phase_pressure, pos, time, dt);
+                MaterialPropertyLib::Variable::gas_phase_pressure, pos, time,
+                dt);
 
     auto const d_rho2_dpdT =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template d2Value<double>(
-                variable_array, MaterialPropertyLib::Variable::phase_pressure,
+                variable_array,
+                MaterialPropertyLib::Variable::gas_phase_pressure,
                 MaterialPropertyLib::Variable::temperature, pos, time, dt);
 
     ASSERT_NEAR(density_norm_air, density, 1.e-10);

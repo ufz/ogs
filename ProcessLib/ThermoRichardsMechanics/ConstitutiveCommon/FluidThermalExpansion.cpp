@@ -29,7 +29,7 @@ void FluidThermalExpansionModel<DisplacementDim>::eval(
 
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables.phase_pressure = -p_cap_data.p_cap;
+    variables.liquid_phase_pressure = -p_cap_data.p_cap;
     variables.temperature = T_data.T;
 
     double const phi = poro_data.phi;

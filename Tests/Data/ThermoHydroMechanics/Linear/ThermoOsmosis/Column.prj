@@ -56,7 +56,7 @@
                                 <expression>-3.0e-4*1000</expression>
                             </dvalue>
                             <dvalue>
-                                <variable_name>phase_pressure</variable_name>
+                                <variable_name>liquid_phase_pressure</variable_name>
                                 <expression>0.303e-9*1000</expression>
                             </dvalue>
                         </property>

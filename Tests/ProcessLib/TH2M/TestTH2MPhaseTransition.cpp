@@ -217,7 +217,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         auto const& cv = ptm->cv;
 
         // Perturb gas pressure
-        variable_array.phase_pressure = pGR + eps_pGR;
+        variable_array.gas_phase_pressure = pGR + eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -227,7 +227,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         auto rhoCGR_plus = ptm->cv.rhoCGR;
         auto rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array.phase_pressure = pGR - eps_pGR;
+        variable_array.gas_phase_pressure = pGR - eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -238,7 +238,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         auto rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array.phase_pressure = pGR;
+        variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
@@ -283,7 +283,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array.phase_pressure = pGR;
+        variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
@@ -330,7 +330,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array.phase_pressure = pGR;
+        variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
@@ -454,7 +454,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         auto const& cv = ptm->cv;
 
         // Perturb gas pressure
-        variable_array.phase_pressure = pGR + eps_pGR;
+        variable_array.gas_phase_pressure = pGR + eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -463,7 +463,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         auto rhoCGR_plus = ptm->cv.rhoCGR;
         auto rhoWGR_plus = ptm->cv.rhoWGR;
 
-        variable_array.phase_pressure = pGR - eps_pGR;
+        variable_array.gas_phase_pressure = pGR - eps_pGR;
 
         ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
                                           time, dt);
@@ -473,7 +473,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         auto rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array.phase_pressure = pGR;
+        variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
@@ -515,7 +515,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array.phase_pressure = pGR;
+        variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
@@ -559,7 +559,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWGR_minus = ptm->cv.rhoWGR;
 
         // Unperturbed primary variables
-        variable_array.phase_pressure = pGR;
+        variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 

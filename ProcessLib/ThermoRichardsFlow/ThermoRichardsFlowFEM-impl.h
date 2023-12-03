@@ -139,7 +139,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
 
         // Note: temperature dependent saturation model is not considered so
         // far.
@@ -252,7 +252,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         NumLib::shapeFunctionInterpolate(-p_L_prev, N, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
         variables.temperature = T_ip;
 
         auto& S_L = _ip_data[ip].saturation;
@@ -278,7 +278,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         double const drho_LR_dp =
             liquid_phase[MPL::PropertyType::density].template dValue<double>(
-                variables, MPL::Variable::phase_pressure, x_position, t, dt);
+                variables, MPL::Variable::liquid_phase_pressure, x_position, t,
+                dt);
         auto const beta_LR = drho_LR_dp / rho_LR;
 
         S_L = medium[MPL::PropertyType::saturation].template value<double>(
@@ -523,9 +524,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
                                              x_position, t, dt);
             double const drho_wv_dp =
                 gas_phase->property(MPL::PropertyType::density)
-                    .template dValue<double>(variables,
-                                             MPL::Variable::phase_pressure,
-                                             x_position, t, dt);
+                    .template dValue<double>(
+                        variables, MPL::Variable::liquid_phase_pressure,
+                        x_position, t, dt);
             auto const f_Tv =
                 gas_phase
                     ->property(
@@ -745,7 +746,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         NumLib::shapeFunctionInterpolate(-p_L_prev, N, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
         variables.temperature = T_ip;
 
         auto& S_L = _ip_data[ip].saturation;
@@ -770,7 +771,8 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         double const drho_LR_dp =
             liquid_phase[MPL::PropertyType::density].template dValue<double>(
-                variables, MPL::Variable::phase_pressure, x_position, t, dt);
+                variables, MPL::Variable::liquid_phase_pressure, x_position, t,
+                dt);
         auto const beta_LR = drho_LR_dp / rho_LR;
 
         S_L = medium[MPL::PropertyType::saturation].template value<double>(
@@ -980,9 +982,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
                                              x_position, t, dt);
             double const drho_wv_dp =
                 gas_phase->property(MaterialPropertyLib::density)
-                    .template dValue<double>(variables,
-                                             MPL::Variable::phase_pressure,
-                                             x_position, t, dt);
+                    .template dValue<double>(
+                        variables, MPL::Variable::liquid_phase_pressure,
+                        x_position, t, dt);
             auto const f_Tv =
                 gas_phase
                     ->property(
@@ -1227,7 +1229,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         NumLib::shapeFunctionInterpolate(-p_L_prev, N, p_cap_prev_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
 
         variables.temperature = T_ip;
 

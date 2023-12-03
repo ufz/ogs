@@ -42,7 +42,7 @@ enum class Variable : int
     molar_mass,
     molar_mass_derivative,
     molar_fraction,
-    phase_pressure,
+    gas_phase_pressure,
     porosity,
     solid_grain_pressure,
     stress,
@@ -72,7 +72,7 @@ static const std::array<std::string,
                              "molar_mass",
                              "molar_mass_derivative",
                              "molar_fraction",
-                             "phase_pressure",
+                             "gas_phase_pressure",
                              "porosity",
                              "solid_grain_pressure",
                              "stress",
@@ -132,8 +132,8 @@ public:
                 return molar_mass_derivative;
             case Variable::molar_fraction:
                 return molar_fraction;
-            case Variable::phase_pressure:
-                return phase_pressure;
+            case Variable::gas_phase_pressure:
+                return gas_phase_pressure;
             case Variable::porosity:
                 return porosity;
             case Variable::solid_grain_pressure:
@@ -183,7 +183,7 @@ public:
     double molar_mass = nan_;
     double molar_mass_derivative = nan_;
     double molar_fraction = nan_;
-    double phase_pressure = nan_;
+    double gas_phase_pressure = nan_;
     double porosity = nan_;
     double solid_grain_pressure = nan_;
     std::variant<std::monostate,

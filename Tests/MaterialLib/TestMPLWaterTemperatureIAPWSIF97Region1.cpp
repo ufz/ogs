@@ -44,7 +44,7 @@ TEST(Material, checkWaterTemperatureIAPWSIF97Region1)
 
     for (int i = 0; i < 4; i++)
     {
-        variable_array.phase_pressure = p[i];
+        variable_array.liquid_phase_pressure = p[i];
         variable_array.enthalpy = h[i];
 
         ASSERT_NEAR(expected_T[i],

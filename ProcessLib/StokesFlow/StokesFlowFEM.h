@@ -188,7 +188,7 @@ public:
 
             NumLib::shapeFunctionInterpolate(local_p, N_p, p_int_pt);
 
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
 
             // Use the viscosity model to compute the viscosity
             auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]

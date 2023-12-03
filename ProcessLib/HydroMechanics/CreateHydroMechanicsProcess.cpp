@@ -214,10 +214,33 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                                                 MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {MaterialPropertyLib::density};
 
+    // setting default to suppress -Wmaybe-uninitialized warning
+    MaterialPropertyLib::Variable phase_pressure =
+        MaterialPropertyLib::Variable::liquid_phase_pressure;
     for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
     {
         media_map.checkElementHasMedium(element_id);
         auto const& medium = *media_map.getMedium(element_id);
+        if (element_id == 0)
+        {
+            phase_pressure =
+                medium.hasPhase("Gas")
+                    ? MaterialPropertyLib::Variable::gas_phase_pressure
+                    : MaterialPropertyLib::Variable::liquid_phase_pressure;
+        }
+        else
+        {
+            auto const phase_pressure_tmp =
+                medium.hasPhase("Gas")
+                    ? MaterialPropertyLib::Variable::gas_phase_pressure
+                    : MaterialPropertyLib::Variable::liquid_phase_pressure;
+            if (phase_pressure != phase_pressure_tmp)
+            {
+                OGS_FATAL(
+                    "You are mixing liquid and gas phases in your model domain."
+                    "OGS does not yet know how to handle this.");
+            }
+        }
         checkRequiredProperties(medium, requiredMediumProperties);
         checkRequiredProperties(fluidPhase(medium), requiredFluidProperties);
         checkRequiredProperties(medium.phase("Solid"), requiredSolidProperties);
@@ -245,7 +268,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         coupling_scheme,
         hydraulic_process_id,
         mechanics_related_process_id,
-        use_taylor_hood_elements};
+        use_taylor_hood_elements,
+        phase_pressure};
 
     SecondaryVariableCollection secondary_variables;
 

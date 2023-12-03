@@ -136,7 +136,7 @@ public:
             NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt, p_int_pt);
 
             vars.temperature = T_int_pt;
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
 
             vars.liquid_saturation = 1.0;
             // \todo the argument to getValue() has to be changed for non

@@ -111,8 +111,9 @@ TEST(MaterialPropertyLib, Exponential)
         p.template value<double>(variable_array, pos, time, dt),
         y_offset + y_ref * (std::exp(factor * (T - reference_condition))),
         1.e-10);
-    ASSERT_EQ(p.template dValue<double>(
-                  variable_array, MPL::Variable::phase_pressure, pos, time, dt),
+    ASSERT_EQ(p.template dValue<double>(variable_array,
+                                        MPL::Variable::liquid_phase_pressure,
+                                        pos, time, dt),
               0.0);
     ASSERT_NEAR(p.template dValue<double>(
                     variable_array, MPL::Variable::temperature, pos, time, dt),

@@ -200,7 +200,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
     vars.temperature = T_int_pt;
     double const p_int_pt = N.dot(p);
-    vars.phase_pressure = p_int_pt;
+    vars.liquid_phase_pressure = p_int_pt;
 
     vars.liquid_saturation = 1.0;
 
@@ -254,8 +254,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     auto const drho_dp =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
-                vars, MaterialPropertyLib::Variable::phase_pressure, x_position,
-                t, dt);
+                vars, MaterialPropertyLib::Variable::liquid_phase_pressure,
+                x_position, t, dt);
 
     crv.fluid_compressibility = 1 / fluid_density * drho_dp;
 

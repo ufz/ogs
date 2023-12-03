@@ -133,7 +133,7 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
                     pos, t, dt);
 
         vars.concentration = C_int_pt;
-        vars.phase_pressure = p_int_pt;
+        vars.liquid_phase_pressure = p_int_pt;
 
         // \todo the argument to getValue() has to be changed for non
         // constant storage model
@@ -292,7 +292,7 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
         if (_process_data.has_gravity)
         {
             vars.concentration = C_int_pt;
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
             auto const rho_w = phase[MaterialPropertyLib::PropertyType::density]
                                    .template value<double>(vars, pos, t, dt);
             auto const b = _process_data.specific_body_force;

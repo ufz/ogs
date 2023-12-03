@@ -44,7 +44,7 @@ PropertyDataType WaterVapourDensity::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = variable_array.phase_pressure;
+    double const p = variable_array.liquid_phase_pressure;
     double const T = variable_array.temperature;
     double const water_density = variable_array.density;
 
@@ -56,7 +56,7 @@ PropertyDataType WaterVapourDensity::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = variable_array.phase_pressure;
+    double const p = variable_array.liquid_phase_pressure;
     double const T = variable_array.temperature;
     double const water_density = variable_array.density;
 
@@ -72,7 +72,7 @@ PropertyDataType WaterVapourDensity::dValue(
                                          SpecificGasConstant::WaterVapour);
     }
 
-    if (variable == Variable::phase_pressure)
+    if (variable == Variable::liquid_phase_pressure)
     {
         double const factor =
             1.0 /
@@ -85,7 +85,7 @@ PropertyDataType WaterVapourDensity::dValue(
 
     OGS_FATAL(
         "WaterVapourDensity::dValue is implemented for derivatives with "
-        "respect to temperature or phase_pressure only.");
+        "respect to temperature or liquid_phase_pressure only.");
 }
 
 }  // namespace MaterialPropertyLib

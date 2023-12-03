@@ -21,7 +21,7 @@ PropertyDataType WaterSaturationTemperatureIAPWSIF97Region4::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = variable_array.phase_pressure;
+    double const p = variable_array.liquid_phase_pressure;
 
     /// According to the IAPWS-IF97:
     /// http://www.iapws.org/relguide/IF97-Rev.pdf,

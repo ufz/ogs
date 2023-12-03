@@ -31,7 +31,7 @@ PropertyDataType WaterEnthalpyIAPWSIF97Region1::value(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = std::max(0.0, variable_array.phase_pressure);
+    double const p = std::max(0.0, variable_array.liquid_phase_pressure);
     double const T = variable_array.temperature;
 
     double const tau = ref_T_ / T;
@@ -47,7 +47,7 @@ PropertyDataType WaterEnthalpyIAPWSIF97Region1::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    double const p = std::max(0.0, variable_array.phase_pressure);
+    double const p = std::max(0.0, variable_array.liquid_phase_pressure);
     double const T = variable_array.temperature;
 
     double const tau = ref_T_ / T;

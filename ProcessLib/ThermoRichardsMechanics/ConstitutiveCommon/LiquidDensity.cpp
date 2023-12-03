@@ -21,7 +21,7 @@ void LiquidDensityModel<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables.phase_pressure = -p_cap_data.p_cap;
+    variables.liquid_phase_pressure = -p_cap_data.p_cap;
     variables.temperature = T_data.T;
 
     auto const& liquid_phase = media_data.liquid;
@@ -29,10 +29,10 @@ void LiquidDensityModel<DisplacementDim>::eval(
     out.rho_LR = liquid_phase.property(MPL::PropertyType::density)
                      .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-    out.drho_LR_dp =
-        liquid_phase.property(MPL::PropertyType::density)
-            .template dValue<double>(variables, MPL::Variable::phase_pressure,
-                                     x_t.x, x_t.t, x_t.dt);
+    out.drho_LR_dp = liquid_phase.property(MPL::PropertyType::density)
+                         .template dValue<double>(
+                             variables, MPL::Variable::liquid_phase_pressure,
+                             x_t.x, x_t.t, x_t.dt);
 
     out.drho_LR_dT =
         liquid_phase.property(MPL::PropertyType::density)

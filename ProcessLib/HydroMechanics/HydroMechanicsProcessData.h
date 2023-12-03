@@ -16,6 +16,7 @@
 #include <variant>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialLib
@@ -89,6 +90,8 @@ struct HydroMechanicsProcessData
     int const mechanics_related_process_id;
 
     const bool use_taylor_hood_elements;
+
+    MaterialPropertyLib::Variable phase_pressure;
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {

@@ -81,7 +81,18 @@
                     <properties>
                         <property>
                             <name>density</name>
-                            <type>IdealGasLaw</type>
+                            <type>Function</type>
+                            <value>
+                                <expression>liquid_phase_pressure * 0.002 / 8.3144621 / temperature </expression>
+                            </value>
+                            <dvalue>
+                                <variable_name>liquid_phase_pressure</variable_name>
+                                <expression> 0.002 / 8.3144621 / temperature </expression>
+                            </dvalue>
+                            <dvalue>
+                                <variable_name>temperature</variable_name>
+                                <expression> -liquid_phase_pressure * 0.002 / 8.3144621 / temperature / temperature </expression>
+                            </dvalue>
                         </property>
                         <property>
                             <name>molar_mass</name>

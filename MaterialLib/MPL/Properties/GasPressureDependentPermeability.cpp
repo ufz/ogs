@@ -57,7 +57,7 @@ PropertyDataType GasPressureDependentPermeability<DisplacementDim>::value(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const /*dt*/) const
 {
-    double const gas_pressure = variable_array.phase_pressure;
+    double const gas_pressure = variable_array.gas_phase_pressure;
 
     auto k_data = k0_(t, pos);
 

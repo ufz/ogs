@@ -173,7 +173,7 @@ public:
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
 
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
             vars.capillary_pressure = -p_int_pt;
 
             auto const permeability =
@@ -201,7 +201,8 @@ public:
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template dValue<double>(
-                        vars, MaterialPropertyLib::Variable::phase_pressure,
+                        vars,
+                        MaterialPropertyLib::Variable::liquid_phase_pressure,
                         pos, t, dt);
             auto const storage =
                 medium.property(MaterialPropertyLib::PropertyType::storage)
@@ -313,7 +314,7 @@ public:
         {
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
-            vars.phase_pressure = p_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
             vars.capillary_pressure = -p_int_pt;
 
             double const Sw =

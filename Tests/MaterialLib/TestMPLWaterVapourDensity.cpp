@@ -39,7 +39,7 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
     double const t = std::numeric_limits<double>::quiet_NaN();
     double const dt = std::numeric_limits<double>::quiet_NaN();
     variable_array.temperature = T;
-    variable_array.phase_pressure = p;
+    variable_array.liquid_phase_pressure = p;
     variable_array.density = rho_w;
 
     // The derivative of the water vapour with respect of temperature
@@ -100,7 +100,7 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
             double const p_i = pressures[i];
 
             variable_array.temperature = T;
-            variable_array.phase_pressure = p_i;
+            variable_array.liquid_phase_pressure = p_i;
 
             double const rho_vw =
                 property.template value<double>(variable_array, pos, t, dt);
@@ -110,12 +110,12 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 << " and for computed water vapour density " << rho_vw;
 
             double const dp = 1.0e-3;
-            variable_array.phase_pressure = p_i - dp;
+            variable_array.liquid_phase_pressure = p_i - dp;
 
             double const rho_vw0 =
                 property.template value<double>(variable_array, pos, t, dt);
 
-            variable_array.phase_pressure = p_i + dp;
+            variable_array.liquid_phase_pressure = p_i + dp;
             double const rho_vw1 =
                 property.template value<double>(variable_array, pos, t, dt);
 
@@ -123,8 +123,9 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 0.5 * (rho_vw1 - rho_vw0) / dp;
 
             double const analytic_drho_wv_dp = property.template dValue<double>(
-                variable_array, MaterialPropertyLib::Variable::phase_pressure,
-                pos, t, dt);
+                variable_array,
+                MaterialPropertyLib::Variable::liquid_phase_pressure, pos, t,
+                dt);
 
             ASSERT_LE(std::fabs(approximated_drho_wv_dp - analytic_drho_wv_dp),
                       1e-7)

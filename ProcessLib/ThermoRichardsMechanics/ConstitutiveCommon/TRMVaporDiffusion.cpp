@@ -40,7 +40,7 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
     variables.temperature = T_data.T;
-    variables.phase_pressure = -p_cap_data.p_cap;
+    variables.liquid_phase_pressure = -p_cap_data.p_cap;
     variables.density = rho_L_data.rho_LR;
     variables.liquid_saturation = S_L_data.S_L;
 
@@ -64,8 +64,8 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
         double const drho_wv_dp =
             gas_phase->property(MaterialPropertyLib::density)
                 .template dValue<double>(variables,
-                                         MPL::Variable::phase_pressure, x_t.x,
-                                         x_t.t, x_t.dt);
+                                         MPL::Variable::liquid_phase_pressure,
+                                         x_t.x, x_t.t, x_t.dt);
         auto const f_Tv =
             gas_phase
                 ->property(

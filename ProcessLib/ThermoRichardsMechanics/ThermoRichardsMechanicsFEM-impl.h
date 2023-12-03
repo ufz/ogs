@@ -123,7 +123,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(-p_L, N, p_cap_ip);
 
         variables.capillary_pressure = p_cap_ip;
-        variables.phase_pressure = -p_cap_ip;
+        variables.liquid_phase_pressure = -p_cap_ip;
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
