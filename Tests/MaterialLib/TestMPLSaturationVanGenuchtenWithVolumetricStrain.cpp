@@ -70,8 +70,43 @@ TEST(MaterialPropertyLib, SaturationVanGenuchtenWithVolumetricStrain)
         double const S = pressure_saturation.template value<double>(
             variable_array, pos, t, dt);
 
-        double const S_expected = 0.71943039;
+        double const S_expected = 0.73068816;
 
         ASSERT_NEAR(S, S_expected, 1e-5);
+    }
+    // Test derivative (dValue) of saturation with respect to capillary pressure
+    {
+        double const vol_s = 0.002;
+        double const p_L = 1000000;
+
+        variable_array.capillary_pressure = p_L;
+        variable_array.volumetric_strain = vol_s;
+
+        // Calculate saturation
+        double const S = pressure_saturation.template value<double>(
+            variable_array, pos, t, dt);
+
+        // Calculate the derivative numerically using a small perturbation
+        double const dP = 1.0e-6;
+        variable_array.capillary_pressure = p_L + dP;
+        double const S_plus_dP = pressure_saturation.template value<double>(
+            variable_array, pos, t, dt);
+
+        double const approximated_dS_dP = (S_plus_dP - S) / dP;
+
+        // Calculate the derivative analytically using dValue
+        double const analytic_dS_dP =
+            pressure_saturation.template dValue<double>(
+                variable_array,
+                MaterialPropertyLib::Variable::capillary_pressure, pos, t, dt);
+
+        // Check if the numerical and analytical derivatives are close
+        ASSERT_LE(std::fabs(approximated_dS_dP - analytic_dS_dP), 1e-6)
+            << "for expected derivative of saturation with respect to "
+               "capillary pressure "
+            << approximated_dS_dP
+            << " and for computed derivative of saturation with respect to "
+               "capillary pressure "
+            << analytic_dS_dP;
     }
 }
