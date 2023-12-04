@@ -11,7 +11,7 @@ weight = 1080
 
 ## Publication procedure
 
-- Update [merge request template](https://gitlab.opengeosys.org/ogs/ogs/-/settings/merge_requests) to point to a new changelog wiki page
+- Update merge request template (settings / merge_requests) to point to a new changelog wiki page
 - Update `CHANGELOG.md` to point to new GitLab release
 - Create new web release page with generated artifact names (frontmatter only!)
 - Add a link to the (upcoming) Doxygen documentation for this tag in `Documentation/mainpage.dox.in` (with `v`-prefix)
