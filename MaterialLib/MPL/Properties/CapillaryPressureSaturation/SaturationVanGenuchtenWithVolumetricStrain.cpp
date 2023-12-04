@@ -74,6 +74,9 @@ PropertyDataType SaturationVanGenuchtenWithVolumetricStrain::value(
     double const S_eff =
         (e_m_ * S_eff_mi + ((e_0_ - e_m_ - (a_ * d_e)) * S_eff_M)) /
         (e_0_ - (a_ * d_e));
+    double const S_eff =
+        (e_m_ * S_eff_mi + ((e_0_ - e_m_ - (a_ * d_e)) * S_eff_M)) /
+        (e_0_ - (a_ * d_e));
     double const S = S_eff * S_L_max_ - S_eff * S_L_res_ + S_L_res_;
 
     return std::clamp(S, S_L_res_, S_L_max_);
@@ -108,9 +111,9 @@ PropertyDataType SaturationVanGenuchtenWithVolumetricStrain::dValue(
     double const p_M = p_cap / p_b_M;
     double const p_to_n_M = std::pow(p_M, n);
     double const S_eff_M = std::pow(p_to_n_M + 1., -m_);
-    double const S_eff = 
-        (e_m_ * S_eff_mi + ((e_0_ - e_m_ - (a_ * d_e)) * (S_eff_M))) /
-        (e_0_- (a_ * d_e));
+    double const S_eff =
+        (e_m_ * S_eff_mi + ((e_0_ - e_m_ - (a_ * d_e)) * S_eff_M)) /
+        (e_0_ - (a_ * d_e));
     double const S = S_eff * S_L_max_ - S_eff * S_L_res_ + S_L_res_;
 
     if (S < S_L_res_ || S > S_L_max_)
@@ -119,11 +122,10 @@ PropertyDataType SaturationVanGenuchtenWithVolumetricStrain::dValue(
     }
 
     double const dS_eff_dp_cap =
-        (-(e_m_) * n * m_ * p_to_n *
-             std::pow(p_to_n + 1., -m_ - 1) -
+        (-(e_m_)*n * m_ * p_to_n * std::pow(p_to_n + 1., -m_ - 1) -
          (e_0_ - e_m_ - (a_ * d_e)) * n * m_ * p_to_n_M *
              std::pow(p_to_n_M + 1., -m_ - 1)) /
-        ((e_0_- (a_ * d_e)) * p_cap);
+        ((e_0_ - (a_ * d_e)) * p_cap);
     return dS_eff_dp_cap * (S_L_max_ - S_L_res_);
 }
 }  // namespace MaterialPropertyLib
