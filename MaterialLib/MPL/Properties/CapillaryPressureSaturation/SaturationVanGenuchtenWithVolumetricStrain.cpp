@@ -74,9 +74,6 @@ PropertyDataType SaturationVanGenuchtenWithVolumetricStrain::value(
     double const S_eff =
         (e_m_ * S_eff_mi + ((e_0_ - e_m_ - (a_ * d_e)) * S_eff_M)) /
         (e_0_ - (a_ * d_e));
-    double const S_eff =
-        (e_m_ * S_eff_mi + ((e_0_ - e_m_ - (a_ * d_e)) * S_eff_M)) /
-        (e_0_ - (a_ * d_e));
     double const S = S_eff * S_L_max_ - S_eff * S_L_res_ + S_L_res_;
 
     return std::clamp(S, S_L_res_, S_L_max_);
