@@ -62,7 +62,7 @@ This mounts your current directory into `~/work` inside the container. Use image
 The above command only works when you run Docker from within a WSL2 Linux shell!
 
 - Install [Docker Desktop on Windows](https://docs.docker.com/desktop/windows/install/), it automatically configures WSL2.
-- Install a Linux distribution from the Microsoft App Store. We recommend [Ubuntu 20.04](https://www.microsoft.com/en-us/p/ubuntu-2004-lts/9n6svws3rx71).
+- Install a Linux distribution from the Microsoft App Store. We recommend [Ubuntu 22.04](https://apps.microsoft.com/search?query=ubuntu).
 - In the Docker Desktop application under *Settings / Resources / WSL integration* add your Linux distribution.
 - Open a command prompt in your Linux distribution (At the start menu type the name of the distribution) and run the container.
   - If your current working contains spaces write out `$PWD`, e.g.:

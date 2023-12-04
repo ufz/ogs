@@ -27,6 +27,7 @@ check web links:
       --ignore-url='https://ogsstorage.blob.core.windows.net/binaries/ogs6'
       --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/graphs/master'
       --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse'
+      --ignore-url='https://docs.gitlab.com/ee/ci/pipelines/pipelines_for_merged_results.html'
       --ignore-url='/css/all.css'
       --ignore-url='www.grs.de'
       --ignore-url='www.smartkd-concept.de'
