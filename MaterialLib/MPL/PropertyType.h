@@ -105,6 +105,7 @@ enum PropertyType : int
     thermal_longitudinal_dispersivity,
     thermal_osmosis_coefficient,
     thermal_transversal_dispersivity,
+    tortuosity,
     transport_porosity,
     /// used to compute the hydrodynamic dispersion tensor.
     transversal_dispersivity,
@@ -179,6 +180,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "thermal_longitudinal_dispersivity",
                              "thermal_osmosis_coefficient",
                              "thermal_transversal_dispersivity",
+                             "tortuosity",
                              "transport_porosity",
                              "transversal_dispersivity",
                              "vapour_pressure",
