@@ -144,8 +144,24 @@
                     <t_end> 600 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
+                            <repeat>60</repeat>
                             <delta_t>60</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>60</repeat>
+                            <delta_t>360</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>41</repeat>
+                            <delta_t>3600</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>16</repeat>
+                            <delta_t>43200</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>28</repeat>
+                            <delta_t>86400</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
