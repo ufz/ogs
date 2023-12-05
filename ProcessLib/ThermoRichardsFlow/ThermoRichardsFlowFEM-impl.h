@@ -534,8 +534,11 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
                     .template value<double>(variables, x_position, t, dt);
 
             variables.porosity = phi;
+            auto const tortuosity =
+                medium.property(MPL::PropertyType::tortuosity)
+                    .template value<double>(variables, x_position, t, dt);
             double const D_v =
-                phi * (1.0 - S_L) *
+                phi * (1.0 - S_L) * tortuosity *
                 gas_phase->property(MPL::PropertyType::diffusion)
                     .template value<double>(variables, x_position, t, dt);
 
@@ -992,8 +995,11 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
                     .template value<double>(variables, x_position, t, dt);
 
             variables.porosity = phi;
+            auto const tortuosity =
+                medium.property(MPL::PropertyType::tortuosity)
+                    .template value<double>(variables, x_position, t, dt);
             double const D_v =
-                phi * (1.0 - S_L) *
+                phi * (1.0 - S_L) * tortuosity *
                 gas_phase->property(MPL::PropertyType::diffusion)
                     .template value<double>(variables, x_position, t, dt);
 

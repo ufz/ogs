@@ -76,8 +76,11 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
         variables.porosity = phi;
 
         double const S_g = 1.0 - S_L_data.S_L;
+        double const tortuosity =
+            medium.property(MPL::PropertyType::tortuosity)
+                .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
         double const D_v =
-            phi * S_g *
+            phi * S_g * tortuosity *
             gas_phase->property(MPL::PropertyType::diffusion)
                 .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 

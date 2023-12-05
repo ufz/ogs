@@ -286,11 +286,8 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
 
     // diffusion
     auto const tortuosity =
-        1.0;  // Tortuosity formally belongs in the conversion from
-              // molecular diffusion coefficient to effective diffusion
-              // coefficient. For the moment, however, it is only determined
-              // by the coefficient (i.e. by parameter 'diffusion' in the
-              // PRJ-file) itself.
+        medium->property(MaterialPropertyLib::PropertyType::tortuosity)
+            .template value<double>(variables, pos, t, dt);
 
     auto const D_W_G_m =
         vapour_component.property(MaterialPropertyLib::PropertyType::diffusion)
