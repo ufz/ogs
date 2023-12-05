@@ -43,7 +43,8 @@ PropertyDataType VapourDiffusionFEBEX::dValue(
     {
         return exponent_ * base_diffusion_coefficient_ *
                std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
-                        exponent_ - 1.0) / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin;
+                        exponent_ - 1.0) /
+               MaterialLib::PhysicalConstant::CelsiusZeroInKelvin;
     }
     if (variable == Variable::liquid_saturation)
     {

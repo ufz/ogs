@@ -55,7 +55,6 @@ enum PropertyType : int
     fredlund_parameters,
     heat_capacity,
     henry_coefficient,
-    latent_heat,
     /// used to compute the hydrodynamic dispersion tensor.
     longitudinal_dispersivity,
     molality,
@@ -140,7 +139,6 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "fredlund_parameters",
                              "heat_capacity",
                              "henry_coefficient",
-                             "latent_heat",
                              "longitudinal_dispersivity",
                              "molality",
                              "molar_mass",
