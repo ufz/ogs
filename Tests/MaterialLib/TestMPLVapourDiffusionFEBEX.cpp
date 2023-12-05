@@ -45,8 +45,9 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
     // The derivative of the water vapour with respect of temperature
     {
         std::array const Ts = {273.0, 293.0, 393.0, 420.0, 500.0};
-        std::array const D_v_expected = {1.72629e-05, 1.96057e-05, 3.32605e-05,
-                                         3.74861e-05, 5.13059e-05, 1.92459e-05};
+        std::array const D_v_expected = {1.72629e-05 / 0.8, 1.96057e-05 / 0.8,
+                                         3.32605e-05 / 0.8, 3.74861e-05 / 0.8,
+                                         5.13059e-05 / 0.8, 1.92459e-05 / 0.8};
 
         for (std::size_t i = 0; i < Ts.size(); ++i)
         {
@@ -88,7 +89,7 @@ TEST(MaterialPropertyLib, VapourDiffusionFEBEX)
     {
         std::array const S = {-1.0, 0.0, 0.2,  0.33, 0.45,
                               0.52, 0.6, 0.85, 1.0,  1.1};
-        double const D_v_expected = 1.92459e-05;
+        double const D_v_expected = 1.92459e-05 / 0.8;
         for (std::size_t i = 0; i < S.size(); ++i)
         {
             variable_array.temperature = T;

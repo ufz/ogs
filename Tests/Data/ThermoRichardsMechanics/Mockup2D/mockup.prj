@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">mockup_domain.vtu</mesh>
@@ -107,7 +107,6 @@
                         <property>
                             <name>diffusion</name>
                             <type>VapourDiffusionFEBEX</type>
-                            <tortuosity>0.1</tortuosity>
                         </property>
                         <property>
                             <name>thermal_diffusion_enhancement_factor</name>
@@ -123,6 +122,11 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>tortuosity</name>
+                    <type>Constant</type>
+                    <value>0.1</value>
+                </property>
                 <property>
                     <name>relative_permeability</name>
                     <type>RelPermBrooksCorey</type>
