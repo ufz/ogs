@@ -78,7 +78,8 @@ std::vector<double> readDataFromNetCDF(
     std::vector<double> raster_data;
     for (auto [variable_name, variable] : variables)
     {
-        DBUG("checking variable '{}'", variable_name);
+        // uncomment for debugging
+        // DBUG("checking variable '{}'", variable_name);
         if (variable_name == var_name)
         {
             auto const n_dims = variable.getDimCount();
@@ -86,14 +87,14 @@ std::vector<double> readDataFromNetCDF(
             {
                 continue;
             }
-            DBUG("variable '{}' has {} dimensions", variable_name, n_dims);
+            // DBUG("variable '{}' has {} dimensions", variable_name, n_dims);
 
             std::vector<std::size_t> counts(n_dims, 1);
             for (int i = 0; i < n_dims; ++i)
             {
                 counts[i] = variable.getDim(i).getSize();
             }
-            DBUG("counts {}", fmt::join(counts, ", "));
+            // DBUG("counts {}", fmt::join(counts, ", "));
             std::vector<std::size_t> start(n_dims, 0);
             if (dimension_number > counts[0])
             {
@@ -109,9 +110,9 @@ std::vector<double> readDataFromNetCDF(
             // y dimension - netcdf dimension number 1
             // With the counts[1] and cell_size the 'usual' lower y-coordinate
             // of the origin is computed.
-            DBUG("reset header.origin[1]: original y0: {}, new y0: {} ",
-                 header.origin[1],
-                 header.origin[1] - counts[1] * header.cell_size);
+            // DBUG("reset header.origin[1]: original y0: {}, new y0: {} ",
+            //     header.origin[1],
+            //     header.origin[1] - counts[1] * header.cell_size);
             header.origin[1] -= counts[1] * header.cell_size;
 
             counts[2] = static_cast<int>(
@@ -129,10 +130,10 @@ std::vector<double> readDataFromNetCDF(
             start[1] = static_cast<int>(std::floor(
                 (min_max_points.min[1] - header.origin[1]) / header.cell_size));
 
-            DBUG("cut-out raster: pixel in x dimension: {} ", counts[2]);
-            DBUG("cut-out raster: pixel in y dimension: {} ", counts[1]);
-            DBUG("cut-out raster: start index x dimension: {}", start[2]);
-            DBUG("cut-out raster: start index y dimension: {}", start[1]);
+            // DBUG("cut-out raster: pixel in x dimension: {} ", counts[2]);
+            // DBUG("cut-out raster: pixel in y dimension: {} ", counts[1]);
+            // DBUG("cut-out raster: start index x dimension: {}", start[2]);
+            // DBUG("cut-out raster: start index y dimension: {}", start[1]);
 
             header.n_cols = counts[2];
             header.n_rows = counts[1];
