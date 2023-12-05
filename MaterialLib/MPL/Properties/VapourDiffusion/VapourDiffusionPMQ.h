@@ -90,7 +90,6 @@ public:
                             double const t, double const dt) const override;
 
 private:
-    static double constexpr tortuosity_ = 0.66;
     double const base_diffusion_coefficient_;
     double const exponent_;
 };
