@@ -141,11 +141,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 432000 </t_end>
+                    <t_end> 600 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>30</repeat>
-                            <delta_t>14400</delta_t>
+                            <repeat>10</repeat>
+                            <delta_t>60</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
