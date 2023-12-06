@@ -57,7 +57,7 @@ lambda_pi = 1.3
 r_pi = 0.12913 # Inner radius of pipe and wellbore
 r_b = 0.14
 t_pi = 0.00587 # Thickness of the pipe
-t = 86400 * 30 # Operation time
+t = 86400 * 5 # Operation time
 ```
 
 In Ramey's analytical solution (Ramey et al. (1962)), the outlet temperature of the pipe inside the wellbore can be calculated by
@@ -337,8 +337,8 @@ for delta_z in Z:
 # Plot numerical vs. analytical result
 fig, ax1 = plt.subplots(figsize=(10, 8))
 
-x_pos = np.arange(0, 2592000+60*60*24*5, 60*60*24*5)
-x_ticks = np.arange(0,35,5)
+x_pos = np.arange(0, 432000, 60*60*24)
+x_ticks = np.arange(0,5,1)
 
 
 ax1.plot(time_range, df.iloc[-1, :], 'k.', markersize=10, markerfacecolor='none', label = 'Ramey\'s analytical solution')
