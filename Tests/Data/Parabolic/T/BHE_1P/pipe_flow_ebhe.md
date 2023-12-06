@@ -10,10 +10,10 @@ project = ["Parabolic/T/BHE_1P/BHE_1P.prj"]
 
 ## Problem description
 
-(Ramey et al. (1962)) proposed the analytical solution concerning the wellbore heat transmission, which can be used to quantify the fluid temperature change in the wellbore.  
-In order to verify the single pipe flow model in the OGS, the numerical results were compared with Ramey's analytical solution (Ramey et al. (1962)).  
+Ramey et al. (1962) proposed the analytical solution concerning the wellbore heat transmission, which can be used to quantify the fluid temperature change in the wellbore.  
+In order to verify the single pipe flow model in the OGS, the numerical results were compared with Ramey's analytical solution Ramey et al. (1962).  
 The detailed calculation of the Ramey's analytical solution is given below.  
-A detailed analysis of an enhanced U-tube borehole heat exchanger (EUBHE) can be found in (Chen, C. et al. (2021)).
+A detailed analysis of an enhanced U-tube borehole heat exchanger (EUBHE) can be found in Chen, C. et al. (2021).
 
 ## Model Setup
 
@@ -60,7 +60,7 @@ t_pi = 0.00587 # Thickness of the pipe
 t = 86400 * 5 # Operation time
 ```
 
-In Ramey's analytical solution (Ramey et al. (1962)), the outlet temperature of the pipe inside the wellbore can be calculated by
+In Ramey's analytical solution Ramey et al. (1962), the outlet temperature of the pipe inside the wellbore can be calculated by
 
 $$
     T_o(t) = T_{s} + (T_i(t) - T_{s})\exp(-\Delta z/X)
@@ -142,7 +142,7 @@ Re = rho_f * v * (2 * r_pi) / mu_f
 
 ```
 
-The Nusselt number can be determined by the following equation (Diersch, (2011)):
+The Nusselt number can be determined by the following equation Diersch, (2011):
 
 $$
     \mathrm{Nu} = 4.364,\  \mathrm{Re} < 2300
@@ -150,8 +150,6 @@ $$
 
 $$
     \mathrm{Nu} = \frac{(\xi_{k}/8)\  \mathrm{Re}_{k}\  \mathrm{Pr}}{1+12.7\sqrt{{\xi_k}/8}(\mathrm{Pr}^{2/3}-1)} [ 1+(\frac{{d_k}^{i}}{L})^{2/3}], Re \geq 10^4
-$$
-
 $$
 
 $$
@@ -206,7 +204,7 @@ h = lambda_f * Nu_p / (2 * r_pi)  # Unit: W/m2/K
 U = 1 / (((r_pi + t_pi) / (r_pi * h)) + (r_pi + t_pi) * (np.log((r_pi + t_pi) / r_pi) / lambda_pi + np.log(r_b / (r_pi + t_pi)) / lambda_g))
 ```
 
-The friction factor $f$, is evaluated by Churchill correlation (Churchill et al. (1977)),
+The friction factor $f$, is evaluated by Churchill correlation Churchill et al. (1977),
 
 $$
     f = \frac{1}{(\frac{1}{[((\frac{8}{Re})^{10}+(\frac{Re}{36500})^{20})]^{1/2}}+[2.21(\ln{\frac{Re}{7}})]^{10})^{1/5}}
