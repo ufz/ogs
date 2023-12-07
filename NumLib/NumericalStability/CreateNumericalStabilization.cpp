@@ -56,6 +56,10 @@ NumericalStabilization createNumericalStabilization(
 
         return FullUpwind{cutoff_velocity};
     }
+    if (type == "FluxCorrectedTransport")
+    {
+        return FluxCorrectedTransport();
+    }
 
     OGS_FATAL("The stabilization type {:s} is not available.", type);
 }

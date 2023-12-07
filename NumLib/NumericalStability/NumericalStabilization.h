@@ -15,6 +15,9 @@
 #include <variant>
 #include <vector>
 
+#include "BaseLib/Error.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
+
 namespace NumLib
 {
 /** It defines stabilization method for solving the advection diffusion
@@ -170,6 +173,26 @@ private:
     double const cutoff_velocity_;
 };
 
+class FluxCorrectedTransport final
+{
+public:
+    explicit FluxCorrectedTransport()
+    {
+#ifdef USE_PETSC
+        OGS_FATAL(
+            "FluxCorrectedTransport scheme is not implemented to work with MPI "
+            "parallelization.");
+#endif
+    }
+
+    void calculateFluxCorrectedTransport(
+        const double t, const double dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        const MathLib::MatrixSpecifications& matrix_specification,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b);
+};
+
 using NumericalStabilization =
-    std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind>;
+    std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind,
+                 FluxCorrectedTransport>;
 }  // namespace NumLib

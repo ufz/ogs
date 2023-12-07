@@ -18,9 +18,12 @@
 #include "MathLib/LinAlg/Eigen/EigenTools.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/NumericalStability/FluxCorrectedTransport.h"
+#include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "NumLib/ODESolver/NonlinearSystem.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFlux.h"
@@ -220,6 +223,16 @@ void ComponentTransportProcess::assembleConcreteProcess(
     _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_tables,
                             _global_assembler, _local_assemblers,
                             pv.getActiveElementIDs());
+
+    if (process_id == _process_data.hydraulic_process_id)
+    {
+        return;
+    }
+    auto const matrix_specification = getMatrixSpecifications(process_id);
+
+    NumLib::computeFluxCorrectedTransport(_process_data.stabilizer, t, dt, x,
+                                          x_prev, process_id,
+                                          matrix_specification, M, K, b);
 }
 
 void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
@@ -515,6 +528,5 @@ void ComponentTransportProcess::preOutputConcreteProcess(
     INFO("[time] Computing residuum flow rates took {:g} s",
          time_residuum.elapsed());
 }
-
 }  // namespace ComponentTransport
 }  // namespace ProcessLib

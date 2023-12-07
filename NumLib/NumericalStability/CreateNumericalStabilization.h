@@ -26,8 +26,11 @@ namespace NumLib
 struct NoStabilization;
 class IsotropicDiffusionStabilization;
 class FullUpwind;
+class FluxCorrectedTransport;
+
 using NumericalStabilization =
-    std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind>;
+    std::variant<NoStabilization, IsotropicDiffusionStabilization, FullUpwind,
+                 FluxCorrectedTransport>;
 }  // namespace NumLib
 
 namespace NumLib

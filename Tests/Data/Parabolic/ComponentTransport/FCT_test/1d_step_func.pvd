@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="1d_step_func_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="0.05" group="" part="0" file="1d_step_func_ts_50_t_0.050000.vtu"/>
+    <DataSet timestep="0.1" group="" part="0" file="1d_step_func_ts_100_t_0.100000.vtu"/>
+    <DataSet timestep="0.15" group="" part="0" file="1d_step_func_ts_150_t_0.150000.vtu"/>
+    <DataSet timestep="0.2" group="" part="0" file="1d_step_func_ts_200_t_0.200000.vtu"/>
+    <DataSet timestep="0.25" group="" part="0" file="1d_step_func_ts_250_t_0.250000.vtu"/>
+    <DataSet timestep="0.3" group="" part="0" file="1d_step_func_ts_300_t_0.300000.vtu"/>
+    <DataSet timestep="0.35" group="" part="0" file="1d_step_func_ts_350_t_0.350000.vtu"/>
+    <DataSet timestep="0.4" group="" part="0" file="1d_step_func_ts_400_t_0.400000.vtu"/>
+    <DataSet timestep="0.45" group="" part="0" file="1d_step_func_ts_450_t_0.450000.vtu"/>
+    <DataSet timestep="0.5" group="" part="0" file="1d_step_func_ts_500_t_0.500000.vtu"/>
+  </Collection>
+</VTKFile>
