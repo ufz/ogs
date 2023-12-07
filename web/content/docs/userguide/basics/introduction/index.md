@@ -97,7 +97,7 @@ not activated you may still use OGS, but either have to give the full path to `o
 virtual environment, or add this path to your `PATH`-environment. Moreover, `pip` may print instructions which directory needs
  to be added to the `PATH`.
 
-You could also use [`pipx`](https://pypa.github.io/pipx/) for installation into an isolated environment.
+You could also use [`pipx`](https://pipx.pypa.io/stable/) for installation into an isolated environment.
 
 <div class='win'>
 
