@@ -11,6 +11,7 @@
 #pragma once
 
 #include <cassert>
+
 #include "BaseLib/Error.h"
 #include "LinAlgEnums.h"
 
@@ -269,3 +270,47 @@ void finalizeAssembly(EigenVector& A);
 } // namespace MathLib
 
 #endif
+
+namespace MathLib::LinAlg
+{
+
+/**
+ * Compute the relative norm between two vectors by \f$ \|x-y\|/\|x\| \f$.
+ *
+ * \param x Vector x
+ * \param y Vector y
+ * \param norm_type The norm type of global vector
+ * \return \f$ \|x-y\|/\|x\| \f$.
+ */
+template <typename VectorType>
+double computeRelativeNorm(VectorType const& x, VectorType const& y,
+                           MathLib::VecNormType norm_type)
+{
+    if (norm_type == MathLib::VecNormType::INVALID)
+    {
+        OGS_FATAL("An invalid norm type has been passed");
+    }
+
+    // Stores \f$diff = x-y\f$.
+    VectorType diff;
+    MathLib::LinAlg::copy(x, diff);
+    MathLib::LinAlg::axpy(diff, -1.0, y);
+
+    const double norm_diff = MathLib::LinAlg::norm(diff, norm_type);
+
+    const double norm_x = MathLib::LinAlg::norm(x, norm_type);
+    if (norm_x > std::numeric_limits<double>::epsilon())
+    {
+        return norm_diff / norm_x;
+    }
+
+    // Both of norm_x and norm_diff are close to zero
+    if (norm_diff < std::numeric_limits<double>::epsilon())
+    {
+        return 1.0;
+    }
+
+    // Only norm_x is close to zero
+    return norm_diff / std::numeric_limits<double>::epsilon();
+}
+}  // namespace MathLib::LinAlg

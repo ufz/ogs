@@ -18,17 +18,6 @@
 
 namespace NumLib
 {
-/**
- * Compute the relative norm between two vectors by \f$ \|x-y\|/\|x\| \f$.
- *
- * \param x Vector x
- * \param y Vector y
- * \param norm_type The norm type of global vector
- * \return \f$ \|x-y\|/\|x\| \f$.
- */
-double computeRelativeNorm(GlobalVector const& x, GlobalVector const& y,
-                           MathLib::VecNormType norm_type);
-
 //! \addtogroup ODESolver
 //! @{
 
