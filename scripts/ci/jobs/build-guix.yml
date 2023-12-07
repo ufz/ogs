@@ -41,7 +41,7 @@ deploy guix container eve:
     - which guix
     - guix describe
     # All processes.
-    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack --no-substitutes -RR --format=squashfs bash ogs-petsc --with-source=ogs-petsc@6.4.4-testing=$PWD | tee | tail -1 )
+    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack --no-substitutes -RR --format=squashfs bash coreutils ogs-petsc --with-source=ogs-petsc@6.4.4-testing=$PWD | tee | tail -1 )
     - echo "Image $image"
     - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
     - scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
