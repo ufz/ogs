@@ -267,9 +267,10 @@ from ogs6py.ogs import OGS
 # Pass the project file and set an output file path
 model=OGS(INPUT_FILE="BHE_1P.prj", PROJECT_FILE=f"{out_dir}/BHE_1P.prj")
 
-# set end time to 30 days (in seconds)
-model.replace_text(30 * 24 * 60 * 60, xpath="./time_stepping/t_end/value")
-
+# set end time (in seconds) and the time increments
+model.replace_text(5 * 24 * 60 * 60, xpath="./time_loop/processes/process/time_stepping/t_end")
+model.replace_text(30, xpath="./time_loop/processes/process/time_stepping/timesteps/pair/repeat")
+model.replace_text(4 * 60 * 60, xpath="./time_loop/processes/process/time_stepping/timesteps/pair/delta_t")
 # Write to the output file 
 model.write_input()
 
