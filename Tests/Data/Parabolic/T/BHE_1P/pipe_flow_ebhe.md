@@ -396,7 +396,6 @@ ax2 = ax1.twinx()
 ax2.set_ylabel('Absolute error (°C)', color=color, fontsize = 20)
 ax2.plot(np.linspace(0,30,101), temp[:,0]-df.iloc[:, -1], linewidth = 2, color=color, label = 'Absolute error')
 ax2.tick_params(axis='y', labelcolor=color)
-ax2.set_ylim(0,0.04)
 ax2.spines['right'].set_color('blue')
 ax2.spines['right'].set_linewidth(2)
 ax2.tick_params(axis='y', labelsize=16)
@@ -405,6 +404,9 @@ fig.tight_layout()
 plt.figlegend(fontsize=18, loc = (0.4, 0.1), frameon=False)
 plt.show()
 
+max_error = 0.08
+if np.max(np.abs(temp[:,0]-df.iloc[:, -1])) > max_error:
+    raise RuntimeError(f'The maximum temperature error is over {max_error} °C, which is higher than expected')
 ```
 
 Figure 3: Distributed temperature of fluid and absolute error.
