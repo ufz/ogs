@@ -58,13 +58,6 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
             integration_order, local_assemblers_,
             &LocalAssemblerInterface<DisplacementDim>::getSigma));
 
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "epsilon_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
-
     ProcessLib::Reflection::addReflectedIntegrationPointWriters<
         DisplacementDim>(
         LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
@@ -185,11 +178,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtSigma);
-    add_secondary_variable(
-        "epsilon",
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim>::RowsAtCompileTime,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilon);
     add_secondary_variable(
         "velocity_gas", mesh.getDimension(),
         &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityGas);

@@ -46,6 +46,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
         current_states_.resize(n_integration_points);
         prev_states_.resize(n_integration_points);
+        output_data_.resize(n_integration_points);
 
         material_states_.reserve(n_integration_points);
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
@@ -62,14 +63,6 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     virtual std::vector<double> getSigma() const = 0;
 
     virtual std::vector<double> const& getIntPtSigma(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> getEpsilon() const = 0;
-
-    virtual std::vector<double> const& getIntPtEpsilon(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -234,7 +227,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         using Self = LocalAssemblerInterface<DisplacementDim>;
 
         return ProcessLib::Reflection::reflectWithoutName(
-            &Self::current_states_);
+            &Self::current_states_, &Self::output_data_);
     }
 
     TH2MProcessData<DisplacementDim>& process_data_;
@@ -250,6 +243,9 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     // old state.
     std::vector<ConstitutiveRelations::MaterialStateData<DisplacementDim>>
         material_states_;
+    std::vector<ConstitutiveRelations::OutputData<DisplacementDim>>
+        output_data_;
+
     NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;

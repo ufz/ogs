@@ -259,26 +259,6 @@ private:
             _ip_data, &IpData::sigma_eff, cache);
     }
 
-    std::vector<double> getEpsilon() const override
-    {
-        constexpr int kelvin_vector_size =
-            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-
-        return transposeInPlace<kelvin_vector_size>(
-            [this](std::vector<double>& values)
-            { return getIntPtEpsilon(0, {}, {}, values); });
-    }
-
-    virtual std::vector<double> const& getIntPtEpsilon(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::eps, cache);
-    }
-
     // TODO: Here is some refactoring potential. All secondary variables could
     // be stored in some container to avoid defining one method for each
     // variable.

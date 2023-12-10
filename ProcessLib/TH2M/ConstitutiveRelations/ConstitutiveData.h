@@ -12,6 +12,8 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "ElasticTangentStiffnessData.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
@@ -51,6 +53,20 @@ struct StatefulDataPrev
         swelling_data = state.swelling_data;
 
         return *this;
+    }
+};
+
+/// Data that is needed for output purposes, but not directly for the assembly.
+template <int DisplacementDim>
+struct OutputData
+{
+    ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
+
+    static auto reflect()
+    {
+        using Self = OutputData<DisplacementDim>;
+
+        return Reflection::reflectWithoutName(&Self::eps_data);
     }
 };
 

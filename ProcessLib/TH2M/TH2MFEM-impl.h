@@ -181,7 +181,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = ip_data.eps;
+        auto& eps = this->output_data_[ip].eps_data.eps;
         eps.noalias() = Bu * displacement;
 
         // Set volumetric strain for the general case without swelling.
@@ -858,11 +858,6 @@ std::size_t TH2MLocalAssembler<
             values, _ip_data, &IpData::sigma_eff);
     }
 
-    if (name == "epsilon")
-    {
-        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::eps);
-    }
     if (name.starts_with("material_state_variable_"))
     {
         name.remove_prefix(24);
@@ -968,7 +963,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = ip_data.eps;
+        auto& eps = this->output_data_[ip].eps_data.eps;
         eps.noalias() = Bu * displacement;
 
         // Set volumetric strain rate for the general case without swelling.
