@@ -15,6 +15,7 @@
 
 #include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
+#include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib
@@ -23,8 +24,17 @@ namespace LIE
 {
 namespace HydroMechanics
 {
+
+/// Used for the extrapolation of the integration point values.
+template <typename ShapeMatrixType>
+struct SecondaryData
+{
+    std::vector<ShapeMatrixType, Eigen::aligned_allocator<ShapeMatrixType>> N;
+};
+
 class HydroMechanicsLocalAssemblerInterface
-    : public ProcessLib::LocalAssemblerInterface
+    : public ProcessLib::LocalAssemblerInterface,
+      public NumLib::ExtrapolatableElement
 {
 public:
     HydroMechanicsLocalAssemblerInterface(MeshLib::Element const& element,
@@ -111,6 +121,48 @@ public:
 
         postTimestepConcreteWithVector(t, dt, _local_u);
     }
+
+    virtual std::vector<double> const& getIntPtSigma(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtEpsilon(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtDarcyVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtFractureVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtFractureStress(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtFractureAperture(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> const& getIntPtFracturePermeability(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
 
 protected:
     virtual void assembleWithJacobianConcrete(

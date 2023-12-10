@@ -11,6 +11,7 @@
 #pragma once
 
 #include "HydroMechanicsLocalAssemblerMatrixNearFracture.h"
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 
 namespace ProcessLib
 {

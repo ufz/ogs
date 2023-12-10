@@ -58,6 +58,69 @@ public:
         const double t, double const dt,
         Eigen::VectorXd const& local_x) override;
 
+    std::vector<double> const& getIntPtSigma(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        cache.resize(0);
+        return cache;
+    }
+
+    std::vector<double> const& getIntPtEpsilon(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        cache.resize(0);
+        return cache;
+    }
+
+    std::vector<double> const& getIntPtDarcyVelocity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        cache.resize(0);
+        return cache;
+    }
+
+    std::vector<double> const& getIntPtFractureVelocity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtFractureStress(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtFractureAperture(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtFracturePermeability(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
+        const unsigned integration_point) const override
+    {
+        auto const& N = _secondary_data.N[integration_point];
+
+        // assumes N is stored contiguously in memory
+        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+    }
+
 private:
     void assembleWithJacobianConcrete(double const t, double const dt,
                                       Eigen::VectorXd const& local_x,
@@ -105,6 +168,10 @@ private:
     static const int displacement_index = ShapeFunctionPressure::NPOINTS;
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * GlobalDim;
+
+    SecondaryData<
+        typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
+        _secondary_data;
 };
 
 }  // namespace HydroMechanics

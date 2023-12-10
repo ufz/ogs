@@ -18,6 +18,7 @@
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -48,6 +49,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         integration_method.getNumberOfPoints();
 
     _ip_data.reserve(n_integration_points);
+    _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices_u =
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
@@ -72,6 +74,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];
+
         ip_data.integration_weight =
             sm_u.detJ * sm_u.integralMeasure *
             integration_method.getWeightedPoint(ip).getWeight();
@@ -90,6 +93,8 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         ip_data.N_p = sm_p.N;
         ip_data.dNdx_p = sm_p.dNdx;
+
+        _secondary_data.N[ip] = sm_u.N;
 
         ip_data.sigma_eff.setZero(kelvin_vector_size);
         ip_data.eps.setZero(kelvin_vector_size);
@@ -464,6 +469,57 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     }
 }
 
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerMatrix<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtSigma(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<GlobalDim>(
+        _ip_data, &IntegrationPointDataType::sigma_eff, cache);
+}
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerMatrix<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtEpsilon(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<GlobalDim>(
+        _ip_data, &IntegrationPointDataType::eps, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerMatrix<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtDarcyVelocity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points = _ip_data.size();
+
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, GlobalDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].darcy_velocity;
+    }
+
+    return cache;
+}
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib

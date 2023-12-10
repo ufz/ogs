@@ -82,6 +82,7 @@ private:
     using Base::pressure_index;
     using Base::pressure_size;
     using typename Base::BMatricesType;
+    using typename Base::IntegrationPointDataType;
     using typename Base::ShapeMatricesTypeDisplacement;
 
     static const int displacement_jump_index =

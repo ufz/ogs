@@ -12,8 +12,11 @@
 
 #include "HydroMechanicsLocalAssemblerFracture.h"
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
+#include "MathLib/KelvinVector.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
+#include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -55,6 +58,7 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         integration_method.getNumberOfPoints();
 
     _ip_data.reserve(n_integration_points);
+    _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices_u =
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
@@ -96,6 +100,8 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             HMatrixType>(sm_u.N, ip_data.H_u);
         ip_data.N_p = sm_p.N;
         ip_data.dNdx_p = sm_p.dNdx;
+
+        _secondary_data.N[ip] = sm_u.N;
 
         // Initialize current time step values
         ip_data.w.setZero(GlobalDim);
@@ -419,12 +425,82 @@ void HydroMechanicsLocalAssemblerFracture<
         (*_process_data.mesh_prop_fracture_stress_shear2)[element_id] =
             ele_sigma_eff[1];
     }
+}
 
-    for (unsigned i = 0; i < GlobalDim; i++)
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtFractureVelocity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points = _ip_data.size();
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, GlobalDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        (*_process_data.mesh_prop_velocity)[element_id * GlobalDim + i] =
-            ele_velocity[i];
+        cache_matrix.col(ip).noalias() = _ip_data[ip].darcy_velocity;
     }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtFractureStress(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points = _ip_data.size();
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, GlobalDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].sigma_eff;
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtFractureAperture(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IntegrationPointDataType::aperture, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtFracturePermeability(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IntegrationPointDataType::permeability, cache);
 }
 
 }  // namespace HydroMechanics
