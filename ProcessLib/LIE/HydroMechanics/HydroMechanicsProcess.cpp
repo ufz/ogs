@@ -212,6 +212,43 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function)
+    {
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
+
+    add_secondary_variable(
+        "sigma",
+        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface::getIntPtSigma);
+
+    add_secondary_variable(
+        "epsilon",
+        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface::getIntPtEpsilon);
+
+    add_secondary_variable("velocity", GlobalDim,
+                           &LocalAssemblerInterface::getIntPtDarcyVelocity);
+
+    add_secondary_variable("fracture_velocity", GlobalDim,
+                           &LocalAssemblerInterface::getIntPtFractureVelocity);
+
+    add_secondary_variable("fracture_stress", GlobalDim,
+                           &LocalAssemblerInterface::getIntPtFractureStress);
+
+    add_secondary_variable("fracture_aperture", 1,
+                           &LocalAssemblerInterface::getIntPtFractureAperture);
+
+    add_secondary_variable(
+        "fracture_permeability", 1,
+        &LocalAssemblerInterface::getIntPtFracturePermeability);
+
     auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "stress_xx",
         MeshLib::MeshItemType::Cell, 1);
@@ -291,7 +328,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     }
 
     auto mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "velocity",
+        const_cast<MeshLib::Mesh&>(mesh), "element_velocity",
         MeshLib::MeshItemType::Cell, GlobalDim);
     mesh_prop_velocity->resize(mesh.getNumberOfElements() * GlobalDim);
     _process_data.mesh_prop_velocity = mesh_prop_velocity;
