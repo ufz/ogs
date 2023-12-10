@@ -77,8 +77,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
-std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+std::tuple<
+    std::vector<ConstitutiveRelations::ConstitutiveData<DisplacementDim>>,
+    std::vector<ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>>>
+TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                   DisplacementDim>::
     updateConstitutiveVariables(Eigen::VectorXd const& local_x,
                                 Eigen::VectorXd const& local_x_prev,
                                 double const t, double const dt)
@@ -114,7 +117,9 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    std::vector<ConstitutiveVariables<DisplacementDim>>
+    std::vector<ConstitutiveRelations::ConstitutiveData<DisplacementDim>>
+        ip_constitutive_data(n_integration_points);
+    std::vector<ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>>
         ip_constitutive_variables(n_integration_points);
 
     PhaseTransitionModelVariables ptmv;
@@ -123,6 +128,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
     {
         auto& ip_data = _ip_data[ip];
         auto& ip_cv = ip_constitutive_variables[ip];
+        auto& ip_cd = ip_constitutive_data[ip];
 
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
@@ -329,7 +335,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        ip_cv.C = ip_data.updateConstitutiveRelation(
+        ip_cd.s_mech_data.stiffness_tensor = ip_data.updateConstitutiveRelation(
             vars, t, pos, dt, T_prev, this->solid_material_,
             this->material_states_[ip].material_state_variables);
 
@@ -840,7 +846,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
     }
 
-    return ip_constitutive_variables;
+    return {ip_constitutive_data, ip_constitutive_variables};
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1122,11 +1128,12 @@ void TH2MLocalAssembler<
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    auto const ip_constitutive_variables = updateConstitutiveVariables(
-        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
-        Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
-                                          local_x_prev.size()),
-        t, dt);
+    auto const [ip_constitutive_data, ip_constitutive_variables] =
+        updateConstitutiveVariables(
+            Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
+            Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                              local_x_prev.size()),
+            t, dt);
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
@@ -1553,15 +1560,17 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    auto const ip_constitutive_variables = updateConstitutiveVariables(
-        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
-        Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
-                                          local_x_prev.size()),
-        t, dt);
+    auto const [ip_constitutive_data, ip_constitutive_variables] =
+        updateConstitutiveVariables(
+            Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
+            Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                              local_x_prev.size()),
+            t, dt);
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
         auto& ip = _ip_data[int_point];
+        auto& ip_cd = ip_constitutive_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
 
         auto const& Np = ip.N_p;
@@ -2116,7 +2125,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)
-            .noalias() += BuT * ip_cv.C * Bu * w;
+            .noalias() += BuT * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
 
         // fU_1
         fU.noalias() -=
@@ -2126,7 +2135,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<displacement_size, temperature_size>(
                 displacement_index, temperature_index)
-            .noalias() -= BuT * (ip_cv.C * ip.alpha_T_SR) * NT * w;
+            .noalias() -=
+            BuT * (ip_cd.s_mech_data.stiffness_tensor * ip.alpha_T_SR) * NT * w;
 
         /* TODO (naumov) Test with gravity needed to check this Jacobian part.
         local_Jac

@@ -9,22 +9,27 @@
 
 #pragma once
 
-#include "MathLib/KelvinVector.h"
+#include "SolidMechanics.h"
 
 namespace ProcessLib::TH2M
 {
-/// Variables needed only for the assembly process. The values are not preserved
-/// throughout the iterations contrary to the variables in IntegrationPointData.
-template <int DisplacementDim>
-struct ConstitutiveVariables
+namespace ConstitutiveRelations
 {
-    using KelvinMatrixType =
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+/// Data that is needed for the equation system assembly.
+template <int DisplacementDim>
+struct ConstitutiveData
+{
+    SolidMechanicsDataStateless<DisplacementDim> s_mech_data;
+};
+
+/// Data that stores intermediate values, which are not needed outside the
+/// constitutive setting.
+template <int DisplacementDim>
+struct ConstitutiveTempData
+{
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
-
-    KelvinMatrixType C;
 
     DisplacementDimMatrix dlambda_dp_GR;
     DisplacementDimMatrix dlambda_dp_cap;
@@ -87,8 +92,6 @@ struct ConstitutiveVariables
     double ds_L_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double chi_s_L = std::numeric_limits<double>::quiet_NaN();
     double dchi_ds_L = std::numeric_limits<double>::quiet_NaN();
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
-
+}  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
