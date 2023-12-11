@@ -288,7 +288,7 @@ brew install python
 
 </div>
 
-## Optional: Install Qt and other dependencies for the Data Explorer
+## Optional: Install Qt, NetCDF and other dependencies for the Data Explorer
 
 Use [Another Qt installer (`aqt`)](https://github.com/miurahr/aqtinstall) for installing the Qt binaries to some path on your machine:
 
@@ -305,6 +305,8 @@ aqt install-qt win desktop {{< dataFile "versions.tested_version.qt" >}} win64_m
 This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64`.
 
 To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64/bin` bin to the `PATH` environment variable.
+
+Install **NetCDF4** by downloading and installing the [official installer](https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netCDF4.9.2-NC4-64.exe). The C++-bindings to NetCDF are automatically build via CPM.
 
 </div>
 
