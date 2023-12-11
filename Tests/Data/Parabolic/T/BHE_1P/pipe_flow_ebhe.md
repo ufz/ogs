@@ -267,9 +267,10 @@ from ogs6py.ogs import OGS
 # Pass the project file and set an output file path
 model=OGS(INPUT_FILE="BHE_1P.prj", PROJECT_FILE=f"{out_dir}/BHE_1P.prj")
 
-# set end time to 30 days (in seconds)
-model.replace_text(30 * 24 * 60 * 60, xpath="./time_stepping/t_end/value")
-
+# set end time (in seconds) and the time increments
+model.replace_text(5 * 24 * 60 * 60, xpath="./time_loop/processes/process/time_stepping/t_end")
+model.replace_text(30, xpath="./time_loop/processes/process/time_stepping/timesteps/pair/repeat")
+model.replace_text(4 * 60 * 60, xpath="./time_loop/processes/process/time_stepping/timesteps/pair/delta_t")
 # Write to the output file 
 model.write_input()
 
@@ -395,7 +396,6 @@ ax2 = ax1.twinx()
 ax2.set_ylabel('Absolute error (°C)', color=color, fontsize = 20)
 ax2.plot(np.linspace(0,30,101), temp[:,0]-df.iloc[:, -1], linewidth = 2, color=color, label = 'Absolute error')
 ax2.tick_params(axis='y', labelcolor=color)
-ax2.set_ylim(0,0.04)
 ax2.spines['right'].set_color('blue')
 ax2.spines['right'].set_linewidth(2)
 ax2.tick_params(axis='y', labelsize=16)
@@ -404,6 +404,9 @@ fig.tight_layout()
 plt.figlegend(fontsize=18, loc = (0.4, 0.1), frameon=False)
 plt.show()
 
+max_error = 0.08
+if np.max(np.abs(temp[:,0]-df.iloc[:, -1])) > max_error:
+    raise RuntimeError(f'The maximum temperature error is over {max_error} °C, which is higher than expected')
 ```
 
 Figure 3: Distributed temperature of fluid and absolute error.
