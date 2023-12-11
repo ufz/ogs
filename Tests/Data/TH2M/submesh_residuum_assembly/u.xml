@@ -7,7 +7,7 @@
     <add sel="/*/process_variables/process_variable[name=&quot;displacement&quot;]/boundary_conditions">
         <boundary_condition>
             <mesh>surface_x_max</mesh>
-            <type>Dirichlet</type>
+            <type>Neumann</type>
             <component>0</component>
             <parameter>u_right</parameter>
         </boundary_condition>
@@ -16,7 +16,7 @@
         <parameter>
             <name>u_right</name>
             <type>Constant</type>
-            <value>0.01</value>
+            <value>1e5</value>
         </parameter>
         <parameter>
             <name>u_initial</name>
@@ -32,14 +32,10 @@
         <parameter>
             <name>initial_stress</name>
             <type>Function</type>
-            <!-- sigma_ic = -lambda * eps_xx
-                 with lambda = E * nu / (1+nu) / (1-2*nu)
-                 for nu = 0.1, E = 1e9 Pa and eps_xx = 2.5e-3 we get
-                 sigma_ic = -2.84090909090909e5 Pa
-            -->
-            <expression>-2.84090909090909e5</expression>
-            <expression>-2.84090909090909e5</expression>
-            <expression>-2.84090909090909e5</expression>
+            <!-- sigma_ic corresponds to the force at the right boundary -->
+            <expression>1e5</expression>
+            <expression>0</expression>
+            <expression>0</expression>
             <expression>0</expression>
         </parameter>
     </add>
@@ -85,13 +81,13 @@
             <vtkdiff>
                 <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>temperature_interpolated</field>
-                <absolute_tolerance>1e-15</absolute_tolerance>
+                <absolute_tolerance>6e-7</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
                 <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>HeatFlowRate</field>
-                <absolute_tolerance>1e-15</absolute_tolerance>
+                <absolute_tolerance>5e-7</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
 
@@ -129,8 +125,14 @@
             </vtkdiff>
             <vtkdiff>
                 <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
+                <field>sigma</field>
+                <absolute_tolerance>2e-7</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>NodalForces</field>
-                <absolute_tolerance>1.2e-8</absolute_tolerance>
+                <absolute_tolerance>1.4e-8</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
         </test_definition>
