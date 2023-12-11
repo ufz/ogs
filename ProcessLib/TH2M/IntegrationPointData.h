@@ -44,15 +44,12 @@ struct IntegrationPointData final
         eps.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
-
-        // Previous time step values are not initialized and are set later.
-        eps_prev.resize(kelvin_vector_size);
         sigma_eff_prev.resize(kelvin_vector_size);
     }
 
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType sigma_sw, sigma_sw_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev;
+    typename BMatricesType::KelvinVectorType eps;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
@@ -183,7 +180,6 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        eps_prev = eps;
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
         sigma_sw_prev = sigma_sw;

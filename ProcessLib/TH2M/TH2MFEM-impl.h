@@ -111,6 +111,8 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
     auto const displacement =
         local_x.template segment<displacement_size>(displacement_index);
+    auto const displacement_prev =
+        local_x_prev.template segment<displacement_size>(displacement_index);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& gas_phase = medium.phase("Gas");
@@ -281,11 +283,11 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = ip_data.alpha_T_SR * (T - T_prev);
 
-        auto& eps_prev = ip_data.eps_prev;
         auto& eps_m = ip_data.eps_m;
         auto& eps_m_prev = ip_data.eps_m_prev;
 
-        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+        eps_m.noalias() =
+            eps_m_prev + eps - Bu * displacement_prev - dthermal_strain;
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
