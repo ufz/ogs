@@ -332,7 +332,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
 
         const double solution_error =
             computationOfChangeNeeded(timestep_algorithm, t)
-                ? NumLib::computeRelativeNorm(
+                ? MathLib::LinAlg::computeRelativeNorm(
                       x, x_prev,
                       ppd.conv_crit.get() ? ppd.conv_crit->getVectorNormType()
                                           : MathLib::VecNormType::NORM2)

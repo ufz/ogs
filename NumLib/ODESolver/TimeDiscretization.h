@@ -18,19 +18,6 @@
 
 namespace NumLib
 {
-/**
- * Compute and return the relative norm of solutions between two
- * successive time steps by \f$ \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
- *
- * \param x         The current solution
- * \param x_prev    The previous solution
- * \param norm_type The norm type of global vector
- * \return          \f$ \|u^{n+1}-u^{n}\|/\|u^{n+1}\| \f$.
- */
-double computeRelativeNorm(GlobalVector const& x,
-                           GlobalVector const& x_prev,
-                           MathLib::VecNormType norm_type);
-
 //! \addtogroup ODESolver
 //! @{
 

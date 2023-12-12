@@ -15,39 +15,6 @@
 
 namespace NumLib
 {
-double computeRelativeNorm(GlobalVector const& x,
-                           GlobalVector const& x_prev,
-                           MathLib::VecNormType norm_type)
-{
-    if (norm_type == MathLib::VecNormType::INVALID)
-    {
-        OGS_FATAL("An invalid norm type has been passed");
-    }
-
-    // Stores \f$ u_{n+1}-u_{n}\f$.
-    GlobalVector dx;
-    MathLib::LinAlg::copy(x, dx);  // copy x to dx.
-
-    // dx = x - x_prev --> x - dx --> dx
-    MathLib::LinAlg::axpy(dx, -1.0, x_prev);
-    const double norm_dx = MathLib::LinAlg::norm(dx, norm_type);
-
-    const double norm_x = MathLib::LinAlg::norm(x, norm_type);
-    if (norm_x > std::numeric_limits<double>::epsilon())
-    {
-        return norm_dx / norm_x;
-    }
-
-    // Both of norm_x and norm_dx are close to zero
-    if (norm_dx < std::numeric_limits<double>::epsilon())
-    {
-        return 1.0;
-    }
-
-    // Only norm_x is close to zero
-    return norm_dx / std::numeric_limits<double>::epsilon();
-}
-
 void BackwardEuler::getWeightedOldX(GlobalVector& y,
                                     GlobalVector const& x_old) const
 {
