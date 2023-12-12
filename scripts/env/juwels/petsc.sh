@@ -9,6 +9,7 @@ module load Boost
 module load git
 module load HDF5/1.12.2
 module load ScaLAPACK/2.2.0-fb
+# module load netCDF-C++4 # uncomment when using OGS_USE_NETCDF=ON
 
 export CC=mpicc
 export CXX=mpic++
