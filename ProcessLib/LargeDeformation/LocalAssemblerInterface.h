@@ -78,7 +78,6 @@ struct LargeDeformationLocalAssemblerInterface
         if (name.starts_with("material_state_variable_"))
         {
             std::string const variable_name = name.substr(24, name.size() - 24);
-            DBUG("Setting material state variable '{:s}'", variable_name);
 
             auto const& internal_variables =
                 solid_material_.getInternalVariables();
@@ -88,6 +87,7 @@ struct LargeDeformationLocalAssemblerInterface
                     { return iv.name == variable_name; });
                 iv != end(internal_variables))
             {
+                DBUG("Setting material state variable '{:s}'", variable_name);
                 return ProcessLib::
                     setIntegrationPointDataMaterialStateVariables(
                         values, material_states_,

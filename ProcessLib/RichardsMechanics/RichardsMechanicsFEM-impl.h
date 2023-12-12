@@ -251,7 +251,6 @@ std::size_t RichardsMechanicsLocalAssembler<
     if (name.starts_with("material_state_variable_") && name.ends_with("_ip"))
     {
         std::string const variable_name = name.substr(24, name.size() - 24 - 3);
-        DBUG("Setting material state variable '{:s}'", variable_name);
 
         // Using first ip data for solid material. TODO (naumov) move solid
         // material into element, store only material state in IPs.
@@ -263,6 +262,7 @@ std::size_t RichardsMechanicsLocalAssembler<
                              { return iv.name == variable_name; });
             iv != end(internal_variables))
         {
+            DBUG("Setting material state variable '{:s}'", variable_name);
             return ProcessLib::setIntegrationPointDataMaterialStateVariables(
                 values, _ip_data, &IpData::material_state_variables,
                 iv->reference);
