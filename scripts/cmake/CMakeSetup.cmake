@@ -39,7 +39,7 @@ if(NOT PROJECT_IS_TOP_LEVEL)
 endif()
 
 if((NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-   OR (NOT CMAKE_BUILD_TYPE AND MSVC AND OGS_USE_CONAN)
+   OR (NOT CMAKE_BUILD_TYPE AND MSVC)
 )
     message(STATUS "Setting build type to 'Debug' as none was specified.")
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build." FORCE)

@@ -9,20 +9,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
     ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
 )
-if(OGS_USE_CONAN AND MSVC)
-    foreach(outputconfig ${CMAKE_CONFIGURATION_TYPES})
-        string(TOUPPER ${outputconfig} outputconfig)
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${outputconfig}
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
-        )
-        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${outputconfig}
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-        )
-        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${outputconfig}
-            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
-        )
-    endforeach()
-endif()
 
 # cmake-lint: disable=C0103
 set(Data_SOURCE_DIR ${PROJECT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")

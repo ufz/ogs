@@ -36,8 +36,5 @@ if(TARGET ConvertSHPToGLI)
 endif()
 
 if(TARGET NetCdfConverter)
-    target_link_libraries(
-        NetCdfConverter ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
-        ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}
-    )
+    target_link_libraries(NetCdfConverter netcdf-cxx4)
 endif()

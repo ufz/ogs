@@ -15,8 +15,6 @@ build gui mac:
       allow_failure: true
   variables:
     CMAKE_PRESET: release-gui
-    CMAKE_ARGS: >-
-      -DOGS_USE_CONAN=auto
   parallel:
     matrix:
       - ARCHITECTURE: ["amd64"] # "arm64" not supported yet

@@ -23,7 +23,7 @@ target_link_libraries(
 if(OGS_USE_NETCDF)
     target_link_libraries(
         GeoLib
-        PRIVATE ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
+        PRIVATE netcdf-cxx4
     )
     target_compile_definitions(GeoLib PRIVATE OGS_USE_NETCDF)
 endif()

@@ -53,17 +53,7 @@ target_link_libraries(
 )
 
 if(OGS_USE_NETCDF)
-    target_link_libraries(
-        VtkVisFilter PUBLIC ${NETCDF_LIBRARIES_CXX} ${NETCDF_LIBRARIES_C}
-                            ${HDF5_HL_LIBRARIES} ${HDF5_LIBRARIES}
-    )
-    # Workaround for system installed VTK (tested on arch)
-    if(NOT OGS_USE_CONAN)
-        target_include_directories(
-            VtkVisFilter SYSTEM PUBLIC ${NETCDF_INCLUDES_C}
-                                       ${NETCDF_INCLUDES_CXX}
-        )
-    endif()
+    target_link_libraries(VtkVisFilter PUBLIC netcdf-cxx4)
     add_autogen_include(VtkVisFilter)
 endif()
 

@@ -19,7 +19,6 @@ The minimum prerequisites to build OGS are:
 - A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
 - Python interpreter and libraries
 - *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
-- *Optional*: [Conan package manager](https://www.conan.io/) (at least version {{< dataFile "versions.minimum_version.conan" >}}) for some optional dependencies.
 
 <div class='note'>
 
@@ -289,7 +288,7 @@ brew install python
 
 </div>
 
-## Optional: Install Qt and other dependencies for the Data Explorer
+## Optional: Install Qt, NetCDF and other dependencies for the Data Explorer
 
 Use [Another Qt installer (`aqt`)](https://github.com/miurahr/aqtinstall) for installing the Qt binaries to some path on your machine:
 
@@ -307,28 +306,7 @@ This will install Qt to `[your-directory]/qt/{{< dataFile "versions.tested_versi
 
 To finish add `[your-directory]/qt/{{< dataFile "versions.tested_version.qt" >}}/msvc2019_64/bin` bin to the `PATH` environment variable.
 
-## Optional: Install Conan package manager (for NetCDF)
-
-Install Conan (>= {{< dataFile "versions.minimum_version.conan" >}}) with Python's pip:
-
-```bash
-pip3 install --user conan
-```
-
-This installed `conan` to `C:\Users\[username]\AppData\Roaming\Python\Python310\Scripts` in your home directory. Make sure to have this directory in your `PATH`!
-
-Check on a newly opened command line if Conan was installed successfully:
-
-```bash
-$ conan --version
-Conan version {{< dataFile "versions.minimum_version.conan" >}}
-```
-
-<div class='note'>
-
-**Advanced usage:** You can also have Conan auto-installed when using the CMake-option `OGS_USE_CONAN=auto`. See the page on [Python environment]({{% ref "python-env.md" %}}) for details.
-
-</div>
+Install **NetCDF4** by downloading and installing the [official installer](https://downloads.unidata.ucar.edu/netcdf-c/4.9.2/netCDF4.9.2-NC4-64.exe). The C++-bindings to NetCDF are automatically build via CPM.
 
 </div>
 

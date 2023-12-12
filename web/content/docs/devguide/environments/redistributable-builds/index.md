@@ -56,8 +56,6 @@ See Linux-tab!
 
 Try to use static libraries as much as possible. For OGS itself use `BUILD_SHARED_LIBS=OFF`, which already defaults to `OFF`.
 
- package manager are often provided as shared libraries. You may want to use [Conan]({{< ref "conan-package-manager.md" >}}) which provides lots of libraries (e.g. VTK) as static libraries.
-
 ## Package the build
 
 Use the `package`-target which tries to gather all dependencies and fixes up shared library paths:

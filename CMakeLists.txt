@@ -30,10 +30,6 @@ set(CMAKE_LIBRARY_SEARCH_PATH ""
 set(OGS_CPU_ARCHITECTURE "native" CACHE STRING "Processor architecture, \
     defaults to native (*nix) / blend (MSVC)."
 )
-option(OGS_USE_CONAN "Should Conan package manager be used?" ON)
-set(OGS_CONAN_BUILD "missing" CACHE STRING "Possible values: all, missing, \
-    never or list of libs to build"
-)
 option(OGS_DISABLE_COMPILER_CACHE "Disables compiler cache." OFF)
 option(OGS_USE_UNITY_BUILDS "Enables Unity builds for faster compilation." ON)
 option(OGS_USE_PIP "Enables automatic Python virtual environment handling." OFF)
@@ -76,16 +72,11 @@ include(PythonSetup)
 include(ProcessesSetup)
 include(ProjectSetup)
 include(Functions)
-include(ConanSetup)
 include(CompilerSetup)
 include(JobPools)
 include(Find)
 include(DependenciesExternalProject)
 include(Dependencies)
-# Hack for Conan (msvc) gui build. Also linking to ${CONAN_LIBS} globally
-if(OGS_USE_CONAN AND OGS_USE_NETCDF)
-    link_libraries($<$<BOOL:${WIN32}>:zlib.lib> ${CONAN_LIBS})
-endif()
 include(DocumentationSetup)
 include(test/Test)
 include(Coverage)

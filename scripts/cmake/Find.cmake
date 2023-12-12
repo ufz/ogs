@@ -61,12 +61,6 @@ if(OGS_BUILD_GUI)
     list(APPEND CMAKE_BUILD_RPATH ${Qt5_DIR}/../..)
 endif()
 
-if(OGS_USE_NETCDF)
-    set(NETCDF_ROOT ${CONAN_NETCDF-C_ROOT})
-    set(NETCDF_CXX_ROOT ${CONAN_NETCDF-CXX_ROOT})
-    find_package(NetCDF REQUIRED)
-endif()
-
 # geotiff ##
 find_package(GEOTIFF)
 
