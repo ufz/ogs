@@ -30,7 +30,6 @@
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
-#include "TH2MProcessData.h"
 
 namespace ProcessLib
 {
@@ -133,11 +132,11 @@ private:
                                                                 ip_data.N_u))};
 
             /// Set initial stress from parameter.
-            if (_process_data.initial_stress != nullptr)
+            if (this->process_data_.initial_stress != nullptr)
             {
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
+                        DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
                             double>::quiet_NaN() /* time independent */,
                         x_position));
@@ -446,13 +445,6 @@ private:
                                                          cache);
     }
 
-    int getMaterialID() const override
-    {
-        return _process_data.material_ids == nullptr
-                   ? 0
-                   : (*_process_data.material_ids)[this->element_.getID()];
-    }
-
     std::vector<double> getMaterialStateVariableInternalState(
         std::function<std::span<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
@@ -472,8 +464,6 @@ private:
     }
 
 private:
-    TH2MProcessData<DisplacementDim>& _process_data;
-
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
     using IpData =

@@ -38,9 +38,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
         TH2MProcessData<DisplacementDim>& process_data)
-    : LocalAssemblerInterface<DisplacementDim>(e, integration_method,
-                                               is_axially_symmetric),
-      _process_data(process_data)
+    : LocalAssemblerInterface<DisplacementDim>(
+          e, integration_method, is_axially_symmetric, process_data)
 {
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -61,8 +60,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
-            _process_data.solid_materials, _process_data.material_ids,
-            e.getID());
+            this->process_data_.solid_materials,
+            this->process_data_.material_ids, e.getID());
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -114,7 +113,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         local_x_prev.template segment<displacement_size>(displacement_index);
 
     auto const& medium =
-        *_process_data.media_map.getMedium(this->element_.getID());
+        *this->process_data_.media_map.getMedium(this->element_.getID());
     auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
@@ -304,7 +303,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
-        double const T0 = _process_data.reference_temperature(t, pos)[0];
+        double const T0 = this->process_data_.reference_temperature(t, pos)[0];
         double const delta_T(T - T0);
         ip_data.thermal_volume_strain = ip_data.beta_T_SR * delta_T;
 
@@ -339,7 +338,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt, T_prev);
 
         // constitutive model object as specified in process creation
-        auto& ptm = *_process_data.phase_transition_model_;
+        auto& ptm = *this->process_data_.phase_transition_model_;
         ptmv = ptm.updateConstitutiveVariables(ptmv, &medium, vars, pos, t, dt);
         auto const& c = ptmv;
 
@@ -587,7 +586,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                                   phi_L * drho_LR_dp_cap * c.uL +
                                   phi_L * c.rhoLR * c.du_L_dp_cap;
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = this->process_data_.specific_body_force;
         GlobalDimMatrixType const k_over_mu_G =
             ip_data.k_S * ip_data.k_rel_G / ip_data.muGR;
         GlobalDimMatrixType const k_over_mu_L =
@@ -868,13 +867,13 @@ std::size_t TH2MLocalAssembler<
 
     if (name == "sigma")
     {
-        if (_process_data.initial_stress != nullptr)
+        if (this->process_data_.initial_stress != nullptr)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
                 "point data and from a parameter '{:s}' is not possible "
                 "simultaneously.",
-                _process_data.initial_stress->name);
+                this->process_data_.initial_stress->name);
         }
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::sigma_eff);
@@ -952,7 +951,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
-        *_process_data.media_map.getMedium(this->element_.getID());
+        *this->process_data_.media_map.getMedium(this->element_.getID());
     auto const& solid_phase = medium.phase("Solid");
 
     unsigned const n_integration_points =
@@ -1200,7 +1199,7 @@ void TH2MLocalAssembler<
         auto& alpha_B = ip.alpha_B;
         auto& beta_p_SR = ip.beta_p_SR;
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = this->process_data_.specific_body_force;
 
         // porosity
         auto& phi = ip.phi;
@@ -1243,7 +1242,7 @@ void TH2MLocalAssembler<
         MCpC.noalias() -=
             NpT * rho_C_FR * (alpha_B - phi) * beta_p_SR * s_L * Np * w;
 
-        if (_process_data.apply_mass_lumping)
+        if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
@@ -1300,7 +1299,7 @@ void TH2MLocalAssembler<
                         (advection_C_G * ip.rhoGR + advection_C_L * ip.rhoLR) *
                         b * w;
 
-        if (!_process_data.apply_mass_lumping)
+        if (!this->process_data_.apply_mass_lumping)
         {
             fC.noalias() -= NpT *
                             (phi * (ip.rhoCLR - ip.rhoCGR) -
@@ -1319,7 +1318,7 @@ void TH2MLocalAssembler<
         MWpC.noalias() -=
             NpT * rho_W_FR * (alpha_B - phi) * beta_p_SR * s_L * Np * w;
 
-        if (_process_data.apply_mass_lumping)
+        if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
@@ -1374,7 +1373,7 @@ void TH2MLocalAssembler<
                         (advection_W_G * ip.rhoGR + advection_W_L * ip.rhoLR) *
                         b * w;
 
-        if (!_process_data.apply_mass_lumping)
+        if (!this->process_data_.apply_mass_lumping)
         {
             fW.noalias() -= NpT *
                             (phi * (ip.rhoWLR - ip.rhoWGR) -
@@ -1418,7 +1417,7 @@ void TH2MLocalAssembler<
         fU.noalias() -=
             (BuT * ip.sigma_eff - N_u_op(Nu).transpose() * rho * b) * w;
 
-        if (_process_data.apply_mass_lumping)
+        if (this->process_data_.apply_mass_lumping)
         {
             MCpG = MCpG.colwise().sum().eval().asDiagonal();
             MCpC = MCpC.colwise().sum().eval().asDiagonal();
@@ -1641,7 +1640,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& alpha_B = ip.alpha_B;
         auto& beta_p_SR = ip.beta_p_SR;
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = this->process_data_.specific_body_force;
 
         // porosity
         auto& phi = ip.phi;
@@ -1684,7 +1683,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         MCpC.noalias() -=
             NpT * rho_C_FR * (alpha_B - phi) * beta_p_SR * s_L * Np * w;
 
-        if (_process_data.apply_mass_lumping)
+        if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
@@ -1798,7 +1797,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         (advection_C_G * ip.rhoGR + advection_C_L * ip.rhoLR) *
                         b * w;
 
-        if (!_process_data.apply_mass_lumping)
+        if (!this->process_data_.apply_mass_lumping)
         {
             // fC_2 = \int a * s_L_dot
             auto const a = phi * (ip.rhoCLR - ip.rhoCGR) -
@@ -1852,7 +1851,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         MWpC.noalias() -=
             NpT * rho_W_FR * (alpha_B - phi) * beta_p_SR * s_L * Np * w;
 
-        if (_process_data.apply_mass_lumping)
+        if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
@@ -1930,7 +1929,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         b * w;
 
         // fW_2 = \int (f - g) * s_L_dot
-        if (!_process_data.apply_mass_lumping)
+        if (!this->process_data_.apply_mass_lumping)
         {
             double const f = phi * (ip.rhoWLR - ip.rhoWGR);
             double const g = rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR;
@@ -2139,7 +2138,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                           N_u_op(Nu).transpose() * w;
          */
 
-        if (_process_data.apply_mass_lumping)
+        if (this->process_data_.apply_mass_lumping)
         {
             MCpG = MCpG.colwise().sum().eval().asDiagonal();
             MCpC = MCpC.colwise().sum().eval().asDiagonal();
@@ -2389,19 +2388,19 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(this->element_, this->is_axially_symmetric_,
                          gas_pressure,
-                         *_process_data.gas_pressure_interpolated);
+                         *this->process_data_.gas_pressure_interpolated);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(this->element_, this->is_axially_symmetric_,
                          capillary_pressure,
-                         *_process_data.capillary_pressure_interpolated);
+                         *this->process_data_.capillary_pressure_interpolated);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(this->element_, this->is_axially_symmetric_,
                          liquid_pressure,
-                         *_process_data.liquid_pressure_interpolated);
+                         *this->process_data_.liquid_pressure_interpolated);
 
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
@@ -2409,7 +2408,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(this->element_, this->is_axially_symmetric_,
-                         temperature, *_process_data.temperature_interpolated);
+                         temperature,
+                         *this->process_data_.temperature_interpolated);
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -2423,7 +2423,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         saturation_avg += _ip_data[ip].s_L;
     }
     saturation_avg /= n_integration_points;
-    (*_process_data.element_saturation)[this->element_.getID()] =
+    (*this->process_data_.element_saturation)[this->element_.getID()] =
         saturation_avg;
 }
 

@@ -14,6 +14,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "TH2MProcessData.h"
 
 namespace ProcessLib
 {
@@ -26,8 +27,10 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     LocalAssemblerInterface(
         MeshLib::Element const& e,
         NumLib::GenericIntegrationMethod const& integration_method,
-        bool const is_axially_symmetric)
-        : integration_method_(integration_method),
+        bool const is_axially_symmetric,
+        TH2MProcessData<DisplacementDim>& process_data)
+        : process_data_(process_data),
+          integration_method_(integration_method),
           element_(e),
           is_axially_symmetric_(is_axially_symmetric)
     {
@@ -201,11 +204,18 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         return integration_method_.getNumberOfPoints();
     }
 
-    virtual int getMaterialID() const = 0;
+    int getMaterialID() const
+    {
+        return process_data_.material_ids == nullptr
+                   ? 0
+                   : (*process_data_.material_ids)[element_.getID()];
+    }
 
     virtual typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
+
+    TH2MProcessData<DisplacementDim>& process_data_;
 
     NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
