@@ -38,13 +38,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
         TH2MProcessData<DisplacementDim>& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_method),
-      _element(e),
-      _is_axially_symmetric(is_axially_symmetric)
+    : LocalAssemblerInterface<DisplacementDim>(e, integration_method,
+                                               is_axially_symmetric),
+      _process_data(process_data)
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     _ip_data.reserve(n_integration_points);
     _secondary_data.N_u.resize(n_integration_points);
@@ -53,12 +52,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
                                   ShapeMatricesTypeDisplacement,
                                   DisplacementDim>(e, is_axially_symmetric,
-                                                   _integration_method);
+                                                   this->integration_method_);
 
     auto const shape_matrices_p =
         NumLib::initShapeMatrices<ShapeFunctionPressure,
                                   ShapeMatricesTypePressure, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+            e, is_axially_symmetric, this->integration_method_);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
@@ -71,7 +70,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         ip_data.integration_weight =
-            _integration_method.getWeightedPoint(ip).getWeight() *
+            this->integration_method_.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
         ip_data.N_u = sm_u.N;
@@ -114,13 +113,14 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
     auto const displacement_prev =
         local_x_prev.template segment<displacement_size>(displacement_index);
 
-    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
+    auto const& medium =
+        *_process_data.media_map.getMedium(this->element_.getID());
     auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     std::vector<ConstitutiveVariables<DisplacementDim>>
         ip_constitutive_variables(n_integration_points);
@@ -138,15 +138,15 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         auto const& gradNu = ip_data.dNdx_u;
         auto const& gradNp = ip_data.dNdx_p;
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, this->element_.getID(), ip,
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
-                    _element, Nu))};
+                    this->element_, Nu))};
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, Nu);
+                this->element_, Nu);
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
@@ -176,7 +176,7 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                gradNu, Nu, x_coord, _is_axially_symmetric);
+                gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
         auto& eps = ip_data.eps;
         eps.noalias() = Bu * displacement;
@@ -857,13 +857,13 @@ std::size_t TH2MLocalAssembler<
                                                  int const integration_order)
 {
     if (integration_order !=
-        static_cast<int>(_integration_method.getIntegrationOrder()))
+        static_cast<int>(this->integration_method_.getIntegrationOrder()))
     {
         OGS_FATAL(
             "Setting integration point initial conditions; The integration "
             "order of the local assembler for element {:d} is different "
             "from the integration order in the initial condition.",
-            _element.getID());
+            this->element_.getID());
     }
 
     if (name == "sigma")
@@ -951,11 +951,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_x.template segment<displacement_size>(displacement_index);
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
-    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
+    auto const& medium =
+        *_process_data.media_map.getMedium(this->element_.getID());
     auto const& solid_phase = medium.phase("Solid");
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -969,13 +970,13 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, Nu);
+                this->element_, Nu);
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, this->element_.getID(), ip,
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
-                    _element, ip_data.N_u))};
+                    this->element_, ip_data.N_u))};
 
         double const pCap = Np.dot(capillary_pressure);
         vars.capillary_pressure = pCap;
@@ -987,7 +988,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                gradNu, Nu, x_coord, _is_axially_symmetric);
+                gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
         auto& eps = ip_data.eps;
         eps.noalias() = Bu * displacement;
@@ -1122,7 +1123,7 @@ void TH2MLocalAssembler<
     auto fU = local_f.template segment<displacement_size>(displacement_index);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     auto const ip_constitutive_variables = updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
@@ -1139,11 +1140,11 @@ void TH2MLocalAssembler<
         auto const& NT = Np;
         auto const& Nu = ip.N_u;
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, _element.getID(), int_point,
+            std::nullopt, this->element_.getID(), int_point,
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
-                    _element, Nu))};
+                    this->element_, Nu))};
 
         auto const& NpT = Np.transpose().eval();
         auto const& NTT = NT.transpose().eval();
@@ -1164,13 +1165,13 @@ void TH2MLocalAssembler<
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, Nu);
+                this->element_, Nu);
 
         auto const Bu =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                gradNu, Nu, x_coord, _is_axially_symmetric);
+                gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
         auto const BuT = Bu.transpose().eval();
 
@@ -1553,7 +1554,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto fU = local_f.template segment<displacement_size>(displacement_index);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     auto const ip_constitutive_variables = updateConstitutiveVariables(
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
@@ -1570,11 +1571,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& NT = Np;
         auto const& Nu = ip.N_u;
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, _element.getID(), int_point,
+            std::nullopt, this->element_.getID(), int_point,
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
-                    _element, Nu))};
+                    this->element_, Nu))};
 
         auto const& NpT = Np.transpose().eval();
         auto const& NTT = NT.transpose().eval();
@@ -1594,13 +1595,13 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, Nu);
+                this->element_, Nu);
 
         auto const Bu =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                gradNu, Nu, x_coord, _is_axially_symmetric);
+                gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
         auto const BuT = Bu.transpose().eval();
 
@@ -2224,7 +2225,7 @@ std::vector<double> const& TH2MLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -2250,7 +2251,7 @@ std::vector<double> const& TH2MLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -2276,7 +2277,7 @@ std::vector<double> const& TH2MLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -2302,7 +2303,7 @@ std::vector<double> const& TH2MLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -2328,7 +2329,7 @@ std::vector<double> const& TH2MLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -2354,7 +2355,7 @@ std::vector<double> const& TH2MLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -2386,17 +2387,20 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, gas_pressure,
+        DisplacementDim>(this->element_, this->is_axially_symmetric_,
+                         gas_pressure,
                          *_process_data.gas_pressure_interpolated);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, capillary_pressure,
+        DisplacementDim>(this->element_, this->is_axially_symmetric_,
+                         capillary_pressure,
                          *_process_data.capillary_pressure_interpolated);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, liquid_pressure,
+        DisplacementDim>(this->element_, this->is_axially_symmetric_,
+                         liquid_pressure,
                          *_process_data.liquid_pressure_interpolated);
 
     auto const temperature =
@@ -2404,11 +2408,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, temperature,
-                         *_process_data.temperature_interpolated);
+        DisplacementDim>(this->element_, this->is_axially_symmetric_,
+                         temperature, *_process_data.temperature_interpolated);
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     double saturation_avg = 0;
 
@@ -2419,7 +2423,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         saturation_avg += _ip_data[ip].s_L;
     }
     saturation_avg /= n_integration_points;
-    (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
+    (*_process_data.element_saturation)[this->element_.getID()] =
+        saturation_avg;
 }
 
 }  // namespace TH2M

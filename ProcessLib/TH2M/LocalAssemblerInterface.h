@@ -12,6 +12,7 @@
 
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib
@@ -22,6 +23,16 @@ template <int DisplacementDim>
 struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                                  public NumLib::ExtrapolatableElement
 {
+    LocalAssemblerInterface(
+        MeshLib::Element const& e,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        bool const is_axially_symmetric)
+        : integration_method_(integration_method),
+          element_(e),
+          is_axially_symmetric_(is_axially_symmetric)
+    {
+    }
+
     virtual std::size_t setIPDataInitialConditions(
         std::string_view name, double const* values,
         int const integration_order) = 0;
@@ -185,13 +196,20 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         int const& n_components) const = 0;
 
     // TODO move to NumLib::ExtrapolatableElement
-    virtual unsigned getNumberOfIntegrationPoints() const = 0;
+    unsigned getNumberOfIntegrationPoints() const
+    {
+        return integration_method_.getNumberOfPoints();
+    }
 
     virtual int getMaterialID() const = 0;
 
     virtual typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
+
+    NumLib::GenericIntegrationMethod const& integration_method_;
+    MeshLib::Element const& element_;
+    bool const is_axially_symmetric_;
 };
 
 }  // namespace TH2M

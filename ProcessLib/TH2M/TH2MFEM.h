@@ -23,7 +23,6 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
-#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -120,18 +119,18 @@ private:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& ip_data = _ip_data[ip];
 
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, _element.getID(), ip,
-                MathLib::Point3d(
-                    NumLib::interpolateCoordinates<
-                        ShapeFunctionDisplacement,
-                        ShapeMatricesTypeDisplacement>(_element, ip_data.N_u))};
+                std::nullopt, this->element_.getID(), ip,
+                MathLib::Point3d(NumLib::interpolateCoordinates<
+                                 ShapeFunctionDisplacement,
+                                 ShapeMatricesTypeDisplacement>(this->element_,
+                                                                ip_data.N_u))};
 
             /// Set initial stress from parameter.
             if (_process_data.initial_stress != nullptr)
@@ -159,7 +158,7 @@ private:
                               int const /*process_id*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -447,16 +446,11 @@ private:
                                                          cache);
     }
 
-    unsigned getNumberOfIntegrationPoints() const override
-    {
-        return _integration_method.getNumberOfPoints();
-    }
-
     int getMaterialID() const override
     {
         return _process_data.material_ids == nullptr
                    ? 0
-                   : (*_process_data.material_ids)[_element.getID()];
+                   : (*_process_data.material_ids)[this->element_.getID()];
     }
 
     std::vector<double> getMaterialStateVariableInternalState(
@@ -488,9 +482,6 @@ private:
                              ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    NumLib::GenericIntegrationMethod const& _integration_method;
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
