@@ -341,7 +341,8 @@ void HydroMechanicsLocalAssemblerFracture<
     auto constexpr index_normal = GlobalDim - 1;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    auto const e_id = _element.getID();
+    x_position.setElementID(e_id);
 
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -391,17 +392,18 @@ void HydroMechanicsLocalAssemblerFracture<
         HMatricesType::ForceVectorType::Zero(GlobalDim);
     typename HMatricesType::ForceVectorType ele_w =
         HMatricesType::ForceVectorType::Zero(GlobalDim);
-    double ele_Fs = -std::numeric_limits<double>::max();
     GlobalDimVectorType ele_velocity = GlobalDimVectorType::Zero();
+
+    double ele_Fs = -std::numeric_limits<double>::max();
     for (auto const& ip : _ip_data)
     {
         ele_b += ip.aperture;
         ele_k += ip.permeability;
         ele_w += ip.w;
         ele_sigma_eff += ip.sigma_eff;
+        ele_velocity += ip.darcy_velocity;
         ele_Fs = std::max(
             ele_Fs, ip.material_state_variables->getShearYieldFunctionValue());
-        ele_velocity += ip.darcy_velocity;
     }
     ele_b /= static_cast<double>(n_integration_points);
     ele_k /= static_cast<double>(n_integration_points);
@@ -411,20 +413,19 @@ void HydroMechanicsLocalAssemblerFracture<
     auto const element_id = _element.getID();
     (*_process_data.mesh_prop_b)[element_id] = ele_b;
     (*_process_data.mesh_prop_k_f)[element_id] = ele_k;
-    (*_process_data.mesh_prop_w_n)[element_id] = ele_w[index_normal];
-    (*_process_data.mesh_prop_w_s)[element_id] = ele_w[0];
-    (*_process_data.mesh_prop_fracture_stress_normal)[element_id] =
-        ele_sigma_eff[index_normal];
-    (*_process_data.mesh_prop_fracture_stress_shear)[element_id] =
-        ele_sigma_eff[0];
-    (*_process_data.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
 
-    if (GlobalDim == 3)
-    {
-        (*_process_data.mesh_prop_w_s2)[element_id] = ele_w[1];
-        (*_process_data.mesh_prop_fracture_stress_shear2)[element_id] =
-            ele_sigma_eff[1];
-    }
+    Eigen::Map<GlobalDimVectorType>(
+        &(*_process_data.element_fracture_stresses)[e_id * GlobalDim]) =
+        ele_sigma_eff;
+
+    Eigen::Map<GlobalDimVectorType>(
+        &(*_process_data.element_fracture_velocities)[e_id * GlobalDim]) =
+        ele_velocity;
+
+    Eigen::Map<GlobalDimVectorType>(
+        &(*_process_data.element_local_jumps)[e_id * GlobalDim]) = ele_w;
+
+    (*_process_data.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

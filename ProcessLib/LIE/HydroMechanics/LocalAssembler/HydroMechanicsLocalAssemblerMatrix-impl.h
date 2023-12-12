@@ -331,7 +331,14 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+
+    auto const e_id = _element.getID();
+    x_position.setElementID(e_id);
+
+    using KV = MathLib::KelvinVector::KelvinVectorType<GlobalDim>;
+    KV sigma_avg = KV::Zero();
+    GlobalDimVector velocity_avg;
+    velocity_avg.setZero();
 
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -384,6 +391,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinMatrixType<GlobalDim> C;
         std::tie(sigma_eff, state, C) = std::move(*solution);
 
+        sigma_avg += ip_data.sigma_eff;
+
         if (!_process_data.deactivate_matrix_in_flow)  // Only for hydraulically
                                                        // active matrix
         {
@@ -396,51 +405,19 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
             ip_data.darcy_velocity.head(GlobalDim).noalias() =
                 -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
+            velocity_avg += ip_data.darcy_velocity.head(GlobalDim);
         }
     }
 
-    int n = GlobalDim == 2 ? 4 : 6;
-    Eigen::VectorXd ele_stress = Eigen::VectorXd::Zero(n);
-    Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
-    GlobalDimVector ele_velocity = GlobalDimVector::Zero();
+    sigma_avg /= n_integration_points;
+    velocity_avg /= n_integration_points;
 
-    for (auto const& ip_data : _ip_data)
-    {
-        ele_stress += ip_data.sigma_eff;
-        ele_strain += ip_data.eps;
-        ele_velocity += ip_data.darcy_velocity;
-    }
+    Eigen::Map<KV>(
+        &(*_process_data.element_stresses)[e_id * KV::RowsAtCompileTime]) =
+        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
 
-    ele_stress /= static_cast<double>(n_integration_points);
-    ele_strain /= static_cast<double>(n_integration_points);
-    ele_velocity /= static_cast<double>(n_integration_points);
-
-    auto const element_id = _element.getID();
-    (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
-    (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data.mesh_prop_stress_zz)[_element.getID()] = ele_stress[2];
-    (*_process_data.mesh_prop_stress_xy)[_element.getID()] = ele_stress[3];
-    if (GlobalDim == 3)
-    {
-        (*_process_data.mesh_prop_stress_yz)[_element.getID()] = ele_stress[4];
-        (*_process_data.mesh_prop_stress_xz)[_element.getID()] = ele_stress[5];
-    }
-
-    (*_process_data.mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
-    (*_process_data.mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data.mesh_prop_strain_zz)[_element.getID()] = ele_strain[2];
-    (*_process_data.mesh_prop_strain_xy)[_element.getID()] = ele_strain[3];
-    if (GlobalDim == 3)
-    {
-        (*_process_data.mesh_prop_strain_yz)[_element.getID()] = ele_strain[4];
-        (*_process_data.mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
-    }
-
-    for (unsigned i = 0; i < GlobalDim; i++)
-    {
-        (*_process_data.mesh_prop_velocity)[element_id * GlobalDim + i] =
-            ele_velocity[i];
-    }
+    Eigen::Map<GlobalDimVector>(
+        &(*_process_data.element_velocities)[e_id * GlobalDim]) = velocity_avg;
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
