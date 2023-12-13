@@ -31,7 +31,7 @@ target_link_libraries(
            $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
            $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
            $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
-           $<$<BOOL:${OGS_USE_PETSC}>:petsc>
+           $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
            $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>
            Eigen3::Eigen
            $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
