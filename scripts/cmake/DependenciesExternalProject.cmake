@@ -142,7 +142,8 @@ if(OGS_USE_PETSC)
     if(EXISTS ${_petsc_source_file})
         set(_petsc_source URL ${_petsc_source_file})
     elseif(NOT (OGS_PETSC_CONFIG_OPTIONS OR OGS_BUILD_PETSC))
-        find_package(PETSc ${ogs.minimum_version.petsc})
+        find_package(PkgConfig REQUIRED)
+        pkg_search_module(PETSC REQUIRED PETSc)
     endif()
 
     if(NOT PETSC_FOUND)
@@ -176,12 +177,18 @@ if(OGS_USE_PETSC)
     endif()
 
     add_library(petsc SHARED IMPORTED)
-    target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
-    # Get first petsc lib as import location
-    list(GET PETSC_LIBRARIES 0 _first_petsc_lib)
-    set_target_properties(
-        petsc PROPERTIES IMPORTED_LOCATION ${_first_petsc_lib}
-    )
+    target_include_directories(petsc INTERFACE ${PETSC_INCLUDES} ${PETSC_INCLUDE_DIRS})
+    if("PETSc" IN_LIST _EXT_LIBS)
+        # Get first petsc lib as import location
+        list(GET PETSC_LIBRARIES 0 _first_petsc_lib)
+        set_target_properties(
+            petsc PROPERTIES IMPORTED_LOCATION ${_first_petsc_lib}
+        )
+    else()
+        set_target_properties(
+            petsc PROPERTIES IMPORTED_LOCATION ${pkgcfg_lib_PETSC_petsc}
+        )
+    endif()
     target_compile_definitions(petsc INTERFACE USE_PETSC)
 endif()
 
