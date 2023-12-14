@@ -32,6 +32,15 @@ After setting up WSL, please follow the Linux tab in this guide.
 
 Before continuing with this guide, please follow all steps from the "Developer guide" articles: [Set Up Prerequisites]({{< ref "prerequisites" >}}) and [Get the source code]({{< ref "get-the-source-code" >}}).
 
+### Install `pkg-config`
+
+Is used for finding the PETSc installation. Can be installed via e.g. `apt` or `brew`:
+
+```bash
+apt-get install pkg-config # Linux
+brew install pkg-config    # macOS
+```
+
 ### Install MPI
 
 <div class='win'>
