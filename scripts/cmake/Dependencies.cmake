@@ -499,7 +499,7 @@ if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
         GITHUB_REPOSITORY TheLartians/Format.cmake
         OPTIONS
             ${_skip_cmake}
-            "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/jedbrown/.*|scripts/cmake/vector-of-bool/.*"
+            "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/vector-of-bool/.*"
     )
 endif()
 

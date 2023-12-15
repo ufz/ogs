@@ -10,7 +10,7 @@ target_link_libraries(
     PUBLIC BaseLib GeoLib NumLib
            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
     PRIVATE CMakeInfoLib MathLib MeshLib MeshGeoToolsLib MeshToolsLib pybind11::pybind11
-            $<$<BOOL:${OGS_USE_PETSC}>:petsc>
+            $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
 )
 
 if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)

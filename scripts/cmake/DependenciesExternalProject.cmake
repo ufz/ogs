@@ -142,7 +142,8 @@ if(OGS_USE_PETSC)
     if(EXISTS ${_petsc_source_file})
         set(_petsc_source URL ${_petsc_source_file})
     elseif(NOT (OGS_PETSC_CONFIG_OPTIONS OR OGS_BUILD_PETSC))
-        find_package(PETSc ${ogs.minimum_version.petsc})
+        find_package(PkgConfig REQUIRED)
+        pkg_search_module(PETSC IMPORTED_TARGET PETSc)
     endif()
 
     if(NOT PETSC_FOUND)
@@ -172,17 +173,12 @@ if(OGS_USE_PETSC)
                 "ExternalProject_Add(): added package PETSc@${ogs.minimum_version.petsc}"
         )
         set(_EXT_LIBS ${_EXT_LIBS} PETSc CACHE INTERNAL "")
-        BuildExternalProject_find_package(PETSc)
+        set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${build_dir_PETSc})
     endif()
 
-    add_library(petsc SHARED IMPORTED)
-    target_include_directories(petsc INTERFACE ${PETSC_INCLUDES})
-    # Get first petsc lib as import location
-    list(GET PETSC_LIBRARIES 0 _first_petsc_lib)
-    set_target_properties(
-        petsc PROPERTIES IMPORTED_LOCATION ${_first_petsc_lib}
-    )
-    target_compile_definitions(petsc INTERFACE USE_PETSC)
+    find_package(PkgConfig REQUIRED)
+    pkg_search_module(PETSC REQUIRED IMPORTED_TARGET PETSc)
+    target_compile_definitions(PkgConfig::PETSC INTERFACE USE_PETSC)
 endif()
 
 if(OGS_USE_LIS)

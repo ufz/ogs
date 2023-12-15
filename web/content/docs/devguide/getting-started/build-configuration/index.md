@@ -36,12 +36,13 @@ We provide CMake configuration presets defined in [CMakePresets.json](https://gi
 | CLI Debug     | debug         | msvc-debug       |
 | GUI Release   | release-gui   | msvc-release-gui |
 | GUI Debug     | debug-gui     | msvc-debug-gui   |
-| PETSc Release | release-petsc | -                |
-| PETSc Debug   | debug-petsc   | -                |
+| PETSc Release[^2] | release-petsc | -                |
+| PETSc Debug[^2]   | debug-petsc   | -                |
 
 <!-- vale on -->
 
 [^1]: Requires the `ninja`-tool. See [install instructions]({{< ref "prerequisites.md#optional-install-ninja" >}}).
+[^2]: Requires the `pkg-config`-tool. Can be installed via e.g. `apt` or `brew`.
 
 ### Configure with a preset
 
