@@ -14,8 +14,8 @@
     - ln -s `$readlink_cmd -f $build_dir_full` build/${CMAKE_PRESET}
     - ([[ $BUILD_CTEST_LARGE_ON_MASTER && "${CI_COMMIT_BRANCH}" == "master" ]]) && export BUILD_CTEST_LARGE=true
     - cmake --preset=$CMAKE_PRESET --log-level=VERBOSE -Wno-dev $CMAKE_ARGS
-    # Activate .venv
-    - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.venv/bin/activate
+    # Activate .venv via .envrc
+    - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.envrc
     - |
       function maybe_run_with_xvfb()
       {

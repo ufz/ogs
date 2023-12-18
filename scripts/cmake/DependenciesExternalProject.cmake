@@ -65,12 +65,6 @@ if(OGS_USE_MFRONT)
                 "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
                 "-Denable-python-bindings=ON"
             )
-            message(
-                STATUS
-                    "TFEL build with Python bindings. To use them:\n "
-                    "  export PYTHONPATH=${PROJECT_BINARY_DIR}/_ext/TFEL/lib/python"
-                    "${_py_version_major_minor}/site-packages:$PYTHONPATH"
-            )
         else()
             # Cleanup variables from previous find_package()-call
             unset(Boost_INCLUDE_DIR)
@@ -111,7 +105,19 @@ if(OGS_USE_MFRONT)
             STATUS
                 "ExternalProject_Add(): added package TFEL@rliv-${ogs.minimum_version.tfel-rliv}"
         )
+        if(Boost_${_py_boost_comp}_FOUND)
+            set(_TFEL_SITE-PACKAGES_DIR
+                "${build_dir_TFEL}/lib/python${_py_version_major_minor}/site-packages"
+                CACHE INTERNAL ""
+            )
+        endif()
         set(TFELHOME ${build_dir_TFEL} CACHE PATH "" FORCE)
+    endif()
+    if(_TFEL_SITE-PACKAGES_DIR)
+        message(
+            STATUS "TFEL build with Python bindings. To use them:\n "
+                   "  export PYTHONPATH=${_TFEL_SITE-PACKAGES_DIR}:$PYTHONPATH"
+        )
     endif()
 endif()
 
@@ -350,6 +356,7 @@ endif()
 # Building from source requires newer hdf version
 string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
 
+# cmake-lint: disable=C0103
 if(COMPILER_IS_GCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.2)
     set(ogs.minimum_version.vtk "9.3.0")
 endif()

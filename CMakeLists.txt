@@ -232,13 +232,18 @@ if(OGS_WRITE_BENCHMARK_COMMANDS)
 endif()
 
 # cmake-lint: disable=E1126
-file(
-    CONFIGURE
-    OUTPUT
-    .envrc
-    CONTENT
-    "PATH_add ${CMAKE_INSTALL_BINDIR}\n[ -d \".venv\" ] && source .venv/bin/activate"
+set(_envrc_content
+    "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source ${PROJECT_BINARY_DIR}/.venv/bin/activate"
+    "export PATH=$PATH:${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
 )
+if(_TFEL_SITE-PACKAGES_DIR)
+    set(_envrc_content
+        "${_envrc_content}"
+        "export PYTHONPATH=${_TFEL_SITE-PACKAGES_DIR}:$PYTHONPATH"
+    )
+endif()
+string(REPLACE ";" "\n" _envrc_content "${_envrc_content}")
+file(CONFIGURE OUTPUT .envrc CONTENT "${_envrc_content}")
 
 check_header_compilation()
 
