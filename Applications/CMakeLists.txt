@@ -20,6 +20,4 @@ if(OGS_USE_INSITU)
     add_subdirectory(InSituLib)
 endif()
 
-if(OGS_BUILD_WHEEL)
-    add_subdirectory(Python)
-endif()
+add_subdirectory(Python)

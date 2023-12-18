@@ -11,5 +11,4 @@ target_link_libraries(
     callbacks PRIVATE ProcessLibBoundaryConditionAndSourceTermPythonModule
 )
 
-# Install into Python module root dir (enables 'import ogs.callbacks')
-install(TARGETS callbacks LIBRARY DESTINATION ogs)
+install(TARGETS callbacks LIBRARY DESTINATION ${_py_install_location})
