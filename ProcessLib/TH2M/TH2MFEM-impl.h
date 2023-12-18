@@ -43,7 +43,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
+    _ip_data.resize(n_integration_points);
     _secondary_data.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
@@ -59,7 +59,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        _ip_data.emplace_back(this->solid_material_);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         ip_data.integration_weight =
@@ -213,7 +212,8 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
                     sigma_total));
         }
         vars.equivalent_plastic_strain =
-            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+            this->material_states_[ip]
+                .material_state_variables->getEquivalentPlasticStrain();
         vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
@@ -329,8 +329,9 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt, T_prev,
-                                                     this->solid_material_);
+        ip_cv.C = ip_data.updateConstitutiveRelation(
+            vars, t, pos, dt, T_prev, this->solid_material_,
+            this->material_states_[ip].material_state_variables);
 
         // constitutive model object as specified in process creation
         auto& ptm = *this->process_data_.phase_transition_model_;
@@ -903,7 +904,9 @@ std::size_t TH2MLocalAssembler<
         {
             DBUG("Setting material state variable '{:s}'", name);
             return ProcessLib::setIntegrationPointDataMaterialStateVariables(
-                values, _ip_data, &IpData::material_state_variables,
+                values, this->material_states_,
+                &ConstitutiveRelations::MaterialStateData<
+                    DisplacementDim>::material_state_variables,
                 iv->reference);
         }
 
@@ -1010,6 +1013,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     {
         auto& ip_data = _ip_data[ip];
         ip_data.pushBackState();
+
+        this->material_states_[ip].pushBackState();
     }
 }
 

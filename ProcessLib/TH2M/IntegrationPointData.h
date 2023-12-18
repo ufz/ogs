@@ -29,11 +29,7 @@ struct IntegrationPointData final
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;
     using GlobalDimVectorType =
         typename ShapeMatricesTypePressure::GlobalDimVectorType;
-    explicit IntegrationPointData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
-        : material_state_variables(
-              solid_material.createMaterialStateVariables())
+    explicit IntegrationPointData()
     {
         // Initialize current time step values
         static const int kelvin_vector_size =
@@ -172,9 +168,6 @@ struct IntegrationPointData final
     // Intrinsic permeability
     GlobalDimMatrixType k_S;
 
-    std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables>
-        material_state_variables;
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
     void pushBackState()
@@ -194,8 +187,6 @@ struct IntegrationPointData final
         rhoWLR_prev = rhoWLR;
 
         rho_u_eff_prev = rho_u_eff;
-
-        material_state_variables->pushBackState();
     }
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
@@ -241,13 +232,13 @@ struct IntegrationPointData final
     }
 
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
-        MaterialPropertyLib::VariableArray& variable_array,
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
+        MaterialPropertyLib::VariableArray& variable_array, double const t,
+        ParameterLib::SpatialPosition const& x_position, double const dt,
         double const T_prev,
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
+            solid_material,
+        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
+            DisplacementDim>::MaterialStateVariables>& material_state_variables)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev.stress

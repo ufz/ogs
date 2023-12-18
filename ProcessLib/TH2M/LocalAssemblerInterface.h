@@ -10,11 +10,13 @@
 
 #pragma once
 
+#include "ConstitutiveRelations/MaterialState.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "TH2MProcessData.h"
 
 namespace ProcessLib
@@ -38,6 +40,15 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
               process_data_.solid_materials, process_data_.material_ids,
               element_.getID()))
     {
+        unsigned const n_integration_points =
+            integration_method_.getNumberOfPoints();
+
+        material_states_.reserve(n_integration_points);
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            material_states_.emplace_back(
+                solid_material_.createMaterialStateVariables());
+        }
     }
 
     virtual std::size_t setIPDataInitialConditions(
@@ -196,12 +207,6 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> getMaterialStateVariableInternalState(
-        std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const = 0;
-
     // TODO move to NumLib::ExtrapolatableElement
     unsigned getNumberOfIntegrationPoints() const
     {
@@ -215,12 +220,32 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                    : (*process_data_.material_ids)[element_.getID()];
     }
 
-    virtual typename MaterialLib::Solids::MechanicsBase<
+    std::vector<double> getMaterialStateVariableInternalState(
+        std::function<std::span<double>(
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const
+    {
+        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+            material_states_,
+            &ConstitutiveRelations::MaterialStateData<
+                DisplacementDim>::material_state_variables,
+            get_values_span, n_components);
+    }
+
+    typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
+    getMaterialStateVariablesAt(unsigned integration_point) const
+    {
+        return *material_states_[integration_point].material_state_variables;
+    }
 
     TH2MProcessData<DisplacementDim>& process_data_;
 
+    // Material state is special, because it contains both the current and the
+    // old state.
+    std::vector<ConstitutiveRelations::MaterialStateData<DisplacementDim>>
+        material_states_;
     NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;

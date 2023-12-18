@@ -143,10 +143,12 @@ private:
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
+            auto& material_state = this->material_states_[ip];
             this->solid_material_.initializeInternalStateVariables(
-                t, x_position, *ip_data.material_state_variables);
+                t, x_position, *material_state.material_state_variables);
 
             ip_data.pushBackState();
+            material_state.pushBackState();
         }
     }
 
@@ -162,6 +164,7 @@ private:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data[ip].pushBackState();
+            this->material_states_[ip].pushBackState();
         }
     }
 
@@ -443,24 +446,6 @@ private:
     {
         return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::h_S,
                                                          cache);
-    }
-
-    std::vector<double> getMaterialStateVariableInternalState(
-        std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const override
-    {
-        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
-            _ip_data, &IpData::material_state_variables, get_values_span,
-            n_components);
-    }
-
-    typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned integration_point) const override
-    {
-        return *_ip_data[integration_point].material_state_variables;
     }
 
 private:
