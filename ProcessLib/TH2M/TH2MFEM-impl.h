@@ -16,7 +16,6 @@
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/PhysicalConstant.h"
-#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
@@ -58,14 +57,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                   ShapeMatricesTypePressure, DisplacementDim>(
             e, is_axially_symmetric, this->integration_method_);
 
-    auto const& solid_material =
-        MaterialLib::Solids::selectSolidConstitutiveRelation(
-            this->process_data_.solid_materials,
-            this->process_data_.material_ids, e.getID());
-
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        _ip_data.emplace_back(solid_material);
+        _ip_data.emplace_back(this->solid_material_);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         ip_data.integration_weight =
@@ -164,9 +158,9 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         vars.liquid_phase_pressure = pLR;
 
         // medium properties
-        auto const C_el =
-            ip_data.computeElasticTangentStiffness(t, pos, dt, T_prev, T);
-        auto const K_S = ip_data.solid_material.getBulkModulus(t, pos, &C_el);
+        auto const C_el = ip_data.computeElasticTangentStiffness(
+            t, pos, dt, T_prev, T, this->solid_material_);
+        auto const K_S = this->solid_material_.getBulkModulus(t, pos, &C_el);
 
         ip_data.alpha_B = medium.property(MPL::PropertyType::biot_coefficient)
                               .template value<double>(vars, pos, t, dt);
@@ -335,7 +329,8 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt, T_prev);
+        ip_cv.C = ip_data.updateConstitutiveRelation(vars, t, pos, dt, T_prev,
+                                                     this->solid_material_);
 
         // constitutive model object as specified in process creation
         auto& ptm = *this->process_data_.phase_transition_model_;
@@ -899,10 +894,8 @@ std::size_t TH2MLocalAssembler<
         name.remove_prefix(24);
         DBUG("Setting material state variable '{:s}'", name);
 
-        // Using first ip data for solid material. TODO (naumov) move solid
-        // material into element, store only material state in IPs.
         auto const& internal_variables =
-            _ip_data[0].solid_material.getInternalVariables();
+            this->solid_material_.getInternalVariables();
         if (auto const iv = std::find_if(
                 begin(internal_variables), end(internal_variables),
                 [&name](auto const& iv) { return iv.name == name; });
@@ -1002,8 +995,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
-        auto const C_el =
-            ip_data.computeElasticTangentStiffness(t, pos, dt, T, T);
+        auto const C_el = ip_data.computeElasticTangentStiffness(
+            t, pos, dt, T, T, this->solid_material_);
         auto& sigma_sw = ip_data.sigma_sw;
         ip_data.eps_m_prev.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)

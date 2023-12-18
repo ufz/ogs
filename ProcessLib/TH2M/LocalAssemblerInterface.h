@@ -11,6 +11,7 @@
 #pragma once
 
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -32,7 +33,10 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         : process_data_(process_data),
           integration_method_(integration_method),
           element_(e),
-          is_axially_symmetric_(is_axially_symmetric)
+          is_axially_symmetric_(is_axially_symmetric),
+          solid_material_(MaterialLib::Solids::selectSolidConstitutiveRelation(
+              process_data_.solid_materials, process_data_.material_ids,
+              element_.getID()))
     {
     }
 
@@ -220,6 +224,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
 };
 
 }  // namespace TH2M

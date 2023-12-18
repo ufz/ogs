@@ -143,7 +143,7 @@ private:
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
-            ip_data.solid_material.initializeInternalStateVariables(
+            this->solid_material_.initializeInternalStateVariables(
                 t, x_position, *ip_data.material_state_variables);
 
             ip_data.pushBackState();

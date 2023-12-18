@@ -32,8 +32,7 @@ struct IntegrationPointData final
     explicit IntegrationPointData(
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             solid_material)
-        : solid_material(solid_material),
-          material_state_variables(
+        : material_state_variables(
               solid_material.createMaterialStateVariables())
     {
         // Initialize current time step values
@@ -173,7 +172,6 @@ struct IntegrationPointData final
     // Intrinsic permeability
     GlobalDimMatrixType k_S;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
@@ -204,7 +202,9 @@ struct IntegrationPointData final
     computeElasticTangentStiffness(
         double const t, ParameterLib::SpatialPosition const& x_position,
         double const dt, double const temperature_prev,
-        double const temperature)
+        double const temperature,
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material)
     {
         namespace MPL = MaterialPropertyLib;
 
@@ -245,7 +245,9 @@ struct IntegrationPointData final
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        double const T_prev)
+        double const T_prev,
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev.stress
