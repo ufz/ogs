@@ -54,9 +54,6 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
-    double s_L = std::numeric_limits<double>::quiet_NaN();
-    double s_L_prev = std::numeric_limits<double>::quiet_NaN();
-
     // phase intrinsic densities
     double rhoGR = std::numeric_limits<double>::quiet_NaN();
     double rhoLR = std::numeric_limits<double>::quiet_NaN();
@@ -170,7 +167,6 @@ struct IntegrationPointData final
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
         sigma_sw_prev = sigma_sw;
-        s_L_prev = s_L;
 
         rho_G_h_G_prev = rho_G_h_G;
         rho_L_h_L_prev = rho_L_h_L;

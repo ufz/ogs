@@ -13,7 +13,6 @@
 #include <memory>
 #include <vector>
 
-#include "ConstitutiveRelations/ConstitutiveData.h"
 #include "ConstitutiveRelations/ConstitutiveModels.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
@@ -166,6 +165,11 @@ private:
         {
             _ip_data[ip].pushBackState();
             this->material_states_[ip].pushBackState();
+        }
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            this->prev_states_[ip] = this->current_states_[ip];
         }
     }
 
@@ -349,23 +353,6 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::phi,
-                                                         cache);
-    }
-
-    std::vector<double> getSaturation() const override
-    {
-        std::vector<double> result;
-        getIntPtSaturation(0, {}, {}, result);
-        return result;
-    }
-
-    virtual std::vector<double> const& getIntPtSaturation(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::s_L,
                                                          cache);
     }
 

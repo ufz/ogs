@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "BaseLib/StrongType.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/KelvinVector.h"
 #include "ParameterLib/SpatialPosition.h"
@@ -23,6 +24,10 @@ using KelvinVector = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
 template <int DisplacementDim>
 using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+
+template <int DisplacementDim>
+using GlobalDimMatrix =
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>;
 
 /// Convenience alias for not a number.
 static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
@@ -50,5 +55,8 @@ struct TemperatureData
     double T;
     double T_prev;
 };
+
+using CapillaryPressureData =
+    BaseLib::StrongType<double, struct CapillaryPressureTag>;
 
 }  // namespace ProcessLib::TH2M

@@ -20,6 +20,8 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
+#include "ProcessLib/Reflection/ReflectionForIPWriters.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 #include "TH2MProcessData.h"
@@ -65,16 +67,15 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
-            "saturation_ip", 1 /*n components*/, integration_order,
-            local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getSaturation));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, local_assemblers_,
             &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
+
+    ProcessLib::Reflection::addReflectedIntegrationPointWriters<
+        DisplacementDim>(
+        LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
+        _integration_point_writer, integration_order, local_assemblers_);
 }
 
 template <int DisplacementDim>
@@ -182,6 +183,10 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
+    ProcessLib::Reflection::addReflectedSecondaryVariables<DisplacementDim>(
+        LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
+        _secondary_variables, getExtrapolator(), local_assemblers_);
+
     add_secondary_variable(
         "sigma",
         MathLib::KelvinVector::KelvinVectorType<
@@ -220,9 +225,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         &LocalAssemblerInterface<
             DisplacementDim>::getIntPtDiffusionVelocityLiquidLiquid);
 
-    add_secondary_variable(
-        "saturation", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtSaturation);
     add_secondary_variable(
         "vapour_pressure", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtVapourPressure);

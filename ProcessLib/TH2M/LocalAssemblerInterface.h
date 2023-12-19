@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "ConstitutiveRelations/ConstitutiveData.h"
 #include "ConstitutiveRelations/MaterialState.h"
 #include "ConstitutiveRelations/SolidMechanics.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
@@ -42,6 +43,9 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     {
         unsigned const n_integration_points =
             integration_method_.getNumberOfPoints();
+
+        current_states_.resize(n_integration_points);
+        prev_states_.resize(n_integration_points);
 
         material_states_.reserve(n_integration_points);
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
@@ -145,14 +149,6 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> getSaturation() const = 0;
-
-    virtual std::vector<double> const& getIntPtSaturation(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
     virtual std::vector<double> const& getIntPtMoleFractionGas(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -241,7 +237,22 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         return *material_states_[integration_point].material_state_variables;
     }
 
+    static auto getReflectionDataForOutput()
+    {
+        using Self = LocalAssemblerInterface<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithoutName(
+            &Self::current_states_);
+    }
+
     TH2MProcessData<DisplacementDim>& process_data_;
+
+    std::vector<typename ConstitutiveRelations::StatefulData<DisplacementDim>>
+        current_states_;  // TODO maybe do not store but rather re-evaluate for
+                          // state update
+    std::vector<
+        typename ConstitutiveRelations::StatefulDataPrev<DisplacementDim>>
+        prev_states_;
 
     // Material state is special, because it contains both the current and the
     // old state.

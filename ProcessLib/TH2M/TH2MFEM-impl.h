@@ -19,6 +19,7 @@
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
+#include "ProcessLib/Reflection/ReflectionSetIPData.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
@@ -132,6 +133,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto& ip_cv = ip_constitutive_variables[ip];
         auto& ip_cd = ip_constitutive_data[ip];
+        auto& current_state = this->current_states_[ip];
+        auto& prev_state = this->prev_states_[ip];
 
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
@@ -184,13 +187,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // Set volumetric strain for the general case without swelling.
         vars.volumetric_strain = Invariants::trace(eps);
 
-        ip_data.s_L =
-            medium.property(MPL::PropertyType::saturation)
-                .template value<double>(
-                    vars, pos, t, std::numeric_limits<double>::quiet_NaN());
+        models.S_L_model.eval({pos, t, dt}, media_data,
+                              CapillaryPressureData{pCap},
+                              current_state.S_L_data, ip_cv.dS_L_dp_cap);
 
-        vars.liquid_saturation = ip_data.s_L;
-        vars_prev.liquid_saturation = ip_data.s_L_prev;
+        vars.liquid_saturation = current_state.S_L_data.S_L;
+        vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
         auto const chi = [&medium, pos, t, dt](double const s_L)
         {
@@ -199,7 +201,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             return medium.property(MPL::PropertyType::bishops_effective_stress)
                 .template value<double>(vs, pos, t, dt);
         };
-        ip_cv.chi_s_L = chi(ip_data.s_L);
+        ip_cv.chi_s_L = chi(current_state.S_L_data.S_L);
         ip_cv.dchi_ds_L =
             medium.property(MPL::PropertyType::bishops_effective_stress)
                 .template dValue<double>(vars, MPL::Variable::liquid_saturation,
@@ -346,8 +348,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ptmv = ptm.updateConstitutiveVariables(ptmv, &medium, vars, pos, t, dt);
         auto const& c = ptmv;
 
-        auto const phi_L = ip_data.s_L * ip_data.phi;
-        auto const phi_G = (1. - ip_data.s_L) * ip_data.phi;
+        auto const phi_L = current_state.S_L_data.S_L * ip_data.phi;
+        auto const phi_G = (1. - current_state.S_L_data.S_L) * ip_data.phi;
 
         // thermal conductivity
         ip_data.lambda = MaterialPropertyLib::formEigenTensor<DisplacementDim>(
@@ -486,18 +488,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_S * drho_SR_dT * u_S + phi_S * rhoSR * cpS +
             dphi_S_dT * rhoSR * u_S;
 
-        ip_cv.ds_L_dp_cap =
-            medium[MPL::PropertyType::saturation].template dValue<double>(
-                vars, MPL::Variable::capillary_pressure, pos, t, dt);
-
         // ds_L_dp_GR = 0;
         // ds_G_dp_GR = -ds_L_dp_GR;
-        double const ds_G_dp_cap = -ip_cv.ds_L_dp_cap;
+        double const ds_G_dp_cap = -ip_cv.dS_L_dp_cap();
 
         // dphi_G_dp_GR = -ds_L_dp_GR * ip_data.phi = 0;
-        double const dphi_G_dp_cap = -ip_cv.ds_L_dp_cap * ip_data.phi;
+        double const dphi_G_dp_cap = -ip_cv.dS_L_dp_cap() * ip_data.phi;
         // dphi_L_dp_GR = ds_L_dp_GR * ip_data.phi = 0;
-        double const dphi_L_dp_cap = ip_cv.ds_L_dp_cap * ip_data.phi;
+        double const dphi_L_dp_cap = ip_cv.dS_L_dp_cap() * ip_data.phi;
 
         auto const lambdaGR =
             gas_phase.hasProperty(MPL::PropertyType::thermal_conductivity)
@@ -603,9 +601,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         //     ip_data.k_S * dk_rel_L_ds_L * (ds_L_dp_GR = 0) / ip_data.muLR =
         //     0;
         ip_cv.dk_over_mu_G_dp_cap =
-            ip_data.k_S * dk_rel_G_ds_L * ip_cv.ds_L_dp_cap / ip_data.muGR;
+            ip_data.k_S * dk_rel_G_ds_L * ip_cv.dS_L_dp_cap() / ip_data.muGR;
         ip_cv.dk_over_mu_L_dp_cap =
-            ip_data.k_S * dk_rel_L_ds_L * ip_cv.ds_L_dp_cap / ip_data.muLR;
+            ip_data.k_S * dk_rel_L_ds_L * ip_cv.dS_L_dp_cap() / ip_data.muLR;
 
         ip_data.w_GS = k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
         ip_data.w_LS = k_over_mu_L * gradpCap + k_over_mu_L * c.rhoLR * b -
@@ -633,8 +631,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // Derivatives of s_G * rho_C_GR_dot + s_L * rho_C_LR_dot abbreviated
         // here with S_rho_C_eff.
-        double const s_L = ip_data.s_L;
-        double const s_G = 1. - ip_data.s_L;
+        double const s_L = current_state.S_L_data.S_L;
+        double const s_G = 1. - s_L;
         double const rho_C_FR = s_G * ip_data.rhoCGR + s_L * ip_data.rhoCLR;
         double const rho_W_FR = s_G * ip_data.rhoWGR + s_L * ip_data.rhoWLR;
         // TODO (naumov) Extend for partially saturated media.
@@ -656,9 +654,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     dt +
                 /*(ds_L_dp_GR = 0) * rho_C_LR_dot +*/ s_L * c.drho_C_LR_dp_GR /
                     dt;
-            ip_cv.dfC_3a_dp_cap =
-                ds_G_dp_cap * rho_C_GR_dot + s_G * drho_C_GR_dp_cap / dt +
-                ip_cv.ds_L_dp_cap * rho_C_LR_dot - s_L * c.drho_C_LR_dp_LR / dt;
+            ip_cv.dfC_3a_dp_cap = ds_G_dp_cap * rho_C_GR_dot +
+                                  s_G * drho_C_GR_dp_cap / dt +
+                                  ip_cv.dS_L_dp_cap() * rho_C_LR_dot -
+                                  s_L * c.drho_C_LR_dp_LR / dt;
             ip_cv.dfC_3a_dT =
                 s_G * c.drho_C_GR_dT / dt + s_L * c.drho_C_LR_dT / dt;
         }
@@ -695,7 +694,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const drho_C_FR_dp_cap =
             ds_G_dp_cap * ip_data.rhoCGR + s_G * drho_C_GR_dp_cap +
-            ip_cv.ds_L_dp_cap * ip_data.rhoCLR - s_L * c.drho_C_LR_dp_LR;
+            ip_cv.dS_L_dp_cap() * ip_data.rhoCLR - s_L * c.drho_C_LR_dp_LR;
 
         ip_cv.dfC_2a_dp_cap =
             ip_data.phi * (-c.drho_C_LR_dp_LR - drho_C_GR_dp_cap) -
@@ -736,7 +735,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             /*(ds_L_dp_GR = 0) * ip_data.rhoWLR +*/ s_L * c.drho_W_LR_dp_GR;
         double const drho_W_FR_dp_cap =
             ds_G_dp_cap * ip_data.rhoWGR + s_G * c.drho_W_GR_dp_cap +
-            ip_cv.ds_L_dp_cap * ip_data.rhoWLR - s_L * c.drho_W_LR_dp_LR;
+            ip_cv.dS_L_dp_cap() * ip_data.rhoWLR - s_L * c.drho_W_LR_dp_LR;
         double const drho_W_FR_dT = s_G * c.drho_W_GR_dT + s_L * c.drho_W_LR_dT;
 
         ip_cv.dfW_2a_dp_GR =
@@ -782,9 +781,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     dt +
                 /*(ds_L_dp_GR = 0) * rho_W_LR_dot +*/ s_L * c.drho_W_LR_dp_GR /
                     dt;
-            ip_cv.dfW_3a_dp_cap =
-                ds_G_dp_cap * rho_W_GR_dot + s_G * c.drho_W_GR_dp_cap / dt +
-                ip_cv.ds_L_dp_cap * rho_W_LR_dot - s_L * c.drho_W_LR_dp_LR / dt;
+            ip_cv.dfW_3a_dp_cap = ds_G_dp_cap * rho_W_GR_dot +
+                                  s_G * c.drho_W_GR_dp_cap / dt +
+                                  ip_cv.dS_L_dp_cap() * rho_W_LR_dot -
+                                  s_L * c.drho_W_LR_dp_LR / dt;
             ip_cv.dfW_3a_dT =
                 s_G * c.drho_W_GR_dT / dt + s_L * c.drho_W_LR_dT / dt;
         }
@@ -884,11 +884,6 @@ std::size_t TH2MLocalAssembler<
             values, _ip_data, &IpData::sigma_eff);
     }
 
-    if (name == "saturation")
-    {
-        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
-                                                         &IpData::s_L);
-    }
     if (name == "swelling_stress")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
@@ -923,8 +918,14 @@ std::size_t TH2MLocalAssembler<
             "Could not find variable {:s} in solid material model's "
             "internal variables.",
             name);
+        return 0;
     }
-    return 0;
+
+    // TODO this logic could be pulled out of the local assembler into the
+    // process. That might lead to a slightly better performance due to less
+    // string comparisons.
+    return ProcessLib::Reflection::reflectSetIPData<DisplacementDim>(
+        name, values, this->current_states_);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1004,7 +1005,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // Set volumetric strain rate for the general case without swelling.
         vars.volumetric_strain = Invariants::trace(eps);
 
-        ip_data.s_L_prev =
+        this->prev_states_[ip].S_L_data->S_L =
             medium.property(MPL::PropertyType::saturation)
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
@@ -1157,6 +1158,8 @@ void TH2MLocalAssembler<
     {
         auto& ip = _ip_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
+        auto& current_state = this->current_states_[int_point];
+        auto& prev_state = this->prev_states_[int_point];
 
         auto const& Np = ip.N_p;
         auto const& NT = Np;
@@ -1215,9 +1218,9 @@ void TH2MLocalAssembler<
 
         auto& k_S = ip.k_S;
 
-        auto& s_L = ip.s_L;
+        auto const s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
-        auto const s_L_dot = (s_L - ip.s_L_prev) / dt;
+        auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
         auto& alpha_B = ip_cv.biot_data();
         auto& beta_p_SR = ip_cv.beta_p_SR();
@@ -1593,6 +1596,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip = _ip_data[int_point];
         auto& ip_cd = ip_constitutive_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
+        auto& current_state = this->current_states_[int_point];
+        auto& prev_state = this->prev_states_[int_point];
 
         auto const& Np = ip.N_p;
         auto const& NT = Np;
@@ -1661,9 +1666,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto& k_S = ip.k_S;
 
-        auto& s_L = ip.s_L;
+        auto& s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
-        auto const s_L_dot = (s_L - ip.s_L_prev) / dt;
+        auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
         auto const alpha_B = ip_cv.biot_data();
         auto const beta_p_SR = ip_cv.beta_p_SR();
@@ -1841,7 +1846,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             local_Jac.template block<C_size, W_size>(C_index, W_index)
                 .noalias() +=
                 NpT *
-                (ip_cv.dfC_2a_dp_cap * s_L_dot + a * ip_cv.ds_L_dp_cap / dt) *
+                (ip_cv.dfC_2a_dp_cap * s_L_dot + a * ip_cv.dS_L_dp_cap() / dt) *
                 Np * w;
 
             local_Jac
@@ -1975,7 +1980,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 .noalias() +=
                 NpT *
                 ((ip_cv.dfW_2a_dp_cap - ip_cv.dfW_2b_dp_cap) * s_L_dot +
-                 (f - g) * ip_cv.ds_L_dp_cap / dt) *
+                 (f - g) * ip_cv.dS_L_dp_cap() / dt) *
                 Np * w;
 
             local_Jac
@@ -2140,8 +2145,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<displacement_size, W_size>(displacement_index,
                                                        W_index)
-            .noalias() += BuT * alpha_B * ip_cv.dchi_ds_L * ip_cv.ds_L_dp_cap *
-                          pCap * m * Np * w;
+            .noalias() += BuT * alpha_B * ip_cv.dchi_ds_L *
+                          ip_cv.dS_L_dp_cap() * pCap * m * Np * w;
 
         local_Jac
             .template block<displacement_size, displacement_size>(
@@ -2455,7 +2460,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        saturation_avg += _ip_data[ip].s_L;
+        saturation_avg += this->current_states_[ip].S_L_data.S_L;
     }
     saturation_avg /= n_integration_points;
     (*this->process_data_.element_saturation)[this->element_.getID()] =

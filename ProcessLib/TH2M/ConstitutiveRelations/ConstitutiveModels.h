@@ -11,6 +11,7 @@
 
 #include "Biot.h"
 #include "ElasticTangentStiffnessModel.h"
+#include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
@@ -36,6 +37,7 @@ struct ConstitutiveModels
     SolidCompressibilityModel<DisplacementDim,
                               SolidConstitutiveRelation<DisplacementDim>>
         beta_p_SR_model;
+    SaturationModel S_L_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
 };
 }  // namespace ConstitutiveRelations

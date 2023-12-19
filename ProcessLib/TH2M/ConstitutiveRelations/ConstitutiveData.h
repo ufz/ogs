@@ -11,6 +11,7 @@
 
 #include "Biot.h"
 #include "ElasticTangentStiffnessData.h"
+#include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
@@ -19,6 +20,34 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
+/// Data whose state must be tracked by the process.
+template <int DisplacementDim>
+struct StatefulData
+{
+    SaturationData S_L_data;
+
+    static auto reflect()
+    {
+        using Self = StatefulData<DisplacementDim>;
+
+        return Reflection::reflectWithoutName(&Self::S_L_data);
+    }
+};
+
+template <int DisplacementDim>
+struct StatefulDataPrev
+{
+    PrevState<SaturationData> S_L_data;
+
+    StatefulDataPrev<DisplacementDim>& operator=(
+        StatefulData<DisplacementDim> const& state)
+    {
+        S_L_data = state.S_L_data;
+
+        return *this;
+    }
+};
+
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
 struct ConstitutiveData
@@ -34,6 +63,7 @@ struct ConstitutiveTempData
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
     SolidCompressibilityData beta_p_SR;
+    SaturationDataDeriv dS_L_dp_cap;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
@@ -98,7 +128,6 @@ struct ConstitutiveTempData
     double dfW_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dT = std::numeric_limits<double>::quiet_NaN();
-    double ds_L_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double chi_s_L = std::numeric_limits<double>::quiet_NaN();
     double dchi_ds_L = std::numeric_limits<double>::quiet_NaN();
 };
