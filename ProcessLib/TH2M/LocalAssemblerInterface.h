@@ -11,7 +11,7 @@
 #pragma once
 
 #include "ConstitutiveRelations/MaterialState.h"
-#include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "ConstitutiveRelations/SolidMechanics.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
@@ -222,8 +222,9 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
     std::vector<double> getMaterialStateVariableInternalState(
         std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
+            typename ConstitutiveRelations::SolidConstitutiveRelation<
+                DisplacementDim>::MaterialStateVariables&)> const&
+            get_values_span,
         int const& n_components) const
     {
         return ProcessLib::getIntegrationPointDataMaterialStateVariables(
@@ -233,7 +234,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
             get_values_span, n_components);
     }
 
-    typename MaterialLib::Solids::MechanicsBase<
+    typename ConstitutiveRelations::SolidConstitutiveRelation<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned integration_point) const
     {
@@ -249,7 +250,8 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
+    ConstitutiveRelations::SolidConstitutiveRelation<DisplacementDim> const&
+        solid_material_;
 };
 
 }  // namespace TH2M
