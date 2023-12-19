@@ -151,6 +151,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
+        TemperatureData const T_data{T, T_prev};
         double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
         double const pLR = pGR - pCap;
@@ -166,9 +167,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars.liquid_phase_pressure = pLR;
 
         // medium properties
-        auto const C_el = ip_data.computeElasticTangentStiffness(
-            t, pos, dt, T_prev, T, this->solid_material_);
-        auto const K_S = this->solid_material_.getBulkModulus(t, pos, &C_el);
+        models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
+                                                    ip_cv.C_el_data);
+        auto const K_S = this->solid_material_.getBulkModulus(
+            t, pos, &ip_cv.C_el_data.stiffness_tensor);
 
         models.biot_model.eval({pos, t, dt}, media_data, ip_cv.biot_data);
 
@@ -291,8 +293,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
-            eps_m.noalias() +=
-                C_el.inverse() * (ip_data.sigma_sw - ip_data.sigma_sw_prev);
+            eps_m.noalias() += ip_cv.C_el_data.stiffness_tensor.inverse() *
+                               (ip_data.sigma_sw - ip_data.sigma_sw_prev);
         }
 
         vars.mechanical_strain
@@ -958,6 +960,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         *this->process_data_.media_map.getMedium(this->element_.getID());
     auto const& solid_phase = medium.phase("Solid");
 
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
+        this->solid_material_};
+
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
@@ -985,6 +990,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars.capillary_pressure = pCap;
 
         double const T = NT.dot(temperature);
+        TemperatureData const T_data{T, T};  // T_prev = T in initialization.
         vars.temperature = T;
 
         auto const Bu =
@@ -1004,18 +1010,23 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
+        // TODO (naumov) Double computation of C_el might be avoided if
+        // updateConstitutiveVariables is called before. But it might interfere
+        // with eps_m initialization.
+        ConstitutiveRelations::ElasticTangentStiffnessData<DisplacementDim>
+            C_el_data;
+        models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
+                                                    C_el_data);
+        auto const& C_el = C_el_data.stiffness_tensor;
+
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
-        auto const C_el = ip_data.computeElasticTangentStiffness(
-            t, pos, dt, T, T, this->solid_material_);
         auto& sigma_sw = ip_data.sigma_sw;
         ip_data.eps_m_prev.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                 ? eps + C_el.inverse() * sigma_sw
                 : eps;
     }
-
-    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
 
     // local_x_prev equal to local_x s.t. the local_x_dot is zero.
     updateConstitutiveVariables(local_x, local_x, t, 0, models);
@@ -1133,7 +1144,8 @@ void TH2MLocalAssembler<
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
+        this->solid_material_};
 
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
@@ -1567,7 +1579,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
+        this->solid_material_};
 
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
@@ -2436,7 +2449,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     double saturation_avg = 0;
 
-    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
+        this->solid_material_};
 
     updateConstitutiveVariables(local_x, local_x_prev, t, dt, models);
 

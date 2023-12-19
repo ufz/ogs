@@ -9,29 +9,32 @@
 
 #pragma once
 
-#include "Biot.h"
-#include "ElasticTangentStiffnessModel.h"
+#include "Base.h"
+#include "ElasticTangentStiffnessData.h"
 #include "SolidMechanics.h"
-#include "SolidThermalExpansion.h"
 
 namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-/// Constitutive models used for assembly.
 template <int DisplacementDim>
-struct ConstitutiveModels
+struct ElasticTangentStiffnessModel
 {
-    explicit ConstitutiveModels(
+    explicit ElasticTangentStiffnessModel(
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
-        : elastic_tangent_stiffness_model(solid_material)
+        : solid_material_(solid_material)
     {
     }
 
-    ElasticTangentStiffnessModel<DisplacementDim>
-        elastic_tangent_stiffness_model;
-    BiotModel biot_model;
-    SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
+    void eval(SpaceTimeData const& x_t,
+              TemperatureData const& T_data,
+              ElasticTangentStiffnessData<DisplacementDim>& out) const;
+
+private:
+    SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
 };
+
+extern template struct ElasticTangentStiffnessModel<2>;
+extern template struct ElasticTangentStiffnessModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

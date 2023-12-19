@@ -45,4 +45,10 @@ struct MediaData
     MaterialPropertyLib::Phase const& solid;
 };
 
+struct TemperatureData
+{
+    double T;
+    double T_prev;
+};
+
 }  // namespace ProcessLib::TH2M

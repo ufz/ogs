@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Biot.h"
+#include "ElasticTangentStiffnessData.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 
@@ -29,6 +30,7 @@ struct ConstitutiveData
 template <int DisplacementDim>
 struct ConstitutiveTempData
 {
+    ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
 
