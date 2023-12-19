@@ -1,4 +1,7 @@
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 SPHERE_RADIUS = 1.0
 START_TIME = 0.0

@@ -1,6 +1,9 @@
 from math import pi, sin
 
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 a = 2.0 * pi
 b = 2.0 * pi

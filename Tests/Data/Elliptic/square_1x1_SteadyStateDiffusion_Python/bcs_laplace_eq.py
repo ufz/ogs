@@ -1,6 +1,9 @@
 from math import cos, cosh, pi, sin, sinh
 
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 a = 2.0 * pi / 3.0
 

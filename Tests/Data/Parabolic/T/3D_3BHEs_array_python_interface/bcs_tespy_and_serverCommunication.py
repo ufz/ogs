@@ -11,7 +11,11 @@ print(sys.version)
 import os
 
 import numpy as np
-import OpenGeoSys
+
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 from pandas import read_csv
 from tespy.networks import load_network
 

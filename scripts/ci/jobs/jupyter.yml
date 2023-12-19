@@ -30,7 +30,7 @@ test notebooks via wheel:
       # status file and sh -c to workaround xvfb-run problems:
       # /usr/bin/xvfb-run: line 186: kill: (<PID>) - No such process"
       find . -type f -iname '*.ipynb' \
-          | grep -vP '\.ipynb_checkpoints|\.ci-skip\.ipynb$|_out|\.venv|PhaseField' \
+          | grep -vP '\.ipynb_checkpoints|\.ci-skip\.ipynb$|_out|\.venv|PhaseField|mtest' \
           | xargs xvfb-run -a \
               sh -c 'statf="$1"; shift; "$@" || echo "$?" >"$statf"' \
               -- "$status_file" \

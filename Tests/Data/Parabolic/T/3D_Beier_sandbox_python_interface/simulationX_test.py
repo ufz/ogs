@@ -8,7 +8,10 @@
 import sys
 
 print(sys.version)
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 from pandas import read_csv
 
 df_server = read_csv(
