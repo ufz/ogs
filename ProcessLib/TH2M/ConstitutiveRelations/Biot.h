@@ -9,17 +9,19 @@
 
 #pragma once
 
-#include "Biot.h"
+#include "Base.h"
+#include "BaseLib/StrongType.h"
 
 namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-/// Constitutive models used for assembly.
-template <int DisplacementDim>
-struct ConstitutiveModels
+using BiotData = BaseLib::StrongType<double, struct BiotTag>;
+
+struct BiotModel
 {
-    BiotModel biot_model;
+    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+              BiotData& out) const;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

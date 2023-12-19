@@ -7,19 +7,20 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#pragma once
-
 #include "Biot.h"
 
 namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-/// Constitutive models used for assembly.
-template <int DisplacementDim>
-struct ConstitutiveModels
+void BiotModel::eval(SpaceTimeData const& x_t, MediaData const& media_data,
+                     BiotData& out) const
 {
-    BiotModel biot_model;
-};
+    namespace MPL = MaterialPropertyLib;
+    MPL::VariableArray variables;
+
+    *out = media_data.medium.property(MPL::PropertyType::biot_coefficient)
+               .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+}
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

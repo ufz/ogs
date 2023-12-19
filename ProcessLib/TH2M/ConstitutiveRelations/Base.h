@@ -9,10 +9,15 @@
 
 #pragma once
 
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/KelvinVector.h"
+#include "ParameterLib/SpatialPosition.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 
 namespace ProcessLib::TH2M
 {
+using namespace ProcessLib::ConstitutiveRelations;
+
 template <int DisplacementDim>
 using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
@@ -25,4 +30,15 @@ constexpr KelvinMatrix<DisplacementDim> KMnan()
 {
     return KelvinMatrix<DisplacementDim>::Constant(nan);
 }
+
+struct MediaData
+{
+    explicit MediaData(MaterialPropertyLib::Medium const& medium)
+        : medium{medium}
+    {
+    }
+
+    MaterialPropertyLib::Medium const& medium;
+};
+
 }  // namespace ProcessLib::TH2M

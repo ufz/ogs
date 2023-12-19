@@ -82,11 +82,11 @@ std::tuple<
     std::vector<ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>>>
 TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                    DisplacementDim>::
-    updateConstitutiveVariables(Eigen::VectorXd const& local_x,
-                                Eigen::VectorXd const& local_x_prev,
-                                double const t, double const dt,
-                                ConstitutiveRelations::ConstitutiveModels<
-                                    DisplacementDim> const& /*models*/)
+    updateConstitutiveVariables(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
+            models)
 {
     [[maybe_unused]] auto const matrix_size =
         gas_pressure_size + capillary_pressure_size + temperature_size +
@@ -115,6 +115,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
+    MediaData media_data{medium};
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -169,8 +170,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             t, pos, dt, T_prev, T, this->solid_material_);
         auto const K_S = this->solid_material_.getBulkModulus(t, pos, &C_el);
 
-        ip_data.alpha_B = medium.property(MPL::PropertyType::biot_coefficient)
-                              .template value<double>(vars, pos, t, dt);
+        models.biot_model.eval({pos, t, dt}, media_data, ip_cv.biot_data);
 
         auto const Bu =
             LinearBMatrix::computeBMatrix<DisplacementDim,
@@ -210,7 +210,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // For stress dependent permeability.
         {
             auto const sigma_total =
-                (_ip_data[ip].sigma_eff - ip_data.alpha_B *
+                (_ip_data[ip].sigma_eff - ip_cv.biot_data() *
                                               (pGR - ip_cv.chi_s_L * pCap) *
                                               Invariants::identity2)
                     .eval();
@@ -252,7 +252,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                          pos, t, dt);
 
         // solid phase compressibility
-        ip_data.beta_p_SR = (1. - ip_data.alpha_B) / K_S;
+        ip_data.beta_p_SR = (1. - ip_cv.biot_data()) / K_S;
 
         // If there is swelling stress rate, compute swelling stress.
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
@@ -320,7 +320,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const div_u = m.transpose() * eps;
 
         const double phi_S = phi_S_0 * (1. + ip_data.thermal_volume_strain -
-                                        ip_data.alpha_B * div_u);
+                                        ip_cv.biot_data() * div_u);
 #else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         const double phi_S = phi_S_0;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
@@ -332,7 +332,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // solid phase density
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         auto const rhoSR = rho_ref_SR * (1. - ip_data.thermal_volume_strain +
-                                         (ip_data.alpha_B - 1.) * div_u);
+                                         (ip_cv.biot_data() - 1.) * div_u);
 #else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
@@ -461,7 +461,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                              pos, t, dt)
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
                 * (1. - ip_data.thermal_volume_strain +
-                   (ip_data.alpha_B - 1.) * div_u) -
+                   (ip_cv.biot_data() - 1.) * div_u) -
             rho_ref_SR * ip_data.beta_T_SR
 #endif
             ;
@@ -475,7 +475,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         const double dphi_S_dT = dphi_S_0_dT
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
                                      * (1. + ip_data.thermal_volume_strain -
-                                        ip_data.alpha_B * div_u) +
+                                        ip_cv.biot_data() * div_u) +
                                  phi_S_0 * ip_data.beta_T_SR
 #endif
             ;
@@ -667,29 +667,30 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             /*(ds_G_dp_GR = 0) * ip_data.rhoCGR +*/ s_G * c.drho_C_GR_dp_GR +
             /*(ds_L_dp_GR = 0) * ip_data.rhoCLR +*/ s_L * c.drho_C_LR_dp_GR;
         ip_cv.dfC_4_MCpG_dp_GR = drho_C_FR_dp_GR *
-                                 (ip_data.alpha_B - ip_data.phi) *
+                                 (ip_cv.biot_data() - ip_data.phi) *
                                  ip_data.beta_p_SR;
 
         double const drho_C_FR_dT = s_G * c.drho_C_GR_dT + s_L * c.drho_C_LR_dT;
         ip_cv.dfC_4_MCpG_dT =
-            drho_C_FR_dT * (ip_data.alpha_B - ip_data.phi) * ip_data.beta_p_SR
+            drho_C_FR_dT * (ip_cv.biot_data() - ip_data.phi) * ip_data.beta_p_SR
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             - rho_C_FR * ip_data.dphi_dT * ip_data.beta_p_SR
 #endif
             ;
 
         ip_cv.dfC_4_MCT_dT =
-            drho_C_FR_dT * (ip_data.alpha_B - ip_data.phi) * ip_data.beta_T_SR
+            drho_C_FR_dT * (ip_cv.biot_data() - ip_data.phi) * ip_data.beta_T_SR
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            + rho_C_FR * (ip_data.alpha_B - ip_data.dphi_dT) * ip_data.beta_T_SR
+            +
+            rho_C_FR * (ip_cv.biot_data() - ip_data.dphi_dT) * ip_data.beta_T_SR
 #endif
             ;
 
-        ip_cv.dfC_4_MCu_dT = drho_C_FR_dT * ip_data.alpha_B;
+        ip_cv.dfC_4_MCu_dT = drho_C_FR_dT * ip_cv.biot_data();
 
         ip_cv.dfC_2a_dp_GR = -ip_data.phi * c.drho_C_GR_dp_GR -
                              drho_C_FR_dp_GR * pCap *
-                                 (ip_data.alpha_B - ip_data.phi) *
+                                 (ip_cv.biot_data() - ip_data.phi) *
                                  ip_data.beta_p_SR;
 
         double const drho_C_FR_dp_cap =
@@ -698,16 +699,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_cv.dfC_2a_dp_cap =
             ip_data.phi * (-c.drho_C_LR_dp_LR - drho_C_GR_dp_cap) -
-            drho_C_FR_dp_cap * pCap * (ip_data.alpha_B - ip_data.phi) *
+            drho_C_FR_dp_cap * pCap * (ip_cv.biot_data() - ip_data.phi) *
                 ip_data.beta_p_SR +
-            rho_C_FR * (ip_data.alpha_B - ip_data.phi) * ip_data.beta_p_SR;
+            rho_C_FR * (ip_cv.biot_data() - ip_data.phi) * ip_data.beta_p_SR;
 
         ip_cv.dfC_2a_dT =
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             ip_data.dphi_dT * (ip_data.rhoCLR - ip_data.rhoCGR) +
 #endif
             ip_data.phi * (c.drho_C_LR_dT - c.drho_C_GR_dT) -
-            drho_C_FR_dT * pCap * (ip_data.alpha_B - ip_data.phi) *
+            drho_C_FR_dT * pCap * (ip_cv.biot_data() - ip_data.phi) *
                 ip_data.beta_p_SR
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             + rho_C_FR * pCap * ip_data.dphi_dT * ip_data.beta_p_SR
@@ -741,14 +742,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.dfW_2a_dp_GR =
             ip_data.phi * (c.drho_W_LR_dp_GR - c.drho_W_GR_dp_GR);
         ip_cv.dfW_2b_dp_GR = drho_W_FR_dp_GR * pCap *
-                             (ip_data.alpha_B - ip_data.phi) *
+                             (ip_cv.biot_data() - ip_data.phi) *
                              ip_data.beta_p_SR;
         ip_cv.dfW_2a_dp_cap =
             ip_data.phi * (-c.drho_W_LR_dp_LR - c.drho_W_GR_dp_cap);
         ip_cv.dfW_2b_dp_cap =
-            drho_W_FR_dp_cap * pCap * (ip_data.alpha_B - ip_data.phi) *
+            drho_W_FR_dp_cap * pCap * (ip_cv.biot_data() - ip_data.phi) *
                 ip_data.beta_p_SR +
-            rho_W_FR * (ip_data.alpha_B - ip_data.phi) * ip_data.beta_p_SR;
+            rho_W_FR * (ip_cv.biot_data() - ip_data.phi) * ip_data.beta_p_SR;
 
         ip_cv.dfW_2a_dT =
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
@@ -756,7 +757,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #endif
             ip_data.phi * (c.drho_W_LR_dT - c.drho_W_GR_dT);
         ip_cv.dfW_2b_dT =
-            drho_W_FR_dT * pCap * (ip_data.alpha_B - ip_data.phi) *
+            drho_W_FR_dT * pCap * (ip_cv.biot_data() - ip_data.phi) *
                 ip_data.beta_p_SR
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             - rho_W_FR * pCap * ip_data.dphi_dT * ip_data.beta_p_SR
@@ -1208,7 +1209,7 @@ void TH2MLocalAssembler<
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - ip.s_L_prev) / dt;
 
-        auto& alpha_B = ip.alpha_B;
+        auto& alpha_B = ip_cv.biot_data();
         auto& beta_p_SR = ip.beta_p_SR;
 
         auto const& b = this->process_data_.specific_body_force;
@@ -1653,7 +1654,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - ip.s_L_prev) / dt;
 
-        auto& alpha_B = ip.alpha_B;
+        auto& alpha_B = ip_cv.biot_data();
         auto& beta_p_SR = ip.beta_p_SR;
 
         auto const& b = this->process_data_.specific_body_force;

@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "Biot.h"
 #include "SolidMechanics.h"
 
 namespace ProcessLib::TH2M
@@ -27,6 +28,8 @@ struct ConstitutiveData
 template <int DisplacementDim>
 struct ConstitutiveTempData
 {
+    BiotData biot_data;
+
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
