@@ -84,7 +84,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                    DisplacementDim>::
     updateConstitutiveVariables(Eigen::VectorXd const& local_x,
                                 Eigen::VectorXd const& local_x_prev,
-                                double const t, double const dt)
+                                double const t, double const dt,
+                                ConstitutiveRelations::ConstitutiveModels<
+                                    DisplacementDim> const& /*models*/)
 {
     [[maybe_unused]] auto const matrix_size =
         gas_pressure_size + capillary_pressure_size + temperature_size +
@@ -1012,8 +1014,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ? eps + C_el.inverse() * sigma_sw
                 : eps;
     }
+
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
+
     // local_x_prev equal to local_x s.t. the local_x_dot is zero.
-    updateConstitutiveVariables(local_x, local_x, t, 0);
+    updateConstitutiveVariables(local_x, local_x, t, 0, models);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -1128,12 +1133,14 @@ void TH2MLocalAssembler<
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
+
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
             Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
             Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
                                               local_x_prev.size()),
-            t, dt);
+            t, dt, models);
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
@@ -1560,12 +1567,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
+
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
             Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
             Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
                                               local_x_prev.size()),
-            t, dt);
+            t, dt, models);
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
@@ -2424,7 +2433,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     double saturation_avg = 0;
 
-    updateConstitutiveVariables(local_x, local_x_prev, t, dt);
+    ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{};
+
+    updateConstitutiveVariables(local_x, local_x_prev, t, dt, models);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {

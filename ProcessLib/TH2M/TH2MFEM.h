@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "ConstitutiveRelations/ConstitutiveData.h"
+#include "ConstitutiveRelations/ConstitutiveModels.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
@@ -216,9 +217,11 @@ private:
         std::vector<ConstitutiveRelations::ConstitutiveData<DisplacementDim>>,
         std::vector<
             ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>>>
-    updateConstitutiveVariables(Eigen::VectorXd const& local_x,
-                                Eigen::VectorXd const& local_x_prev,
-                                double const t, double const dt);
+    updateConstitutiveVariables(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
+            models);
 
     std::size_t setSigma(double const* values)
     {
