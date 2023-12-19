@@ -113,10 +113,13 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
         os.add_dll_directory(OGS_BIN_DIR)
 
     def _program(name, args):
-        return subprocess.run([OGS_BIN_DIR / name] + args).returncode  # noqa: PLW1510
+        exe = OGS_BIN_DIR / name
+        if "OGS_USE_PATH" in os.environ:
+            exe = name
+        return subprocess.run([exe] + args).returncode  # noqa: PLW1510
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
     for f in binaries_list:
-        if f == "ogs":
+        if f == "ogs" and "OGS_USE_PATH" not in os.environ:
             continue  # provided by separate function
         exec(FUNC_TEMPLATE.format(f))

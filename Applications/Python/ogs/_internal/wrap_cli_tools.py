@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 
@@ -42,6 +43,9 @@ class CLI:
 
         cmdline = CLI._get_cmdline("ogs", *args, **kwargs)
 
+        if "OGS_USE_PATH" in os.environ:
+            return subprocess.call(cmdline)
+
         return ogs_with_args(cmdline)
 
     @staticmethod
@@ -65,6 +69,8 @@ class CLI:
         def run_cmd(*args, **kwargs):
             # TODO provide override via os.environ?
             cmd = OGS_BIN_DIR / attr
+            if "OGS_USE_PATH" in os.environ:
+                cmd = attr
             cmdline = CLI._get_cmdline(cmd, *args, **kwargs)
             return subprocess.call(cmdline)
 
