@@ -11,6 +11,7 @@
 
 #include "Biot.h"
 #include "ElasticTangentStiffnessData.h"
+#include "SolidCompressibility.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 
@@ -32,6 +33,7 @@ struct ConstitutiveTempData
 {
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
+    SolidCompressibilityData beta_p_SR;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;

@@ -11,6 +11,7 @@
 
 #include "Biot.h"
 #include "ElasticTangentStiffnessModel.h"
+#include "SolidCompressibility.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 
@@ -24,13 +25,17 @@ struct ConstitutiveModels
 {
     explicit ConstitutiveModels(
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
-        : elastic_tangent_stiffness_model(solid_material)
+        : elastic_tangent_stiffness_model(solid_material),
+          beta_p_SR_model(solid_material)
     {
     }
 
     ElasticTangentStiffnessModel<DisplacementDim>
         elastic_tangent_stiffness_model;
     BiotModel biot_model;
+    SolidCompressibilityModel<DisplacementDim,
+                              SolidConstitutiveRelation<DisplacementDim>>
+        beta_p_SR_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
 };
 }  // namespace ConstitutiveRelations

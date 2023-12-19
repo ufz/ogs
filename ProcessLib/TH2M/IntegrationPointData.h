@@ -156,7 +156,6 @@ struct IntegrationPointData final
 
     double thermal_volume_strain = std::numeric_limits<double>::quiet_NaN();
     double beta_T_SR = std::numeric_limits<double>::quiet_NaN();
-    double beta_p_SR = std::numeric_limits<double>::quiet_NaN();
 
     double k_rel_L = std::numeric_limits<double>::quiet_NaN();
     double k_rel_G = std::numeric_limits<double>::quiet_NaN();
