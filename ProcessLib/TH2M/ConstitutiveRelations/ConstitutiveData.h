@@ -11,6 +11,7 @@
 
 #include "Biot.h"
 #include "SolidMechanics.h"
+#include "SolidThermalExpansion.h"
 
 namespace ProcessLib::TH2M
 {
@@ -29,6 +30,7 @@ template <int DisplacementDim>
 struct ConstitutiveTempData
 {
     BiotData biot_data;
+    SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

@@ -19,6 +19,9 @@ namespace ProcessLib::TH2M
 using namespace ProcessLib::ConstitutiveRelations;
 
 template <int DisplacementDim>
+using KelvinVector = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+
+template <int DisplacementDim>
 using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
 
 /// Convenience alias for not a number.
@@ -34,11 +37,12 @@ constexpr KelvinMatrix<DisplacementDim> KMnan()
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
-        : medium{medium}
+        : medium{medium}, solid{medium.phase("Solid")}
     {
     }
 
     MaterialPropertyLib::Medium const& medium;
+    MaterialPropertyLib::Phase const& solid;
 };
 
 }  // namespace ProcessLib::TH2M

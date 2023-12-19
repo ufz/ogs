@@ -161,9 +161,6 @@ struct IntegrationPointData final
     double k_rel_L = std::numeric_limits<double>::quiet_NaN();
     double k_rel_G = std::numeric_limits<double>::quiet_NaN();
 
-    // solid phase linear thermal expansivity
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> alpha_T_SR;
-
     // Intrinsic permeability
     GlobalDimMatrixType k_S;
 

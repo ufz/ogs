@@ -271,18 +271,17 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         }
 
         // solid phase linear thermal expansion coefficient
-        ip_data.alpha_T_SR = MathLib::KelvinVector::tensorToKelvin<
-            DisplacementDim>(MaterialPropertyLib::formEigenTensor<3>(
-            solid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_expansivity)
-                .value(vars, pos, t, dt)));
+        models.s_therm_exp_model.eval({pos, t, dt}, media_data,
+                                      ip_cv.s_therm_exp_data);
 
         // isotropic solid phase volumetric thermal expansion coefficient
-        ip_data.beta_T_SR = Invariants::trace(ip_data.alpha_T_SR);
+        ip_data.beta_T_SR = Invariants::trace(
+            ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector);
 
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain = ip_data.alpha_T_SR * (T - T_prev);
+            dthermal_strain =
+                ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector *
+                (T - T_prev);
 
         auto& eps_m = ip_data.eps_m;
         auto& eps_m_prev = ip_data.eps_m_prev;
@@ -2146,7 +2145,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<displacement_size, temperature_size>(
                 displacement_index, temperature_index)
             .noalias() -=
-            BuT * (ip_cd.s_mech_data.stiffness_tensor * ip.alpha_T_SR) * NT * w;
+            BuT *
+            (ip_cd.s_mech_data.stiffness_tensor *
+             ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector) *
+            NT * w;
 
         /* TODO (naumov) Test with gravity needed to check this Jacobian part.
         local_Jac

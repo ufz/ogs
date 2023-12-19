@@ -9,19 +9,26 @@
 
 #pragma once
 
-#include "Biot.h"
-#include "SolidThermalExpansion.h"
+#include "Base.h"
 
 namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-/// Constitutive models used for assembly.
 template <int DisplacementDim>
-struct ConstitutiveModels
+struct SolidThermalExpansionData
 {
-    BiotModel biot_model;
-    SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
+    KelvinVector<DisplacementDim> solid_linear_thermal_expansivity_vector;
 };
+
+template <int DisplacementDim>
+struct SolidThermalExpansionModel
+{
+    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+              SolidThermalExpansionData<DisplacementDim>& out) const;
+};
+
+extern template struct SolidThermalExpansionModel<2>;
+extern template struct SolidThermalExpansionModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
