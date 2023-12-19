@@ -1,4 +1,7 @@
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 p_flux_in = 1e-2
 p_0 = 1e5

@@ -48,7 +48,10 @@ The path to the file can be defined in relative or absolute terms. For example:
 First, the OpenGeoSys module has to be imported:
 
 ```python
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 ```
 
 This module doesn't need to be installed, if OpenGeoSys is compiled with Python support, then it is part of the Python
@@ -127,7 +130,10 @@ Examples of the application of Python boundary conditions can be found in [this 
 ## Full example of a Python boundary condition
 
 ```python
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 class BoundaryCondition(OpenGeoSys):
 

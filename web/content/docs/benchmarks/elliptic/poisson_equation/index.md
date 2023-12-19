@@ -105,7 +105,11 @@ Python object `sinx_sinx_source_term` that is created in the last line of the
 Python script:
 
 ```python
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
+
 from math import pi, sin
 
 a = 2.0*pi

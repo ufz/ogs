@@ -1,4 +1,7 @@
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 
 class BCPressure(OpenGeoSys.BoundaryCondition):

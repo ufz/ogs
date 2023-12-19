@@ -1,4 +1,7 @@
-import OpenGeoSys
+try:
+    import ogs.callbacks as OpenGeoSys
+except ModuleNotFoundError:
+    import OpenGeoSys
 
 dirichlet_displacement_0 = 0
 neumann_displacement_overburden = -2.125e6
