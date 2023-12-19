@@ -197,6 +197,31 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
                                   current_state.S_L_data, ip_cv.chi_S_L);
 
+        // solid phase compressibility
+        models.beta_p_SR_model.eval({pos, t, dt}, ip_cv.biot_data,
+                                    ip_cv.C_el_data, ip_cv.beta_p_SR);
+
+        // If there is swelling stress rate, compute swelling stress.
+        models.swelling_model.eval(
+            {pos, t, dt}, media_data, ip_cv.C_el_data, current_state.S_L_data,
+            prev_state.S_L_data, prev_state.swelling_data,
+            current_state.swelling_data, ip_cv.swelling_data);
+
+        // solid phase linear thermal expansion coefficient
+        models.s_therm_exp_model.eval({pos, t, dt}, media_data,
+                                      ip_cv.s_therm_exp_data);
+
+        models.mechanical_strain_model.eval(
+            T_data, ip_cv.s_therm_exp_data, this->output_data_[ip].eps_data,
+            Bu * displacement_prev, prev_state.mechanical_strain_data,
+            ip_cv.swelling_data, current_state.mechanical_strain_data);
+
+        models.s_mech_model.eval(
+            {pos, t, dt}, T_data, current_state.mechanical_strain_data,
+            prev_state.mechanical_strain_data, prev_state.eff_stress_data,
+            current_state.eff_stress_data, this->material_states_[ip],
+            ip_cd.s_mech_data);
+
         models.total_stress_model.eval(
             current_state.eff_stress_data, ip_cv.biot_data, ip_cv.chi_S_L,
             GasPressureData{pGR}, CapillaryPressureData{pCap},
@@ -241,25 +266,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 .template dValue<double>(vars, MPL::Variable::liquid_saturation,
                                          pos, t, dt);
 
-        // solid phase compressibility
-        models.beta_p_SR_model.eval({pos, t, dt}, ip_cv.biot_data,
-                                    ip_cv.C_el_data, ip_cv.beta_p_SR);
-
-        // If there is swelling stress rate, compute swelling stress.
-        models.swelling_model.eval(
-            {pos, t, dt}, media_data, ip_cv.C_el_data, current_state.S_L_data,
-            prev_state.S_L_data, prev_state.swelling_data,
-            current_state.swelling_data, ip_cv.swelling_data);
-
-        // solid phase linear thermal expansion coefficient
-        models.s_therm_exp_model.eval({pos, t, dt}, media_data,
-                                      ip_cv.s_therm_exp_data);
-
-        models.mechanical_strain_model.eval(
-            T_data, ip_cv.s_therm_exp_data, this->output_data_[ip].eps_data,
-            Bu * displacement_prev, prev_state.mechanical_strain_data,
-            ip_cv.swelling_data, current_state.mechanical_strain_data);
-
         vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 current_state.mechanical_strain_data.eps_m);
@@ -301,12 +307,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-
-        models.s_mech_model.eval(
-            {pos, t, dt}, T_data, current_state.mechanical_strain_data,
-            prev_state.mechanical_strain_data, prev_state.eff_stress_data,
-            current_state.eff_stress_data, this->material_states_[ip],
-            ip_cd.s_mech_data);
 
         // constitutive model object as specified in process creation
         auto& ptm = *this->process_data_.phase_transition_model_;
