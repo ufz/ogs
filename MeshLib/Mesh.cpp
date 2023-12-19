@@ -64,6 +64,7 @@ Mesh::Mesh(std::string name,
                nodes,
            std::vector<Element*>
                elements,
+           bool const compute_element_neighbors,
            Properties const& properties)
     : _id(global_mesh_counter++),
       _mesh_dimension(0),
@@ -71,7 +72,8 @@ Mesh::Mesh(std::string name,
       _name(std::move(name)),
       _nodes(std::move(nodes)),
       _elements(std::move(elements)),
-      _properties(properties)
+      _properties(properties),
+      _compute_element_neighbors(compute_element_neighbors)
 {
     this->resetNodeIDs();
     this->resetElementIDs();
@@ -79,7 +81,10 @@ Mesh::Mesh(std::string name,
 
     _elements_connected_to_nodes = findElementsConnectedToNodes(*this);
 
-    this->setElementNeighbors();
+    if (_compute_element_neighbors)
+    {
+        this->setElementNeighbors();
+    }
 }
 
 Mesh::Mesh(const Mesh& mesh)
@@ -89,7 +94,8 @@ Mesh::Mesh(const Mesh& mesh)
       _name(mesh.getName()),
       _nodes(mesh.getNumberOfNodes()),
       _elements(mesh.getNumberOfElements()),
-      _properties(mesh._properties)
+      _properties(mesh._properties),
+      _compute_element_neighbors(mesh._compute_element_neighbors)
 {
     const std::vector<Node*>& nodes(mesh.getNodes());
     const std::size_t nNodes(nodes.size());
@@ -114,8 +120,12 @@ Mesh::Mesh(const Mesh& mesh)
     {
         this->setDimension();
     }
+
     _elements_connected_to_nodes = findElementsConnectedToNodes(*this);
-    this->setElementNeighbors();
+    if (_compute_element_neighbors)
+    {
+        this->setElementNeighbors();
+    }
 }
 
 Mesh::Mesh(Mesh&& mesh) = default;
