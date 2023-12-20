@@ -28,6 +28,12 @@ void SolidThermalExpansionModel<DisplacementDim>::eval(
         MPL::formKelvinVector<DisplacementDim>(
             media_data.solid.property(MPL::PropertyType::thermal_expansivity)
                 .value(variables, x_t.x, x_t.t, x_t.dt));
+
+    static int const KelvinVectorSize =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+    using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
+    out.beta_T_SR =
+        Invariants::trace(out.solid_linear_thermal_expansivity_vector);
 }
 
 template struct SolidThermalExpansionModel<2>;

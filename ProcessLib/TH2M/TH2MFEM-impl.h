@@ -267,10 +267,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.s_therm_exp_model.eval({pos, t, dt}, media_data,
                                       ip_cv.s_therm_exp_data);
 
-        // isotropic solid phase volumetric thermal expansion coefficient
-        ip_data.beta_T_SR = Invariants::trace(
-            ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector);
-
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain =
                 ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector *
@@ -299,7 +295,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T0 = this->process_data_.reference_temperature(t, pos)[0];
         double const delta_T(T - T0);
-        ip_data.thermal_volume_strain = ip_data.beta_T_SR * delta_T;
+        ip_data.thermal_volume_strain =
+            ip_cv.s_therm_exp_data.beta_T_SR * delta_T;
 
         // initial porosity
         auto const phi_0 = medium.property(MPL::PropertyType::porosity)
@@ -454,7 +451,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
                 * (1. - ip_data.thermal_volume_strain +
                    (ip_cv.biot_data() - 1.) * div_u) -
-            rho_ref_SR * ip_data.beta_T_SR
+            rho_ref_SR * ip_cv.s_therm_exp_data.beta_T_SR
 #endif
             ;
 
@@ -468,7 +465,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
                                      * (1. + ip_data.thermal_volume_strain -
                                         ip_cv.biot_data() * div_u) +
-                                 phi_S_0 * ip_data.beta_T_SR
+                                 phi_S_0 * ip_cv.s_therm_exp_data.beta_T_SR
 #endif
             ;
 
@@ -667,11 +664,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #endif
             ;
 
-        ip_cv.dfC_4_MCT_dT =
-            drho_C_FR_dT * (ip_cv.biot_data() - ip_data.phi) * ip_data.beta_T_SR
+        ip_cv.dfC_4_MCT_dT = drho_C_FR_dT * (ip_cv.biot_data() - ip_data.phi) *
+                                 ip_cv.s_therm_exp_data.beta_T_SR
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            +
-            rho_C_FR * (ip_cv.biot_data() - ip_data.dphi_dT) * ip_data.beta_T_SR
+                             +
+                             rho_C_FR * (ip_cv.biot_data() - ip_data.dphi_dT) *
+                                 ip_cv.s_therm_exp_data.beta_T_SR
 #endif
             ;
 
@@ -1193,7 +1191,7 @@ void TH2MLocalAssembler<
         double const pCap = Np.dot(capillary_pressure);
         double const pCap_prev = Np.dot(capillary_pressure_prev);
 
-        auto& beta_T_SR = ip.beta_T_SR;
+        double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
 
         auto const I =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
@@ -1641,7 +1639,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const pGR_prev = Np.dot(gas_pressure_prev);
         double const pCap_prev = Np.dot(capillary_pressure_prev);
         double const T_prev = NT.dot(temperature_prev);
-        auto& beta_T_SR = ip.beta_T_SR;
+        double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
 
         auto const I =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
