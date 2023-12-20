@@ -197,20 +197,18 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
                                   current_state.S_L_data, ip_cv.chi_S_L);
 
+        models.total_stress_model.eval(
+            current_state.eff_stress_data, ip_cv.biot_data, ip_cv.chi_S_L,
+            GasPressureData{pGR}, CapillaryPressureData{pCap},
+            ip_cv.total_stress_data);
+
         // relative permeability
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
-        {
-            auto const sigma_total =
-                (this->current_states_[ip].eff_stress_data.sigma -
-                 ip_cv.biot_data() * (pGR - ip_cv.chi_S_L.chi_S_L * pCap) *
-                     Invariants::identity2)
-                    .eval();
+        vars.total_stress.emplace<SymmetricTensor>(
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
+                ip_cv.total_stress_data.sigma_total));
 
-            vars.total_stress.emplace<SymmetricTensor>(
-                MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                    sigma_total));
-        }
         vars.equivalent_plastic_strain =
             this->material_states_[ip]
                 .material_state_variables->getEquivalentPlasticStrain();

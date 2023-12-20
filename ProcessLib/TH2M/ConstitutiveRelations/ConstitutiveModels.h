@@ -18,6 +18,7 @@
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
+#include "TotalStress.h"
 
 namespace ProcessLib::TH2M
 {
@@ -47,6 +48,7 @@ struct ConstitutiveModels
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
     MechanicalStrainModel<DisplacementDim> mechanical_strain_model;
     SolidMechanicsModel<DisplacementDim> s_mech_model;
+    TotalStressModel<DisplacementDim> total_stress_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

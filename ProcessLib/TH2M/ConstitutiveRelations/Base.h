@@ -70,6 +70,7 @@ struct TemperatureData
     double T_prev;
 };
 
+using GasPressureData = BaseLib::StrongType<double, struct GasPressureTag>;
 using CapillaryPressureData =
     BaseLib::StrongType<double, struct CapillaryPressureTag>;
 

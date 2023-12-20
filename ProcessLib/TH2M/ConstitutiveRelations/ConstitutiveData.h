@@ -21,6 +21,7 @@
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
+#include "TotalStress.h"
 
 namespace ProcessLib::TH2M
 {
@@ -99,6 +100,7 @@ struct ConstitutiveTempData
     SaturationDataDeriv dS_L_dp_cap;
     BishopsData chi_S_L;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
+    TotalStressData<DisplacementDim> total_stress_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
