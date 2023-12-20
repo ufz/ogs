@@ -16,6 +16,7 @@
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
+#include "Swelling.h"
 
 namespace ProcessLib::TH2M
 {
@@ -26,12 +27,14 @@ template <int DisplacementDim>
 struct StatefulData
 {
     SaturationData S_L_data;
+    SwellingDataStateful<DisplacementDim> swelling_data;
 
     static auto reflect()
     {
         using Self = StatefulData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(&Self::S_L_data);
+        return Reflection::reflectWithoutName(&Self::S_L_data,
+                                              &Self::swelling_data);
     }
 };
 
@@ -39,11 +42,13 @@ template <int DisplacementDim>
 struct StatefulDataPrev
 {
     PrevState<SaturationData> S_L_data;
+    PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
     {
         S_L_data = state.S_L_data;
+        swelling_data = state.swelling_data;
 
         return *this;
     }
@@ -61,6 +66,7 @@ struct ConstitutiveData
 template <int DisplacementDim>
 struct ConstitutiveTempData
 {
+    SwellingDataStateless<DisplacementDim> swelling_data;
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
     SolidCompressibilityData beta_p_SR;

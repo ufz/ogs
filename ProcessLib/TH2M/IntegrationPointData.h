@@ -35,7 +35,6 @@ struct IntegrationPointData final
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         sigma_eff.setZero(kelvin_vector_size);
-        sigma_sw.setZero(kelvin_vector_size);
         eps.resize(
             kelvin_vector_size);  // Later initialization from displacement
         eps_m.setZero(kelvin_vector_size);
@@ -44,7 +43,6 @@ struct IntegrationPointData final
     }
 
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
-    typename BMatricesType::KelvinVectorType sigma_sw, sigma_sw_prev;
     typename BMatricesType::KelvinVectorType eps;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
@@ -165,7 +163,6 @@ struct IntegrationPointData final
     {
         eps_m_prev = eps_m;
         sigma_eff_prev = sigma_eff;
-        sigma_sw_prev = sigma_sw;
 
         rho_G_h_G_prev = rho_G_h_G;
         rho_L_h_L_prev = rho_L_h_L;

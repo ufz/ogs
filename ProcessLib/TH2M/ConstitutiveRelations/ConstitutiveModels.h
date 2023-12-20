@@ -16,6 +16,7 @@
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
+#include "Swelling.h"
 
 namespace ProcessLib::TH2M
 {
@@ -40,6 +41,7 @@ struct ConstitutiveModels
         beta_p_SR_model;
     SaturationModel S_L_model;
     BishopsModel chi_S_L_model;
+    SwellingModel<DisplacementDim> swelling_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
 };
 }  // namespace ConstitutiveRelations

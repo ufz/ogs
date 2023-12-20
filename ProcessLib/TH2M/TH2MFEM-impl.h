@@ -248,20 +248,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.C_el_data, ip_cv.beta_p_SR);
 
         // If there is swelling stress rate, compute swelling stress.
-        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
-        {
-            auto& sigma_sw = ip_data.sigma_sw;
-            auto const& sigma_sw_prev = ip_data.sigma_sw_prev;
-
-            sigma_sw = sigma_sw_prev;
-
-            auto const sigma_sw_dot =
-                MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
-                    MPL::formEigenTensor<3>(
-                        solid_phase[MPL::PropertyType::swelling_stress_rate]
-                            .value(vars, vars_prev, pos, t, dt)));
-            sigma_sw += sigma_sw_dot * dt;
-        }
+        models.swelling_model.eval(
+            {pos, t, dt}, media_data, ip_cv.C_el_data, current_state.S_L_data,
+            prev_state.S_L_data, prev_state.swelling_data,
+            current_state.swelling_data, ip_cv.swelling_data);
 
         // solid phase linear thermal expansion coefficient
         models.s_therm_exp_model.eval({pos, t, dt}, media_data,
@@ -278,11 +268,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         eps_m.noalias() =
             eps_m_prev + eps - Bu * displacement_prev - dthermal_strain;
 
-        if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
-        {
-            eps_m.noalias() += ip_cv.C_el_data.stiffness_tensor.inverse() *
-                               (ip_data.sigma_sw - ip_data.sigma_sw_prev);
-        }
+        eps_m.noalias() += ip_cv.swelling_data.eps_m;
 
         vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
@@ -872,11 +858,6 @@ std::size_t TH2MLocalAssembler<
             values, _ip_data, &IpData::sigma_eff);
     }
 
-    if (name == "swelling_stress")
-    {
-        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_sw);
-    }
     if (name == "epsilon")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
@@ -1009,7 +990,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
-        auto& sigma_sw = ip_data.sigma_sw;
+        auto const& sigma_sw = this->current_states_[ip].swelling_data.sigma_sw;
         ip_data.eps_m_prev.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                 ? eps + C_el.inverse() * sigma_sw

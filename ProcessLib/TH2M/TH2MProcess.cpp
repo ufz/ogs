@@ -60,13 +60,6 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
-            "swelling_stress_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getSwellingStress));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, local_assemblers_,
@@ -192,11 +185,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtSigma);
-    add_secondary_variable(
-        "swelling_stress",
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim>::RowsAtCompileTime,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtSwellingStress);
     add_secondary_variable(
         "epsilon",
         MathLib::KelvinVector::KelvinVectorType<

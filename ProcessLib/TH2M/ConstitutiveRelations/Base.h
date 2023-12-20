@@ -39,6 +39,13 @@ constexpr KelvinMatrix<DisplacementDim> KMnan()
     return KelvinMatrix<DisplacementDim>::Constant(nan);
 }
 
+/// Used to set a Kelvin vector to all zero.
+template <int DisplacementDim>
+constexpr KelvinVector<DisplacementDim> KVzero()
+{
+    return KelvinVector<DisplacementDim>::Zero();
+}
+
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
