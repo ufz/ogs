@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Biot.h"
+#include "Bishops.h"
 #include "ElasticTangentStiffnessData.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
@@ -64,6 +65,7 @@ struct ConstitutiveTempData
     BiotData biot_data;
     SolidCompressibilityData beta_p_SR;
     SaturationDataDeriv dS_L_dp_cap;
+    BishopsData chi_S_L;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
@@ -128,8 +130,6 @@ struct ConstitutiveTempData
     double dfW_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dT = std::numeric_limits<double>::quiet_NaN();
-    double chi_s_L = std::numeric_limits<double>::quiet_NaN();
-    double dchi_ds_L = std::numeric_limits<double>::quiet_NaN();
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

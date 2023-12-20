@@ -194,27 +194,17 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars.liquid_saturation = current_state.S_L_data.S_L;
         vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
-        auto const chi = [&medium, pos, t, dt](double const s_L)
-        {
-            MPL::VariableArray vs;
-            vs.liquid_saturation = s_L;
-            return medium.property(MPL::PropertyType::bishops_effective_stress)
-                .template value<double>(vs, pos, t, dt);
-        };
-        ip_cv.chi_s_L = chi(current_state.S_L_data.S_L);
-        ip_cv.dchi_ds_L =
-            medium.property(MPL::PropertyType::bishops_effective_stress)
-                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
-                                         pos, t, dt);
+        models.chi_S_L_model.eval({pos, t, dt}, media_data,
+                                  current_state.S_L_data, ip_cv.chi_S_L);
 
         // relative permeability
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
             auto const sigma_total =
-                (_ip_data[ip].sigma_eff - ip_cv.biot_data() *
-                                              (pGR - ip_cv.chi_s_L * pCap) *
-                                              Invariants::identity2)
+                (_ip_data[ip].sigma_eff -
+                 ip_cv.biot_data() * (pGR - ip_cv.chi_S_L.chi_S_L * pCap) *
+                     Invariants::identity2)
                     .eval();
 
             vars.total_stress.emplace<SymmetricTensor>(
@@ -1438,7 +1428,7 @@ void TH2MLocalAssembler<
 
         KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
 
-        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_s_L * m * Np) * w;
+        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
 
         fU.noalias() -=
             (BuT * ip.sigma_eff - N_u_op(Nu).transpose() * rho * b) * w;
@@ -2138,14 +2128,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // dfU_2/dp_GR = dKUpG/dp_GR * p_GR + KUpG. The former is zero, the
         // latter is handled below.
 
-        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_s_L * m * Np) * w;
+        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
 
         // dfU_2/dp_cap = dKUpC/dp_cap * p_cap + KUpC. The former is handled
         // here, the latter below.
         local_Jac
             .template block<displacement_size, W_size>(displacement_index,
                                                        W_index)
-            .noalias() += BuT * alpha_B * ip_cv.dchi_ds_L *
+            .noalias() += BuT * alpha_B * ip_cv.chi_S_L.dchi_dS_L *
                           ip_cv.dS_L_dp_cap() * pCap * m * Np * w;
 
         local_Jac

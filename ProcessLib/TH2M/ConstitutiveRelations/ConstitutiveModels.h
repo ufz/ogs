@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Biot.h"
+#include "Bishops.h"
 #include "ElasticTangentStiffnessModel.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
@@ -38,6 +39,7 @@ struct ConstitutiveModels
                               SolidConstitutiveRelation<DisplacementDim>>
         beta_p_SR_model;
     SaturationModel S_L_model;
+    BishopsModel chi_S_L_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
 };
 }  // namespace ConstitutiveRelations
