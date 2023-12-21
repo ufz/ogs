@@ -1,15 +1,22 @@
-module load Stages/2023
-module load GCC/11.3.0
-module load OpenMPI/4.1.4
-module load CMake/3.23.1
-module load Ninja/1.10.2
+# previous version Stages/2023 can be used as long as it is supported by JUWELS
+# the module versions can be found in git history
+module load Stages/2024
+module load GCC
+module load ParaStationMPI
+module load CMake
+module load Ninja
 module load Python
 module load Eigen
 module load Boost
 module load git
-module load HDF5/1.12.2
-module load ScaLAPACK/2.2.0-fb
-# module load netCDF-C++4 # uncomment when using OGS_USE_NETCDF=ON
+module load PETSc
+module load netCDF-C++4
+# HDF5 version 1.14.3 fixes a bug that is contained in previous versions
+# a module with this version isn't in Stages/2024
+# it will be provided by ogs cpm
+# module load HDF5/1.14.3
+module load imkl # provides lapack - use either imkl or ScaLAPACK module
+# module load ScaLAPACK
 
 export CC=mpicc
 export CXX=mpic++
