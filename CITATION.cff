@@ -10,21 +10,26 @@ authors:
     - given-names: Dmitri
       family-names: Naumov
       name-particle: Yu.
+      orcid: "https://orcid.org/0000-0001-6680-1028"
       affiliation: TU Bergakademie Freiberg
     - given-names: Lars
       family-names: Bilke
+      orcid: "https://orcid.org/0000-0001-8986-2413"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Thomas
       family-names: Fischer
+      orcid: "https://orcid.org/0000-0002-1071-3464"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Christoph
       family-names: Lehmann
+      orcid: "https://orcid.org/0000-0001-7936-9852"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Karsten
       family-names: Rink
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Wenqing
       family-names: Wang
+      orcid: "https://orcid.org/0000-0001-8909-6245"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Norihiro
       family-names: Watanabe
@@ -37,21 +42,27 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jörg
       family-names: Buchwald
+      orcid: "https://orcid.org/0000-0001-5174-3603"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Tobias
       family-names: Meisel
+      orcid: "https://orcid.org/0009-0009-8790-8903"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Florian
       family-names: Zill
+      orcid: "https://orcid.org/0000-0002-5177-401X"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Chaofan
       family-names: Chen
+      orcid: "https://orcid.org/0000-0003-2019-3439"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Thomas
       family-names: Nagel
+      orcid: "https://orcid.org/0000-0001-8459-4616"
       affiliation: TU Bergakademie Freiberg
     - given-names: Christian
       family-names: Silbermann
+      orcid: "https://orcid.org/0000-0002-5474-0165"
       affiliation: TU Bergakademie Freiberg
     - given-names: Yonghui
       family-names: Huang
@@ -68,18 +79,22 @@ authors:
           Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
     - given-names: Julian
       family-names: Heinze
+      oricd: "https://orcid.org/0009-0004-3449-8852"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Haibing
       family-names: Shao
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Feliks K.
       family-names: Kiszkurno
+      orcid: "https://orcid.org/0000-0003-3304-4838"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Keita
       family-names: Yoshioka
+      orcid: "https://orcid.org/0000-0001-7518-6952"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Dominik
       family-names: Kern
+      orcid: "https://orcid.org/0000-0002-1958-2982"
       affiliation: TU Bergakademie Freiberg
     - given-names: Francesco
       family-names: Parisio
@@ -110,6 +125,7 @@ authors:
       affiliation: TU Dresden
     - given-names: Sonja
       family-names: Kaiser
+      orcid: "https://orcid.org/0000-0001-8724-5024"
       affiliation: TU Bergakademie Freiberg
     - given-names: Tianyuan
       family-names: Zheng
@@ -151,6 +167,7 @@ authors:
       affiliation: BGE TECHNOLOGY GmbH
     - given-names: Vanessa
       family-names: Montoya
+      orcid: "https://orcid.org/0000-0002-4751-3597"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Falko
       family-names: Vehling
@@ -163,6 +180,7 @@ authors:
       affiliation: TU Bergakademie Freiberg
     - given-names: Aqeel
       family-names: Chaudhry
+      orcid: "https://orcid.org/0000-0003-1051-9335"
       affiliation: TU Bergakademie Freiberg
     - given-names: Carolin
       family-names: Helbig
@@ -175,6 +193,7 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Philipp
       family-names: Selzer
+      orcid: "https://orcid.org/0000-0001-9995-3634"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Reza
       family-names: Taher Dang Koo
@@ -201,6 +220,7 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Mehran
       family-names: Ghasabeh
+      orcid: "https://orcid.org/0000-0003-3970-3224"
       affiliation: TU Bergakademie Freiberg
     - given-names: Michael
       family-names: Pitz
