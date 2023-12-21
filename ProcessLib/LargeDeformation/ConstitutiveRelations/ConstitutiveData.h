@@ -52,12 +52,14 @@ template <int DisplacementDim>
 struct OutputData
 {
     StrainData<DisplacementDim> eps_data;
+    DeformationGradientData<DisplacementDim> deformation_gradient_data;
 
     static auto reflect()
     {
         using Self = OutputData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(&Self::eps_data);
+        return Reflection::reflectWithoutName(&Self::eps_data,
+                                              &Self::deformation_gradient_data);
     }
 };
 
@@ -75,7 +77,6 @@ template <int DisplacementDim>
 struct ConstitutiveTempData
 {
     PrevState<StrainData<DisplacementDim>> eps_data_prev;
-    DeformationGradientData<DisplacementDim> deformation_gradient_data;
     PrevState<DeformationGradientData<DisplacementDim>>
         deformation_gradient_data_prev;
     SolidDensity rho_SR;
