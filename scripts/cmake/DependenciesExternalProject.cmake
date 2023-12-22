@@ -159,12 +159,18 @@ if(OGS_USE_PETSC)
         endif()
 
         unset(ENV{PETSC_DIR})
+        # Remove after upgrading PETSc to > 3.18
+        file(
+            DOWNLOAD
+            http://ftp.mcs.anl.gov/pub/petsc/externalpackages/f2cblaslapack-3.4.2.q4.tar.gz
+            ${CMAKE_CURRENT_BINARY_DIR}/f2cblaslapack-3.4.2.q4.tar.gz
+        )
         BuildExternalProject(
             PETSc ${_petsc_source}
             LOG_OUTPUT_ON_FAILURE ON
             CONFIGURE_COMMAND
                 ./configure
-                --download-f2cblaslapack=1
+                --download-f2cblaslapack=${CMAKE_CURRENT_BINARY_DIR}/f2cblaslapack-3.4.2.q4.tar.gz
                 --prefix=<INSTALL_DIR>
                 --download-hypre
                 --with-debugging=$<CONFIG:Debug>
