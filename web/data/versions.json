@@ -16,7 +16,7 @@
     "eigen": "3.4.0",
     "eigen-unsupported": "9441d94dccccd5db8d64179516fdc5b53994a047",
     "vtk": "9.1.0",
-    "petsc": "3.16.1",
+    "petsc": "3.18.6",
     "qt": "5.14.2",
     "python": "3.6",
     "snakemake": "7.20.0",
@@ -75,7 +75,7 @@
     "package_file_sha256": "fe5b6489d66351dfac09622ac53d3fd987b2b7d81df01038ad0c2e316d6a3ebd"
   },
   "ext": {
-    "cache_hash": "8621cb642359944025c34dc50eafc8ee8155c710"
+    "cache_hash": "5063f1593404ca5e61365e327a09cb3a1edcea1c"
   },
   "libraries": {
     "vtk": {

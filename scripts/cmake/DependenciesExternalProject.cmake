@@ -164,9 +164,9 @@ if(OGS_USE_PETSC)
             LOG_OUTPUT_ON_FAILURE ON
             CONFIGURE_COMMAND
                 ./configure
-                --download-f2cblaslapack=1
                 --prefix=<INSTALL_DIR>
-                --download-hypre
+                --download-f2cblaslapack=1
+                --download-hypre=1
                 --with-debugging=$<CONFIG:Debug>
                 ${_configure_opts}
                 ${OGS_PETSC_CONFIG_OPTIONS}

@@ -62,7 +62,6 @@ create cpm cache:
     - cd ext
     - wget --no-verbose --output-document tfel-rliv-${TFEL_RLIV_VERSION}.zip https://github.com/thelfer/tfel/archive/refs/heads/rliv-${TFEL_RLIV_VERSION}.zip
     - wget --no-verbose --output-document petsc-v${PETSC_VERSION}.zip https://gitlab.com/petsc/petsc/-/archive/v${PETSC_VERSION}/petsc-v${PETSC_VERSION}.zip
-    - wget --no-verbose --output-document f2cblaslapack-3.4.2.q4.tar.gz http://ftp.mcs.anl.gov/pub/petsc/externalpackages/f2cblaslapack-3.4.2.q4.tar.gz
     - wget --no-verbose --output-document lis-${LIS_VERSION}.zip https://github.com/anishida/lis/archive/refs/tags/${LIS_VERSION}.zip
     - wget --no-verbose --output-document hdf5-${HDF5_VERSION}.zip https://github.com/HDFGroup/hdf5/archive/refs/tags/hdf5-${HDF5_VERSION//./_}.zip
     - wget --no-verbose --output-document vtk-v${VTK_VERSION}.zip https://github.com/Kitware/VTK/archive/refs/tags/v${VTK_VERSION}.zip
@@ -103,5 +102,4 @@ offline configure:
       rm CMakeCache.txt
       cmake ../../ogs -B . -G Ninja --preset release-petsc \
         -DOGS_DOWNLOAD_CPM_CACHE=ON \
-        -DOGS_USE_MFRONT=ON -DOGS_USE_LIS=ON -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./ext \
-        -DOGS_PETSC_CONFIG_OPTIONS="--download-f2cblaslapack=$PWD/ext/f2cblaslapack-3.4.2.q4.tar.gz"
+        -DOGS_USE_MFRONT=ON -DOGS_USE_LIS=ON -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./ext
