@@ -42,6 +42,7 @@ set(_mfront_behaviours
     MohrCoulombAbboSloanOrtho
     MohrCoulombAbboSloanUBI
     MohrCoulombAbboSloanUBIOrtho
+    NeoHooke
     PowerLawLinearCreep
     SaintVenantKirchhoff
     StandardElasticityBrick

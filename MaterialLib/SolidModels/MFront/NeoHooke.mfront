@@ -1,0 +1,50 @@
+@DSL DefaultFiniteStrainDSL;
+@Behaviour NeoHooke;
+@Author Thomas Nagel;
+@Date 04/03/2023;
+@Description{
+  Compressible Neo Hooke in Coupled Formulation.
+
+  ToDo: Add initial stress capabilities.
+}
+
+@AuxiliaryStateVariable Stensor PK2;
+
+@MaterialProperty stress young;
+young.setGlossaryName("YoungModulus");
+@MaterialProperty real nu;
+nu.setGlossaryName("PoissonRatio");
+
+@LocalVariable stress C1;
+@LocalVariable stress D2;
+@LocalVariable StrainStensor C;
+@LocalVariable StrainStensor Cinv;
+@LocalVariable real I3;
+@LocalVariable real logI3;
+@LocalVariable stress dpsi_dI3;
+@LocalVariable StrainStensor dI3_dC;
+
+@InitLocalVariables{
+  C1 = young / (4*(1.+nu));
+  D2 = C1 * nu / (2.*(1-2.*nu));
+}
+
+@Integrator{
+  C = computeRightCauchyGreenTensor(F1);
+  I3 = det(C);
+  logI3 = log(I3);
+  // ATTENTION: Requires MGIS interface to be set to 2PK
+
+  auto const dpsi_dI1 = C1;
+  dpsi_dI3 = (2.*D2*logI3-C1)/I3;
+
+  dI3_dC = computeDeterminantDerivative(C);
+  sig = 2*(dpsi_dI1 * Stensor::Id() + dpsi_dI3 * dI3_dC);
+  sig = convertSecondPiolaKirchhoffStressToCauchyStress(sig, F1);
+}
+
+@TangentOperator<DS_DEGL>{
+  const auto ddI3_ddC = computeDeterminantSecondDerivative(C);
+  const auto ddpsi_ddI3 = (2*D2 - (2*D2*logI3 - C1))/ (I3*I3);
+  Dt = 4 * (ddpsi_ddI3 * (dI3_dC^dI3_dC) + dpsi_dI3 * ddI3_ddC);
+}
