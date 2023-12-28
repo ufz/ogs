@@ -19,6 +19,7 @@
 #include "MaterialLib/PhysicalConstant.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MathLib/VectorizedTensor.h"
 #include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -210,20 +211,6 @@ public:
             dNdx, G, this->is_axially_symmetric_, N, x_coord);
 
         GradientVectorType const grad_u = G * u;
-        GradientVectorType gradient_vector_identity =
-            GradientVectorType::Zero();
-        if constexpr (DisplacementDim == 2)
-        {
-            gradient_vector_identity[0] = 1;
-            gradient_vector_identity[3] = 1;
-            gradient_vector_identity[4] = 1;
-        }
-        if constexpr (DisplacementDim == 3)
-        {
-            gradient_vector_identity[0] = 1;
-            gradient_vector_identity[4] = 1;
-            gradient_vector_identity[8] = 1;
-        }
 
         auto const B_0 =
             LinearBMatrix::computeBMatrix<DisplacementDim,
@@ -251,12 +238,13 @@ public:
 
         output_data.eps_data.eps = B * u;
 
-        CS.eval(models, t, dt, x_position,              //
-                medium,                                 //
-                T_ref,                                  //
-                grad_u + gradient_vector_identity,      //
-                G * u_prev + gradient_vector_identity,  //
-                current_state, prev_state, material_state, tmp, CD);
+        CS.eval(
+            models, t, dt, x_position,  //
+            medium,                     //
+            T_ref,                      //
+            grad_u + MathLib::VectorizedTensor::identity<DisplacementDim>(),
+            G * u_prev + MathLib::VectorizedTensor::identity<DisplacementDim>(),
+            current_state, prev_state, material_state, tmp, CD);
 
         return CD;
     }
