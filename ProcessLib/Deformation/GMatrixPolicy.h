@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "MathLib/VectorizedTensor.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 
 namespace ProcessLib
@@ -37,11 +38,10 @@ private:
 public:
     // For the 2D case the 33-component is needed (and the four entries
     // of the non-symmetric matrix); In 3d there are nine entries.
-    using GradientMatrixType = MatrixType<DisplacementDim * DisplacementDim +
-                                              (DisplacementDim == 2 ? 1 : 0),
-                                          _number_of_dof>;
+    using GradientMatrixType =
+        MatrixType<MathLib::VectorizedTensor::size(DisplacementDim),
+                   _number_of_dof>;
     using GradientVectorType =
-        VectorTypeFixedSize<DisplacementDim * DisplacementDim +
-                            (DisplacementDim == 2 ? 1 : 0)>;
+        VectorTypeFixedSize<MathLib::VectorizedTensor::size(DisplacementDim)>;
 };
 }  // namespace ProcessLib
