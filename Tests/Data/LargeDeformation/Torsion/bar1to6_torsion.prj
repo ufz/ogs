@@ -25,6 +25,8 @@
             <secondary_variables>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="deformation_gradient" output_name="deformation_gradient"/>
+                <secondary_variable internal_name="volume_ratio" output_name="volume_ratio"/>
             </secondary_variables>
         </process>
     </processes>
@@ -221,6 +223,18 @@
             <field>epsilon</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>bar1to6_torsion_ts_5_t_0.050000.vtu</regex>
+            <field>deformation_gradient</field>
+            <absolute_tolerance>5e-15</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>bar1to6_torsion_ts_5_t_0.050000.vtu</regex>
+            <field>volume_ratio</field>
+            <absolute_tolerance>5e-15</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
