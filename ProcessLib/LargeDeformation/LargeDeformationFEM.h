@@ -239,6 +239,9 @@ public:
         output_data.eps_data.eps = B * u;
         output_data.deformation_gradient_data.deformation_gradient =
             grad_u + MathLib::VectorizedTensor::identity<DisplacementDim>();
+        output_data.deformation_gradient_data.volume_ratio =
+            MathLib::VectorizedTensor::determinant(
+                output_data.deformation_gradient_data.deformation_gradient);
 
         CS.eval(
             models, t, dt, x_position,              //
