@@ -339,7 +339,8 @@ MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
         ERR("Ignoring Material IDs information (does not match number of "
             "elements).");
     }
-    return new MeshLib::Mesh(mesh_name, nodes, elements, properties);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */, properties);
 }
 
 }  // namespace FileIO

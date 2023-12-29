@@ -367,7 +367,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
 
         MeshLib::Mesh* mesh(new MeshLib::Mesh(
             BaseLib::extractBaseNameWithoutExtension(file_name), nodes,
-            elements));
+            elements, true /* compute_element_neighbors */));
 
         auto* const material_ids =
             mesh->getProperties().createNewPropertyVector<int>(

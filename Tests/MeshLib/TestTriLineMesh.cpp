@@ -42,7 +42,8 @@ public:
         l_nodes[1] = nodes[2];
         elements.push_back(new MeshLib::Line(l_nodes));
 
-        mesh = new MeshLib::Mesh("M", nodes, elements);
+        mesh = new MeshLib::Mesh("M", nodes, elements,
+                                 true /* compute_element_neighbors */);
     }
 
     ~MeshLibTriLineMesh() override

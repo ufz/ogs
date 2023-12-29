@@ -39,7 +39,8 @@ void detectHoles(MeshLib::Mesh const& mesh,
         delete elems[pos];
         elems.erase(elems.begin() + pos);
     }
-    MeshLib::Mesh mesh2("mesh2", nodes, elems);
+    MeshLib::Mesh mesh2(
+        "mesh2", nodes, elems, true /* compute_element_neighbors */);
     ASSERT_EQ(expected_n_holes,
               MeshToolsLib::MeshValidation::detectHoles(mesh2));
 };

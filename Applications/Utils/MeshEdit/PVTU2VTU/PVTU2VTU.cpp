@@ -372,7 +372,8 @@ int main(int argc, char* argv[])
     // The Node pointers of 'merged_nodes' and Element pointers of
     // 'regular_elements' are shared with 'meshes', the partitioned meshes.
     MeshLib::Mesh merged_mesh =
-        MeshLib::Mesh("pvtu_merged_mesh", merged_nodes, regular_elements);
+        MeshLib::Mesh("pvtu_merged_mesh", merged_nodes, regular_elements,
+                      true /* compute_element_neighbors */);
 
     auto const& properties = meshes[0]->getProperties();
 

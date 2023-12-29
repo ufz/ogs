@@ -186,7 +186,8 @@ std::unique_ptr<MeshLib::Mesh> GocadSGridReader::getMesh() const
 
     DBUG("Creating mesh from Gocad SGrid.");
     std::unique_ptr<MeshLib::Mesh> mesh(new MeshLib::Mesh(
-        BaseLib::extractBaseNameWithoutExtension(_fname), nodes, elements));
+        BaseLib::extractBaseNameWithoutExtension(_fname), nodes, elements,
+        true /* compute_element_neighbors */));
     addGocadPropertiesToMesh(*mesh);
     DBUG("Mesh created.");
 
@@ -785,8 +786,9 @@ std::unique_ptr<MeshLib::Mesh> GocadSGridReader::getFaceSetMesh(
     }
 
     std::string const mesh_name("FaceSet-" + std::to_string(face_set_number));
-    return std::make_unique<MeshLib::Mesh>(mesh_name, face_set_nodes,
-                                           face_set_elements);
+    return std::make_unique<MeshLib::Mesh>(
+        mesh_name, face_set_nodes, face_set_elements,
+        true /* compute_element_neighbors */);
 }
 
 void GocadSGridReader::addFaceSetQuad(

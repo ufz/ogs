@@ -193,7 +193,8 @@ MeshLib::Mesh* MeshGenerator::generateLineMesh(const BaseLib::ISubdivision& div,
         elements.push_back(new MeshLib::Line({nodes[i], nodes[i + 1]}));
     }
 
-    return new MeshLib::Mesh(mesh_name, nodes, elements);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */);
 }
 
 MeshLib::Mesh* MeshGenerator::generateRegularQuadMesh(
@@ -275,7 +276,8 @@ MeshLib::Mesh* MeshGenerator::generateRegularQuadMesh(
         }
     }
 
-    return new MeshLib::Mesh(mesh_name, nodes, elements);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */);
 }
 
 MeshLib::Mesh* MeshGenerator::generateRegularHexMesh(
@@ -382,7 +384,8 @@ MeshLib::Mesh* MeshGenerator::generateRegularHexMesh(
         }
     }
 
-    return new MeshLib::Mesh(mesh_name, nodes, elements);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */);
 }
 
 MeshLib::Mesh* MeshGenerator::generateRegularPyramidMesh(
@@ -479,7 +482,8 @@ MeshLib::Mesh* MeshGenerator::generateRegularPyramidMesh(
             }
         }
     }
-    return new MeshLib::Mesh(mesh_name, nodes, elements);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */);
 }
 
 MeshLib::Mesh* MeshGenerator::generateRegularTriMesh(
@@ -564,7 +568,8 @@ MeshLib::Mesh* MeshGenerator::generateRegularTriMesh(
         }
     }
 
-    return new MeshLib::Mesh(mesh_name, nodes, elements);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */);
 }
 
 MeshLib::Mesh* MeshGenerator::generateRegularPrismMesh(
@@ -735,7 +740,8 @@ MeshLib::Mesh* MeshGenerator::generateRegularTetMesh(
         }
     }
 
-    return new MeshLib::Mesh(mesh_name, nodes, elements);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */);
 }
 
 MeshLib::Mesh* MeshGenerator::createSurfaceMesh(
@@ -775,7 +781,8 @@ MeshLib::Mesh* MeshGenerator::createSurfaceMesh(
         }
     }
 
-    return new MeshLib::Mesh(mesh_name, nodes, sfc_eles);
+    return new MeshLib::Mesh(mesh_name, nodes, sfc_eles,
+                             true /* compute_element_neighbors */);
 }
 
 }  // namespace MeshToolsLib

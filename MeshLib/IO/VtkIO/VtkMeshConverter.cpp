@@ -229,7 +229,8 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
         elements[i] = elem;
     }
 
-    MeshLib::Mesh* mesh = new MeshLib::Mesh(mesh_name, nodes, elements);
+    MeshLib::Mesh* mesh = new MeshLib::Mesh(
+        mesh_name, nodes, elements, true /* compute_element_neighbors */);
     convertScalarArrays(*grid, *mesh);
 
     return mesh;

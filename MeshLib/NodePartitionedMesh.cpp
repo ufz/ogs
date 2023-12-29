@@ -41,7 +41,8 @@ NodePartitionedMesh::NodePartitionedMesh(
     const std::size_t n_regular_nodes,
     std::vector<std::size_t>&& n_regular_base_nodes_at_rank,
     std::vector<std::size_t>&& n_regular_high_order_nodes_at_rank)
-    : Mesh(name, nodes, elements, properties),
+    : Mesh(name, nodes, elements, true /* compute_element_neighbors */,
+           properties),
       _global_node_ids(glb_node_ids),
       _n_global_base_nodes(n_global_base_nodes),
       _n_global_nodes(n_global_nodes),

@@ -281,8 +281,9 @@ MeshLib::Mesh* MeshSurfaceExtraction::getMeshSurface(
     std::vector<std::size_t> const id_map(sfc_node_ids.begin(),
                                           sfc_node_ids.end());
 
-    MeshLib::Mesh* result(new MeshLib::Mesh(subsfc_mesh.getName() + "-Surface",
-                                            sfc_nodes, new_elements));
+    MeshLib::Mesh* result(
+        new MeshLib::Mesh(subsfc_mesh.getName() + "-Surface", sfc_nodes,
+                          new_elements, true /* compute_element_neighbors */));
 
     addBulkIDPropertiesToMesh(*result, subsfc_node_id_prop_name, id_map,
                               subsfc_element_id_prop_name, element_ids_map,
@@ -504,8 +505,9 @@ std::unique_ptr<MeshLib::Mesh> getBoundaryElementsAsMesh(
     std::vector<std::size_t> const nodes_to_bulk_nodes_id_map(
         boundary_node_ids.begin(), boundary_node_ids.end());
 
-    std::unique_ptr<MeshLib::Mesh> boundary_mesh(new MeshLib::Mesh(
-        bulk_mesh.getName() + "-boundary", boundary_nodes, new_elements));
+    std::unique_ptr<MeshLib::Mesh> boundary_mesh(
+        new MeshLib::Mesh(bulk_mesh.getName() + "-boundary", boundary_nodes,
+                          new_elements, true /* compute_element_neighbors */));
 
     addBulkIDPropertiesToMesh(
         *boundary_mesh, subsfc_node_id_prop_name, nodes_to_bulk_nodes_id_map,
