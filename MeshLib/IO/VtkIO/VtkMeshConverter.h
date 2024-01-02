@@ -42,6 +42,7 @@ public:
     /// Converts a vtkUnstructuredGrid object to a Mesh
     static MeshLib::Mesh* convertUnstructuredGrid(
         vtkUnstructuredGrid* grid,
+        bool const compute_element_neighbors = false,
         std::string const& mesh_name = "vtkUnstructuredGrid");
 
 private:

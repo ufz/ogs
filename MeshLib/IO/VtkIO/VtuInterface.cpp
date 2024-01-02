@@ -33,7 +33,6 @@
 #endif
 
 #include "BaseLib/FileTools.h"
-#include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "VtkMeshConverter.h"
@@ -52,7 +51,8 @@ VtuInterface::VtuInterface(MeshLib::Mesh const* const mesh, int const dataMode,
     }
 }
 
-MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name)
+MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name,
+                                         bool const compute_element_neighbors)
 {
     if (!BaseLib::IsFileExisting(file_name))
     {
@@ -81,11 +81,12 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name)
 
     std::string const mesh_name(
         BaseLib::extractBaseNameWithoutExtension(file_name));
-    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid,
-                                                              mesh_name);
+    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(
+        vtkGrid, compute_element_neighbors, mesh_name);
 }
 
-MeshLib::Mesh* VtuInterface::readVTKFile(std::string const& file_name)
+MeshLib::Mesh* VtuInterface::readVTKFile(std::string const& file_name,
+                                         bool const compute_element_neighbors)
 {
     if (!BaseLib::IsFileExisting(file_name))
     {
@@ -117,8 +118,8 @@ MeshLib::Mesh* VtuInterface::readVTKFile(std::string const& file_name)
 
     std::string const mesh_name(
         BaseLib::extractBaseNameWithoutExtension(file_name));
-    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtkGrid,
-                                                              mesh_name);
+    return MeshLib::VtkMeshConverter::convertUnstructuredGrid(
+        vtkGrid, compute_element_neighbors, mesh_name);
 }
 
 #ifdef USE_PETSC

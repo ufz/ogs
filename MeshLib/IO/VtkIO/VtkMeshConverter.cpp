@@ -63,7 +63,8 @@ MeshLib::Element* createElementWithSameNodeOrder(
 }  // namespace detail
 
 MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
-    vtkUnstructuredGrid* grid, std::string const& mesh_name)
+    vtkUnstructuredGrid* grid, bool const compute_element_neighbors,
+    std::string const& mesh_name)
 {
     if (!grid)
     {
@@ -229,8 +230,8 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
         elements[i] = elem;
     }
 
-    MeshLib::Mesh* mesh = new MeshLib::Mesh(
-        mesh_name, nodes, elements, true /* compute_element_neighbors */);
+    MeshLib::Mesh* mesh = new MeshLib::Mesh(mesh_name, nodes, elements,
+                                            compute_element_neighbors);
     convertScalarArrays(*grid, *mesh);
 
     return mesh;

@@ -21,6 +21,7 @@ class Mesh;
 
 namespace IO
 {
-MeshLib::Mesh* readMeshFromFile(const std::string &file_name);
+MeshLib::Mesh* readMeshFromFile(const std::string& file_name,
+                                bool const compute_element_neighbors = false);
 }
 }
