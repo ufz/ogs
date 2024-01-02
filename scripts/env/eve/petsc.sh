@@ -7,11 +7,13 @@ fi
 source $DIR/mpi.sh
 
 # TODO build these for foss2022b or remove it:
-#module load petsc/3.18.5_foss2020b
 #module load vtk/9.2.5_mpi_foss2020b
-#module load hdf5/1.14.0_mpi_foss_2020b
 
-export OGS_PETSC_CONFIG_OPTIONS="--download-fc;--download-mumps;--download-hypre;--download-scalapack"
+module load petsc/3.19.5_foss2022b
+module load hdf5/1.14.2_mpi_foss_2022b
+
+export CMAKE_PREFIX_PATH=/global/apps/petsc/3.19.5.foss_2022b
+export HDF5_ROOT=/global/apps/hdf5/1.14.2_mpi
 
 echo -e "Note: If you want to run a simulation on the cluster be aware of the"\
      "mixed CPU architecture. There are Sandy-Bridge-based nodes (orte-28,"\
