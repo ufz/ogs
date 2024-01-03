@@ -7,7 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <map>
+#include <range/v3/range/conversion.hpp>
+#include <unordered_map>
 #include <vector>
 
 #include "MeshLib/Elements/Element.h"
@@ -48,39 +49,26 @@ std::vector<std::size_t> identifySubdomainMeshNodes(
 /// \note It is recommended to include only base nodes of elements into the
 /// search \c node_ids.
 std::vector<std::size_t> findElementsInMesh(
-    MeshLib::Mesh const& mesh, std::vector<std::size_t> const& node_ids)
+    std::vector<std::size_t> const& node_ids,
+    std::vector<std::vector<std::size_t>> const& connected_element_ids_per_node)
 {
-    //
-    // Collect all element ids for all nodes.
-    //
-    std::vector<std::size_t> common_element_ids;
-    // Every node is connected to at least one element.
-    auto const nnodes = node_ids.size();
-    common_element_ids.reserve(nnodes);
-
-    for (auto const node_id : node_ids)
-    {
-        auto const& connected_elements =
-            mesh.getElementsConnectedToNode(node_id);
-        std::transform(begin(connected_elements), end(connected_elements),
-                       back_inserter(common_element_ids),
-                       [](MeshLib::Element const* const e)
-                       { return e->getID(); });
-    }
-
     //
     // Count how often an element is shared by all nodes.
     //
-    std::map<std::size_t, int> element_counts;
-    for (auto const element_id : common_element_ids)
+    std::unordered_map<std::size_t, int> element_counts(8);
+    for (auto const node_id : node_ids)
     {
-        element_counts[element_id]++;
+        for (auto const element_id : connected_element_ids_per_node[node_id])
+        {
+            element_counts[element_id]++;
+        }
     }
 
     //
     // Elements which are shared by as many nodes as the input nodes are the
     // desired elements.
     //
+    auto const nnodes = node_ids.size();
     std::vector<std::size_t> element_ids;
     for (auto const& pair : element_counts)
     {
@@ -105,6 +93,15 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
     std::vector<std::vector<std::size_t>> bulk_element_ids_map(
         subdomain_mesh.getNumberOfElements());
 
+    // For each node a vector of connected element ids of that node.
+    std::vector<std::vector<std::size_t>> connected_element_ids_per_node(
+        bulk_mesh.getNumberOfNodes());
+    for (auto const node_id : bulk_mesh.getNodes() | MeshLib::views::ids)
+    {
+        connected_element_ids_per_node[node_id] =
+            bulk_mesh.getElementsConnectedToNode(node_id) |
+            MeshLib::views::ids | ranges::to<std::vector>;
+    }
     for (auto* const e : subdomain_mesh.getElements())
     {
         std::vector<std::size_t> element_node_ids(e->getNumberOfBaseNodes());
@@ -118,8 +115,9 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
                        begin(element_node_ids_bulk),
                        [&bulk_node_ids](std::size_t const id)
                        { return bulk_node_ids[id]; });
-        std::vector<std::size_t> bulk_element_ids =
-            findElementsInMesh(bulk_mesh, element_node_ids_bulk);
+
+        std::vector<std::size_t> bulk_element_ids = findElementsInMesh(
+            element_node_ids_bulk, connected_element_ids_per_node);
 
         if (bulk_element_ids.empty())
         {
