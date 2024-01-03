@@ -25,6 +25,7 @@
 
 #include <boost/algorithm/string/erase.hpp>
 
+#include "BaseLib/DisableFPE.h"
 #include "BaseLib/Logging.h"
 
 #ifdef USE_PETSC
@@ -62,7 +63,14 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name)
     vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
         vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
     reader->SetFileName(file_name.c_str());
-    reader->Update();
+    {
+        // Reading the VTU files can trigger floating point exceptions. Because
+        // we are not debugging VTK (or other libraries) at this point, the
+        // floating point exceptions are temporarily disabled and are restored
+        // at the end of the scope.
+        [[maybe_unused]] DisableFPE disable_fpe;
+        reader->Update();
+    }
 
     vtkUnstructuredGrid* vtkGrid = reader->GetOutput();
     if (vtkGrid->GetNumberOfPoints() == 0)
