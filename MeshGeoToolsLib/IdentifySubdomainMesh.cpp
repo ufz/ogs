@@ -103,6 +103,7 @@ std::vector<std::vector<std::size_t>> identifySubdomainMeshElements(
             bulk_mesh.getElementsConnectedToNode(node_id) |
             MeshLib::views::ids | ranges::to<std::vector>;
     }
+#pragma omp parallel for
     for (auto* const e : subdomain_mesh.getElements())
     {
         std::vector<std::size_t> element_node_ids(e->getNumberOfBaseNodes());
