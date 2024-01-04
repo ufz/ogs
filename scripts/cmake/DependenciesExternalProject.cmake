@@ -368,7 +368,7 @@ set(_vtk_source_file
 )
 if(EXISTS ${_vtk_source_file})
     set(_vtk_source URL ${_vtk_source_file})
-elseif(NOT OGS_BUILD_VTK AND NOT OGS_USE_MKL)
+elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR GUIX_BUILD))
     # Typically VTK also pulls in libgomp dependency when found on system
     unset(VTK_COMPONENTS)
     foreach(opt ${VTK_OPTIONS})
