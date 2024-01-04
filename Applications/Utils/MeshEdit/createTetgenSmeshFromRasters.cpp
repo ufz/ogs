@@ -103,8 +103,8 @@ int main(int argc, char* argv[])
     }
 
     INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
-    std::unique_ptr<MeshLib::Mesh> const sfc_mesh(
-        MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
+    std::unique_ptr<MeshLib::Mesh> const sfc_mesh(MeshLib::IO::readMeshFromFile(
+        mesh_arg.getValue(), true /* compute_element_neighbors */));
     if (!sfc_mesh)
     {
         ERR("Error reading mesh '{:s}'.", mesh_arg.getValue());

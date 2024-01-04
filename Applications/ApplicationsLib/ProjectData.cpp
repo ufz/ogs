@@ -166,8 +166,8 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
         mesh_config_parameter.getValue<std::string>(), directory);
     DBUG("Reading mesh file '{:s}'.", mesh_file);
 
-    auto mesh = std::unique_ptr<MeshLib::Mesh>(
-        MeshLib::IO::readMeshFromFile(mesh_file));
+    auto mesh = std::unique_ptr<MeshLib::Mesh>(MeshLib::IO::readMeshFromFile(
+        mesh_file, true /* compute_element_neighbors */));
     if (!mesh)
     {
         OGS_FATAL("Could not read mesh from '{:s}' file. No mesh added.",

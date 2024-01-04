@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
     MPI_Init(&argc, &argv);
 #endif
 
-    std::unique_ptr<MeshLib::Mesh const> mesh(
-        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(
+        mesh_in.getValue(), true /* compute_element_neighbors */));
 
     if (!mesh)
     {

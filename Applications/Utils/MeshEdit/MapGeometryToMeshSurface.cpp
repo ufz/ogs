@@ -87,8 +87,8 @@ int main(int argc, char* argv[])
     MeshGeoToolsLib::GeoMapper geo_mapper(geometries, geo_name);
 
     // *** read mesh
-    std::unique_ptr<MeshLib::Mesh> mesh(
-        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(
+        mesh_in.getValue(), true /* compute_element_neighbors */));
 
     if (additional_insert_mapping.getValue())
     {

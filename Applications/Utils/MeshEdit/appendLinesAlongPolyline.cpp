@@ -88,8 +88,8 @@ int main(int argc, char* argv[])
     }
 
     // read a mesh
-    MeshLib::Mesh const* const mesh(
-        MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
+    MeshLib::Mesh const* const mesh(MeshLib::IO::readMeshFromFile(
+        mesh_in.getValue(), true /* compute_element_neighbors */));
     if (!mesh)
     {
         ERR("Mesh file '{:s}' not found", mesh_in.getValue());
