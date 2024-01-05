@@ -459,7 +459,7 @@ if(OGS_USE_NETCDF)
         set_target_properties(
             netCDF::netcdf PROPERTIES INTERFACE_LINK_LIBRARIES ""
         ) # fix win installed config
-        target_link_libraries(netcdf-cxx4 PUBLIC netCDF::netcdf)
+        target_link_libraries(netcdf-cxx4 netCDF::netcdf)
     else()
         find_path(NETCDF_INCLUDES_CXX NAMES netcdf)
         add_library(netcdf-cxx4 INTERFACE IMPORTED)
