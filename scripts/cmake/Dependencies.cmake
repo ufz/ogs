@@ -137,7 +137,7 @@ endif()
 
 if(OGS_USE_MFRONT)
     if(GUIX_BUILD)
-        find_package (MFrontGenericInterface REQUIRED)
+        find_package(MFrontGenericInterface REQUIRED)
     else()
         set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
         CPMAddPackage(
@@ -431,6 +431,7 @@ if(OGS_BUILD_UTILS)
                 metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32
             )
             list(APPEND DISABLE_WARNINGS_TARGETS metis GKlib)
+            install(TARGETS mpmetis)
         endif()
     else()
         find_library(METIS_LIB metis REQUIRED)
