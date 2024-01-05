@@ -70,7 +70,6 @@ computeSigmaGeom(Eigen::Matrix3d const& sigma_tensor)
 
     if constexpr (DisplacementDim == 3)
     {
-        // Assuming sigma_geom_op is defined for 3D
         return sigma_geom_op(sigma_tensor);
     }
 }

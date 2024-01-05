@@ -281,14 +281,13 @@ std::vector<GeoLib::NamedRaster> readRasters(
     BaseLib::ConfigTree const& config, std::string const& raster_directory,
     GeoLib::MinMaxPoints const& min_max_points)
 {
-    INFO("readRasters ... ");
+    INFO("readRasters ...");
     std::vector<GeoLib::NamedRaster> named_rasters;
 
     //! \ogs_file_param{prj__rasters}
     auto optional_rasters = config.getConfigSubtreeOptional("rasters");
     if (optional_rasters)
     {
-        INFO("Reading rasters.");
         //! \ogs_file_param{prj__rasters__raster}
         auto const configs = optional_rasters->getConfigSubtreeList("raster");
         std::transform(
