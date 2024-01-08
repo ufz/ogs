@@ -684,6 +684,23 @@ void checkFieldPropertyVectorSize(
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     BaseLib::RunTime run_timer;
+
+    // ToDo (TF) extract to own function
+    std::vector<std::vector<std::size_t>> partition_ids_per_element(
+        _mesh->getNumberOfElements());
+    auto const& elements = _mesh->getElements();
+    auto const number_elements = _mesh->getNumberOfElements();
+    for (std::size_t k = 0; k < number_elements; ++k)
+    {
+        auto const& element = *elements[k];
+        auto const number_of_nodes = element.getNumberOfNodes();
+        for (std::size_t i = 0; i < number_of_nodes; ++i)
+        {
+            partition_ids_per_element[k].push_back(
+                _nodes_partition_ids[element.getNode(i)->getID()]);
+        }
+    }
+
     auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
