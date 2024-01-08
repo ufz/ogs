@@ -35,6 +35,7 @@ container:
       --cvode --ccache --cpmcache --mfront --netcdf
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_TESTING=OFF'
+      --boost-sourceforge
       $DOCKER_TAG_SERIAL
       $ON_MASTER_ARGS
     # petsc container
@@ -45,6 +46,7 @@ container:
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_TESTING=OFF'
       --ompi 4.0.5 --mpi_benchmarks
+      --boost-sourceforge
       $DOCKER_TAG_PETSC
       $ON_MASTER_ARGS
     # test ogs can run in container
@@ -63,6 +65,7 @@ container:
       --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
       --gui
+      --boost-sourceforge
     ### Jupyter container ###
     # Serial image
     - >
@@ -70,6 +73,7 @@ container:
       --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:22.04_3.10'
+      --boost-sourceforge
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
     # PETSc image
@@ -79,6 +83,7 @@ container:
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
       --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:22.04_3.10'
       --mpi_no_entrypoint
+      --boost-sourceforge
       --tag $DOCKER_TAG_JUPYTER_PETSC
       $ON_MASTER_ARGS
   artifacts:
