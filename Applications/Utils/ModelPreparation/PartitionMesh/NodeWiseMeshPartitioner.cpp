@@ -117,6 +117,30 @@ std::size_t partitionLookup(
     return partition_ids[node_id(node)];
 }
 
+std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
+splitIntoBaseAndHigherOrderNodes(std::vector<MeshLib::Node*> const& nodes,
+                                 MeshLib::Mesh const& mesh)
+{
+    // Space for resulting vectors.
+    std::vector<MeshLib::Node*> base_nodes;
+    // if linear mesh, then one reallocation, no realloc for higher order
+    // elements meshes.
+    base_nodes.reserve(nodes.size() / 2);
+    std::vector<MeshLib::Node*> higher_order_nodes;
+    // if linear mesh, then wasted space, good estimate for quadratic
+    // order mesh, and realloc needed for higher order element meshes.
+    higher_order_nodes.reserve(nodes.size() / 2);
+
+    // Split the nodes into base nodes and extra nodes.
+    std::partition_copy(
+        begin(nodes), end(nodes), std::back_inserter(base_nodes),
+        std::back_inserter(higher_order_nodes),
+        [&](MeshLib::Node* const n)
+        { return isBaseNode(*n, mesh.getElementsConnectedToNode(*n)); });
+
+    return {base_nodes, higher_order_nodes};
+}
+
 /// 1 copy pointers to nodes belonging to the partition part_id into base nodes
 /// vector, and
 /// 2 collect non-linear element nodes belonging to the partition part_id in
@@ -140,25 +164,7 @@ findRegularNodesInPartition(
                        part_id;
             });
 
-    // Space for resulting vectors.
-    std::vector<MeshLib::Node*> base_nodes;
-    base_nodes.reserve(partition_nodes.size() /
-                       2);  // if linear mesh, then one reallocation, no realloc
-                            // for higher order elements meshes.
-    std::vector<MeshLib::Node*> higher_order_nodes;
-    higher_order_nodes.reserve(
-        partition_nodes.size() /
-        2);  // if linear mesh, then wasted space, good estimate for quadratic
-             // order mesh, and realloc needed for higher order element meshes.
-
-    // Split the nodes into base nodes and extra nodes.
-    std::partition_copy(
-        begin(partition_nodes), end(partition_nodes),
-        std::back_inserter(base_nodes), std::back_inserter(higher_order_nodes),
-        [&](MeshLib::Node* const n)
-        { return isBaseNode(*n, mesh.getElementsConnectedToNode(*n)); });
-
-    return {base_nodes, higher_order_nodes};
+    return splitIntoBaseAndHigherOrderNodes(partition_nodes, mesh);
 }
 
 std::ptrdiff_t numberOfRegularNodes(
