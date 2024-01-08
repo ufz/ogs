@@ -432,7 +432,7 @@ if(OGS_BUILD_UTILS)
                 metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32
             )
             list(APPEND DISABLE_WARNINGS_TARGETS metis GKlib)
-            install(TARGETS mpmetis)
+            install(TARGETS mpmetis GKlib)
         endif()
     else()
         find_library(METIS_LIB metis REQUIRED)
