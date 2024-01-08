@@ -125,7 +125,8 @@ private:
     // Renumber the global indices of nodes,
     void renumberNodeIndices();
 
-    void processPartition(std::size_t const part_id);
+    void processPartition(std::size_t const part_id,
+                          std::size_t const number_of_mesh_base_nodes);
 
     /// Renumber the bulk_node_ids property for each partition to match the
     /// partitioned bulk mesh nodes.

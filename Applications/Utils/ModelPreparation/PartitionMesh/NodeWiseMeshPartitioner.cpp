@@ -264,7 +264,8 @@ findGhostNodesInPartition(
         base_nodes, ghost_nodes};
 }
 
-void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id)
+void NodeWiseMeshPartitioner::processPartition(
+    std::size_t const part_id, std::size_t const number_of_mesh_base_nodes)
 {
     auto& partition = _partitions[part_id];
     std::vector<MeshLib::Node*> higher_order_regular_nodes;
@@ -300,7 +301,7 @@ void NodeWiseMeshPartitioner::processPartition(std::size_t const part_id)
               std::back_inserter(partition.nodes));
 
     // Set the node numbers of base and all mesh nodes.
-    partition.number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
+    partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
     partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
 }
 
@@ -682,10 +683,14 @@ void checkFieldPropertyVectorSize(
 }
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
+    BaseLib::RunTime run_timer;
+    auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
-        INFO("Processing partition: {:d}", part_id);
-        processPartition(part_id);
+        run_timer.start();
+        processPartition(part_id, number_of_mesh_base_nodes);
+        INFO("Partition {:d} processed in {:g} s", part_id,
+             run_timer.elapsed());
     }
 
     markDuplicateGhostCells(*_mesh, _partitions);
