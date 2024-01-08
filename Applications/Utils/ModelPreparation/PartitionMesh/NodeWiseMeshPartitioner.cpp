@@ -21,6 +21,7 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/RunTime.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/IO/NodeData.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -285,10 +286,14 @@ void NodeWiseMeshPartitioner::processPartition(
                                 _nodes_partition_ids);
     std::vector<MeshLib::Node*> base_ghost_nodes;
     std::vector<MeshLib::Node*> higher_order_ghost_nodes;
+    BaseLib::RunTime run_timer;
+    run_timer.start();
     std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
         findGhostNodesInPartition(part_id, _mesh->getNodes(),
                                   partition.ghost_elements,
                                   _nodes_partition_ids, *_mesh);
+    INFO("processPartition(): findGhostNodesInPartition took: {:g} s.",
+         run_timer.elapsed());
 
     std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
               std::back_inserter(partition.nodes));
@@ -301,8 +306,13 @@ void NodeWiseMeshPartitioner::processPartition(
               std::back_inserter(partition.nodes));
 
     // Set the node numbers of base and all mesh nodes.
+    run_timer.start();
     partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
     partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
+    INFO(
+        "processPartition(): computeNumberOfBaseNodes() / getNumberOfNodes() "
+        "took: {:g} s.",
+        run_timer.elapsed());
 }
 
 /// Copies the properties from global property vector \c pv to the
@@ -686,6 +696,7 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     BaseLib::RunTime run_timer;
 
     // ToDo (TF) extract to own function
+    run_timer.start();
     std::vector<std::vector<std::size_t>> partition_ids_per_element(
         _mesh->getNumberOfElements());
     auto const& elements = _mesh->getElements();
@@ -700,6 +711,7 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
                 _nodes_partition_ids[element.getNode(i)->getID()]);
         }
     }
+    INFO("Partition IDs per element computed in {:g} s", run_timer.elapsed());
 
     auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
