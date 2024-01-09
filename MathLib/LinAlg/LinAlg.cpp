@@ -230,8 +230,9 @@ template <>
 void componentwiseDivide(EigenVector& w, EigenVector const& x,
                          EigenVector const& y)
 {
-    w.getRawVector().noalias() =
-        x.getRawVector().cwiseQuotient(y.getRawVector());
+    w.getRawVector().noalias() = x.getRawVector().binaryExpr(
+        y.getRawVector(),
+        [](auto const x, auto const y) { return y == 0 ? 0.0 : x / y; });
 }
 
 // Explicit specialization
