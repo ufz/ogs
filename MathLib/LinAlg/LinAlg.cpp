@@ -70,6 +70,13 @@ void axpby(PETScVector& y, PetscScalar const a, PetscScalar const b,
 
 // Explicit specialization
 // Computes w = x/y componentwise.
+// \note  that VecPointwiseDivide avoids to divide by values that are
+// identically zero such as
+//   for (int i=0; i<n; i++)
+//   {
+//      w[i] = y[i] == 0.0 ? 0.0 : x[i] / y[i];
+//   }
+//
 template <>
 void componentwiseDivide(PETScVector& w, PETScVector const& x,
                          PETScVector const& y)
