@@ -34,13 +34,10 @@ struct IntegrationPointData final
         // Initialize current time step values
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-        sigma_eff.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
-        sigma_eff_prev.resize(kelvin_vector_size);
     }
 
-    typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
@@ -159,7 +156,6 @@ struct IntegrationPointData final
     void pushBackState()
     {
         eps_m_prev = eps_m;
-        sigma_eff_prev = sigma_eff;
 
         rho_G_h_G_prev = rho_G_h_G;
         rho_L_h_L_prev = rho_L_h_L;
@@ -173,10 +169,13 @@ struct IntegrationPointData final
         rho_u_eff_prev = rho_u_eff;
     }
 
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+    std::tuple<typename BMatricesType::KelvinVectorType,
+               typename BMatricesType::KelvinMatrixType>
+    updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray& variable_array, double const t,
         ParameterLib::SpatialPosition const& x_position, double const dt,
         double const T_prev,
+        typename BMatricesType::KelvinVectorType const& sigma_eff_prev,
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             solid_material,
         std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
@@ -198,9 +197,10 @@ struct IntegrationPointData final
             OGS_FATAL("Computation of local constitutive relation failed.");
 
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
+        typename BMatricesType::KelvinVectorType sigma_eff;
         std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
 
-        return C;
+        return {sigma_eff, C};
     }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

@@ -13,6 +13,7 @@
 #include "Bishops.h"
 #include "ElasticTangentStiffnessData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
@@ -30,13 +31,15 @@ struct StatefulData
 {
     SaturationData S_L_data;
     SwellingDataStateful<DisplacementDim> swelling_data;
+    ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>
+        eff_stress_data;
 
     static auto reflect()
     {
         using Self = StatefulData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(&Self::S_L_data,
-                                              &Self::swelling_data);
+        return Reflection::reflectWithoutName(
+            &Self::S_L_data, &Self::swelling_data, &Self::eff_stress_data);
     }
 };
 
@@ -45,12 +48,15 @@ struct StatefulDataPrev
 {
     PrevState<SaturationData> S_L_data;
     PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
+    PrevState<ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>>
+        eff_stress_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
     {
         S_L_data = state.S_L_data;
         swelling_data = state.swelling_data;
+        eff_stress_data = state.eff_stress_data;
 
         return *this;
     }

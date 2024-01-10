@@ -17,6 +17,7 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/Reflection/ReflectionSetIPData.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "TH2MProcessData.h"
 
@@ -53,20 +54,17 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         {
             material_states_.emplace_back(
                 solid_material_.createMaterialStateVariables());
+
+            // Set initial stress field to zero. Might be overwritten by
+            // integration point data or initial stress.
+            current_states_[ip].eff_stress_data.sigma =
+                KelvinVector<DisplacementDim>::Zero();
         }
     }
 
     virtual std::size_t setIPDataInitialConditions(
         std::string_view name, double const* values,
         int const integration_order) = 0;
-
-    virtual std::vector<double> getSigma() const = 0;
-
-    virtual std::vector<double> const& getIntPtSigma(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtDarcyVelocityGas(
         const double t,

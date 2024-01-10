@@ -202,7 +202,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // For stress dependent permeability.
         {
             auto const sigma_total =
-                (_ip_data[ip].sigma_eff -
+                (this->current_states_[ip].eff_stress_data.sigma -
                  ip_cv.biot_data() * (pGR - ip_cv.chi_S_L.chi_S_L * pCap) *
                      Invariants::identity2)
                     .eval();
@@ -312,9 +312,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        ip_cd.s_mech_data.stiffness_tensor = ip_data.updateConstitutiveRelation(
-            vars, t, pos, dt, T_prev, this->solid_material_,
-            this->material_states_[ip].material_state_variables);
+        std::tie(current_state.eff_stress_data.sigma,
+                 ip_cd.s_mech_data.stiffness_tensor) =
+            ip_data.updateConstitutiveRelation(
+                vars, t, pos, dt, T_prev, prev_state.eff_stress_data->sigma,
+                this->solid_material_,
+                this->material_states_[ip].material_state_variables);
 
         // constitutive model object as specified in process creation
         auto& ptm = *this->process_data_.phase_transition_model_;
@@ -844,18 +847,13 @@ std::size_t TH2MLocalAssembler<
             this->element_.getID());
     }
 
-    if (name == "sigma")
+    if (name == "sigma" && this->process_data_.initial_stress != nullptr)
     {
-        if (this->process_data_.initial_stress != nullptr)
-        {
-            OGS_FATAL(
-                "Setting initial conditions for stress from integration "
-                "point data and from a parameter '{:s}' is not possible "
-                "simultaneously.",
-                this->process_data_.initial_stress->name);
-        }
-        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_eff);
+        OGS_FATAL(
+            "Setting initial conditions for stress from integration "
+            "point data and from a parameter '{:s}' is not possible "
+            "simultaneously.",
+            this->process_data_.initial_stress->name);
     }
 
     if (name.starts_with("material_state_variable_"))
@@ -1404,8 +1402,9 @@ void TH2MLocalAssembler<
 
         KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
 
-        fU.noalias() -=
-            (BuT * ip.sigma_eff - N_u_op(Nu).transpose() * rho * b) * w;
+        fU.noalias() -= (BuT * current_state.eff_stress_data.sigma -
+                         N_u_op(Nu).transpose() * rho * b) *
+                        w;
 
         if (this->process_data_.apply_mass_lumping)
         {
@@ -2118,8 +2117,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() += BuT * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
 
         // fU_1
-        fU.noalias() -=
-            (BuT * ip.sigma_eff - N_u_op(Nu).transpose() * rho * b) * w;
+        fU.noalias() -= (BuT * current_state.eff_stress_data.sigma -
+                         N_u_op(Nu).transpose() * rho * b) *
+                        w;
 
         // KuT
         local_Jac

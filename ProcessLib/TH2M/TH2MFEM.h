@@ -134,7 +134,7 @@ private:
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress != nullptr)
             {
-                ip_data.sigma_eff =
+                this->current_states_[ip].eff_stress_data.sigma.noalias() =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
@@ -149,6 +149,11 @@ private:
 
             ip_data.pushBackState();
             material_state.pushBackState();
+        }
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            this->prev_states_[ip] = this->current_states_[ip];
         }
     }
 
@@ -226,38 +231,6 @@ private:
         double const t, double const dt,
         ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
             models);
-
-    std::size_t setSigma(double const* values)
-    {
-        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_eff);
-    }
-
-    // TODO (naumov) This method is same as getIntPtSigma but for arguments and
-    // the ordering of the cache_mat.
-    // There should be only one.
-    std::vector<double> getSigma() const override
-    {
-        {
-            constexpr int kelvin_vector_size =
-                MathLib::KelvinVector::kelvin_vector_dimensions(
-                    DisplacementDim);
-
-            return transposeInPlace<kelvin_vector_size>(
-                [this](std::vector<double>& values)
-                { return getIntPtSigma(0, {}, {}, values); });
-        }
-    }
-
-    std::vector<double> const& getIntPtSigma(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma_eff, cache);
-    }
 
     // TODO: Here is some refactoring potential. All secondary variables could
     // be stored in some container to avoid defining one method for each
