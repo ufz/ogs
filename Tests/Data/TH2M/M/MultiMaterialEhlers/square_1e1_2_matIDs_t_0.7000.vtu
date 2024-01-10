@@ -4,7 +4,6 @@
     <FieldData>
       <DataArray type="Int8" Name="IntegrationPointMetaData" NumberOfTuples="1002" format="appended" RangeMin="34"                   RangeMax="125"                  offset="0"                   />
       <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="25" format="appended" RangeMin="45"                   RangeMax="121"                  offset="312"                 />
-      <DataArray type="Float64" Name="epsilon_ip" NumberOfComponents="4" NumberOfTuples="48" format="appended" RangeMin="0.00049497474683"     RangeMax="0.00049497474683"     offset="400"                 />
       <DataArray type="Float64" Name="material_state_variable_ElasticStrain_ip" NumberOfComponents="4" NumberOfTuples="24" format="appended" RangeMin="0.00043074710448"     RangeMax="0.00043074710448"     offset="1000"                />
       <DataArray type="Float64" Name="material_state_variable_EquivalentPlasticStrain_ip" NumberOfTuples="24" format="appended" RangeMin="9.19908e-05"          RangeMax="9.19908e-05"          offset="1576"                />
       <DataArray type="Float64" Name="material_state_variable_damage.kappa_d_ip" NumberOfTuples="24" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1728"                />

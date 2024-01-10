@@ -947,6 +947,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
 
+    auto const displacement =
+        local_x.template segment<displacement_size>(displacement_index);
+
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium.phase("Solid");
@@ -961,6 +964,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
+        auto const& Nu = ip_data.N_u;
+        auto const& gradNu = ip_data.dNdx_u;
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, Nu);
         ParameterLib::SpatialPosition const pos{
             std::nullopt, _element.getID(), ip,
             MathLib::Point3d(
@@ -974,7 +983,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const T = NT.dot(temperature);
         vars.temperature = T;
 
+        auto const Bu =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                gradNu, Nu, x_coord, _is_axially_symmetric);
+
         auto& eps = ip_data.eps;
+        eps.noalias() = Bu * displacement;
 
         // Set volumetric strain rate for the general case without swelling.
         vars.volumetric_strain = Invariants::trace(eps);
