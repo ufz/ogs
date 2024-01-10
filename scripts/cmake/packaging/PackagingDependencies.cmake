@@ -13,6 +13,7 @@ install(CODE "set(CMAKE_BUILD_RPATH \"${CMAKE_BUILD_RPATH}\")")
 install(CODE "set(INSTALL_DIR \"${INSTALL_DIR}\")")
 install(CODE "set(CMAKE_INSTALL_LIBDIR \"${CMAKE_INSTALL_LIBDIR}\")")
 install(CODE "set(_rpath \"${_rpath}\")")
+file(TO_CMAKE_PATH "$ENV{MKLROOT}" MKL_ROOT_DIR)
 install(CODE "set(MKL_ROOT_DIR \"${MKL_ROOT_DIR}\")")
 install(
     CODE "set(OGS_INSTALL_DEPENDENCIES_PRE_EXCLUDES \"${OGS_INSTALL_DEPENDENCIES_PRE_EXCLUDES}\")"
@@ -31,6 +32,7 @@ install(
     DIRECTORIES
         ${MKL_ROOT_DIR}/redist/intel64
         ${MKL_ROOT_DIR}/../../tbb/latest/redist/intel64/vc_mt
+        ${MKL_ROOT_DIR}/../../compiler/latest/windows/redist/intel64_win/compiler
         ${CMAKE_BUILD_RPATH}
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
