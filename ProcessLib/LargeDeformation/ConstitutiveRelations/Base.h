@@ -132,13 +132,17 @@ struct DeformationGradientData
     // TODO Move initialization to the local assembler.
     MaterialPropertyLib::Tensor<DisplacementDim> deformation_gradient =
         MaterialPropertyLib::Tensor<DisplacementDim>::Zero();
+    double volume_ratio = 0;
 
     static auto reflect()
     {
         using Self = DeformationGradientData<DisplacementDim>;
 
-        return ProcessLib::Reflection::reflectWithName(
-            "deformation_gradient", &Self::deformation_gradient);
+        return std::tuple{
+            ProcessLib::Reflection::makeReflectionData(
+                "deformation_gradient", &Self::deformation_gradient),
+            ProcessLib::Reflection::makeReflectionData("volume_ratio",
+                                                       &Self::volume_ratio)};
     }
 };
 

@@ -20,7 +20,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     ConstitutiveModels<DisplacementDim>& models, double const t,
     double const dt, ParameterLib::SpatialPosition const& x_position,
     MaterialPropertyLib::Medium const& medium, double const T_ref,
-    GradientVectorType const& deformation_gradient,
+    DeformationGradientData<DisplacementDim> const& deformation_gradient_data,
     GradientVectorType const& deformation_gradient_prev,
     StatefulData<DisplacementDim>& state,
     StatefulDataPrev<DisplacementDim> const& prev_state,
@@ -30,8 +30,6 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
 
-    auto& deformation_gradient_data = tmp.deformation_gradient_data;
-    deformation_gradient_data.deformation_gradient = deformation_gradient;
     auto& deformation_gradient_data_prev = tmp.deformation_gradient_data_prev;
     deformation_gradient_data_prev->deformation_gradient =
         deformation_gradient_prev;

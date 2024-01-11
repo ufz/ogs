@@ -27,7 +27,8 @@ struct ConstitutiveSetting
     void eval(ConstitutiveModels<DisplacementDim>& models, double const t,
               double const dt, ParameterLib::SpatialPosition const& x_position,
               MaterialPropertyLib::Medium const& medium, double const T_ref,
-              GradientVectorType const& deformation_gradient,
+              DeformationGradientData<DisplacementDim> const&
+                  deformation_gradient_data,
               GradientVectorType const& deformation_gradient_prev,
               StatefulData<DisplacementDim>& state,
               StatefulDataPrev<DisplacementDim> const& prev_state,
