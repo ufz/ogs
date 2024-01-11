@@ -33,7 +33,8 @@
 
 namespace
 {
-MeshLib::Mesh* readMeshFromFileSerial(const std::string& file_name)
+MeshLib::Mesh* readMeshFromFileSerial(const std::string& file_name,
+                                      bool const compute_element_neighbors)
 {
     if (BaseLib::hasFileExtension(".msh", file_name))
     {
@@ -43,12 +44,14 @@ MeshLib::Mesh* readMeshFromFileSerial(const std::string& file_name)
 
     if (BaseLib::hasFileExtension(".vtu", file_name))
     {
-        return MeshLib::IO::VtuInterface::readVTUFile(file_name);
+        return MeshLib::IO::VtuInterface::readVTUFile(
+            file_name, compute_element_neighbors);
     }
 
     if (BaseLib::hasFileExtension(".vtk", file_name))
     {
-        return MeshLib::IO::VtuInterface::readVTKFile(file_name);
+        return MeshLib::IO::VtuInterface::readVTKFile(
+            file_name, compute_element_neighbors);
     }
 
     ERR("readMeshFromFile(): Unknown mesh file format in file {:s}.",
@@ -61,7 +64,8 @@ namespace MeshLib
 {
 namespace IO
 {
-MeshLib::Mesh* readMeshFromFile(const std::string& file_name)
+MeshLib::Mesh* readMeshFromFile(const std::string& file_name,
+                                bool const compute_element_neighbors)
 {
 #ifdef USE_PETSC
     int mpi_init;
@@ -79,13 +83,14 @@ MeshLib::Mesh* readMeshFromFile(const std::string& file_name)
         }
         if (world_size == 1)
         {
-            std::unique_ptr<Mesh> mesh{readMeshFromFileSerial(file_name)};
+            std::unique_ptr<Mesh> mesh{
+                readMeshFromFileSerial(file_name, compute_element_neighbors)};
             return new MeshLib::NodePartitionedMesh(*mesh);
         }
         return nullptr;
     }
 #endif
-    return readMeshFromFileSerial(file_name);
+    return readMeshFromFileSerial(file_name, compute_element_neighbors);
 }
 
 }  // end namespace IO

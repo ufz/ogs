@@ -51,12 +51,15 @@ public:
     /// @param name          Mesh name.
     /// @param nodes         A vector of mesh nodes.
     /// @param elements      An array of mesh elements.
+    /// @param compute_element_neighbors switch to compute element neighbors or
+    /// not
     /// @param properties    Mesh properties.
     Mesh(std::string name,
          std::vector<Node*>
              nodes,
          std::vector<Element*>
              elements,
+         bool const compute_element_neighbors = false,
          Properties const& properties = Properties());
 
     /// Copy constructor
@@ -158,6 +161,7 @@ protected:
     std::vector<std::vector<Element const*>> _elements_connected_to_nodes;
 
     bool _is_axially_symmetric = false;
+    bool const _compute_element_neighbors;
 }; /* class */
 
 /// Computes the element-connectivity of nodes. Two nodes i and j are

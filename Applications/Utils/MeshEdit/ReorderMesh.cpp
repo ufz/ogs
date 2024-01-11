@@ -207,6 +207,7 @@ int main(int argc, char* argv[])
     // is implemented are copied
     MeshLib::Mesh reordered_mesh{
         "reordered_mesh", reordered_nodes, reordered_elements,
+        false /* compute_element_neighbors */,
         original_properties.excludeCopyProperties(exclude_property_vectors)};
     auto& properties = reordered_mesh.getProperties();
 

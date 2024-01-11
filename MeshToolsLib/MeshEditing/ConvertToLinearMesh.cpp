@@ -115,6 +115,7 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
 
     auto new_mesh = std::make_unique<MeshLib::Mesh>(
         new_mesh_name, new_mesh_nodes, vec_new_eles,
+        true /* compute_element_neighbors */,
         mesh.getProperties().excludeCopyProperties(
             std::vector<MeshLib::MeshItemType>(1,
                                                MeshLib::MeshItemType::Node)));

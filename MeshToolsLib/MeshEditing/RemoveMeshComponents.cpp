@@ -88,6 +88,7 @@ MeshLib::Mesh* removeElements(
     {
         MeshLib::Mesh* new_mesh =
             new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems,
+                              true /* compute_element_neighbors */,
                               mesh.getProperties().excludeCopyProperties(
                                   removed_element_ids, removed_node_ids));
         return new_mesh;
@@ -167,6 +168,7 @@ MeshLib::Mesh* removeNodes(const MeshLib::Mesh& mesh,
     {
         MeshLib::Mesh* new_mesh =
             new MeshLib::Mesh(new_mesh_name, new_nodes, new_elems,
+                              true /* compute_element_neighbors */,
                               mesh.getProperties().excludeCopyProperties(
                                   removed_element_ids, del_nodes_idx));
         return new_mesh;

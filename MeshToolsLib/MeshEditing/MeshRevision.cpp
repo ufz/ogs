@@ -1083,6 +1083,7 @@ MeshLib::Mesh* MeshRevision::simplifyMesh(const std::string& new_mesh_name,
     if (!new_elements.empty())
     {
         return new MeshLib::Mesh(new_mesh_name, new_nodes, new_elements,
+                                 true /* compute_element_neighbors */,
                                  new_properties);
     }
 

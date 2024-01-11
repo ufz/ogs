@@ -252,7 +252,8 @@ int main(int argc, char* argv[])
         }
     }
 
-    MeshLib::Mesh const result("result", new_nodes, new_elems, props);
+    MeshLib::Mesh const result("result", new_nodes, new_elems,
+                               true /* compute_element_neighbors */, props);
     MeshLib::IO::VtuInterface vtu(&result);
     vtu.writeToFile(output_name);
 #ifdef USE_PETSC

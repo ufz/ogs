@@ -73,8 +73,9 @@ std::unique_ptr<MeshLib::Mesh> createFlippedMesh(MeshLib::Mesh const& mesh)
             createFlippedElement(*elems[i], new_nodes).release());
     }
 
-    return std::make_unique<MeshLib::Mesh>("FlippedElementMesh", new_nodes,
-                                           new_elems, mesh.getProperties());
+    return std::make_unique<MeshLib::Mesh>(
+        "FlippedElementMesh", new_nodes, new_elems,
+        true /* compute_element_neighbors */, mesh.getProperties());
 }
 
 }  // namespace MeshToolsLib

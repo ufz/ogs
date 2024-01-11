@@ -44,12 +44,16 @@ public:
 
     /// Read an unstructured grid from a VTU file.
     /// \return The converted mesh or a nullptr if reading failed
-    static MeshLib::Mesh* readVTUFile(std::string const &file_name);
+    static MeshLib::Mesh* readVTUFile(
+        std::string const& file_name,
+        bool const compute_element_neighbors = false);
 
     /// Read an unstructured grid from a legacy VTK file.
     /// Other data structures such as PolyData are ignored.
     /// \return The converted mesh or a nullptr if reading failed
-    static MeshLib::Mesh* readVTKFile(std::string const& file_name);
+    static MeshLib::Mesh* readVTKFile(
+        std::string const& file_name,
+        bool const compute_element_neighbors = false);
 
     /// Writes the given mesh to file.
     /// \return True on success, false on error

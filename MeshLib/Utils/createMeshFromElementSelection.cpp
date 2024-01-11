@@ -76,7 +76,8 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
         nodes_map | ranges::views::keys | ranges::to<std::vector>;
 
     auto mesh = std::make_unique<MeshLib::Mesh>(
-        std::move(mesh_name), std::move(element_nodes), std::move(elements));
+        std::move(mesh_name), std::move(element_nodes), std::move(elements),
+        true /* compute_element_neighbors */);
     assert(mesh != nullptr);
 
     addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Cell),

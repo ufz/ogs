@@ -569,7 +569,9 @@ MeshLib::Mesh* createMesh(std::ifstream& in, DataType type,
             std::for_each(nodes.begin(), nodes.end(),
                           [](MeshLib::Node* n) { (*n)[2] *= -1; });
         }
-        return new MeshLib::Mesh(mesh_name, nodes, elems, mesh_prop);
+        return new MeshLib::Mesh(mesh_name, nodes, elems,
+                                 true /* compute_element_neighbors */,
+                                 mesh_prop);
     }
     ERR("Error parsing {:s} {:s}.", dataType2ShortString(type), mesh_name);
     BaseLib::cleanupVectorElements(nodes, elems);

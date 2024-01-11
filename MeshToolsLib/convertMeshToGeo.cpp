@@ -170,7 +170,8 @@ MeshLib::Mesh* convertSurfaceToMesh(const GeoLib::Surface& sfc,
             nodes.push_back(tri_nodes[j]);
         }
     }
-    MeshLib::Mesh mesh_with_duplicated_nodes(mesh_name, nodes, elements);
+    MeshLib::Mesh mesh_with_duplicated_nodes(
+        mesh_name, nodes, elements, true /* compute_element_neighbors */);
 
     // remove duplicated nodes
     MeshToolsLib::MeshRevision rev(mesh_with_duplicated_nodes);

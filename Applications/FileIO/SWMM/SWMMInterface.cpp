@@ -836,7 +836,9 @@ bool SwmmInterface::readSwmmInputToLineMesh()
         ERR("Size of max depth array does not fit number of elements. Skipping "
             "array.");
 
-    _mesh.reset(new MeshLib::Mesh(_base_name, nodes, elements, props));
+    _mesh.reset(new MeshLib::Mesh(_base_name, nodes, elements,
+                                  false /* compute_element_neighbors */,
+                                  props));
     return true;
 }
 

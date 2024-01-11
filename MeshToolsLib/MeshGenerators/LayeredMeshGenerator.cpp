@@ -89,7 +89,11 @@ std::unique_ptr<MeshLib::Mesh> LayeredMeshGenerator::getMesh(
     }
 
     std::unique_ptr<MeshLib::Mesh> result(
-        new MeshLib::Mesh(mesh_name, _nodes, _elements, properties));
+        new MeshLib::Mesh(mesh_name,
+                          _nodes,
+                          _elements,
+                          true /* compute_element_neighbors */,
+                          properties));
     MeshLib::NodeSearch ns(*result);
     if (ns.searchUnused() > 0)
     {

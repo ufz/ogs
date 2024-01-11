@@ -269,7 +269,8 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh(std::string const& nodes_fname,
 
     const std::string mesh_name(
         BaseLib::extractBaseNameWithoutExtension(nodes_fname));
-    return new MeshLib::Mesh(mesh_name, nodes, elements, properties);
+    return new MeshLib::Mesh(mesh_name, nodes, elements,
+                             true /* compute_element_neighbors */, properties);
 }
 
 bool TetGenInterface::readNodesFromStream(std::ifstream& ins,

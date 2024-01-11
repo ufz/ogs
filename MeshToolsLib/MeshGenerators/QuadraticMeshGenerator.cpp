@@ -245,6 +245,7 @@ std::unique_ptr<MeshLib::Mesh> createQuadraticOrderMesh(
 
     return std::make_unique<MeshLib::Mesh>(
         linear_mesh.getName(), quadratic_mesh_nodes, quadratic_elements,
+        true /* compute_element_neighbors */,
         linear_mesh.getProperties().excludeCopyProperties(
             std::vector<MeshLib::MeshItemType>(1,
                                                MeshLib::MeshItemType::Node)));

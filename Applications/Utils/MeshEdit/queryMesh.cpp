@@ -60,7 +60,8 @@ int main(int argc, char* argv[])
 
     // read the mesh file
     auto const mesh =
-        std::unique_ptr<MeshLib::Mesh>(MeshLib::IO::readMeshFromFile(filename));
+        std::unique_ptr<MeshLib::Mesh>(MeshLib::IO::readMeshFromFile(
+            filename, true /* compute_element_neighbors */));
     if (!mesh)
     {
 #ifdef USE_PETSC

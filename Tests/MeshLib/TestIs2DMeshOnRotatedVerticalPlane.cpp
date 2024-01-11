@@ -35,8 +35,8 @@ void testAsNoVerticalPlaneMesh(
                                       element_nodes.end());
 
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
-    meshes.push_back(
-        std::make_unique<MeshLib::Mesh>("a_mesh", nodes, elements));
+    meshes.push_back(std::make_unique<MeshLib::Mesh>(
+        "a_mesh", nodes, elements, true /* compute_element_neighbors */));
 
     MeshLib::setMeshSpaceDimension(meshes);
     ASSERT_EQ(expected_space_dimension, elements[0]->space_dimension_);
@@ -60,8 +60,8 @@ void testAsVerticalPlaneMesh(const unsigned expected_space_dimension,
                                       element_nodes.end());
 
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
-    meshes.push_back(
-        std::make_unique<MeshLib::Mesh>("a_mesh", nodes, elements));
+    meshes.push_back(std::make_unique<MeshLib::Mesh>(
+        "a_mesh", nodes, elements, true /* compute_element_neighbors */));
 
     MeshLib::setMeshSpaceDimension(meshes);
 

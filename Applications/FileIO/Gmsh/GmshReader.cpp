@@ -373,7 +373,8 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
     }
 
     MeshLib::Mesh* mesh(new MeshLib::Mesh(
-        BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements));
+        BaseLib::extractBaseNameWithoutExtension(fname), nodes, elements,
+        true /* compute_element_neighbors */));
 
     auto* const material_ids =
         mesh->getProperties().createNewPropertyVector<int>(

@@ -164,7 +164,8 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
             subsfc_nodes, *sfc_elements[k], *node_id_pv, subsfc_sfc_id_map));
     }
 
-    auto new_mesh = new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements);
+    auto new_mesh = new MeshLib::Mesh(name, subsfc_nodes, subsfc_elements,
+                                      true /* compute_element_neighbors */);
 
     if (!mesh.getProperties().existsPropertyVector<int>("MaterialIDs"))
     {

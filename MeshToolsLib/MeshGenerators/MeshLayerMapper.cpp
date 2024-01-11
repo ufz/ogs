@@ -140,7 +140,8 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(
             materials->push_back(mat_id);
         }
     }
-    return new MeshLib::Mesh(mesh_name, new_nodes, new_elems, properties);
+    return new MeshLib::Mesh(mesh_name, new_nodes, new_elems,
+                             true /* compute_element_neighbors */, properties);
 }
 
 bool MeshLayerMapper::createRasterLayers(
