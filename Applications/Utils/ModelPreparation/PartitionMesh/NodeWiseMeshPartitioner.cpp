@@ -691,27 +691,54 @@ void checkFieldPropertyVectorSize(
         }
     }
 }
+
+std::vector<std::vector<std::size_t>> computePartitionIDPerElement(
+    std::vector<std::size_t> const& node_partition_map,
+    std::vector<MeshLib::Element*> const& elements,
+    std::vector<std::size_t> const* bulk_node_ids)
+{
+    std::vector<std::vector<std::size_t>> partition_ids_per_element(
+        elements.size());
+    auto const number_elements = elements.size();
+    if (bulk_node_ids == nullptr)
+    {
+        for (std::size_t k = 0; k < number_elements; ++k)
+        {
+            auto const& element = *elements[k];
+            auto const number_of_nodes = element.getNumberOfNodes();
+            for (std::size_t i = 0; i < number_of_nodes; ++i)
+            {
+                partition_ids_per_element[k].push_back(
+                    node_partition_map[element.getNode(i)->getID()]);
+            }
+        }
+    }
+    else
+    {
+        for (std::size_t k = 0; k < number_elements; ++k)
+        {
+            auto const& element = *elements[k];
+            auto const number_of_nodes = element.getNumberOfNodes();
+            for (std::size_t i = 0; i < number_of_nodes; ++i)
+            {
+                partition_ids_per_element[k].push_back(node_partition_map[(
+                    *bulk_node_ids)[element.getNode(i)->getID()]]);
+            }
+        }
+    }
+
+    return partition_ids_per_element;
+}
+
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     BaseLib::RunTime run_timer;
 
-    // ToDo (TF) extract to own function
     run_timer.start();
-    std::vector<std::vector<std::size_t>> partition_ids_per_element(
-        _mesh->getNumberOfElements());
-    auto const& elements = _mesh->getElements();
-    auto const number_elements = _mesh->getNumberOfElements();
-    for (std::size_t k = 0; k < number_elements; ++k)
-    {
-        auto const& element = *elements[k];
-        auto const number_of_nodes = element.getNumberOfNodes();
-        for (std::size_t i = 0; i < number_of_nodes; ++i)
-        {
-            partition_ids_per_element[k].push_back(
-                _nodes_partition_ids[element.getNode(i)->getID()]);
-        }
-    }
-    INFO("Partition IDs per element computed in {:g} s", run_timer.elapsed());
+    auto const partition_ids_per_element = computePartitionIDPerElement(
+        _nodes_partition_ids, _mesh->getElements());
+    INFO("partitionByMETIS(): Partition IDs per element computed in {:g} s",
+         run_timer.elapsed());
 
     auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
