@@ -310,8 +310,9 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "temperature_interpolated",
             MeshLib::MeshItemType::Node, 1);
 
+    bool const remove_name_suffix = true;
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
-                               local_assemblers_);
+                               local_assemblers_, remove_name_suffix);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
