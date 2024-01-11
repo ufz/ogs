@@ -32,12 +32,36 @@ HeatConductionProcess::HeatConductionProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     HeatConductionProcessData&& process_data,
-    SecondaryVariableCollection&& secondary_variables)
+    SecondaryVariableCollection&& secondary_variables,
+    bool const is_linear,
+    bool const ls_compute_only_upon_timestep_change)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
-      _process_data(std::move(process_data))
+      _process_data(std::move(process_data)),
+      _asm_mat_cache{is_linear, true /*use_monolithic_scheme*/},
+      _ls_compute_only_upon_timestep_change{
+          ls_compute_only_upon_timestep_change}
 {
+    if (ls_compute_only_upon_timestep_change)
+    {
+        // TODO move this feature to some common location for all processes.
+        if (!is_linear)
+        {
+            OGS_FATAL(
+                "Using the linear solver compute() method only upon timestep "
+                "change only makes sense for linear model equations.");
+        }
+
+        WARN(
+            "You specified that the HeatConduction linear solver will do "
+            "the compute() step only upon timestep change. This is an expert "
+            "option. It is your responsibility to ensure that "
+            "the conditions for the correct use of this feature are met! "
+            "Otherwise OGS might compute garbage without being recognized. "
+            "There is no safety net!");
+    }
+
     _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 }
@@ -72,11 +96,10 @@ void HeatConductionProcess::assembleConcreteProcess(
 
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
-        b);
+
+    _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_table,
+                            _global_assembler, _local_assemblers,
+                            pv.getActiveElementIDs());
 
     MathLib::finalizeMatrixAssembly(M);
     MathLib::finalizeMatrixAssembly(K);
