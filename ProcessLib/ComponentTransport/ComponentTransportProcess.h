@@ -13,7 +13,7 @@
 #include "ComponentTransportFEM.h"
 #include "ComponentTransportProcessData.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
-#include "ProcessLib/ComponentTransport/AssembledMatrixCache.h"
+#include "ProcessLib/Assembly/AssembledMatrixCache.h"
 #include "ProcessLib/Process.h"
 
 namespace ChemistryLib
