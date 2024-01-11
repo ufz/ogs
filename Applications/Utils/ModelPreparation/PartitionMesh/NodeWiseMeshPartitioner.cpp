@@ -740,6 +740,15 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     INFO("partitionByMETIS(): Partition IDs per element computed in {:g} s",
          run_timer.elapsed());
 
+    run_timer.start();
+    // distribute (bulk) nodes to partitions
+    for (auto const& node : _mesh->getNodes())
+    {
+        _partitions[_nodes_partition_ids[node->getID()]].nodes.push_back(node);
+    }
+    INFO("partitionByMETIS(): distribute nodes to partitions took {:g} s",
+         run_timer.elapsed());
+
     auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
