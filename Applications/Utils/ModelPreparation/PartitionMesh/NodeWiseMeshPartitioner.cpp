@@ -749,6 +749,25 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     INFO("partitionByMETIS(): distribute nodes to partitions took {:g} s",
          run_timer.elapsed());
 
+    run_timer.start();
+    // sort nodes: first base nodes, then higher order nodes
+    for (auto& partition : _partitions)
+    {
+        std::vector<MeshLib::Node*> higher_order_nodes;
+        // after splitIntoBaseAndHigherOrderNodes() partition.nodes contain only
+        // base nodes
+        std::tie(partition.nodes, higher_order_nodes) =
+            splitIntoBaseAndHigherOrderNodes(partition.nodes, *_mesh);
+        partition.number_of_regular_base_nodes = partition.nodes.size();
+        std::copy(begin(higher_order_nodes), end(higher_order_nodes),
+                  std::back_inserter(partition.nodes));
+        partition.number_of_regular_nodes = partition.nodes.size();
+    }
+    INFO(
+        "partitionByMETIS(): sorting [base nodes | higher order nodes] took "
+        "{:g} s",
+        run_timer.elapsed());
+
     auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
