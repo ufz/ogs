@@ -63,6 +63,7 @@ ComponentTransportProcess::ComponentTransportProcess(
 {
     if (ls_compute_only_upon_timestep_change)
     {
+        // TODO move this feature to some common location for all processes.
         if (!is_linear)
         {
             OGS_FATAL(
@@ -76,8 +77,7 @@ ComponentTransportProcess::ComponentTransportProcess(
             "option. It is your responsibility to ensure that "
             "the conditions for the correct use of this feature are met! "
             "Otherwise OGS might compute garbage without being recognized. "
-            "There is no "
-            "safety net!");
+            "There is no safety net!");
     }
 
     _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
