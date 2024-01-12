@@ -781,6 +781,35 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
         "nodes took {:g} s",
         run_timer.elapsed());
 
+    run_timer.start();
+    // distribute elements into partitions
+    for (auto const& element : _mesh->getElements())
+    {
+        auto const element_id = element->getID();
+        auto node_partition_ids = partition_ids_per_element[element_id];
+        // make partition ids unique
+        std::sort(node_partition_ids.begin(), node_partition_ids.end());
+        auto last =
+            std::unique(node_partition_ids.begin(), node_partition_ids.end());
+        node_partition_ids.erase(last, node_partition_ids.end());
+
+        // all element nodes belong to the same partition => regular element
+        if (node_partition_ids.size() == 1)
+        {
+            _partitions[node_partition_ids[0]].regular_elements.push_back(
+                element);
+        }
+        else
+        {
+            for (auto const partition_id : node_partition_ids)
+            {
+                _partitions[partition_id].ghost_elements.push_back(element);
+            }
+        }
+    }
+    INFO("partitionByMETIS(): distribute elements into partitions took {:g} s",
+         run_timer.elapsed());
+
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
         run_timer.start();
