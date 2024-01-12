@@ -16,8 +16,39 @@ AddTest(
         EXECUTABLE_ARGS line_60_heat.prj
         TESTER vtkdiff
         DIFF_DATA
+        # analytical solution
         temperature_analytical.vtu line_60_heat_ts_65_t_5078125.000000.vtu Temperature_Analytical_2months temperature 1e-5 1e-5
         temperature_analytical.vtu line_60_heat_ts_405_t_31640625.000000.vtu Temperature_Analytical_1year temperature 1e-5 1e-5
+        # numerical solution – ts 65
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        temperature temperature 2.0e-12 0
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        heat_flux heat_flux 2.4e-12 0
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        HeatFlowRate HeatFlowRate 6.5e-12 0
+        # numerical solution – ts 405
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        temperature temperature 1.2e-11 0
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        heat_flux heat_flux 6.2e-12 0
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        HeatFlowRate HeatFlowRate 5.9e-12 0
+        # numerical solution – ts 500
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        temperature temperature 1.4e-11 0
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        heat_flux heat_flux 7.5e-12 0
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        HeatFlowRate HeatFlowRate 7.9e-12 0
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
