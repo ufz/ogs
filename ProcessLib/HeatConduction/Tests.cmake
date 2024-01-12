@@ -52,6 +52,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# variation of the test above with assembly optimization
 AddTest(
         NAME 1D_HeatConduction_dirichlet_linear
         PATH Parabolic/T/1D_dirichlet/linear
@@ -89,6 +90,47 @@ AddTest(
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
         HeatFlowRate HeatFlowRate 9.8e-12 0
+    REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# another variation with more optimizations
+AddTest(
+        NAME 1D_HeatConduction_dirichlet_linear_dt_change
+        PATH Parabolic/T/1D_dirichlet/linear_compute_only_on_dt_change
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_60_heat.xml
+        TESTER vtkdiff
+        DIFF_DATA
+        # numerical solution – ts 65
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        temperature temperature 2e-12 0
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        heat_flux heat_flux 2.1e-12 0
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        line_60_heat_ts_65_t_5078125.000000.vtu
+        HeatFlowRate HeatFlowRate 3.5e-12 0
+        # numerical solution – ts 405
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        temperature temperature 1.2e-11 0
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        heat_flux heat_flux 5.7e-12 0
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        line_60_heat_ts_405_t_31640625.000000.vtu
+        HeatFlowRate HeatFlowRate 5.5e-12 0
+        # numerical solution – ts 500
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        temperature temperature 1.4e-11 0
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        heat_flux heat_flux 7.2e-12 0
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        line_60_heat_ts_500_t_39062500.000000.vtu
+        HeatFlowRate HeatFlowRate 6.9e-12 0
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
