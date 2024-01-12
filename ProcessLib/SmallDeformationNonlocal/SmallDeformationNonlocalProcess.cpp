@@ -14,6 +14,7 @@
 
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 
 // Reusing local assembler creation code.
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
@@ -118,57 +119,14 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
         &LocalAssemblerInterface::nonlocal, _local_assemblers,
         _local_assemblers);
 
-    // Set initial conditions for integration point data.
+    setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
+                               _local_assemblers);
+
+    // Set initial conditions for integration point from cell mesh properties.
     for (auto const& ip_writer : _integration_point_writer)
     {
         auto const& name = ip_writer->name();
-        // First check the field data, which is used for restart.
-        if (mesh.getProperties().existsPropertyVector<double>(name))
-        {
-            auto const& mesh_property =
-                *mesh.getProperties().template getPropertyVector<double>(name);
-
-            // The mesh property must be defined on integration points.
-            if (mesh_property.getMeshItemType() !=
-                MeshLib::MeshItemType::IntegrationPoint)
-            {
-                continue;
-            }
-
-            auto const ip_meta_data =
-                getIntegrationPointMetaData(mesh.getProperties(), name);
-
-            // Check the number of components.
-            if (ip_meta_data.n_components !=
-                mesh_property.getNumberOfGlobalComponents())
-            {
-                OGS_FATAL(
-                    "Different number of components in meta data ({:d}) than "
-                    "in the integration point field data for '{:s}': {:d}.",
-                    ip_meta_data.n_components, name,
-                    mesh_property.getNumberOfGlobalComponents());
-            }
-
-            // Now we have a properly named vtk's field data array and the
-            // corresponding meta data.
-            std::size_t position = 0;
-            for (auto& local_asm : _local_assemblers)
-            {
-                std::size_t const integration_points_read =
-                    local_asm->setIPDataInitialConditions(
-                        name, &mesh_property[position],
-                        ip_meta_data.integration_order);
-                if (integration_points_read == 0)
-                {
-                    OGS_FATAL(
-                        "No integration points read in the integration point "
-                        "initial conditions set function.");
-                }
-                position += integration_points_read * ip_meta_data.n_components;
-            }
-        }
-        else if (mesh.getProperties().existsPropertyVector<double>(name +
-                                                                   "_ic"))
+        if (mesh.getProperties().existsPropertyVector<double>(name + "_ic"))
         {  // Try to find cell data with '_ic' suffix
             auto const& mesh_property =
                 *mesh.getProperties().template getPropertyVector<double>(name +
@@ -178,6 +136,18 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
                 continue;
             }
 
+            // Disallow setting ip-data from both, the e.g. sigma_ip and
+            // sigma_ip_ic fields simultaneously.
+            if (mesh.getProperties().existsPropertyVector<double>(
+                    name, MeshLib::MeshItemType::IntegrationPoint,
+                    mesh_property.getNumberOfGlobalComponents()))
+            {
+                OGS_FATAL(
+                    "Both, the field-data ({:s}) and cell-data ({:s}) "
+                    "properties are available in the mesh for integration "
+                    "point initialization, but only one can be used.",
+                    name, name + "_ic");
+            }
             // Now we have a vtk's cell data array containing the initial
             // conditions for the corresponding integration point writer.
 
