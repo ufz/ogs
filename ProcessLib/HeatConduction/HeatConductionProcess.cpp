@@ -100,15 +100,6 @@ void HeatConductionProcess::assembleConcreteProcess(
     _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_table,
                             _global_assembler, _local_assemblers,
                             pv.getActiveElementIDs());
-
-    MathLib::finalizeMatrixAssembly(M);
-    MathLib::finalizeMatrixAssembly(K);
-    MathLib::finalizeVectorAssembly(b);
-
-    auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], M, K, b);
-    transformVariableFromGlobalVector(residuum, 0 /*variable id*/,
-                                      *_local_to_global_index_map, *_heat_flux,
-                                      std::negate<double>());
 }
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
@@ -151,5 +142,38 @@ void HeatConductionProcess::computeSecondaryVariableConcrete(
         x_prev, process_id);
 }
 
+void HeatConductionProcess::preOutputConcreteProcess(
+    const double t,
+    double const dt,
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev,
+    int const process_id)
+{
+    auto const matrix_specification = getMatrixSpecifications(process_id);
+
+    auto M = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
+        matrix_specification);
+    auto K = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
+        matrix_specification);
+    auto b = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+        matrix_specification);
+
+    M->setZero();
+    K->setZero();
+    b->setZero();
+
+    assembleConcreteProcess(t, dt, x, x_prev, process_id, *M, *K, *b);
+
+    BaseLib::RunTime time_residuum;
+    time_residuum.start();
+
+    auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], *M, *K, *b);
+
+    transformVariableFromGlobalVector(residuum, 0, *_local_to_global_index_map,
+                                      *_heat_flux, std::negate<double>());
+
+    INFO("[time] Computing residuum flow rates took {:g} s",
+         time_residuum.elapsed());
+}
 }  // namespace HeatConduction
 }  // namespace ProcessLib
