@@ -134,6 +134,129 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
+# a variation with a varying time step size
+AddTest(
+        NAME 1D_HeatConduction_dirichlet_varying_dt
+        PATH Parabolic/T/1D_dirichlet/varying_dt
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_60_heat.xml
+        TESTER vtkdiff
+        DIFF_DATA
+        # numerical solution – ts 130
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        temperature temperature 4.6e-13 0
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        heat_flux heat_flux 7.8e-13 0
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        HeatFlowRate HeatFlowRate 7.5e-12 0
+        # numerical solution – ts 505
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        temperature temperature 9.4e-12 0
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        heat_flux heat_flux 5.1e-12 0
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        HeatFlowRate HeatFlowRate 5.5e-12 0
+        # numerical solution – ts 600
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        temperature temperature 1.3e-11 0
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        heat_flux heat_flux 6.4e-12 0
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        HeatFlowRate HeatFlowRate 6.4e-12 0
+    REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# a variation with a varying time step size and <linear> optimization
+AddTest(
+        NAME 1D_HeatConduction_dirichlet_varying_dt_linear
+        PATH Parabolic/T/1D_dirichlet/varying_dt_linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_60_heat.xml
+        TESTER vtkdiff
+        DIFF_DATA
+        # numerical solution – ts 130
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        temperature temperature 8e-13 0
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        heat_flux heat_flux 8.3e-13 0
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        HeatFlowRate HeatFlowRate 8.5e-12 0
+        # numerical solution – ts 505
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        temperature temperature 9.8e-12 0
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        heat_flux heat_flux 5.0e-12 0
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        HeatFlowRate HeatFlowRate 5.2e-12 0
+        # numerical solution – ts 600
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        temperature temperature 1.2e-11 0
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        heat_flux heat_flux 5.9e-12 0
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        HeatFlowRate HeatFlowRate 6.2e-12 0
+    REQUIREMENTS NOT OGS_USE_MPI
+)
+
+# a variation with a varying time step size and more optimizations
+AddTest(
+        NAME 1D_HeatConduction_dirichlet_varying_dt_linear_compute_only_on_dt_change
+        PATH Parabolic/T/1D_dirichlet/varying_dt_linear_compute_only_on_dt_change
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_60_heat.xml
+        TESTER vtkdiff
+        DIFF_DATA
+        # numerical solution – ts 130
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        temperature temperature 8e-13 0
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        heat_flux heat_flux 8.3e-13 0
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        line_60_heat_ts_130_t_5078125.000000.vtu
+        HeatFlowRate HeatFlowRate 8.5e-12 0
+        # numerical solution – ts 505
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        temperature temperature 9.8e-12 0
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        heat_flux heat_flux 5.0e-12 0
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        line_60_heat_ts_505_t_31640625.000000.vtu
+        HeatFlowRate HeatFlowRate 5.2e-12 0
+        # numerical solution – ts 600
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        temperature temperature 1.2e-11 0
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        heat_flux heat_flux 5.9e-12 0
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        line_60_heat_ts_600_t_39062500.000000.vtu
+        HeatFlowRate HeatFlowRate 6.2e-12 0
+    REQUIREMENTS NOT OGS_USE_MPI
+)
+
 AddTest(
         NAME 1D_HeatConduction_neumann_picard
         PATH Parabolic/T/1D_neumann

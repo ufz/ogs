@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="25" format="appended" RangeMin="45"                   RangeMax="121"                  offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="61"                   NumberOfCells="60"                  >
+      <PointData>
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-2.9558577808e-12"    RangeMax="0.57078848908"        offset="88"                  />
+        <DataArray type="Float64" Name="heat_flux" format="appended" RangeMin="-5.8806559622e-12"    RangeMax="0.56613190966"        offset="384"                 />
+        <DataArray type="Float64" Name="temperature" format="appended" RangeMin="273.15"               RangeMax="274.15"               offset="892"                 />
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1232"                />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="60"                   offset="1292"                />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="1544"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1740"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1944"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9A1NDbQTTdPNDAzN00x1kvJLCqpBABJiAaoAQAAAAAAAAAAgAAAAAAAAOgBAAAAAAAAvAAAAAAAAAA=eF5brbXR4pnzI3sGIHAINbUF0QyhrhCaoWAvhM6A8lvA/AOroqDiBWDxgNBUML1gVRRUXQlMPRoNAaGhtSB+w///6WDx///9ofINIHrFqlVg9atWrSqCucMW5LrQ0ElQutQWrGxVly1I9///nbYg0/7/z7cFOgII6mwZGEH6uvZ+AAn/n2K7Cgwm2q4G0w1QcxOg/kggkh8A5QdA+Rlo4ZOAxs9A049LPbH2o/NhAN1cGICpD7AFAOOxXoQ=AQAAAAAAAAAAgAAAAAAAAOgBAAAAAAAAWgEAAAAAAAA=eF57vH/ZqgOyj+w35JTxcK17aL9xgmnKgrwH9nrvpkcbid21n/pEsLu46Yb9Sf2e8wErLttrR/ampTCcs5+kLnr7+9Gj9p9OX6zj5dpnr7L+yduz6zbbb0hhqTWtXmF/NN/kXf39OfY6Ye/8WxUm2H84yiu8i6vR3uNTX3E+U6H9IfHifUsYE+yva3OGl4b72D/qMv27qNvcPmb9Es5UHyV7u677JRcbuOwfVamWVZ35aPc68E/SSvZrdo+qVPSzXu2wC9oRd/JH4Uw7sXXun3R4yoF8uZP7vwfaHfqqUWO4Q81OdJ37w+4Dn23lW18H/lCaYvuwSmQd+92Ze3fKAQWWF+19EbhDrlVbzPYJlCbEB5lXpWJvux5IieyzsP2mEdN/KNdhb9troIJSK7h5MHXroOpcwBbL7sWlnlj70fk3FhfYcsX7YLgDJg6zt1oE6BKzgL0AH3/ccg==AQAAAAAAAAAAgAAAAAAAAOgBAAAAAAAA3gAAAAAAAAA=eF5LSwMCpUKHiD3eBybKFzqkNDoxP5ApdJidraOXL1XosNwwpTtEotDh/Aa5M7PECh32Hz5s5yRa6HBkrdsRJ5FCB4llacf7hAsdJu3cHy8GpDWjoz+fFCp0qPHY8n02kF7WPvtII5BewZC+rBhIX31vVJ4DpPMjHrJkAunAkvVl6UB6kS7PuTQgnStm3Q2ii0z6ikD0bAGpLBD9Ij0vHUQr31uRBqIP2ZeCaVPHTDCtdiMNTNcXQejeNAitDqWjoXQGlE4nkw+j0wioT0MTJ6SeXD4uc9PQ+ABnx7FNAQAAAAAAAAAAgAAAAAAAAPAAAAAAAAAADAAAAAAAAAA=eF5jYBhZAAAA8AABAQAAAAAAAAAAgAAAAAAAALgFAAAAAAAAnAAAAAAAAAA=eF59yTkOAQAARNEplQqFQiEiIiJi3/d9P9Mc2REcwHy/fF/612cDY5u5AF4EL4GXwSvgVfAaeB28Ad4Eb4G3wTvgXfAeeB98AD4EH4GPwSfgU/AZ+Bx8Ab4EX4GvwTfg2+wG1y67wbXPbnAdshtcx+wG1ym7wXXObnBdshtc1+wG1y27wXXPbnA9shtcz+wG1yu7wfX+8S+zGCQEAQAAAAAAAAAAgAAAAAAAAMADAAAAAAAAcQAAAAAAAAA=eF5dxbMBAwAAALDatm3b/9/VoZ2SJYHAT5BDHOYIRznGcU5wklOc5gxnOcd5LnCRS1zmCle5xnVucJNb3OYOd7nHfR7wkEc85glPecZzXvCSV7zmDW95x3s+8JFPfOYLX/nGd37wk1/85s//L9CvDhE=AQAAAAAAAAAAgAAAAAAAAOABAAAAAAAAeAAAAAAAAAA=eF4txcEKQQEAADBJkiRJkiRJkiRJkvSSJEmSJEmSJEmSJJ/vYLssHPqLOOqY40446ZTTzjjrnPMuuOiSy6646prrbrjpltvuuOue+x448NAjjz3x1DPPvfDSK6+98dY7733w0SefffHVN9/98NMvv/3x1z8+Jw5NAQAAAAAAAAAAgAAAAAAAADwAAAAAAAAADAAAAAAAAAA=eF5jZiYfAAAVrgC1
+  </AppendedData>
+</VTKFile>

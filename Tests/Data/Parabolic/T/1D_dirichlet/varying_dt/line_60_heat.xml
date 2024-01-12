@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="../line_60_heat.prj">
+    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps"/>
+    <add sel="/*/time_loop/processes/process/time_stepping">
+        <timesteps>
+            <pair>
+                <repeat>200</repeat>
+                <delta_t>39062.5</delta_t>
+            </pair>
+            <pair>
+                <repeat>400</repeat>
+                <delta_t>78125</delta_t>
+            </pair>
+        </timesteps>
+    </add>
+
+    <remove sel="/*/time_loop/output/timesteps"/>
+    <add sel="/*/time_loop/output">
+        <timesteps>
+            <pair>
+                <repeat> 1 </repeat>
+                <each_steps> 130 </each_steps>
+            </pair>
+            <pair>
+                <repeat> 1 </repeat>
+                <each_steps> 70 </each_steps>
+            </pair>
+            <pair>
+                <repeat> 1 </repeat>
+                <each_steps> 305 </each_steps>
+            </pair>
+        </timesteps>
+    </add>
+</OpenGeoSysProjectDiff>
