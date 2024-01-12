@@ -768,7 +768,19 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
         "{:g} s",
         run_timer.elapsed());
 
+    run_timer.start();
     auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
+    for (auto& partition : _partitions)
+    {
+        partition.number_of_regular_nodes = partition.nodes.size();
+        partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
+        partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
+    }
+    INFO(
+        "partitionByMETIS(): setting number of nodes and of all mesh base "
+        "nodes took {:g} s",
+        run_timer.elapsed());
+
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
         run_timer.start();
