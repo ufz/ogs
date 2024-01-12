@@ -265,56 +265,6 @@ findGhostNodesInPartition(
         base_ghost_nodes, higher_order_ghost_nodes};
 }
 
-void NodeWiseMeshPartitioner::processPartition(
-    std::size_t const part_id, std::size_t const number_of_mesh_base_nodes)
-{
-    auto& partition = _partitions[part_id];
-    std::vector<MeshLib::Node*> higher_order_regular_nodes;
-    std::tie(partition.nodes, higher_order_regular_nodes) =
-        findRegularNodesInPartition(part_id, _mesh->getNodes(),
-                                    _nodes_partition_ids, *_mesh);
-
-    partition.number_of_regular_base_nodes = partition.nodes.size();
-    std::copy(begin(higher_order_regular_nodes),
-              end(higher_order_regular_nodes),
-              std::back_inserter(partition.nodes));
-
-    partition.number_of_regular_nodes = partition.nodes.size();
-
-    std::tie(partition.regular_elements, partition.ghost_elements) =
-        findElementsInPartition(part_id, _mesh->getElements(),
-                                _nodes_partition_ids);
-    std::vector<MeshLib::Node*> base_ghost_nodes;
-    std::vector<MeshLib::Node*> higher_order_ghost_nodes;
-    BaseLib::RunTime run_timer;
-    run_timer.start();
-    std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
-        findGhostNodesInPartition(part_id, _mesh->getNodes(),
-                                  partition.ghost_elements,
-                                  _nodes_partition_ids, *_mesh);
-    INFO("processPartition(): findGhostNodesInPartition took: {:g} s.",
-         run_timer.elapsed());
-
-    std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
-              std::back_inserter(partition.nodes));
-
-    partition.number_of_base_nodes =
-        partition.number_of_regular_base_nodes + base_ghost_nodes.size();
-
-    std::copy(begin(higher_order_ghost_nodes),
-              end(higher_order_ghost_nodes),
-              std::back_inserter(partition.nodes));
-
-    // Set the node numbers of base and all mesh nodes.
-    run_timer.start();
-    partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
-    partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
-    INFO(
-        "processPartition(): computeNumberOfBaseNodes() / getNumberOfNodes() "
-        "took: {:g} s.",
-        run_timer.elapsed());
-}
-
 /// Copies the properties from global property vector \c pv to the
 /// partition-local one \c partitioned_pv.
 template <typename T>
@@ -850,10 +800,6 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
 
         partition.number_of_base_nodes =
             partition.number_of_regular_base_nodes + base_ghost_nodes.size();
-        INFO("      partition.number_of_base_nodes: {}",
-             partition.number_of_base_nodes);
-        INFO("      partition.number_of_regular_base_nodes: {}",
-             partition.number_of_regular_base_nodes);
 
         std::copy(begin(higher_order_ghost_nodes),
                   end(higher_order_ghost_nodes),
@@ -861,14 +807,6 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     }
     INFO("partitionByMETIS(): determine / append ghost nodes took {:g} s",
          run_timer.elapsed());
-
-    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
-    {
-        run_timer.start();
-        processPartition(part_id, number_of_mesh_base_nodes);
-        INFO("Partition {:d} processed in {:g} s", part_id,
-             run_timer.elapsed());
-    }
 
     markDuplicateGhostCells(*_mesh, _partitions);
 
