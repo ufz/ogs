@@ -209,7 +209,7 @@ std::size_t RichardsMechanicsLocalAssembler<
             _element.getID());
     }
 
-    if (name == "sigma_ip")
+    if (name == "sigma")
     {
         if (_process_data.initial_stress != nullptr)
         {
@@ -223,34 +223,34 @@ std::size_t RichardsMechanicsLocalAssembler<
             values, _ip_data, &IpData::sigma_eff);
     }
 
-    if (name == "saturation_ip")
+    if (name == "saturation")
     {
         return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
                                                          &IpData::saturation);
     }
-    if (name == "porosity_ip")
+    if (name == "porosity")
     {
         return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
                                                          &IpData::porosity);
     }
-    if (name == "transport_porosity_ip")
+    if (name == "transport_porosity")
     {
         return ProcessLib::setIntegrationPointScalarData(
             values, _ip_data, &IpData::transport_porosity);
     }
-    if (name == "swelling_stress_ip")
+    if (name == "swelling_stress")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::sigma_sw);
     }
-    if (name == "epsilon_ip")
+    if (name == "epsilon")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
     }
-    if (name.starts_with("material_state_variable_") && name.ends_with("_ip"))
+    if (name.starts_with("material_state_variable_"))
     {
-        std::string const variable_name = name.substr(24, name.size() - 24 - 3);
+        std::string const variable_name = name.substr(24, name.size() - 24);
 
         // Using first ip data for solid material. TODO (naumov) move solid
         // material into element, store only material state in IPs.

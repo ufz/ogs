@@ -95,15 +95,15 @@ std::size_t ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
             _element.getID());
     }
 
-    if (name == "sigma_ip")
+    if (name == "sigma")
     {
         return setSigma(values);
     }
-    if (name == "epsilon_ip")
+    if (name == "epsilon")
     {
         return setEpsilon(values);
     }
-    if (name == "epsilon_m_ip")
+    if (name == "epsilon_m")
     {
         return setEpsilonMechanical(values);
     }

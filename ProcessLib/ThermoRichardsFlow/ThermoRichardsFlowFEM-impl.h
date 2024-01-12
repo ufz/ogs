@@ -94,12 +94,12 @@ std::size_t ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
             _element.getID());
     }
 
-    if (name == "saturation_ip")
+    if (name == "saturation")
     {
         return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
                                                          &IpData::saturation);
     }
-    if (name == "porosity_ip")
+    if (name == "porosity")
     {
         return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
                                                          &IpData::porosity);

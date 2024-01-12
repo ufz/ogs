@@ -35,8 +35,7 @@ void setIPDataInitialConditions(
     std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>> const&
         _integration_point_writer,
     MeshLib::Properties const& mesh_properties,
-    LocalAssemblersVector& local_assemblers,
-    bool const remove_name_suffix = false)
+    LocalAssemblersVector& local_assemblers)
 {
     for (auto const& ip_writer : _integration_point_writer)
     {
@@ -72,8 +71,7 @@ void setIPDataInitialConditions(
 
         INFO("Setting initial integration point data for '{}'", name);
 
-        auto const& name_transformed =
-            remove_name_suffix ? removeIPFieldDataNameSuffix(name) : name;
+        auto const& name_transformed = removeIPFieldDataNameSuffix(name);
 
         // Now we have a properly named vtk's field data array and the
         // corresponding meta data.
