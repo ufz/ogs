@@ -101,7 +101,7 @@ public:
              EigenOption::getSolverName(opt.solver_type));
 
         x = solver_.solve(b);
-        if (solver_.info() != Eigen::Success)
+        if (solver_.info() != Eigen::Success || x.hasNaN())
         {
             ERR("Failed during Eigen linear solve");
             return false;
