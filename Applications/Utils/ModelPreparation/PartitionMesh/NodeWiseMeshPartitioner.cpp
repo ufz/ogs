@@ -810,6 +810,37 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
     INFO("partitionByMETIS(): distribute elements into partitions took {:g} s",
          run_timer.elapsed());
 
+    run_timer.start();
+    // determine and append ghost nodes to partition.nodes such that
+    // [base nodes, higher order nodes, base ghost nodes, higher order ghost
+    // nodes]
+    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
+    {
+        auto& partition = _partitions[part_id];
+        std::vector<MeshLib::Node*> base_ghost_nodes;
+        std::vector<MeshLib::Node*> higher_order_ghost_nodes;
+        std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
+            findGhostNodesInPartition(part_id, _mesh->getNodes(),
+                                      _partitions[part_id].ghost_elements,
+                                      _nodes_partition_ids, *_mesh, nullptr);
+
+        std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
+                  std::back_inserter(_partitions[part_id].nodes));
+
+        partition.number_of_base_nodes =
+            partition.number_of_regular_base_nodes + base_ghost_nodes.size();
+        INFO("      partition.number_of_base_nodes: {}",
+             partition.number_of_base_nodes);
+        INFO("      partition.number_of_regular_base_nodes: {}",
+             partition.number_of_regular_base_nodes);
+
+        std::copy(begin(higher_order_ghost_nodes),
+                  end(higher_order_ghost_nodes),
+                  std::back_inserter(_partitions[part_id].nodes));
+    }
+    INFO("partitionByMETIS(): determine / append ghost nodes took {:g} s",
+         run_timer.elapsed());
+
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
         run_timer.start();
