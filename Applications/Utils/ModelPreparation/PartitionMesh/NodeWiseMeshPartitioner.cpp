@@ -233,8 +233,8 @@ findGhostNodesInPartition(
     MeshLib::Mesh const& mesh,
     std::vector<std::size_t> const* node_id_mapping = nullptr)
 {
-    std::vector<MeshLib::Node*> base_nodes;
-    std::vector<MeshLib::Node*> ghost_nodes;
+    std::vector<MeshLib::Node*> base_ghost_nodes;
+    std::vector<MeshLib::Node*> higher_order_ghost_nodes;
 
     std::vector<bool> is_ghost_node(nodes.size(), false);
     for (const auto* ghost_elem : ghost_elements)
@@ -251,18 +251,18 @@ findGhostNodesInPartition(
             {
                 if (isBaseNode(*n, mesh.getElementsConnectedToNode(*n)))
                 {
-                    base_nodes.push_back(nodes[n->getID()]);
+                    base_ghost_nodes.push_back(nodes[n->getID()]);
                 }
                 else
                 {
-                    ghost_nodes.push_back(nodes[n->getID()]);
+                    higher_order_ghost_nodes.push_back(nodes[n->getID()]);
                 }
                 is_ghost_node[n->getID()] = true;
             }
         }
     }
     return std::tuple<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>{
-        base_nodes, ghost_nodes};
+        base_ghost_nodes, higher_order_ghost_nodes};
 }
 
 void NodeWiseMeshPartitioner::processPartition(
