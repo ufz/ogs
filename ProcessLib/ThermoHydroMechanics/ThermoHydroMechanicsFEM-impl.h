@@ -106,7 +106,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 std::size_t ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
-    DisplacementDim>::setIPDataInitialConditions(std::string const& name,
+    DisplacementDim>::setIPDataInitialConditions(std::string_view const name,
                                                  double const* values,
                                                  int const integration_order)
 {

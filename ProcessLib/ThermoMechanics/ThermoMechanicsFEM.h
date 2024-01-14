@@ -163,7 +163,7 @@ public:
 
     /// Returns number of read integration points.
     std::size_t setIPDataInitialConditions(
-        std::string const& name,
+        std::string_view const name,
         double const* values,
         int const integration_order) override;
 

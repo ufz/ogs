@@ -852,7 +852,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 std::size_t TH2MLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
-    DisplacementDim>::setIPDataInitialConditions(std::string const& name,
+    DisplacementDim>::setIPDataInitialConditions(std::string_view name,
                                                  double const* values,
                                                  int const integration_order)
 {
@@ -897,19 +897,19 @@ std::size_t TH2MLocalAssembler<
     }
     if (name.starts_with("material_state_variable_"))
     {
-        std::string const variable_name = name.substr(24, name.size() - 24);
+        name.remove_prefix(24);
+        DBUG("Setting material state variable '{:s}'", name);
 
         // Using first ip data for solid material. TODO (naumov) move solid
         // material into element, store only material state in IPs.
         auto const& internal_variables =
             _ip_data[0].solid_material.getInternalVariables();
-        if (auto const iv =
-                std::find_if(begin(internal_variables), end(internal_variables),
-                             [&variable_name](auto const& iv)
-                             { return iv.name == variable_name; });
+        if (auto const iv = std::find_if(
+                begin(internal_variables), end(internal_variables),
+                [&name](auto const& iv) { return iv.name == name; });
             iv != end(internal_variables))
         {
-            DBUG("Setting material state variable '{:s}'", variable_name);
+            DBUG("Setting material state variable '{:s}'", name);
             return ProcessLib::setIntegrationPointDataMaterialStateVariables(
                 values, _ip_data, &IpData::material_state_variables,
                 iv->reference);
@@ -918,7 +918,7 @@ std::size_t TH2MLocalAssembler<
         WARN(
             "Could not find variable {:s} in solid material model's "
             "internal variables.",
-            variable_name);
+            name);
     }
     return 0;
 }

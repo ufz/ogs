@@ -146,7 +146,7 @@ public:
         }
     }
 
-    std::size_t setIPDataInitialConditions(std::string const& name,
+    std::size_t setIPDataInitialConditions(std::string_view const name,
                                            double const* values,
                                            int const integration_order) override
     {

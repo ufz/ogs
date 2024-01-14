@@ -80,7 +80,7 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
 template <typename ShapeFunction, int GlobalDim>
 std::size_t ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
-    setIPDataInitialConditions(std::string const& name,
+    setIPDataInitialConditions(std::string_view const name,
                                double const* values,
                                int const integration_order)
 {

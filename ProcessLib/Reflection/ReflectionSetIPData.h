@@ -72,7 +72,7 @@ void setIPData(double const* values,
 // Returns true if IP have been set, false otherwise.
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
           typename Class, typename Accessor>
-bool setIPDataIfNameMatches(std::string const& name, double const* values,
+bool setIPDataIfNameMatches(std::string_view const name, double const* values,
                             std::vector<IPData>& ip_data_vector,
                             Accessor_CurrentLevelFromIPData const& accessor,
                             ReflectionData<Class, Accessor> const& refl_data)
@@ -112,7 +112,7 @@ bool setIPDataIfNameMatches(std::string const& name, double const* values,
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
           typename... Classes, typename... Accessors, std::size_t... Idcs>
 bool reflectSetIPData(
-    std::string const& name, double const* values,
+    std::string_view const name, double const* values,
     std::vector<IPData>& ip_data_vector,
     Accessor_CurrentLevelFromIPData const& accessor,
     std::tuple<ReflectionData<Classes, Accessors>...> const& refl_data,
@@ -128,7 +128,7 @@ bool reflectSetIPData(
 template <int dim, typename IPData, typename Accessor_CurrentLevelFromIPData,
           typename... Classes, typename... Accessors>
 bool reflectSetIPData(
-    std::string const& name, double const* values,
+    std::string_view const name, double const* values,
     std::vector<IPData>& ip_data_vector,
     Accessor_CurrentLevelFromIPData const& accessor,
     std::tuple<ReflectionData<Classes, Accessors>...> const& refl_data)
@@ -149,7 +149,7 @@ bool reflectSetIPData(
  * \return The number of integration points.
  */
 template <int dim, typename IPData>
-std::size_t reflectSetIPData(std::string const& name, double const* values,
+std::size_t reflectSetIPData(std::string_view const name, double const* values,
                              std::vector<IPData>& ip_data_vector)
 {
     detail::reflectSetIPData<dim>(
