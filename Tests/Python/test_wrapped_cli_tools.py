@@ -1,5 +1,5 @@
-import os
 import tempfile
+from pathlib import Path
 
 import ogs
 
@@ -16,18 +16,18 @@ def test_ogs_help():
 
 def test_generate_structured_mesh():
     with tempfile.TemporaryDirectory() as tmpdirname:
-        outfile = os.path.join(tmpdirname, "test.vtu")
-        assert not os.path.exists(outfile)
+        outfile = Path(tmpdirname) / "test.vtu"
+        assert not outfile.exists()
 
         assert ogs.cli.generateStructuredMesh(e="line", lx=1, nx=10, o=outfile) == 0
 
-        assert os.path.exists(outfile)
+        assert outfile.exists()
 
 
 def test_parameter_with_underscore():
-    tempdir = tempfile.mkdtemp()
-    gml_filename = os.path.join(tempdir, "geom.gml")
-    gmsh_filename = os.path.join(tempdir, "geom.gmsh")
+    tempdir = Path(tempfile.mkdtemp())
+    gml_filename = tempdir / "geom.gml"
+    gmsh_filename = tempdir / "geom.gmsh"
 
     assert (
         ogs.cli.generateGeometry(
@@ -49,7 +49,7 @@ def test_parameter_with_underscore():
         )
         == 0
     )
-    assert os.path.exists(gml_filename)
+    assert gml_filename.exists()
 
     assert (
         ogs.cli.geometryToGmshGeo(
@@ -57,4 +57,4 @@ def test_parameter_with_underscore():
         )
         == 0
     )
-    assert os.path.exists(gmsh_filename)
+    assert gmsh_filename.exists()
