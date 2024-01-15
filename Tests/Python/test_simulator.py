@@ -1,13 +1,14 @@
-import os
 import tempfile
+from pathlib import Path
 
 import ogs.simulator as sim
 
 
 def test_simulator():
+    current_dir = Path(__file__).parent.abspath()
     arguments = [
         "",
-        f"{os.path.abspath(os.path.dirname(__file__))}/../Data/Parabolic/LiquidFlow/Flux/cube_1e3_calculatesurfaceflux.prj",
+        f"{current_dir}/../Data/Parabolic/LiquidFlow/Flux/cube_1e3_calculatesurfaceflux.prj",
         "-o " + tempfile.mkdtemp(),
     ]
 
