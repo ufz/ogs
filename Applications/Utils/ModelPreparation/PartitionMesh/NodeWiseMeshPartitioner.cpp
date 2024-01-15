@@ -740,13 +740,74 @@ void setNumberOfNodesInPartitions(std::vector<Partition>& partitions,
     }
 }
 
+void distributeElementsIntoPartitions(
+    std::vector<Partition>& partitions,
+    MeshLib::Mesh const& mesh,
+    std::vector<std::vector<std::size_t>> const& partition_ids_per_element)
+{
+    for (auto const& element : mesh.getElements())
+    {
+        auto const element_id = element->getID();
+        auto node_partition_ids = partition_ids_per_element[element_id];
+        // make partition ids unique
+        std::sort(node_partition_ids.begin(), node_partition_ids.end());
+        auto last =
+            std::unique(node_partition_ids.begin(), node_partition_ids.end());
+        node_partition_ids.erase(last, node_partition_ids.end());
+
+        // all element nodes belong to the same partition => regular element
+        if (node_partition_ids.size() == 1)
+        {
+            partitions[node_partition_ids[0]].regular_elements.push_back(
+                element);
+        }
+        else
+        {
+            for (auto const partition_id : node_partition_ids)
+            {
+                partitions[partition_id].ghost_elements.push_back(element);
+            }
+        }
+    }
+}
+
+// determine and append ghost nodes to partition.nodes in the following order
+// [base nodes, higher order nodes, base ghost nodes, higher order ghost
+// nodes]
+void determineAndAppendGhostNodesToPartitions(
+    std::vector<Partition>& partitions, MeshLib::Mesh const& mesh,
+    std::vector<std::size_t> const& nodes_partition_ids,
+    std::vector<std::size_t> const* node_id_mapping)
+{
+    for (std::size_t part_id = 0; part_id < partitions.size(); part_id++)
+    {
+        auto& partition = partitions[part_id];
+        std::vector<MeshLib::Node*> base_ghost_nodes;
+        std::vector<MeshLib::Node*> higher_order_ghost_nodes;
+        std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
+            findGhostNodesInPartition(
+                part_id, mesh.getNodes(), partition.ghost_elements,
+                nodes_partition_ids, mesh, node_id_mapping);
+
+        std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
+                  std::back_inserter(partition.nodes));
+
+        partition.number_of_base_nodes =
+            partition.number_of_regular_base_nodes + base_ghost_nodes.size();
+
+        std::copy(begin(higher_order_ghost_nodes),
+                  end(higher_order_ghost_nodes),
+                  std::back_inserter(partition.nodes));
+    }
+}
+
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     BaseLib::RunTime run_timer;
 
     run_timer.start();
     auto const partition_ids_per_element = computePartitionIDPerElement(
-        _nodes_partition_ids, _mesh->getElements());
+        _nodes_partition_ids, _mesh->getElements(), nullptr);
     INFO("partitionByMETIS(): Partition IDs per element computed in {:g} s",
          run_timer.elapsed());
 
@@ -771,58 +832,14 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
         run_timer.elapsed());
 
     run_timer.start();
-    // distribute elements into partitions
-    for (auto const& element : _mesh->getElements())
-    {
-        auto const element_id = element->getID();
-        auto node_partition_ids = partition_ids_per_element[element_id];
-        // make partition ids unique
-        std::sort(node_partition_ids.begin(), node_partition_ids.end());
-        auto last =
-            std::unique(node_partition_ids.begin(), node_partition_ids.end());
-        node_partition_ids.erase(last, node_partition_ids.end());
-
-        // all element nodes belong to the same partition => regular element
-        if (node_partition_ids.size() == 1)
-        {
-            _partitions[node_partition_ids[0]].regular_elements.push_back(
-                element);
-        }
-        else
-        {
-            for (auto const partition_id : node_partition_ids)
-            {
-                _partitions[partition_id].ghost_elements.push_back(element);
-            }
-        }
-    }
+    distributeElementsIntoPartitions(_partitions, *_mesh,
+                                     partition_ids_per_element);
     INFO("partitionByMETIS(): distribute elements into partitions took {:g} s",
          run_timer.elapsed());
 
     run_timer.start();
-    // determine and append ghost nodes to partition.nodes such that
-    // [base nodes, higher order nodes, base ghost nodes, higher order ghost
-    // nodes]
-    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
-    {
-        auto& partition = _partitions[part_id];
-        std::vector<MeshLib::Node*> base_ghost_nodes;
-        std::vector<MeshLib::Node*> higher_order_ghost_nodes;
-        std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
-            findGhostNodesInPartition(part_id, _mesh->getNodes(),
-                                      _partitions[part_id].ghost_elements,
-                                      _nodes_partition_ids, *_mesh, nullptr);
-
-        std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
-                  std::back_inserter(_partitions[part_id].nodes));
-
-        partition.number_of_base_nodes =
-            partition.number_of_regular_base_nodes + base_ghost_nodes.size();
-
-        std::copy(begin(higher_order_ghost_nodes),
-                  end(higher_order_ghost_nodes),
-                  std::back_inserter(_partitions[part_id].nodes));
-    }
+    determineAndAppendGhostNodesToPartitions(_partitions, *_mesh,
+                                             _nodes_partition_ids, nullptr);
     INFO("partitionByMETIS(): determine / append ghost nodes took {:g} s",
          run_timer.elapsed());
 
