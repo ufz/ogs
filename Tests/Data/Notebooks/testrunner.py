@@ -15,12 +15,12 @@ from nbconvert import HTMLExporter
 from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
 
 
-def save_to_website(exec_notebook_file, web_path):
+def save_to_website(exec_notebook_file):
     output_path_arg = ""
     output_path = ""
     notebook = nbformat.read(exec_notebook_file, as_version=4)
     first_cell = notebook.cells[0]
-    if "Tests/Data" in exec_notebook_file:
+    if "Tests/Data" in str(exec_notebook_file):
         lines = first_cell.source.splitlines()
         toml_begin = lines.index("+++")
         toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
@@ -30,14 +30,11 @@ def save_to_website(exec_notebook_file, web_path):
             Path(build_dir)
             / Path("web/content/docs/benchmarks")
             / Path(parsed_frontmatter["web_subsection"])
-            / Path(exec_notebook_file).stem.lower()
+            / exec_notebook_file.stem.lower()
         )
         output_path_arg = f"--output-dir={Path(output_path)}"
 
-    template = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "nbconvert_templates/collapsed.md.j2",
-    )
+    template = Path(__file__).parent.resolve() / "nbconvert_templates/collapsed.md.j2"
     subprocess.run(
         [
             "jupyter",
@@ -52,7 +49,7 @@ def save_to_website(exec_notebook_file, web_path):
         check=True,
     )
 
-    if "Tests/Data" not in exec_notebook_file:
+    if "Tests/Data" not in str(exec_notebook_file):
         return
 
     Path(output_path).mkdir(parents=True, exist_ok=True)
@@ -64,11 +61,9 @@ def save_to_website(exec_notebook_file, web_path):
         print(f"Copying ${exec_notebook_file} to {to_copy_path}")
 
     for subfolder in ["figures", "images"]:
-        figures_path = os.path.abspath(
-            os.path.join(os.path.dirname(notebook_file_path), subfolder)
-        )
+        figures_path = (Path(notebook_file_path).parent / subfolder).resolve()
         symlink_figures_path = to_copy_path / subfolder
-        if os.path.exists(figures_path) and not os.path.exists(symlink_figures_path):
+        if figures_path.exists() and not symlink_figures_path.exists():
             print(
                 f"{subfolder} folder detected, copying {figures_path} to "
                 f"{symlink_figures_path}"
@@ -77,6 +72,7 @@ def save_to_website(exec_notebook_file, web_path):
 
 
 def check_and_modify_frontmatter():
+    success = True
     # Check frontmatter has its own cell
     first_cell = nb["cells"][0]
     if (
@@ -135,6 +131,8 @@ def check_and_modify_frontmatter():
         # Insert a new markdown cell
         nb["cells"].insert(1, nbformat.v4.new_markdown_cell(text))
 
+    return success
+
 
 # Script arguments
 parser = argparse.ArgumentParser(description="Jupyter notebook testrunner.")
@@ -147,47 +145,51 @@ parser.add_argument("--hugo-out", default="web", help="Hugo output directory.")
 args = parser.parse_args()
 
 # Path setup
-testrunner_script_path = os.path.dirname(os.path.abspath(__file__))
-ogs_source_path = os.path.abspath(os.path.join(testrunner_script_path, "../../.."))
+testrunner_script_path = Path(__file__).parent.resolve()
+ogs_source_path = testrunner_script_path.parent.parent.parent.resolve()
 if "OGS_DATA_DIR" not in os.environ:
-    os.environ["OGS_DATA_DIR"] = os.path.join(ogs_source_path, "Tests/Data")
-os.makedirs(args.out, exist_ok=True)
+    os.environ["OGS_DATA_DIR"] = str(ogs_source_path / "Tests/Data")
+Path(args.out).mkdir(parents=True, exist_ok=True)
 build_dir = Path(args.out).parent.parent
 success = True
 
-for notebook_file_path in args.notebooks:
+for notebook_file in args.notebooks:
+    notebook_file_path = Path(notebook_file)
     notebook_success = True
     is_jupytext = False
-    if Path(notebook_file_path).suffix in [".md", ".py"]:
+    if notebook_file_path.suffix in [".md", ".py"]:
         is_jupytext = True
-    notebook_file_path_relative = (
-        Path(notebook_file_path).absolute().relative_to(ogs_source_path)
+    notebook_file_path_relative = notebook_file_path.absolute().relative_to(
+        ogs_source_path
     )
 
-    if "run-skip" not in notebook_file_path:
-        notebook_basename = os.path.splitext(notebook_file_path)[0]
-        notebook_output_path = os.path.abspath(
-            os.path.join(
-                args.out,
-                os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"]),
-            )
+    if "run-skip" not in str(notebook_file_path):
+        notebook_basename = (
+            notebook_file_path.parent.resolve() / notebook_file_path.stem
         )
-        os.makedirs(notebook_output_path, exist_ok=True)
-        os.environ["OGS_TESTRUNNER_OUT_DIR"] = notebook_output_path
-        notebook_filename = os.path.basename(notebook_file_path)
+        if "web/content" in str(notebook_basename):
+            notebook_output_path = notebook_basename
+        else:
+            notebook_output_path = (
+                Path(args.out)
+                / Path(notebook_basename).relative_to(os.environ["OGS_DATA_DIR"])
+            ).resolve()
+        notebook_output_path.mkdir(parents=True, exist_ok=True)
+        os.environ["OGS_TESTRUNNER_OUT_DIR"] = str(notebook_output_path)
+        notebook_filename = notebook_file_path.name
         convert_notebook_file = notebook_output_path
         if not is_jupytext:
-            convert_notebook_file = os.path.join(
-                convert_notebook_file, Path(notebook_filename).stem
-            )
-        convert_notebook_file += ".ipynb"
+            convert_notebook_file = convert_notebook_file / Path(notebook_filename).stem
+        convert_notebook_file = convert_notebook_file.with_suffix(".ipynb")
 
         if is_jupytext:
             nb = jupytext.read(notebook_file_path)
-            convert_notebook_file = convert_notebook_file.replace("notebook-", "")
+            convert_notebook_file = Path(
+                str(convert_notebook_file).replace("notebook-", "")
+            )
             jupytext.write(nb, convert_notebook_file)
         else:
-            with open(notebook_file_path, encoding="utf-8") as f:
+            with notebook_file_path.open(encoding="utf-8") as f:
                 nb = nbformat.read(f, as_version=4)
         ep = ExecutePreprocessor(kernel_name="python3")
 
@@ -195,36 +197,30 @@ for notebook_file_path in args.notebooks:
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
-            ep.preprocess(
-                nb, {"metadata": {"path": os.path.dirname(notebook_file_path)}}
-            )
+            ep.preprocess(nb, {"metadata": {"path": notebook_file_path.parent}})
         except DeadKernelError:
             out = None
             msg = 'Error executing the notebook "%s".\n\n' % notebook_filename
             msg += 'See notebook "%s" for the traceback.' % convert_notebook_file
             print(msg)
             notebook_success = False
-            success = False
-            with open(convert_notebook_file, mode="w", encoding="utf-8") as f:
+            with convert_notebook_file.open(mode="w", encoding="utf-8") as f:
                 nbformat.write(nb, f)
         except CellExecutionError:
             notebook_success = False
-            success = False
         end = timer()
 
         # Write new notebook
-        with open(convert_notebook_file, "w", encoding="utf-8") as f:
+        with convert_notebook_file.open(mode="w", encoding="utf-8") as f:
             if args.hugo:
-                check_and_modify_frontmatter()
+                success = check_and_modify_frontmatter()
             nbformat.write(nb, f)
 
     status_string = ""
     if notebook_success:
         status_string += "[Passed] "
         if args.hugo:
-            save_to_website(
-                convert_notebook_file, os.path.join(ogs_source_path, args.hugo_out)
-            )
+            save_to_website(convert_notebook_file)
     else:
         status_string += "[Failed] "
 
@@ -233,8 +229,10 @@ for notebook_file_path in args.notebooks:
         html_exporter.template_name = "classic"
         (body, resources) = html_exporter.from_notebook_node(nb)
 
-        html_file = convert_notebook_file + ".html"
-        with open(html_file, "w", encoding="utf-8") as fh:
+        html_file = convert_notebook_file.with_suffix(
+            convert_notebook_file.suffix + ".html"
+        )
+        with html_file.open(mode="w", encoding="utf-8") as fh:
             fh.write(body)
 
     status_string += f"{notebook_filename} in "
@@ -243,5 +241,5 @@ for notebook_file_path in args.notebooks:
         status_string += f" --> {html_file} <--"
     print(status_string)
 
-if not success:
+if not (success and notebook_success):
     sys.exit(1)
