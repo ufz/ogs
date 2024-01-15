@@ -1,11 +1,11 @@
 Loads a material model from a shared library that has been created by MFront
 with MFront's generic interface.
 
-See <http://tfel.sourceforge.net/> <https://github.com/thelfer/MFrontGenericInterfaceSupport>
+See <https://thelfer.github.io/tfel/web/> <https://github.com/thelfer/MFrontGenericInterfaceSupport>
 
 This requires MFront version 3.2.1 (which must correspond to the MFront's
 "generic" interface), which must be available on your system: see
-<http://tfel.sourceforge.net> page for download and installation instructions.
+<https://thelfer.github.io/tfel/web> page for download and installation instructions.
 
 \note The MFront library is distributed under GPL license.
 

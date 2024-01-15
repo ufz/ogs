@@ -26,7 +26,7 @@ Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
   - [VTUinterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
   - [ogstools](https://pypi.org/project/ogstools/) — OGS-related helper scripts, e.g. `msh2vtu`: Gmsh to VTU conversion
   - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
-  - [MFront python bindings](http://tfel.sourceforge.net/mfront-python.html) – Material model manipulation
+  - [MFront python bindings](https://thelfer.github.io/tfel/web/mfront-python.html) – Material model manipulation
   - [Matplotlib](https://matplotlib.org) — Plotting
   - [NumPy](https://numpy.org) — Scientific computing
   - [pandas](https://pandas.pydata.org) — Data analysis
