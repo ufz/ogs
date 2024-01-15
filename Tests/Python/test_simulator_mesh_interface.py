@@ -1,6 +1,6 @@
-import os
 import sys
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import ogs.mesh as mesh  # noqa: F401
@@ -79,9 +79,10 @@ def checkCells(cells, celltypes, points):
 
 
 def test_simulator():
+    current_dir = Path(__file__).parent.abspath()
     arguments = [
         "",
-        f"{os.path.abspath(os.path.dirname(__file__))}/../Data/Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_Python.prj",
+        f"{current_dir}/../Data/Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_Python.prj",
         "-o " + tempfile.mkdtemp(),
     ]
 
