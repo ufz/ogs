@@ -80,9 +80,11 @@ plt.rcParams["figure.figsize"] = (8, 6)
 ```
 
 ```python jupyter={"source_hidden": true}
-out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+from pathlib import Path
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
 ```
 
 ```python jupyter={"source_hidden": true}

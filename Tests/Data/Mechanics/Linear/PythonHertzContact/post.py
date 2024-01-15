@@ -162,9 +162,9 @@ for t, fn in zip(ts, fns):
             for node in range(3):
                 l1, l2 = T_inv * (cell_pts[node, :].T - cell_pts[2, :].T)
                 assert l1 > -1e-15
-                assert 1 + 1e-15 > l1
+                assert l1 < 1 + 1e-15
                 assert l2 > -1e-15
-                assert 1 + 1e-15 > l2
+                assert l2 < 1 + 1e-15
 
             grad = np.empty((2, 2))
             for comp in range(2):

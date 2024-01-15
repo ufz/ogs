@@ -46,9 +46,11 @@ For better optimal accuracy and better spatial discretizations, the mesh around 
 
 ```python
 #environment variable for output path
-out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+from pathlib import Path
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
 
 exe_dir = os.environ.get("OGS_BINARY_DIR")
 

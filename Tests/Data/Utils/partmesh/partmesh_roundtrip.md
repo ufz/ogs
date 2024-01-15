@@ -6,10 +6,11 @@
 
 ```python
 import os
+from pathlib import Path
 
-out_dir = os.environ.get('OGS_TESTRUNNER_OUT_DIR', '_out')
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
 
 data_dir = os.environ.get('OGS_DATA_DIR')
 
