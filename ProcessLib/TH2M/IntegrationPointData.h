@@ -29,16 +29,6 @@ struct IntegrationPointData final
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;
     using GlobalDimVectorType =
         typename ShapeMatricesTypePressure::GlobalDimVectorType;
-    explicit IntegrationPointData()
-    {
-        // Initialize current time step values
-        static const int kelvin_vector_size =
-            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-        eps_m.setZero(kelvin_vector_size);
-        eps_m_prev.resize(kelvin_vector_size);
-    }
-
-    typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
@@ -155,8 +145,6 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        eps_m_prev = eps_m;
-
         rho_G_h_G_prev = rho_G_h_G;
         rho_L_h_L_prev = rho_L_h_L;
         rho_S_h_S_prev = rho_S_h_S;
@@ -176,6 +164,7 @@ struct IntegrationPointData final
         ParameterLib::SpatialPosition const& x_position, double const dt,
         double const T_prev,
         typename BMatricesType::KelvinVectorType const& sigma_eff_prev,
+        typename BMatricesType::KelvinVectorType const& eps_m_prev,
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             solid_material,
         std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<

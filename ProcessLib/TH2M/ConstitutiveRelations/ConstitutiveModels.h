@@ -12,6 +12,7 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "ElasticTangentStiffnessModel.h"
+#include "MechanicalStrain.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
@@ -43,6 +44,7 @@ struct ConstitutiveModels
     BishopsModel chi_S_L_model;
     SwellingModel<DisplacementDim> swelling_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
+    MechanicalStrainModel<DisplacementDim> mechanical_strain_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

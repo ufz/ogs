@@ -257,22 +257,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.s_therm_exp_model.eval({pos, t, dt}, media_data,
                                       ip_cv.s_therm_exp_data);
 
-        MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-            dthermal_strain =
-                ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector *
-                (T - T_prev);
-
-        auto& eps_m = ip_data.eps_m;
-        auto& eps_m_prev = ip_data.eps_m_prev;
-
-        eps_m.noalias() =
-            eps_m_prev + eps - Bu * displacement_prev - dthermal_strain;
-
-        eps_m.noalias() += ip_cv.swelling_data.eps_m;
+        models.mechanical_strain_model.eval(
+            T_data, ip_cv.s_therm_exp_data, this->output_data_[ip].eps_data,
+            Bu * displacement_prev, prev_state.mechanical_strain_data,
+            ip_cv.swelling_data, current_state.mechanical_strain_data);
 
         vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m);
+                current_state.mechanical_strain_data.eps_m);
 
         auto const rho_ref_SR =
             solid_phase.property(MPL::PropertyType::density)
@@ -316,7 +308,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                  ip_cd.s_mech_data.stiffness_tensor) =
             ip_data.updateConstitutiveRelation(
                 vars, t, pos, dt, T_prev, prev_state.eff_stress_data->sigma,
-                this->solid_material_,
+                prev_state.mechanical_strain_data->eps_m, this->solid_material_,
                 this->material_states_[ip].material_state_variables);
 
         // constitutive model object as specified in process creation
@@ -933,6 +925,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         MPL::VariableArray vars;
 
         auto& ip_data = _ip_data[ip];
+        auto& prev_state = this->prev_states_[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
         auto const& Nu = ip_data.N_u;
@@ -984,7 +977,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
         auto const& sigma_sw = this->current_states_[ip].swelling_data.sigma_sw;
-        ip_data.eps_m_prev.noalias() =
+        prev_state.mechanical_strain_data->eps_m.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                 ? eps + C_el.inverse() * sigma_sw
                 : eps;
@@ -1121,7 +1114,7 @@ void TH2MLocalAssembler<
         auto& ip = _ip_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
         auto& current_state = this->current_states_[int_point];
-        auto& prev_state = this->prev_states_[int_point];
+        auto const& prev_state = this->prev_states_[int_point];
 
         auto const& Np = ip.N_p;
         auto const& NT = Np;
