@@ -985,6 +985,8 @@ void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
 std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
     MeshLib::Mesh const& mesh) const
 {
+    BaseLib::RunTime run_timer;
+
     auto const bulk_node_ids_string =
         MeshLib::getBulkIDString(MeshLib::MeshItemType::Node);
     auto const& bulk_node_ids =
@@ -992,49 +994,50 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
             bulk_node_ids_string, MeshLib::MeshItemType::Node, 1);
 
     std::vector<Partition> partitions(_partitions.size());
-    auto const number_of_mesh_base_nodes = mesh.computeNumberOfBaseNodes();
-    for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
-    {
-        auto& partition = partitions[part_id];
-        partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
-        partition.number_of_mesh_all_nodes = mesh.getNumberOfNodes();
 
-        std::vector<MeshLib::Node*> higher_order_regular_nodes;
-        std::tie(partition.nodes, higher_order_regular_nodes) =
-            findRegularNodesInPartition(part_id, mesh.getNodes(),
-                                        _nodes_partition_ids, mesh,
-                                        bulk_node_ids);
+    run_timer.start();
+    auto const partition_ids_per_element = computePartitionIDPerElement(
+        _nodes_partition_ids, mesh.getElements(), bulk_node_ids);
+    INFO("partitionOtherMesh(): Partition IDs per element computed in {:g} s",
+         run_timer.elapsed());
 
-        partition.number_of_regular_base_nodes = partition.nodes.size();
-        std::copy(begin(higher_order_regular_nodes),
-                  end(higher_order_regular_nodes),
-                  std::back_inserter(partition.nodes));
+    run_timer.start();
+    distributeNodesToPartitions(partitions, _nodes_partition_ids,
+                                mesh.getNodes(), bulk_node_ids);
+    INFO("partitionOtherMesh(): distribute nodes to partitions took {:g} s",
+         run_timer.elapsed());
 
-        partition.number_of_regular_nodes = partition.nodes.size();
+    run_timer.start();
+    reorderNodesIntoBaseAndHigherOrderNodesPerPartition(partitions, mesh);
+    INFO(
+        "partitionOtherMesh(): sorting [base nodes | higher order nodes] took "
+        "{:g} s",
+        run_timer.elapsed());
 
-        std::tie(partition.regular_elements, partition.ghost_elements) =
-            findElementsInPartition(part_id, mesh.getElements(),
-                                    _nodes_partition_ids, bulk_node_ids);
+    run_timer.start();
+    setNumberOfNodesInPartitions(partitions, mesh);
+    INFO(
+        "partitionOtherMesh(): setting number of nodes and of all mesh base "
+        "nodes took {:g} s",
+        run_timer.elapsed());
 
-        std::vector<MeshLib::Node*> base_ghost_nodes;
-        std::vector<MeshLib::Node*> higher_order_ghost_nodes;
-        std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
-            findGhostNodesInPartition(
-                part_id, mesh.getNodes(), partition.ghost_elements,
-                _nodes_partition_ids, mesh, bulk_node_ids);
+    run_timer.start();
+    distributeElementsIntoPartitions(partitions, mesh,
+                                     partition_ids_per_element);
+    INFO(
+        "partitionOtherMesh(): distribute elements into partitions took {:g} s",
+        run_timer.elapsed());
 
-        std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
-                  std::back_inserter(partition.nodes));
+    run_timer.start();
+    determineAndAppendGhostNodesToPartitions(
+        partitions, mesh, _nodes_partition_ids, bulk_node_ids);
+    INFO("partitionOtherMesh(): determine / append ghost nodes took {:g} s",
+         run_timer.elapsed());
 
-        partition.number_of_base_nodes =
-            partition.number_of_regular_base_nodes + base_ghost_nodes.size();
-
-        std::copy(begin(higher_order_ghost_nodes),
-                  end(higher_order_ghost_nodes),
-                  std::back_inserter(partition.nodes));
-    }
-
+    run_timer.start();
     markDuplicateGhostCells(mesh, partitions);
+    INFO("partitionOtherMesh(): markDuplicateGhostCells took {:g} s",
+         run_timer.elapsed());
     return partitions;
 }
 
