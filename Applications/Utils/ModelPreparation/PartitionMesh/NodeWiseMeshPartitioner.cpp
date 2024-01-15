@@ -704,6 +704,29 @@ void distributeNodesToPartitions(
     }
 }
 
+void reorderNodesIntoBaseAndHigherOrderNodes(Partition& partition,
+                                             MeshLib::Mesh const& mesh)
+{
+    std::vector<MeshLib::Node*> higher_order_nodes;
+    // after splitIntoBaseAndHigherOrderNodes() partition.nodes contains only
+    // base nodes
+    std::tie(partition.nodes, higher_order_nodes) =
+        splitIntoBaseAndHigherOrderNodes(partition.nodes, mesh);
+    partition.number_of_regular_base_nodes = partition.nodes.size();
+    std::copy(begin(higher_order_nodes), end(higher_order_nodes),
+              std::back_inserter(partition.nodes));
+    partition.number_of_regular_nodes = partition.nodes.size();
+}
+
+void reorderNodesIntoBaseAndHigherOrderNodesPerPartition(
+    std::vector<Partition>& partitions, MeshLib::Mesh const& mesh)
+{
+    for (auto& partition : partitions)
+    {
+        reorderNodesIntoBaseAndHigherOrderNodes(partition, mesh);
+    }
+}
+
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     BaseLib::RunTime run_timer;
@@ -721,19 +744,7 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
          run_timer.elapsed());
 
     run_timer.start();
-    // sort nodes: first base nodes, then higher order nodes
-    for (auto& partition : _partitions)
-    {
-        std::vector<MeshLib::Node*> higher_order_nodes;
-        // after splitIntoBaseAndHigherOrderNodes() partition.nodes contain only
-        // base nodes
-        std::tie(partition.nodes, higher_order_nodes) =
-            splitIntoBaseAndHigherOrderNodes(partition.nodes, *_mesh);
-        partition.number_of_regular_base_nodes = partition.nodes.size();
-        std::copy(begin(higher_order_nodes), end(higher_order_nodes),
-                  std::back_inserter(partition.nodes));
-        partition.number_of_regular_nodes = partition.nodes.size();
-    }
+    reorderNodesIntoBaseAndHigherOrderNodesPerPartition(_partitions, *_mesh);
     INFO(
         "partitionByMETIS(): sorting [base nodes | higher order nodes] took "
         "{:g} s",
