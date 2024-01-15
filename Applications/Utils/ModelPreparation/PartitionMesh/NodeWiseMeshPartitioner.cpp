@@ -727,6 +727,19 @@ void reorderNodesIntoBaseAndHigherOrderNodesPerPartition(
     }
 }
 
+void setNumberOfNodesInPartitions(std::vector<Partition>& partitions,
+                                  MeshLib::Mesh const& mesh)
+{
+    auto const number_of_mesh_base_nodes = mesh.computeNumberOfBaseNodes();
+    auto const number_of_mesh_all_nodes = mesh.getNumberOfNodes();
+    for (auto& partition : partitions)
+    {
+        partition.number_of_regular_nodes = partition.nodes.size();
+        partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
+        partition.number_of_mesh_all_nodes = number_of_mesh_all_nodes;
+    }
+}
+
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     BaseLib::RunTime run_timer;
@@ -751,13 +764,7 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
         run_timer.elapsed());
 
     run_timer.start();
-    auto const number_of_mesh_base_nodes = _mesh->computeNumberOfBaseNodes();
-    for (auto& partition : _partitions)
-    {
-        partition.number_of_regular_nodes = partition.nodes.size();
-        partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
-        partition.number_of_mesh_all_nodes = _mesh->getNumberOfNodes();
-    }
+    setNumberOfNodesInPartitions(_partitions, *_mesh);
     INFO(
         "partitionByMETIS(): setting number of nodes and of all mesh base "
         "nodes took {:g} s",
