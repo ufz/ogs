@@ -232,8 +232,11 @@ int main(int argc, char* argv[])
             partitioned_properties);
     }
 
-    INFO("Write the data of partitions into binary files ...");
+    BaseLib::RunTime io_run_timer;
+    io_run_timer.start();
     mesh_partitioner.write(output_file_name_wo_extension);
+    INFO("Writing the partitions data into binary files took {:g} s",
+         io_run_timer.elapsed());
 
     INFO("Total runtime: {:g} s.", run_timer.elapsed());
     INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
