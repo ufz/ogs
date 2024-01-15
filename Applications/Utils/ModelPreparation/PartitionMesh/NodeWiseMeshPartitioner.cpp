@@ -957,12 +957,11 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
             bulk_node_ids_string, MeshLib::MeshItemType::Node, 1);
 
     std::vector<Partition> partitions(_partitions.size());
+    auto const number_of_mesh_base_nodes = mesh.computeNumberOfBaseNodes();
     for (std::size_t part_id = 0; part_id < _partitions.size(); part_id++)
     {
         auto& partition = partitions[part_id];
-        INFO("Processing partition: {:d}", part_id);
-        // Set the node numbers of base and all mesh nodes.
-        partition.number_of_mesh_base_nodes = mesh.computeNumberOfBaseNodes();
+        partition.number_of_mesh_base_nodes = number_of_mesh_base_nodes;
         partition.number_of_mesh_all_nodes = mesh.getNumberOfNodes();
 
         std::vector<MeshLib::Node*> higher_order_regular_nodes;
