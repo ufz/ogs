@@ -730,6 +730,30 @@ std::vector<std::vector<std::size_t>> computePartitionIDPerElement(
     return partition_ids_per_element;
 }
 
+void distributeNodesToPartitions(
+    std::vector<Partition>& partitions,
+    std::vector<std::size_t> const& nodes_partition_ids,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::vector<std::size_t> const* bulk_node_ids)
+{
+    if (bulk_node_ids == nullptr)
+    {
+        for (auto const& node : nodes)
+        {
+            partitions[nodes_partition_ids[node->getID()]].nodes.push_back(
+                node);
+        }
+    }
+    else
+    {
+        for (auto const& node : nodes)
+        {
+            partitions[nodes_partition_ids[(*bulk_node_ids)[node->getID()]]]
+                .nodes.push_back(node);
+        }
+    }
+}
+
 void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     BaseLib::RunTime run_timer;
@@ -741,11 +765,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
          run_timer.elapsed());
 
     run_timer.start();
-    // distribute (bulk) nodes to partitions
-    for (auto const& node : _mesh->getNodes())
-    {
-        _partitions[_nodes_partition_ids[node->getID()]].nodes.push_back(node);
-    }
+    distributeNodesToPartitions(_partitions, _nodes_partition_ids,
+                                _mesh->getNodes(), nullptr);
     INFO("partitionByMETIS(): distribute nodes to partitions took {:g} s",
          run_timer.elapsed());
 
