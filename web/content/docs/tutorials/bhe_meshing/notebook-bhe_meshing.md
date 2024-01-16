@@ -246,7 +246,8 @@ check_file = os.path.isfile(f"{out_dir}/{bhe_mesh_file_name}.msh")
 if check_file:
     print("Creation of BHE mesh in Gmsh format was successful.")
 else:
-    raise Exception("Error! Gmsh file is not properly created in the BHE meshing tutorial.")
+    msg = "Error! Gmsh file is not properly created in the BHE meshing tutorial."
+    raise Exception(msg)
 ```
 
 In this step, we will investigate the number of nodes, lines, prisms, and Material ID of the created mesh file, to validate if it is created properly for simulation.
@@ -287,5 +288,6 @@ check_file = os.path.isfile(f"{out_dir}/{bhe_mesh_file_name}.vtu")
 if check_file:
     print("Conversion of mesh file from Gmsh to VTU format was successful.")
 else:
-    raise Exception("Error! Gmsh file is not properly converted to VTU format in the BHE meshing tutorial.")
+    msg = "Error! Gmsh file is not properly converted to VTU format in the BHE meshing tutorial."
+    raise Exception(msg)
 ```
