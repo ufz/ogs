@@ -362,8 +362,9 @@ void HydroMechanicsLocalAssemblerFracture<
         {
             DBUG(
                 "Element {:d}, gp {:d}: Fracture aperture is {:g}, but it is "
-                "expected to be non-negative.",
+                "expected to be non-negative. Setting it to zero now.",
                 _element.getID(), ip, b_m);
+            b_m = 0;
         }
 
         auto const initial_effective_stress =
