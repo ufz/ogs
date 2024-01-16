@@ -320,6 +320,21 @@ AddTest(
     output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
 )
 
+AddTest(
+    NAME HydroMechanics_hydraulic_deactivation
+    PATH HydroMechanics/HydraulicDeactivation
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS simHM_deactivate_H.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    hydraulic_deactivation_ts_1_t_1e+00.vtu hydraulic_deactivation_ts_1_t_1e+00.vtu pressure pressure 0 1e-12
+    hydraulic_deactivation_ts_1_t_1e+00.vtu hydraulic_deactivation_ts_1_t_1e+00.vtu displacement displacement 1e-14 0
+    hydraulic_deactivation_ts_1_t_1e+00.vtu hydraulic_deactivation_ts_1_t_1e+00.vtu sigma sigma 1e-10 0
+    hydraulic_deactivation_ts_1_t_1e+00.vtu hydraulic_deactivation_ts_1_t_1e+00.vtu epsilon epsilon 1e-14 0
+)
+
 ## Tests for Ideal gas
 # flow_no_strain
 AddTest(
