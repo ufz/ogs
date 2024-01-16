@@ -100,22 +100,11 @@ std::ostream& Partition::writeConfig(std::ostream& os) const
     return os.write(reinterpret_cast<const char*>(data), sizeof(data));
 }
 
-std::size_t nodeIdBulkMesh(
-    MeshLib::Node const& node,
-    std::vector<std::size_t> const* node_id_mapping = nullptr)
+std::size_t partitionLookup(MeshLib::Node const& node,
+                            std::vector<std::size_t> const& partition_ids,
+                            std::vector<std::size_t> const& node_id_mapping)
 {
-    return node_id_mapping ? (*node_id_mapping)[node.getID()] : node.getID();
-}
-
-std::size_t partitionLookup(
-    MeshLib::Node const& node,
-    std::vector<std::size_t> const& partition_ids,
-    std::vector<std::size_t> const* node_id_mapping = nullptr)
-{
-    auto node_id = [&node_id_mapping](MeshLib::Node const& n)
-    { return nodeIdBulkMesh(n, node_id_mapping); };
-
-    return partition_ids[node_id(node)];
+    return partition_ids[node_id_mapping[node.getID()]];
 }
 
 std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
@@ -150,12 +139,11 @@ splitIntoBaseAndHigherOrderNodes(std::vector<MeshLib::Node*> const& nodes,
 /// other ids; used by boundary meshes, for example.
 /// \return a pair of base node and extra nodes.
 std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
-findRegularNodesInPartition(
-    std::size_t const part_id,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::vector<std::size_t> const& partition_ids,
-    MeshLib::Mesh const& mesh,
-    std::vector<std::size_t> const* node_id_mapping = nullptr)
+findRegularNodesInPartition(std::size_t const part_id,
+                            std::vector<MeshLib::Node*> const& nodes,
+                            std::vector<std::size_t> const& partition_ids,
+                            MeshLib::Mesh const& mesh,
+                            std::vector<std::size_t> const& node_id_mapping)
 {
     // Find nodes belonging to a given partition id.
     std::vector<MeshLib::Node*> partition_nodes;
@@ -178,7 +166,7 @@ findGhostNodesInPartition(
     std::vector<MeshLib::Element const*> const& ghost_elements,
     std::vector<std::size_t> const& partition_ids,
     MeshLib::Mesh const& mesh,
-    std::vector<std::size_t> const* node_id_mapping = nullptr)
+    std::vector<std::size_t> const& node_id_mapping)
 {
     std::vector<MeshLib::Node*> base_ghost_nodes;
     std::vector<MeshLib::Node*> higher_order_ghost_nodes;
@@ -592,35 +580,19 @@ void checkFieldPropertyVectorSize(
 std::vector<std::vector<std::size_t>> computePartitionIDPerElement(
     std::vector<std::size_t> const& node_partition_map,
     std::vector<MeshLib::Element*> const& elements,
-    std::vector<std::size_t> const* bulk_node_ids)
+    std::vector<std::size_t> const& bulk_node_ids)
 {
     std::vector<std::vector<std::size_t>> partition_ids_per_element(
         elements.size());
     auto const number_elements = elements.size();
-    if (bulk_node_ids == nullptr)
+    for (std::size_t k = 0; k < number_elements; ++k)
     {
-        for (std::size_t k = 0; k < number_elements; ++k)
+        auto const& element = *elements[k];
+        auto const number_of_nodes = element.getNumberOfNodes();
+        for (std::size_t i = 0; i < number_of_nodes; ++i)
         {
-            auto const& element = *elements[k];
-            auto const number_of_nodes = element.getNumberOfNodes();
-            for (std::size_t i = 0; i < number_of_nodes; ++i)
-            {
-                partition_ids_per_element[k].push_back(
-                    node_partition_map[element.getNode(i)->getID()]);
-            }
-        }
-    }
-    else
-    {
-        for (std::size_t k = 0; k < number_elements; ++k)
-        {
-            auto const& element = *elements[k];
-            auto const number_of_nodes = element.getNumberOfNodes();
-            for (std::size_t i = 0; i < number_of_nodes; ++i)
-            {
-                partition_ids_per_element[k].push_back(node_partition_map[(
-                    *bulk_node_ids)[element.getNode(i)->getID()]]);
-            }
+            partition_ids_per_element[k].push_back(
+                node_partition_map[bulk_node_ids[element.getNode(i)->getID()]]);
         }
     }
 
@@ -631,24 +603,12 @@ void distributeNodesToPartitions(
     std::vector<Partition>& partitions,
     std::vector<std::size_t> const& nodes_partition_ids,
     std::vector<MeshLib::Node*> const& nodes,
-    std::vector<std::size_t> const* bulk_node_ids)
+    std::vector<std::size_t> const& bulk_node_ids)
 {
-    if (bulk_node_ids == nullptr)
+    for (auto const& node : nodes)
     {
-        for (auto const& node : nodes)
-        {
-            partitions[nodes_partition_ids[node->getID()]].nodes.push_back(
-                node);
-        }
-    }
-    else
-    {
-        auto const node_ids = *bulk_node_ids;
-        for (auto const& node : nodes)
-        {
-            partitions[nodes_partition_ids[node_ids[node->getID()]]]
-                .nodes.push_back(node);
-        }
+        partitions[nodes_partition_ids[bulk_node_ids[node->getID()]]]
+            .nodes.push_back(node);
     }
 }
 
@@ -725,7 +685,7 @@ void distributeElementsIntoPartitions(
 void determineAndAppendGhostNodesToPartitions(
     std::vector<Partition>& partitions, MeshLib::Mesh const& mesh,
     std::vector<std::size_t> const& nodes_partition_ids,
-    std::vector<std::size_t> const* node_id_mapping)
+    std::vector<std::size_t> const& node_id_mapping)
 {
     for (std::size_t part_id = 0; part_id < partitions.size(); part_id++)
     {
@@ -753,15 +713,18 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
 {
     BaseLib::RunTime run_timer;
 
+    std::vector<std::size_t> bulk_node_ids(_mesh->getNumberOfNodes());
+    std::iota(bulk_node_ids.begin(), bulk_node_ids.end(), 0);
+
     run_timer.start();
     auto const partition_ids_per_element = computePartitionIDPerElement(
-        _nodes_partition_ids, _mesh->getElements(), nullptr);
+        _nodes_partition_ids, _mesh->getElements(), bulk_node_ids);
     INFO("partitionByMETIS(): Partition IDs per element computed in {:g} s",
          run_timer.elapsed());
 
     run_timer.start();
     distributeNodesToPartitions(_partitions, _nodes_partition_ids,
-                                _mesh->getNodes(), nullptr);
+                                _mesh->getNodes(), bulk_node_ids);
     INFO("partitionByMETIS(): distribute nodes to partitions took {:g} s",
          run_timer.elapsed());
 
@@ -786,8 +749,8 @@ void NodeWiseMeshPartitioner::partitionByMETIS()
          run_timer.elapsed());
 
     run_timer.start();
-    determineAndAppendGhostNodesToPartitions(_partitions, *_mesh,
-                                             _nodes_partition_ids, nullptr);
+    determineAndAppendGhostNodesToPartitions(
+        _partitions, *_mesh, _nodes_partition_ids, bulk_node_ids);
     INFO("partitionByMETIS(): determine / append ghost nodes took {:g} s",
          run_timer.elapsed());
 
@@ -945,13 +908,13 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
 
     run_timer.start();
     auto const partition_ids_per_element = computePartitionIDPerElement(
-        _nodes_partition_ids, mesh.getElements(), bulk_node_ids);
+        _nodes_partition_ids, mesh.getElements(), *bulk_node_ids);
     INFO("partitionOtherMesh(): Partition IDs per element computed in {:g} s",
          run_timer.elapsed());
 
     run_timer.start();
     distributeNodesToPartitions(partitions, _nodes_partition_ids,
-                                mesh.getNodes(), bulk_node_ids);
+                                mesh.getNodes(), *bulk_node_ids);
     INFO("partitionOtherMesh(): distribute nodes to partitions took {:g} s",
          run_timer.elapsed());
 
@@ -978,7 +941,7 @@ std::vector<Partition> NodeWiseMeshPartitioner::partitionOtherMesh(
 
     run_timer.start();
     determineAndAppendGhostNodesToPartitions(
-        partitions, mesh, _nodes_partition_ids, bulk_node_ids);
+        partitions, mesh, _nodes_partition_ids, *bulk_node_ids);
     INFO("partitionOtherMesh(): determine / append ghost nodes took {:g} s",
          run_timer.elapsed());
 
