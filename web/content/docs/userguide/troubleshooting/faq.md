@@ -5,6 +5,19 @@ author = "Lars Bilke and Feliks Kiszkurno"
 weight = 1
 +++
 
+## Windows only: `ogs`` or any of its tools cannot open an existing file with a long path
+
+Windows has a [default path length limit of 260 characters](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation). Especially in workflows this limit can be exceeded easily. To enable long paths on Windows you need to alter the Windows registry which requires administrative user privileges:
+
+- Open a PowerShell command prompt as an Administrator
+- Run the following script:
+
+  ```powershell
+  New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+  ```
+
+- You may have to restart the computer
+
 ## `XSDError: Loaded schema file is invalid` error encountered when running DataExplorer
 
 You may encounter the following error (or similar) on opening `.gml`, `.cnd`, `std` or `.prj` files in the Data Explorer or file
