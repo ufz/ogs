@@ -202,6 +202,26 @@ void Process::updateDeactivatedSubdomains(double const time,
     {
         variable.get().updateDeactivatedSubdomains(time);
     }
+    _ids_of_active_elements.clear();
+    for (ProcessLib::ProcessVariable const& pv :
+         getProcessVariables(process_id))
+    {
+        auto const pv_active_element_ids = pv.getActiveElementIDs();
+        // empty if no deactivated_subdomains exist in process variable
+        // executeSelectedMemberDereferenced with empty active_element_ids
+        // will run executeMemberDereferenced (i.e. on all elements)
+        if (pv_active_element_ids.empty())
+        {
+            _ids_of_active_elements.clear();
+            return;
+        }
+        std::vector<std::size_t> tempResult;
+        std::set_union(
+            _ids_of_active_elements.begin(), _ids_of_active_elements.end(),
+            pv_active_element_ids.begin(), pv_active_element_ids.end(),
+            std::back_inserter(tempResult));
+        _ids_of_active_elements = std::move(tempResult);
+    }
 }
 
 void Process::preAssemble(const double t, double const dt,
