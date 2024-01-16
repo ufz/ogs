@@ -221,7 +221,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>INFINITY_N</norm_type>
-                    <abstols>1e-3 1e-3 1e-5 1e-6 1.e-6</abstols>
+                    <abstols>1e-10 1e-7 1e-16 1e-16 1e-16</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -342,7 +342,7 @@
         <process_variable>
             <name>displacement</name>
             <components>2</components>
-            <order>1</order>
+            <order>2</order>
             <boundary_conditions>
                 <boundary_condition>
                     <mesh>surface_y_min</mesh>

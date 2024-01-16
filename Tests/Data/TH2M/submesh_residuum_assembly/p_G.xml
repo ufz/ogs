@@ -105,7 +105,7 @@
             <vtkdiff>
                 <regex>p_G.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>HeatFlowRate</field>
-                <absolute_tolerance>1e-15</absolute_tolerance>
+                <absolute_tolerance>2e-13</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
 

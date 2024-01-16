@@ -111,6 +111,8 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
 
     auto const displacement =
         local_x.template segment<displacement_size>(displacement_index);
+    auto const displacement_prev =
+        local_x_prev.template segment<displacement_size>(displacement_index);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& gas_phase = medium.phase("Gas");
@@ -281,11 +283,11 @@ std::vector<ConstitutiveVariables<DisplacementDim>> TH2MLocalAssembler<
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
             dthermal_strain = ip_data.alpha_T_SR * (T - T_prev);
 
-        auto& eps_prev = ip_data.eps_prev;
         auto& eps_m = ip_data.eps_m;
         auto& eps_m_prev = ip_data.eps_m_prev;
 
-        eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+        eps_m.noalias() =
+            eps_m_prev + eps - Bu * displacement_prev - dthermal_strain;
 
         if (solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
         {
@@ -896,7 +898,6 @@ std::size_t TH2MLocalAssembler<
     if (name.starts_with("material_state_variable_") && name.ends_with("_ip"))
     {
         std::string const variable_name = name.substr(24, name.size() - 24 - 3);
-        DBUG("Setting material state variable '{:s}'", variable_name);
 
         // Using first ip data for solid material. TODO (naumov) move solid
         // material into element, store only material state in IPs.
@@ -908,10 +909,16 @@ std::size_t TH2MLocalAssembler<
                              { return iv.name == variable_name; });
             iv != end(internal_variables))
         {
+            DBUG("Setting material state variable '{:s}'", variable_name);
             return ProcessLib::setIntegrationPointDataMaterialStateVariables(
                 values, _ip_data, &IpData::material_state_variables,
                 iv->reference);
         }
+
+        WARN(
+            "Could not find variable {:s} in solid material model's "
+            "internal variables.",
+            variable_name);
     }
     return 0;
 }
@@ -940,6 +947,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
 
+    auto const displacement =
+        local_x.template segment<displacement_size>(displacement_index);
+
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium.phase("Solid");
@@ -954,6 +964,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
+        auto const& Nu = ip_data.N_u;
+        auto const& gradNu = ip_data.dNdx_u;
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, Nu);
         ParameterLib::SpatialPosition const pos{
             std::nullopt, _element.getID(), ip,
             MathLib::Point3d(
@@ -967,7 +983,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const T = NT.dot(temperature);
         vars.temperature = T;
 
+        auto const Bu =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                gradNu, Nu, x_coord, _is_axially_symmetric);
+
         auto& eps = ip_data.eps;
+        eps.noalias() = Bu * displacement;
 
         // Set volumetric strain rate for the general case without swelling.
         vars.volumetric_strain = Invariants::trace(eps);
