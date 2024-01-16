@@ -696,9 +696,10 @@ void distributeNodesToPartitions(
     }
     else
     {
+        auto const node_ids = *bulk_node_ids;
         for (auto const& node : nodes)
         {
-            partitions[nodes_partition_ids[(*bulk_node_ids)[node->getID()]]]
+            partitions[nodes_partition_ids[node_ids[node->getID()]]]
                 .nodes.push_back(node);
         }
     }
