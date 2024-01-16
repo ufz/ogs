@@ -100,11 +100,11 @@ std::ostream& Partition::writeConfig(std::ostream& os) const
     return os.write(reinterpret_cast<const char*>(data), sizeof(data));
 }
 
-std::size_t partitionLookup(MeshLib::Node const& node,
+std::size_t partitionLookup(std::size_t const& node_id,
                             std::vector<std::size_t> const& partition_ids,
                             std::vector<std::size_t> const& node_id_mapping)
 {
-    return partition_ids[node_id_mapping[node.getID()]];
+    return partition_ids[node_id_mapping[node_id]];
 }
 
 std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
@@ -148,9 +148,10 @@ findRegularNodesInPartition(std::size_t const part_id,
     // Find nodes belonging to a given partition id.
     std::vector<MeshLib::Node*> partition_nodes;
     copy_if(begin(nodes), end(nodes), std::back_inserter(partition_nodes),
-            [&](auto const& n) {
-                return partitionLookup(*n, partition_ids, node_id_mapping) ==
-                       part_id;
+            [&](auto const& n)
+            {
+                return partitionLookup(n->getID(), partition_ids,
+                                       node_id_mapping) == part_id;
             });
 
     return splitIntoBaseAndHigherOrderNodes(partition_nodes, mesh);
@@ -177,22 +178,24 @@ findGhostNodesInPartition(
         for (unsigned i = 0; i < ghost_elem->getNumberOfNodes(); i++)
         {
             auto const& n = ghost_elem->getNode(i);
-            if (is_ghost_node[n->getID()])
+            auto const node_id = n->getID();
+            if (is_ghost_node[node_id])
             {
                 continue;
             }
 
-            if (partitionLookup(*n, partition_ids, node_id_mapping) != part_id)
+            if (partitionLookup(node_id, partition_ids, node_id_mapping) !=
+                part_id)
             {
                 if (isBaseNode(*n, mesh.getElementsConnectedToNode(*n)))
                 {
-                    base_ghost_nodes.push_back(nodes[n->getID()]);
+                    base_ghost_nodes.push_back(nodes[node_id]);
                 }
                 else
                 {
-                    higher_order_ghost_nodes.push_back(nodes[n->getID()]);
+                    higher_order_ghost_nodes.push_back(nodes[node_id]);
                 }
-                is_ghost_node[n->getID()] = true;
+                is_ghost_node[node_id] = true;
             }
         }
     }
