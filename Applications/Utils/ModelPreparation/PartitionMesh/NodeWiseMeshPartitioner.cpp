@@ -131,32 +131,6 @@ splitIntoBaseAndHigherOrderNodes(std::vector<MeshLib::Node*> const& nodes,
     return {base_nodes, higher_order_nodes};
 }
 
-/// 1 copy pointers to nodes belonging to the partition part_id into base nodes
-/// vector, and
-/// 2 collect non-linear element nodes belonging to the partition part_id in
-/// extra nodes vector.
-/// If \c node_id_mapping is given, it will be used to map the mesh node ids to
-/// other ids; used by boundary meshes, for example.
-/// \return a pair of base node and extra nodes.
-std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
-findRegularNodesInPartition(std::size_t const part_id,
-                            std::vector<MeshLib::Node*> const& nodes,
-                            std::vector<std::size_t> const& partition_ids,
-                            MeshLib::Mesh const& mesh,
-                            std::vector<std::size_t> const& node_id_mapping)
-{
-    // Find nodes belonging to a given partition id.
-    std::vector<MeshLib::Node*> partition_nodes;
-    copy_if(begin(nodes), end(nodes), std::back_inserter(partition_nodes),
-            [&](auto const& n)
-            {
-                return partitionLookup(n->getID(), partition_ids,
-                                       node_id_mapping) == part_id;
-            });
-
-    return splitIntoBaseAndHigherOrderNodes(partition_nodes, mesh);
-}
-
 /// Prerequisite: the ghost elements has to be found
 /// Finds ghost nodes and non-linear element ghost nodes by walking over
 /// ghost elements.
