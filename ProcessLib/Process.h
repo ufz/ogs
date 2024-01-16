@@ -400,7 +400,7 @@ private:
     ExtrapolatorData _extrapolator_data;
 
     /// Union of active element ids per process variable
-    mutable std::vector<std::size_t> _ids_of_active_elements;
+    std::vector<std::size_t> _ids_of_active_elements;
 };
 
 }  // namespace ProcessLib
