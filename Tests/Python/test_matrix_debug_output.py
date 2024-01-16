@@ -1,6 +1,7 @@
 import os
 import platform
 import tempfile
+from pathlib import Path
 
 import ogs.simulator as sim
 import pytest
@@ -30,17 +31,17 @@ def run(prjpath, outdir, expect_successful):
 
 
 def check_simulation_results_exist(outdir):
-    assert os.path.exists(os.path.join(outdir, "square_1e2_ts_0_t_0.000000.vtu"))
-    assert os.path.exists(os.path.join(outdir, "square_1e2_ts_4_t_1.000000.vtu"))
+    assert (outdir / "square_1e2_ts_0_t_0.000000.vtu").exists()
+    assert (outdir / "square_1e2_ts_4_t_1.000000.vtu").exists()
 
 
 def check_local_matrix_output_files_exist(outdir, file_should_exist=True):
-    logfile = os.path.join(outdir, "ogs_local_matrix.log")
+    logfile = outdir / "ogs_local_matrix.log"
 
-    assert file_should_exist == os.path.exists(logfile)
+    assert file_should_exist == logfile.exists()
 
     if file_should_exist:
-        num_lines = sum(1 for line in open(logfile))
+        num_lines = sum(1 for line in logfile.open())
 
         # the number is a "reference value", it should not change unless the test is changed
         assert num_lines == 230
@@ -72,12 +73,12 @@ def check_global_matrix_output_files_exist(outdir, file_should_exist=True):
     }
 
     for f, num_lines_expected in map_filename_to_num_lines.items():
-        logfile = os.path.join(outdir, f)
+        logfile = outdir / f
 
-        assert file_should_exist == os.path.exists(logfile)
+        assert file_should_exist == logfile.exists()
 
         if file_should_exist:
-            num_lines_actual = sum(1 for line in open(logfile))
+            num_lines_actual = sum(1 for line in logfile.open())
 
             assert num_lines_actual == num_lines_expected
 
@@ -110,11 +111,8 @@ def check_global_matrix_output_files_exist(outdir, file_should_exist=True):
     ],
 )
 def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_parameter):
-    srcdir = os.path.join(os.path.dirname(__file__), "..", "..")
-    prjpath = os.path.join(
-        srcdir,
-        "Tests/Data/Mechanics/Linear/square_1e2.prj",
-    )
+    srcdir = Path(__file__).parent.parent.parent
+    prjpath = srcdir / "Tests/Data/Mechanics/Linear/square_1e2.prj"
 
     assert "OGS_LOCAL_MAT_OUT_PREFIX" not in os.environ
     assert "OGS_LOCAL_MAT_OUT_ELEMENTS" not in os.environ
@@ -122,10 +120,11 @@ def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_param
     prefix_setting, matrix_logfile_writable, prefix_expect_output = prefix_parameter
     elements_setting, elements_expect_output = elements_parameter
 
-    if platform.system() == "Windows":
-        # Empty env var not supported on Windows!
-        if prefix_setting == "" or elements_setting == "":
-            return
+    # Empty env var not supported on Windows!
+    if platform.system() == "Windows" and (
+        prefix_setting == "" or elements_setting == ""
+    ):
+        return
 
     # whether a logfile is expected based on the environment variable
     # settings
@@ -135,33 +134,33 @@ def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_param
     # log file is not writable
     expect_ogs_success = (not expect_matrix_logfile_output) or matrix_logfile_writable
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
-        with monkeypatch.context() as ctx:
-            # prepare environment
-            if prefix_setting is False:
-                pass
-            elif prefix_setting is True:
-                ctx.setenv("OGS_LOCAL_MAT_OUT_PREFIX", tmpdirname + os.sep)
-            elif prefix_setting == "" or prefix_setting.startswith("."):
-                ctx.setenv("OGS_LOCAL_MAT_OUT_PREFIX", prefix_setting)
-                # change to the temporary directory such that log files will be written there.
-                ctx.chdir(tmpdirname)
+    # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
+    with tempfile.TemporaryDirectory() as tmpdirname, monkeypatch.context() as ctx:
+        tmpdirpath = Path(tmpdirname)
+        # prepare environment
+        if prefix_setting is False:
+            pass
+        elif prefix_setting is True:
+            ctx.setenv("OGS_LOCAL_MAT_OUT_PREFIX", tmpdirname + os.sep)
+        elif prefix_setting == "" or prefix_setting.startswith("."):
+            ctx.setenv("OGS_LOCAL_MAT_OUT_PREFIX", prefix_setting)
+            # change to the temporary directory such that log files will be written there.
+            ctx.chdir(tmpdirname)
 
-            if elements_setting is not False:
-                ctx.setenv("OGS_LOCAL_MAT_OUT_ELEMENTS", elements_setting)
+        if elements_setting is not False:
+            ctx.setenv("OGS_LOCAL_MAT_OUT_ELEMENTS", elements_setting)
 
-            # run and test
-            check_local_matrix_output_files_exist(tmpdirname, False)
+        # run and test
+        check_local_matrix_output_files_exist(tmpdirpath, False)
 
-            run(prjpath, tmpdirname, expect_ogs_success)
+        run(prjpath, tmpdirpath, expect_ogs_success)
 
-            if expect_ogs_success:
-                check_simulation_results_exist(tmpdirname)
+        if expect_ogs_success:
+            check_simulation_results_exist(tmpdirpath)
 
-            check_local_matrix_output_files_exist(
-                tmpdirname, expect_matrix_logfile_output and expect_ogs_success
-            )
+        check_local_matrix_output_files_exist(
+            tmpdirpath, expect_matrix_logfile_output and expect_ogs_success
+        )
 
 
 @pytest.mark.parametrize(
@@ -182,11 +181,8 @@ def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_param
     ],
 )
 def test_global_matrix_debug_output(monkeypatch, prefix_parameter):
-    srcdir = os.path.join(os.path.dirname(__file__), "..", "..")
-    prjpath = os.path.join(
-        srcdir,
-        "Tests/Data/Mechanics/Linear/square_1e2.prj",
-    )
+    srcdir = Path(__file__).parent.parent.parent
+    prjpath = srcdir / "Tests/Data/Mechanics/Linear/square_1e2.prj"
 
     assert "OGS_GLOBAL_MAT_OUT_PREFIX" not in os.environ
 
@@ -196,25 +192,24 @@ def test_global_matrix_debug_output(monkeypatch, prefix_parameter):
         # Empty env var not supported on Windows!
         return
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
-        with monkeypatch.context() as ctx:
-            # prepare environment
-            if prefix_setting is False:
-                pass
-            elif prefix_setting is True:
-                ctx.setenv("OGS_GLOBAL_MAT_OUT_PREFIX", tmpdirname + os.sep)
-            elif prefix_setting == "" or prefix_setting.startswith("."):
-                ctx.setenv("OGS_GLOBAL_MAT_OUT_PREFIX", prefix_setting)
-                # change to the temporary directory such that log files will be written there.
-                ctx.chdir(tmpdirname)
+    # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
+    with tempfile.TemporaryDirectory() as tmpdirname, monkeypatch.context() as ctx:
+        # prepare environment
+        if prefix_setting is False:
+            pass
+        elif prefix_setting is True:
+            ctx.setenv("OGS_GLOBAL_MAT_OUT_PREFIX", tmpdirname + os.sep)
+        elif prefix_setting == "" or prefix_setting.startswith("."):
+            ctx.setenv("OGS_GLOBAL_MAT_OUT_PREFIX", prefix_setting)
+            # change to the temporary directory such that log files will be written there.
+            ctx.chdir(tmpdirname)
 
-            # run and test
-            check_global_matrix_output_files_exist(tmpdirname, False)
+        # run and test
+        check_global_matrix_output_files_exist(tmpdirname, False)
 
-            run(prjpath, tmpdirname, expect_ogs_success)
+        run(prjpath, tmpdirname, expect_ogs_success)
 
-            if expect_ogs_success:
-                check_simulation_results_exist(tmpdirname)
+        if expect_ogs_success:
+            check_simulation_results_exist(tmpdirname)
 
-            check_global_matrix_output_files_exist(tmpdirname, prefix_expect_output)
+        check_global_matrix_output_files_exist(tmpdirname, prefix_expect_output)
