@@ -168,60 +168,7 @@ findRegularNodesInPartition(
     return splitIntoBaseAndHigherOrderNodes(partition_nodes, mesh);
 }
 
-std::ptrdiff_t numberOfRegularNodes(
-    MeshLib::Element const& e, std::size_t const part_id,
-    std::vector<std::size_t> const& partition_ids,
-    std::vector<std::size_t> const* node_id_mapping = nullptr)
-{
-    return std::count_if(e.getNodes(), e.getNodes() + e.getNumberOfNodes(),
-                         [&](MeshLib::Node* const n) {
-                             return partitionLookup(*n, partition_ids,
-                                                    node_id_mapping) == part_id;
-                         });
-}
-
-/// 1 find elements belonging to the partition part_id:
-/// fills vector partition.regular_elements
-/// 2 find ghost elements belonging to the partition part_id
-/// fills vector partition.ghost_elements
-std::tuple<std::vector<MeshLib::Element const*>,
-           std::vector<MeshLib::Element const*>>
-findElementsInPartition(
-    std::size_t const part_id,
-    std::vector<MeshLib::Element*> const& elements,
-    std::vector<std::size_t> const& partition_ids,
-    std::vector<std::size_t> const* node_id_mapping = nullptr)
-{
-    std::vector<MeshLib::Element const*> regular_elements;
-    std::vector<MeshLib::Element const*> ghost_elements;
-
-    for (auto elem : elements)
-    {
-        auto const regular_nodes = numberOfRegularNodes(
-            *elem, part_id, partition_ids, node_id_mapping);
-
-        if (regular_nodes == 0)
-        {
-            continue;
-        }
-
-        if (regular_nodes ==
-            static_cast<std::ptrdiff_t>(elem->getNumberOfNodes()))
-        {
-            regular_elements.push_back(elem);
-        }
-        else
-        {
-            ghost_elements.push_back(elem);
-        }
-    }
-    return std::tuple<std::vector<MeshLib::Element const*>,
-                      std::vector<MeshLib::Element const*>>{regular_elements,
-                                                            ghost_elements};
-}
-
-/// Prerequisite: the ghost elements has to be found (using
-/// findElementsInPartition).
+/// Prerequisite: the ghost elements has to be found
 /// Finds ghost nodes and non-linear element ghost nodes by walking over
 /// ghost elements.
 std::tuple<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
