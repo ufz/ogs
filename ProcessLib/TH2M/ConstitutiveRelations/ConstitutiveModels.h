@@ -30,7 +30,8 @@ struct ConstitutiveModels
     explicit ConstitutiveModels(
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
         : elastic_tangent_stiffness_model(solid_material),
-          beta_p_SR_model(solid_material)
+          beta_p_SR_model(solid_material),
+          s_mech_model(solid_material)
     {
     }
 
@@ -45,6 +46,7 @@ struct ConstitutiveModels
     SwellingModel<DisplacementDim> swelling_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
     MechanicalStrainModel<DisplacementDim> mechanical_strain_model;
+    SolidMechanicsModel<DisplacementDim> s_mech_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

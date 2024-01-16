@@ -157,41 +157,6 @@ struct IntegrationPointData final
         rho_u_eff_prev = rho_u_eff;
     }
 
-    std::tuple<typename BMatricesType::KelvinVectorType,
-               typename BMatricesType::KelvinMatrixType>
-    updateConstitutiveRelation(
-        MaterialPropertyLib::VariableArray& variable_array, double const t,
-        ParameterLib::SpatialPosition const& x_position, double const dt,
-        double const T_prev,
-        typename BMatricesType::KelvinVectorType const& sigma_eff_prev,
-        typename BMatricesType::KelvinVectorType const& eps_m_prev,
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material,
-        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-            DisplacementDim>::MaterialStateVariables>& material_state_variables)
-    {
-        MaterialPropertyLib::VariableArray variable_array_prev;
-        variable_array_prev.stress
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                sigma_eff_prev);
-        variable_array_prev.mechanical_strain
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m_prev);
-        variable_array_prev.temperature = T_prev;
-        auto&& solution = solid_material.integrateStress(
-            variable_array_prev, variable_array, t, x_position, dt,
-            *material_state_variables);
-
-        if (!solution)
-            OGS_FATAL("Computation of local constitutive relation failed.");
-
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-        typename BMatricesType::KelvinVectorType sigma_eff;
-        std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
-
-        return {sigma_eff, C};
-    }
-
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 

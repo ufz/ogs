@@ -304,12 +304,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        std::tie(current_state.eff_stress_data.sigma,
-                 ip_cd.s_mech_data.stiffness_tensor) =
-            ip_data.updateConstitutiveRelation(
-                vars, t, pos, dt, T_prev, prev_state.eff_stress_data->sigma,
-                prev_state.mechanical_strain_data->eps_m, this->solid_material_,
-                this->material_states_[ip].material_state_variables);
+        models.s_mech_model.eval(
+            {pos, t, dt}, T_data, current_state.mechanical_strain_data,
+            prev_state.mechanical_strain_data, prev_state.eff_stress_data,
+            current_state.eff_stress_data, this->material_states_[ip],
+            ip_cd.s_mech_data);
 
         // constitutive model object as specified in process creation
         auto& ptm = *this->process_data_.phase_transition_model_;
