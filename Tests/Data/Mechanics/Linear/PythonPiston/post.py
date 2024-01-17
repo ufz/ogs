@@ -1,5 +1,8 @@
 #!/usr/bin/vtkpython
 
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
 import chamber as ch
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,18 +14,11 @@ pvd_file = "out/piston_pcs_0.pvd"
 
 ### helpers ##############################################
 
-import os
-
-try:
-    import xml.etree.ElementTree as ET
-except:
-    import xml.etree.ElementTree as ET
-
 
 def relpathfrom(origin, relpath):
-    if os.path.isabs(relpath):
-        return relpath
-    return os.path.join(origin, relpath)
+    if relpath.is_absolute():
+        return str(relpath)
+    return str(origin / relpath)
 
 
 def read_pvd_file(fn):
@@ -30,7 +26,7 @@ def read_pvd_file(fn):
         path = fn.name
     except AttributeError:
         path = fn
-    pathroot = os.path.dirname(path)
+    pathroot = Path(path).parent
     pvdtree = ET.parse(fn)
     node = pvdtree.getroot()
     if node.tag != "VTKFile":
@@ -49,7 +45,7 @@ def read_pvd_file(fn):
         if child.tag != "DataSet":
             return None, None
         ts.append(float(child.get("timestep")))
-        fs.append(relpathfrom(pathroot, child.get("file")))
+        fs.append(relpathfrom(pathroot, Path(child.get("file"))))
 
     return ts, fs
 
