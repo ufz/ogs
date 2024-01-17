@@ -20,7 +20,7 @@ def grad_solution(x, y):
 
 # Dirichlet BCs
 class BCTop(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
         x, y, z = coords
         assert y == 1.0
         assert z == 0.0
@@ -29,7 +29,7 @@ class BCTop(OpenGeoSys.BoundaryCondition):
 
 
 class BCLeft(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
         x, y, z = coords
         assert x == 0.0
         assert z == 0.0
@@ -38,7 +38,7 @@ class BCLeft(OpenGeoSys.BoundaryCondition):
 
 
 class BCBottom(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
         x, y, z = coords
         assert y == 0.0
         assert z == 0.0
@@ -48,7 +48,7 @@ class BCBottom(OpenGeoSys.BoundaryCondition):
 
 # Neumann BC
 class BCRight(OpenGeoSys.BoundaryCondition):
-    def getFlux(self, t, coords, primary_vars):
+    def getFlux(self, _t, coords, _primary_vars):
         x, y, z = coords
         assert x == 1.0
         assert z == 0.0
