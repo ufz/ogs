@@ -12,6 +12,7 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "ElasticTangentStiffnessData.h"
+#include "EquivalentPlasticStrainData.h"
 #include "MechanicalStrain.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
@@ -101,6 +102,7 @@ struct ConstitutiveTempData
     BishopsData chi_S_L;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     TotalStressData<DisplacementDim> total_stress_data;
+    EquivalentPlasticStrainData equivalent_plastic_strain_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

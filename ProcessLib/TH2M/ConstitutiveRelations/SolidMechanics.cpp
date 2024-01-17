@@ -26,7 +26,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>&
         eff_stress_data,
     MaterialStateData<DisplacementDim>& mat_state,
-    SolidMechanicsDataStateless<DisplacementDim>& out) const
+    SolidMechanicsDataStateless<DisplacementDim>& out,
+    EquivalentPlasticStrainData& equivalent_plastic_strain) const
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
@@ -53,6 +54,9 @@ void SolidMechanicsModel<DisplacementDim>::eval(
 
     std::tie(eff_stress_data.sigma, mat_state.material_state_variables,
              out.stiffness_tensor) = std::move(*solution);
+
+    *equivalent_plastic_strain =
+        mat_state.material_state_variables->getEquivalentPlasticStrain();
 }
 
 template struct SolidMechanicsModel<2>;

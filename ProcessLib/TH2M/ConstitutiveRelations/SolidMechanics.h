@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Base.h"
+#include "EquivalentPlasticStrainData.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialState.h"
 #include "MechanicalStrain.h"
@@ -49,7 +50,8 @@ struct SolidMechanicsModel
         ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>&
             eff_stress_data,
         MaterialStateData<DisplacementDim>& mat_state,
-        SolidMechanicsDataStateless<DisplacementDim>& out) const;
+        SolidMechanicsDataStateless<DisplacementDim>& out,
+        EquivalentPlasticStrainData& equivalent_plastic_strain) const;
 
     auto getInternalVariables() const
     {

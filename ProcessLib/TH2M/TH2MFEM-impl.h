@@ -220,7 +220,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             {pos, t, dt}, T_data, current_state.mechanical_strain_data,
             prev_state.mechanical_strain_data, prev_state.eff_stress_data,
             current_state.eff_stress_data, this->material_states_[ip],
-            ip_cd.s_mech_data);
+            ip_cd.s_mech_data, ip_cv.equivalent_plastic_strain_data);
 
         models.total_stress_model.eval(
             current_state.eff_stress_data, ip_cv.biot_data, ip_cv.chi_S_L,
@@ -234,9 +234,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
                 ip_cv.total_stress_data.sigma_total));
 
-        vars.equivalent_plastic_strain =
-            this->material_states_[ip]
-                .material_state_variables->getEquivalentPlasticStrain();
+        vars.equivalent_plastic_strain = *ip_cv.equivalent_plastic_strain_data;
+
         vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
