@@ -133,7 +133,7 @@ class HertzContactBC(OpenGeoSys.BoundaryCondition):
                 if x <= self._a_prev:
                     raise AssertionError()  # this case shouldn't happen
                     res = (True, y_top - y)
-                elif self._boundary_x_coords_are_initialized(t):
+                if self._boundary_x_coords_are_initialized(t):
                     idx = self._boundary_x_coords.index(x)
                     if idx != 0 and self._boundary_x_coords[idx - 1] == self._a_prev:
                         res = (True, y_top - y)
@@ -146,7 +146,7 @@ class HertzContactBC(OpenGeoSys.BoundaryCondition):
 
         return 1.0 - 0.005 * t
 
-    def _boundary_x_coords_are_initialized(self, t):
+    def _boundary_x_coords_are_initialized(self, _t):
         return self._iteration >= 2
 
 
