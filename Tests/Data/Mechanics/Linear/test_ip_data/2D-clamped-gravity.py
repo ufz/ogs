@@ -16,21 +16,23 @@
 # # Deformation of a linear elastic Material due to its own gravity
 
 # %%
+import os
+import subprocess
+from pathlib import Path
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pyvista as pv
+from IPython.display import HTML, display
 
 pv.set_jupyter_backend("static")
 
-import os
-import subprocess
+# %
 
-import matplotlib.pyplot as plt
-
-# %%
-outdir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
-if not os.path.exists(outdir):
-    os.makedirs(outdir)
-    with open(os.path.join(outdir, ".gitignore"), "w") as fh:
+outdir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not outdir.exists():
+    outdir.mkdir(parents=True)
+    with (outdir / ".gitignore").open(mode="w") as fh:
         fh.write("*\n")
 
 # %% [markdown]
@@ -141,7 +143,7 @@ def u_y_ana(y):
 # # Run OGS
 
 # %%
-with open(os.path.join(outdir, "ogs-out.txt"), "w") as fh:
+with (outdir / "ogs-out.txt").open(mode="w") as fh:
     subprocess.run(
         ["ogs", "-o", outdir, "square_1e2_test_ip_data.prj"],
         check=True,
@@ -151,14 +153,14 @@ with open(os.path.join(outdir, "ogs-out.txt"), "w") as fh:
 
 # %%
 # convert last result to point cloud
-with open(os.path.join(outdir, "point-cloud-out.txt"), "w") as fh:
+with (outdir / "point-cloud-out.txt").open(mode="w") as fh:
     subprocess.run(
         [
             "ipDataToPointCloud",
             "-i",
-            os.path.join(outdir, "square_1e2_ts_4_t_1.000000.vtu"),
+            outdir / "square_1e2_ts_4_t_1.000000.vtu",
             "-o",
-            os.path.join(outdir, "square_1e2_ts_4_point_cloud.vtu"),
+            outdir / "square_1e2_ts_4_point_cloud.vtu",
         ],
         check=True,
         stdout=fh,
@@ -185,8 +187,8 @@ def add_vertex_cells(mesh):
 
 
 # %%
-mesh = pv.read(os.path.join(outdir, "square_1e2_ts_4_t_1.000000.vtu"))
-mesh_pc = pv.read(os.path.join(outdir, "square_1e2_ts_4_point_cloud.vtu"))
+mesh = pv.read(outdir / "square_1e2_ts_4_t_1.000000.vtu")
+mesh_pc = pv.read(outdir / "square_1e2_ts_4_point_cloud.vtu")
 mesh_pc = add_vertex_cells(mesh_pc)  # add vertex cells to make pyvista vis work
 
 # %%
@@ -262,7 +264,6 @@ ax2.set_xlabel(r"$\Delta u_y$ / m")
 
 ax.legend()
 
-ax
 fig.set_size_inches(12, 4)
 
 # %%
@@ -311,16 +312,10 @@ ax.set_ylabel("$y$ / m")
 
 ax.legend()
 
-ax
 fig.set_size_inches(12, 4)
 
-# %% [markdown]
-# # Checks (Assertions)
 
 # %%
-from IPython.display import HTML, display
-
-
 def allclose(x, y, abstol):
     d = np.max(np.abs(x - y))
 
