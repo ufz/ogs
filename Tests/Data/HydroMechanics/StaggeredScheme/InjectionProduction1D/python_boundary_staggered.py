@@ -12,13 +12,13 @@ source_term_production = -1.16e-4
 # Source Terms
 ## Pressure
 class Source_p_injection(OpenGeoSys.SourceTerm):
-    def getFlux(self, t, coords, primary_vars):
+    def getFlux(self, _t, _coords, _primary_vars):
         Jac = [0.0]
         return (source_term_injection, Jac)
 
 
 class Source_p_production(OpenGeoSys.SourceTerm):
-    def getFlux(self, t, coords, primary_vars):
+    def getFlux(self, _t, _coords, _primary_vars):
         Jac = [0.0]
         return (source_term_production, Jac)
 
@@ -30,12 +30,12 @@ class Source_p_production(OpenGeoSys.SourceTerm):
 ## Displacement
 ### Dirichlet
 class BC_u_D(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, _coords, _node_id, _primary_vars):
         return (True, dirichlet_displacement_0)
 
 
 class BC_u_N(OpenGeoSys.BoundaryCondition):
-    def getFlux(self, t, coords, primary_vars):
+    def getFlux(self, _t, _coords, _primary_vars):
         Jac = [0.0, 0.0]
         return (True, neumann_displacement_overburden, Jac)
 
