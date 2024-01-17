@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-from vtk import *
+import vtk
 
 
 def createStressArray(points):
-    sigma = vtkDoubleArray()
+    sigma = vtk.vtkDoubleArray()
     sigma.SetNumberOfComponents(4)
     sigma.SetNumberOfTuples(points.GetNumberOfPoints())
     for i in range(points.GetNumberOfPoints()):
@@ -17,7 +17,7 @@ def createStressArray(points):
 
 
 def createStressArrayForCells(mesh):
-    cell_centers = vtkCellCenters()
+    cell_centers = vtk.vtkCellCenters()
     cell_centers.SetInputData(mesh)
     cell_centers.Update()
     return createStressArray(cell_centers.GetOutput())
@@ -28,7 +28,7 @@ def createStressArrayForNodes(mesh):
 
 
 def writeDataToFile(mesh, filename):
-    w = vtkXMLUnstructuredGridWriter()
+    w = vtk.vtkXMLUnstructuredGridWriter()
     w.SetFileName(filename)
     w.SetInputData(mesh)
     w.Write()
@@ -39,7 +39,7 @@ def addStressArraysToMesh(mesh):
     mesh.GetCellData().AddArray(createStressArrayForCells(mesh))
 
 
-r = vtkXMLUnstructuredGridReader()
+r = vtk.vtkXMLUnstructuredGridReader()
 r.SetFileName("soil_column.vtu")
 r.Update()
 m = r.GetOutput()
