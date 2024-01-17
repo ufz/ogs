@@ -9,15 +9,15 @@
 
 #pragma once
 
-#include "Base.h"
+#include "MathLib/KelvinVector.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
 
-namespace ProcessLib::SmallDeformation
+namespace ProcessLib::ConstitutiveRelations
 {
-
 template <int DisplacementDim>
 struct StressData
 {
-    KelvinVector<DisplacementDim> sigma = KVnan<DisplacementDim>();
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> sigma;
 
     static auto reflect()
     {
@@ -26,4 +26,4 @@ struct StressData
         return ProcessLib::Reflection::reflectWithName("sigma", &Self::sigma);
     }
 };
-}  // namespace ProcessLib::SmallDeformation
+}  // namespace ProcessLib::ConstitutiveRelations

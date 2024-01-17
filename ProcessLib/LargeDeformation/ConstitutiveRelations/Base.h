@@ -112,19 +112,4 @@ struct DeformationGradientData
                                                        &Self::volume_ratio)};
     }
 };
-
-template <int DisplacementDim>
-struct StrainData
-{
-    // TODO Move initialization to the local assembler.
-    KelvinVector<DisplacementDim> eps = KVnan<DisplacementDim>();
-
-    static auto reflect()
-    {
-        using Self = StrainData<DisplacementDim>;
-
-        return ProcessLib::Reflection::reflectWithName("epsilon", &Self::eps);
-    }
-};
-
 }  // namespace ProcessLib::LargeDeformation

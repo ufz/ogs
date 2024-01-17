@@ -11,6 +11,7 @@
 #pragma once
 
 #include "ElasticTangentStiffnessData.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "Saturation.h"
 
 namespace ProcessLib::ThermoRichardsMechanics

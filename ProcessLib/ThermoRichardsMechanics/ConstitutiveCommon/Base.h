@@ -108,18 +108,4 @@ struct CapillaryPressureData
     double p_cap_prev;
     Eigen::Vector<double, DisplacementDim> grad_p_cap;
 };
-
-template <int DisplacementDim>
-struct StrainData
-{
-    KelvinVector<DisplacementDim> eps = KVnan<DisplacementDim>();
-
-    static auto reflect()
-    {
-        using Self = StrainData<DisplacementDim>;
-
-        return ProcessLib::Reflection::reflectWithName("epsilon", &Self::eps);
-    }
-};
-
 }  // namespace ProcessLib::ThermoRichardsMechanics
