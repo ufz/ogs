@@ -127,6 +127,26 @@ function(ogs_add_executable targetName)
         list(APPEND files ${file_path})
     endforeach()
 
+    if(WIN32)
+        # Generate manifest file with long paths enabled. Is added to source
+        # files which embeds it into the executable. To work long paths have
+        # to be enabled in the registry as well:
+        # https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation?tabs=registry#enable-long-paths-in-windows-10-version-1607-and-later
+        set(target_mn_filename "${targetName}_longpath.manifest")
+        set(mn_file_output "${CMAKE_CURRENT_BINARY_DIR}/${target_mn_filename}")
+
+        set(mn_contents [=[<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+<application  xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings xmlns:ws2="http://schemas.microsoft.com/SMI/2016/WindowsSettings">
+        <ws2:longPathAware>true</ws2:longPathAware>
+    </windowsSettings>
+</application>
+</assembly>]=])
+        file(GENERATE OUTPUT "${mn_file_output}" CONTENT "${mn_contents}")
+        list(APPEND files ${mn_file_output})
+    endif()
+
     add_executable(${targetName} ${files})
 
     target_compile_options(
