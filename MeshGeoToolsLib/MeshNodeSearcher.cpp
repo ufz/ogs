@@ -135,12 +135,13 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
 {
     double const epsilon_radius = _search_length_algorithm->getSearchLength();
 
-    std::vector<std::size_t> node_ids;
-    node_ids.reserve(points.size());
+    std::vector<std::size_t> node_ids(points.size());
 
-    for (auto const* const p_ptr : points)
+    auto const number_of_points = std::ssize(points);
+#pragma omp for
+    for (std::ptrdiff_t i = 0; i < number_of_points; ++i)
     {
-        auto const& p = *p_ptr;
+        auto const& p = *points[i];
         std::vector<std::size_t> const ids =
             _mesh_grid.getPointsInEpsilonEnvironment(p, epsilon_radius);
         if (ids.empty())
@@ -168,7 +169,7 @@ std::vector<std::size_t> MeshNodeSearcher::getMeshNodeIDs(
                 ids.size(), p.getID(), p[0], p[1], p[2], epsilon_radius,
                 _mesh.getName(), ss.str());
         }
-        node_ids.push_back(ids.front());
+        node_ids[i] = ids.front();
     }
     return node_ids;
 }
