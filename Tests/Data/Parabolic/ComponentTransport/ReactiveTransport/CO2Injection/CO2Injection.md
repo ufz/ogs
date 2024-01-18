@@ -88,7 +88,8 @@ check_file = os.path.isfile(f"{out_dir}/calcite_simple_ts_43_t_30000.000000.vtu"
 if check_file:
     print("OGS simulation for the scenario simple case runs successfully")
 else:
-    raise Exception("OGS simulation failed.")
+    msg = "OGS simulation failed."
+    raise Exception(msg)
 
 # pwp
 prj_name = "calcite_pwp.prj"
@@ -106,7 +107,8 @@ check_file = os.path.isfile(f"{out_dir}/calcite_pwp_ts_43_t_30000.000000.vtu")
 if check_file:
     print("OGS simulation for the scenario PWP case runs successfully")
 else:
-    raise Exception("OGS simulation failed.")
+    msg = "OGS simulation failed."
+    raise Exception(msg)
 ```
 
 ```python
