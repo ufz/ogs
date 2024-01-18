@@ -6,13 +6,15 @@
 ###
 
 import sys
+from pathlib import Path
+
+from pandas import read_csv
 
 print(sys.version)
 try:
     import ogs.callbacks as OpenGeoSys
 except ModuleNotFoundError:
     import OpenGeoSys
-from pandas import read_csv
 
 df_server = read_csv(
     "initial.csv", delimiter=";", index_col=[0], dtype={"data_index": str}
@@ -43,42 +45,34 @@ class BC(OpenGeoSys.BHENetwork):
         data_col_4 = df_server["flowrate"].tolist()  # 'BHE flow rate'
         return (t, data_col_1, data_col_2, data_col_3, data_col_4)
 
-    def serverCommunicationPreTimestep(self, t, dt, Tin_val, Tout_val, flowrate):
+    def serverCommunicationPreTimestep(self, t, _dt, Tin_val, Tout_val, flowrate):
         # TODO: Code for SimualtionX simulation
         # with t; only take the last results for each time point
         # TODO: say SimulationX the next time point from OGS
 
         Tin_val = get_Tin(t)
-        tin_file = open("T_in.txt", "a")
-        tin_file.write(str(t) + str(Tin_val) + "\n")
-        tin_file.close()
+        with Path("T_in.txt").open(mode="a") as fd:
+            fd.write(str(t) + str(Tin_val) + "\n")
 
-        tout_file = open("T_out.txt", "a")
-        tout_file.write(str(t) + str(Tout_val) + "\n")
-        tout_file.close()
+        with Path("T_out.txt").open(mode="a") as fd:
+            fd.write(str(t) + str(Tout_val) + "\n")
 
-        flowrate_file = open("flowrate.txt", "a")
-        flowrate_file.write(str(t) + str(flowrate) + "\n")
-        flowrate_file.close()
+        with Path("flowrate.txt").open(mode="a") as fd:
+            fd.write(str(t) + str(flowrate) + "\n")
 
         return (Tin_val, flowrate)
 
-    def serverCommunicationPostTimestep(self, t, dt, Tin_val, Tout_val, flowrate):
+    def serverCommunicationPostTimestep(self, t, _dt, Tin_val, Tout_val, flowrate):
         Tin_val = [305]
 
-        tin = open("T_in.txt", "a")
-        tin.write("post: " + str(t) + str(Tin_val) + "\n")
-        tin.close()
+        with Path("T_in.txt").open(mode="a") as fd:
+            fd.write("post: " + str(t) + str(Tin_val) + "\n")
 
-        tout = open("T_out.txt", "a")
-        tout.write("post: " + str(t) + str(Tout_val) + "\n")
-        tout.close()
+        with Path("T_out.txt").open(mode="a") as fd:
+            fd.write("post: " + str(t) + str(Tout_val) + "\n")
 
-        flowrate_file = open("flowrate.txt", "a")
-        flowrate_file.write("post: " + str(t) + str(flowrate) + "\n")
-        flowrate_file.close()
-
-        return
+        with Path("flowrate.txt").open(mode="a") as fd:
+            fd.write("post: " + str(t) + str(flowrate) + "\n")
 
 
 # main
