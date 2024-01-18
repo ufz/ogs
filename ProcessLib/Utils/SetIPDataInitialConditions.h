@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <string_view>
+
 #include "BaseLib/Error.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
@@ -17,7 +19,7 @@
 namespace ProcessLib
 {
 /// Removes the suffix '_ip' from the passed field name.
-inline std::string removeIPFieldDataNameSuffix(std::string const& name)
+inline std::string_view removeIPFieldDataNameSuffix(std::string_view const name)
 {
     if (!name.ends_with("_ip"))
     {
@@ -27,7 +29,7 @@ inline std::string removeIPFieldDataNameSuffix(std::string const& name)
             name);
     }
 
-    return name.substr(0, name.size() - 3);
+    return {name.data(), name.size() - 3};
 }
 
 template <typename LocalAssemblersVector>
@@ -35,8 +37,7 @@ void setIPDataInitialConditions(
     std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>> const&
         _integration_point_writer,
     MeshLib::Properties const& mesh_properties,
-    LocalAssemblersVector& local_assemblers,
-    bool const remove_name_suffix = false)
+    LocalAssemblersVector& local_assemblers)
 {
     for (auto const& ip_writer : _integration_point_writer)
     {
@@ -72,8 +73,7 @@ void setIPDataInitialConditions(
 
         INFO("Setting initial integration point data for '{}'", name);
 
-        auto const& name_transformed =
-            remove_name_suffix ? removeIPFieldDataNameSuffix(name) : name;
+        auto const name_transformed = removeIPFieldDataNameSuffix(name);
 
         // Now we have a properly named vtk's field data array and the
         // corresponding meta data.

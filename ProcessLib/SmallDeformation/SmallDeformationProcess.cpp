@@ -121,9 +121,8 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             _process_data.solid_materials, _local_assemblers,
             _integration_point_writer, integration_order);
 
-    bool const remove_name_suffix = true;
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
-                               _local_assemblers, remove_name_suffix);
+                               _local_assemblers);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(

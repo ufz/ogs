@@ -1046,7 +1046,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 std::size_t HydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
-    DisplacementDim>::setIPDataInitialConditions(std::string const& name,
+    DisplacementDim>::setIPDataInitialConditions(std::string_view const name,
                                                  double const* values,
                                                  int const integration_order)
 {
@@ -1060,7 +1060,7 @@ std::size_t HydroMechanicsLocalAssembler<
             _element.getID());
     }
 
-    if (name == "sigma_ip")
+    if (name == "sigma")
     {
         if (_process_data.initial_stress != nullptr)
         {
@@ -1075,13 +1075,13 @@ std::size_t HydroMechanicsLocalAssembler<
             values, _ip_data, &IpData::sigma_eff);
     }
 
-    if (name == "epsilon_ip")
+    if (name == "epsilon")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
     }
 
-    if (name == "strain_rate_variable_ip")
+    if (name == "strain_rate_variable")
     {
         return ProcessLib::setIntegrationPointScalarData(
             values, _ip_data, &IpData::strain_rate_variable);

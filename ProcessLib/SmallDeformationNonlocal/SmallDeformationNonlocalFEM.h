@@ -146,7 +146,7 @@ public:
         }
     }
 
-    std::size_t setIPDataInitialConditions(std::string const& name,
+    std::size_t setIPDataInitialConditions(std::string_view const name,
                                            double const* values,
                                            int const integration_order) override
     {
@@ -160,12 +160,12 @@ public:
                 _element.getID());
         }
 
-        if (name == "sigma_ip")
+        if (name == "sigma")
         {
             return setSigma(values);
         }
 
-        if (name == "kappa_d_ip")
+        if (name == "kappa_d")
         {
             return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
                                                              &IpData::kappa_d);

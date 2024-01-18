@@ -54,7 +54,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         }
     }
 
-    std::size_t setIPDataInitialConditions(std::string const& name,
+    std::size_t setIPDataInitialConditions(std::string_view name,
                                            double const* values,
                                            int const integration_order)
     {
@@ -83,17 +83,16 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         // reflectWithName function also supports only a single return value.
         if (name.starts_with("material_state_variable_"))
         {
-            std::string const variable_name = name.substr(24, name.size() - 24);
+            name.remove_prefix(24);
 
             auto const& internal_variables =
                 solid_material_.getInternalVariables();
             if (auto const iv = std::find_if(
                     begin(internal_variables), end(internal_variables),
-                    [&variable_name](auto const& iv)
-                    { return iv.name == variable_name; });
+                    [&name](auto const& iv) { return iv.name == name; });
                 iv != end(internal_variables))
             {
-                DBUG("Setting material state variable '{:s}'", variable_name);
+                DBUG("Setting material state variable '{:s}'", name);
                 return ProcessLib::
                     setIntegrationPointDataMaterialStateVariables(
                         values, material_states_,
