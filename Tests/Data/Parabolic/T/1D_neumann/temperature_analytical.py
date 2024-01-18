@@ -2,10 +2,10 @@
 # Solution of heatequation in a semi-infinite domain.
 
 import numpy as np
+import vtk
 from scipy.special import erfc
-from vtk import *
 
-r = vtkXMLUnstructuredGridReader()
+r = vtk.vtkXMLUnstructuredGridReader()
 r.SetFileName("mesh.vtu")
 r.Update()
 m = r.GetOutput()
@@ -30,7 +30,7 @@ def temperature(x, t):
 
 
 def addSolution(t):
-    T = vtkDoubleArray()
+    T = vtk.vtkDoubleArray()
     T.SetName("temperature_" + str(t) + "s")
     T.SetNumberOfComponents(1)
     T.SetNumberOfTuples(ps.GetNumberOfPoints())
@@ -45,7 +45,7 @@ def addSolution(t):
 for t in 78125 * np.array([1, 3, 65, 405, 500]):
     addSolution(t)
 
-w = vtkXMLUnstructuredGridWriter()
+w = vtk.vtkXMLUnstructuredGridWriter()
 w.SetFileName("x.vtu")
 w.SetInputData(m)
 w.Update()
