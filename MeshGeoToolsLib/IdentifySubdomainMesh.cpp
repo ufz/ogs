@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "BaseLib/RunTime.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -193,15 +194,22 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
                            MeshNodeSearcher const& mesh_node_searcher,
                            bool const force_overwrite = false)
 {
+    BaseLib::RunTime time;
+    time.start();
     auto const& bulk_node_ids =
         identifySubdomainMeshNodes(subdomain_mesh, mesh_node_searcher);
+    INFO("identifySubdomainMesh(): identifySubdomainMeshNodes took {:g} s",
+         time.elapsed());
 
     updateOrCheckExistingSubdomainProperty(
         subdomain_mesh, MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
         bulk_node_ids, MeshLib::MeshItemType::Node, force_overwrite);
 
+    time.start();
     auto const& bulk_element_ids =
         identifySubdomainMeshElements(subdomain_mesh, bulk_mesh);
+    INFO("identifySubdomainMesh(): identifySubdomainMeshElements took {:g} s",
+         time.elapsed());
 
     // The bulk_element_ids could be of two types: one element per entry---this
     // is the expected case for the boundary meshes; multiple elements per
