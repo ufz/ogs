@@ -51,6 +51,11 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         {
             material_states_.emplace_back(
                 solid_material_.createMaterialStateVariables());
+
+            // Set initial strain field to zero. Might be overwritten by
+            // integration point data or initial stress.
+            current_states_[ip].eps_data.eps =
+                KelvinVector<DisplacementDim>::Zero();
         }
     }
 

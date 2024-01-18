@@ -112,8 +112,7 @@ struct CapillaryPressureData
 template <int DisplacementDim>
 struct StrainData
 {
-    // TODO Move initialization to the local assembler.
-    KelvinVector<DisplacementDim> eps = KVzero<DisplacementDim>();
+    KelvinVector<DisplacementDim> eps = KVnan<DisplacementDim>();
 
     static auto reflect()
     {
