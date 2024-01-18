@@ -340,18 +340,6 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         _process_data.mesh_prop_fracture_shear_failure =
             mesh_prop_fracture_shear_failure;
 
-        auto mesh_prop_nodal_w = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "nodal_w",
-            MeshLib::MeshItemType::Node, GlobalDim);
-        mesh_prop_nodal_w->resize(mesh.getNumberOfNodes() * GlobalDim);
-        _process_data.mesh_prop_nodal_w = mesh_prop_nodal_w;
-
-        auto mesh_prop_nodal_b = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "nodal_aperture",
-            MeshLib::MeshItemType::Node, 1);
-        mesh_prop_nodal_b->resize(mesh.getNumberOfNodes());
-        _process_data.mesh_prop_nodal_b = mesh_prop_nodal_b;
-
         auto mesh_prop_nodal_p = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
             MeshLib::MeshItemType::Node, 1);
@@ -453,48 +441,6 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
             mesh_prop_g[node->getID() * num_comp + component_id] =
                 (*x[process_id])[global_index];
         }
-    }
-
-    // compute nodal w and aperture
-    auto const& R = _process_data.fracture_property->R;
-    auto const& b0 = _process_data.fracture_property->aperture0;
-    MeshLib::PropertyVector<double>& vec_w = *_process_data.mesh_prop_nodal_w;
-    MeshLib::PropertyVector<double>& vec_b = *_process_data.mesh_prop_nodal_b;
-
-    auto compute_nodal_aperture =
-        [&](std::size_t const node_id, double const w_n)
-    {
-        // skip aperture computation for element-wise defined b0 because there
-        // are jumps on the nodes between the element's values.
-        if (dynamic_cast<ParameterLib::MeshElementParameter<double> const*>(
-                &b0))
-        {
-            return std::numeric_limits<double>::quiet_NaN();
-        }
-
-        ParameterLib::SpatialPosition x;
-        x.setNodeID(node_id);
-        return w_n + b0(/*time independent*/ 0, x)[0];
-    };
-
-    Eigen::VectorXd g(GlobalDim);
-    Eigen::VectorXd w(GlobalDim);
-    for (MeshLib::Node const* node : _vec_fracture_nodes)
-    {
-        auto const node_id = node->getID();
-        g.setZero();
-        for (int k = 0; k < GlobalDim; k++)
-        {
-            g[k] = mesh_prop_g[node_id * GlobalDim + k];
-        }
-
-        w.noalias() = R * g;
-        for (int k = 0; k < GlobalDim; k++)
-        {
-            vec_w[node_id * GlobalDim + k] = w[k];
-        }
-
-        vec_b[node_id] = compute_nodal_aperture(node_id, w[GlobalDim - 1]);
     }
 }
 

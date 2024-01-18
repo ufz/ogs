@@ -119,8 +119,6 @@ struct HydroMechanicsProcessData
     MeshLib::PropertyVector<double>* mesh_prop_b = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_k_f = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_fracture_shear_failure = nullptr;
-    MeshLib::PropertyVector<double>* mesh_prop_nodal_w = nullptr;
-    MeshLib::PropertyVector<double>* mesh_prop_nodal_b = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_nodal_p = nullptr;
 
     MeshLib::PropertyVector<double>* mesh_prop_nodal_forces = nullptr;
