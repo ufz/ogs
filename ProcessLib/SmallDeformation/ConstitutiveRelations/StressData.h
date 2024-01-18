@@ -17,10 +17,7 @@ namespace ProcessLib::SmallDeformation
 template <int DisplacementDim>
 struct StressData
 {
-    // Stress is stateful for some constitutive settings and therefore must be
-    // initialized to something valid, e.g., zero.
-    // TODO find a better solution for that.
-    KelvinVector<DisplacementDim> sigma = KVzero<DisplacementDim>();
+    KelvinVector<DisplacementDim> sigma = KVnan<DisplacementDim>();
 
     static auto reflect()
     {
