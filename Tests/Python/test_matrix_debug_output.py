@@ -75,6 +75,7 @@ def check_global_matrix_output_files_exist(outdir, file_should_exist=True):
     for f, num_lines_expected in map_filename_to_num_lines.items():
         logfile = outdir / f
 
+        print(logfile)
         assert file_should_exist == logfile.exists()
 
         if file_should_exist:
@@ -153,7 +154,7 @@ def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_param
         # run and test
         check_local_matrix_output_files_exist(tmpdirpath, False)
 
-        run(prjpath, tmpdirpath, expect_ogs_success)
+        run(str(prjpath), str(tmpdirpath), expect_ogs_success)
 
         if expect_ogs_success:
             check_simulation_results_exist(tmpdirpath)
@@ -194,6 +195,7 @@ def test_global_matrix_debug_output(monkeypatch, prefix_parameter):
 
     # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
     with tempfile.TemporaryDirectory() as tmpdirname, monkeypatch.context() as ctx:
+        tmpdirpath = Path(tmpdirname)
         # prepare environment
         if prefix_setting is False:
             pass
@@ -205,11 +207,11 @@ def test_global_matrix_debug_output(monkeypatch, prefix_parameter):
             ctx.chdir(tmpdirname)
 
         # run and test
-        check_global_matrix_output_files_exist(tmpdirname, False)
+        check_global_matrix_output_files_exist(tmpdirpath, False)
 
-        run(prjpath, tmpdirname, expect_ogs_success)
+        run(str(prjpath), str(tmpdirpath), expect_ogs_success)
 
         if expect_ogs_success:
-            check_simulation_results_exist(tmpdirname)
+            check_simulation_results_exist(tmpdirpath)
 
-        check_global_matrix_output_files_exist(tmpdirname, prefix_expect_output)
+        check_global_matrix_output_files_exist(tmpdirpath, prefix_expect_output)

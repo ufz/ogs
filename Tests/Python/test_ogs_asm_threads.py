@@ -79,7 +79,7 @@ def test_ogs_asm_threads_env_var(monkeypatch, asm_threads_parameter):
         ctx.chdir(tmpdirname)
 
         # run and test
-        run(prjpath, Path(tmpdirname), expect_ogs_success)
+        run(str(prjpath), tmpdirname, expect_ogs_success)
 
         if expect_ogs_success:
             check_simulation_results_exist(Path(tmpdirname))

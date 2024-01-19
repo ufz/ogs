@@ -79,7 +79,7 @@ def checkCells(cells, celltypes, points):
 
 
 def test_simulator():
-    current_dir = Path(__file__).parent.abspath()
+    current_dir = Path(__file__).parent.resolve()
     arguments = [
         "",
         f"{current_dir}/../Data/Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_Python.prj",

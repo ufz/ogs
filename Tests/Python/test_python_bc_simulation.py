@@ -12,7 +12,7 @@ def test_HM_ground_equil_TaylorHood_Python():
     )
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        arguments = ["ogs", prjpath, "-o", tmpdirname]
+        arguments = ["ogs", str(prjpath), "-o", tmpdirname]
 
         try:
             print("Python OpenGeoSys.init ...")
