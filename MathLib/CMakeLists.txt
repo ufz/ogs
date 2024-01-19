@@ -38,6 +38,9 @@ target_link_libraries(
         $<$<AND:$<TARGET_EXISTS:OpenMP::OpenMP_CXX>,$<BOOL:$<STREQUAL:${OGS_EIGEN_PARALLEL_BACKEND},OpenMP>>>:OpenMP::OpenMP_CXX>
     PRIVATE $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>
 )
+if(WIN32)
+    target_compile_options(MathLib PUBLIC /openmp::llvm)
+endif()
 if(OGS_USE_MKL AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Otherwise required MKL libs get stripped out (don't show up in ldd):
     target_link_options(MathLib PUBLIC "LINKER:--no-as-needed")
