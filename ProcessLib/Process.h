@@ -157,6 +157,11 @@ public:
         return _process_variables[process_id];
     }
 
+    std::vector<std::size_t> const& getActiveElementIDs() const
+    {
+        return _ids_of_active_elements;
+    }
+
     SecondaryVariableCollection const& getSecondaryVariables() const
     {
         return _secondary_variables;
@@ -393,6 +398,9 @@ private:
     std::vector<SourceTermCollection> _source_term_collections;
 
     ExtrapolatorData _extrapolator_data;
+
+    /// Union of active element ids per process variable
+    std::vector<std::size_t> _ids_of_active_elements;
 };
 
 }  // namespace ProcessLib

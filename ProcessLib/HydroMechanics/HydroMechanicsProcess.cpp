@@ -297,11 +297,9 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
         dof_table = {std::ref(*_local_to_global_index_map)};
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -342,12 +340,10 @@ void HydroMechanicsProcess<DisplacementDim>::
         dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -383,12 +379,10 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     if (hasMechanicalProcess(process_id))
     {
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerIF::preTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map,
-            *x[process_id], t, dt);
+            getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+            t, dt);
     }
 }
 
@@ -412,11 +406,10 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         dof_tables.push_back(&getDOFTable(process_id));
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
-        false /*unused*/, process_id);
+        getActiveElementIDs(), dof_tables, x, x_prev, t, dt, false /*unused*/,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -428,10 +421,9 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     DBUG("PostNonLinearSolver HydroMechanicsProcess.");
 
     // Calculate strain, stress or other internal variables of mechanics.
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, x_prev, t, dt,
+        getActiveElementIDs(), getDOFTable(process_id), x, x_prev, t, dt,
         false /*unused*/, process_id);
 }
 
@@ -448,10 +440,9 @@ void HydroMechanicsProcess<DisplacementDim>::
 
     DBUG("Set initial conditions of HydroMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
+        getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
         _process_data.isMonolithicSchemeUsed(), process_id);
 }
 
@@ -474,10 +465,9 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
         dof_tables.push_back(&getDOFTable(process_id));
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
 }
 
 template <int DisplacementDim>
