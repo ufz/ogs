@@ -212,89 +212,51 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
-    auto mesh_prop_sigma_xx = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "stress_xx",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_sigma_xx->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_xx = mesh_prop_sigma_xx;
-
-    auto mesh_prop_sigma_yy = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "stress_yy",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_sigma_yy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_yy = mesh_prop_sigma_yy;
-
-    auto mesh_prop_sigma_zz = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "stress_zz",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_sigma_zz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_zz = mesh_prop_sigma_zz;
-
-    auto mesh_prop_sigma_xy = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "stress_xy",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_sigma_xy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_stress_xy = mesh_prop_sigma_xy;
-
-    if (GlobalDim == 3)
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function)
     {
-        auto mesh_prop_sigma_xz = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "stress_xz",
-            MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_sigma_xz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_stress_xz = mesh_prop_sigma_xz;
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
 
-        auto mesh_prop_sigma_yz = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "stress_yz",
-            MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_sigma_yz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_stress_yz = mesh_prop_sigma_yz;
-    }
+    add_secondary_variable(
+        "sigma",
+        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface::getIntPtSigma);
 
-    auto mesh_prop_epsilon_xx = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "strain_xx",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_epsilon_xx->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_xx = mesh_prop_epsilon_xx;
+    add_secondary_variable(
+        "epsilon",
+        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface::getIntPtEpsilon);
 
-    auto mesh_prop_epsilon_yy = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "strain_yy",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_epsilon_yy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_yy = mesh_prop_epsilon_yy;
+    add_secondary_variable("velocity", GlobalDim,
+                           &LocalAssemblerInterface::getIntPtDarcyVelocity);
 
-    auto mesh_prop_epsilon_zz = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "strain_zz",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_epsilon_zz->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_zz = mesh_prop_epsilon_zz;
+    add_secondary_variable("fracture_velocity", GlobalDim,
+                           &LocalAssemblerInterface::getIntPtFractureVelocity);
 
-    auto mesh_prop_epsilon_xy = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "strain_xy",
-        MeshLib::MeshItemType::Cell, 1);
-    mesh_prop_epsilon_xy->resize(mesh.getNumberOfElements());
-    _process_data.mesh_prop_strain_xy = mesh_prop_epsilon_xy;
+    add_secondary_variable("fracture_stress", GlobalDim,
+                           &LocalAssemblerInterface::getIntPtFractureStress);
 
-    if (GlobalDim == 3)
-    {
-        auto mesh_prop_epsilon_xz = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "strain_xz",
-            MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_epsilon_xz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_strain_xz = mesh_prop_epsilon_xz;
+    add_secondary_variable("fracture_aperture", 1,
+                           &LocalAssemblerInterface::getIntPtFractureAperture);
 
-        auto mesh_prop_epsilon_yz = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "strain_yz",
-            MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_epsilon_yz->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_strain_yz = mesh_prop_epsilon_yz;
-    }
+    add_secondary_variable(
+        "fracture_permeability", 1,
+        &LocalAssemblerInterface::getIntPtFracturePermeability);
 
-    auto mesh_prop_velocity = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "velocity",
+    _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "sigma_avg",
+        MeshLib::MeshItemType::Cell,
+        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime);
+
+    _process_data.element_velocities = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "velocity_avg",
         MeshLib::MeshItemType::Cell, GlobalDim);
-    mesh_prop_velocity->resize(mesh.getNumberOfElements() * GlobalDim);
-    _process_data.mesh_prop_velocity = mesh_prop_velocity;
 
     if (!_vec_fracture_elements.empty())
     {
@@ -319,21 +281,26 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
             (*mesh_prop_levelset)[e->getID()] = levelsets[0];
         }
 
-        auto mesh_prop_w_n = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "w_n",
-            MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_w_n->resize(mesh.getNumberOfElements());
-        auto mesh_prop_w_s = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "w_s",
-            MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_w_s->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_w_n = mesh_prop_w_n;
-        _process_data.mesh_prop_w_s = mesh_prop_w_s;
+        _process_data.element_local_jumps =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "local_jump_w_avg",
+                MeshLib::MeshItemType::Cell, GlobalDim);
+
+        _process_data.element_fracture_stresses =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "fracture_stress_avg",
+                MeshLib::MeshItemType::Cell, GlobalDim);
+
+        _process_data.element_fracture_velocities =
+            MeshLib::getOrCreateMeshProperty<double>(
+                const_cast<MeshLib::Mesh&>(mesh), "fracture_velocity_avg",
+                MeshLib::MeshItemType::Cell, GlobalDim);
 
         auto mesh_prop_b = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "aperture",
+            const_cast<MeshLib::Mesh&>(mesh), "fracture_aperture_avg",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_b->resize(mesh.getNumberOfElements());
+
         auto const mesh_prop_matid = materialIDs(mesh);
         if (!mesh_prop_matid)
         {
@@ -360,26 +327,10 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         _process_data.mesh_prop_b = mesh_prop_b;
 
         auto mesh_prop_k_f = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "k_f",
+            const_cast<MeshLib::Mesh&>(mesh), "fracture_permeability_avg",
             MeshLib::MeshItemType::Cell, 1);
         mesh_prop_k_f->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_k_f = mesh_prop_k_f;
-
-        auto mesh_prop_fracture_stress_shear =
-            MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh), "f_stress_s",
-                MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_fracture_stress_shear->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_fracture_stress_shear =
-            mesh_prop_fracture_stress_shear;
-
-        auto mesh_prop_fracture_stress_normal =
-            MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh), "f_stress_n",
-                MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_fracture_stress_normal->resize(mesh.getNumberOfElements());
-        _process_data.mesh_prop_fracture_stress_normal =
-            mesh_prop_fracture_stress_normal;
 
         auto mesh_prop_fracture_shear_failure =
             MeshLib::getOrCreateMeshProperty<double>(
@@ -388,36 +339,6 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
         mesh_prop_fracture_shear_failure->resize(mesh.getNumberOfElements());
         _process_data.mesh_prop_fracture_shear_failure =
             mesh_prop_fracture_shear_failure;
-
-        auto mesh_prop_nodal_w = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "nodal_w",
-            MeshLib::MeshItemType::Node, GlobalDim);
-        mesh_prop_nodal_w->resize(mesh.getNumberOfNodes() * GlobalDim);
-        _process_data.mesh_prop_nodal_w = mesh_prop_nodal_w;
-
-        auto mesh_prop_nodal_b = MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "nodal_aperture",
-            MeshLib::MeshItemType::Node, 1);
-        mesh_prop_nodal_b->resize(mesh.getNumberOfNodes());
-        _process_data.mesh_prop_nodal_b = mesh_prop_nodal_b;
-
-        if (GlobalDim == 3)
-        {
-            auto mesh_prop_w_s2 = MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh), "w_s2",
-                MeshLib::MeshItemType::Cell, 1);
-            mesh_prop_w_s2->resize(mesh.getNumberOfElements());
-            _process_data.mesh_prop_w_s2 = mesh_prop_w_s2;
-
-            auto mesh_prop_fracture_stress_shear2 =
-                MeshLib::getOrCreateMeshProperty<double>(
-                    const_cast<MeshLib::Mesh&>(mesh), "f_stress_s2",
-                    MeshLib::MeshItemType::Cell, 1);
-            mesh_prop_fracture_stress_shear2->resize(
-                mesh.getNumberOfElements());
-            _process_data.mesh_prop_fracture_stress_shear2 =
-                mesh_prop_fracture_stress_shear2;
-        }
 
         auto mesh_prop_nodal_p = MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
@@ -520,48 +441,6 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
             mesh_prop_g[node->getID() * num_comp + component_id] =
                 (*x[process_id])[global_index];
         }
-    }
-
-    // compute nodal w and aperture
-    auto const& R = _process_data.fracture_property->R;
-    auto const& b0 = _process_data.fracture_property->aperture0;
-    MeshLib::PropertyVector<double>& vec_w = *_process_data.mesh_prop_nodal_w;
-    MeshLib::PropertyVector<double>& vec_b = *_process_data.mesh_prop_nodal_b;
-
-    auto compute_nodal_aperture =
-        [&](std::size_t const node_id, double const w_n)
-    {
-        // skip aperture computation for element-wise defined b0 because there
-        // are jumps on the nodes between the element's values.
-        if (dynamic_cast<ParameterLib::MeshElementParameter<double> const*>(
-                &b0))
-        {
-            return std::numeric_limits<double>::quiet_NaN();
-        }
-
-        ParameterLib::SpatialPosition x;
-        x.setNodeID(node_id);
-        return w_n + b0(/*time independent*/ 0, x)[0];
-    };
-
-    Eigen::VectorXd g(GlobalDim);
-    Eigen::VectorXd w(GlobalDim);
-    for (MeshLib::Node const* node : _vec_fracture_nodes)
-    {
-        auto const node_id = node->getID();
-        g.setZero();
-        for (int k = 0; k < GlobalDim; k++)
-        {
-            g[k] = mesh_prop_g[node_id * GlobalDim + k];
-        }
-
-        w.noalias() = R * g;
-        for (int k = 0; k < GlobalDim; k++)
-        {
-            vec_w[node_id * GlobalDim + k] = w[k];
-        }
-
-        vec_b[node_id] = compute_nodal_aperture(node_id, w[GlobalDim - 1]);
     }
 }
 

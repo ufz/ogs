@@ -18,6 +18,7 @@
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib
 {
@@ -48,6 +49,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         integration_method.getNumberOfPoints();
 
     _ip_data.reserve(n_integration_points);
+    _secondary_data.N.resize(n_integration_points);
 
     auto const shape_matrices_u =
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
@@ -72,6 +74,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];
+
         ip_data.integration_weight =
             sm_u.detJ * sm_u.integralMeasure *
             integration_method.getWeightedPoint(ip).getWeight();
@@ -90,6 +93,8 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         ip_data.N_p = sm_p.N;
         ip_data.dNdx_p = sm_p.dNdx;
+
+        _secondary_data.N[ip] = sm_u.N;
 
         ip_data.sigma_eff.setZero(kelvin_vector_size);
         ip_data.eps.setZero(kelvin_vector_size);
@@ -326,7 +331,14 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+
+    auto const e_id = _element.getID();
+    x_position.setElementID(e_id);
+
+    using KV = MathLib::KelvinVector::KelvinVectorType<GlobalDim>;
+    KV sigma_avg = KV::Zero();
+    GlobalDimVector velocity_avg;
+    velocity_avg.setZero();
 
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -379,6 +391,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         MathLib::KelvinVector::KelvinMatrixType<GlobalDim> C;
         std::tie(sigma_eff, state, C) = std::move(*solution);
 
+        sigma_avg += ip_data.sigma_eff;
+
         if (!_process_data.deactivate_matrix_in_flow)  // Only for hydraulically
                                                        // active matrix
         {
@@ -391,51 +405,19 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
             ip_data.darcy_velocity.head(GlobalDim).noalias() =
                 -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
+            velocity_avg += ip_data.darcy_velocity.head(GlobalDim);
         }
     }
 
-    int n = GlobalDim == 2 ? 4 : 6;
-    Eigen::VectorXd ele_stress = Eigen::VectorXd::Zero(n);
-    Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
-    GlobalDimVector ele_velocity = GlobalDimVector::Zero();
+    sigma_avg /= n_integration_points;
+    velocity_avg /= n_integration_points;
 
-    for (auto const& ip_data : _ip_data)
-    {
-        ele_stress += ip_data.sigma_eff;
-        ele_strain += ip_data.eps;
-        ele_velocity += ip_data.darcy_velocity;
-    }
+    Eigen::Map<KV>(
+        &(*_process_data.element_stresses)[e_id * KV::RowsAtCompileTime]) =
+        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
 
-    ele_stress /= static_cast<double>(n_integration_points);
-    ele_strain /= static_cast<double>(n_integration_points);
-    ele_velocity /= static_cast<double>(n_integration_points);
-
-    auto const element_id = _element.getID();
-    (*_process_data.mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
-    (*_process_data.mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data.mesh_prop_stress_zz)[_element.getID()] = ele_stress[2];
-    (*_process_data.mesh_prop_stress_xy)[_element.getID()] = ele_stress[3];
-    if (GlobalDim == 3)
-    {
-        (*_process_data.mesh_prop_stress_yz)[_element.getID()] = ele_stress[4];
-        (*_process_data.mesh_prop_stress_xz)[_element.getID()] = ele_stress[5];
-    }
-
-    (*_process_data.mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
-    (*_process_data.mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data.mesh_prop_strain_zz)[_element.getID()] = ele_strain[2];
-    (*_process_data.mesh_prop_strain_xy)[_element.getID()] = ele_strain[3];
-    if (GlobalDim == 3)
-    {
-        (*_process_data.mesh_prop_strain_yz)[_element.getID()] = ele_strain[4];
-        (*_process_data.mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
-    }
-
-    for (unsigned i = 0; i < GlobalDim; i++)
-    {
-        (*_process_data.mesh_prop_velocity)[element_id * GlobalDim + i] =
-            ele_velocity[i];
-    }
+    Eigen::Map<GlobalDimVector>(
+        &(*_process_data.element_velocities)[e_id * GlobalDim]) = velocity_avg;
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
@@ -464,6 +446,57 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     }
 }
 
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerMatrix<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtSigma(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<GlobalDim>(
+        _ip_data, &IntegrationPointDataType::sigma_eff, cache);
+}
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerMatrix<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtEpsilon(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<GlobalDim>(
+        _ip_data, &IntegrationPointDataType::eps, cache);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int GlobalDim>
+std::vector<double> const& HydroMechanicsLocalAssemblerMatrix<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    getIntPtDarcyVelocity(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points = _ip_data.size();
+
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<
+        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, GlobalDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].darcy_velocity;
+    }
+
+    return cache;
+}
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib

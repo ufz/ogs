@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>single_fracture.vtu</mesh>
     <geometry>single_fracture.gml</geometry>
@@ -44,6 +44,13 @@
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
             <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma" />
+                <secondary_variable internal_name="epsilon" output_name="epsilon" />
+                <secondary_variable internal_name="velocity" output_name="velocity" />
+                <secondary_variable internal_name="fracture_velocity" output_name="fracture_velocity" />
+                <secondary_variable internal_name="fracture_permeability" output_name="fracture_permeability" />
+                <secondary_variable internal_name="fracture_stress" output_name="fracture_stress" />
+                <secondary_variable internal_name="fracture_aperture" output_name="fracture_aperture" />
             </secondary_variables>
         </process>
     </processes>
@@ -86,17 +93,23 @@
                 <variable>pressure_interpolated</variable>
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
-                <variable>nodal_w</variable>
-                <variable>nodal_aperture</variable>
-                <variable>strain_xx</variable>
-                <variable>strain_yy</variable>
-                <variable>strain_xy</variable>
-                <variable>stress_xx</variable>
-                <variable>stress_yy</variable>
-                <variable>velocity</variable>
                 <variable>MassFlowRate</variable>
                 <variable>NodalForces</variable>
                 <variable>NodalForcesJump</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>velocity</variable>
+                <variable>fracture_stress</variable>
+                <variable>fracture_velocity</variable>
+                <variable>fracture_permeability</variable>
+                <variable>fracture_aperture</variable>
+                <variable>sigma_avg</variable>
+                <variable>velocity_avg</variable>
+                <variable>local_jump_w_avg</variable>
+                <variable>fracture_velocity_avg</variable>
+                <variable>fracture_stress_avg</variable>
+                <variable>fracture_aperture_avg</variable>
+                <variable>fracture_permeability_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

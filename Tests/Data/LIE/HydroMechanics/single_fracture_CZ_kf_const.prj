@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>single_fracture_2x2_mesh2.vtu</mesh>
     <geometry>single_fracture_2x2.gml</geometry>
@@ -48,6 +48,13 @@
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
             <deactivate_matrix_in_flow>true</deactivate_matrix_in_flow>
             <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma" />
+                <secondary_variable internal_name="epsilon" output_name="epsilon" />
+                <secondary_variable internal_name="velocity" output_name="velocity" />
+                <secondary_variable internal_name="fracture_velocity" output_name="fracture_velocity" />
+                <secondary_variable internal_name="fracture_permeability" output_name="fracture_permeability" />
+                <secondary_variable internal_name="fracture_stress" output_name="fracture_stress" />
+                <secondary_variable internal_name="fracture_aperture" output_name="fracture_aperture" />
             </secondary_variables>
         </process>
     </processes>
@@ -101,9 +108,21 @@
                 <variable>pressure</variable>
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
-                <variable>k_f</variable>
                 <variable>pressure_interpolated</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
                 <variable>velocity</variable>
+                <variable>fracture_stress</variable>
+                <variable>fracture_velocity</variable>
+                <variable>fracture_permeability</variable>
+                <variable>fracture_aperture</variable>
+                <variable>sigma_avg</variable>
+                <variable>velocity_avg</variable>
+                <variable>local_jump_w_avg</variable>
+                <variable>fracture_velocity_avg</variable>
+                <variable>fracture_stress_avg</variable>
+                <variable>fracture_aperture_avg</variable>
+                <variable>fracture_permeability_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
@@ -363,15 +382,87 @@
         </vtkdiff>
         <vtkdiff>
             <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
-            <field>k_f</field>
-            <absolute_tolerance>1e-12</absolute_tolerance>
-            <relative_tolerance>1e-12</relative_tolerance>
+            <field>sigma</field>
+            <absolute_tolerance>1.e-8</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
             <field>velocity</field>
-            <absolute_tolerance>1e-12</absolute_tolerance>
-            <relative_tolerance>1e-12</relative_tolerance>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_stress</field>
+            <absolute_tolerance>1.e-10</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_velocity</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_permeability</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_aperture</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>sigma_avg</field>
+            <absolute_tolerance>1.e-9</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>velocity_avg</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>local_jump_w_avg</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_velocity_avg</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_stress_avg</field>
+            <absolute_tolerance>1.e-10</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_aperture_avg</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>out_single_fracture_CZ_kf_const_.*.vtu</regex>
+            <field>fracture_permeability_avg</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.e-11</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

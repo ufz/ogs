@@ -60,9 +60,9 @@ class LocalDataInitializer final
                 return false;
             }
 
-            // exclude 0D elements and linear elements
+            // exclude 0D elements
             return ElementTraits::Element::dimension >= 1 &&
-                   ElementTraits::ShapeFunction::ORDER == 2;
+                   ElementTraits::ShapeFunction::ORDER >= 1;
         }
     };
 
