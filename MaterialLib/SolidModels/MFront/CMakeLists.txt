@@ -32,6 +32,7 @@ set(_mfront_behaviours
     DruckerPrager
     GuentherSalzer
     GuentherSalzerDilatancy_semi_expl
+    HoekBrownC2
     Lubby2
     Lubby2mod
     ModCamClay_semiExpl
