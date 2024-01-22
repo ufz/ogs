@@ -16,6 +16,8 @@
 
 #include <limits>
 #include <numeric>
+#include <range/v3/algorithm/transform.hpp>
+#include <range/v3/range/conversion.hpp>
 #include <unordered_map>
 
 #include "BaseLib/Error.h"
@@ -559,21 +561,18 @@ std::vector<std::vector<std::size_t>> computePartitionIDPerElement(
     std::vector<MeshLib::Element*> const& elements,
     std::vector<std::size_t> const& bulk_node_ids)
 {
-    std::vector<std::vector<std::size_t>> partition_ids_per_element(
-        elements.size());
-    auto const number_elements = elements.size();
-    for (std::size_t k = 0; k < number_elements; ++k)
-    {
-        auto const& element = *elements[k];
-        auto const number_of_nodes = element.getNumberOfNodes();
-        for (std::size_t i = 0; i < number_of_nodes; ++i)
+    auto node_partition_ids = ranges::views::transform(
+        [&](MeshLib::Element const* const element)
         {
-            partition_ids_per_element[k].push_back(
-                node_partition_map[bulk_node_ids[element.getNode(i)->getID()]]);
-        }
-    }
+            auto node_lookup = ranges::views::transform(
+                [&](std::size_t const i)
+                { return node_partition_map[bulk_node_ids[i]]; });
 
-    return partition_ids_per_element;
+            return element->nodes() | MeshLib::views::ids | node_lookup |
+                   ranges::to<std::vector>;
+        });
+
+    return elements | node_partition_ids | ranges::to<std::vector>;
 }
 
 void distributeNodesToPartitions(
