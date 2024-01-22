@@ -84,6 +84,7 @@ repos:
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
+        args: [--show-source]
   # Enable on demand, run with
   #     pre-commit run --all-files clang-format
   #

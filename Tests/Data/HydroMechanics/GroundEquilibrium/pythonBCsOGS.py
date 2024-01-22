@@ -36,7 +36,7 @@ def ExternalDisplacement(x, t):
 # Hydraulic BCs
 # -------------
 class BCH_SurfacePressure(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
         x, y, z = coords
 
         value = 0.0
@@ -45,7 +45,7 @@ class BCH_SurfacePressure(OpenGeoSys.BoundaryCondition):
 
 
 class BCH_VerticalPressure(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
         x, y, z = coords
 
         value = -rho_W * g * y
@@ -57,7 +57,7 @@ class BCH_VerticalPressure(OpenGeoSys.BoundaryCondition):
 # -------------
 class BCM_VerticalTraction_X(OpenGeoSys.BoundaryCondition):
     def getFlux(
-        self, t, coords, primary_vars
+        self, _t, coords, _primary_vars
     ):  # here Neumann BC: flux of linear momentum
         x, y, z = coords
 
@@ -72,8 +72,6 @@ class BCM_VerticalTraction_X(OpenGeoSys.BoundaryCondition):
 class BCM_MonitoringTraction(OpenGeoSys.BoundaryCondition):
     def getFlux(self, t, coords, primary_vars):
         x, y, z = coords
-        pp_actual = primary_vars[0]
-        ux_actual = primary_vars[1]
         uy_actual = primary_vars[2]
 
         uy_target = ExternalDisplacement(x, t)
@@ -89,7 +87,7 @@ class BCM_MonitoringTraction(OpenGeoSys.BoundaryCondition):
 
 
 class BCM_SurfaceDisplacement_Y(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
         x, y, z = coords
 
         # prescribe displacement u_y
@@ -99,7 +97,7 @@ class BCM_SurfaceDisplacement_Y(OpenGeoSys.BoundaryCondition):
 
 
 class BCM_BottomDisplacement_Y(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, _coords, _node_id, _primary_vars):
         # prescribe displacement u_y
         value = 0
 
@@ -107,7 +105,7 @@ class BCM_BottomDisplacement_Y(OpenGeoSys.BoundaryCondition):
 
 
 class BCM_LateralDisplacement_X(OpenGeoSys.BoundaryCondition):
-    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+    def getDirichletBCValue(self, _t, _coords, _node_id, _primary_vars):
         # prescribe displacement u_x
         value = 0
 

@@ -127,13 +127,14 @@ The first cell after the frontmatter needs to be a `markdown`-cell!
 
   ```python
   import os
+  from pathlib import Path
 
   # On CI out_dir is set to the notebooks directory inside the build directory
   # similar to regular benchmark tests. On local testing it will output to the
   # notebooks source directory under a _out-subdirectory.
-  out_dir = os.environ.get('OGS_TESTRUNNER_OUT_DIR', '_out')
-  if not os.path.exists(out_dir):
-      os.makedirs(out_dir)
+  out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+  if not out_dir.exists():
+      out_dir.mkdir(parents=True)
 
   # ...
   # Run ogs; get input data from current directory; write to `out_dir`

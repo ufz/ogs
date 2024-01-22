@@ -14,29 +14,35 @@ nnodes = grid.GetNumberOfPoints()
 ts = np.arange(0, 11)
 T0 = 273.15
 Ts = np.linspace(273.15, 313.15, 9)
-Ts = np.hstack(([ T0 ], Ts, [ Ts[-1] ]))
+Ts = np.hstack(([T0], Ts, [Ts[-1]]))
 assert len(ts) == len(Ts)
 
 E = 5e9
 nu = 0.2
 alpha = 1e-5
-I = np.matrix([1, 1, 1, 0, 0, 0]).T
+I = np.matrix([1, 1, 1, 0, 0, 0]).T  # noqa: E741
 
 D = 0.0  # just a dummy value because that part of C is not needed!
 
-C = np.matrix([
-    [1-nu,  nu,    nu,    0,  0,  0],
-    [nu,    1-nu,  nu,    0,  0,  0],
-    [nu,    nu,    1-nu,  0,  0,  0],
-    [0,     0,     0,     D,  0,  0],
-    [0,     0,     0,     0,  D,  0],
-    [0,     0,     0,     0,  0,  D]]) * (E / ( 1+nu ) / (1-2*nu))
+C = np.matrix(
+    [
+        [1 - nu, nu, nu, 0, 0, 0],
+        [nu, 1 - nu, nu, 0, 0, 0],
+        [nu, nu, 1 - nu, 0, 0, 0],
+        [0, 0, 0, D, 0, 0],
+        [0, 0, 0, 0, D, 0],
+        [0, 0, 0, 0, 0, D],
+    ]
+) * (E / (1 + nu) / (1 - 2 * nu))
+
 
 def eps_T(T):
     return I * (alpha * (T - T0))
 
+
 def sigma(T):
-    return - C * eps_T(T)
+    return -C * eps_T(T)
+
 
 for t, T in zip(ts, Ts):
     sigma_ = np.tile(sigma(T).T, (nnodes, 1))

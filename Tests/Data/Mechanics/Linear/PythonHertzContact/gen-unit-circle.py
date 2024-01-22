@@ -1,6 +1,7 @@
 #!/usr/bin/vtkpython
 
 import sys
+from pathlib import Path
 
 import numpy as np
 import vtk
@@ -49,7 +50,7 @@ coords = vtk_to_numpy(grid.GetPoints().GetData())
 
 a = np.empty(coords.shape[0])
 
-for i, (x, y, z) in enumerate(coords):
+for i, (x, y, _z) in enumerate(coords):
     if x > y:
         R = np.sqrt(1 + (y / x) ** 2)
         a[i] = 1.0 / R
@@ -86,7 +87,7 @@ idcs = np.where(abs(R_squared - 1) < 1e-8)[0]
 idcs = idcs[np.argsort(phi[idcs])]  # sorted with ascending polar angle
 
 
-with open(out_geom, "w") as fh:
+with Path(out_geom).open(mode="w") as fh:
     fh.write(
         """<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysGLI>

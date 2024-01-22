@@ -1,6 +1,6 @@
-import os
 import platform
 import tempfile
+from pathlib import Path
 
 import ogs.simulator as sim
 import pytest
@@ -30,9 +30,7 @@ def run(prjpath, outdir, expect_successful):
 
 
 def check_simulation_results_exist(outdir):
-    assert os.path.exists(
-        os.path.join(outdir, "anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu")
-    )
+    assert (outdir / "anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu").exists()
 
 
 @pytest.mark.parametrize(
@@ -59,11 +57,11 @@ def check_simulation_results_exist(outdir):
     ],
 )
 def test_ogs_asm_threads_env_var(monkeypatch, asm_threads_parameter):
-    srcdir = os.path.join(os.path.dirname(__file__), "..", "..")
-    prjpath = os.path.join(
-        srcdir,
-        # fast running model with TRM process (OpenMP parallelized)
-        "Tests/Data/ThermoRichardsMechanics/anisotropic_thermal_expansion/aniso_expansion.prj",
+    srcdir = Path(__file__).parent.parent.parent
+    # fast running model with TRM process (OpenMP parallelized)
+    prjpath = (
+        srcdir
+        / "Tests/Data/ThermoRichardsMechanics/anisotropic_thermal_expansion/aniso_expansion.prj"
     )
 
     asm_threads_setting, expect_ogs_success = asm_threads_parameter
@@ -72,17 +70,16 @@ def test_ogs_asm_threads_env_var(monkeypatch, asm_threads_parameter):
         # Empty env var not supported on Windows!
         return
 
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
-        with monkeypatch.context() as ctx:
-            # prepare environment
-            if asm_threads_setting is not False:
-                ctx.setenv("OGS_ASM_THREADS", asm_threads_setting)
+    # https://docs.pytest.org/en/6.2.x/reference.html#pytest.MonkeyPatch
+    with tempfile.TemporaryDirectory() as tmpdirname, monkeypatch.context() as ctx:
+        # prepare environment
+        if asm_threads_setting is not False:
+            ctx.setenv("OGS_ASM_THREADS", asm_threads_setting)
 
-            ctx.chdir(tmpdirname)
+        ctx.chdir(tmpdirname)
 
-            # run and test
-            run(prjpath, tmpdirname, expect_ogs_success)
+        # run and test
+        run(str(prjpath), tmpdirname, expect_ogs_success)
 
-            if expect_ogs_success:
-                check_simulation_results_exist(tmpdirname)
+        if expect_ogs_success:
+            check_simulation_results_exist(Path(tmpdirname))

@@ -3,8 +3,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-content_dir = Path(__file__).resolve().parent.parent / "content"
-os.chdir(content_dir)
+root_dir = Path(__file__).resolve().parent.parent.parent
+os.chdir(root_dir / "web" / "content")
 notebooks = Path().glob("**/*.ipynb")
 exit_code = 0
 
@@ -16,10 +16,7 @@ for notebook in notebooks:
         )
         exit_code = 1
         continue
-    template = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        "../../Tests/Data/Notebooks/nbconvert_templates/collapsed.md.j2",
-    )
+    template = root_dir / "Tests/Data/Notebooks/nbconvert_templates/collapsed.md.j2"
     subprocess.run(
         [
             "jupyter",

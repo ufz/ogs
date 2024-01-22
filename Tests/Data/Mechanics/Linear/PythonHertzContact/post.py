@@ -1,5 +1,8 @@
 #!/usr/bin/vtkpython
 
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import vtk
@@ -31,19 +34,10 @@ def p_contact(r, r_contact):
 
 
 ### helpers ##############################################
-
-import os
-
-try:
-    import xml.etree.ElementTree as ET
-except:
-    import xml.etree.ElementTree as ET
-
-
 def relpathfrom(origin, relpath):
-    if os.path.isabs(relpath):
-        return relpath
-    return os.path.join(origin, relpath)
+    if relpath.is_absolute():
+        return str(relpath)
+    return str(origin / relpath)
 
 
 def read_pvd_file(fn):
@@ -51,7 +45,7 @@ def read_pvd_file(fn):
         path = fn.name
     except AttributeError:
         path = fn
-    pathroot = os.path.dirname(path)
+    pathroot = Path(path).parent
     pvdtree = ET.parse(fn)
     node = pvdtree.getroot()
     if node.tag != "VTKFile":
@@ -70,7 +64,7 @@ def read_pvd_file(fn):
         if child.tag != "DataSet":
             return None, None
         ts.append(float(child.get("timestep")))
-        fs.append(relpathfrom(pathroot, child.get("file")))
+        fs.append(relpathfrom(pathroot, Path(child.get("file"))))
 
     return ts, fs
 
@@ -140,111 +134,6 @@ for t, fn in zip(ts, fns):
     disp_3d_vtk.SetName("u")
 
     grid.GetPointData().AddArray(disp_3d_vtk)
-    # grid.GetPointData().SetActiveVectors("u")
-
-    if False:
-        # compute strain
-        def strain_triangle_axi(cell, point_data, strain_data):
-            cell_pts = np.matrix(vtk_to_numpy(cell.GetPoints().GetData())[:, :-1])
-            assert cell_pts.shape[0] == 3  # triangles
-            assert point_data.shape[1] == 2  # 2D vector field
-            node_ids = [cell.GetPointId(i) for i in range(cell.GetNumberOfPoints())]
-
-            # interpolation using barycentric coordinates on linear triangles
-            T = np.matrix(np.empty((2, 2)))
-            T[:, 0] = (cell_pts[0, :] - cell_pts[2, :]).T
-            T[:, 1] = (cell_pts[1, :] - cell_pts[2, :]).T
-            T_inv = np.linalg.inv(T)
-
-            dl1 = T_inv[0, :]  # row 0
-            dl2 = T_inv[1, :]  # row 1
-
-            for node in range(3):
-                l1, l2 = T_inv * (cell_pts[node, :].T - cell_pts[2, :].T)
-                assert l1 > -1e-15
-                assert 1 + 1e-15 > l1
-                assert l2 > -1e-15
-                assert 1 + 1e-15 > l2
-
-            grad = np.empty((2, 2))
-            for comp in range(2):
-                nodal_values = point_data[node_ids, comp]
-                # nodal_values = cell_pts[:, comp].flat
-                # if t > 0 and cell_pts[0,1] > 0.95 and comp == 1:
-                #     print(nodal_values[0])
-                grad[comp, :] = (
-                    dl1 * nodal_values[0]
-                    + dl2 * nodal_values[1]
-                    - (dl1 + dl2) * nodal_values[2]
-                )
-
-            # if t > 0 and cell_pts[0,1] > 0.95:
-            #     print(grad)
-
-            strain = 0.5 * (grad + grad.T)  # rr, rz, zr,zz components
-
-            for node in range(3):
-                r = cell_pts[node, 0]
-                node_id = node_ids[node]
-
-                if r == 0:
-                    dvdr = grad[0, 0]
-                    v_over_r = dvdr
-                else:
-                    v_over_r = point_data[node_id, 0] / r
-
-                strain_kelvin = np.array(
-                    [strain[0, 0], strain[1, 1], v_over_r, strain[0, 1] * np.sqrt(2.0)]
-                )
-                strain_data[node_id, :] = strain_kelvin
-
-        def computeStrain(grid):
-            destroyTopology.SetInputData(grid)
-            destroyTopology.Update()
-            grid = destroyTopology.GetOutput()
-
-            disp_2d = vtk_to_numpy(grid.GetPointData().GetArray("displacement"))
-            strain_kelvin = np.empty((disp_2d.shape[0], 4))
-
-            n_cells = grid.GetNumberOfCells()
-            for c in xrange(n_cells):
-                cell = grid.GetCell(c)
-                strain_triangle_axi(cell, disp_2d, strain_kelvin)
-
-            strain_kelvin_vtk = numpy_to_vtk(strain_kelvin, 1)
-            strain_kelvin_vtk.SetName("strain_post_kelvin")
-            grid.GetPointData().AddArray(strain_kelvin_vtk)
-
-            strain = strain_kelvin.copy()
-            strain[:, 3] /= np.sqrt(2.0)
-            strain_vtk = numpy_to_vtk(strain, 1)
-            strain_vtk.SetName("strain_post")
-            grid.GetPointData().AddArray(strain_vtk)
-
-            # ( (4 x 4) * (nodes x 4).T ).T
-            stress_kelvin = (C * strain_kelvin.T).T
-            # stress_kelv = np.empty_like(strain_kelv)
-            # for c, eps in enumerate(strain_kelv):
-            #     stress_kelv[c, :] = (C * np.atleast_2d(eps).T).flat
-
-            stress_kelvin_vtk = numpy_to_vtk(stress_kelvin, 1)
-            stress_kelvin_vtk.SetName("stress_post_kelvin")
-
-            stress_symm_tensor = stress_kelvin.copy()
-            stress_symm_tensor[:, 3] /= np.sqrt(2.0)
-
-            stress_symm_tensor_vtk = numpy_to_vtk(stress_symm_tensor, 1)
-            stress_symm_tensor_vtk.SetName("stress_post")
-            grid.GetPointData().AddArray(stress_symm_tensor_vtk)
-
-            writer.SetInputData(grid)
-            writer.SetFileName(os.path.join(os.path.dirname(fn), f"post_{t:.0f}.vtu"))
-            writer.Write()
-
-            return grid
-
-        grid = computeStrain(grid)
-
     grid.GetPointData().SetActiveVectors("u")
     warpVector.SetInputData(grid)
     warpVector.Update()
@@ -300,9 +189,7 @@ for t, fn in zip(ts, fns):
 
         return 2.0 * np.pi * np.trapz(x=rs_int, y=rs_int * stress_int(rs_int))
 
-    def stress_at_contact_area():
-        global add_leg
-
+    if t > 0:
         plane.SetOrigin(0, y_at_r_contact, 0)
         cutter.Update()
         grid = cutter.GetOutput()
@@ -325,14 +212,6 @@ for t, fn in zip(ts, fns):
             ax.plot([], [], color="k", ls=":", label="ref")
         (h,) = ax.plot(rs, -p_contact(rs, r_contact), ls=":")
 
-        if False:
-            r_contact_ana = np.sqrt(w_0 * R)
-
-            rs2 = np.linspace(0, r_contact_ana, 200)
-            if add_leg:
-                ax.plot([], [], color="k", ls="--", label="ref2")
-            ax.plot(rs2, -p_contact(rs, r_contact_ana), ls="--", color=h.get_color())
-
         stress_yy = vtk_to_numpy(grid.GetPointData().GetArray("sigma"))[:, 1]
         rs, avg_stress_yy = average_stress(xs, stress_yy)
         if add_leg:
@@ -345,18 +224,6 @@ for t, fn in zip(ts, fns):
             label=rf"$w_0 = {w_0}$",
         )
 
-        if False:
-            stress = vtk_to_numpy(grid.GetPointData().GetArray("stress_post"))
-            rs, avg_stress_yy = average_stress(xs, stress[:, 1])
-            if add_leg:
-                ax.plot([], [], color="k", label="post")
-            ax.plot(
-                rs,
-                avg_stress_yy,
-                color=h.get_color(),
-                label=rf"$w_0 = {2 * (1.0 - y_top)}$",
-            )
-
         ax.scatter([r_contact], [0], color=h.get_color())
         ax.legend(loc="center left", bbox_to_anchor=(1.0, 0.5))
 
@@ -364,9 +231,6 @@ for t, fn in zip(ts, fns):
         add_leg = False
 
         Fs.append(-total_force(xs, stress_yy))
-
-    if t > 0:
-        stress_at_contact_area()
 
 fig.savefig("stress_at_contact.png")
 plt.close(fig)
@@ -398,8 +262,8 @@ Fs_ref = 8.0 * rs_ref**3 * kappa / 3.0
 
 ax.plot(rs_ref, Fs_ref, label="ref")
 
-l = ax.legend()
-l.get_frame().set_facecolor("white")
+legend = ax.legend()
+legend.get_frame().set_facecolor("white")
 
 ax.set_xlabel("radius of contact area $a$ / m")
 ax.set_ylabel("applied force $F$ / N")

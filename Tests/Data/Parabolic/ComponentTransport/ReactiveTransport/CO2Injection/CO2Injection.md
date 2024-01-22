@@ -66,9 +66,11 @@ import time
 ```
 
 ```python
-out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+from pathlib import Path
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
 
 # simple
 prj_name = "calcite_simple.prj"
@@ -86,7 +88,8 @@ check_file = os.path.isfile(f"{out_dir}/calcite_simple_ts_43_t_30000.000000.vtu"
 if check_file:
     print("OGS simulation for the scenario simple case runs successfully")
 else:
-    raise Exception("OGS simulation failed.")
+    msg = "OGS simulation failed."
+    raise Exception(msg)
 
 # pwp
 prj_name = "calcite_pwp.prj"
@@ -104,7 +107,8 @@ check_file = os.path.isfile(f"{out_dir}/calcite_pwp_ts_43_t_30000.000000.vtu")
 if check_file:
     print("OGS simulation for the scenario PWP case runs successfully")
 else:
-    raise Exception("OGS simulation failed.")
+    msg = "OGS simulation failed."
+    raise Exception(msg)
 ```
 
 ```python

@@ -46,9 +46,11 @@ For better optimal accuracy and better spatial discretizations, the mesh around 
 
 ```python
 #environment variable for output path
-out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+from pathlib import Path
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
 
 exe_dir = os.environ.get("OGS_BINARY_DIR")
 
@@ -244,7 +246,8 @@ check_file = os.path.isfile(f"{out_dir}/{bhe_mesh_file_name}.msh")
 if check_file:
     print("Creation of BHE mesh in Gmsh format was successful.")
 else:
-    raise Exception("Error! Gmsh file is not properly created in the BHE meshing tutorial.")
+    msg = "Error! Gmsh file is not properly created in the BHE meshing tutorial."
+    raise Exception(msg)
 ```
 
 In this step, we will investigate the number of nodes, lines, prisms, and Material ID of the created mesh file, to validate if it is created properly for simulation.
@@ -285,5 +288,6 @@ check_file = os.path.isfile(f"{out_dir}/{bhe_mesh_file_name}.vtu")
 if check_file:
     print("Conversion of mesh file from Gmsh to VTU format was successful.")
 else:
-    raise Exception("Error! Gmsh file is not properly converted to VTU format in the BHE meshing tutorial.")
+    msg = "Error! Gmsh file is not properly converted to VTU format in the BHE meshing tutorial."
+    raise Exception(msg)
 ```

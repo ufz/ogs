@@ -5,19 +5,19 @@
 # http://www.opengeosys.org/project/license
 ###
 
+import os
 import sys
 
-print(sys.version)
-import os
-
 import numpy as np
+from pandas import read_csv
+from tespy.networks import load_network
 
 try:
     import ogs.callbacks as OpenGeoSys
 except ModuleNotFoundError:
     import OpenGeoSys
-from pandas import read_csv
-from tespy.networks import load_network
+
+print(sys.version)
 
 # User setting ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # parameters
@@ -148,36 +148,34 @@ class BC(OpenGeoSys.BHENetwork):
             df.loc[:, "flowrate"] = 0
             cur_flowrate = df["flowrate"].tolist()
             return (True, True, Tout_val, cur_flowrate)
-        else:
-            # read Tout_val to dataframe
-            for i in range(n_BHE):
-                df.loc[df.index[i], "Tout_val"] = Tout_val[i]
-            # TESPy solver
-            cur_Tin_val, cur_flowrate = get_tespy_results(t)
-            # check norm if network achieves the converge
-            if_success = False
-            pre_Tin_val = Tin_val
-            norm = np.linalg.norm(
-                abs(np.asarray(pre_Tin_val) - np.asarray(cur_Tin_val))
-            )
-            if norm < 10e-6:
-                if_success = True
-            # return to OGS
-            return (True, if_success, cur_Tin_val, cur_flowrate)
+
+        # read Tout_val to dataframe
+        for i in range(n_BHE):
+            df.loc[df.index[i], "Tout_val"] = Tout_val[i]
+        # TESPy solver
+        cur_Tin_val, cur_flowrate = get_tespy_results(t)
+        # check norm if network achieves the converge
+        if_success = False
+        pre_Tin_val = Tin_val
+        norm = np.linalg.norm(abs(np.asarray(pre_Tin_val) - np.asarray(cur_Tin_val)))
+        if norm < 10e-6:
+            if_success = True
+        # return to OGS
+        return (True, if_success, cur_Tin_val, cur_flowrate)
 
 
 # main
 # initialize the tespy model of the bhe network
 # load path of network model:
 # loading the TESPy model
-if ogs_prj_directory != "":
-    os.chdir(ogs_prj_directory)
+if ogs_prj_directory != "":  # noqa: F821
+    os.chdir(ogs_prj_directory)  # noqa: F821
 nw = load_network("./pre/tespy_nw")
 # set if print the network iteration info
 nw.set_attr(iterinfo=False)
 
 # create bhe dataframe of the network system from bhe_network.csv
-df = create_dataframe()
+df = create_dataframe()  # noqa: PD901
 n_BHE = np.size(df.iloc[:, 0])
 
 # create local variables of the components label and connections label in
