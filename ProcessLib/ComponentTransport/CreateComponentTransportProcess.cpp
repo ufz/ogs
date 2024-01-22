@@ -107,13 +107,26 @@ std::unique_ptr<Process> createComponentTransportProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
 
-    /// Primary process variables as they appear in the global component vector:
-    auto const collected_process_variables = findProcessVariables(
+    /// Primary process variables as they appear in the global component vector.
+    std::vector collected_process_variables = findProcessVariables(
         variables, pv_config,
         {//! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__pressure}
          "pressure",
          //! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__concentration}
          "concentration"});
+
+    /// Temperature is optional.
+    std::vector const temperature_variable = findProcessVariables(
+        variables, pv_config,
+        //! \ogs_file_param_special{prj__processes__process__ComponentTransport__process_variables__temperature}
+        "temperature", true /*temperature is optional*/);
+    bool const isothermal = temperature_variable.empty();
+    if (!isothermal)
+    {
+        assert(temperature_variable.size() == 1);
+        collected_process_variables.insert(
+            ++collected_process_variables.begin(), temperature_variable[0]);
+    }
 
     // Check number of components for each process variable
     auto it = std::find_if(
@@ -136,6 +149,13 @@ std::unique_ptr<Process> createComponentTransportProcess(
     // depending on what scheme is adopted
     if (use_monolithic_scheme)  // monolithic scheme.
     {
+        if (!isothermal)
+        {
+            OGS_FATAL(
+                "Currently, non-isothermal component transport process can "
+                "only be simulated in staggered scheme.");
+        }
+
         process_variables.push_back(std::move(collected_process_variables));
     }
     else  // staggered scheme.
@@ -183,8 +203,16 @@ std::unique_ptr<Process> createComponentTransportProcess(
             // pressure
             per_process_variable.emplace_back(collected_process_variables[0]);
             process_variables.push_back(std::move(per_process_variable));
+            // temperature
+            if (!isothermal)
+            {
+                per_process_variable.emplace_back(
+                    collected_process_variables[1]);
+                process_variables.push_back(std::move(per_process_variable));
+            }
             // concentration
-            assert(components.size() + 1 == collected_process_variables.size());
+            assert(components.size() + (isothermal ? 1 : 2) ==
+                   collected_process_variables.size());
             std::transform(components.begin(), components.end(),
                            std::back_inserter(process_variables),
                            sort_by_component);
@@ -222,9 +250,14 @@ std::unique_ptr<Process> createComponentTransportProcess(
         config.getConfigParameter<bool>("chemically_induced_porosity_change",
                                         false);
 
-    auto const temperature = ParameterLib::findOptionalTagParameter<double>(
+    auto const temperature_field = ParameterLib::findOptionalTagParameter<
+        double>(
         //! \ogs_file_param_special{prj__processes__process__ComponentTransport__temperature_field}
         config, "temperature_field", parameters, 1, &mesh);
+    if (!isothermal && temperature_field != nullptr)
+    {
+        OGS_FATAL("Temperature field is set for non-isothermal setup.")
+    }
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
@@ -275,14 +308,16 @@ std::unique_ptr<Process> createComponentTransportProcess(
         std::move(media_map),
         has_gravity,
         non_advective_form,
-        temperature,
+        temperature_field,
         chemically_induced_porosity_change,
         chemical_solver_interface.get(),
         std::move(lookup_table),
         std::move(stabilizer),
         projected_specific_body_force_vectors,
         mesh_space_dimension,
-        *aperture_size_parameter};
+        *aperture_size_parameter,
+        isothermal,
+    };
 
     SecondaryVariableCollection secondary_variables;
 

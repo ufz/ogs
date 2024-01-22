@@ -82,13 +82,17 @@ struct ComponentTransportProcessData
     ParameterLib::Parameter<double> const& aperture_size =
         ParameterLib::ConstantParameter<double>("constant_one", 1.0);
 
+    bool const isothermal;
+
     static const int hydraulic_process_id = 0;
+    // Thermal process is optional, indicated by -1. If present, it is positive.
+    const int thermal_process_id = isothermal ? -1 : 1;
     // TODO (renchao-lu): This variable is used in the calculation of the
     // fluid's density and flux, indicating the transport process id. For now it
     // is assumed that these quantities depend on the first occurring transport
     // process only. The density and flux calculations have to be extended to
     // all processes.
-    static const int first_transport_process_id = 1;
+    const int first_transport_process_id = isothermal ? 1 : 2;
 
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_porosity = nullptr;

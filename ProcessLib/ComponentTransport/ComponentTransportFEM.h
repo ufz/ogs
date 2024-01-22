@@ -210,7 +210,8 @@ class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
     // When monolithic scheme is adopted, nodal pressure and nodal concentration
     // are accessed by vector index.
     static const int pressure_index = 0;
-    static const int first_concentration_index = ShapeFunction::NPOINTS;
+    const int temperature_index = -1;
+    const int first_concentration_index = -1;
 
     static const int pressure_size = ShapeFunction::NPOINTS;
     static const int temperature_size = ShapeFunction::NPOINTS;
@@ -247,7 +248,12 @@ public:
         ComponentTransportProcessData const& process_data,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
             transport_process_variables)
-        : _element(element),
+        : temperature_index(process_data.isothermal ? -1
+                                                    : ShapeFunction::NPOINTS),
+          first_concentration_index(process_data.isothermal
+                                        ? ShapeFunction::NPOINTS
+                                        : 2 * ShapeFunction::NPOINTS),
+          _element(element),
           _process_data(process_data),
           _integration_method(integration_method),
           _transport_process_variables(transport_process_variables)
@@ -811,6 +817,25 @@ public:
         auto const local_C_prev =
             local_x_prev.segment<concentration_size>(first_concentration_index);
 
+        NodalVectorType local_T;
+        if (_process_data.isothermal)
+        {
+            if (_process_data.temperature)
+            {
+                local_T = _process_data.temperature->getNodalValuesOnElement(
+                    _element, t);
+            }
+            else
+            {
+                local_T = NodalVectorType::Zero(temperature_size);
+            }
+        }
+        else
+        {
+            local_T =
+                local_x.template segment<temperature_size>(temperature_index);
+        }
+
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, pressure_size, pressure_size);
         auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
@@ -846,14 +871,13 @@ public:
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
 
-            double C_int_pt = 0.0;
-            double p_int_pt = 0.0;
-
-            NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
-            NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
+            double const C_int_pt = N.dot(local_C);
+            double const p_int_pt = N.dot(local_p);
+            double const T_int_pt = N.dot(local_T);
 
             vars.concentration = C_int_pt;
             vars.liquid_phase_pressure = p_int_pt;
+            vars.temperature = T_int_pt;
 
             //  porosity
             {
@@ -1048,20 +1072,38 @@ public:
         std::vector<double>& local_K_data,
         std::vector<double>& /*local_b_data*/, int const transport_process_id)
     {
+        assert(static_cast<int>(local_x.size()) ==
+               pressure_size +
+                   concentration_size *
+                       static_cast<int>(_transport_process_variables.size()) +
+                   (_process_data.isothermal ? 0 : temperature_size));
+
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);
-        auto const local_C = local_x.template segment<concentration_size>(
-            first_concentration_index +
-            (transport_process_id - 1) * concentration_size);
-        auto const local_p_prev =
-            local_x_prev.segment<pressure_size>(pressure_index);
-
         NodalVectorType local_T;
-        if (_process_data.temperature)
+        if (_process_data.isothermal)
+        {
+            if (_process_data.temperature)
+            {
+                local_T = _process_data.temperature->getNodalValuesOnElement(
+                    _element, t);
+            }
+            else
+            {
+                local_T = NodalVectorType::Zero(temperature_size);
+            }
+        }
+        else
         {
             local_T =
-                _process_data.temperature->getNodalValuesOnElement(_element, t);
+                local_x.template segment<temperature_size>(temperature_index);
         }
+        auto const local_C = local_x.template segment<concentration_size>(
+            first_concentration_index +
+            (transport_process_id - (_process_data.isothermal ? 1 : 2)) *
+                concentration_size);
+        auto const local_p_prev =
+            local_x_prev.segment<pressure_size>(pressure_index);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
@@ -1094,9 +1136,8 @@ public:
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
-        // Hydraulic process id is 0 and thus transport process id starts
-        // from 1.
-        auto const component_id = transport_process_id - 1;
+        auto const component_id =
+            transport_process_id - (_process_data.isothermal ? 1 : 2);
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
@@ -1111,14 +1152,13 @@ public:
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
 
-            double C_int_pt = 0.0;
-            double p_int_pt = 0.0;
-
-            NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
-            NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
+            double const C_int_pt = N.dot(local_C);
+            double const p_int_pt = N.dot(local_p);
+            double const T_int_pt = N.dot(local_T);
 
             vars.concentration = C_int_pt;
             vars.liquid_phase_pressure = p_int_pt;
+            vars.temperature = T_int_pt;
 
             if (_process_data.temperature)
             {

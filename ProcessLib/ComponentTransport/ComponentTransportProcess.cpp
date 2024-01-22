@@ -11,6 +11,7 @@
 #include "ComponentTransportProcess.h"
 
 #include <cassert>
+#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/drop.hpp>
 
 #include "BaseLib/RunTime.h"
@@ -88,27 +89,36 @@ ComponentTransportProcess::ComponentTransportProcess(
             "probably expect.");
     }
 
-    _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "LiquidMassFlowRate", MeshLib::MeshItemType::Node, 1));
+    auto residuum_name = [&](auto const& pv) -> std::string
+    {
+        std::string const& pv_name = pv.getName();
+        if (pv_name == "pressure")
+        {
+            return "LiquidMassFlowRate";
+        }
+        if (pv_name == "temperature")
+        {
+            return "HeatFlowRate";
+        }
+        return pv_name + "FlowRate";
+    };
 
     if (_use_monolithic_scheme)
     {
-        const int process_id = 0;
-        for (auto const& pv :
-             _process_variables[process_id] | ranges::views::drop(1))
+        int const process_id = 0;
+        for (auto const& pv : _process_variables[process_id])
         {
             _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-                mesh, pv.get().getName() + "FlowRate",
-                MeshLib::MeshItemType::Node, 1));
+                mesh, residuum_name(pv.get()), MeshLib::MeshItemType::Node, 1));
         }
     }
     else
     {
-        for (auto const& pv : _process_variables | ranges::views::drop(1))
+        for (auto const& pv : _process_variables)
         {
             _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-                mesh, pv[0].get().getName() + "FlowRate",
-                MeshLib::MeshItemType::Node, 1));
+                mesh, residuum_name(pv[0].get()), MeshLib::MeshItemType::Node,
+                1));
         }
     }
 }
@@ -142,11 +152,13 @@ void ComponentTransportProcess::initializeConcreteProcess(
     }
     else
     {
-        for (auto pv_iter = std::next(_process_variables.begin());
-             pv_iter != _process_variables.end();
-             ++pv_iter)
+        // All process variables but the pressure and optionally the temperature
+        // are transport variables.
+        for (auto const& pv :
+             _process_variables |
+                 ranges::views::drop(_process_data.isothermal ? 1 : 2))
         {
-            transport_process_variables.push_back((*pv_iter)[0]);
+            transport_process_variables.push_back(pv[0]);
         }
     }
 
@@ -232,6 +244,8 @@ void ComponentTransportProcess::assembleConcreteProcess(
                             _global_assembler, _local_assemblers,
                             pv.getActiveElementIDs());
 
+    // TODO (naumov) What about temperature? A test with FCT would reveal any
+    // problems.
     if (process_id == _process_data.hydraulic_process_id)
     {
         return;
