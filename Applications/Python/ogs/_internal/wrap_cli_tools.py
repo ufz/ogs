@@ -44,6 +44,7 @@ class CLI:
         cmdline = CLI._get_cmdline("ogs", *args, **kwargs)
 
         if OGS_USE_PATH:
+            print("OGS_USE_PATH is true: ogs from $PATH is used!")
             return subprocess.call(cmdline)
 
         return ogs_with_args(cmdline)
