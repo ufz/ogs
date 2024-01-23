@@ -11,14 +11,13 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
 #include <memory>
 #include <string>
 
 #include "CreateTestConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticOrthotropic.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticTransverseIsotropic.h"
-#include "MaterialLib/SolidModels/LinearElasticOrthotropic.h"
-#include "MaterialLib/SolidModels/LinearElasticTransverseIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/CoordinateSystem.h"
@@ -79,60 +78,125 @@ setParametersForLinearElasticOrthotropic(std::vector<double> const& E0,
     return parameters;
 }
 
-TEST(MaterialLib, LinearElasticTransverseIsotropic)
+class LinearElasticTransverseIsotropic : public ::testing::Test
 {
-    ParameterLib::ConstantParameter<double> const e1{
-        "e1", {-0.8191520442889918, 0.0, -0.573576436351046}};
-    ParameterLib::ConstantParameter<double> const e2{"e2", {0.0, -1.0, 0.0}};
-    ParameterLib::ConstantParameter<double> const e3{
-        "e3", {-0.573576436351046, 0.0, 0.8191520442889918}};
-    /*ParameterLib::ConstantParameter<double> const e1{"e1", {1, 0.0, 0.0}};
-    ParameterLib::ConstantParameter<double> const e2{"e2", {0.0, 1.0, 0.0}};
-    ParameterLib::ConstantParameter<double> const e3{"e3", {0, 0.0, 1.0}};*/
-    ParameterLib::CoordinateSystem const coordinate_system{e1, e2, e3};
+public:
+    template <int Dim>
+    void compareWithElasticOrthotropic(
+        ParameterLib::CoordinateSystem const& coordinate_system)
+    {
+        // Create a LinearElasticTransverseIsotropic instance:
+        auto const parameters_ti =
+            setParametersForLinearElasticTransverseIsotropic(8.0e9, 4.0e9, 0.35,
+                                                             0.25, 1.2e9);
+        auto const elastic_model_transverse_isotropy =
+            Tests::createTestConstitutiveRelation<
+                MaterialLib::Solids::LinearElasticTransverseIsotropic<Dim>>(
+                xml_ti, parameters_ti, coordinate_system, false,
+                MaterialLib::Solids::createLinearElasticTransverseIsotropic<
+                    Dim>);
 
-    double const t = std::numeric_limits<double>::quiet_NaN();
-    ParameterLib::SpatialPosition const pos;
-    double const T_ref = std::numeric_limits<double>::quiet_NaN();
+        ParameterLib::SpatialPosition const pos;
+        auto const C = elastic_model_transverse_isotropy->getElasticTensor(
+            t_, pos, T_ref_);
 
-    auto const parameters_ti = setParametersForLinearElasticTransverseIsotropic(
-        8.0e9, 4.0e9, 0.35, 0.25, 1.2e9);
+        // Create a LinearElasticOrthotropic instance:
+        auto const parameters_orth =
+            getParametersForLinearElasticOrthotropic(Dim);
 
-    auto const elastic_model_transverse_isotropy =
-        Tests::createTestConstitutiveRelation<
-            MaterialLib::Solids::LinearElasticTransverseIsotropic<3>>(
-            xml_ti, parameters_ti, coordinate_system, false,
-            MaterialLib::Solids::createLinearElasticTransverseIsotropic<3>);
-    auto const E =
-        elastic_model_transverse_isotropy->getElasticTensor(t, pos, T_ref);
+        auto const elastic_model_orthotropic =
+            Tests::createTestConstitutiveRelation<
+                MaterialLib::Solids::LinearElasticOrthotropic<Dim>>(
+                xml_orth, parameters_orth, coordinate_system, false,
+                MaterialLib::Solids::createLinearElasticOrthotropic<Dim>);
+        auto const C_oth =
+            elastic_model_orthotropic->getElasticTensor(t_, pos, T_ref_);
 
-    std::vector<double> E0{8.0e9, 8.0e9, 4.0e9};
-    std::vector<double> nu0{0.35, 0.25, 0.25};
-    std::vector<double> G0{2.962962962963e+09, 1.2e9, 1.2e9};
-    auto const parameters_orth =
-        setParametersForLinearElasticOrthotropic(E0, nu0, G0);
+        // Compare the elastic tensor obtained by two models, respectively:
+        ASSERT_LE((C - C_oth).norm() / C.norm(), 1e-14);
 
-    auto const elastic_model_orthotropic =
-        Tests::createTestConstitutiveRelation<
-            MaterialLib::Solids::LinearElasticOrthotropic<3>>(
-            xml_orth, parameters_orth, coordinate_system, false,
-            MaterialLib::Solids::createLinearElasticOrthotropic<3>);
+        MathLib::KelvinVector::KelvinMatrixType<Dim> Cel;
 
-    auto const E_oth =
-        elastic_model_orthotropic->getElasticTensor(t, pos, T_ref);
+        // Compare the bulk modulus obtained by the transverse isotropic elastic
+        // model with the expected value:
+        double const k_ti =
+            elastic_model_transverse_isotropy->getBulkModulus(t_, pos, &Cel);
+        ASSERT_LE(std::abs(k_ti - 4301075268.8172045), 1e-14)
+            << "Calculated bulk modulus by the transverse isotropy model: "
+            << k_ti << "\n"
+            << "Expected Bulk modulus: 4301075268.8172045";
 
-    ASSERT_LE((E - E_oth).norm() / E.norm(), 1e-14);
+        // The definitions of the bulk modulus by LinearElasticOrthotropic and
+        // by LinearElasticTransverseIsotropic are different. Therefore, the
+        // comparison of the bulk modulus values by the models are not
+        // presented.
+    }
 
-    MathLib::KelvinVector::KelvinMatrixType<3> Cel;
+private:
+    double const t_ = std::numeric_limits<double>::quiet_NaN();
+    double const T_ref_ = std::numeric_limits<double>::quiet_NaN();
 
-    double const k_ti =
-        elastic_model_transverse_isotropy->getBulkModulus(t, pos, &Cel);
-    ASSERT_LE(k_ti - 4301075268.8172045, 1e-14)
-        << "Calculated bulk modulus by the transverse isotropy model: " << k_ti
-        << "\n"
-        << "Expected Bulk modulus: 4301075268.8172045";
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>
+    getParametersForLinearElasticOrthotropic(int const dim)
+    {
+        if (dim == 2)
+        {
+            // Since the model LinearElasticTransverseIsotropic defines the unit
+            // direction of anisotropy as the second base (base2) of the 2D
+            // local coordinate system, the following data are computed from
+            // that for the  model LinearElasticTransverseIsotropic:
+            std::vector<double> E0{8.0e9, 4.0e9, 8.0e9};
+            std::vector<double> nu0{0.25, 0.125, 0.35};
+            std::vector<double> G0{1.2e9, 0.0, 0.0};
+            return setParametersForLinearElasticOrthotropic(E0, nu0, G0);
+        }
 
-    // The definitions of the bulk modulus by LinearElasticOrthotropic and by
-    // LinearElasticTransverseIsotropic are different. Therefore, the comparison
-    // of the bulk modulus values by the models are not presented.
+        std::vector<double> E0{8.0e9, 8.0e9, 4.0e9};
+        std::vector<double> nu0{0.35, 0.25, 0.25};
+        std::vector<double> G0{2.962962962963e+09, 1.2e9, 1.2e9};
+        return setParametersForLinearElasticOrthotropic(E0, nu0, G0);
+    }
+};
+
+TEST_F(LinearElasticTransverseIsotropic, test_agaist_ElasticOrthotropic)
+{
+    {  // 2D
+        ParameterLib::ConstantParameter<double> const e1{
+            "e1", {0.8191520442889918, 0.573576436351046}};
+        ParameterLib::ConstantParameter<double> const e2{
+            "e2", {-0.573576436351046, 0.8191520442889918}};
+        ParameterLib::CoordinateSystem const coordinate_system{e1, e2};
+
+        compareWithElasticOrthotropic<2>(coordinate_system);
+    }
+    {  // 3D
+        ParameterLib::ConstantParameter<double> const e1{
+            "e1", {-0.8191520442889918, 0.0, -0.573576436351046}};
+        ParameterLib::ConstantParameter<double> const e2{"e2",
+                                                         {0.0, -1.0, 0.0}};
+        ParameterLib::ConstantParameter<double> const e3{
+            "e3", {-0.573576436351046, 0.0, 0.8191520442889918}};
+        ParameterLib::CoordinateSystem const coordinate_system{e1, e2, e3};
+
+        compareWithElasticOrthotropic<3>(coordinate_system);
+    }
+}
+
+TEST_F(LinearElasticTransverseIsotropic,
+       test_agaist_ElasticOrthotropicWithImplicitCoordinateBase)
+{
+    {  // 2D
+        ParameterLib::ConstantParameter<double> const line_direction{
+            "e3", {-0.573576436351046, 0.8191520442889918}};
+        ParameterLib::CoordinateSystem const coordinate_system{line_direction};
+
+        compareWithElasticOrthotropic<2>(coordinate_system);
+    }
+    {  // 3D
+        ParameterLib::ConstantParameter<double> const line_direction{
+            "e3", {-0.573576436351046, 0.0, 0.8191520442889918}};
+        ParameterLib::CoordinateSystem const coordinate_system{line_direction};
+
+        compareWithElasticOrthotropic<3>(coordinate_system);
+    }
 }

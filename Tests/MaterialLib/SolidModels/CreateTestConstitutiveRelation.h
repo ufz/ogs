@@ -15,6 +15,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/CoordinateSystem.h"
+#include "Tests/TestTools.h"
 
 namespace Tests
 {
