@@ -99,6 +99,24 @@ virtual environment, or add this path to your `PATH`-environment. Moreover, `pip
 
 You could also use [`pipx`](https://pipx.pypa.io/stable/) for installation into an isolated environment.
 
+<div class="note">
+
+### Advanced usage: Use binaries from `PATH` instead of pip package
+
+When using the OGS Python bindings it may be desired to use a different OGS version than provided by the pip package. This can be achieved by setting the environment variable `OGS_USE_PATH`. E.g.:
+
+```bash
+pip install ogs
+# now ogs from pip is used
+export PATH=/path/to/ogs/bin:$PATH
+OGS_USE_PATH=1 python
+# now in Python interpreter:
+>>> import ogs
+>>> ogs.cli.ogs("--version") # uses /path/to/ogs/bin/ogs instead of ogs from pip
+```
+
+</div>
+
 <div class='win'>
 
 <div class="note">
