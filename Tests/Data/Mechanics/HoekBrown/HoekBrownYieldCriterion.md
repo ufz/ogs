@@ -114,25 +114,28 @@ Then the model is applied to an average-quality rock mass, as explained in detai
 <!-- #endregion -->
 
 ```python
-from matplotlib.ticker import MultipleLocator
-from IPython.display import display, Markdown
-from tfel.material import projectOnPiPlane
-from math import pi, cos, sin, sqrt
-from scipy.optimize import fsolve
-from IPython.display import Math
-import matplotlib.pyplot as plt
-import pandas as pd
-import numpy as np
-import tfel.math
-import shutil
-import mtest
+import math as mt
 import os
+import shutil
+from math import cos, pi, sin, sqrt
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import mtest
+import numpy as np
+import pandas as pd
+import vtuIO
+from IPython.display import Markdown, display
+from matplotlib.ticker import MultipleLocator
+from ogs6py.ogs import OGS
+from scipy.optimize import fsolve
+from tfel.material import projectOnPiPlane
 ```
 
 ```python
 # Specify the folder names
-calFolder_name = "calculatedData"
-refFolder_name = "refData"
+calFolder_name = Path("calculatedData")
+refFolder_name = Path("refData")
 
 # Attempt to remove the folder
 try:
@@ -144,8 +147,8 @@ except Exception as e:
     print(f"An error occurred: {e}")
 
 # Create the folder if it doesn't exist
-if not os.path.exists(calFolder_name):
-    os.makedirs(calFolder_name)
+if not calFolder_name.exists():
+    calFolder_name.mkdir(parents=True)
 ```
 
 ```python
@@ -158,10 +161,10 @@ file_path = [
 ]
 
 # Check if the file exists before attempting to delete
-for file in file_path:
-    if os.path.exists(file):
+for file in map(Path, file_path):
+    if file.exists():
         # Delete the file
-        os.remove(file)
+        file.unlink()
 ```
 
 ```python
@@ -191,19 +194,21 @@ mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
 def ErrorAnalysis(refFile, calFile, input1, input2, labelx, labely,
  tol):
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 5.5))
-    file_path1 = os.path.join(refFolder_name, refFile)
-    file_path2 = os.path.join(calFolder_name, calFile)
+    file_path1 = refFolder_name / refFile
+    file_path2 = calFolder_name / calFile
 
     df1 = pd.read_csv(file_path1)
     df2 = pd.read_csv(file_path2)
 
     # Check if the columns are the same in both DataFrames
     if not df1.columns.equals(df2.columns):
-        raise ValueError("Columns in the CSV files are not the same.")
+        msg = "Columns in the CSV files are not the same."
+        raise ValueError(msg)
 
     # Check if the shape of the DataFrames is the same
     if df1.shape != df2.shape:
-        raise ValueError("Shapes of the CSV files are not the same.")
+        msg = "Shapes of the CSV files are not the same."
+        raise ValueError(msg)
 
     errors0 = df1[input1] - df2[input1]
     errors1 = df1[input2] - df2[input2]
@@ -239,11 +244,11 @@ def ErrorAnalysis(refFile, calFile, input1, input2, labelx, labely,
 
     # Check if the error exceeds the threshold
     if mean_error > tolerance:
+        msg = f"Error exceeds the threshold. Stopping the code. Mean Error: {mean_error}"
         raise ValueError(
-            f"Error exceeds the threshold. Stopping the code. Mean Error: {mean_error}"
+            msg
         )
-    else:
-        print("Continue with the rest of the code.", "Mean Error:", mean_error)
+    print("Continue with the rest of the code.", "Mean Error:", mean_error)
 ```
 
 ## Verifications
@@ -278,7 +283,7 @@ def run_pi_plane(theta, material_set, data, calFile):
 
     # solve the problem
     solutionInfo = fsolve(nonlinearEquation, initialGuess, full_output=1)
-    Jtwo = sum((solutionInfo[0]))
+    Jtwo = sum(solutionInfo[0])
     rho = sqrt(Jtwo)
     npas = 100
     tmax = 1
@@ -350,9 +355,8 @@ def run_pi_plane(theta, material_set, data, calFile):
         "alphF": alphF,
         "m_b": m_b,
     }
-    df = pd.DataFrame(data)
-    file_path = os.path.join(calFolder_name, calFile)
-    df.to_csv(file_path, index=False)
+    pd.DataFrame(data).to_csv(calFolder_name / calFile, index=False)
+
     return results_set
 ```
 
@@ -403,8 +407,8 @@ ErrorAnalysis(
     "calculated_piplane_data_Ex1.csv",
     "sigma0",
     "sigma1",
-    "Errors of $\sigma_{xx}$",
-    "Errors of $\sigma_{yy}$",
+    r"Errors of $\sigma_{xx}$",
+    r"Errors of $\sigma_{yy}$",
     tol=1e-6,
 )
 ```
@@ -455,8 +459,8 @@ ErrorAnalysis(
     "calculated_piplane_data_Ex2.csv",
     "sigma0",
     "sigma1",
-    "Errors of $\sigma_{xx}$",
-    "Errors of $\sigma_{yy}$",
+    r"Errors of $\sigma_{xx}$",
+    r"Errors of $\sigma_{yy}$",
     tol=1e-6,
 )
 ```
@@ -532,7 +536,7 @@ def runTest(material_set, data, calFile):
 
     # solve the problem
     solutionInfo = fsolve(nonlinearEquation, initialGuess, full_output=1)
-    Jtwo = sum((solutionInfo[0]))
+    Jtwo = sum(solutionInfo[0])
     rho = sqrt(Jtwo)
     npas = 200
     tmax = 1
@@ -601,13 +605,9 @@ def runTest(material_set, data, calFile):
             "Ec": Ec,
         }
     if material_set["Test"] == "Compressive Loading Test":
-        df = pd.DataFrame(data)
-        file_path = os.path.join(calFolder_name, calFile)
-        df.to_csv(file_path, index=False)
+        pd.DataFrame(data).to_csv(calFolder_name / calFile, index=False)
     if material_set["Test"] == "Hydrostatic Loading Test":
-        df = pd.DataFrame(data)
-        file_path = os.path.join(calFolder_name, calFile)
-        df.to_csv(file_path, index=False)
+        pd.DataFrame(data).to_csv(calFolder_name / calFile, index=False)
     return results_set
 ```
 
@@ -662,8 +662,8 @@ ErrorAnalysis(
     "calculated_CLT_data_Ex3.csv",
     "epsilon2",
     "sigma2",
-    "Errors of $\sigma_{zz}$",
-    "Errors of $\epsilon_{zz}$ / %",
+    r"Errors of $\sigma_{zz}$",
+    r"Errors of $\epsilon_{zz}$ / %",
     tol=1e-6,
 )
 ```
@@ -848,16 +848,9 @@ $$
 $$
 
 ```python
-from ogs6py.ogs import OGS
-import math as mt
-import numpy as np
-import vtuIO
-```
-
-```python
-out_dir = os.environ.get("OGS_TESTRUNNER_DIR", "_out")
-if not os.path.exists(out_dir):
-    os.makedirs(out_dir)
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
 ```
 
 ```python
@@ -867,11 +860,11 @@ model_hb = OGS(
 ```
 
 ```python
-model_hb.run_model(logfile=os.path.join(out_dir, "out.txt"), args=f"-o {out_dir}", write_prj_to_pvd=False)
+model_hb.run_model(logfile=str(out_dir / "out.txt"), args=f"-o {out_dir}", write_prj_to_pvd=False)
 ```
 
 ```python
-pvd_hb = vtuIO.PVDIO("load_test_hb.pvd", dim=2)
+pvd_hb = vtuIO.PVDIO(f"{out_dir}/load_test_hb.pvd", dim=2)
 ```
 
 ```python
@@ -938,9 +931,8 @@ def analyticalSolution(material_set, data, analytFile):
             "sig_tt": sig_tt,
             "pl_range": b_pl,
         }
-    df = pd.DataFrame(data)
-    file_path = os.path.join(calFolder_name, analytFile)
-    df.to_csv(file_path, index=False)
+    pd.DataFrame(data).to_csv(calFolder_name / analytFile, index=False)
+
     return results_set
 ```
 
@@ -999,11 +991,9 @@ fig, ax = plt.subplots(figsize=(14, 7))
 radData = np.array(raxis).T[0] / 1000
 calData_stress_rr = pvd_hb.read_set_data(i, "sigma", pointsetarray=raxis).T[0]
 calData_stress_tt = pvd_hb.read_set_data(i, "sigma", pointsetarray=raxis).T[2]
-df = pd.DataFrame(
-    {"rad": radData, "sigma_rr": calData_stress_rr, "sigma_tt": calData_stress_tt}
-)
-file_path = os.path.join(calFolder_name, "calculated_data_Ex5.csv")
-df.to_csv(file_path, index=False)
+pd.DataFrame(
+        {"rad": radData, "sigma_rr": calData_stress_rr, "sigma_tt": calData_stress_tt}
+    ).to_csv(calFolder_name/ "calculated_data_Ex5.csv", index=False)
 
 ax.plot(
     np.array(raxis).T[0] / 1000,
@@ -1046,8 +1036,8 @@ ErrorAnalysis(
     "calculated_data_Ex5.csv",
     "sigma_rr",
     "sigma_tt",
-    "Errors of $\sigma_{rr}$",
-    "Errors of $\sigma_{\\theta \\theta}$",
+    r"Errors of $\sigma_{rr}$",
+    "Errors of $\\sigma_{\\theta \\theta}$",
     tol=1e-6,
 )
 ```
@@ -1058,8 +1048,8 @@ ErrorAnalysis(
     "analytical_data_Ex5.csv",
     "sigma_rr",
     "sigma_tt",
-    "Errors of $\sigma_{rr}$",
-    "Errors of $\sigma_{\\theta \\theta}$",
+    r"Errors of $\sigma_{rr}$",
+    "Errors of $\\sigma_{\\theta \\theta}$",
     tol=5e-1,
 )
 ```
