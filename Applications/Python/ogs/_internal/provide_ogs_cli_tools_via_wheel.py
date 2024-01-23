@@ -4,6 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from . import OGS_USE_PATH
+
 # Here, we assume that this script is installed, e.g., in a virtual environment
 # alongside a "bin" directory.
 OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
@@ -82,6 +84,7 @@ def pyproject_get_binaries():
     }
 
 
+# Not used when OGS_USE_PATH is true!
 def ogs():
     raise SystemExit(ogs_with_args(sys.argv))
 
@@ -113,10 +116,15 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
         os.add_dll_directory(OGS_BIN_DIR)
 
     def _program(name, args):
-        return subprocess.run([OGS_BIN_DIR / name] + args).returncode  # noqa: PLW1510
+        exe = OGS_BIN_DIR / name
+        if OGS_USE_PATH:
+            exe = name
+        print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
+        return subprocess.run([exe] + args).returncode  # noqa: PLW1510
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
     for f in binaries_list:
-        if f == "ogs":
+        if f == "ogs" and not OGS_USE_PATH:
             continue  # provided by separate function
+        # When OGS_USE_PATH is true then ogs()-function above is not used!
         exec(FUNC_TEMPLATE.format(f))

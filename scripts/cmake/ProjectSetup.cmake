@@ -26,8 +26,13 @@ endif()
 file(RELATIVE_PATH relDir ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
      ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
 )
+
+set(_py_module_rpath ${BASEPOINT}/${CMAKE_INSTALL_LIBDIR})
+if(NOT OGS_BUILD_WHEEL)
+    set(_py_module_rpath ${BASEPOINT}/../../..)
+endif()
 list(APPEND CMAKE_INSTALL_RPATH ${BASEPOINT} ${BASEPOINT}/${relDir}
-     ${BASEPOINT}/${CMAKE_INSTALL_LIBDIR} # Python modules
+     ${_py_module_rpath} # Python modules
 )
 list(APPEND CMAKE_BUILD_RPATH ${BASEPOINT} ${BASEPOINT}/${relDir}
      ${BASEPOINT}/${CMAKE_INSTALL_LIBDIR} # Python modules

@@ -18,5 +18,4 @@ target_link_libraries(
 )
 target_include_directories(simulator PRIVATE ../../CLI)
 
-# Install into Python module root dir (enables 'import ogs.simulator')
-install(TARGETS simulator LIBRARY DESTINATION ogs)
+install(TARGETS simulator LIBRARY DESTINATION ${_py_install_location})

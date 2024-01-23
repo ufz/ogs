@@ -9,7 +9,12 @@ target_link_libraries(
     ApplicationsLib
     PUBLIC BaseLib GeoLib NumLib
            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-    PRIVATE CMakeInfoLib MathLib MeshLib MeshGeoToolsLib MeshToolsLib pybind11::pybind11
+    PRIVATE CMakeInfoLib
+            MathLib
+            MeshLib
+            MeshGeoToolsLib
+            MeshToolsLib
+            pybind11::pybind11
             $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
 )
 
@@ -18,7 +23,9 @@ if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
         ApplicationsLib PUBLIC Processes PRIVATE ParameterLib ProcessLib
     )
 elseif(OGS_BUILD_GUI)
-    target_link_libraries(ApplicationsLib PRIVATE MeshToolsLib nlohmann_json::nlohmann_json)
+    target_link_libraries(
+        ApplicationsLib PRIVATE MeshToolsLib nlohmann_json::nlohmann_json
+    )
 endif()
 
 if(OGS_USE_LIS)

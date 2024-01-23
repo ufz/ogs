@@ -17,5 +17,4 @@ endif()
 
 target_link_libraries(mesh PRIVATE _python_mesh)
 
-# Install into Python module root dir (enables 'import ogs.mesh')
-install(TARGETS mesh LIBRARY DESTINATION ogs)
+install(TARGETS mesh LIBRARY DESTINATION ${_py_install_location})
