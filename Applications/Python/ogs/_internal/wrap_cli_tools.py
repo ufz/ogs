@@ -1,7 +1,7 @@
-import os
 import subprocess
 from pathlib import Path
 
+from . import OGS_USE_PATH
 from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
 
 # Here, we assume that this script is installed, e.g., in a virtual environment
@@ -43,7 +43,7 @@ class CLI:
 
         cmdline = CLI._get_cmdline("ogs", *args, **kwargs)
 
-        if "OGS_USE_PATH" in os.environ:
+        if OGS_USE_PATH:
             return subprocess.call(cmdline)
 
         return ogs_with_args(cmdline)
@@ -67,9 +67,8 @@ class CLI:
     @staticmethod
     def _get_run_cmd(attr):
         def run_cmd(*args, **kwargs):
-            # TODO provide override via os.environ?
             cmd = OGS_BIN_DIR / attr
-            if "OGS_USE_PATH" in os.environ:
+            if OGS_USE_PATH:
                 cmd = attr
             cmdline = CLI._get_cmdline(cmd, *args, **kwargs)
             return subprocess.call(cmdline)
