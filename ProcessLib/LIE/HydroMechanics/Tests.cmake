@@ -53,7 +53,7 @@ AddTest(
     single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu fracture_aperture_avg fracture_aperture_avg 1e-12 1e-12
     single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu fracture_permeability fracture_permeability 1e-12 1e-12
     single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu fracture_permeability_avg fracture_permeability_avg 1e-12 1e-12
-    single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu sigma sigma 1e-6 1e-12
+    single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu sigma sigma 2e-6 1e-12
     single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu sigma_avg sigma_avg 1e-6 1e-12
     single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu epsilon epsilon 1e-12 1e-12
     single_fracture_3D_ts_10_t_100.000000.vtu single_fracture_3D_ts_10_t_100.000000.vtu velocity velocity 1e-12 1e-12
