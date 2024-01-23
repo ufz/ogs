@@ -8,7 +8,6 @@ image = "./figures/MandelCryer_mesh.png"
 web_subsection = "hydro-mechanics"
 +++
 
-
 <!-- #region -->
 ## Mandel-Cryer Effect
 
