@@ -40,7 +40,12 @@ deploy guix container eve:
   script:
     - which guix
     - guix describe
-    # All processes.
+    # Build phase, retry once if failed
+    - guix time-machine -C scripts/guix/channels.scm -- build bash coreutils
+    - if [ $? -ne 0 ]; then !!; fi
+    - guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc@6.5.0-testing=$PWD
+    - if [ $? -ne 0 ]; then !!; fi
+    # Pack phase
     - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils ogs-petsc --with-source=ogs-petsc@6.5.0-testing=$PWD | tee | tail -1 )
     - echo "Image $image"
     - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
