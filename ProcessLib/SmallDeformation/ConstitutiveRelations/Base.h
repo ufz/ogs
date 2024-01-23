@@ -13,10 +13,14 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/KelvinVector.h"
 #include "ParameterLib/SpatialPosition.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::SmallDeformation
 {
+
+using namespace ProcessLib::ConstitutiveRelations;
+
 template <int DisplacementDim>
 using KelvinVector = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
@@ -50,43 +54,6 @@ constexpr KelvinVector<DisplacementDim> KVzero()
     return KelvinVector<DisplacementDim>::Zero();
 }
 
-/// Represents a previous state of type T.
-template <typename T>
-struct PrevState
-{
-    PrevState() = default;
-    explicit PrevState(T const& t) : t{t} {}
-    explicit PrevState(T&& t) : t{std::move(t)} {}
-
-    PrevState<T>& operator=(T const& u)
-    {
-        t = u;
-        return *this;
-    }
-
-    PrevState<T>& operator=(T&& u)
-    {
-        t = std::move(u);
-        return *this;
-    }
-
-    T& operator*() { return t; }
-    T const& operator*() const { return t; }
-
-    T* operator->() { return &t; }
-    T const* operator->() const { return &t; }
-
-private:
-    T t;
-};
-
-struct SpaceTimeData
-{
-    ParameterLib::SpatialPosition x;
-    double t;
-    double dt;
-};
-
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
@@ -99,19 +66,5 @@ struct MediaData
 };
 
 using Temperature = BaseLib::StrongType<double, struct TemperatureTag>;
-
-template <int DisplacementDim>
-struct StrainData
-{
-    // TODO Move initialization to the local assembler.
-    KelvinVector<DisplacementDim> eps = KVnan<DisplacementDim>();
-
-    static auto reflect()
-    {
-        using Self = StrainData<DisplacementDim>;
-
-        return ProcessLib::Reflection::reflectWithName("epsilon", &Self::eps);
-    }
-};
 
 }  // namespace ProcessLib::SmallDeformation

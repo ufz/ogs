@@ -52,16 +52,22 @@ struct SmallDeformationLocalAssemblerInterface
         unsigned const n_integration_points =
             integration_method_.getNumberOfPoints();
 
+        current_states_.resize(n_integration_points);
+        prev_states_.resize(n_integration_points);
+        output_data_.resize(n_integration_points);
+
         material_states_.reserve(n_integration_points);
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             material_states_.emplace_back(
                 solid_material_.createMaterialStateVariables());
-        }
 
-        current_states_.resize(n_integration_points);
-        prev_states_.resize(n_integration_points);
-        output_data_.resize(n_integration_points);
+            // Set initial stress field to zero. Might be overwritten by
+            // integration point data or initial stress.
+            this->current_states_[ip].stress_data.sigma.noalias() =
+                MathLib::KelvinVector::KelvinVectorType<
+                    DisplacementDim>::Zero();
+        }
     }
     /// Returns number of read integration points.
     std::size_t setIPDataInitialConditions(std::string_view name,

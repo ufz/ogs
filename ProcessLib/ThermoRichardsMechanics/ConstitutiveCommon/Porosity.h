@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Bishops.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 

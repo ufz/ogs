@@ -9,10 +9,12 @@
 
 #pragma once
 
+#include "Base.h"
 #include "FreeEnergyDensity.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialState.h"
-#include "StressData.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
 
 namespace ProcessLib::SmallDeformation
 {

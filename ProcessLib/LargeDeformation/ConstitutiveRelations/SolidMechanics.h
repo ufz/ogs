@@ -9,10 +9,12 @@
 
 #pragma once
 
+#include "Base.h"
 #include "MaterialLib/SolidModels/MFront/MFrontGeneric.h"
 #include "MaterialLib/SolidModels/MFront/Variable.h"
 #include "MaterialState.h"
-#include "StressData.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
 
 namespace ProcessLib::LargeDeformation
 {
