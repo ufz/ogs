@@ -89,10 +89,11 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
             "requested.");
     }
 
-    auto e0 = (*_base[0])(0 /* time independent */, pos);
-    auto e1 = (*_base[1])(0 /* time independent */, pos);
     Eigen::Matrix<double, 2, 2> t;
-    t << e0[0], e1[0], e0[1], e1[1];
+    t.col(0) = Eigen::Map<Eigen::Vector2d>(
+        (*_base[0])(0 /* time independent */, pos).data());
+    t.col(1) = Eigen::Map<Eigen::Vector2d>(
+        (*_base[1])(0 /* time independent */, pos).data());
 
 #ifndef NDEBUG
     if (std::abs(t.determinant() - 1) > tolerance)
@@ -114,11 +115,13 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
             "requested.");
     }
 
-    auto e0 = (*_base[0])(0 /* time independent */, pos);
-    auto e1 = (*_base[1])(0 /* time independent */, pos);
-    auto e2 = (*_base[2])(0 /* time independent */, pos);
     Eigen::Matrix<double, 3, 3> t;
-    t << e0[0], e1[0], e2[0], e0[1], e1[1], e2[1], e0[2], e1[2], e2[2];
+    t.col(0) = Eigen::Map<Eigen::Vector3d>(
+        (*_base[0])(0 /* time independent */, pos).data());
+    t.col(1) = Eigen::Map<Eigen::Vector3d>(
+        (*_base[1])(0 /* time independent */, pos).data());
+    t.col(2) = Eigen::Map<Eigen::Vector3d>(
+        (*_base[2])(0 /* time independent */, pos).data());
 
 #ifndef NDEBUG
     if (std::abs(t.determinant() - 1) > tolerance)
