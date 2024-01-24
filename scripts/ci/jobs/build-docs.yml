@@ -98,6 +98,7 @@ check docs links:
       --ignore-url='sciencedirect.com'
       --ignore-url='search_opensearch.php'
       --ignore-url='doxygen.css'
+      --ignore-url='https://doi.org/10.1680/geot.2008.58.3.157'
       build/docs
 
 spell check docs:
