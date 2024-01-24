@@ -167,13 +167,8 @@ for notebook_file in args.notebooks:
         notebook_basename = (
             notebook_file_path.parent.resolve() / notebook_file_path.stem
         )
-        if "web/content" in str(notebook_basename):
-            notebook_output_path = notebook_basename
-        else:
-            notebook_output_path = (
-                Path(args.out)
-                / Path(notebook_basename).relative_to(os.environ["OGS_DATA_DIR"])
-            ).resolve()
+        _relpath = os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"])
+        notebook_output_path = (Path(args.out) / _relpath).resolve()
         notebook_output_path.mkdir(parents=True, exist_ok=True)
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = str(notebook_output_path)
         notebook_filename = notebook_file_path.name
