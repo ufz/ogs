@@ -77,19 +77,22 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
 std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     std::vector<ProcessVariable> const& variables,
-    BaseLib::ConfigTree const& pv_config,
-    std::string const& tag)
+    BaseLib::ConfigTree const& pv_config, std::string const& tag,
+    bool const optional)
 {
-    std::vector<std::reference_wrapper<ProcessVariable>> vars;
-
     //! \ogs_file_special
     auto var_names = pv_config.getConfigParameterList<std::string>(tag);
 
     if (var_names.empty())
     {
+        if (optional)
+        {
+            return {};
+        }
         OGS_FATAL("No entity is found with config tag <{:s}>.", tag);
     }
 
+    std::vector<std::reference_wrapper<ProcessVariable>> vars;
     std::vector<std::string> cached_var_names;
 
     for (std::string const& var_name : var_names)
