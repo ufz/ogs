@@ -29,7 +29,7 @@ namespace ApplicationUtils
 ///  A subdomain mesh.
 struct Partition
 {
-    std::vector<MeshLib::Node*> nodes;  ///< nodes.
+    std::vector<MeshLib::Node const*> nodes;  ///< nodes.
     std::size_t number_of_regular_base_nodes;
     std::size_t number_of_regular_nodes;
     std::size_t number_of_base_nodes;
@@ -124,8 +124,6 @@ private:
 
     // Renumber the global indices of nodes,
     void renumberNodeIndices();
-
-    void processPartition(std::size_t const part_id);
 
     /// Renumber the bulk_node_ids property for each partition to match the
     /// partitioned bulk mesh nodes.
