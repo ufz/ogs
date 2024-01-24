@@ -29,7 +29,7 @@ namespace ApplicationUtils
 ///  A subdomain mesh.
 struct Partition
 {
-    std::vector<MeshLib::Node*> nodes;  ///< nodes.
+    std::vector<MeshLib::Node const*> nodes;  ///< nodes.
     std::size_t number_of_regular_base_nodes;
     std::size_t number_of_regular_nodes;
     std::size_t number_of_base_nodes;

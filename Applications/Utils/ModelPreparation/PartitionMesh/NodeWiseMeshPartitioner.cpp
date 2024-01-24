@@ -109,16 +109,16 @@ std::size_t partitionLookup(std::size_t const& node_id,
     return partition_ids[node_id_mapping[node_id]];
 }
 
-std::pair<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
-splitIntoBaseAndHigherOrderNodes(std::vector<MeshLib::Node*> const& nodes,
+std::pair<std::vector<MeshLib::Node const*>, std::vector<MeshLib::Node const*>>
+splitIntoBaseAndHigherOrderNodes(std::vector<MeshLib::Node const*> const& nodes,
                                  MeshLib::Mesh const& mesh)
 {
     // Space for resulting vectors.
-    std::vector<MeshLib::Node*> base_nodes;
+    std::vector<MeshLib::Node const*> base_nodes;
     // if linear mesh, then one reallocation, no realloc for higher order
     // elements meshes.
     base_nodes.reserve(nodes.size() / 2);
-    std::vector<MeshLib::Node*> higher_order_nodes;
+    std::vector<MeshLib::Node const*> higher_order_nodes;
     // if linear mesh, then wasted space, good estimate for quadratic
     // order mesh, and realloc needed for higher order element meshes.
     higher_order_nodes.reserve(nodes.size() / 2);
@@ -127,7 +127,7 @@ splitIntoBaseAndHigherOrderNodes(std::vector<MeshLib::Node*> const& nodes,
     std::partition_copy(
         begin(nodes), end(nodes), std::back_inserter(base_nodes),
         std::back_inserter(higher_order_nodes),
-        [&](MeshLib::Node* const n)
+        [&](MeshLib::Node const* const n)
         { return isBaseNode(*n, mesh.getElementsConnectedToNode(*n)); });
 
     return {base_nodes, higher_order_nodes};
@@ -581,7 +581,7 @@ void distributeNodesToPartitions(
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<std::size_t> const& bulk_node_ids)
 {
-    for (auto const& node : nodes)
+    for (auto const* const node : nodes)
     {
         partitions[nodes_partition_ids[bulk_node_ids[node->getID()]]]
             .nodes.push_back(node);
@@ -591,7 +591,7 @@ void distributeNodesToPartitions(
 void reorderNodesIntoBaseAndHigherOrderNodes(Partition& partition,
                                              MeshLib::Mesh const& mesh)
 {
-    std::vector<MeshLib::Node*> higher_order_nodes;
+    std::vector<MeshLib::Node const*> higher_order_nodes;
     // after splitIntoBaseAndHigherOrderNodes() partition.nodes contains only
     // base nodes
     std::tie(partition.nodes, higher_order_nodes) =
@@ -1124,7 +1124,7 @@ void getElementIntegerVariables(
 
 /// Generates a mapping of given node ids to a new local (renumbered) node ids.
 std::unordered_map<std::size_t, long> enumerateLocalNodeIds(
-    std::vector<MeshLib::Node*> const& nodes)
+    std::vector<MeshLib::Node const*> const& nodes)
 {
     std::unordered_map<std::size_t, long> local_ids;
     local_ids.reserve(nodes.size());
