@@ -106,17 +106,16 @@ if(OGS_USE_MFRONT)
                 "ExternalProject_Add(): added package TFEL@rliv-${ogs.minimum_version.tfel-rliv}"
         )
         if(Boost_${_py_boost_comp}_FOUND)
-            set(_TFEL_SITE-PACKAGES_DIR
+            set(TFEL_WITH_PYTHON
                 "${build_dir_TFEL}/lib/python${_py_version_major_minor}/site-packages"
-                CACHE INTERNAL ""
+                CACHE PATH ""
             )
         endif()
         set(TFELHOME ${build_dir_TFEL} CACHE PATH "" FORCE)
     endif()
-    if(_TFEL_SITE-PACKAGES_DIR)
-        message(
-            STATUS "TFEL build with Python bindings. To use them:\n "
-                   "  export PYTHONPATH=${_TFEL_SITE-PACKAGES_DIR}:$PYTHONPATH"
+    if(TFEL_WITH_PYTHON)
+        message(STATUS "TFEL build with Python bindings. To use them:\n "
+                       "  export PYTHONPATH=${TFEL_WITH_PYTHON}:$PYTHONPATH"
         )
     endif()
 endif()

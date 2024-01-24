@@ -236,10 +236,9 @@ set(_envrc_content
     "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source ${PROJECT_BINARY_DIR}/.venv/bin/activate"
     "export PATH=$PATH:${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
 )
-if(_TFEL_SITE-PACKAGES_DIR)
-    set(_envrc_content
-        "${_envrc_content}"
-        "export PYTHONPATH=${_TFEL_SITE-PACKAGES_DIR}:$PYTHONPATH"
+if(TFEL_WITH_PYTHON)
+    set(_envrc_content "${_envrc_content}"
+                       "export PYTHONPATH=${TFEL_WITH_PYTHON}:$PYTHONPATH"
     )
 endif()
 string(REPLACE ";" "\n" _envrc_content "${_envrc_content}")

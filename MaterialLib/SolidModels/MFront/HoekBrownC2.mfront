@@ -1,0 +1,539 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2024, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+// Metadata
+@Author Mehran Ghasabeh, Dmitri Naumov, Thomas Nagel;
+@Date 15 / 11 / 2023;
+@Description{
+    Implementation of non - associated flow rule of the Brown yield criterion,
+    which is derived based on the work of Hoek and Brown,
+    https :  // doi.org/10.1016/j.jrmge.2018.08.001.
+};
+
+@DSL Implicit;
+@Behaviour HoekBrownC2;
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 500;
+@Brick StandardElasticity;
+@Theta 1.0;
+@Epsilon 1e-14;
+@ModellingHypotheses{".+"};
+@RequireStiffnessTensor<UnAltered>;
+@StateVariable real lam;
+lam.setGlossaryName("EquivalentPlasticStrain");
+
+// Material properties for the failure criterion
+@MaterialProperty stress sigma_ci;
+sigma_ci.setEntryName("UniaxialCompressiveStrengthF");
+@MaterialProperty real m_b;
+m_b.setEntryName("CurveFittingParameterF");
+@MaterialProperty real a;
+a.setEntryName("ExponentF");
+@MaterialProperty real sp;
+sp.setEntryName("EstimatedParameterF");
+@MaterialProperty real delta_tol;
+delta_tol.setEntryName("J2TOL");
+@MaterialProperty real rho;
+rho.setEntryName("InitialJ2");
+@MaterialProperty real lodeT;
+lodeT.setEntryName("TransitionAngle");
+
+// Material properties for the plastic potential
+@MaterialProperty stress sigma_cg;
+sigma_cg.setEntryName("UniaxialCompressiveStrengthG");
+@MaterialProperty real m_g;
+m_g.setEntryName("CurveFittingParameterG");
+@MaterialProperty real a_g;
+a_g.setEntryName("ExponentG");
+@MaterialProperty real sp_g;
+sp_g.setEntryName("EstimatedParameterG");
+
+@Parameter local_zero_tolerance = 1e-14;
+@Parameter mu_tol = 1e-1;
+
+// Local variable
+@LocalVariable Stensor np;
+@LocalVariable bool plastic_loading;
+@LocalVariable real cos_lodeT;
+@LocalVariable real sin_lodeT;
+@LocalVariable real tan_lodeT;
+@LocalVariable real cos_3_lodeT;
+@LocalVariable real sin_3_lodeT;
+@LocalVariable real tan_3_lodeT;
+@LocalVariable real pows;
+@LocalVariable real pows_1;
+@LocalVariable real pows_1g;
+@LocalVariable real pows_1i;
+
+@Private
+{
+    std::tuple<double, double, double> computeABC(
+        double const term1, double const term2, double const sign,
+        double const sqrt_J2) const
+    {
+        constexpr auto sqrt3 = math::Cste<real>::sqrt3;
+        constexpr auto isqrt3 = math::Cste<real>::isqrt3;
+
+        const auto B =
+            term1 * (tan_lodeT * tan_lodeT * sign * tan_3_lodeT) /
+                (9. * term2) +
+            term1 * (sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT) /
+                (3. * term2) -
+            term1 * (sign * tan_lodeT) / (3. * term2) +
+            term1 * (sign * tan_3_lodeT) / (9. * term2) -
+            term1 * (tan_lodeT * tan_lodeT * sign * tan_3_lodeT) /
+                (9. * term2 * a) +
+            sign * sin_lodeT * tan_3_lodeT * tan_3_lodeT / (3. * cos_3_lodeT) -
+            sin_lodeT * tan_3_lodeT / (9. * sqrt3 * cos_3_lodeT) -
+            sign * sin_lodeT / (3. * cos_3_lodeT) +
+            tan_3_lodeT * tan_3_lodeT * cos_lodeT / (3. * sqrt3 * cos_3_lodeT) +
+            sign * tan_3_lodeT * cos_lodeT / (9. * cos_3_lodeT) -
+            cos_lodeT / (3. * sqrt3 * cos_3_lodeT);
+
+        const auto C =
+            -term1 * tan_lodeT * tan_lodeT / (18. * term2 * cos_3_lodeT) -
+            term1 * (tan_lodeT * tan_3_lodeT) / (6. * term2 * cos_3_lodeT) -
+            term1 / (18. * term2 * cos_3_lodeT) +
+            term1 * tan_lodeT * tan_lodeT / (18. * term2 * a * cos_3_lodeT) -
+            sin_lodeT * tan_3_lodeT / (6. * cos_3_lodeT * cos_3_lodeT) +
+            sign * sin_lodeT / (18. * sqrt3 * cos_3_lodeT * cos_3_lodeT) -
+            sign * tan_3_lodeT * cos_lodeT /
+                (6. * sqrt3 * cos_3_lodeT * cos_3_lodeT) -
+            cos_lodeT / (18. * cos_3_lodeT * cos_3_lodeT);
+
+        const auto A = term1 / (sqrt_J2 * m_b) - B * sign * sin_3_lodeT -
+                       C * sin_3_lodeT * sin_3_lodeT -
+                       sign * sin_lodeT * isqrt3 + cos_lodeT;
+
+        return {A, B, C};
+    }
+
+    double yieldFunction(double const I_1, double const sqrt_J_2,
+                         double const K, double const cos_lode,
+                         bool const generalFormHB)
+    {
+        double result =
+            I_1 * m_b * pows_1 / 3. + sqrt_J_2 * m_b * pows_1 * K - sp * pows;
+
+        if (generalFormHB)
+        {
+            result += std::pow(sqrt_J_2 * 2. * cos_lode, 1. / a);
+        }
+        return result;
+    }
+}
+
+@InitLocalVariables
+{
+    constexpr auto sqrt3 = Cste<real>::sqrt3;
+    constexpr auto isqrt3 = Cste<real>::isqrt3;
+    constexpr auto pi = 3.14159265358979323846;
+
+    pows = std::pow(sigma_ci, 1. / a);
+    pows_1 = std::pow(sigma_ci, 1. / a - 1.);
+    pows_1i = std::pow(sigma_ci, 1. - 1. / a);
+    pows_1g = std::pow(sigma_cg, 1. / a_g - 1.);
+
+    lodeT *= pi / 180.;
+    sin_lodeT = std::sin(lodeT);
+    cos_lodeT = std::cos(lodeT);
+    tan_lodeT = std::tan(lodeT);
+    tan_3_lodeT = std::tan(3. * lodeT);
+    sin_3_lodeT = std::sin(3. * lodeT);
+    cos_3_lodeT = std::cos(3. * lodeT);
+
+    // Compute initial elastic strain
+    const auto S = invert(D);
+    eel = S * sig;
+
+    // elastic prediction
+    const auto sig_el = computeElasticPrediction();
+
+    // The three invariant
+    const auto s_el = deviator(sig_el);
+
+    const auto J_2el = std::max((s_el | s_el) / 2., local_zero_tolerance);
+    const auto sqrt_J_2el = std::sqrt(J_2el);
+    const auto J2_el = J_2el + std::min(delta_tol, mu_tol * rho) *
+                                   std::min(delta_tol, mu_tol * rho);
+    const auto sqrt_J2_el = std::sqrt(J2_el);
+
+    const auto J3_el = det(s_el);
+
+    const auto arg =
+        std::clamp(-3. * sqrt3 * J3_el / (2. * J_2el * sqrt_J_2el),
+                   -1. + local_zero_tolerance, 1. - local_zero_tolerance);
+    const auto lode_el = 1. / 3. * std::asin(arg);
+    const auto cos_lode_el = std::cos(lode_el);
+    const auto sin_lode_el = std::sin(lode_el);
+
+    auto const generalFormHB = std::fabs(lode_el) < lodeT;
+
+    auto K = 0.;
+    if (generalFormHB)
+    {
+        K = cos_lode_el - isqrt3 * sin_lode_el;
+    }  //
+    else
+    {
+        const auto sign = (std::signbit(lode_el) ? -1 : 1);
+        const auto term1 =
+            pows_1i * std::pow(2. * sqrt_J2_el * cos_lodeT, 1. / a);
+        const auto term2 = sqrt_J2_el * a * m_b * cos_3_lodeT;
+        auto const [A, B, C] = computeABC(term1, term2, sign, sqrt_J2_el);
+
+        K = A + B * arg + C * arg * arg;
+    }
+
+    plastic_loading = yieldFunction(trace(sig_el), sqrt_J2_el, K, cos_lode_el,
+                                    generalFormHB) > 0;
+    np = Stensor(real(0));
+}
+
+@Integrator
+{
+    constexpr auto sqrt3 = Cste<real>::sqrt3;
+    constexpr auto isqrt3 = Cste<real>::isqrt3;
+    constexpr auto id = Stensor::Id();
+
+    if (!plastic_loading)
+    {
+        return true;
+    }
+
+    // stress invariant
+    const auto s = deviator(sig);
+    const auto detSig = det(s);
+    const auto J2 = std::max((s | s) / 2., local_zero_tolerance);
+    const auto J_2 = J2 + std::min(delta_tol, mu_tol * rho) *
+                              std::min(delta_tol, mu_tol * rho);
+    const auto sqrt_J_2 = std::sqrt(J_2);
+    const auto J_3 = real(detSig < 0. ? std::min(detSig, -local_zero_tolerance)
+                                      : std::max(detSig, local_zero_tolerance));
+    const auto arg =
+        std::clamp(-3. * sqrt3 * J_3 / (2. * J2 * std::sqrt(J2)),
+                   -1. + local_zero_tolerance, 1. - local_zero_tolerance);
+    const auto lode = 1. / 3. * std::asin(arg);
+    const auto cos_lode = std::cos(lode);
+    const auto sin_lode = std::sin(lode);
+    const auto tan_lode = sin_lode / cos_lode;
+    const auto cos_3_lode = std::cos(3. * lode);
+    const auto sin_3_lode = std::sin(3. * lode);
+    const auto tan_3_lode = sin_3_lode / cos_3_lode;
+    const auto sin_6_lode = std::sin(6. * lode);
+    const auto cos_6_lode = std::cos(6. * lode);
+    auto K = 0.0;
+    auto dF_dI1 = 1.;
+    auto dFdJ2 = 1.;
+    auto dF_dlode = 1.;
+    bool const generalFormHB = std::fabs(lode) < lodeT;
+    if (generalFormHB)
+    {
+        K = cos_lode - sin_lode * isqrt3;
+        dF_dI1 = m_b * pows_1 / 3.;
+        dFdJ2 =
+            std::pow(2. * sqrt_J_2 * cos_lode, 1. / a) / (2. * J_2 * a) -
+            m_b * pows_1 * (sqrt3 * sin_lode / 3. - cos_lode) / (2. * sqrt_J_2);
+        dF_dlode = -sqrt_J_2 * m_b * pows_1 * (sin_lode + isqrt3 * cos_lode) -
+                   std::pow(2. * sqrt_J_2 * cos_lode, 1. / a) * tan_lode / a;
+    }
+    else
+    {
+        const auto sign = (std::signbit(lode) ? -1 : 1);
+        const auto term1 =
+            pows_1i * std::pow(2. * sqrt_J_2 * cos_lodeT, 1. / a);
+        const auto term2 = sqrt_J_2 * a * m_b * cos_3_lodeT;
+        auto const [A, B, C] = computeABC(term1, term2, sign, sqrt_J_2);
+
+        const auto dB_dJ2 =
+            -term1 * sign * tan_3_lodeT * tan_lodeT * tan_lodeT /
+                (18. * J_2 * term2) -
+            term1 * sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT /
+                (6. * J_2 * term2) +
+            term1 * sign * tan_lodeT / (6. * J_2 * term2) -
+            term1 * sign * tan_3_lodeT / (18. * J_2 * term2) +
+            term1 * sign * tan_3_lodeT * tan_lodeT * tan_lodeT /
+                (9. * a_g * J_2 * term2) +
+            term1 * sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT /
+                (6. * a_g * J_2 * term2) -
+            term1 * sign * tan_lodeT / (6. * a_g * J_2 * term2) +
+            term1 * sign * tan_3_lodeT / (18. * a_g * J_2 * term2) -
+            term1 * sign * tan_3_lodeT * tan_lodeT * tan_lodeT /
+                (18. * a_g * a_g * J_2 * term2);
+
+        const auto dC_dJ2 =
+            term1 * tan_lodeT * tan_lodeT / (36. * J_2 * cos_3_lodeT * term2) +
+            term1 * tan_lodeT * tan_3_lodeT /
+                (12. * J_2 * cos_3_lodeT * term2) +
+            term1 / (36. * J_2 * cos_3_lodeT * term2) -
+            term1 * tan_lodeT * tan_lodeT /
+                (18. * a_g * J_2 * cos_3_lodeT * term2) -
+            term1 * tan_lodeT * tan_3_lodeT /
+                (12. * a_g * J_2 * cos_3_lodeT * term2) -
+            term1 / (36. * a_g * J_2 * cos_3_lodeT * term2) +
+            term1 * tan_lodeT * tan_lodeT /
+                (36. * a_g * a_g * J_2 * cos_3_lodeT * term2);
+
+        const auto dA_dJ2 =
+            (term1 - term1 * a) / (2. * J_2 * sqrt_J_2 * a * m_b) -
+            dB_dJ2 * sign * sin_3_lodeT - dC_dJ2 * sin_3_lodeT * sin_3_lodeT;
+
+        dF_dI1 = m_b * pows_1 / 3.;
+
+        dFdJ2 = m_b * pows_1 / (2. * sqrt_J_2) *
+                    (A + B * sin_3_lode + C * sin_3_lode * sin_3_lode) +
+                m_b * pows_1 * sqrt_J_2 *
+                    (dA_dJ2 + dB_dJ2 * sin_3_lode +
+                     dC_dJ2 * sin_3_lode * sin_3_lode);
+
+        dF_dlode =
+            3. * m_b * pows_1 * sqrt_J_2 * (B * cos_3_lode + C * sin_6_lode);
+
+        K = A + B * sin_3_lode + C * sin_3_lode * sin_3_lode;
+    }
+
+    // derivatives of stress invariats
+    auto dGdJ2 = 1.;
+    auto dG_ddJ_2 = 1.;
+    auto dG_dlode = 1.;
+    auto dG_ddlode = 1.;
+    auto dG_ddlodeJ2 = 1.;
+    auto dG_dI1 = m_g * pows_1g / 3.;
+    if (std::fabs(lode) < lodeT)
+    {
+        const auto pows_2g = std::pow(2. * sqrt_J_2 * cos_lode, 1. / a_g);
+        // The flow direction is computed :
+        dGdJ2 = pows_2g / (2. * J_2 * a_g) -
+                m_g * pows_1g * (sqrt3 * sin_lode / 3. - cos_lode) /
+                    (2. * sqrt_J_2);
+
+        dG_dlode = -sqrt_J_2 * m_g * pows_1g * (sin_lode + isqrt3 * cos_lode) -
+                   pows_2g * tan_lode / a_g;
+
+        dG_ddlode =
+            pows_2g * (tan_lode * tan_lode - a_g * tan_lode * tan_lode - a_g) /
+                a_g / a_g +
+            m_g * sqrt_J_2 * pows_1g * (sin_lode * isqrt3 - cos_lode);
+
+        dG_ddlodeJ2 =
+            -pows_2g * tan_lode / (2. * J_2 * a_g * a_g) -
+            m_g * pows_1g * (sin_lode + isqrt3 * cos_lode) / (2. * sqrt_J_2);
+
+        dG_ddJ_2 = -pows_2g / (2. * J_2 * J_2 * a_g) +
+                   pows_2g / (4. * J_2 * J_2 * a_g * a_g) +
+                   m_g * pows_1g * (isqrt3 * sin_lode - cos_lode) /
+                       (4. * J_2 * sqrt_J_2);
+    }
+    else
+    {
+        const auto sign = (std::signbit(lode) ? -1 : 1);
+        const auto term1G = std::pow(sigma_cg, 1. - 1. / a_g) *
+                            std::pow(2. * sqrt_J_2 * cos_lodeT, 1. / a_g);
+        const auto term2G = sqrt_J_2 * a_g * m_g * cos_3_lodeT;
+
+        const auto BG =
+            term1G * (tan_lodeT * tan_lodeT * sign * tan_3_lodeT) /
+                (9. * term2G) +
+            term1G * (sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT) /
+                (3. * term2G) -
+            term1G * (sign * tan_lodeT) / (3. * term2G) +
+            term1G * (sign * tan_3_lodeT) / (9. * term2G) -
+            term1G * (tan_lodeT * tan_lodeT * sign * tan_3_lodeT) /
+                (9. * term2G * a_g) +
+            sign * sin_lodeT * tan_3_lodeT * tan_3_lodeT / (3. * cos_3_lodeT) -
+            sin_lodeT * tan_3_lodeT / (9. * sqrt3 * cos_3_lodeT) -
+            sign * sin_lodeT / (3. * cos_3_lodeT) +
+            tan_3_lodeT * tan_3_lodeT * cos_lodeT / (3. * sqrt3 * cos_3_lodeT) +
+            sign * tan_3_lodeT * cos_lodeT / (9. * cos_3_lodeT) -
+            cos_lodeT / (3. * sqrt3 * cos_3_lodeT);
+
+        const auto CG =
+            -term1G * tan_lodeT * tan_lodeT / (18. * term2G * cos_3_lodeT) -
+            term1G * (tan_lodeT * tan_3_lodeT) / (6. * term2G * cos_3_lodeT) -
+            term1G / (18. * term2G * cos_3_lodeT) +
+            term1G * tan_lodeT * tan_lodeT /
+                (18. * term2G * a_g * cos_3_lodeT) -
+            sin_lodeT * tan_3_lodeT / (6. * cos_3_lodeT * cos_3_lodeT) +
+            sign * sin_lodeT / (18. * sqrt3 * cos_3_lodeT * cos_3_lodeT) -
+            sign * tan_3_lodeT * cos_lodeT /
+                (6. * sqrt3 * cos_3_lodeT * cos_3_lodeT) -
+            cos_lodeT / (18. * cos_3_lodeT * cos_3_lodeT);
+
+        const auto AG = term1G / (sqrt_J_2 * m_g) - BG * sign * sin_3_lodeT -
+                        CG * sin_3_lodeT * sin_3_lodeT -
+                        sign * sin_lodeT * isqrt3 + cos_lodeT;
+
+        const auto dB_dJ2 =
+            -term1G * sign * tan_3_lodeT * tan_lodeT * tan_lodeT /
+                (18. * J_2 * term2G) -
+            term1G * sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT /
+                (6. * J_2 * term2G) +
+            term1G * sign * tan_lodeT / (6. * J_2 * term2G) -
+            term1G * sign * tan_3_lodeT / (18. * J_2 * term2G) +
+            term1G * sign * tan_3_lodeT * tan_lodeT * tan_lodeT /
+                (9. * a_g * J_2 * term2G) +
+            term1G * sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT /
+                (6. * a_g * J_2 * term2G) -
+            term1G * sign * tan_lodeT / (6. * a_g * J_2 * term2G) +
+            term1G * sign * tan_3_lodeT / (18. * a_g * J_2 * term2G) -
+            term1G * sign * tan_3_lodeT * tan_lodeT * tan_lodeT /
+                (18. * a_g * a_g * J_2 * term2G);
+
+        const auto dC_dJ2 = term1G * tan_lodeT * tan_lodeT /
+                                (36. * J_2 * cos_3_lodeT * term2G) +
+                            term1G * tan_lodeT * tan_3_lodeT /
+                                (12. * J_2 * cos_3_lodeT * term2G) +
+                            term1G / (36. * J_2 * cos_3_lodeT * term2G) -
+                            term1G * tan_lodeT * tan_lodeT /
+                                (18. * a_g * J_2 * cos_3_lodeT * term2G) -
+                            term1G * tan_lodeT * tan_3_lodeT /
+                                (12. * a_g * J_2 * cos_3_lodeT * term2G) -
+                            term1G / (36. * a_g * J_2 * cos_3_lodeT * term2G) +
+                            term1G * tan_lodeT * tan_lodeT /
+                                (36. * a_g * a_g * J_2 * cos_3_lodeT * term2G);
+
+        const auto dA_dJ2 =
+            (term1G - term1G * a_g) / (2. * J_2 * sqrt_J_2 * a_g * m_g) -
+            dB_dJ2 * sign * sin_3_lodeT - dC_dJ2 * sin_3_lodeT * sin_3_lodeT;
+
+        const auto dB_ddJ2 =
+            term1G * sign * tan_3_lodeT * tan_lodeT * tan_lodeT /
+                (12. * J_2 * J_2 * term2G) +
+            term1G * sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT /
+                (4. * J_2 * J_2 * term2G) -
+            term1G * sign * tan_lodeT / (4. * J_2 * J_2 * term2G) +
+            term1G * sign * tan_3_lodeT / (12. * J_2 * J_2 * term2G) -
+            7. * term1G * tan_lodeT * tan_lodeT * sign * tan_3_lodeT /
+                (36. * J_2 * J_2 * a_g * term2G) -
+            term1G * sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT /
+                (3. * J_2 * J_2 * a_g * term2G) +
+            term1G * sign * tan_lodeT / (3. * J_2 * J_2 * a_g * term2G) -
+            term1G * sign * tan_3_lodeT / (9. * J_2 * J_2 * a_g * term2G) +
+            5. * term1G * tan_lodeT * tan_lodeT * sign * tan_3_lodeT /
+                (36. * J_2 * J_2 * a_g * a_g * term2G) +
+            term1G * sign * tan_lodeT * tan_3_lodeT * tan_3_lodeT /
+                (12. * J_2 * J_2 * a_g * a_g * term2G) -
+            term1G * sign * tan_lodeT / (12. * J_2 * J_2 * a_g * a_g * term2G) +
+            term1G * sign * tan_3_lodeT /
+                (36. * J_2 * J_2 * a_g * a_g * term2G) -
+            term1G * tan_lodeT * tan_lodeT * sign * tan_3_lodeT /
+                (36. * J_2 * J_2 * a_g * a_g * a_g * term2G);
+
+        const auto dC_ddJ2 =
+            -term1G * tan_lodeT * tan_lodeT /
+                (24. * J_2 * J_2 * cos_3_lodeT * term2G) -
+            term1G * tan_lodeT * tan_3_lodeT /
+                (8. * J_2 * J_2 * cos_3_lodeT * term2G) -
+            term1G / (24. * J_2 * J_2 * cos_3_lodeT * term2G) +
+            term1G * tan_lodeT * tan_lodeT * 7. /
+                (72. * J_2 * J_2 * a_g * cos_3_lodeT * term2G) +
+            term1G * tan_lodeT * tan_3_lodeT /
+                (6. * J_2 * J_2 * a_g * cos_3_lodeT * term2G) +
+            term1G / (18. * J_2 * J_2 * a_g * cos_3_lodeT * term2G) -
+            term1G * tan_lodeT * tan_lodeT * 5. /
+                (72. * J_2 * J_2 * a_g * a_g * cos_3_lodeT * term2G) -
+            term1G * tan_lodeT * tan_3_lodeT /
+                (24. * J_2 * J_2 * a_g * a_g * cos_3_lodeT * term2G) -
+            term1G / (72. * J_2 * J_2 * a_g * a_g * cos_3_lodeT * term2G) +
+            term1G * tan_lodeT * tan_lodeT /
+                (72. * J_2 * J_2 * a_g * a_g * a_g * cos_3_lodeT * term2G);
+
+        const auto dA_ddJ2 =
+            3. * term1G / (4. * J_2 * J_2 * sqrt_J_2 * m_g) -
+            term1G / (J_2 * J_2 * sqrt_J_2 * a_g * m_g) +
+            term1G / (4. * J_2 * J_2 * sqrt_J_2 * a_g * a_g * m_g) -
+            dB_ddJ2 * sign * sin_3_lodeT - dC_ddJ2 * sin_3_lodeT * sin_3_lodeT;
+
+        dGdJ2 = m_g * pows_1g / (2. * sqrt_J_2) *
+                    (AG + BG * sin_3_lode + CG * sin_3_lode * sin_3_lode) +
+                m_g * pows_1g * sqrt_J_2 *
+                    (dA_dJ2 + dB_dJ2 * sin_3_lode +
+                     dC_dJ2 * sin_3_lode * sin_3_lode);
+
+        dG_ddJ_2 = -m_g * pows_1g / (4. * J_2 * sqrt_J_2) *
+                       (AG + BG * sin_3_lode + CG * sin_3_lode * sin_3_lode) +
+                   m_g * pows_1g / (2. * sqrt_J_2) *
+                       (dA_dJ2 + dB_dJ2 * sin_3_lode +
+                        dC_dJ2 * sin_3_lode * sin_3_lode) +
+                   m_g * pows_1g / (2. * sqrt_J_2) *
+                       (dA_dJ2 + dB_dJ2 * sin_3_lode +
+                        dC_dJ2 * sin_3_lode * sin_3_lode) +
+                   m_g * pows_1g * sqrt_J_2 *
+                       (dA_ddJ2 + dB_ddJ2 * sin_3_lode +
+                        dC_ddJ2 * sin_3_lode * sin_3_lode);
+
+        dG_dlode =
+            3. * m_g * pows_1g * sqrt_J_2 * (BG * cos_3_lode + CG * sin_6_lode);
+        dG_ddlode = 9. * m_g * pows_1g * sqrt_J_2 *
+                    (2. * CG * cos_6_lode - BG * sin_3_lode);
+        dG_ddlodeJ2 = 3. * m_g * pows_1g / (2. * sqrt_J_2) *
+                          (BG * cos_3_lode + CG * sin_6_lode) +
+                      3. * m_g * pows_1g * sqrt_J_2 *
+                          (dB_dJ2 * cos_3_lode + dC_dJ2 * sin_6_lode);
+    }
+
+    const auto dlode_dJ2 = -tan_3_lode / (2. * J2);
+    const auto dlode_dJ3 = tan_3_lode / (3. * J_3);
+    const auto dev_s_squared = computeJ3Derivative(sig);
+    const auto dG_dJ2 = dGdJ2 + dG_dlode * dlode_dJ2;
+    const auto dG_dJ3 = dG_dlode * dlode_dJ3;
+    const auto nG = eval(dG_dI1 * id + dG_dJ2 * s + dG_dJ3 * dev_s_squared);
+    if (this->iter > 30 &&
+        std::abs(nG | np) < std::sqrt(nG | nG) * std::sqrt(np | np) * 0.99)
+    {
+        return false;
+    }
+
+    const auto Fy =
+        yieldFunction(trace(sig), sqrt_J_2, K, cos_lode, generalFormHB);
+    // return if overshoot of yield surface
+    if (Fy > 1e-4 * D(0, 0))
+    {
+        return false;
+    }
+
+    const auto dF_dJ2 = dFdJ2 + dF_dlode * dlode_dJ2;
+    const auto dF_dJ3 = dF_dlode * dlode_dJ3;
+    const auto nF = eval(dF_dI1 * id + dF_dJ2 * s + dF_dJ3 * dev_s_squared);
+
+    // building dfeel_ddeel
+    const auto Pdev = Stensor4::K();
+
+    const auto dlode_ddJ3 = -tan_3_lode / (3. * J_3 * J_3);
+    const auto dlode_ddJ2 = tan_3_lode / (2. * J2 * J2);
+
+    const auto dlode_ddJ3lode = 1. / (J_3 * cos_3_lode * cos_3_lode);
+    const auto dlode_ddJ2lode = -3. / (2. * J2 * cos_3_lode * cos_3_lode);
+
+    const auto dG_ddJ3 = dlode_ddJ3 * dG_dlode +
+                         dG_ddlode * dlode_dJ3 * dlode_dJ3 +
+                         dG_dlode * dlode_ddJ3lode * dlode_dJ3;
+
+    const auto dG_ddJ2J3 =
+        (dG_ddlodeJ2 + dG_ddlode * dlode_dJ2 + dG_dlode * dlode_ddJ2lode) *
+        dlode_dJ3;
+    const auto dG_ddJ2 = dG_ddJ_2 + dG_dlode * dlode_ddJ2 +
+                         dlode_dJ2 * (2. * dG_ddlodeJ2 + dlode_dJ2 * dG_ddlode +
+                                      dlode_ddJ2lode * dG_dlode);
+
+    // first equation
+    feel += dlam * nG;
+    dfeel_ddeel +=
+        theta * dlam *
+        (dG_dJ2 * Pdev + dG_dJ3 * computeJ3SecondDerivative(sig) +
+         dG_ddJ2 * (s ^ s) + dG_ddJ3 * (dev_s_squared ^ dev_s_squared) +
+         dG_ddJ2J3 * ((dev_s_squared ^ s) + (s ^ dev_s_squared))) *
+        D;
+    dfeel_ddlam = nG;
+
+    // second equation
+    flam = Fy / D(0, 0);
+    dflam_ddlam = strain(0.);
+    dflam_ddeel = theta * (nF | D) / D(0, 0);
+    np = nG;
+}
