@@ -23,22 +23,33 @@ class SpatialPosition;
 
 namespace ParameterLib
 {
+/**
+ * \brief A local coordinate system used for tensor transformations.
+ *
+ * It offers a simple way for input of anisotropic tensors w.r.t. a coordinate
+ * system.
+ * The basis vectors form a transformation matrix \f$R = (e_0, e_1, e_2)\f$.
+ * For a given anisotropic tensor \f$A\f$ parameter with the corresponding
+ * \ref ogs_file_param__prj__parameters__parameter__use_local_coordinate_system
+ * the tensor is rotated according to the formula: \f$A' = R\cdot A\cdot R^T\f$.
+ *
+ * For computations in transverse isotropic material models, we can create a
+ * coordinate system with only one base, where the last base is explicitly
+ * given. The other bases are set as implicit and computed from the given base
+ * as follows:
+ *  - For a 2D coordinate system, the unit vector orthogonal to
+ *    the given base is used as the first base,
+ *  - For a 3D coordinate system, the given base vector, \c unit_direction,
+ *    is set as the third base,  \f${\vec e}_2\f$. An arbitrary unit vector
+ *    orthogonal to \f${\vec e}_2\f$ is selected as the second base
+ *    \f$e_1\f$, and the first  base \f${\vec e}_0\f$ is calculated as
+ *    \f${\vec e}_0 = {\vec e}_1 \times {\vec e}_2\f$.
+ */
 struct CoordinateSystem final
 {
     /**
-     * It is used to create a coordinate system with only one base, where the
-     * last base is explicitly given. The other bases are set as implicit and
-     * computed from the given base as follows:
-     *  - For a 2D coordinate system, the unit vector orthogonal to
-     *    the given base is used as the first base,
-     *  - For a 3D coordinate system, the given base vector, \c unit_direction,
-     *    is set as the third base,  \f${\vec e}_2\f$. An arbitrary unit vector
-     *    orthogonal to \f${\vec e}_2\f$ is selected as the second base
-     *    \f$e_1\f$, and the first  base \f${\vec e}_0\f$ is calculated as
-     *    \f${\vec e}_0 = {\vec e}_1 \times {\vec e}_2\f$.
-     *
-     * This type of coordinate system can be used for computations in transverse
-     * isotropic material models.
+     * It is used to create a local coordinate system with only one base, where
+     * the last base is explicitly given as \c unit_direction.
      *
      * @param unit_direction The specified unit direction.
      */
