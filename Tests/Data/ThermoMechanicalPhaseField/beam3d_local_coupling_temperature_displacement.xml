@@ -4,6 +4,7 @@
         <local_coupling_processes>
             <process_name>temperature</process_name>
             <process_name>displacement</process_name>
+            <max_iter>10</max_iter>
         </local_coupling_processes> 
     </add>
     <add sel="/*/time_loop/processes/process[1]">

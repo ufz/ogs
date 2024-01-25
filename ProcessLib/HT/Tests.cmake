@@ -442,6 +442,20 @@ AddTest(
 )
 
 AddTest(
+    NAME HT_HeatTransportInStationaryFlow_Staggered_Scheme_via_Sub-coupling
+    PATH Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS HeatTransportInStationaryFlow_via_sub-coupling.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 4
+    DIFF_DATA
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_via_sub-coupling_ts_50_t_50000.000000.vtu temperature  temperature 5.e-5 1.0e-4
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_via_sub-coupling_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5
+)
+
+AddTest(
     NAME HT_ClassicalTransportExample
     PATH Parabolic/HT/ClassicalTransportExample
     EXECUTABLE ogs

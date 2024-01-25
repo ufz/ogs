@@ -1,1 +1,1 @@
-Defines the maximum iteration number of the coupling loop of the staggered scheme.
+\copydoc NumLib::StaggeredCoupling::global_coupling_max_iterations_

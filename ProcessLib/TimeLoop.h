@@ -21,6 +21,7 @@
 namespace NumLib
 {
 class ConvergenceCriterion;
+class StaggeredCoupling;
 }
 
 namespace ChemistryLib
@@ -38,10 +39,7 @@ class TimeLoop
 public:
     TimeLoop(std::vector<Output>&& outputs,
              std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
-             const int global_coupling_max_iterations,
-             std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>&&
-                 global_coupling_conv_crit,
-             std::map<std::string, int>&& local_coupling_processes,
+             std::unique_ptr<NumLib::StaggeredCoupling>&& staggered_coupling,
              const double start_time, const double end_time);
 
     void initialize();
@@ -67,13 +65,6 @@ public:
 private:
     bool preTsNonlinearSolvePostTs(double const t, double const dt,
                                    std::size_t const timesteps);
-    /**
-     * This function fills the vector of solutions of coupled processes of
-     * processes, _solutions_of_coupled_processes, and initializes the vector
-     * of solutions of the previous coupling iteration,
-     * _solutions_of_last_cpl_iteration.
-     */
-    void setCoupledSolutions();
 
     /**
      * \brief Member to solver non coupled systems of equations, which can be
@@ -146,17 +137,6 @@ private:
     int _repeating_times_of_rejected_step = 0;
     bool _last_step_rejected = false;
 
-    /// Maximum iterations of the global coupling.
-    const int _global_coupling_max_iterations;
-    /// Convergence criteria of processes for the global coupling iterations.
-    std::vector<std::unique_ptr<NumLib::ConvergenceCriterion>>
-        _global_coupling_conv_crit;
-
-    /// Processes that will be solved in a local iteration.
-    std::map<std::string, int> _local_coupling_processes;
-
-    /// Solutions of the previous coupling iteration for the convergence
-    /// criteria of the coupling iteration.
-    std::vector<GlobalVector*> _solutions_of_last_cpl_iteration;
+    std::unique_ptr<NumLib::StaggeredCoupling> _staggered_coupling;
 };
 }  // namespace ProcessLib

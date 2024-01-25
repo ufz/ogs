@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "NumLib/ODESolver/Types.h"
@@ -27,7 +29,7 @@ struct ProcessData
         NumLib::NonlinearSolverBase& nonlinear_solver_,
         std::unique_ptr<NumLib::ConvergenceCriterion>&& conv_crit_,
         std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
-        int const process_id_, Process& process_)
+        int const process_id_, std::string&& process_name_, Process& process_)
         : timestep_algorithm(std::move(timestep_algorithm_)),
           timestep_previous(timestep_algorithm->begin()),
           timestep_current(timestep_previous),
@@ -37,6 +39,7 @@ struct ProcessData
           conv_crit(std::move(conv_crit_)),
           time_disc(std::move(time_disc_)),
           process_id(process_id_),
+          process_name(std::move(process_name_)),
           process(process_)
     {
     }
@@ -61,6 +64,7 @@ struct ProcessData
     std::unique_ptr<NumLib::EquationSystem> tdisc_ode_sys;
 
     int const process_id;
+    std::string const process_name;
 
     Process& process;
 };
