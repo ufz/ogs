@@ -770,9 +770,18 @@ if (NOT OGS_USE_MPI)
 
     # variation that will fail because material ids are missing in the input
     # mesh
+    AddTest(
+        NAME 1D_MultiLayerDiffusion_fail_no_mat_ids
+        PATH Parabolic/ComponentTransport/MultiLayerDiffusion
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS 1D_MultiLayerDiffusion_fail_no_mat_ids.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "More than one porous medium definition.*but no MaterialIDs are present in the bulk mesh"
+    )
     OgsTest(
         PROJECTFILE Parabolic/ComponentTransport/MultiLayerDiffusion/1D_MultiLayerDiffusion_fail_no_mat_ids.xml
-        PROPERTIES WILL_FAIL TRUE
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "More than one porous medium definition.*but no MaterialIDs are present in the bulk mesh"
         RUNTIME 1
     )
 

@@ -19,6 +19,12 @@ execute_process(
     ERROR_FILE ${LOG_FILE}
 )
 
+# execute_process(
+#     COMMAND cat ${LOG_FILE}
+#     WORKING_DIRECTORY ${WORKING_DIRECTORY}
+#     RESULT_VARIABLE EXIT_CODE
+# )
+
 if(EXIT_CODE STREQUAL "0")
     if(DEFINED ENV{CI})
         file(REMOVE ${LOG_FILE})
