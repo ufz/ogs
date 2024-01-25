@@ -81,6 +81,15 @@ PorousMediaProperties createPorousMediaProperties(
             ? 0
             : *std::max_element(begin(*material_ids), end(*material_ids));
 
+    if (!material_ids && mat_ids.size() > 1)
+    {
+        OGS_FATAL(
+            "More than one porous medium definition (namely {}) is present in "
+            "the project file, but no MaterialIDs are present in the bulk "
+            "mesh.",
+            mat_ids.size());
+    }
+
     if (max_material_id > static_cast<int>(mat_ids.size() - 1))
     {
         OGS_FATAL(
