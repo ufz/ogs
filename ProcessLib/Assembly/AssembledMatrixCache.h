@@ -8,41 +8,50 @@
  *
  */
 
-#include "AssembledMatrixCache.h"
+#pragma once
+
+#include <memory>
 
 #include "BaseLib/RunTime.h"
 #include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
 #include "MathLib/LinAlg/FinalizeVectorAssembly.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "ProcessLib/VectorMatrixAssembler.h"
 
-namespace ProcessLib::ComponentTransport
+namespace ProcessLib
 {
 
-AssembledMatrixCache::AssembledMatrixCache(bool const is_linear,
-                                           bool const use_monolithic_scheme)
-    : is_linear_{is_linear && use_monolithic_scheme}
+struct AssembledMatrixCache final
 {
-    if (is_linear && !use_monolithic_scheme)
-    {
-        OGS_FATAL(
-            "You requested to assemble only once in combination with staggered "
-            "coupling. This use case is not yet implemented.");
-    }
+    AssembledMatrixCache(bool const is_linear,
+                         bool const use_monolithic_scheme);
 
-    if (is_linear_)
-    {
-        WARN(
-            "You specified that the ComponentTransport process is linear. With "
-            "that optimization the process will be assembled only once and the "
-            "non-linear solver will do only one iteration per time step. No "
-            "non-linearities will be resolved and OGS will not detect if there "
-            "are any non-linearities. It is your responsibility to ensure that "
-            "the assembled equation systems are linear, indeed! There is no "
-            "safety net!");
-    }
-}
+    template <typename VectorOfLocalAssemblers>
+    void assemble(const double t, double const dt,
+                  std::vector<GlobalVector*> const& x,
+                  std::vector<GlobalVector*> const& x_prev,
+                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
+                  GlobalVector& b,
+                  std::vector<std::reference_wrapper<
+                      NumLib::LocalToGlobalIndexMap>> const& dof_tables,
+                  VectorMatrixAssembler& global_assembler,
+                  VectorOfLocalAssemblers const& local_assemblers,
+                  std::vector<std::size_t> const& active_element_ids);
 
+    bool isLinear() const { return is_linear_; }
+
+private:
+    bool const is_linear_;
+
+    std::unique_ptr<GlobalMatrix> M_{};
+    std::unique_ptr<GlobalMatrix> K_{};
+    std::unique_ptr<GlobalVector> b_{};
+};
+
+template <typename VectorOfLocalAssemblers>
 void AssembledMatrixCache::assemble(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
@@ -50,9 +59,7 @@ void AssembledMatrixCache::assemble(
     std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
         dof_tables,
     VectorMatrixAssembler& global_assembler,
-    std::vector<
-        std::unique_ptr<ComponentTransportLocalAssemblerInterface>> const&
-        local_assemblers,
+    VectorOfLocalAssemblers const& local_assemblers,
     std::vector<std::size_t> const& active_element_ids)
 {
     if (bool const cache_empty = K_ == nullptr; cache_empty)
@@ -102,4 +109,4 @@ void AssembledMatrixCache::assemble(
              time_restore.elapsed());
     }
 }
-}  // namespace ProcessLib::ComponentTransport
+}  // namespace ProcessLib

@@ -42,21 +42,27 @@ void updateDeactivatedSubdomains(
 }
 
 bool isOutputStep(std::vector<ProcessLib::Output> const& outputs,
-                  const int timestep, const double t)
+                  const int timestep, const double t, const double end_time)
 {
+    if (std::abs(end_time - t) < std::numeric_limits<double>::epsilon())
+    {
+        // the last timestep is an output step
+        return true;
+    }
+
     return ranges::any_of(outputs, [timestep, t](auto const& output)
                           { return output.isOutputStep(timestep, t); });
 }
 
 void preOutputForAllProcesses(
-    int const timestep, double const t, double const dt,
+    int const timestep, double const t, double const dt, const double end_time,
     std::vector<std::unique_ptr<ProcessLib::ProcessData>> const&
         per_process_data,
     std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev,
     std::vector<ProcessLib::Output> const& outputs)
 {
-    if (!isOutputStep(outputs, timestep, t))
+    if (!isOutputStep(outputs, timestep, t, end_time))
     {
         return;
     }
@@ -640,7 +646,7 @@ bool TimeLoop::preTsNonlinearSolvePostTs(double const t, double const dt,
         // Later on, the timestep_algorithm might reject the timestep. We assume
         // that this is a rare case, so still, we call preOutput() here. We
         // don't expect a large overhead from it.
-        preOutputForAllProcesses(timesteps, t, dt, _per_process_data,
+        preOutputForAllProcesses(timesteps, t, dt, _end_time, _per_process_data,
                                  _process_solutions, _process_solutions_prev,
                                  _outputs);
 

@@ -79,6 +79,15 @@ std::unique_ptr<Process> createHeatConductionProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__linear}
+        config.getConfigParameter("linear", false);
+
+    auto const ls_compute_only_upon_timestep_change =
+        //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__linear_solver_compute_only_upon_timestep_change}
+        config.getConfigParameter(
+            "linear_solver_compute_only_upon_timestep_change", false);
+
     HeatConductionProcessData process_data{
         std::move(media_map), mass_lumping,
         MeshLib::getSpaceDimension(mesh.getNodes())};
@@ -90,7 +99,8 @@ std::unique_ptr<Process> createHeatConductionProcess(
     return std::make_unique<HeatConductionProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables));
+        std::move(process_data), std::move(secondary_variables), is_linear,
+        ls_compute_only_upon_timestep_change);
 }
 
 }  // namespace HeatConduction

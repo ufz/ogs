@@ -12,6 +12,7 @@
 
 #include "HeatConductionFEM.h"
 #include "HeatConductionProcessData.h"
+#include "ProcessLib/Assembly/AssembledMatrixCache.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
@@ -32,17 +33,26 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         HeatConductionProcessData&& process_data,
-        SecondaryVariableCollection&& secondary_variables);
+        SecondaryVariableCollection&& secondary_variables,
+        bool const is_linear,
+        bool const ls_compute_only_upon_timestep_change);
 
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override { return false; }
+    bool isLinear() const override { return _asm_mat_cache.isLinear(); }
+    //! @}
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
                                           GlobalVector const& x_prev,
                                           int const process_id) override;
+
+    bool shouldLinearSolverComputeOnlyUponTimestepChange() const override
+    {
+        // TODO move this feature to some common location for all processes.
+        return _ls_compute_only_upon_timestep_change;
+    }
 
 private:
     void initializeConcreteProcess(
@@ -63,12 +73,21 @@ private:
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
         GlobalMatrix& Jac) override;
 
+    void preOutputConcreteProcess(const double t, double const dt,
+                                  std::vector<GlobalVector*> const& x,
+                                  std::vector<GlobalVector*> const& x_prev,
+                                  int const process_id) override;
+
     HeatConductionProcessData _process_data;
 
     std::vector<std::unique_ptr<HeatConductionLocalAssemblerInterface>>
         _local_assemblers;
 
     MeshLib::PropertyVector<double>* _heat_flux = nullptr;
+
+    AssembledMatrixCache _asm_mat_cache;
+
+    bool const _ls_compute_only_upon_timestep_change;
 };
 
 }  // namespace HeatConduction

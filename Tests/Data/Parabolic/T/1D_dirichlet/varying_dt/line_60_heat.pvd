@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="line_60_heat_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="5078125" group="" part="0" file="line_60_heat_ts_130_t_5078125.000000.vtu"/>
+    <DataSet timestep="7812500" group="" part="0" file="line_60_heat_ts_200_t_7812500.000000.vtu"/>
+    <DataSet timestep="31640625" group="" part="0" file="line_60_heat_ts_505_t_31640625.000000.vtu"/>
+    <DataSet timestep="39062500" group="" part="0" file="line_60_heat_ts_600_t_39062500.000000.vtu"/>
+  </Collection>
+</VTKFile>
