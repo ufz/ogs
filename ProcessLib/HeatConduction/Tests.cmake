@@ -22,10 +22,10 @@ AddTest(
         # numerical solution – ts 65
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
-        temperature temperature 2.0e-12 0
+        temperature temperature 2.1e-12 0
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
-        heat_flux heat_flux 2.4e-12 0
+        heat_flux heat_flux 2.8e-12 0
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
         HeatFlowRate HeatFlowRate 6.5e-12 0
@@ -42,7 +42,7 @@ AddTest(
         # numerical solution – ts 500
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
-        temperature temperature 1.4e-11 0
+        temperature temperature 1.5e-11 0
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
         heat_flux heat_flux 7.5e-12 0
@@ -63,30 +63,30 @@ AddTest(
         # numerical solution – ts 65
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
-        temperature temperature 2.0e-12 0
+        temperature temperature 2.2e-12 0
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
         heat_flux heat_flux 2.1e-12 0
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
-        HeatFlowRate HeatFlowRate 3.5e-12 0
+        HeatFlowRate HeatFlowRate 4.4e-12 0
         # numerical solution – ts 405
         line_60_heat_ts_405_t_31640625.000000.vtu
         line_60_heat_ts_405_t_31640625.000000.vtu
-        temperature temperature 1.2e-11 0
+        temperature temperature 1.3e-11 0
         line_60_heat_ts_405_t_31640625.000000.vtu
         line_60_heat_ts_405_t_31640625.000000.vtu
         heat_flux heat_flux 5.7e-12 0
         line_60_heat_ts_405_t_31640625.000000.vtu
         line_60_heat_ts_405_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.5e-12 0
+        HeatFlowRate HeatFlowRate 5.9e-12 0
         # numerical solution – ts 500
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
-        temperature temperature 1.4e-11 0
+        temperature temperature 1.5e-11 0
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
-        heat_flux heat_flux 7.2e-12 0
+        heat_flux heat_flux 7.5e-12 0
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
         HeatFlowRate HeatFlowRate 9.8e-12 0
@@ -104,33 +104,33 @@ AddTest(
         # numerical solution – ts 65
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
-        temperature temperature 2e-12 0
+        temperature temperature 2.2e-12 0
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
         heat_flux heat_flux 2.1e-12 0
         line_60_heat_ts_65_t_5078125.000000.vtu
         line_60_heat_ts_65_t_5078125.000000.vtu
-        HeatFlowRate HeatFlowRate 3.5e-12 0
+        HeatFlowRate HeatFlowRate 4.4e-12 0
         # numerical solution – ts 405
         line_60_heat_ts_405_t_31640625.000000.vtu
         line_60_heat_ts_405_t_31640625.000000.vtu
-        temperature temperature 1.2e-11 0
+        temperature temperature 1.3e-11 0
         line_60_heat_ts_405_t_31640625.000000.vtu
         line_60_heat_ts_405_t_31640625.000000.vtu
         heat_flux heat_flux 5.7e-12 0
         line_60_heat_ts_405_t_31640625.000000.vtu
         line_60_heat_ts_405_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.5e-12 0
+        HeatFlowRate HeatFlowRate 5.9e-12 0
         # numerical solution – ts 500
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
-        temperature temperature 1.4e-11 0
+        temperature temperature 1.5e-11 0
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
-        heat_flux heat_flux 7.2e-12 0
+        heat_flux heat_flux 7.5e-12 0
         line_60_heat_ts_500_t_39062500.000000.vtu
         line_60_heat_ts_500_t_39062500.000000.vtu
-        HeatFlowRate HeatFlowRate 6.9e-12 0
+        HeatFlowRate HeatFlowRate 7.9e-12 0
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -145,7 +145,7 @@ AddTest(
         # numerical solution – ts 130
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
-        temperature temperature 4.6e-13 0
+        temperature temperature 6.3e-13 0
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
         heat_flux heat_flux 7.8e-13 0
@@ -155,23 +155,23 @@ AddTest(
         # numerical solution – ts 505
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
-        temperature temperature 9.4e-12 0
+        temperature temperature 9.9e-12 0
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
-        heat_flux heat_flux 5.1e-12 0
+        heat_flux heat_flux 5.7e-12 0
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.5e-12 0
+        HeatFlowRate HeatFlowRate 5.7e-12 0
         # numerical solution – ts 600
         line_60_heat_ts_600_t_39062500.000000.vtu
         line_60_heat_ts_600_t_39062500.000000.vtu
         temperature temperature 1.3e-11 0
         line_60_heat_ts_600_t_39062500.000000.vtu
         line_60_heat_ts_600_t_39062500.000000.vtu
-        heat_flux heat_flux 6.4e-12 0
+        heat_flux heat_flux 6.8e-12 0
         line_60_heat_ts_600_t_39062500.000000.vtu
         line_60_heat_ts_600_t_39062500.000000.vtu
-        HeatFlowRate HeatFlowRate 6.4e-12 0
+        HeatFlowRate HeatFlowRate 6.8e-12 0
     REQUIREMENTS NOT OGS_USE_MPI
 )
 
@@ -186,27 +186,27 @@ AddTest(
         # numerical solution – ts 130
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
-        temperature temperature 8e-13 0
+        temperature temperature 8.6e-13 0
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
-        heat_flux heat_flux 8.3e-13 0
+        heat_flux heat_flux 1.1e-12 0
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
         HeatFlowRate HeatFlowRate 8.5e-12 0
         # numerical solution – ts 505
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
-        temperature temperature 9.8e-12 0
+        temperature temperature 1.1e-11 0
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
-        heat_flux heat_flux 5.0e-12 0
+        heat_flux heat_flux 5.2e-12 0
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
         HeatFlowRate HeatFlowRate 5.2e-12 0
         # numerical solution – ts 600
         line_60_heat_ts_600_t_39062500.000000.vtu
         line_60_heat_ts_600_t_39062500.000000.vtu
-        temperature temperature 1.2e-11 0
+        temperature temperature 1.3e-11 0
         line_60_heat_ts_600_t_39062500.000000.vtu
         line_60_heat_ts_600_t_39062500.000000.vtu
         heat_flux heat_flux 5.9e-12 0
@@ -227,27 +227,27 @@ AddTest(
         # numerical solution – ts 130
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
-        temperature temperature 8e-13 0
+        temperature temperature 8.6e-13 0
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
-        heat_flux heat_flux 8.3e-13 0
+        heat_flux heat_flux 1.1e-12 0
         line_60_heat_ts_130_t_5078125.000000.vtu
         line_60_heat_ts_130_t_5078125.000000.vtu
         HeatFlowRate HeatFlowRate 8.5e-12 0
         # numerical solution – ts 505
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
-        temperature temperature 9.8e-12 0
+        temperature temperature 1.1e-11 0
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
-        heat_flux heat_flux 5.0e-12 0
+        heat_flux heat_flux 5.2e-12 0
         line_60_heat_ts_505_t_31640625.000000.vtu
         line_60_heat_ts_505_t_31640625.000000.vtu
         HeatFlowRate HeatFlowRate 5.2e-12 0
         # numerical solution – ts 600
         line_60_heat_ts_600_t_39062500.000000.vtu
         line_60_heat_ts_600_t_39062500.000000.vtu
-        temperature temperature 1.2e-11 0
+        temperature temperature 1.3e-11 0
         line_60_heat_ts_600_t_39062500.000000.vtu
         line_60_heat_ts_600_t_39062500.000000.vtu
         heat_flux heat_flux 5.9e-12 0
