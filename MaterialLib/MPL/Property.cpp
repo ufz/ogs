@@ -69,7 +69,7 @@ PropertyDataType fromVector(std::vector<double> const& values)
 PropertyDataType Property::initialValue(
     ParameterLib::SpatialPosition const& pos, double const t) const
 {
-    return value(VariableArray{}, pos, t,
+    return value(EmptyVariableArray, pos, t,
                  std::numeric_limits<double>::quiet_NaN());
 }
 
@@ -99,7 +99,7 @@ PropertyDataType Property::value(VariableArray const& variable_array,
 #ifndef NDEBUG
     property_used = true;
 #endif
-    return value(variable_array, VariableArray{}, pos, t, dt);
+    return value(variable_array, EmptyVariableArray, pos, t, dt);
 }
 
 PropertyDataType Property::dValue(VariableArray const& /*variable_array*/,
@@ -124,7 +124,7 @@ PropertyDataType Property::dValue(VariableArray const& variable_array,
 #ifndef NDEBUG
     property_used = true;
 #endif
-    return dValue(variable_array, VariableArray{}, variable, pos, t, dt);
+    return dValue(variable_array, EmptyVariableArray, variable, pos, t, dt);
 }
 
 /// Default implementation: 2nd derivative of any constant property is zero.

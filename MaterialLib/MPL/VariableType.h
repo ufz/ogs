@@ -207,6 +207,8 @@ private:
     static constexpr auto nan_ = std::numeric_limits<double>::signaling_NaN();
 };
 
+static const VariableArray EmptyVariableArray{};
+
 /// This function converts a string (e.g. a string from the configuration-tree)
 /// into one of the entries of the VariableType enumerator.
 Variable convertStringToVariable(std::string const& string);
