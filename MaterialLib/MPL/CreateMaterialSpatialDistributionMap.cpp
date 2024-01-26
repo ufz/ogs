@@ -26,6 +26,15 @@ MaterialSpatialDistributionMap createMaterialSpatialDistributionMap(
             ? 0
             : *std::max_element(begin(*material_ids), end(*material_ids));
 
+    if (!material_ids && media.size() > 1)
+    {
+        OGS_FATAL(
+            "More than one porous medium definition (namely {}) is present in "
+            "the project file, but no MaterialIDs are present in the bulk "
+            "mesh.",
+            media.size());
+    }
+
     if (max_material_id > static_cast<int>(media.size() - 1))
     {
         WARN(
