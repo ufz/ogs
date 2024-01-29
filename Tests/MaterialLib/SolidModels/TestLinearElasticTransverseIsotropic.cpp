@@ -16,6 +16,7 @@
 #include <string>
 
 #include "CreateTestConstitutiveRelation.h"
+#include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticOrthotropic.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticTransverseIsotropic.h"
 #include "MathLib/KelvinVector.h"
@@ -38,6 +39,13 @@ constexpr char xml_orth[] =
     "    <youngs_moduli>E0</youngs_moduli>"
     "    <shear_moduli>G0</shear_moduli>"
     "    <poissons_ratios>nu0</poissons_ratios>"
+    "</constitutive_relation> ";
+
+constexpr char xml_iso[] =
+    "<constitutive_relation> "
+    "    <type>LinearElasticIsotropic</type>"
+    "    <youngs_modulus>E</youngs_modulus>"
+    "    <poissons_ratio>nu</poissons_ratio>"
     "</constitutive_relation> ";
 
 std::vector<std::unique_ptr<ParameterLib::ParameterBase>>
@@ -75,6 +83,17 @@ setParametersForLinearElasticOrthotropic(std::vector<double> const& E0,
         std::make_unique<ParameterLib::ConstantParameter<double>>("nu0", nu0));
     parameters.push_back(
         std::make_unique<ParameterLib::ConstantParameter<double>>("G0", G0));
+    return parameters;
+}
+
+std::vector<std::unique_ptr<ParameterLib::ParameterBase>>
+setParametersForLinearElasticIsotropic(double const E, double const nu)
+{
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("E", E));
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("nu", nu));
     return parameters;
 }
 
@@ -130,6 +149,59 @@ public:
         // by LinearElasticTransverseIsotropic are different. Therefore, the
         // comparison of the bulk modulus values by the models are not
         // presented.
+    }
+
+    template <int Dimension>
+    void compareWithLinearElasticIsotropic()
+    {
+        // Create an isotropic elastic model by using
+        // LinearElasticTransverseIsotropic:
+        ParameterLib::ConstantParameter<double> const line_direction{
+            "e3", {1, 0.0, 0.0}};
+        ParameterLib::CoordinateSystem const coordinate_system{line_direction};
+        double const E = 8.0e9;
+        double const nu = 0.25;
+        double const Ga = 0.5 * E / (1 + nu);
+        auto const parameters_ti =
+            setParametersForLinearElasticTransverseIsotropic(E, E, nu, nu, Ga);
+        auto const elastic_model_transverse_isotropy =
+            Tests::createTestConstitutiveRelation<
+                MaterialLib::Solids::LinearElasticTransverseIsotropic<
+                    Dimension>>(
+                xml_ti, parameters_ti, coordinate_system, false,
+                MaterialLib::Solids::createLinearElasticTransverseIsotropic<
+                    Dimension>);
+        ParameterLib::SpatialPosition const pos;
+        auto const C_a = elastic_model_transverse_isotropy->getElasticTensor(
+            t_, pos, T_ref_);
+
+        // Create an isotropic elastic model by using LinearElasticIsotropic:
+        auto parameters_iso = setParametersForLinearElasticIsotropic(E, nu);
+        auto const elastic_model_linear_elastic_isotropic =
+            Tests::createTestConstitutiveRelation<
+                MaterialLib::Solids::LinearElasticIsotropic<Dimension>>(
+                xml_iso, parameters_iso, false,
+                MaterialLib::Solids::createLinearElasticIsotropic<Dimension>);
+        auto const C_i =
+            elastic_model_linear_elastic_isotropic->getElasticTensor(t_, pos,
+                                                                     T_ref_);
+        // Compare the elastic tensor obtained by two models, respectively:
+        ASSERT_LE((C_a - C_i).norm() / C_a.norm(), 1e-14);
+
+        MathLib::KelvinVector::KelvinMatrixType<Dimension> Cel;
+
+        // Compare the bulk modulus obtained by obtained by two models,
+        // respectively:
+        double const k_ti =
+            elastic_model_transverse_isotropy->getBulkModulus(t_, pos, &Cel);
+        double const k_i =
+            elastic_model_linear_elastic_isotropic->getBulkModulus(t_, pos,
+                                                                   &Cel);
+        ASSERT_LE(std::abs(k_ti - k_i), 1e-14)
+            << "Calculated bulk modulus by the transverse isotropic elastic "
+               "model: "
+            << k_ti << "\n"
+            << "Calculated bulk modulus by the isotropic elastic model:" << k_i;
     }
 
 private:
@@ -199,4 +271,10 @@ TEST_F(LinearElasticTransverseIsotropic,
 
         compareWithElasticOrthotropic<3>(coordinate_system);
     }
+}
+
+TEST_F(LinearElasticTransverseIsotropic, test_agaist_LinearElasticIsotropic)
+{
+    compareWithLinearElasticIsotropic<2>();
+    compareWithLinearElasticIsotropic<3>();
 }

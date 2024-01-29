@@ -44,4 +44,27 @@ std::unique_ptr<ConstitutiveLaw> createTestConstitutiveRelation(
                                       skip_type_checking);
 }
 
+template <typename ConstitutiveLaw>
+std::unique_ptr<ConstitutiveLaw> createTestConstitutiveRelation(
+    const char xml[],
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    const bool skip_type_checking,
+    std::function<std::unique_ptr<ConstitutiveLaw>(
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
+            parameters,
+        BaseLib::ConfigTree const& config, const bool skip_type_checking)>
+        createConstitutiveRelation)
+{
+    auto ptree = Tests::readXml(xml);
+    BaseLib::ConfigTree conf(std::move(ptree), "", BaseLib::ConfigTree::onerror,
+                             BaseLib::ConfigTree::onwarning);
+
+    auto const& sub_config = conf.getConfigSubtree("constitutive_relation");
+
+    auto const type = sub_config.peekConfigParameter<std::string>("type");
+
+    return createConstitutiveRelation(parameters, sub_config,
+                                      skip_type_checking);
+}
+
 }  // namespace Tests
