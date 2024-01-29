@@ -115,8 +115,6 @@ function(NotebookTest)
         ENVIRONMENT_MODIFICATION
         PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
         ${NotebookTest_PROPERTIES}
-        ENVIRONMENT
-        CI=1
     )
 
     set_tests_properties(
@@ -128,6 +126,8 @@ function(NotebookTest)
                    ${NotebookTest_DISABLED}
                    LABELS
                    "${labels}"
+                   ENVIRONMENT
+                   "CI=1;PYDEVD_DISABLE_FILE_VALIDATION=1"
     )
 
 endfunction()
