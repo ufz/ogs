@@ -1,9 +1,6 @@
 # IMPORTANT: multiple arguments in one variables have to be in list notation (;)
 # and have to be quoted when passed
 # "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
-foreach(file ${FILES_TO_DELETE})
-    file(REMOVE ${BINARY_PATH}/${file})
-endforeach()
 
 string(REPLACE ";" " " CMD_STRING
                "cd ${WORKING_DIRECTORY} && ${WRAPPER_COMMAND} "
