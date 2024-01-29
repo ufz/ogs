@@ -108,7 +108,7 @@ macro(_ogs_add_test TEST_NAME)
             "-DWRAPPER_COMMAND=${OgsTest_WRAPPER}"
             -DWORKING_DIRECTORY=${OgsTest_BINARY_DIR}
             -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME_UNDERSCORE}.txt
-            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
+            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
     set_tests_properties(

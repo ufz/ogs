@@ -103,10 +103,10 @@ function(NotebookTest)
         COMMAND
             ${CMAKE_COMMAND} ${CMAKE_COMMAND}
             # TODO: only works if notebook is in a leaf directory
-            # -DFILES_TO_DELETE=${Data_BINARY_DIR}/${NotebookTest_DIR}
             -DEXECUTABLE=${Python_EXECUTABLE} "-DEXECUTABLE_ARGS=${_exe_args}"
-            -DWORKING_DIRECTORY=${Data_SOURCE_DIR} -DCAT_LOG=TRUE -P
-            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/OgsTestWrapper.cmake
+            -DWORKING_DIRECTORY=${Data_SOURCE_DIR}
+            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${NotebookTest_NAME_WE}.txt
+            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
     list(
