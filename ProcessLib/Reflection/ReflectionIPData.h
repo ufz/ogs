@@ -239,6 +239,16 @@ struct GetFlattenedIPDataFromLocAsm
                     result[ip * num_comp + comp] = converted[comp];
                 }
             }
+            else if constexpr (num_cols == MathLib::KelvinVector::
+                                               kelvin_vector_dimensions(Dim) &&
+                               num_rows == 1)
+            {
+                static_assert(
+                    num_rows != 1 /* always false in this branch */,
+                    "We support Kelvin column-vectors, but not Kelvin "
+                    "row-vectors. The latter are unusual and confusion with "
+                    "generic vectors might be possible.");
+            }
             else if constexpr (num_rows == 1 || num_cols == 1)
             {
                 // row or column vector
