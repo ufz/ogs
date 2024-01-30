@@ -647,3 +647,43 @@ TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
     check("scalar2b", num_int_pts, ref.scalar2b);
     check("scalar3b", num_int_pts, ref.scalar3b);
 }
+
+TYPED_TEST(ProcessLib_ReflectIPData, RawDataTypes)
+{
+    constexpr int dim = TypeParam::value;
+    constexpr int kv_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(dim);
+
+    namespace PRD = ProcessLib::Reflection::detail;
+
+    // scalars
+    static_assert(PRD::is_raw_data<double>::value);
+
+    // vectors
+    static_assert(PRD::is_raw_data<Eigen::Vector<double, dim>>::value);
+    static_assert(PRD::is_raw_data<Eigen::RowVector<double, dim>>::value);
+
+    // Kelvin vectors
+    static_assert(PRD::is_raw_data<Eigen::Vector<double, kv_size>>::value);
+
+    // matrices
+    static_assert(PRD::is_raw_data<
+                  Eigen::Matrix<double, dim, dim, Eigen::RowMajor>>::value);
+    static_assert(PRD::is_raw_data<
+                  Eigen::Matrix<double, dim, kv_size, Eigen::RowMajor>>::value);
+    static_assert(PRD::is_raw_data<
+                  Eigen::Matrix<double, kv_size, dim, Eigen::RowMajor>>::value);
+    static_assert(
+        PRD::is_raw_data<
+            Eigen::Matrix<double, kv_size, kv_size, Eigen::RowMajor>>::value);
+
+    // column major matrices are not supported in order to avoid confusion of
+    // storage order
+    static_assert(!PRD::is_raw_data<Eigen::Matrix<double, dim, dim>>::value);
+    static_assert(
+        !PRD::is_raw_data<Eigen::Matrix<double, dim, kv_size>>::value);
+    static_assert(
+        !PRD::is_raw_data<Eigen::Matrix<double, kv_size, dim>>::value);
+    static_assert(
+        !PRD::is_raw_data<Eigen::Matrix<double, kv_size, kv_size>>::value);
+}
