@@ -23,9 +23,10 @@ namespace ConstitutiveRelations
 template <int DisplacementDim>
 struct SolidMechanicsDataStateless
 {
-    KelvinMatrix<DisplacementDim> stiffness_tensor = KMnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_uT_BT_K_N = KVnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_up_BT_K_N = KVnan<DisplacementDim>();
+    KelvinMatrix<DisplacementDim> stiffness_tensor =
+        KV::KMnan<DisplacementDim>();
+    KelvinVector<DisplacementDim> J_uT_BT_K_N = KV::KVnan<DisplacementDim>();
+    KelvinVector<DisplacementDim> J_up_BT_K_N = KV::KVnan<DisplacementDim>();
 };
 
 namespace MSM = MaterialLib::Solids::MFront;

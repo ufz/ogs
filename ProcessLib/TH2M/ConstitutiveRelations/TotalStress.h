@@ -23,7 +23,7 @@ namespace ConstitutiveRelations
 template <int DisplacementDim>
 struct TotalStressData
 {
-    KelvinVector<DisplacementDim> sigma_total = KVnan<DisplacementDim>();
+    KelvinVector<DisplacementDim> sigma_total = KV::KVnan<DisplacementDim>();
 
     static auto reflect()
     {

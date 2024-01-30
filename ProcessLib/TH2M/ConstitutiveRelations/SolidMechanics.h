@@ -23,7 +23,8 @@ namespace ConstitutiveRelations
 template <int DisplacementDim>
 struct SolidMechanicsDataStateless
 {
-    KelvinMatrix<DisplacementDim> stiffness_tensor = KMnan<DisplacementDim>();
+    KelvinMatrix<DisplacementDim> stiffness_tensor =
+        KV::KMnan<DisplacementDim>();
 };
 
 template <int DisplacementDim>

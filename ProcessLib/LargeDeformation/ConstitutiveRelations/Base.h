@@ -21,12 +21,13 @@ namespace ProcessLib::LargeDeformation
 {
 
 using namespace ProcessLib::ConstitutiveRelations;
+namespace KV = MathLib::KelvinVector;
 
 template <int DisplacementDim>
-using KelvinVector = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+using KelvinVector = KV::KelvinVectorType<DisplacementDim>;
 
 template <int DisplacementDim>
-using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+using KelvinMatrix = KV::KelvinMatrixType<DisplacementDim>;
 
 template <int DisplacementDim>
 using GlobalDimVector = Eigen::Vector<double, DisplacementDim>;
@@ -37,20 +38,6 @@ using GlobalDimMatrix =
 
 /// Convenience alias for not a number.
 static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-
-/// Used to set a Kelvin vector to all not-a-number.
-template <int DisplacementDim>
-constexpr KelvinVector<DisplacementDim> KVnan()
-{
-    return KelvinVector<DisplacementDim>::Constant(nan);
-}
-
-/// Used to set a Kelvin matrix to all not-a-number.
-template <int DisplacementDim>
-constexpr KelvinMatrix<DisplacementDim> KMnan()
-{
-    return KelvinMatrix<DisplacementDim>::Constant(nan);
-}
 
 /// Used to set a D dimensional vector to all not-a-number.
 template <int D>
@@ -64,20 +51,6 @@ template <int D>
 constexpr GlobalDimMatrix<D> DMnan()
 {
     return GlobalDimMatrix<D>::Constant(nan);
-}
-
-/// Used to set a Kelvin vector to all zero.
-template <int DisplacementDim>
-constexpr KelvinVector<DisplacementDim> KVzero()
-{
-    return KelvinVector<DisplacementDim>::Zero();
-}
-
-/// Used to set a Kelvin matrix to all zero.
-template <int DisplacementDim>
-constexpr KelvinMatrix<DisplacementDim> KMzero()
-{
-    return KelvinMatrix<DisplacementDim>::Zero();
 }
 
 struct MediaData

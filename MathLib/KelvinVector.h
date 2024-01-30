@@ -56,6 +56,36 @@ using KelvinMatrixType =
     Eigen::Matrix<double, kelvin_vector_dimensions(DisplacementDim),
                   kelvin_vector_dimensions(DisplacementDim), Eigen::RowMajor>;
 
+/// Returns an expressions for a Kelvin vector filled with zero.
+template <int DisplacementDim>
+constexpr auto KVzero()
+{
+    return KelvinVectorType<DisplacementDim>::Zero();
+}
+
+/// Returns an expressions for a Kelvin matrix filled with zero.
+template <int DisplacementDim>
+constexpr auto KMzero()
+{
+    return KelvinMatrixType<DisplacementDim>::Zero();
+}
+
+/// Returns an expressions for a Kelvin vector filled with NaN.
+template <int DisplacementDim>
+constexpr auto KVnan()
+{
+    return KelvinVectorType<DisplacementDim>::Constant(
+        std::numeric_limits<double>::quiet_NaN());
+}
+
+/// Returns an expressions for a Kelvin matrix filled with NaN.
+template <int DisplacementDim>
+constexpr auto KMnan()
+{
+    return KelvinMatrixType<DisplacementDim>::Constant(
+        std::numeric_limits<double>::quiet_NaN());
+}
+
 /// Invariants used in mechanics, based on Kelvin representation of the vectors
 /// and matrices.
 /// The invariants are computed at process creation time.

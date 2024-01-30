@@ -38,7 +38,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     // This constitutive setting does not need eps_m. But eps_m is there,
     // because it is set in setInitialConditionsConcrete()
     // We set it to NaN for now.
-    current_state.eps_m.noalias() = KVnan<DisplacementDim>();
+    current_state.eps_m.noalias() = KV::KVnan<DisplacementDim>();
 
     auto const& eps_total = eps_data.eps;
     auto const& eps_total_prev = eps_prev_data->eps;
