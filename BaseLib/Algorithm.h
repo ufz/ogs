@@ -12,10 +12,14 @@
 
 #include <algorithm>
 #include <cassert>
+#include <concepts>
 #include <optional>
+#include <range/v3/algorithm/find_if.hpp>
+#include <range/v3/range/concepts.hpp>
 #include <string>
 #include <typeindex>
 #include <typeinfo>
+#include <utility>
 
 #include "Error.h"
 
@@ -63,6 +67,27 @@ void excludeObjectCopy(std::vector<T> const& src_vec,
                        std::vector<T>& dest_vec)
 {
     dest_vec = excludeObjectCopy(src_vec, exclude_positions);
+}
+
+/// Returns reference to an element in the range satisfying the predicate. If no
+/// such element is found, error_callback is called and reference to
+/// past-the-end of the range is returned.
+template <ranges::input_range Range>
+ranges::range_reference_t<Range> findElementOrError(
+    Range& range,
+    std::predicate<ranges::range_reference_t<Range>> auto&& predicate,
+    std::invocable auto error_callback)
+{
+    auto it =
+        ranges::find_if(range, std::forward<decltype(predicate)>(predicate));
+    if (it == ranges::end(range))
+    {
+        error_callback();
+        OGS_FATAL(
+            "Element not found in the input range. The user provided error "
+            "callback is meant not to return. That has not happened.");
+    }
+    return *it;
 }
 
 template <typename InputIt, typename Predicate>

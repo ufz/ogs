@@ -427,11 +427,11 @@ public:
         {
             // find corresponding internal variable
             auto const& iv = BaseLib::findElementOrError(
-                begin(ivs),
-                end(ivs),
+                ivs,
                 [name = name](InternalVariable const& iv)
                 { return iv.name == name; },
-                fmt::format("Internal variable `{:s}' not found.", name));
+                [name = name]()
+                { OGS_FATAL("Internal variable `{:s}' not found.", name); });
 
             // evaluate parameter
             std::vector<double> values = (*parameter)(t, x);
