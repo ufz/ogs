@@ -75,7 +75,7 @@ endif()
 
 if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 50
-        PROPERTIES WILL_FAIL true
+        PROPERTIES PASS_REGULAR_EXPRESSION "The nonlinear solver failed in time step #.* at t = 5.37.* s for process #0"
     )
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/load_test_mc.prj)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_1e0_47.prj)

@@ -520,7 +520,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_invalid_multiple_outputs.xml
         WRAPPER time
         REQUIREMENTS NOT OGS_USE_MPI
-        PROPERTIES WILL_FAIL TRUE
+        PROPERTIES PASS_REGULAR_EXPRESSION "Output configuration paths are not unique. This will lead to overwritten results or invalid"
     )
 
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs_different_variables.xml)
