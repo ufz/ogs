@@ -139,7 +139,7 @@ bool Simulation::executeTimeStep()
     return false;
 }
 
-MeshLib::Mesh* Simulation::getMesh(std::string const& name)
+MeshLib::Mesh& Simulation::getMesh(std::string const& name)
 {
     return project_data->getMesh(name);
 }

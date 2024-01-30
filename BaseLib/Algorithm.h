@@ -90,19 +90,6 @@ ranges::range_reference_t<Range> findElementOrError(
     return *it;
 }
 
-template <typename InputIt, typename Predicate>
-typename std::iterator_traits<InputIt>::reference findElementOrError(
-    InputIt begin, InputIt end, Predicate predicate,
-    std::string const& error = "")
-{
-    auto it = std::find_if(begin, end, predicate);
-    if (it == end)
-    {
-        OGS_FATAL("Element not found in the input range; {:s}", error);
-    }
-    return *it;
-}
-
 //! Inserts the given \c key with the given \c value into the \c map if an entry
 //! with the
 //! given \c key does not yet exist; otherwise an \c error_message is printed

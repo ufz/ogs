@@ -76,14 +76,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         config.getConfigParameter<std::string>("mesh");
 
     // Find and extract mesh from the list of meshes.
-    auto const& mesh = *BaseLib::findElementOrError(
-        std::begin(meshes), std::end(meshes),
-        [&mesh_name](auto const& mesh)
-        {
-            assert(mesh != nullptr);
-            return mesh->getName() == mesh_name;
-        },
-        "Required mesh with name '" + mesh_name + "' not found.");
+    auto const& mesh = MeshLib::findMeshByName(meshes, mesh_name);
 
     assert(mesh.getID() != 0);
     DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName(), mesh.getID());
@@ -207,14 +200,7 @@ createChemicalSolverInterface<ChemicalSolver::SelfContained>(
         config.getConfigParameter<std::string>("mesh");
 
     // Find and extract mesh from the list of meshes.
-    auto const& mesh = *BaseLib::findElementOrError(
-        std::begin(meshes), std::end(meshes),
-        [&mesh_name](auto const& mesh)
-        {
-            assert(mesh != nullptr);
-            return mesh->getName() == mesh_name;
-        },
-        "Required mesh with name '" + mesh_name + "' not found.");
+    auto const& mesh = MeshLib::findMeshByName(meshes, mesh_name);
 
     assert(mesh.getID() != 0);
     DBUG("Found mesh '{:s}' with id {:d}.", mesh.getName(), mesh.getID());

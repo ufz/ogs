@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Error.h"
 #include "MathLib/Point3d.h"
 #include "MeshEnums.h"
@@ -213,6 +214,9 @@ bool idsComparator(T const a, T const b)
         return a.getID() < b.getID();
     }
 }
+
+Mesh& findMeshByName(std::vector<std::unique_ptr<Mesh>> const& meshes,
+                     std::string_view const name);
 
 /// MeshLib specific, lazy, non-owning, non-mutating, composable range views.
 namespace views

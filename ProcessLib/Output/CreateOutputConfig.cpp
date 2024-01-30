@@ -37,14 +37,7 @@ std::string parseOutputMeshConfig(
     std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes)
 {
     auto const mesh_name = output_mesh_config.getValue<std::string>();
-    auto const& mesh = *BaseLib::findElementOrError(
-        begin(meshes), end(meshes),
-        [&mesh_name](auto const& mesh)
-        {
-            assert(mesh != nullptr);
-            return mesh->getName() == mesh_name;
-        },
-        "Required mesh with name '" + mesh_name + "' not found.");
+    auto const& mesh = MeshLib::findMeshByName(meshes, mesh_name);
 
     auto material_id_string =
         //! \ogs_file_attr{prj__time_loop__output__meshes__mesh__material_ids}

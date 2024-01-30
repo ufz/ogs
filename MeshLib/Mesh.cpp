@@ -360,4 +360,17 @@ bool isBaseNode(Node const& node,
     return local_index < n_base_nodes;
 }
 
+Mesh& findMeshByName(std::vector<std::unique_ptr<Mesh>> const& meshes,
+                     std::string_view const name)
+{
+    return *BaseLib::findElementOrError(
+        meshes,
+        [&name](auto const& mesh)
+        {
+            assert(mesh != nullptr);
+            return mesh->getName() == name;
+        },
+        [&]() { OGS_FATAL("Required mesh named {:s} not found.", name); });
+}
+
 }  // namespace MeshLib
