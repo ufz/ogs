@@ -35,9 +35,6 @@ template <int DisplacementDim>
 using GlobalDimMatrix =
     Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>;
 
-/// Convenience alias for not a number.
-static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-
 /// Used to set a D dimensional vector to all not-a-number.
 template <int D>
 constexpr GlobalDimVector<D> DVnan()
