@@ -172,8 +172,8 @@ TEST(RichardsMechanics, computeMicroPorosity)
             I_2_C_el_inverse,
             rho_LR_m,  // for simplification equal to rho_LR_M
             mu_LR, micro_porosity_parameters, alpha_B, phi_M, p_L,
-            state_prev.p_L_m, MaterialPropertyLib::VariableArray{}, S_L_m_prev,
-            state_prev.phi_m, pos, t, dt, saturation_micro,
+            state_prev.p_L_m, MaterialPropertyLib::EmptyVariableArray,
+            S_L_m_prev, state_prev.phi_m, pos, t, dt, saturation_micro,
             swelling_stress_rate);
 
         // push back state

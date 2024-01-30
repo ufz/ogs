@@ -922,7 +922,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const T_ref =
             medium->property(MPL::PropertyType::reference_temperature)
-                .template value<double>(MPL::VariableArray(), x_position, t,
+                .template value<double>(MPL::EmptyVariableArray, x_position, t,
                                         dt);
 
         const int displacement_offset =
