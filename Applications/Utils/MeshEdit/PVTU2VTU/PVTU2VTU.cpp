@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -341,6 +342,8 @@ int main(int argc, char* argv[])
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
     meshes.reserve(vtu_file_names.size());
 
+    BaseLib::RunTime io_timer;
+    io_timer.start();
     for (auto const& file_name : vtu_file_names)
     {
         auto mesh = std::unique_ptr<MeshLib::Mesh>(
@@ -357,26 +360,39 @@ int main(int argc, char* argv[])
 
         meshes.emplace_back(std::move(mesh));
     }
+    INFO("Reading meshes took {} s", io_timer.elapsed());
 
+    BaseLib::RunTime merged_element_timer;
+    merged_element_timer.start();
     // If structured binding is used for the returned tuple, Mac compiler gives
     // an error in reference to local binding in calling applyToPropertyVectors.
     std::vector<MeshEntityMapInfo> merged_element_map;
     std::vector<MeshLib::Element*> regular_elements;
     std::tie(regular_elements, merged_element_map) = getRegularElements(meshes);
+    INFO("Regular elements and computing element map took {} s",
+         merged_element_timer.elapsed());
 
+    BaseLib::RunTime merged_nodes_timer;
+    merged_nodes_timer.start();
     std::vector<MeshEntityMapInfo> merged_node_map;
     std::vector<MeshLib::Node*> merged_nodes;
     std::tie(merged_nodes, merged_node_map) =
         getNodesOfRegularElements(regular_elements, merged_element_map);
+    INFO("Make merged points unique / computing map took {} s",
+         merged_nodes_timer.elapsed());
 
+    BaseLib::RunTime mesh_creation_timer;
+    mesh_creation_timer.start();
     // The Node pointers of 'merged_nodes' and Element pointers of
     // 'regular_elements' are shared with 'meshes', the partitioned meshes.
     MeshLib::Mesh merged_mesh =
         MeshLib::Mesh("pvtu_merged_mesh", merged_nodes, regular_elements,
                       true /* compute_element_neighbors */);
+    INFO("creation of merged mesh took {} s", mesh_creation_timer.elapsed());
 
     auto const& properties = meshes[0]->getProperties();
-
+    BaseLib::RunTime property_timer;
+    property_timer.start();
     applyToPropertyVectors(
         properties,
         [&](auto type, auto const& property)
@@ -387,15 +403,20 @@ int main(int argc, char* argv[])
                     property),
                 properties, merged_node_map, merged_element_map);
         });
+    INFO("merge properties into merged mesh took {} s",
+         property_timer.elapsed());
 
     MeshLib::IO::VtuInterface writer(&merged_mesh);
 
+    BaseLib::RunTime writing_timer;
+    writing_timer.start();
     auto const result = writer.writeToFile(output_arg.getValue());
     if (!result)
     {
         ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
         return EXIT_FAILURE;
     }
+    INFO("writing mesh took {} s", writing_timer.elapsed());
 
     // Since the Node pointers of 'merged_nodes' and Element pointers of
     // 'regular_elements' are held by 'meshes', the partitioned meshes, the
