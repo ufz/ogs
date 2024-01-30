@@ -191,9 +191,6 @@ function(AddTest)
         return()
     endif()
 
-    set(FILES_TO_DELETE "")
-    list(APPEND FILES_TO_DELETE "${AddTest_STDOUT_FILE_PATH}")
-
     if(AddTest_DIFF_DATA)
         string(LENGTH "${AddTest_DIFF_DATA}" DIFF_DATA_LENGTH)
         if(${DIFF_DATA_LENGTH} GREATER 7500)
@@ -355,7 +352,6 @@ macro(_add_test TEST_NAME)
             # passed as list see https://stackoverflow.com/a/33248574/80480
             -DBINARY_PATH=${_binary_path} -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
             "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
-            "-DFILES_TO_DELETE=${FILES_TO_DELETE}"
             -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
             -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt -P
             ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
@@ -422,8 +418,6 @@ macro(_add_test_tester TEST_NAME)
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${_binary_path}/${FILE}"
             )
-            list(APPEND FILES_TO_DELETE "${FILE}")
-
         endforeach()
     elseif(AddTest_TESTER STREQUAL "vtkdiff" OR AddTest_TESTER STREQUAL
                                                 "xdmfdiff"
@@ -463,7 +457,6 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                 -a ${NAME_A} -b ${NAME_B} \
                 ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
                 )
-                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
             endforeach()
         elseif(${DiffDataLengthMod6} EQUAL 0)
             if(${AddTest_ABSTOL} OR ${AddTest_RELTOL})
@@ -505,7 +498,6 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
                     )
                 endif()
-                list(APPEND FILES_TO_DELETE "${VTK_FILE}")
             endforeach()
         else()
             message(
@@ -570,7 +562,6 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                 ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
                 ${_binary_path}/${GML_FILE}"
             )
-            list(APPEND FILES_TO_DELETE "${GML_FILE}")
         endforeach()
     elseif(AddTest_TESTER STREQUAL "memcheck")
         set(TESTER_COMMAND
@@ -593,7 +584,6 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         ${TESTER_ARGS} ${AddTest_TESTER_ARGS} ${AddTest_SOURCE_PATH}/${FILE_EXPECTED} \
         ${_binary_path}/${FILE}"
             )
-            list(APPEND FILES_TO_DELETE "${FILE}")
         endforeach()
     endif()
 
