@@ -20,6 +20,8 @@
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
+#include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
+#include "ProcessLib/Reflection/ReflectionForIPWriters.h"
 #include "ProcessLib/Utils/ComputeResiduum.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 #include "TH2MProcessData.h"
@@ -46,35 +48,10 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
       AssemblyMixin<TH2MProcess<DisplacementDim>>{*_jacobian_assembler},
       _process_data(std::move(process_data))
 {
-    // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
-    // properties, s.t. there is no "overlapping" with cell/point data.
-    // See getOrCreateMeshProperty.
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "sigma_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getSigma));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "swelling_stress_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getSwellingStress));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "saturation_ip", 1 /*n components*/, integration_order,
-            local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getSaturation));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "epsilon_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
+    ProcessLib::Reflection::addReflectedIntegrationPointWriters<
+        DisplacementDim>(
+        LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
+        _integration_point_writer, integration_order, local_assemblers_);
 }
 
 template <int DisplacementDim>
@@ -182,21 +159,10 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    add_secondary_variable(
-        "sigma",
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim>::RowsAtCompileTime,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtSigma);
-    add_secondary_variable(
-        "swelling_stress",
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim>::RowsAtCompileTime,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtSwellingStress);
-    add_secondary_variable(
-        "epsilon",
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim>::RowsAtCompileTime,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilon);
+    ProcessLib::Reflection::addReflectedSecondaryVariables<DisplacementDim>(
+        LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
+        _secondary_variables, getExtrapolator(), local_assemblers_);
+
     add_secondary_variable(
         "velocity_gas", mesh.getDimension(),
         &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityGas);
@@ -220,9 +186,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         &LocalAssemblerInterface<
             DisplacementDim>::getIntPtDiffusionVelocityLiquidLiquid);
 
-    add_secondary_variable(
-        "saturation", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtSaturation);
     add_secondary_variable(
         "vapour_pressure", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtVapourPressure);

@@ -9,22 +9,104 @@
 
 #pragma once
 
-#include "MathLib/KelvinVector.h"
+#include "Biot.h"
+#include "Bishops.h"
+#include "ElasticTangentStiffnessData.h"
+#include "EquivalentPlasticStrainData.h"
+#include "MechanicalStrain.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
+#include "Saturation.h"
+#include "SolidCompressibility.h"
+#include "SolidMechanics.h"
+#include "SolidThermalExpansion.h"
+#include "Swelling.h"
+#include "TotalStress.h"
 
 namespace ProcessLib::TH2M
 {
-/// Variables needed only for the assembly process. The values are not preserved
-/// throughout the iterations contrary to the variables in IntegrationPointData.
-template <int DisplacementDim>
-struct ConstitutiveVariables
+namespace ConstitutiveRelations
 {
-    using KelvinMatrixType =
-        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+/// Data whose state must be tracked by the process.
+template <int DisplacementDim>
+struct StatefulData
+{
+    SaturationData S_L_data;
+    SwellingDataStateful<DisplacementDim> swelling_data;
+    ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>
+        eff_stress_data;
+    MechanicalStrainData<DisplacementDim> mechanical_strain_data;
+
+    static auto reflect()
+    {
+        using Self = StatefulData<DisplacementDim>;
+
+        return Reflection::reflectWithoutName(
+            &Self::S_L_data, &Self::swelling_data, &Self::eff_stress_data);
+    }
+};
+
+template <int DisplacementDim>
+struct StatefulDataPrev
+{
+    PrevState<SaturationData> S_L_data;
+    PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
+    PrevState<ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>>
+        eff_stress_data;
+    PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
+
+    StatefulDataPrev<DisplacementDim>& operator=(
+        StatefulData<DisplacementDim> const& state)
+    {
+        S_L_data = state.S_L_data;
+        swelling_data = state.swelling_data;
+        eff_stress_data = state.eff_stress_data;
+        mechanical_strain_data = state.mechanical_strain_data;
+
+        return *this;
+    }
+};
+
+/// Data that is needed for output purposes, but not directly for the assembly.
+template <int DisplacementDim>
+struct OutputData
+{
+    ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
+
+    static auto reflect()
+    {
+        using Self = OutputData<DisplacementDim>;
+
+        return Reflection::reflectWithoutName(&Self::eps_data);
+    }
+};
+
+/// Data that is needed for the equation system assembly.
+template <int DisplacementDim>
+struct ConstitutiveData
+{
+    SolidMechanicsDataStateless<DisplacementDim> s_mech_data;
+};
+
+/// Data that stores intermediate values, which are not needed outside the
+/// constitutive setting.
+template <int DisplacementDim>
+struct ConstitutiveTempData
+{
+    SwellingDataStateless<DisplacementDim> swelling_data;
+    ElasticTangentStiffnessData<DisplacementDim> C_el_data;
+    BiotData biot_data;
+    SolidCompressibilityData beta_p_SR;
+    SaturationDataDeriv dS_L_dp_cap;
+    BishopsData chi_S_L;
+    SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
+    TotalStressData<DisplacementDim> total_stress_data;
+    EquivalentPlasticStrainData equivalent_plastic_strain_data;
+
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
-
-    KelvinMatrixType C;
 
     DisplacementDimMatrix dlambda_dp_GR;
     DisplacementDimMatrix dlambda_dp_cap;
@@ -84,11 +166,6 @@ struct ConstitutiveVariables
     double dfW_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dT = std::numeric_limits<double>::quiet_NaN();
-    double ds_L_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double chi_s_L = std::numeric_limits<double>::quiet_NaN();
-    double dchi_ds_L = std::numeric_limits<double>::quiet_NaN();
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
-
+}  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

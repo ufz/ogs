@@ -13,7 +13,7 @@
 #include <memory>
 #include <vector>
 
-#include "ConstitutiveVariables.h"
+#include "ConstitutiveRelations/ConstitutiveModels.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/PhysicalConstant.h"
@@ -23,7 +23,6 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
-#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
@@ -31,7 +30,6 @@
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
-#include "TH2MProcessData.h"
 
 namespace ProcessLib
 {
@@ -120,35 +118,42 @@ private:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& ip_data = _ip_data[ip];
 
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, _element.getID(), ip,
-                MathLib::Point3d(
-                    NumLib::interpolateCoordinates<
-                        ShapeFunctionDisplacement,
-                        ShapeMatricesTypeDisplacement>(_element, ip_data.N_u))};
+                std::nullopt, this->element_.getID(), ip,
+                MathLib::Point3d(NumLib::interpolateCoordinates<
+                                 ShapeFunctionDisplacement,
+                                 ShapeMatricesTypeDisplacement>(this->element_,
+                                                                ip_data.N_u))};
 
             /// Set initial stress from parameter.
-            if (_process_data.initial_stress != nullptr)
+            if (this->process_data_.initial_stress != nullptr)
             {
-                ip_data.sigma_eff =
+                this->current_states_[ip].eff_stress_data.sigma.noalias() =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
+                        DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
                             double>::quiet_NaN() /* time independent */,
                         x_position));
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
-            ip_data.solid_material.initializeInternalStateVariables(
-                t, x_position, *ip_data.material_state_variables);
+            auto& material_state = this->material_states_[ip];
+            this->solid_material_.initializeInternalStateVariables(
+                t, x_position, *material_state.material_state_variables);
 
             ip_data.pushBackState();
+            material_state.pushBackState();
+        }
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            this->prev_states_[ip] = this->current_states_[ip];
         }
     }
 
@@ -159,11 +164,17 @@ private:
                               int const /*process_id*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data[ip].pushBackState();
+            this->material_states_[ip].pushBackState();
+        }
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            this->prev_states_[ip] = this->current_states_[ip];
         }
     }
 
@@ -211,85 +222,15 @@ private:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
-    std::vector<ConstitutiveVariables<DisplacementDim>>
-    updateConstitutiveVariables(Eigen::VectorXd const& local_x,
-                                Eigen::VectorXd const& local_x_prev,
-                                double const t, double const dt);
-
-    std::size_t setSigma(double const* values)
-    {
-        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_eff);
-    }
-
-    // TODO (naumov) This method is same as getIntPtSigma but for arguments and
-    // the ordering of the cache_mat.
-    // There should be only one.
-    std::vector<double> getSigma() const override
-    {
-        {
-            constexpr int kelvin_vector_size =
-                MathLib::KelvinVector::kelvin_vector_dimensions(
-                    DisplacementDim);
-
-            return transposeInPlace<kelvin_vector_size>(
-                [this](std::vector<double>& values)
-                { return getIntPtSigma(0, {}, {}, values); });
-        }
-    }
-
-    std::vector<double> const& getIntPtSigma(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma_eff, cache);
-    }
-
-    std::vector<double> getSwellingStress() const override
-    {
-        {
-            constexpr int kelvin_vector_size =
-                MathLib::KelvinVector::kelvin_vector_dimensions(
-                    DisplacementDim);
-
-            return transposeInPlace<kelvin_vector_size>(
-                [this](std::vector<double>& values)
-                { return getIntPtSwellingStress(0, {}, {}, values); });
-        }
-    }
-
-    std::vector<double> const& getIntPtSwellingStress(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::sigma_sw, cache);
-    }
-
-    std::vector<double> getEpsilon() const override
-    {
-        constexpr int kelvin_vector_size =
-            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-
-        return transposeInPlace<kelvin_vector_size>(
-            [this](std::vector<double>& values)
-            { return getIntPtEpsilon(0, {}, {}, values); });
-    }
-
-    virtual std::vector<double> const& getIntPtEpsilon(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-            _ip_data, &IpData::eps, cache);
-    }
+    std::tuple<
+        std::vector<ConstitutiveRelations::ConstitutiveData<DisplacementDim>>,
+        std::vector<
+            ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>>>
+    updateConstitutiveVariables(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
+            models);
 
     // TODO: Here is some refactoring potential. All secondary variables could
     // be stored in some container to avoid defining one method for each
@@ -342,23 +283,6 @@ private:
         std::vector<double>& cache) const override
     {
         return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::phi,
-                                                         cache);
-    }
-
-    std::vector<double> getSaturation() const override
-    {
-        std::vector<double> result;
-        getIntPtSaturation(0, {}, {}, result);
-        return result;
-    }
-
-    virtual std::vector<double> const& getIntPtSaturation(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::s_L,
                                                          cache);
     }
 
@@ -447,39 +371,7 @@ private:
                                                          cache);
     }
 
-    unsigned getNumberOfIntegrationPoints() const override
-    {
-        return _integration_method.getNumberOfPoints();
-    }
-
-    int getMaterialID() const override
-    {
-        return _process_data.material_ids == nullptr
-                   ? 0
-                   : (*_process_data.material_ids)[_element.getID()];
-    }
-
-    std::vector<double> getMaterialStateVariableInternalState(
-        std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const override
-    {
-        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
-            _ip_data, &IpData::material_state_variables, get_values_span,
-            n_components);
-    }
-
-    typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned integration_point) const override
-    {
-        return *_ip_data[integration_point].material_state_variables;
-    }
-
 private:
-    TH2MProcessData<DisplacementDim>& _process_data;
-
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
     using IpData =
@@ -488,9 +380,6 @@ private:
                              ShapeFunctionDisplacement::NPOINTS>;
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    NumLib::GenericIntegrationMethod const& _integration_method;
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;
