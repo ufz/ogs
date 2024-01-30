@@ -81,8 +81,9 @@ if(OGS_USE_MKL)
     if(APPLE)
         set(_mac_ld_prefix "DY")
     endif()
-    if(NOT DEFINED ENV{MKLROOT} OR (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}"
-                                    MATCHES "intel" AND NOT WIN32)
+    if(NOT GUIX_BUILD AND (NOT DEFINED ENV{MKLROOT} OR
+                          (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}"
+                                    MATCHES "intel" AND NOT WIN32))
     )
         message(
             FATAL_ERROR
@@ -101,7 +102,7 @@ if(OGS_USE_MKL)
     elseif("${MKL_INTERFACE}" STREQUAL "ilp64")
         set(BLA_VENDOR Intel10_64ilp)
     endif()
-    if(NOT WIN32 AND NOT APPLE)
+    if(NOT WIN32 AND NOT APPLE AND NOT GUIX_BUILD)
         set(CMAKE_REQUIRE_FIND_PACKAGE_BLAS TRUE)
         set(CMAKE_REQUIRE_FIND_PACKAGE_LAPACK TRUE)
     endif()
@@ -110,8 +111,21 @@ find_package(BLAS)
 find_package(LAPACK)
 
 if(OGS_USE_MKL)
-    find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT})
-    find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT}/../.. NO_DEFAULT_PATH)
+    if(GUIX_BUILD)
+        find_package(PkgConfig REQUIRED)
+        if(DEFINED ENV{GUIX_ENVIRONMENT})
+            set(MKLROOT $ENV{GUIX_ENVIRONMENT})
+        endif()
+        set(PKG_CONFIG_ARGN "--define-variable=MKLROOT=${MKLROOT}")
+        set(ENV{PKG_CONFIG_PATH} ${MKLROOT}/bin/pkgconfig)
+        # TODO: Using -seq instead of -iomp; library iomp5 is missing
+        # See https://gitlab.opengeosys.org/ogs/inf/guix-ogs/-/issues/1
+        pkg_search_module(MKL REQUIRED IMPORTED_TARGET mkl-dynamic-${MKL_INTERFACE}-seq)
+        add_library(MKL::MKL ALIAS PkgConfig::MKL)
+    else()
+        find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT} ${MKLROOT})
+        find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT}/../.. NO_DEFAULT_PATH)
+    endif()
 endif()
 
 # Check MPI package
