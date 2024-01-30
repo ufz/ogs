@@ -23,13 +23,21 @@ struct Level3
     MathLib::KelvinVector::KelvinVectorType<Dim> kelvin3;
     Eigen::Vector<double, Dim> vector3;
     double scalar3;
+    Eigen::Matrix<double, Dim, 4, Eigen::RowMajor> matrix3;
+    Eigen::Matrix<double, 4, Dim, Eigen::RowMajor> matrix3_1;
+    // Same number of components as Kelvin vector in 2D. Test that Kelvin vector
+    // and matrix code are not mixed up.
+    Eigen::Matrix<double, 2, 2, Eigen::RowMajor> matrix3_2;
 
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
         return std::tuple{makeReflectionData("kelvin3", &Level3::kelvin3),
                           makeReflectionData("vector3", &Level3::vector3),
-                          makeReflectionData("scalar3", &Level3::scalar3)};
+                          makeReflectionData("scalar3", &Level3::scalar3),
+                          makeReflectionData("matrix3", &Level3::matrix3),
+                          makeReflectionData("matrix3_1", &Level3::matrix3_1),
+                          makeReflectionData("matrix3_2", &Level3::matrix3_2)};
     }
 };
 
@@ -265,6 +273,59 @@ std::vector<double> initKelvin(LocAsmIF<dim>& loc_asm,
     return vector_expected;
 }
 
+// Prepares matrix valued IP data for the passed local assembler.
+//
+// The IP data are a sequence of double values starting at the passed start
+// value and incremented by one for each integration point and matrix entry.
+//
+// The location of the prepared data is specified by the IP data  accessor
+// callback function.
+//
+// Returns the expected data for use in unit test checks.
+template <int dim>
+std::vector<double> initMatrix(LocAsmIF<dim>& loc_asm,
+                               double const start_value,
+                               auto const ip_data_accessor,
+                               bool const for_read_test)
+{
+    using MatrixType = std::remove_cvref_t<
+        std::invoke_result_t<std::remove_cvref_t<decltype(ip_data_accessor)>,
+                             LocAsmIF<dim> const&, unsigned /* ip */>>;
+    auto constexpr rows = MatrixType::RowsAtCompileTime;
+    auto constexpr cols = MatrixType::ColsAtCompileTime;
+    auto constexpr size = rows * cols;
+
+    auto const num_int_pts = loc_asm.numIPs();
+
+    // init ip data in the local assembler
+    if (for_read_test)
+    {
+        for (std::size_t ip = 0; ip < num_int_pts; ++ip)
+        {
+            ip_data_accessor(loc_asm, ip) =
+                Eigen::Vector<double, size>::LinSpaced(
+                    size, ip * size + start_value,
+                    ip * size + start_value - 1 + size)
+                    .template reshaped<Eigen::RowMajor>(rows, cols);
+        }
+    }
+    else
+    {
+        for (std::size_t ip = 0; ip < num_int_pts; ++ip)
+        {
+            ip_data_accessor(loc_asm, ip) =
+                Eigen::Vector<double, size>::Constant(
+                    std::numeric_limits<double>::quiet_NaN())
+                    .template reshaped<Eigen::RowMajor>(rows, cols);
+        }
+    }
+
+    // prepare reference data
+    std::vector<double> vector_expected(num_int_pts * size);
+    iota(begin(vector_expected), end(vector_expected), start_value);
+    return vector_expected;
+}
+
 template <int dim>
 struct ReferenceData
 {
@@ -279,6 +340,9 @@ struct ReferenceData
     std::vector<double> scalar3;
     std::vector<double> vector3;
     std::vector<double> kelvin3;
+    std::vector<double> matrix3;
+    std::vector<double> matrix3_1;
+    std::vector<double> matrix3_2;
 
     std::vector<double> scalar1b;
     std::vector<double> scalar2b;
@@ -363,6 +427,30 @@ struct ReferenceData
             [](auto& loc_asm, unsigned const ip) -> auto& {
                 return std::get<Level3<dim>>(loc_asm.ip_data_level1[ip].level2)
                     .kelvin3;
+            },
+            for_read_test);
+
+        ref.matrix3 = initMatrix(
+            loc_asm, start_value(),
+            [](auto& loc_asm, unsigned const ip) -> auto& {
+                return std::get<Level3<dim>>(loc_asm.ip_data_level1[ip].level2)
+                    .matrix3;
+            },
+            for_read_test);
+
+        ref.matrix3_1 = initMatrix(
+            loc_asm, start_value(),
+            [](auto& loc_asm, unsigned const ip) -> auto& {
+                return std::get<Level3<dim>>(loc_asm.ip_data_level1[ip].level2)
+                    .matrix3_1;
+            },
+            for_read_test);
+
+        ref.matrix3_2 = initMatrix(
+            loc_asm, start_value(),
+            [](auto& loc_asm, unsigned const ip) -> auto& {
+                return std::get<Level3<dim>>(loc_asm.ip_data_level1[ip].level2)
+                    .matrix3_2;
             },
             for_read_test);
 
@@ -474,6 +562,9 @@ TYPED_TEST(ProcessLib_ReflectIPData, ReadTest)
     check("scalar3", 1, ref.scalar3);
     check("vector3", dim, ref.vector3);
     check("kelvin3", kv_size, ref.kelvin3);
+    check("matrix3", dim * 4, ref.matrix3);
+    check("matrix3_1", dim * 4, ref.matrix3_1);
+    check("matrix3_2", 4, ref.matrix3_2);
 
     // b levels
     check("scalar1b", 1, ref.scalar1b);
@@ -549,6 +640,9 @@ TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
     check("scalar3", num_int_pts, ref.scalar3);
     check("vector3", num_int_pts, ref.vector3);
     check("kelvin3", num_int_pts, ref.kelvin3);
+    check("matrix3", num_int_pts, ref.matrix3);
+    check("matrix3_1", num_int_pts, ref.matrix3_1);
+    check("matrix3_2", num_int_pts, ref.matrix3_2);
 
     check("scalar2b", num_int_pts, ref.scalar2b);
     check("scalar3b", num_int_pts, ref.scalar3b);
