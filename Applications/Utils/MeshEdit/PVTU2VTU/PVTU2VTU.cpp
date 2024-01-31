@@ -215,6 +215,27 @@ std::vector<std::string> readVtuFileNames(std::string const& pvtu_file_name)
     return vtu_file_names;
 }
 
+// all nodes (also 'ghost' nodes) of all meshes sorted by partition
+std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
+getMergedNodesVector(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+{
+    std::vector<std::size_t> number_of_nodes_per_partition;
+    ranges::transform(meshes, std::back_inserter(number_of_nodes_per_partition),
+                      [](auto const& mesh)
+                      { return mesh->getNumberOfNodes(); });
+    std::vector<std::size_t> offsets(meshes.size() + 1, 0);
+    std::partial_sum(number_of_nodes_per_partition.begin(),
+                     number_of_nodes_per_partition.end(), offsets.begin() + 1);
+
+    std::vector<MeshLib::Node*> all_nodes;
+    all_nodes.reserve(offsets.back());
+    for (auto const& mesh : meshes)
+    {
+        ranges::copy(mesh->getNodes(), std::back_inserter(all_nodes));
+    }
+    return {all_nodes, offsets};
+}
+
 std::tuple<std::vector<MeshLib::Element*>, std::vector<MeshEntityMapInfo>>
 getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 {
@@ -374,6 +395,7 @@ int main(int argc, char* argv[])
 
     BaseLib::RunTime merged_nodes_timer;
     merged_nodes_timer.start();
+    auto [all_merged_nodes_tmp, offsets] = getMergedNodesVector(meshes);
     std::vector<MeshEntityMapInfo> merged_node_map;
     std::vector<MeshLib::Node*> merged_nodes;
     std::tie(merged_nodes, merged_node_map) =
