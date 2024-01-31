@@ -10,7 +10,6 @@
 
 #include "PrjProcessing.h"
 
-#include <libxml/globals.h>
 #include <libxml/parser.h>
 #include <libxml/xmlstring.h>
 #include <spdlog/fmt/bundled/core.h>
@@ -155,8 +154,8 @@ void replaceIncludes(std::stringstream& prj_stream,
     // function.
     [[maybe_unused]] DisableFPE disable_fpe;
 
-    auto doc =
-        xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
+    auto doc = xmlReadMemory(prj_stream.str().c_str(), prj_stream.str().size(),
+                             nullptr, nullptr, 0);
     if (doc == nullptr)
     {
         OGS_FATAL("Error reading project file from memory.");
@@ -179,14 +178,16 @@ void replaceIncludes(std::stringstream& prj_stream,
 void patchStream(std::string const& patch_file, std::stringstream& prj_stream,
                  bool after_includes = false)
 {
+    // xmlReadFile(patch_file.c_str(), nullptr, 0); leads to malloc errors in
+    // xmlFreeDoc(doc) below
     auto patch = xmlParseFile(patch_file.c_str());
     if (patch == nullptr)
     {
         OGS_FATAL("Error reading XML diff file {:s}.", patch_file);
     }
 
-    auto doc =
-        xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
+    auto doc = xmlReadMemory(prj_stream.str().c_str(), prj_stream.str().size(),
+                             nullptr, nullptr, 0);
     if (doc == nullptr)
     {
         OGS_FATAL("Error reading project file from memory.");
@@ -281,7 +282,7 @@ void readAndPatchPrj(std::stringstream& prj_stream, std::string& prj_file,
                 "if a patch file was already specified as the "
                 "prj-file.");
         }
-        auto patch = xmlParseFile(prj_file.c_str());
+        auto patch = xmlReadFile(prj_file.c_str(), nullptr, 0);
         auto node = xmlDocGetRootElement(patch);
         xmlChar const base_file_string[] = "base_file";
         auto base_file = xmlGetProp(node, base_file_string);
@@ -340,16 +341,15 @@ void prepareProjectFile(std::stringstream& prj_stream,
 
     if (write_prj)
     {
-        // pretty-print
-        xmlKeepBlanksDefault(0);
-
         // The following two lines should set indenting to 4 spaces but it does
         // not work. 2 spaces are default.
         //
         // xmlThrDefIndentTreeOutput(1);
         // xmlThrDefTreeIndentString("    "); // 4 spaces indent
+        // XML_PARSE_NOBLANKS -> pretty-print
         auto doc =
-            xmlParseMemory(prj_stream.str().c_str(), prj_stream.str().size());
+            xmlReadMemory(prj_stream.str().c_str(), prj_stream.str().size(),
+                          nullptr, nullptr, XML_PARSE_NOBLANKS);
         auto prj_out = (std::filesystem::path(out_directory) /
                         std::filesystem::path(filepath).stem())
                            .string() +
