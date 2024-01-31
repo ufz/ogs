@@ -72,7 +72,7 @@ container:
       poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:22.04_3.10'
+      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:23.04_3.10'
       --boost-sourceforge
       --tag $DOCKER_TAG_JUPYTER
       $ON_MASTER_ARGS
@@ -81,7 +81,7 @@ container:
       poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
       --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
       --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:22.04_3.10'
+      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:23.04_3.10'
       --mpi_no_entrypoint
       --boost-sourceforge
       --tag $DOCKER_TAG_JUPYTER_PETSC
