@@ -12,6 +12,7 @@
 #include <mpi.h>
 
 #include <numeric>
+#include <range/v3/algorithm/count_if.hpp>
 #include <range/v3/numeric.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/enumerate.hpp>
@@ -97,15 +98,13 @@ std::pair<std::vector<Node*>, std::vector<Element*>> copyNodesAndElements(
 unsigned long computeNumberOfRegularNodes(NodePartitionedMesh const* bulk_mesh,
                                           Mesh const* subdomain_mesh)
 {
-    auto const subdomain_nodes = subdomain_mesh->getNodes();
-    auto const local_bulk_node_ids_for_subdomain =
+    auto const& subdomain_nodes = subdomain_mesh->getNodes();
+    auto const& local_bulk_node_ids_for_subdomain =
         *bulkNodeIDs(*subdomain_mesh);
-    auto const subdomain_node_ids =
-        subdomain_nodes | MeshLib::views::ids | ranges::to<std::vector>;
     unsigned long const number_of_regular_nodes =
-        std::count_if(subdomain_node_ids.begin(), subdomain_node_ids.end(),
-                      std::bind_front(isRegularNode, *bulk_mesh,
-                                      local_bulk_node_ids_for_subdomain));
+        ranges::count_if(subdomain_nodes | MeshLib::views::ids,
+                         std::bind_front(isRegularNode, *bulk_mesh,
+                                         local_bulk_node_ids_for_subdomain));
 
     DBUG("[{}] number of regular nodes: {}", subdomain_mesh->getName(),
          number_of_regular_nodes);
@@ -117,8 +116,8 @@ computeRegularBaseNodeGlobalNodeIDsOfSubDomainPartition(
     NodePartitionedMesh const* bulk_mesh, Mesh const* subdomain_mesh)
 {
     // create/fill global nodes information of the sub-domain partition
-    auto const subdomain_nodes = subdomain_mesh->getNodes();
-    auto const local_bulk_node_ids_for_subdomain =
+    auto const& subdomain_nodes = subdomain_mesh->getNodes();
+    auto const& local_bulk_node_ids_for_subdomain =
         *bulkNodeIDs(*subdomain_mesh);
 
     // global node ids for the sub-domain:
