@@ -34,8 +34,9 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Reads a Gocad stratigraphic grid file (file ending sg) and writes the "
         "data in the vtk unstructured grid file format. The documentation is "
-        "available at  "
-        "https://www.opengeosys.org/docs/tools/meshing/gocadsgridreader/.\n\n "
+        "available at "
+        "https://www.opengeosys.org/docs/tools/meshing/gocadsgridreader/."
+        "\n"
         "OpenGeoSys-6 "
         "software, version " +
             GitInfoLib::GitInfo::ogs_version +

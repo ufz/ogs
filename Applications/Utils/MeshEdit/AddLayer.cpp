@@ -29,12 +29,13 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Adds a layer to an existing mesh."
         "The documentation is available at "
-        "https://docs.opengeosys.org/docs/tools/meshing/addlayer.\n\n"
+        "https://www.opengeosys.org/docs/tools/meshing/addlayer."
+        "\n"
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
             "Copyright (c) 2012-2024, OpenGeoSys Community "
-            "(http://www.opengeosys.org)",
+            "(https://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_arg(
         "i", "input-mesh-file", "the name of the file containing the mesh",
