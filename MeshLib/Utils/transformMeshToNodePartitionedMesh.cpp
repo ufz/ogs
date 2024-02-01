@@ -101,10 +101,12 @@ unsigned long computeNumberOfRegularNodes(NodePartitionedMesh const* bulk_mesh,
     auto const& subdomain_nodes = subdomain_mesh->getNodes();
     auto const& local_bulk_node_ids_for_subdomain =
         *bulkNodeIDs(*subdomain_mesh);
-    unsigned long const number_of_regular_nodes =
-        ranges::count_if(subdomain_nodes | MeshLib::views::ids,
-                         std::bind_front(isRegularNode, *bulk_mesh,
-                                         local_bulk_node_ids_for_subdomain));
+    unsigned long const number_of_regular_nodes = ranges::count_if(
+        subdomain_nodes | MeshLib::views::ids,
+        [&](std::size_t const id) {
+            return isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain,
+                                 id);
+        });
 
     DBUG("[{}] number of regular nodes: {}", subdomain_mesh->getName(),
          number_of_regular_nodes);
