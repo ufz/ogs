@@ -42,6 +42,13 @@ constructAdditionalMeshesFromGeometries(
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> additional_meshes;
 
+#ifdef USE_PETSC
+    // The subdomain_mesh is not yet a NodePartitionedMesh.
+    // The bulk_mesh, which is a NodePartitionedMesh, is needed to construct the
+    // subdomain NodePartitionedMesh.
+    auto const* bulk_mesh = dynamic_cast<MeshLib::NodePartitionedMesh const*>(
+        &boundary_element_searcher.mesh);
+#endif
     for (GeometryVec* const geometry_vec : geometries)
     {
         // Each geometry_vec has a name, this is the first part of the full
@@ -75,13 +82,6 @@ constructAdditionalMeshesFromGeometries(
                         geometry, multiple_nodes_allowed)));
 
 #ifdef USE_PETSC
-            // The subdomain_mesh is not yet a NodePartitionedMesh.
-            // The bulk_mesh, which is a NodePartitionedMesh, is needed to
-            // construct the subdomain NodePartitionedMesh
-            auto const* bulk_mesh =
-                dynamic_cast<MeshLib::NodePartitionedMesh const*>(
-                    &boundary_element_searcher.mesh);
-
             additional_meshes.push_back(
                 MeshLib::transformMeshToNodePartitionedMesh(
                     bulk_mesh, subdomain_mesh.get()));
