@@ -101,6 +101,30 @@ check docs links:
       --ignore-url='https://doi.org/10.1680/geot.2008.58.3.157'
       build/docs
 
+check docs links new:
+  stage: check
+  tags: [envinf4, docker] # pinning for cache
+  allow_failure: true
+  image:
+    name: lycheeverse/lychee
+    entrypoint: [ '/bin/bash', '-c', 'ln -snf /bin/bash /bin/sh && /bin/bash -c $0' ]
+  needs: ["build docs"]
+  extends:
+    - .rules-master-manual
+  script:
+    - lychee --cache --max-cache-age 2d
+      --threads ${CTEST_PARALLEL_LEVEL:-4}
+      --exclude gitlab.opengeosys.org/ogs/ogs
+      --exclude github.com/ufz/ogs/commit/\%1
+      build/docs
+    - lychee --cache --max-cache-age 14d
+      --max-concurrency 2
+      --include gitlab.opengeosys.org/ogs/ogs
+      build/docs
+  cache:
+    paths:
+      - .lycheecache
+
 spell check docs:
   image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.18-vale-2.27.0-markdownlint-0.35.0-markdownlint2-0.8.1
   stage: check

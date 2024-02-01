@@ -23,15 +23,20 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
 {
     // Parse CLI arguments.
     TCLAP::CmdLine cmd(
-        "OpenGeoSys-6 software.\n"
+        "OpenGeoSys-6 software."
+        "\n"
         "Copyright (c) 2012-2024, OpenGeoSys Community "
-        "(http://www.opengeosys.org) "
+        "(https://www.opengeosys.org) "
+        "\n"
         "Distributed under a Modified BSD License. "
         "See accompanying file LICENSE.txt or "
-        "http://www.opengeosys.org/project/license\n"
+        "https://www.opengeosys.org/project/license"
+        "\n"
         "version: " +
-            GitInfoLib::GitInfo::ogs_version + "\n" +
-            "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args,
+            GitInfoLib::GitInfo::ogs_version +
+            "\n"
+            "CMake arguments: " +
+            CMakeInfoLib::CMakeInfo::cmake_args,
         ' ',
         GitInfoLib::GitInfo::ogs_version + "\n\n" +
             "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
