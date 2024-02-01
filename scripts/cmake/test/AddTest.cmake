@@ -96,11 +96,13 @@ function(AddTest)
     if(NOT DEFINED AddTest_REQUIREMENTS)
         set(AddTest_REQUIREMENTS TRUE)
     endif()
-    set(timeout ${ogs.ctest.large_runtime})
-    if(DEFINED AddTest_RUNTIME)
-        math(EXPR timeout "${AddTest_RUNTIME} * 3")
-    else()
+    if(NOT DEFINED AddTest_RUNTIME)
         set(AddTest_RUNTIME 1)
+    elseif(AddTest_RUNTIME GREATER 750)
+        # Set a timeout on jobs larger than the default ctest timeout of 1500 (s).
+        # The allowed runtime is twice as long as the given RUNTIME parameter.
+        math(EXPR timeout "${AddTest_RUNTIME} * 2")
+        set(timeout TIMEOUT ${timeout})
     endif()
     if(NOT DEFINED AddTest_WORKING_DIRECTORY)
         set(AddTest_WORKING_DIRECTORY ${AddTest_BINARY_PATH})
@@ -381,6 +383,7 @@ macro(_add_test TEST_NAME)
                    ${AddTest_DISABLED}
                    LABELS
                    "${labels}"
+                   ${timeout}
     )
 endmacro()
 
