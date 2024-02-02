@@ -54,6 +54,16 @@ $$
 $$
 where $t_{1/2}$ [s] is the half life of the decaying component.
 
+It is worth noting that non-isothermal component transport process can be simulated by including the process variable `Temperature`. Currently, the non-isothermal component transport process is only available in staggered scheme.
+
+The corresponding heat transport equation is given as follows.
+$$
+\begin{equation}
+\left(\phi \rho_\text{f} c_\text{f} + (1-\phi) \rho_\text{s} c_\text{s} \right) \frac{\partial T}{\partial t} + \rho_\text{f} c_\text{f} \textbf{q} \cdot \nabla  T - \nabla \cdot \left (\Lambda \cdot \nabla T \right) = 0
+\end{equation}
+$$
+where $c_\text{f}$ and $c_\text{s}$ [J/kg/K] refer to the specific heat capacity of fluid and solid, $\rho_\text{f}$ and $\rho_\text{s}$ [kg/m$^3$] denote the density of fluid and solid, $\phi$ [-] and $\Lambda$ [W/m/K] are the porosity and tensor of thermal dispersion.
+
 ## Input parameters
 
 The following table shows an overview of all input parameters available in the ComponentTransport process.
