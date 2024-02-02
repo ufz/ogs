@@ -116,7 +116,7 @@ check docs links new:
       --threads ${CTEST_PARALLEL_LEVEL:-4}
       --exclude gitlab.opengeosys.org/ogs/ogs
       --exclude github.com/ufz/ogs/commit/\%1
-      --exclude-path search_opensearch.php
+      --exclude search_opensearch.php
       build/docs
     - lychee --cache --max-cache-age 14d
       --max-concurrency 2
