@@ -291,13 +291,41 @@ void resetNodesInRegularElements(
             MeshLib::Node* node_ptr = nullptr;
             if (!oct_tree.addPoint(node, node_ptr))
             {
-                e->setNode(i, node_ptr);
-            }
-            else
-            {
-                OGS_FATAL("node id {} inserted ({}, {}, {}) for element {}",
-                          node->getID(), (*node)[0], (*node)[1], (*node)[2],
-                          e->getID());
+                std::vector<MeshLib::Node*> query_nodes;
+                auto const eps = std::numeric_limits<double>::epsilon() * 1e13;
+                Eigen::Vector3d const min =
+                    node->asEigenVector3d().array() - eps;
+                Eigen::Vector3d const max =
+                    node->asEigenVector3d().array() + eps;
+                oct_tree.getPointsInRange(min, max, query_nodes);
+
+                if (query_nodes.empty())
+                {
+                    OGS_FATAL(
+                        "query_nodes for node [{}], ({}, {}, {}) of element "
+                        "[{}] are empty",
+                        node->getID(), (*node)[0], (*node)[1], (*node)[2],
+                        e->getID());
+                }
+                auto const it = std::find_if(
+                    query_nodes.begin(), query_nodes.end(),
+                    [&node, eps](auto const* p)
+                    {
+                        return (p->asEigenVector3d() - node->asEigenVector3d())
+                                   .squaredNorm() < eps * eps;
+                    });
+                if (it == query_nodes.end())
+                {
+                    OGS_FATAL(
+                        "did not find node: [{}] ({}, {}, {}) of element [{}] "
+                        "in query_nodes",
+                        node->getID(), (*node)[0], (*node)[1], (*node)[2],
+                        e->getID());
+                }
+                else
+                {
+                    e->setNode(i, *it);
+                }
             }
         }
     }
