@@ -12,7 +12,7 @@ Three tests are presented:
 
 - {{< data-link "1D homogeneous" "Parabolic/T/1D_freezing_column_Stefan/Stefan_problem_homogen.prj" >}},
 - {{< data-link "1D heterogeneous" "Parabolic/T/1D_freezing_column_Stefan/Stefan_problem.prj" >}}, and
-- {{< data-link "2D heterogeneous" "/Parabolic/T/2D_freezing_disk/circle_disk.prj" >}}.
+- {{< data-link "2D heterogeneous" "Parabolic/T/2D_freezing_disk/circle_disk.prj" >}}.
 
 ## Problem description
 

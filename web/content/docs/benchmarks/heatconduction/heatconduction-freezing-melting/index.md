@@ -28,4 +28,4 @@ Next figure depicts comparison of the manufactured solution and the numerical on
 
 The test is presented in:
 
-{{< data-link "2D_Ice_melting-forming_manuf_solution/ManSol3_IceWaterMix_Scaled.prj" >}},
+{{< data-link "Parabolic/T/2D_Ice_melting-forming_manuf_solution/ManSol3_IceWaterMix_Scaled.prj" >}},
