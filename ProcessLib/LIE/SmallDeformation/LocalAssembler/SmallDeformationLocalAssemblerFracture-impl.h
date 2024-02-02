@@ -18,6 +18,7 @@
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
 #include "ProcessLib/LIE/Common/Utils.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "SmallDeformationLocalAssemblerFracture.h"
 
 namespace ProcessLib
@@ -260,7 +261,8 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
         _integration_method.getNumberOfPoints();
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    auto const e_id = _element.getID();
+    x_position.setElementID(e_id);
 
     std::vector<Eigen::VectorXd> vec_nodal_g;
     for (unsigned i = 0; i < n_enrich_var; i++)
@@ -324,10 +326,8 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
     }
 
     double ele_b = 0;
-    typename HMatricesType::ForceVectorType ele_sigma =
-        HMatricesType::ForceVectorType::Zero(DisplacementDim);
-    typename HMatricesType::ForceVectorType ele_w =
-        HMatricesType::ForceVectorType::Zero(DisplacementDim);
+    ForceVectorType ele_sigma = ForceVectorType::Zero(DisplacementDim);
+    ForceVectorType ele_w = ForceVectorType::Zero(DisplacementDim);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -340,12 +340,49 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
     ele_w /= n_integration_points;
     ele_sigma /= n_integration_points;
     (*_process_data._mesh_prop_b)[_element.getID()] = ele_b;
-    (*_process_data._mesh_prop_w_n)[_element.getID()] = ele_w[index_normal];
-    (*_process_data._mesh_prop_w_s)[_element.getID()] = ele_w[0];
-    (*_process_data._mesh_prop_fracture_stress_normal)[_element.getID()] =
-        ele_sigma[index_normal];
-    (*_process_data._mesh_prop_fracture_stress_shear)[_element.getID()] =
-        ele_sigma[0];
+
+    Eigen::Map<GlobalDimVectorType>(
+        &(*_process_data.element_fracture_stresses)[e_id * DisplacementDim]) =
+        ele_sigma;
+
+    Eigen::Map<GlobalDimVectorType>(
+        &(*_process_data.element_local_jumps)[e_id * DisplacementDim]) = ele_w;
+}
+
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> const&
+SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
+    getIntPtFractureStress(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    unsigned const n_integration_points = _ip_data.size();
+    cache.clear();
+    auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, DisplacementDim, n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        cache_matrix.col(ip).noalias() = _ip_data[ip].sigma;
+    }
+
+    return cache;
+}
+
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> const&
+SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
+    getIntPtFractureAperture(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointScalarData(
+        _ip_data, &IntegrationPointDataType::aperture, cache);
 }
 
 }  // namespace SmallDeformation

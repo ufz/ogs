@@ -83,28 +83,12 @@ struct SmallDeformationProcessData
     std::vector<std::vector<int>> _vec_ele_connected_junctionIDs;
 
     // mesh properties to output element's stress.
-    MeshLib::PropertyVector<double>* _mesh_prop_stress_xx = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_stress_yy = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_stress_zz = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_stress_xy = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_stress_xz = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_stress_yz = nullptr;
-
-    // mesh properties to output element's strain
-    MeshLib::PropertyVector<double>* _mesh_prop_strain_xx = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_strain_yy = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_strain_zz = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_strain_xy = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_strain_xz = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_strain_yz = nullptr;
+    MeshLib::PropertyVector<double>* element_stresses = nullptr;
+    MeshLib::PropertyVector<double>* element_local_jumps = nullptr;
+    MeshLib::PropertyVector<double>* element_fracture_stresses = nullptr;
 
     // mesh property for fracture aperture
     MeshLib::PropertyVector<double>* _mesh_prop_b = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_w_n = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_w_s = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_fracture_stress_shear = nullptr;
-    MeshLib::PropertyVector<double>* _mesh_prop_fracture_stress_normal =
-        nullptr;
 
     double const _reference_temperature;
 };

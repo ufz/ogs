@@ -104,167 +104,46 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
-    std::vector<double> const& getIntPtSigmaXX(
+    std::vector<double> const& getIntPtSigma(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtEpsilon(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override;
+
+    std::vector<double> const& getIntPtFractureStress(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        return getIntPtSigma(cache, 0);
+        cache.resize(0);
+        return cache;
     }
 
-    std::vector<double> const& getIntPtSigmaYY(
+    std::vector<double> const& getIntPtFractureAperture(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const override
     {
-        return getIntPtSigma(cache, 1);
-    }
-
-    std::vector<double> const& getIntPtSigmaZZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 2);
-    }
-
-    std::vector<double> const& getIntPtSigmaXY(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtSigma(cache, 3);
-    }
-
-    std::vector<double> const& getIntPtSigmaXZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtSigma(cache, 4);
-    }
-
-    std::vector<double> const& getIntPtSigmaYZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtSigma(cache, 5);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXX(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 0);
-    }
-
-    std::vector<double> const& getIntPtEpsilonYY(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 1);
-    }
-
-    std::vector<double> const& getIntPtEpsilonZZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 2);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXY(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return getIntPtEpsilon(cache, 3);
-    }
-
-    std::vector<double> const& getIntPtEpsilonXZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtEpsilon(cache, 4);
-    }
-
-    std::vector<double> const& getIntPtEpsilonYZ(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        assert(DisplacementDim == 3);
-        return getIntPtEpsilon(cache, 5);
+        cache.resize(0);
+        return cache;
     }
 
 private:
-    std::vector<double> const& getIntPtSigma(std::vector<double>& cache,
-                                             std::size_t const component) const
-    {
-        cache.clear();
-        cache.reserve(_ip_data.size());
-
-        for (auto const& ip_data : _ip_data)
-        {
-            if (component < 3)
-            {  // xx, yy, zz components
-                cache.push_back(ip_data._sigma[component]);
-            }
-            else
-            {  // mixed xy, yz, xz components
-                cache.push_back(ip_data._sigma[component] / std::sqrt(2));
-            }
-        }
-
-        return cache;
-    }
-
-    std::vector<double> const& getIntPtEpsilon(
-        std::vector<double>& cache, std::size_t const component) const
-    {
-        cache.clear();
-        cache.reserve(_ip_data.size());
-
-        for (auto const& ip_data : _ip_data)
-        {
-            if (component < 3)
-            {  // xx, yy, zz components
-                cache.push_back(ip_data._eps[component]);
-            }
-            else
-            {  // mixed xy, yz, xz components
-                cache.push_back(ip_data._eps[component] / std::sqrt(2));
-            }
-        }
-
-        return cache;
-    }
-
     SmallDeformationProcessData<DisplacementDim>& _process_data;
 
-    std::vector<IntegrationPointDataMatrix<ShapeMatricesType, BMatricesType,
-                                           DisplacementDim>,
-                Eigen::aligned_allocator<IntegrationPointDataMatrix<
-                    ShapeMatricesType, BMatricesType, DisplacementDim>>>
+    using IntegrationPointDataType =
+        IntegrationPointDataMatrix<ShapeMatricesType, BMatricesType,
+                                   DisplacementDim>;
+    std::vector<IntegrationPointDataType,
+                Eigen::aligned_allocator<IntegrationPointDataType>>
         _ip_data;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
