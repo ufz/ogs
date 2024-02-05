@@ -16,6 +16,8 @@
 #include <petscvec.h>
 #include <spdlog/fmt/bundled/core.h>
 
+#include <string>
+
 #include "BaseLib/RunTime.h"
 
 template <>
@@ -29,7 +31,7 @@ struct fmt::formatter<SNESConvergedReason>
         if (reason < 0)
         {
             return fmt::format_to(ctx.out(), "DIVERGED: {}",
-                                  SNESConvergedReasons[-reason]);
+                                  SNESConvergedReasons[reason]);
         }
         return fmt::format_to(ctx.out(), "CONVERGED: {}",
                               SNESConvergedReasons[reason]);
