@@ -140,35 +140,37 @@ especially for the solution of non-linear problems.
 
 ### Error tolerances
 
-Error tolerances will be applied to the solution vector
+Error tolerances will be applied to the solution vector.
 There are two ways of defining error tolerances:
 
-- relative `<reltosl> </reltols>`
-- absolute `<abstols> </abstols>`
+- relative
+- absolute
 
 Both of them can be defined as single value, that will be applied to all process variables, or with multiple ones applied to
-them individually.
+them individually ("per component" criteria).
+
+In those two cases appropriate tags have to be used:
+
+- for relative tolerances: `<reltol> </reltol>`
+- for absolute tolerances: `<abstol> </abstol>`
+
+and for "per component":
+
+- for relative tolerances: `<reltols> </reltols>`
+- for absolute tolerances: `<abstols> </abstols>`
 
 <!-- TODO: Describe the definition of the relative tolerance. -->
 
 If tolerances per process variable are provided, the order of values defined inside of the tags `<abstols> </abstols>` and
-`<reltosl> </reltols>` has to match order of process variables defined in [processes](/docs/userguide/blocks/processes/).
+`<reltols> </reltols>` has to match order of process variables defined in [processes](/docs/userguide/blocks/processes/).
 If process variable is directional, an XYZ order is followed.
 For example for a 3D THM problem with directional displacement $\mathbf{u}$ the following order has to be used: $T$, $p$, $u_x$
 , $u_y$, $u_z$.
 The order of $T$, $p$, and $u$ is prescribed by the THM process.
 
 Depending on process and simulation setup, the number of variables in the solution vector can vary.
-In the following example, there are four tolerances given in `abstol`: one for $T$, one for $p$, and two for $\mathbf{u}$ ($u_x$
-and $u_y$ as this is a 2D problem):
-
-```xml
-<process_variables>
-    <displacement>displacement</displacement>
-    <pressure>pressure</pressure>
-    <temperature>temperature</temperature>
-</process_variables>
-```
+For example in a 2D THM simulation, there will four tolerances given in `abstol`: one for $T$, one for $p$, and two for $\mathbf{u}$ ($u_x$
+and $u_y$).
 
 The same order is preserved for [output variables](/docs/userguide/blocks/time_loop/#output).
 
