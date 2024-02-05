@@ -224,17 +224,19 @@ A more realistic example can be found in benchmark [A2](https://gitlab.opengeosy
 </property>
 ```
 
+The slope value provided in the `<independent_variable> </independent_variable>` block for temperature is the thermal expansion coefficient.
+
 The definition of density provided in the snippet above can be expressed by following equations:
 $$
-\rho (T=298.15, p=4e6)=1200
+\rho_{0} (T_{0}=298.15, p_{0}=4\cdot 10^{6})=1200
 $$
 
 $$
-\rho (T)=(-6 \cdot 10^{-4})\cdot T+1200
+\rho (T)=((-6 \cdot 10^{-4})\cdot (T-T_{0}) + 1) \rho_{0}
 $$
 
 $$
-\rho (p)=(0.5 \cdot 10^{9}) \cdot p+1200
+\rho (p)=((0.5 \cdot 10^{9}) \cdot (p-p_{0}) + 1) \rho_{0}
 $$
 
 ### Function
