@@ -14,29 +14,8 @@
 
 #include <petscmat.h>
 #include <petscvec.h>
-#include <spdlog/fmt/bundled/core.h>
-
-#include <string>
 
 #include "BaseLib/RunTime.h"
-
-template <>
-struct fmt::formatter<SNESConvergedReason>
-{
-    constexpr auto parse(format_parse_context& ctx) { return ctx.end(); }
-
-    template <typename FormatContext>
-    auto format(SNESConvergedReason const reason, FormatContext& ctx)
-    {
-        if (reason < 0)
-        {
-            return fmt::format_to(ctx.out(), "DIVERGED: {}",
-                                  SNESConvergedReasons[reason]);
-        }
-        return fmt::format_to(ctx.out(), "CONVERGED: {}",
-                              SNESConvergedReasons[reason]);
-    }
-};
 
 namespace
 {
@@ -50,6 +29,21 @@ struct PetscContext
     GlobalMatrix* J;
     int const process_id;
 };
+
+void printConvergenceReason(SNES const& snes_solver,
+                            SNESConvergedReason const& reason)
+{
+    const char* strreason;
+    SNESGetConvergedReasonString(snes_solver, &strreason);
+    if (reason < 0)
+    {
+        INFO("PETScSNES diverged reason: {:s}.", strreason);
+    }
+    else
+    {
+        INFO("PETScSNES converged reason: {:s}.", strreason);
+    }
+}
 
 PetscErrorCode updateResidual(SNES /*snes*/, Vec x, Vec petsc_r,
                               void* petsc_context)
@@ -229,9 +223,9 @@ NonlinearSolverStatus PETScNonlinearSolver::solve(
     DBUG("PETScNonlinearSolver: call SNESSolve");
     SNESSolve(_snes_solver, nullptr, x_snes.getRawVector());
 
-    SNESConvergedReason reason = SNES_CONVERGED_ITERATING;
+    SNESConvergedReason reason;
     SNESGetConvergedReason(_snes_solver, &reason);
-    INFO("PETSsSNES convergence reason {}.", reason);
+    printConvergenceReason(_snes_solver, reason);
 
     PetscInt iterations;
     SNESGetIterationNumber(_snes_solver, &iterations);
