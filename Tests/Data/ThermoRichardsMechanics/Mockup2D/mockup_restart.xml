@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="mockup.prj">
+    <replace sel="/*/meshes/mesh[1]/text()">mockup_results_51840000.000000.vtu</replace>
+
+    <add sel="/*/processes/process">
+        <initialize_porosity_from_medium_property>false</initialize_porosity_from_medium_property>
+    </add>
+
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">51840000.000000</replace>
+
+    <!-- This is the step size from the non-restart version (see base_file) **after** t = 51840000.000000 s.
+         It's exact value is crucial to meet the tight tolerances set in this test. -->
+    <replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">4696576.89244747</replace>
+
+    <replace sel="/*/time_loop/output/prefix/text()">mockup_results_restart</replace>
+
+    <remove sel="/*/parameters/parameter[name='displacement0']" />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>displacement0</name>
+            <type>MeshNode</type>
+            <mesh>mockup_results_51840000.000000</mesh>
+            <field_name>displacement</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/parameters/parameter[name='p0']" />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>p0</name>
+            <type>MeshNode</type>
+            <mesh>mockup_results_51840000.000000</mesh>
+            <field_name>pressure</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/parameters/parameter[name='T_ref']" />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>T_ref</name>
+            <type>MeshNode</type>
+            <mesh>mockup_results_51840000.000000</mesh>
+            <field_name>temperature</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>displacement</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>epsilon</field>
+                <absolute_tolerance>2e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>porosity</field>
+                <absolute_tolerance>2e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>pressure</field>
+                <absolute_tolerance>6e-6</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>saturation</field>
+                <absolute_tolerance>4e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>sigma</field>
+                <absolute_tolerance>8e-7</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>swelling_stress</field>
+                <absolute_tolerance>2e-7</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>temperature</field>
+                <absolute_tolerance>4e-12</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>intrinsic_permeability</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>relative_permeability</field>
+                <absolute_tolerance>6e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>intrinsic_permeability_ip</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mockup_results_restart_.*[.]vtu</regex>
+                <field>relative_permeability_ip</field>
+                <absolute_tolerance>5e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
