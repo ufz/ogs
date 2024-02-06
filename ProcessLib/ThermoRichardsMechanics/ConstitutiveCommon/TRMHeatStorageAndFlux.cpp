@@ -19,7 +19,7 @@ void TRMHeatStorageAndFluxModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     LiquidDensityData const& rho_L_data, SolidDensityData const& rho_S_data,
     SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_data,
-    PorosityData const& poro_data,
+    PorosityData const& poro_data, LiquidViscosityData const& mu_L_data,
     PermeabilityData<DisplacementDim> const& perm,
     TemperatureData<DisplacementDim> const& T_data,
     DarcyLawData<DisplacementDim> const& darcy_data,
@@ -68,8 +68,9 @@ void TRMHeatStorageAndFluxModel<DisplacementDim>::eval(
     //
     // temperature equation, pressure part
     //
-    out.K_Tp_NT_V_dN = -volumetric_heat_capacity_liquid * perm.k_rel *
-                       (perm.Ki_over_mu.transpose() * T_data.grad_T);
+    out.K_Tp_NT_V_dN = -volumetric_heat_capacity_liquid * perm.k_rel /
+                       mu_L_data.viscosity *
+                       (perm.Ki.transpose() * T_data.grad_T);
     out.K_Tp_X_NTN = -volumetric_heat_capacity_liquid *
                      darcy_data.v_darcy.dot(T_data.grad_T) / perm.k_rel *
                      perm.dk_rel_dS_L * dS_L_data.dS_L_dp_cap;

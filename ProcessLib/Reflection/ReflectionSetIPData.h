@@ -34,12 +34,11 @@ void setIPData(double const* values,
 
     constexpr auto num_comp = NumberOfComponents<AccessorResultStripped>::value;
 
-    auto constexpr kv_size =
-        MathLib::KelvinVector::kelvin_vector_dimensions(dim);
     auto const num_int_pts = ip_data_vector.size();
 
     if constexpr (num_comp == 1)
     {
+        // scalar
         for (unsigned ip = 0; ip < num_int_pts; ++ip)
         {
             accessor(ip_data_vector[ip]) = values[ip];
@@ -47,6 +46,12 @@ void setIPData(double const* values,
     }
     else
     {
+        constexpr auto num_rows = NumberOfRows<AccessorResultStripped>::value;
+        constexpr auto num_cols =
+            NumberOfColumns<AccessorResultStripped>::value;
+        constexpr auto kv_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(dim);
+
         auto const values_mat =
             Eigen::Map<Eigen::Matrix<double, num_comp, Eigen::Dynamic,
                                      Eigen::ColMajor> const>(values, num_comp,
@@ -54,15 +59,28 @@ void setIPData(double const* values,
 
         for (unsigned ip = 0; ip < num_int_pts; ++ip)
         {
-            if constexpr (num_comp == kv_size)
+            if constexpr (num_cols == 1 || num_rows == 1)
             {
-                accessor(ip_data_vector[ip]) =
-                    MathLib::KelvinVector::symmetricTensorToKelvinVector(
-                        values_mat.col(ip));
+                // vector
+                if constexpr (num_comp == kv_size)
+                {
+                    // Kelvin vector
+                    accessor(ip_data_vector[ip]) =
+                        MathLib::KelvinVector::symmetricTensorToKelvinVector(
+                            values_mat.col(ip));
+                }
+                else
+                {
+                    // other vector
+                    accessor(ip_data_vector[ip]) = values_mat.col(ip);
+                }
             }
             else
             {
-                accessor(ip_data_vector[ip]) = values_mat.col(ip);
+                // matrix
+                accessor(ip_data_vector[ip]) =
+                    values_mat.col(ip).template reshaped<Eigen::RowMajor>(
+                        num_rows, num_cols);
             }
         }
     }

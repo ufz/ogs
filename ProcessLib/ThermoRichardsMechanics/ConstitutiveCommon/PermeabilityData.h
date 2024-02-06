@@ -19,6 +19,16 @@ struct PermeabilityData
 {
     double k_rel;
     double dk_rel_dS_L;
-    GlobalDimMatrix<DisplacementDim> Ki_over_mu;
+    GlobalDimMatrix<DisplacementDim> Ki;
+
+    static auto reflect()
+    {
+        using Self = PermeabilityData<DisplacementDim>;
+        namespace R = ProcessLib::Reflection;
+
+        return std::tuple{
+            R::makeReflectionData("intrinsic_permeability", &Self::Ki),
+            R::makeReflectionData("relative_permeability", &Self::k_rel)};
+    }
 };
 }  // namespace ProcessLib::ThermoRichardsMechanics

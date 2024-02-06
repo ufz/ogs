@@ -13,6 +13,7 @@
 #include "Biot.h"
 #include "FluidThermalExpansion.h"
 #include "LiquidDensity.h"
+#include "LiquidViscosity.h"
 #include "PermeabilityData.h"
 #include "Saturation.h"
 #include "TRMStorage.h"
@@ -51,6 +52,7 @@ struct EqPModel
               SaturationDataDeriv const& dS_L_data,
               BiotData const& biot_data,
               LiquidDensityData const& rho_L_data,
+              LiquidViscosityData const& mu_L_data,
               PermeabilityData<DisplacementDim> const& perm_data,
               FluidThermalExpansionData const& f_therm_exp_data,
               TRMVaporDiffusionData<DisplacementDim> const& vap_data,

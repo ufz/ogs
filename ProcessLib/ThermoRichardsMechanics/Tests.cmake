@@ -458,3 +458,7 @@ if(OGS_USE_MFRONT)
         OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/A2/A2.xml RUNTIME 18)
     endif()
 endif()
+
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup.prj RUNTIME 60)
+endif()

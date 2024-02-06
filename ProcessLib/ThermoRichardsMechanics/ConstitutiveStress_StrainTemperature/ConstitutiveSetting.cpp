@@ -43,7 +43,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     auto& rho_L_data = out.rho_L_data;
     auto& rho_S_data = out.rho_S_data;
     auto& mu_L_data = out.mu_L_data;
-    auto& perm_data = tmp.perm_data;
+    auto& perm_data = out.perm_data;
     auto& darcy_data = out.darcy_data;
     auto& f_therm_exp_data = tmp.f_therm_exp_data;
 
@@ -148,22 +148,22 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 
     assertEvalArgsUnique(models.perm_model);
     models.perm_model.eval(x_t, media_data, S_L_data, p_cap_data, T_data,
-                           mu_L_data, state.transport_poro_data,
-                           cd.total_stress_data, state.eps_data,
-                           tmp.equiv_plast_strain_data, perm_data);
+                           state.transport_poro_data, cd.total_stress_data,
+                           state.eps_data, tmp.equiv_plast_strain_data,
+                           perm_data);
 
     assertEvalArgsUnique(models.th_osmosis_model);
     models.th_osmosis_model.eval(x_t, media_data, T_data, rho_L_data,
                                  cd.th_osmosis_data);
 
     assertEvalArgsUnique(models.darcy_model);
-    models.darcy_model.eval(p_cap_data, rho_L_data, perm_data,
+    models.darcy_model.eval(p_cap_data, rho_L_data, mu_L_data, perm_data,
                             cd.th_osmosis_data, darcy_data);
 
     assertEvalArgsUnique(models.heat_storage_and_flux_model);
     models.heat_storage_and_flux_model.eval(
         x_t, media_data, rho_L_data, rho_S_data, S_L_data, dS_L_data, poro_data,
-        perm_data, T_data, darcy_data, heat_data);
+        mu_L_data, perm_data, T_data, darcy_data, heat_data);
 
     assertEvalArgsUnique(models.vapor_diffusion_model);
     models.vapor_diffusion_model.eval(x_t, media_data, rho_L_data, S_L_data,
@@ -182,8 +182,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
 
     assertEvalArgsUnique(models.eq_p_model);
     models.eq_p_model.eval(p_cap_data, T_data, S_L_data, dS_L_data, biot_data,
-                           rho_L_data, perm_data, f_therm_exp_data, vap_data,
-                           storage_data, cd.eq_p_data);
+                           rho_L_data, mu_L_data, perm_data, f_therm_exp_data,
+                           vap_data, storage_data, cd.eq_p_data);
 
     assertEvalArgsUnique(models.eq_T_model);
     models.eq_T_model.eval(heat_data, vap_data, cd.eq_T_data);

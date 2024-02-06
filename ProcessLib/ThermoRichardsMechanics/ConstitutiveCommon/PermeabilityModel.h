@@ -12,7 +12,6 @@
 
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
@@ -26,7 +25,6 @@ struct PermeabilityModel
               SaturationData const& S_L_data,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               TemperatureData<DisplacementDim> const& T_data,
-              LiquidViscosityData const& mu_L_data,
               TransportPorosityData const& transport_poro_data,
               TotalStressData<DisplacementDim> const& total_stress_data,
               StrainData<DisplacementDim> const& eps_data,

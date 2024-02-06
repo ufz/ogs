@@ -42,6 +42,7 @@ struct DarcyLawModel
 
     void eval(CapillaryPressureData<DisplacementDim> const& p_cap_data,
               LiquidDensityData const& rho_L_data,
+              LiquidViscosityData const& mu_L_data,
               PermeabilityData<DisplacementDim> const& perm_data,
               ThermoOsmosisData<DisplacementDim> const& th_osmosis_data,
               DarcyLawData<DisplacementDim>& out) const;
