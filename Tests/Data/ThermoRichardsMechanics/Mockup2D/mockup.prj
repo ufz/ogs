@@ -217,21 +217,8 @@
                 </pair>
             </timesteps>
             <output_iteration_results>false</output_iteration_results>
-            <variables>
-                <variable>pressure</variable>
-                <variable>temperature</variable>
-                <variable>displacement</variable>
-                <variable>sigma</variable>
-                <variable>epsilon</variable>
-                <variable>saturation</variable>
-                <variable>swelling_stress</variable>
-                <variable>porosity</variable>
-                <variable>intrinsic_permeability</variable>
-                <variable>intrinsic_permeability_ip</variable>
-                <variable>relative_permeability</variable>
-                <variable>relative_permeability_ip</variable>
-            </variables>
-            <fixed_output_times>0 17280000 34560000 51840000 69120000 86400000</fixed_output_times>
+            <variables />
+			<fixed_output_times>0 17280000 34560000 51840000 69120000 86400000</fixed_output_times>
             <suffix>_{:time}</suffix>
         </output>
     </time_loop>
@@ -407,73 +394,73 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>epsilon</field>
             <absolute_tolerance>2e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>porosity</field>
             <absolute_tolerance>2e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>pressure</field>
             <absolute_tolerance>7.2e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>saturation</field>
             <absolute_tolerance>5e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>sigma</field>
             <absolute_tolerance>8e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>swelling_stress</field>
             <absolute_tolerance>2e-7</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>temperature</field>
             <absolute_tolerance>4e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>intrinsic_permeability</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>relative_permeability</field>
             <absolute_tolerance>6e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>intrinsic_permeability_ip</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mockup_results_.*[.]vtu</regex>
+            <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>relative_permeability_ip</field>
             <absolute_tolerance>6e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
