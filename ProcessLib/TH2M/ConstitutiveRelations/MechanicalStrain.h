@@ -22,7 +22,7 @@ template <int DisplacementDim>
 struct MechanicalStrainData
 {
     // TODO it seems fragile that some data have to be initialized that way.
-    KelvinVector<DisplacementDim> eps_m = KVzero<DisplacementDim>();
+    KelvinVector<DisplacementDim> eps_m = KV::KVzero<DisplacementDim>();
 };
 
 template <int DisplacementDim>

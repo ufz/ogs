@@ -19,7 +19,7 @@ namespace ConstitutiveRelations
 template <int DisplacementDim>
 struct SwellingDataStateful
 {
-    KelvinVector<DisplacementDim> sigma_sw = KVzero<DisplacementDim>();
+    KelvinVector<DisplacementDim> sigma_sw = KV::KVzero<DisplacementDim>();
 
     static auto reflect()
     {

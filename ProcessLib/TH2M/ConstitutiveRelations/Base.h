@@ -18,40 +18,17 @@
 namespace ProcessLib::TH2M
 {
 using namespace ProcessLib::ConstitutiveRelations;
+namespace KV = MathLib::KelvinVector;
 
 template <int DisplacementDim>
-using KelvinVector = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+using KelvinVector = KV::KelvinVectorType<DisplacementDim>;
 
 template <int DisplacementDim>
-using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>;
+using KelvinMatrix = KV::KelvinMatrixType<DisplacementDim>;
 
 template <int DisplacementDim>
 using GlobalDimMatrix =
     Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>;
-
-/// Convenience alias for not a number.
-static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
-
-/// Used to set a Kelvin vector to all not-a-number.
-template <int DisplacementDim>
-constexpr KelvinVector<DisplacementDim> KVnan()
-{
-    return KelvinVector<DisplacementDim>::Constant(nan);
-}
-
-/// Used to set a Kelvin matrix to all not-a-number.
-template <int DisplacementDim>
-constexpr KelvinMatrix<DisplacementDim> KMnan()
-{
-    return KelvinMatrix<DisplacementDim>::Constant(nan);
-}
-
-/// Used to set a Kelvin vector to all zero.
-template <int DisplacementDim>
-constexpr KelvinVector<DisplacementDim> KVzero()
-{
-    return KelvinVector<DisplacementDim>::Zero();
-}
 
 struct MediaData
 {

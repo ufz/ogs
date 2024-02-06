@@ -28,8 +28,8 @@ template <int DisplacementDim>
 struct SolidMechanicsDataStateful
 {
     // TODO it seems fragile that some data have to be initialized that way.
-    KelvinVector<DisplacementDim> sigma_eff = KVzero<DisplacementDim>();
-    KelvinVector<DisplacementDim> eps_m = KVzero<DisplacementDim>();
+    KelvinVector<DisplacementDim> sigma_eff = KV::KVzero<DisplacementDim>();
+    KelvinVector<DisplacementDim> eps_m = KV::KVzero<DisplacementDim>();
 
     static auto reflect()
     {
@@ -44,9 +44,10 @@ struct SolidMechanicsDataStateful
 template <int DisplacementDim>
 struct SolidMechanicsDataStateless
 {
-    KelvinMatrix<DisplacementDim> stiffness_tensor = KMnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_uT_BT_K_N = KVnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_up_BT_K_N = KVnan<DisplacementDim>();
+    KelvinMatrix<DisplacementDim> stiffness_tensor =
+        KV::KMnan<DisplacementDim>();
+    KelvinVector<DisplacementDim> J_uT_BT_K_N = KV::KVnan<DisplacementDim>();
+    KelvinVector<DisplacementDim> J_up_BT_K_N = KV::KVnan<DisplacementDim>();
 };
 
 template <int DisplacementDim>

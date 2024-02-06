@@ -50,4 +50,7 @@ struct SpaceTimeData
     double dt;
 };
 
+/// Convenience alias for not a number.
+static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+
 }  // namespace ProcessLib::ConstitutiveRelations
