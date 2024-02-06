@@ -817,24 +817,7 @@ public:
         auto const local_C_prev =
             local_x_prev.segment<concentration_size>(first_concentration_index);
 
-        NodalVectorType local_T;
-        if (_process_data.isothermal)
-        {
-            if (_process_data.temperature)
-            {
-                local_T = _process_data.temperature->getNodalValuesOnElement(
-                    _element, t);
-            }
-            else
-            {
-                local_T = NodalVectorType::Zero(temperature_size);
-            }
-        }
-        else
-        {
-            local_T =
-                local_x.template segment<temperature_size>(temperature_index);
-        }
+        NodalVectorType local_T = getLocalTemperature(t, local_x);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, pressure_size, pressure_size);
@@ -1080,24 +1063,9 @@ public:
 
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);
-        NodalVectorType local_T;
-        if (_process_data.isothermal)
-        {
-            if (_process_data.temperature)
-            {
-                local_T = _process_data.temperature->getNodalValuesOnElement(
-                    _element, t);
-            }
-            else
-            {
-                local_T = NodalVectorType::Zero(temperature_size);
-            }
-        }
-        else
-        {
-            local_T =
-                local_x.template segment<temperature_size>(temperature_index);
-        }
+
+        NodalVectorType local_T = getLocalTemperature(t, local_x);
+
         auto const local_C = local_x.template segment<concentration_size>(
             first_concentration_index +
             (transport_process_id - (_process_data.isothermal ? 1 : 2)) *
@@ -2071,6 +2039,30 @@ private:
                        GlobalDimMatrixType::Zero(GlobalDim, GlobalDim),
                        velocity, 0 /* phi */, thermal_dispersivity_transversal,
                        thermal_dispersivity_longitudinal);
+    }
+
+    NodalVectorType getLocalTemperature(double const t,
+                                        Eigen::VectorXd const& local_x)
+    {
+        NodalVectorType local_T;
+        if (_process_data.isothermal)
+        {
+            if (_process_data.temperature)
+            {
+                local_T = _process_data.temperature->getNodalValuesOnElement(
+                    _element, t);
+            }
+            else
+            {
+                local_T = NodalVectorType::Zero(temperature_size);
+            }
+        }
+        else
+        {
+            local_T =
+                local_x.template segment<temperature_size>(temperature_index);
+        }
+        return local_T;
     }
 };
 
