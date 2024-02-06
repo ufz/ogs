@@ -86,7 +86,7 @@ public:
     virtual const Element* getBoundary(unsigned i) const = 0;
 
     /// Returns the ID of the element.
-    virtual std::size_t getID() const final { return _id; }
+    std::size_t getID() const { return _id; }
 
     virtual unsigned getNumberOfBoundaries() const = 0;
 
@@ -195,7 +195,7 @@ protected:
     explicit Element(std::size_t id);
 
     /// Sets the element ID.
-    virtual void setID(std::size_t id) final { _id = id; }
+    void setID(std::size_t id) { _id = id; }
 
     std::size_t _id;
 
