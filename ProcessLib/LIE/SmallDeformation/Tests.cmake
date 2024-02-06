@@ -15,7 +15,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    single_joint_3D_expected_ts_1_t_1.000000.vtu single_joint_3D_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    single_joint_3D_ts_1_t_1.000000.vtu single_joint_3D_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
     single_joint_3D_expected_ts_1_t_1.000000.vtu single_joint_3D_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
 )
 
@@ -28,8 +28,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    single_joint_expected_ts_1_t_1.000000.vtu single_joint_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
-    single_joint_expected_ts_1_t_1.000000.vtu single_joint_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    single_joint_ts_1_t_1.000000.vtu single_joint_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    single_joint_ts_1_t_1.000000.vtu single_joint_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
 )
 
 AddTest(
@@ -41,8 +41,8 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    single_joint_inside_expected_ts_1_t_1.000000.vtu single_joint_inside_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
-    single_joint_inside_expected_ts_1_t_1.000000.vtu single_joint_inside_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    single_joint_inside_ts_1_t_1.000000.vtu single_joint_inside_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    single_joint_inside_ts_1_t_1.000000.vtu single_joint_inside_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
 )
 
 AddTest(
@@ -54,9 +54,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    two_joints_expected_ts_1_t_1.000000.vtu two_joints_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
-    two_joints_expected_ts_1_t_1.000000.vtu two_joints_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
-    two_joints_expected_ts_1_t_1.000000.vtu two_joints_ts_1_t_1.000000.vtu displacement_jump2 displacement_jump2 1e-16 1e-16
+    two_joints_ts_1_t_1.000000.vtu two_joints_ts_1_t_1.000000.vtu displacement displacement 1e-16 1e-16
+    two_joints_ts_1_t_1.000000.vtu two_joints_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-16 1e-16
+    two_joints_ts_1_t_1.000000.vtu two_joints_ts_1_t_1.000000.vtu displacement_jump2 displacement_jump2 1e-16 1e-16
 )
 
 AddTest(
