@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-  <meshes>
-  <mesh axially_symmetric="true">mockup_domain.vtu</mesh>
-  <mesh axially_symmetric="true">mockup_b_Bottom.vtu</mesh>
-  <mesh axially_symmetric="true">mockup_b_Right.vtu</mesh>
-  <mesh axially_symmetric="true">mockup_b_Left.vtu</mesh>
-  <mesh axially_symmetric="true">mockup_b_Heater.vtu</mesh>
-  </meshes>
-  <processes>
-    <process>
-      <name>mockup2D</name>
-      <type>THERMO_RICHARDS_MECHANICS</type>
-	  <mass_lumping>true</mass_lumping>
-	  <integration_order>2</integration_order>
-      <constitutive_relation>
-        <type>LinearElasticIsotropic</type>
-        <youngs_modulus>E</youngs_modulus>
-        <poissons_ratio>nu</poissons_ratio>
-      </constitutive_relation>
-      <process_variables>
-        <temperature>temperature</temperature>
-        <pressure>pressure</pressure>
-        <displacement>displacement</displacement>
-      </process_variables>
-      <secondary_variables>
-        <secondary_variable internal_name="sigma" output_name="sigma"/>
-        <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-        <secondary_variable internal_name="saturation" output_name="saturation"/>
-		<secondary_variable internal_name="swelling_stress" output_name="swelling_stress"/>
-		<secondary_variable internal_name="porosity" output_name="porosity"/>
-		<secondary_variable internal_name="intrinsic_permeability" output_name="intrinsic_permeability"/>
-		<secondary_variable internal_name="relative_permeability" output_name="relative_permeability"/>
-      </secondary_variables>
-      <specific_body_force>0 0</specific_body_force>
-    </process>
-  </processes>
-  <media>
-        <medium id="0"><!-- Bentonite -->
+    <meshes>
+        <mesh axially_symmetric="true">mockup_domain.vtu</mesh>
+        <mesh axially_symmetric="true">mockup_b_Bottom.vtu</mesh>
+        <mesh axially_symmetric="true">mockup_b_Right.vtu</mesh>
+        <mesh axially_symmetric="true">mockup_b_Left.vtu</mesh>
+        <mesh axially_symmetric="true">mockup_b_Heater.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>mockup2D</name>
+            <type>THERMO_RICHARDS_MECHANICS</type>
+            <mass_lumping>true</mass_lumping>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>LinearElasticIsotropic</type>
+                <youngs_modulus>E</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+            </constitutive_relation>
+            <process_variables>
+                <temperature>temperature</temperature>
+                <pressure>pressure</pressure>
+                <displacement>displacement</displacement>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="saturation" output_name="saturation"/>
+                <secondary_variable internal_name="swelling_stress" output_name="swelling_stress"/>
+                <secondary_variable internal_name="porosity" output_name="porosity"/>
+                <secondary_variable internal_name="intrinsic_permeability" output_name="intrinsic_permeability"/>
+                <secondary_variable internal_name="relative_permeability" output_name="relative_permeability"/>
+            </secondary_variables>
+            <specific_body_force>0 0</specific_body_force>
+        </process>
+    </processes>
+    <media>
+        <medium id="0">
+            <!-- Bentonite -->
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
@@ -46,7 +47,7 @@
                             <type>Constant</type>
                             <value>4180</value>
                         </property>
-						<property>
+                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1.009e-3</value>
@@ -61,7 +62,7 @@
                                 <slope>1.e-10</slope>
                             </independent_variable>
                         </property>
-						<property>
+                        <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
                             <value>4.0e-4</value>
@@ -86,7 +87,7 @@
                             <type>Constant</type>
                             <value>3.0e-6</value>
                         </property>
-						<property>
+                        <property>
                             <name>swelling_stress_rate</name>
                             <type>SaturationDependentSwelling</type>
                             <swelling_pressures>4.3e6 4.3e6 4.3e6</swelling_pressures>
@@ -99,15 +100,15 @@
                 <phase>
                     <type>Gas</type>
                     <properties>
-						<property>
-							<name>density</name>
-							<type>WaterVapourDensity</type>
-						</property>
-						<property>
-							<name>diffusion</name>
-							<type>VapourDiffusionFEBEX</type>
-							<tortuosity>0.1</tortuosity>
-						</property>
+                        <property>
+                            <name>density</name>
+                            <type>WaterVapourDensity</type>
+                        </property>
+                        <property>
+                            <name>diffusion</name>
+                            <type>VapourDiffusionFEBEX</type>
+                            <tortuosity>0.1</tortuosity>
+                        </property>
                         <property>
                             <name>thermal_diffusion_enhancement_factor</name>
                             <type>Constant</type>
@@ -130,7 +131,7 @@
                     <lambda>2</lambda>
                     <min_relative_permeability>0.0</min_relative_permeability>
                 </property>
-				<property>
+                <property>
                     <name>saturation</name>
                     <type>SaturationVanGenuchten</type>
                     <residual_liquid_saturation>0.1</residual_liquid_saturation>
@@ -169,20 +170,20 @@
                     <cutoff_value>1</cutoff_value>
                 </property>
                 <property>
-					<name>thermal_conductivity</name>
-					<type>Function</type>
-					<value>
-						<expression>1.403 * liquid_saturation + 0.097</expression>
-					</value>
+                    <name>thermal_conductivity</name>
+                    <type>Function</type>
+                    <value>
+                        <expression>1.403 * liquid_saturation + 0.097</expression>
+                    </value>
                     <dvalue>
-						<variable_name>liquid_saturation</variable_name>
-						<expression>1.403</expression>
-					</dvalue>
-				</property>
+                        <variable_name>liquid_saturation</variable_name>
+                        <expression>1.403</expression>
+                    </dvalue>
+                </property>
             </properties>
         </medium>
-  </media>
-  <time_loop>
+    </media>
+    <time_loop>
         <processes>
             <process ref="mockup2D">
                 <nonlinear_solver>nonlinear_solver</nonlinear_solver>
@@ -209,7 +210,7 @@
         <output>
             <type>VTK</type>
             <prefix>mockup_results</prefix>
-			<timesteps>
+            <timesteps>
                 <pair>
                     <repeat>1</repeat>
                     <each_steps>100000000</each_steps>
@@ -223,91 +224,104 @@
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
                 <variable>saturation</variable>
-				<variable>swelling_stress</variable>
-				<variable>porosity</variable>
-				<variable>intrinsic_permeability</variable>
-				<variable>intrinsic_permeability_ip</variable>
-				<variable>relative_permeability</variable>
-				<variable>relative_permeability_ip</variable>
+                <variable>swelling_stress</variable>
+                <variable>porosity</variable>
+                <variable>intrinsic_permeability</variable>
+                <variable>intrinsic_permeability_ip</variable>
+                <variable>relative_permeability</variable>
+                <variable>relative_permeability_ip</variable>
             </variables>
-			<fixed_output_times>0 17280000 34560000 51840000 69120000 86400000</fixed_output_times>
+            <fixed_output_times>0 17280000 34560000 51840000 69120000 86400000</fixed_output_times>
             <suffix>_{:time}</suffix>
         </output>
     </time_loop>
-  <local_coordinate_system>
+    <local_coordinate_system>
         <basis_vector_0>e0</basis_vector_0>
         <basis_vector_1>e1</basis_vector_1>
-  </local_coordinate_system>
-  <parameters>
-      <parameter><!--e0-->
-         <name>e0</name>
-         <type>Constant</type>
-         <values>1 0</values>
-      </parameter>
-      <parameter><!--e1-->
-         <name>e1</name>
-         <type>Constant</type>
-         <values>0 1</values>
-      </parameter>
-      <parameter><!--E-->
-          <name>E</name>
-          <type>Constant</type>
-          <value>100e6</value>
-      </parameter>
-      <parameter><!--nu-->
-          <name>nu</name>
-          <type>Constant</type>
-          <value>0.45</value>
-      </parameter>
-	  <parameter><!--phi0-->
+    </local_coordinate_system>
+    <parameters>
+        <parameter>
+            <!--e0-->
+            <name>e0</name>
+            <type>Constant</type>
+            <values>1 0</values>
+        </parameter>
+        <parameter>
+            <!--e1-->
+            <name>e1</name>
+            <type>Constant</type>
+            <values>0 1</values>
+        </parameter>
+        <parameter>
+            <!--E-->
+            <name>E</name>
+            <type>Constant</type>
+            <value>100e6</value>
+        </parameter>
+        <parameter>
+            <!--nu-->
+            <name>nu</name>
+            <type>Constant</type>
+            <value>0.45</value>
+        </parameter>
+        <parameter>
+            <!--phi0-->
             <name>phi0</name>
             <type>Constant</type>
             <values>0.363</values>
         </parameter>
-      <parameter><!--u0-->
+        <parameter>
+            <!--u0-->
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0</values>
         </parameter>
-        <parameter><!--dirichlet0-->
+        <parameter>
+            <!--dirichlet0-->
             <name>dirichlet0</name>
             <type>Constant</type>
             <values>0</values>
         </parameter>
-        <parameter><!--p0-->
+        <parameter>
+            <!--p0-->
             <name>p0</name>
             <type>Constant</type>
             <value>-80e6</value>
         </parameter>
-		<parameter><!--flow_rate-->
+        <parameter>
+            <!--flow_rate-->
             <name>flow_rate</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
-		<parameter><!--flow_rate_scaled-->
+        <parameter>
+            <!--flow_rate_scaled-->
             <name>flow_rate_scaled</name>
             <type>CurveScaled</type>
             <curve>timeRamp_flow</curve>
             <parameter>flow_rate</parameter>
         </parameter>
-        <parameter><!--T_ref-->
+        <parameter>
+            <!--T_ref-->
             <name>T_ref</name>
             <type>Constant</type>
             <value>293.15</value>
         </parameter>
-		<parameter><!--temp_scaled-->
+        <parameter>
+            <!--temp_scaled-->
             <name>temp_source</name>
             <type>Constant</type>
             <value>1</value>
         </parameter>
-		<parameter><!--Heater-->
+        <parameter>
+            <!--Heater-->
             <name>temp_scaled</name>
             <type>CurveScaled</type>
             <curve>timeRamp_temperature</curve>
             <parameter>temp_source</parameter>
         </parameter>
     </parameters>
-	<curves>
+    <curves>
         <curve>
             <name>timeRamp_temperature</name>
             <coords>0 8640000 13824000 86400000</coords>
@@ -315,19 +329,21 @@
         </curve>
         <curve>
             <name>timeRamp_flow</name>
-			<coords>0 86400000 86400001</coords>
+            <coords>0 86400000 86400001</coords>
             <values>0. 7.62e-7 0</values>
         </curve>
-	</curves>
-  <process_variables><!--Initial and boundary conditions-->
-        <process_variable><!--u-->
+    </curves>
+    <process_variables>
+        <!--Initial and boundary conditions-->
+        <process_variable>
+            <!--u-->
             <name>displacement</name>
-			<compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
+            <compensate_non_equilibrium_initial_residuum>false</compensate_non_equilibrium_initial_residuum>
             <components>2</components>
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
-				<boundary_condition>
+                <boundary_condition>
                     <mesh>mockup_b_Left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
@@ -341,14 +357,15 @@
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-        <process_variable><!--p-->
+        <process_variable>
+            <!--p-->
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
             </boundary_conditions>
-			<source_terms>
+            <source_terms>
                 <source_term>
                     <mesh>mockup_b_Right</mesh>
                     <type>Volumetric</type>
@@ -356,13 +373,14 @@
                 </source_term>
             </source_terms>
         </process_variable>
-		<process_variable><!--T-->
+        <process_variable>
+            <!--T-->
             <name>temperature</name>
             <components>1</components>
             <order>1</order>
             <initial_condition>T_ref</initial_condition>
             <boundary_conditions>
-				<boundary_condition>
+                <boundary_condition>
                     <mesh>mockup_b_Heater</mesh>
                     <type>Dirichlet</type>
                     <parameter>temp_scaled</parameter>
@@ -370,7 +388,7 @@
             </boundary_conditions>
         </process_variable>
     </process_variables>
-  <nonlinear_solvers>
+    <nonlinear_solvers>
         <nonlinear_solver>
             <name>nonlinear_solver</name>
             <type>Newton</type>
@@ -381,9 +399,9 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-			<eigen>
+            <eigen>
                 <solver_type>SparseLU</solver_type>
-				<!--solver_type>PardisoLU</solver_type-->
+                <!--solver_type>PardisoLU</solver_type-->
             </eigen>
         </linear_solver>
     </linear_solvers>
