@@ -50,9 +50,9 @@ struct GetFlattenedTupleTypes
 /// This function does essentially the same as
 /// <code>std::get<T>(some_tuple)</code>, but for any number of passed tuples.
 ///
-/// The type \code T must be present in the \code Tuples's member types exactly
-/// once. The passed \code Tuples's member types might be cvref qualified, but
-/// \code T must not.
+/// The type \c T must be present in the \c Tuples's member types exactly  once.
+/// The passed \c Tuples's member types might be cvref qualified, but \c T must
+/// not.
 template <typename T, typename... Tuples>
 auto& get(Tuples&... ts)
 {
