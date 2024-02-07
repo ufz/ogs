@@ -210,9 +210,11 @@ class LocalAssemblerData : public ComponentTransportLocalAssemblerInterface
     // When monolithic scheme is adopted, nodal pressure and nodal concentration
     // are accessed by vector index.
     static const int pressure_index = 0;
-    static const int first_concentration_index = ShapeFunction::NPOINTS;
+    const int temperature_index = -1;
+    const int first_concentration_index = -1;
 
     static const int pressure_size = ShapeFunction::NPOINTS;
+    static const int temperature_size = ShapeFunction::NPOINTS;
     static const int concentration_size =
         ShapeFunction::NPOINTS;  // per component
 
@@ -246,7 +248,12 @@ public:
         ComponentTransportProcessData const& process_data,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
             transport_process_variables)
-        : _element(element),
+        : temperature_index(process_data.isothermal ? -1
+                                                    : ShapeFunction::NPOINTS),
+          first_concentration_index(process_data.isothermal
+                                        ? ShapeFunction::NPOINTS
+                                        : 2 * ShapeFunction::NPOINTS),
+          _element(element),
           _process_data(process_data),
           _integration_method(integration_method),
           _transport_process_variables(transport_process_variables)
@@ -780,6 +787,12 @@ public:
             assembleHydraulicEquation(t, dt, local_x, local_x_prev,
                                       local_M_data, local_K_data, local_b_data);
         }
+        else if (process_id == _process_data.thermal_process_id)
+        {
+            assembleHeatTransportEquation(t, dt, local_x, local_x_prev,
+                                          local_M_data, local_K_data,
+                                          local_b_data);
+        }
         else
         {
             // Go for assembling in an order of transport process id.
@@ -803,6 +816,8 @@ public:
             first_concentration_index);
         auto const local_C_prev =
             local_x_prev.segment<concentration_size>(first_concentration_index);
+
+        NodalVectorType local_T = getLocalTemperature(t, local_x);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, pressure_size, pressure_size);
@@ -839,14 +854,13 @@ public:
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
 
-            double C_int_pt = 0.0;
-            double p_int_pt = 0.0;
-
-            NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
-            NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
+            double const C_int_pt = N.dot(local_C);
+            double const p_int_pt = N.dot(local_p);
+            double const T_int_pt = N.dot(local_T);
 
             vars.concentration = C_int_pt;
             vars.liquid_phase_pressure = p_int_pt;
+            vars.temperature = T_int_pt;
 
             //  porosity
             {
@@ -912,26 +926,152 @@ public:
         }
     }
 
+    void assembleHeatTransportEquation(double const t, double const dt,
+                                       Eigen::VectorXd const& local_x,
+                                       Eigen::VectorXd const& /*local_x_prev*/,
+                                       std::vector<double>& local_M_data,
+                                       std::vector<double>& local_K_data,
+                                       std::vector<double>& /*local_b_data*/)
+    {
+        assert(local_x.size() ==
+               pressure_size + temperature_size + concentration_size);
+
+        auto const local_p =
+            local_x.template segment<pressure_size>(pressure_index);
+        auto const local_T =
+            local_x.template segment<temperature_size>(temperature_index);
+
+        auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
+            local_M_data, temperature_size, temperature_size);
+        auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
+            local_K_data, temperature_size, temperature_size);
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(this->_element.getID());
+
+        auto const& process_data = this->_process_data;
+        auto const& medium =
+            *process_data.media_map.getMedium(this->_element.getID());
+        auto const& liquid_phase = medium.phase("AqueousLiquid");
+
+        auto const& b =
+            _process_data
+                .projected_specific_body_force_vectors[_element.getID()];
+
+        MaterialPropertyLib::VariableArray vars;
+
+        unsigned const n_integration_points =
+            this->_integration_method.getNumberOfPoints();
+
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+        ip_flux_vector.reserve(n_integration_points);
+
+        for (unsigned ip(0); ip < n_integration_points; ip++)
+        {
+            pos.setIntegrationPoint(ip);
+
+            auto const& ip_data = this->_ip_data[ip];
+            auto const& N = ip_data.N;
+            auto const& dNdx = ip_data.dNdx;
+            auto const& w = ip_data.integration_weight;
+
+            double p_at_xi = 0.;
+            NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
+            double T_at_xi = 0.;
+            NumLib::shapeFunctionInterpolate(local_T, N, T_at_xi);
+
+            vars.temperature = T_at_xi;
+            vars.liquid_phase_pressure = p_at_xi;
+
+            vars.liquid_saturation = 1.0;
+
+            auto const porosity =
+                medium.property(MaterialPropertyLib::PropertyType::porosity)
+                    .template value<double>(vars, pos, t, dt);
+            vars.porosity = porosity;
+
+            // Use the fluid density model to compute the density
+            auto const fluid_density =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars, pos, t, dt);
+            vars.density = fluid_density;
+            auto const specific_heat_capacity_fluid =
+                liquid_phase
+                    .property(MaterialPropertyLib::specific_heat_capacity)
+                    .template value<double>(vars, pos, t, dt);
+
+            // Assemble mass matrix
+            local_M.noalias() += w *
+                                 this->getHeatEnergyCoefficient(
+                                     vars, porosity, fluid_density,
+                                     specific_heat_capacity_fluid, pos, t, dt) *
+                                 N.transpose() * N;
+
+            // Assemble Laplace matrix
+            auto const viscosity =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::viscosity)
+                    .template value<double>(vars, pos, t, dt);
+
+            auto const intrinsic_permeability =
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    medium
+                        .property(
+                            MaterialPropertyLib::PropertyType::permeability)
+                        .value(vars, pos, t, dt));
+
+            GlobalDimMatrixType const K_over_mu =
+                intrinsic_permeability / viscosity;
+            GlobalDimVectorType const velocity =
+                process_data.has_gravity
+                    ? GlobalDimVectorType(-K_over_mu *
+                                          (dNdx * local_p - fluid_density * b))
+                    : GlobalDimVectorType(-K_over_mu * dNdx * local_p);
+
+            GlobalDimMatrixType const thermal_conductivity_dispersivity =
+                this->getThermalConductivityDispersivity(
+                    vars, fluid_density, specific_heat_capacity_fluid, velocity,
+                    pos, t, dt);
+
+            local_K.noalias() +=
+                w * dNdx.transpose() * thermal_conductivity_dispersivity * dNdx;
+
+            ip_flux_vector.emplace_back(velocity * fluid_density *
+                                        specific_heat_capacity_fluid);
+            average_velocity_norm += velocity.norm();
+        }
+
+        NumLib::assembleAdvectionMatrix(
+            process_data.stabilizer, this->_ip_data, ip_flux_vector,
+            average_velocity_norm / static_cast<double>(n_integration_points),
+            local_K);
+    }
+
     void assembleComponentTransportEquation(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data,
         std::vector<double>& /*local_b_data*/, int const transport_process_id)
     {
+        assert(static_cast<int>(local_x.size()) ==
+               pressure_size +
+                   concentration_size *
+                       static_cast<int>(_transport_process_variables.size()) +
+                   (_process_data.isothermal ? 0 : temperature_size));
+
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);
+
+        NodalVectorType local_T = getLocalTemperature(t, local_x);
+
         auto const local_C = local_x.template segment<concentration_size>(
             first_concentration_index +
-            (transport_process_id - 1) * concentration_size);
+            (transport_process_id - (_process_data.isothermal ? 1 : 2)) *
+                concentration_size);
         auto const local_p_prev =
             local_x_prev.segment<pressure_size>(pressure_index);
-
-        NodalVectorType local_T;
-        if (_process_data.temperature)
-        {
-            local_T =
-                _process_data.temperature->getNodalValuesOnElement(_element, t);
-        }
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, concentration_size, concentration_size);
@@ -964,9 +1104,8 @@ public:
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
-        // Hydraulic process id is 0 and thus transport process id starts
-        // from 1.
-        auto const component_id = transport_process_id - 1;
+        auto const component_id =
+            transport_process_id - (_process_data.isothermal ? 1 : 2);
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
@@ -981,14 +1120,13 @@ public:
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
 
-            double C_int_pt = 0.0;
-            double p_int_pt = 0.0;
-
-            NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
-            NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
+            double const C_int_pt = N.dot(local_C);
+            double const p_int_pt = N.dot(local_p);
+            double const T_int_pt = N.dot(local_T);
 
             vars.concentration = C_int_pt;
             vars.liquid_phase_pressure = p_int_pt;
+            vars.temperature = T_int_pt;
 
             if (_process_data.temperature)
             {
@@ -1837,6 +1975,95 @@ private:
         Eigen::aligned_allocator<
             IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
         _ip_data;
+
+    double getHeatEnergyCoefficient(
+        MaterialPropertyLib::VariableArray const& vars, const double porosity,
+        const double fluid_density, const double specific_heat_capacity_fluid,
+        ParameterLib::SpatialPosition const& pos, double const t,
+        double const dt)
+    {
+        auto const& medium =
+            *_process_data.media_map.getMedium(this->_element.getID());
+        auto const& solid_phase = medium.phase("Solid");
+
+        auto const specific_heat_capacity_solid =
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::specific_heat_capacity)
+                .template value<double>(vars, pos, t, dt);
+
+        auto const solid_density =
+            solid_phase.property(MaterialPropertyLib::PropertyType::density)
+                .template value<double>(vars, pos, t, dt);
+
+        return solid_density * specific_heat_capacity_solid * (1 - porosity) +
+               fluid_density * specific_heat_capacity_fluid * porosity;
+    }
+
+    GlobalDimMatrixType getThermalConductivityDispersivity(
+        MaterialPropertyLib::VariableArray const& vars,
+        const double fluid_density, const double specific_heat_capacity_fluid,
+        const GlobalDimVectorType& velocity,
+        ParameterLib::SpatialPosition const& pos, double const t,
+        double const dt)
+    {
+        auto const& medium =
+            *_process_data.media_map.getMedium(_element.getID());
+
+        auto thermal_conductivity =
+            MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt));
+
+        auto const thermal_dispersivity_transversal =
+            medium
+                .property(MaterialPropertyLib::PropertyType::
+                              thermal_transversal_dispersivity)
+                .template value<double>();
+
+        auto const thermal_dispersivity_longitudinal =
+            medium
+                .property(MaterialPropertyLib::PropertyType::
+                              thermal_longitudinal_dispersivity)
+                .template value<double>();
+
+        // Thermal conductivity is moved outside and zero matrix is passed
+        // instead due to multiplication with fluid's density times specific
+        // heat capacity.
+        return thermal_conductivity +
+               fluid_density * specific_heat_capacity_fluid *
+                   NumLib::computeHydrodynamicDispersion(
+                       _process_data.stabilizer, _element.getID(),
+                       GlobalDimMatrixType::Zero(GlobalDim, GlobalDim),
+                       velocity, 0 /* phi */, thermal_dispersivity_transversal,
+                       thermal_dispersivity_longitudinal);
+    }
+
+    NodalVectorType getLocalTemperature(double const t,
+                                        Eigen::VectorXd const& local_x)
+    {
+        NodalVectorType local_T;
+        if (_process_data.isothermal)
+        {
+            if (_process_data.temperature)
+            {
+                local_T = _process_data.temperature->getNodalValuesOnElement(
+                    _element, t);
+            }
+            else
+            {
+                local_T = NodalVectorType::Zero(temperature_size);
+            }
+        }
+        else
+        {
+            local_T =
+                local_x.template segment<temperature_size>(temperature_index);
+        }
+        return local_T;
+    }
 };
 
 }  // namespace ComponentTransport

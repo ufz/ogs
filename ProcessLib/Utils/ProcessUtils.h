@@ -50,7 +50,7 @@ std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
 
 std::vector<std::reference_wrapper<ProcessVariable>> findProcessVariables(
     std::vector<ProcessVariable> const& variables,
-    BaseLib::ConfigTree const& pv_config,
-    std::string const& tag);
+    BaseLib::ConfigTree const& pv_config, std::string const& tag,
+    bool const optional = false);
 
 }  // namespace ProcessLib
