@@ -153,3 +153,55 @@ TEST(ProcessLib_Graph_Get, WriteMultipleTuples)
     EXPECT_EQ("rts", std::get<std::string>(t4));
     EXPECT_EQ('y', *std::get<S3>(t4));
 }
+
+TEST(ProcessLib_Graph_Get, ReadTwoTuplesWithReferenceMembers)
+{
+    namespace PG = ProcessLib::Graph;
+
+    using S1 = BaseLib::StrongType<int, struct S1Tag>;
+    using S2 = BaseLib::StrongType<double, struct S2Tag>;
+
+    S1 i{2};
+    S2 const d{5.5};
+    std::tuple<char, S1&> const t1{'a', i};
+    std::tuple<S2 const&, int> const t2{d, 4};
+
+    // check same values
+    EXPECT_EQ('a', PG::get<char>(t1, t2));
+    EXPECT_EQ(2, *PG::get<S1>(t2, t1));
+    EXPECT_EQ(5.5, *PG::get<S2>(t1, t2));
+    EXPECT_EQ(4, PG::get<int>(t2, t1));
+
+    // check same addresses
+    EXPECT_EQ(&std::get<char>(t1), &PG::get<char>(t1, t2));
+    // note: PG::get<>() access without cvref in contrast to std::get<>().
+    EXPECT_EQ(&std::get<S1&>(t1), &PG::get<S1>(t1, t2));
+    EXPECT_EQ(&std::get<S2 const&>(t2), &PG::get<S2>(t1, t2));
+    EXPECT_EQ(&std::get<int>(t2), &PG::get<int>(t1, t2));
+
+    EXPECT_EQ(&i, &PG::get<S1>(t1, t2));
+    EXPECT_EQ(&d, &PG::get<S2>(t1, t2));
+}
+
+TEST(ProcessLib_Graph_Get, WriteTwoTuplesWithReferenceMembers)
+{
+    namespace PG = ProcessLib::Graph;
+
+    using S1 = BaseLib::StrongType<int, struct S1Tag>;
+    using S2 = BaseLib::StrongType<double, struct S2Tag>;
+
+    S1 i{2};
+    S2 d{5.5};
+    std::tuple<char, S1&> t1{'a', i};
+    std::tuple<S2&, int> t2{d, 4};
+
+    PG::get<char>(t1, t2) = 'c';
+    PG::get<S1>(t2, t1) = S1{7};
+    PG::get<S2>(t1, t2) = S2{6.5};
+    PG::get<int>(t2, t1) = 9;
+
+    EXPECT_EQ('c', std::get<char>(t1));
+    EXPECT_EQ(7, *i);  // original modified
+    EXPECT_EQ(6.5, *d);
+    EXPECT_EQ(9, std::get<int>(t2));
+}
