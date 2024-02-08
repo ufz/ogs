@@ -22,8 +22,8 @@ It was published in this state to make existing content available to users and h
 </div>
 
 Inside of this block, all media of the simulation are defined.
- There has to be a medium for every value of Material IDs used in the mesh.
- Those IDs are assigned when the mesh is created or converted by msh2vtu script.
+There has to be a medium for every value of Material IDs used in the mesh.
+Those IDs are assigned when the mesh is created or converted by msh2vtu script.
 
 ```xml
 <media>
@@ -36,8 +36,7 @@ Inside of this block, all media of the simulation are defined.
 ## Phases
 
 A medium can consist of multiple phases.
-For example geological porous media would consist of a solid phase (for example gravel, sand, silt, clay, or some mix of the
-former) and a liquid phase (in most cases water, which fills the pore space either fully or just partially).
+For example geological porous media would consist of a solid phase (for example gravel, sand, silt, clay, or some mix of the former) and a liquid phase (in most cases water, which fills the pore space either fully or just partially).
 
 In media with multiple phases, each of them can occur at maximum once per medium.
 Phases within one medium are distinguished by their type:
@@ -95,10 +94,9 @@ The properties belonging to a specific phase within a medium, have to be placed 
 </medium>
 ```
 
-The properties share very similar structure with [parameters](/docs/userguide/blocks/parameters), but they are not
-interchangeable.
-
-<!-- TODO: Describe the differences between `properties` and `parameters`. -->
+The properties share very similar structure with [parameters](/docs/userguide/blocks/parameters), but they are not interchangeable.
+The parameters can represent time and space dependent values, whereas the medium properties are representing material laws.
+The latter can refer to the parameters and therefore the parameters are more basic in their nature.
 
 Following basic types of properties are available:
 
@@ -112,48 +110,15 @@ They can be used by the user to define the properties in a way, that is specific
 There are more general properties available.
 They are described in section [Other types of properties](/docs/userguide/blocks/media/#other-types-of-properties).
 
-Generally, it is most safe to use the `Constant` type for properties, if properties are not transient. If this is not
-sufficient, the type "Parameter" can be used. Still, there are some limitations to what types of parameter can be used in
-different processes.
-
-In opposite to the parameters in the `parameter` block, in the `media` block parameters can depend on more variables than x, y,
- z, and t.
-
-The types linear, function, and curve can depend on a set of variables listed in [MPL->VariableType.h](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/MaterialLib/MPL/VariableType.h):
-
-- `capillary_pressure`
-- `concentration`
-- `density`
-- `displacement`
-- `effective_pore_pressure`
-- `enthalpy_of_evaporation`
-- `equivalent_plastic_strain`
-- `grain_compressibility`
-- `liquid_phase_pressure`
-- `liquid_saturation`
-- `mechanical_strain`
-- `molar_mass`
-- `molar_mass_derivative`
-- `molar_fraction`
-- `phase_pressure`
-- `porosity`
-- `solid_grain_pressure`
-- `stress`
-- `temperature`
-- `total_strain`
-- `total_stress`
-- `transport_porosity`
-- `vapour_pressure`
-- `volumetric_strain`
-
-Keep in mind that not all of those variables will be available in all the processes. For example, in THM there is `phase_pressure`, but not `liquid_phase_pressure`.
-
-<!-- TODO: At best, give links and a little bit more information on the variables listed above. -->
+The types linear, function, and curve can depend on a set of variables listed in [MPL->VariableType.h](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/MaterialLib/MPL/VariableType.h).
+Keep in mind that not all of those variables will be available in all the processes.
 
 ### Constant
 
-This is the most basic type. It only requires the `<value> </value>` tag additionally where the value of the parameter is
-provided as a number. It will not change throughout the experiment. For example:
+This is the most basic type.
+It only requires the `<value> </value>` tag additionally where the value of the parameter is provided as a number.
+It will not change throughout the experiment.
+For example:
 
 ```xml
 <parameter>
@@ -163,8 +128,9 @@ provided as a number. It will not change throughout the experiment. For example:
 </parameter>
 ```
 
-For vectorial quantities, please list the individual entries, `<values>0.5 1 2</values>`. This example will be interpreted as a
-3D vector.
+For vectorial quantities, please list the individual entries.
+The order of the entries has to follow the order of the x, y and z components of the vector.
+`<values>0.5 1 2</values>`, will be interpreted as a 3D vector with components for x, y and z.
 
 ### Linear
 
@@ -176,33 +142,47 @@ has to be provided, too.
 Linearly varying parameters can be a function of space (x, y, and z) and time (t).
 Linear dependency on each independent variable requires `<reference_condition> </reference_condition>` and `<slope> </slope>`.
 
-Consider the simple linear equation:
+Linear property is defined as follows:
+
 $$
-y(x)=ax+b.
+y(x_{i}) = y_{\textrm{ref}} \left(1 + \sum_{i=1}^{n} m_{i} (x_{i} - x_{i,\textrm{ref}})\right)
 $$
-Specifically, a parameter $y$ may depends linearly on time:
-$$
-y(t)=a \cdot t+y_0.
-$$
+
+where
+
+- $x_{i}$ can be a number of dependent variables, for instance temperature, pressure
+- $y_{\textrm{ref}}$ is a reference value, for instance reference density
+- $m_{i}$ is a value influencing the slope of the linear relationship with respect to dependent variable
+- $x_{i, \textrm{ref}}$ is a reference condition with respect to dependent variable, for instance reference temperature, reference pressure
+
 Defining it as type `linear` would look like this in project file:
 
 ```xml
 <property>
     <name>y</name>
     <type>Linear</type>
-    <reference_value>y_0</reference_value>
+    <reference_value>y_ref</reference_value>
     <independent_variable>
-        <variable_name>time</variable_name>
-        <reference_condition>t_0</reference_condition>
-        <slope>a</slope>
+        <variable_name>dependent_variable_x</variable_name>
+        <reference_condition>x_ref</reference_condition>
+        <slope>m</slope>
     </independent_variable>
 </property>
 ```
 
-where the reference value $y_0$ is defined as follows:
+where the reference value $y_{ref}$ is defined as follows:
+
 $$
-y_0=y(t_0)
+y_{ref}=y(x_{ref})
 $$
+
+For this block the equation would simplify to:
+
+$$
+y(x_{i}) = y_{\textrm{ref}} \left(1 + m (x - x_{\textrm{ref}})\right)
+$$
+
+as there is only one dependent variable.
 
 A more realistic example can be found in benchmark [A2](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/HydroMechanics/A2/A2.prj), where the fluid density linearly but independently depends on pressure and temperature:
 
@@ -232,11 +212,11 @@ $$
 $$
 
 $$
-\rho (T)=((-6 \cdot 10^{-4})\cdot (T-T_{0}) + 1) \rho_{0}
+\rho (T) = \rho_{0} (1 + (-6 \cdot 10^{-4})\cdot (T-T_{0}))
 $$
 
 $$
-\rho (p)=((0.5 \cdot 10^{9}) \cdot (p-p_{0}) + 1) \rho_{0}
+\rho (p) = \rho_{0} (1 + (0.5 \cdot 10^{-9}) \cdot (p-p_{0}))
 $$
 
 ### Function
@@ -248,7 +228,7 @@ Additionally, derivatives with respect to applicable process variables have to b
 
 ```xml
 <dvalue>
-    <variable_name>primary variable derived over</variable_name>  
+    <variable_name>primary variable derived over</variable_name>
     <expression>derivative of function w.r.t. specific primary variable </expression>
 </dvalue>
 ```
@@ -257,13 +237,12 @@ Additionally, derivatives with respect to applicable process variables have to b
 
 Powers are indicated by "^", e.g.: 2^3=8.
 
-However, following standard conventions, powers to the basis of 10 may also be expressed as  `0.002=2e-3=2e-03`. All three
-expression can be used in OpenGeoSys and are obviously equivalent.
+However, following standard conventions, powers to the basis of 10 may also be expressed as  `0.002=2e-3=2e-03`.
+All three expression can be used in OpenGeoSys and are obviously equivalent.
 
 C++ functions (for example std::pow) cannot be called from the expression tag.
 
-The [`exprtk`](http://www.partow.net/programming/exprtk/) library interpreting such expressions is used in OGS and the full
-list of available functions and control structures can be found on its web page.
+The [`exprtk`](http://www.partow.net/programming/exprtk/) library interpreting such expressions is used in OGS and the full list of available functions and control structures can be found on its web page.
 
 #### Example
 
@@ -292,13 +271,8 @@ as follows:
 </property>
 ```
 
-There are limitations of what variables can be used inside of the `<expression> </expression>` tags. Only the ones related to
-the process variables can be called. The values defined for example in the `parameter` block are out of reach.
-
-<!-- TODO: Check if this is correct. Please also check again the code-example above. -->
-
-For example if `thermal_conductivity` is defined and density is provided as a function, the `dvalue` of density, which is the
-derivative with respect to temperature, will be ignored.
+There are limitations of what variables can be used inside of the `<expression> </expression>` tags.
+Only the ones related to the process variables can be called. The values defined for example in the `parameter` block are out of reach.
 
 Notice, that OpenGeoSys assumes self consistent set of units.
 In the code snippet above temperature has to be converted from kelvins (used by other temperature dependent parameters in the `.prj`-file from which this snippet comes) to degrees Celsius required by the provided formula.
@@ -308,8 +282,7 @@ It is your task to ensure, that the units used are consistent!
 ### Curve
 
 Curve is a special type, as it requires the presence of another block in the project file.
-Whether the parameter is defined in the Parameters block, or anywhere else in the project file, type curve will always refer to
-the curve defined in [curve block](/docs/userguide/blocks//curves/).
+Whether the parameter is defined in the Parameters block, or anywhere else in the project file, type curve will always refer to the curve defined in [curve block](/docs/userguide/blocks//curves/).
 Regardless, of whether there is only one curve defined or multiple, they are always identified by the content of the tag `<name> </name>`.
 
 ![Relation between parameter of type curve and curves block](/docs/userguide/blocks/figures/curve.svg)
@@ -345,7 +318,8 @@ Various properties of water can be called by providing an appropriate tag:
 - viscosity `<type>WaterViscosityIAPWS</type>`
 - thermal conductivity `<type>WaterThermalConductivityIAPWS</type>`
 
-Those tags can be used only on the phase level. Please see the following example:
+Those tags can be used only on the phase level.
+Please see the following example:
 
 ```xml
 <phase>
