@@ -14,6 +14,7 @@
 #include <memory>
 #include <utility>
 
+#include "BaseLib/StrongType.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Parameter.h"
 
@@ -21,6 +22,10 @@ namespace ProcessLib
 {
 namespace ThermoRichardsMechanics
 {
+/// A type helping to avoid confusion of different boolean values.
+using InitializePorosityFromMediumProperty =
+    BaseLib::StrongType<bool, struct InitializePorosityFromMediumPropertyTag>;
+
 template <int DisplacementDim, typename ConstitutiveTraits>
 struct ThermoRichardsMechanicsProcessData
 {
@@ -47,6 +52,9 @@ struct ThermoRichardsMechanicsProcessData
     const bool use_TaylorHood_elements;
 
     bool const apply_body_force_for_deformation;
+
+    InitializePorosityFromMediumProperty const
+        initialize_porosity_from_medium_property;
 
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* element_porosity = nullptr;

@@ -187,6 +187,11 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
         config.getConfigParameter<bool>("apply_body_force_for_deformation",
                                         true);
 
+    bool const initialize_porosity_from_medium_property =
+        //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__initialize_porosity_from_medium_property}
+        config.getConfigParameter("initialize_porosity_from_medium_property",
+                                  true);
+
     const bool use_TaylorHood_elements =
         variable_p->getShapeFunctionOrder() !=
                 variable_u->getShapeFunctionOrder()
@@ -201,7 +206,9 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
                      specific_body_force,
                      mass_lumping,
                      use_TaylorHood_elements,
-                     apply_body_force_for_deformation};
+                     apply_body_force_for_deformation,
+                     InitializePorosityFromMediumProperty{
+                         initialize_porosity_from_medium_property}};
 
     SecondaryVariableCollection secondary_variables;
 
