@@ -133,6 +133,7 @@ void TimeDiscretizedODESystem<
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
     applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
+                              GlobalVector const& x,
                               GlobalVector& minus_delta_x) const
 {
     if (!_known_solutions)

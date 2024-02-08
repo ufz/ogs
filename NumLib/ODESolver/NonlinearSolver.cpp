@@ -375,7 +375,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         minus_delta_x.setZero();
 
         timer_dirichlet.start();
-        sys.applyKnownSolutionsNewton(J, res, minus_delta_x);
+        sys.applyKnownSolutionsNewton(J, res, *x[process_id], minus_delta_x);
         time_dirichlet += timer_dirichlet.elapsed();
         INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 

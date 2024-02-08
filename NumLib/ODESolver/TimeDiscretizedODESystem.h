@@ -106,6 +106,7 @@ public:
     void applyKnownSolutions(GlobalVector& x) const override;
 
     void applyKnownSolutionsNewton(GlobalMatrix& Jac, GlobalVector& res,
+                                   GlobalVector const& x,
                                    GlobalVector& minus_delta_x) const override;
 
     void applyKnownSolutionsPETScSNES(GlobalMatrix& Jac, GlobalVector& res,

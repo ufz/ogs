@@ -75,7 +75,7 @@ public:
     //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
     //! \pre computeKnownSolutions() must have been called before.
     virtual void applyKnownSolutionsNewton(
-        GlobalMatrix& Jac, GlobalVector& res,
+        GlobalMatrix& Jac, GlobalVector& res, GlobalVector const& x,
         GlobalVector& minus_delta_x) const = 0;
 
     //! Apply known solutions to the linearized equation system
