@@ -10,6 +10,9 @@
 
 #include "TimeDiscretizedODESystem.h"
 
+#include <range/v3/numeric/accumulate.hpp>
+#include <range/v3/view/transform.hpp>
+
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/Exceptions.h"
@@ -142,14 +145,27 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     }
 
     using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+    std::size_t const size = ranges::accumulate(
+        *_known_solutions | ranges::views::transform([](auto const& bc)
+                                                     { return bc.ids.size(); }),
+        0);
     std::vector<IndexType> ids;
+    ids.reserve(size);
+    std::vector<double> values;
+    values.reserve(size);
+
     for (auto const& bc : *_known_solutions)
     {
-        ids.insert(end(ids), begin(bc.ids), end(bc.ids));
+        for (std::size_t i = 0; i < bc.ids.size(); ++i)
+        {
+            auto const id = bc.ids[i];
+            ids.push_back(id);
+            // minus_delta_x will be set to the difference between the current
+            // value and the Dirichlet BC value.
+            values.push_back(x[id] - bc.values[i]);
+        }
     }
 
-    // For the Newton method the values must be zero
-    std::vector<double> values(ids.size(), 0);
     MathLib::applyKnownSolution(Jac, res, minus_delta_x, ids, values);
 }
 
