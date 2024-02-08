@@ -153,15 +153,16 @@ CMake comes with a graphical tool called `cmake-gui`. You can find it in the **W
 
 <div class='linux'>
 
-A more convenient way of running CMake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. To use it just run `ccmake` instead of `cmake`:
+A more convenient way of running CMake on the command line is to use the `ccmake` tool. This is a shell tool but with some graphical user interface. If you want to use a preset configure with regular `cmake` first (`ccmake` **does not support presets**) and then run `ccmake` supplying the path to the build directory:
 
 ```bash
-ccmake --preset release
+cmake --preset release
+ccmake ../build/release
 ```
 
-First press <kbd>C</kbd> to **Configure**. You are now presented the available configuration options. You can navigate in the list with the cursor keys and toggle / alter options with <kbd>Enter</kbd>. You may also press <kbd>T</kbd> to toggle (previously hidden) advanced options. Press <kbd>C</kbd> again until the **Generate**-option becomes visible. Press <kbd>G</kbd> to generate the project files and exit `ccmake`.
+You are now presented the available configuration options. You can navigate in the list with the cursor keys and toggle / alter options with <kbd>Enter</kbd>. You may also press <kbd>T</kbd> to toggle (previously hidden) advanced options. Press <kbd>C</kbd> again until the **Generate**-option becomes visible. Press <kbd>G</kbd> to generate the project files and exit `ccmake`.
 
-There is also the tool `cmake-gui` available, please see the Win-Tab for a description.
+There is also the tool `cmake-gui` available (which supports presets), please see the Win-Tab for a description.
 
 </div>
 
