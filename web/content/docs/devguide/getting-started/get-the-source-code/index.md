@@ -24,7 +24,7 @@ First you need to get the clone URL:
 Then clone the repository with `git`:
 
 ```bash
-git clone --filter=blob:limit=100 https://gitlab.opengeosys.org/ogs/ogs.git
+git clone --filter=blob:limit=100k https://gitlab.opengeosys.org/ogs/ogs.git
 ```
 
 <div class='note'>
