@@ -15,8 +15,21 @@
 #include <Eigen/Core>
 #include <concepts>
 
+namespace MathLib
+{
+struct EigenIOFormat
+{
+    static const Eigen::IOFormat full_precision;
+};
+}  // namespace MathLib
+
 template <typename T>
 requires std::derived_from<T, Eigen::DenseBase<T>>
 struct fmt::formatter<T> : fmt::ostream_formatter
 {
+    auto format(T const& value, fmt::format_context& ctx) const
+    {
+        return fmt::ostream_formatter::format(
+            value.format(MathLib::EigenIOFormat::full_precision), ctx);
+    }
 };
