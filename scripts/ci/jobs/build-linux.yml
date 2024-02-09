@@ -63,7 +63,7 @@ build linux debug with sanitizers:
       -DCMAKE_C_COMPILER=/usr/bin/clang
       -DCMAKE_CXX_COMPILER=/usr/bin/clang++
       -DBUILD_SHARED_LIBS=ON
-      -DOGS_COMPILE_FLAGS=-O3;-fno-var-tracking
+      -DOGS_CXX_FLAGS=-O3;-fno-var-tracking
       -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=OFF
       -DENABLE_ASAN=ON
       -DENABLE_UBSAN=ON
