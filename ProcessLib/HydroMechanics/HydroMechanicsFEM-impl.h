@@ -816,7 +816,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
     setInitialConditionsConcrete(std::vector<double> const& local_x,
-                                 double const /*t*/,
+                                 double const t,
                                  bool const use_monolithic_scheme,
                                  int const process_id)
 {
@@ -832,12 +832,25 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ParameterLib::SpatialPosition x_position;
         x_position.setElementID(_element.getID());
 
-        const int displacement_offset =
+        auto const& medium =
+            _process_data.media_map.getMedium(_element.getID());
+
+        int const displacement_offset =
             use_monolithic_scheme ? displacement_index : 0;
 
-        auto u = Eigen::Map<typename ShapeMatricesTypeDisplacement::
-                                template VectorType<displacement_size> const>(
-            local_x.data() + displacement_offset, displacement_size);
+        auto const u =
+            Eigen::Map<typename ShapeMatricesTypeDisplacement::
+                           template VectorType<displacement_size> const>(
+                local_x.data() + displacement_offset, displacement_size);
+
+        int const pressure_offset = use_monolithic_scheme ? pressure_index : 0;
+
+        auto const p =
+            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+                pressure_size> const>(local_x.data() + pressure_offset,
+                                      pressure_size);
+        auto const& identity2 = Invariants::identity2;
+        const double dt = 0.0;
 
         MPL::VariableArray vars;
 
@@ -862,6 +875,18 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             eps.noalias() = B * u;
             vars.mechanical_strain.emplace<
                 MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(eps);
+
+            if (_process_data.initial_stress.isTotalStress())
+            {
+                auto const& N_p = _ip_data[ip].N_p;
+                auto const alpha_b =
+                    medium->property(MPL::PropertyType::biot_coefficient)
+                        .template value<double>(vars, x_position, t, dt);
+
+                auto& sigma_eff = _ip_data[ip].sigma_eff;
+                sigma_eff += alpha_b * N_p.dot(p) * identity2;
+                _ip_data[ip].sigma_eff_prev = sigma_eff;
+            }
         }
     }
 }
