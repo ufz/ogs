@@ -22,6 +22,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MeshLib/Utils/Is2DMeshOnRotatedVerticalPlane.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -248,12 +249,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     DBUG("Media properties verified.");
 
     // Initial stress conditions
-    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS__initial_stress}
-        config, "initial_stress", parameters,
-        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
-        &mesh);
+    auto initial_stress = ProcessLib::createInitialStress<DisplacementDim>(
+        config, parameters, mesh);
 
     const bool use_taylor_hood_elements = variable_p->getShapeFunctionOrder() !=
                                           variable_u->getShapeFunctionOrder();

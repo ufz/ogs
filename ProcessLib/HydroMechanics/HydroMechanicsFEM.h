@@ -244,11 +244,11 @@ public:
                         _element, ip_data.N_p))};
 
             /// Set initial stress from parameter.
-            if (_process_data.initial_stress != nullptr)
+            if (_process_data.initial_stress.value)
             {
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
+                        DisplacementDim>((*_process_data.initial_stress.value)(
                         std::numeric_limits<
                             double>::quiet_NaN() /* time independent */,
                         x_position));

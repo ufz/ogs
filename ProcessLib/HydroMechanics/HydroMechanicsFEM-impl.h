@@ -1062,13 +1062,13 @@ std::size_t HydroMechanicsLocalAssembler<
 
     if (name == "sigma")
     {
-        if (_process_data.initial_stress != nullptr)
+        if (_process_data.initial_stress.value != nullptr)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
                 "point data and from a parameter '{:s}' is not possible "
                 "simultaneously.",
-                _process_data.initial_stress->name);
+                _process_data.initial_stress.value->name);
         }
 
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
