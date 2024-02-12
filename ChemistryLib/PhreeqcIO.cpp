@@ -787,9 +787,12 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                 case ItemType::Component:
                 {
                     // Update component concentrations
-                    auto& component = BaseLib::findElementOrError(
-                        components.begin(), components.end(), compare_by_name,
-                        "Could not find component '" + item_name + "'.");
+                    auto const& component = BaseLib::findElementOrError(
+                        components, compare_by_name,
+                        [&]() {
+                            OGS_FATAL("Could not find component '{:s}'.",
+                                      item_name);
+                        });
                     MathLib::LinAlg::setLocalAccessibleVector(
                         *component.amount);
                     component.amount->set(global_index,
@@ -801,10 +804,14 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     // Update amounts of equilibrium reactant
                     auto const& equilibrium_reactant =
                         BaseLib::findElementOrError(
-                            equilibrium_reactants.begin(),
-                            equilibrium_reactants.end(), compare_by_name,
-                            "Could not find equilibrium reactant '" +
-                                item_name + "'.");
+                            equilibrium_reactants, compare_by_name,
+                            [&]()
+                            {
+                                OGS_FATAL(
+                                    "Could not find equilibrium reactant "
+                                    "'{:s}'",
+                                    item_name);
+                            });
                     (*equilibrium_reactant.molality)[chemical_system_id] =
                         accepted_items[item_id];
                     break;
@@ -813,9 +820,11 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                 {
                     // Update amounts of kinetic reactants
                     auto const& kinetic_reactant = BaseLib::findElementOrError(
-                        kinetic_reactants.begin(), kinetic_reactants.end(),
-                        compare_by_name,
-                        "Could not find kinetic reactant '" + item_name + "'.");
+                        kinetic_reactants, compare_by_name,
+                        [&]() {
+                            OGS_FATAL("Could not find kinetic reactant '{:s}'.",
+                                      item_name);
+                        });
                     (*kinetic_reactant.molality)[chemical_system_id] =
                         accepted_items[item_id];
                     break;
@@ -828,10 +837,12 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                     // Update values of secondary variables
                     auto const& secondary_variable =
                         BaseLib::findElementOrError(
-                            secondary_variables.begin(),
-                            secondary_variables.end(), compare_by_name,
-                            "Could not find secondary variable '" + item_name +
-                                "'.");
+                            secondary_variables, compare_by_name,
+                            [&]() {
+                                OGS_FATAL(
+                                    "Could not find secondary variable '{:s}'.",
+                                    item_name);
+                            });
                     (*secondary_variable.value)[chemical_system_id] =
                         accepted_items[item_id];
                     break;

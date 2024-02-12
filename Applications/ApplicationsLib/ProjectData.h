@@ -94,7 +94,7 @@ public:
 
     ProcessLib::TimeLoop& getTimeLoop() { return *_time_loop; }
 
-    MeshLib::Mesh* getMesh(std::string const& mesh_name) const;
+    MeshLib::Mesh& getMesh(std::string const& mesh_name) const;
 
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
     getMedia() const

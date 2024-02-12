@@ -12,8 +12,6 @@
 
 #include "Medium.h"
 
-#include <range/v3/algorithm/find_if.hpp>
-
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Error.h"
 #include "Properties/Properties.h"
@@ -39,15 +37,11 @@ Phase const& Medium::phase(std::size_t const index) const
 
 Phase const& Medium::phase(std::string const& phase_name) const
 {
-    auto it = ranges::find_if(
+    return *BaseLib::findElementOrError(
         phases_,
         [&phase_name](std::unique_ptr<MaterialPropertyLib::Phase> const& phase)
-        { return phase->name == phase_name; });
-    if (it == phases_.end())
-    {
-        OGS_FATAL("Could not find phase name '{:s}.'", phase_name);
-    }
-    return **it;
+        { return phase->name == phase_name; },
+        [&]() { OGS_FATAL("Could not find phase named '{:s}.'", phase_name); });
 }
 
 bool Medium::hasPhase(std::string const& phase_name) const

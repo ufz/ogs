@@ -22,6 +22,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Process.h"
 
@@ -215,11 +216,7 @@ MeshLib::Mesh const& Output::prepareSubmesh(
     const int process_id, double const t,
     std::vector<GlobalVector*> const& xs) const
 {
-    auto& submesh = *BaseLib::findElementOrError(
-        _meshes.get().begin(), _meshes.get().end(),
-        [&submesh_output_name](auto const& m)
-        { return m->getName() == submesh_output_name; },
-        "Need mesh '" + submesh_output_name + "' for the output.");
+    auto& submesh = MeshLib::findMeshByName(_meshes.get(), submesh_output_name);
 
     DBUG("Found {:d} nodes for output at mesh '{:s}'.",
          submesh.getNumberOfNodes(), submesh.getName());

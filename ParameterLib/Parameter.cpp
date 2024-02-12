@@ -43,10 +43,7 @@ std::unique_ptr<ParameterBase> createParameter(
         //! \ogs_file_param{prj__parameters__parameter__mesh}
         config.getConfigParameter<std::string>("mesh", meshes[0]->getName());
 
-    auto const& mesh = *BaseLib::findElementOrError(
-        begin(meshes), end(meshes),
-        [&mesh_name](auto const& m) { return m->getName() == mesh_name; },
-        "Expected to find a mesh named " + mesh_name + ".");
+    auto const& mesh = MeshLib::findMeshByName(meshes, mesh_name);
 
     // Create parameter based on the provided type.
     if (type == "Constant")
@@ -81,10 +78,7 @@ std::unique_ptr<ParameterBase> createParameter(
     }
     if (type == "RandomFieldMeshElement")
     {
-        auto& mesh_var = *BaseLib::findElementOrError(
-            begin(meshes), end(meshes),
-            [&mesh_name](auto const& m) { return m->getName() == mesh_name; },
-            "Expected to find a mesh named " + mesh_name + ".");
+        auto& mesh_var = MeshLib::findMeshByName(meshes, mesh_name);
         INFO("RandomFieldMeshElement: {:s}", name);
         return createRandomFieldMeshElementParameter(name, config, mesh_var);
     }

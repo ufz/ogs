@@ -12,8 +12,6 @@
 
 #include "Phase.h"
 
-#include <range/v3/algorithm/find_if.hpp>
-
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Error.h"
 #include "Component.h"
@@ -44,16 +42,12 @@ bool Phase::hasComponent(std::size_t const& index) const
 
 Component const& Phase::component(std::string const& name) const
 {
-    auto it = ranges::find_if(
+    return *BaseLib::findElementOrError(
         components_,
         [&name](
             std::unique_ptr<MaterialPropertyLib::Component> const& component)
-        { return component->name == name; });
-    if (it == components_.end())
-    {
-        OGS_FATAL("Could not find component name '{:s}.'", name);
-    }
-    return **it;
+        { return component->name == name; },
+        [&]() { OGS_FATAL("Could not find component named '{:s}.'", name); });
 }
 
 Property const& Phase::property(PropertyType const& p) const

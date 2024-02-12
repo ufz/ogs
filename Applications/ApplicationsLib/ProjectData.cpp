@@ -447,10 +447,7 @@ void ProjectData::parseProcessVariables(
             var_config.getConfigParameter<std::string>("mesh",
                                                        _mesh_vec[0]->getName());
 
-        auto& mesh = *BaseLib::findElementOrError(
-            begin(_mesh_vec), end(_mesh_vec),
-            [&mesh_name](auto const& m) { return m->getName() == mesh_name; },
-            "Expected to find a mesh named " + mesh_name + ".");
+        auto& mesh = MeshLib::findMeshByName(_mesh_vec, mesh_name);
 
         auto pv = ProcessLib::ProcessVariable{var_config, mesh, _mesh_vec,
                                               _parameters, _curves};
@@ -1362,12 +1359,7 @@ void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
     }
 }
 
-MeshLib::Mesh* ProjectData::getMesh(std::string const& mesh_name) const
+MeshLib::Mesh& ProjectData::getMesh(std::string const& mesh_name) const
 {
-    return BaseLib::findElementOrError(
-               begin(_mesh_vec), end(_mesh_vec),
-               [&mesh_name](auto const& m)
-               { return m->getName() == mesh_name; },
-               "Expected to find a mesh named " + mesh_name + ".")
-        .get();
+    return MeshLib::findMeshByName(_mesh_vec, mesh_name);
 }

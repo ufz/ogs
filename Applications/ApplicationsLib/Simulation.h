@@ -43,7 +43,7 @@ public:
     OGS_EXPORT_SYMBOL bool executeTimeStep();
     OGS_EXPORT_SYMBOL bool executeSimulation();
     OGS_EXPORT_SYMBOL void outputLastTimeStep() const;
-    OGS_EXPORT_SYMBOL MeshLib::Mesh* getMesh(std::string const& name);
+    OGS_EXPORT_SYMBOL MeshLib::Mesh& getMesh(std::string const& name);
 
     OGS_EXPORT_SYMBOL std::optional<ApplicationsLib::TestDefinition>
     getTestDefinition() const;

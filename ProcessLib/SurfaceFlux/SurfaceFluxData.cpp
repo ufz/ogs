@@ -52,11 +52,7 @@ SurfaceFluxData::createSurfaceFluxData(
         "'{:s}'\n",
         mesh_name, surfaceflux_pv_name);
 
-    auto& surfaceflux_mesh = *BaseLib::findElementOrError(
-        meshes.begin(), meshes.end(),
-        [&mesh_name](auto const& m) { return mesh_name == m->getName(); },
-        "Expected to find a mesh named " + mesh_name +
-            " for the surfaceflux calculation.");
+    auto& surfaceflux_mesh = MeshLib::findMeshByName(meshes, mesh_name);
 
     return std::make_unique<SurfaceFluxData>(surfaceflux_mesh,
                                              std::move(surfaceflux_pv_name));
