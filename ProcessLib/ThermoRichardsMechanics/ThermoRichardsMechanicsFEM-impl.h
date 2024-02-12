@@ -15,6 +15,7 @@
 
 #include <Eigen/LU>
 #include <cassert>
+#include <type_traits>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -135,9 +136,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
         variables.temperature = T_ip;
 
-        std::get<PrevState<SaturationData>>(this->prev_states_[ip])->S_L =
+        double const S_L =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
+
+        std::get<PrevState<SaturationData>>(this->prev_states_[ip])->S_L = S_L;
 
         {
             // Set eps_m_prev from potentially non-zero eps and sigma_sw from
@@ -162,7 +165,56 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                     ? eps + C_el_data.C_el.inverse() * sigma_sw
                     : eps;
         }
+
+        if (this->process_data_.initial_stress.value)
+        {
+            variables.liquid_saturation = S_L;
+            convertInitialStressType(ip, t, x_position, *medium, variables,
+                                     -p_cap_ip);
+        }
     }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunction,
+          int DisplacementDim, typename ConstitutiveTraits>
+void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
+                                           ShapeFunction, DisplacementDim,
+                                           ConstitutiveTraits>::
+    convertInitialStressType(unsigned const ip,
+                             double const t,
+                             ParameterLib::SpatialPosition const x_position,
+                             MaterialPropertyLib::Medium const& medium,
+                             MPL::VariableArray const& variables,
+                             double const p_at_ip)
+{
+    bool constexpr is_strain_temperature_constitutive =
+        std::is_same<ConstitutiveStress_StrainTemperature::ConstitutiveTraits<
+                         DisplacementDim>,
+                     ConstitutiveTraits>::value;
+    if (is_strain_temperature_constitutive &&
+        this->process_data_.initial_stress.type ==
+            InitialStress::Type::Effective)
+    {
+        return;
+    }
+
+    if (!is_strain_temperature_constitutive &&
+        this->process_data_.initial_stress.type == InitialStress::Type::Total)
+    {
+        return;
+    }
+
+    double const alpha_b =
+        medium.property(MPL::PropertyType::biot_coefficient)
+            .template value<double>(variables, x_position, t, 0.0 /*dt*/);
+
+    double const bishop =
+        medium.property(MPL::PropertyType::bishops_effective_stress)
+            .template value<double>(variables, x_position, t, 0.0 /*dt*/);
+
+    ConstitutiveTraits::ConstitutiveSetting::convertInitialStressType(
+        this->current_states_[ip], this->prev_states_[ip],
+        bishop * alpha_b * p_at_ip * Invariants::identity2);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,

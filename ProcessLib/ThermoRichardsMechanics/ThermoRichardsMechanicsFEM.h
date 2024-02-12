@@ -418,6 +418,18 @@ private:
     {
         return vec.template segment<temperature_size>(temperature_index);
     }
+
+    /// This function resets the initial stress type according to the input
+    /// initial stress type, either total or effective.
+    /// If subtype = `StressSaturation_StrainPressureTemperature` is bing used
+    /// in the process setting, the initial effective stress is converted to
+    /// total stress. Otherwise, the initial total stress is converted to
+    /// effective stress.
+    void convertInitialStressType(
+        unsigned const ip, double const t,
+        ParameterLib::SpatialPosition const x_position,
+        MaterialPropertyLib::Medium const& medium,
+        MPL::VariableArray const& variables, double const p_at_ip);
 };
 
 }  // namespace ThermoRichardsMechanics
