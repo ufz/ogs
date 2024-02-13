@@ -17,6 +17,27 @@ append_source_files(SOURCES SurfaceFlux)
 append_source_files(SOURCES Output)
 append_source_files(SOURCES Utils)
 append_source_files(SOURCES Reflection)
+### For processes that contains both hydraulical process and mechanical process
+# Define a function to check if enabled_processes contains LIE, HydroMechanics,
+# ThermoHydroMechanics, RichardsMechanics, or ThermoRichardsMechanics
+function(check_enabled_processes contains_hm_process)
+    set(${contains_hm_process} FALSE PARENT_SCOPE)
+    foreach(process ${_enabled_processes})
+        if(process STREQUAL "LIE"
+             OR process STREQUAL "HydroMechanics"
+             OR process STREQUAL "ThermoHydroMechanics"
+             OR process STREQUAL "RichardsMechanics"
+             OR process STREQUAL "TH2M"
+             OR process STREQUAL "ThermoRichardsMechanics")
+            set(${contains_hm_process} TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+endfunction()
+check_enabled_processes(contains_hm_process)
+if(contains_hm_process)
+    append_source_files(SOURCES Common/HydroMechanics)
+endif()
 
 ogs_add_library(ProcessLib GENERATE_EXPORT_HEADER ${SOURCES})
 
