@@ -87,6 +87,7 @@ ogs_add_executable(testrunner ${TEST_SOURCES})
 target_sources(testrunner
   PRIVATE
     ProcessLib/Graph/TestGet.cpp
+    ProcessLib/Graph/TestApply.cpp
 )
 
 target_link_libraries(
