@@ -888,9 +888,9 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    computeSecondaryVariableConcrete(double const t, double const dt,
+    computeSecondaryVariableConcrete(double const /*t*/, double const /*dt*/,
                                      Eigen::VectorXd const& local_x,
-                                     Eigen::VectorXd const& local_x_prev)
+                                     Eigen::VectorXd const& /*local_x_prev*/)
 {
     auto const p = local_x.template segment<pressure_size>(pressure_index);
     auto const T =
@@ -908,17 +908,6 @@ void ThermoHydroMechanicsLocalAssembler<
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto& ip_data = _ip_data[ip];
-        auto const& N_u = ip_data.N_u;
-
-        ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
-            MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u))};
-
-        updateConstitutiveRelations(local_x, local_x_prev, x_position, t, dt,
-                                    _ip_data[ip], _ip_data_output[ip]);
 
         fluid_density_avg += _ip_data_output[ip].fluid_density;
         viscosity_avg += _ip_data_output[ip].viscosity;

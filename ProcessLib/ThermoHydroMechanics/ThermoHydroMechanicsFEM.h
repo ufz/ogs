@@ -168,9 +168,9 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_prev*/,
-                              double const /*t*/, double const /*dt*/,
+    void postTimestepConcrete(Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_x_prev,
+                              double const t, double const dt,
                               bool const /*use_monolithic_scheme*/,
                               int const /*process_id*/) override
     {
@@ -179,6 +179,19 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            auto& ip_data = _ip_data[ip];
+            auto const& N_u = ip_data.N_u;
+
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<
+                        ShapeFunctionDisplacement,
+                        ShapeMatricesTypeDisplacement>(_element, N_u))};
+
+            updateConstitutiveRelations(local_x, local_x_prev, x_position, t,
+                                        dt, _ip_data[ip], _ip_data_output[ip]);
+
             _ip_data[ip].eps0 =
                 _ip_data[ip].eps0_prev +
                 (1 - _ip_data[ip].phi_fr_prev / _ip_data[ip].porosity) *
