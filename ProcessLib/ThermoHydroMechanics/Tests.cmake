@@ -9,7 +9,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoHydroMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.xml RUNTIME 1)
 endif()
 
 AddTest(
