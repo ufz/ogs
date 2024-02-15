@@ -24,6 +24,7 @@
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "ThermoRichardsMechanicsProcess.h"
@@ -77,16 +78,15 @@ void checkProcessVariableComponents(ProcessVariable const& variable,
 template <int DisplacementDim, typename ConstitutiveTraits,
           typename CreateConstitutiveSetting>
 std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
-    std::string const& name,
-    MeshLib::Mesh& mesh,
+    std::string const& name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    unsigned const integration_order,
-    BaseLib::ConfigTree const& config,
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
+    unsigned const integration_order, BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
+    bool const mandatory_stress0_type)
 {
     auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__coupling_scheme}
@@ -165,13 +165,8 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
     checkMPLProperties(media);
     DBUG("Media properties verified.");
 
-    // Initial stress conditions
-    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
-        //! \ogs_file_param_special{prj__processes__process__THERMO_RICHARDS_MECHANICS__initial_stress}
-        config, "initial_stress", parameters,
-        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
-        &mesh);
+    auto initial_stress = ProcessLib::createInitialStress<DisplacementDim>(
+        config, parameters, mesh, mandatory_stress0_type);
 
     bool mass_lumping = false;
     if (auto const mass_lumping_ptr =
@@ -202,7 +197,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
         process_data{materialIDs(mesh),
                      std::move(media_map),
                      std::move(solid_constitutive_relations),
-                     initial_stress,
+                     std::move(initial_stress),
                      specific_body_force,
                      mass_lumping,
                      use_TaylorHood_elements,
@@ -247,19 +242,22 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
 
     if (subtype == "Stress_StrainTemperature")
     {
+        bool const mandatory_stress0_type = false;
         return createThermoRichardsMechanicsProcessStage2<
             DisplacementDim,
             ConstitutiveStress_StrainTemperature::ConstitutiveTraits<
                 DisplacementDim>,
             ConstitutiveStress_StrainTemperature::CreateConstitutiveSetting<
-                DisplacementDim>>(
-            name, mesh, std::move(jacobian_assembler), variables, parameters,
-            local_coordinate_system, integration_order, config, media);
+                DisplacementDim>>(name, mesh, std::move(jacobian_assembler),
+                                  variables, parameters,
+                                  local_coordinate_system, integration_order,
+                                  config, media, mandatory_stress0_type);
     }
 
     if (subtype == "StressSaturation_StrainPressureTemperature")
     {
 #ifdef OGS_USE_MFRONT
+        bool const mandatory_stress0_type = true;
         return createThermoRichardsMechanicsProcessStage2<
             DisplacementDim,
             ConstitutiveStressSaturation_StrainPressureTemperature::
@@ -267,7 +265,8 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcess(
             ConstitutiveStressSaturation_StrainPressureTemperature::
                 CreateConstitutiveSetting<DisplacementDim>>(
             name, mesh, std::move(jacobian_assembler), variables, parameters,
-            local_coordinate_system, integration_order, config, media);
+            local_coordinate_system, integration_order, config, media,
+            mandatory_stress0_type);
 #else
         OGS_FATAL(
             "TRM process subtype 'StressSaturation_StrainPressureTemperature' "

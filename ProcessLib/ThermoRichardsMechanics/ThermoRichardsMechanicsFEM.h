@@ -292,13 +292,14 @@ public:
             auto& current_state = this->current_states_[ip];
 
             // Set initial stress from parameter.
-            if (this->process_data_.initial_stress != nullptr)
+            if (this->process_data_.initial_stress.value)
             {
                 ConstitutiveTraits::ConstitutiveSetting::statefulStress(
                     current_state) =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*this->process_data_.initial_stress)(
-                        time_independent, x_position));
+                        DisplacementDim>(
+                        (*this->process_data_.initial_stress.value)(
+                            time_independent, x_position));
             }
 
             if (*this->process_data_.initialize_porosity_from_medium_property)
