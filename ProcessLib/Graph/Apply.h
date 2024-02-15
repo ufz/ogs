@@ -17,7 +17,9 @@ namespace detail
 {
 template <typename Function>
 struct GetFunctionArgumentTypesPlain  // plain, i.e., without cvref
+    /** \cond */
     : GetFunctionArgumentTypesPlain<decltype(&Function::operator())>
+/** \endcond */
 {
 };
 
@@ -44,7 +46,9 @@ struct GetFunctionArgumentTypesPlain<Result (*)(Args...)>
 
 template <typename Function>
 struct GetFunctionReturnType
+    /** \cond */
     : GetFunctionReturnType<decltype(&Function::operator())>
+/** \endcond */
 {
 };
 
@@ -150,9 +154,11 @@ Result unpackAndInvoke(boost::mp11::mp_list<FunctionArgumentTypesPlain...>,
 
 template <typename Function, typename... PassedArgsTuples>
 struct GetFlattenedTupleOfPassedArgs
+    /** \cond */
     : GetFlattenedTupleOfPassedArgs<decltype(&Function::operator()),
                                     Function,
                                     PassedArgsTuples...>
+/** \endcond */
 {
 };
 
