@@ -40,9 +40,7 @@
             </fracture_properties>
             <!--
             <secondary_variables>
-                <secondary_variable internal_name="sigma_xx" output_name="sigma_xx"/>
-                <secondary_variable internal_name="sigma_yy" output_name="sigma_yy"/>
-                <secondary_variable internal_name="sigma_xy" output_name="sigma_xy"/>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
             </secondary_variables>
             -->
         </process>
@@ -87,11 +85,9 @@
                 <variable>displacement_jump2</variable>
                 <variable>displacement_jump3</variable>
                 <variable>displacement_jump4</variable>
-                <variable>f_stress_n</variable>
+                <variable>fracture_stress_avg</variable>
                 <!--
-                <variable>sigma_xx</variable>
-                <variable>sigma_yy</variable>
-                <variable>sigma_xy</variable>
+                <variable>sigma</variable>
                 -->
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>

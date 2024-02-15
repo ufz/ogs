@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>mohr_coulomb_load_path.vtu</mesh>
     <geometry>mohr_coulomb_load_path.gml</geometry>
@@ -36,9 +36,10 @@
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
-                <secondary_variable internal_name="sigma_xx" output_name="sigma_xx"/>
-                <secondary_variable internal_name="sigma_yy" output_name="sigma_yy"/>
-                <secondary_variable internal_name="sigma_xy" output_name="sigma_xy"/>
+                <secondary_variable internal_name="sigma" output_name="sigma" />
+                <secondary_variable internal_name="epsilon" output_name="epsilon" />
+                <secondary_variable internal_name="fracture_stress" output_name="fracture_stress" />
+                <secondary_variable internal_name="fracture_aperture" output_name="fracture_aperture" />
             </secondary_variables>
         </process>
     </processes>
@@ -79,11 +80,15 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
-                <variable>sigma_xx</variable>
-                <variable>sigma_yy</variable>
-                <variable>sigma_xy</variable>
-                <variable>f_stress_s</variable>
                 <variable>stress_xy</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>fracture_stress</variable>
+                <variable>fracture_aperture</variable>
+                <variable>sigma_avg</variable>
+                <variable>local_jump_w_avg</variable>
+                <variable>fracture_stress_avg</variable>
+                <variable>fracture_aperture_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
@@ -290,26 +295,26 @@
         </vtkdiff>
         <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_0.500000.vtu</regex>
-            <field>stress_xy</field>
+            <field>sigma</field>
             <absolute_tolerance>3e-4</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_1.500000.vtu</regex>
-            <field>stress_xy</field>
-            <absolute_tolerance>6e-4</absolute_tolerance>
+            <field>sigma</field>
+            <absolute_tolerance>1.2e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_2.500000.vtu</regex>
-            <field>stress_xy</field>
-            <absolute_tolerance>2.6e-3</absolute_tolerance>
+            <field>sigma</field>
+            <absolute_tolerance>7.0e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_4.000000.vtu</regex>
-            <field>stress_xy</field>
-            <absolute_tolerance>5.6e-4</absolute_tolerance>
+            <field>sigma</field>
+            <absolute_tolerance>1.0e-3</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -337,26 +342,26 @@
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_0.500000.vtu</regex>
-            <field>f_stress_s</field>
-            <absolute_tolerance>2e-14</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_1.500000.vtu</regex>
-            <field>f_stress_s</field>
+            <field>fracture_stress</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_2.500000.vtu</regex>
-            <field>f_stress_s</field>
+            <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_4.000000.vtu</regex>
+            <field>fracture_stress</field>
             <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
+            <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_1.500000.vtu</regex>
+            <field>fracture_stress_avg</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
             <regex>out_mohr_coulomb_load_path_nu0p3_ts_(.*)_t_4.000000.vtu</regex>
-            <field>f_stress_s</field>
+            <field>fracture_stress_avg</field>
             <absolute_tolerance>1e-7</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>

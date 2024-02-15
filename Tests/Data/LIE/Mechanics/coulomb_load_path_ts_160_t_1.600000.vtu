@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="25" format="appended" RangeMin="45"                   RangeMax="121"                  offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="6"                    NumberOfCells="3"                   >
+      <PointData>
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="6.0827625303e-06"     offset="88"                  />
+        <DataArray type="Float64" Name="displacement_jump1" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="6.0827624546e-06"     offset="212"                 />
+        <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="1.5517621616e-14"     RangeMax="3.6681403465e-14"     offset="304"                 />
+        <DataArray type="Float64" Name="fracture_aperture" format="appended" RangeMin="0"                    RangeMax="9.0000000326e-06"     offset="544"                 />
+        <DataArray type="Float64" Name="fracture_stress" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="41646.88895"          offset="620"                 />
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="4" format="appended" RangeMin="24524.346901"         RangeMax="101166.72399"         offset="712"                 />
+      </PointData>
+      <CellData>
+        <DataArray type="Float64" Name="fracture_aperture_avg" format="appended" RangeMin="0"                    RangeMax="9.0000000326e-06"     offset="988"                 />
+        <DataArray type="Float64" Name="fracture_stress_avg" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="41646.88895"          offset="1060"                />
+        <DataArray type="Float64" Name="local_jump_w_avg" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="6.0827624546e-06"     offset="1140"                />
+        <DataArray type="Float64" Name="sigma_avg" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="44043.031072"         offset="1220"                />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="2.2360679775"         offset="1356"                />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="1436"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1520"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1588"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9A1NjPSTTdKTrJIMzZN1UvJLCqpBABN8gcQAQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAOwAAAAAAAAA=eF5jYMAPkp8IFBZr3bTrfbt1wfdjG/ah812XJBQUa520qy9eN+P7sQX7GlQOFoL4s9L3rgDxAZErJJg=AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAIwAAAAAAAAA=eF5jYKAMSFnw5BRr3dzH+KZ9+vdjG+wkofz/ryF8AO8PEGU=AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAAkwAAAAAAAAA=eF47suL79tmXlloqMDA8KM94tIcBChgZGDZsCBS07fvy93qWwhLL////z642VdzLgABzNl4Ws2VgcBDtsFlszWB+SK4CSf+1pN9LQPoFomaxhu9ytp54Z/IsZP2s5nGzQfqvvG/byMzBZtt/Z7IEc4wQXF7luJ7aF74PNp66SctB8gXKb2SR5XfJZQqC5AGoTTzHAQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAFgAAAAAAAAA=eF5jYMAPCrM/Tb12/5EdjAYAV/IKcQ==AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAIgAAAAAAAAA=eF5jYKAMbLoppeYgdMHhx12nbt11jw5sgPK/Q/kABlUQlg==AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAArAAAAAAAAAA=eF6rNEzOsM9ZdICT/+RPz7qtBxqg/JXSob+CZa47PI7QkmWxfHiAcy+b0i3xLwceQvk7/1YYXS+959C4qvSGDVD9Vw2elSD9k2ZoFdsB+V9cF74G6Y9dwioNUs8qaqYA0i/3MQ/MPyu10BCk/8hu9gs8aXsdvC79WmVx8/6BjFVaX4H8A5GV0i9X5W514PBz6gbJ/yzq3AOSZ7x5V44XKH9scvJZkDwAYURdtA==AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAEwAAAAAAAAA=eF4rzP409dr9R3YMaAAAapkFOQ==AQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAGwAAAAAAAAA=eF7bcFNKzUHogsOPu07duuseHWAgAABKBghLAQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAGwAAAAAAAAA=eF6TsuDJKda6acfwpn3692Mb9jEQAAAoYge0AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAARQAAAAAAAAA=eF5jYMAPohmPH+3k2XZA/+bUHt11jw5cdtEO9t558kDDZz91B6ELDgf5+VtB8i+9GrpB8iuYND1A8mt5WJVA8gADox4aAQAAAAAAAAAAgAAAAAAAAJAAAAAAAAAAGwAAAAAAAAA=eF5jYMAHPtgTEHfALo9LHN08GB8hDgBcugZsAQAAAAAAAAAAgAAAAAAAAFAAAAAAAAAAHAAAAAAAAAA=eF5jZYAAFgZUwAilWdHkmdH4MHkmKA0ABegAIg==AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAEAAAAAAAAAA=eF5jYoAANijNBaUBAPgAEw==AQAAAAAAAAAAgAAAAAAAAAMAAAAAAAAACwAAAAAAAAA=eF5j5uQEAAAnABY=
+  </AppendedData>
+</VTKFile>

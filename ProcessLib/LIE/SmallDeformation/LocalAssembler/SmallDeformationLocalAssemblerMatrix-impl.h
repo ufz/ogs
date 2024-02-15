@@ -17,12 +17,14 @@
 #include "IntegrationPointDataMatrix.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
+#include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LIE/SmallDeformation/SmallDeformationProcessData.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "SecondaryData.h"
 #include "SmallDeformationLocalAssemblerInterface.h"
 #include "SmallDeformationLocalAssemblerMatrix.h"
@@ -175,41 +177,46 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
         double const /*t*/, Eigen::VectorXd const& /*local_x*/)
 {
     // Compute average value per element
-    const int n = DisplacementDim == 2 ? 4 : 6;
-    Eigen::VectorXd ele_stress = Eigen::VectorXd::Zero(n);
-    Eigen::VectorXd ele_strain = Eigen::VectorXd::Zero(n);
+    using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+    KV sigma_avg = KV::Zero();
+    auto const e_id = _element.getID();
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& ip_data = _ip_data[ip];
-
-        ele_stress += ip_data._sigma;
-        ele_strain += ip_data._eps;
+        sigma_avg += _ip_data[ip]._sigma;
     }
-    ele_stress /= n_integration_points;
-    ele_strain /= n_integration_points;
+    sigma_avg /= n_integration_points;
 
-    (*_process_data._mesh_prop_stress_xx)[_element.getID()] = ele_stress[0];
-    (*_process_data._mesh_prop_stress_yy)[_element.getID()] = ele_stress[1];
-    (*_process_data._mesh_prop_stress_zz)[_element.getID()] = ele_stress[2];
-    (*_process_data._mesh_prop_stress_xy)[_element.getID()] = ele_stress[3];
-    if (DisplacementDim == 3)
-    {
-        (*_process_data._mesh_prop_stress_yz)[_element.getID()] = ele_stress[4];
-        (*_process_data._mesh_prop_stress_xz)[_element.getID()] = ele_stress[5];
-    }
+    Eigen::Map<KV>(
+        &(*_process_data.element_stresses)[e_id * KV::RowsAtCompileTime]) =
+        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
+}
 
-    (*_process_data._mesh_prop_strain_xx)[_element.getID()] = ele_strain[0];
-    (*_process_data._mesh_prop_strain_yy)[_element.getID()] = ele_strain[1];
-    (*_process_data._mesh_prop_strain_zz)[_element.getID()] = ele_strain[2];
-    (*_process_data._mesh_prop_strain_xy)[_element.getID()] = ele_strain[3];
-    if (DisplacementDim == 3)
-    {
-        (*_process_data._mesh_prop_strain_yz)[_element.getID()] = ele_strain[4];
-        (*_process_data._mesh_prop_strain_xz)[_element.getID()] = ele_strain[5];
-    }
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> const&
+SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
+    getIntPtSigma(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IntegrationPointDataType::_sigma, cache);
+}
+template <typename ShapeFunction, int DisplacementDim>
+std::vector<double> const&
+SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
+    getIntPtEpsilon(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IntegrationPointDataType::_eps, cache);
 }
 
 }  // namespace SmallDeformation
