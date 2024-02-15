@@ -306,6 +306,20 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
 }
 
 template <int DisplacementDim>
+void ThermoHydroMechanicsProcess<DisplacementDim>::
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+                                        double const t,
+                                        int const process_id)
+{
+    DBUG("SetInitialConditions ThermoHydroMechanicsProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,
+        _local_assemblers, *_local_to_global_index_map, *x[process_id], t,
+        _use_monolithic_scheme, process_id);
+}
+
+template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,

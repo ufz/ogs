@@ -93,6 +93,20 @@ public:
         double const* values,
         int const integration_order) override;
 
+    void setInitialConditionsConcrete(std::vector<double> const& /*local_x*/,
+                                      double const /*t*/,
+                                      bool const /*use_monolithic_scheme*/,
+                                      int const /*process_id*/) override
+    {
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            // Set eps_m_prev from potentially non-zero eps from restart.
+            _ip_data[ip].eps_m_prev.noalias() = _ip_data[ip].eps;
+        }
+    }
+
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
                   std::vector<double> const& /*local_x_prev*/,
