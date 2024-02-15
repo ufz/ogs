@@ -299,23 +299,27 @@ public:
                         time_independent, x_position));
             }
 
-            // Initial porosity. Could be read from integration point data
-            // or mesh.
-            current_state.poro_data.phi = medium.property(MPL::porosity)
-                                              .template initialValue<double>(
-                                                  x_position, time_independent);
-
-            if (medium.hasProperty(MPL::PropertyType::transport_porosity))
+            if (*this->process_data_.initialize_porosity_from_medium_property)
             {
-                current_state.transport_poro_data.phi =
-                    medium.property(MPL::transport_porosity)
+                // Initial porosity. Could be read from integration point data
+                // or mesh.
+                current_state.poro_data.phi =
+                    medium.property(MPL::porosity)
                         .template initialValue<double>(x_position,
                                                        time_independent);
-            }
-            else
-            {
-                current_state.transport_poro_data.phi =
-                    current_state.poro_data.phi;
+
+                if (medium.hasProperty(MPL::PropertyType::transport_porosity))
+                {
+                    current_state.transport_poro_data.phi =
+                        medium.property(MPL::transport_porosity)
+                            .template initialValue<double>(x_position,
+                                                           time_independent);
+                }
+                else
+                {
+                    current_state.transport_poro_data.phi =
+                        current_state.poro_data.phi;
+                }
             }
 
             double const t = 0;  // TODO (naumov) pass t from top

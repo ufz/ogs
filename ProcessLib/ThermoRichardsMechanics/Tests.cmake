@@ -461,4 +461,5 @@ endif()
 
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup.prj RUNTIME 60)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup_restart.xml RUNTIME 30)
 endif()
