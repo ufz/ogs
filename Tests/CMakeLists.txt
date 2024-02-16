@@ -59,6 +59,8 @@ if(NOT OGS_BUILD_WHEEL)
     endif()
 endif()
 
+append_source_files(TEST_SOURCES ProcessLib/Graph)
+
 if(OGS_BUILD_GUI)
     append_source_files(TEST_SOURCES FileIO_Qt)
 endif()
@@ -81,6 +83,11 @@ if(OGS_USE_MFRONT)
 endif()
 
 ogs_add_executable(testrunner ${TEST_SOURCES})
+
+target_sources(testrunner
+  PRIVATE
+    ProcessLib/Graph/TestGet.cpp
+)
 
 target_link_libraries(
     testrunner
