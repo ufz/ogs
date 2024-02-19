@@ -122,6 +122,82 @@
                 <absolute_tolerance>3e-11</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
+
+            <!-- fluxes -->
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Cm-247]Flux</field>
+                <absolute_tolerance>3e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Am-243]Flux</field>
+                <absolute_tolerance>3e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Pu-239]Flux</field>
+                <absolute_tolerance>3.1e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[U-235]Flux</field>
+                <absolute_tolerance>3.1e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Pa-231]Flux</field>
+                <absolute_tolerance>3e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Ac-227]Flux</field>
+                <absolute_tolerance>1.9e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+
+            <!-- flux residuals -->
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Cm-247]Flux_residual</field>
+                <absolute_tolerance>4.3e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Am-243]Flux_residual</field>
+                <absolute_tolerance>1.3e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Pu-239]Flux_residual</field>
+                <absolute_tolerance>1.4e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[U-235]Flux_residual</field>
+                <absolute_tolerance>1.6e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Pa-231]Flux_residual</field>
+                <absolute_tolerance>1.3e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>1d_decay_chain_GIA_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+                <field>[Ac-227]Flux_residual</field>
+                <absolute_tolerance>1.1e-18</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
         </test_definition>
     </add>
 </OpenGeoSysProjectDiff>
