@@ -422,6 +422,15 @@
                     <parameter>p_Dirichlet_right</parameter>
                 </boundary_condition>
             </boundary_conditions>
+            <deactivated_subdomains>
+                <deactivated_subdomain>
+                    <time_interval>
+                        <start>0</start>
+                        <end>3600</end>
+                    </time_interval>
+                    <material_ids>0</material_ids>
+                </deactivated_subdomain>
+            </deactivated_subdomains>
         </process_variable>
         <process_variable>
             <name>temperature</name>
