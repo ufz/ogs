@@ -18,7 +18,7 @@
             <specific_body_force>0</specific_body_force>
             <secondary_variables>
                 <secondary_variable internal_name="darcy_velocity" output_name="darcy_velocity"/>
-                <secondary_variable internal_name="molar_flux" output_name="molar_flux"/>
+                <secondary_variable internal_name="CsFlux" output_name="CsFlux"/>
             </secondary_variables>
         </process>
     </processes>
@@ -165,7 +165,7 @@
             <variables>
                 <variable>Cs</variable>
                 <variable>pressure</variable>
-                <variable>molar_flux</variable>
+                <variable>CsFlux</variable>
                 <variable>CsFlowRate</variable>
                 <variable>darcy_velocity</variable>
             </variables>
@@ -308,7 +308,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>ConTracer_1d_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
-            <field>molar_flux</field>
+            <field>CsFlux</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>

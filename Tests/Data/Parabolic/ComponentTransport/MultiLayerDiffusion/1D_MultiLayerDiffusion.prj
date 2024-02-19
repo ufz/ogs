@@ -17,7 +17,7 @@
             </process_variables>
             <specific_body_force>0</specific_body_force>
             <secondary_variables>
-                <secondary_variable internal_name="molar_flux" output_name="molar_flux"/>
+                <secondary_variable internal_name="HTOFlux" output_name="HTOFlux"/>
             </secondary_variables>
         </process>
     </processes>
@@ -240,7 +240,7 @@
                 <variable>HTO</variable>
                 <variable>HTOFlowRate</variable>
                 <variable>pressure</variable>
-                <variable>molar_flux</variable>
+                <variable>HTOFlux</variable>
             </variables>
         </output>
     </time_loop>

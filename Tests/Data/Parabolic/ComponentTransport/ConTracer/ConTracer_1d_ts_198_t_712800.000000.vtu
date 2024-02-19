@@ -9,7 +9,7 @@
         <DataArray type="Float64" Name="Cs" format="appended" RangeMin="0"                    RangeMax="0.00022510165765"     offset="84"                  />
         <DataArray type="Float64" Name="CsFlowRate" format="appended" RangeMin="-9.9557591071e-08"    RangeMax="6.5909751208e-21"     offset="1156"                />
         <DataArray type="Float64" Name="darcy_velocity" format="appended" RangeMin="6.5509299998e-06"     RangeMax="6.5509300003e-06"     offset="1532"                />
-        <DataArray type="Float64" Name="molar_flux" format="appended" RangeMin="-3.879362475e-11"     RangeMax="1.467779272e-09"      offset="2084"                />
+        <DataArray type="Float64" Name="CsFlux" format="appended" RangeMin="-3.879362475e-11"     RangeMax="1.467779272e-09"      offset="2084"                />
         <DataArray type="Float64" Name="pressure" format="appended" RangeMin="9810"                 RangeMax="9813.0789371"         offset="3156"                />
       </PointData>
       <CellData>
