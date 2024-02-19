@@ -273,6 +273,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
     auto& eps = ip_data.eps;
     eps.noalias() = B * u;
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const eps_prev =
+        B * u_prev;
 
     vars.temperature = T_int_pt;
     double const p_int_pt = N.dot(p);
@@ -377,7 +379,6 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     //
     // displacement equation, displacement part
     //
-    auto& eps_prev = ip_data.eps_prev;
     auto& eps_m = ip_data.eps_m;
     auto& eps_m_prev = ip_data.eps_m_prev;
     eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;

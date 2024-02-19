@@ -178,10 +178,13 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
+        auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& ip_data = _ip_data[ip];
             auto const& N_u = ip_data.N_u;
+            auto const& dNdx_u = ip_data.dNdx_u;
 
             ParameterLib::SpatialPosition const x_position{
                 std::nullopt, _element.getID(), ip,
@@ -193,10 +196,24 @@ public:
             updateConstitutiveRelations(local_x, local_x_prev, x_position, t,
                                         dt, _ip_data[ip], _ip_data_output[ip]);
 
+            auto const x_coord =
+                NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u);
+            auto const B = LinearBMatrix::computeBMatrix<
+                DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
+                typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
+                                                     _is_axially_symmetric);
+
+            ConstitutiveRelationsValues<DisplacementDim> crv;
+
+            MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+                eps_prev = B * u_prev;
+
             _ip_data[ip].eps0 =
                 _ip_data[ip].eps0_prev +
                 (1 - _ip_data[ip].phi_fr_prev / _ip_data[ip].porosity) *
-                    (_ip_data[ip].eps_prev - _ip_data[ip].eps0_prev);
+                    (eps_prev - _ip_data[ip].eps0_prev);
             _ip_data[ip].pushBackState();
         }
     }
