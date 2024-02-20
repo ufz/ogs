@@ -77,6 +77,9 @@ struct is_raw_data<Eigen::Matrix<double, N, M, Eigen::RowMajor, N, M>>
 };
 
 template <typename T>
+constexpr bool is_raw_data_v = is_raw_data<T>::value;
+
+template <typename T>
 struct NumberOfRows;
 
 template <>
