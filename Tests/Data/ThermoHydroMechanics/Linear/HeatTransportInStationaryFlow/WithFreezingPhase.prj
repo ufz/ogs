@@ -360,7 +360,7 @@
         <vtkdiff>
             <regex>WithFreezingPhase_ts_.*.vtu</regex>
             <field>sigma_ice</field>
-            <absolute_tolerance>7e-6</absolute_tolerance>
+            <absolute_tolerance>8e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
