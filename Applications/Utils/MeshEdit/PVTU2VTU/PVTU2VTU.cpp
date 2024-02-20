@@ -23,6 +23,8 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
+#include "GeoLib/AABB.h"
+#include "GeoLib/OctTree.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -393,13 +395,44 @@ int main(int argc, char* argv[])
     INFO("Regular elements and computing element map took {} s",
          merged_element_timer.elapsed());
 
+    BaseLib::RunTime collect_nodes_timer;
+    collect_nodes_timer.start();
+    auto [all_merged_nodes_tmp, partition_offsets] =
+        getMergedNodesVector(meshes);
+    INFO("Collection of {} nodes and computing offsets took {} s",
+         all_merged_nodes_tmp.size(), collect_nodes_timer.elapsed());
+
     BaseLib::RunTime merged_nodes_timer;
     merged_nodes_timer.start();
     auto [all_merged_nodes_tmp, offsets] = getMergedNodesVector(meshes);
+    GeoLib::AABB aabb(all_merged_nodes_tmp.begin(), all_merged_nodes_tmp.end());
+    auto oct_tree = std::unique_ptr<GeoLib::OctTree<MeshLib::Node, 16>>(
+        GeoLib::OctTree<MeshLib::Node, 16>::createOctTree(
+            aabb.getMinPoint(), aabb.getMaxPoint(), 1e-16));
+
+    std::vector<MeshLib::Node*> unique_merged_nodes;
     std::vector<MeshEntityMapInfo> merged_node_map;
-    std::vector<MeshLib::Node*> merged_nodes;
-    std::tie(merged_nodes, merged_node_map) =
-        getNodesOfRegularElements(regular_elements, merged_element_map);
+    std::tie(unique_merged_nodes, merged_node_map) =
+        makeNodesUnique(all_merged_nodes_tmp, partition_offsets, *oct_tree);
+    INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
+         unique_merged_nodes.size(), merged_nodes_timer.elapsed());
+
+    std::vector<MeshEntityMapInfo> merged_node_map_new;
+    merged_node_map_new.reserve(all_merged_nodes_tmp.size());
+
+    for (std::size_t i = 0; i < offsets.size() - 1; ++i)
+    {
+        for (std::size_t pos = offsets[i]; pos < offsets[i + 1]; ++pos)
+        {
+            auto* node = all_merged_nodes_tmp[pos];
+            MeshLib::Node* node_ptr = nullptr;
+            if (oct_tree->addPoint(node, node_ptr))
+            {
+                unique_merged_nodes.push_back(node);
+                merged_node_map_new.emplace_back(i, pos - offsets[i]);
+            }
+        }
+    }
     INFO("Make merged points unique / computing map took {} s",
          merged_nodes_timer.elapsed());
 
@@ -408,8 +441,8 @@ int main(int argc, char* argv[])
     // The Node pointers of 'merged_nodes' and Element pointers of
     // 'regular_elements' are shared with 'meshes', the partitioned meshes.
     MeshLib::Mesh merged_mesh =
-        MeshLib::Mesh("pvtu_merged_mesh", merged_nodes, regular_elements,
-                      true /* compute_element_neighbors */);
+        MeshLib::Mesh("pvtu_merged_mesh", unique_merged_nodes, regular_elements,
+                      false /* compute_element_neighbors */);
     INFO("creation of merged mesh took {} s", mesh_creation_timer.elapsed());
 
     auto const& properties = meshes[0]->getProperties();
