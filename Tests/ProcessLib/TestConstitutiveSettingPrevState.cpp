@@ -96,3 +96,73 @@ TEST(ProcessLib_ConstitutiveSettingPrevState, Tests2)
     p = std::move(s);
     ASSERT_EQ("something else", *p);
 }
+
+TEST(ProcessLib_ConstitutiveSettingPrevState, PrevStateOf)
+{
+    using namespace ProcessLib::ConstitutiveRelations;
+
+    // empty tuple
+    {
+        using Tuple = std::tuple<>;
+        static_assert(std::is_same_v<Tuple, PrevStateOf<Tuple>>);
+    }
+
+    // one entry
+    {
+        using Tuple = std::tuple<int>;
+        using TuplePrev = std::tuple<PrevState<int>>;
+        static_assert(std::is_same_v<TuplePrev, PrevStateOf<Tuple>>);
+    }
+
+    // multiple entries
+    {
+        using Tuple = std::tuple<int, double, std::string>;
+        using TuplePrev = std::
+            tuple<PrevState<int>, PrevState<double>, PrevState<std::string>>;
+        static_assert(std::is_same_v<TuplePrev, PrevStateOf<Tuple>>);
+    }
+}
+
+TEST(ProcessLib_ConstitutiveSettingPrevState, PrevStateOfAssign)
+{
+    using namespace ProcessLib::ConstitutiveRelations;
+
+    // empty tuple
+    {
+        using Tuple = std::tuple<>;
+
+        Tuple const t;
+        PrevStateOf<Tuple> tp;
+
+        assign(tp, t);  // only needs to compile
+    }
+
+    // one entry
+    {
+        using Tuple = std::tuple<int>;
+        using TuplePrev = std::tuple<PrevState<int>>;
+
+        Tuple const t{5};
+        TuplePrev tp{6};
+
+        assign(tp, t);
+
+        EXPECT_EQ(5, *std::get<0>(tp));
+    }
+
+    // multiple entries
+    {
+        using Tuple = std::tuple<int, double, std::string>;
+        using TuplePrev = std::
+            tuple<PrevState<int>, PrevState<double>, PrevState<std::string>>;
+
+        Tuple const t{5, 7.5, "hello"};
+        TuplePrev tp{6, 8.25, "bye"};
+
+        assign(tp, t);
+
+        EXPECT_EQ(5, *std::get<0>(tp));
+        EXPECT_EQ(7.5, *std::get<1>(tp));
+        EXPECT_EQ("hello", *std::get<2>(tp));
+    }
+}
