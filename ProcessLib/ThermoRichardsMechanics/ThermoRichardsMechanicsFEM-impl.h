@@ -388,58 +388,96 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ConstitutiveTraits::ConstitutiveSetting::totalStress(CD, current_state);
 
     // residual, order T, p, u
-    block_p(out.res).noalias() = dNdx.transpose() * CD.eq_p_data.rhs_p_dNT_V;
+    block_p(out.res).noalias() =
+        dNdx.transpose() * std::get<EqPData<DisplacementDim>>(CD).rhs_p_dNT_V;
     block_u(out.res).noalias() =
         B.transpose() * sigma_total -
         static_cast<int>(this->process_data_.apply_body_force_for_deformation) *
-            N_u_op(N_u).transpose() * CD.grav_data.volumetric_body_force;
+            N_u_op(N_u).transpose() *
+            std::get<GravityData<DisplacementDim>>(CD).volumetric_body_force;
 
     // Storage matrices
-    out.storage_p_a_p.noalias() = CD.eq_p_data.storage_p_a_p_X_NTN * NTN;
-    out.storage_p_a_S.noalias() = CD.storage_data.storage_p_a_S_X_NTN * NTN;
+    out.storage_p_a_p.noalias() =
+        std::get<EqPData<DisplacementDim>>(CD).storage_p_a_p_X_NTN * NTN;
+    out.storage_p_a_S.noalias() =
+        std::get<TRMStorageData>(CD).storage_p_a_S_X_NTN * NTN;
     out.storage_p_a_S_Jpp.noalias() =
-        CD.storage_data.storage_p_a_S_Jpp_X_NTN * NTN;
+        std::get<TRMStorageData>(CD).storage_p_a_S_Jpp_X_NTN * NTN;
 
     // M matrices, order T, p, u
-    out.M_TT.noalias() = CD.eq_T_data.M_TT_X_NTN * NTN;
-    out.M_Tp.noalias() = CD.vap_data.M_Tp_X_NTN * NTN;
+    out.M_TT.noalias() =
+        std::get<EqTData<DisplacementDim>>(CD).M_TT_X_NTN * NTN;
+    out.M_Tp.noalias() =
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).M_Tp_X_NTN * NTN;
 
-    out.M_pT.noalias() = CD.eq_p_data.M_pT_X_NTN * NTN;
-    out.M_pu.noalias() = CD.eq_p_data.M_pu_X_BTI2N * BTI2N.transpose();
+    out.M_pT.noalias() =
+        std::get<EqPData<DisplacementDim>>(CD).M_pT_X_NTN * NTN;
+    out.M_pu.noalias() =
+        std::get<EqPData<DisplacementDim>>(CD).M_pu_X_BTI2N * BTI2N.transpose();
 
     // K matrices, order T, p, u
     out.K_TT.noalias() =
-        dNdx.transpose() * CD.heat_data.K_TT_Laplace * dNdx +
-        N.transpose() * (CD.eq_T_data.K_TT_NT_V_dN.transpose() * dNdx) +
-        CD.vap_data.K_TT_X_dNTdN * dNTdN;
+        dNdx.transpose() *
+            std::get<TRMHeatStorageAndFluxData<DisplacementDim>>(CD)
+                .K_TT_Laplace *
+            dNdx +
+        N.transpose() *
+            (std::get<EqTData<DisplacementDim>>(CD).K_TT_NT_V_dN.transpose() *
+             dNdx) +
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).K_TT_X_dNTdN *
+            dNTdN;
 
     out.dK_TT_dp.noalias() =
-        N.transpose() * (CD.heat_data.K_Tp_NT_V_dN.transpose() * dNdx) +
-        CD.heat_data.K_Tp_X_NTN * NTN;
+        N.transpose() *
+            (std::get<TRMHeatStorageAndFluxData<DisplacementDim>>(CD)
+                 .K_Tp_NT_V_dN.transpose() *
+             dNdx) +
+        std::get<TRMHeatStorageAndFluxData<DisplacementDim>>(CD).K_Tp_X_NTN *
+            NTN;
     out.K_Tp.noalias() =
-        dNdx.transpose() * CD.th_osmosis_data.K_Tp_Laplace * dNdx +
-        CD.vap_data.K_Tp_X_dNTdN * dNTdN;
+        dNdx.transpose() *
+            std::get<ThermoOsmosisData<DisplacementDim>>(CD).K_Tp_Laplace *
+            dNdx +
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).K_Tp_X_dNTdN *
+            dNTdN;
 
-    out.K_pp.noalias() = dNdx.transpose() * CD.eq_p_data.K_pp_Laplace * dNdx +
-                         CD.vap_data.K_pp_X_dNTdN * dNTdN;
+    out.K_pp.noalias() =
+        dNdx.transpose() * std::get<EqPData<DisplacementDim>>(CD).K_pp_Laplace *
+            dNdx +
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).K_pp_X_dNTdN *
+            dNTdN;
     out.K_pT.noalias() =
-        dNdx.transpose() * CD.th_osmosis_data.K_pT_Laplace * dNdx;
+        dNdx.transpose() *
+        std::get<ThermoOsmosisData<DisplacementDim>>(CD).K_pT_Laplace * dNdx;
 
     // direct Jacobian contributions, order T, p, u
-    block_pT(out.Jac).noalias() = CD.vap_data.J_pT_X_dNTdN * dNTdN;
+    block_pT(out.Jac).noalias() =
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).J_pT_X_dNTdN *
+        dNTdN;
     block_pp(out.Jac).noalias() =
-        CD.storage_data.J_pp_X_NTN * NTN +
-        CD.eq_p_data.J_pp_X_BTI2NT_u_dot_N * BTI2N.transpose() * (u - u_prev) /
-            dt * N  // TODO something with volumetric strain rate?
-        + dNdx.transpose() * CD.eq_p_data.J_pp_dNT_V_N * N;
+        std::get<TRMStorageData>(CD).J_pp_X_NTN * NTN +
+        std::get<EqPData<DisplacementDim>>(CD).J_pp_X_BTI2NT_u_dot_N *
+            BTI2N.transpose() * (u - u_prev) / dt *
+            N  // TODO something with volumetric strain rate?
+        + dNdx.transpose() *
+              std::get<EqPData<DisplacementDim>>(CD).J_pp_dNT_V_N * N;
 
     block_uT(out.Jac).noalias() =
-        B.transpose() * CD.s_mech_data.J_uT_BT_K_N * N;
+        B.transpose() *
+        std::get<SolidMechanicsDataStateless<DisplacementDim>>(CD).J_uT_BT_K_N *
+        N;
     block_up(out.Jac).noalias() =
-        B.transpose() * CD.s_mech_data.J_up_BT_K_N * N +
-        N_u_op(N_u).transpose() * CD.grav_data.J_up_HT_V_N * N;
+        B.transpose() *
+            std::get<SolidMechanicsDataStateless<DisplacementDim>>(CD)
+                .J_up_BT_K_N *
+            N +
+        N_u_op(N_u).transpose() *
+            std::get<GravityData<DisplacementDim>>(CD).J_up_HT_V_N * N;
     block_uu(out.Jac).noalias() =
-        B.transpose() * CD.s_mech_data.stiffness_tensor * B;
+        B.transpose() *
+        std::get<SolidMechanicsDataStateless<DisplacementDim>>(CD)
+            .stiffness_tensor *
+        B;
 
     out *= ip_data.integration_weight;
 }

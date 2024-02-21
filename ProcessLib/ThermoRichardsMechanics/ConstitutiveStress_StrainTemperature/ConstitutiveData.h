@@ -89,18 +89,16 @@ using OutputData = std::tuple<DarcyLawData<DisplacementDim>,
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
-struct ConstitutiveData
-{
-    SolidMechanicsDataStateless<DisplacementDim> s_mech_data;
-    TotalStressData<DisplacementDim> total_stress_data;
-    GravityData<DisplacementDim> grav_data;
-    TRMHeatStorageAndFluxData<DisplacementDim> heat_data;
-    TRMVaporDiffusionData<DisplacementDim> vap_data;
-    TRMStorageData storage_data;
-    EqPData<DisplacementDim> eq_p_data;
-    EqTData<DisplacementDim> eq_T_data;
-    ThermoOsmosisData<DisplacementDim> th_osmosis_data;
-};
+using ConstitutiveData =
+    std::tuple<SolidMechanicsDataStateless<DisplacementDim>,
+               TotalStressData<DisplacementDim>,
+               GravityData<DisplacementDim>,
+               TRMHeatStorageAndFluxData<DisplacementDim>,
+               TRMVaporDiffusionData<DisplacementDim>,
+               TRMStorageData,
+               EqPData<DisplacementDim>,
+               EqTData<DisplacementDim>,
+               ThermoOsmosisData<DisplacementDim>>;
 
 /// Data that stores intermediate values, which are not needed outside the
 /// constitutive setting.

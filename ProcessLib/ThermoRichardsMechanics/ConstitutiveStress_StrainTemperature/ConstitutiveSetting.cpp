@@ -50,11 +50,12 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     auto& f_therm_exp_data = std::get<FluidThermalExpansionData>(tmp);
 
     auto& swelling_data = std::get<SwellingDataStateless<DisplacementDim>>(tmp);
-    auto& s_mech_data = cd.s_mech_data;
-    auto& grav_data = cd.grav_data;
-    auto& heat_data = cd.heat_data;
-    auto& vap_data = cd.vap_data;
-    auto& storage_data = cd.storage_data;
+    auto& s_mech_data =
+        std::get<SolidMechanicsDataStateless<DisplacementDim>>(cd);
+    auto& grav_data = std::get<GravityData<DisplacementDim>>(cd);
+    auto& heat_data = std::get<TRMHeatStorageAndFluxData<DisplacementDim>>(cd);
+    auto& vap_data = std::get<TRMVaporDiffusionData<DisplacementDim>>(cd);
+    auto& storage_data = std::get<TRMStorageData>(cd);
 
     auto& poro_data = state.poro_data;
     auto& S_L_data = state.S_L_data;
@@ -116,7 +117,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         x_t, s_therm_exp_data, swelling_data, T_data, p_cap_data, biot_data,
         bishops_data, dS_L_data, state.eps_data,
         prev_state.eps_data /* TODO why is eps stateful? */, mat_state,
-        prev_state.s_mech_data, state.s_mech_data, cd.total_stress_data,
+        prev_state.s_mech_data, state.s_mech_data,
+        std::get<TotalStressData<DisplacementDim>>(cd),
         std::get<EquivalentPlasticStrainData>(tmp), s_mech_data);
 
     assertEvalArgsUnique(models.rho_L_model);
@@ -149,10 +151,11 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         state.transport_poro_data);
 
     assertEvalArgsUnique(models.perm_model);
-    models.perm_model.eval(x_t, media_data, S_L_data, p_cap_data, T_data,
-                           mu_L_data, state.transport_poro_data,
-                           cd.total_stress_data, state.eps_data, std::get<EquivalentPlasticStrainData>(tmp),
-                           perm_data);
+    models.perm_model.eval(
+        x_t, media_data, S_L_data, p_cap_data, T_data, mu_L_data,
+        state.transport_poro_data,
+        std::get<TotalStressData<DisplacementDim>>(cd), state.eps_data,
+        std::get<EquivalentPlasticStrainData>(tmp), perm_data);
 
     assertEvalArgsUnique(models.th_osmosis_model);
     models.th_osmosis_model.eval(x_t, media_data, T_data, rho_L_data,
@@ -185,10 +188,12 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     assertEvalArgsUnique(models.eq_p_model);
     models.eq_p_model.eval(p_cap_data, T_data, S_L_data, dS_L_data, biot_data,
                            rho_L_data, mu_L_data, perm_data, f_therm_exp_data,
-                           vap_data, storage_data, cd.eq_p_data);
+                           vap_data, storage_data,
+                           std::get<EqPData<DisplacementDim>>(cd));
 
     assertEvalArgsUnique(models.eq_T_model);
-    models.eq_T_model.eval(heat_data, vap_data, cd.eq_T_data);
+    models.eq_T_model.eval(heat_data, vap_data,
+                           std::get<EqTData<DisplacementDim>>(cd));
 }
 
 template struct ConstitutiveSetting<2>;
