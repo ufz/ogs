@@ -50,7 +50,7 @@ public:
      */
     template <typename InputIterator>
     Grid(InputIterator first, InputIterator last,
-         std::size_t max_num_per_grid_cell = 16);
+         std::size_t max_num_per_grid_cell = 1);
 
     Grid(Grid const&) = delete;
     Grid& operator=(Grid const&) = delete;
