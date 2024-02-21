@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <boost/mp11.hpp>
+
 #include "ParameterLib/SpatialPosition.h"
 
 namespace ProcessLib::ConstitutiveRelations
@@ -42,6 +44,30 @@ struct PrevState
 private:
     T t;
 };
+
+//! Applies PrevState to a tuple of constitutive data.
+template <typename Tuple>
+using PrevStateOf = boost::mp11::mp_transform<PrevState, Tuple>;
+
+namespace detail
+{
+template <typename... Ts, std::size_t... Idcs>
+void assign(std::tuple<PrevState<Ts>...>& prev_states,
+            std::tuple<Ts...> const& current_states,
+            std::index_sequence<Idcs...>)
+{
+    ((std::get<Idcs>(prev_states) = std::get<Idcs>(current_states)), ...);
+}
+}  // namespace detail
+
+//! Assigns a tuple of current states to a tuple of previous states.
+template <typename... Ts>
+void assign(std::tuple<PrevState<Ts>...>& prev_states,
+            std::tuple<Ts...> const& current_states)
+{
+    detail::assign(prev_states, current_states,
+                   std::make_index_sequence<sizeof...(Ts)>{});
+}
 
 struct SpaceTimeData
 {
