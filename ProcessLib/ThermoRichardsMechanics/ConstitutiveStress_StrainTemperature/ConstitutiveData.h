@@ -45,23 +45,18 @@ using StatefulDataPrev = PrevStateOf<StatefulData<DisplacementDim>>;
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
-using OutputData = std::tuple<DarcyLawData<DisplacementDim>,
-                              LiquidDensityData,
-                              LiquidViscosityData,
-                              SolidDensityData,
+using OutputData = std::tuple<DarcyLawData<DisplacementDim>, LiquidDensityData,
+                              LiquidViscosityData, SolidDensityData,
                               PermeabilityData<DisplacementDim>>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
 using ConstitutiveData =
     std::tuple<SolidMechanicsDataStateless<DisplacementDim>,
-               TotalStressData<DisplacementDim>,
-               GravityData<DisplacementDim>,
+               TotalStressData<DisplacementDim>, GravityData<DisplacementDim>,
                TRMHeatStorageAndFluxData<DisplacementDim>,
-               TRMVaporDiffusionData<DisplacementDim>,
-               TRMStorageData,
-               EqPData<DisplacementDim>,
-               EqTData<DisplacementDim>,
+               TRMVaporDiffusionData<DisplacementDim>, TRMStorageData,
+               EqPData<DisplacementDim>, EqTData<DisplacementDim>,
                ThermoOsmosisData<DisplacementDim>>;
 
 /// Data that stores intermediate values, which are not needed outside the
@@ -69,15 +64,11 @@ using ConstitutiveData =
 template <int DisplacementDim>
 using ConstitutiveTempData =
     std::tuple<SwellingDataStateless<DisplacementDim>,
-               ElasticTangentStiffnessData<DisplacementDim>,
-               BiotData,
-               SolidCompressibilityData,
-               SaturationDataDeriv,
-               BishopsData,
+               ElasticTangentStiffnessData<DisplacementDim>, BiotData,
+               SolidCompressibilityData, SaturationDataDeriv, BishopsData,
                // TODO why not usual state tracking for that?
                PrevState<BishopsData>,
                SolidThermalExpansionData<DisplacementDim>,
-               FluidThermalExpansionData,
-               EquivalentPlasticStrainData>;
+               FluidThermalExpansionData, EquivalentPlasticStrainData>;
 }  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics
