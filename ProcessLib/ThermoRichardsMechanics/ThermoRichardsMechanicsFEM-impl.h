@@ -134,7 +134,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
         variables.temperature = T_ip;
 
-        this->prev_states_[ip].S_L_data->S_L =
+        std::get<PrevState<SaturationData>>(this->prev_states_[ip])->S_L =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
 

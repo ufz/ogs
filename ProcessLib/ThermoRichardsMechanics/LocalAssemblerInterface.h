@@ -13,8 +13,10 @@
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Base.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
 #include "ProcessLib/ThermoRichardsMechanics/ThermoRichardsMechanicsProcessData.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
@@ -53,7 +55,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                 solid_material_.createMaterialStateVariables());
 
             // Set initial strain field to zero.
-            current_states_[ip].eps_data.eps =
+            std::get<StrainData<DisplacementDim>>(current_states_[ip]).eps =
                 KelvinVector<DisplacementDim>::Zero();
         }
     }

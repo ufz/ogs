@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "ProcessLib/Reflection/ReflectionData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
@@ -42,29 +41,7 @@ using StatefulData =
                SolidMechanicsDataStateful<DisplacementDim>>;
 
 template <int DisplacementDim>
-struct StatefulDataPrev
-{
-    PrevState<SaturationData> S_L_data;
-    PrevState<PorosityData> poro_data;
-    PrevState<TransportPorosityData> transport_poro_data;
-    PrevState<StrainData<DisplacementDim>> eps_data;
-    PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
-    PrevState<SolidMechanicsDataStateful<DisplacementDim>> s_mech_data;
-
-    StatefulDataPrev<DisplacementDim>& operator=(
-        StatefulData<DisplacementDim> const& state)
-    {
-        S_L_data = std::get<SaturationData>(state);
-        poro_data = std::get<PorosityData>(state);
-        transport_poro_data = std::get<TransportPorosityData>(state);
-        eps_data = std::get<StrainData<DisplacementDim>>(state);
-        swelling_data = std::get<SwellingDataStateful<DisplacementDim>>(state);
-        s_mech_data =
-            std::get<SolidMechanicsDataStateful<DisplacementDim>>(state);
-
-        return *this;
-    }
-};
+using StatefulDataPrev = PrevStateOf<StatefulData<DisplacementDim>>;
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>

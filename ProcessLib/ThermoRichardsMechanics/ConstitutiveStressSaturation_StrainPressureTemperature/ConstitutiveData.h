@@ -16,9 +16,11 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MechanicalStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidDensity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidMechanicsDataStateless.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Swelling.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
@@ -31,6 +33,7 @@ namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
+// TODO directly declare these type aliases in Traits.h
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
 using StatefulData =
@@ -46,34 +49,8 @@ using StatefulData =
                MechanicalStrainData<DisplacementDim>,
                TotalStressData<DisplacementDim>>;
 
-// TODO convert to tuple
-/// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
-struct StatefulDataPrev
-{
-    PrevState<SaturationData> S_L_data;
-    PrevState<PorosityData> poro_data;
-    PrevState<TransportPorosityData> transport_poro_data;
-    PrevState<StrainData<DisplacementDim>> eps_data;
-    PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
-    PrevState<SolidMechanicsDataStateful<DisplacementDim>> s_mech_data;
-    PrevState<TotalStressData<DisplacementDim>> total_stress_data;
-
-    StatefulDataPrev<DisplacementDim>& operator=(
-        StatefulData<DisplacementDim> const& state)
-    {
-        S_L_data = std::get<SaturationData>(state);
-        poro_data = std::get<PorosityData>(state);
-        transport_poro_data = std::get<TransportPorosityData>(state);
-        eps_data = std::get<StrainData<DisplacementDim>>(state);
-        swelling_data = std::get<SwellingDataStateful<DisplacementDim>>(state);
-        s_mech_data =
-            std::get<SolidMechanicsDataStateful<DisplacementDim>>(state);
-        total_stress_data = std::get<TotalStressData<DisplacementDim>>(state);
-
-        return *this;
-    }
-};
+using StatefulDataPrev = PrevStateOf<StatefulData<DisplacementDim>>;
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
