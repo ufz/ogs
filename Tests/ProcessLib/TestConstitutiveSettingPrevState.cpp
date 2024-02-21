@@ -10,23 +10,22 @@
 
 #include <gtest/gtest.h>
 
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Base.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 
 template <class T>
-struct ProcessLib_TRMConstitutiveSettingPrevState_Typed : ::testing::Test
+struct ProcessLib_ConstitutiveSettingPrevState_Typed : ::testing::Test
 {
 };
 
-using ProcessLib_TRMConstitutiveSettingPrevState_TypedTestCases =
+using ProcessLib_ConstitutiveSettingPrevState_TypedTestCases =
     ::testing::Types<int, std::string>;
 
-TYPED_TEST_SUITE(ProcessLib_TRMConstitutiveSettingPrevState_Typed,
-                 ProcessLib_TRMConstitutiveSettingPrevState_TypedTestCases);
+TYPED_TEST_SUITE(ProcessLib_ConstitutiveSettingPrevState_Typed,
+                 ProcessLib_ConstitutiveSettingPrevState_TypedTestCases);
 
-TYPED_TEST(ProcessLib_TRMConstitutiveSettingPrevState_Typed,
-           StaticAssertions_Ctor)
+TYPED_TEST(ProcessLib_ConstitutiveSettingPrevState_Typed, StaticAssertions_Ctor)
 {
-    using namespace ProcessLib::ThermoRichardsMechanics;
+    using namespace ProcessLib::ConstitutiveRelations;
     using T = TypeParam;
 
     // copy, move, default
@@ -41,10 +40,10 @@ TYPED_TEST(ProcessLib_TRMConstitutiveSettingPrevState_Typed,
     static_assert(std::is_constructible_v<PrevState<T>, T&&>);
 }
 
-TYPED_TEST(ProcessLib_TRMConstitutiveSettingPrevState_Typed,
+TYPED_TEST(ProcessLib_ConstitutiveSettingPrevState_Typed,
            StaticAssertions_Assignment)
 {
-    using namespace ProcessLib::ThermoRichardsMechanics;
+    using namespace ProcessLib::ConstitutiveRelations;
     using T = TypeParam;
 
     // copy, move
@@ -64,9 +63,9 @@ TYPED_TEST(ProcessLib_TRMConstitutiveSettingPrevState_Typed,
     static_assert(!std::is_assignable_v<T, PrevState<T>&&>);
 }
 
-TEST(ProcessLib_TRMConstitutiveSettingPrevState, Tests1)
+TEST(ProcessLib_ConstitutiveSettingPrevState, Tests1)
 {
-    using P = ProcessLib::ThermoRichardsMechanics::PrevState<std::string>;
+    using P = ProcessLib::ConstitutiveRelations::PrevState<std::string>;
 
     P p;  // default constructed
 
@@ -80,9 +79,9 @@ TEST(ProcessLib_TRMConstitutiveSettingPrevState, Tests1)
     ASSERT_EQ("something else", *p);
 }
 
-TEST(ProcessLib_TRMConstitutiveSettingPrevState, Tests2)
+TEST(ProcessLib_ConstitutiveSettingPrevState, Tests2)
 {
-    using P = ProcessLib::ThermoRichardsMechanics::PrevState<std::string>;
+    using P = ProcessLib::ConstitutiveRelations::PrevState<std::string>;
 
     P p{"msg"};
 
