@@ -13,6 +13,7 @@
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MechanicalStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidMechanicsDataStateless.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
@@ -22,13 +23,6 @@ namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
-template <int DisplacementDim>
-struct SolidMechanicsDataStateful
-{
-    // TODO get rid of that
-    KelvinVector<DisplacementDim> eps_m = KV::KVnan<DisplacementDim>();
-};
-
 template <int DisplacementDim>
 struct SolidMechanicsModel
 {
@@ -40,23 +34,20 @@ struct SolidMechanicsModel
     {
     }
 
-    void eval(
-        const SpaceTimeData& x_t,
-        TemperatureData<DisplacementDim> const& T_data,
-        CapillaryPressureData<DisplacementDim> const& p_cap_data,
-        StrainData<DisplacementDim> const& eps_data,
-        PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
-        MaterialStateData<DisplacementDim>& mat_state,
-        PrevState<
-            SolidMechanicsDataStateful<DisplacementDim>> const& /*prev_state*/,
-        SolidMechanicsDataStateful<DisplacementDim>& current_state,
-        PrevState<TotalStressData<DisplacementDim>> const&
-            total_stress_data_prev,
-        TotalStressData<DisplacementDim>& total_stress_data,
-        EquivalentPlasticStrainData& equiv_plast_strain_data,
-        SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
-        PrevState<SaturationData> const& S_L_prev_data,
-        SaturationData& S_L_data, SaturationDataDeriv& dS_L_data) const;
+    void eval(const SpaceTimeData& x_t,
+              TemperatureData<DisplacementDim> const& T_data,
+              CapillaryPressureData<DisplacementDim> const& p_cap_data,
+              StrainData<DisplacementDim> const& eps_data,
+              PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+              MaterialStateData<DisplacementDim>& mat_state,
+              MechanicalStrainData<DisplacementDim>& eps_m_data,
+              PrevState<TotalStressData<DisplacementDim>> const&
+                  total_stress_data_prev,
+              TotalStressData<DisplacementDim>& total_stress_data,
+              EquivalentPlasticStrainData& equiv_plast_strain_data,
+              SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
+              PrevState<SaturationData> const& S_L_prev_data,
+              SaturationData& S_L_data, SaturationDataDeriv& dS_L_data) const;
 
 private:
     SolidConstitutiveRelation<DisplacementDim> const& solid_material_;

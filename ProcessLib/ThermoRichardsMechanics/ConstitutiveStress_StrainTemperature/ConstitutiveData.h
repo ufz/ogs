@@ -16,6 +16,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Gravity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MechanicalStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidDensity.h"
@@ -37,6 +38,7 @@ using StatefulData =
     std::tuple<SaturationData, PorosityData, TransportPorosityData,
                StrainData<DisplacementDim>,
                SwellingDataStateful<DisplacementDim>,
+               MechanicalStrainData<DisplacementDim>,
                SolidMechanicsDataStateful<DisplacementDim>>;
 
 template <int DisplacementDim>

@@ -42,7 +42,8 @@ using StatefulData =
                // from the common to the original subdirectory for constitutive
                // settings
                SwellingDataStateful<DisplacementDim>,
-               SolidMechanicsDataStateful<DisplacementDim>,
+               // TODO get rid of that
+               MechanicalStrainData<DisplacementDim>,
                TotalStressData<DisplacementDim>>;
 
 // TODO convert to tuple

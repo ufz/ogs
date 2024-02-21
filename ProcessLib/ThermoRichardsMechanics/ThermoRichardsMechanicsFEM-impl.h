@@ -154,7 +154,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 std::get<SwellingDataStateful<DisplacementDim>>(
                     this->current_states_[ip])
                     .sigma_sw;
-            this->prev_states_[ip].s_mech_data->eps_m.noalias() =
+            std::get<PrevState<MechanicalStrainData<DisplacementDim>>>(
+                this->prev_states_[ip])
+                ->eps_m.noalias() =
                 solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                     ? eps + C_el_data.C_el.inverse() * sigma_sw
                     : eps;
