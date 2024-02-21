@@ -107,7 +107,7 @@ check docs links new:
   allow_failure: true
   image:
     name: lycheeverse/lychee
-    entrypoint: [ '/bin/bash', '-c', 'ln -snf /bin/bash /bin/sh && /bin/bash -c $0' ]
+    entrypoint: [""]
   needs: ["build docs"]
   extends:
     - .rules-master-manual
