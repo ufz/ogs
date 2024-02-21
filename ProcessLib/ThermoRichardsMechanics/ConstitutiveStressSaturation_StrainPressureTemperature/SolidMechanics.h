@@ -14,6 +14,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidMechanicsDataStateless.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "TraitsBase.h"
 
@@ -26,15 +27,6 @@ struct SolidMechanicsDataStateful
 {
     // TODO get rid of that
     KelvinVector<DisplacementDim> eps_m = KV::KVnan<DisplacementDim>();
-};
-
-template <int DisplacementDim>
-struct SolidMechanicsDataStateless
-{
-    KelvinMatrix<DisplacementDim> stiffness_tensor =
-        KV::KMnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_uT_BT_K_N = KV::KVnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_up_BT_K_N = KV::KVnan<DisplacementDim>();
 };
 
 template <int DisplacementDim>
