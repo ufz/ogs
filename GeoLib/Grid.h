@@ -50,7 +50,7 @@ public:
      */
     template <typename InputIterator>
     Grid(InputIterator first, InputIterator last,
-         std::size_t max_num_per_grid_cell = 16);
+         std::size_t max_num_per_grid_cell = 1);
 
     Grid(Grid const&) = delete;
     Grid& operator=(Grid const&) = delete;
@@ -433,8 +433,9 @@ std::array<std::size_t, 3> Grid<POINT>::getGridCoords(T const& pnt) const
             continue;
         }
         coords[k] = static_cast<std::size_t>(
-            std::floor((pnt[k] - min_point[k])) /
-            std::nextafter(_step_sizes[k], std::numeric_limits<double>::max()));
+            std::floor((pnt[k] - min_point[k]) /
+                       std::nextafter(_step_sizes[k],
+                                      std::numeric_limits<double>::max())));
     }
     return coords;
 }
