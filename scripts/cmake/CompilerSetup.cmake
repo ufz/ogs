@@ -109,7 +109,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     endif()
 
     # Linker: prefer lld > gold > regular
-    foreach(linker lld gold)
+    foreach(linker mold lld gold)
         execute_process(
             COMMAND ${CMAKE_CXX_COMPILER} -fuse-ld=${linker} -Wl,--version
             ERROR_QUIET OUTPUT_VARIABLE _linker_version
@@ -121,6 +121,10 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         elseif("${_linker_version}" MATCHES "GNU gold")
             add_link_options(-fuse-ld=gold)
             message(STATUS "Using GNU gold linker. (${_linker_version})")
+            break()
+        elseif("${_linker_version}" MATCHES "mold")
+            add_link_options(-fuse-ld=mold)
+            message(STATUS "Using mold linker. (${_linker_version})")
             break()
         endif()
     endforeach()
