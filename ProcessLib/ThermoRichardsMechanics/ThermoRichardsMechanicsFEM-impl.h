@@ -124,6 +124,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
 
         double T_ip;
         NumLib::shapeFunctionInterpolate(T, N, T_ip);

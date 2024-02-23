@@ -175,6 +175,9 @@ public:
 
             vars.liquid_phase_pressure = p_int_pt;
             vars.capillary_pressure = -p_int_pt;
+            // setting pG to 1 atm
+            // TODO : rewrite equations s.t. p_L = pG-p_cap
+            vars.gas_phase_pressure = 1.0e5;
 
             auto const permeability =
                 MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -316,6 +319,9 @@ public:
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
             vars.liquid_phase_pressure = p_int_pt;
             vars.capillary_pressure = -p_int_pt;
+            // setting pG to 1 atm
+            // TODO : rewrite equations s.t. p_L = pG-p_cap
+            vars.gas_phase_pressure = 1.0e5;
 
             double const Sw =
                 medium.property(MaterialPropertyLib::PropertyType::saturation)
