@@ -88,15 +88,20 @@ public:
      * \param recompute_jacobian recompute jacobian for the follow-up steps
      * \param damping A positive damping factor.
      * \see _damping
+     * \param damping_reduction A parameter that reduces damping
+     * \see _damping_reduction
      */
-    explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
-                             int const maxiter,
-                             int const recompute_jacobian = 1,
-                             double const damping = 1.0)
+    explicit NonlinearSolver(
+        GlobalLinearSolver& linear_solver,
+        int const maxiter,
+        int const recompute_jacobian = 1,
+        double const damping = 1.0,
+        std::optional<double> const damping_reduction = std::nullopt)
         : _linear_solver(linear_solver),
           _maxiter(maxiter),
           _recompute_jacobian(recompute_jacobian),
-          _damping(damping)
+          _damping(damping),
+          _damping_reduction(damping_reduction)
     {
     }
 
@@ -142,6 +147,11 @@ private:
     //! conservative method and seldom become smaller than 0.2 for very
     //! conservative approach.
     double const _damping;
+
+    //! A parameter that reduces the damping by iteration / _damping_reduction
+    //! If the expression is smaller than zero, then damping is the same for all
+    //! iterations. If the expression is bigger than one it is clamped by one.
+    std::optional<double> const _damping_reduction;
 
     GlobalVector* _r_neq = nullptr;      //!< non-equilibrium initial residuum.
     std::size_t _res_id = 0u;            //!< ID of the residual vector.
