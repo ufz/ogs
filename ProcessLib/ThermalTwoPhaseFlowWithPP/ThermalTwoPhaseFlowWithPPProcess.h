@@ -83,6 +83,8 @@ private:
     std::vector<
         std::unique_ptr<ThermalTwoPhaseFlowWithPPLocalAssemblerInterface>>
         _local_assemblers;
+
+    Assembly::GlobalMatrixOutput _global_output;
 };
 
 }  // namespace ThermalTwoPhaseFlowWithPP
