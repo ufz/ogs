@@ -2,6 +2,11 @@
 <OpenGeoSysProjectDiff base_file="A2.prj">
     <add sel="/*/processes/process"><subtype>StressSaturation_StrainPressureTemperature</subtype></add>
 
+    <remove sel="/*/processes/process[1]/initial_stress"/>
+    <add sel="/*/processes/process[1]">
+        <initial_stress type = "total">sigma0</initial_stress>
+    </add>
+
     <!-- Remove in reverse order, because the later commands will operate on the modified XML tree -->
     <remove sel="/*/processes/process/constitutive_relation[2]" />
     <remove sel="/*/processes/process/constitutive_relation[1]" />
