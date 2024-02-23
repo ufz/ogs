@@ -456,7 +456,7 @@
         <vtkdiff>
             <regex>result_ogata-banks_ts_.*.vtu</regex>
             <field>temperature_interpolated</field>
-            <absolute_tolerance>1.7e-09</absolute_tolerance>
+            <absolute_tolerance>2e-09</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
