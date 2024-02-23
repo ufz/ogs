@@ -18,7 +18,7 @@ Once you have submitted a [merge request]({{< ref "setup-fork.md/#optional-worki
 - The core developer again checks the code and finally approves the changes.
 - If also the [CI]({{< ref "continuous-integration.md" >}}) is happy (all checks and tests did pass) the MR is merged.
 
-For more information on merge requests see the [GitLab documentation](https://docs.gitlab.com/ee/user/project/merge_requests/getting_started.html).
+For more information on merge requests see the [GitLab documentation](https://docs.gitlab.com/ee/user/project/merge_requests).
 
 ### How to request a code review
 
