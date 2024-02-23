@@ -94,20 +94,6 @@ public:
         double const* values,
         int const integration_order) override;
 
-    void setInitialConditionsConcrete(std::vector<double> const& /*local_x*/,
-                                      double const /*t*/,
-                                      bool const /*use_monolithic_scheme*/,
-                                      int const /*process_id*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            // Set eps_m_prev from potentially non-zero eps from restart.
-            _ip_data[ip].eps_m_prev.noalias() = _ip_data[ip].eps;
-        }
-    }
-
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
                   std::vector<double> const& /*local_x_prev*/,
@@ -299,6 +285,26 @@ private:
     {
         return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
             _ip_data, &IpData::sigma_eff_ice, cache);
+    }
+
+    std::vector<double> getEpsilonM() const override
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtEpsilonM(0, {}, {}, values); });
+    }
+
+    virtual std::vector<double> const& getIntPtEpsilonM(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::eps_m, cache);
     }
 
     std::vector<double> getEpsilon() const override

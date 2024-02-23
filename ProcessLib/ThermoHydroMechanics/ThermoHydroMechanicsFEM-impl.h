@@ -134,6 +134,11 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::sigma_eff);
     }
+    if (name == "epsilon_m")
+    {
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::eps_m);
+    }
     if (name == "epsilon")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
