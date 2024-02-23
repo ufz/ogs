@@ -264,10 +264,11 @@
             <name>general_linear_solver</name>
             <eigen>
                 <solver_type>SparseLU</solver_type>
-                <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-16</error_tolerance>
+                <scaling>true</scaling>
             </eigen>
+            <petsc>
+                <parameters>-ksp_type bcgs -pc_type bjacobi -ksp_rtol 1e-15 -ksp_atol 1e-16 -ksp_max_it 4000</parameters>
+            </petsc>
         </linear_solver>
     </linear_solvers>
     <test_definition>
