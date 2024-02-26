@@ -835,13 +835,13 @@ std::size_t TH2MLocalAssembler<
             this->element_.getID());
     }
 
-    if (name == "sigma" && this->process_data_.initial_stress != nullptr)
+    if (name == "sigma" && this->process_data_.initial_stress.value)
     {
         OGS_FATAL(
             "Setting initial conditions for stress from integration "
             "point data and from a parameter '{:s}' is not possible "
             "simultaneously.",
-            this->process_data_.initial_stress->name);
+            this->process_data_.initial_stress.value->name);
     }
 
     if (name.starts_with("material_state_variable_"))
