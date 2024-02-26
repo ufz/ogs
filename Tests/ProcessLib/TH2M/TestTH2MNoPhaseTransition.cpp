@@ -65,7 +65,14 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
                                             specific_heat_capacity_water);
     m << "</properties>\n";
     m << "</phase>\n";
-    m << "</phases> </medium>\n";
+    m << "</phases>\n";
+    m << "<properties>\n";
+    m << "  <property>\n";
+    m << "      <name>tortuosity</name>\n";
+    m << "      <type>Constant</type>\n";
+    m << "      <value>1</value>\n";
+    m << "  </property>\n";
+    m << "</properties> </medium>\n";
 
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
         Tests::createTestMaterial(m.str());

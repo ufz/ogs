@@ -45,8 +45,6 @@
                         <property>
                             <name>diffusion</name>
                             <type>VapourDiffusionFEBEX</type>
-                            <!-- 1.0 * 86400 -->
-                            <tortuosity>86400.0</tortuosity>
                         </property>
                         <property>
                             <name>thermal_diffusion_enhancement_factor</name>
@@ -114,6 +112,12 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>tortuosity</name>
+                    <type>Constant</type>
+                    <!-- mutiplied with a time factor of 86400-->
+                    <value>86400.0</value>
+                </property>
                 <property>
                     <name>permeability</name>
                     <type>Function</type>

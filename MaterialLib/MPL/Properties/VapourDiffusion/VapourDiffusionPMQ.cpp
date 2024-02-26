@@ -30,7 +30,7 @@ PropertyDataType VapourDiffusionPMQ::value(
     const double T = variable_array.temperature;
 
     const double S_v = 1 - S_L;
-    const double D_vr = tortuosity_ * S_v;
+    const double D_vr = S_v;
 
     return base_diffusion_coefficient_ *
            std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
@@ -50,7 +50,7 @@ PropertyDataType VapourDiffusionPMQ::dValue(
     if (variable == Variable::temperature)
     {
         const double S_v = 1 - S_L;
-        const double D_vr = tortuosity_ * S_v;
+        const double D_vr = S_v;
 
         return exponent_ * base_diffusion_coefficient_ *
                std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
@@ -62,8 +62,7 @@ PropertyDataType VapourDiffusionPMQ::dValue(
     {
         return -base_diffusion_coefficient_ *
                std::pow(T / MaterialLib::PhysicalConstant::CelsiusZeroInKelvin,
-                        exponent_) *
-               tortuosity_;
+                        exponent_);
     }
 
     OGS_FATAL(

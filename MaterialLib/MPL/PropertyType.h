@@ -55,7 +55,6 @@ enum PropertyType : int
     fredlund_parameters,
     heat_capacity,
     henry_coefficient,
-    latent_heat,
     /// used to compute the hydrodynamic dispersion tensor.
     longitudinal_dispersivity,
     molality,
@@ -105,6 +104,7 @@ enum PropertyType : int
     thermal_longitudinal_dispersivity,
     thermal_osmosis_coefficient,
     thermal_transversal_dispersivity,
+    tortuosity,
     transport_porosity,
     /// used to compute the hydrodynamic dispersion tensor.
     transversal_dispersivity,
@@ -139,7 +139,6 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "fredlund_parameters",
                              "heat_capacity",
                              "henry_coefficient",
-                             "latent_heat",
                              "longitudinal_dispersivity",
                              "molality",
                              "molar_mass",
@@ -179,6 +178,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "thermal_longitudinal_dispersivity",
                              "thermal_osmosis_coefficient",
                              "thermal_transversal_dispersivity",
+                             "tortuosity",
                              "transport_porosity",
                              "transversal_dispersivity",
                              "vapour_pressure",

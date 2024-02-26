@@ -262,6 +262,11 @@
                     <value>0.15</value>
                 </property>
                 <property>
+                    <name>tortuosity</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
                     <name>thermal_conductivity</name>
                     <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>

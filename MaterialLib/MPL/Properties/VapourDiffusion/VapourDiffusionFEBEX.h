@@ -51,11 +51,10 @@ class Phase;
 class VapourDiffusionFEBEX final : public Property
 {
 public:
-    VapourDiffusionFEBEX(std::string name, double const tortuosity,
+    VapourDiffusionFEBEX(std::string name,
                          double const base_diffusion_coefficient,
                          double const exponent)
-        : tortuosity_(tortuosity),
-          base_diffusion_coefficient_(base_diffusion_coefficient),
+        : base_diffusion_coefficient_(base_diffusion_coefficient),
           exponent_(exponent)
     {
         name_ = std::move(name);
@@ -83,7 +82,6 @@ public:
                             double const t, double const dt) const override;
 
 private:
-    double const tortuosity_;
     double const base_diffusion_coefficient_;
     double const exponent_;
 };

@@ -28,10 +28,6 @@ std::unique_ptr<Property> createVapourDiffusionFEBEX(
     //! \ogs_file_param{properties__property__name}
     auto property_name = config.peekConfigParameter<std::string>("name");
 
-    auto const tortuosity =
-        //! \ogs_file_param{properties__property__VapourDiffusionFEBEX__tortuosity}
-        config.getConfigParameter<double>("tortuosity");
-
     double const base_diffusion_coefficient =
         //! \ogs_file_param{properties__property__VapourDiffusionFEBEX__base_diffusion_coefficient}
         config.getConfigParameter<double>("base_diffusion_coefficient",
@@ -42,7 +38,6 @@ std::unique_ptr<Property> createVapourDiffusionFEBEX(
         config.getConfigParameter<double>("exponent", 1.8);
 
     return std::make_unique<VapourDiffusionFEBEX>(
-        std::move(property_name), tortuosity, base_diffusion_coefficient,
-        exponent);
+        std::move(property_name), base_diffusion_coefficient, exponent);
 }
 }  // namespace MaterialPropertyLib
