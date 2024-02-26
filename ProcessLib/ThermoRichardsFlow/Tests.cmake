@@ -182,6 +182,21 @@ AddTest(
 )
 
 AddTest(
+    NAME ThermoRichardsFlow_TaskCDECOVALEX2023_DeVriesVD
+    PATH ThermoRichardsFlow/TaskCDECOVALEX2023
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS Decovalex-0-TRF_DeVries.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 17
+    DIFF_DATA
+    expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu pressure pressure 5e-2 1e-6
+    expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu saturation saturation 5e-5 1e-10
+    expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu temperature temperature 5e-5 1e-10
+)
+
+AddTest(
     NAME ThermoRichardsFlow_TaskCDECOVALEX2023_Picard
     PATH ThermoRichardsFlow/TaskCDECOVALEX2023/WithPicardNonLinearSolverAndPETSc
     EXECUTABLE ogs

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="Decovalex-0-TRF.prj">
+    <replace msel="/*/time_loop/output/prefix/text()">
+        Decovalex-THuni-0_DeVries
+    </replace>
+    <replace msel="/*/media/medium[1]/phases/phase[1]/properties/property[2]/type/text()">
+        VapourDiffusionDeVries
+    </replace>
+    <replace msel="/*/media/medium[2]/phases/phase[1]/properties/property[2]/type/text()">
+        VapourDiffusionDeVries
+    </replace>
+    <replace msel="/*/media/medium[3]/phases/phase[1]/properties/property[2]/type/text()">
+        VapourDiffusionDeVries
+    </replace>
+</OpenGeoSysProjectDiff>
