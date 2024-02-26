@@ -1,0 +1,9 @@
+exclude = [
+  "gitlab\\.opengeosys\\.org",
+  "ogsstorage\\.blob\\.core\\.windows\\.net/binaries/ogs6",
+  "discourse\\.opengeosys.org/t/",
+  "localhost:1313",
+  "smartkd-concept\\.de",
+  "all\\.css",
+]
+exclude_path = ["public/releases/"]

@@ -13,7 +13,7 @@ The second book in the OpenGeoSys benchmarking series provides guidance to under
 
 The second volume mainly is dedicated to “closed form solutions” developed and provided by Dr. Peter Vogel (BGR). You will find the packed input files for Chapter 2 as an attachment. Inside take a look at the file Chapter#Files.txt referring to the corresponding names of the input files for each book section.
 
-Also have a look at [Volume 1](http://www.springer.com/de/book/9783642271762) of this book series.
+Also have a look at [Volume 1](https://link.springer.com/book/10.1007/978-3-642-27177-9) of this book series.
 
 <div class='note clear-both'>
 
