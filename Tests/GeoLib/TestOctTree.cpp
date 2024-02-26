@@ -326,7 +326,7 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
     {
         for (std::size_t j = 0; j < 21; ++j)
         {
-            std::size_t id = k * 21 + j;
+            std::size_t const id = k * 21 + j;
             for (std::size_t i = 0; i < 21; ++i)
             {
                 ps_ptr.push_back(
