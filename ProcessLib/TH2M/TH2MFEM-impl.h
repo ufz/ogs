@@ -12,6 +12,7 @@
 
 #include <Eigen/LU>
 
+#include "ConstitutiveRelations/ConstitutiveData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -21,6 +22,7 @@
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
+#include "TH2MProcessData.h"
 
 namespace ProcessLib
 {
@@ -899,6 +901,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_x.template segment<capillary_pressure_size>(
             capillary_pressure_index);
 
+    auto const p_GR =
+        local_x.template segment<gas_pressure_size>(gas_pressure_index);
+
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
 
@@ -956,10 +961,11 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // Set volumetric strain rate for the general case without swelling.
         vars.volumetric_strain = Invariants::trace(eps);
 
-        this->prev_states_[ip].S_L_data->S_L =
+        double const S_L =
             medium.property(MPL::PropertyType::saturation)
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
+        this->prev_states_[ip].S_L_data->S_L = S_L;
 
         // TODO (naumov) Double computation of C_el might be avoided if
         // updateConstitutiveVariables is called before. But it might interfere
@@ -977,6 +983,24 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                 ? eps + C_el.inverse() * sigma_sw
                 : eps;
+
+        if (this->process_data_.initial_stress.isTotalStress())
+        {
+            auto const alpha_b =
+                medium.property(MPL::PropertyType::biot_coefficient)
+                    .template value<double>(vars, pos, t, 0.0 /*dt*/);
+
+            vars.liquid_saturation = S_L;
+            double const bishop =
+                medium.property(MPL::PropertyType::bishops_effective_stress)
+                    .template value<double>(vars, pos, t, 0.0 /*dt*/);
+
+            this->current_states_[ip].eff_stress_data.sigma.noalias() +=
+                alpha_b * Np.dot(p_GR - bishop * capillary_pressure) *
+                Invariants::identity2;
+            this->prev_states_[ip].eff_stress_data =
+                this->current_states_[ip].eff_stress_data;
+        }
     }
 
     // local_x_prev equal to local_x s.t. the local_x_dot is zero.
