@@ -76,10 +76,22 @@ OctTree<POINT, MAX_POINTS>::~OctTree()
 template <typename POINT, std::size_t MAX_POINTS>
 bool OctTree<POINT, MAX_POINTS>::addPoint(POINT* pnt, POINT*& ret_pnt)
 {
-    // first do a range query using a epsilon box around the point pnt
+    // first do a range query using a small box around the point pnt
     std::vector<POINT*> query_pnts;
     Eigen::Vector3d const min = pnt->asEigenVector3d().array() - _eps;
-    Eigen::Vector3d const max = pnt->asEigenVector3d().array() + _eps;
+    Eigen::Vector3d const max = {
+        std::abs(((*pnt)[0] + _eps) - (*pnt)[0]) > 0.0
+            ? (*pnt)[0] + _eps
+            : std::nextafter((*pnt)[0],
+                             std::numeric_limits<double>::infinity()),
+        std::abs(((*pnt)[1] + _eps) - (*pnt)[1]) > 0.0
+            ? (*pnt)[1] + _eps
+            : std::nextafter((*pnt)[1],
+                             std::numeric_limits<double>::infinity()),
+        std::abs(((*pnt)[2] + _eps) - (*pnt)[2]) > 0.0
+            ? (*pnt)[2] + _eps
+            : std::nextafter((*pnt)[2],
+                             std::numeric_limits<double>::infinity())};
     getPointsInRange(min, max, query_pnts);
     auto const it =
         std::find_if(query_pnts.begin(), query_pnts.end(),
