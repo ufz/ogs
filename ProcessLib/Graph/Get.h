@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "boost/mp11.hpp"
+#include <boost/mp11.hpp>
 
 namespace ProcessLib::Graph
 {
