@@ -337,10 +337,11 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 
     // create OctTree
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    auto const& min(aabb.getMinPoint());
-    auto const& max(aabb.getMaxPoint());
+    auto const& aabb_min(aabb.getMinPoint());
+    auto const& aabb_max(aabb.getMaxPoint());
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
+        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(aabb_min, aabb_max,
+                                                         eps));
 
     // fill OctTree
     for (auto p : ps_ptr)
@@ -352,14 +353,26 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
 
     // point near the GeoLib::Point (0, -10, -10, 10) (with id 10)
     std::unique_ptr<GeoLib::Point> p0(new GeoLib::Point(0.1, -10.0, -10.0));
-    GeoLib::Point* ret_pnt(nullptr);
-    ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
-    ASSERT_EQ(10u, ret_pnt->getID());
+    std::vector<GeoLib::Point*> found_points;
+    Eigen::Vector3d min = p0->asEigenVector3d().array() - eps;
+    Eigen::Vector3d max = p0->asEigenVector3d().array() + eps;
+    oct_tree->getPointsInRange(min, max, found_points);
+    ASSERT_EQ(1u, found_points.size());
+    ASSERT_EQ(0.0, (*found_points[0])[0]);
+    ASSERT_EQ(-10.0, (*found_points[0])[1]);
+    ASSERT_EQ(-10.0, (*found_points[0])[2]);
+    ASSERT_EQ(10u, found_points[0]->getID());
 
-    (*p0)[0] = -0.1;
-    ret_pnt = nullptr;
-    ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
-    ASSERT_EQ(10u, ret_pnt->getID());
+    found_points.clear();
+    (*p0)[0] = 0.5;
+    min = p0->asEigenVector3d().array() - eps;
+    max = p0->asEigenVector3d().array() + eps;
+    oct_tree->getPointsInRange(min, max, found_points);
+    ASSERT_EQ(1u, found_points.size());
+    ASSERT_EQ(0.0, (*found_points[0])[0]);
+    ASSERT_EQ(-10.0, (*found_points[0])[1]);
+    ASSERT_EQ(-10.0, (*found_points[0])[2]);
+    ASSERT_EQ(10u, found_points[0]->getID());
 }
 
 TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPoints)
