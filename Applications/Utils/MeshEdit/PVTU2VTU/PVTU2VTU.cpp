@@ -396,19 +396,19 @@ int main(int argc, char* argv[])
     std::vector<MeshEntityMapInfo> merged_element_map;
     std::vector<MeshLib::Element*> regular_elements;
     std::tie(regular_elements, merged_element_map) = getRegularElements(meshes);
-    INFO("Regular elements and computing element map took {} s",
-         merged_element_timer.elapsed());
+    INFO(
+        "Collection of {} regular elements and computing element map took {} s",
+        regular_elements.size(), merged_element_timer.elapsed());
 
+    // alternative implementation of getNodesOfRegularElements
     BaseLib::RunTime collect_nodes_timer;
     collect_nodes_timer.start();
-    auto [all_merged_nodes_tmp, partition_offsets] =
-        getMergedNodesVector(meshes);
+    auto [all_merged_nodes_tmp, offsets] = getMergedNodesVector(meshes);
     INFO("Collection of {} nodes and computing offsets took {} s",
          all_merged_nodes_tmp.size(), collect_nodes_timer.elapsed());
 
     BaseLib::RunTime merged_nodes_timer;
     merged_nodes_timer.start();
-    auto [all_merged_nodes_tmp, offsets] = getMergedNodesVector(meshes);
     GeoLib::AABB aabb(all_merged_nodes_tmp.begin(), all_merged_nodes_tmp.end());
     auto oct_tree = std::unique_ptr<GeoLib::OctTree<MeshLib::Node, 16>>(
         GeoLib::OctTree<MeshLib::Node, 16>::createOctTree(
@@ -437,8 +437,8 @@ int main(int argc, char* argv[])
             }
         }
     }
-    INFO("Make merged points unique / computing map took {} s",
-         merged_nodes_timer.elapsed());
+    INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
+         unique_merged_nodes.size(), merged_nodes_timer.elapsed());
 
     BaseLib::RunTime reset_nodes_in_elements_timer;
     reset_nodes_in_elements_timer.start();
