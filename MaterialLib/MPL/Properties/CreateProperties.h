@@ -73,6 +73,7 @@
 #include "ThermalConductivity/CreateSaturationWeightedThermalConductivity.h"
 #include "ThermalConductivity/CreateSoilThermalConductivitySomerton.h"
 #include "ThermalConductivity/CreateWaterThermalConductivityIAPWS.h"
+#include "VapourDiffusion/CreateVapourDiffusionDeVries.h"
 #include "VapourDiffusion/CreateVapourDiffusionFEBEX.h"
 #include "VapourDiffusion/CreateVapourDiffusionPMQ.h"
 #include "Viscosity/CreateLiquidViscosityVogels.h"

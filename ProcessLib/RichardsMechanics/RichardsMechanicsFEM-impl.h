@@ -312,6 +312,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
         _ip_data[ip].liquid_pressure_m_prev = -p_cap_ip;
         _ip_data[ip].liquid_pressure_m = -p_cap_ip;
 
@@ -451,6 +454,9 @@ void RichardsMechanicsLocalAssembler<
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
@@ -799,6 +805,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
+
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
                 .template value<double>(variables, x_position, t, dt);
@@ -1573,6 +1583,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)

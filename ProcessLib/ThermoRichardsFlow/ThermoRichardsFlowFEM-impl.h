@@ -140,6 +140,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
 
         // Note: temperature dependent saturation model is not considered so
         // far.
@@ -253,6 +256,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
         variables.temperature = T_ip;
 
         auto& S_L = _ip_data[ip].saturation;
@@ -750,6 +756,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
         variables.temperature = T_ip;
 
         auto& S_L = _ip_data[ip].saturation;
@@ -1236,6 +1245,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         variables.capillary_pressure = p_cap_ip;
         variables.liquid_phase_pressure = -p_cap_ip;
+        // setting pG to 1 atm
+        // TODO : rewrite equations s.t. p_L = pG-p_cap
+        variables.gas_phase_pressure = 1.0e5;
 
         variables.temperature = T_ip;
 

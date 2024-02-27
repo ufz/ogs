@@ -41,6 +41,9 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
     MPL::VariableArray variables;
     variables.temperature = T_data.T;
     variables.liquid_phase_pressure = -p_cap_data.p_cap;
+    // setting pG to 1 atm
+    // TODO : rewrite equations s.t. p_L = pG-p_cap
+    variables.gas_phase_pressure = 1.0e5;
     variables.density = rho_L_data.rho_LR;
     variables.liquid_saturation = S_L_data.S_L;
 
