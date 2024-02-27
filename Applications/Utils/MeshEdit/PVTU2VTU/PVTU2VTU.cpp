@@ -282,7 +282,8 @@ getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 
 void resetNodesInRegularElements(
     std::vector<MeshLib::Element*> const& regular_elements,
-    GeoLib::OctTree<MeshLib::Node, 16>& oct_tree)
+    GeoLib::OctTree<MeshLib::Node, 16>& oct_tree,
+    Eigen::Vector3d const& extent)
 {
     for (auto& e : regular_elements)
     {
@@ -293,7 +294,8 @@ void resetNodesInRegularElements(
             if (!oct_tree.addPoint(node, node_ptr))
             {
                 std::vector<MeshLib::Node*> query_nodes;
-                auto const eps = std::numeric_limits<double>::epsilon() * 1e13;
+                auto const eps = std::numeric_limits<double>::epsilon() *
+                                 extent.squaredNorm();
                 Eigen::Vector3d const min =
                     node->asEigenVector3d().array() - eps;
                 Eigen::Vector3d const max =
@@ -304,16 +306,16 @@ void resetNodesInRegularElements(
                 {
                     OGS_FATAL(
                         "query_nodes for node [{}], ({}, {}, {}) of element "
-                        "[{}] are empty",
+                        "[{}] are empty, eps is {}",
                         node->getID(), (*node)[0], (*node)[1], (*node)[2],
-                        e->getID());
+                        e->getID(), eps);
                 }
                 auto const it = std::find_if(
                     query_nodes.begin(), query_nodes.end(),
                     [&node, eps](auto const* p)
                     {
                         return (p->asEigenVector3d() - node->asEigenVector3d())
-                                   .squaredNorm() < eps * eps;
+                                   .squaredNorm() < eps;
                     });
                 if (it == query_nodes.end())
                 {
@@ -443,7 +445,8 @@ int main(int argc, char* argv[])
 
     BaseLib::RunTime reset_nodes_in_elements_timer;
     reset_nodes_in_elements_timer.start();
-    resetNodesInRegularElements(regular_elements, *oct_tree);
+    auto const extent = aabb.getMaxPoint() - aabb.getMinPoint();
+    resetNodesInRegularElements(regular_elements, *oct_tree, extent);
     INFO("Reset nodes in regular elements took {} s",
          reset_nodes_in_elements_timer.elapsed());
 
