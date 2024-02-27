@@ -334,6 +334,35 @@ void resetNodesInRegularElements(
     }
 }
 
+std::pair<std::vector<MeshLib::Node*>, std::vector<MeshEntityMapInfo>>
+makeNodesUnique(std::vector<MeshLib::Node*> const& all_merged_nodes_tmp,
+                std::vector<std::size_t> const& partition_offsets,
+                GeoLib::OctTree<MeshLib::Node, 16>& oct_tree)
+{
+    std::vector<MeshLib::Node*> unique_merged_nodes;
+    unique_merged_nodes.reserve(all_merged_nodes_tmp.size());
+
+    std::vector<MeshEntityMapInfo> merged_node_map;
+    merged_node_map.reserve(all_merged_nodes_tmp.size());
+
+    for (std::size_t i = 0; i < partition_offsets.size() - 1; ++i)
+    {
+        for (std::size_t pos = partition_offsets[i];
+             pos < partition_offsets[i + 1];
+             ++pos)
+        {
+            auto* node = all_merged_nodes_tmp[pos];
+            MeshLib::Node* node_ptr = nullptr;
+            if (oct_tree.addPoint(node, node_ptr))
+            {
+                unique_merged_nodes.push_back(node);
+                merged_node_map.emplace_back(i, pos - partition_offsets[i]);
+            }
+        }
+    }
+    return {unique_merged_nodes, merged_node_map};
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -406,7 +435,8 @@ int main(int argc, char* argv[])
     // alternative implementation of getNodesOfRegularElements
     BaseLib::RunTime collect_nodes_timer;
     collect_nodes_timer.start();
-    auto [all_merged_nodes_tmp, offsets] = getMergedNodesVector(meshes);
+    auto [all_merged_nodes_tmp, partition_offsets] =
+        getMergedNodesVector(meshes);
     INFO("Collection of {} nodes and computing offsets took {} s",
          all_merged_nodes_tmp.size(), collect_nodes_timer.elapsed());
 
@@ -421,25 +451,6 @@ int main(int argc, char* argv[])
     std::vector<MeshEntityMapInfo> merged_node_map;
     std::tie(unique_merged_nodes, merged_node_map) =
         makeNodesUnique(all_merged_nodes_tmp, partition_offsets, *oct_tree);
-    INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
-         unique_merged_nodes.size(), merged_nodes_timer.elapsed());
-
-    std::vector<MeshEntityMapInfo> merged_node_map_new;
-    merged_node_map_new.reserve(all_merged_nodes_tmp.size());
-
-    for (std::size_t i = 0; i < offsets.size() - 1; ++i)
-    {
-        for (std::size_t pos = offsets[i]; pos < offsets[i + 1]; ++pos)
-        {
-            auto* node = all_merged_nodes_tmp[pos];
-            MeshLib::Node* node_ptr = nullptr;
-            if (oct_tree->addPoint(node, node_ptr))
-            {
-                unique_merged_nodes.push_back(node);
-                merged_node_map_new.emplace_back(i, pos - offsets[i]);
-            }
-        }
-    }
     INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
          unique_merged_nodes.size(), merged_nodes_timer.elapsed());
 
