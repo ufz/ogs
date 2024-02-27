@@ -29,6 +29,7 @@
 #include "GeoLib/AABB.h"
 #include "GeoLib/OctTree.h"
 #include "InfoLib/GitInfo.h"
+#include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Location.h"
