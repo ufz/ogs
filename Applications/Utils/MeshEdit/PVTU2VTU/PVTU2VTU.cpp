@@ -17,6 +17,9 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <numeric>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/transform.hpp>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -276,55 +279,28 @@ getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     return {regular_elements, merged_element_map};
 }
 
-std::tuple<std::vector<MeshLib::Node*>, std::vector<MeshEntityMapInfo>>
-getNodesOfRegularElements(
+void resetNodesInRegularElements(
     std::vector<MeshLib::Element*> const& regular_elements,
-    std::vector<MeshEntityMapInfo> const& merged_element_map)
+    GeoLib::OctTree<MeshLib::Node, 16>& oct_tree)
 {
-    std::vector<MeshLib::Node*> merged_nodes;
-    std::vector<MeshEntityMapInfo> merged_node_map;
-    std::unordered_set<const MeshLib::Node*> node_status;
-
-    std::size_t element_counter = 0;
     for (auto& e : regular_elements)
     {
         for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
         {
             auto* const node = e->getNode(i);
-
-            if (node_status.contains(node))
-
+            MeshLib::Node* node_ptr = nullptr;
+            if (!oct_tree.addPoint(node, node_ptr))
             {
-                continue;
+                e->setNode(i, node_ptr);
             }
-
-            // TODO To use std::execution::par if Mac compiler supports
-            // parallel algorithms.
-            auto const found_node =
-                std::find_if(std::begin(merged_nodes),
-                             std::end(merged_nodes),
-                             [&node](auto const merged_node) {
-                                 return (node->asEigenVector3d() ==
-                                         merged_node->asEigenVector3d());
-                             });
-
-            if (found_node != std::end(merged_nodes))
-
+            else
             {
-                e->setNode(i, *found_node);
-                continue;
+                OGS_FATAL("node id {} inserted ({}, {}, {}) for element {}",
+                          node->getID(), (*node)[0], (*node)[1], (*node)[2],
+                          e->getID());
             }
-
-            node_status.insert(node);
-            merged_nodes.push_back(node);
-            merged_node_map.push_back(
-                {merged_element_map[element_counter].partition_id,
-                 node->getID()});
         }
-        element_counter++;
     }
-
-    return {merged_nodes, merged_node_map};
 }
 
 int main(int argc, char* argv[])
@@ -436,6 +412,12 @@ int main(int argc, char* argv[])
     INFO("Make merged points unique / computing map took {} s",
          merged_nodes_timer.elapsed());
 
+    BaseLib::RunTime reset_nodes_in_elements_timer;
+    reset_nodes_in_elements_timer.start();
+    resetNodesInRegularElements(regular_elements, *oct_tree);
+    INFO("Reset nodes in regular elements took {} s",
+         reset_nodes_in_elements_timer.elapsed());
+
     BaseLib::RunTime mesh_creation_timer;
     mesh_creation_timer.start();
     // The Node pointers of 'merged_nodes' and Element pointers of
@@ -446,6 +428,7 @@ int main(int argc, char* argv[])
     INFO("creation of merged mesh took {} s", mesh_creation_timer.elapsed());
 
     auto const& properties = meshes[0]->getProperties();
+
     BaseLib::RunTime property_timer;
     property_timer.start();
     applyToPropertyVectors(
