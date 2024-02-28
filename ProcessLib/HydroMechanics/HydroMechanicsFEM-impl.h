@@ -884,8 +884,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                         .template value<double>(vars, x_position, t, dt);
 
                 auto& sigma_eff = _ip_data[ip].sigma_eff;
-                sigma_eff += alpha_b * N_p.dot(p) * identity2;
-                _ip_data[ip].sigma_eff_prev = sigma_eff;
+                sigma_eff.noalias() += alpha_b * N_p.dot(p) * identity2;
+                _ip_data[ip].sigma_eff_prev.noalias() = sigma_eff;
             }
         }
     }
