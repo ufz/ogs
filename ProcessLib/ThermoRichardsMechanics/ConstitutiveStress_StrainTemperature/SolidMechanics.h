@@ -15,6 +15,8 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MechanicalStrainData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidMechanicsDataStateless.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidThermalExpansion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Swelling.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
@@ -25,29 +27,18 @@ namespace ProcessLib::ThermoRichardsMechanics
 namespace ConstitutiveStress_StrainTemperature
 {
 template <int DisplacementDim>
-struct SolidMechanicsDataStateful
+struct EffectiveStressData
 {
     // TODO it seems fragile that some data have to be initialized that way.
     KelvinVector<DisplacementDim> sigma_eff = KV::KVzero<DisplacementDim>();
-    KelvinVector<DisplacementDim> eps_m = KV::KVzero<DisplacementDim>();
 
     static auto reflect()
     {
-        using Self = SolidMechanicsDataStateful<DisplacementDim>;
+        using Self = EffectiveStressData<DisplacementDim>;
 
-        // TODO add eps_m?
         return ProcessLib::Reflection::reflectWithName("sigma",
                                                        &Self::sigma_eff);
     }
-};
-
-template <int DisplacementDim>
-struct SolidMechanicsDataStateless
-{
-    KelvinMatrix<DisplacementDim> stiffness_tensor =
-        KV::KMnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_uT_BT_K_N = KV::KVnan<DisplacementDim>();
-    KelvinVector<DisplacementDim> J_up_BT_K_N = KV::KVnan<DisplacementDim>();
 };
 
 template <int DisplacementDim>
@@ -71,9 +62,11 @@ struct SolidMechanicsModel
         StrainData<DisplacementDim> const& eps_data,
         PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
         MaterialStateData<DisplacementDim>& mat_state,
-        PrevState<SolidMechanicsDataStateful<DisplacementDim>> const&
-            prev_state,
-        SolidMechanicsDataStateful<DisplacementDim>& current_state,
+        PrevState<EffectiveStressData<DisplacementDim>> const&
+            sigma_eff_prev_data,
+        EffectiveStressData<DisplacementDim>& sigma_eff_data,
+        PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
+        MechanicalStrainData<DisplacementDim>& eps_m_data,
         TotalStressData<DisplacementDim>& total_stress_data,
         EquivalentPlasticStrainData& equiv_plast_strain_data,
         SolidMechanicsDataStateless<DisplacementDim>& out) const;

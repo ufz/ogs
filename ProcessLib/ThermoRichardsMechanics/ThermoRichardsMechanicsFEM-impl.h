@@ -23,6 +23,9 @@
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Function/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/Graph/Get.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidDensity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
 #include "ThermoRichardsMechanicsFEM.h"
@@ -132,7 +135,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::shapeFunctionInterpolate(T, N, T_ip);
         variables.temperature = T_ip;
 
-        this->prev_states_[ip].S_L_data->S_L =
+        std::get<PrevState<SaturationData>>(this->prev_states_[ip])->S_L =
             medium->property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
 
@@ -145,10 +148,16 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 this->solid_material_}
                 .eval(x_t, {T_ip, 0, {}}, C_el_data);
 
-            auto const& eps = this->current_states_[ip].eps_data.eps;
+            auto const& eps =
+                std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
+                    .eps;
             auto const& sigma_sw =
-                this->current_states_[ip].swelling_data.sigma_sw;
-            this->prev_states_[ip].s_mech_data->eps_m.noalias() =
+                std::get<SwellingDataStateful<DisplacementDim>>(
+                    this->current_states_[ip])
+                    .sigma_sw;
+            std::get<PrevState<MechanicalStrainData<DisplacementDim>>>(
+                this->prev_states_[ip])
+                ->eps_m.noalias() =
                 solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                     ? eps + C_el_data.C_el.inverse() * sigma_sw
                     : eps;
@@ -316,15 +325,12 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& N = ip_data.N_p;
     auto const& dNdx = ip_data.dNdx_p;
 
-    auto const x_coord =
-        NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                       ShapeMatricesTypeDisplacement>(
-            this->element_, N_u);
     auto const B =
         LinearBMatrix::computeBMatrix<DisplacementDim,
                                       ShapeFunctionDisplacement::NPOINTS,
                                       typename BMatricesType::BMatrixType>(
-            dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
+            dNdx_u, N_u, (*x_position.getCoordinates())[0],
+            this->is_axially_symmetric_);
 
     auto const [T, p_L, u] = localDOF(local_x);
     auto const [T_prev, p_L_prev, u_prev] = localDOF(local_x_prev);
@@ -385,62 +391,100 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
      *   argument, not add to it
      */
 
-    auto const& sigma_total =
-        ConstitutiveTraits::ConstitutiveSetting::totalStress(CD, current_state);
-
     // residual, order T, p, u
-    block_p(out.res).noalias() = dNdx.transpose() * CD.eq_p_data.rhs_p_dNT_V;
+    block_p(out.res).noalias() =
+        dNdx.transpose() * std::get<EqPData<DisplacementDim>>(CD).rhs_p_dNT_V;
     block_u(out.res).noalias() =
-        B.transpose() * sigma_total -
+        B.transpose() *
+            ProcessLib::Graph::get<TotalStressData<DisplacementDim>>(
+                CD, current_state)
+                .sigma_total -
         static_cast<int>(this->process_data_.apply_body_force_for_deformation) *
-            N_u_op(N_u).transpose() * CD.grav_data.volumetric_body_force;
+            N_u_op(N_u).transpose() *
+            std::get<GravityData<DisplacementDim>>(CD).volumetric_body_force;
 
     // Storage matrices
-    out.storage_p_a_p.noalias() = CD.eq_p_data.storage_p_a_p_X_NTN * NTN;
-    out.storage_p_a_S.noalias() = CD.storage_data.storage_p_a_S_X_NTN * NTN;
+    out.storage_p_a_p.noalias() =
+        std::get<EqPData<DisplacementDim>>(CD).storage_p_a_p_X_NTN * NTN;
+    out.storage_p_a_S.noalias() =
+        std::get<TRMStorageData>(CD).storage_p_a_S_X_NTN * NTN;
     out.storage_p_a_S_Jpp.noalias() =
-        CD.storage_data.storage_p_a_S_Jpp_X_NTN * NTN;
+        std::get<TRMStorageData>(CD).storage_p_a_S_Jpp_X_NTN * NTN;
 
     // M matrices, order T, p, u
-    out.M_TT.noalias() = CD.eq_T_data.M_TT_X_NTN * NTN;
-    out.M_Tp.noalias() = CD.vap_data.M_Tp_X_NTN * NTN;
+    out.M_TT.noalias() =
+        std::get<EqTData<DisplacementDim>>(CD).M_TT_X_NTN * NTN;
+    out.M_Tp.noalias() =
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).M_Tp_X_NTN * NTN;
 
-    out.M_pT.noalias() = CD.eq_p_data.M_pT_X_NTN * NTN;
-    out.M_pu.noalias() = CD.eq_p_data.M_pu_X_BTI2N * BTI2N.transpose();
+    out.M_pT.noalias() =
+        std::get<EqPData<DisplacementDim>>(CD).M_pT_X_NTN * NTN;
+    out.M_pu.noalias() =
+        std::get<EqPData<DisplacementDim>>(CD).M_pu_X_BTI2N * BTI2N.transpose();
 
     // K matrices, order T, p, u
     out.K_TT.noalias() =
-        dNdx.transpose() * CD.heat_data.K_TT_Laplace * dNdx +
-        N.transpose() * (CD.eq_T_data.K_TT_NT_V_dN.transpose() * dNdx) +
-        CD.vap_data.K_TT_X_dNTdN * dNTdN;
+        dNdx.transpose() *
+            std::get<TRMHeatStorageAndFluxData<DisplacementDim>>(CD)
+                .K_TT_Laplace *
+            dNdx +
+        N.transpose() *
+            (std::get<EqTData<DisplacementDim>>(CD).K_TT_NT_V_dN.transpose() *
+             dNdx) +
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).K_TT_X_dNTdN *
+            dNTdN;
 
     out.dK_TT_dp.noalias() =
-        N.transpose() * (CD.heat_data.K_Tp_NT_V_dN.transpose() * dNdx) +
-        CD.heat_data.K_Tp_X_NTN * NTN;
+        N.transpose() *
+            (std::get<TRMHeatStorageAndFluxData<DisplacementDim>>(CD)
+                 .K_Tp_NT_V_dN.transpose() *
+             dNdx) +
+        std::get<TRMHeatStorageAndFluxData<DisplacementDim>>(CD).K_Tp_X_NTN *
+            NTN;
     out.K_Tp.noalias() =
-        dNdx.transpose() * CD.th_osmosis_data.K_Tp_Laplace * dNdx +
-        CD.vap_data.K_Tp_X_dNTdN * dNTdN;
+        dNdx.transpose() *
+            std::get<ThermoOsmosisData<DisplacementDim>>(CD).K_Tp_Laplace *
+            dNdx +
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).K_Tp_X_dNTdN *
+            dNTdN;
 
-    out.K_pp.noalias() = dNdx.transpose() * CD.eq_p_data.K_pp_Laplace * dNdx +
-                         CD.vap_data.K_pp_X_dNTdN * dNTdN;
+    out.K_pp.noalias() =
+        dNdx.transpose() * std::get<EqPData<DisplacementDim>>(CD).K_pp_Laplace *
+            dNdx +
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).K_pp_X_dNTdN *
+            dNTdN;
     out.K_pT.noalias() =
-        dNdx.transpose() * CD.th_osmosis_data.K_pT_Laplace * dNdx;
+        dNdx.transpose() *
+        std::get<ThermoOsmosisData<DisplacementDim>>(CD).K_pT_Laplace * dNdx;
 
     // direct Jacobian contributions, order T, p, u
-    block_pT(out.Jac).noalias() = CD.vap_data.J_pT_X_dNTdN * dNTdN;
+    block_pT(out.Jac).noalias() =
+        std::get<TRMVaporDiffusionData<DisplacementDim>>(CD).J_pT_X_dNTdN *
+        dNTdN;
     block_pp(out.Jac).noalias() =
-        CD.storage_data.J_pp_X_NTN * NTN +
-        CD.eq_p_data.J_pp_X_BTI2NT_u_dot_N * BTI2N.transpose() * (u - u_prev) /
-            dt * N  // TODO something with volumetric strain rate?
-        + dNdx.transpose() * CD.eq_p_data.J_pp_dNT_V_N * N;
+        std::get<TRMStorageData>(CD).J_pp_X_NTN * NTN +
+        std::get<EqPData<DisplacementDim>>(CD).J_pp_X_BTI2NT_u_dot_N *
+            BTI2N.transpose() * (u - u_prev) / dt *
+            N  // TODO something with volumetric strain rate?
+        + dNdx.transpose() *
+              std::get<EqPData<DisplacementDim>>(CD).J_pp_dNT_V_N * N;
 
     block_uT(out.Jac).noalias() =
-        B.transpose() * CD.s_mech_data.J_uT_BT_K_N * N;
+        B.transpose() *
+        std::get<SolidMechanicsDataStateless<DisplacementDim>>(CD).J_uT_BT_K_N *
+        N;
     block_up(out.Jac).noalias() =
-        B.transpose() * CD.s_mech_data.J_up_BT_K_N * N +
-        N_u_op(N_u).transpose() * CD.grav_data.J_up_HT_V_N * N;
+        B.transpose() *
+            std::get<SolidMechanicsDataStateless<DisplacementDim>>(CD)
+                .J_up_BT_K_N *
+            N +
+        N_u_op(N_u).transpose() *
+            std::get<GravityData<DisplacementDim>>(CD).J_up_HT_V_N * N;
     block_uu(out.Jac).noalias() =
-        B.transpose() * CD.s_mech_data.stiffness_tensor * B;
+        B.transpose() *
+        std::get<SolidMechanicsDataStateless<DisplacementDim>>(CD)
+            .stiffness_tensor *
+        B;
 
     out *= ip_data.integration_weight;
 }
@@ -531,11 +575,11 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   this->material_states_[ip], tmp, output_data,
                                   CD);
 
-        saturation_avg += current_state.S_L_data.S_L;
-        porosity_avg += current_state.poro_data.phi;
+        saturation_avg += std::get<SaturationData>(current_state).S_L;
+        porosity_avg += std::get<PorosityData>(current_state).phi;
 
-        liquid_density_avg += output_data.rho_L_data.rho_LR;
-        viscosity_avg += output_data.mu_L_data.viscosity;
+        liquid_density_avg += std::get<LiquidDensityData>(output_data).rho_LR;
+        viscosity_avg += std::get<LiquidViscosityData>(output_data).viscosity;
         sigma_avg += ConstitutiveTraits::ConstitutiveSetting::statefulStress(
             current_state);
     }

@@ -34,28 +34,15 @@ struct ConstitutiveSetting
               OutputData<DisplacementDim>& out,
               ConstitutiveData<DisplacementDim>& cd) const;
 
-    static KelvinVector<DisplacementDim> const& totalStress(
-        ConstitutiveData<DisplacementDim> const& /*cd*/,
-        StatefulData<DisplacementDim> const& state)
-    {
-        return state.total_stress_data.sigma_total;
-    }
-    static KelvinVector<DisplacementDim>& totalStress(
-        ConstitutiveData<DisplacementDim>& /*cd*/,
-        StatefulData<DisplacementDim>& state)
-    {
-        return state.total_stress_data.sigma_total;
-    }
-
     static KelvinVector<DisplacementDim> const& statefulStress(
         StatefulData<DisplacementDim> const& state)
     {
-        return state.total_stress_data.sigma_total;
+        return std::get<TotalStressData<DisplacementDim>>(state).sigma_total;
     }
     static KelvinVector<DisplacementDim>& statefulStress(
         StatefulData<DisplacementDim>& state)
     {
-        return state.total_stress_data.sigma_total;
+        return std::get<TotalStressData<DisplacementDim>>(state).sigma_total;
     }
 };
 
