@@ -1,5 +1,6 @@
 exclude = [
   "gitlab\\.opengeosys\\.org",
+  "discourse\\.opengeosys\\.org",
   "ogsstorage\\.blob\\.core\\.windows\\.net/binaries/ogs6",
   "discourse\\.opengeosys.org/t/",
   "localhost:1313",
