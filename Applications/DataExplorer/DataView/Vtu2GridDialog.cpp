@@ -20,6 +20,7 @@
 #include <optional>
 #include <string>
 
+#include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/IO/writeMeshToFile.h"
