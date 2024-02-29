@@ -176,7 +176,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x,
+    setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
@@ -189,10 +189,8 @@ void ThermoHydroMechanicsLocalAssembler<
     // TODO: For staggered scheme, overload
     // LocalAssemblerInterface::setInitialConditions to enable local_x contains
     // the primary variables from all coupled processes.
-    auto const p =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
+    auto const p = local_x.template segment<pressure_size>(pressure_index);
+
     double const dt = 0.0;
 
     MPL::VariableArray vars;

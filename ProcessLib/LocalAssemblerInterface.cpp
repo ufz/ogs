@@ -105,8 +105,10 @@ void LocalAssemblerInterface::setInitialConditions(
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x.get(indices);
+    auto const local_x_eigen_map = MathLib::toVector(local_x);
 
-    setInitialConditionsConcrete(local_x, t, use_monolithic_scheme, process_id);
+    setInitialConditionsConcrete(local_x_eigen_map, t, use_monolithic_scheme,
+                                 process_id);
 }
 
 void LocalAssemblerInterface::initialize(

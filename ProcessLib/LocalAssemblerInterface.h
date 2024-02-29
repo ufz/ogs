@@ -33,11 +33,10 @@ class LocalAssemblerInterface
 public:
     virtual ~LocalAssemblerInterface() = default;
 
-    void setInitialConditions(std::size_t const mesh_item_id,
-                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                              GlobalVector const& x, double const t,
-                              bool const use_monolithic_scheme,
-                              int const process_id);
+    virtual void setInitialConditions(
+        std::size_t const mesh_item_id,
+        NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
+        double const t, bool const use_monolithic_scheme, int const process_id);
 
     virtual void initialize(std::size_t const mesh_item_id,
                             NumLib::LocalToGlobalIndexMap const& dof_table);
@@ -121,7 +120,7 @@ public:
 
 private:
     virtual void setInitialConditionsConcrete(
-        std::vector<double> const& /*local_x*/, double const /*t*/,
+        Eigen::VectorXd const& /*local_x*/, double const /*t*/,
         bool const /*use_monolithic_scheme*/, int const /*process_id*/)
     {
     }

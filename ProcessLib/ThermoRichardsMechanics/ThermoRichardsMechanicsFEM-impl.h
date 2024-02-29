@@ -86,7 +86,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunction,
 void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                            ShapeFunction, DisplacementDim,
                                            ConstitutiveTraits>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x,
+    setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
@@ -94,13 +94,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     assert(local_x.size() ==
            temperature_size + pressure_size + displacement_size);
 
-    auto const p_L = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<pressure_size> const>(
-        local_x.data() + pressure_index, pressure_size);
-
-    auto const T = Eigen::Map<typename ShapeMatricesType::template VectorType<
-        temperature_size> const>(local_x.data() + temperature_index,
-                                 temperature_size);
+    auto const p_L = local_x.template segment<pressure_size>(pressure_index);
+    auto const T =
+        local_x.template segment<temperature_size>(temperature_index);
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =

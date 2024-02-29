@@ -815,7 +815,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x,
+    setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                  double const t,
                                  bool const use_monolithic_scheme,
                                  int const process_id)
@@ -835,20 +835,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& medium =
             _process_data.media_map.getMedium(_element.getID());
 
-        int const displacement_offset =
-            use_monolithic_scheme ? displacement_index : 0;
-
+        auto const p = local_x.template segment<pressure_size>(pressure_index);
         auto const u =
-            Eigen::Map<typename ShapeMatricesTypeDisplacement::
-                           template VectorType<displacement_size> const>(
-                local_x.data() + displacement_offset, displacement_size);
+            local_x.template segment<displacement_size>(displacement_index);
 
-        int const pressure_offset = use_monolithic_scheme ? pressure_index : 0;
-
-        auto const p =
-            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-                pressure_size> const>(local_x.data() + pressure_offset,
-                                      pressure_size);
         auto const& identity2 = Invariants::identity2;
         const double dt = 0.0;
 

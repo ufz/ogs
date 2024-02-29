@@ -852,7 +852,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         DisplacementDim>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x_data,
+    setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                  double const t,
                                  bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
@@ -861,10 +861,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         gas_pressure_size + capillary_pressure_size + temperature_size +
         displacement_size;
 
-    assert(local_x_data.size() == matrix_size);
+    assert(local_x.size() == matrix_size);
 
-    auto const local_x = Eigen::Map<Eigen::VectorXd const>(local_x_data.data(),
-                                                           local_x_data.size());
     auto const capillary_pressure =
         local_x.template segment<capillary_pressure_size>(
             capillary_pressure_index);
