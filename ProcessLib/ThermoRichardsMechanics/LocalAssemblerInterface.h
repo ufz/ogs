@@ -74,14 +74,13 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                 element_.getID());
         }
 
-        // TODO check total vs effective stress
-        if (name == "sigma" && process_data_.initial_stress != nullptr)
+        if (name == "sigma" && process_data_.initial_stress.value)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
                 "point data and from a parameter '{:s}' is not possible "
                 "simultaneously.",
-                process_data_.initial_stress->name);
+                process_data_.initial_stress.value->name);
         }
 
         // TODO (naumov) this information is runtime information and I'm not

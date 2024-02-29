@@ -292,13 +292,14 @@ public:
             auto& current_state = this->current_states_[ip];
 
             // Set initial stress from parameter.
-            if (this->process_data_.initial_stress != nullptr)
+            if (this->process_data_.initial_stress.value)
             {
                 ConstitutiveTraits::ConstitutiveSetting::statefulStress(
                     current_state) =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*this->process_data_.initial_stress)(
-                        time_independent, x_position));
+                        DisplacementDim>(
+                        (*this->process_data_.initial_stress.value)(
+                            time_independent, x_position));
             }
 
             if (*this->process_data_.initialize_porosity_from_medium_property)
@@ -417,6 +418,18 @@ private:
     {
         return vec.template segment<temperature_size>(temperature_index);
     }
+
+    /// This function resets the initial stress type according to the input
+    /// initial stress type, either total or effective.
+    /// If subtype = `StressSaturation_StrainPressureTemperature` is bing used
+    /// in the process setting, the initial effective stress is converted to
+    /// total stress. Otherwise, the initial total stress is converted to
+    /// effective stress.
+    void convertInitialStressType(
+        unsigned const ip, double const t,
+        ParameterLib::SpatialPosition const x_position,
+        MaterialPropertyLib::Medium const& medium,
+        MPL::VariableArray const& variables, double const p_at_ip);
 };
 
 }  // namespace ThermoRichardsMechanics

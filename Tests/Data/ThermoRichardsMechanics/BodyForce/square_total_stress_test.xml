@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="square.prj">
+    <remove sel="/*/processes/process[1]/initial_stress"/>
+    <add sel="/*/processes/process[1]">
+        <initial_stress type = "total">total_stress0</initial_stress>
+    </add>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>total_stress0</name>
+            <type>Constant</type>
+            <values>-4.5e6 -2.5e6 -6.0e6 0.0</values>
+        </parameter>
+    </add>
+    <replace msel="/*/time_loop/output/prefix/text()">
+        dont_apply_body_force_for_deformation_total_stess0_test
+    </replace>
+</OpenGeoSysProjectDiff>

@@ -448,6 +448,22 @@ AddTest(
     expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu sigma sigma 5e-2 1e-8
 )
 
+AddTest(
+    NAME ThermoRichardsMechanics_total_initial_stress_dont_apply_body_force_for_deformation
+    PATH ThermoRichardsMechanics/BodyForce
+    RUNTIME 1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_total_stress_test.xml
+    WRAPPER time
+    TESTER vtkdiff
+    DIFF_DATA
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_total_stess0_test_ts_10_t_864000.000000.vtu displacement displacement 1e-10 1e-10
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_total_stess0_test_ts_10_t_864000.000000.vtu pressure pressure 5e-2 1e-8
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_total_stess0_test_ts_10_t_864000.000000.vtu temperature temperature 1e-10 1e-10
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_total_stess0_test_ts_10_t_864000.000000.vtu epsilon epsilon 1e-10 1e-10
+    expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_total_stess0_test_ts_10_t_864000.000000.vtu sigma sigma 5e-2 1e-8
+)
+
 if(OGS_USE_MFRONT)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
@@ -456,6 +472,21 @@ if(OGS_USE_MFRONT)
 
     if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/A2/A2.xml RUNTIME 18)
+        AddTest(
+            NAME ThermoRichardsMechanics_A2_effective_initial_stress
+            PATH ThermoRichardsMechanics/MFront/A2
+            RUNTIME 1
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS A2_effective_stress0.xml
+            WRAPPER time
+            TESTER vtkdiff
+            DIFF_DATA
+            A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu displacement displacement 1e-10 1e-10
+            A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu pressure pressure 1e-9 1e-8
+            A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu temperature temperature 1e-10 1e-10
+            A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu epsilon epsilon 1e-10 1e-10
+            mfront_A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu sigma_total sigma_total 5e-8 1e-8
+        )
     endif()
 endif()
 

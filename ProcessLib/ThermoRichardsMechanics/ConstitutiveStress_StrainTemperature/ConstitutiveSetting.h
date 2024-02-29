@@ -44,6 +44,23 @@ struct ConstitutiveSetting
     {
         return std::get<EffectiveStressData<DisplacementDim>>(state).sigma_eff;
     }
+
+    /// In case that the input initial data for
+    /// state.s_mech_data.sigma_eff are total stress values,
+    /// state.s_mech_data.sigma_eff is reset to effective stress.
+    static void convertInitialStressType(
+        StatefulData<DisplacementDim>& state,
+        StatefulDataPrev<DisplacementDim>& prev_state,
+        KelvinVector<DisplacementDim> const& pore_pressure_part)
+    {
+        auto& sigma_eff =
+            std::get<EffectiveStressData<DisplacementDim>>(state).sigma_eff;
+        sigma_eff.noalias() += pore_pressure_part;
+
+        (std::get<PrevState<EffectiveStressData<DisplacementDim>>>(prev_state)
+             ->sigma_eff)
+            .noalias() = sigma_eff;
+    }
 };
 
 extern template struct ConstitutiveSetting<2>;

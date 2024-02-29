@@ -4,7 +4,7 @@
 
     <remove sel="/*/processes/process[1]/initial_stress"/>
     <add sel="/*/processes/process[1]">
-        <initial_stress type = "total">sigma0</initial_stress>
+        <initial_stress type = "effective">sigma0</initial_stress>
     </add>
 
     <!-- Remove in reverse order, because the later commands will operate on the modified XML tree -->
@@ -42,22 +42,6 @@
                 <material_property name="VanGenuchtenExponent_m" parameter="m_S"/>
             </material_properties>
         </constitutive_relation>
-    </add>
-
-    <!-- Replace initial effective stress with total stress -->
-    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[6]" />
-    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[5]" />
-    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[4]" />
-    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[3]" />
-    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[2]" />
-    <remove sel="/*/parameters/parameter[name=&quot;sigma0&quot;]/expression[1]" />
-    <add sel="/*/parameters/parameter[name=&quot;sigma0&quot;]">
-        <expression>-10e6</expression>
-        <expression>-10e6</expression>
-        <expression>-12e6</expression>
-        <expression>0</expression>
-        <expression>0</expression>
-        <expression>0</expression>
     </add>
 
     <!-- Add parameters for the extended MFront model -->
@@ -108,12 +92,10 @@
     <add sel="/*/processes/process/secondary_variables">
         <secondary_variable internal_name="sigma_total" output_name="sigma_total" />
     </add>
-
-    <!-- Due to different stress measures we cannot test against the stress values from the original test -->
-    <remove sel="/*/test_definition/vtkdiff[field=&quot;sigma&quot;]" />
-
-    <!-- Relax the tolerance a bit -->
-    <replace sel="/*/test_definition/vtkdiff[field=&quot;NodalForces&quot;]/absolute_tolerance/text()">
-        1e-9
+   
+    <replace msel="/*/time_loop/output/prefix/text()">
+        A2_effective_stess0_test
     </replace>
+
+    <remove sel="/*/test_definition" />
 </OpenGeoSysProjectDiff>
