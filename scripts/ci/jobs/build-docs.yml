@@ -86,23 +86,6 @@ deploy docs:
 
 check docs links:
   stage: check
-  tags: [docker]
-  allow_failure: true
-  image: $WEB_IMAGE
-  needs: [meta, ci_images, "build docs"]
-  extends:
-    - .rules-master-manual
-  script:
-    - >
-      linkchecker --no-warnings --check-extern
-      --ignore-url='sciencedirect.com'
-      --ignore-url='search_opensearch.php'
-      --ignore-url='doxygen.css'
-      --ignore-url='https://doi.org/10.1680/geot.2008.58.3.157'
-      build/docs
-
-check docs links new:
-  stage: check
   tags: [envinf4, docker] # pinning for cache
   allow_failure: true
   image:
