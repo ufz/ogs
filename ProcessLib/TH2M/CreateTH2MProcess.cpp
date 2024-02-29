@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/TH2M/PhaseTransitionModels/NoPhaseTransition.h"
 #include "ProcessLib/TH2M/PhaseTransitionModels/PhaseTransition.h"
@@ -204,12 +205,8 @@ std::unique_ptr<Process> createTH2MProcess(
     }
 
     // Initial stress conditions
-    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
-        //! \ogs_file_param_special{prj__processes__process__TH2M__initial_stress}
-        config, "initial_stress", parameters,
-        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
-        &mesh);
+    auto initial_stress = ProcessLib::createInitialStress<DisplacementDim>(
+        config, parameters, mesh);
 
     auto const mass_lumping =
         //! \ogs_file_param{prj__processes__process__TH2M__mass_lumping}
@@ -232,7 +229,7 @@ std::unique_ptr<Process> createTH2MProcess(
         std::move(solid_constitutive_relations),
         std::move(phase_transition_model),
         reference_temperature,
-        initial_stress,
+        std::move(initial_stress),
         specific_body_force,
         mass_lumping,
         use_TaylorHood_elements};

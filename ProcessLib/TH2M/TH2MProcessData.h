@@ -18,6 +18,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Parameter.h"
 #include "PhaseTransitionModels/PhaseTransitionModel.h"
+#include "ProcessLib/Common/HydroMechanics/InitialStress.h"
 
 namespace ProcessLib
 {
@@ -39,9 +40,7 @@ struct TH2MProcessData
 
     ParameterLib::Parameter<double> const& reference_temperature;
 
-    /// Optional, initial stress field. A symmetric tensor, short vector
-    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const* const initial_stress;
+    InitialStress const initial_stress;
 
     /// Specific body forces applied to solid and both fluid phases.
     /// It is usually used to apply gravitational forces.

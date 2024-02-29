@@ -435,6 +435,24 @@ AddTest(
     results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu saturation saturation 1e-9 1e-8
 )
 
+AddTest(
+    NAME TH2MTotalInitialStress
+    PATH TH2M/TotalInitialStress
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS total_initial_stress_H2M.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 1
+    DIFF_DATA
+    total_initial_stress_H2M_ts_0_t_0.000000.vtu total_initial_stress_H2M_ts_0_t_0.000000.vtu capillary_pressure capillary_pressure 1.0e-10 1.e-10
+    total_initial_stress_H2M_ts_0_t_0.000000.vtu total_initial_stress_H2M_ts_0_t_0.000000.vtu p_GR p_GR 1.0e-10 1.e-10
+    total_initial_stress_H2M_ts_0_t_0.000000.vtu total_initial_stress_H2M_ts_0_t_0.000000.vtu sigma sigma 1.0e-8 1.e-10
+    total_initial_stress_H2M_ts_1_t_1000000.000000.vtu total_initial_stress_H2M_ts_1_t_1000000.000000.vtu capillary_pressure capillary_pressure 1.0e-10 1.e-10
+    total_initial_stress_H2M_ts_1_t_1000000.000000.vtu total_initial_stress_H2M_ts_1_t_1000000.000000.vtu p_GR p_GR 1.e-10 1.e-10
+    total_initial_stress_H2M_ts_1_t_1000000.000000.vtu total_initial_stress_H2M_ts_1_t_1000000.000000.vtu sigma sigma 1.0e-8 1.e-10
+)
+
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE TH2M/TH2/heatpipe/heatpipe.ipynb RUNTIME 140)
 endif()
