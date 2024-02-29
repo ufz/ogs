@@ -1,43 +1,6 @@
 check web links:
   stage: check
   allow_failure: true
-  tags: [docker]
-  extends:
-    - .rules-master-manual
-  needs: [ci_images, "build linux arch", "build mac petsc arm64"]
-  image: $WEB_IMAGE
-  script:
-    # Copy notebook pages
-    - cp -rl build/*/web/content web/
-    - cd web
-    - yarn
-    - yarn index
-    - hugo server &
-    - sleep 20
-    - >
-      linkchecker --no-warnings
-      --check-extern
-      --ignore-url='sciencedirect.com'
-      --ignore-url='wiley.com'
-      --ignore-url='doi.org'
-      --ignore-url='linkinghub.elsevier.com'
-      --ignore-url='overleaf.com'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/commit/'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/new'
-      --ignore-url='https://ogsstorage.blob.core.windows.net/binaries/ogs6'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/graphs/master'
-      --ignore-url='https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse'
-      --ignore-url='https://docs.gitlab.com/ee/ci/pipelines/pipelines_for_merged_results.html'
-      --ignore-url='/css/all.css'
-      --ignore-url='www.grs.de'
-      --ignore-url='www.smartkd-concept.de'
-      --ignore-url='https://mybinder.org'
-      http://localhost:1313
-    - kill $!
-
-check web links new:
-  stage: check
-  allow_failure: true
   tags: [envinf4, docker] # pinning for cache
   extends:
     - .rules-master-manual
