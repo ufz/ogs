@@ -1,0 +1,1 @@
+../../HydroMechanics/TotalInitialStress/cube_1x1x1.gml

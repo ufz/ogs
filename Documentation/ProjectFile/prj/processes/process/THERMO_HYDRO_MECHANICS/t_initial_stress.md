@@ -1,1 +1,0 @@
-\copydoc ProcessLib::ThermoHydroMechanics::ThermoHydroMechanicsProcessData::initial_stress

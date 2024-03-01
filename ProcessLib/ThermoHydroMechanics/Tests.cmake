@@ -341,3 +341,19 @@ AddTest(
     hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
     hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu sigma sigma 1e-8 1.0e-7
 )
+
+AddTest(
+    NAME ThermoHydroMechanicsTotalInitialStress
+    PATH ThermoHydroMechanics/TotalInitialStress
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS total_initial_stress_HM.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 1
+    DIFF_DATA
+    total_initial_stress_HM_ts_0_t_0.000000.vtu total_initial_stress_HM_ts_0_t_0.000000.vtu pressure pressure 1.0e-10 1.e-10
+    total_initial_stress_HM_ts_0_t_0.000000.vtu total_initial_stress_HM_ts_0_t_0.000000.vtu sigma sigma 1.0e-8 1.e-10
+    total_initial_stress_HM_ts_1_t_1000000.000000.vtu total_initial_stress_HM_ts_1_t_1000000.000000.vtu pressure pressure 1.0e-10 1.e-10
+    total_initial_stress_HM_ts_1_t_1000000.000000.vtu total_initial_stress_HM_ts_1_t_1000000.000000.vtu sigma sigma 1.0e-8 1.e-10
+)

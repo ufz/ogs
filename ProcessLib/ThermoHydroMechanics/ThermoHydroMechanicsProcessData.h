@@ -17,6 +17,7 @@
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "ParameterLib/Parameter.h"
+#include "ProcessLib/Common/HydroMechanics/InitialStress.h"
 
 namespace MaterialLib
 {
@@ -47,9 +48,7 @@ struct ThermoHydroMechanicsProcessData
     std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         ice_constitutive_relation;
 
-    /// Optional, initial stress field. A symmetric tensor, short vector
-    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const* const initial_stress;
+    InitialStress const initial_stress;
 
     /// Specific body forces applied to solid and fluid.
     /// It is usually used to apply gravitational forces.

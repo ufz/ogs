@@ -122,13 +122,13 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
 
     if (name == "sigma")
     {
-        if (_process_data.initial_stress != nullptr)
+        if (_process_data.initial_stress.value)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
                 "point data and from a parameter '{:s}' is not possible "
                 "simultaneously.",
-                _process_data.initial_stress->name);
+                _process_data.initial_stress.value->name);
         }
 
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
@@ -141,6 +141,52 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
     }
 
     return 0;
+}
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    setInitialConditionsConcrete(std::vector<double> const& local_x,
+                                 double const t,
+                                 bool const /*use_monolithic_scheme*/,
+                                 int const /*process_id*/)
+{
+    if (!_process_data.initial_stress.isTotalStress())
+    {
+        return;
+    }
+
+    // TODO: For staggered scheme, overload
+    // LocalAssemblerInterface::setInitialConditions to enable local_x contains
+    // the primary variables from all coupled processes.
+    auto const p =
+        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
+            pressure_size> const>(local_x.data() + pressure_index,
+                                  pressure_size);
+    double const dt = 0.0;
+
+    MPL::VariableArray vars;
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& N = _ip_data[ip].N;
+        auto const& N_u = _ip_data[ip].N_u;
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+        auto const alpha_b =
+            medium->property(MPL::PropertyType::biot_coefficient)
+                .template value<double>(vars, x_position, t, dt);
+
+        auto& sigma_eff = _ip_data[ip].sigma_eff;
+        sigma_eff.noalias() += alpha_b * N.dot(p) * Invariants::identity2;
+        _ip_data[ip].sigma_eff_prev.noalias() = sigma_eff;
+    }
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

@@ -130,11 +130,11 @@ public:
                         ShapeMatricesTypeDisplacement>(_element, ip_data.N_u))};
 
             /// Set initial stress from parameter.
-            if (_process_data.initial_stress != nullptr)
+            if (_process_data.initial_stress.value)
             {
                 ip_data.sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
+                        DisplacementDim>((*_process_data.initial_stress.value)(
                         std::numeric_limits<double>::quiet_NaN() /* time
                                                                     independent
                                                                   */
@@ -149,6 +149,11 @@ public:
             ip_data.pushBackState();
         }
     }
+
+    void setInitialConditionsConcrete(std::vector<double> const& local_x,
+                                      double const t,
+                                      bool const use_monolithic_scheme,
+                                      int const process_id) override;
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/, double const /*dt*/) override
