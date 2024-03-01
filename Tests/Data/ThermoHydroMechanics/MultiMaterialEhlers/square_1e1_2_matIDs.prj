@@ -8,7 +8,7 @@
     <geometry>square_1x1.gml</geometry>
     <processes>
         <process>
-            <name>SD</name>
+            <name>M</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>2</integration_order>
             <constitutive_relation id="0">
@@ -56,6 +56,7 @@
             <secondary_variables>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="epsilon_m" output_name="epsilon_m"/>
                 <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
                 <secondary_variable internal_name="eps_p.D" output_name="eps_p.D"/>
                 <secondary_variable internal_name="eps_p.V" output_name="eps_p.V"/>
@@ -133,7 +134,7 @@
     </media>
     <time_loop>
         <processes>
-            <process ref="SD">
+            <process ref="M">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
                     <type>DeltaX</type>
