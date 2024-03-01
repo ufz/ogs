@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0.7" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7000.vtu"/>
+    <DataSet timestep="0.71" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7100.vtu"/>
+    <DataSet timestep="0.7205" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7205.vtu"/>
+    <DataSet timestep="0.7305" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7305.vtu"/>
+    <DataSet timestep="0.741" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7410.vtu"/>
+    <DataSet timestep="0.752025" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7520.vtu"/>
+    <DataSet timestep="0.76360125" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7636.vtu"/>
+    <DataSet timestep="0.7757563125" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7758.vtu"/>
+    <DataSet timestep="0.788519128125" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.7885.vtu"/>
+    <DataSet timestep="0.8" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8000.vtu"/>
+    <DataSet timestep="0.81205491546875" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8121.vtu"/>
+    <DataSet timestep="0.824712576710938" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8247.vtu"/>
+    <DataSet timestep="0.838003121015235" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8380.vtu"/>
+    <DataSet timestep="0.851958192534747" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8520.vtu"/>
+    <DataSet timestep="0.866611017630235" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8666.vtu"/>
+    <DataSet timestep="0.881996483980497" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8820.vtu"/>
+    <DataSet timestep="0.898151223648272" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.8982.vtu"/>
+    <DataSet timestep="0.9" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9000.vtu"/>
+    <DataSet timestep="0.91" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9100.vtu"/>
+    <DataSet timestep="0.9205" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9205.vtu"/>
+    <DataSet timestep="0.931525" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9315.vtu"/>
+    <DataSet timestep="0.94310125" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9431.vtu"/>
+    <DataSet timestep="0.9552563125" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9553.vtu"/>
+    <DataSet timestep="0.968019128125" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9680.vtu"/>
+    <DataSet timestep="0.98142008453125" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9814.vtu"/>
+    <DataSet timestep="0.995491088757812" group="" part="0" file="square_1e1_2_matIDs_restart_t_0.9955.vtu"/>
+    <DataSet timestep="1" group="" part="0" file="square_1e1_2_matIDs_restart_t_1.0000.vtu"/>
+  </Collection>
+</VTKFile>
