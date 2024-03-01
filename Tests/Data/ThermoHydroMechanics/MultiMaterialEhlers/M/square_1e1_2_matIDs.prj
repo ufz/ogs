@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
     Same as for SmallDeformation process, checking solid multi-material internal
-    state variables output.
+    state variables output  for a (TH)M process.
     -->
 <OpenGeoSysProject>
     <mesh>square_1x1_quad_1e1_2_matIDs.vtu</mesh>
