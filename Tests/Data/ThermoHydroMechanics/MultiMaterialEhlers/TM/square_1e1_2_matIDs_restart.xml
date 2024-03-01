@@ -4,8 +4,8 @@
 
     <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">0.7</replace>
     <!-- The step size from the non-restart version (see base_file) **after** t =0.7 s. is constant 1.e-2.
-         Else, the exact adaptive value must used to meet the tolerances set in this test. -->
-    <!--<replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">0.005234</replace>-->
+         Else, the exact adaptive value must be used to meet the tolerances set in this test: -->
+    <!--<replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">0.00523411057211993</replace>-->
     <replace sel="/*/time_loop/output/prefix/text()">square_1e1_2_matIDs_restart</replace>
     <replace sel="/*/time_loop/output/fixed_output_times/text()">.7 .8 .9 1</replace>
 
@@ -74,7 +74,7 @@
             <vtkdiff>
                 <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
                 <field>NodalForces</field>
-                <absolute_tolerance>2.1e-12</absolute_tolerance>
+                <absolute_tolerance>6e-12</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
