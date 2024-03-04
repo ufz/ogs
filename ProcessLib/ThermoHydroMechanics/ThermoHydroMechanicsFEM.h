@@ -49,7 +49,8 @@ struct SecondaryData
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
-class ThermoHydroMechanicsLocalAssembler : public LocalAssemblerInterface
+class ThermoHydroMechanicsLocalAssembler
+    : public LocalAssemblerInterface<DisplacementDim>
 {
 public:
     using ShapeMatricesTypeDisplacement =
@@ -168,9 +169,9 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_prev*/,
-                              double const /*t*/, double const /*dt*/,
+    void postTimestepConcrete(Eigen::VectorXd const& local_x,
+                              Eigen::VectorXd const& local_x_prev,
+                              double const t, double const dt,
                               bool const /*use_monolithic_scheme*/,
                               int const /*process_id*/) override
     {
@@ -179,6 +180,19 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            auto& ip_data = _ip_data[ip];
+            auto const& N_u = ip_data.N_u;
+
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<
+                        ShapeFunctionDisplacement,
+                        ShapeMatricesTypeDisplacement>(_element, N_u))};
+
+            updateConstitutiveRelations(local_x, local_x_prev, x_position, t,
+                                        dt, _ip_data[ip], _ip_data_output[ip]);
+
             _ip_data[ip].eps0 =
                 _ip_data[ip].eps0_prev +
                 (1 - _ip_data[ip].phi_fr_prev / _ip_data[ip].porosity) *
@@ -273,6 +287,26 @@ private:
             _ip_data, &IpData::sigma_eff_ice, cache);
     }
 
+    std::vector<double> getEpsilonM() const override
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtEpsilonM(0, {}, {}, values); });
+    }
+
+    virtual std::vector<double> const& getIntPtEpsilonM(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::eps_m, cache);
+    }
+
     std::vector<double> getEpsilon() const override
     {
         constexpr int kelvin_vector_size =
@@ -301,6 +335,36 @@ private:
     {
         return ProcessLib::getIntegrationPointScalarData(
             _ip_data, &IpData::phi_fr, cache);
+    }
+
+    unsigned getNumberOfIntegrationPoints() const override
+    {
+        return _integration_method.getNumberOfPoints();
+    }
+
+    int getMaterialID() const override
+    {
+        return _process_data.material_ids == nullptr
+                   ? 0
+                   : (*_process_data.material_ids)[_element.getID()];
+    }
+
+    std::vector<double> getMaterialStateVariableInternalState(
+        std::function<std::span<double>(
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables&)> const& get_values_span,
+        int const& n_components) const override
+    {
+        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+            _ip_data, &IpData::material_state_variables, get_values_span,
+            n_components);
+    }
+
+    typename MaterialLib::Solids::MechanicsBase<
+        DisplacementDim>::MaterialStateVariables const&
+    getMaterialStateVariablesAt(unsigned integration_point) const override
+    {
+        return *_ip_data[integration_point].material_state_variables;
     }
 
 private:

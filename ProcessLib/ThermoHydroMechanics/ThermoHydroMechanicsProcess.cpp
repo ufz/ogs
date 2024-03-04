@@ -15,6 +15,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -56,14 +57,21 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
-            &LocalAssemblerInterface::getSigma));
+            &LocalAssemblerInterface<DisplacementDim>::getSigma));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
+            "epsilon_m_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order, _local_assemblers,
+            &LocalAssemblerInterface<DisplacementDim>::getEpsilonM));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, _local_assemblers,
-            &LocalAssemblerInterface::getEpsilon));
+            &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
 }
 
 template <int DisplacementDim>
@@ -173,20 +181,6 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
 }
 
 template <int DisplacementDim>
-void ThermoHydroMechanicsProcess<DisplacementDim>::
-    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
-                                        double const t,
-                                        int const process_id)
-{
-    DBUG("SetInitialConditions ThermoRichardsMechanicsProcess.");
-
-    GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::setInitialConditions, _local_assemblers,
-        *_local_to_global_index_map, *x[process_id], t, _use_monolithic_scheme,
-        process_id);
-}
-
-template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
@@ -198,47 +192,56 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
-    _secondary_variables.addSecondaryVariable(
+    auto add_secondary_variable = [&](std::string const& name,
+                                      int const num_components,
+                                      auto get_ip_values_function)
+    {
+        _secondary_variables.addSecondaryVariable(
+            name,
+            makeExtrapolator(num_components, getExtrapolator(),
+                             _local_assemblers,
+                             std::move(get_ip_values_function)));
+    };
+
+    add_secondary_variable(
         "sigma",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigma));
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSigma);
 
-    _secondary_variables.addSecondaryVariable(
+    add_secondary_variable(
         "sigma_ice",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtSigmaIce));
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtSigmaIce);
 
-    _secondary_variables.addSecondaryVariable(
+    add_secondary_variable(
+        "epsilon_m",
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilonM);
+
+    add_secondary_variable(
         "epsilon",
-        makeExtrapolator(MathLib::KelvinVector::KelvinVectorType<
-                             DisplacementDim>::RowsAtCompileTime,
-                         getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtEpsilon));
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilon);
 
-    _secondary_variables.addSecondaryVariable(
-        "ice_volume_fraction",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtIceVolume));
+    add_secondary_variable(
+        "ice_volume_fraction", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtIceVolume);
 
-    _secondary_variables.addSecondaryVariable(
-        "velocity",
-        makeExtrapolator(mesh.getDimension(), getExtrapolator(),
-                         _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtDarcyVelocity));
+    add_secondary_variable(
+        "velocity", mesh.getDimension(),
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocity);
 
-    _secondary_variables.addSecondaryVariable(
-        "fluid_density",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtFluidDensity));
+    add_secondary_variable(
+        "fluid_density", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtFluidDensity);
 
-    _secondary_variables.addSecondaryVariable(
-        "viscosity",
-        makeExtrapolator(1, getExtrapolator(), _local_assemblers,
-                         &LocalAssemblerInterface::getIntPtViscosity));
+    add_secondary_variable(
+        "viscosity", 1,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtViscosity);
 
     _process_data.element_fluid_density =
         MeshLib::getOrCreateMeshProperty<double>(
@@ -265,13 +268,25 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             const_cast<MeshLib::Mesh&>(mesh), "temperature_interpolated",
             MeshLib::MeshItemType::Node, 1);
 
+    //
+    // enable output of internal variables defined by material models
+    //
+    ProcessLib::Deformation::solidMaterialInternalToSecondaryVariables<
+        LocalAssemblerInterface<DisplacementDim>>(_process_data.solid_materials,
+                                                  add_secondary_variable);
+
+    ProcessLib::Deformation::
+        solidMaterialInternalVariablesToIntegrationPointWriter(
+            _process_data.solid_materials, _local_assemblers,
+            _integration_point_writer, integration_order);
+
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
                                _local_assemblers);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerInterface::initialize, _local_assemblers,
-        *_local_to_global_index_map);
+        &LocalAssemblerInterface<DisplacementDim>::initialize,
+        _local_assemblers, *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -303,6 +318,20 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
     const int mechanical_process_id = 2;
     initializeProcessBoundaryConditionsAndSourceTerms(
         *_local_to_global_index_map, mechanical_process_id, media);
+}
+
+template <int DisplacementDim>
+void ThermoHydroMechanicsProcess<DisplacementDim>::
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+                                        double const t,
+                                        int const process_id)
+{
+    DBUG("SetInitialConditions ThermoHydroMechanicsProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,
+        _local_assemblers, *_local_to_global_index_map, *x[process_id], t,
+        _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
@@ -413,8 +442,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     if (hasMechanicalProcess(process_id))
     {
         GlobalExecutor::executeMemberOnDereferenced(
-            &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            *_local_to_global_index_map, *x[process_id], t, dt);
+            &LocalAssemblerInterface<DisplacementDim>::preTimestep,
+            _local_assemblers, *_local_to_global_index_map, *x[process_id], t,
+            dt);
     }
 }
 
@@ -441,9 +471,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
-        _use_monolithic_scheme, process_id);
+        &LocalAssemblerInterface<DisplacementDim>::postTimestep,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
+        dt, _use_monolithic_scheme, process_id);
 }
 
 template <int DisplacementDim>
@@ -469,8 +499,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+        &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
+        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
+        x_prev, process_id);
 }
 
 template <int DisplacementDim>

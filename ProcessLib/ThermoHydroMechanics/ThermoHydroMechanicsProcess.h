@@ -18,8 +18,6 @@ namespace ProcessLib
 {
 namespace ThermoHydroMechanics
 {
-struct LocalAssemblerInterface;
-
 /// Thermally induced deformation process in linear kinematics
 /// poro-mechanical/biphasic model.
 ///
@@ -72,13 +70,13 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
-                                             double const t,
-                                             int const process_id) override;
-
     void initializeBoundaryConditions(
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media) override;
+
+    void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+                                             double const t,
+                                             int const process_id) override;
 
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
@@ -109,7 +107,8 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     ThermoHydroMechanicsProcessData<DisplacementDim> _process_data;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface<DisplacementDim>>>
+        _local_assemblers;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
