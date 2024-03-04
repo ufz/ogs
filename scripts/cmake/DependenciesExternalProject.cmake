@@ -247,9 +247,19 @@ if(NOT ZLIB_FOUND)
             "ExternalProject_Add(): added package ZLIB@${ogs.tested_version.zlib}"
     )
     if(WIN32)
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            set(_zlib_debug_postfix "d")
+        endif()
+        # Remove zlib dll and corresponding lib, ZLIB_USE_STATIC_LIBS sometimes does not work
+        file(REMOVE
+            ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlib${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX}
+            ${build_dir_ZLIB}/${CMAKE_INSTALL_BINDIR}/zlib${_zlib_debug_postfix}${CMAKE_SHARED_LIBRARY_SUFFIX}
+        )
         # requires CMake 3.24 to be effective:
         set(ZLIB_USE_STATIC_LIBS "ON")
         set(ZLIB_ROOT ${build_dir_ZLIB})
+        # Force local zlib build, found netcdf-installed zlib sometimes
+        set(ZLIB_LIBRARIES ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlibstatic${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX})
     endif()
     set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
     BuildExternalProject_find_package(ZLIB)
