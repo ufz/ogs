@@ -387,8 +387,7 @@ macro(_add_test TEST_NAME)
     )
 endmacro()
 
-# Sets number of threads, adds label 'omp' and adds a dependency to the
-# non-OpenMP test because both write to the same output files.
+# Sets number of threads, adds label 'omp'
 macro(_set_omp_test_properties)
     get_test_property(${TEST_NAME}-omp ENVIRONMENT _environment)
     if(NOT _environment)
@@ -404,6 +403,7 @@ endmacro()
 # Adds subsequent tester ctest.
 macro(_add_test_tester TEST_NAME)
 
+    unset(TESTER_COMMAND)
     set(_binary_path ${AddTest_BINARY_PATH})
     if("${TEST_NAME}" MATCHES "-omp")
         set(_binary_path ${_binary_path}-omp)
