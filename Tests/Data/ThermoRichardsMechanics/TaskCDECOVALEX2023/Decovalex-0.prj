@@ -553,11 +553,11 @@
     </time_loop>
     <local_coordinate_system>
         <basis_vector_0 implicit = "true" />
-        <basis_vector_1>normal_to_transverse_plane</basis_vector_1>
+        <basis_vector_1>b1</basis_vector_1>
     </local_coordinate_system>
     <parameters>
         <parameter>
-            <name>normal_to_transverse_plane</name>
+            <name>b1</name>
             <type>Constant</type>
             <values>-0.559192903470747 0.829037572555042</values>
         </parameter>
