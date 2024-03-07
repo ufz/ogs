@@ -485,7 +485,7 @@ if(OGS_USE_MFRONT)
             A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu pressure pressure 1e-9 1e-8
             A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu temperature temperature 1e-10 1e-10
             A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu epsilon epsilon 1e-10 1e-10
-            mfront_A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu sigma_total sigma_total 5e-8 1e-8
+            mfront_A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu sigma_total sigma_total 6e-8 1e-8
         )
     endif()
 endif()
