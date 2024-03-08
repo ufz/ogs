@@ -10,8 +10,8 @@
 
 #pragma once
 
+#include "ElasticTangentStiffnessData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Base.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/ElasticTangentStiffnessData.h"
 #include "TraitsBase.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
