@@ -47,7 +47,7 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     G::eval(models.s_mech_model, aux_data, tmp, state, prev_state,
             mat_state_tuple, cd);
 
-    G::eval(models.solid_compressibility_model, aux_data, tmp);
+    G::eval(models.solid_compressibility_model, aux_data, tmp, cd);
 
     G::eval(models.bishops_model, aux_data, state, tmp);
     // TODO why not ordinary state tracking?

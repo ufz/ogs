@@ -10,16 +10,14 @@
 
 #pragma once
 
-#include "Biot.h"
 #include "ElasticTangentStiffnessData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct SolidCompressibilityData
+namespace ConstitutiveStress_StrainTemperature
 {
-    double beta_SR;
-};
-
 template <int DisplacementDim, typename SolidMaterial>
 struct SolidCompressibilityModel
 {
@@ -40,4 +38,5 @@ struct SolidCompressibilityModel
 private:
     SolidMaterial const& solid_material_;
 };
+}  // namespace ConstitutiveStress_StrainTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

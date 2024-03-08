@@ -13,7 +13,7 @@
 #include "Bishops.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "Saturation.h"
-#include "SolidCompressibility.h"
+#include "SolidCompressibilityData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
