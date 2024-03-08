@@ -1,6 +1,6 @@
 # How to generate Font Awesome icon set
 
-- Open the [Desktop subsetter](https://fontawesome.com/how-to-use/on-the-desktop/other-topics/subsetter) applications
+- Open the [Desktop Subsetter](https://docs.fontawesome.com/v5/desktop/other-topics/subsetter/) applications
 - Load `opengeosys.yml` project file
 - Add icons
 - Build icon set
