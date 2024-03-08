@@ -104,7 +104,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
-        this->process_data_.media_map.getMedium(this->element_.getID());
+        *this->process_data_.media_map.getMedium(this->element_.getID());
 
     MediaData const media_data{medium};
 
@@ -141,7 +141,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables.temperature = T_ip;
 
         double const S_L =
-            medium->property(MPL::PropertyType::saturation)
+            medium.property(MPL::PropertyType::saturation)
                 .template value<double>(variables, x_position, t, dt);
         std::get<PrevState<SaturationData>>(this->prev_states_[ip])->S_L = S_L;
 
@@ -152,7 +152,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         if (this->process_data_.initial_stress.value)
         {
             variables.liquid_saturation = S_L;
-            convertInitialStressType(ip, t, x_position, *medium, variables,
+            convertInitialStressType(ip, t, x_position, medium, variables,
                                      -p_cap_ip);
         }
     }
