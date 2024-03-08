@@ -21,6 +21,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidCompressibilityModel.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidMechanics.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

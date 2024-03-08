@@ -10,8 +10,6 @@
 
 #include "ElasticTangentStiffnessModel.h"
 
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-
 namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStress_StrainTemperature
