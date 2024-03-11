@@ -1,10 +1,9 @@
 linux ctest large:
-  image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [docker, envinf2]
-  needs: [meta, ci_images]
+  tags: [shell, envinf23]
+  needs: [meta]
   rules:
     - when: manual
       allow_failure: true
@@ -13,6 +12,12 @@ linux ctest large:
     BUILD_TESTS: "false"
     BUILD_CTEST_LARGE: "true"
     CMAKE_PRESET: release-all
+    CMAKE_ARGS: >-
+      -DBUILD_SHARED_LIBS=ON
+      -DOGS_USE_MKL=ON
+      -DOGS_USE_NETCDF=ON
+  before_script:
+    - source /opt/intel/oneapi/setvars.sh
 
 build linux (no unity):
   extends:
