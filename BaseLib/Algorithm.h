@@ -109,8 +109,6 @@ void insertIfKeyUniqueElseError(Map& map, Key const& key, Value&& value,
 //! Returns the value of \c key from the given \c map if such an entry exists;
 //! otherwise an \c error_message is printed and the program is aborted.
 //! Cf. also the const overload below.
-//! \remark Use as: \code{.cpp} get_or_error<Value>(some_map, some_key, "error
-//! message") \endcode
 template <typename Map, typename Key>
 typename Map::mapped_type& getOrError(Map& map, Key const& key,
                                       std::string const& error_message)
