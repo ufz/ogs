@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "Biot.h"
 #include "LiquidDensity.h"
 #include "Porosity.h"
 #include "SolidThermalExpansion.h"

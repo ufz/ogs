@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include "ElasticTangentStiffnessModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
@@ -21,6 +20,8 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidCompressibilityModel.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidMechanics.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -34,8 +35,7 @@ struct ConstitutiveModels
     explicit ConstitutiveModels(
         TRMProcessData const& process_data,
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
-        : elastic_tangent_stiffness_model(solid_material),
-          solid_compressibility_model(solid_material),
+        : solid_compressibility_model(solid_material),
           s_mech_model(solid_material),
           grav_model(process_data.specific_body_force),
           darcy_model(process_data.specific_body_force),
@@ -43,8 +43,6 @@ struct ConstitutiveModels
     {
     }
 
-    ElasticTangentStiffnessModel<DisplacementDim>
-        elastic_tangent_stiffness_model;
     BiotModel biot_model;
     SolidCompressibilityModel<DisplacementDim,
                               SolidConstitutiveRelation<DisplacementDim>>
@@ -53,7 +51,6 @@ struct ConstitutiveModels
     BishopsPrevModel bishops_prev_model;
     PorosityModel<DisplacementDim> poro_model;
     TransportPorosityModel<DisplacementDim> transport_poro_model;
-    SwellingModel<DisplacementDim> swelling_model;
     SolidThermalExpansionModel<DisplacementDim> s_therm_exp_model;
     SolidMechanicsModel<DisplacementDim> s_mech_model;
     LiquidDensityModel<DisplacementDim> rho_L_model;

@@ -20,6 +20,14 @@ namespace ConstitutiveStressSaturation_StrainPressureTemperature
 template <int DisplacementDim>
 struct ConstitutiveSetting
 {
+    void init(ConstitutiveModels<DisplacementDim>&, double const /*t*/,
+              double const /*dt*/, ParameterLib::SpatialPosition const&,
+              MediaData const&, TemperatureData<DisplacementDim> const&,
+              StatefulData<DisplacementDim>&,
+              StatefulDataPrev<DisplacementDim>&) const
+    {
+    }
+
     /// Evaluate the constitutive setting.
     void eval(ConstitutiveModels<DisplacementDim>& models, double const t,
               double const dt, ParameterLib::SpatialPosition const& x_position,

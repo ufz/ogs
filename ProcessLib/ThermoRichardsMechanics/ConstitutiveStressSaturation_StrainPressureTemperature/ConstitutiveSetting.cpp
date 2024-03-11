@@ -42,12 +42,12 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     // solving the global equation system)
     std::get<StrainData<DisplacementDim>>(state).eps.noalias() = eps_arg;
 
-    G::eval(models.elastic_tangent_stiffness_model, aux_data, tmp);
     G::eval(models.biot_model, aux_data, tmp);
-    G::eval(models.solid_compressibility_model, aux_data, tmp);
 
     G::eval(models.s_mech_model, aux_data, tmp, state, prev_state,
             mat_state_tuple, cd);
+
+    G::eval(models.solid_compressibility_model, aux_data, tmp, cd);
 
     G::eval(models.bishops_model, aux_data, state, tmp);
     // TODO why not ordinary state tracking?

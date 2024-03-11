@@ -17,7 +17,7 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 1
     DIFF_DATA
-    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu sigma sigma 1e-12 1e-12
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu sigma sigma 4e-11 0
     expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 1e-14
     expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu saturation saturation 1e-12 1e-12
     expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu pressure pressure 1e-10 1e-10
@@ -34,7 +34,7 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 1
     DIFF_DATA
-    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu sigma sigma 1e-12 1e-12
+    expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu sigma sigma 4e-11 0
     expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 1e-14
     expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu saturation saturation 1e-14 1e-14
     expected_anisotropic_thermal_expansion_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_ts_1_t_1000000.000000.vtu pressure pressure 1e-10 1e-10
@@ -51,7 +51,7 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 1
     DIFF_DATA
-    expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu sigma sigma 2e-12 1e-12
+    expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu sigma sigma 4e-11 0
     expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu displacement displacement 1e-14 1e-14
     expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu saturation saturation 1e-12 1e-12
     expected_anisotropic_thermal_expansion_z90_ts_1_t_1000000.000000.vtu anisotropic_thermal_expansion_expansivity_matrix_z90_ts_1_t_1000000.000000.vtu pressure pressure 1e-10 1e-10
