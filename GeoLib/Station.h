@@ -23,8 +23,6 @@
 namespace GeoLib
 {
 /**
- * \ingroup GeoLib
- *
  * \brief A Station (observation site) is basically a Point with some additional
  * information.
  *

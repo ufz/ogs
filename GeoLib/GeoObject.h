@@ -3,7 +3,6 @@
  * \author Thomas Fischer
  * \date   2010-08-27
  * \brief  Base class for classes Point, Polyline, Surface.
- * \ingroup GeoLib
  *
  * \copyright
  * Copyright (c) 2012-2024, OpenGeoSys Community (http://www.opengeosys.org)

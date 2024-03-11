@@ -19,10 +19,6 @@
 namespace GeoLib
 {
 
-/**
- * \ingroup GeoLib
- */
-
 enum class GEOTYPE
 {
     POINT,

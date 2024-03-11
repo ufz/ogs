@@ -25,8 +25,6 @@ class Triangle;
 class SurfaceGrid;
 
 /**
- * \ingroup GeoLib
- *
  * \brief A Surface is represented by Triangles. It consists of a reference
  * to a vector of (pointers to) points (_sfc_pnts) and a vector that stores
  * the Triangles consisting of points from _sfc_pnts.

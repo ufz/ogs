@@ -21,12 +21,9 @@ namespace GeoLib
 {
 
 /**
- * \ingroup GeoLib
- *
  * \brief class PolylineVec encapsulate a std::vector of Polylines
  * additional one can give the vector of polylines a name
  * */
-
 using PolylineVec = TemplateVec<GeoLib::Polyline>;
 
 }  // namespace GeoLib

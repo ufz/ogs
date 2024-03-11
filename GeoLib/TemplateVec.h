@@ -28,8 +28,6 @@
 namespace GeoLib
 {
 /**
- * \ingroup GeoLib
- *
  * \brief The class TemplateVec takes a unique name and manages
  * a std::vector of pointers to data elements of type T.
  *
