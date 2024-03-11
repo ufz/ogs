@@ -23,7 +23,7 @@ build linux (no unity):
   extends:
     - .template-build-linux
   tags: [shell, envinf]
-  needs: [meta, ci_images]
+  needs: [meta]
   timeout: 3h
   variables:
     BUILD_TESTS: "false"
