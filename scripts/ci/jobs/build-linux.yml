@@ -32,10 +32,9 @@ build linux (no unity):
     CMAKE_PRESET: ci-no-unity
 
 build linux (no deps, no procs):
-  image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
-  tags: [docker]
-  needs: [meta, ci_images]
+  tags: [shell, envinf]
+  needs: [meta]
   timeout: 2h
   variables:
     BUILD_TESTS: "false"
