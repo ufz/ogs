@@ -257,6 +257,18 @@ AddTest(
 )
 
 AddTest(
+    NAME MechanicsTransverseElasticModel
+    PATH Mechanics/TransverseElasticModel
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS m_e_transiso_2D.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    m_e_transiso_2D.vtu  transverse_E_ts_1_t_1.000000.vtu DISPLACEMENT displacement 1e-11 0
+)
+
+AddTest(
     NAME Mechanics_creep_with_heterogeneous_reference_temperature
     PATH Mechanics/CreepWithHeterogeneousReferenceTemperature
     EXECUTABLE ogs
