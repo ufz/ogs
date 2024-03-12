@@ -24,10 +24,6 @@
 
 namespace GeoLib
 {
-/**
- * \ingroup GeoLib
- */
-
 // forward declaration
 class PointVec;
 

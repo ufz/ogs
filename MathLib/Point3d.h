@@ -19,10 +19,6 @@
 
 namespace MathLib
 {
-/**
- * \ingroup MathLib
- *
- */
 class Point3d
 {
 public:

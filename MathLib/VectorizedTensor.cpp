@@ -9,7 +9,7 @@
 
 #include "VectorizedTensor.h"
 
-namespace MathLib ::VectorizedTensor
+namespace MathLib::VectorizedTensor
 {
 
 bool isTensorConvertibleTo1d(Eigen::Matrix3d const& tensor)

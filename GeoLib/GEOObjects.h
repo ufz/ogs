@@ -27,14 +27,10 @@
 #include "Surface.h"
 #include "SurfaceVec.h"
 
+/// This module consists of classes governing geometric objects and related
+/// algorithms.
 namespace GeoLib
 {
-///
-/**
- * \defgroup GeoLib This module consists of classes governing geometric objects
- * and related algorithms.
- */
-
 /**
  * \brief Container class for geometric objects.
  *

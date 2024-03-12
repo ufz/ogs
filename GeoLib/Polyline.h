@@ -30,8 +30,6 @@ namespace GeoLib
 class PointVec;
 
 /**
- * \ingroup GeoLib
- *
  * \brief Class Polyline consists mainly of a reference to a point vector and
  * a vector that stores the indices in the point vector.
  * A polyline consists of at least one line segment. The polyline is specified

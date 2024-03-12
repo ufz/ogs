@@ -27,8 +27,6 @@
 namespace GeoLib
 {
 /**
- * \ingroup GeoLib
- *
  * \brief This class manages pointers to Points in a std::vector along with a
  * name. It also handles the deletion of points. Furthermore, typically,
  * PointVec objects are managed by GEOObjects using the instance name for
