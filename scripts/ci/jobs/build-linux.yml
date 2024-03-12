@@ -1,21 +1,9 @@
-build linux:
-  image: $CONTAINER_GCC_IMAGE
-  extends:
-    - .template-build-linux
-    - .test-artifacts
-  tags: [docker]
-  needs: [meta, ci_images]
-  timeout: 3h
-  variables:
-    CMAKE_PRESET: release-all
-
 linux ctest large:
-  image: $CONTAINER_GCC_IMAGE
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [docker, envinf2]
-  needs: [meta, ci_images]
+  tags: [shell, envinf23]
+  needs: [meta]
   rules:
     - when: manual
       allow_failure: true
@@ -24,12 +12,18 @@ linux ctest large:
     BUILD_TESTS: "false"
     BUILD_CTEST_LARGE: "true"
     CMAKE_PRESET: release-all
+    CMAKE_ARGS: >-
+      -DBUILD_SHARED_LIBS=ON
+      -DOGS_USE_MKL=ON
+      -DOGS_USE_NETCDF=ON
+  before_script:
+    - source /opt/intel/oneapi/setvars.sh
 
 build linux (no unity):
   extends:
     - .template-build-linux
   tags: [shell, envinf]
-  needs: [meta, ci_images]
+  needs: [meta]
   timeout: 3h
   variables:
     BUILD_TESTS: "false"
@@ -38,10 +32,9 @@ build linux (no unity):
     CMAKE_PRESET: ci-no-unity
 
 build linux (no deps, no procs):
-  image: $CONTAINER_GCC_IMAGE
   extends: .template-build-linux
-  tags: [docker]
-  needs: [meta, ci_images]
+  tags: [shell, envinf]
+  needs: [meta]
   timeout: 2h
   variables:
     BUILD_TESTS: "false"
