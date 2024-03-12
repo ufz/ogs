@@ -20,6 +20,7 @@
 #include <optional>
 #include <string>
 
+#include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
 #include "GeoLib/AABB.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -185,12 +186,11 @@ void Vtu2GridDialog::accept()
                                (*cellsize)[1], (*cellsize)[2], min, "grid"));
     if (grid == nullptr)
     {
-        OGS_FATAL(
-            "Could not generate regular hex mesh. With parameters dims={} {} "
-            "{}, "
-            "cellsize={} {} {}",
-            dims[0], dims[1], dims[2], (*cellsize)[0], (*cellsize)[1],
-            (*cellsize)[2]);
+        OGSError::box(QString::fromStdString(
+            fmt::format("Could not generate regular hex mesh. With "
+                        "parameters dims={} {} {}, cellsize={} {} {}",
+                        dims[0], dims[1], dims[2], (*cellsize)[0],
+                        (*cellsize)[1], (*cellsize)[2])));
     }
 
     std::vector<int>* cell_ids =
@@ -198,7 +198,7 @@ void Vtu2GridDialog::accept()
             VoxelGridFromMesh::cell_id_name, MeshLib::MeshItemType::Cell, 1);
     if (cell_ids == nullptr)
     {
-        OGS_FATAL("Could not create cell ids.");
+        OGSError::box("Could not create cell ids.");
     }
     *cell_ids = VoxelGridFromMesh::assignCellIds(mesh, min, dims, *cellsize);
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
