@@ -83,13 +83,12 @@ ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunction,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunction,
           int DisplacementDim, typename ConstitutiveTraits>
-void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                           ShapeFunction, DisplacementDim,
-                                           ConstitutiveTraits>::
-    setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
-                                 double const t,
-                                 bool const /*use_monolithic_scheme*/,
-                                 int const /*process_id*/)
+void ThermoRichardsMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunction, DisplacementDim,
+    ConstitutiveTraits>::setInitialConditionsConcrete(Eigen::VectorXd const&
+                                                          local_x,
+                                                      double const t,
+                                                      int const /*process_id*/)
 {
     assert(local_x.size() ==
            temperature_size + pressure_size + displacement_size);

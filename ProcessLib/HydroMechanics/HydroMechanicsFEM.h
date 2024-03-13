@@ -278,7 +278,6 @@ public:
 
     void setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                       double const t,
-                                      bool const use_monolithic_scheme,
                                       int const process_id) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(

@@ -121,8 +121,7 @@ void ThermoRichardsFlowProcess::setInitialConditionsConcreteProcess(
 
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        *_local_to_global_index_map, *x[process_id], t, _use_monolithic_scheme,
-        process_id);
+        *_local_to_global_index_map, *x[process_id], t, process_id);
 }
 
 void ThermoRichardsFlowProcess::assembleConcreteProcess(

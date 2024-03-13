@@ -175,11 +175,11 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
-                                 double const t,
-                                 bool const /*use_monolithic_scheme*/,
-                                 int const /*process_id*/)
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
+    DisplacementDim>::setInitialConditionsConcrete(Eigen::VectorXd const&
+                                                       local_x,
+                                                   double const t,
+                                                   int const /*process_id*/)
 {
     if (!_process_data.initial_stress.isTotalStress())
     {

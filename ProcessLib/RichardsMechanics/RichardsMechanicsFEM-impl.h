@@ -280,7 +280,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                  double const t,
-                                 bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
 {
     assert(local_x.size() == pressure_size + displacement_size);

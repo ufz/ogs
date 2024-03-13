@@ -96,7 +96,6 @@ public:
 
     void setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                       double const t,
-                                      bool const use_monolithic_scheme,
                                       int const process_id) override;
 
     void assemble(double const t, double const dt,

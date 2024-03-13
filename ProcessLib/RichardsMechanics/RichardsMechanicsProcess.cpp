@@ -331,7 +331,7 @@ void RichardsMechanicsProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
-        _use_monolithic_scheme, process_id);
+        process_id);
 }
 
 template <int DisplacementDim>

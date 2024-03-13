@@ -297,7 +297,7 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,
         local_assemblers_, getDOFTable(process_id), *x[process_id], t,
-        _use_monolithic_scheme, process_id);
+        process_id);
 }
 
 template <int DisplacementDim>

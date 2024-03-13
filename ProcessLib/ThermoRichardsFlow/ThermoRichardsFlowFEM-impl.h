@@ -111,7 +111,6 @@ template <typename ShapeFunction, int GlobalDim>
 void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                  double const t,
-                                 bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
 {
     assert(local_x.size() == temperature_size + pressure_size);

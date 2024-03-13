@@ -217,8 +217,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, local_assemblers_,
-        *_local_to_global_index_map, *x[process_id], t, _use_monolithic_scheme,
-        process_id);
+        *_local_to_global_index_map, *x[process_id], t, process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

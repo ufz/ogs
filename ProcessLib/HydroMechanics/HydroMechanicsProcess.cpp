@@ -17,6 +17,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
@@ -398,14 +399,11 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     }
 
     DBUG("PostTimestep HydroMechanicsProcess.");
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    auto const n_processes = x.size();
-    dof_tables.reserve(n_processes);
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        dof_tables.push_back(&getDOFTable(process_id));
-    }
 
+    auto const dof_tables = NumLib::getDOFTables(
+        x.size(),
+        std::bind(&HydroMechanicsProcess<DisplacementDim>::getDOFTable, this,
+                  std::placeholders::_1));
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
         getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
@@ -432,17 +430,21 @@ void HydroMechanicsProcess<DisplacementDim>::
                                         double const t,
                                         int const process_id)
 {
-    if (process_id != _process_data.hydraulic_process_id)
+    // So far, this function only sets the initial stress using the input data.
+    if (process_id != _process_data.mechanics_related_process_id)
     {
         return;
     }
 
     DBUG("Set initial conditions of HydroMechanicsProcess.");
 
+    auto const dof_tables = NumLib::getDOFTables(
+        x.size(),
+        std::bind(&HydroMechanicsProcess<DisplacementDim>::getDOFTable, this,
+                  std::placeholders::_1));
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
-        _process_data.isMonolithicSchemeUsed(), process_id);
+        getActiveElementIDs(), dof_tables, x, t, process_id);
 }
 
 template <int DisplacementDim>
@@ -456,13 +458,10 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     }
 
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    auto const n_processes = x.size();
-    dof_tables.reserve(n_processes);
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        dof_tables.push_back(&getDOFTable(process_id));
-    }
+    auto const dof_tables = NumLib::getDOFTables(
+        x.size(),
+        std::bind(&HydroMechanicsProcess<DisplacementDim>::getDOFTable, this,
+                  std::placeholders::_1));
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,

@@ -153,7 +153,6 @@ public:
 
     void setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                       double const t,
-                                      bool const use_monolithic_scheme,
                                       int const process_id) override;
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,

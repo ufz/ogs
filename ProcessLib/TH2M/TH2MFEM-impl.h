@@ -854,7 +854,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                         DisplacementDim>::
     setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
                                  double const t,
-                                 bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
 {
     [[maybe_unused]] auto const matrix_size =
