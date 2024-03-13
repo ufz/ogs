@@ -69,11 +69,10 @@ void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
         "implemented in the local assembler.");
 }
 
-void LocalAssemblerInterface::computeSecondaryVariable(
+std::vector<double> getLocalX(
     std::size_t const mesh_item_id,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-    double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x)
 {
     std::vector<double> local_x_vec;
 
@@ -87,6 +86,18 @@ void LocalAssemblerInterface::computeSecondaryVariable(
         local_x_vec.insert(std::end(local_x_vec), std::begin(local_solution),
                            std::end(local_solution));
     }
+    return local_x_vec;
+}
+
+void LocalAssemblerInterface::computeSecondaryVariable(
+    std::size_t const mesh_item_id,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    double const t, double const dt, std::vector<GlobalVector*> const& x,
+    GlobalVector const& x_prev, int const process_id)
+{
+    std::vector<double> const local_x_vec =
+        getLocalX(mesh_item_id, dof_tables, x);
+
     auto const local_x = MathLib::toVector(local_x_vec);
 
     // Todo: A more decent way is to directly pass x_prevs as done for x
