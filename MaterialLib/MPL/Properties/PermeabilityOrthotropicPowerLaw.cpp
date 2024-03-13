@@ -86,18 +86,11 @@ PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::value(
 }
 template <int DisplacementDim>
 PropertyDataType PermeabilityOrthotropicPowerLaw<DisplacementDim>::dValue(
-    VariableArray const& /*variable_array*/, Variable const variable,
+    VariableArray const& /*variable_array*/, Variable const /*variable*/,
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
-    if (variable != Variable::total_strain)
-    {
-        OGS_FATAL(
-            "PermeabilityOrthotropicPowerLaw::dValue is implemented for "
-            "derivatives with respect to total strain only.");
-    }
-
-    return 0.;
+    OGS_FATAL("PermeabilityOrthotropicPowerLaw::dValue is not implemented.");
 }
 
 template class PermeabilityOrthotropicPowerLaw<2>;
