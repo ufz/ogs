@@ -422,7 +422,7 @@ TEST_F(GeoLibOctTree, TestOctTreeOnCubicDomain)
     ASSERT_EQ(ps_ptr[1], ret_pnt);
 }
 
-TEST_F(GeoLibOctTree, TestOctTreeOnSquareDomain)
+TEST_F(GeoLibOctTree, TestAddPointOnSquareDomain)
 {
     std::size_t const n = 3;
     for (std::size_t i = 0; i <= n; ++i)
