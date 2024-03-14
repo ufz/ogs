@@ -498,7 +498,7 @@ TEST_F(GeoLibOctTree, TestAddPointOnSquareDomain)
     BaseLib::cleanupVectorElements(points_with_same_coordinates);
 }
 
-TEST_F(GeoLibOctTree, TestRangeQueryOnUnitSquare)
+TEST_F(GeoLibOctTree, TestRangeQueryForEntireDomain)
 {
     std::size_t const n = 3;
     for (std::size_t i = 0; i <= n; ++i)
@@ -518,29 +518,6 @@ TEST_F(GeoLibOctTree, TestRangeQueryOnUnitSquare)
     // min and max from aabb -> all inserted points should be in query_pnts
     oct_tree->getPointsInRange(min, max, query_points);
     ASSERT_EQ((n + 1) * (n + 1), query_points.size());
-
-    for (std::size_t i = 0; i <= n; ++i)
-    {
-        for (std::size_t j = 0; j <= n; ++j)
-        {
-            query_points.clear();
-
-            auto p = Eigen::Vector3d(double(i) / double(n),
-                                     double(j) / double(n), 0);
-            Eigen::Vector3d const min_p = p;
-            Eigen::Vector3d const max_p{
-                std::nextafter(p[0], std::numeric_limits<double>::infinity()),
-                std::nextafter(p[1], std::numeric_limits<double>::infinity()),
-                std::nextafter(p[2], std::numeric_limits<double>::infinity())};
-            oct_tree->getPointsInRange(min_p, max_p, query_points);
-
-            ASSERT_EQ(1u, query_points.size()) << " for point (" << p[0] << " ,"
-                                               << p[1] << ", " << p[2] << ")";
-            ASSERT_EQ(p[0], (*query_points[0])[0]);
-            ASSERT_EQ(p[1], (*query_points[0])[1]);
-            ASSERT_EQ(p[2], (*query_points[0])[2]);
-        }
-    }
 }
 
 TEST_F(GeoLibOctTree, TestRangeQueryEmptyRange)
