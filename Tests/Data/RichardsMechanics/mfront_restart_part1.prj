@@ -38,6 +38,8 @@
             <secondary_variables>
                 <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
                 <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
+                <secondary_variable internal_name="PreConsolidationPressure" output_name="PreConsolidationPressure"/>
+                <secondary_variable internal_name="PlasticVolumetricStrain" output_name="PlasticVolumetricStrain"/>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="swelling_stress" output_name="swelling_stress"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
@@ -164,15 +166,6 @@
                 </pair>
             </timesteps>
             <variables>
-                <variable>displacement</variable>
-                <variable>pressure</variable>
-                <variable>sigma</variable>
-                <variable>epsilon</variable>
-                <variable>velocity</variable>
-                <variable>saturation</variable>
-                <variable>porosity</variable>
-                <variable>MassFlowRate</variable>
-                <variable>NodalForces</variable>
             </variables>
         </output>
     </time_loop>
