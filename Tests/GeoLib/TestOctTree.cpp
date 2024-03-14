@@ -100,6 +100,18 @@ protected:
         }
     }
 
+    void generateEquidistantPointsUnitSquare(std::size_t const n)
+    {
+        for (std::size_t i = 0; i <= n; ++i)
+        {
+            for (std::size_t j = 0; j <= n; ++j)
+            {
+                ps_ptr.push_back(new GeoLib::Point(i / double(n), j / double(n),
+                                                   0, i * (n + 1) + j));
+            }
+        }
+    }
+
     std::tuple<Eigen::Vector3d const, Eigen::Vector3d const,
                std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>>>
     generateOctTreeFromPointSet(double const eps)
@@ -451,19 +463,8 @@ TEST_F(GeoLibOctTree, TestOctTreeOnCubicDomain)
 
 TEST_F(GeoLibOctTree, TestAddPointOnSquareDomain)
 {
-    std::size_t const n = 3;
-    for (std::size_t i = 0; i <= n; ++i)
-    {
-        for (std::size_t j = 0; j <= n; ++j)
-        {
-            ps_ptr.push_back(new GeoLib::Point(double(i) / double(n),
-                                               double(j) / double(n), 0,
-                                               i * (n + 1) + j));
-        }
-    }
-
+    generateEquidistantPointsUnitSquare(3);
     double const eps = std::numeric_limits<double>::epsilon() * 0.5;
-
     GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
     auto const& min(aabb.getMinPoint());
     auto const& max(aabb.getMaxPoint());
@@ -477,15 +478,11 @@ TEST_F(GeoLibOctTree, TestAddPointOnSquareDomain)
     }
 
     VectorOfPoints points_with_same_coordinates;
-    for (std::size_t i = 0; i <= n; ++i)
+    for (auto const* point : ps_ptr)
     {
-        for (std::size_t j = 0; j <= n; ++j)
-        {
-            points_with_same_coordinates.push_back(
-                new GeoLib::Point(double(i) / double(n), double(j) / double(n),
-                                  0, i * (n + 1) + j));
-        }
+        points_with_same_coordinates.push_back(new GeoLib::Point(*point));
     }
+
     for (auto* p : points_with_same_coordinates)
     {
         GeoLib::Point* ret_pnt(nullptr);
@@ -501,16 +498,7 @@ TEST_F(GeoLibOctTree, TestAddPointOnSquareDomain)
 TEST_F(GeoLibOctTree, TestRangeQueryForEntireDomain)
 {
     std::size_t const n = 3;
-    for (std::size_t i = 0; i <= n; ++i)
-    {
-        for (std::size_t j = 0; j <= n; ++j)
-        {
-            ps_ptr.push_back(new GeoLib::Point(double(i) / double(n),
-                                               double(j) / double(n), 0,
-                                               i * (n + 1) + j));
-        }
-    }
-
+    generateEquidistantPointsUnitSquare(n);
     double const eps = std::numeric_limits<double>::epsilon() * 0.5;
     auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
 
