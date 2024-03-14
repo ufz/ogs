@@ -111,12 +111,12 @@ void LocalAssemblerInterface::computeSecondaryVariable(
 
 void LocalAssemblerInterface::setInitialConditions(
     std::size_t const mesh_item_id,
-    NumLib::LocalToGlobalIndexMap const& dof_table, GlobalVector const& x,
-    double const t, int const process_id)
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    std::vector<GlobalVector*> const& x, double const t, int const process_id)
 {
-    auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
-    auto const local_x = x.get(indices);
-    auto const local_x_eigen_map = MathLib::toVector(local_x);
+    std::vector<double> const local_x_vec =
+        getLocalX(mesh_item_id, dof_tables, x);
+    auto const local_x_eigen_map = MathLib::toVector(local_x_vec);
 
     setInitialConditionsConcrete(local_x_eigen_map, t, process_id);
 }

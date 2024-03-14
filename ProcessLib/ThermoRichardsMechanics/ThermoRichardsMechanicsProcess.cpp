@@ -216,9 +216,13 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("SetInitialConditions ThermoRichardsMechanicsProcess.");
 
+    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    {
+        return getDOFTable(num_processes);
+    };
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, local_assemblers_,
-        *_local_to_global_index_map, *x[process_id], t, process_id);
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, t, process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

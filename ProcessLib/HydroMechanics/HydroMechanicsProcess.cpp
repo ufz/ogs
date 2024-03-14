@@ -400,13 +400,15 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     DBUG("PostTimestep HydroMechanicsProcess.");
 
-    auto const dof_tables = NumLib::getDOFTables(
-        x.size(),
-        std::bind(&HydroMechanicsProcess<DisplacementDim>::getDOFTable, this,
-                  std::placeholders::_1));
+    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    {
+        return getDOFTable(num_processes);
+    };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
+        getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -438,13 +440,14 @@ void HydroMechanicsProcess<DisplacementDim>::
 
     DBUG("Set initial conditions of HydroMechanicsProcess.");
 
-    auto const dof_tables = NumLib::getDOFTables(
-        x.size(),
-        std::bind(&HydroMechanicsProcess<DisplacementDim>::getDOFTable, this,
-                  std::placeholders::_1));
+    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    {
+        return getDOFTable(num_processes);
+    };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        getActiveElementIDs(), dof_tables, x, t, process_id);
+        getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, t, process_id);
 }
 
 template <int DisplacementDim>
@@ -458,14 +461,16 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     }
 
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
-    auto const dof_tables = NumLib::getDOFTables(
-        x.size(),
-        std::bind(&HydroMechanicsProcess<DisplacementDim>::getDOFTable, this,
-                  std::placeholders::_1));
 
+    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    {
+        return getDOFTable(num_processes);
+    };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+        getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        process_id);
 }
 
 template <int DisplacementDim>

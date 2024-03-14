@@ -329,10 +329,14 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
+    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    {
+        return getDOFTable(num_processes);
+    };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
-        process_id);
+        pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, t, process_id);
 }
 
 template <int DisplacementDim>
