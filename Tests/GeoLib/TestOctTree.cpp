@@ -100,6 +100,29 @@ protected:
         }
     }
 
+    std::tuple<Eigen::Vector3d const, Eigen::Vector3d const,
+               std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>>>
+    generateOctTreeFromPointSet(double const eps)
+    {
+        GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
+        auto const& min(aabb.getMinPoint());
+        auto const& max(aabb.getMaxPoint());
+        std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+            GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
+        for (auto* p : ps_ptr)
+        {
+            GeoLib::Point* ret_pnt(nullptr);
+            // the insertion of points into the OctTree is already tested
+            if (!oct_tree->addPoint(p, ret_pnt))
+            {
+                OGS_FATAL("Could not insert point into OctTree");
+            }
+        }
+        return std::tuple<Eigen::Vector3d const, Eigen::Vector3d const,
+                          std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>>>(
+            min, max, std::move(oct_tree));
+    }
+
 protected:
     VectorOfPoints ps_ptr;
 };
@@ -489,18 +512,7 @@ TEST_F(GeoLibOctTree, TestRangeQueryOnUnitSquare)
     }
 
     double const eps = std::numeric_limits<double>::epsilon() * 0.5;
-
-    GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
-    auto const& min(aabb.getMinPoint());
-    auto const& max(aabb.getMaxPoint());
-    std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
-    for (auto* p : ps_ptr)
-    {
-        GeoLib::Point* ret_pnt(nullptr);
-        ASSERT_TRUE(oct_tree->addPoint(p, ret_pnt));
-        ASSERT_EQ(p, ret_pnt);
-    }
+    auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
 
     std::vector<GeoLib::Point*> query_points;
     // min and max from aabb -> all inserted points should be in query_pnts
@@ -535,17 +547,7 @@ TEST_F(GeoLibOctTree, TestRangeQueryEmptyRange)
 {
     generateEquidistantPoints3dUnitCube(21);
     double const eps = std::numeric_limits<double>::epsilon() * 0.5;
-    GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
-    auto const& min(aabb.getMinPoint());
-    auto const& max(aabb.getMaxPoint());
-    std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
-    for (auto* p : ps_ptr)
-    {
-        GeoLib::Point* ret_pnt(nullptr);
-        ASSERT_TRUE(oct_tree->addPoint(p, ret_pnt));
-        ASSERT_EQ(p, ret_pnt);
-    }
+    auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
 
     for (auto const* point : ps_ptr)
     {
@@ -561,17 +563,7 @@ TEST_F(GeoLibOctTree, TestRangeQueryWithOutsideRange)
 {
     generateEquidistantPoints3dUnitCube(21);
     double const eps = std::numeric_limits<double>::epsilon() * 0.5;
-    GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
-    auto const& min(aabb.getMinPoint());
-    auto const& max(aabb.getMaxPoint());
-    std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
-    for (auto* p : ps_ptr)
-    {
-        GeoLib::Point* ret_pnt(nullptr);
-        ASSERT_TRUE(oct_tree->addPoint(p, ret_pnt));
-        ASSERT_EQ(p, ret_pnt);
-    }
+    auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
 
     // range query for range outside the cube domain [min, max)
     std::vector<GeoLib::Point*> query_points;
