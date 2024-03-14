@@ -112,7 +112,6 @@ target_link_libraries(
             VTK::FiltersSources
             Boost::boost # TODO move OGSMFrontThermodynamicForcesView to
                          # MathLib?
-            $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
             $<$<TARGET_EXISTS:LIE>:LIE>
             $<$<TARGET_EXISTS:TH2M>:TH2M>
             $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
