@@ -5,7 +5,9 @@
     <replace sel="/*/time_loop/processes/process/time_stepping/t_end/text()">2000</replace>
     <replace sel="/*/time_loop/output/prefix/text()">mfront_restart_part2</replace>
 
+    <remove sel="/*/processes/process/constitutive_relation/initial_values"/>
     <remove sel="/*/processes/process/initial_stress"/>
+
     <remove sel="/*/parameters/parameter[name='displacement0']"/>
     <add sel="/*/parameters">
         <parameter>
@@ -14,6 +16,7 @@
             <field_name>displacement</field_name>
         </parameter>
     </add>
+
     <remove sel="/*/parameters/parameter[name='pressure_ic']"/>
     <add sel="/*/parameters">
         <parameter>

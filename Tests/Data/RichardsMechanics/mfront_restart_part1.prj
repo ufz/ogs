@@ -149,7 +149,7 @@
                     <t_end>1000</t_end>
                     <initial_dt>1000</initial_dt>
                     <minimum_dt>100</minimum_dt>
-                    <maximum_dt>1e5</maximum_dt>
+                    <maximum_dt>1000</maximum_dt>
                     <number_iterations>1   5   10   15</number_iterations>
                     <multiplier>1.2 1.0 0.8 0.6</multiplier>
                 </time_stepping>
@@ -210,21 +210,11 @@
             <value>2e5</value>
         </parameter>
         <parameter>
-            <name>InitialPorosity</name>
-            <type>Constant</type>
-            <value>0.44</value>
-        </parameter>
-        <parameter>
             <name>InitialVolumeRatio</name>
             <type>Constant</type>
             <value>1.78571428571428571429</value>
         </parameter>
         <!-- Initial and boundary values -->
-        <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
@@ -238,7 +228,7 @@
         <parameter>
             <name>phi0</name>
             <type>Constant</type>
-            <value>0.432</value>
+            <value>0.432</value> <!-- TODO 0.44-->
         </parameter>
         <parameter>
             <name>top_pressure</name>
