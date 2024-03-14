@@ -13,6 +13,7 @@
 #include <memory>
 #include <random>
 
+#include "BaseLib/Algorithm.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/OctTree.h"
 #include "GeoLib/Point.h"
@@ -31,13 +32,8 @@ public:
     using VectorOfPoints = std::vector<GeoLib::Point*>;
 
     GeoLibOctTree() = default;
-    ~GeoLibOctTree() override
-    {
-        for (auto p : ps_ptr)
-        {
-            delete p;
-        }
-    }
+    ~GeoLibOctTree() override { BaseLib::cleanupVectorElements(ps_ptr); }
+
 #ifndef NDEBUG
     template <std::size_t MAX_POINTS>
     void checkOctTreeChildsNonNullptr(
@@ -86,6 +82,57 @@ protected:
                 }
             }
         }
+    }
+
+    void generateEquidistantPoints3dUnitCube(std::size_t const n = 11)
+    {
+        for (std::size_t k(0); k < n; ++k)
+        {
+            double const z(k / (n - 1.0));
+            for (std::size_t j(0); j < n; ++j)
+            {
+                double const y(j / (n - 1.0));
+                for (std::size_t i(0); i < n; ++i)
+                {
+                    ps_ptr.push_back(new GeoLib::Point(i / (n - 1.0), y, z));
+                }
+            }
+        }
+    }
+
+    void generateEquidistantPointsUnitSquare(std::size_t const n)
+    {
+        for (std::size_t i = 0; i <= n; ++i)
+        {
+            for (std::size_t j = 0; j <= n; ++j)
+            {
+                ps_ptr.push_back(new GeoLib::Point(i / double(n), j / double(n),
+                                                   0, i * (n + 1) + j));
+            }
+        }
+    }
+
+    std::tuple<Eigen::Vector3d const, Eigen::Vector3d const,
+               std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>>>
+    generateOctTreeFromPointSet(double const eps)
+    {
+        GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
+        auto const& min(aabb.getMinPoint());
+        auto const& max(aabb.getMaxPoint());
+        std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+            GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
+        for (auto* p : ps_ptr)
+        {
+            GeoLib::Point* ret_pnt(nullptr);
+            // the insertion of points into the OctTree is already tested
+            if (!oct_tree->addPoint(p, ret_pnt))
+            {
+                OGS_FATAL("Could not insert point into OctTree");
+            }
+        }
+        return std::tuple<Eigen::Vector3d const, Eigen::Vector3d const,
+                          std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>>>(
+            min, max, std::move(oct_tree));
     }
 
 protected:
@@ -321,32 +368,19 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
     ASSERT_EQ(ps_ptr[2], ret_pnt);
 }
 
-TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
+TEST_F(GeoLibOctTree, TestRangeQueryOnCube)
 {
-    // case where two points with a small distance but different OctTree leaves
-    // are inserted
-    double const eps(0.5);
-    for (std::size_t k = 0; k < 21; ++k)
-    {
-        for (std::size_t j = 0; j < 21; ++j)
-        {
-            std::size_t id = k * 21 + j;
-            for (std::size_t i = 0; i < 21; ++i)
-            {
-                ps_ptr.push_back(
-                    new GeoLib::Point(i - 10., j - 10., k - 10., id + i));
-            }
-        }
-    }
+    generateEquidistantPoints3d(21);
 
     // create OctTree
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
-    auto const& min(aabb.getMinPoint());
-    auto const& max(aabb.getMaxPoint());
+    auto const& aabb_min(aabb.getMinPoint());
+    auto const& aabb_max(aabb.getMaxPoint());
+    double const eps(0.5);
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
-        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
-
-    // fill OctTree
+        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(aabb_min, aabb_max,
+                                                         eps));
+    // fill OctTree with the test points
     for (auto p : ps_ptr)
     {
         GeoLib::Point* ret_pnt(nullptr);
@@ -354,16 +388,20 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
         ASSERT_EQ(p, ret_pnt);
     }
 
-    // point near the GeoLib::Point (0, -10, -10, 10) (with id 10)
-    std::unique_ptr<GeoLib::Point> p0(new GeoLib::Point(0.1, -10.0, -10.0));
-    GeoLib::Point* ret_pnt(nullptr);
-    ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
-    ASSERT_EQ(10u, ret_pnt->getID());
-
-    (*p0)[0] = -0.1;
-    ret_pnt = nullptr;
-    ASSERT_FALSE(oct_tree->addPoint(p0.get(), ret_pnt));
-    ASSERT_EQ(10u, ret_pnt->getID());
+    // do a range query for every test point - only the test point should be
+    // found
+    for (auto const* point : ps_ptr)
+    {
+        std::vector<GeoLib::Point*> found_points;
+        Eigen::Vector3d min = point->asEigenVector3d().array() - eps;
+        Eigen::Vector3d max = point->asEigenVector3d().array() + eps;
+        oct_tree->getPointsInRange(min, max, found_points);
+        ASSERT_EQ(1u, found_points.size());
+        ASSERT_EQ((*point)[0], (*found_points[0])[0]);
+        ASSERT_EQ((*point)[1], (*found_points[0])[1]);
+        ASSERT_EQ((*point)[2], (*found_points[0])[2]);
+        ASSERT_EQ(point->getID(), found_points[0]->getID());
+    }
 }
 
 TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPoints)
@@ -421,4 +459,81 @@ TEST_F(GeoLibOctTree, TestOctTreeOnCubicDomain)
     ASSERT_EQ(ps_ptr[0], ret_pnt);
     ASSERT_TRUE(oct_tree->addPoint(ps_ptr[1], ret_pnt));
     ASSERT_EQ(ps_ptr[1], ret_pnt);
+}
+
+TEST_F(GeoLibOctTree, TestAddPointOnSquareDomain)
+{
+    generateEquidistantPointsUnitSquare(3);
+    double const eps = std::numeric_limits<double>::epsilon() * 0.5;
+    GeoLib::AABB aabb(ps_ptr.begin(), ps_ptr.end());
+    auto const& min(aabb.getMinPoint());
+    auto const& max(aabb.getMaxPoint());
+    std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
+        GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(min, max, eps));
+    for (auto* p : ps_ptr)
+    {
+        GeoLib::Point* ret_pnt(nullptr);
+        ASSERT_TRUE(oct_tree->addPoint(p, ret_pnt));
+        ASSERT_EQ(p, ret_pnt);
+    }
+
+    VectorOfPoints points_with_same_coordinates;
+    for (auto const* point : ps_ptr)
+    {
+        points_with_same_coordinates.push_back(new GeoLib::Point(*point));
+    }
+
+    for (auto* p : points_with_same_coordinates)
+    {
+        GeoLib::Point* ret_pnt(nullptr);
+        ASSERT_FALSE(oct_tree->addPoint(p, ret_pnt));
+        ASSERT_EQ((*p)[0], (*ret_pnt)[0]);
+        ASSERT_EQ((*p)[1], (*ret_pnt)[1]);
+        ASSERT_EQ((*p)[2], (*ret_pnt)[2]);
+        ASSERT_FALSE(p == ret_pnt);
+    }
+    BaseLib::cleanupVectorElements(points_with_same_coordinates);
+}
+
+TEST_F(GeoLibOctTree, TestRangeQueryForEntireDomain)
+{
+    std::size_t const n = 3;
+    generateEquidistantPointsUnitSquare(n);
+    double const eps = std::numeric_limits<double>::epsilon() * 0.5;
+    auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
+
+    std::vector<GeoLib::Point*> query_points;
+    // min and max from aabb -> all inserted points should be in query_pnts
+    oct_tree->getPointsInRange(min, max, query_points);
+    ASSERT_EQ((n + 1) * (n + 1), query_points.size());
+}
+
+TEST_F(GeoLibOctTree, TestRangeQueryEmptyRange)
+{
+    generateEquidistantPoints3dUnitCube(21);
+    double const eps = std::numeric_limits<double>::epsilon() * 0.5;
+    auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
+
+    for (auto const* point : ps_ptr)
+    {
+        std::vector<GeoLib::Point*> query_points;
+        Eigen::Vector3d const min_p(point->asEigenVector3d());
+        Eigen::Vector3d const max_p = min_p;
+        oct_tree->getPointsInRange(min_p, max_p, query_points);
+        ASSERT_EQ(0u, query_points.size());
+    }
+}
+
+TEST_F(GeoLibOctTree, TestRangeQueryWithOutsideRange)
+{
+    generateEquidistantPoints3dUnitCube(21);
+    double const eps = std::numeric_limits<double>::epsilon() * 0.5;
+    auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
+
+    // range query for range outside the cube domain [min, max)
+    std::vector<GeoLib::Point*> query_points;
+    Eigen::Vector3d const min_p(max);
+    Eigen::Vector3d const max_p = min_p.array() + 1.0;
+    oct_tree->getPointsInRange(min_p, max_p, query_points);
+    ASSERT_EQ(0u, query_points.size());
 }
