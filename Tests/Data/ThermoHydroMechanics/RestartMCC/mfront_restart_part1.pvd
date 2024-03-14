@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="mfront_restart_part1_t_0.000000.vtu"/>
+    <DataSet timestep="100" group="" part="0" file="mfront_restart_part1_t_100.000000.vtu"/>
+    <DataSet timestep="200" group="" part="0" file="mfront_restart_part1_t_200.000000.vtu"/>
+    <DataSet timestep="300" group="" part="0" file="mfront_restart_part1_t_300.000000.vtu"/>
+    <DataSet timestep="400" group="" part="0" file="mfront_restart_part1_t_400.000000.vtu"/>
+    <DataSet timestep="520" group="" part="0" file="mfront_restart_part1_t_520.000000.vtu"/>
+    <DataSet timestep="664" group="" part="0" file="mfront_restart_part1_t_664.000000.vtu"/>
+    <DataSet timestep="836.8" group="" part="0" file="mfront_restart_part1_t_836.800000.vtu"/>
+    <DataSet timestep="1000" group="" part="0" file="mfront_restart_part1_t_1000.000000.vtu"/>
+  </Collection>
+</VTKFile>

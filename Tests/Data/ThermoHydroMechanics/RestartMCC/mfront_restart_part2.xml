@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="mfront_restart_part1.prj">
+    <replace sel="/*/meshes/mesh[1]/text()">mfront_restart_part1_t_1000.000000.vtu</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">1000</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_end/text()">2000</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">mfront_restart_part2</replace>
+
+    <remove sel="/*/processes/process/constitutive_relation/initial_values"/>
+    <remove sel="/*/processes/process/initial_stress"/>
+
+    <remove sel="/*/parameters/parameter[name='displacement0']"/>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>displacement0</name>
+            <type>MeshNode</type>
+            <field_name>displacement</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/parameters/parameter[name='pressure_ic']"/>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>pressure_ic</name>
+            <type>MeshNode</type>
+            <field_name>pressure</field_name>
+        </parameter>
+        <parameter>
+            <name>pressure_bc</name>
+            <type>Constant</type>
+            <value>-5e3</value>
+        </parameter>
+    </add>
+
+    <remove sel="/*/process_variables/process_variable[name='pressure']/boundary_conditions"/>
+    <add sel="/*/process_variables/process_variable[name='pressure']">
+        <boundary_conditions>
+            <boundary_condition>
+                <mesh>square_1x1_quad_1e0_top</mesh>
+                <type>Dirichlet</type>
+                <parameter>pressure_bc</parameter>
+            </boundary_condition>
+            <boundary_condition>
+                <mesh>square_1x1_quad_1e0_bottom</mesh>
+                <type>Dirichlet</type>
+                <parameter>pressure_bc</parameter>
+            </boundary_condition>
+        </boundary_conditions>
+    </add>
+
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <regex>mfront_restart_part2_ts_.*_t_.*.vtu</regex>
+                <field>displacement</field>
+                <absolute_tolerance>2e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mfront_restart_part2_ts_.*_t_.*.vtu</regex>
+                <field>sigma</field>
+                <absolute_tolerance>1e-9</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mfront_restart_part2_ts_.*_t_.*.vtu</regex>
+                <field>epsilon</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mfront_restart_part2_ts_.*_t_.*.vtu</regex>
+                <field>pressure</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mfront_restart_part2_ts_.*_t_.*.vtu</regex>
+                <field>velocity</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mfront_restart_part2_ts_.*_t_.*.vtu</regex>
+                <field>MassFlowRate</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>mfront_restart_part2_ts_.*_t_.*.vtu</regex>
+                <field>NodalForces</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>

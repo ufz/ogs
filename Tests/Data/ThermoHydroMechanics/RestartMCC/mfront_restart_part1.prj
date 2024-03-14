@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh axially_symmetric="true">square_1x1_quad_1e0.vtu</mesh>
+        <mesh axially_symmetric="true">square_1x1_quad_1e0_left.vtu</mesh>
+        <mesh axially_symmetric="true">square_1x1_quad_1e0_right.vtu</mesh>
+        <mesh axially_symmetric="true">square_1x1_quad_1e0_top.vtu</mesh>
+        <mesh axially_symmetric="true">square_1x1_quad_1e0_bottom.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>THM</name>
+            <type>THERMO_HYDRO_MECHANICS</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>ModCamClay_semiExpl_constE</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="YoungModulus"/>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                    <material_property name="CriticalStateLineSlope" parameter="CriticalStateLineSlope"/>
+                    <material_property name="SwellingLineSlope" parameter="SwellingLineSlope"/>
+                    <material_property name="VirginConsolidationLineSlope" parameter="VirginConsolidationLineSlope"/>
+                    <material_property name="CharacteristicPreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                </material_properties>
+                <initial_values>
+                    <state_variable name="PreConsolidationPressure" parameter="InitialPreConsolidationPressure"/>
+                    <state_variable name="VolumeRatio" parameter="InitialVolumeRatio"/>
+                </initial_values>
+            </constitutive_relation>
+            <process_variables>
+                <temperature>temperature</temperature>
+                <pressure>pressure</pressure>
+                <displacement>displacement</displacement>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="epsilon_m" output_name="epsilon_m"/>
+                <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
+                <secondary_variable internal_name="PreConsolidationPressure" output_name="PreConsolidationPressure"/>
+                <secondary_variable internal_name="PlasticVolumetricStrain" output_name="PlasticVolumetricStrain"/>
+                <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
+                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
+            </secondary_variables>
+            <specific_body_force>0 0</specific_body_force>
+            <initial_stress>sigma0</initial_stress>
+        </process>
+    </processes>
+       <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2780.0</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>1</value>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>1e-6</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-12</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.432</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+               <property>
+                      <name>biot_coefficient</name>
+                      <type>Constant</type>
+                      <value>1.0</value>
+                  </property>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="THM">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>PerComponentDeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstols>1e-9 1e-9 1e-12 1e-12</abstols>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>IterationNumberBasedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>1000</t_end>
+                    <initial_dt>100</initial_dt>
+                    <minimum_dt>10</minimum_dt>
+                    <maximum_dt>1000</maximum_dt>
+                    <number_iterations>1   5   10   15</number_iterations>
+                    <multiplier>1.2 1.0 0.8 0.6</multiplier>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>mfront_restart_part1</prefix>
+            <suffix>_t_{:time}</suffix>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+            </variables>
+        </output>
+    </time_loop>
+    <parameters>
+        <!--Modified Cam clay parameters-->
+        <parameter>
+            <name>sigma0</name>
+            <type>Function</type>
+            <expression>-5e3</expression>
+            <expression>-5e3</expression>
+            <expression>-5e3</expression>
+            <expression>0</expression>
+        </parameter>
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>52e6</value><!--Pa-->
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>0.3</value>
+        </parameter>
+        <parameter>
+            <name>CriticalStateLineSlope</name>
+            <type>Constant</type>
+            <value>1.2</value>
+        </parameter>
+        <parameter>
+            <name>SwellingLineSlope</name>
+            <type>Constant</type>
+            <value>6.6e-3</value>
+        </parameter>
+        <parameter>
+            <name>VirginConsolidationLineSlope</name>
+            <type>Constant</type>
+            <value>7.7e-2</value>
+        </parameter>
+        <parameter>
+            <name>InitialPreConsolidationPressure</name>
+            <type>Constant</type>
+            <value>2e5</value>
+        </parameter>
+        <parameter>
+            <name>InitialVolumeRatio</name>
+            <type>Constant</type>
+            <value>1.76</value>
+        </parameter>
+        <!-- Initial and boundary values -->
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </parameter>
+        <parameter>
+            <name>reference_temperature</name>
+            <type>Constant</type>
+            <value>293.15</value>
+        </parameter>
+        <parameter>
+            <name>top_pressure</name>
+            <type>Constant</type>
+            <value>-5e5</value>
+        </parameter>
+        <parameter>
+            <name>pressure_ic</name>
+            <type>Constant</type>
+            <value>-5e3</value>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>reference_temperature</initial_condition>
+            <deactivated_subdomains>
+                <deactivated_subdomain>
+                    <time_interval>
+                        <start>0</start>
+                        <end>2000</end>
+                    </time_interval>
+                    <material_ids>0</material_ids>
+                    <boundary_parameter>reference_temperature</boundary_parameter>
+                </deactivated_subdomain>
+            </deactivated_subdomains>
+        </process_variable>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>pressure_ic</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0_top</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>pressure_ic</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <!--fix left in radial direction-->
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0_left</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--fix bottom in axial direction-->
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0_bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <!--compression in axial direction -->
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0_top</mesh>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>top_pressure</parameter>
+                </boundary_condition>
+                <!--compression in -radial direction-->
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0_right</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>60</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>mfront_restart_part1_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>2e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>mfront_restart_part1_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>1e-9</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>mfront_restart_part1_ts_.*_t_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>mfront_restart_part1_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>mfront_restart_part1_ts_.*_t_.*.vtu</regex>
+            <field>velocity</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>1e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>mfront_restart_part1_ts_.*_t_.*.vtu</regex>
+            <field>MassFlowRate</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>mfront_restart_part1_ts_.*_t_.*.vtu</regex>
+            <field>NodalForces</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
