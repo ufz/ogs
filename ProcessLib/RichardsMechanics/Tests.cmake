@@ -29,7 +29,7 @@ endif()
 
 if (NOT OGS_USE_MPI AND OGS_USE_MFRONT)
     OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part1.prj RUNTIME 1)
-    OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part2.prj RUNTIME 1)
+    OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part2.xml RUNTIME 1)
 endif()
 
 AddTest(
