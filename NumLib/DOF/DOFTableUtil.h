@@ -143,4 +143,10 @@ void transformVariableFromGlobalVector(
         }
     }
 }
+
+std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
+    int const number_of_processes,
+    std::function<NumLib::LocalToGlobalIndexMap const&(const int)>
+        get_single_dof_table);
+
 }  // namespace NumLib
