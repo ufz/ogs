@@ -43,11 +43,6 @@ endif()
 # ##############################################################################
 # Find libraries
 # ##############################################################################
-if(OGS_USE_MFRONT)
-    set(CMAKE_REQUIRE_FIND_PACKAGE_Threads TRUE)
-    set(THREADS_PREFER_PTHREAD_FLAG ON)
-endif()
-find_package(Threads)
 
 # Qt5 library ##
 if(OGS_BUILD_GUI)

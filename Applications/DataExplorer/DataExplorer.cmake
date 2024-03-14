@@ -34,7 +34,6 @@ target_link_libraries(
     QtDataView
     QtDiagramView
     VtkVis
-    $<$<TARGET_EXISTS:Threads::Threads>:Threads::Threads>
     Qt5::Core
     Qt5::Gui
     Qt5::Widgets
