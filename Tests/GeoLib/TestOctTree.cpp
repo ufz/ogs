@@ -84,6 +84,22 @@ protected:
         }
     }
 
+    void generateEquidistantPoints3dUnitCube(std::size_t const n = 11)
+    {
+        for (std::size_t k(0); k < n; ++k)
+        {
+            double const z(k / (n - 1.0));
+            for (std::size_t j(0); j < n; ++j)
+            {
+                double const y(j / (n - 1.0));
+                for (std::size_t i(0); i < n; ++i)
+                {
+                    ps_ptr.push_back(new GeoLib::Point(i / (n - 1.0), y, z));
+                }
+            }
+        }
+    }
+
 protected:
     VectorOfPoints ps_ptr;
 };
@@ -319,19 +335,7 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
 
 TEST_F(GeoLibOctTree, TestRangeQueryOnCube)
 {
-    // create set of test points
-    for (std::size_t k = 0; k < 21; ++k)
-    {
-        for (std::size_t j = 0; j < 21; ++j)
-        {
-            std::size_t const id = k * 21 + j;
-            for (std::size_t i = 0; i < 21; ++i)
-            {
-                ps_ptr.push_back(
-                    new GeoLib::Point(i - 10., j - 10., k - 10., id + i));
-            }
-        }
-    }
+    generateEquidistantPoints3d(21);
 
     // create OctTree
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
