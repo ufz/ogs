@@ -16,6 +16,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -183,12 +184,16 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
 
     DBUG("PostTimestep ThermoRichardsFlowProcess.");
 
-    auto const dof_tables = getDOFTables(x.size());
-
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
+        pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        process_id);
 }
 
 void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
@@ -202,22 +207,18 @@ void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
     DBUG(
         "Compute the secondary variables for "
         "ThermoRichardsFlowProcess.");
-    auto const dof_tables = getDOFTables(x.size());
+
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
-}
-
-std::vector<NumLib::LocalToGlobalIndexMap const*>
-ThermoRichardsFlowProcess::getDOFTables(int const number_of_processes) const
-{
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    dof_tables.reserve(number_of_processes);
-    std::generate_n(std::back_inserter(dof_tables), number_of_processes,
-                    [&]() { return _local_to_global_index_map.get(); });
-    return dof_tables;
+        pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        process_id);
 }
 
 }  // namespace ThermoRichardsFlow

@@ -16,6 +16,7 @@
 #include "CreateThermoRichardsMechanicsLocalAssemblers.h"
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
@@ -287,12 +288,16 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("PostTimestep ThermoRichardsMechanicsProcess.");
 
-    auto const dof_tables = getDOFTables(x.size());
-
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
+        pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
@@ -304,13 +309,16 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("Compute the secondary variables for ThermoRichardsMechanicsProcess.");
 
-    auto const dof_tables = getDOFTables(x.size());
-
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+        pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
@@ -328,19 +336,6 @@ NumLib::LocalToGlobalIndexMap const& ThermoRichardsMechanicsProcess<
     const
 {
     return *_local_to_global_index_map;
-}
-
-// TODO can't that be implemented in the Process base class?
-template <int DisplacementDim, typename ConstitutiveTraits>
-std::vector<NumLib::LocalToGlobalIndexMap const*>
-ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
-    getDOFTables(int const number_of_processes) const
-{
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    dof_tables.reserve(number_of_processes);
-    std::generate_n(std::back_inserter(dof_tables), number_of_processes,
-                    [&]() { return &getDOFTable(dof_tables.size()); });
-    return dof_tables;
 }
 
 template class ThermoRichardsMechanicsProcess<

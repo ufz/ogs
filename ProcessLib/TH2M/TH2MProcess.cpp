@@ -356,12 +356,17 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
     const int process_id)
 {
     DBUG("PostTimestep TH2MProcess.");
-    auto const dof_tables = getDOFTables(x.size());
+
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
-        local_assemblers_, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
-        dt, process_id);
+        local_assemblers_, pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -375,13 +380,17 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     }
 
     DBUG("Compute the secondary variables for TH2MProcess.");
-    auto const dof_tables = getDOFTables(x.size());
 
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
-        local_assemblers_, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id);
+        local_assemblers_, pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -422,16 +431,6 @@ NumLib::LocalToGlobalIndexMap const& TH2MProcess<DisplacementDim>::getDOFTable(
     return *_local_to_global_index_map_with_base_nodes;
 }
 
-template <int DisplacementDim>
-std::vector<NumLib::LocalToGlobalIndexMap const*>
-TH2MProcess<DisplacementDim>::getDOFTables(int const number_of_processes) const
-{
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    dof_tables.reserve(number_of_processes);
-    std::generate_n(std::back_inserter(dof_tables), number_of_processes,
-                    [&]() { return &getDOFTable(dof_tables.size()); });
-    return dof_tables;
-}
 template class TH2MProcess<2>;
 template class TH2MProcess<3>;
 

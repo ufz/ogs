@@ -234,9 +234,6 @@ private:
     std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
     getDOFTableForExtrapolatorData() const override;
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
-        const int number_of_processes) const;
-
     /// Check whether the process represented by \c process_id is/has
     /// mechanical process. In the present implementation, the mechanical
     /// process has process_id == 1 in the staggered scheme.
