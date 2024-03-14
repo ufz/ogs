@@ -1,7 +1,5 @@
 code coverage:
   stage: check
-  extends:
-    - .template-build-linux
   tags: [shell, envinf23]
   needs: [meta]
   variables:
@@ -10,7 +8,8 @@ code coverage:
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
       -DBUILD_SHARED_LIBS=ON
-  after_script:
+  script:
+    - !reference [.template-build-linux, script]
     - cmake --build --preset $CMAKE_PRESET -t process_coverage
   coverage: '/lines: \d+\.\d+/'
   artifacts:
