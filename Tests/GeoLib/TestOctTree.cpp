@@ -317,11 +317,9 @@ TEST_F(GeoLibOctTree, TestWithAlternatingPoints3d)
     ASSERT_EQ(ps_ptr[2], ret_pnt);
 }
 
-TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
+TEST_F(GeoLibOctTree, TestRangeQueryOnCube)
 {
-    // case where two points with a small distance but different OctTree leaves
-    // are inserted
-    double const eps(0.5);
+    // create set of test points
     for (std::size_t k = 0; k < 21; ++k)
     {
         for (std::size_t j = 0; j < 21; ++j)
@@ -339,11 +337,11 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
     GeoLib::AABB const aabb(ps_ptr.cbegin(), ps_ptr.cend());
     auto const& aabb_min(aabb.getMinPoint());
     auto const& aabb_max(aabb.getMaxPoint());
+    double const eps(0.5);
     std::unique_ptr<GeoLib::OctTree<GeoLib::Point, 2>> oct_tree(
         GeoLib::OctTree<GeoLib::Point, 2>::createOctTree(aabb_min, aabb_max,
                                                          eps));
-
-    // fill OctTree
+    // fill OctTree with the test points
     for (auto p : ps_ptr)
     {
         GeoLib::Point* ret_pnt(nullptr);
@@ -351,28 +349,20 @@ TEST_F(GeoLibOctTree, TestSmallDistanceDifferentLeaves)
         ASSERT_EQ(p, ret_pnt);
     }
 
-    // point near the GeoLib::Point (0, -10, -10, 10) (with id 10)
-    std::unique_ptr<GeoLib::Point> p0(new GeoLib::Point(0.1, -10.0, -10.0));
-    std::vector<GeoLib::Point*> found_points;
-    Eigen::Vector3d min = p0->asEigenVector3d().array() - eps;
-    Eigen::Vector3d max = p0->asEigenVector3d().array() + eps;
-    oct_tree->getPointsInRange(min, max, found_points);
-    ASSERT_EQ(1u, found_points.size());
-    ASSERT_EQ(0.0, (*found_points[0])[0]);
-    ASSERT_EQ(-10.0, (*found_points[0])[1]);
-    ASSERT_EQ(-10.0, (*found_points[0])[2]);
-    ASSERT_EQ(10u, found_points[0]->getID());
-
-    found_points.clear();
-    (*p0)[0] = 0.5;
-    min = p0->asEigenVector3d().array() - eps;
-    max = p0->asEigenVector3d().array() + eps;
-    oct_tree->getPointsInRange(min, max, found_points);
-    ASSERT_EQ(1u, found_points.size());
-    ASSERT_EQ(0.0, (*found_points[0])[0]);
-    ASSERT_EQ(-10.0, (*found_points[0])[1]);
-    ASSERT_EQ(-10.0, (*found_points[0])[2]);
-    ASSERT_EQ(10u, found_points[0]->getID());
+    // do a range query for every test point - only the test point should be
+    // found
+    for (auto const* point : ps_ptr)
+    {
+        std::vector<GeoLib::Point*> found_points;
+        Eigen::Vector3d min = point->asEigenVector3d().array() - eps;
+        Eigen::Vector3d max = point->asEigenVector3d().array() + eps;
+        oct_tree->getPointsInRange(min, max, found_points);
+        ASSERT_EQ(1u, found_points.size());
+        ASSERT_EQ((*point)[0], (*found_points[0])[0]);
+        ASSERT_EQ((*point)[1], (*found_points[0])[1]);
+        ASSERT_EQ((*point)[2], (*found_points[0])[2]);
+        ASSERT_EQ(point->getID(), found_points[0]->getID());
+    }
 }
 
 TEST_F(GeoLibOctTree, TestOctTreeWithTwoEqualPoints)
