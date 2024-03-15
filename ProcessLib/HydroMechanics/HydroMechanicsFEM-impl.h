@@ -898,7 +898,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                 std::vector<double> const& local_x_prev,
                                 double const t, double const dt,
-                                bool const /*use_monolithic_scheme*/,
                                 int const process_id)
 {
     // Note: local_x and local_x_prev only contain the solutions of current

@@ -164,14 +164,13 @@ void LocalAssemblerInterface::postNonLinearSolver(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
-    bool const use_monolithic_scheme, int const process_id)
+    int const process_id)
 {
     auto const indices = NumLib::getIndices(mesh_item_id, dof_table);
     auto const local_x = x[process_id]->get(indices);
     auto const local_x_prev = x_prev[process_id]->get(indices);
 
-    postNonLinearSolverConcrete(local_x, local_x_prev, t, dt,
-                                use_monolithic_scheme, process_id);
+    postNonLinearSolverConcrete(local_x, local_x_prev, t, dt, process_id);
 }
 
 }  // namespace ProcessLib

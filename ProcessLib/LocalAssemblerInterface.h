@@ -98,7 +98,6 @@ public:
                              std::vector<GlobalVector*> const& x,
                              std::vector<GlobalVector*> const& x_prev,
                              double const t, double const dt,
-                             bool const use_monolithic_scheme,
                              int const process_id);
 
     /// Computes the flux in the point \c p_local_coords that is given in local
@@ -146,8 +145,7 @@ private:
     virtual void postNonLinearSolverConcrete(
         std::vector<double> const& /*local_x*/,
         std::vector<double> const& /*local_x_prev*/, double const /*t*/,
-        double const /*dt*/, bool const /*use_monolithic_scheme*/,
-        int const /*process_id*/)
+        double const /*dt*/, int const /*process_id*/)
     {
     }
 
