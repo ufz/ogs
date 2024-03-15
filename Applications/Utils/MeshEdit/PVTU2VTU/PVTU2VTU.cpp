@@ -284,6 +284,41 @@ getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     return {regular_elements, merged_element_map};
 }
 
+MeshLib::Node* getExistingNodeFromOctTree(
+    GeoLib::OctTree<MeshLib::Node, 16>& oct_tree, Eigen::Vector3d const& extent,
+    MeshLib::Node const& node, std::size_t const element_id)
+{
+    std::vector<MeshLib::Node*> query_nodes;
+    auto const eps =
+        std::numeric_limits<double>::epsilon() * extent.squaredNorm();
+    Eigen::Vector3d const min = node.asEigenVector3d().array() - eps;
+    Eigen::Vector3d const max = node.asEigenVector3d().array() + eps;
+    oct_tree.getPointsInRange(min, max, query_nodes);
+
+    if (query_nodes.empty())
+    {
+        OGS_FATAL(
+            "query_nodes for node [{}], ({}, {}, {}) of element "
+            "[{}] are empty, eps is {}",
+            node.getID(), node[0], node[1], node[2], element_id, eps);
+    }
+    auto const it =
+        std::find_if(query_nodes.begin(), query_nodes.end(),
+                     [&node, eps](auto const* p)
+                     {
+                         return (p->asEigenVector3d() - node.asEigenVector3d())
+                                    .squaredNorm() < eps;
+                     });
+    if (it == query_nodes.end())
+    {
+        OGS_FATAL(
+            "did not find node: [{}] ({}, {}, {}) of element [{}] in "
+            "query_nodes",
+            node.getID(), node[0], node[1], node[2], element_id);
+    }
+    return *it;
+}
+
 void resetNodesInRegularElements(
     std::vector<MeshLib::Element*> const& regular_elements,
     GeoLib::OctTree<MeshLib::Node, 16>& oct_tree,
@@ -297,42 +332,9 @@ void resetNodesInRegularElements(
             MeshLib::Node* node_ptr = nullptr;
             if (!oct_tree.addPoint(node, node_ptr))
             {
-                std::vector<MeshLib::Node*> query_nodes;
-                auto const eps = std::numeric_limits<double>::epsilon() *
-                                 extent.squaredNorm();
-                Eigen::Vector3d const min =
-                    node->asEigenVector3d().array() - eps;
-                Eigen::Vector3d const max =
-                    node->asEigenVector3d().array() + eps;
-                oct_tree.getPointsInRange(min, max, query_nodes);
-
-                if (query_nodes.empty())
-                {
-                    OGS_FATAL(
-                        "query_nodes for node [{}], ({}, {}, {}) of element "
-                        "[{}] are empty, eps is {}",
-                        node->getID(), (*node)[0], (*node)[1], (*node)[2],
-                        e->getID(), eps);
-                }
-                auto const it = std::find_if(
-                    query_nodes.begin(), query_nodes.end(),
-                    [&node, eps](auto const* p)
-                    {
-                        return (p->asEigenVector3d() - node->asEigenVector3d())
-                                   .squaredNorm() < eps;
-                    });
-                if (it == query_nodes.end())
-                {
-                    OGS_FATAL(
-                        "did not find node: [{}] ({}, {}, {}) of element [{}] "
-                        "in query_nodes",
-                        node->getID(), (*node)[0], (*node)[1], (*node)[2],
-                        e->getID());
-                }
-                else
-                {
-                    e->setNode(i, *it);
-                }
+                auto const node_ptr = getExistingNodeFromOctTree(
+                    oct_tree, extent, *node, e->getID());
+                e->setNode(i, node_ptr);
             }
         }
     }
