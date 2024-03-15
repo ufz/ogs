@@ -132,7 +132,7 @@ void LocalAssemblerInterface::postTimestep(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
-    bool const use_monolithic_scheme, int const process_id)
+    int const process_id)
 {
     std::vector<double> local_x_vec;
     std::vector<double> local_x_prev_vec;
@@ -155,8 +155,7 @@ void LocalAssemblerInterface::postTimestep(
     auto const local_x = MathLib::toVector(local_x_vec);
     auto const local_x_prev = MathLib::toVector(local_x_prev_vec);
 
-    postTimestepConcrete(local_x, local_x_prev, t, dt, use_monolithic_scheme,
-                         process_id);
+    postTimestepConcrete(local_x, local_x_prev, t, dt, process_id);
 }
 
 void LocalAssemblerInterface::postNonLinearSolver(

@@ -992,7 +992,6 @@ void HydroMechanicsLocalAssembler<
     DisplacementDim>::postTimestepConcrete(Eigen::VectorXd const& local_x,
                                            Eigen::VectorXd const& local_x_prev,
                                            double const t, double const dt,
-                                           bool const /*use_monolithic_scheme*/,
                                            int const process_id)
 {
     auto const staggered_scheme_ptr =

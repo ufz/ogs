@@ -90,8 +90,7 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev, double const t,
-        double const dt, bool const use_monolithic_scheme,
-        int const process_id);
+        double const dt, int const process_id);
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
@@ -137,7 +136,6 @@ private:
     virtual void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                                       Eigen::VectorXd const& /*local_x_prev*/,
                                       double const /*t*/, double const /*dt*/,
-                                      bool const /*use_monolithic_scheme*/,
                                       int const /*process_id*/)
     {
     }
