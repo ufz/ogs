@@ -135,6 +135,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto& ip_cv = ip_constitutive_variables[ip];
         auto& ip_cd = ip_constitutive_data[ip];
+        auto& ip_out = this->output_data_[ip];
         auto& current_state = this->current_states_[ip];
         auto& prev_state = this->prev_states_[ip];
 
@@ -243,26 +244,26 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 eps);
 
         // intrinsic permeability
-        ip_data.k_S = MPL::formEigenTensor<DisplacementDim>(
+        ip_out.permeability_data.Ki = MPL::formEigenTensor<DisplacementDim>(
             medium.property(MPL::PropertyType::permeability)
                 .value(vars, pos, t, dt));
 
-        ip_data.k_rel_G =
+        ip_out.permeability_data.k_rel_G =
             medium
                 .property(
                     MPL::PropertyType::relative_permeability_nonwetting_phase)
                 .template value<double>(vars, pos, t, dt);
 
-        auto const dk_rel_G_ds_L =
+        ip_out.permeability_data.dk_rel_G_dS_L =
             medium[MPL::PropertyType::relative_permeability_nonwetting_phase]
                 .template dValue<double>(vars, MPL::Variable::liquid_saturation,
                                          pos, t, dt);
 
-        ip_data.k_rel_L =
+        ip_out.permeability_data.k_rel_L =
             medium.property(MPL::PropertyType::relative_permeability)
                 .template value<double>(vars, pos, t, dt);
 
-        auto const dk_rel_L_ds_L =
+        ip_out.permeability_data.dk_rel_L_dS_L =
             medium[MPL::PropertyType::relative_permeability]
                 .template dValue<double>(vars, MPL::Variable::liquid_saturation,
                                          pos, t, dt);
@@ -556,20 +557,24 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const& b = this->process_data_.specific_body_force;
         GlobalDimMatrixType const k_over_mu_G =
-            ip_data.k_S * ip_data.k_rel_G / ip_data.muGR;
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
+            ip_data.muGR;
         GlobalDimMatrixType const k_over_mu_L =
-            ip_data.k_S * ip_data.k_rel_L / ip_data.muLR;
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
+            ip_data.muLR;
 
-        // dk_over_mu_G_dp_GR =
-        //    ip_data.k_S * dk_rel_G_ds_L * (ds_L_dp_GR = 0) / ip_data.muGR =
-        //    0;
-        // dk_over_mu_L_dp_GR =
-        //     ip_data.k_S * dk_rel_L_ds_L * (ds_L_dp_GR = 0) / ip_data.muLR =
-        //     0;
-        ip_cv.dk_over_mu_G_dp_cap =
-            ip_data.k_S * dk_rel_G_ds_L * ip_cv.dS_L_dp_cap() / ip_data.muGR;
-        ip_cv.dk_over_mu_L_dp_cap =
-            ip_data.k_S * dk_rel_L_ds_L * ip_cv.dS_L_dp_cap() / ip_data.muLR;
+        // dk_over_mu_G_dp_GR = ip_out.permeability_data.Ki *
+        //                      ip_out.permeability_data.dk_rel_G_dS_L *
+        //                      (ds_L_dp_GR = 0) / ip_data.muGR = 0;
+        // dk_over_mu_L_dp_GR = ip_out.permeability_data.Ki *
+        //                      ip_out.permeability_data.dk_rel_L_dS_L *
+        //                      (ds_L_dp_GR = 0) / ip_data.muLR = 0;
+        ip_cv.dk_over_mu_G_dp_cap = ip_out.permeability_data.Ki *
+                                    ip_out.permeability_data.dk_rel_G_dS_L *
+                                    ip_cv.dS_L_dp_cap() / ip_data.muGR;
+        ip_cv.dk_over_mu_L_dp_cap = ip_out.permeability_data.Ki *
+                                    ip_out.permeability_data.dk_rel_L_dS_L *
+                                    ip_cv.dS_L_dp_cap() / ip_data.muLR;
 
         ip_data.w_GS = k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
         ip_data.w_LS = k_over_mu_L * gradpCap + k_over_mu_L * c.rhoLR * b -
@@ -1133,6 +1138,7 @@ void TH2MLocalAssembler<
     {
         auto& ip = _ip_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
+        auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto const& prev_state = this->prev_states_[int_point];
 
@@ -1191,8 +1197,6 @@ void TH2MLocalAssembler<
         GlobalDimMatrixType const D_C_L = sD_L * I;
         GlobalDimMatrixType const D_W_L = sD_L * I;
 
-        auto& k_S = ip.k_S;
-
         auto const s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
@@ -1232,8 +1236,12 @@ void TH2MLocalAssembler<
 
         auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
 
-        GlobalDimMatrixType const k_over_mu_G = k_S * ip.k_rel_G / ip.muGR;
-        GlobalDimMatrixType const k_over_mu_L = k_S * ip.k_rel_L / ip.muLR;
+        GlobalDimMatrixType const k_over_mu_G =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
+            ip.muGR;
+        GlobalDimMatrixType const k_over_mu_L =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
+            ip.muLR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1572,6 +1580,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip = _ip_data[int_point];
         auto& ip_cd = ip_constitutive_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
+        auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto& prev_state = this->prev_states_[int_point];
 
@@ -1640,8 +1649,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimMatrixType const D_C_L = sD_L * I;
         GlobalDimMatrixType const D_W_L = sD_L * I;
 
-        auto& k_S = ip.k_S;
-
         auto& s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
@@ -1681,8 +1688,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
 
-        GlobalDimMatrixType const k_over_mu_G = k_S * ip.k_rel_G / ip.muGR;
-        GlobalDimMatrixType const k_over_mu_L = k_S * ip.k_rel_L / ip.muLR;
+        GlobalDimMatrixType const k_over_mu_G =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
+            ip.muGR;
+        GlobalDimMatrixType const k_over_mu_L =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
+            ip.muLR;
 
         // ---------------------------------------------------------------------
         // C-component equation
