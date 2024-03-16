@@ -184,7 +184,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = this->output_data_[ip].eps_data.eps;
+        auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
 
         // Set volumetric strain for the general case without swelling.
@@ -215,7 +215,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                       ip_cv.s_therm_exp_data);
 
         models.mechanical_strain_model.eval(
-            T_data, ip_cv.s_therm_exp_data, this->output_data_[ip].eps_data,
+            T_data, ip_cv.s_therm_exp_data, ip_out.eps_data,
             Bu * displacement_prev, prev_state.mechanical_strain_data,
             ip_cv.swelling_data, current_state.mechanical_strain_data);
 
@@ -931,6 +931,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         MPL::VariableArray vars;
 
         auto& ip_data = _ip_data[ip];
+        auto& ip_out = this->output_data_[ip];
         auto& prev_state = this->prev_states_[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
@@ -960,7 +961,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = this->output_data_[ip].eps_data.eps;
+        auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
 
         // Set volumetric strain rate for the general case without swelling.
