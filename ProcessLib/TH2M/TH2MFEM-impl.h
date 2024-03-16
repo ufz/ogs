@@ -165,13 +165,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
         GlobalDimVectorType const gradT = gradNp * temperature;
 
-        MPL::VariableArray vars;
-        MPL::VariableArray vars_prev;
-        vars.temperature = T;
-        vars.gas_phase_pressure = pGR;
-        vars.capillary_pressure = pCap;
-        vars.liquid_phase_pressure = pLR;
-
         // medium properties
         models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
                                                     ip_cv.C_el_data);
@@ -186,16 +179,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
-
-        // Set volumetric strain for the general case without swelling.
-        vars.volumetric_strain = Invariants::trace(eps);
-
         models.S_L_model.eval({pos, t, dt}, media_data,
                               CapillaryPressureData{pCap},
                               current_state.S_L_data, ip_cv.dS_L_dp_cap);
-
-        vars.liquid_saturation = current_state.S_L_data.S_L;
-        vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
                                   current_state.S_L_data, ip_cv.chi_S_L);
@@ -236,22 +222,18 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.eps_data, ip_cv.equivalent_plastic_strain_data,
             ip_out.permeability_data);
 
-        // relative permeability
-        // Set mechanical variables for the intrinsic permeability model
-        // For stress dependent permeability.
-        vars.total_stress.emplace<SymmetricTensor>(
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                ip_cv.total_stress_data.sigma_total));
+        MPL::VariableArray vars;
+        MPL::VariableArray vars_prev;
+        vars.temperature = T;
+        vars.gas_phase_pressure = pGR;
+        vars.capillary_pressure = pCap;
+        vars.liquid_phase_pressure = pLR;
 
-        vars.equivalent_plastic_strain = *ip_cv.equivalent_plastic_strain_data;
+        // Set volumetric strain for the general case without swelling.
+        vars.volumetric_strain = Invariants::trace(eps);
 
-        vars.mechanical_strain
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
-
-        vars.mechanical_strain
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                current_state.mechanical_strain_data.eps_m);
+        vars.liquid_saturation = current_state.S_L_data.S_L;
+        vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
         auto const rho_ref_SR =
             solid_phase.property(MPL::PropertyType::density)
