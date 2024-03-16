@@ -5,3 +5,4 @@ html-details = @CMAKE_BINARY_DIR@/coverage/html/index.html
 gcov-executable = @GCOV_EXECUTABLE@
 gcov-parallel = yes
 print-summary = yes
+gcov-ignore-parse-errors = negative_hits.warn
