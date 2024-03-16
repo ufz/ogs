@@ -230,6 +230,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             GasPressureData{pGR}, CapillaryPressureData{pCap},
             ip_cv.total_stress_data);
 
+        models.permeability_model.eval(
+            {pos, t, dt}, media_data, current_state.S_L_data,
+            CapillaryPressureData{pCap}, T_data, ip_cv.total_stress_data,
+            ip_out.eps_data, ip_cv.equivalent_plastic_strain_data,
+            ip_out.permeability_data);
+
         // relative permeability
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
@@ -242,31 +248,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
-
-        // intrinsic permeability
-        ip_out.permeability_data.Ki = MPL::formEigenTensor<DisplacementDim>(
-            medium.property(MPL::PropertyType::permeability)
-                .value(vars, pos, t, dt));
-
-        ip_out.permeability_data.k_rel_G =
-            medium
-                .property(
-                    MPL::PropertyType::relative_permeability_nonwetting_phase)
-                .template value<double>(vars, pos, t, dt);
-
-        ip_out.permeability_data.dk_rel_G_dS_L =
-            medium[MPL::PropertyType::relative_permeability_nonwetting_phase]
-                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
-                                         pos, t, dt);
-
-        ip_out.permeability_data.k_rel_L =
-            medium.property(MPL::PropertyType::relative_permeability)
-                .template value<double>(vars, pos, t, dt);
-
-        ip_out.permeability_data.dk_rel_L_dS_L =
-            medium[MPL::PropertyType::relative_permeability]
-                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
-                                         pos, t, dt);
 
         vars.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
