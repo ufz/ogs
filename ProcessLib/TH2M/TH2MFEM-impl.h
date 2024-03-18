@@ -220,6 +220,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.eps_data, ip_cv.equivalent_plastic_strain_data,
             ip_out.permeability_data);
 
+        models.phase_transition_model.eval(
+            {pos, t, dt}, media_data, GasPressureData{pGR},
+            CapillaryPressureData{pCap}, T_data, ip_out.phase_transition_data);
+
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
         vars.temperature = T;
@@ -271,10 +275,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        // constitutive model object as specified in process creation
-        auto& ptm = *this->process_data_.phase_transition_model_;
-        ptm.updateConstitutiveVariables(ip_out.phase_transition_data, &medium,
-                                        vars, pos, t, dt);
         auto const& c = ip_out.phase_transition_data;
 
         auto const phi_L = current_state.S_L_data.S_L * ip_data.phi;
@@ -849,7 +849,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const& solid_phase = medium.phase("Solid");
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -1054,7 +1054,7 @@ void TH2MLocalAssembler<
         this->integration_method_.getNumberOfPoints();
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
@@ -1500,7 +1500,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         this->integration_method_.getNumberOfPoints();
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
@@ -2381,7 +2381,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     double saturation_avg = 0;
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     updateConstitutiveVariables(local_x, local_x_prev, t, dt, models);
 

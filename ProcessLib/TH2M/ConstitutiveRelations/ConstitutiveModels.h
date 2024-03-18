@@ -14,6 +14,7 @@
 #include "ElasticTangentStiffnessModel.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityModel.h"
+#include "PhaseTransitionModel.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
@@ -30,10 +31,12 @@ template <int DisplacementDim>
 struct ConstitutiveModels
 {
     explicit ConstitutiveModels(
-        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
+        SolidConstitutiveRelation<DisplacementDim> const& solid_material,
+        PhaseTransitionModel const& phase_transition_model)
         : elastic_tangent_stiffness_model(solid_material),
           beta_p_SR_model(solid_material),
-          s_mech_model(solid_material)
+          s_mech_model(solid_material),
+          phase_transition_model(phase_transition_model)
     {
     }
 
@@ -51,6 +54,7 @@ struct ConstitutiveModels
     SolidMechanicsModel<DisplacementDim> s_mech_model;
     TotalStressModel<DisplacementDim> total_stress_model;
     PermeabilityModel<DisplacementDim> permeability_model;
+    PhaseTransitionModel const& phase_transition_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

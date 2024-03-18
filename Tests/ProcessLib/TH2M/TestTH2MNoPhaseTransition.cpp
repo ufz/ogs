@@ -14,12 +14,15 @@
 #include <sstream>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "ProcessLib/TH2M/PhaseTransitionModels/NoPhaseTransition.h"
+#include "ProcessLib/TH2M/ConstitutiveRelations/NoPhaseTransition.h"
 #include "Tests/MaterialLib/TestMPL.h"
 #include "Tests/TestTools.h"
 
 TEST(ProcessLib, TH2MNoPhaseTransition)
 {
+    using namespace ProcessLib::TH2M;
+    using namespace ProcessLib::TH2M::ConstitutiveRelations;
+
     std::stringstream m;
 
     auto const density_air = 1.2;
@@ -37,6 +40,14 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     m << "<medium>\n";
     m << "  <phases>\n";
+
+    // solid phase
+    m << "<phase>\n";
+    m << "<type>Solid</type>\n";
+    m << "<properties>\n";
+    m << Tests::makeConstantPropertyElement("density", 2e3);
+    m << "</properties>\n";
+    m << "</phase>\n";
 
     // gas phase
     m << "<phase>\n";
@@ -76,16 +87,18 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
         Tests::createTestMaterial(m.str());
+    ProcessLib::TH2M::MediaData media_data{*medium};
 
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> media{
         {0, medium}};
 
     MaterialPropertyLib::VariableArray variable_array;
-    ParameterLib::SpatialPosition const pos;
-    double const time = std::numeric_limits<double>::quiet_NaN();
-    double const dt = std::numeric_limits<double>::quiet_NaN();
+    ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
+        {},
+        std::numeric_limits<double>::quiet_NaN(),
+        std::numeric_limits<double>::quiet_NaN()};
 
-    auto ptm = std::make_unique<ProcessLib::TH2M::NoPhaseTransition>(media);
+    auto ptm = std::make_unique<NoPhaseTransition>(media);
 
     double const pGR = 1000000.;
     double const pCap = 1000000.;
@@ -95,9 +108,10 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     variable_array.capillary_pressure = pCap;
     variable_array.temperature = T;
 
-    ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
-    ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
-                                     time, dt);
+    PhaseTransitionData cv;
+    ptm->eval(x_t, media_data, GasPressureData{pGR}, CapillaryPressureData{pGR},
+              TemperatureData{T, T}, cv);
+
     // reference values
     double const rhoCGR = density_air;
     double const rhoWGR = 0.0;

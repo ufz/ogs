@@ -1,5 +1,4 @@
 get_source_files(SOURCES)
-append_source_files(SOURCES PhaseTransitionModels)
 append_source_files(SOURCES ConstitutiveRelations)
 
 ogs_add_library(TH2M ${SOURCES})

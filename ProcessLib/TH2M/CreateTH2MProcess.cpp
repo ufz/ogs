@@ -19,8 +19,8 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
-#include "ProcessLib/TH2M/PhaseTransitionModels/NoPhaseTransition.h"
-#include "ProcessLib/TH2M/PhaseTransitionModels/PhaseTransition.h"
+#include "ProcessLib/TH2M/ConstitutiveRelations/NoPhaseTransition.h"
+#include "ProcessLib/TH2M/ConstitutiveRelations/PhaseTransition.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "TH2MProcess.h"
 #include "TH2MProcessData.h"
@@ -29,7 +29,8 @@ namespace ProcessLib
 {
 namespace TH2M
 {
-std::unique_ptr<PhaseTransitionModel> createPhaseTransitionModel(
+std::unique_ptr<ConstitutiveRelations::PhaseTransitionModel>
+createPhaseTransitionModel(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // the approach here is that the number of phase components determines the
@@ -47,9 +48,9 @@ std::unique_ptr<PhaseTransitionModel> createPhaseTransitionModel(
     // phase_transition is returned.
     if (phase_transition)
     {
-        return std::make_unique<PhaseTransition>(media);
+        return std::make_unique<ConstitutiveRelations::PhaseTransition>(media);
     }
-    return std::make_unique<NoPhaseTransition>(media);
+    return std::make_unique<ConstitutiveRelations::NoPhaseTransition>(media);
 }
 
 template <int DisplacementDim>

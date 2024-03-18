@@ -11,9 +11,9 @@
 
 #include "MaterialLib/PhysicalConstant.h"
 
-namespace ProcessLib
+namespace ProcessLib::TH2M
 {
-namespace TH2M
+namespace ConstitutiveRelations
 {
 NoPhaseTransition::NoPhaseTransition(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
@@ -37,18 +37,24 @@ NoPhaseTransition::NoPhaseTransition(
     }
 }
 
-void NoPhaseTransition::updateConstitutiveVariables(
-    ConstitutiveRelations::PhaseTransitionData& cv,
-    const MaterialPropertyLib::Medium* medium,
-    MaterialPropertyLib::VariableArray variables,
-    ParameterLib::SpatialPosition pos, double const t, double const dt) const
+void NoPhaseTransition::eval(SpaceTimeData const& x_t,
+                             MediaData const& media_data,
+                             GasPressureData const& p_GR,
+                             CapillaryPressureData const& p_cap,
+                             TemperatureData const& T_data,
+                             PhaseTransitionData& cv) const
 {
-    // primary variables
-    auto const pGR = variables.gas_phase_pressure;
-    auto const T = variables.temperature;
+    MaterialPropertyLib::VariableArray variables;
 
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& gas_phase = medium->phase("Gas");
+    // primary variables
+    auto const pGR = p_GR();
+    auto const pCap = p_cap();
+    auto const T = T_data.T;
+    variables.gas_phase_pressure = pGR;
+    variables.temperature = T;
+
+    auto const& liquid_phase = media_data.liquid_phase;
+    auto const& gas_phase = media_data.gas_phase;
 
     // C-component is only component in the gas phase
     cv.xnWG = 0.;
@@ -58,27 +64,29 @@ void NoPhaseTransition::updateConstitutiveVariables(
 
     auto const M =
         gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     variables.molar_mass = M;
 
     cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                  .template value<double>(variables, pos, t, dt);
+                  .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     cv.rhoCGR = cv.rhoGR;
 
     // W-component is only component in the liquid phase
     cv.xmWL = 1.;
 
+    auto const pLR = pGR - pCap;
+    variables.liquid_phase_pressure = pLR;
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     variables.density = cv.rhoLR;
 
     cv.muLR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     cv.rhoWLR = cv.rhoLR;
 
@@ -86,12 +94,12 @@ void NoPhaseTransition::updateConstitutiveVariables(
     auto const cpG =
         gas_phase
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     auto const cpL =
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific phase enthalpies
     cv.hG = cpG * T;
@@ -107,7 +115,7 @@ void NoPhaseTransition::updateConstitutiveVariables(
         gas_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
+                                     x_t.x, x_t.t, x_t.dt);
     cv.du_G_dT = cpG + pGR * drho_GR_dT / cv.rhoGR / cv.rhoGR;
 
     cv.du_L_dT = cpL;
@@ -116,12 +124,12 @@ void NoPhaseTransition::updateConstitutiveVariables(
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::gas_phase_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
     cv.drho_LR_dp_LR =
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::liquid_phase_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
     cv.drho_LR_dp_GR = cv.drho_LR_dp_LR;
 
     cv.du_G_dp_GR =
@@ -136,7 +144,7 @@ void NoPhaseTransition::updateConstitutiveVariables(
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
+                                     x_t.x, x_t.t, x_t.dt);
     cv.drho_C_LR_dT = 0;
 
     cv.du_L_dp_GR = 0;
@@ -152,5 +160,5 @@ void NoPhaseTransition::updateConstitutiveVariables(
     cv.drho_W_GR_dp_GR = 0;
     cv.drho_W_GR_dp_cap = 0;
 }
-}  // namespace TH2M
-}  // namespace ProcessLib
+}  // namespace ConstitutiveRelations
+}  // namespace ProcessLib::TH2M

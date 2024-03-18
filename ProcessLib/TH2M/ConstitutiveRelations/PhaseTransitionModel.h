@@ -9,14 +9,12 @@
 
 #pragma once
 
-#include <map>
+#include "Base.h"
+#include "PhaseTransitionData.h"
 
-#include "../ConstitutiveRelations/PhaseTransitionData.h"
-#include "MaterialLib/MPL/Medium.h"
-
-namespace ProcessLib
+namespace ProcessLib::TH2M
 {
-namespace TH2M
+namespace ConstitutiveRelations
 {
 struct PhaseTransitionModel
 {
@@ -43,21 +41,11 @@ struct PhaseTransitionModel
 
     virtual ~PhaseTransitionModel() = default;
 
-    virtual void updateConstitutiveVariables(
-        ConstitutiveRelations::PhaseTransitionData& cv,
-        const MaterialPropertyLib::Medium* medium,
-        MaterialPropertyLib::VariableArray variables,
-        ParameterLib::SpatialPosition pos, double const t,
-        double const dt) const = 0;
+    virtual void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+                      GasPressureData const& p_GR,
+                      CapillaryPressureData const& p_cap,
+                      TemperatureData const& T_data,
+                      PhaseTransitionData& cv) const = 0;
 };
-
-int numberOfComponents(
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
-    std::string phase_name);
-
-int findComponentIndex(
-    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
-    std::string phase_name, MaterialPropertyLib::PropertyType property_type);
-
-}  // namespace TH2M
-}  // namespace ProcessLib
+}  // namespace ConstitutiveRelations
+}  // namespace ProcessLib::TH2M

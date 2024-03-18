@@ -39,6 +39,9 @@ struct MediaData
 
     MaterialPropertyLib::Medium const& medium;
     MaterialPropertyLib::Phase const& solid;
+    MaterialPropertyLib::Phase const& liquid_phase =
+        medium.phase("AqueousLiquid");
+    MaterialPropertyLib::Phase const& gas_phase = medium.phase("Gas");
 };
 
 struct TemperatureData

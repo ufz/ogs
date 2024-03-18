@@ -11,9 +11,52 @@
 
 #include "MaterialLib/PhysicalConstant.h"
 
-namespace ProcessLib
+namespace
 {
-namespace TH2M
+int numberOfComponents(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
+    std::string const& phase_name)
+{
+    // Always the first (begin) medium that holds fluid phases.
+    auto const& medium = media.begin()->second;
+    return medium->phase(phase_name).numberOfComponents();
+}
+
+int findComponentIndex(
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media,
+    std::string const& phase_name,
+    MaterialPropertyLib::PropertyType property_type)
+{
+    // It is always the first (begin) medium that holds fluid phases.
+    auto const& medium = media.begin()->second;
+    auto const& phase = medium->phase(phase_name);
+
+    // find the component for which the property 'property_type' is defined
+    for (std::size_t c = 0; c < phase.numberOfComponents(); c++)
+    {
+        if (phase.component(c).hasProperty(property_type))
+        {
+            return c;
+        }
+    }
+
+    // A lot of checks can (and should) be done to make sure that the right
+    // components with the right properties are used. For example, the names
+    // of the components can be compared to check that the name of the
+    // evaporable component does not also correspond to the name of the
+    // solute.
+
+    OGS_FATAL(
+        "PhaseTransitionModel: findComponentIndex() could not find the "
+        "specified property type '{:s}' in phase '{:s}'.",
+        MaterialPropertyLib::property_enum_to_string[property_type],
+        phase_name);
+}
+}  // namespace
+
+namespace ProcessLib::TH2M
+{
+namespace ConstitutiveRelations
 {
 PhaseTransition::PhaseTransition(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
@@ -91,20 +134,25 @@ PhaseTransition::PhaseTransition(
     checkRequiredProperties(liquid_phase, required_liquid_properties);
 }
 
-void PhaseTransition::updateConstitutiveVariables(
-    ConstitutiveRelations::PhaseTransitionData& cv,
-    const MaterialPropertyLib::Medium* medium,
-    MaterialPropertyLib::VariableArray variables,
-    ParameterLib::SpatialPosition pos, double const t, const double dt) const
+void PhaseTransition::eval(SpaceTimeData const& x_t,
+                           MediaData const& media_data,
+                           GasPressureData const& p_GR,
+                           CapillaryPressureData const& p_cap,
+                           TemperatureData const& T_data,
+                           PhaseTransitionData& cv) const
 {
-    // primary variables
-    auto const pGR = variables.gas_phase_pressure;
-    auto const pCap = variables.capillary_pressure;
-    auto const T = variables.temperature;
-    auto const pLR = pGR - pCap;
+    MaterialPropertyLib::VariableArray variables;
 
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& gas_phase = medium->phase("Gas");
+    // primary variables
+    auto const pGR = p_GR();
+    auto const pCap = p_cap();
+    auto const T = T_data.T;
+    variables.gas_phase_pressure = pGR;
+    variables.capillary_pressure = pCap;
+    variables.temperature = T;
+
+    auto const& liquid_phase = media_data.liquid_phase;
+    auto const& gas_phase = media_data.gas_phase;
 
     constexpr double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 
@@ -118,12 +166,12 @@ void PhaseTransition::updateConstitutiveVariables(
     const auto dh_evap =
         vapour_component
             .property(MaterialPropertyLib::PropertyType::specific_latent_heat)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // molar mass of evaporating component
     auto const M_W =
         vapour_component.property(MaterialPropertyLib::PropertyType::molar_mass)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // provide evaporation enthalpy and molar mass of the evaporating
     // component in the variable array
@@ -134,23 +182,24 @@ void PhaseTransition::updateConstitutiveVariables(
     const auto p_vap_flat =
         vapour_component
             .property(MaterialPropertyLib::PropertyType::vapour_pressure)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     const auto dp_vap_flat_dT =
         vapour_component
             .property(MaterialPropertyLib::PropertyType::vapour_pressure)
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
+                                     x_t.x, x_t.t, x_t.dt);
 
     // molar mass of dry air component
     auto const M_C =
         dry_air_component
             .property(MaterialPropertyLib::PropertyType::molar_mass)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // Water pressure is passed to the VariableArray in order to calculate
     // the water density.
+    auto const pLR = pGR - pCap;
     variables.liquid_phase_pressure = pLR;
 
     // Concentration is initially zero to calculate the density of the pure
@@ -158,7 +207,7 @@ void PhaseTransition::updateConstitutiveVariables(
     variables.concentration = 0.;
     const auto rhoLR_0 =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // Kelvin-Laplace correction for menisci
     const double K = pCap > 0. ? std::exp(-pCap * M_W / rhoLR_0 / R / T) : 1.;
@@ -206,7 +255,7 @@ void PhaseTransition::updateConstitutiveVariables(
 
     // density of overall gas phase
     cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // derivatives of average molar mass of the gas phase
     auto const dMG = M_W - M_C;
@@ -223,7 +272,7 @@ void PhaseTransition::updateConstitutiveVariables(
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::gas_phase_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
 
     auto const dMG_dpCap = dxnWG_dpCap * dMG;
     variables.molar_mass_derivative = dMG_dpCap;
@@ -231,7 +280,7 @@ void PhaseTransition::updateConstitutiveVariables(
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::capillary_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
 
     auto const dMG_dT = dxnWG_dT * dMG;
     variables.molar_mass_derivative = dMG_dT;
@@ -239,7 +288,7 @@ void PhaseTransition::updateConstitutiveVariables(
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
+                                     x_t.x, x_t.t, x_t.dt);
 
     // The derivatives of the partial densities of the gas phase are
     // hard-coded (they should remain so, as they are a fundamental part of
@@ -266,11 +315,11 @@ void PhaseTransition::updateConstitutiveVariables(
     auto const cpCG =
         dry_air_component
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     auto const cpWG =
         vapour_component
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific enthalpy of dry air and vapour components
     cv.hCG = cpCG * T;
@@ -284,12 +333,13 @@ void PhaseTransition::updateConstitutiveVariables(
 
     // diffusion
     auto const tortuosity =
-        medium->property(MaterialPropertyLib::PropertyType::tortuosity)
-            .template value<double>(variables, pos, t, dt);
+        media_data.medium
+            .property(MaterialPropertyLib::PropertyType::tortuosity)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     auto const D_W_G_m =
         vapour_component.property(MaterialPropertyLib::PropertyType::diffusion)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     cv.diffusion_coefficient_vapour =
         tortuosity * D_W_G_m;  // Note here that D_W_G = D_C_G.
 
@@ -297,7 +347,7 @@ void PhaseTransition::updateConstitutiveVariables(
 
     // gas phase viscosity
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                  .template value<double>(variables, pos, t, dt);
+                  .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // Dissolution part -- Liquid phase properties
     // -------------------------------------------
@@ -314,20 +364,20 @@ void PhaseTransition::updateConstitutiveVariables(
     auto const H =
         solute_component
             .property(MaterialPropertyLib::PropertyType::henry_coefficient)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     auto const dH_dT =
         solute_component
             .property(MaterialPropertyLib::PropertyType::henry_coefficient)
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
+                                     x_t.x, x_t.t, x_t.dt);
     auto const dH_dpGR =
         solute_component
             .property(MaterialPropertyLib::PropertyType::henry_coefficient)
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::gas_phase_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
 
     // Concentration of the dissolved gas as amount of substance of the
     // mixture component C related to the total volume of the liquid phase.
@@ -355,7 +405,7 @@ void PhaseTransition::updateConstitutiveVariables(
     // phase because the composition there was determined via the molar
     // fractions (ratio of the partial pressures).
     cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, pos, t, dt);
+                   .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     variables.density = cv.rhoLR;
 
     // Gas component partial density in liquid phase
@@ -380,25 +430,25 @@ void PhaseTransition::updateConstitutiveVariables(
     //         .template dValue<double>(
     //             variables,
     //             MaterialPropertyLib::Variable::liquid_phase_pressure,
-    //             pos, t, dt);
+    //             x_t.x, x_t.t, x_t.dt);
 
     auto const rho_ref_betaP =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::liquid_phase_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
 
     auto const rho_ref_betaT =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
+                                     x_t.x, x_t.t, x_t.dt);
 
     auto const rho_ref_betaC =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
-                variables, MaterialPropertyLib::Variable::concentration, pos, t,
-                dt);
+                variables, MaterialPropertyLib::Variable::concentration, x_t.x,
+                x_t.t, x_t.dt);
 
     // liquid phase density derivatives
     auto const drhoLR_dpGR = rho_ref_betaP + rho_ref_betaC * dcCL_dpGR;
@@ -426,17 +476,17 @@ void PhaseTransition::updateConstitutiveVariables(
     auto const cpCL =
         solute_component
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     auto const cpWL =
         solvent_component
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific heat of solution
     const auto dh_sol =
         solute_component
             .property(MaterialPropertyLib::PropertyType::specific_latent_heat)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific enthalpy of liquid phase and its components
     cv.hCL = cpCL * T + dh_sol;
@@ -449,15 +499,15 @@ void PhaseTransition::updateConstitutiveVariables(
     // diffusion
     auto const D_C_L_m =
         solute_component.property(MaterialPropertyLib::PropertyType::diffusion)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     cv.diffusion_coefficient_solute =
         tortuosity * D_C_L_m;  // Note here that D_C_L = D_W_L.
 
     // liquid phase viscosity
     cv.muLR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 }
 
-}  // namespace TH2M
-}  // namespace ProcessLib
+}  // namespace ConstitutiveRelations
+}  // namespace ProcessLib::TH2M
