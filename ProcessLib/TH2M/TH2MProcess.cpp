@@ -192,12 +192,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable(
         "solid_density", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtSolidDensity);
-    add_secondary_variable(
-        "mole_fraction_gas", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtMoleFractionGas);
-    add_secondary_variable(
-        "mass_fraction_gas", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtMassFractionGas);
 
     add_secondary_variable(
         "enthalpy_solid", 1,

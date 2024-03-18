@@ -59,6 +59,8 @@ struct PhaseTransitionData
     double pWGR = 0;
 
     // constituent mass and molar fractions
+    double xnCG = 0.;
+    double xmCG = 0.;
     double xnWG = 0.;
     double xmWG = 0.;
     double xnWL = 0.;
@@ -113,7 +115,9 @@ struct PhaseTransitionData
             R::makeReflectionData("enthalpy_gas", &Self::hG),
             R::makeReflectionData("enthalpy_liquid", &Self::hL),
             R::makeReflectionData("vapour_pressure", &Self::pWGR),
-            R::makeReflectionData("mass_fraction_liquid", &Self::xmWL)};
+            R::makeReflectionData("mass_fraction_liquid", &Self::xmWL),
+            R::makeReflectionData("mole_fraction_gas", &Self::xnCG),
+            R::makeReflectionData("mass_fraction_gas", &Self::xmCG)};
     }
 };
 

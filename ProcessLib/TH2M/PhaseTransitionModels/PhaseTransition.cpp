@@ -183,7 +183,7 @@ void PhaseTransition::updateConstitutiveVariables(
                  // matrix to be zero). The value is simply made up, seems
                  // reasonable.
     cv.xnWG = std::clamp(cv.pWGR / pGR, xnWG_min, 1. - xnWG_min);
-    const double xnCG = 1. - cv.xnWG;
+    cv.xnCG = 1. - cv.xnWG;
 
     // gas phase molar fraction derivatives
     auto const dxnWG_dpGR = -cv.pWGR / pGR / pGR;
@@ -191,12 +191,12 @@ void PhaseTransition::updateConstitutiveVariables(
     auto const dxnWG_dT = dpWGR_dT / pGR;
 
     // molar mass of the gas phase as a mixture of 'air' and vapour
-    auto const MG = xnCG * M_C + cv.xnWG * M_W;
+    auto const MG = cv.xnCG * M_C + cv.xnWG * M_W;
     variables.molar_mass = MG;
 
     // gas phase mass fractions
     cv.xmWG = cv.xnWG * M_W / MG;
-    const auto xmCG = 1. - cv.xmWG;
+    cv.xmCG = 1. - cv.xmWG;
 
     auto const dxn_dxm_conversion = M_W * M_C / MG / MG;
     // gas phase mass fraction derivatives
@@ -247,13 +247,14 @@ void PhaseTransition::updateConstitutiveVariables(
     // density to the MPL, a constant phase density can also be assumed, the
     // derivatives of the partial densities are then unaffected and the
     // model is still consistent.
-    cv.rhoCGR = xmCG * cv.rhoGR;
+    cv.rhoCGR = cv.xmCG * cv.rhoGR;
     cv.rhoWGR = cv.xmWG * cv.rhoGR;
 
     // 'Air'-component partial density derivatives
-    cv.drho_C_GR_dp_GR = xmCG * cv.drho_GR_dp_GR - cv.dxmWG_dpGR * cv.rhoGR;
-    cv.drho_C_GR_dp_cap = xmCG * cv.drho_GR_dp_cap - cv.dxmWG_dpCap * cv.rhoGR;
-    cv.drho_C_GR_dT = xmCG * cv.drho_GR_dT - cv.dxmWG_dT * cv.rhoGR;
+    cv.drho_C_GR_dp_GR = cv.xmCG * cv.drho_GR_dp_GR - cv.dxmWG_dpGR * cv.rhoGR;
+    cv.drho_C_GR_dp_cap =
+        cv.xmCG * cv.drho_GR_dp_cap - cv.dxmWG_dpCap * cv.rhoGR;
+    cv.drho_C_GR_dT = cv.xmCG * cv.drho_GR_dT - cv.dxmWG_dT * cv.rhoGR;
 
     // Vapour-component partial density derivatives
     cv.drho_W_GR_dp_GR = cv.xmWG * cv.drho_GR_dp_GR + cv.dxmWG_dpGR * cv.rhoGR;
@@ -276,7 +277,7 @@ void PhaseTransition::updateConstitutiveVariables(
     cv.hWG = cpWG * T + dh_evap;
 
     // specific enthalpy of gas phase
-    cv.hG = xmCG * cv.hCG + cv.xmWG * cv.hWG;
+    cv.hG = cv.xmCG * cv.hCG + cv.xmWG * cv.hWG;
 
     // specific inner energies of gas phase
     cv.uG = cv.hG - pGR / cv.rhoGR;
@@ -292,7 +293,7 @@ void PhaseTransition::updateConstitutiveVariables(
     cv.diffusion_coefficient_vapour =
         tortuosity * D_W_G_m;  // Note here that D_W_G = D_C_G.
 
-    variables.molar_fraction = xnCG;
+    variables.molar_fraction = cv.xnCG;
 
     // gas phase viscosity
     cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
@@ -330,14 +331,15 @@ void PhaseTransition::updateConstitutiveVariables(
 
     // Concentration of the dissolved gas as amount of substance of the
     // mixture component C related to the total volume of the liquid phase.
-    auto const cCL = H * xnCG * pGR;
+    auto const cCL = H * cv.xnCG * pGR;
     // Fortunately for the developer, the signs of the derivatives of the
     // composition of binary mixtures are often opposed.
     auto const dxnCG_dpGR = -dxnWG_dpGR;
     auto const dxnCG_dT = -dxnWG_dT;
 
-    auto const dcCL_dpGR = (dH_dpGR * xnCG + H * dxnCG_dpGR) * pGR + H * xnCG;
-    auto const dcCL_dT = pGR * (dH_dT * xnCG + H * dxnCG_dT);
+    auto const dcCL_dpGR =
+        (dH_dpGR * cv.xnCG + H * dxnCG_dpGR) * pGR + H * cv.xnCG;
+    auto const dcCL_dT = pGR * (dH_dT * cv.xnCG + H * dxnCG_dT);
 
     // Density of pure liquid phase
     cv.rhoWLR = rhoLR_0;

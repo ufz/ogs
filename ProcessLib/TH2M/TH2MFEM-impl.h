@@ -308,8 +308,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.rhoWLR = c.rhoWLR;
 
         // for variable output
-        ip_data.xnCG = 1. - c.xnWG;
-        ip_data.xmCG = 1. - c.xmWG;
         auto const xmCL = 1. - c.xmWL;
 
         const GlobalDimVectorType gradxmWG = c.dxmWG_dpGR * gradpGR +
@@ -326,11 +324,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // the respective phase transition model, here only the multiplication
         // with the gradient of the mass fractions should take place.
 
-        ip_data.d_CG = ip_data.xmCG == 0.
-                           ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
-                                            // division by zero
-                           : -phi_G / ip_data.xmCG *
-                                 c.diffusion_coefficient_vapour * gradxmCG;
+        ip_data.d_CG =
+            c.xmCG == 0.
+                ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
+                                 // division by zero
+                : -phi_G / c.xmCG * c.diffusion_coefficient_vapour * gradxmCG;
 
         ip_data.d_WG =
             c.xmWG == 0.

@@ -49,13 +49,6 @@ struct IntegrationPointData final
     double rhoWLR = std::numeric_limits<double>::quiet_NaN();
     double rhoWLR_prev = std::numeric_limits<double>::quiet_NaN();
 
-    // phase composition
-    // molar fraction
-    double xnCG = std::numeric_limits<double>::quiet_NaN();
-
-    // mass fraction
-    double xmCG = std::numeric_limits<double>::quiet_NaN();
-
     // phase enthalpies
     double rho_G_h_G = std::numeric_limits<double>::quiet_NaN();
     double rho_G_h_G_prev = std::numeric_limits<double>::quiet_NaN();

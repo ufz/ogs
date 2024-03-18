@@ -255,25 +255,6 @@ private:
                                                          cache);
     }
 
-    virtual std::vector<double> const& getIntPtMoleFractionGas(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::xnCG, cache);
-    }
-    virtual std::vector<double> const& getIntPtMassFractionGas(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::xmCG, cache);
-    }
-
     virtual std::vector<double> const& getIntPtEnthalpySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,

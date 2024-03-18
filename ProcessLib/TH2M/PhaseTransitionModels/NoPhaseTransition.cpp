@@ -53,6 +53,8 @@ void NoPhaseTransition::updateConstitutiveVariables(
     // C-component is only component in the gas phase
     cv.xnWG = 0.;
     cv.xmWG = 0.;
+    cv.xnCG = 1. - cv.xnWG;
+    cv.xmCG = 1. - cv.xmWG;
 
     auto const M =
         gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)
