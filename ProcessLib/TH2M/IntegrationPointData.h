@@ -41,14 +41,6 @@ struct IntegrationPointData final
     double rhoLR = std::numeric_limits<double>::quiet_NaN();
     double rhoSR = std::numeric_limits<double>::quiet_NaN();
 
-    // phase intrinsic density derivatives
-    double drhoGR_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double drhoGR_dpCap = std::numeric_limits<double>::quiet_NaN();
-    double drhoGR_dT = std::numeric_limits<double>::quiet_NaN();
-    double drhoLR_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double drhoLR_dpCap = std::numeric_limits<double>::quiet_NaN();
-    double drhoLR_dT = std::numeric_limits<double>::quiet_NaN();
-
     // vapour pressure (water component partial gas phase pressure)
     double pWGR = std::numeric_limits<double>::quiet_NaN();
 
@@ -62,19 +54,9 @@ struct IntegrationPointData final
     double rhoWLR = std::numeric_limits<double>::quiet_NaN();
     double rhoWLR_prev = std::numeric_limits<double>::quiet_NaN();
 
-    // real constituent partial density derivatives
-    double drhoCGR_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double drhoWGR_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double drhoCGR_dpCap = std::numeric_limits<double>::quiet_NaN();
-    double drhoWGR_dpCap = std::numeric_limits<double>::quiet_NaN();
-    double drhoCGR_dT = std::numeric_limits<double>::quiet_NaN();
-    double drhoWGR_dT = std::numeric_limits<double>::quiet_NaN();
-
     // phase composition
     // molar fraction
     double xnCG = std::numeric_limits<double>::quiet_NaN();
-    double xnWG = std::numeric_limits<double>::quiet_NaN();
-    double xnWL = std::numeric_limits<double>::quiet_NaN();
 
     // mass fraction
     double xmCG = std::numeric_limits<double>::quiet_NaN();
@@ -110,8 +92,6 @@ struct IntegrationPointData final
     double h_S = std::numeric_limits<double>::quiet_NaN();
     double h_CG = std::numeric_limits<double>::quiet_NaN();
     double h_WG = std::numeric_limits<double>::quiet_NaN();
-    double h_WL = std::numeric_limits<double>::quiet_NaN();
-    double h_CL = std::numeric_limits<double>::quiet_NaN();
 
     // internal energies
     double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
