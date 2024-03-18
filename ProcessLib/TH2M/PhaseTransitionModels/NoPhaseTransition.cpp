@@ -37,8 +37,8 @@ NoPhaseTransition::NoPhaseTransition(
     }
 }
 
-PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
-    PhaseTransitionModelVariables const& phase_transition_model_variables,
+void NoPhaseTransition::updateConstitutiveVariables(
+    ConstitutiveRelations::PhaseTransitionData& cv,
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,
     ParameterLib::SpatialPosition pos, double const t, double const dt) const
@@ -49,9 +49,6 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
 
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& gas_phase = medium->phase("Gas");
-
-    // copy previous state before modification.
-    PhaseTransitionModelVariables cv = phase_transition_model_variables;
 
     // C-component is only component in the gas phase
     cv.xnWG = 0.;
@@ -152,7 +149,6 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
     cv.drho_W_GR_dT = 0;
     cv.drho_W_GR_dp_GR = 0;
     cv.drho_W_GR_dp_cap = 0;
-    return cv;
 }
 }  // namespace TH2M
 }  // namespace ProcessLib

@@ -91,8 +91,8 @@ PhaseTransition::PhaseTransition(
     checkRequiredProperties(liquid_phase, required_liquid_properties);
 }
 
-PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
-    PhaseTransitionModelVariables const& phase_transition_model_variables,
+void PhaseTransition::updateConstitutiveVariables(
+    ConstitutiveRelations::PhaseTransitionData& cv,
     const MaterialPropertyLib::Medium* medium,
     MaterialPropertyLib::VariableArray variables,
     ParameterLib::SpatialPosition pos, double const t, const double dt) const
@@ -148,9 +148,6 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
         dry_air_component
             .property(MaterialPropertyLib::PropertyType::molar_mass)
             .template value<double>(variables, pos, t, dt);
-
-    // copy previous state before modification.
-    PhaseTransitionModelVariables cv = phase_transition_model_variables;
 
     // Water pressure is passed to the VariableArray in order to calculate
     // the water density.
@@ -458,8 +455,6 @@ PhaseTransitionModelVariables PhaseTransition::updateConstitutiveVariables(
     cv.muLR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
             .template value<double>(variables, pos, t, dt);
-
-    return cv;
 }
 
 }  // namespace TH2M

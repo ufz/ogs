@@ -95,10 +95,9 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     variable_array.capillary_pressure = pCap;
     variable_array.temperature = T;
 
-    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time,
-                                      dt);
-    auto const& cv = ptm->cv;
-
+    ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
+    ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                     time, dt);
     // reference values
     double const rhoCGR = density_air;
     double const rhoWGR = 0.0;

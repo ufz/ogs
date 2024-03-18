@@ -37,12 +37,7 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
     // phase intrinsic densities
-    double rhoGR = std::numeric_limits<double>::quiet_NaN();
-    double rhoLR = std::numeric_limits<double>::quiet_NaN();
     double rhoSR = std::numeric_limits<double>::quiet_NaN();
-
-    // vapour pressure (water component partial gas phase pressure)
-    double pWGR = std::numeric_limits<double>::quiet_NaN();
 
     // real constituent partial densities
     double rhoCGR = std::numeric_limits<double>::quiet_NaN();
@@ -60,23 +55,6 @@ struct IntegrationPointData final
 
     // mass fraction
     double xmCG = std::numeric_limits<double>::quiet_NaN();
-    double xmWG = std::numeric_limits<double>::quiet_NaN();
-    double xmWL = std::numeric_limits<double>::quiet_NaN();
-
-    // mass fraction derivatives
-    double dxmWG_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double dxmWG_dpCap = std::numeric_limits<double>::quiet_NaN();
-    double dxmWG_dT = std::numeric_limits<double>::quiet_NaN();
-    double dxmWL_dpGR = std::numeric_limits<double>::quiet_NaN();
-    double dxmWL_dpCap = std::numeric_limits<double>::quiet_NaN();
-    double dxmWL_dpLR = std::numeric_limits<double>::quiet_NaN();
-    double dxmWL_dT = std::numeric_limits<double>::quiet_NaN();
-
-    // diffusion coefficients
-    double diffusion_coefficient_vapour =
-        std::numeric_limits<double>::quiet_NaN();
-    double diffusion_coefficient_solute =
-        std::numeric_limits<double>::quiet_NaN();
 
     // phase enthalpies
     double rho_G_h_G = std::numeric_limits<double>::quiet_NaN();
@@ -87,11 +65,7 @@ struct IntegrationPointData final
     double rho_S_h_S_prev = std::numeric_limits<double>::quiet_NaN();
 
     // specific enthalpies
-    double h_G = std::numeric_limits<double>::quiet_NaN();
-    double h_L = std::numeric_limits<double>::quiet_NaN();
     double h_S = std::numeric_limits<double>::quiet_NaN();
-    double h_CG = std::numeric_limits<double>::quiet_NaN();
-    double h_WG = std::numeric_limits<double>::quiet_NaN();
 
     // internal energies
     double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
@@ -100,9 +74,6 @@ struct IntegrationPointData final
     // porosity
     double phi = std::numeric_limits<double>::quiet_NaN();
     double dphi_dT = std::numeric_limits<double>::quiet_NaN();
-
-    double muGR = std::numeric_limits<double>::quiet_NaN();
-    double muLR = std::numeric_limits<double>::quiet_NaN();
 
     GlobalDimMatrixType lambda;
     GlobalDimVectorType d_CG;

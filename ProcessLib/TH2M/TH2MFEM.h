@@ -235,26 +235,6 @@ private:
     // be stored in some container to avoid defining one method for each
     // variable.
 
-    virtual std::vector<double> const& getIntPtLiquidDensity(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::rhoLR, cache);
-    }
-
-    virtual std::vector<double> const& getIntPtGasDensity(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::rhoGR, cache);
-    }
-
     virtual std::vector<double> const& getIntPtSolidDensity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -263,16 +243,6 @@ private:
     {
         return ProcessLib::getIntegrationPointScalarData(_ip_data,
                                                          &IpData::rhoSR, cache);
-    }
-
-    virtual std::vector<double> const& getIntPtVapourPressure(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::pWGR, cache);
     }
 
     virtual std::vector<double> const& getIntPtPorosity(
@@ -303,34 +273,7 @@ private:
         return ProcessLib::getIntegrationPointScalarData(_ip_data,
                                                          &IpData::xmCG, cache);
     }
-    virtual std::vector<double> const& getIntPtMassFractionLiquid(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::xmWL, cache);
-    }
 
-    virtual std::vector<double> const& getIntPtEnthalpyGas(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::h_G,
-                                                         cache);
-    }
-    virtual std::vector<double> const& getIntPtEnthalpyLiquid(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::h_L,
-                                                         cache);
-    }
     virtual std::vector<double> const& getIntPtEnthalpySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,

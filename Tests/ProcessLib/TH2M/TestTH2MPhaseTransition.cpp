@@ -212,6 +212,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
     auto const eps_pCap = pCap_max * 2.e-5;
     auto const eps_T = T_max * 2.e-5;
 
+    ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
+
     for (std::size_t i = 0; i <= count; i++)
     {
         auto pGR = pGR_min + i * dpGR;
@@ -221,36 +223,34 @@ TEST(ProcessLib, TH2MPhaseTransition)
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        auto const& cv = ptm->cv;
-
         // Perturb gas pressure
         variable_array.gas_phase_pressure = pGR + eps_pGR;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        auto xmWG_plus = ptm->cv.xmWG;
-        auto rhoGR_plus = ptm->cv.rhoGR;
-        auto rhoCGR_plus = ptm->cv.rhoCGR;
-        auto rhoWGR_plus = ptm->cv.rhoWGR;
+        auto xmWG_plus = cv.xmWG;
+        auto rhoGR_plus = cv.rhoGR;
+        auto rhoCGR_plus = cv.rhoCGR;
+        auto rhoWGR_plus = cv.rhoWGR;
 
         variable_array.gas_phase_pressure = pGR - eps_pGR;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        auto xmWG_minus = ptm->cv.xmWG;
-        auto rhoGR_minus = ptm->cv.rhoGR;
-        auto rhoCGR_minus = ptm->cv.rhoCGR;
-        auto rhoWGR_minus = ptm->cv.rhoWGR;
+        auto xmWG_minus = cv.xmWG;
+        auto rhoGR_minus = cv.rhoGR;
+        auto rhoCGR_minus = cv.rhoCGR;
+        auto rhoWGR_minus = cv.rhoWGR;
 
         // Unperturbed primary variables
         variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
         // Central difference derivatives
         auto const dxmWG_dpGR = (xmWG_plus - xmWG_minus) / (2. * eps_pGR);
@@ -271,31 +271,31 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // Perturb capillary pressure
         variable_array.capillary_pressure = pCap + eps_pCap;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_plus = ptm->cv.xmWG;
-        rhoGR_plus = ptm->cv.rhoGR;
-        rhoCGR_plus = ptm->cv.rhoCGR;
-        rhoWGR_plus = ptm->cv.rhoWGR;
+        xmWG_plus = cv.xmWG;
+        rhoGR_plus = cv.rhoGR;
+        rhoCGR_plus = cv.rhoCGR;
+        rhoWGR_plus = cv.rhoWGR;
 
         variable_array.capillary_pressure = pCap - eps_pCap;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_minus = ptm->cv.xmWG;
-        rhoGR_minus = ptm->cv.rhoGR;
-        rhoCGR_minus = ptm->cv.rhoCGR;
-        rhoWGR_minus = ptm->cv.rhoWGR;
+        xmWG_minus = cv.xmWG;
+        rhoGR_minus = cv.rhoGR;
+        rhoCGR_minus = cv.rhoCGR;
+        rhoWGR_minus = cv.rhoWGR;
 
         // Unperturbed primary variables
         variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
         // Central difference derivatives
         auto const dxmWG_dpCap = (xmWG_plus - xmWG_minus) / (2. * eps_pCap);
@@ -318,31 +318,31 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // Perturb temperature
         variable_array.temperature = T + eps_T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_plus = ptm->cv.xmWG;
-        rhoGR_plus = ptm->cv.rhoGR;
-        rhoCGR_plus = ptm->cv.rhoCGR;
-        rhoWGR_plus = ptm->cv.rhoWGR;
+        xmWG_plus = cv.xmWG;
+        rhoGR_plus = cv.rhoGR;
+        rhoCGR_plus = cv.rhoCGR;
+        rhoWGR_plus = cv.rhoWGR;
 
         variable_array.temperature = T - eps_T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_minus = ptm->cv.xmWG;
-        rhoGR_minus = ptm->cv.rhoGR;
-        rhoCGR_minus = ptm->cv.rhoCGR;
-        rhoWGR_minus = ptm->cv.rhoWGR;
+        xmWG_minus = cv.xmWG;
+        rhoGR_minus = cv.rhoGR;
+        rhoCGR_minus = cv.rhoCGR;
+        rhoWGR_minus = cv.rhoWGR;
 
         // Unperturbed primary variables
         variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
         // Central difference derivatives
         auto const dxmWG_dT = (xmWG_plus - xmWG_minus) / (2. * eps_T);
@@ -449,6 +449,8 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
     auto const eps_pCap = pCap_max * 2.e-5;
     auto const eps_T = T_max * 2.e-5;
 
+    ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
+
     for (std::size_t i = 0; i <= count; i++)
     {
         auto pGR = pGR_min + i * dpGR;
@@ -458,34 +460,32 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        auto const& cv = ptm->cv;
-
         // Perturb gas pressure
         variable_array.gas_phase_pressure = pGR + eps_pGR;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        auto xmWG_plus = ptm->cv.xmWG;
-        auto rhoCGR_plus = ptm->cv.rhoCGR;
-        auto rhoWGR_plus = ptm->cv.rhoWGR;
+        auto xmWG_plus = cv.xmWG;
+        auto rhoCGR_plus = cv.rhoCGR;
+        auto rhoWGR_plus = cv.rhoWGR;
 
         variable_array.gas_phase_pressure = pGR - eps_pGR;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        auto xmWG_minus = ptm->cv.xmWG;
-        auto rhoCGR_minus = ptm->cv.rhoCGR;
-        auto rhoWGR_minus = ptm->cv.rhoWGR;
+        auto xmWG_minus = cv.xmWG;
+        auto rhoCGR_minus = cv.rhoCGR;
+        auto rhoWGR_minus = cv.rhoWGR;
 
         // Unperturbed primary variables
         variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
         // Central difference derivatives
         auto const dxmWG_dpGR = (xmWG_plus - xmWG_minus) / (2. * eps_pGR);
@@ -505,29 +505,29 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // Perturb capillary pressure
         variable_array.capillary_pressure = pCap + eps_pCap;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_plus = ptm->cv.xmWG;
-        rhoCGR_plus = ptm->cv.rhoCGR;
-        rhoWGR_plus = ptm->cv.rhoWGR;
+        xmWG_plus = cv.xmWG;
+        rhoCGR_plus = cv.rhoCGR;
+        rhoWGR_plus = cv.rhoWGR;
 
         variable_array.capillary_pressure = pCap - eps_pCap;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_minus = ptm->cv.xmWG;
-        rhoCGR_minus = ptm->cv.rhoCGR;
-        rhoWGR_minus = ptm->cv.rhoWGR;
+        xmWG_minus = cv.xmWG;
+        rhoCGR_minus = cv.rhoCGR;
+        rhoWGR_minus = cv.rhoWGR;
 
         // Unperturbed primary variables
         variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
         // Central difference derivatives
         auto const dxmWG_dpCap = (xmWG_plus - xmWG_minus) / (2. * eps_pCap);
@@ -549,29 +549,29 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // Perturb temperature
         variable_array.temperature = T + eps_T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_plus = ptm->cv.xmWG;
-        rhoCGR_plus = ptm->cv.rhoCGR;
-        rhoWGR_plus = ptm->cv.rhoWGR;
+        xmWG_plus = cv.xmWG;
+        rhoCGR_plus = cv.rhoCGR;
+        rhoWGR_plus = cv.rhoWGR;
 
         variable_array.temperature = T - eps_T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
-        xmWG_minus = ptm->cv.xmWG;
-        rhoCGR_minus = ptm->cv.rhoCGR;
-        rhoWGR_minus = ptm->cv.rhoWGR;
+        xmWG_minus = cv.xmWG;
+        rhoCGR_minus = cv.rhoCGR;
+        rhoWGR_minus = cv.rhoWGR;
 
         // Unperturbed primary variables
         variable_array.gas_phase_pressure = pGR;
         variable_array.capillary_pressure = pCap;
         variable_array.temperature = T;
 
-        ptm->computeConstitutiveVariables(medium.get(), variable_array, pos,
-                                          time, dt);
+        ptm->updateConstitutiveVariables(cv, medium.get(), variable_array, pos,
+                                         time, dt);
 
         // Central difference derivatives
         auto const dxmWG_dT = (xmWG_plus - xmWG_minus) / (2. * eps_T);

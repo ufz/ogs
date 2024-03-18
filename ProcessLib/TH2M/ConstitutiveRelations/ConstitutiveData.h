@@ -15,6 +15,7 @@
 #include "EquivalentPlasticStrainData.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
+#include "PhaseTransitionData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
@@ -75,13 +76,15 @@ struct OutputData
 {
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
+    PhaseTransitionData phase_transition_data;
 
     static auto reflect()
     {
         using Self = OutputData<DisplacementDim>;
 
         return Reflection::reflectWithoutName(&Self::eps_data,
-                                              &Self::permeability_data);
+                                              &Self::permeability_data,
+                                              &Self::phase_transition_data);
     }
 };
 

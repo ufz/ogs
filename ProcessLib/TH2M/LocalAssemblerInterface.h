@@ -102,25 +102,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> const& getIntPtLiquidDensity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtGasDensity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
     virtual std::vector<double> const& getIntPtSolidDensity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtVapourPressure(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
@@ -139,24 +121,6 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtMassFractionGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtMassFractionLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEnthalpyGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEnthalpyLiquid(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
