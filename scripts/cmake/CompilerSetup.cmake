@@ -90,6 +90,9 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                     is required! Found version ${CMAKE_CXX_COMPILER_VERSION}. Update Xcode!"
                 )
             endif()
+            # TODO: remove after CMake 3.29 is out:
+            # https://gitlab.kitware.com/cmake/cmake/-/issues/25297
+            add_link_options(LINKER:-no_warn_duplicate_libraries)
         else()
             if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS
                ${ogs.minimum_version.clang}
