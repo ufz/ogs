@@ -17,12 +17,19 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <numeric>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/transform.hpp>
 #include <string>
 #include <unordered_set>
 #include <vector>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/RunTime.h"
+#include "GeoLib/AABB.h"
+#include "GeoLib/OctTree.h"
 #include "InfoLib/GitInfo.h"
+#include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Location.h"
@@ -35,8 +42,12 @@
 
 struct MeshEntityMapInfo
 {
-    std::size_t const partition_id;
-    std::size_t const original_id;
+    MeshEntityMapInfo(std::size_t partition, std::size_t orig_id)
+        : partition_id(partition), original_id(orig_id)
+    {
+    }
+    std::size_t partition_id;
+    std::size_t original_id;
 };
 
 template <typename T>
@@ -214,6 +225,27 @@ std::vector<std::string> readVtuFileNames(std::string const& pvtu_file_name)
     return vtu_file_names;
 }
 
+// all nodes (also 'ghost' nodes) of all meshes sorted by partition
+std::tuple<std::vector<MeshLib::Node*>, std::vector<std::size_t>>
+getMergedNodesVector(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+{
+    std::vector<std::size_t> number_of_nodes_per_partition;
+    ranges::transform(meshes, std::back_inserter(number_of_nodes_per_partition),
+                      [](auto const& mesh)
+                      { return mesh->getNumberOfNodes(); });
+    std::vector<std::size_t> offsets(meshes.size() + 1, 0);
+    std::partial_sum(number_of_nodes_per_partition.begin(),
+                     number_of_nodes_per_partition.end(), offsets.begin() + 1);
+
+    std::vector<MeshLib::Node*> all_nodes;
+    all_nodes.reserve(offsets.back());
+    for (auto const& mesh : meshes)
+    {
+        ranges::copy(mesh->getNodes(), std::back_inserter(all_nodes));
+    }
+    return {all_nodes, offsets};
+}
+
 std::tuple<std::vector<MeshLib::Element*>, std::vector<MeshEntityMapInfo>>
 getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
 {
@@ -252,55 +284,89 @@ getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     return {regular_elements, merged_element_map};
 }
 
-std::tuple<std::vector<MeshLib::Node*>, std::vector<MeshEntityMapInfo>>
-getNodesOfRegularElements(
-    std::vector<MeshLib::Element*> const& regular_elements,
-    std::vector<MeshEntityMapInfo> const& merged_element_map)
+MeshLib::Node* getExistingNodeFromOctTree(
+    GeoLib::OctTree<MeshLib::Node, 16>& oct_tree, Eigen::Vector3d const& extent,
+    MeshLib::Node const& node, std::size_t const element_id)
 {
-    std::vector<MeshLib::Node*> merged_nodes;
-    std::vector<MeshEntityMapInfo> merged_node_map;
-    std::unordered_set<const MeshLib::Node*> node_status;
+    std::vector<MeshLib::Node*> query_nodes;
+    auto const eps =
+        std::numeric_limits<double>::epsilon() * extent.squaredNorm();
+    Eigen::Vector3d const min = node.asEigenVector3d().array() - eps;
+    Eigen::Vector3d const max = node.asEigenVector3d().array() + eps;
+    oct_tree.getPointsInRange(min, max, query_nodes);
 
-    std::size_t element_counter = 0;
+    if (query_nodes.empty())
+    {
+        OGS_FATAL(
+            "query_nodes for node [{}], ({}, {}, {}) of element "
+            "[{}] are empty, eps is {}",
+            node.getID(), node[0], node[1], node[2], element_id, eps);
+    }
+    auto const it =
+        std::find_if(query_nodes.begin(), query_nodes.end(),
+                     [&node, eps](auto const* p)
+                     {
+                         return (p->asEigenVector3d() - node.asEigenVector3d())
+                                    .squaredNorm() < eps;
+                     });
+    if (it == query_nodes.end())
+    {
+        OGS_FATAL(
+            "did not find node: [{}] ({}, {}, {}) of element [{}] in "
+            "query_nodes",
+            node.getID(), node[0], node[1], node[2], element_id);
+    }
+    return *it;
+}
+
+void resetNodesInRegularElements(
+    std::vector<MeshLib::Element*> const& regular_elements,
+    GeoLib::OctTree<MeshLib::Node, 16>& oct_tree,
+    Eigen::Vector3d const& extent)
+{
     for (auto& e : regular_elements)
     {
         for (unsigned i = 0; i < e->getNumberOfNodes(); i++)
         {
             auto* const node = e->getNode(i);
-
-            if (node_status.contains(node))
-
+            MeshLib::Node* node_ptr = nullptr;
+            if (!oct_tree.addPoint(node, node_ptr))
             {
-                continue;
+                auto const node_ptr = getExistingNodeFromOctTree(
+                    oct_tree, extent, *node, e->getID());
+                e->setNode(i, node_ptr);
             }
-
-            // TODO To use std::execution::par if Mac compiler supports
-            // parallel algorithms.
-            auto const found_node =
-                std::find_if(std::begin(merged_nodes),
-                             std::end(merged_nodes),
-                             [&node](auto const merged_node) {
-                                 return (node->asEigenVector3d() ==
-                                         merged_node->asEigenVector3d());
-                             });
-
-            if (found_node != std::end(merged_nodes))
-
-            {
-                e->setNode(i, *found_node);
-                continue;
-            }
-
-            node_status.insert(node);
-            merged_nodes.push_back(node);
-            merged_node_map.push_back(
-                {merged_element_map[element_counter].partition_id,
-                 node->getID()});
         }
-        element_counter++;
     }
+}
 
-    return {merged_nodes, merged_node_map};
+std::pair<std::vector<MeshLib::Node*>, std::vector<MeshEntityMapInfo>>
+makeNodesUnique(std::vector<MeshLib::Node*> const& all_merged_nodes_tmp,
+                std::vector<std::size_t> const& partition_offsets,
+                GeoLib::OctTree<MeshLib::Node, 16>& oct_tree)
+{
+    std::vector<MeshLib::Node*> unique_merged_nodes;
+    unique_merged_nodes.reserve(all_merged_nodes_tmp.size());
+
+    std::vector<MeshEntityMapInfo> merged_node_map;
+    merged_node_map.reserve(all_merged_nodes_tmp.size());
+
+    for (std::size_t i = 0; i < partition_offsets.size() - 1; ++i)
+    {
+        for (std::size_t pos = partition_offsets[i];
+             pos < partition_offsets[i + 1];
+             ++pos)
+        {
+            auto* node = all_merged_nodes_tmp[pos];
+            MeshLib::Node* node_ptr = nullptr;
+            if (oct_tree.addPoint(node, node_ptr))
+            {
+                unique_merged_nodes.push_back(node);
+                merged_node_map.emplace_back(i, pos - partition_offsets[i]);
+            }
+        }
+    }
+    return {unique_merged_nodes, merged_node_map};
 }
 
 int main(int argc, char* argv[])
@@ -341,6 +407,8 @@ int main(int argc, char* argv[])
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
     meshes.reserve(vtu_file_names.size());
 
+    BaseLib::RunTime io_timer;
+    io_timer.start();
     for (auto const& file_name : vtu_file_names)
     {
         auto mesh = std::unique_ptr<MeshLib::Mesh>(
@@ -357,26 +425,61 @@ int main(int argc, char* argv[])
 
         meshes.emplace_back(std::move(mesh));
     }
+    INFO("Reading meshes took {} s", io_timer.elapsed());
 
+    BaseLib::RunTime merged_element_timer;
+    merged_element_timer.start();
     // If structured binding is used for the returned tuple, Mac compiler gives
     // an error in reference to local binding in calling applyToPropertyVectors.
     std::vector<MeshEntityMapInfo> merged_element_map;
     std::vector<MeshLib::Element*> regular_elements;
     std::tie(regular_elements, merged_element_map) = getRegularElements(meshes);
+    INFO(
+        "Collection of {} regular elements and computing element map took {} s",
+        regular_elements.size(), merged_element_timer.elapsed());
 
+    // alternative implementation of getNodesOfRegularElements
+    BaseLib::RunTime collect_nodes_timer;
+    collect_nodes_timer.start();
+    auto [all_merged_nodes_tmp, partition_offsets] =
+        getMergedNodesVector(meshes);
+    INFO("Collection of {} nodes and computing offsets took {} s",
+         all_merged_nodes_tmp.size(), collect_nodes_timer.elapsed());
+
+    BaseLib::RunTime merged_nodes_timer;
+    merged_nodes_timer.start();
+    GeoLib::AABB aabb(all_merged_nodes_tmp.begin(), all_merged_nodes_tmp.end());
+    auto oct_tree = std::unique_ptr<GeoLib::OctTree<MeshLib::Node, 16>>(
+        GeoLib::OctTree<MeshLib::Node, 16>::createOctTree(
+            aabb.getMinPoint(), aabb.getMaxPoint(), 1e-16));
+
+    std::vector<MeshLib::Node*> unique_merged_nodes;
     std::vector<MeshEntityMapInfo> merged_node_map;
-    std::vector<MeshLib::Node*> merged_nodes;
-    std::tie(merged_nodes, merged_node_map) =
-        getNodesOfRegularElements(regular_elements, merged_element_map);
+    std::tie(unique_merged_nodes, merged_node_map) =
+        makeNodesUnique(all_merged_nodes_tmp, partition_offsets, *oct_tree);
+    INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
+         unique_merged_nodes.size(), merged_nodes_timer.elapsed());
 
+    BaseLib::RunTime reset_nodes_in_elements_timer;
+    reset_nodes_in_elements_timer.start();
+    auto const extent = aabb.getMaxPoint() - aabb.getMinPoint();
+    resetNodesInRegularElements(regular_elements, *oct_tree, extent);
+    INFO("Reset nodes in regular elements took {} s",
+         reset_nodes_in_elements_timer.elapsed());
+
+    BaseLib::RunTime mesh_creation_timer;
+    mesh_creation_timer.start();
     // The Node pointers of 'merged_nodes' and Element pointers of
     // 'regular_elements' are shared with 'meshes', the partitioned meshes.
     MeshLib::Mesh merged_mesh =
-        MeshLib::Mesh("pvtu_merged_mesh", merged_nodes, regular_elements,
-                      true /* compute_element_neighbors */);
+        MeshLib::Mesh("pvtu_merged_mesh", unique_merged_nodes, regular_elements,
+                      false /* compute_element_neighbors */);
+    INFO("creation of merged mesh took {} s", mesh_creation_timer.elapsed());
 
     auto const& properties = meshes[0]->getProperties();
 
+    BaseLib::RunTime property_timer;
+    property_timer.start();
     applyToPropertyVectors(
         properties,
         [&](auto type, auto const& property)
@@ -387,15 +490,20 @@ int main(int argc, char* argv[])
                     property),
                 properties, merged_node_map, merged_element_map);
         });
+    INFO("merge properties into merged mesh took {} s",
+         property_timer.elapsed());
 
     MeshLib::IO::VtuInterface writer(&merged_mesh);
 
+    BaseLib::RunTime writing_timer;
+    writing_timer.start();
     auto const result = writer.writeToFile(output_arg.getValue());
     if (!result)
     {
         ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
         return EXIT_FAILURE;
     }
+    INFO("writing mesh took {} s", writing_timer.elapsed());
 
     // Since the Node pointers of 'merged_nodes' and Element pointers of
     // 'regular_elements' are held by 'meshes', the partitioned meshes, the
