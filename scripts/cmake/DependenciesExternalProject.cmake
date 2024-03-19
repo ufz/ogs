@@ -133,6 +133,12 @@ if(OGS_USE_PETSC)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()
 
+        # apple clang 15 requires newer petsc, see
+    # https://www.mail-archive.com/petsc-users@mcs.anl.gov/msg46980.html
+    if(APPLE AND ${CMAKE_CXX_COMPILER_VERSION} GREATER_EQUAL 15)
+        set(ogs.minimum_version.petsc 3.20.5)
+    endif()
+
     set(_petsc_source GIT_REPOSITORY https://gitlab.com/petsc/petsc.git GIT_TAG
                       v${ogs.minimum_version.petsc}
     )
@@ -295,6 +301,14 @@ if(WIN32 OR HDF5_USE_STATIC_LIBRARIES)
     set(HDF5_USE_STATIC_LIBRARIES ON)
     list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
 endif()
+
+# With apple clang 15 there are errors when the cpm compiled hdf5
+# has a different version than the one bundled with vtk, see
+# https://gitlab.kitware.com/vtk/vtk/-/issues/19232.
+if(APPLE AND ${CMAKE_CXX_COMPILER_VERSION} GREATER_EQUAL 15)
+    set(ogs.tested_version.hdf5 1.10.7)
+endif()
+
 # Building from source requires newer hdf version
 string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
 
