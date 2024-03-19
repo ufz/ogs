@@ -102,7 +102,7 @@ class LinearElasticTransverseIsotropic : public ::testing::Test
 public:
     template <int Dim>
     void compareWithElasticOrthotropic(
-        ParameterLib::CoordinateSystem const& coordinate_system)
+        std::optional<ParameterLib::CoordinateSystem> const& coordinate_system)
     {
         // Create a LinearElasticTransverseIsotropic instance:
         auto const parameters_ti =
@@ -152,13 +152,11 @@ public:
     }
 
     template <int Dimension>
-    void compareWithLinearElasticIsotropic()
+    void compareWithLinearElasticIsotropic(
+        std::optional<ParameterLib::CoordinateSystem> const& coordinate_system)
     {
         // Create an isotropic elastic model by using
         // LinearElasticTransverseIsotropic:
-        ParameterLib::ConstantParameter<double> const line_direction{
-            "e3", {1, 0.0, 0.0}};
-        ParameterLib::CoordinateSystem const coordinate_system{line_direction};
         double const E = 8.0e9;
         double const nu = 0.25;
         double const Ga = 0.5 * E / (1 + nu);
@@ -275,6 +273,7 @@ TEST_F(LinearElasticTransverseIsotropic,
 
 TEST_F(LinearElasticTransverseIsotropic, test_agaist_LinearElasticIsotropic)
 {
-    compareWithLinearElasticIsotropic<2>();
-    compareWithLinearElasticIsotropic<3>();
+    std::optional<ParameterLib::CoordinateSystem> coordinate_system = {};
+    compareWithLinearElasticIsotropic<2>(coordinate_system);
+    compareWithLinearElasticIsotropic<3>(coordinate_system);
 }
