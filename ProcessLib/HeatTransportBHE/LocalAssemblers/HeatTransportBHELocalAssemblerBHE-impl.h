@@ -213,5 +213,44 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::assemble(
     // std::cout << local_K.format(CleanFmt) << sep;
     // std::cout << local_M.format(CleanFmt) << sep;
 }
+
+template <typename ShapeFunction, typename BHEType>
+void HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::
+    assembleWithJacobian(double const t, double const dt,
+                         std::vector<double> const& local_x,
+                         std::vector<double> const& local_x_prev,
+                         std::vector<double>& local_M_data,
+                         std::vector<double>& local_K_data,
+                         std::vector<double>& local_rhs_data,
+                         std::vector<double>& local_Jac_data)
+{
+    auto const local_matrix_size = local_x.size();
+    // initialize x and x_prev
+    auto x =
+        Eigen::Map<BheLocalVectorType const>(local_x.data(), local_matrix_size);
+    auto x_prev = Eigen::Map<BheLocalVectorType const>(local_x_prev.data(),
+                                                       local_matrix_size);
+    // initialize local_Jac and local_rhs
+    auto local_Jac = MathLib::createZeroedMatrix<BheLocalMatrixType>(
+        local_Jac_data, local_matrix_size, local_matrix_size);
+    auto local_rhs = MathLib::createZeroedVector<BheLocalVectorType>(
+        local_rhs_data, local_matrix_size);
+
+    assemble(t, dt, local_x, local_x_prev, local_M_data, local_K_data,
+             local_rhs_data /*not going to be used*/);
+
+    // convert to matrix
+    auto local_M = MathLib::toMatrix<BheLocalMatrixType>(
+        local_M_data, local_matrix_size, local_matrix_size);
+    auto local_K = MathLib::toMatrix<BheLocalMatrixType>(
+        local_K_data, local_matrix_size, local_matrix_size);
+
+    // Jac matrix and rhs vector operation
+    local_Jac.noalias() += local_K + local_M / dt;
+    local_rhs.noalias() -= local_K * x + local_M * (x - x_prev) / dt;
+
+    local_M.setZero();
+    local_K.setZero();
+}
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

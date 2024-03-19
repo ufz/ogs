@@ -41,11 +41,16 @@ public:
     using ShapeMatricesType =
         ShapeMatrixPolicyType<ShapeFunction, 3 /* GlobalDim */>;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
+    using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
+    using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     // Using dynamic size, because the number of unknowns in the BHE is runtime
     // value.
     using BheLocalMatrixType =
         typename ShapeMatricesType::template MatrixType<local_matrix_size,
                                                         local_matrix_size>;
+    using BheLocalVectorType =
+        typename ShapeMatricesType::template VectorType<local_matrix_size>;
+
     HeatTransportBHELocalAssemblerBHE(
         HeatTransportBHELocalAssemblerBHE const&) = delete;
     HeatTransportBHELocalAssemblerBHE(HeatTransportBHELocalAssemblerBHE&&) =
@@ -64,6 +69,14 @@ public:
                   std::vector<double>& /*local_M_data*/,
                   std::vector<double>& /*local_K_data*/,
                   std::vector<double>& /*local_b_data*/) override;
+
+    void assembleWithJacobian(double const t, double const dt,
+                              std::vector<double> const& local_x,
+                              std::vector<double> const& local_x_prev,
+                              std::vector<double>& /*local_M_data*/,
+                              std::vector<double>& /*local_K_data*/,
+                              std::vector<double>& local_rhs_data,
+                              std::vector<double>& local_Jac_data) override;
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
