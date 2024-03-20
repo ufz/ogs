@@ -184,7 +184,8 @@ std::pair<MeshLib::Element*, int> createElement<MeshLib::Pyramid13>(
 
 std::pair<MeshLib::Element*, int> readElement(
     std::ifstream& in, std::vector<MeshLib::Node*> const& nodes,
-    std::map<unsigned, unsigned> const& id_map)
+    std::map<unsigned, unsigned> const& id_map,
+    bool const is_created_with_gmsh2)
 {
     unsigned idx;
     unsigned type;
@@ -192,9 +193,23 @@ std::pair<MeshLib::Element*, int> readElement(
     unsigned dummy;
     int mat_id;
 
-    // element format is structured like this:
+    // The element format is structured like this:
+    // Gmsh version 4:
     // element-id element-type n-tags physical-entity elementary entity node-ids
-    in >> idx >> type >> n_tags >> dummy >> mat_id;
+    // Gmsh version 2:
+    // element-id element-type n-tags  elementary physical-entity entity
+    // node-ids
+
+    in >> idx >> type >> n_tags;
+
+    if (!is_created_with_gmsh2)
+    {
+        in >> mat_id >> dummy;
+    }
+    else  // for meshes created by using Gmsh version 2
+    {
+        in >> dummy >> mat_id;
+    }
 
     switch (type)
     {
@@ -268,8 +283,18 @@ std::pair<MeshLib::Element*, int> readElement(
     return std::make_pair(nullptr, -1);
 }
 
-MeshLib::Mesh* readGMSHMesh(std::string const& fname)
+MeshLib::Mesh* readGMSHMesh(std::string const& fname,
+                            bool const is_created_with_gmsh2)
 {
+    if (!is_created_with_gmsh2)
+    {
+        WARN(
+            "If the mesh is generated with Gmsh version 2 and it is saved"
+            " (or exported) as \"Version 2 ASCII\" format, the flag"
+            " --gmsh2_physical_id must be used for a correct conversion from "
+            "physical id to MaterialIDs.");
+    }
+
     std::string line;
     std::ifstream in(fname.c_str(), std::ios::in);
     if (!in.is_open())
@@ -340,7 +365,8 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname)
             {
                 MeshLib::Element* elem(nullptr);
                 int mat_id(0);
-                std::tie(elem, mat_id) = readElement(in, nodes, id_map);
+                std::tie(elem, mat_id) =
+                    readElement(in, nodes, id_map, is_created_with_gmsh2);
 
                 if (elem)
                 {
