@@ -42,10 +42,6 @@
 
 struct MeshEntityMapInfo
 {
-    MeshEntityMapInfo(std::size_t partition, std::size_t orig_id)
-        : partition_id(partition), original_id(orig_id)
-    {
-    }
     std::size_t partition_id;
     std::size_t original_id;
 };
