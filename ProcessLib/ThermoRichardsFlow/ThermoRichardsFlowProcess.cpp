@@ -189,8 +189,7 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
-        _use_monolithic_scheme, process_id);
+        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
 }
 
 void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(

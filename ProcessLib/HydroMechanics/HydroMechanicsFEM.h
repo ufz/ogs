@@ -265,7 +265,6 @@ public:
     void postTimestepConcrete(Eigen::VectorXd const& local_x,
                               Eigen::VectorXd const& local_x_prev,
                               double const t, double const dt,
-                              bool const use_monolithic_scheme,
                               int const process_id) override;
 
     void computeSecondaryVariableConcrete(
@@ -275,7 +274,6 @@ public:
     void postNonLinearSolverConcrete(std::vector<double> const& local_x,
                                      std::vector<double> const& local_x_prev,
                                      double const t, double const dt,
-                                     bool const use_monolithic_scheme,
                                      int const process_id) override;
 
     void setInitialConditionsConcrete(std::vector<double> const& local_x,

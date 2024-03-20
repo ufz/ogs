@@ -301,7 +301,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
         _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
-        dt, _use_monolithic_scheme, process_id);
+        dt, process_id);
 }
 
 template <int DisplacementDim>
@@ -318,13 +318,12 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 
     DBUG("PostNonLinearSolver ThermoMechanicalPhaseFieldProcess.");
     // Calculate strain, stress or other internal variables of mechanics.
-    const bool use_monolithic_scheme = false;
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
         pv.getActiveElementIDs(), getDOFTable(process_id), x, x_prev, t, dt,
-        use_monolithic_scheme, process_id);
+        process_id);
 }
 
 template class ThermoMechanicalPhaseFieldProcess<2>;

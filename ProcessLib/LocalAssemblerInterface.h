@@ -90,15 +90,13 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev, double const t,
-        double const dt, bool const use_monolithic_scheme,
-        int const process_id);
+        double const dt, int const process_id);
 
     void postNonLinearSolver(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
                              std::vector<GlobalVector*> const& x,
                              std::vector<GlobalVector*> const& x_prev,
                              double const t, double const dt,
-                             bool const use_monolithic_scheme,
                              int const process_id);
 
     /// Computes the flux in the point \c p_local_coords that is given in local
@@ -138,7 +136,6 @@ private:
     virtual void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                                       Eigen::VectorXd const& /*local_x_prev*/,
                                       double const /*t*/, double const /*dt*/,
-                                      bool const /*use_monolithic_scheme*/,
                                       int const /*process_id*/)
     {
     }
@@ -146,8 +143,7 @@ private:
     virtual void postNonLinearSolverConcrete(
         std::vector<double> const& /*local_x*/,
         std::vector<double> const& /*local_x_prev*/, double const /*t*/,
-        double const /*dt*/, bool const /*use_monolithic_scheme*/,
-        int const /*process_id*/)
+        double const /*dt*/, int const /*process_id*/)
     {
     }
 

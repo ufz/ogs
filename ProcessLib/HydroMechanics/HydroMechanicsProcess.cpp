@@ -408,8 +408,7 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        getActiveElementIDs(), dof_tables, x, x_prev, t, dt, false /*unused*/,
-        process_id);
+        getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
 }
 
 template <int DisplacementDim>
@@ -424,7 +423,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
         getActiveElementIDs(), getDOFTable(process_id), x, x_prev, t, dt,
-        false /*unused*/, process_id);
+        process_id);
 }
 
 template <int DisplacementDim>
