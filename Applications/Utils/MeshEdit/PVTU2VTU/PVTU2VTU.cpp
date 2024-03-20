@@ -358,7 +358,7 @@ makeNodesUnique(std::vector<MeshLib::Node*> const& all_merged_nodes_tmp,
             if (oct_tree.addPoint(node, node_ptr))
             {
                 unique_merged_nodes.push_back(node);
-                merged_node_map.emplace_back(i, pos - partition_offsets[i]);
+                merged_node_map.push_back({i, pos - partition_offsets[i]});
             }
         }
     }
