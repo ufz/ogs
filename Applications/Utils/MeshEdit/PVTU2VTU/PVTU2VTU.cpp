@@ -478,7 +478,9 @@ int main(int argc, char* argv[])
     property_timer.start();
     applyToPropertyVectors(
         properties,
-        [&](auto type, auto const& property)
+        [&, &merged_node_map = merged_node_map,
+         &merged_element_map = merged_element_map](auto type,
+                                                   auto const& property)
         {
             return createPropertyVector<decltype(type)>(
                 merged_mesh, meshes,
