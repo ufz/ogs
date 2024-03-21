@@ -42,10 +42,6 @@
 
 struct MeshEntityMapInfo
 {
-    MeshEntityMapInfo(std::size_t partition, std::size_t orig_id)
-        : partition_id(partition), original_id(orig_id)
-    {
-    }
     std::size_t partition_id;
     std::size_t original_id;
 };
@@ -362,7 +358,7 @@ makeNodesUnique(std::vector<MeshLib::Node*> const& all_merged_nodes_tmp,
             if (oct_tree.addPoint(node, node_ptr))
             {
                 unique_merged_nodes.push_back(node);
-                merged_node_map.emplace_back(i, pos - partition_offsets[i]);
+                merged_node_map.push_back({i, pos - partition_offsets[i]});
             }
         }
     }
@@ -431,9 +427,7 @@ int main(int argc, char* argv[])
     merged_element_timer.start();
     // If structured binding is used for the returned tuple, Mac compiler gives
     // an error in reference to local binding in calling applyToPropertyVectors.
-    std::vector<MeshEntityMapInfo> merged_element_map;
-    std::vector<MeshLib::Element*> regular_elements;
-    std::tie(regular_elements, merged_element_map) = getRegularElements(meshes);
+    auto [regular_elements, merged_element_map] = getRegularElements(meshes);
     INFO(
         "Collection of {} regular elements and computing element map took {} s",
         regular_elements.size(), merged_element_timer.elapsed());
@@ -453,9 +447,7 @@ int main(int argc, char* argv[])
         GeoLib::OctTree<MeshLib::Node, 16>::createOctTree(
             aabb.getMinPoint(), aabb.getMaxPoint(), 1e-16));
 
-    std::vector<MeshLib::Node*> unique_merged_nodes;
-    std::vector<MeshEntityMapInfo> merged_node_map;
-    std::tie(unique_merged_nodes, merged_node_map) =
+    auto [unique_merged_nodes, merged_node_map] =
         makeNodesUnique(all_merged_nodes_tmp, partition_offsets, *oct_tree);
     INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
          unique_merged_nodes.size(), merged_nodes_timer.elapsed());
@@ -482,7 +474,9 @@ int main(int argc, char* argv[])
     property_timer.start();
     applyToPropertyVectors(
         properties,
-        [&](auto type, auto const& property)
+        [&, &merged_node_map = merged_node_map,
+         &merged_element_map = merged_element_map](auto type,
+                                                   auto const& property)
         {
             return createPropertyVector<decltype(type)>(
                 merged_mesh, meshes,
