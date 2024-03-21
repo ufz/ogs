@@ -956,6 +956,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.pushBackState();
 
         this->material_states_[ip].pushBackState();
+        this->prev_states_[ip] = this->current_states_[ip];
     }
 }
 
