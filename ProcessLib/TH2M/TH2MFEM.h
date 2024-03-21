@@ -95,7 +95,7 @@ private:
         double const* values,
         int const integration_order) override;
 
-    void setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
+    void setInitialConditionsConcrete(Eigen::Ref<Eigen::VectorXd const> local_x,
                                       double const t,
                                       int const process_id) override;
 

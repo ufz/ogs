@@ -109,7 +109,7 @@ std::size_t ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
 template <typename ShapeFunction, int GlobalDim>
 void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
-    setInitialConditionsConcrete(Eigen::VectorXd const& local_x,
+    setInitialConditionsConcrete(Eigen::Ref<Eigen::VectorXd const> local_x,
                                  double const t,
                                  int const /*process_id*/)
 {

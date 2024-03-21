@@ -121,7 +121,7 @@ public:
 
 private:
     virtual void setInitialConditionsConcrete(
-        Eigen::VectorXd const& /*local_x*/, double const /*t*/,
+        Eigen::Ref<Eigen::VectorXd const> /*local_x*/, double const /*t*/,
         int const /*process_id*/)
     {
     }
