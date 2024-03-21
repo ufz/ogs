@@ -139,6 +139,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            GasPressureData const& p_GR,
                            CapillaryPressureData const& p_cap,
                            TemperatureData const& T_data,
+                           PureLiquidDensityData const& rho_W_LR,
                            PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -202,19 +203,14 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     auto const pLR = pGR - pCap;
     variables.liquid_phase_pressure = pLR;
 
-    // Concentration is initially zero to calculate the density of the pure
-    // water phase, which is needed for the Kelvin-Laplace equation.
-    variables.concentration = 0.;
-    const auto rhoLR_0 =
-        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
-
     // Kelvin-Laplace correction for menisci
-    const double K = pCap > 0. ? std::exp(-pCap * M_W / rhoLR_0 / R / T) : 1.;
-    const double dK_dT = pCap > 0. ? pCap * M_W / rhoLR_0 / R / T / T * K : 0;
+    const double K =
+        pCap > 0. ? std::exp(-pCap * M_W / rho_W_LR() / R / T) : 1.;
+    const double dK_dT =
+        pCap > 0. ? pCap * M_W / rho_W_LR() / R / T / T * K : 0;
     const double dK_dpCap =
-        pCap > 0. ? -M_W / rhoLR_0 / R / T * K
-                  : 0.;  // rhoLR_0 is treated as a constant here. However, the
+        pCap > 0. ? -M_W / rho_W_LR() / R / T * K
+                  : 0.;  // rho_W_LR is treated as a constant here. However, the
                          // resulting errors are very small and can be ignored.
 
     // vapour pressure inside porespace (== water partial pressure in gas
@@ -391,9 +387,6 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
         (dH_dpGR * cv.xnCG + H * dxnCG_dpGR) * pGR + H * cv.xnCG;
     auto const dcCL_dT = pGR * (dH_dT * cv.xnCG + H * dxnCG_dT);
 
-    // Density of pure liquid phase
-    cv.rhoWLR = rhoLR_0;
-
     variables.concentration = cCL;
     // Liquid density including dissolved gas components. Attention! This
     // only works if the concentration of the C-component is taken into
@@ -409,10 +402,10 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     variables.density = cv.rhoLR;
 
     // Gas component partial density in liquid phase
-    cv.rhoCLR = cv.rhoLR - cv.rhoWLR;
+    cv.rhoCLR = cv.rhoLR - rho_W_LR();
 
     // liquid phase composition (mass fraction)
-    cv.xmWL = std::clamp(cv.rhoWLR / cv.rhoLR, 0., 1.);
+    cv.xmWL = std::clamp(rho_W_LR() / cv.rhoLR, 0., 1.);
     auto const xmCL = 1. - cv.xmWL;
 
     // Attention! Usually a multi-linear equation of state is used to

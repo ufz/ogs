@@ -15,6 +15,7 @@
 #include "MechanicalStrain.h"
 #include "PermeabilityModel.h"
 #include "PhaseTransitionModel.h"
+#include "PureLiquidDensity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
@@ -54,6 +55,7 @@ struct ConstitutiveModels
     SolidMechanicsModel<DisplacementDim> s_mech_model;
     TotalStressModel<DisplacementDim> total_stress_model;
     PermeabilityModel<DisplacementDim> permeability_model;
+    PureLiquidDensityModel pure_liquid_density_model;
     PhaseTransitionModel const& phase_transition_model;
 };
 }  // namespace ConstitutiveRelations

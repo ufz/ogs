@@ -108,15 +108,22 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     variable_array.capillary_pressure = pCap;
     variable_array.temperature = T;
 
+    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityData rhoWLR;
+    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityModel
+        rhoWLR_model;
+    rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR},
+                      CapillaryPressureData{pGR}, TemperatureData{T, T},
+                      rhoWLR);
+    ASSERT_NEAR(density_water, rhoWLR(), 1e-10);
+
     PhaseTransitionData cv;
     ptm->eval(x_t, media_data, GasPressureData{pGR}, CapillaryPressureData{pGR},
-              TemperatureData{T, T}, cv);
+              TemperatureData{T, T}, rhoWLR, cv);
 
     // reference values
     double const rhoCGR = density_air;
     double const rhoWGR = 0.0;
     double const rhoCLR = 0.0;
-    double const rhoWLR = density_water;
     double const xmCG = 1.0;
     double const xmWG = 0.0;
     double const dxmWG_dpGR = 0.0;
@@ -137,7 +144,6 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ASSERT_NEAR(rhoCGR, cv.rhoCGR, 1.0e-10);
     ASSERT_NEAR(rhoWGR, cv.rhoWGR, 1.0e-10);
     ASSERT_NEAR(rhoCLR, cv.rhoCLR, 1.0e-10);
-    ASSERT_NEAR(rhoWLR, cv.rhoWLR, 1.0e-10);
     ASSERT_NEAR(xmCG, 1. - cv.xmWG, 1.e-10);
     ASSERT_NEAR(xmWG, cv.xmWG, 1.e-10);
     ASSERT_NEAR(dxmWG_dpGR, cv.dxmWG_dpGR, 1.0e-10);

@@ -19,6 +19,7 @@
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
+#include "PureLiquidDensity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
@@ -39,6 +40,7 @@ struct StatefulData
     ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>
         eff_stress_data;
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
+    PureLiquidDensityData rho_W_LR;
 
     static auto reflect()
     {
@@ -57,6 +59,7 @@ struct StatefulDataPrev
     PrevState<ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>>
         eff_stress_data;
     PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
+    PrevState<PureLiquidDensityData> rho_W_LR;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
@@ -65,6 +68,7 @@ struct StatefulDataPrev
         swelling_data = state.swelling_data;
         eff_stress_data = state.eff_stress_data;
         mechanical_strain_data = state.mechanical_strain_data;
+        rho_W_LR = state.rho_W_LR;
 
         return *this;
     }

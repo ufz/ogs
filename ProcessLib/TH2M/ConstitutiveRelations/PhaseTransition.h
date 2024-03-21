@@ -27,6 +27,7 @@ struct PhaseTransition : PhaseTransitionModel
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
               GasPressureData const& p_GR, CapillaryPressureData const& p_cap,
               TemperatureData const& T_data,
+              PureLiquidDensityData const& rho_W_LR,
               PhaseTransitionData& cv) const override;
 
 private:

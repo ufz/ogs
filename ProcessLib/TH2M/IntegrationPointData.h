@@ -46,8 +46,6 @@ struct IntegrationPointData final
     double rhoWGR_prev = std::numeric_limits<double>::quiet_NaN();
     double rhoCLR = std::numeric_limits<double>::quiet_NaN();
     double rhoCLR_prev = std::numeric_limits<double>::quiet_NaN();
-    double rhoWLR = std::numeric_limits<double>::quiet_NaN();
-    double rhoWLR_prev = std::numeric_limits<double>::quiet_NaN();
 
     // phase enthalpies
     double rho_G_h_G = std::numeric_limits<double>::quiet_NaN();
@@ -90,7 +88,6 @@ struct IntegrationPointData final
         rhoCGR_prev = rhoCGR;
         rhoWGR_prev = rhoWGR;
         rhoCLR_prev = rhoCLR;
-        rhoWLR_prev = rhoWLR;
 
         rho_u_eff_prev = rho_u_eff;
     }

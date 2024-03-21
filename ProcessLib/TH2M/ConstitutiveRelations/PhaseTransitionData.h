@@ -37,7 +37,6 @@ struct PhaseTransitionData
 
     // liquid phase density
     double rhoLR = 0.;
-    double rhoWLR = 0.;
     double rhoCLR = 0.;
 
     double drho_LR_dp_GR = 0.;
