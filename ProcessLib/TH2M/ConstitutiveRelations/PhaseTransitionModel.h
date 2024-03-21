@@ -12,6 +12,7 @@
 #include "Base.h"
 #include "PhaseTransitionData.h"
 #include "PureLiquidDensity.h"
+#include "Viscosity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -47,6 +48,7 @@ struct PhaseTransitionModel
                       CapillaryPressureData const& p_cap,
                       TemperatureData const& T_data,
                       PureLiquidDensityData const& rho_W_LR,
+                      ViscosityData& viscosity_data,
                       PhaseTransitionData& cv) const = 0;
 };
 }  // namespace ConstitutiveRelations

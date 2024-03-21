@@ -22,6 +22,7 @@
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
 #include "TotalStress.h"
+#include "Viscosity.h"
 
 namespace ProcessLib::TH2M
 {

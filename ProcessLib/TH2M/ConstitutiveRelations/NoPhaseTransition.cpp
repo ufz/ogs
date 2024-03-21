@@ -43,6 +43,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                              CapillaryPressureData const& p_cap,
                              TemperatureData const& T_data,
                              PureLiquidDensityData const& rho_W_LR,
+                             ViscosityData& viscosity_data,
                              PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -71,8 +72,9 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
 
     cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
                    .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
-    cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                  .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    viscosity_data.mu_GR =
+        gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     cv.rhoCGR = cv.rhoGR;
 
@@ -84,7 +86,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     cv.rhoLR = rho_W_LR();
     variables.density = cv.rhoLR;
 
-    cv.muLR =
+    viscosity_data.mu_LR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 

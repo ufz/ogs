@@ -75,10 +75,6 @@ struct PhaseTransitionData
     double dxmWL_dpLR = 0.;
     double dxmWL_dT = 0.;
 
-    // viscosities
-    double muGR = 0.;
-    double muLR = 0.;
-
     double diffusion_coefficient_vapour = 0.;
     double diffusion_coefficient_solute = 0.;
 

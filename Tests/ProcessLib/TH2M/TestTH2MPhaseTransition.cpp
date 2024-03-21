@@ -224,6 +224,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
     ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityModel
         rhoWLR_model;
 
+    ProcessLib::TH2M::ConstitutiveRelations::ViscosityData viscosity;
     ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
     ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
         {},
@@ -243,7 +244,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR + eps_pGR},
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR + eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, cv);
+                  T_data, rhoWLR, viscosity, cv);
 
         auto xmWG_plus = cv.xmWG;
         auto rhoGR_plus = cv.rhoGR;
@@ -253,7 +254,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR - eps_pGR},
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR - eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, cv);
+                  T_data, rhoWLR, viscosity, cv);
 
         auto xmWG_minus = cv.xmWG;
         auto rhoGR_minus = cv.rhoGR;
@@ -263,7 +264,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR}, p_cap_data,
                           T_data, rhoWLR);
-        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR, cv);
+        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
+                  viscosity, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpGR = (xmWG_plus - xmWG_minus) / (2. * eps_pGR);
@@ -287,7 +289,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
                           CapillaryPressureData{pCap + eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR, cv);
+                  CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
+                  viscosity, cv);
 
         xmWG_plus = cv.xmWG;
         rhoGR_plus = cv.rhoGR;
@@ -298,7 +301,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
                           CapillaryPressureData{pCap - eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR, cv);
+                  CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
+                  viscosity, cv);
 
         xmWG_minus = cv.xmWG;
         rhoGR_minus = cv.rhoGR;
@@ -308,7 +312,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
-        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR, cv);
+        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
+                  viscosity, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpCap = (xmWG_plus - xmWG_minus) / (2. * eps_pCap);
@@ -333,7 +338,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
                           TemperatureData{T + eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T + eps_T, T}, rhoWLR, cv);
+                  TemperatureData{T + eps_T, T}, rhoWLR, viscosity, cv);
 
         xmWG_plus = cv.xmWG;
         rhoGR_plus = cv.rhoGR;
@@ -343,7 +348,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
                           TemperatureData{T - eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T - eps_T, T}, rhoWLR, cv);
+                  TemperatureData{T - eps_T, T}, rhoWLR, viscosity, cv);
 
         xmWG_minus = cv.xmWG;
         rhoGR_minus = cv.rhoGR;
@@ -353,7 +358,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
-        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR, cv);
+        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
+                  viscosity, cv);
 
         // Central difference derivatives
         auto const dxmWG_dT = (xmWG_plus - xmWG_minus) / (2. * eps_T);
@@ -422,8 +428,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
         ASSERT_NEAR(diffusion_gas_phase, cv.diffusion_coefficient_vapour,
                     1.0e-10);
 
-        ASSERT_NEAR(viscosity_air, cv.muGR, 1.0e-10);
-        ASSERT_NEAR(viscosity_water, cv.muLR, 1.0e-10);
+        ASSERT_NEAR(viscosity_air, viscosity.mu_GR, 1.0e-10);
+        ASSERT_NEAR(viscosity_water, viscosity.mu_LR, 1.0e-10);
     }
 }
 
@@ -460,6 +466,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
     ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityModel
         rhoWLR_model;
 
+    ProcessLib::TH2M::ConstitutiveRelations::ViscosityData viscosity;
     ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
     ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
         {},
@@ -479,7 +486,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR + eps_pGR},
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR + eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, cv);
+                  T_data, rhoWLR, viscosity, cv);
 
         auto xmWG_plus = cv.xmWG;
         auto rhoCGR_plus = cv.rhoCGR;
@@ -488,7 +495,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR - eps_pGR},
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR - eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, cv);
+                  T_data, rhoWLR, viscosity, cv);
 
         auto xmWG_minus = cv.xmWG;
         auto rhoCGR_minus = cv.rhoCGR;
@@ -497,7 +504,8 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
-        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR, cv);
+        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
+                  viscosity, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpGR = (xmWG_plus - xmWG_minus) / (2. * eps_pGR);
@@ -520,7 +528,8 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                           CapillaryPressureData{pCap + eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR, cv);
+                  CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
+                  viscosity, cv);
 
         xmWG_plus = cv.xmWG;
         rhoCGR_plus = cv.rhoCGR;
@@ -530,7 +539,8 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                           CapillaryPressureData{pCap - eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR, cv);
+                  CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
+                  viscosity, cv);
 
         xmWG_minus = cv.xmWG;
         rhoCGR_minus = cv.rhoCGR;
@@ -539,7 +549,8 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
-        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR, cv);
+        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
+                  viscosity, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpCap = (xmWG_plus - xmWG_minus) / (2. * eps_pCap);
@@ -563,7 +574,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
                           TemperatureData{T + eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T + eps_T, T}, rhoWLR, cv);
+                  TemperatureData{T + eps_T, T}, rhoWLR, viscosity, cv);
 
         xmWG_plus = cv.xmWG;
         rhoCGR_plus = cv.rhoCGR;
@@ -572,7 +583,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
                           TemperatureData{T - eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T - eps_T, T}, rhoWLR, cv);
+                  TemperatureData{T - eps_T, T}, rhoWLR, viscosity, cv);
 
         xmWG_minus = cv.xmWG;
         rhoCGR_minus = cv.rhoCGR;
@@ -581,7 +592,8 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
-        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR, cv);
+        ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
+                  viscosity, cv);
 
         // Central difference derivatives
         auto const dxmWG_dT = (xmWG_plus - xmWG_minus) / (2. * eps_T);
@@ -646,7 +658,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         ASSERT_NEAR(diffusion_gas_phase, cv.diffusion_coefficient_vapour,
                     1.0e-10);
 
-        ASSERT_NEAR(viscosity_air, cv.muGR, 1.0e-10);
-        ASSERT_NEAR(viscosity_water, cv.muLR, 1.0e-10);
+        ASSERT_NEAR(viscosity_air, viscosity.mu_GR, 1.0e-10);
+        ASSERT_NEAR(viscosity_water, viscosity.mu_LR, 1.0e-10);
     }
 }

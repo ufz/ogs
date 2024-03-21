@@ -140,6 +140,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            CapillaryPressureData const& p_cap,
                            TemperatureData const& T_data,
                            PureLiquidDensityData const& rho_W_LR,
+                           ViscosityData& viscosity_data,
                            PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -342,8 +343,9 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     variables.molar_fraction = cv.xnCG;
 
     // gas phase viscosity
-    cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                  .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    viscosity_data.mu_GR =
+        gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // Dissolution part -- Liquid phase properties
     // -------------------------------------------
@@ -497,7 +499,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
         tortuosity * D_C_L_m;  // Note here that D_C_L = D_W_L.
 
     // liquid phase viscosity
-    cv.muLR =
+    viscosity_data.mu_LR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 }

@@ -227,7 +227,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.phase_transition_model.eval(
             {pos, t, dt}, media_data, GasPressureData{pGR},
             CapillaryPressureData{pCap}, T_data, current_state.rho_W_LR,
-            ip_out.phase_transition_data);
+            ip_cv.viscosity_data, ip_out.phase_transition_data);
 
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
@@ -493,23 +493,27 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& b = this->process_data_.specific_body_force;
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            c.muGR;
+            ip_cv.viscosity_data.mu_GR;
         GlobalDimMatrixType const k_over_mu_L =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            c.muLR;
+            ip_cv.viscosity_data.mu_LR;
 
         // dk_over_mu_G_dp_GR = ip_out.permeability_data.Ki *
         //                      ip_out.permeability_data.dk_rel_G_dS_L *
-        //                      (ds_L_dp_GR = 0) / c.muGR = 0;
+        //                      (ds_L_dp_GR = 0) /
+        //                      ip_cv.viscosity_data.mu_GR = 0;
         // dk_over_mu_L_dp_GR = ip_out.permeability_data.Ki *
         //                      ip_out.permeability_data.dk_rel_L_dS_L *
-        //                      (ds_L_dp_GR = 0) / c.muLR = 0;
+        //                      (ds_L_dp_GR = 0) /
+        //                      ip_cv.viscosity_data.mu_LR = 0;
         ip_cv.dk_over_mu_G_dp_cap = ip_out.permeability_data.Ki *
                                     ip_out.permeability_data.dk_rel_G_dS_L *
-                                    ip_cv.dS_L_dp_cap() / c.muGR;
+                                    ip_cv.dS_L_dp_cap() /
+                                    ip_cv.viscosity_data.mu_GR;
         ip_cv.dk_over_mu_L_dp_cap = ip_out.permeability_data.Ki *
                                     ip_out.permeability_data.dk_rel_L_dS_L *
-                                    ip_cv.dS_L_dp_cap() / c.muLR;
+                                    ip_cv.dS_L_dp_cap() /
+                                    ip_cv.viscosity_data.mu_LR;
 
         ip_data.w_GS = k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
         ip_data.w_LS = k_over_mu_L * gradpCap + k_over_mu_L * c.rhoLR * b -
@@ -1186,10 +1190,10 @@ void TH2MLocalAssembler<
 
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip_out.phase_transition_data.muGR;
+            ip_cv.viscosity_data.mu_GR;
         GlobalDimMatrixType const k_over_mu_L =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip_out.phase_transition_data.muLR;
+            ip_cv.viscosity_data.mu_LR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1646,10 +1650,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip_out.phase_transition_data.muGR;
+            ip_cv.viscosity_data.mu_GR;
         GlobalDimMatrixType const k_over_mu_L =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip_out.phase_transition_data.muLR;
+            ip_cv.viscosity_data.mu_LR;
 
         // ---------------------------------------------------------------------
         // C-component equation
