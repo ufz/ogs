@@ -149,4 +149,8 @@ std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
     std::function<NumLib::LocalToGlobalIndexMap const&(const int)>
         get_single_dof_table);
 
+std::vector<double> getLocalX(
+    std::size_t const mesh_item_id,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    std::vector<GlobalVector*> const& x);
 }  // namespace NumLib

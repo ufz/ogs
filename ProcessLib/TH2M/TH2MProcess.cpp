@@ -294,9 +294,9 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
 
     DBUG("Set initial conditions of TH2MProcess.");
 
-    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    auto get_a_dof_table_func = [this](const int process_id) -> auto&
     {
-        return getDOFTable(num_processes);
+        return getDOFTable(process_id);
     };
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,

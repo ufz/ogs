@@ -120,9 +120,9 @@ void ThermoRichardsFlowProcess::setInitialConditionsConcreteProcess(
     }
     DBUG("SetInitialConditions ThermoRichardsFlowProcess.");
 
-    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    auto get_a_dof_table_func = [this](const int process_id) -> auto&
     {
-        return getDOFTable(num_processes);
+        return getDOFTable(process_id);
     };
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,

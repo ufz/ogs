@@ -329,9 +329,9 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    auto get_a_dof_table_func = [this](const int process_id) -> auto&
     {
-        return getDOFTable(num_processes);
+        return getDOFTable(process_id);
     };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,

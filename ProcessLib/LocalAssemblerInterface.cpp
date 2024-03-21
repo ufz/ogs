@@ -69,26 +69,6 @@ void LocalAssemblerInterface::assembleWithJacobianForStaggeredScheme(
         "implemented in the local assembler.");
 }
 
-std::vector<double> getLocalX(
-    std::size_t const mesh_item_id,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-    std::vector<GlobalVector*> const& x)
-{
-    std::vector<double> local_x_vec;
-
-    auto const n_processes = x.size();
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        auto const indices =
-            NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
-        assert(!indices.empty());
-        auto const local_solution = x[process_id]->get(indices);
-        local_x_vec.insert(std::end(local_x_vec), std::begin(local_solution),
-                           std::end(local_solution));
-    }
-    return local_x_vec;
-}
-
 void LocalAssemblerInterface::computeSecondaryVariable(
     std::size_t const mesh_item_id,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
@@ -96,7 +76,7 @@ void LocalAssemblerInterface::computeSecondaryVariable(
     GlobalVector const& x_prev, int const process_id)
 {
     std::vector<double> const local_x_vec =
-        getLocalX(mesh_item_id, dof_tables, x);
+        NumLib::getLocalX(mesh_item_id, dof_tables, x);
 
     auto const local_x = MathLib::toVector(local_x_vec);
 
@@ -115,7 +95,7 @@ void LocalAssemblerInterface::setInitialConditions(
     std::vector<GlobalVector*> const& x, double const t, int const process_id)
 {
     std::vector<double> const local_x_vec =
-        getLocalX(mesh_item_id, dof_tables, x);
+        NumLib::getLocalX(mesh_item_id, dof_tables, x);
     auto const local_x_eigen_map = MathLib::toVector(local_x_vec);
 
     setInitialConditionsConcrete(local_x_eigen_map, t, process_id);

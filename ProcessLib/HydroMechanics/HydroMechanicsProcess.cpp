@@ -400,9 +400,9 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     DBUG("PostTimestep HydroMechanicsProcess.");
 
-    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    auto get_a_dof_table_func = [this](const int process_id) -> auto&
     {
-        return getDOFTable(num_processes);
+        return getDOFTable(process_id);
     };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
@@ -440,9 +440,9 @@ void HydroMechanicsProcess<DisplacementDim>::
 
     DBUG("Set initial conditions of HydroMechanicsProcess.");
 
-    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    auto get_a_dof_table_func = [this](const int process_id) -> auto&
     {
-        return getDOFTable(num_processes);
+        return getDOFTable(process_id);
     };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
@@ -462,9 +462,9 @@ void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
 
-    auto get_a_dof_table_func = [this](const int num_processes) -> auto&
+    auto get_a_dof_table_func = [this](const int process_id) -> auto&
     {
-        return getDOFTable(num_processes);
+        return getDOFTable(process_id);
     };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
