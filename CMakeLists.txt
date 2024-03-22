@@ -1,6 +1,10 @@
 # ---- OGS-6 Project ----
 cmake_minimum_required(VERSION 3.22)
 
+if(CMAKE_VERSION GREATER_EQUAL 3.29)
+    cmake_policy(SET CMP0156 NEW)
+endif()
+
 project(OGS-6)
 
 option(OGS_BUILD_WHEEL "Build Python wheels of OGS" OFF)
