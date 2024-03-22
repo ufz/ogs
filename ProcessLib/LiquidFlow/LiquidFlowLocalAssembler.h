@@ -37,14 +37,12 @@ namespace LiquidFlow
 template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    explicit IntegrationPointData(NodalRowVectorType const& N_,
-                                  GlobalDimNodalMatrixType const& dNdx_,
+    explicit IntegrationPointData(GlobalDimNodalMatrixType const& dNdx_,
                                   double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+        : dNdx(dNdx_), integration_weight(integration_weight_)
     {
     }
 
-    NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
@@ -115,7 +113,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
-                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
@@ -138,10 +136,13 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N;
+        auto const& N =
+            _shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+        return Eigen::Map<const Eigen::RowVectorXd>(
+            N[integration_point].data(), N[integration_point].size());
     }
 
     std::vector<double> const& getIntPtDarcyVelocity(
