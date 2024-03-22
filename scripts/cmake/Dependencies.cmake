@@ -67,7 +67,7 @@ if(GUIX_BUILD)
 else()
     CPMAddPackage(
         NAME tetgen GITHUB_REPOSITORY ufz/tetgen
-        GIT_TAG 603ba181ebfaed38eec88532720e282606009b73
+        GIT_TAG 213548f5bca1ec00269603703f0fec1272181587
     )
     if(tetgen_ADDED)
         install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
