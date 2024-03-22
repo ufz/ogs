@@ -67,9 +67,7 @@ class HertzContactBC(OpenGeoSys.BoundaryCondition):
         self._iteration += 1
 
         print(
-            "BC: a_est={:.4f}, a_prev={:.4f} ({:.4f}, {:.4f})".format(
-                self._a_est, self._a_prev, self._a_range[0], self._a_range[1]
-            )
+            f"BC: a_est={self._a_est:.4f}, a_prev={self._a_prev:.4f} ({self._a_range[0]:.4f}, {self._a_range[1]:.4f})"
         )
 
     def getDirichletBCValue(self, t, coords, node_id, primary_vars):
