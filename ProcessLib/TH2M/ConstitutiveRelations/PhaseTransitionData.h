@@ -79,10 +79,8 @@ struct PhaseTransitionData
     double diffusion_coefficient_solute = 0.;
 
     // specific enthalpies
-    double hG = 0;
     double hCG = 0;
     double hWG = 0;
-    double hL = 0;
     double hCL = 0;
     double hWL = 0;
 
@@ -107,8 +105,6 @@ struct PhaseTransitionData
         return std::tuple{
             R::makeReflectionData("gas_density", &Self::rhoGR),
             R::makeReflectionData("liquid_density", &Self::rhoLR),
-            R::makeReflectionData("enthalpy_gas", &Self::hG),
-            R::makeReflectionData("enthalpy_liquid", &Self::hL),
             R::makeReflectionData("vapour_pressure", &Self::pWGR),
             R::makeReflectionData("mass_fraction_liquid", &Self::xmWL),
             R::makeReflectionData("mole_fraction_gas", &Self::xnCG),

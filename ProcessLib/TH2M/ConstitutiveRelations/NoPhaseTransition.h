@@ -28,7 +28,7 @@ struct NoPhaseTransition : PhaseTransitionModel
               GasPressureData const& p_GR, CapillaryPressureData const& p_cap,
               TemperatureData const& T_data,
               PureLiquidDensityData const& rho_W_LR,
-              ViscosityData& viscosity_data,
+              ViscosityData& viscosity_data, EnthalpyData& enthalpy_data,
               PhaseTransitionData& cv) const override;
 };
 

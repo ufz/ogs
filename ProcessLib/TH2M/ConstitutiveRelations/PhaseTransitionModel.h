@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Base.h"
+#include "Enthalpy.h"
 #include "PhaseTransitionData.h"
 #include "PureLiquidDensity.h"
 #include "Viscosity.h"
@@ -49,6 +50,7 @@ struct PhaseTransitionModel
                       TemperatureData const& T_data,
                       PureLiquidDensityData const& rho_W_LR,
                       ViscosityData& viscosity_data,
+                      EnthalpyData& enthalpy_data,
                       PhaseTransitionData& cv) const = 0;
 };
 }  // namespace ConstitutiveRelations

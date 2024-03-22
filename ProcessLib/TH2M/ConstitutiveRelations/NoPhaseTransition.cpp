@@ -44,6 +44,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                              TemperatureData const& T_data,
                              PureLiquidDensityData const& rho_W_LR,
                              ViscosityData& viscosity_data,
+                             EnthalpyData& enthalpy_data,
                              PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -102,14 +103,14 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific phase enthalpies
-    cv.hG = cpG * T;
-    cv.hL = cpL * T;
+    enthalpy_data.h_G = cpG * T;
+    enthalpy_data.h_L = cpL * T;
     cv.dh_G_dT = cpG;
     cv.dh_L_dT = cpL;
 
     // specific inner energies
-    cv.uG = cv.hG - pGR / cv.rhoGR;
-    cv.uL = cv.hL;
+    cv.uG = enthalpy_data.h_G - pGR / cv.rhoGR;
+    cv.uL = enthalpy_data.h_L;
 
     auto const drho_GR_dT =
         gas_phase[MaterialPropertyLib::PropertyType::density]

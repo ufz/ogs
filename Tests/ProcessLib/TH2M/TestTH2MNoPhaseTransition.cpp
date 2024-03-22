@@ -117,9 +117,10 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ASSERT_NEAR(density_water, rhoWLR(), 1e-10);
 
     ProcessLib::TH2M::ConstitutiveRelations::ViscosityData viscosity;
+    ProcessLib::TH2M::ConstitutiveRelations::EnthalpyData enthalpy;
     PhaseTransitionData cv;
     ptm->eval(x_t, media_data, GasPressureData{pGR}, CapillaryPressureData{pGR},
-              TemperatureData{T, T}, rhoWLR, viscosity, cv);
+              TemperatureData{T, T}, rhoWLR, viscosity, enthalpy, cv);
 
     // reference values
     double const rhoCGR = density_air;
@@ -153,8 +154,8 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ASSERT_NEAR(dxmCG_dT, -cv.dxmWG_dT, 1.0e-10);
     ASSERT_NEAR(hCG, cv.hCG, 1.0e-9);
     ASSERT_NEAR(hWG, cv.hWG, 1.0e-9);
-    ASSERT_NEAR(hG, cv.hG, 1.0e-10);
-    ASSERT_NEAR(hL, cv.hL, 1.0e-10);
+    ASSERT_NEAR(hG, enthalpy.h_G, 1.0e-10);
+    ASSERT_NEAR(hL, enthalpy.h_L, 1.0e-10);
     ASSERT_NEAR(uG, cv.uG, 1.0e-10);
     ASSERT_NEAR(uL, cv.uL, 1.0e-10);
     ASSERT_NEAR(diffusion_coefficient_vapour, cv.diffusion_coefficient_vapour,

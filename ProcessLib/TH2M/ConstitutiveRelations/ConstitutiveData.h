@@ -12,6 +12,7 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "ElasticTangentStiffnessData.h"
+#include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
@@ -81,6 +82,7 @@ struct OutputData
 {
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
+    EnthalpyData enthalpy_data;
     PhaseTransitionData phase_transition_data;
 
     static auto reflect()
@@ -89,6 +91,7 @@ struct OutputData
 
         return Reflection::reflectWithoutName(&Self::eps_data,
                                               &Self::permeability_data,
+                                              &Self::enthalpy_data,
                                               &Self::phase_transition_data);
     }
 };

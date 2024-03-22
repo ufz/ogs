@@ -141,6 +141,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            TemperatureData const& T_data,
                            PureLiquidDensityData const& rho_W_LR,
                            ViscosityData& viscosity_data,
+                           EnthalpyData& enthalpy_data,
                            PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -323,10 +324,10 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.hWG = cpWG * T + dh_evap;
 
     // specific enthalpy of gas phase
-    cv.hG = cv.xmCG * cv.hCG + cv.xmWG * cv.hWG;
+    enthalpy_data.h_G = cv.xmCG * cv.hCG + cv.xmWG * cv.hWG;
 
     // specific inner energies of gas phase
-    cv.uG = cv.hG - pGR / cv.rhoGR;
+    cv.uG = enthalpy_data.h_G - pGR / cv.rhoGR;
 
     // diffusion
     auto const tortuosity =
@@ -486,10 +487,10 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // specific enthalpy of liquid phase and its components
     cv.hCL = cpCL * T + dh_sol;
     cv.hWL = cpWL * T;
-    cv.hL = xmCL * cv.hCL + cv.xmWL * cv.hWL;
+    enthalpy_data.h_L = xmCL * cv.hCL + cv.xmWL * cv.hWL;
 
     // specific inner energies of liquid phase
-    cv.uL = cv.hL;
+    cv.uL = enthalpy_data.h_L;
 
     // diffusion
     auto const D_C_L_m =

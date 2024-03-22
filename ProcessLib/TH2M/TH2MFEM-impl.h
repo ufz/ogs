@@ -227,7 +227,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.phase_transition_model.eval(
             {pos, t, dt}, media_data, GasPressureData{pGR},
             CapillaryPressureData{pCap}, T_data, current_state.rho_W_LR,
-            ip_cv.viscosity_data, ip_out.phase_transition_data);
+            ip_cv.viscosity_data, ip_out.enthalpy_data,
+            ip_out.phase_transition_data);
 
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
@@ -301,8 +302,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.rho_u_eff = phi_G * c.rhoGR * c.uG + phi_L * c.rhoLR * c.uL +
                             phi_S * rhoSR * u_S;
 
-        ip_data.rho_G_h_G = phi_G * c.rhoGR * c.hG;
-        ip_data.rho_L_h_L = phi_L * c.rhoLR * c.hL;
+        ip_data.rho_G_h_G = phi_G * c.rhoGR * ip_out.enthalpy_data.h_G;
+        ip_data.rho_L_h_L = phi_L * c.rhoLR * ip_out.enthalpy_data.h_L;
         ip_data.rho_S_h_S = phi_S * rhoSR * ip_data.h_S;
 
         ip_data.rhoSR = rhoSR;
@@ -459,24 +460,27 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // drho_GR_dp_cap = 0;
 
         ip_cv.drho_h_eff_dp_GR =
-            /*(dphi_G_dp_GR = 0) * c.rhoGR * c.hG +*/ phi_G * c.drho_GR_dp_GR *
-                c.hG +
-            /*(dphi_L_dp_GR = 0) * c.rhoLR * c.hL +*/ phi_L * drho_LR_dp_GR *
-                c.hL;
-        ip_cv.drho_h_eff_dp_cap = dphi_G_dp_cap * c.rhoGR * c.hG +
-                                  /*phi_G * (drho_GR_dp_cap = 0) * c.hG +*/
-                                  dphi_L_dp_cap * c.rhoLR * c.hL +
-                                  phi_L * drho_LR_dp_cap * c.hL;
+            /*(dphi_G_dp_GR = 0) * c.rhoGR * ip_out.enthalpy_data.h_G +*/
+            phi_G * c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G +
+            /*(dphi_L_dp_GR = 0) * c.rhoLR * ip_out.enthalpy_data.h_L +*/
+            phi_L * drho_LR_dp_GR * ip_out.enthalpy_data.h_L;
+        ip_cv.drho_h_eff_dp_cap =
+            dphi_G_dp_cap * c.rhoGR * ip_out.enthalpy_data.h_G +
+            /*phi_G * (drho_GR_dp_cap = 0) * ip_out.enthalpy_data.h_G +*/
+            dphi_L_dp_cap * c.rhoLR * ip_out.enthalpy_data.h_L +
+            phi_L * drho_LR_dp_cap * ip_out.enthalpy_data.h_L;
 
         // TODO (naumov) Extend for temperature dependent porosities.
         constexpr double dphi_G_dT = 0;
         constexpr double dphi_L_dT = 0;
         ip_cv.drho_h_eff_dT =
-            dphi_G_dT * c.rhoGR * c.hG + phi_G * c.drho_GR_dT * c.hG +
-            phi_G * c.rhoGR * c.dh_G_dT + dphi_L_dT * c.rhoLR * c.hL +
-            phi_L * drho_LR_dT * c.hL + phi_L * c.rhoLR * c.dh_L_dT +
-            dphi_S_dT * rhoSR * ip_data.h_S + phi_S * drho_SR_dT * ip_data.h_S +
-            phi_S * rhoSR * cpS;
+            dphi_G_dT * c.rhoGR * ip_out.enthalpy_data.h_G +
+            phi_G * c.drho_GR_dT * ip_out.enthalpy_data.h_G +
+            phi_G * c.rhoGR * c.dh_G_dT +
+            dphi_L_dT * c.rhoLR * ip_out.enthalpy_data.h_L +
+            phi_L * drho_LR_dT * ip_out.enthalpy_data.h_L +
+            phi_L * c.rhoLR * c.dh_L_dT + dphi_S_dT * rhoSR * ip_data.h_S +
+            phi_S * drho_SR_dT * ip_data.h_S + phi_S * rhoSR * cpS;
 
         ip_cv.drho_u_eff_dp_GR =
             /*(dphi_G_dp_GR = 0) * c.rhoGR * c.uG +*/
@@ -520,22 +524,26 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                        k_over_mu_L * gradpGR;
 
         ip_cv.drho_GR_h_w_eff_dp_GR_Npart =
-            c.drho_GR_dp_GR * c.hG * ip_data.w_GS +
-            c.rhoGR * c.hG * k_over_mu_G * c.drho_GR_dp_GR * b;
+            c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G * ip_data.w_GS +
+            c.rhoGR * ip_out.enthalpy_data.h_G * k_over_mu_G * c.drho_GR_dp_GR *
+                b;
         ip_cv.drho_GR_h_w_eff_dp_GR_gradNpart =
-            -c.rhoGR * c.hG * k_over_mu_G - c.rhoLR * c.hL * k_over_mu_L;
+            -c.rhoGR * ip_out.enthalpy_data.h_G * k_over_mu_G -
+            c.rhoLR * ip_out.enthalpy_data.h_L * k_over_mu_L;
 
         ip_cv.drho_LR_h_w_eff_dp_cap_Npart =
-            -drho_LR_dp_cap * c.hL * ip_data.w_LS -
-            c.rhoLR * c.hL * k_over_mu_L * drho_LR_dp_cap * b;
+            -drho_LR_dp_cap * ip_out.enthalpy_data.h_L * ip_data.w_LS -
+            c.rhoLR * ip_out.enthalpy_data.h_L * k_over_mu_L * drho_LR_dp_cap *
+                b;
         ip_cv.drho_LR_h_w_eff_dp_cap_gradNpart =
             // TODO (naumov) why the minus sign??????
-            -c.rhoLR * c.hL * k_over_mu_L;
+            -c.rhoLR * ip_out.enthalpy_data.h_L * k_over_mu_L;
 
-        ip_cv.drho_GR_h_w_eff_dT = c.drho_GR_dT * c.hG * ip_data.w_GS +
-                                   c.rhoGR * c.dh_G_dT * ip_data.w_GS +
-                                   drho_LR_dT * c.hL * ip_data.w_LS +
-                                   c.rhoLR * c.dh_L_dT * ip_data.w_LS;
+        ip_cv.drho_GR_h_w_eff_dT =
+            c.drho_GR_dT * ip_out.enthalpy_data.h_G * ip_data.w_GS +
+            c.rhoGR * c.dh_G_dT * ip_data.w_GS +
+            drho_LR_dT * ip_out.enthalpy_data.h_L * ip_data.w_LS +
+            c.rhoLR * c.dh_L_dT * ip_data.w_LS;
         // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
         // drho_LR_dT * b
 
@@ -1174,10 +1182,6 @@ void TH2MLocalAssembler<
         const double rho_W_FR =
             s_G * ip.rhoWGR + s_L * current_state.rho_W_LR();
 
-        // phase specific enthalpies
-        auto const h_G = ip_out.phase_transition_data.hG;
-        auto const h_L = ip_out.phase_transition_data.hL;
-
         auto const rho_C_GR_dot = (ip.rhoCGR - ip.rhoCGR_prev) / dt;
         auto const rho_C_LR_dot = (ip.rhoCLR - ip.rhoCLR_prev) / dt;
         auto const rho_W_GR_dot = (ip.rhoWGR - ip.rhoWGR_prev) / dt;
@@ -1354,8 +1358,10 @@ void TH2MLocalAssembler<
 
         fT.noalias() -= NTT * rho_u_eff_dot * w;
 
-        fT.noalias() +=
-            gradNTT * (rhoGR * h_G * ip.w_GS + rhoLR * h_L * ip.w_LS) * w;
+        fT.noalias() += gradNTT *
+                        (rhoGR * ip_out.enthalpy_data.h_G * ip.w_GS +
+                         rhoLR * ip_out.enthalpy_data.h_L * ip.w_LS) *
+                        w;
 
         fT.noalias() +=
             gradNTT *
@@ -1633,10 +1639,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         const double rho_C_FR = s_G * ip.rhoCGR + s_L * ip.rhoCLR;
         const double rho_W_FR =
             s_G * ip.rhoWGR + s_L * current_state.rho_W_LR();
-
-        // phase specific enthalpies
-        auto const h_G = ip_out.phase_transition_data.hG;
-        auto const h_L = ip_out.phase_transition_data.hL;
 
         auto const rho_C_GR_dot = (ip.rhoCGR - ip.rhoCGR_prev) / dt;
         auto const rho_C_LR_dot = (ip.rhoCLR - ip.rhoCLR_prev) / dt;
@@ -2036,8 +2038,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() += NTT * ip_cv.drho_u_eff_dT / dt * NT * w;
 
         // fT_2
-        fT.noalias() +=
-            gradNTT * (rhoGR * h_G * ip.w_GS + rhoLR * h_L * ip.w_LS) * w;
+        fT.noalias() += gradNTT *
+                        (rhoGR * ip_out.enthalpy_data.h_G * ip.w_GS +
+                         rhoLR * ip_out.enthalpy_data.h_L * ip.w_LS) *
+                        w;
 
         // dfT_2/dp_GR
         local_Jac
