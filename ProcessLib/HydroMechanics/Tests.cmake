@@ -770,6 +770,22 @@ AddTest(
     total_initial_stress_HM_ts_1_t_1000000.000000.vtu total_initial_stress_HM_ts_1_t_1000000.000000.vtu sigma sigma 1.0e-8 1.e-10
 )
 
+AddTest(
+    NAME HydroMechanicsTotalInitialStress_Staggered
+    PATH HydroMechanics/TotalInitialStress
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS total_initial_stress_HM_staggered.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 1
+    DIFF_DATA
+    total_initial_stress_HM_ts_0_t_0.000000.vtu total_initial_stress_HM_staggered_ts_0_t_0.000000.vtu pressure pressure 1.0e-10 1.e-10
+    total_initial_stress_HM_ts_0_t_0.000000.vtu total_initial_stress_HM_staggered_ts_0_t_0.000000.vtu sigma sigma 1.0e-8 1.e-10
+    total_initial_stress_HM_ts_1_t_1000000.000000.vtu total_initial_stress_HM_staggered_ts_1_t_1000000.000000.vtu pressure pressure 1.0e-10 1.e-10
+    total_initial_stress_HM_ts_1_t_1000000.000000.vtu total_initial_stress_HM_staggered_ts_1_t_1000000.000000.vtu sigma sigma 1.0e-8 1.e-10
+)
+
 #Parallel computing with PETSc enabled.
 AddTest(
     NAME ParallelFEM_SimpleHM_SingleMesh
