@@ -58,12 +58,8 @@ struct PhaseTransitionData
     double pWGR = 0;
 
     // constituent mass and molar fractions
-    double xnCG = 0.;
-    double xmCG = 0.;
     double xnWG = 0.;
     double xmWG = 0.;
-    double xnWL = 0.;
-    double xmWL = 0.;
 
     // mass fraction derivatives
     double dxmWG_dpGR = 0.;
@@ -105,10 +101,7 @@ struct PhaseTransitionData
         return std::tuple{
             R::makeReflectionData("gas_density", &Self::rhoGR),
             R::makeReflectionData("liquid_density", &Self::rhoLR),
-            R::makeReflectionData("vapour_pressure", &Self::pWGR),
-            R::makeReflectionData("mass_fraction_liquid", &Self::xmWL),
-            R::makeReflectionData("mole_fraction_gas", &Self::xnCG),
-            R::makeReflectionData("mass_fraction_gas", &Self::xmCG)};
+            R::makeReflectionData("vapour_pressure", &Self::pWGR)};
     }
 };
 

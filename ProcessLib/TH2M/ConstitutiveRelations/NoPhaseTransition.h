@@ -29,6 +29,7 @@ struct NoPhaseTransition : PhaseTransitionModel
               TemperatureData const& T_data,
               PureLiquidDensityData const& rho_W_LR,
               ViscosityData& viscosity_data, EnthalpyData& enthalpy_data,
+              MassMoleFractionsData& mass_mole_fractions_data,
               PhaseTransitionData& cv) const override;
 };
 

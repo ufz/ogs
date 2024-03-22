@@ -14,6 +14,7 @@
 #include "ElasticTangentStiffnessData.h"
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
+#include "MassMoleFractions.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
 #include "PhaseTransitionData.h"
@@ -83,6 +84,7 @@ struct OutputData
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
     EnthalpyData enthalpy_data;
+    MassMoleFractionsData mass_mole_fractions_data;
     PhaseTransitionData phase_transition_data;
 
     static auto reflect()
@@ -92,6 +94,7 @@ struct OutputData
         return Reflection::reflectWithoutName(&Self::eps_data,
                                               &Self::permeability_data,
                                               &Self::enthalpy_data,
+                                              &Self::mass_mole_fractions_data,
                                               &Self::phase_transition_data);
     }
 };

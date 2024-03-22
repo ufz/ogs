@@ -228,7 +228,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             {pos, t, dt}, media_data, GasPressureData{pGR},
             CapillaryPressureData{pCap}, T_data, current_state.rho_W_LR,
             ip_cv.viscosity_data, ip_out.enthalpy_data,
-            ip_out.phase_transition_data);
+            ip_out.mass_mole_fractions_data, ip_out.phase_transition_data);
 
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
@@ -313,7 +313,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.rhoWGR = c.rhoWGR;
 
         // for variable output
-        auto const xmCL = 1. - c.xmWL;
+        auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
         const GlobalDimVectorType gradxmWG = c.dxmWG_dpGR * gradpGR +
                                              c.dxmWG_dpCap * gradpCap +
@@ -329,11 +329,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // the respective phase transition model, here only the multiplication
         // with the gradient of the mass fractions should take place.
 
-        ip_data.d_CG =
-            c.xmCG == 0.
-                ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
-                                 // division by zero
-                : -phi_G / c.xmCG * c.diffusion_coefficient_vapour * gradxmCG;
+        ip_data.d_CG = ip_out.mass_mole_fractions_data.xmCG == 0.
+                           ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
+                                            // division by zero
+                           : -phi_G / ip_out.mass_mole_fractions_data.xmCG *
+                                 c.diffusion_coefficient_vapour * gradxmCG;
 
         ip_data.d_WG =
             c.xmWG == 0.
@@ -347,11 +347,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                  // prevent division by zero
                 : -phi_L / xmCL * c.diffusion_coefficient_solute * gradxmCL;
 
-        ip_data.d_WL =
-            c.xmWL == 0.
-                ? 0. * gradxmWL  // Keep d_WG's dimension and prevent
-                                 // division by zero
-                : -phi_L / c.xmWL * c.diffusion_coefficient_solute * gradxmWL;
+        ip_data.d_WL = ip_out.mass_mole_fractions_data.xmWL == 0.
+                           ? 0. * gradxmWL  // Keep d_WG's dimension and prevent
+                                            // division by zero
+                           : -phi_L / ip_out.mass_mole_fractions_data.xmWL *
+                                 c.diffusion_coefficient_solute * gradxmWL;
 
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian

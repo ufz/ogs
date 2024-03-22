@@ -142,6 +142,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            PureLiquidDensityData const& rho_W_LR,
                            ViscosityData& viscosity_data,
                            EnthalpyData& enthalpy_data,
+                           MassMoleFractionsData& mass_mole_fractions_data,
                            PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -230,7 +231,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                  // matrix to be zero). The value is simply made up, seems
                  // reasonable.
     cv.xnWG = std::clamp(cv.pWGR / pGR, xnWG_min, 1. - xnWG_min);
-    cv.xnCG = 1. - cv.xnWG;
+    mass_mole_fractions_data.xnCG = 1. - cv.xnWG;
 
     // gas phase molar fraction derivatives
     auto const dxnWG_dpGR = -cv.pWGR / pGR / pGR;
@@ -238,12 +239,12 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     auto const dxnWG_dT = dpWGR_dT / pGR;
 
     // molar mass of the gas phase as a mixture of 'air' and vapour
-    auto const MG = cv.xnCG * M_C + cv.xnWG * M_W;
+    auto const MG = mass_mole_fractions_data.xnCG * M_C + cv.xnWG * M_W;
     variables.molar_mass = MG;
 
     // gas phase mass fractions
     cv.xmWG = cv.xnWG * M_W / MG;
-    cv.xmCG = 1. - cv.xmWG;
+    mass_mole_fractions_data.xmCG = 1. - cv.xmWG;
 
     auto const dxn_dxm_conversion = M_W * M_C / MG / MG;
     // gas phase mass fraction derivatives
@@ -294,14 +295,16 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // density to the MPL, a constant phase density can also be assumed, the
     // derivatives of the partial densities are then unaffected and the
     // model is still consistent.
-    cv.rhoCGR = cv.xmCG * cv.rhoGR;
+    cv.rhoCGR = mass_mole_fractions_data.xmCG * cv.rhoGR;
     cv.rhoWGR = cv.xmWG * cv.rhoGR;
 
     // 'Air'-component partial density derivatives
-    cv.drho_C_GR_dp_GR = cv.xmCG * cv.drho_GR_dp_GR - cv.dxmWG_dpGR * cv.rhoGR;
-    cv.drho_C_GR_dp_cap =
-        cv.xmCG * cv.drho_GR_dp_cap - cv.dxmWG_dpCap * cv.rhoGR;
-    cv.drho_C_GR_dT = cv.xmCG * cv.drho_GR_dT - cv.dxmWG_dT * cv.rhoGR;
+    cv.drho_C_GR_dp_GR = mass_mole_fractions_data.xmCG * cv.drho_GR_dp_GR -
+                         cv.dxmWG_dpGR * cv.rhoGR;
+    cv.drho_C_GR_dp_cap = mass_mole_fractions_data.xmCG * cv.drho_GR_dp_cap -
+                          cv.dxmWG_dpCap * cv.rhoGR;
+    cv.drho_C_GR_dT =
+        mass_mole_fractions_data.xmCG * cv.drho_GR_dT - cv.dxmWG_dT * cv.rhoGR;
 
     // Vapour-component partial density derivatives
     cv.drho_W_GR_dp_GR = cv.xmWG * cv.drho_GR_dp_GR + cv.dxmWG_dpGR * cv.rhoGR;
@@ -324,7 +327,8 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.hWG = cpWG * T + dh_evap;
 
     // specific enthalpy of gas phase
-    enthalpy_data.h_G = cv.xmCG * cv.hCG + cv.xmWG * cv.hWG;
+    enthalpy_data.h_G =
+        mass_mole_fractions_data.xmCG * cv.hCG + cv.xmWG * cv.hWG;
 
     // specific inner energies of gas phase
     cv.uG = enthalpy_data.h_G - pGR / cv.rhoGR;
@@ -341,7 +345,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.diffusion_coefficient_vapour =
         tortuosity * D_W_G_m;  // Note here that D_W_G = D_C_G.
 
-    variables.molar_fraction = cv.xnCG;
+    variables.molar_fraction = mass_mole_fractions_data.xnCG;
 
     // gas phase viscosity
     viscosity_data.mu_GR =
@@ -380,15 +384,17 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
 
     // Concentration of the dissolved gas as amount of substance of the
     // mixture component C related to the total volume of the liquid phase.
-    auto const cCL = H * cv.xnCG * pGR;
+    auto const cCL = H * mass_mole_fractions_data.xnCG * pGR;
     // Fortunately for the developer, the signs of the derivatives of the
     // composition of binary mixtures are often opposed.
     auto const dxnCG_dpGR = -dxnWG_dpGR;
     auto const dxnCG_dT = -dxnWG_dT;
 
     auto const dcCL_dpGR =
-        (dH_dpGR * cv.xnCG + H * dxnCG_dpGR) * pGR + H * cv.xnCG;
-    auto const dcCL_dT = pGR * (dH_dT * cv.xnCG + H * dxnCG_dT);
+        (dH_dpGR * mass_mole_fractions_data.xnCG + H * dxnCG_dpGR) * pGR +
+        H * mass_mole_fractions_data.xnCG;
+    auto const dcCL_dT =
+        pGR * (dH_dT * mass_mole_fractions_data.xnCG + H * dxnCG_dT);
 
     variables.concentration = cCL;
     // Liquid density including dissolved gas components. Attention! This
@@ -408,8 +414,8 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.rhoCLR = cv.rhoLR - rho_W_LR();
 
     // liquid phase composition (mass fraction)
-    cv.xmWL = std::clamp(rho_W_LR() / cv.rhoLR, 0., 1.);
-    auto const xmCL = 1. - cv.xmWL;
+    mass_mole_fractions_data.xmWL = std::clamp(rho_W_LR() / cv.rhoLR, 0., 1.);
+    auto const xmCL = 1. - mass_mole_fractions_data.xmWL;
 
     // Attention! Usually a multi-linear equation of state is used to
     // determine the density of the solution. This requires independent
@@ -457,12 +463,19 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     auto const drhoWLR_dT = rho_ref_betaT;
 
     // liquid phase mass fraction derivatives
-    cv.dxmWL_dpGR = 1. / cv.rhoLR * (drhoWLR_dpGR - cv.xmWL * drhoLR_dpGR);
-    cv.dxmWL_dpCap = 1. / cv.rhoLR * (drhoWLR_dpCap - cv.xmWL * drhoLR_dpCap);
-    cv.dxmWL_dT = 1. / cv.rhoLR * (drhoWLR_dT - cv.xmWL * drhoLR_dT);
+    cv.dxmWL_dpGR =
+        1. / cv.rhoLR *
+        (drhoWLR_dpGR - mass_mole_fractions_data.xmWL * drhoLR_dpGR);
+    cv.dxmWL_dpCap =
+        1. / cv.rhoLR *
+        (drhoWLR_dpCap - mass_mole_fractions_data.xmWL * drhoLR_dpCap);
+    cv.dxmWL_dT = 1. / cv.rhoLR *
+                  (drhoWLR_dT - mass_mole_fractions_data.xmWL * drhoLR_dT);
 
     // liquid phase molar fractions and derivatives
-    cv.xnWL = cv.xmWL * M_C / (cv.xmWL * M_C + xmCL * M_W);
+    mass_mole_fractions_data.xnWL =
+        mass_mole_fractions_data.xmWL * M_C /
+        (mass_mole_fractions_data.xmWL * M_C + xmCL * M_W);
 
     // Reference to the pure liquid component
     auto const& solvent_component =
@@ -487,7 +500,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // specific enthalpy of liquid phase and its components
     cv.hCL = cpCL * T + dh_sol;
     cv.hWL = cpWL * T;
-    enthalpy_data.h_L = xmCL * cv.hCL + cv.xmWL * cv.hWL;
+    enthalpy_data.h_L = xmCL * cv.hCL + mass_mole_fractions_data.xmWL * cv.hWL;
 
     // specific inner energies of liquid phase
     cv.uL = enthalpy_data.h_L;
