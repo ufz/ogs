@@ -24,6 +24,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -87,10 +88,12 @@ public:
         std::size_t const /*local_matrix_size*/,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        LiquidFlowData const& process_data)
+        LiquidFlowData const& process_data,
+        NumLib::ShapeMatrixCache const& shape_matrix_cache)
         : _element(element),
           _integration_method(integration_method),
-          _process_data(process_data)
+          _process_data(process_data),
+          _shape_matrix_cache(shape_matrix_cache)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -227,6 +230,7 @@ private:
                               VelocityCacheType& darcy_velocity_at_ips) const;
 
     const LiquidFlowData& _process_data;
+    NumLib::ShapeMatrixCache const& _shape_matrix_cache;
 };
 
 }  // namespace LiquidFlow
