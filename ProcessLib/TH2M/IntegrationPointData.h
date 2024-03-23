@@ -135,12 +135,6 @@ struct IntegrationPointData final
 
     double thermal_volume_strain = std::numeric_limits<double>::quiet_NaN();
 
-    double k_rel_L = std::numeric_limits<double>::quiet_NaN();
-    double k_rel_G = std::numeric_limits<double>::quiet_NaN();
-
-    // Intrinsic permeability
-    GlobalDimMatrixType k_S;
-
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
     void pushBackState()

@@ -13,6 +13,7 @@
 #include "Bishops.h"
 #include "ElasticTangentStiffnessModel.h"
 #include "MechanicalStrain.h"
+#include "PermeabilityModel.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
@@ -49,6 +50,7 @@ struct ConstitutiveModels
     MechanicalStrainModel<DisplacementDim> mechanical_strain_model;
     SolidMechanicsModel<DisplacementDim> s_mech_model;
     TotalStressModel<DisplacementDim> total_stress_model;
+    PermeabilityModel<DisplacementDim> permeability_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

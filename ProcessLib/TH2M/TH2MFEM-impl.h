@@ -135,6 +135,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto& ip_cv = ip_constitutive_variables[ip];
         auto& ip_cd = ip_constitutive_data[ip];
+        auto& ip_out = this->output_data_[ip];
         auto& current_state = this->current_states_[ip];
         auto& prev_state = this->prev_states_[ip];
 
@@ -164,13 +165,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
         GlobalDimVectorType const gradT = gradNp * temperature;
 
-        MPL::VariableArray vars;
-        MPL::VariableArray vars_prev;
-        vars.temperature = T;
-        vars.gas_phase_pressure = pGR;
-        vars.capillary_pressure = pCap;
-        vars.liquid_phase_pressure = pLR;
-
         // medium properties
         models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
                                                     ip_cv.C_el_data);
@@ -183,18 +177,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = this->output_data_[ip].eps_data.eps;
+        auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
-
-        // Set volumetric strain for the general case without swelling.
-        vars.volumetric_strain = Invariants::trace(eps);
-
         models.S_L_model.eval({pos, t, dt}, media_data,
                               CapillaryPressureData{pCap},
                               current_state.S_L_data, ip_cv.dS_L_dp_cap);
-
-        vars.liquid_saturation = current_state.S_L_data.S_L;
-        vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
                                   current_state.S_L_data, ip_cv.chi_S_L);
@@ -214,7 +201,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                       ip_cv.s_therm_exp_data);
 
         models.mechanical_strain_model.eval(
-            T_data, ip_cv.s_therm_exp_data, this->output_data_[ip].eps_data,
+            T_data, ip_cv.s_therm_exp_data, ip_out.eps_data,
             Bu * displacement_prev, prev_state.mechanical_strain_data,
             ip_cv.swelling_data, current_state.mechanical_strain_data);
 
@@ -229,47 +216,24 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             GasPressureData{pGR}, CapillaryPressureData{pCap},
             ip_cv.total_stress_data);
 
-        // relative permeability
-        // Set mechanical variables for the intrinsic permeability model
-        // For stress dependent permeability.
-        vars.total_stress.emplace<SymmetricTensor>(
-            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
-                ip_cv.total_stress_data.sigma_total));
+        models.permeability_model.eval(
+            {pos, t, dt}, media_data, current_state.S_L_data,
+            CapillaryPressureData{pCap}, T_data, ip_cv.total_stress_data,
+            ip_out.eps_data, ip_cv.equivalent_plastic_strain_data,
+            ip_out.permeability_data);
 
-        vars.equivalent_plastic_strain = *ip_cv.equivalent_plastic_strain_data;
+        MPL::VariableArray vars;
+        MPL::VariableArray vars_prev;
+        vars.temperature = T;
+        vars.gas_phase_pressure = pGR;
+        vars.capillary_pressure = pCap;
+        vars.liquid_phase_pressure = pLR;
 
-        vars.mechanical_strain
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps);
+        // Set volumetric strain for the general case without swelling.
+        vars.volumetric_strain = Invariants::trace(eps);
 
-        // intrinsic permeability
-        ip_data.k_S = MPL::formEigenTensor<DisplacementDim>(
-            medium.property(MPL::PropertyType::permeability)
-                .value(vars, pos, t, dt));
-
-        ip_data.k_rel_G =
-            medium
-                .property(
-                    MPL::PropertyType::relative_permeability_nonwetting_phase)
-                .template value<double>(vars, pos, t, dt);
-
-        auto const dk_rel_G_ds_L =
-            medium[MPL::PropertyType::relative_permeability_nonwetting_phase]
-                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
-                                         pos, t, dt);
-
-        ip_data.k_rel_L =
-            medium.property(MPL::PropertyType::relative_permeability)
-                .template value<double>(vars, pos, t, dt);
-
-        auto const dk_rel_L_ds_L =
-            medium[MPL::PropertyType::relative_permeability]
-                .template dValue<double>(vars, MPL::Variable::liquid_saturation,
-                                         pos, t, dt);
-
-        vars.mechanical_strain
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                current_state.mechanical_strain_data.eps_m);
+        vars.liquid_saturation = current_state.S_L_data.S_L;
+        vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
         auto const rho_ref_SR =
             solid_phase.property(MPL::PropertyType::density)
@@ -556,20 +520,24 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const& b = this->process_data_.specific_body_force;
         GlobalDimMatrixType const k_over_mu_G =
-            ip_data.k_S * ip_data.k_rel_G / ip_data.muGR;
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
+            ip_data.muGR;
         GlobalDimMatrixType const k_over_mu_L =
-            ip_data.k_S * ip_data.k_rel_L / ip_data.muLR;
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
+            ip_data.muLR;
 
-        // dk_over_mu_G_dp_GR =
-        //    ip_data.k_S * dk_rel_G_ds_L * (ds_L_dp_GR = 0) / ip_data.muGR =
-        //    0;
-        // dk_over_mu_L_dp_GR =
-        //     ip_data.k_S * dk_rel_L_ds_L * (ds_L_dp_GR = 0) / ip_data.muLR =
-        //     0;
-        ip_cv.dk_over_mu_G_dp_cap =
-            ip_data.k_S * dk_rel_G_ds_L * ip_cv.dS_L_dp_cap() / ip_data.muGR;
-        ip_cv.dk_over_mu_L_dp_cap =
-            ip_data.k_S * dk_rel_L_ds_L * ip_cv.dS_L_dp_cap() / ip_data.muLR;
+        // dk_over_mu_G_dp_GR = ip_out.permeability_data.Ki *
+        //                      ip_out.permeability_data.dk_rel_G_dS_L *
+        //                      (ds_L_dp_GR = 0) / ip_data.muGR = 0;
+        // dk_over_mu_L_dp_GR = ip_out.permeability_data.Ki *
+        //                      ip_out.permeability_data.dk_rel_L_dS_L *
+        //                      (ds_L_dp_GR = 0) / ip_data.muLR = 0;
+        ip_cv.dk_over_mu_G_dp_cap = ip_out.permeability_data.Ki *
+                                    ip_out.permeability_data.dk_rel_G_dS_L *
+                                    ip_cv.dS_L_dp_cap() / ip_data.muGR;
+        ip_cv.dk_over_mu_L_dp_cap = ip_out.permeability_data.Ki *
+                                    ip_out.permeability_data.dk_rel_L_dS_L *
+                                    ip_cv.dS_L_dp_cap() / ip_data.muLR;
 
         ip_data.w_GS = k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
         ip_data.w_LS = k_over_mu_L * gradpCap + k_over_mu_L * c.rhoLR * b -
@@ -926,6 +894,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         MPL::VariableArray vars;
 
         auto& ip_data = _ip_data[ip];
+        auto& ip_out = this->output_data_[ip];
         auto& prev_state = this->prev_states_[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
@@ -955,7 +924,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = this->output_data_[ip].eps_data.eps;
+        auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
 
         // Set volumetric strain rate for the general case without swelling.
@@ -1133,6 +1102,7 @@ void TH2MLocalAssembler<
     {
         auto& ip = _ip_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
+        auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto const& prev_state = this->prev_states_[int_point];
 
@@ -1191,8 +1161,6 @@ void TH2MLocalAssembler<
         GlobalDimMatrixType const D_C_L = sD_L * I;
         GlobalDimMatrixType const D_W_L = sD_L * I;
 
-        auto& k_S = ip.k_S;
-
         auto const s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
@@ -1232,8 +1200,12 @@ void TH2MLocalAssembler<
 
         auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
 
-        GlobalDimMatrixType const k_over_mu_G = k_S * ip.k_rel_G / ip.muGR;
-        GlobalDimMatrixType const k_over_mu_L = k_S * ip.k_rel_L / ip.muLR;
+        GlobalDimMatrixType const k_over_mu_G =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
+            ip.muGR;
+        GlobalDimMatrixType const k_over_mu_L =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
+            ip.muLR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1572,6 +1544,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip = _ip_data[int_point];
         auto& ip_cd = ip_constitutive_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
+        auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto& prev_state = this->prev_states_[int_point];
 
@@ -1640,8 +1613,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimMatrixType const D_C_L = sD_L * I;
         GlobalDimMatrixType const D_W_L = sD_L * I;
 
-        auto& k_S = ip.k_S;
-
         auto& s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
@@ -1681,8 +1652,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
 
-        GlobalDimMatrixType const k_over_mu_G = k_S * ip.k_rel_G / ip.muGR;
-        GlobalDimMatrixType const k_over_mu_L = k_S * ip.k_rel_L / ip.muLR;
+        GlobalDimMatrixType const k_over_mu_G =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
+            ip.muGR;
+        GlobalDimMatrixType const k_over_mu_L =
+            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
+            ip.muLR;
 
         // ---------------------------------------------------------------------
         // C-component equation

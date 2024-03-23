@@ -14,6 +14,7 @@
 #include "ElasticTangentStiffnessData.h"
 #include "EquivalentPlasticStrainData.h"
 #include "MechanicalStrain.h"
+#include "PermeabilityData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
@@ -68,17 +69,19 @@ struct StatefulDataPrev
     }
 };
 
-/// Data that is needed for output purposes, but not directly for the assembly.
+/// Data that is needed for output purposes.
 template <int DisplacementDim>
 struct OutputData
 {
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
+    PermeabilityData<DisplacementDim> permeability_data;
 
     static auto reflect()
     {
         using Self = OutputData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(&Self::eps_data);
+        return Reflection::reflectWithoutName(&Self::eps_data,
+                                              &Self::permeability_data);
     }
 };
 

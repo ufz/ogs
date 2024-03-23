@@ -47,7 +47,6 @@ enum class Variable : int
     solid_grain_pressure,
     stress,
     temperature,
-    total_strain,
     total_stress,
     transport_porosity,
     vapour_pressure,
@@ -77,7 +76,6 @@ static const std::array<std::string,
                              "solid_grain_pressure",
                              "stress",
                              "temperature",
-                             "total_strain",
                              "total_stress",
                              "transport_porosity",
                              "vapour_pressure",
@@ -142,8 +140,6 @@ public:
                 return std::visit(identity, stress);
             case Variable::temperature:
                 return temperature;
-            case Variable::total_strain:
-                return std::visit(identity, total_strain);
             case Variable::total_stress:
                 return std::visit(identity, total_stress);
             case Variable::transport_porosity:
