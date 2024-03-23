@@ -46,6 +46,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                              ViscosityData& viscosity_data,
                              EnthalpyData& enthalpy_data,
                              MassMoleFractionsData& mass_mole_fractions_data,
+                             FluidDensityData& fluid_density_data,
                              PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -72,21 +73,22 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
 
     variables.molar_mass = M;
 
-    cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    fluid_density_data.rho_GR =
+        gas_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     viscosity_data.mu_GR =
         gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-    cv.rhoCGR = cv.rhoGR;
+    cv.rhoCGR = fluid_density_data.rho_GR;
 
     // W-component is only component in the liquid phase
     mass_mole_fractions_data.xmWL = 1.;
 
     auto const pLR = pGR - pCap;
     variables.liquid_phase_pressure = pLR;
-    cv.rhoLR = rho_W_LR();
-    variables.density = cv.rhoLR;
+    fluid_density_data.rho_LR = rho_W_LR();
+    variables.density = fluid_density_data.rho_LR;
 
     viscosity_data.mu_LR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
@@ -110,7 +112,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     cv.dh_L_dT = cpL;
 
     // specific inner energies
-    cv.uG = enthalpy_data.h_G - pGR / cv.rhoGR;
+    cv.uG = enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
     cv.uL = enthalpy_data.h_L;
 
     auto const drho_GR_dT =
@@ -118,7 +120,8 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
                                      x_t.x, x_t.t, x_t.dt);
-    cv.du_G_dT = cpG + pGR * drho_GR_dT / cv.rhoGR / cv.rhoGR;
+    cv.du_G_dT = cpG + pGR * drho_GR_dT / fluid_density_data.rho_GR /
+                           fluid_density_data.rho_GR;
 
     cv.du_L_dT = cpL;
 
@@ -134,8 +137,9 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                 x_t.x, x_t.t, x_t.dt);
     cv.drho_LR_dp_GR = cv.drho_LR_dp_LR;
 
-    cv.du_G_dp_GR =
-        -1 / cv.rhoGR + pGR * cv.drho_GR_dp_GR / cv.rhoGR / cv.rhoGR;
+    cv.du_G_dp_GR = -1 / fluid_density_data.rho_GR +
+                    pGR * cv.drho_GR_dp_GR / fluid_density_data.rho_GR /
+                        fluid_density_data.rho_GR;
 
     cv.drho_C_GR_dp_GR = cv.drho_GR_dp_GR;
     cv.drho_C_LR_dp_LR = 0;
@@ -152,7 +156,9 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     cv.du_L_dp_GR = 0;
     cv.du_L_dp_cap = 0;
     /* TODO update to the following when uL has same structure as the uG:
-        +-1 / cv.rhoLR + pLR * cv.drho_LR_dp_cap / cv.rhoLR / cv.rhoLR;
+    +-1 / fluid_density_data.rho_LR + pLR* cv.drho_LR_dp_cap /
+                                          fluid_density_data.rho_LR /
+                                          fluid_density_data.rho_LR;
     */
 
     cv.drho_W_LR_dp_LR = cv.drho_LR_dp_LR;

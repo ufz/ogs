@@ -14,6 +14,7 @@
 #include "ElasticTangentStiffnessData.h"
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
+#include "FluidDensity.h"
 #include "MassMoleFractions.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
@@ -85,6 +86,7 @@ struct OutputData
     PermeabilityData<DisplacementDim> permeability_data;
     EnthalpyData enthalpy_data;
     MassMoleFractionsData mass_mole_fractions_data;
+    FluidDensityData fluid_density_data;
     PhaseTransitionData phase_transition_data;
 
     static auto reflect()
@@ -95,6 +97,7 @@ struct OutputData
                                               &Self::permeability_data,
                                               &Self::enthalpy_data,
                                               &Self::mass_mole_fractions_data,
+                                              &Self::fluid_density_data,
                                               &Self::phase_transition_data);
     }
 };

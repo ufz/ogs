@@ -19,7 +19,6 @@ namespace ConstitutiveRelations
 struct PhaseTransitionData
 {
     // gas phase density
-    double rhoGR = 0.;
     double rhoCGR = 0.;
     double rhoWGR = 0.;
 
@@ -36,7 +35,6 @@ struct PhaseTransitionData
     double drho_W_GR_dT = 0.;
 
     // liquid phase density
-    double rhoLR = 0.;
     double rhoCLR = 0.;
 
     double drho_LR_dp_GR = 0.;
@@ -99,8 +97,6 @@ struct PhaseTransitionData
         namespace R = ProcessLib::Reflection;
 
         return std::tuple{
-            R::makeReflectionData("gas_density", &Self::rhoGR),
-            R::makeReflectionData("liquid_density", &Self::rhoLR),
             R::makeReflectionData("vapour_pressure", &Self::pWGR)};
     }
 };

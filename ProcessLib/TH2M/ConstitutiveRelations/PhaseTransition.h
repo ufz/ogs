@@ -30,6 +30,7 @@ struct PhaseTransition : PhaseTransitionModel
               PureLiquidDensityData const& rho_W_LR,
               ViscosityData& viscosity_data, EnthalpyData& enthalpy_data,
               MassMoleFractionsData& mass_mole_fractions_data,
+              FluidDensityData& fluid_density_data,
               PhaseTransitionData& cv) const override;
 
 private:

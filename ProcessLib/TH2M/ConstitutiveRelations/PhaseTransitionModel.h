@@ -11,6 +11,7 @@
 
 #include "Base.h"
 #include "Enthalpy.h"
+#include "FluidDensity.h"
 #include "MassMoleFractions.h"
 #include "PhaseTransitionData.h"
 #include "PureLiquidDensity.h"
@@ -53,6 +54,7 @@ struct PhaseTransitionModel
                       ViscosityData& viscosity_data,
                       EnthalpyData& enthalpy_data,
                       MassMoleFractionsData& mass_mole_fractions_data,
+                      FluidDensityData& fluid_density_data,
                       PhaseTransitionData& cv) const = 0;
 };
 }  // namespace ConstitutiveRelations

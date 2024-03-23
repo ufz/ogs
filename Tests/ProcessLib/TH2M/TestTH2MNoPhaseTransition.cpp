@@ -120,10 +120,11 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ProcessLib::TH2M::ConstitutiveRelations::EnthalpyData enthalpy;
     ProcessLib::TH2M::ConstitutiveRelations::MassMoleFractionsData
         mass_mole_fractions;
+    FluidDensityData fluid_density;
     PhaseTransitionData cv;
     ptm->eval(x_t, media_data, GasPressureData{pGR}, CapillaryPressureData{pGR},
               TemperatureData{T, T}, rhoWLR, viscosity, enthalpy,
-              mass_mole_fractions, cv);
+              mass_mole_fractions, fluid_density, cv);
 
     // reference values
     double const rhoCGR = density_air;
@@ -144,8 +145,8 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     double const muGR = viscosity_air;
     double const muLR = viscosity_water;
 
-    ASSERT_NEAR(density_air, cv.rhoGR, 1.0e-10);
-    ASSERT_NEAR(density_water, cv.rhoLR, 1.0e-10);
+    ASSERT_NEAR(density_air, fluid_density.rho_GR, 1.0e-10);
+    ASSERT_NEAR(density_water, fluid_density.rho_LR, 1.0e-10);
     ASSERT_NEAR(rhoCGR, cv.rhoCGR, 1.0e-10);
     ASSERT_NEAR(rhoWGR, cv.rhoWGR, 1.0e-10);
     ASSERT_NEAR(rhoCLR, cv.rhoCLR, 1.0e-10);

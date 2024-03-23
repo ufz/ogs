@@ -143,6 +143,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            ViscosityData& viscosity_data,
                            EnthalpyData& enthalpy_data,
                            MassMoleFractionsData& mass_mole_fractions_data,
+                           FluidDensityData& fluid_density_data,
                            PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -253,8 +254,9 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.dxmWG_dT = dxnWG_dT * dxn_dxm_conversion;
 
     // density of overall gas phase
-    cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    fluid_density_data.rho_GR =
+        gas_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // derivatives of average molar mass of the gas phase
     auto const dMG = M_W - M_C;
@@ -295,22 +297,24 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // density to the MPL, a constant phase density can also be assumed, the
     // derivatives of the partial densities are then unaffected and the
     // model is still consistent.
-    cv.rhoCGR = mass_mole_fractions_data.xmCG * cv.rhoGR;
-    cv.rhoWGR = cv.xmWG * cv.rhoGR;
+    cv.rhoCGR = mass_mole_fractions_data.xmCG * fluid_density_data.rho_GR;
+    cv.rhoWGR = cv.xmWG * fluid_density_data.rho_GR;
 
     // 'Air'-component partial density derivatives
     cv.drho_C_GR_dp_GR = mass_mole_fractions_data.xmCG * cv.drho_GR_dp_GR -
-                         cv.dxmWG_dpGR * cv.rhoGR;
+                         cv.dxmWG_dpGR * fluid_density_data.rho_GR;
     cv.drho_C_GR_dp_cap = mass_mole_fractions_data.xmCG * cv.drho_GR_dp_cap -
-                          cv.dxmWG_dpCap * cv.rhoGR;
-    cv.drho_C_GR_dT =
-        mass_mole_fractions_data.xmCG * cv.drho_GR_dT - cv.dxmWG_dT * cv.rhoGR;
+                          cv.dxmWG_dpCap * fluid_density_data.rho_GR;
+    cv.drho_C_GR_dT = mass_mole_fractions_data.xmCG * cv.drho_GR_dT -
+                      cv.dxmWG_dT * fluid_density_data.rho_GR;
 
     // Vapour-component partial density derivatives
-    cv.drho_W_GR_dp_GR = cv.xmWG * cv.drho_GR_dp_GR + cv.dxmWG_dpGR * cv.rhoGR;
-    cv.drho_W_GR_dp_cap =
-        cv.xmWG * cv.drho_GR_dp_cap + cv.dxmWG_dpCap * cv.rhoGR;
-    cv.drho_W_GR_dT = cv.xmWG * cv.drho_GR_dT + cv.dxmWG_dT * cv.rhoGR;
+    cv.drho_W_GR_dp_GR =
+        cv.xmWG * cv.drho_GR_dp_GR + cv.dxmWG_dpGR * fluid_density_data.rho_GR;
+    cv.drho_W_GR_dp_cap = cv.xmWG * cv.drho_GR_dp_cap +
+                          cv.dxmWG_dpCap * fluid_density_data.rho_GR;
+    cv.drho_W_GR_dT =
+        cv.xmWG * cv.drho_GR_dT + cv.dxmWG_dT * fluid_density_data.rho_GR;
 
     // specific heat capacities of dry air and vapour
     auto const cpCG =
@@ -331,7 +335,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
         mass_mole_fractions_data.xmCG * cv.hCG + cv.xmWG * cv.hWG;
 
     // specific inner energies of gas phase
-    cv.uG = enthalpy_data.h_G - pGR / cv.rhoGR;
+    cv.uG = enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
 
     // diffusion
     auto const tortuosity =
@@ -406,15 +410,17 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // of solvent and solution). NB! This problem did not occur with the gas
     // phase because the composition there was determined via the molar
     // fractions (ratio of the partial pressures).
-    cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
-    variables.density = cv.rhoLR;
+    fluid_density_data.rho_LR =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    variables.density = fluid_density_data.rho_LR;
 
     // Gas component partial density in liquid phase
-    cv.rhoCLR = cv.rhoLR - rho_W_LR();
+    cv.rhoCLR = fluid_density_data.rho_LR - rho_W_LR();
 
     // liquid phase composition (mass fraction)
-    mass_mole_fractions_data.xmWL = std::clamp(rho_W_LR() / cv.rhoLR, 0., 1.);
+    mass_mole_fractions_data.xmWL =
+        std::clamp(rho_W_LR() / fluid_density_data.rho_LR, 0., 1.);
     auto const xmCL = 1. - mass_mole_fractions_data.xmWL;
 
     // Attention! Usually a multi-linear equation of state is used to
@@ -464,12 +470,12 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
 
     // liquid phase mass fraction derivatives
     cv.dxmWL_dpGR =
-        1. / cv.rhoLR *
+        1. / fluid_density_data.rho_LR *
         (drhoWLR_dpGR - mass_mole_fractions_data.xmWL * drhoLR_dpGR);
     cv.dxmWL_dpCap =
-        1. / cv.rhoLR *
+        1. / fluid_density_data.rho_LR *
         (drhoWLR_dpCap - mass_mole_fractions_data.xmWL * drhoLR_dpCap);
-    cv.dxmWL_dT = 1. / cv.rhoLR *
+    cv.dxmWL_dT = 1. / fluid_density_data.rho_LR *
                   (drhoWLR_dT - mass_mole_fractions_data.xmWL * drhoLR_dT);
 
     // liquid phase molar fractions and derivatives
