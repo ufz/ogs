@@ -79,3 +79,15 @@ with (source_path / "scripts" / "doc" / "_redirects").open("a") as f:
     f.write(
         f"/v{new_version}/* https://ogs-doxygen-v{new_version_dash}.netlify.app/:splat 200!\n"
     )
+
+print(
+    f"""Run the following and update CITATION.cff:
+
+git shortlog -sne {new_version}...{current_version}
+
+Then check diff and run:
+
+git commit -m "{new_version}"
+git tag -s -m "OpenGeoSys {new_version}" {new_version}
+git push --tags"""
+)
