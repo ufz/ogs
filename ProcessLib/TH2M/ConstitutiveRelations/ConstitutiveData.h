@@ -89,7 +89,6 @@ struct OutputData
     MassMoleFractionsData mass_mole_fractions_data;
     FluidDensityData fluid_density_data;
     VapourPartialPressureData vapour_pressure_data;
-    PhaseTransitionData phase_transition_data;
 
     static auto reflect()
     {
@@ -126,6 +125,7 @@ struct ConstitutiveTempData
     TotalStressData<DisplacementDim> total_stress_data;
     EquivalentPlasticStrainData equivalent_plastic_strain_data;
     ViscosityData viscosity_data;
+    PhaseTransitionData phase_transition_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

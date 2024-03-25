@@ -229,7 +229,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             CapillaryPressureData{pCap}, T_data, current_state.rho_W_LR,
             ip_cv.viscosity_data, ip_out.enthalpy_data,
             ip_out.mass_mole_fractions_data, ip_out.fluid_density_data,
-            ip_out.vapour_pressure_data, ip_out.phase_transition_data);
+            ip_out.vapour_pressure_data, ip_cv.phase_transition_data);
 
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
@@ -282,7 +282,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        auto const& c = ip_out.phase_transition_data;
+        auto const& c = ip_cv.phase_transition_data;
 
         auto const phi_L = current_state.S_L_data.S_L * ip_data.phi;
         auto const phi_G = (1. - current_state.S_L_data.S_L) * ip_data.phi;
@@ -1163,9 +1163,9 @@ void TH2MLocalAssembler<
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
 
         double const sD_G =
-            ip_out.phase_transition_data.diffusion_coefficient_vapour;
+            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
         double const sD_L =
-            ip_out.phase_transition_data.diffusion_coefficient_solute;
+            ip_cv.phase_transition_data.diffusion_coefficient_solute;
 
         GlobalDimMatrixType const D_C_G = sD_G * I;
         GlobalDimMatrixType const D_W_G = sD_G * I;
@@ -1250,19 +1250,19 @@ void TH2MLocalAssembler<
         DisplacementDimMatrix const advection_C_L = ip.rhoCLR * k_over_mu_L;
 
         DisplacementDimMatrix const diffusion_CGpGR =
-            -phi_G * rhoGR * D_C_G * ip_out.phase_transition_data.dxmWG_dpGR;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         DisplacementDimMatrix const diffusion_CLpGR =
-            -phi_L * rhoLR * D_C_L * ip_out.phase_transition_data.dxmWL_dpGR;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpGR;
 
         DisplacementDimMatrix const diffusion_CGpCap =
-            -phi_G * rhoGR * D_C_G * ip_out.phase_transition_data.dxmWG_dpCap;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpCap;
         DisplacementDimMatrix const diffusion_CLpCap =
-            -phi_L * rhoLR * D_C_L * ip_out.phase_transition_data.dxmWL_dpCap;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpCap;
 
         DisplacementDimMatrix const diffusion_CGT =
-            -phi_G * rhoGR * D_C_G * ip_out.phase_transition_data.dxmWG_dT;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dT;
         DisplacementDimMatrix const diffusion_CLT =
-            -phi_L * rhoLR * D_C_L * ip_out.phase_transition_data.dxmWL_dT;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         DisplacementDimMatrix const advection_C = advection_C_G + advection_C_L;
         DisplacementDimMatrix const diffusion_C_pGR =
@@ -1324,19 +1324,19 @@ void TH2MLocalAssembler<
             current_state.rho_W_LR() * k_over_mu_L;
 
         DisplacementDimMatrix const diffusion_WGpGR =
-            phi_G * rhoGR * D_W_G * ip_out.phase_transition_data.dxmWG_dpGR;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         DisplacementDimMatrix const diffusion_WLpGR =
-            phi_L * rhoLR * D_W_L * ip_out.phase_transition_data.dxmWL_dpGR;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpGR;
 
         DisplacementDimMatrix const diffusion_WGpCap =
-            phi_G * rhoGR * D_W_G * ip_out.phase_transition_data.dxmWG_dpCap;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpCap;
         DisplacementDimMatrix const diffusion_WLpCap =
-            phi_L * rhoLR * D_W_L * ip_out.phase_transition_data.dxmWL_dpCap;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpCap;
 
         DisplacementDimMatrix const diffusion_WGT =
-            phi_G * rhoGR * D_W_G * ip_out.phase_transition_data.dxmWG_dT;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
         DisplacementDimMatrix const diffusion_WLT =
-            phi_L * rhoLR * D_W_L * ip_out.phase_transition_data.dxmWL_dT;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         DisplacementDimMatrix const advection_W = advection_W_G + advection_W_L;
         DisplacementDimMatrix const diffusion_W_pGR =
@@ -1386,8 +1386,8 @@ void TH2MLocalAssembler<
 
         fT.noalias() +=
             gradNTT *
-            (ip.rhoCGR * ip_out.phase_transition_data.hCG * ip.d_CG +
-             ip.rhoWGR * ip_out.phase_transition_data.hWG * ip.d_WG) *
+            (ip.rhoCGR * ip_cv.phase_transition_data.hCG * ip.d_CG +
+             ip.rhoWGR * ip_cv.phase_transition_data.hWG * ip.d_WG) *
             w;
 
         fT.noalias() +=
@@ -1621,9 +1621,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
 
         double const sD_G =
-            ip_out.phase_transition_data.diffusion_coefficient_vapour;
+            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
         double const sD_L =
-            ip_out.phase_transition_data.diffusion_coefficient_solute;
+            ip_cv.phase_transition_data.diffusion_coefficient_solute;
 
         GlobalDimMatrixType const D_C_G = sD_G * I;
         GlobalDimMatrixType const D_W_G = sD_G * I;
@@ -1715,13 +1715,13 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimMatrixType const advection_C_G = ip.rhoCGR * k_over_mu_G;
         GlobalDimMatrixType const advection_C_L = ip.rhoCLR * k_over_mu_L;
         GlobalDimMatrixType const diffusion_C_G_p =
-            -phi_G * rhoGR * D_C_G * ip_out.phase_transition_data.dxmWG_dpGR;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         GlobalDimMatrixType const diffusion_C_L_p =
-            -phi_L * rhoLR * D_C_L * ip_out.phase_transition_data.dxmWL_dpLR;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpLR;
         GlobalDimMatrixType const diffusion_C_G_T =
-            -phi_G * rhoGR * D_C_G * ip_out.phase_transition_data.dxmWG_dT;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dT;
         GlobalDimMatrixType const diffusion_C_L_T =
-            -phi_L * rhoLR * D_C_L * ip_out.phase_transition_data.dxmWL_dT;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         GlobalDimMatrixType const advection_C = advection_C_G + advection_C_L;
         GlobalDimMatrixType const diffusion_C_p =
@@ -1873,13 +1873,13 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimMatrixType const advection_W_L =
             current_state.rho_W_LR() * k_over_mu_L;
         GlobalDimMatrixType const diffusion_W_G_p =
-            phi_G * rhoGR * D_W_G * ip_out.phase_transition_data.dxmWG_dpGR;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         GlobalDimMatrixType const diffusion_W_L_p =
-            phi_L * rhoLR * D_W_L * ip_out.phase_transition_data.dxmWL_dpLR;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpLR;
         GlobalDimMatrixType const diffusion_W_G_T =
-            phi_G * rhoGR * D_W_G * ip_out.phase_transition_data.dxmWG_dT;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
         GlobalDimMatrixType const diffusion_W_L_T =
-            phi_L * rhoLR * D_W_L * ip_out.phase_transition_data.dxmWL_dT;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         GlobalDimMatrixType const advection_W = advection_W_G + advection_W_L;
         GlobalDimMatrixType const diffusion_W_p =
@@ -2097,8 +2097,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         fT.noalias() +=
             gradNTT *
-            (ip.rhoCGR * ip_out.phase_transition_data.hCG * ip.d_CG +
-             ip.rhoWGR * ip_out.phase_transition_data.hWG * ip.d_WG) *
+            (ip.rhoCGR * ip_cv.phase_transition_data.hCG * ip.d_CG +
+             ip.rhoWGR * ip_cv.phase_transition_data.hWG * ip.d_WG) *
             w;
 
         // ---------------------------------------------------------------------
