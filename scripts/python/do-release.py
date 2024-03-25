@@ -12,6 +12,15 @@ def increment_ver(version):
 script_path = Path(__file__).resolve()
 source_path = script_path.parent.parent.parent.resolve()
 
+git_describe = subprocess.run(
+    "git describe --tags --abbrev=0",
+    shell=True,
+    check=True,
+    text=True,
+    capture_output=True,
+)
+current_version = git_describe.stdout.splitlines()[0]
+
 # Modify changelog
 new_version = ""
 changelog_content = ""
@@ -54,5 +63,13 @@ text = path.read_text()
 text = text.replace(
     " * The documentation for OGS releases can be found here:\n *\n",
     f" * The documentation for OGS releases can be found here:\n *\n * - https://doxygen.opengeosys.org/v{new_version}\n",
+)
+path.write_text(text)
+
+path = Path(source_path / "README.md")
+text = path.read_text()
+text = text.replace(
+    f"https://doxygen.opengeosys.org/v{current_version}",
+    f"https://doxygen.opengeosys.org/v{new_version}",
 )
 path.write_text(text)
