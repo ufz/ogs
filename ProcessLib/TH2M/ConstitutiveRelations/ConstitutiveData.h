@@ -11,6 +11,7 @@
 
 #include "Biot.h"
 #include "Bishops.h"
+#include "ConstitutiveDensity.h"
 #include "ElasticTangentStiffnessData.h"
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
@@ -46,6 +47,7 @@ struct StatefulData
         eff_stress_data;
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
     PureLiquidDensityData rho_W_LR;
+    ConstituentDensityData constituent_density_data;
 
     static auto reflect()
     {
@@ -65,6 +67,7 @@ struct StatefulDataPrev
         eff_stress_data;
     PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
     PrevState<PureLiquidDensityData> rho_W_LR;
+    PrevState<ConstituentDensityData> constituent_density_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
@@ -74,6 +77,7 @@ struct StatefulDataPrev
         eff_stress_data = state.eff_stress_data;
         mechanical_strain_data = state.mechanical_strain_data;
         rho_W_LR = state.rho_W_LR;
+        constituent_density_data = state.constituent_density_data;
 
         return *this;
     }

@@ -145,6 +145,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            MassMoleFractionsData& mass_mole_fractions_data,
                            FluidDensityData& fluid_density_data,
                            VapourPartialPressureData& vapour_pressure_data,
+                           ConstituentDensityData& constituent_density_data,
                            PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -299,8 +300,9 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // density to the MPL, a constant phase density can also be assumed, the
     // derivatives of the partial densities are then unaffected and the
     // model is still consistent.
-    cv.rhoCGR = mass_mole_fractions_data.xmCG * fluid_density_data.rho_GR;
-    cv.rhoWGR = cv.xmWG * fluid_density_data.rho_GR;
+    constituent_density_data.rho_C_GR =
+        mass_mole_fractions_data.xmCG * fluid_density_data.rho_GR;
+    constituent_density_data.rho_W_GR = cv.xmWG * fluid_density_data.rho_GR;
 
     // 'Air'-component partial density derivatives
     cv.drho_C_GR_dp_GR = mass_mole_fractions_data.xmCG * cv.drho_GR_dp_GR -
@@ -418,7 +420,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     variables.density = fluid_density_data.rho_LR;
 
     // Gas component partial density in liquid phase
-    cv.rhoCLR = fluid_density_data.rho_LR - rho_W_LR();
+    constituent_density_data.rho_C_LR = fluid_density_data.rho_LR - rho_W_LR();
 
     // liquid phase composition (mass fraction)
     mass_mole_fractions_data.xmWL =

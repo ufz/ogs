@@ -48,6 +48,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                              MassMoleFractionsData& mass_mole_fractions_data,
                              FluidDensityData& fluid_density_data,
                              VapourPartialPressureData& vapour_pressure_data,
+                             ConstituentDensityData& constituent_density_data,
                              PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -83,7 +84,9 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
         gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-    cv.rhoCGR = fluid_density_data.rho_GR;
+    constituent_density_data.rho_C_GR = fluid_density_data.rho_GR;
+    constituent_density_data.rho_W_GR = 0;
+    constituent_density_data.rho_C_LR = 0;
 
     // W-component is only component in the liquid phase
     mass_mole_fractions_data.xmWL = 1.;

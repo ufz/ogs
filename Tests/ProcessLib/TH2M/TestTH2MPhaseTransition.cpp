@@ -230,6 +230,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         mass_mole_fractions;
     FluidDensityData fluid_density;
     VapourPartialPressureData vapour_pressure;
+    ConstituentDensityData constituent_density;
     ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
     ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
         {},
@@ -250,30 +251,30 @@ TEST(ProcessLib, TH2MPhaseTransition)
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR + eps_pGR}, p_cap_data,
                   T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, cv);
+                  fluid_density, vapour_pressure, constituent_density, cv);
 
         auto xmWG_plus = cv.xmWG;
         auto rhoGR_plus = fluid_density.rho_GR;
-        auto rhoCGR_plus = cv.rhoCGR;
-        auto rhoWGR_plus = cv.rhoWGR;
+        auto rhoCGR_plus = constituent_density.rho_C_GR;
+        auto rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR - eps_pGR},
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR - eps_pGR}, p_cap_data,
                   T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, cv);
+                  fluid_density, vapour_pressure, constituent_density, cv);
 
         auto xmWG_minus = cv.xmWG;
         auto rhoGR_minus = fluid_density.rho_GR;
-        auto rhoCGR_minus = cv.rhoCGR;
-        auto rhoWGR_minus = cv.rhoWGR;
+        auto rhoCGR_minus = constituent_density.rho_C_GR;
+        auto rhoWGR_minus = constituent_density.rho_W_GR;
 
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR}, p_cap_data,
                           T_data, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpGR = (xmWG_plus - xmWG_minus) / (2. * eps_pGR);
@@ -299,12 +300,12 @@ TEST(ProcessLib, TH2MPhaseTransition)
         ptm->eval(x_t, media_data, p_GR_data,
                   CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         xmWG_plus = cv.xmWG;
         rhoGR_plus = fluid_density.rho_GR;
-        rhoCGR_plus = cv.rhoCGR;
-        rhoWGR_plus = cv.rhoWGR;
+        rhoCGR_plus = constituent_density.rho_C_GR;
+        rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data,
                           CapillaryPressureData{pCap - eps_pCap}, T_data,
@@ -312,19 +313,19 @@ TEST(ProcessLib, TH2MPhaseTransition)
         ptm->eval(x_t, media_data, p_GR_data,
                   CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         xmWG_minus = cv.xmWG;
         rhoGR_minus = fluid_density.rho_GR;
-        rhoCGR_minus = cv.rhoCGR;
-        rhoWGR_minus = cv.rhoWGR;
+        rhoCGR_minus = constituent_density.rho_C_GR;
+        rhoWGR_minus = constituent_density.rho_W_GR;
 
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpCap = (xmWG_plus - xmWG_minus) / (2. * eps_pCap);
@@ -350,30 +351,32 @@ TEST(ProcessLib, TH2MPhaseTransition)
                           TemperatureData{T + eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
                   TemperatureData{T + eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure, cv);
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         xmWG_plus = cv.xmWG;
         rhoGR_plus = fluid_density.rho_GR;
-        rhoCGR_plus = cv.rhoCGR;
-        rhoWGR_plus = cv.rhoWGR;
+        rhoCGR_plus = constituent_density.rho_C_GR;
+        rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
                           TemperatureData{T - eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
                   TemperatureData{T - eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure, cv);
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         xmWG_minus = cv.xmWG;
         rhoGR_minus = fluid_density.rho_GR;
-        rhoCGR_minus = cv.rhoCGR;
-        rhoWGR_minus = cv.rhoWGR;
+        rhoCGR_minus = constituent_density.rho_C_GR;
+        rhoWGR_minus = constituent_density.rho_W_GR;
 
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         // Central difference derivatives
         auto const dxmWG_dT = (xmWG_plus - xmWG_minus) / (2. * eps_T);
@@ -401,18 +404,22 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // The quotient of constituent partial densities and phase densities
         // must be equal to the mass fraction of those constituents in both
         // phases.
-        ASSERT_NEAR(cv.rhoWGR / fluid_density.rho_GR, cv.xmWG, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_W_GR / fluid_density.rho_GR,
+                    cv.xmWG, 1.e-10);
         ASSERT_NEAR(rhoWLR() / fluid_density.rho_LR, mass_mole_fractions.xmWL,
                     1.e-10);
 
-        ASSERT_NEAR(cv.rhoCGR / fluid_density.rho_GR, 1. - cv.xmWG, 1.e-10);
-        ASSERT_NEAR(cv.rhoCLR / fluid_density.rho_LR,
+        ASSERT_NEAR(constituent_density.rho_C_GR / fluid_density.rho_GR,
+                    1. - cv.xmWG, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_C_LR / fluid_density.rho_LR,
                     1. - mass_mole_fractions.xmWL, 1.e-10);
 
         // Sum of constituent partial densities must be equal to phase
         // density
-        ASSERT_NEAR(cv.rhoCGR + cv.rhoWGR, fluid_density.rho_GR, 1.e-10);
-        ASSERT_NEAR(cv.rhoCLR + rhoWLR(), fluid_density.rho_LR, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_C_GR + constituent_density.rho_W_GR,
+                    fluid_density.rho_GR, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_C_LR + rhoWLR(),
+                    fluid_density.rho_LR, 1.e-10);
 
         // Liquid phase contains Water component only
         ASSERT_NEAR(1., mass_mole_fractions.xmWL, 1.e-10);
@@ -489,6 +496,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         mass_mole_fractions;
     FluidDensityData fluid_density;
     VapourPartialPressureData vapour_pressure;
+    ConstituentDensityData constituent_density;
     ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
     ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
         {},
@@ -509,28 +517,28 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR + eps_pGR}, p_cap_data,
                   T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, cv);
+                  fluid_density, vapour_pressure, constituent_density, cv);
 
         auto xmWG_plus = cv.xmWG;
-        auto rhoCGR_plus = cv.rhoCGR;
-        auto rhoWGR_plus = cv.rhoWGR;
+        auto rhoCGR_plus = constituent_density.rho_C_GR;
+        auto rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR - eps_pGR},
                           p_cap_data, T_data, rhoWLR);
         ptm->eval(x_t, media_data, GasPressureData{pGR - eps_pGR}, p_cap_data,
                   T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, cv);
+                  fluid_density, vapour_pressure, constituent_density, cv);
 
         auto xmWG_minus = cv.xmWG;
-        auto rhoCGR_minus = cv.rhoCGR;
-        auto rhoWGR_minus = cv.rhoWGR;
+        auto rhoCGR_minus = constituent_density.rho_C_GR;
+        auto rhoWGR_minus = constituent_density.rho_W_GR;
 
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpGR = (xmWG_plus - xmWG_minus) / (2. * eps_pGR);
@@ -555,11 +563,11 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         ptm->eval(x_t, media_data, p_GR_data,
                   CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         xmWG_plus = cv.xmWG;
-        rhoCGR_plus = cv.rhoCGR;
-        rhoWGR_plus = cv.rhoWGR;
+        rhoCGR_plus = constituent_density.rho_C_GR;
+        rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data,
                           CapillaryPressureData{pCap - eps_pCap}, T_data,
@@ -567,18 +575,18 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         ptm->eval(x_t, media_data, p_GR_data,
                   CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         xmWG_minus = cv.xmWG;
-        rhoCGR_minus = cv.rhoCGR;
-        rhoWGR_minus = cv.rhoWGR;
+        rhoCGR_minus = constituent_density.rho_C_GR;
+        rhoWGR_minus = constituent_density.rho_W_GR;
 
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         // Central difference derivatives
         auto const dxmWG_dpCap = (xmWG_plus - xmWG_minus) / (2. * eps_pCap);
@@ -603,28 +611,30 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                           TemperatureData{T + eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
                   TemperatureData{T + eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure, cv);
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         xmWG_plus = cv.xmWG;
-        rhoCGR_plus = cv.rhoCGR;
-        rhoWGR_plus = cv.rhoWGR;
+        rhoCGR_plus = constituent_density.rho_C_GR;
+        rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
                           TemperatureData{T - eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
                   TemperatureData{T - eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure, cv);
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         xmWG_minus = cv.xmWG;
-        rhoCGR_minus = cv.rhoCGR;
-        rhoWGR_minus = cv.rhoWGR;
+        rhoCGR_minus = constituent_density.rho_C_GR;
+        rhoWGR_minus = constituent_density.rho_W_GR;
 
         // Unperturbed primary variables
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
-                  vapour_pressure, cv);
+                  vapour_pressure, constituent_density, cv);
 
         // Central difference derivatives
         auto const dxmWG_dT = (xmWG_plus - xmWG_minus) / (2. * eps_T);
@@ -651,18 +661,22 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // The quotient of constituent partial densities and phase densities
         // must be equal to the mass fraction of those constituents in both
         // phases.
-        ASSERT_NEAR(cv.rhoWGR / fluid_density.rho_GR, cv.xmWG, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_W_GR / fluid_density.rho_GR,
+                    cv.xmWG, 1.e-10);
         ASSERT_NEAR(rhoWLR() / fluid_density.rho_LR, mass_mole_fractions.xmWL,
                     1.e-10);
 
-        ASSERT_NEAR(cv.rhoCGR / fluid_density.rho_GR, 1. - cv.xmWG, 1.e-10);
-        ASSERT_NEAR(cv.rhoCLR / fluid_density.rho_LR,
+        ASSERT_NEAR(constituent_density.rho_C_GR / fluid_density.rho_GR,
+                    1. - cv.xmWG, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_C_LR / fluid_density.rho_LR,
                     1. - mass_mole_fractions.xmWL, 1.e-10);
 
         // Sum of constituent partial densities must be equal to phase
         // density
-        ASSERT_NEAR(cv.rhoCGR + cv.rhoWGR, fluid_density.rho_GR, 1.e-10);
-        ASSERT_NEAR(cv.rhoCLR + rhoWLR(), fluid_density.rho_LR, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_C_GR + constituent_density.rho_W_GR,
+                    fluid_density.rho_GR, 1.e-10);
+        ASSERT_NEAR(constituent_density.rho_C_LR + rhoWLR(),
+                    fluid_density.rho_LR, 1.e-10);
 
         // Liquid phase contains Water component only
         ASSERT_NEAR(1., mass_mole_fractions.xmWL, 1.e-10);

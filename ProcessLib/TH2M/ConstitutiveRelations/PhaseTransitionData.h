@@ -17,10 +17,6 @@ namespace ConstitutiveRelations
 {
 struct PhaseTransitionData
 {
-    // gas phase density
-    double rhoCGR = 0.;
-    double rhoWGR = 0.;
-
     double drho_GR_dp_GR = 0.;
     double drho_GR_dp_cap = 0.;
     double drho_GR_dT = 0.;
@@ -32,9 +28,6 @@ struct PhaseTransitionData
     double drho_W_GR_dp_GR = 0.;
     double drho_W_GR_dp_cap = 0.;
     double drho_W_GR_dT = 0.;
-
-    // liquid phase density
-    double rhoCLR = 0.;
 
     double drho_LR_dp_GR = 0.;
     double drho_LR_dp_cap = 0.;

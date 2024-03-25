@@ -10,6 +10,7 @@
 #pragma once
 
 #include "Base.h"
+#include "ConstitutiveDensity.h"
 #include "Enthalpy.h"
 #include "FluidDensity.h"
 #include "MassMoleFractions.h"
@@ -57,6 +58,7 @@ struct PhaseTransitionModel
                       MassMoleFractionsData& mass_mole_fractions_data,
                       FluidDensityData& fluid_density_data,
                       VapourPartialPressureData& vapour_pressure_data,
+                      ConstituentDensityData& constituent_density_data,
                       PhaseTransitionData& cv) const = 0;
 };
 }  // namespace ConstitutiveRelations

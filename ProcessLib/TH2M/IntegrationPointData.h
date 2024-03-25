@@ -39,14 +39,6 @@ struct IntegrationPointData final
     // phase intrinsic densities
     double rhoSR = std::numeric_limits<double>::quiet_NaN();
 
-    // real constituent partial densities
-    double rhoCGR = std::numeric_limits<double>::quiet_NaN();
-    double rhoCGR_prev = std::numeric_limits<double>::quiet_NaN();
-    double rhoWGR = std::numeric_limits<double>::quiet_NaN();
-    double rhoWGR_prev = std::numeric_limits<double>::quiet_NaN();
-    double rhoCLR = std::numeric_limits<double>::quiet_NaN();
-    double rhoCLR_prev = std::numeric_limits<double>::quiet_NaN();
-
     // phase enthalpies
     double rho_G_h_G = std::numeric_limits<double>::quiet_NaN();
     double rho_L_h_L = std::numeric_limits<double>::quiet_NaN();
@@ -76,14 +68,7 @@ struct IntegrationPointData final
 
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
-    void pushBackState()
-    {
-        rhoCGR_prev = rhoCGR;
-        rhoWGR_prev = rhoWGR;
-        rhoCLR_prev = rhoCLR;
-
-        rho_u_eff_prev = rho_u_eff;
-    }
+    void pushBackState() { rho_u_eff_prev = rho_u_eff; }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

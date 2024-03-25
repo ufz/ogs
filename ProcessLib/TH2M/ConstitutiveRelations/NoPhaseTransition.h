@@ -32,6 +32,7 @@ struct NoPhaseTransition : PhaseTransitionModel
               MassMoleFractionsData& mass_mole_fractions_data,
               FluidDensityData& fluid_density_data,
               VapourPartialPressureData& vapour_pressure_data,
+              ConstituentDensityData& constituent_density_data,
               PhaseTransitionData& cv) const override;
 };
 
