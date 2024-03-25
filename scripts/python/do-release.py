@@ -73,3 +73,9 @@ text = text.replace(
     f"https://doxygen.opengeosys.org/v{new_version}",
 )
 path.write_text(text)
+
+new_version_dash = new_version.replace(".", "-")
+with (source_path / "scripts" / "doc" / "_redirects").open("a") as f:
+    f.write(
+        f"/v{new_version}/* https://ogs-doxygen-v{new_version_dash}.netlify.app/:splat 200!\n"
+    )
