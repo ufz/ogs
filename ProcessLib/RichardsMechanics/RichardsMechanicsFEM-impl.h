@@ -278,7 +278,7 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
-    setInitialConditionsConcrete(Eigen::Ref<Eigen::VectorXd const> local_x,
+    setInitialConditionsConcrete(Eigen::VectorXd const local_x,
                                  double const t,
                                  int const /*process_id*/)
 {

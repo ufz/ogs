@@ -276,7 +276,7 @@ public:
                                      double const t, double const dt,
                                      int const process_id) override;
 
-    void setInitialConditionsConcrete(Eigen::Ref<Eigen::VectorXd const> local_x,
+    void setInitialConditionsConcrete(Eigen::VectorXd const local_x,
                                       double const t,
                                       int const process_id) override;
 
