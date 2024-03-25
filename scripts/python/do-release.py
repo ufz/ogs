@@ -48,3 +48,11 @@ subprocess.run(
     check=True,
     cwd=source_path / "web",
 )
+
+path = Path(source_path / "Documentation" / "mainpage.dox.in")
+text = path.read_text()
+text = text.replace(
+    " * The documentation for OGS releases can be found here:\n *\n",
+    f" * The documentation for OGS releases can be found here:\n *\n * - https://doxygen.opengeosys.org/v{new_version}\n",
+)
+path.write_text(text)
