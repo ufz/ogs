@@ -121,26 +121,9 @@ void LocalAssemblerInterface::postTimestep(
     std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
     int const process_id)
 {
-    std::vector<double> local_x_vec;
-    std::vector<double> local_x_prev_vec;
-
-    auto const n_processes = x.size();
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        auto const indices =
-            NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
-        assert(!indices.empty());
-        auto const local_solution = x[process_id]->get(indices);
-        local_x_vec.insert(std::end(local_x_vec), std::begin(local_solution),
-                           std::end(local_solution));
-
-        auto const local_solution_prev = x_prev[process_id]->get(indices);
-        local_x_prev_vec.insert(std::end(local_x_prev_vec),
-                                std::begin(local_solution_prev),
-                                std::end(local_solution_prev));
-    }
-    auto const local_x = MathLib::toVector(local_x_vec);
-    auto const local_x_prev = MathLib::toVector(local_x_prev_vec);
+    auto const local_x = NumLib::getLocalX(mesh_item_id, dof_tables, x);
+    auto const local_x_prev =
+        NumLib::getLocalX(mesh_item_id, dof_tables, x_prev);
 
     postTimestepConcrete(local_x, local_x_prev, t, dt, process_id);
 }
