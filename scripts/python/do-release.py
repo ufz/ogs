@@ -1,4 +1,5 @@
 import re
+import subprocess
 from pathlib import Path
 
 
@@ -37,5 +38,13 @@ changelog_new_content = re.sub(
     changelog_content,
 )
 
-with (source_path / "CHANGELOG.md", "w").open() as f:
+with (source_path / "CHANGELOG.md").open("w") as f:
     f.write(changelog_new_content)
+
+# Create web release page
+subprocess.run(
+    f"hugo new releases/{new_version}.md",
+    shell=True,
+    check=True,
+    cwd=source_path / "web",
+)
