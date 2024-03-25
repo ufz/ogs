@@ -121,10 +121,11 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ProcessLib::TH2M::ConstitutiveRelations::MassMoleFractionsData
         mass_mole_fractions;
     FluidDensityData fluid_density;
+    VapourPartialPressureData vapour_pressure;
     PhaseTransitionData cv;
     ptm->eval(x_t, media_data, GasPressureData{pGR}, CapillaryPressureData{pGR},
               TemperatureData{T, T}, rhoWLR, viscosity, enthalpy,
-              mass_mole_fractions, fluid_density, cv);
+              mass_mole_fractions, fluid_density, vapour_pressure, cv);
 
     // reference values
     double const rhoCGR = density_air;

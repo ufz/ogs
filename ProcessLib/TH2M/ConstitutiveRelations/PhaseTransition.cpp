@@ -144,6 +144,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            EnthalpyData& enthalpy_data,
                            MassMoleFractionsData& mass_mole_fractions_data,
                            FluidDensityData& fluid_density_data,
+                           VapourPartialPressureData& vapour_pressure_data,
                            PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -219,7 +220,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
 
     // vapour pressure inside porespace (== water partial pressure in gas
     // phase)
-    cv.pWGR = p_vap_flat * K;
+    vapour_pressure_data.pWGR = p_vap_flat * K;
     auto const dpWGR_dT = dp_vap_flat_dT * K + p_vap_flat * dK_dT;
     auto const dpWGR_dpCap = p_vap_flat * dK_dpCap;
 
@@ -231,11 +232,12 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                  // of the mass balance on the diagonal of the local element
                  // matrix to be zero). The value is simply made up, seems
                  // reasonable.
-    cv.xnWG = std::clamp(cv.pWGR / pGR, xnWG_min, 1. - xnWG_min);
+    cv.xnWG =
+        std::clamp(vapour_pressure_data.pWGR / pGR, xnWG_min, 1. - xnWG_min);
     mass_mole_fractions_data.xnCG = 1. - cv.xnWG;
 
     // gas phase molar fraction derivatives
-    auto const dxnWG_dpGR = -cv.pWGR / pGR / pGR;
+    auto const dxnWG_dpGR = -vapour_pressure_data.pWGR / pGR / pGR;
     auto const dxnWG_dpCap = dpWGR_dpCap / pGR;
     auto const dxnWG_dT = dpWGR_dT / pGR;
 

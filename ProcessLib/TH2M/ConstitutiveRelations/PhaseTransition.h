@@ -31,6 +31,7 @@ struct PhaseTransition : PhaseTransitionModel
               ViscosityData& viscosity_data, EnthalpyData& enthalpy_data,
               MassMoleFractionsData& mass_mole_fractions_data,
               FluidDensityData& fluid_density_data,
+              VapourPartialPressureData& vapour_pressure_data,
               PhaseTransitionData& cv) const override;
 
 private:

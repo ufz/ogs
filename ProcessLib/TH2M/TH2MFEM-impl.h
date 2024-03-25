@@ -229,7 +229,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             CapillaryPressureData{pCap}, T_data, current_state.rho_W_LR,
             ip_cv.viscosity_data, ip_out.enthalpy_data,
             ip_out.mass_mole_fractions_data, ip_out.fluid_density_data,
-            ip_out.phase_transition_data);
+            ip_out.vapour_pressure_data, ip_out.phase_transition_data);
 
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;

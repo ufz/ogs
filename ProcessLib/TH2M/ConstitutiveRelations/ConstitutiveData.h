@@ -29,6 +29,7 @@
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
 #include "TotalStress.h"
+#include "VapourPartialPressure.h"
 #include "Viscosity.h"
 
 namespace ProcessLib::TH2M
@@ -87,6 +88,7 @@ struct OutputData
     EnthalpyData enthalpy_data;
     MassMoleFractionsData mass_mole_fractions_data;
     FluidDensityData fluid_density_data;
+    VapourPartialPressureData vapour_pressure_data;
     PhaseTransitionData phase_transition_data;
 
     static auto reflect()
@@ -98,7 +100,7 @@ struct OutputData
                                               &Self::enthalpy_data,
                                               &Self::mass_mole_fractions_data,
                                               &Self::fluid_density_data,
-                                              &Self::phase_transition_data);
+                                              &Self::vapour_pressure_data);
     }
 };
 

@@ -15,6 +15,7 @@
 #include "MassMoleFractions.h"
 #include "PhaseTransitionData.h"
 #include "PureLiquidDensity.h"
+#include "VapourPartialPressure.h"
 #include "Viscosity.h"
 
 namespace ProcessLib::TH2M
@@ -55,6 +56,7 @@ struct PhaseTransitionModel
                       EnthalpyData& enthalpy_data,
                       MassMoleFractionsData& mass_mole_fractions_data,
                       FluidDensityData& fluid_density_data,
+                      VapourPartialPressureData& vapour_pressure_data,
                       PhaseTransitionData& cv) const = 0;
 };
 }  // namespace ConstitutiveRelations

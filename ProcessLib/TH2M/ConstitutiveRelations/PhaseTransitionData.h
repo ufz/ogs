@@ -10,7 +10,6 @@
 #pragma once
 
 #include "Base.h"
-#include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::TH2M
 {
@@ -52,9 +51,6 @@ struct PhaseTransitionData
     double drho_W_LR_dT = 0.;
     double drho_W_LR_dp_LR = 0.;
 
-    // water partial pressure in gas phase
-    double pWGR = 0;
-
     // constituent mass and molar fractions
     double xnWG = 0.;
     double xmWG = 0.;
@@ -90,15 +86,6 @@ struct PhaseTransitionData
     double du_G_dp_GR = 0;
     double du_L_dp_GR = 0;
     double du_L_dp_cap = 0;
-
-    static auto reflect()
-    {
-        using Self = PhaseTransitionData;
-        namespace R = ProcessLib::Reflection;
-
-        return std::tuple{
-            R::makeReflectionData("vapour_pressure", &Self::pWGR)};
-    }
 };
 
 }  // namespace ConstitutiveRelations

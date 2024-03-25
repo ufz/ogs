@@ -47,6 +47,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                              EnthalpyData& enthalpy_data,
                              MassMoleFractionsData& mass_mole_fractions_data,
                              FluidDensityData& fluid_density_data,
+                             VapourPartialPressureData& vapour_pressure_data,
                              PhaseTransitionData& cv) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -60,6 +61,8 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
 
     auto const& liquid_phase = media_data.liquid_phase;
     auto const& gas_phase = media_data.gas_phase;
+
+    vapour_pressure_data.pWGR = 0;
 
     // C-component is only component in the gas phase
     cv.xnWG = 0.;
