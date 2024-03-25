@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <cassert>
 #include <functional>
+
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 namespace NumLib
 {
 namespace
@@ -190,12 +192,12 @@ std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
     return dof_tables;
 }
 
-std::vector<double> getLocalX(
+Eigen::VectorXd getLocalX(
     std::size_t const mesh_item_id,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     std::vector<GlobalVector*> const& x)
 {
-    std::vector<double> local_x_vec;
+    Eigen::VectorXd local_x_vec;
 
     auto const n_processes = x.size();
     for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
@@ -203,9 +205,12 @@ std::vector<double> getLocalX(
         auto const indices =
             NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
         assert(!indices.empty());
+        auto const last = local_x_vec.size();
+        local_x_vec.conservativeResize(last + indices.size());
         auto const local_solution = x[process_id]->get(indices);
-        local_x_vec.insert(std::end(local_x_vec), std::begin(local_solution),
-                           std::end(local_solution));
+        assert(indices.size() == local_solution.size());
+        local_x_vec.tail(local_solution.size()).noalias() =
+            MathLib::toVector(local_solution);
     }
     return local_x_vec;
 }

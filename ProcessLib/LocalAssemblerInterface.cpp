@@ -75,10 +75,7 @@ void LocalAssemblerInterface::computeSecondaryVariable(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
     GlobalVector const& x_prev, int const process_id)
 {
-    std::vector<double> const local_x_vec =
-        NumLib::getLocalX(mesh_item_id, dof_tables, x);
-
-    auto const local_x = MathLib::toVector(local_x_vec);
+    auto const local_x = NumLib::getLocalX(mesh_item_id, dof_tables, x);
 
     // Todo: A more decent way is to directly pass x_prevs as done for x
     auto const indices =
@@ -94,11 +91,9 @@ void LocalAssemblerInterface::setInitialConditions(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     std::vector<GlobalVector*> const& x, double const t, int const process_id)
 {
-    std::vector<double> const local_x_vec =
-        NumLib::getLocalX(mesh_item_id, dof_tables, x);
-    auto const local_x_eigen_map = MathLib::toVector(local_x_vec);
+    auto local_x = NumLib::getLocalX(mesh_item_id, dof_tables, x);
 
-    setInitialConditionsConcrete(local_x_eigen_map, t, process_id);
+    setInitialConditionsConcrete(local_x, t, process_id);
 }
 
 void LocalAssemblerInterface::initialize(
