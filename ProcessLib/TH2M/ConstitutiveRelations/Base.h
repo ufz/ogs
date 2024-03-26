@@ -17,6 +17,8 @@
 
 namespace ProcessLib::TH2M
 {
+namespace ConstitutiveRelations
+{
 using namespace ProcessLib::ConstitutiveRelations;
 namespace KV = MathLib::KelvinVector;
 
@@ -54,4 +56,5 @@ using GasPressureData = BaseLib::StrongType<double, struct GasPressureTag>;
 using CapillaryPressureData =
     BaseLib::StrongType<double, struct CapillaryPressureTag>;
 
+}  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

@@ -118,7 +118,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
-    MediaData media_data{medium};
+    ConstitutiveRelations::MediaData media_data{medium};
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -155,9 +155,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
-        TemperatureData const T_data{T, T_prev};
         double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
+        ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
+        ConstitutiveRelations::GasPressureData const pGR_data{pGR};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap};
         double const pLR = pGR - pCap;
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
@@ -177,8 +179,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
-        models.S_L_model.eval({pos, t, dt}, media_data,
-                              CapillaryPressureData{pCap},
+        models.S_L_model.eval({pos, t, dt}, media_data, pCap_data,
                               current_state.S_L_data, ip_cv.dS_L_dp_cap);
 
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
@@ -209,25 +210,22 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.eff_stress_data, this->material_states_[ip],
             ip_cd.s_mech_data, ip_cv.equivalent_plastic_strain_data);
 
-        models.total_stress_model.eval(
-            current_state.eff_stress_data, ip_cv.biot_data, ip_cv.chi_S_L,
-            GasPressureData{pGR}, CapillaryPressureData{pCap},
-            ip_cv.total_stress_data);
+        models.total_stress_model.eval(current_state.eff_stress_data,
+                                       ip_cv.biot_data, ip_cv.chi_S_L, pGR_data,
+                                       pCap_data, ip_cv.total_stress_data);
 
         models.permeability_model.eval(
-            {pos, t, dt}, media_data, current_state.S_L_data,
-            CapillaryPressureData{pCap}, T_data, ip_cv.total_stress_data,
-            ip_out.eps_data, ip_cv.equivalent_plastic_strain_data,
-            ip_out.permeability_data);
+            {pos, t, dt}, media_data, current_state.S_L_data, pCap_data, T_data,
+            ip_cv.total_stress_data, ip_out.eps_data,
+            ip_cv.equivalent_plastic_strain_data, ip_out.permeability_data);
 
-        models.pure_liquid_density_model.eval(
-            {pos, t, dt}, media_data, GasPressureData{pGR},
-            CapillaryPressureData{pCap}, T_data, current_state.rho_W_LR);
+        models.pure_liquid_density_model.eval({pos, t, dt}, media_data,
+                                              pGR_data, pCap_data, T_data,
+                                              current_state.rho_W_LR);
 
         models.phase_transition_model.eval(
-            {pos, t, dt}, media_data, GasPressureData{pGR},
-            CapillaryPressureData{pCap}, T_data, current_state.rho_W_LR,
-            ip_cv.viscosity_data, ip_out.enthalpy_data,
+            {pos, t, dt}, media_data, pGR_data, pCap_data, T_data,
+            current_state.rho_W_LR, ip_cv.viscosity_data, ip_out.enthalpy_data,
             ip_out.mass_mole_fractions_data, ip_out.fluid_density_data,
             ip_out.vapour_pressure_data, current_state.constituent_density_data,
             ip_cv.phase_transition_data);
@@ -947,7 +945,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars.capillary_pressure = pCap;
 
         double const T = NT.dot(temperature);
-        TemperatureData const T_data{T, T};  // T_prev = T in initialization.
+        ConstitutiveRelations::TemperatureData const T_data{
+            T, T};  // T_prev = T in initialization.
         vars.temperature = T;
 
         auto const Bu =
