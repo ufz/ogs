@@ -193,6 +193,18 @@ Here is an example in which the circulating fluid is water at about 15 $^{\circ}
 </refrigerant>
 ```
 
+## Available Nonlinear Solvers
+
+In the `HEAT_TRANSPORT_BHE` process, both Picard and Newton nonlinear solvers are supported.
+With the Picard solver, the linear equation system is iterated until the change in the solution vector is small enough (typically less than 1E-6).
+With the Newton approach, the global Jacobian matrix and residual vector are evaluated in each iteration, in order to solve for the change of solution vector in each iteration.
+The solved change vector is then further used to update the global solution vector.
+Typically, after 5 to 8 iterations, the Newton approach leads to a globally converged solution, i.e. the norm of the residual vector is less than certain tolerance (e.g. relative tolerance less than 1E-10).
+When configuring an OGS project with the `HEAT_TRANSPORT_BHE` process, Picard iterations will be sufficient when the time step size is kept small (tens of seconds).
+However, when the time step is large (hours or days), Newton iterations may reach convergence much faster than the Picard approach.
+
+For more information regarding how to configure the Picard and Newton nonlinear solvers, please also refer to the section in [Project File - Building Blocks](/docs/userguide/blocks/nonlinear_solvers)
+
 ## References
 
 <!-- vale off -->
