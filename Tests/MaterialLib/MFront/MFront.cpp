@@ -18,10 +18,6 @@
 
 namespace MPL = MaterialPropertyLib;
 using namespace MaterialLib::Solids;
-template <int Dim>
-using KelvinVector = MathLib::KelvinVector::KelvinVectorType<Dim>;
-template <int Dim>
-using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<Dim>;
 
 constexpr mgis::behaviour::Hypothesis hypothesis(int dim)
 {
@@ -103,16 +99,19 @@ struct MohrCoulombAbboSloanBehaviour
 template <int Dim, typename TestBehaviour>
 struct MaterialLib_SolidModelsMFront : public testing::Test
 {
+    using KelvinVector = MathLib::KelvinVector::KelvinVectorType<Dim>;
+    using KelvinMatrix = MathLib::KelvinVector::KelvinMatrixType<Dim>;
+
     MaterialLib_SolidModelsMFront()
     {
-        variable_array_prev.stress.template emplace<KelvinVector<Dim>>(
-            KelvinVector<Dim>::Zero());
-        variable_array_prev.mechanical_strain
-            .template emplace<KelvinVector<Dim>>(KelvinVector<Dim>::Zero());
+        variable_array_prev.stress.template emplace<KelvinVector>(
+            KelvinVector::Zero());
+        variable_array_prev.mechanical_strain.template emplace<KelvinVector>(
+            KelvinVector::Zero());
         variable_array_prev.temperature = 0;
 
-        variable_array.mechanical_strain.template emplace<KelvinVector<Dim>>(
-            KelvinVector<Dim>::Zero());
+        variable_array.mechanical_strain.template emplace<KelvinVector>(
+            KelvinVector::Zero());
         variable_array.temperature = 0;
         constitutive_relation = TestBehaviour::createConstitutiveRelation();
     }
@@ -190,19 +189,20 @@ TYPED_TEST(MaterialLib_SolidModelsMFront3, IntegrateZeroDisplacement)
 TEST(MaterialLib_SolidModelsMFront, Conversion)
 {
     using namespace MaterialLib::Solids::MFront;
+    using namespace MathLib::KelvinVector;
 
     {  // vectors
 
         // 2D
-        KelvinVector<2> const ogs2{0, 1, 2, 3};
-        KelvinVector<2> const mfront2 = ogs2;
+        KelvinVectorType<2> const ogs2{0, 1, 2, 3};
+        KelvinVectorType<2> const mfront2 = ogs2;
 
         ASSERT_EQ(mfront2, eigenSwap45View(ogs2).eval());
         ASSERT_EQ(ogs2, eigenSwap45View(mfront2).eval());
 
         // 3D
-        KelvinVector<3> const ogs3{0, 1, 2, 3, 4, 5};
-        KelvinVector<3> const mfront3{0, 1, 2, 3, 5, 4};
+        KelvinVectorType<3> const ogs3{0, 1, 2, 3, 4, 5};
+        KelvinVectorType<3> const mfront3{0, 1, 2, 3, 5, 4};
 
         ASSERT_EQ(mfront3, eigenSwap45View(ogs3).eval());
         ASSERT_EQ(ogs3, eigenSwap45View(mfront3).eval());
@@ -212,13 +212,13 @@ TEST(MaterialLib_SolidModelsMFront, Conversion)
 
         // 2D
         // clang-format off
-        KelvinMatrix<2> ogs2;
+        KelvinMatrixType<2> ogs2;
         ogs2 <<
             0, 1, 2, 3,
             4, 5, 6, 7,
             8, 9, 10, 11,
             12, 13, 14, 15;
-        KelvinMatrix<2> const mfront2 = ogs2;
+        KelvinMatrixType<2> const mfront2 = ogs2;
         // clang-format on
 
         ASSERT_EQ(mfront2, eigenSwap45View(ogs2).eval());
@@ -226,7 +226,7 @@ TEST(MaterialLib_SolidModelsMFront, Conversion)
 
         // 3D matrix
         // clang-format off
-        KelvinMatrix<3> ogs3;
+        KelvinMatrixType<3> ogs3;
         ogs3 <<
             0 , 1 , 2 , 3 , 4 , 5 ,
             6 , 7 , 8 , 9 , 10, 11,
@@ -234,7 +234,7 @@ TEST(MaterialLib_SolidModelsMFront, Conversion)
             18, 19, 20, 21, 22, 23,
             24, 25, 26, 27, 28, 29,
             30, 31, 32, 33, 34, 35;
-        KelvinMatrix<3> mfront3;
+        KelvinMatrixType<3> mfront3;
         mfront3 <<                  // fourth and fifth rows/cols swapped
             0 , 1 , 2 , 3 , 5 , 4 ,
             6 , 7 , 8 , 9 , 11, 10,
