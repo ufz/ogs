@@ -20,15 +20,6 @@ weight = 1080
 - Copy release binaries and container images from CI job to Azure OGS storage to a subdirectory containing the tag name at <https://ogsstorage.blob.core.windows.net/binaries/ogs6>
 - Create a release on GitHub mirror (`ufz/ogs`)
 - Check if a [Zenodo release](https://zenodo.org/account/settings/github/repository/ufz/ogs#) is automatically issued
-- Issue a scan on Software Heritage: `curl -X POST https://archive.softwareheritage.org/api/1/origin/save/git/url/https://gitlab.opengeosys.org/ogs/ogs.git/`
-- Update `CITATION.cff` and `web/content/publications/_index.md` with new Zenodo DOI
-- Update `CITATION.cff` author list (`git shortlog -sne 6.4.3...6.4.2`) and corresponding bibtex-entry in publications web page, TODO: download BibTex entry and copy to web page, e.g. https://zenodo.org/records/2600042/export/bibtex
+- Run `python scripts/python/post-release.py` and commit and create a discourse announcement post
 - Update Zenodo entry with correct authors
-- Create a discourse announcement post
-  - DOI badge
-  - Software heritage badge
-  - Link to release page on opengeosys.org
-  - Link to GitLab release
-  - Link to Zenodo release
-  - Link to archive on Software Heritage
 - Set milestone on expired issues and merge requests
