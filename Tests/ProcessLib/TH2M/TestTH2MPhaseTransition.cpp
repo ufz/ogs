@@ -41,9 +41,6 @@ static const double pLR_ref = 1.01235e5;
 static const double slope_T = -4.4e-4;
 static const double slope_pLR = 4.65e-10;
 
-using namespace ProcessLib::TH2M;
-using namespace ProcessLib::TH2M::ConstitutiveRelations;
-
 std::string MediumDefinition(const bool density_is_constant)
 {
     std::stringstream m;
@@ -194,15 +191,17 @@ std::string MediumDefinition(const bool density_is_constant)
 
 TEST(ProcessLib, TH2MPhaseTransition)
 {
+    namespace CR = ProcessLib::TH2M::ConstitutiveRelations;
+
     bool const density_is_constant = false;
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
         Tests::createTestMaterial(MediumDefinition(density_is_constant));
-    ProcessLib::TH2M::MediaData media_data{*medium};
+    CR::MediaData media_data{*medium};
 
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> media{
         {0, medium}};
 
-    auto ptm = std::make_unique<PhaseTransition>(media);
+    auto ptm = std::make_unique<CR::PhaseTransition>(media);
 
     auto const count = 200000;
     auto const pGR_min = 100000.;
@@ -220,49 +219,48 @@ TEST(ProcessLib, TH2MPhaseTransition)
     auto const eps_pCap = pCap_max * 2.e-5;
     auto const eps_T = T_max * 2.e-5;
 
-    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityData rhoWLR;
-    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityModel
-        rhoWLR_model;
+    CR::PureLiquidDensityData rhoWLR;
+    CR::PureLiquidDensityModel rhoWLR_model;
 
-    ProcessLib::TH2M::ConstitutiveRelations::ViscosityData viscosity;
-    ProcessLib::TH2M::ConstitutiveRelations::EnthalpyData enthalpy;
-    ProcessLib::TH2M::ConstitutiveRelations::MassMoleFractionsData
-        mass_mole_fractions;
-    FluidDensityData fluid_density;
-    VapourPartialPressureData vapour_pressure;
-    ConstituentDensityData constituent_density;
-    ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
-    ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
-        {},
-        std::numeric_limits<double>::quiet_NaN(),
-        std::numeric_limits<double>::quiet_NaN()};
+    CR::ViscosityData viscosity;
+    CR::EnthalpyData enthalpy;
+    CR::MassMoleFractionsData mass_mole_fractions;
+    CR::FluidDensityData fluid_density;
+    CR::VapourPartialPressureData vapour_pressure;
+    CR::ConstituentDensityData constituent_density;
+    CR::PhaseTransitionData cv;
+    CR::SpaceTimeData x_t{{},
+                          std::numeric_limits<double>::quiet_NaN(),
+                          std::numeric_limits<double>::quiet_NaN()};
 
     for (std::size_t i = 0; i <= count; i++)
     {
         auto pGR = pGR_min + i * dpGR;
         auto pCap = pCap_min + i * dpCap;
         auto T = T_min + i * dT;
-        GasPressureData p_GR_data{pGR};
-        CapillaryPressureData p_cap_data{pCap};
-        TemperatureData T_data{T, T};
+        CR::GasPressureData p_GR_data{pGR};
+        CR::CapillaryPressureData p_cap_data{pCap};
+        CR::TemperatureData T_data{T, T};
 
         // Perturb gas pressure
-        rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR + eps_pGR},
+        rhoWLR_model.eval(x_t, media_data, CR::GasPressureData{pGR + eps_pGR},
                           p_cap_data, T_data, rhoWLR);
-        ptm->eval(x_t, media_data, GasPressureData{pGR + eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, constituent_density, cv);
+        ptm->eval(x_t, media_data, CR::GasPressureData{pGR + eps_pGR},
+                  p_cap_data, T_data, rhoWLR, viscosity, enthalpy,
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         auto xmWG_plus = cv.xmWG;
         auto rhoGR_plus = fluid_density.rho_GR;
         auto rhoCGR_plus = constituent_density.rho_C_GR;
         auto rhoWGR_plus = constituent_density.rho_W_GR;
 
-        rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR - eps_pGR},
+        rhoWLR_model.eval(x_t, media_data, CR::GasPressureData{pGR - eps_pGR},
                           p_cap_data, T_data, rhoWLR);
-        ptm->eval(x_t, media_data, GasPressureData{pGR - eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, constituent_density, cv);
+        ptm->eval(x_t, media_data, CR::GasPressureData{pGR - eps_pGR},
+                  p_cap_data, T_data, rhoWLR, viscosity, enthalpy,
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         auto xmWG_minus = cv.xmWG;
         auto rhoGR_minus = fluid_density.rho_GR;
@@ -270,7 +268,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
         auto rhoWGR_minus = constituent_density.rho_W_GR;
 
         // Unperturbed primary variables
-        rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR}, p_cap_data,
+        rhoWLR_model.eval(x_t, media_data, CR::GasPressureData{pGR}, p_cap_data,
                           T_data, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
@@ -295,10 +293,10 @@ TEST(ProcessLib, TH2MPhaseTransition)
 
         // Perturb capillary pressure
         rhoWLR_model.eval(x_t, media_data, p_GR_data,
-                          CapillaryPressureData{pCap + eps_pCap}, T_data,
+                          CR::CapillaryPressureData{pCap + eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
+                  CR::CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
@@ -308,10 +306,10 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data,
-                          CapillaryPressureData{pCap - eps_pCap}, T_data,
+                          CR::CapillaryPressureData{pCap - eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
+                  CR::CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
@@ -348,10 +346,10 @@ TEST(ProcessLib, TH2MPhaseTransition)
 
         // Perturb temperature
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
-                          TemperatureData{T + eps_T, T}, rhoWLR);
+                          CR::TemperatureData{T + eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T + eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  CR::TemperatureData{T + eps_T, T}, rhoWLR, viscosity,
+                  enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
         xmWG_plus = cv.xmWG;
@@ -360,10 +358,10 @@ TEST(ProcessLib, TH2MPhaseTransition)
         rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
-                          TemperatureData{T - eps_T, T}, rhoWLR);
+                          CR::TemperatureData{T - eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T - eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  CR::TemperatureData{T - eps_T, T}, rhoWLR, viscosity,
+                  enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
         xmWG_minus = cv.xmWG;
@@ -460,15 +458,17 @@ TEST(ProcessLib, TH2MPhaseTransition)
 // Same test as above, but with constant gas density
 TEST(ProcessLib, TH2MPhaseTransitionConstRho)
 {
+    namespace CR = ProcessLib::TH2M::ConstitutiveRelations;
+
     bool const density_is_constant = true;
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
         Tests::createTestMaterial(MediumDefinition(density_is_constant));
-    ProcessLib::TH2M::MediaData media_data{*medium};
+    CR::MediaData media_data{*medium};
 
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> media{
         {0, medium}};
 
-    auto ptm = std::make_unique<PhaseTransition>(media);
+    auto ptm = std::make_unique<CR::PhaseTransition>(media);
 
     auto const count = 200000;
     auto const pGR_min = 100000.;
@@ -486,48 +486,47 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
     auto const eps_pCap = pCap_max * 2.e-5;
     auto const eps_T = T_max * 2.e-5;
 
-    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityData rhoWLR;
-    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityModel
-        rhoWLR_model;
+    CR::PureLiquidDensityData rhoWLR;
+    CR::PureLiquidDensityModel rhoWLR_model;
 
-    ProcessLib::TH2M::ConstitutiveRelations::ViscosityData viscosity;
-    ProcessLib::TH2M::ConstitutiveRelations::EnthalpyData enthalpy;
-    ProcessLib::TH2M::ConstitutiveRelations::MassMoleFractionsData
-        mass_mole_fractions;
-    FluidDensityData fluid_density;
-    VapourPartialPressureData vapour_pressure;
-    ConstituentDensityData constituent_density;
-    ProcessLib::TH2M::ConstitutiveRelations::PhaseTransitionData cv;
-    ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
-        {},
-        std::numeric_limits<double>::quiet_NaN(),
-        std::numeric_limits<double>::quiet_NaN()};
+    CR::ViscosityData viscosity;
+    CR::EnthalpyData enthalpy;
+    CR::MassMoleFractionsData mass_mole_fractions;
+    CR::FluidDensityData fluid_density;
+    CR::VapourPartialPressureData vapour_pressure;
+    CR::ConstituentDensityData constituent_density;
+    CR::PhaseTransitionData cv;
+    CR::SpaceTimeData x_t{{},
+                          std::numeric_limits<double>::quiet_NaN(),
+                          std::numeric_limits<double>::quiet_NaN()};
 
     for (std::size_t i = 0; i <= count; i++)
     {
         auto pGR = pGR_min + i * dpGR;
         auto pCap = pCap_min + i * dpCap;
         auto T = T_min + i * dT;
-        GasPressureData p_GR_data{pGR};
-        CapillaryPressureData p_cap_data{pCap};
-        TemperatureData T_data{T, T};
+        CR::GasPressureData p_GR_data{pGR};
+        CR::CapillaryPressureData p_cap_data{pCap};
+        CR::TemperatureData T_data{T, T};
 
         // Perturb gas pressure
-        rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR + eps_pGR},
+        rhoWLR_model.eval(x_t, media_data, CR::GasPressureData{pGR + eps_pGR},
                           p_cap_data, T_data, rhoWLR);
-        ptm->eval(x_t, media_data, GasPressureData{pGR + eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, constituent_density, cv);
+        ptm->eval(x_t, media_data, CR::GasPressureData{pGR + eps_pGR},
+                  p_cap_data, T_data, rhoWLR, viscosity, enthalpy,
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         auto xmWG_plus = cv.xmWG;
         auto rhoCGR_plus = constituent_density.rho_C_GR;
         auto rhoWGR_plus = constituent_density.rho_W_GR;
 
-        rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR - eps_pGR},
+        rhoWLR_model.eval(x_t, media_data, CR::GasPressureData{pGR - eps_pGR},
                           p_cap_data, T_data, rhoWLR);
-        ptm->eval(x_t, media_data, GasPressureData{pGR - eps_pGR}, p_cap_data,
-                  T_data, rhoWLR, viscosity, enthalpy, mass_mole_fractions,
-                  fluid_density, vapour_pressure, constituent_density, cv);
+        ptm->eval(x_t, media_data, CR::GasPressureData{pGR - eps_pGR},
+                  p_cap_data, T_data, rhoWLR, viscosity, enthalpy,
+                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  constituent_density, cv);
 
         auto xmWG_minus = cv.xmWG;
         auto rhoCGR_minus = constituent_density.rho_C_GR;
@@ -558,10 +557,10 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
 
         // Perturb capillary pressure
         rhoWLR_model.eval(x_t, media_data, p_GR_data,
-                          CapillaryPressureData{pCap + eps_pCap}, T_data,
+                          CR::CapillaryPressureData{pCap + eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
+                  CR::CapillaryPressureData{pCap + eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
@@ -570,10 +569,10 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data,
-                          CapillaryPressureData{pCap - eps_pCap}, T_data,
+                          CR::CapillaryPressureData{pCap - eps_pCap}, T_data,
                           rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data,
-                  CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
+                  CR::CapillaryPressureData{pCap - eps_pCap}, T_data, rhoWLR,
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
@@ -608,10 +607,10 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
 
         // Perturb temperature
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
-                          TemperatureData{T + eps_T, T}, rhoWLR);
+                          CR::TemperatureData{T + eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T + eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  CR::TemperatureData{T + eps_T, T}, rhoWLR, viscosity,
+                  enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
         xmWG_plus = cv.xmWG;
@@ -619,10 +618,10 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         rhoWGR_plus = constituent_density.rho_W_GR;
 
         rhoWLR_model.eval(x_t, media_data, p_GR_data, p_cap_data,
-                          TemperatureData{T - eps_T, T}, rhoWLR);
+                          CR::TemperatureData{T - eps_T, T}, rhoWLR);
         ptm->eval(x_t, media_data, p_GR_data, p_cap_data,
-                  TemperatureData{T - eps_T, T}, rhoWLR, viscosity, enthalpy,
-                  mass_mole_fractions, fluid_density, vapour_pressure,
+                  CR::TemperatureData{T - eps_T, T}, rhoWLR, viscosity,
+                  enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
         xmWG_minus = cv.xmWG;

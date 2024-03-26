@@ -20,8 +20,7 @@
 
 TEST(ProcessLib, TH2MNoPhaseTransition)
 {
-    using namespace ProcessLib::TH2M;
-    using namespace ProcessLib::TH2M::ConstitutiveRelations;
+    namespace CR = ProcessLib::TH2M::ConstitutiveRelations;
 
     std::stringstream m;
 
@@ -87,18 +86,17 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
         Tests::createTestMaterial(m.str());
-    ProcessLib::TH2M::MediaData media_data{*medium};
+    CR::MediaData media_data{*medium};
 
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> media{
         {0, medium}};
 
     MaterialPropertyLib::VariableArray variable_array;
-    ProcessLib::ConstitutiveRelations::SpaceTimeData x_t{
-        {},
-        std::numeric_limits<double>::quiet_NaN(),
-        std::numeric_limits<double>::quiet_NaN()};
+    CR::SpaceTimeData x_t{{},
+                          std::numeric_limits<double>::quiet_NaN(),
+                          std::numeric_limits<double>::quiet_NaN()};
 
-    auto ptm = std::make_unique<NoPhaseTransition>(media);
+    auto ptm = std::make_unique<CR::NoPhaseTransition>(media);
 
     double const pGR = 1000000.;
     double const pCap = 1000000.;
@@ -108,26 +106,24 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     variable_array.capillary_pressure = pCap;
     variable_array.temperature = T;
 
-    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityData rhoWLR;
-    ProcessLib::TH2M::ConstitutiveRelations::PureLiquidDensityModel
-        rhoWLR_model;
-    rhoWLR_model.eval(x_t, media_data, GasPressureData{pGR},
-                      CapillaryPressureData{pGR}, TemperatureData{T, T},
+    CR::PureLiquidDensityData rhoWLR;
+    CR::PureLiquidDensityModel rhoWLR_model;
+    rhoWLR_model.eval(x_t, media_data, CR::GasPressureData{pGR},
+                      CR::CapillaryPressureData{pGR}, CR::TemperatureData{T, T},
                       rhoWLR);
     ASSERT_NEAR(density_water, rhoWLR(), 1e-10);
 
-    ProcessLib::TH2M::ConstitutiveRelations::ViscosityData viscosity;
-    ProcessLib::TH2M::ConstitutiveRelations::EnthalpyData enthalpy;
-    ProcessLib::TH2M::ConstitutiveRelations::MassMoleFractionsData
-        mass_mole_fractions;
-    FluidDensityData fluid_density;
-    VapourPartialPressureData vapour_pressure;
-    ConstituentDensityData constituent_density;
-    PhaseTransitionData cv;
-    ptm->eval(x_t, media_data, GasPressureData{pGR}, CapillaryPressureData{pGR},
-              TemperatureData{T, T}, rhoWLR, viscosity, enthalpy,
-              mass_mole_fractions, fluid_density, vapour_pressure,
-              constituent_density, cv);
+    CR::ViscosityData viscosity;
+    CR::EnthalpyData enthalpy;
+    CR::MassMoleFractionsData mass_mole_fractions;
+    CR::FluidDensityData fluid_density;
+    CR::VapourPartialPressureData vapour_pressure;
+    CR::ConstituentDensityData constituent_density;
+    CR::PhaseTransitionData cv;
+    ptm->eval(x_t, media_data, CR::GasPressureData{pGR},
+              CR::CapillaryPressureData{pGR}, CR::TemperatureData{T, T}, rhoWLR,
+              viscosity, enthalpy, mass_mole_fractions, fluid_density,
+              vapour_pressure, constituent_density, cv);
 
     // reference values
     double const rhoCGR = density_air;
