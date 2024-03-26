@@ -51,10 +51,6 @@ struct IntegrationPointData final
     double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
     double rho_u_eff_prev = std::numeric_limits<double>::quiet_NaN();
 
-    // porosity
-    double phi = std::numeric_limits<double>::quiet_NaN();
-    double dphi_dT = std::numeric_limits<double>::quiet_NaN();
-
     GlobalDimMatrixType lambda;
     GlobalDimVectorType d_CG;
     GlobalDimVectorType d_WG;

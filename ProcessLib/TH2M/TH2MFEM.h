@@ -245,16 +245,6 @@ private:
                                                          &IpData::rhoSR, cache);
     }
 
-    virtual std::vector<double> const& getIntPtPorosity(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::phi,
-                                                         cache);
-    }
-
     virtual std::vector<double> const& getIntPtEnthalpySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
