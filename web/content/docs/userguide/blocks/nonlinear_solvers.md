@@ -29,13 +29,13 @@ Following non-linear solvers are available in OpenGeoSys:
 <!-- TODO: add content -->
 
 The nonlinear solver of "Newton" type is an implementation of the Newton-Raphson method.
-The basic definition of the non-linear solver follows this template:
+The basic definition of the non-linear solver with "Newton" follows this template:
 
 ```xml
 <nonlinear_solver>
     <name>basic_newton</name>
     <type>Newton</type>
-    <max_iter>100</max_iter>
+    <max_iter>10</max_iter>
     <linear_solver>linear_solver</linear_solver>
 </nonlinear_solver>
 ```
@@ -43,3 +43,15 @@ The basic definition of the non-linear solver follows this template:
 ## Picard
 
 <!-- TODO: add content -->
+
+The nonlinear solver of "Picard" type is an implementation of the Picard-Iteration method.
+The basic definition of the non-linear solver with "Picard" follows this template:
+
+```xml
+<nonlinear_solver>
+    <name>basic_picard</name>
+    <type>Picard</type>
+    <max_iter>100</max_iter>
+    <linear_solver>linear_solver</linear_solver>
+</nonlinear_solver>
+```
