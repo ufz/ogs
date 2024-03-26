@@ -10,8 +10,11 @@
 
 #include "DOFTableUtil.h"
 
+#include <algorithm>
 #include <cassert>
+#include <functional>
 
+#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 namespace NumLib
 {
 namespace
@@ -175,6 +178,41 @@ double norm(GlobalVector const& x, unsigned const global_component,
         default:
             OGS_FATAL("An invalid norm type has been passed.");
     }
+}
+
+std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
+    int const number_of_processes,
+    std::function<NumLib::LocalToGlobalIndexMap const&(const int)>
+        get_single_dof_table)
+{
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(number_of_processes);
+    std::generate_n(std::back_inserter(dof_tables), number_of_processes,
+                    [&]() { return &get_single_dof_table(dof_tables.size()); });
+    return dof_tables;
+}
+
+Eigen::VectorXd getLocalX(
+    std::size_t const mesh_item_id,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    std::vector<GlobalVector*> const& x)
+{
+    Eigen::VectorXd local_x_vec;
+
+    auto const n_processes = x.size();
+    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+    {
+        auto const indices =
+            NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
+        assert(!indices.empty());
+        auto const last = local_x_vec.size();
+        local_x_vec.conservativeResize(last + indices.size());
+        auto const local_solution = x[process_id]->get(indices);
+        assert(indices.size() == local_solution.size());
+        local_x_vec.tail(local_solution.size()).noalias() =
+            MathLib::toVector(local_solution);
+    }
+    return local_x_vec;
 }
 
 }  // namespace NumLib

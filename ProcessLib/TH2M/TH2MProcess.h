@@ -106,9 +106,6 @@ private:
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
-        int const number_of_processes) const;
-
     std::vector<std::string> initializeAssemblyOnSubmeshes(
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
         override;

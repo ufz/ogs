@@ -815,78 +815,57 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x,
+    setInitialConditionsConcrete(Eigen::VectorXd const local_x,
                                  double const t,
-                                 bool const use_monolithic_scheme,
-                                 int const process_id)
+                                 int const /*process_id*/)
 {
-    if (!use_monolithic_scheme &&
-        process_id == _process_data.hydraulic_process_id)
+    ParameterLib::SpatialPosition x_position;
+    x_position.setElementID(_element.getID());
+
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+
+    auto const p = local_x.template segment<pressure_size>(pressure_index);
+    auto const u =
+        local_x.template segment<displacement_size>(displacement_index);
+
+    auto const& identity2 = Invariants::identity2;
+    const double dt = 0.0;
+
+    MPL::VariableArray vars;
+
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
     {
-        return;
-    }
+        x_position.setIntegrationPoint(ip);
+        auto const& N_u = _ip_data[ip].N_u;
+        auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
-    if (use_monolithic_scheme ||
-        process_id == _process_data.mechanics_related_process_id)
-    {
-        ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(_element.getID());
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                _element, N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
 
-        auto const& medium =
-            _process_data.media_map.getMedium(_element.getID());
+        auto& eps = _ip_data[ip].eps;
+        eps.noalias() = B * u;
+        vars.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
 
-        int const displacement_offset =
-            use_monolithic_scheme ? displacement_index : 0;
-
-        auto const u =
-            Eigen::Map<typename ShapeMatricesTypeDisplacement::
-                           template VectorType<displacement_size> const>(
-                local_x.data() + displacement_offset, displacement_size);
-
-        int const pressure_offset = use_monolithic_scheme ? pressure_index : 0;
-
-        auto const p =
-            Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-                pressure_size> const>(local_x.data() + pressure_offset,
-                                      pressure_size);
-        auto const& identity2 = Invariants::identity2;
-        const double dt = 0.0;
-
-        MPL::VariableArray vars;
-
-        int const n_integration_points =
-            _integration_method.getNumberOfPoints();
-        for (int ip = 0; ip < n_integration_points; ip++)
+        if (_process_data.initial_stress.isTotalStress())
         {
-            x_position.setIntegrationPoint(ip);
-            auto const& N_u = _ip_data[ip].N_u;
-            auto const& dNdx_u = _ip_data[ip].dNdx_u;
+            auto const& N_p = _ip_data[ip].N_p;
+            auto const alpha_b =
+                medium->property(MPL::PropertyType::biot_coefficient)
+                    .template value<double>(vars, x_position, t, dt);
 
-            auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u);
-            auto const B = LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
-                typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
-                                                     _is_axially_symmetric);
-
-            auto& eps = _ip_data[ip].eps;
-            eps.noalias() = B * u;
-            vars.mechanical_strain.emplace<
-                MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(eps);
-
-            if (_process_data.initial_stress.isTotalStress())
-            {
-                auto const& N_p = _ip_data[ip].N_p;
-                auto const alpha_b =
-                    medium->property(MPL::PropertyType::biot_coefficient)
-                        .template value<double>(vars, x_position, t, dt);
-
-                auto& sigma_eff = _ip_data[ip].sigma_eff;
-                sigma_eff.noalias() += alpha_b * N_p.dot(p) * identity2;
-                _ip_data[ip].sigma_eff_prev.noalias() = sigma_eff;
-            }
+            auto& sigma_eff = _ip_data[ip].sigma_eff;
+            sigma_eff.noalias() += alpha_b * N_p.dot(p) * identity2;
+            _ip_data[ip].sigma_eff_prev.noalias() = sigma_eff;
         }
     }
 }

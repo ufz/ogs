@@ -95,10 +95,9 @@ private:
         double const* values,
         int const integration_order) override;
 
-    void setInitialConditionsConcrete(std::vector<double> const& local_x_data,
+    void setInitialConditionsConcrete(Eigen::VectorXd const local_x,
                                       double const t,
-                                      bool const /*use_monolithic_scheme*/,
-                                      int const /*process_id*/) override;
+                                      int const process_id) override;
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,

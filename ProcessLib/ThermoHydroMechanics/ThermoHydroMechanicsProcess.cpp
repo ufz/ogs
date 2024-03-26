@@ -15,6 +15,7 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
@@ -328,10 +329,14 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 {
     DBUG("SetInitialConditions ThermoHydroMechanicsProcess.");
 
+    auto get_a_dof_table_func = [this](const int process_id) -> auto&
+    {
+        return getDOFTable(process_id);
+    };
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,
-        _local_assemblers, *_local_to_global_index_map, *x[process_id], t,
-        _use_monolithic_scheme, process_id);
+        _local_assemblers, NumLib::getDOFTables(x.size(), get_a_dof_table_func),
+        x, t, process_id);
 }
 
 template <int DisplacementDim>
@@ -460,20 +465,17 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     }
 
     DBUG("PostTimestep ThermoHydroMechanicsProcess.");
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    auto const n_processes = x.size();
-    dof_tables.reserve(n_processes);
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
     {
-        dof_tables.push_back(&getDOFTable(process_id));
-    }
-
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
-        dt, process_id);
+        _local_assemblers, pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -489,19 +491,17 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     }
 
     DBUG("Compute the secondary variables for ThermoHydroMechanicsProcess.");
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    auto const n_processes = x.size();
-    dof_tables.reserve(n_processes);
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        dof_tables.push_back(&getDOFTable(process_id));
-    }
 
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id);
+        _local_assemblers, pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        process_id);
 }
 
 template <int DisplacementDim>

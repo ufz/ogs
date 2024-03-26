@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Core>
+
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -143,4 +145,14 @@ void transformVariableFromGlobalVector(
         }
     }
 }
+
+std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
+    int const number_of_processes,
+    std::function<NumLib::LocalToGlobalIndexMap const&(const int)>
+        get_single_dof_table);
+
+Eigen::VectorXd getLocalX(
+    std::size_t const mesh_item_id,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    std::vector<GlobalVector*> const& x);
 }  // namespace NumLib

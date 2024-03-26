@@ -13,6 +13,7 @@
 #include <cassert>
 
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
 #include "ThermoMechanicalPhaseFieldFEM.h"
@@ -289,19 +290,17 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
     }
 
     DBUG("PostTimestep ThermoMechanicalPhaseFieldProcess.");
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    auto const n_processes = x.size();
-    dof_tables.reserve(n_processes);
-    for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
-    {
-        dof_tables.push_back(&getDOFTable(process_id));
-    }
 
+    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
+    {
+        return getDOFTable(processe_id);
+    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
-        dt, process_id);
+        _local_assemblers, pv.getActiveElementIDs(),
+        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        process_id);
 }
 
 template <int DisplacementDim>

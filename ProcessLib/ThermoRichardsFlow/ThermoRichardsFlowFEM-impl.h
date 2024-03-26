@@ -109,16 +109,13 @@ std::size_t ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
 template <typename ShapeFunction, int GlobalDim>
 void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
-    setInitialConditionsConcrete(std::vector<double> const& local_x,
+    setInitialConditionsConcrete(Eigen::VectorXd const local_x,
                                  double const t,
-                                 bool const /*use_monolithic_scheme*/,
                                  int const /*process_id*/)
 {
     assert(local_x.size() == temperature_size + pressure_size);
 
-    auto p_L = Eigen::Map<
-        typename ShapeMatricesType::template VectorType<pressure_size> const>(
-        local_x.data() + pressure_index, pressure_size);
+    auto const p_L = local_x.template segment<pressure_size>(pressure_index);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     MPL::VariableArray variables;
