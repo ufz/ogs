@@ -382,7 +382,7 @@ public:
      * \pre \c param must not have been read before from this ConfigTree.
      */
     std::optional<ConfigTree> getConfigParameterOptional(
-        std::string const& root) const;
+        std::string const& param) const;
 
     /*! Fetches all parameters with name \c param from the current level of the
      * tree.

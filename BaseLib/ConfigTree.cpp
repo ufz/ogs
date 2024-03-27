@@ -115,23 +115,23 @@ ConfigTree& ConfigTree::operator=(ConfigTree&& other)
     return *this;
 }
 
-ConfigTree ConfigTree::getConfigParameter(std::string const& root) const
+ConfigTree ConfigTree::getConfigParameter(std::string const& param) const
 {
-    auto ct = getConfigSubtree(root);
+    auto ct = getConfigSubtree(param);
     if (ct.hasChildren())
     {
-        error("Requested parameter <" + root + "> actually is a subtree.");
+        error("Requested parameter <" + param + "> actually is a subtree.");
     }
     return ct;
 }
 
 std::optional<ConfigTree> ConfigTree::getConfigParameterOptional(
-    std::string const& root) const
+    std::string const& param) const
 {
-    auto ct = getConfigSubtreeOptional(root);
+    auto ct = getConfigSubtreeOptional(param);
     if (ct && ct->hasChildren())
     {
-        error("Requested parameter <" + root + "> actually is a subtree.");
+        error("Requested parameter <" + param + "> actually is a subtree.");
     }
     return ct;
 }

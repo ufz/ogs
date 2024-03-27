@@ -45,9 +45,9 @@ class VolumeFractionAverage : public Property
     // Struct with pointers on the properties of relevant phases
     struct PhaseProperties
     {
-        const Property* liquid;
-        const Property* frozen;
-        const Property* porous;
+        const Property* liquid = nullptr;
+        const Property* frozen = nullptr;
+        const Property* porous = nullptr;
     };
 
 public:

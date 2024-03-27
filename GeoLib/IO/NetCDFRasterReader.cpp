@@ -10,11 +10,13 @@
 #include "GeoLib/IO/NetCDFRasterReader.h"
 
 #include <filesystem>
+#include <numeric>
 #ifdef OGS_USE_NETCDF
 #include <netcdf>
 #endif
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/StringTools.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 

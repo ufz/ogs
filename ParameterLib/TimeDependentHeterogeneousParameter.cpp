@@ -60,6 +60,13 @@ std::vector<double> TimeDependentHeterogeneousParameter::operator()(
             break;
         }
     }
+    if (k == _time_parameter_mapping.size())
+    {
+        OGS_FATAL(
+            "Could not find parameter for time {}. There are {:d} "
+            "time-parameter pairs.",
+            t, _time_parameter_mapping.size());
+    }
     auto const t0 = _time_parameter_mapping[k - 1].first;
     auto const t1 = _time_parameter_mapping[k].first;
     auto const alpha = (t - t0) / (t1 - t0);
