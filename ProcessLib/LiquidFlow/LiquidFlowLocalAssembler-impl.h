@@ -143,12 +143,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
         _process_data.specific_body_force;
 
+    auto const& N = _shape_matrix_cache
+                        .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
 
         double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
+        NumLib::shapeFunctionInterpolate(local_x, N[ip], p);
         vars.liquid_phase_pressure = p;
 
         // Compute density:
@@ -173,7 +176,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         // Assemble mass matrix, M
         local_M.noalias() +=
             (porosity * ddensity_dpressure / fluid_density + storage) *
-            ip_data.N.transpose() * ip_data.N * ip_data.integration_weight;
+            N[ip].transpose() * N[ip] * ip_data.integration_weight;
 
         // Compute viscosity:
         auto const viscosity =
@@ -292,11 +295,14 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
         _process_data.specific_body_force;
 
+    auto const& N = _shape_matrix_cache
+                        .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
         double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, ip_data.N, p);
+        NumLib::shapeFunctionInterpolate(local_x, N[ip], p);
         vars.liquid_phase_pressure = p;
 
         // Compute density:

@@ -24,6 +24,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
@@ -36,14 +37,12 @@ namespace LiquidFlow
 template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    explicit IntegrationPointData(NodalRowVectorType const& N_,
-                                  GlobalDimNodalMatrixType const& dNdx_,
+    explicit IntegrationPointData(GlobalDimNodalMatrixType const& dNdx_,
                                   double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+        : dNdx(dNdx_), integration_weight(integration_weight_)
     {
     }
 
-    NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
@@ -87,10 +86,12 @@ public:
         std::size_t const /*local_matrix_size*/,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        LiquidFlowData const& process_data)
+        LiquidFlowData const& process_data,
+        NumLib::ShapeMatrixCache const& shape_matrix_cache)
         : _element(element),
           _integration_method(integration_method),
-          _process_data(process_data)
+          _process_data(process_data),
+          _shape_matrix_cache(shape_matrix_cache)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -112,7 +113,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
-                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
@@ -135,10 +136,13 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N;
+        auto const& N =
+            _shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         // assumes N is stored contiguously in memory
-        return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
+        return Eigen::Map<const Eigen::RowVectorXd>(
+            N[integration_point].data(), N[integration_point].size());
     }
 
     std::vector<double> const& getIntPtDarcyVelocity(
@@ -227,6 +231,7 @@ private:
                               VelocityCacheType& darcy_velocity_at_ips) const;
 
     const LiquidFlowData& _process_data;
+    NumLib::ShapeMatrixCache const& _shape_matrix_cache;
 };
 
 }  // namespace LiquidFlow

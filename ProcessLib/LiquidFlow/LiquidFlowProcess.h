@@ -14,9 +14,10 @@
 
 #include <memory>
 
-#include "LiquidFlowLocalAssembler.h"
 #include "LiquidFlowData.h"
+#include "LiquidFlowLocalAssembler.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 
@@ -107,6 +108,8 @@ private:
 
     std::vector<std::unique_ptr<LiquidFlowLocalAssemblerInterface>>
         _local_assemblers;
+
+    NumLib::ShapeMatrixCache _shape_matrix_cache;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
     MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
