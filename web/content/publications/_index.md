@@ -12,36 +12,37 @@ weight = 3
 ### Cite the software
 
 ```bibtex
-@software{ogs:6.4.3,
-  author       = {Lars Bilke and
-                  Thomas Fischer and
-                  Dmitri Naumov and
-                  Christoph Lehmann and
-                  Wenqing Wang and
-                  Renchao Lu and
-                  Boyan Meng and
-                  Karsten Rink and
-                  Norbert Grunwald and
-                  Jörg Buchwald and
-                  Christian Silbermann and
-                  Robert Habel and
-                  Linda Günther and
-                  Mostafa Mollaali and
-                  Tobias Meisel and
-                  Jakob Randow and
-                  Sophia Einspänner and
-                  Haibing Shao and
-                  Kata Kurgyis and
-                  Olaf Kolditz and
-                  Jaime Garibay},
+@software{ogs:6.5.0,
+  author       = {Naumov, Dmitri and
+                  Bilke, Lars and
+                  Fischer, Thomas and
+                  Lehmann, Christoph and
+                  Wang, Wenqing and
+                  Heinze, Julian and
+                  Chen, Chaofan and
+                  Silbermann, Christian and
+                  Kiszkurno, Feliks K. and
+                  Buchwald, Jörg and
+                  Rink, Karsten and
+                  Nagel, Thomas and
+                  Meisel, Tobias and
+                  Gerasimov, Tymofiy and
+                  Loer, Frieder and
+                  Mollaali, Mostafa and
+                  You, Tao and
+                  Brato Shil, Joy and
+                  Chen, Shuang and
+                  Selzer, Philipp and
+                  Shao, Haibing and
+                  Kessler, Kristof and
+                  Ghasabeh, Mehran},
   title        = {OpenGeoSys},
-  month        = apr,
-  year         = 2022,
-  note         = {{If you use this software, please cite it using these metadata.}},
+  month        = nov,
+  year         = 2023,
   publisher    = {Zenodo},
-  version      = {6.4.3},
-  doi          = {10.5281/zenodo.7092676},
-  url          = {https://doi.org/10.5281/zenodo.7092676}
+  version      = {6.5.0},
+  doi          = {10.5281/zenodo.2600042},
+  url          = {https://doi.org/10.5281/zenodo.2600042}
 }
 ```
 

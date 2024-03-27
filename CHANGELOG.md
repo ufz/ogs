@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/6.5.1)
+[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.1)
 
 ----
 
