@@ -195,6 +195,8 @@ Type<DisplacementDim> toVector(Eigen::MatrixBase<Derived> const& tensor)
     {
         return tensor.reshaped();
     }
+    OGS_FATAL(
+        "Not all cases handled in the VectorizedTensor::toVector() function.");
 }
 
 /// Converts a vectorized tensor to a 3x3 matrix.
