@@ -158,8 +158,8 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     variables.capillary_pressure = pCap;
     variables.temperature = T;
 
-    auto const& liquid_phase = media_data.liquid_phase;
-    auto const& gas_phase = media_data.gas_phase;
+    auto const& liquid_phase = media_data.liquid;
+    auto const& gas_phase = media_data.gas;
 
     constexpr double R = MaterialLib::PhysicalConstant::IdealGasConstant;
 

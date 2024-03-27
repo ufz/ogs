@@ -60,8 +60,8 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     variables.gas_phase_pressure = pGR;
     variables.temperature = T;
 
-    auto const& liquid_phase = media_data.liquid_phase;
-    auto const& gas_phase = media_data.gas_phase;
+    auto const& liquid_phase = media_data.liquid;
+    auto const& gas_phase = media_data.gas;
 
     vapour_pressure_data.pWGR = 0;
 

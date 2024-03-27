@@ -38,7 +38,7 @@ struct PureLiquidDensityModel
         variables.capillary_pressure = pCap;
         variables.temperature = T;
 
-        auto const& liquid_phase = media_data.liquid_phase;
+        auto const& liquid_phase = media_data.liquid;
 
         // Water pressure is passed to the VariableArray in order to calculate
         // the water density.

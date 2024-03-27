@@ -35,15 +35,14 @@ using GlobalDimMatrix =
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
-        : medium{medium}, solid{medium.phase("Solid")}
+        : medium{medium}
     {
     }
 
     MaterialPropertyLib::Medium const& medium;
-    MaterialPropertyLib::Phase const& solid;
-    MaterialPropertyLib::Phase const& liquid_phase =
-        medium.phase("AqueousLiquid");
-    MaterialPropertyLib::Phase const& gas_phase = medium.phase("Gas");
+    MaterialPropertyLib::Phase const& solid = medium.phase("Solid");
+    MaterialPropertyLib::Phase const& liquid = medium.phase("AqueousLiquid");
+    MaterialPropertyLib::Phase const& gas = medium.phase("Gas");
 };
 
 struct TemperatureData
