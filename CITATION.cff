@@ -77,12 +77,12 @@ authors:
       family-names: Chen
       affiliation: >-
           Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
+    - given-names: Haibing
+      family-names: Shao
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Julian
       family-names: Heinze
       oricd: "https://orcid.org/0009-0004-3449-8852"
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Haibing
-      family-names: Shao
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Feliks K.
       family-names: Kiszkurno
@@ -130,12 +130,15 @@ authors:
     - given-names: Tianyuan
       family-names: Zheng
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Jakob
-      family-names: Randow
-      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
     - given-names: Loer
       family-names: Frieder
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Tao
+      family-names: You
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jakob
+      family-names: Randow
+      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
     - given-names: Robert
       family-names: Habel
       affiliation: TU Bergakademie Freiberg
@@ -156,9 +159,6 @@ authors:
       affiliation: >-
           Bundesanstalt für Geowissenschaften und Rohstoffe --
           BGR
-    - given-names: Tao
-      family-names: You
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Vahid Ziaei
       family-names: Rad
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -169,6 +169,11 @@ authors:
       family-names: Montoya
       orcid: "https://orcid.org/0000-0002-4751-3597"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Eike
+      family-names: Radeisen
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
     - given-names: Falko
       family-names: Vehling
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
