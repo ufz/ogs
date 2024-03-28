@@ -10,7 +10,10 @@
 #pragma once
 
 #include "Base.h"
+#include "Biot.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
+#include "SolidThermalExpansion.h"
 
 namespace ProcessLib::TH2M
 {
@@ -19,7 +22,6 @@ namespace ConstitutiveRelations
 struct PorosityDerivativeData
 {
     double dphi_S_dT = nan;
-    double phi_0 = nan;  // Initial porosity.
 };
 
 struct PorosityData
@@ -34,6 +36,30 @@ struct PorosityData
         return std::tuple{R::makeReflectionData("porosity", &Self::phi)};
     }
 };
+
+struct PorosityModel
+{
+    void eval(SpaceTimeData const& x_t,
+              MediaData const& media_data,
+              PorosityData& porosity_data,
+              PorosityDerivativeData& porosity_d_data) const;
+};
+
+template <int DisplacementDim>
+struct PorosityModelNonConstantSolidPhaseVolumeFraction
+{
+    void eval(
+        SpaceTimeData const& x_t,
+        MediaData const& media_data,
+        BiotData const& biot,
+        StrainData<DisplacementDim> const& strain_data,
+        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+        PorosityData& porosity_data,
+        PorosityDerivativeData& porosity_d_data) const;
+};
+
+extern template struct PorosityModelNonConstantSolidPhaseVolumeFraction<2>;
+extern template struct PorosityModelNonConstantSolidPhaseVolumeFraction<3>;
 
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

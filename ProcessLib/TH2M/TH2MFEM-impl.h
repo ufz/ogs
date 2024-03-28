@@ -232,6 +232,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.vapour_pressure_data, current_state.constituent_density_data,
             ip_cv.phase_transition_data);
 
+        models.porosity_model.eval({pos, t, dt}, media_data,
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+                                   ip_cv.biot_data, ip_out.eps_data,
+                                   ip_cv.s_therm_exp_data,
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+                                   ip_out.porosity_data, ip_cv.porosity_d_data);
+
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
         vars.temperature = T;
@@ -245,23 +252,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars.liquid_saturation = current_state.S_L_data.S_L;
         vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
-        ip_cv.porosity_d_data.phi_0 =
-            medium.property(MPL::PropertyType::porosity)
-                .template value<double>(vars, pos, t, dt);
-
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-        auto const& m = Invariants::identity2;
-        double const div_u = m.transpose() * eps;
-
-        double const phi_S =
-            (1. - ip_cv.porosity_d_data.phi_0) *
-            (1. + ip_data.thermal_volume_strain - ip_cv.biot_data() * div_u);
-#else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-        double const phi_S = (1. - ip_cv.porosity_d_data.phi_0);
-#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-
-        // porosity
-        ip_out.porosity_data.phi = 1. - phi_S;
         vars.porosity = ip_out.porosity_data.phi;
 
         // solid phase density
@@ -284,6 +274,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.S_L_data.S_L * ip_out.porosity_data.phi;
         auto const phi_G =
             (1. - current_state.S_L_data.S_L) * ip_out.porosity_data.phi;
+        double const phi_S = 1. - ip_out.porosity_data.phi;
 
         // thermal conductivity
         ip_data.lambda = MaterialPropertyLib::formEigenTensor<DisplacementDim>(
@@ -366,22 +357,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 * (1. - ip_cv.s_therm_exp_data.thermal_volume_strain +
                    (ip_cv.biot_data() - 1.) * div_u) -
             rho_ref_SR * ip_cv.s_therm_exp_data.beta_T_SR
-#endif
-            ;
-
-        // porosity
-        auto const dphi_0_dT =
-            medium[MPL::PropertyType::porosity].template dValue<double>(
-                vars, MPL::Variable::temperature, pos, t, dt);
-
-        auto const dphi_S_0_dT = -dphi_0_dT;
-        ip_cv.porosity_d_data.dphi_S_dT =
-            dphi_S_0_dT
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                * (1. + ip_cv.s_therm_exp_data.thermal_volume_strain -
-                   ip_cv.biot_data() * div_u) +
-            (1. - ip_cv.porosity_d_data.phi_0) *
-                ip_cv.s_therm_exp_data.beta_T_SR
 #endif
             ;
 
