@@ -55,24 +55,24 @@ Extract the external dependencies cache into a directory. Configure OGS as usual
 cmake --preset release -DOGS_EXTERNAL_DEPENDENCIES_CACHE=./path/to/ext
 ```
 
-## Example for OpenGeoSys 6.4.3 (bugfix-branch)
+## Example for OpenGeoSys 6.5.1
 
 On a machine with internet access download the tarballs:
 
 ```bash
-wget https://gitlab.opengeosys.org/ogs/ogs/-/archive/v6.4.3/ogs-v6.4.3.tar.gz
-wget -O cpm.tar.gz https://gitlab.opengeosys.org/ogs/ogs/-/package_files/193/download
-wget -O ext.tar.gz https://gitlab.opengeosys.org/ogs/ogs/-/package_files/120/download
+wget https://gitlab.opengeosys.org/ogs/ogs/-/archive/6.5.1/ogs-6.5.1.tar.gz
+wget -O cpm.tar.gz https://gitlab.opengeosys.org/ogs/ogs/-/package_files/1048/download
+wget -O ext.tar.gz https://gitlab.opengeosys.org/ogs/ogs/-/package_files/1245/download
 ```
 
 Copy those file onto the machine where you want to build OGS. Then build OGS offline:
 
 ```bash
-tar xf ogs-v6.4.3.tar.gz
+tar xf ogs-6.5.1.tar.gz
 tar xf cpm.tar.gz
 tar xf ext.tar.gz
 
-cd ogs-v6.4.3
-OGS_VERSION=6.4.3 cmake --preset release -DCPM_SOURCE_CACHE=../cpm -DOGS_EXTERNAL_DEPENDENCIES_CACHE=../ext
+cd ogs-6.5.1
+OGS_VERSION=6.5.1 cmake --preset release -DCPM_SOURCE_CACHE=../cpm -DOGS_EXTERNAL_DEPENDENCIES_CACHE=../ext
 cmake --build --preset release
 ```

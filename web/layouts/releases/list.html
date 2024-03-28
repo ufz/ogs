@@ -48,27 +48,6 @@
 
       <hr>
       {{ range first 1 .Data.Pages }}
-      {{ $vtag := (print "v" .Params.tag ) }}
-      <h1 id="bugfixes">Current release with bug-fixes: {{ .Params.tag }}</h1>
-      <p>
-        Here you can find the last released version ({{ .Params.tag }}) of OpenGeoSys
-        <a href="https://gitlab.opengeosys.org/ogs/ogs/-/compare/{{ .Params.tag }}...{{ $vtag }}">
-          enhanced with bug-fixes
-        </a>.
-        We recommend to use this version for production.
-      </p>
-      <div class="bg-green-50 py-1 px-4 rounded-lg shadow mb-12">
-        <h3><i class="far fa-download"></i> Downloads</h3>
-        <ul>
-          {{ range after 1 $.Params.head_downloads }} <!-- skip pip download -->
-          <li>
-            <i class="{{ .icon }}"></i>
-            <a href='{{ replace .url "master" $vtag }}'>{{ replace .name "Latest" $vtag }}</a>
-            {{ if .note }} <span class="text-sm">({{ .note | markdownify }})</span>{{ end }}
-          </li>
-          {{ end }}
-        </ul>
-      </div>
 
       <h1 class="mt-0" id="current"><i class="far fa-stars"></i> Current Release: <a style="text-decoration: none;"
           href="{{ .Permalink }}">{{ .Title }}</a></h1>

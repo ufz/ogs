@@ -49,9 +49,6 @@ workflow:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "ogs/ogs"' # master, ogs/ogs repo only
       variables:
         PIPELINE_NAME: "master pipeline"
-    - if: '$CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/ && $CI_PROJECT_PATH == "ogs/ogs"' # release branches, e.g. v6.x.x
-      variables:
-        PIPELINE_NAME: "bugfix branch $CI_COMMIT_BRANCH pipeline"
 
 include:
   - local: "scripts/ci/extends/*.yml"
