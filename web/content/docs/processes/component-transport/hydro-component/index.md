@@ -70,7 +70,7 @@ The following table shows an overview of all input parameters available in the C
 
 | Parameter                  | Symbol      | Unit       | Doxygen and Example              |
 | -------------------------- | ----------- | ---------- | ---------------------- |
-| Porosity                   | $\phi$      |[-]       |[Link](https://doxygen.opengeosys.org/dc/d15/ogs_file_param__material__porous_medium__porosity.html),[Example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj) |
+| Porosity                   | $\phi$      |[-]       |[Link](https://doxygen.opengeosys.org/de/d8f/ogs_file_param__material__porous_medium__porous_medium__porosity.html),[Example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj) |
 | Fluid density              | $\rho$      |[kg/m$^{3}$] |[Link](https://doxygen.opengeosys.org/d1/d47/ogs_file_param__material__fluid__density.html) |
 | Intrinsic permeability     |$\textbf{k}$|[m$^{2}$]   | [Link](https://doxygen.opengeosys.org/d5/d06/ogs_file_param__material__porous_medium__permeability.html),[Example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj)  |
 | Dynamic viscosity          | $\mu$  |[Pa$\cdot$s]|[Link](https://doxygen.opengeosys.org/da/d5d/ogs_file_param__material__fluid__viscosity.html)|
