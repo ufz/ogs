@@ -98,10 +98,6 @@ struct IntegrationPointData final
         MPL::VariableArray variable_array;
         MPL::VariableArray variable_array_prev;
 
-        auto const null_state = solid_material.createMaterialStateVariables();
-        solid_material.initializeInternalStateVariables(t, x_position,
-                                                        *null_state);
-
         using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
         variable_array.stress.emplace<KV>(KV::Zero());
@@ -112,9 +108,9 @@ struct IntegrationPointData final
         variable_array_prev.mechanical_strain.emplace<KV>(KV::Zero());
         variable_array_prev.temperature = temperature;
 
-        auto&& solution =
-            solid_material.integrateStress(variable_array_prev, variable_array,
-                                           t, x_position, dt, *null_state);
+        auto&& solution = solid_material.integrateStress(
+            variable_array_prev, variable_array, t, x_position, dt,
+            *material_state_variables);
 
         if (!solution)
         {
