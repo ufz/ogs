@@ -83,12 +83,20 @@ set(DOXYGEN_ALIASES
     "ogs_missing_documentation = \\xrefitem ogs_missing_documentation \\\"Missing Documentation\\\" \\\"OGS Input File Parameters&mdash\;List of incomplete documentation pages\\\" Documentation missing/incomplete"
 )
 set(DOXYGEN_CREATE_SUBDIRS YES)
-if($ENV{CI_COMMIT_BRANCH} MATCHES "master|^v[0-9]\.[0-9]\.[0-9]")
+if($ENV{CI_COMMIT_BRANCH} MATCHES "master" OR "$ENV{CI_COMMIT_TAG}" MATCHES
+                                              "^[0-9]\.[0-9]\.[0-9]"
+)
     set(DOXYGEN_SERVER_BASED_SEARCH YES)
     set(DOXYGEN_EXTERNAL_SEARCH YES)
-    set(DOXYGEN_SEARCHENGINE_URL
-        "https://doxysearch.opengeosys.org/$ENV{CI_COMMIT_BRANCH}/doxysearch.cgi"
-    )
+    if("$ENV{CI_COMMIT_TAG}" MATCHES "^[0-9]\.[0-9]\.[0-9]")
+        set(DOXYGEN_SEARCHENGINE_URL
+            "https://doxysearch.opengeosys.org/$ENV{CI_COMMIT_TAG}/doxysearch.cgi"
+        )
+    else()
+        set(DOXYGEN_SEARCHENGINE_URL
+            "https://doxysearch.opengeosys.org/$ENV{CI_COMMIT_BRANCH}/doxysearch.cgi"
+        )
+    endif()
     set(DOXYGEN_SEARCHENGINE YES)
     message(STATUS "Doxygen search server: ${DOXYGEN_SEARCHENGINE_URL}")
 endif()
