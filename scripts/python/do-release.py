@@ -62,28 +62,28 @@ path = Path(source_path / "Documentation" / "mainpage.dox.in")
 text = path.read_text()
 text = text.replace(
     " * The documentation for OGS releases can be found here:\n *\n",
-    f" * The documentation for OGS releases can be found here:\n *\n * - https://doxygen.opengeosys.org/v{new_version}\n",
+    f" * The documentation for OGS releases can be found here:\n *\n * - https://doxygen.opengeosys.org/{new_version}\n",
 )
 path.write_text(text)
 
 path = Path(source_path / "README.md")
 text = path.read_text()
 text = text.replace(
-    f"https://doxygen.opengeosys.org/v{current_version}",
-    f"https://doxygen.opengeosys.org/v{new_version}",
+    f"https://doxygen.opengeosys.org/{current_version}",
+    f"https://doxygen.opengeosys.org/{new_version}",
 )
 path.write_text(text)
 
 new_version_dash = new_version.replace(".", "-")
 with (source_path / "scripts" / "doc" / "_redirects").open("a") as f:
     f.write(
-        f"/v{new_version}/* https://ogs-doxygen-v{new_version_dash}.netlify.app/:splat 200!\n"
+        f"/{new_version}/* https://ogs-doxygen-{new_version_dash}.netlify.app/:splat 200!\n"
     )
 
 print(
     f"""Run the following and update CITATION.cff:
 
-git shortlog -sne {new_version}...{current_version}
+git shortlog -sne HEAD...{current_version}
 
 Then check diff and run:
 
