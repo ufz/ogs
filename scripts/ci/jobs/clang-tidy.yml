@@ -2,11 +2,11 @@ clang tidy:
   stage: check
   extends:
     - .rules-manual
-  needs: [ci_images]
+  tags: [shell, envinf]
+  needs: []
   variables:
-    BUILD_DIR: "../build/tidy"
-    CMAKE_ARGS: "-DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DCMAKE_CXX_CLANG_TIDY=clang-tidy-9"
-  image: $CONTAINER_CLANG_IMAGE
+    BUILD_DIR: "./build-tidy"
+    CMAKE_ARGS: "-DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DCMAKE_CXX_CLANG_TIDY=clang-tidy;--extra-arg=-Wno-error=unknown-warning-option"
   script:
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
