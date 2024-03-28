@@ -160,6 +160,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
         ConstitutiveRelations::GasPressureData const pGR_data{pGR};
         ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap};
+        ConstitutiveRelations::ReferenceTemperatureData const T0{
+            this->process_data_.reference_temperature(t, pos)[0]};
         double const pLR = pGR - pCap;
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
@@ -196,7 +198,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.swelling_data, ip_cv.swelling_data);
 
         // solid phase linear thermal expansion coefficient
-        models.s_therm_exp_model.eval({pos, t, dt}, media_data,
+        models.s_therm_exp_model.eval({pos, t, dt}, media_data, T_data, T0,
                                       ip_cv.s_therm_exp_data);
 
         models.mechanical_strain_model.eval(
@@ -248,11 +250,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 .template value<double>(
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
-        double const T0 = this->process_data_.reference_temperature(t, pos)[0];
-        double const delta_T(T - T0);
-        ip_data.thermal_volume_strain =
-            ip_cv.s_therm_exp_data.beta_T_SR * delta_T;
-
         // initial porosity
         auto const phi_0 = medium.property(MPL::PropertyType::porosity)
                                .template value<double>(vars, pos, t, dt);
@@ -263,8 +260,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& m = Invariants::identity2;
         double const div_u = m.transpose() * eps;
 
-        const double phi_S = phi_S_0 * (1. + ip_data.thermal_volume_strain -
-                                        ip_cv.biot_data() * div_u);
+        const double phi_S =
+            phi_S_0 * (1. + ip_cv.s_therm_exp_data.thermal_volume_strain -
+                       ip_cv.biot_data() * div_u);
 #else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         const double phi_S = phi_S_0;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
@@ -275,8 +273,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // solid phase density
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-        auto const rhoSR = rho_ref_SR * (1. - ip_data.thermal_volume_strain +
-                                         (ip_cv.biot_data() - 1.) * div_u);
+        auto const rhoSR =
+            rho_ref_SR * (1. - ip_cv.s_therm_exp_data.thermal_volume_strain +
+                          (ip_cv.biot_data() - 1.) * div_u);
 #else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
@@ -364,7 +363,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     .template dValue<double>(vars, MPL::Variable::temperature,
                                              pos, t, dt)
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                * (1. - ip_data.thermal_volume_strain +
+                * (1. - ip_cv.s_therm_exp_data.thermal_volume_strain +
                    (ip_cv.biot_data() - 1.) * div_u) -
             rho_ref_SR * ip_cv.s_therm_exp_data.beta_T_SR
 #endif
@@ -376,11 +375,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 vars, MPL::Variable::temperature, pos, t, dt);
 
         auto const dphi_S_0_dT = -dphi_0_dT;
-        const double dphi_S_dT = dphi_S_0_dT
+        const double dphi_S_dT =
+            dphi_S_0_dT
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                     * (1. + ip_data.thermal_volume_strain -
-                                        ip_cv.biot_data() * div_u) +
-                                 phi_S_0 * ip_cv.s_therm_exp_data.beta_T_SR
+                * (1. + ip_cv.s_therm_exp_data.thermal_volume_strain -
+                   ip_cv.biot_data() * div_u) +
+            phi_S_0 * ip_cv.s_therm_exp_data.beta_T_SR
 #endif
             ;
 

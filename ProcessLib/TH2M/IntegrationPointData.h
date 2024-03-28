@@ -64,8 +64,6 @@ struct IntegrationPointData final
     GlobalDimVectorType w_GS;
     GlobalDimVectorType w_LS;
 
-    double thermal_volume_strain = std::numeric_limits<double>::quiet_NaN();
-
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
     void pushBackState() { rho_u_eff_prev = rho_u_eff; }
