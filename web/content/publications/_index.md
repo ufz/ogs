@@ -12,37 +12,29 @@ weight = 3
 ### Cite the software
 
 ```bibtex
-@software{ogs:6.5.0,
-  author       = {Naumov, Dmitri and
-                  Bilke, Lars and
+@software{ogs:6.5.1,
+  author       = {Bilke, Lars and
+                  Naumov, Dmitri and
+                  Wang, Wenqing and
                   Fischer, Thomas and
                   Lehmann, Christoph and
-                  Wang, Wenqing and
-                  Heinze, Julian and
+                  Buchwald, Jörg and
+                  Shao, Haibing and
+                  Kiszkurno, Feliks K. and
                   Chen, Chaofan and
                   Silbermann, Christian and
-                  Kiszkurno, Feliks K. and
-                  Buchwald, Jörg and
-                  Rink, Karsten and
-                  Nagel, Thomas and
-                  Meisel, Tobias and
-                  Gerasimov, Tymofiy and
-                  Loer, Frieder and
-                  Mollaali, Mostafa and
-                  You, Tao and
-                  Brato Shil, Joy and
-                  Chen, Shuang and
-                  Selzer, Philipp and
-                  Shao, Haibing and
+                  Radeisen, Eike and
+                  Zill, Florian and
+                  Frieder, Loer and
                   Kessler, Kristof and
                   Ghasabeh, Mehran},
   title        = {OpenGeoSys},
-  month        = nov,
-  year         = 2023,
+  month        = mar,
+  year         = 2024,
   publisher    = {Zenodo},
-  version      = {6.5.0},
-  doi          = {10.5281/zenodo.2600042},
-  url          = {https://doi.org/10.5281/zenodo.2600042}
+  version      = {6.5.1},
+  doi          = {10.5281/zenodo.10890088},
+  url          = {https://doi.org/10.5281/zenodo.10890088}
 }
 ```
 
