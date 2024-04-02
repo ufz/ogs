@@ -6,18 +6,12 @@ clang tidy:
   needs: []
   variables:
     BUILD_DIR: "./build-tidy"
-    CMAKE_ARGS: "-DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF -DCMAKE_CXX_CLANG_TIDY=clang-tidy;--extra-arg=-Wno-error=unknown-warning-option"
   script:
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
     - cd $BUILD_DIR
     - >
       cmake .. -G Ninja
-      $CMAKE_ARGS
+      -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-    - cmake --build . > >(tee make.txt)
-  artifacts:
-    # No report yet: https://gitlab.com/gitlab-org/gitlab/-/issues/3985
-    paths:
-      - $BUILD_DIR/make.txt
-    expire_in: 1 week
+    - cmake --build . --target run-clang-tidy
