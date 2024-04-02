@@ -10,7 +10,7 @@ if(OGS_BUILD_TESTING)
         GIT_TAG v${ogs.tested_version.gtest}
         OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt ON"
                 "BUILD_SHARED_LIBS OFF"
-        EXCLUDE_FROM_ALL YES
+        EXCLUDE_FROM_ALL YES SYSTEM TRUE
     )
     if(googletest_ADDED AND WIN32)
         target_compile_options(gtest PRIVATE /EHsc)
@@ -38,7 +38,7 @@ else()
         NAME spdlog
         GITHUB_REPOSITORY gabime/spdlog
         VERSION 1.12.0
-        OPTIONS "BUILD_SHARED_LIBS OFF"
+        OPTIONS "BUILD_SHARED_LIBS OFF" SYSTEM TRUE
     )
 endif()
 
@@ -67,17 +67,17 @@ if(GUIX_BUILD)
 else()
     CPMAddPackage(
         NAME tetgen GITHUB_REPOSITORY ufz/tetgen
-        GIT_TAG 213548f5bca1ec00269603703f0fec1272181587
+        GIT_TAG 213548f5bca1ec00269603703f0fec1272181587 SYSTEM TRUE
     )
     if(tetgen_ADDED)
         install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
-        list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
     endif()
+    list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
 CPMFindPackage(
     NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
-    VERSION ${ogs.minimum_version.pybind11}
+    VERSION ${ogs.minimum_version.pybind11} SYSTEM TRUE
 )
 
 if(_build_chemistry_lib)
@@ -93,19 +93,19 @@ if(_build_chemistry_lib)
         )
         if(iphreeqc_ADDED)
             target_include_directories(
-                IPhreeqc
+                IPhreeqc SYSTEM
                 PUBLIC ${iphreeqc_SOURCE_DIR}/src
                 INTERFACE ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/common
                           ${iphreeqc_SOURCE_DIR}/src/phreeqcpp/PhreeqcKeywords
                           ${iphreeqc_SOURCE_DIR}/src/phreeqcpp
             )
-            list(APPEND DISABLE_WARNINGS_TARGETS IPhreeqc)
             if(BUILD_SHARED_LIBS)
                 install(TARGETS IPhreeqc
                         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
                 )
             endif()
         endif()
+        list(APPEND DISABLE_WARNINGS_TARGETS IPhreeqc)
     endif()
 endif()
 
@@ -148,11 +148,9 @@ if(OGS_USE_MFRONT)
             GIT_TAG rliv-2.0
             OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
                     "enable-website OFF"
-            EXCLUDE_FROM_ALL YES
+            EXCLUDE_FROM_ALL YES SYSTEM TRUE
         )
-        if(MGIS_ADDED)
-            list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
-        endif()
+        list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
     endif()
 endif()
 
@@ -160,12 +158,17 @@ CPMFindPackage(
     NAME Boost
     VERSION ${ogs.minimum_version.boost}
     URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/303158/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
+        SYSTEM TRUE
 )
 if(Boost_ADDED)
     add_library(Boost::boost INTERFACE IMPORTED)
-    target_include_directories(Boost::boost INTERFACE "${Boost_SOURCE_DIR}")
+    target_include_directories(
+        Boost::boost SYSTEM INTERFACE "${Boost_SOURCE_DIR}"
+    )
 else()
-    target_include_directories(Boost::boost INTERFACE "${Boost_INCLUDE_DIR}")
+    target_include_directories(
+        Boost::boost SYSTEM INTERFACE "${Boost_INCLUDE_DIR}"
+    )
 endif()
 
 CPMFindPackage(
@@ -180,12 +183,11 @@ CPMFindPackage(
             "LIBXML2_WITH_LZMA OFF"
             "LIBXML2_WITH_PYTHON OFF"
             "LIBXML2_WITH_ZLIB OFF"
-    EXCLUDE_FROM_ALL YES
+    EXCLUDE_FROM_ALL YES SYSTEM TRUE
 )
 if(LibXml2_ADDED)
     add_library(LibXml2::LibXml2 ALIAS LibXml2)
     set(LIBXML2_INCLUDE_DIR ${LibXml2_SOURCE_DIR})
-    list(APPEND DISABLE_WARNINGS_TARGETS LibXml2)
 endif()
 
 if(GUIX_BUILD)
@@ -198,7 +200,7 @@ else()
         NAME xmlpatch
         VERSION 0.4.2
         GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
-        OPTIONS "BUILD_SHARED_LIBS OFF"
+        OPTIONS "BUILD_SHARED_LIBS OFF" SYSTEM TRUE
     )
 endif()
 
@@ -207,14 +209,14 @@ if(OGS_BUILD_SWMM)
         NAME SWMMInterface
         GITHUB_REPOSITORY ufz/SwmmInterface
         GIT_TAG 141e05ae1f419918799d7bf9178ebcd97feb1ed3
-        OPTIONS "BUILD_SHARED_LIBS OFF"
+        OPTIONS "BUILD_SHARED_LIBS OFF" SYSTEM TRUE
     )
     if(SWMMInterface_ADDED)
         target_include_directories(
             SwmmInterface SYSTEM PUBLIC ${SWMMInterface_SOURCE_DIR}
         )
-        list(APPEND DISABLE_WARNINGS_TARGETS SWMM SwmmInterface)
     endif()
+    list(APPEND DISABLE_WARNINGS_TARGETS SWMM SwmmInterface)
 endif()
 
 CPMFindPackage(
@@ -228,7 +230,7 @@ CPMFindPackage(
 if(nlohmann_json_ADDED)
     add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
     target_include_directories(
-        nlohmann_json::nlohmann_json
+        nlohmann_json::nlohmann_json SYSTEM
         INTERFACE ${nlohmann_json_SOURCE_DIR}/include
     )
 endif()
@@ -239,11 +241,13 @@ if(OGS_BUILD_GUI)
         VERSION 1.13
         GITHUB_REPOSITORY ufz/rapidxml
         GIT_TAG 2ae4b2888165a393dfb6382168825fddf00c27b9
-        EXCLUDE_FROM_ALL YES
+        EXCLUDE_FROM_ALL YES SYSTEM TRUE
     )
     if(rapidxml_ADDED)
         add_library(rapidxml INTERFACE IMPORTED)
-        target_include_directories(rapidxml INTERFACE ${rapidxml_SOURCE_DIR})
+        target_include_directories(
+            rapidxml SYSTEM INTERFACE ${rapidxml_SOURCE_DIR}
+        )
     endif()
 endif()
 
@@ -251,7 +255,9 @@ if(OGS_BUILD_GUI)
     find_package(Shapelib QUIET)
     if(Shapelib_FOUND)
         add_library(shp INTERFACE IMPORTED)
-        target_include_directories(shp INTERFACE ${Shapelib_INCLUDE_DIRS})
+        target_include_directories(
+            shp SYSTEM INTERFACE ${Shapelib_INCLUDE_DIRS}
+        )
         target_link_libraries(shp INTERFACE ${Shapelib_LIBRARIES})
     else()
         CPMAddPackage(
@@ -259,10 +265,10 @@ if(OGS_BUILD_GUI)
             GITHUB_REPOSITORY OSGeo/shapelib
             VERSION 1.5.0-dev
             GIT_TAG 21ae8fc16afa15a1b723077b6cec3a9abc592f6a
-            EXCLUDE_FROM_ALL YES
+            EXCLUDE_FROM_ALL YES SYSTEM TRUE
         )
         target_include_directories(
-            shp INTERFACE $<BUILD_INTERFACE:${Shapelib_SOURCE_DIR}>
+            shp SYSTEM INTERFACE $<BUILD_INTERFACE:${Shapelib_SOURCE_DIR}>
         )
     endif()
 endif()
@@ -274,13 +280,13 @@ if(OGS_USE_CVODE)
         VERSION 2.8.2
         GIT_TAG 42d786bff4f950045d2de941677ecd4432cec855
         OPTIONS "EXAMPLES_ENABLE OFF"
-        EXCLUDE_FROM_ALL YES
+        EXCLUDE_FROM_ALL YES SYSTEM TRUE
     )
     if(CVODE_ADDED)
         add_library(CVODE::CVODE INTERFACE IMPORTED)
         target_include_directories(
-            CVODE::CVODE INTERFACE ${CVODE_SOURCE_DIR}/include
-                                   ${CVODE_BINARY_DIR}/include
+            CVODE::CVODE SYSTEM INTERFACE ${CVODE_SOURCE_DIR}/include
+                                          ${CVODE_BINARY_DIR}/include
         )
         target_link_libraries(
             CVODE::CVODE INTERFACE sundials_cvode_static
@@ -318,7 +324,7 @@ else()
         GITHUB_REPOSITORY ericniebler/range-v3
         VERSION ${ogs.minimum_version.range-v3}
         GIT_TAG ${ogs.minimum_version.range-v3}
-        EXCLUDE_FROM_ALL YES
+        EXCLUDE_FROM_ALL YES SYSTEM TRUE
     )
 endif()
 
@@ -354,16 +360,17 @@ if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
         GIT_TAG 92a851f1acb87ad5367eb62f9b97785bedb700bb
         OPTIONS "XDMF_LIBNAME OgsXdmf" "CMAKE_MACOSX_RPATH ON"
                 "HDF5_C_INCLUDE_DIR ${HDF5_INCLUDE_DIRS}"
-        EXCLUDE_FROM_ALL YES
+        EXCLUDE_FROM_ALL YES SYSTEM TRUE
     )
     if(xdmf_ADDED)
         target_include_directories(
-            OgsXdmf PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
+            OgsXdmf SYSTEM PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
         )
 
         target_link_libraries(OgsXdmf Boost::boost)
         target_include_directories(
-            OgsXdmfCore PUBLIC ${xdmf_SOURCE_DIR}/core ${xdmf_BINARY_DIR}/core
+            OgsXdmfCore SYSTEM PUBLIC ${xdmf_SOURCE_DIR}/core
+                                      ${xdmf_BINARY_DIR}/core
             PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
         target_link_libraries(
@@ -384,8 +391,8 @@ if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
                     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             )
         endif()
-        list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
     endif()
+    list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
 endif()
 
 if(MSVC)
@@ -411,7 +418,7 @@ if(OGS_BUILD_UTILS)
             GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
             VERSION 5.1.1
             OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW" ${_metis_options}
-            EXCLUDE_FROM_ALL YES
+            EXCLUDE_FROM_ALL YES SYSTEM TRUE
         )
         CPMFindPackage(
             NAME metis
@@ -420,7 +427,7 @@ if(OGS_BUILD_UTILS)
             EXCLUDE_FROM_ALL YES UPDATE_DISCONNECTED ON
             PATCH_COMMAND git apply
                           ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
-            OPTIONS ${_metis_options}
+            OPTIONS ${_metis_options} SYSTEM TRUE
         )
         if(GKlib_ADDED AND metis_ADDED)
             target_include_directories(
@@ -431,9 +438,9 @@ if(OGS_BUILD_UTILS)
             target_compile_definitions(
                 metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32
             )
-            list(APPEND DISABLE_WARNINGS_TARGETS metis GKlib)
             install(TARGETS mpmetis GKlib)
         endif()
+        list(APPEND DISABLE_WARNINGS_TARGETS metis GKlib)
     else()
         find_library(METIS_LIB metis REQUIRED)
         find_path(METIS_INC "metis.h" REQUIRED)
@@ -454,7 +461,7 @@ if(OGS_USE_NETCDF)
             GIT_REPOSITORY https://github.com/Unidata/netcdf-cxx4
             VERSION 4.3.1
             EXCLUDE_FROM_ALL YES SOURCE_SUBDIR cxx4
-            OPTIONS "NCXX_ENABLE_TESTS OFF"
+            OPTIONS "NCXX_ENABLE_TESTS OFF" SYSTEM TRUE
         )
         set_target_properties(
             netCDF::netcdf PROPERTIES INTERFACE_LINK_LIBRARIES ""
@@ -463,7 +470,9 @@ if(OGS_USE_NETCDF)
     else()
         find_path(NETCDF_INCLUDES_CXX NAMES netcdf)
         add_library(netcdf-cxx4 INTERFACE IMPORTED)
-        target_include_directories(netcdf-cxx4 INTERFACE ${NETCDF_INCLUDES_CXX})
+        target_include_directories(
+            netcdf-cxx4 SYSTEM INTERFACE ${NETCDF_INCLUDES_CXX}
+        )
         target_link_libraries(
             netcdf-cxx4 INTERFACE ${NETCDF_LIBRARIES_CXX} netCDF::netcdf
         )
@@ -475,10 +484,12 @@ if(WIN32 AND VTK_ADDED)
     list(APPEND DISABLE_WARNINGS_TARGETS vtksys)
 endif()
 foreach(target ${DISABLE_WARNINGS_TARGETS})
-    target_compile_options(
-        ${target} PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
-                          $<$<CXX_COMPILER_ID:MSVC>:/W0>
-    )
+    if(TARGET ${target})
+        target_compile_options(
+            ${target} PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
+                              $<$<CXX_COMPILER_ID:MSVC>:/W0>
+        )
+    endif()
 endforeach()
 
 # Hack: Disable tests from dependencies
