@@ -259,7 +259,7 @@
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
-                    <value>0.15</value>
+                    <value>0.15000000000000002</value>
                 </property>
                 <property>
                     <name>tortuosity</name>
