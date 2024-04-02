@@ -256,7 +256,8 @@ MeshLib::Mesh* generateMesh(GeoLib::GEOObjects& geo,
         ERR("Execution of gmsh command returned non-zero status, %d",
             return_value);
     }
-    return FileIO::GMSH::readGMSHMesh(gmsh_mesh_name);
+    return FileIO::GMSH::readGMSHMesh(gmsh_mesh_name,
+                                      false /*is_created_with_gmsh2*/);
 }
 
 /// inverse rotation of the mesh, back into original position
