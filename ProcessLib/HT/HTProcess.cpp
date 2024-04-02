@@ -56,14 +56,14 @@ void HTProcess::initializeConcreteProcess(
         ProcessLib::createLocalAssemblers<MonolithicHTFEM>(
             mesh_space_dimension, mesh.getElements(), dof_table,
             _local_assemblers, NumLib::IntegrationOrder{integration_order},
-            mesh.isAxiallySymmetric(), _process_data);
+            mesh.isAxiallySymmetric(), _process_data, _shape_matrix_cache);
     }
     else
     {
         ProcessLib::createLocalAssemblers<StaggeredHTFEM>(
             mesh_space_dimension, mesh.getElements(), dof_table,
             _local_assemblers, NumLib::IntegrationOrder{integration_order},
-            mesh.isAxiallySymmetric(), _process_data);
+            mesh.isAxiallySymmetric(), _process_data, _shape_matrix_cache);
     }
 
     _secondary_variables.addSecondaryVariable(
