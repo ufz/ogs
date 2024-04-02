@@ -333,8 +333,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::IsotropicCalculator::
     calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)
@@ -355,8 +354,7 @@ Eigen::Matrix<double, GlobalDim, 1>
 LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::IsotropicCalculator::
     calculateVelocity(
         Eigen::Map<const NodalVectorType> const& local_p,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)
@@ -377,8 +375,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::AnisotropicCalculator::
     calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)
@@ -399,8 +396,7 @@ Eigen::Matrix<double, GlobalDim, 1>
 LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::AnisotropicCalculator::
     calculateVelocity(
         Eigen::Map<const NodalVectorType> const& local_p,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)

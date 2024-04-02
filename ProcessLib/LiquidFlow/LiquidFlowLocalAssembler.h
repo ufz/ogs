@@ -34,7 +34,7 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+template <typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(GlobalDimNodalMatrixType const& dNdx_,
@@ -155,10 +155,9 @@ private:
     MeshLib::Element const& _element;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
-    std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
+    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>,
+                Eigen::aligned_allocator<
+                    IntegrationPointData<GlobalDimNodalMatrixType>>>
         _ip_data;
 
     /**
@@ -170,16 +169,14 @@ private:
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
         static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
             Eigen::Map<const NodalVectorType> const& local_p,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
@@ -194,16 +191,14 @@ private:
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
         static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
             Eigen::Map<const NodalVectorType> const& local_p,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
