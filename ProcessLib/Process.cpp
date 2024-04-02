@@ -71,6 +71,7 @@ Process::Process(
               }
               return pcs_BCs;
           }(_process_variables.size())),
+      _shape_matrix_cache{integration_order},
       _source_term_collections(
           [&](const std::size_t number_of_processes)
               -> std::vector<SourceTermCollection>
