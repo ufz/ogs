@@ -597,11 +597,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const drho_C_FR_dT = s_G * c.drho_C_GR_dT + s_L * c.drho_C_LR_dT;
         ip_cv.dfC_4_MCpG_dT =
             drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR()
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            + rho_C_FR * ip_cv.porosity_d_data.dphi_S_dT * ip_cv.beta_p_SR()
-#endif
-            ;
+                ip_cv.beta_p_SR() +
+            rho_C_FR * ip_cv.porosity_d_data.dphi_S_dT * ip_cv.beta_p_SR();
 
         ip_cv.dfC_4_MCT_dT =
             drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
@@ -636,20 +633,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ip_cv.beta_p_SR();
 
         ip_cv.dfC_2a_dT =
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             -ip_cv.porosity_d_data.dphi_S_dT *
                 (current_state.constituent_density_data.rho_C_LR -
                  current_state.constituent_density_data.rho_C_GR) +
-#endif
             ip_out.porosity_data.phi * (c.drho_C_LR_dT - c.drho_C_GR_dT) -
             drho_C_FR_dT * pCap *
                 (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR()
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            - rho_C_FR * pCap * ip_cv.porosity_d_data.dphi_S_dT *
-                  ip_cv.beta_p_SR()
-#endif
-            ;
+                ip_cv.beta_p_SR() -
+            rho_C_FR * pCap * ip_cv.porosity_d_data.dphi_S_dT *
+                ip_cv.beta_p_SR();
 
         ip_cv.dadvection_C_dp_GR = c.drho_C_GR_dp_GR * k_over_mu_G
                                    // + rhoCGR * (dk_over_mu_G_dp_GR = 0)
@@ -697,20 +689,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ip_cv.beta_p_SR();
 
         ip_cv.dfW_2a_dT =
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             -ip_cv.porosity_d_data.dphi_S_dT *
                 (current_state.rho_W_LR() -
                  current_state.constituent_density_data.rho_W_GR) +
-#endif
             ip_out.porosity_data.phi * (c.drho_W_LR_dT - c.drho_W_GR_dT);
         ip_cv.dfW_2b_dT = drho_W_FR_dT * pCap *
                               (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                              ip_cv.beta_p_SR()
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                          + rho_W_FR * pCap * ip_cv.porosity_d_data.dphi_S_dT *
-                                ip_cv.beta_p_SR()
-#endif
-            ;
+                              ip_cv.beta_p_SR() +
+                          rho_W_FR * pCap * ip_cv.porosity_d_data.dphi_S_dT *
+                              ip_cv.beta_p_SR();
 
         if (dt == 0.)
         {
@@ -1908,11 +1895,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
                 .noalias() += NpT *
-                              (
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                  -ip_cv.porosity_d_data.dphi_S_dT * a +
-#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                  ip_out.porosity_data.phi * ip_cv.dfC_3a_dT) *
+                              (-ip_cv.porosity_d_data.dphi_S_dT * a +
+                               ip_out.porosity_data.phi * ip_cv.dfC_3a_dT) *
                               NT * w;
         }
         // ---------------------------------------------------------------------
@@ -2054,12 +2038,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
             .noalias() += NpT *
-                          (
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                              -ip_cv.porosity_d_data.dphi_S_dT *
-                                  (s_G * rho_W_GR_dot + s_L * rho_W_LR_dot) +
-#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                              ip_out.porosity_data.phi * ip_cv.dfW_3a_dT) *
+                          (-ip_cv.porosity_d_data.dphi_S_dT *
+                               (s_G * rho_W_GR_dot + s_L * rho_W_LR_dot) +
+                           ip_out.porosity_data.phi * ip_cv.dfW_3a_dT) *
                           NT * w;
 
         // ---------------------------------------------------------------------
