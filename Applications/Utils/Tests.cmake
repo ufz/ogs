@@ -871,7 +871,6 @@ if(TARGET GMSH2OGS AND SNAKEMAKE AND TEE_TOOL_PATH)
         -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary.smk
     )
     set_tests_properties(snakemake_GMSH2OGS_ExtractBoundary PROPERTIES LABELS "default")
-    add_dependencies(ctest GMSH2OGS)
 
     add_test(NAME snakemake_GMSH2OGS_Gmsh4_ExtractBoundary
         COMMAND ${SNAKEMAKE} --cores all
@@ -879,6 +878,7 @@ if(TARGET GMSH2OGS AND SNAKEMAKE AND TEE_TOOL_PATH)
         -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary_MeshByGmsh4.smk
     )
     set_tests_properties(snakemake_GMSH2OGS_Gmsh4_ExtractBoundary PROPERTIES LABELS "default")
+
     add_dependencies(ctest GMSH2OGS)
 endif()
 
