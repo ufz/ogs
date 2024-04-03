@@ -5,7 +5,6 @@ endif()
 find_program(CLANG_TIDY_EXECUTABLE clang-tidy)
 find_program(RUN_CLANG_TIDY_EXECUTABLE run-clang-tidy)
 if(CLANG_TIDY_EXECUTABLE AND RUN_CLANG_TIDY_EXECUTABLE)
-    set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
     add_custom_target(
         run-clang-tidy
         COMMAND ${RUN_CLANG_TIDY_EXECUTABLE} -clang-tidy-binary
