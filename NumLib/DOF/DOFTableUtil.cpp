@@ -180,18 +180,6 @@ double norm(GlobalVector const& x, unsigned const global_component,
     }
 }
 
-std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
-    int const number_of_processes,
-    std::function<NumLib::LocalToGlobalIndexMap const&(const int)>
-        get_single_dof_table)
-{
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    dof_tables.reserve(number_of_processes);
-    std::generate_n(std::back_inserter(dof_tables), number_of_processes,
-                    [&]() { return &get_single_dof_table(dof_tables.size()); });
-    return dof_tables;
-}
-
 Eigen::VectorXd getLocalX(
     std::size_t const mesh_item_id,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,

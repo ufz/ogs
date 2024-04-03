@@ -146,11 +146,6 @@ void transformVariableFromGlobalVector(
     }
 }
 
-std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
-    int const number_of_processes,
-    std::function<NumLib::LocalToGlobalIndexMap const&(const int)>
-        get_single_dof_table);
-
 Eigen::VectorXd getLocalX(
     std::size_t const mesh_item_id,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
