@@ -81,7 +81,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
-                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
@@ -172,11 +172,7 @@ protected:
     NumLib::ShapeMatrixCache const& _shape_matrix_cache;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
-    std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>> _ip_data;
 
     double getHeatEnergyCoefficient(
         MaterialPropertyLib::VariableArray const& vars, const double porosity,

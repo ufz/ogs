@@ -21,19 +21,15 @@ namespace ProcessLib
 
 namespace HT
 {
-template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+template <typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    IntegrationPointData(NodalRowVectorType N_,
-                         GlobalDimNodalMatrixType dNdx_,
+    IntegrationPointData(GlobalDimNodalMatrixType dNdx_,
                          double const& integration_weight_)
-        : N(std::move(N_)),
-          dNdx(std::move(dNdx_)),
-          integration_weight(integration_weight_)
+        : dNdx(std::move(dNdx_)), integration_weight(integration_weight_)
     {
     }
 
-    NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
