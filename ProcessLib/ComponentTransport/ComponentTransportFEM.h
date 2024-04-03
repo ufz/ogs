@@ -736,9 +736,11 @@ public:
 
         if (!_process_data.non_advective_form)
         {
-            NumLib::assembleAdvectionMatrix(
+            NumLib::assembleAdvectionMatrix<
+                typename ShapeFunction::MeshElement>(
                 _process_data.stabilizer,
                 _ip_data,
+                _shape_matrix_cache,
                 ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
@@ -1072,8 +1074,9 @@ public:
             average_velocity_norm += velocity.norm();
         }
 
-        NumLib::assembleAdvectionMatrix(
-            process_data.stabilizer, this->_ip_data, ip_flux_vector,
+        NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
+            process_data.stabilizer, this->_ip_data, _shape_matrix_cache,
+            ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             local_K);
     }
@@ -1273,9 +1276,9 @@ public:
 
         if (!_process_data.non_advective_form)
         {
-            NumLib::assembleAdvectionMatrix(
-                _process_data.stabilizer,
-                _ip_data,
+            NumLib::assembleAdvectionMatrix<
+                typename ShapeFunction::MeshElement>(
+                _process_data.stabilizer, _ip_data, _shape_matrix_cache,
                 ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
@@ -1554,8 +1557,9 @@ public:
             average_velocity_norm += q.norm();
         }
 
-        NumLib::assembleAdvectionMatrix(
-            _process_data.stabilizer, _ip_data, ip_flux_vector,
+        NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
+            _process_data.stabilizer, _ip_data, _shape_matrix_cache,
+            ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             KCC_Laplacian);
 

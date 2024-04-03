@@ -216,8 +216,9 @@ public:
              * in buoyancy effects */
         }
 
-        NumLib::assembleAdvectionMatrix(
-            process_data.stabilizer, this->_ip_data, ip_flux_vector,
+        NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
+            process_data.stabilizer, this->_ip_data, this->_shape_matrix_cache,
+            ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             KTT);
     }

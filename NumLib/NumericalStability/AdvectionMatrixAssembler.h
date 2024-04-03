@@ -14,12 +14,35 @@
 #include <memory>
 #include <vector>
 
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumericalStabilization.h"
 
 namespace NumLib
 {
 namespace detail
 {
+template <typename MeshElementType,
+          typename IPData,
+          typename FluxVectorType,
+          typename Derived>
+void assembleAdvectionMatrix(IPData const& ip_data_vector,
+                             NumLib::ShapeMatrixCache const& shape_matrix_cache,
+                             std::vector<FluxVectorType> const& ip_flux_vector,
+                             Eigen::MatrixBase<Derived>& laplacian_matrix)
+{
+    auto const& Ns = shape_matrix_cache.NsHigherOrder<MeshElementType>();
+
+    for (std::size_t ip = 0; ip < ip_flux_vector.size(); ++ip)
+    {
+        auto const& ip_data = ip_data_vector[ip];
+        auto const w = ip_data.integration_weight;
+        auto const& dNdx = ip_data.dNdx;
+        auto const& N = Ns[ip];
+        laplacian_matrix.noalias() +=
+            N.transpose() * ip_flux_vector[ip].transpose() * dNdx * w;
+    }
+}
+
 template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleAdvectionMatrix(IPData const& ip_data_vector,
                              std::vector<FluxVectorType> const& ip_flux_vector,
@@ -79,6 +102,38 @@ void applyFullUpwind(IPData const& ip_data_vector,
 }
 }  // namespace detail
 
+template <typename MeshElementType,
+          typename IPData,
+          typename FluxVectorType,
+          typename Derived>
+void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
+                             IPData const& ip_data_vector,
+                             NumLib::ShapeMatrixCache const& shape_matrix_cache,
+                             std::vector<FluxVectorType> const& ip_flux_vector,
+                             double const average_velocity,
+                             Eigen::MatrixBase<Derived>& laplacian_matrix)
+{
+    std::visit(
+        [&](auto&& stabilizer)
+        {
+            using Stabilizer = std::decay_t<decltype(stabilizer)>;
+            if constexpr (std::is_same_v<Stabilizer, FullUpwind>)
+            {
+                if (average_velocity > stabilizer.getCutoffVelocity())
+                {
+                    detail::applyFullUpwind(ip_data_vector, ip_flux_vector,
+                                            laplacian_matrix);
+                    return;
+                }
+            }
+
+            detail::assembleAdvectionMatrix<MeshElementType>(
+                ip_data_vector, shape_matrix_cache, ip_flux_vector,
+                laplacian_matrix);
+        },
+        stabilizer);
+}
+
 template <typename IPData, typename FluxVectorType, typename Derived>
 void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
                              IPData const& ip_data_vector,
@@ -100,8 +155,8 @@ void assembleAdvectionMatrix(NumericalStabilization const& stabilizer,
                 }
             }
 
-            detail::assembleAdvectionMatrix(ip_data_vector, ip_flux_vector,
-                                            laplacian_matrix);
+            detail::assembleAdvectionMatrix(
+                ip_data_vector, ip_flux_vector, laplacian_matrix);
         },
         stabilizer);
 }
