@@ -183,8 +183,8 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble SmallDeformationNonlocalProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -222,8 +222,8 @@ void SmallDeformationNonlocalProcess<DisplacementDim>::
 {
     DBUG("AssembleWithJacobian SmallDeformationNonlocalProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 

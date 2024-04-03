@@ -11,7 +11,6 @@
 #include "VectorMatrixAssembler.h"
 
 #include <cassert>
-#include <functional>  // for std::reference_wrapper.
 
 #include "CoupledSolutionsForStaggeredScheme.h"
 #include "LocalAssemblerInterface.h"
@@ -39,8 +38,7 @@ void VectorMatrixAssembler::preAssemble(
 
 void VectorMatrixAssembler::assemble(
     const std::size_t mesh_item_id, LocalAssemblerInterface& local_assembler,
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
-        dof_tables,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
@@ -49,8 +47,8 @@ void VectorMatrixAssembler::assemble(
     indices_of_processes.reserve(dof_tables.size());
     transform(cbegin(dof_tables), cend(dof_tables),
               back_inserter(indices_of_processes),
-              [&](auto const& dof_table)
-              { return NumLib::getIndices(mesh_item_id, dof_table); });
+              [&](auto const dof_table)
+              { return NumLib::getIndices(mesh_item_id, *dof_table); });
 
     auto const& indices = indices_of_processes[process_id];
     _local_M_data.clear();
@@ -107,8 +105,7 @@ void VectorMatrixAssembler::assemble(
 
 void VectorMatrixAssembler::assembleWithJacobian(
     std::size_t const mesh_item_id, LocalAssemblerInterface& local_assembler,
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
-        dof_tables,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
@@ -117,8 +114,8 @@ void VectorMatrixAssembler::assembleWithJacobian(
     indices_of_processes.reserve(dof_tables.size());
     transform(cbegin(dof_tables), cend(dof_tables),
               back_inserter(indices_of_processes),
-              [&](auto const& dof_table)
-              { return NumLib::getIndices(mesh_item_id, dof_table); });
+              [&](auto const dof_table)
+              { return NumLib::getIndices(mesh_item_id, *dof_table); });
 
     auto const& indices = indices_of_processes[process_id];
 

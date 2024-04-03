@@ -341,8 +341,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble the equations for ThermoHydroMechanics");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -359,15 +359,12 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
     // For the monolithic scheme
     if (_use_monolithic_scheme)
     {
         DBUG(
             "Assemble the Jacobian of ThermoHydroMechanics for the monolithic "
             "scheme.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
     }
     else
     {
@@ -390,12 +387,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
                 "Assemble the Jacobian equations of mechanical process in "
                 "ThermoHydroMechanics for the staggered scheme.");
         }
-        dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
-        dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
-        dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+
+    auto const dof_tables = getDOFTables(x.size());
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
@@ -406,13 +402,13 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     {
         if (_use_monolithic_scheme)
         {
-            transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
+            transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
                                               output_vector,
                                               std::negate<double>());
         }
         else
         {
-            transformVariableFromGlobalVector(b, 0, dof_tables[process_id],
+            transformVariableFromGlobalVector(b, 0, *dof_tables[process_id],
                                               output_vector,
                                               std::negate<double>());
         }

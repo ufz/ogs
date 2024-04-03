@@ -190,8 +190,8 @@ private:
                          GlobalVector& b, Jac&... jac_or_not_jac)
     {
         // TODO why not getDOFTables(x.size()); ?
-        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const
-            dof_tables{*derived()._local_to_global_index_map};
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const dof_tables{
+            derived()._local_to_global_index_map.get()};
 
         auto const& loc_asms = derived().local_assemblers_;
 
@@ -211,7 +211,7 @@ private:
                 MathLib::LinAlg::axpy(b, 1.0, b_submesh);
 
                 AssemblyMixinBase::copyResiduumVectorsToSubmesh(
-                    b_submesh, dof_tables.front().get(), sad);
+                    b_submesh, *(dof_tables.front()), sad);
             }
 
             NumLib::GlobalVectorProvider::provider.releaseVector(b_submesh);
@@ -229,7 +229,7 @@ private:
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(
-            b, dof_tables.front().get(), residuum_vectors_bulk_);
+            b, *(dof_tables.front()), residuum_vectors_bulk_);
     }
 };
 

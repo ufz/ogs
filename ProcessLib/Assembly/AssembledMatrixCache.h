@@ -30,16 +30,14 @@ struct AssembledMatrixCache final
                          bool const use_monolithic_scheme);
 
     template <typename VectorOfLocalAssemblers>
-    void assemble(const double t, double const dt,
-                  std::vector<GlobalVector*> const& x,
-                  std::vector<GlobalVector*> const& x_prev,
-                  int const process_id, GlobalMatrix& M, GlobalMatrix& K,
-                  GlobalVector& b,
-                  std::vector<std::reference_wrapper<
-                      NumLib::LocalToGlobalIndexMap>> const& dof_tables,
-                  VectorMatrixAssembler& global_assembler,
-                  VectorOfLocalAssemblers const& local_assemblers,
-                  std::vector<std::size_t> const& active_element_ids);
+    void assemble(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+        VectorMatrixAssembler& global_assembler,
+        VectorOfLocalAssemblers const& local_assemblers,
+        std::vector<std::size_t> const& active_element_ids);
 
     bool isLinear() const { return is_linear_; }
 
@@ -56,8 +54,7 @@ void AssembledMatrixCache::assemble(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
-        dof_tables,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     VectorMatrixAssembler& global_assembler,
     VectorOfLocalAssemblers const& local_assemblers,
     std::vector<std::size_t> const& active_element_ids)

@@ -294,8 +294,8 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // only the Newton-Raphson method is employed to simulate coupled HM
     // processes in this class, this function is actually not used so far.
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
@@ -310,8 +310,6 @@ void HydroMechanicsProcess<DisplacementDim>::
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
     // For the monolithic scheme
     bool const use_monolithic_scheme = _process_data.isMonolithicSchemeUsed();
     if (use_monolithic_scheme)
@@ -319,7 +317,6 @@ void HydroMechanicsProcess<DisplacementDim>::
         DBUG(
             "Assemble the Jacobian of HydroMechanics for the monolithic "
             "scheme.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
     }
     else
     {
@@ -336,10 +333,9 @@ void HydroMechanicsProcess<DisplacementDim>::
                 "Assemble the Jacobian equations of mechanical process in "
                 "HydroMechanics for the staggered scheme.");
         }
-        dof_tables.emplace_back(*_local_to_global_index_map_with_base_nodes);
-        dof_tables.emplace_back(*_local_to_global_index_map);
     }
 
+    auto const dof_tables = getDOFTables(x.size());
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
@@ -349,13 +345,13 @@ void HydroMechanicsProcess<DisplacementDim>::
     {
         if (use_monolithic_scheme)
         {
-            transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
+            transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
                                               output_vector,
                                               std::negate<double>());
         }
         else
         {
-            transformVariableFromGlobalVector(b, 0, dof_tables[process_id],
+            transformVariableFromGlobalVector(b, 0, *dof_tables[process_id],
                                               output_vector,
                                               std::negate<double>());
         }

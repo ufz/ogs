@@ -87,8 +87,8 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleConcreteProcess(
 {
     DBUG("Assemble ThermalTwoPhaseFlowWithPPProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -105,8 +105,8 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian ThermalTwoPhaseFlowWithPPProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.

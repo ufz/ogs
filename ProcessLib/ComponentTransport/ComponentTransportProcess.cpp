@@ -228,17 +228,16 @@ void ComponentTransportProcess::assembleConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     if (_use_monolithic_scheme)
     {
-        dof_tables.push_back(std::ref(*_local_to_global_index_map));
+        dof_tables.push_back(_local_to_global_index_map.get());
     }
     else
     {
-        std::generate_n(
-            std::back_inserter(dof_tables), _process_variables.size(),
-            [&]() { return std::ref(*_local_to_global_index_map); });
+        std::generate_n(std::back_inserter(dof_tables),
+                        _process_variables.size(),
+                        [&]() { return _local_to_global_index_map.get(); });
     }
 
     _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_tables,
@@ -274,11 +273,10 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
     std::generate_n(std::back_inserter(dof_tables), _process_variables.size(),
-                    [&]() { return std::ref(*_local_to_global_index_map); });
+                    [&]() { return _local_to_global_index_map.get(); });
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
@@ -511,17 +509,16 @@ void ComponentTransportProcess::preOutputConcreteProcess(
 
     assembleConcreteProcess(t, dt, x, x_prev, process_id, *M, *K, *b);
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     if (_use_monolithic_scheme)
     {
-        dof_tables.push_back(std::ref(*_local_to_global_index_map));
+        dof_tables.push_back(_local_to_global_index_map.get());
     }
     else
     {
-        std::generate_n(
-            std::back_inserter(dof_tables), _process_variables.size(),
-            [&]() { return std::ref(*_local_to_global_index_map); });
+        std::generate_n(std::back_inserter(dof_tables),
+                        _process_variables.size(),
+                        [&]() { return _local_to_global_index_map.get(); });
     }
 
     BaseLib::RunTime time_residuum;
@@ -535,7 +532,7 @@ void ComponentTransportProcess::preOutputConcreteProcess(
              ++variable_id)
         {
             transformVariableFromGlobalVector(
-                residuum, variable_id, dof_tables[0], *_residua[variable_id],
+                residuum, variable_id, *dof_tables[0], *_residua[variable_id],
                 std::negate<double>());
         }
     }
@@ -543,7 +540,7 @@ void ComponentTransportProcess::preOutputConcreteProcess(
     {
         auto const residuum = computeResiduum(dt, *x[process_id],
                                               *x_prev[process_id], *M, *K, *b);
-        transformVariableFromGlobalVector(residuum, 0, dof_tables[process_id],
+        transformVariableFromGlobalVector(residuum, 0, *dof_tables[process_id],
                                           *_residua[process_id],
                                           std::negate<double>());
     }

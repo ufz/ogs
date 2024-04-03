@@ -131,8 +131,8 @@ void ThermoRichardsFlowProcess::assembleConcreteProcess(
 {
     DBUG("Assemble the equations for ThermoRichardsFlowProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -147,13 +147,12 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
     DBUG(
         "Assemble the Jacobian of ThermoRichardsFlow for the monolithic "
         "scheme.");
-    dof_tables.emplace_back(*_local_to_global_index_map);
+    dof_tables.emplace_back(_local_to_global_index_map.get());
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -163,7 +162,7 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
-        transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
+        transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
                                           output_vector, std::negate<double>());
     };
 

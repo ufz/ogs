@@ -102,8 +102,8 @@ void HeatConductionProcess::assembleConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
 
     _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_table,
                             _global_assembler, _local_assemblers,
@@ -119,8 +119,8 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,

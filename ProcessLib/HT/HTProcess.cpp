@@ -78,12 +78,11 @@ void HTProcess::assembleConcreteProcess(
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     if (_use_monolithic_scheme)
     {
         DBUG("Assemble HTProcess.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(_local_to_global_index_map.get());
     }
     else
     {
@@ -99,8 +98,8 @@ void HTProcess::assembleConcreteProcess(
                 "Assemble the equations of single phase fully saturated "
                 "fluid flow process within HTProcess.");
         }
-        dof_tables.emplace_back(*_local_to_global_index_map);
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(_local_to_global_index_map.get());
+        dof_tables.emplace_back(_local_to_global_index_map.get());
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
@@ -118,16 +117,15 @@ void HTProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HTProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     if (!_use_monolithic_scheme)
     {
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(_local_to_global_index_map.get());
     }
     else
     {
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
-        dof_tables.emplace_back(std::ref(*_local_to_global_index_map));
+        dof_tables.emplace_back(_local_to_global_index_map.get());
+        dof_tables.emplace_back(_local_to_global_index_map.get());
     }
 
     // Call global assembler for each local assembly item.
