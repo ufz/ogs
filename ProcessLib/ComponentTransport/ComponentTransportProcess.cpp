@@ -23,6 +23,7 @@
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/NumericalStability/FluxCorrectedTransport.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "NumLib/ODESolver/NonlinearSystem.h"
@@ -165,7 +166,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
         mesh_space_dimension, mesh.getElements(), dof_table, _local_assemblers,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
-        _process_data, transport_process_variables);
+        _process_data, _shape_matrix_cache, transport_process_variables);
 
     if (_chemical_solver_interface && !_use_monolithic_scheme)
     {
