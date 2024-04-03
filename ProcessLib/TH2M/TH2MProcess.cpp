@@ -187,37 +187,11 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
             DisplacementDim>::getIntPtDiffusionVelocityLiquidLiquid);
 
     add_secondary_variable(
-        "vapour_pressure", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtVapourPressure);
-    add_secondary_variable(
         "porosity", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtPorosity);
     add_secondary_variable(
-        "gas_density", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtGasDensity);
-    add_secondary_variable(
         "solid_density", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtSolidDensity);
-    add_secondary_variable(
-        "liquid_density", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtLiquidDensity);
-    add_secondary_variable(
-        "mole_fraction_gas", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtMoleFractionGas);
-    add_secondary_variable(
-        "mass_fraction_gas", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtMassFractionGas);
-    add_secondary_variable(
-        "mass_fraction_liquid", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtMassFractionLiquid);
-
-    add_secondary_variable(
-        "enthalpy_gas", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpyGas);
-
-    add_secondary_variable(
-        "enthalpy_liquid", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpyLiquid);
 
     add_secondary_variable(
         "enthalpy_solid", 1,

@@ -14,9 +14,9 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "PhaseTransitionModel.h"
 
-namespace ProcessLib
+namespace ProcessLib::TH2M
 {
-namespace TH2M
+namespace ConstitutiveRelations
 {
 struct PhaseTransition : PhaseTransitionModel
 {
@@ -24,12 +24,16 @@ struct PhaseTransition : PhaseTransitionModel
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media);
 
-    PhaseTransitionModelVariables updateConstitutiveVariables(
-        PhaseTransitionModelVariables const& phase_transition_model_variables,
-        const MaterialPropertyLib::Medium* medium,
-        MaterialPropertyLib::VariableArray variables,
-        ParameterLib::SpatialPosition pos, double const t,
-        double const dt) const override;
+    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+              GasPressureData const& p_GR, CapillaryPressureData const& p_cap,
+              TemperatureData const& T_data,
+              PureLiquidDensityData const& rho_W_LR,
+              ViscosityData& viscosity_data, EnthalpyData& enthalpy_data,
+              MassMoleFractionsData& mass_mole_fractions_data,
+              FluidDensityData& fluid_density_data,
+              VapourPartialPressureData& vapour_pressure_data,
+              ConstituentDensityData& constituent_density_data,
+              PhaseTransitionData& cv) const override;
 
 private:
     int const n_components_gas_;
@@ -39,5 +43,5 @@ private:
     int const liquid_phase_solvent_component_index_;
 };
 
-}  // namespace TH2M
-}  // namespace ProcessLib
+}  // namespace ConstitutiveRelations
+}  // namespace ProcessLib::TH2M

@@ -11,19 +11,27 @@
 
 #include "Biot.h"
 #include "Bishops.h"
+#include "ConstitutiveDensity.h"
 #include "ElasticTangentStiffnessData.h"
+#include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
+#include "FluidDensity.h"
+#include "MassMoleFractions.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
+#include "PhaseTransitionData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
+#include "PureLiquidDensity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
 #include "TotalStress.h"
+#include "VapourPartialPressure.h"
+#include "Viscosity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -38,6 +46,8 @@ struct StatefulData
     ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>
         eff_stress_data;
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
+    PureLiquidDensityData rho_W_LR;
+    ConstituentDensityData constituent_density_data;
 
     static auto reflect()
     {
@@ -56,6 +66,8 @@ struct StatefulDataPrev
     PrevState<ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>>
         eff_stress_data;
     PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
+    PrevState<PureLiquidDensityData> rho_W_LR;
+    PrevState<ConstituentDensityData> constituent_density_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
@@ -64,6 +76,8 @@ struct StatefulDataPrev
         swelling_data = state.swelling_data;
         eff_stress_data = state.eff_stress_data;
         mechanical_strain_data = state.mechanical_strain_data;
+        rho_W_LR = state.rho_W_LR;
+        constituent_density_data = state.constituent_density_data;
 
         return *this;
     }
@@ -75,13 +89,21 @@ struct OutputData
 {
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
+    EnthalpyData enthalpy_data;
+    MassMoleFractionsData mass_mole_fractions_data;
+    FluidDensityData fluid_density_data;
+    VapourPartialPressureData vapour_pressure_data;
 
     static auto reflect()
     {
         using Self = OutputData<DisplacementDim>;
 
         return Reflection::reflectWithoutName(&Self::eps_data,
-                                              &Self::permeability_data);
+                                              &Self::permeability_data,
+                                              &Self::enthalpy_data,
+                                              &Self::mass_mole_fractions_data,
+                                              &Self::fluid_density_data,
+                                              &Self::vapour_pressure_data);
     }
 };
 
@@ -106,6 +128,8 @@ struct ConstitutiveTempData
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     TotalStressData<DisplacementDim> total_stress_data;
     EquivalentPlasticStrainData equivalent_plastic_strain_data;
+    ViscosityData viscosity_data;
+    PhaseTransitionData phase_transition_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

@@ -14,10 +14,10 @@
 #include <memory>
 #include <utility>
 
+#include "ConstitutiveRelations/PhaseTransitionModel.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Parameter.h"
-#include "PhaseTransitionModels/PhaseTransitionModel.h"
 #include "ProcessLib/Common/HydroMechanics/InitialStress.h"
 
 namespace ProcessLib
@@ -36,7 +36,8 @@ struct TH2MProcessData
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
-    std::unique_ptr<PhaseTransitionModel> phase_transition_model_ = nullptr;
+    std::unique_ptr<ConstitutiveRelations::PhaseTransitionModel>
+        phase_transition_model_ = nullptr;
 
     ParameterLib::Parameter<double> const& reference_temperature;
 

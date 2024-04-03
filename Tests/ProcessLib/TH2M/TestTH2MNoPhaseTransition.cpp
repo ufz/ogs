@@ -14,12 +14,14 @@
 #include <sstream>
 
 #include "MaterialLib/MPL/Medium.h"
-#include "ProcessLib/TH2M/PhaseTransitionModels/NoPhaseTransition.h"
+#include "ProcessLib/TH2M/ConstitutiveRelations/NoPhaseTransition.h"
 #include "Tests/MaterialLib/TestMPL.h"
 #include "Tests/TestTools.h"
 
 TEST(ProcessLib, TH2MNoPhaseTransition)
 {
+    namespace CR = ProcessLib::TH2M::ConstitutiveRelations;
+
     std::stringstream m;
 
     auto const density_air = 1.2;
@@ -37,6 +39,14 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     m << "<medium>\n";
     m << "  <phases>\n";
+
+    // solid phase
+    m << "<phase>\n";
+    m << "<type>Solid</type>\n";
+    m << "<properties>\n";
+    m << Tests::makeConstantPropertyElement("density", 2e3);
+    m << "</properties>\n";
+    m << "</phase>\n";
 
     // gas phase
     m << "<phase>\n";
@@ -76,16 +86,17 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
         Tests::createTestMaterial(m.str());
+    CR::MediaData media_data{*medium};
 
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> media{
         {0, medium}};
 
     MaterialPropertyLib::VariableArray variable_array;
-    ParameterLib::SpatialPosition const pos;
-    double const time = std::numeric_limits<double>::quiet_NaN();
-    double const dt = std::numeric_limits<double>::quiet_NaN();
+    CR::SpaceTimeData x_t{{},
+                          std::numeric_limits<double>::quiet_NaN(),
+                          std::numeric_limits<double>::quiet_NaN()};
 
-    auto ptm = std::make_unique<ProcessLib::TH2M::NoPhaseTransition>(media);
+    auto ptm = std::make_unique<CR::NoPhaseTransition>(media);
 
     double const pGR = 1000000.;
     double const pCap = 1000000.;
@@ -95,15 +106,29 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     variable_array.capillary_pressure = pCap;
     variable_array.temperature = T;
 
-    ptm->computeConstitutiveVariables(medium.get(), variable_array, pos, time,
-                                      dt);
-    auto const& cv = ptm->cv;
+    CR::PureLiquidDensityData rhoWLR;
+    CR::PureLiquidDensityModel rhoWLR_model;
+    rhoWLR_model.eval(x_t, media_data, CR::GasPressureData{pGR},
+                      CR::CapillaryPressureData{pGR}, CR::TemperatureData{T, T},
+                      rhoWLR);
+    ASSERT_NEAR(density_water, rhoWLR(), 1e-10);
+
+    CR::ViscosityData viscosity;
+    CR::EnthalpyData enthalpy;
+    CR::MassMoleFractionsData mass_mole_fractions;
+    CR::FluidDensityData fluid_density;
+    CR::VapourPartialPressureData vapour_pressure;
+    CR::ConstituentDensityData constituent_density;
+    CR::PhaseTransitionData cv;
+    ptm->eval(x_t, media_data, CR::GasPressureData{pGR},
+              CR::CapillaryPressureData{pGR}, CR::TemperatureData{T, T}, rhoWLR,
+              viscosity, enthalpy, mass_mole_fractions, fluid_density,
+              vapour_pressure, constituent_density, cv);
 
     // reference values
     double const rhoCGR = density_air;
     double const rhoWGR = 0.0;
     double const rhoCLR = 0.0;
-    double const rhoWLR = density_water;
     double const xmCG = 1.0;
     double const xmWG = 0.0;
     double const dxmWG_dpGR = 0.0;
@@ -119,13 +144,13 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     double const muGR = viscosity_air;
     double const muLR = viscosity_water;
 
-    ASSERT_NEAR(density_air, cv.rhoGR, 1.0e-10);
-    ASSERT_NEAR(density_water, cv.rhoLR, 1.0e-10);
-    ASSERT_NEAR(rhoCGR, cv.rhoCGR, 1.0e-10);
-    ASSERT_NEAR(rhoWGR, cv.rhoWGR, 1.0e-10);
-    ASSERT_NEAR(rhoCLR, cv.rhoCLR, 1.0e-10);
-    ASSERT_NEAR(rhoWLR, cv.rhoWLR, 1.0e-10);
+    ASSERT_NEAR(density_air, fluid_density.rho_GR, 1.0e-10);
+    ASSERT_NEAR(density_water, fluid_density.rho_LR, 1.0e-10);
+    ASSERT_NEAR(rhoCGR, constituent_density.rho_C_GR, 1.0e-10);
+    ASSERT_NEAR(rhoWGR, constituent_density.rho_W_GR, 1.0e-10);
+    ASSERT_NEAR(rhoCLR, constituent_density.rho_C_LR, 1.0e-10);
     ASSERT_NEAR(xmCG, 1. - cv.xmWG, 1.e-10);
+    ASSERT_NEAR(xmCG, mass_mole_fractions.xmCG, 1.e-10);
     ASSERT_NEAR(xmWG, cv.xmWG, 1.e-10);
     ASSERT_NEAR(dxmWG_dpGR, cv.dxmWG_dpGR, 1.0e-10);
     ASSERT_NEAR(dxmCG_dpGR, -cv.dxmWG_dpGR, 1.0e-10);
@@ -133,12 +158,12 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ASSERT_NEAR(dxmCG_dT, -cv.dxmWG_dT, 1.0e-10);
     ASSERT_NEAR(hCG, cv.hCG, 1.0e-9);
     ASSERT_NEAR(hWG, cv.hWG, 1.0e-9);
-    ASSERT_NEAR(hG, cv.hG, 1.0e-10);
-    ASSERT_NEAR(hL, cv.hL, 1.0e-10);
+    ASSERT_NEAR(hG, enthalpy.h_G, 1.0e-10);
+    ASSERT_NEAR(hL, enthalpy.h_L, 1.0e-10);
     ASSERT_NEAR(uG, cv.uG, 1.0e-10);
     ASSERT_NEAR(uL, cv.uL, 1.0e-10);
     ASSERT_NEAR(diffusion_coefficient_vapour, cv.diffusion_coefficient_vapour,
                 1.0e-10);
-    ASSERT_NEAR(muGR, cv.muGR, 1.0e-10);
-    ASSERT_NEAR(muLR, cv.muLR, 1.0e-10);
+    ASSERT_NEAR(muGR, viscosity.mu_GR, 1.0e-10);
+    ASSERT_NEAR(muLR, viscosity.mu_LR, 1.0e-10);
 }

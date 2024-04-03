@@ -118,7 +118,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
-    MediaData media_data{medium};
+    ConstitutiveRelations::MediaData media_data{medium};
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -127,8 +127,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_constitutive_data(n_integration_points);
     std::vector<ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>>
         ip_constitutive_variables(n_integration_points);
-
-    PhaseTransitionModelVariables ptmv;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -157,9 +155,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
-        TemperatureData const T_data{T, T_prev};
         double const pGR = Np.dot(gas_pressure);
         double const pCap = Np.dot(capillary_pressure);
+        ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
+        ConstitutiveRelations::GasPressureData const pGR_data{pGR};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap};
         double const pLR = pGR - pCap;
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
@@ -179,8 +179,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
-        models.S_L_model.eval({pos, t, dt}, media_data,
-                              CapillaryPressureData{pCap},
+        models.S_L_model.eval({pos, t, dt}, media_data, pCap_data,
                               current_state.S_L_data, ip_cv.dS_L_dp_cap);
 
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
@@ -211,16 +210,25 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.eff_stress_data, this->material_states_[ip],
             ip_cd.s_mech_data, ip_cv.equivalent_plastic_strain_data);
 
-        models.total_stress_model.eval(
-            current_state.eff_stress_data, ip_cv.biot_data, ip_cv.chi_S_L,
-            GasPressureData{pGR}, CapillaryPressureData{pCap},
-            ip_cv.total_stress_data);
+        models.total_stress_model.eval(current_state.eff_stress_data,
+                                       ip_cv.biot_data, ip_cv.chi_S_L, pGR_data,
+                                       pCap_data, ip_cv.total_stress_data);
 
         models.permeability_model.eval(
-            {pos, t, dt}, media_data, current_state.S_L_data,
-            CapillaryPressureData{pCap}, T_data, ip_cv.total_stress_data,
-            ip_out.eps_data, ip_cv.equivalent_plastic_strain_data,
-            ip_out.permeability_data);
+            {pos, t, dt}, media_data, current_state.S_L_data, pCap_data, T_data,
+            ip_cv.total_stress_data, ip_out.eps_data,
+            ip_cv.equivalent_plastic_strain_data, ip_out.permeability_data);
+
+        models.pure_liquid_density_model.eval({pos, t, dt}, media_data,
+                                              pGR_data, pCap_data, T_data,
+                                              current_state.rho_W_LR);
+
+        models.phase_transition_model.eval(
+            {pos, t, dt}, media_data, pGR_data, pCap_data, T_data,
+            current_state.rho_W_LR, ip_cv.viscosity_data, ip_out.enthalpy_data,
+            ip_out.mass_mole_fractions_data, ip_out.fluid_density_data,
+            ip_out.vapour_pressure_data, current_state.constituent_density_data,
+            ip_cv.phase_transition_data);
 
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
@@ -273,10 +281,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rhoSR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
-        // constitutive model object as specified in process creation
-        auto& ptm = *this->process_data_.phase_transition_model_;
-        ptmv = ptm.updateConstitutiveVariables(ptmv, &medium, vars, pos, t, dt);
-        auto const& c = ptmv;
+        auto const& c = ip_cv.phase_transition_data;
 
         auto const phi_L = current_state.S_L_data.S_L * ip_data.phi;
         auto const phi_G = (1. - current_state.S_L_data.S_L) * ip_data.phi;
@@ -294,91 +299,58 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.h_S = cpS * T;
         auto const u_S = ip_data.h_S;
 
-        ip_data.rho_u_eff = phi_G * c.rhoGR * c.uG + phi_L * c.rhoLR * c.uL +
+        ip_data.rho_u_eff = phi_G * ip_out.fluid_density_data.rho_GR * c.uG +
+                            phi_L * ip_out.fluid_density_data.rho_LR * c.uL +
                             phi_S * rhoSR * u_S;
 
-        ip_data.rho_G_h_G = phi_G * c.rhoGR * c.hG;
-        ip_data.rho_L_h_L = phi_L * c.rhoLR * c.hL;
+        ip_data.rho_G_h_G =
+            phi_G * ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G;
+        ip_data.rho_L_h_L =
+            phi_L * ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L;
         ip_data.rho_S_h_S = phi_S * rhoSR * ip_data.h_S;
 
-        ip_data.muGR = c.muGR;
-        ip_data.muLR = c.muLR;
-
-        ip_data.rhoGR = c.rhoGR;
-        ip_data.rhoLR = c.rhoLR;
         ip_data.rhoSR = rhoSR;
 
-        ip_data.rhoCGR = c.rhoCGR;
-        ip_data.rhoCLR = c.rhoCLR;
-        ip_data.rhoWGR = c.rhoWGR;
-        ip_data.rhoWLR = c.rhoWLR;
-
-        ip_data.dxmWG_dpGR = c.dxmWG_dpGR;
-        ip_data.dxmWG_dpCap = c.dxmWG_dpCap;
-        ip_data.dxmWG_dT = c.dxmWG_dT;
-
-        ip_data.dxmWL_dpGR = c.dxmWL_dpGR;
-        ip_data.dxmWL_dpCap = c.dxmWL_dpCap;
-        ip_data.dxmWL_dT = c.dxmWL_dT;
-
-        ip_data.dxmWL_dpLR = c.dxmWL_dpLR;
-
         // for variable output
-        ip_data.xnCG = 1. - c.xnWG;
-        ip_data.xmCG = 1. - c.xmWG;
-        ip_data.xmWG = c.xmWG;
-        ip_data.xmWL = c.xmWL;
-        auto const xmCL = 1. - c.xmWL;
+        auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
-        ip_data.diffusion_coefficient_vapour = c.diffusion_coefficient_vapour;
-        ip_data.diffusion_coefficient_solute = c.diffusion_coefficient_solute;
-
-        ip_data.h_G = c.hG;
-        ip_data.h_CG = c.hCG;
-        ip_data.h_WG = c.hWG;
-        ip_data.h_L = c.hL;
-        ip_data.pWGR = c.pWGR;
-
-        const GlobalDimVectorType gradxmWG = ip_data.dxmWG_dpGR * gradpGR +
-                                             ip_data.dxmWG_dpCap * gradpCap +
-                                             ip_data.dxmWG_dT * gradT;
+        const GlobalDimVectorType gradxmWG = c.dxmWG_dpGR * gradpGR +
+                                             c.dxmWG_dpCap * gradpCap +
+                                             c.dxmWG_dT * gradT;
         const GlobalDimVectorType gradxmCG = -gradxmWG;
 
-        const GlobalDimVectorType gradxmWL = ip_data.dxmWL_dpGR * gradpGR +
-                                             ip_data.dxmWL_dpCap * gradpCap +
-                                             ip_data.dxmWL_dT * gradT;
+        const GlobalDimVectorType gradxmWL = c.dxmWL_dpGR * gradpGR +
+                                             c.dxmWL_dpCap * gradpCap +
+                                             c.dxmWL_dT * gradT;
         const GlobalDimVectorType gradxmCL = -gradxmWL;
 
         // Todo: factor -phiAlpha / xmZetaAlpha * DZetaAlpha can be evaluated in
         // the respective phase transition model, here only the multiplication
         // with the gradient of the mass fractions should take place.
 
-        ip_data.d_CG = ip_data.xmCG == 0.
+        ip_data.d_CG = ip_out.mass_mole_fractions_data.xmCG == 0.
                            ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
                                             // division by zero
-                           : -phi_G / ip_data.xmCG *
-                                 ip_data.diffusion_coefficient_vapour *
-                                 gradxmCG;
+                           : -phi_G / ip_out.mass_mole_fractions_data.xmCG *
+                                 c.diffusion_coefficient_vapour * gradxmCG;
 
-        ip_data.d_WG = ip_data.xmWG == 0.
-                           ? 0. * gradxmWG  // Keep d_WG's dimension and prevent
-                                            // division by zero
-                           : -phi_G / ip_data.xmWG *
-                                 ip_data.diffusion_coefficient_vapour *
-                                 gradxmWG;
+        ip_data.d_WG =
+            c.xmWG == 0.
+                ? 0. * gradxmWG  // Keep d_WG's dimension and prevent
+                                 // division by zero
+                : -phi_G / c.xmWG * c.diffusion_coefficient_vapour * gradxmWG;
 
-        ip_data.d_CL = xmCL == 0. ? 0. * gradxmCL  // Keep d_CL's dimension and
-                                                   // prevent division by zero
-                                  : -phi_L / xmCL *
-                                        ip_data.diffusion_coefficient_solute *
-                                        gradxmCL;
+        ip_data.d_CL =
+            xmCL == 0.
+                ? 0. * gradxmCL  // Keep d_CL's dimension and
+                                 // prevent division by zero
+                : -phi_L / xmCL * c.diffusion_coefficient_solute * gradxmCL;
 
-        ip_data.d_WL = ip_data.xmWL == 0.
+        ip_data.d_WL = ip_out.mass_mole_fractions_data.xmWL == 0.
                            ? 0. * gradxmWL  // Keep d_WG's dimension and prevent
                                             // division by zero
-                           : -phi_L / ip_data.xmWL *
-                                 ip_data.diffusion_coefficient_solute *
-                                 gradxmWL;
+                           : -phi_L / ip_out.mass_mole_fractions_data.xmWL *
+                                 c.diffusion_coefficient_solute * gradxmWL;
 
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
@@ -413,8 +385,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ;
 
         ip_cv.drho_u_eff_dT =
-            phi_G * c.drho_GR_dT * c.uG + phi_G * c.rhoGR * c.du_G_dT +
-            phi_L * drho_LR_dT * c.uL + phi_L * c.rhoLR * c.du_L_dT +
+            phi_G * c.drho_GR_dT * c.uG +
+            phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dT +
+            phi_L * drho_LR_dT * c.uL +
+            phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dT +
             phi_S * drho_SR_dT * u_S + phi_S * rhoSR * cpS +
             dphi_S_dT * rhoSR * u_S;
 
@@ -487,79 +461,105 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // drho_GR_dp_cap = 0;
 
         ip_cv.drho_h_eff_dp_GR =
-            /*(dphi_G_dp_GR = 0) * c.rhoGR * c.hG +*/ phi_G * c.drho_GR_dp_GR *
-                c.hG +
-            /*(dphi_L_dp_GR = 0) * c.rhoLR * c.hL +*/ phi_L * drho_LR_dp_GR *
-                c.hL;
-        ip_cv.drho_h_eff_dp_cap = dphi_G_dp_cap * c.rhoGR * c.hG +
-                                  /*phi_G * (drho_GR_dp_cap = 0) * c.hG +*/
-                                  dphi_L_dp_cap * c.rhoLR * c.hL +
-                                  phi_L * drho_LR_dp_cap * c.hL;
+            /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR *
+                ip_out.enthalpy_data.h_G +*/
+            phi_G * c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G +
+            /*(dphi_L_dp_GR = 0) * ip_out.fluid_density_data.rho_LR *
+                ip_out.enthalpy_data.h_L +*/
+            phi_L * drho_LR_dp_GR * ip_out.enthalpy_data.h_L;
+        ip_cv.drho_h_eff_dp_cap =
+            dphi_G_dp_cap * ip_out.fluid_density_data.rho_GR *
+                ip_out.enthalpy_data.h_G +
+            /*phi_G * (drho_GR_dp_cap = 0) * ip_out.enthalpy_data.h_G +*/
+            dphi_L_dp_cap * ip_out.fluid_density_data.rho_LR *
+                ip_out.enthalpy_data.h_L +
+            phi_L * drho_LR_dp_cap * ip_out.enthalpy_data.h_L;
 
         // TODO (naumov) Extend for temperature dependent porosities.
         constexpr double dphi_G_dT = 0;
         constexpr double dphi_L_dT = 0;
         ip_cv.drho_h_eff_dT =
-            dphi_G_dT * c.rhoGR * c.hG + phi_G * c.drho_GR_dT * c.hG +
-            phi_G * c.rhoGR * c.dh_G_dT + dphi_L_dT * c.rhoLR * c.hL +
-            phi_L * drho_LR_dT * c.hL + phi_L * c.rhoLR * c.dh_L_dT +
+            dphi_G_dT * ip_out.fluid_density_data.rho_GR *
+                ip_out.enthalpy_data.h_G +
+            phi_G * c.drho_GR_dT * ip_out.enthalpy_data.h_G +
+            phi_G * ip_out.fluid_density_data.rho_GR * c.dh_G_dT +
+            dphi_L_dT * ip_out.fluid_density_data.rho_LR *
+                ip_out.enthalpy_data.h_L +
+            phi_L * drho_LR_dT * ip_out.enthalpy_data.h_L +
+            phi_L * ip_out.fluid_density_data.rho_LR * c.dh_L_dT +
             dphi_S_dT * rhoSR * ip_data.h_S + phi_S * drho_SR_dT * ip_data.h_S +
             phi_S * rhoSR * cpS;
 
         ip_cv.drho_u_eff_dp_GR =
-            /*(dphi_G_dp_GR = 0) * c.rhoGR * c.uG +*/
-            phi_G * c.drho_GR_dp_GR * c.uG + phi_G * c.rhoGR * c.du_G_dp_GR +
-            /*(dphi_L_dp_GR = 0) * c.rhoLR * c.uL +*/
-            phi_L * drho_LR_dp_GR * c.uL + phi_L * c.rhoLR * c.du_L_dp_GR;
+            /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR * c.uG +*/
+            phi_G * c.drho_GR_dp_GR * c.uG +
+            phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dp_GR +
+            /*(dphi_L_dp_GR = 0) * ip_out.fluid_density_data.rho_LR * c.uL +*/
+            phi_L * drho_LR_dp_GR * c.uL +
+            phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dp_GR;
 
-        ip_cv.drho_u_eff_dp_cap = dphi_G_dp_cap * c.rhoGR * c.uG +
-                                  /*phi_G * (drho_GR_dp_cap = 0) * c.uG +*/
-                                  dphi_L_dp_cap * c.rhoLR * c.uL +
-                                  phi_L * drho_LR_dp_cap * c.uL +
-                                  phi_L * c.rhoLR * c.du_L_dp_cap;
+        ip_cv.drho_u_eff_dp_cap =
+            dphi_G_dp_cap * ip_out.fluid_density_data.rho_GR * c.uG +
+            /*phi_G * (drho_GR_dp_cap = 0) * c.uG +*/
+            dphi_L_dp_cap * ip_out.fluid_density_data.rho_LR * c.uL +
+            phi_L * drho_LR_dp_cap * c.uL +
+            phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dp_cap;
 
         auto const& b = this->process_data_.specific_body_force;
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip_data.muGR;
+            ip_cv.viscosity_data.mu_GR;
         GlobalDimMatrixType const k_over_mu_L =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip_data.muLR;
+            ip_cv.viscosity_data.mu_LR;
 
         // dk_over_mu_G_dp_GR = ip_out.permeability_data.Ki *
         //                      ip_out.permeability_data.dk_rel_G_dS_L *
-        //                      (ds_L_dp_GR = 0) / ip_data.muGR = 0;
+        //                      (ds_L_dp_GR = 0) /
+        //                      ip_cv.viscosity_data.mu_GR = 0;
         // dk_over_mu_L_dp_GR = ip_out.permeability_data.Ki *
         //                      ip_out.permeability_data.dk_rel_L_dS_L *
-        //                      (ds_L_dp_GR = 0) / ip_data.muLR = 0;
+        //                      (ds_L_dp_GR = 0) /
+        //                      ip_cv.viscosity_data.mu_LR = 0;
         ip_cv.dk_over_mu_G_dp_cap = ip_out.permeability_data.Ki *
                                     ip_out.permeability_data.dk_rel_G_dS_L *
-                                    ip_cv.dS_L_dp_cap() / ip_data.muGR;
+                                    ip_cv.dS_L_dp_cap() /
+                                    ip_cv.viscosity_data.mu_GR;
         ip_cv.dk_over_mu_L_dp_cap = ip_out.permeability_data.Ki *
                                     ip_out.permeability_data.dk_rel_L_dS_L *
-                                    ip_cv.dS_L_dp_cap() / ip_data.muLR;
+                                    ip_cv.dS_L_dp_cap() /
+                                    ip_cv.viscosity_data.mu_LR;
 
-        ip_data.w_GS = k_over_mu_G * c.rhoGR * b - k_over_mu_G * gradpGR;
-        ip_data.w_LS = k_over_mu_L * gradpCap + k_over_mu_L * c.rhoLR * b -
+        ip_data.w_GS = k_over_mu_G * ip_out.fluid_density_data.rho_GR * b -
+                       k_over_mu_G * gradpGR;
+        ip_data.w_LS = k_over_mu_L * gradpCap +
+                       k_over_mu_L * ip_out.fluid_density_data.rho_LR * b -
                        k_over_mu_L * gradpGR;
 
         ip_cv.drho_GR_h_w_eff_dp_GR_Npart =
-            c.drho_GR_dp_GR * c.hG * ip_data.w_GS +
-            c.rhoGR * c.hG * k_over_mu_G * c.drho_GR_dp_GR * b;
+            c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G * ip_data.w_GS +
+            ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G *
+                k_over_mu_G * c.drho_GR_dp_GR * b;
         ip_cv.drho_GR_h_w_eff_dp_GR_gradNpart =
-            -c.rhoGR * c.hG * k_over_mu_G - c.rhoLR * c.hL * k_over_mu_L;
+            ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G *
+                k_over_mu_G -
+            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
+                k_over_mu_L;
 
         ip_cv.drho_LR_h_w_eff_dp_cap_Npart =
-            -drho_LR_dp_cap * c.hL * ip_data.w_LS -
-            c.rhoLR * c.hL * k_over_mu_L * drho_LR_dp_cap * b;
+            -drho_LR_dp_cap * ip_out.enthalpy_data.h_L * ip_data.w_LS -
+            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
+                k_over_mu_L * drho_LR_dp_cap * b;
         ip_cv.drho_LR_h_w_eff_dp_cap_gradNpart =
             // TODO (naumov) why the minus sign??????
-            -c.rhoLR * c.hL * k_over_mu_L;
+            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
+            k_over_mu_L;
 
-        ip_cv.drho_GR_h_w_eff_dT = c.drho_GR_dT * c.hG * ip_data.w_GS +
-                                   c.rhoGR * c.dh_G_dT * ip_data.w_GS +
-                                   drho_LR_dT * c.hL * ip_data.w_LS +
-                                   c.rhoLR * c.dh_L_dT * ip_data.w_LS;
+        ip_cv.drho_GR_h_w_eff_dT =
+            c.drho_GR_dT * ip_out.enthalpy_data.h_G * ip_data.w_GS +
+            ip_out.fluid_density_data.rho_GR * c.dh_G_dT * ip_data.w_GS +
+            drho_LR_dT * ip_out.enthalpy_data.h_L * ip_data.w_LS +
+            ip_out.fluid_density_data.rho_LR * c.dh_L_dT * ip_data.w_LS;
         // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
         // drho_LR_dT * b
 
@@ -567,8 +567,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // here with S_rho_C_eff.
         double const s_L = current_state.S_L_data.S_L;
         double const s_G = 1. - s_L;
-        double const rho_C_FR = s_G * ip_data.rhoCGR + s_L * ip_data.rhoCLR;
-        double const rho_W_FR = s_G * ip_data.rhoWGR + s_L * ip_data.rhoWLR;
+        double const rho_C_FR =
+            s_G * current_state.constituent_density_data.rho_C_GR +
+            s_L * current_state.constituent_density_data.rho_C_LR;
+        double const rho_W_FR =
+            s_G * current_state.constituent_density_data.rho_W_GR +
+            s_L * current_state.rho_W_LR();
         // TODO (naumov) Extend for partially saturated media.
         constexpr double drho_C_GR_dp_cap = 0;
         if (dt == 0.)
@@ -580,9 +584,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         else
         {
             double const rho_C_GR_dot =
-                (ip_data.rhoCGR - ip_data.rhoCGR_prev) / dt;
+                (current_state.constituent_density_data.rho_C_GR -
+                 prev_state.constituent_density_data->rho_C_GR) /
+                dt;
             double const rho_C_LR_dot =
-                (ip_data.rhoCLR - ip_data.rhoCLR_prev) / dt;
+                (current_state.constituent_density_data.rho_C_LR -
+                 prev_state.constituent_density_data->rho_C_LR) /
+                dt;
             ip_cv.dfC_3a_dp_GR =
                 /*(ds_G_dp_GR = 0) * rho_C_GR_dot +*/ s_G * c.drho_C_GR_dp_GR /
                     dt +
@@ -597,8 +605,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         }
 
         double const drho_C_FR_dp_GR =
-            /*(ds_G_dp_GR = 0) * ip_data.rhoCGR +*/ s_G * c.drho_C_GR_dp_GR +
-            /*(ds_L_dp_GR = 0) * ip_data.rhoCLR +*/ s_L * c.drho_C_LR_dp_GR;
+            /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_C_GR
+               +*/
+            s_G * c.drho_C_GR_dp_GR +
+            /*(ds_L_dp_GR = 0) * current_state.constituent_density_data.rho_C_LR
+               +*/
+            s_L * c.drho_C_LR_dp_GR;
         ip_cv.dfC_4_MCpG_dp_GR = drho_C_FR_dp_GR *
                                  (ip_cv.biot_data() - ip_data.phi) *
                                  ip_cv.beta_p_SR();
@@ -628,8 +640,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                  ip_cv.beta_p_SR();
 
         double const drho_C_FR_dp_cap =
-            ds_G_dp_cap * ip_data.rhoCGR + s_G * drho_C_GR_dp_cap +
-            ip_cv.dS_L_dp_cap() * ip_data.rhoCLR - s_L * c.drho_C_LR_dp_LR;
+            ds_G_dp_cap * current_state.constituent_density_data.rho_C_GR +
+            s_G * drho_C_GR_dp_cap +
+            ip_cv.dS_L_dp_cap() *
+                current_state.constituent_density_data.rho_C_LR -
+            s_L * c.drho_C_LR_dp_LR;
 
         ip_cv.dfC_2a_dp_cap =
             ip_data.phi * (-c.drho_C_LR_dp_LR - drho_C_GR_dp_cap) -
@@ -639,7 +654,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_cv.dfC_2a_dT =
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_data.dphi_dT * (ip_data.rhoCLR - ip_data.rhoCGR) +
+            ip_data.dphi_dT *
+                (current_state.constituent_density_data.rho_C_LR -
+                 current_state.constituent_density_data.rho_C_GR) +
 #endif
             ip_data.phi * (c.drho_C_LR_dT - c.drho_C_GR_dT) -
             drho_C_FR_dT * pCap * (ip_cv.biot_data() - ip_data.phi) *
@@ -656,9 +673,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_cv.dadvection_C_dp_cap =
             //(drho_C_GR_dp_cap = 0) * k_over_mu_G
-            ip_data.rhoCGR * ip_cv.dk_over_mu_G_dp_cap +
+            current_state.constituent_density_data.rho_C_GR *
+                ip_cv.dk_over_mu_G_dp_cap +
             (-c.drho_C_LR_dp_LR) * k_over_mu_L +
-            ip_data.rhoCLR * ip_cv.dk_over_mu_L_dp_cap;
+            current_state.constituent_density_data.rho_C_LR *
+                ip_cv.dk_over_mu_L_dp_cap;
 
         ip_cv.dfC_4_LCpG_dT =
             c.drho_C_GR_dT * k_over_mu_G + c.drho_C_LR_dT * k_over_mu_L
@@ -666,11 +685,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ;
 
         double const drho_W_FR_dp_GR =
-            /*(ds_G_dp_GR = 0) * ip_data.rhoWGR +*/ s_G * c.drho_W_GR_dp_GR +
-            /*(ds_L_dp_GR = 0) * ip_data.rhoWLR +*/ s_L * c.drho_W_LR_dp_GR;
+            /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_W_GR
+               +*/
+            s_G * c.drho_W_GR_dp_GR +
+            /*(ds_L_dp_GR = 0) * current_state.rho_W_LR() +*/
+            s_L * c.drho_W_LR_dp_GR;
         double const drho_W_FR_dp_cap =
-            ds_G_dp_cap * ip_data.rhoWGR + s_G * c.drho_W_GR_dp_cap +
-            ip_cv.dS_L_dp_cap() * ip_data.rhoWLR - s_L * c.drho_W_LR_dp_LR;
+            ds_G_dp_cap * current_state.constituent_density_data.rho_W_GR +
+            s_G * c.drho_W_GR_dp_cap +
+            ip_cv.dS_L_dp_cap() * current_state.rho_W_LR() -
+            s_L * c.drho_W_LR_dp_LR;
         double const drho_W_FR_dT = s_G * c.drho_W_GR_dT + s_L * c.drho_W_LR_dT;
 
         ip_cv.dfW_2a_dp_GR =
@@ -687,7 +711,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_cv.dfW_2a_dT =
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_data.dphi_dT * (ip_data.rhoWLR - ip_data.rhoWGR) +
+            ip_data.dphi_dT *
+                (current_state.rho_W_LR() -
+                 current_state.constituent_density_data.rho_W_GR) +
 #endif
             ip_data.phi * (c.drho_W_LR_dT - c.drho_W_GR_dT);
         ip_cv.dfW_2b_dT =
@@ -707,9 +733,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         else
         {
             double const rho_W_GR_dot =
-                (ip_data.rhoWGR - ip_data.rhoWGR_prev) / dt;
+                (current_state.constituent_density_data.rho_W_GR -
+                 prev_state.constituent_density_data->rho_W_GR) /
+                dt;
             double const rho_W_LR_dot =
-                (ip_data.rhoWLR - ip_data.rhoWLR_prev) / dt;
+                (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
 
             ip_cv.dfW_3a_dp_GR =
                 /*(ds_G_dp_GR = 0) * rho_W_GR_dot +*/ s_G * c.drho_W_GR_dp_GR /
@@ -729,10 +757,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    + c.drho_W_LR_dp_GR * k_over_mu_L
             // + rhoWLR * (dk_over_mu_L_dp_GR = 0)
             ;
-        ip_cv.dfW_4_LWpG_a_dp_cap = c.drho_W_GR_dp_cap * k_over_mu_G +
-                                    ip_data.rhoWGR * ip_cv.dk_over_mu_G_dp_cap +
-                                    -c.drho_W_LR_dp_LR * k_over_mu_L +
-                                    ip_data.rhoWLR * ip_cv.dk_over_mu_L_dp_cap;
+        ip_cv.dfW_4_LWpG_a_dp_cap =
+            c.drho_W_GR_dp_cap * k_over_mu_G +
+            current_state.constituent_density_data.rho_W_GR *
+                ip_cv.dk_over_mu_G_dp_cap +
+            -c.drho_W_LR_dp_LR * k_over_mu_L +
+            current_state.rho_W_LR() * ip_cv.dk_over_mu_L_dp_cap;
 
         ip_cv.dfW_4_LWpG_a_dT =
             c.drho_W_GR_dT * k_over_mu_G
@@ -752,8 +782,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.dfW_4_LWpC_a_dp_GR = c.drho_W_LR_dp_GR * k_over_mu_L
             //+ rhoWLR * (dk_over_mu_L_dp_GR = 0)
             ;
-        ip_cv.dfW_4_LWpC_a_dp_cap = -c.drho_W_LR_dp_LR * k_over_mu_L +
-                                    ip_data.rhoWLR * ip_cv.dk_over_mu_L_dp_cap;
+        ip_cv.dfW_4_LWpC_a_dp_cap =
+            -c.drho_W_LR_dp_LR * k_over_mu_L +
+            current_state.rho_W_LR() * ip_cv.dk_over_mu_L_dp_cap;
         ip_cv.dfW_4_LWpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
             //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
             ;
@@ -769,8 +800,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.dfC_4_LCpC_a_dp_GR = c.drho_C_LR_dp_GR * k_over_mu_L
             //+ rhoCLR * (dk_over_mu_L_dp_GR = 0)
             ;
-        ip_cv.dfC_4_LCpC_a_dp_cap = -c.drho_C_LR_dp_LR * k_over_mu_L +
-                                    ip_data.rhoCLR * ip_cv.dk_over_mu_L_dp_cap;
+        ip_cv.dfC_4_LCpC_a_dp_cap =
+            -c.drho_C_LR_dp_LR * k_over_mu_L +
+            current_state.constituent_density_data.rho_C_LR *
+                ip_cv.dk_over_mu_L_dp_cap;
         ip_cv.dfC_4_LCpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
             //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
             ;
@@ -881,7 +914,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const& solid_phase = medium.phase("Solid");
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
@@ -912,7 +945,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars.capillary_pressure = pCap;
 
         double const T = NT.dot(temperature);
-        TemperatureData const T_data{T, T};  // T_prev = T in initialization.
+        ConstitutiveRelations::TemperatureData const T_data{
+            T, T};  // T_prev = T in initialization.
         vars.temperature = T;
 
         auto const Bu =
@@ -978,6 +1012,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_data.pushBackState();
 
         this->material_states_[ip].pushBackState();
+        this->prev_states_[ip] = this->current_states_[ip];
     }
 }
 
@@ -1086,7 +1121,7 @@ void TH2MLocalAssembler<
         this->integration_method_.getNumberOfPoints();
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
@@ -1150,8 +1185,10 @@ void TH2MLocalAssembler<
         auto const I =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
 
-        const double sD_G = ip.diffusion_coefficient_vapour;
-        const double sD_L = ip.diffusion_coefficient_solute;
+        double const sD_G =
+            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
+        double const sD_L =
+            ip_cv.phase_transition_data.diffusion_coefficient_solute;
 
         GlobalDimMatrixType const D_C_G = sD_G * I;
         GlobalDimMatrixType const D_W_G = sD_G * I;
@@ -1177,21 +1214,35 @@ void TH2MLocalAssembler<
 
         // solid phase density
         auto& rho_SR = ip.rhoSR;
+
+        auto const rhoGR = ip_out.fluid_density_data.rho_GR;
+        auto const rhoLR = ip_out.fluid_density_data.rho_LR;
+
         // effective density
-        auto const rho = phi_G * ip.rhoGR + phi_L * ip.rhoLR + phi_S * rho_SR;
+        auto const rho = phi_G * rhoGR + phi_L * rhoLR + phi_S * rho_SR;
 
         // abbreviations
-        const double rho_C_FR = s_G * ip.rhoCGR + s_L * ip.rhoCLR;
-        const double rho_W_FR = s_G * ip.rhoWGR + s_L * ip.rhoWLR;
+        const double rho_C_FR =
+            s_G * current_state.constituent_density_data.rho_C_GR +
+            s_L * current_state.constituent_density_data.rho_C_LR;
+        const double rho_W_FR =
+            s_G * current_state.constituent_density_data.rho_W_GR +
+            s_L * current_state.rho_W_LR();
 
-        // phase specific enthalpies
-        auto& h_G = ip.h_G;
-        auto& h_L = ip.h_L;
-
-        auto const rho_C_GR_dot = (ip.rhoCGR - ip.rhoCGR_prev) / dt;
-        auto const rho_C_LR_dot = (ip.rhoCLR - ip.rhoCLR_prev) / dt;
-        auto const rho_W_GR_dot = (ip.rhoWGR - ip.rhoWGR_prev) / dt;
-        auto const rho_W_LR_dot = (ip.rhoWLR - ip.rhoWLR_prev) / dt;
+        auto const rho_C_GR_dot =
+            (current_state.constituent_density_data.rho_C_GR -
+             prev_state.constituent_density_data->rho_C_GR) /
+            dt;
+        auto const rho_C_LR_dot =
+            (current_state.constituent_density_data.rho_C_LR -
+             prev_state.constituent_density_data->rho_C_LR) /
+            dt;
+        auto const rho_W_GR_dot =
+            (current_state.constituent_density_data.rho_W_GR -
+             prev_state.constituent_density_data->rho_W_GR) /
+            dt;
+        auto const rho_W_LR_dot =
+            (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
 
         auto const rho_h_eff = ip.rho_G_h_G + ip.rho_L_h_L + ip.rho_S_h_S;
 
@@ -1199,10 +1250,10 @@ void TH2MLocalAssembler<
 
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip.muGR;
+            ip_cv.viscosity_data.mu_GR;
         GlobalDimMatrixType const k_over_mu_L =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip.muLR;
+            ip_cv.viscosity_data.mu_LR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1218,7 +1269,8 @@ void TH2MLocalAssembler<
             {
                 MCpC.noalias() +=
                     NpT *
-                    (phi * (ip.rhoCLR - ip.rhoCGR) -
+                    (phi * (current_state.constituent_density_data.rho_C_LR -
+                            current_state.constituent_density_data.rho_C_GR) -
                      rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR) *
                     s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
@@ -1230,23 +1282,25 @@ void TH2MLocalAssembler<
         using DisplacementDimMatrix =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
 
-        DisplacementDimMatrix const advection_C_G = ip.rhoCGR * k_over_mu_G;
-        DisplacementDimMatrix const advection_C_L = ip.rhoCLR * k_over_mu_L;
+        DisplacementDimMatrix const advection_C_G =
+            current_state.constituent_density_data.rho_C_GR * k_over_mu_G;
+        DisplacementDimMatrix const advection_C_L =
+            current_state.constituent_density_data.rho_C_LR * k_over_mu_L;
 
         DisplacementDimMatrix const diffusion_CGpGR =
-            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpGR;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         DisplacementDimMatrix const diffusion_CLpGR =
-            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpGR;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpGR;
 
         DisplacementDimMatrix const diffusion_CGpCap =
-            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpCap;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpCap;
         DisplacementDimMatrix const diffusion_CLpCap =
-            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpCap;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpCap;
 
         DisplacementDimMatrix const diffusion_CGT =
-            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dT;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dT;
         DisplacementDimMatrix const diffusion_CLT =
-            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dT;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         DisplacementDimMatrix const advection_C = advection_C_G + advection_C_L;
         DisplacementDimMatrix const diffusion_C_pGR =
@@ -1265,16 +1319,17 @@ void TH2MLocalAssembler<
 
         LCT.noalias() += gradNpT * (diffusion_C_T)*gradNp * w;
 
-        fC.noalias() += gradNpT *
-                        (advection_C_G * ip.rhoGR + advection_C_L * ip.rhoLR) *
-                        b * w;
+        fC.noalias() +=
+            gradNpT * (advection_C_G * rhoGR + advection_C_L * rhoLR) * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
-            fC.noalias() -= NpT *
-                            (phi * (ip.rhoCLR - ip.rhoCGR) -
-                             rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR) *
-                            s_L_dot * w;
+            fC.noalias() -=
+                NpT *
+                (phi * (current_state.constituent_density_data.rho_C_LR -
+                        current_state.constituent_density_data.rho_C_GR) -
+                 rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR) *
+                s_L_dot * w;
         }
         // fC_III
         fC.noalias() -=
@@ -1294,7 +1349,8 @@ void TH2MLocalAssembler<
             {
                 MWpC.noalias() +=
                     NpT *
-                    (phi * (ip.rhoWLR - ip.rhoWGR) -
+                    (phi * (current_state.rho_W_LR() -
+                            current_state.constituent_density_data.rho_W_GR) -
                      rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR) *
                     s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
@@ -1304,23 +1360,25 @@ void TH2MLocalAssembler<
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
-        DisplacementDimMatrix const advection_W_G = ip.rhoWGR * k_over_mu_G;
-        DisplacementDimMatrix const advection_W_L = ip.rhoWLR * k_over_mu_L;
+        DisplacementDimMatrix const advection_W_G =
+            current_state.constituent_density_data.rho_W_GR * k_over_mu_G;
+        DisplacementDimMatrix const advection_W_L =
+            current_state.rho_W_LR() * k_over_mu_L;
 
         DisplacementDimMatrix const diffusion_WGpGR =
-            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpGR;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         DisplacementDimMatrix const diffusion_WLpGR =
-            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpGR;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpGR;
 
         DisplacementDimMatrix const diffusion_WGpCap =
-            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpCap;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpCap;
         DisplacementDimMatrix const diffusion_WLpCap =
-            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpCap;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpCap;
 
         DisplacementDimMatrix const diffusion_WGT =
-            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
         DisplacementDimMatrix const diffusion_WLT =
-            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         DisplacementDimMatrix const advection_W = advection_W_G + advection_W_L;
         DisplacementDimMatrix const diffusion_W_pGR =
@@ -1339,16 +1397,17 @@ void TH2MLocalAssembler<
 
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
-        fW.noalias() += gradNpT *
-                        (advection_W_G * ip.rhoGR + advection_W_L * ip.rhoLR) *
-                        b * w;
+        fW.noalias() +=
+            gradNpT * (advection_W_G * rhoGR + advection_W_L * rhoLR) * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
-            fW.noalias() -= NpT *
-                            (phi * (ip.rhoWLR - ip.rhoWGR) -
-                             rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR) *
-                            s_L_dot * w;
+            fW.noalias() -=
+                NpT *
+                (phi * (current_state.rho_W_LR() -
+                        current_state.constituent_density_data.rho_W_GR) -
+                 rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR) *
+                s_L_dot * w;
         }
 
         fW.noalias() -=
@@ -1364,16 +1423,20 @@ void TH2MLocalAssembler<
 
         fT.noalias() -= NTT * rho_u_eff_dot * w;
 
-        fT.noalias() +=
-            gradNTT * (ip.rhoGR * h_G * ip.w_GS + ip.rhoLR * h_L * ip.w_LS) * w;
+        fT.noalias() += gradNTT *
+                        (rhoGR * ip_out.enthalpy_data.h_G * ip.w_GS +
+                         rhoLR * ip_out.enthalpy_data.h_L * ip.w_LS) *
+                        w;
+
+        fT.noalias() += gradNTT *
+                        (current_state.constituent_density_data.rho_C_GR *
+                             ip_cv.phase_transition_data.hCG * ip.d_CG +
+                         current_state.constituent_density_data.rho_W_GR *
+                             ip_cv.phase_transition_data.hWG * ip.d_WG) *
+                        w;
 
         fT.noalias() +=
-            gradNTT *
-            (ip.rhoCGR * ip.h_CG * ip.d_CG + ip.rhoWGR * ip.h_WG * ip.d_WG) * w;
-
-        fT.noalias() +=
-            NTT *
-            (ip.rhoGR * ip.w_GS.transpose() + ip.rhoLR * ip.w_LS.transpose()) *
+            NTT * (rhoGR * ip.w_GS.transpose() + rhoLR * ip.w_LS.transpose()) *
             b * w;
 
         // ---------------------------------------------------------------------
@@ -1527,7 +1590,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         this->integration_method_.getNumberOfPoints();
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     auto const [ip_constitutive_data, ip_constitutive_variables] =
         updateConstitutiveVariables(
@@ -1602,8 +1665,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const I =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
 
-        const double sD_G = ip.diffusion_coefficient_vapour;
-        const double sD_L = ip.diffusion_coefficient_solute;
+        double const sD_G =
+            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
+        double const sD_L =
+            ip_cv.phase_transition_data.diffusion_coefficient_solute;
 
         GlobalDimMatrixType const D_C_G = sD_G * I;
         GlobalDimMatrixType const D_W_G = sD_G * I;
@@ -1629,21 +1694,35 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // solid phase density
         auto& rho_SR = ip.rhoSR;
+
+        auto const rhoGR = ip_out.fluid_density_data.rho_GR;
+        auto const rhoLR = ip_out.fluid_density_data.rho_LR;
+
         // effective density
-        auto const rho = phi_G * ip.rhoGR + phi_L * ip.rhoLR + phi_S * rho_SR;
+        auto const rho = phi_G * rhoGR + phi_L * rhoLR + phi_S * rho_SR;
 
         // abbreviations
-        const double rho_C_FR = s_G * ip.rhoCGR + s_L * ip.rhoCLR;
-        const double rho_W_FR = s_G * ip.rhoWGR + s_L * ip.rhoWLR;
+        const double rho_C_FR =
+            s_G * current_state.constituent_density_data.rho_C_GR +
+            s_L * current_state.constituent_density_data.rho_C_LR;
+        const double rho_W_FR =
+            s_G * current_state.constituent_density_data.rho_W_GR +
+            s_L * current_state.rho_W_LR();
 
-        // phase specific enthalpies
-        auto& h_G = ip.h_G;
-        auto& h_L = ip.h_L;
-
-        auto const rho_C_GR_dot = (ip.rhoCGR - ip.rhoCGR_prev) / dt;
-        auto const rho_C_LR_dot = (ip.rhoCLR - ip.rhoCLR_prev) / dt;
-        auto const rho_W_GR_dot = (ip.rhoWGR - ip.rhoWGR_prev) / dt;
-        auto const rho_W_LR_dot = (ip.rhoWLR - ip.rhoWLR_prev) / dt;
+        auto const rho_C_GR_dot =
+            (current_state.constituent_density_data.rho_C_GR -
+             prev_state.constituent_density_data->rho_C_GR) /
+            dt;
+        auto const rho_C_LR_dot =
+            (current_state.constituent_density_data.rho_C_LR -
+             prev_state.constituent_density_data->rho_C_LR) /
+            dt;
+        auto const rho_W_GR_dot =
+            (current_state.constituent_density_data.rho_W_GR -
+             prev_state.constituent_density_data->rho_W_GR) /
+            dt;
+        auto const rho_W_LR_dot =
+            (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
 
         auto const rho_h_eff = ip.rho_G_h_G + ip.rho_L_h_L + ip.rho_S_h_S;
 
@@ -1651,10 +1730,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip.muGR;
+            ip_cv.viscosity_data.mu_GR;
         GlobalDimMatrixType const k_over_mu_L =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip.muLR;
+            ip_cv.viscosity_data.mu_LR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1670,7 +1749,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             {
                 MCpC.noalias() +=
                     NpT *
-                    (phi * (ip.rhoCLR - ip.rhoCGR) -
+                    (phi * (current_state.constituent_density_data.rho_C_LR -
+                            current_state.constituent_density_data.rho_C_GR) -
                      rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR) *
                     s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
@@ -1690,16 +1770,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       temperature_index)
             .noalias() += NpT * ip_cv.dfC_4_MCu_dT * div_u_dot * NT * w;
 
-        GlobalDimMatrixType const advection_C_G = ip.rhoCGR * k_over_mu_G;
-        GlobalDimMatrixType const advection_C_L = ip.rhoCLR * k_over_mu_L;
+        GlobalDimMatrixType const advection_C_G =
+            current_state.constituent_density_data.rho_C_GR * k_over_mu_G;
+        GlobalDimMatrixType const advection_C_L =
+            current_state.constituent_density_data.rho_C_LR * k_over_mu_L;
         GlobalDimMatrixType const diffusion_C_G_p =
-            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dpGR;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         GlobalDimMatrixType const diffusion_C_L_p =
-            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dpLR;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpLR;
         GlobalDimMatrixType const diffusion_C_G_T =
-            -phi_G * ip.rhoGR * D_C_G * ip.dxmWG_dT;
+            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dT;
         GlobalDimMatrixType const diffusion_C_L_T =
-            -phi_L * ip.rhoLR * D_C_L * ip.dxmWL_dT;
+            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         GlobalDimMatrixType const advection_C = advection_C_G + advection_C_L;
         GlobalDimMatrixType const diffusion_C_p =
@@ -1774,15 +1856,16 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         LCT.noalias() += gradNpT * diffusion_C_T * gradNp * w;
 
         // fC_1
-        fC.noalias() += gradNpT *
-                        (advection_C_G * ip.rhoGR + advection_C_L * ip.rhoLR) *
-                        b * w;
+        fC.noalias() +=
+            gradNpT * (advection_C_G * rhoGR + advection_C_L * rhoLR) * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
             // fC_2 = \int a * s_L_dot
-            auto const a = phi * (ip.rhoCLR - ip.rhoCGR) -
-                           rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR;
+            auto const a =
+                phi * (current_state.constituent_density_data.rho_C_LR -
+                       current_state.constituent_density_data.rho_C_GR) -
+                rho_C_FR * pCap * (alpha_B - phi) * beta_p_SR;
             fC.noalias() -= NpT * a * s_L_dot * w;
 
             local_Jac.template block<C_size, C_size>(C_index, C_index)
@@ -1838,7 +1921,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             {
                 MWpC.noalias() +=
                     NpT *
-                    (phi * (ip.rhoWLR - ip.rhoWGR) -
+                    (phi * (current_state.rho_W_LR() -
+                            current_state.constituent_density_data.rho_W_GR) -
                      rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR) *
                     s_L_dot * dt / (pCap - pCap_prev) * Np * w;
             }
@@ -1848,16 +1932,18 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
-        GlobalDimMatrixType const advection_W_G = ip.rhoWGR * k_over_mu_G;
-        GlobalDimMatrixType const advection_W_L = ip.rhoWLR * k_over_mu_L;
+        GlobalDimMatrixType const advection_W_G =
+            current_state.constituent_density_data.rho_W_GR * k_over_mu_G;
+        GlobalDimMatrixType const advection_W_L =
+            current_state.rho_W_LR() * k_over_mu_L;
         GlobalDimMatrixType const diffusion_W_G_p =
-            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dpGR;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpGR;
         GlobalDimMatrixType const diffusion_W_L_p =
-            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dpLR;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpLR;
         GlobalDimMatrixType const diffusion_W_G_T =
-            phi_G * ip.rhoGR * D_W_G * ip.dxmWG_dT;
+            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
         GlobalDimMatrixType const diffusion_W_L_T =
-            phi_L * ip.rhoLR * D_W_L * ip.dxmWL_dT;
+            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
 
         GlobalDimMatrixType const advection_W = advection_W_G + advection_W_L;
         GlobalDimMatrixType const diffusion_W_p =
@@ -1905,14 +1991,15 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
         // fW_1
-        fW.noalias() += gradNpT *
-                        (advection_W_G * ip.rhoGR + advection_W_L * ip.rhoLR) *
-                        b * w;
+        fW.noalias() +=
+            gradNpT * (advection_W_G * rhoGR + advection_W_L * rhoLR) * b * w;
 
         // fW_2 = \int (f - g) * s_L_dot
         if (!this->process_data_.apply_mass_lumping)
         {
-            double const f = phi * (ip.rhoWLR - ip.rhoWGR);
+            double const f =
+                phi * (current_state.rho_W_LR() -
+                       current_state.constituent_density_data.rho_W_GR);
             double const g = rho_W_FR * pCap * (alpha_B - phi) * beta_p_SR;
 
             fW.noalias() -= NpT * (f - g) * s_L_dot * w;
@@ -2038,8 +2125,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() += NTT * ip_cv.drho_u_eff_dT / dt * NT * w;
 
         // fT_2
-        fT.noalias() +=
-            gradNTT * (ip.rhoGR * h_G * ip.w_GS + ip.rhoLR * h_L * ip.w_LS) * w;
+        fT.noalias() += gradNTT *
+                        (rhoGR * ip_out.enthalpy_data.h_G * ip.w_GS +
+                         rhoLR * ip_out.enthalpy_data.h_L * ip.w_LS) *
+                        w;
 
         // dfT_2/dp_GR
         local_Jac
@@ -2069,13 +2158,15 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // fT_3
         fT.noalias() +=
-            NTT *
-            (ip.rhoGR * ip.w_GS.transpose() + ip.rhoLR * ip.w_LS.transpose()) *
+            NTT * (rhoGR * ip.w_GS.transpose() + rhoLR * ip.w_LS.transpose()) *
             b * w;
 
-        fT.noalias() +=
-            gradNTT *
-            (ip.rhoCGR * ip.h_CG * ip.d_CG + ip.rhoWGR * ip.h_WG * ip.d_WG) * w;
+        fT.noalias() += gradNTT *
+                        (current_state.constituent_density_data.rho_C_GR *
+                             ip_cv.phase_transition_data.hCG * ip.d_CG +
+                         current_state.constituent_density_data.rho_W_GR *
+                             ip_cv.phase_transition_data.hWG * ip.d_WG) *
+                        w;
 
         // ---------------------------------------------------------------------
         //  - displacement equation
@@ -2403,7 +2494,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     double saturation_avg = 0;
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
-        this->solid_material_};
+        this->solid_material_, *this->process_data_.phase_transition_model_};
 
     updateConstitutiveVariables(local_x, local_x_prev, t, dt, models);
 

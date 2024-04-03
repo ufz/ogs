@@ -58,7 +58,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
             // Set initial stress field to zero. Might be overwritten by
             // integration point data or initial stress.
             current_states_[ip].eff_stress_data.sigma =
-                KelvinVector<DisplacementDim>::Zero();
+                ConstitutiveRelations::KelvinVector<DisplacementDim>::Zero();
         }
     }
 
@@ -102,61 +102,13 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> const& getIntPtLiquidDensity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtGasDensity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
     virtual std::vector<double> const& getIntPtSolidDensity(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
-    virtual std::vector<double> const& getIntPtVapourPressure(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
     virtual std::vector<double> const& getIntPtPorosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtMoleFractionGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtMassFractionGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtMassFractionLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEnthalpyGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
-
-    virtual std::vector<double> const& getIntPtEnthalpyLiquid(
         const double t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,

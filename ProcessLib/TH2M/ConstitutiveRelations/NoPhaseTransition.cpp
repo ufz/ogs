@@ -11,9 +11,9 @@
 
 #include "MaterialLib/PhysicalConstant.h"
 
-namespace ProcessLib
+namespace ProcessLib::TH2M
 {
-namespace TH2M
+namespace ConstitutiveRelations
 {
 NoPhaseTransition::NoPhaseTransition(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
@@ -37,79 +37,97 @@ NoPhaseTransition::NoPhaseTransition(
     }
 }
 
-PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
-    PhaseTransitionModelVariables const& phase_transition_model_variables,
-    const MaterialPropertyLib::Medium* medium,
-    MaterialPropertyLib::VariableArray variables,
-    ParameterLib::SpatialPosition pos, double const t, double const dt) const
+void NoPhaseTransition::eval(SpaceTimeData const& x_t,
+                             MediaData const& media_data,
+                             GasPressureData const& p_GR,
+                             CapillaryPressureData const& p_cap,
+                             TemperatureData const& T_data,
+                             PureLiquidDensityData const& rho_W_LR,
+                             ViscosityData& viscosity_data,
+                             EnthalpyData& enthalpy_data,
+                             MassMoleFractionsData& mass_mole_fractions_data,
+                             FluidDensityData& fluid_density_data,
+                             VapourPartialPressureData& vapour_pressure_data,
+                             ConstituentDensityData& constituent_density_data,
+                             PhaseTransitionData& cv) const
 {
+    MaterialPropertyLib::VariableArray variables;
+
     // primary variables
-    auto const pGR = variables.gas_phase_pressure;
-    auto const T = variables.temperature;
+    auto const pGR = p_GR();
+    auto const pCap = p_cap();
+    auto const T = T_data.T;
+    variables.gas_phase_pressure = pGR;
+    variables.temperature = T;
 
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& gas_phase = medium->phase("Gas");
+    auto const& liquid_phase = media_data.liquid;
+    auto const& gas_phase = media_data.gas;
 
-    // copy previous state before modification.
-    PhaseTransitionModelVariables cv = phase_transition_model_variables;
+    vapour_pressure_data.pWGR = 0;
 
     // C-component is only component in the gas phase
     cv.xnWG = 0.;
     cv.xmWG = 0.;
+    mass_mole_fractions_data.xnCG = 1. - cv.xnWG;
+    mass_mole_fractions_data.xmCG = 1. - cv.xmWG;
 
     auto const M =
         gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     variables.molar_mass = M;
 
-    cv.rhoGR = gas_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, pos, t, dt);
-    cv.muGR = gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-                  .template value<double>(variables, pos, t, dt);
+    fluid_density_data.rho_GR =
+        gas_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    viscosity_data.mu_GR =
+        gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-    cv.rhoCGR = cv.rhoGR;
+    constituent_density_data.rho_C_GR = fluid_density_data.rho_GR;
+    constituent_density_data.rho_W_GR = 0;
+    constituent_density_data.rho_C_LR = 0;
 
     // W-component is only component in the liquid phase
-    cv.xmWL = 1.;
+    mass_mole_fractions_data.xmWL = 1.;
 
-    cv.rhoLR = liquid_phase.property(MaterialPropertyLib::PropertyType::density)
-                   .template value<double>(variables, pos, t, dt);
-    variables.density = cv.rhoLR;
+    auto const pLR = pGR - pCap;
+    variables.liquid_phase_pressure = pLR;
+    fluid_density_data.rho_LR = rho_W_LR();
+    variables.density = fluid_density_data.rho_LR;
 
-    cv.muLR =
+    viscosity_data.mu_LR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, pos, t, dt);
-
-    cv.rhoWLR = cv.rhoLR;
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific heat capacities
     auto const cpG =
         gas_phase
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     auto const cpL =
         liquid_phase
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
-            .template value<double>(variables, pos, t, dt);
+            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific phase enthalpies
-    cv.hG = cpG * T;
-    cv.hL = cpL * T;
+    enthalpy_data.h_G = cpG * T;
+    enthalpy_data.h_L = cpL * T;
     cv.dh_G_dT = cpG;
     cv.dh_L_dT = cpL;
 
     // specific inner energies
-    cv.uG = cv.hG - pGR / cv.rhoGR;
-    cv.uL = cv.hL;
+    cv.uG = enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
+    cv.uL = enthalpy_data.h_L;
 
     auto const drho_GR_dT =
         gas_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
-    cv.du_G_dT = cpG + pGR * drho_GR_dT / cv.rhoGR / cv.rhoGR;
+                                     x_t.x, x_t.t, x_t.dt);
+    cv.du_G_dT = cpG + pGR * drho_GR_dT / fluid_density_data.rho_GR /
+                           fluid_density_data.rho_GR;
 
     cv.du_L_dT = cpL;
 
@@ -117,16 +135,17 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::gas_phase_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
     cv.drho_LR_dp_LR =
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::liquid_phase_pressure,
-                pos, t, dt);
+                x_t.x, x_t.t, x_t.dt);
     cv.drho_LR_dp_GR = cv.drho_LR_dp_LR;
 
-    cv.du_G_dp_GR =
-        -1 / cv.rhoGR + pGR * cv.drho_GR_dp_GR / cv.rhoGR / cv.rhoGR;
+    cv.du_G_dp_GR = -1 / fluid_density_data.rho_GR +
+                    pGR * cv.drho_GR_dp_GR / fluid_density_data.rho_GR /
+                        fluid_density_data.rho_GR;
 
     cv.drho_C_GR_dp_GR = cv.drho_GR_dp_GR;
     cv.drho_C_LR_dp_LR = 0;
@@ -137,13 +156,15 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
-                                     pos, t, dt);
+                                     x_t.x, x_t.t, x_t.dt);
     cv.drho_C_LR_dT = 0;
 
     cv.du_L_dp_GR = 0;
     cv.du_L_dp_cap = 0;
     /* TODO update to the following when uL has same structure as the uG:
-        +-1 / cv.rhoLR + pLR * cv.drho_LR_dp_cap / cv.rhoLR / cv.rhoLR;
+    +-1 / fluid_density_data.rho_LR + pLR* cv.drho_LR_dp_cap /
+                                          fluid_density_data.rho_LR /
+                                          fluid_density_data.rho_LR;
     */
 
     cv.drho_W_LR_dp_LR = cv.drho_LR_dp_LR;
@@ -152,7 +173,6 @@ PhaseTransitionModelVariables NoPhaseTransition::updateConstitutiveVariables(
     cv.drho_W_GR_dT = 0;
     cv.drho_W_GR_dp_GR = 0;
     cv.drho_W_GR_dp_cap = 0;
-    return cv;
 }
-}  // namespace TH2M
-}  // namespace ProcessLib
+}  // namespace ConstitutiveRelations
+}  // namespace ProcessLib::TH2M

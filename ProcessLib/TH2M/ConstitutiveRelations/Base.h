@@ -17,6 +17,8 @@
 
 namespace ProcessLib::TH2M
 {
+namespace ConstitutiveRelations
+{
 using namespace ProcessLib::ConstitutiveRelations;
 namespace KV = MathLib::KelvinVector;
 
@@ -33,12 +35,14 @@ using GlobalDimMatrix =
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
-        : medium{medium}, solid{medium.phase("Solid")}
+        : medium{medium}
     {
     }
 
     MaterialPropertyLib::Medium const& medium;
-    MaterialPropertyLib::Phase const& solid;
+    MaterialPropertyLib::Phase const& solid = medium.phase("Solid");
+    MaterialPropertyLib::Phase const& liquid = medium.phase("AqueousLiquid");
+    MaterialPropertyLib::Phase const& gas = medium.phase("Gas");
 };
 
 struct TemperatureData
@@ -51,4 +55,5 @@ using GasPressureData = BaseLib::StrongType<double, struct GasPressureTag>;
 using CapillaryPressureData =
     BaseLib::StrongType<double, struct CapillaryPressureTag>;
 
+}  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
