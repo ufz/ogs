@@ -115,9 +115,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const& medium =
         *this->process_data_.media_map.getMedium(this->element_.getID());
-    auto const& gas_phase = medium.phase("Gas");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& solid_phase = medium.phase("Solid");
     ConstitutiveRelations::MediaData media_data{medium};
 
     unsigned const n_integration_points =
@@ -249,6 +247,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.solid_heat_capacity_model.eval({pos, t, dt}, media_data, T_data,
                                               ip_cv.solid_heat_capacity_data);
 
+        models.thermal_conductivity_model.eval(
+            {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
+            ip_cv.porosity_d_data, current_state.S_L_data, ip_cv.dS_L_dp_cap,
+            ip_cv.thermal_conductivity_data);
+
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
         vars.temperature = T;
@@ -271,14 +274,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const phi_G =
             (1. - current_state.S_L_data.S_L) * ip_out.porosity_data.phi;
         double const phi_S = 1. - ip_out.porosity_data.phi;
-
-        // thermal conductivity
-        ip_cv.thermal_conductivity_data.lambda =
-            MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                medium
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_conductivity)
-                    .value(vars, pos, t, dt));
 
         ip_data.h_S = ip_cv.solid_heat_capacity_data() * T;
         auto const u_S = ip_data.h_S;
@@ -364,58 +359,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // dphi_L_dp_GR = ds_L_dp_GR * ip_out.porosity_data.phi = 0;
         double const dphi_L_dp_cap =
             ip_cv.dS_L_dp_cap() * ip_out.porosity_data.phi;
-
-        auto const lambdaGR =
-            gas_phase.hasProperty(MPL::PropertyType::thermal_conductivity)
-                ? MPL::formEigenTensor<DisplacementDim>(
-                      gas_phase
-                          .property(MPL::PropertyType::thermal_conductivity)
-                          .value(vars, pos, t, dt))
-                : MPL::formEigenTensor<DisplacementDim>(0.);
-
-        auto const dlambda_GR_dT =
-            gas_phase.hasProperty(MPL::PropertyType::thermal_conductivity)
-                ? MPL::formEigenTensor<DisplacementDim>(
-                      gas_phase[MPL::PropertyType::thermal_conductivity].dValue(
-                          vars, MPL::Variable::temperature, pos, t, dt))
-                : MPL::formEigenTensor<DisplacementDim>(0.);
-
-        auto const lambdaLR =
-            liquid_phase.hasProperty(MPL::PropertyType::thermal_conductivity)
-                ? MPL::formEigenTensor<DisplacementDim>(
-                      liquid_phase
-                          .property(MPL::PropertyType::thermal_conductivity)
-                          .value(vars, pos, t, dt))
-                : MPL::formEigenTensor<DisplacementDim>(0.);
-
-        auto const dlambda_LR_dT =
-            liquid_phase.hasProperty(MPL::PropertyType::thermal_conductivity)
-                ? MPL::formEigenTensor<DisplacementDim>(
-                      liquid_phase[MPL::PropertyType::thermal_conductivity]
-                          .dValue(vars, MPL::Variable::temperature, pos, t, dt))
-                : MPL::formEigenTensor<DisplacementDim>(0.);
-
-        auto const lambdaSR =
-            solid_phase.hasProperty(MPL::PropertyType::thermal_conductivity)
-                ? MPL::formEigenTensor<DisplacementDim>(
-                      solid_phase
-                          .property(MPL::PropertyType::thermal_conductivity)
-                          .value(vars, pos, t, dt))
-                : MPL::formEigenTensor<DisplacementDim>(0.);
-
-        auto const dlambda_SR_dT =
-            solid_phase.hasProperty(MPL::PropertyType::thermal_conductivity)
-                ? MPL::formEigenTensor<DisplacementDim>(
-                      solid_phase[MPL::PropertyType::thermal_conductivity]
-                          .dValue(vars, MPL::Variable::temperature, pos, t, dt))
-                : MPL::formEigenTensor<DisplacementDim>(0.);
-
-        ip_cv.thermal_conductivity_data.dlambda_dp_cap =
-            dphi_G_dp_cap * lambdaGR + dphi_L_dp_cap * lambdaLR;
-
-        ip_cv.thermal_conductivity_data.dlambda_dT =
-            phi_G * dlambda_GR_dT + phi_L * dlambda_LR_dT +
-            phi_S * dlambda_SR_dT - ip_cv.porosity_d_data.dphi_dT * lambdaSR;
 
         // From p_LR = p_GR - p_cap it follows for
         // drho_LR/dp_GR = drho_LR/dp_LR * dp_LR/dp_GR
