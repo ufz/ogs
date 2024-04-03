@@ -373,6 +373,16 @@ void Process::constructDofTableOfSpecifiedProcessStaggeredScheme(
     assert(_local_to_global_index_map);
 }
 
+std::vector<NumLib::LocalToGlobalIndexMap const*> Process::getDOFTables(
+    int const number_of_processes) const
+{
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
+    dof_tables.reserve(number_of_processes);
+    std::generate_n(std::back_inserter(dof_tables), number_of_processes,
+                    [&]() { return &getDOFTable(dof_tables.size()); });
+    return dof_tables;
+}
+
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
 Process::getDOFTableForExtrapolatorData() const
 {
