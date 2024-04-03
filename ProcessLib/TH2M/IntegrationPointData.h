@@ -36,9 +36,6 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
-    // phase intrinsic densities
-    double rhoSR = std::numeric_limits<double>::quiet_NaN();
-
     // phase enthalpies
     double rho_G_h_G = std::numeric_limits<double>::quiet_NaN();
     double rho_L_h_L = std::numeric_limits<double>::quiet_NaN();

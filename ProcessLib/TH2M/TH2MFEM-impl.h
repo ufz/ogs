@@ -261,11 +261,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     vars, pos, t, std::numeric_limits<double>::quiet_NaN());
 
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-        auto const rhoSR =
+        ip_out.solid_density_data.rho_SR =
             rho_ref_SR * (1. - ip_cv.s_therm_exp_data.thermal_volume_strain +
                           (ip_cv.biot_data() - 1.) * div_u);
 #else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-        auto const rhoSR = rho_ref_SR;
+        ip_out.solid_density_data.rho_SR = rho_ref_SR;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
         auto const& c = ip_cv.phase_transition_data;
@@ -291,15 +291,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         ip_data.rho_u_eff = phi_G * ip_out.fluid_density_data.rho_GR * c.uG +
                             phi_L * ip_out.fluid_density_data.rho_LR * c.uL +
-                            phi_S * rhoSR * u_S;
+                            phi_S * ip_out.solid_density_data.rho_SR * u_S;
 
         ip_data.rho_G_h_G =
             phi_G * ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G;
         ip_data.rho_L_h_L =
             phi_L * ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L;
-        ip_data.rho_S_h_S = phi_S * rhoSR * ip_data.h_S;
-
-        ip_data.rhoSR = rhoSR;
+        ip_data.rho_S_h_S =
+            phi_S * ip_out.solid_density_data.rho_SR * ip_data.h_S;
 
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
@@ -365,8 +364,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dT +
             phi_L * drho_LR_dT * c.uL +
             phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dT +
-            phi_S * drho_SR_dT * u_S + phi_S * rhoSR * cpS +
-            ip_cv.porosity_d_data.dphi_S_dT * rhoSR * u_S;
+            phi_S * drho_SR_dT * u_S +
+            phi_S * ip_out.solid_density_data.rho_SR * cpS +
+            ip_cv.porosity_d_data.dphi_S_dT * ip_out.solid_density_data.rho_SR *
+                u_S;
 
         // ds_L_dp_GR = 0;
         // ds_G_dp_GR = -ds_L_dp_GR;
@@ -466,8 +467,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ip_out.enthalpy_data.h_L +
             phi_L * drho_LR_dT * ip_out.enthalpy_data.h_L +
             phi_L * ip_out.fluid_density_data.rho_LR * c.dh_L_dT +
-            ip_cv.porosity_d_data.dphi_S_dT * rhoSR * ip_data.h_S +
-            phi_S * drho_SR_dT * ip_data.h_S + phi_S * rhoSR * cpS;
+            ip_cv.porosity_d_data.dphi_S_dT * ip_out.solid_density_data.rho_SR *
+                ip_data.h_S +
+            phi_S * drho_SR_dT * ip_data.h_S +
+            phi_S * ip_out.solid_density_data.rho_SR * cpS;
 
         ip_cv.drho_u_eff_dp_GR =
             /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR * c.uG +*/
@@ -1184,14 +1187,12 @@ void TH2MLocalAssembler<
         auto const phi_L = s_L * ip_out.porosity_data.phi;
         auto const phi_S = 1. - ip_out.porosity_data.phi;
 
-        // solid phase density
-        auto& rho_SR = ip.rhoSR;
-
         auto const rhoGR = ip_out.fluid_density_data.rho_GR;
         auto const rhoLR = ip_out.fluid_density_data.rho_LR;
 
         // effective density
-        auto const rho = phi_G * rhoGR + phi_L * rhoLR + phi_S * rho_SR;
+        auto const rho = phi_G * rhoGR + phi_L * rhoLR +
+                         phi_S * ip_out.solid_density_data.rho_SR;
 
         // abbreviations
         const double rho_C_FR =
@@ -1677,14 +1678,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const phi_L = s_L * ip_out.porosity_data.phi;
         auto const phi_S = 1. - ip_out.porosity_data.phi;
 
-        // solid phase density
-        auto& rho_SR = ip.rhoSR;
-
         auto const rhoGR = ip_out.fluid_density_data.rho_GR;
         auto const rhoLR = ip_out.fluid_density_data.rho_LR;
 
         // effective density
-        auto const rho = phi_G * rhoGR + phi_L * rhoLR + phi_S * rho_SR;
+        auto const rho = phi_G * rhoGR + phi_L * rhoLR +
+                         phi_S * ip_out.solid_density_data.rho_SR;
 
         // abbreviations
         const double rho_C_FR =

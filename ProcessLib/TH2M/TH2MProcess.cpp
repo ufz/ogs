@@ -187,10 +187,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
             DisplacementDim>::getIntPtDiffusionVelocityLiquidLiquid);
 
     add_secondary_variable(
-        "solid_density", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtSolidDensity);
-
-    add_secondary_variable(
         "enthalpy_solid", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpySolid);
 

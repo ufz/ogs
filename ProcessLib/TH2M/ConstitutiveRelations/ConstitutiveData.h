@@ -27,6 +27,7 @@
 #include "PureLiquidDensity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
+#include "SolidDensity.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
@@ -95,6 +96,7 @@ struct OutputData
     FluidDensityData fluid_density_data;
     VapourPartialPressureData vapour_pressure_data;
     PorosityData porosity_data;
+    SolidDensityData solid_density_data;
 
     static auto reflect()
     {
@@ -106,7 +108,8 @@ struct OutputData
                                               &Self::mass_mole_fractions_data,
                                               &Self::fluid_density_data,
                                               &Self::vapour_pressure_data,
-                                              &Self::porosity_data);
+                                              &Self::porosity_data,
+                                              &Self::solid_density_data);
     }
 };
 

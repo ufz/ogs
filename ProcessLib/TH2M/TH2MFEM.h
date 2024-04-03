@@ -235,16 +235,6 @@ private:
     // be stored in some container to avoid defining one method for each
     // variable.
 
-    virtual std::vector<double> const& getIntPtSolidDensity(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                         &IpData::rhoSR, cache);
-    }
-
     virtual std::vector<double> const& getIntPtEnthalpySolid(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
