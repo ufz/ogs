@@ -246,6 +246,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             ip_out.solid_density_data, ip_cv.solid_density_d_data);
 
+        models.solid_heat_capacity_model.eval({pos, t, dt}, media_data, T_data,
+                                              ip_cv.solid_heat_capacity_data);
+
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
         vars.temperature = T;
@@ -276,10 +279,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .value(vars, pos, t, dt));
 
-        auto const cpS =
-            solid_phase.property(MPL::PropertyType::specific_heat_capacity)
-                .template value<double>(vars, pos, t, dt);
-        ip_data.h_S = cpS * T;
+        ip_data.h_S = ip_cv.solid_heat_capacity_data() * T;
         auto const u_S = ip_data.h_S;
 
         ip_data.rho_u_eff = phi_G * ip_out.fluid_density_data.rho_GR * c.uG +
@@ -348,7 +348,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_L * drho_LR_dT * c.uL +
             phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dT +
             phi_S * ip_cv.solid_density_d_data.drho_SR_dT * u_S +
-            phi_S * ip_out.solid_density_data.rho_SR * cpS -
+            phi_S * ip_out.solid_density_data.rho_SR *
+                ip_cv.solid_heat_capacity_data() -
             ip_cv.porosity_d_data.dphi_dT * ip_out.solid_density_data.rho_SR *
                 u_S;
 
@@ -453,7 +454,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cv.porosity_d_data.dphi_dT * ip_out.solid_density_data.rho_SR *
                 ip_data.h_S +
             phi_S * ip_cv.solid_density_d_data.drho_SR_dT * ip_data.h_S +
-            phi_S * ip_out.solid_density_data.rho_SR * cpS;
+            phi_S * ip_out.solid_density_data.rho_SR *
+                ip_cv.solid_heat_capacity_data();
 
         ip_cv.drho_u_eff_dp_GR =
             /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR * c.uG +*/

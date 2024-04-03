@@ -28,6 +28,7 @@
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidDensity.h"
+#include "SolidHeatCapacity.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
@@ -138,6 +139,7 @@ struct ConstitutiveTempData
     PhaseTransitionData phase_transition_data;
     PorosityDerivativeData porosity_d_data;
     SolidDensityDerivativeData solid_density_d_data;
+    SolidHeatCapacityData solid_heat_capacity_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

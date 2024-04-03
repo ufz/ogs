@@ -20,6 +20,7 @@
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidDensity.h"
+#include "SolidHeatCapacity.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
@@ -69,6 +70,7 @@ struct ConstitutiveModels
     PorosityModel porosity_model;
     SolidDensityModel solid_density_model;
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+    SolidHeatCapacityModel solid_heat_capacity_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
