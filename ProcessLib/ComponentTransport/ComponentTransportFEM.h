@@ -38,18 +38,16 @@ namespace ProcessLib
 {
 namespace ComponentTransport
 {
-template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+template <typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    IntegrationPointData(NodalRowVectorType const& N_,
-                         GlobalDimNodalMatrixType const& dNdx_,
+    IntegrationPointData(GlobalDimNodalMatrixType const& dNdx_,
                          double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+        : dNdx(dNdx_), integration_weight(integration_weight_)
     {
     }
 
     void pushBackState() { porosity_prev = porosity; }
-    NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
@@ -281,7 +279,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
-                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
@@ -2029,11 +2027,7 @@ private:
     std::vector<std::reference_wrapper<ProcessVariable>> const
         _transport_process_variables;
 
-    std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>> _ip_data;
 
     double getHeatEnergyCoefficient(
         MaterialPropertyLib::VariableArray const& vars, const double porosity,
