@@ -273,11 +273,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const phi_S = 1. - ip_out.porosity_data.phi;
 
         // thermal conductivity
-        ip_data.lambda = MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-            medium
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_conductivity)
-                .value(vars, pos, t, dt));
+        ip_cv.thermal_conductivity_data.lambda =
+            MaterialPropertyLib::formEigenTensor<DisplacementDim>(
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_conductivity)
+                    .value(vars, pos, t, dt));
 
         ip_data.h_S = ip_cv.solid_heat_capacity_data() * T;
         auto const u_S = ip_data.h_S;
@@ -409,12 +410,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                           .dValue(vars, MPL::Variable::temperature, pos, t, dt))
                 : MPL::formEigenTensor<DisplacementDim>(0.);
 
-        ip_cv.dlambda_dp_cap =
+        ip_cv.thermal_conductivity_data.dlambda_dp_cap =
             dphi_G_dp_cap * lambdaGR + dphi_L_dp_cap * lambdaLR;
 
-        ip_cv.dlambda_dT = phi_G * dlambda_GR_dT + phi_L * dlambda_LR_dT +
-                           phi_S * dlambda_SR_dT -
-                           ip_cv.porosity_d_data.dphi_dT * lambdaSR;
+        ip_cv.thermal_conductivity_data.dlambda_dT =
+            phi_G * dlambda_GR_dT + phi_L * dlambda_LR_dT +
+            phi_S * dlambda_SR_dT - ip_cv.porosity_d_data.dphi_dT * lambdaSR;
 
         // From p_LR = p_GR - p_cap it follows for
         // drho_LR/dp_GR = drho_LR/dp_LR * dp_LR/dp_GR
@@ -1392,7 +1393,8 @@ void TH2MLocalAssembler<
 
         MTu.noalias() += NTT * rho_h_eff * mT * Bu * w;
 
-        KTT.noalias() += gradNTT * ip.lambda * gradNT * w;
+        KTT.noalias() +=
+            gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
 
         fT.noalias() -= NTT * rho_u_eff_dot * w;
 
@@ -2053,7 +2055,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 temperature_index, temperature_index)
             .noalias() += NTT * ip_cv.drho_h_eff_dT * div_u_dot * NT * w;
 
-        KTT.noalias() += gradNTT * ip.lambda * gradNT * w;
+        KTT.noalias() +=
+            gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
 
         // d KTT/dp_GR * T
         // TODO (naumov) always zero if lambda_xR have no derivatives wrt. p_GR.
@@ -2073,13 +2076,16 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
-            .noalias() += gradNTT * ip_cv.dlambda_dp_cap * gradT * Np * w;
+            .noalias() += gradNTT *
+                          ip_cv.thermal_conductivity_data.dlambda_dp_cap *
+                          gradT * Np * w;
 
         // d KTT/dT * T
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() += gradNTT * ip_cv.dlambda_dT * gradT * NT * w;
+            .noalias() += gradNTT * ip_cv.thermal_conductivity_data.dlambda_dT *
+                          gradT * NT * w;
 
         // fT_1
         fT.noalias() -= NTT * rho_u_eff_dot * w;

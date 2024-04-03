@@ -48,7 +48,6 @@ struct IntegrationPointData final
     double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
     double rho_u_eff_prev = std::numeric_limits<double>::quiet_NaN();
 
-    GlobalDimMatrixType lambda;
     GlobalDimVectorType d_CG;
     GlobalDimVectorType d_WG;
     GlobalDimVectorType d_CL;

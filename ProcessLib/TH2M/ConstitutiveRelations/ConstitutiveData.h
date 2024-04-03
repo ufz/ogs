@@ -32,6 +32,7 @@
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
+#include "ThermalConductivity.h"
 #include "TotalStress.h"
 #include "VapourPartialPressure.h"
 #include "Viscosity.h"
@@ -140,14 +141,12 @@ struct ConstitutiveTempData
     PorosityDerivativeData porosity_d_data;
     SolidDensityDerivativeData solid_density_d_data;
     SolidHeatCapacityData solid_heat_capacity_data;
+    ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
 
-    DisplacementDimMatrix dlambda_dp_GR;
-    DisplacementDimMatrix dlambda_dp_cap;
-    DisplacementDimMatrix dlambda_dT;
     DisplacementDimVector drho_GR_h_w_eff_dp_GR_Npart;
     DisplacementDimMatrix drho_GR_h_w_eff_dp_GR_gradNpart;
     DisplacementDimVector drho_LR_h_w_eff_dp_cap_Npart;
