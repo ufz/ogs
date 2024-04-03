@@ -137,6 +137,7 @@ struct ConstitutiveTempData
     ViscosityData viscosity_data;
     PhaseTransitionData phase_transition_data;
     PorosityDerivativeData porosity_d_data;
+    SolidDensityDerivativeData solid_density_d_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

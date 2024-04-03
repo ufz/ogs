@@ -239,6 +239,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
                                    ip_out.porosity_data, ip_cv.porosity_d_data);
 
+        models.solid_density_model.eval(
+            {pos, t, dt}, media_data, T_data,
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+            ip_cv.biot_data, ip_out.eps_data, ip_cv.s_therm_exp_data,
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+            ip_out.solid_density_data, ip_cv.solid_density_d_data);
+
         MPL::VariableArray vars;
         MPL::VariableArray vars_prev;
         vars.temperature = T;
@@ -253,20 +260,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
 
         vars.porosity = ip_out.porosity_data.phi;
-
-        // solid phase density
-        auto const rho_ref_SR =
-            solid_phase.property(MPL::PropertyType::density)
-                .template value<double>(
-                    vars, pos, t, std::numeric_limits<double>::quiet_NaN());
-
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-        ip_out.solid_density_data.rho_SR =
-            rho_ref_SR * (1. - ip_cv.s_therm_exp_data.thermal_volume_strain +
-                          (ip_cv.biot_data() - 1.) * div_u);
-#else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-        ip_out.solid_density_data.rho_SR = rho_ref_SR;
-#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 
         auto const& c = ip_cv.phase_transition_data;
 
@@ -348,23 +341,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             liquid_phase.property(MPL::PropertyType::density)
                 .template dValue<double>(vars, MPL::Variable::temperature, pos,
                                          t, dt);
-        auto const drho_SR_dT =
-            solid_phase.property(MPL::PropertyType::density)
-                    .template dValue<double>(vars, MPL::Variable::temperature,
-                                             pos, t, dt)
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                * (1. - ip_cv.s_therm_exp_data.thermal_volume_strain +
-                   (ip_cv.biot_data() - 1.) * div_u) -
-            rho_ref_SR * ip_cv.s_therm_exp_data.beta_T_SR
-#endif
-            ;
 
         ip_cv.drho_u_eff_dT =
             phi_G * c.drho_GR_dT * c.uG +
             phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dT +
             phi_L * drho_LR_dT * c.uL +
             phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dT +
-            phi_S * drho_SR_dT * u_S +
+            phi_S * ip_cv.solid_density_d_data.drho_SR_dT * u_S +
             phi_S * ip_out.solid_density_data.rho_SR * cpS +
             ip_cv.porosity_d_data.dphi_S_dT * ip_out.solid_density_data.rho_SR *
                 u_S;
@@ -469,7 +452,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_L * ip_out.fluid_density_data.rho_LR * c.dh_L_dT +
             ip_cv.porosity_d_data.dphi_S_dT * ip_out.solid_density_data.rho_SR *
                 ip_data.h_S +
-            phi_S * drho_SR_dT * ip_data.h_S +
+            phi_S * ip_cv.solid_density_d_data.drho_SR_dT * ip_data.h_S +
             phi_S * ip_out.solid_density_data.rho_SR * cpS;
 
         ip_cv.drho_u_eff_dp_GR =
