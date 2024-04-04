@@ -34,12 +34,10 @@ struct PhaseTransitionData
     double drho_LR_dp_LR = 0.;
 
     double drho_C_LR_dp_GR = 0.;
-    double drho_C_LR_dp_cap = 0.;
     double drho_C_LR_dT = 0.;
     double drho_C_LR_dp_LR = 0.;
 
     double drho_W_LR_dp_GR = 0.;
-    double drho_W_LR_dp_cap = 0.;
     double drho_W_LR_dT = 0.;
     double drho_W_LR_dp_LR = 0.;
 
