@@ -17,62 +17,71 @@ namespace ConstitutiveRelations
 {
 struct PhaseTransitionData
 {
-    double drho_GR_dp_GR = 0.;
-    double drho_GR_dp_cap = 0.;
-    double drho_GR_dT = 0.;
+    double drho_GR_dp_GR = nan;
+    double drho_GR_dp_cap = nan;
+    double drho_GR_dT = nan;
 
-    double drho_C_GR_dp_GR = 0.;
-    double drho_C_GR_dp_cap = 0.;
-    double drho_C_GR_dT = 0.;
+    double drho_C_GR_dp_GR = nan;
+    double drho_C_GR_dp_cap = nan;
+    double drho_C_GR_dT = nan;
 
-    double drho_W_GR_dp_GR = 0.;
-    double drho_W_GR_dp_cap = 0.;
-    double drho_W_GR_dT = 0.;
+    double drho_W_GR_dp_GR = nan;
+    double drho_W_GR_dp_cap = nan;
+    double drho_W_GR_dT = nan;
 
-    double drho_LR_dp_cap = 0.;
-    double drho_LR_dT = 0.;
-    double drho_LR_dp_LR = 0.;
+    double drho_LR_dT = nan;
+    double drho_LR_dp_LR = nan;
 
-    double drho_C_LR_dp_GR = 0.;
-    double drho_C_LR_dT = 0.;
-    double drho_C_LR_dp_LR = 0.;
+    // TODO (naumov) These three are zero in both models but used in the
+    // assembly. Remove them and simplify assembly or correct the expressions in
+    // the phase transition models?
+    static constexpr double drho_C_LR_dp_GR = 0.;
+    static constexpr double drho_C_LR_dT = 0.;
+    static constexpr double drho_C_LR_dp_LR = 0.;
 
-    double drho_W_LR_dp_GR = 0.;
-    double drho_W_LR_dT = 0.;
-    double drho_W_LR_dp_LR = 0.;
+    double drho_W_LR_dp_GR = nan;
+    double drho_W_LR_dT = nan;
+    double drho_W_LR_dp_LR = nan;
 
     // constituent mass and molar fractions
-    double xmWG = 0.;
+    double xmWG = nan;
 
     // mass fraction derivatives
-    double dxmWG_dpGR = 0.;
-    double dxmWG_dpCap = 0.;
-    double dxmWG_dT = 0.;
+    double dxmWG_dpGR = nan;
+    double dxmWG_dpCap = nan;
+    double dxmWG_dT = nan;
 
-    double dxmWL_dpGR = 0.;
-    double dxmWL_dpCap = 0.;
-    double dxmWL_dpLR = 0.;
-    double dxmWL_dT = 0.;
+    double dxmWL_dpGR = nan;
+    double dxmWL_dpCap = nan;
+    double dxmWL_dT = nan;
+    // TODO (naumov) This is zero in both models but used in the assembly.
+    // Remove it and simplify assembly or correct the expressions in the phase
+    // transition models?
+    static constexpr double dxmWL_dpLR = 0.;
 
-    double diffusion_coefficient_vapour = 0.;
-    double diffusion_coefficient_solute = 0.;
+    double diffusion_coefficient_vapour = nan;
+    double diffusion_coefficient_solute = nan;
 
     // specific enthalpies
-    double hCG = 0;
-    double hWG = 0;
+    double hCG = nan;
+    double hWG = nan;
 
-    double dh_G_dT = 0;
-    double dh_L_dT = 0;
+    double dh_G_dT = nan;
+    double dh_L_dT = nan;
 
     // specific inner energies
-    double uG = 0;
-    double uL = 0;
+    double uG = nan;
+    double uL = nan;
 
-    double du_G_dT = 0;
-    double du_L_dT = 0;
-    double du_G_dp_GR = 0;
-    double du_L_dp_GR = 0;
-    double du_L_dp_cap = 0;
+    double du_G_dT = nan;
+    double du_L_dT = nan;
+    double du_G_dp_GR = nan;
+
+    // TODO (naumov) These two are zero in both models but used in the assembly.
+    // Remove them and simplify assembly or correct the expressions in the phase
+    // transition models?
+    static constexpr double du_L_dp_GR = 0;
+    static constexpr double du_L_dp_cap = 0;
 };
 
 }  // namespace ConstitutiveRelations

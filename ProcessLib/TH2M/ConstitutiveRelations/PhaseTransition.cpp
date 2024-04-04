@@ -337,9 +337,12 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // specific enthalpy of gas phase
     enthalpy_data.h_G =
         mass_mole_fractions_data.xmCG * cv.hCG + cv.xmWG * cv.hWG;
+    cv.dh_G_dT = 0;
 
     // specific inner energies of gas phase
     cv.uG = enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
+    cv.du_G_dT = 0;
+    cv.du_G_dp_GR = 0;
 
     // diffusion
     auto const tortuosity =
@@ -511,9 +514,11 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     double const hCL = cpCL * T + dh_sol;
     double const hWL = cpWL * T;
     enthalpy_data.h_L = xmCL * hCL + mass_mole_fractions_data.xmWL * hWL;
+    cv.dh_L_dT = 0;
 
     // specific inner energies of liquid phase
     cv.uL = enthalpy_data.h_L;
+    cv.du_L_dT = 0;
 
     // diffusion
     auto const D_C_L_m =
@@ -526,6 +531,12 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     viscosity_data.mu_LR =
         liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+
+    // Some default initializations.
+    cv.drho_LR_dp_LR = 0;
+    cv.drho_W_LR_dp_GR = 0.;
+    cv.drho_W_LR_dT = 0.;
+    cv.drho_W_LR_dp_LR = 0.;
 }
 
 }  // namespace ConstitutiveRelations
