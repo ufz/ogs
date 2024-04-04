@@ -152,12 +152,6 @@ private:
         Eigen::VectorXd const& /*local_x_prev*/)
     {
     }
-
-    virtual void computeSecondaryVariableWithCoupledProcessConcrete(
-        double const /*t*/, std::vector<std::vector<double>> const&
-        /*coupled_local_solutions*/)
-    {
-    }
 };
 
 }  // namespace ProcessLib
