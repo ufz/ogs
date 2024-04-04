@@ -412,7 +412,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
     // Calculate strain, stress or other internal variables of mechanics.
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postNonLinearSolver, _local_assemblers,
-        getActiveElementIDs(), getDOFTable(process_id), x, x_prev, t, dt,
+        getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
 

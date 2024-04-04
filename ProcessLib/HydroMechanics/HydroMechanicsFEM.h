@@ -271,8 +271,8 @@ public:
         double const t, double const dt, Eigen::VectorXd const& local_xs,
         Eigen::VectorXd const& local_x_prev) override;
 
-    void postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                     std::vector<double> const& local_x_prev,
+    void postNonLinearSolverConcrete(Eigen::VectorXd const& local_x,
+                                     Eigen::VectorXd const& local_x_prev,
                                      double const t, double const dt,
                                      int const process_id) override;
 
