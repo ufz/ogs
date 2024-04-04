@@ -12,12 +12,11 @@ workdir: f"{config['Data_BINARY_DIR']}/MeshLib"
 
 VTKDIFF = f"file://{config['SOURCE_DIR']}/scripts/snakemake/vtkdiff"
 SOURCE_DIR = f"{config['Data_SOURCE_DIR']}/MeshLib"
+GMSH2OGS = f"{config['BIN_DIR']}/GMSH2OGS"
 
 MESH_NAME = "A2"
 BULK_MESH = f"{MESH_NAME}.vtu"
-GMSH_MESH = f"{MESH_NAME}-gmsh.msh"
-GMSH2OGS = f"{config['BIN_DIR']}/GMSH2OGS --gmsh2_physical_id"
-
+GMSH_MESH = f"{MESH_NAME}-gmsh4.msh"
 INNER_BOUNDARIES = "[12]"
 OUTER_BOUNDARIES = "[034567]"
 

@@ -167,6 +167,13 @@ int main(int argc, char* argv[])
         "if set, lines will not be written to the ogs mesh");
     cmd.add(exclude_lines_arg);
 
+    std::string const gmsh2_opt_message =
+        "if set, the mesh is generated with Gmsh version 2 and it is saved"
+        " (or exported) as \"Version 2 ASCII\" format";
+
+    TCLAP::SwitchArg gmsh2_arg("", "gmsh2_physical_id", gmsh2_opt_message);
+    cmd.add(gmsh2_arg);
+
     cmd.parse(argc, argv);
 
 #ifdef USE_PETSC
@@ -181,7 +188,8 @@ int main(int argc, char* argv[])
 #endif
     BaseLib::RunTime run_time;
     run_time.start();
-    MeshLib::Mesh* mesh(FileIO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue()));
+    MeshLib::Mesh* mesh(FileIO::GMSH::readGMSHMesh(gmsh_mesh_arg.getValue(),
+                                                   gmsh2_arg.getValue()));
 
     if (mesh == nullptr)
     {
