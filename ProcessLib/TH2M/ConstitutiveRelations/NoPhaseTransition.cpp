@@ -140,7 +140,6 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
             .template dValue<double>(
                 variables, MaterialPropertyLib::Variable::liquid_phase_pressure,
                 x_t.x, x_t.t, x_t.dt);
-    cv.drho_LR_dp_GR = cv.drho_LR_dp_LR;
 
     cv.du_G_dp_GR = -1 / fluid_density_data.rho_GR +
                     pGR * cv.drho_GR_dp_GR / fluid_density_data.rho_GR /
@@ -167,7 +166,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     */
 
     cv.drho_W_LR_dp_LR = cv.drho_LR_dp_LR;
-    cv.drho_W_LR_dp_GR = cv.drho_LR_dp_GR;
+    cv.drho_W_LR_dp_GR = cv.drho_LR_dp_LR;
     cv.drho_W_LR_dT = cv.drho_LR_dT;
     cv.drho_W_GR_dT = 0;
     cv.drho_W_GR_dp_GR = 0;
