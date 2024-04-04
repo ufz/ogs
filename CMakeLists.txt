@@ -85,6 +85,7 @@ include(DocumentationSetup)
 include(test/Test)
 include(Coverage)
 include(CppCheck)
+include(ClangTidy)
 
 # ---- More Options ----
 

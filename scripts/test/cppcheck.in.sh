@@ -11,6 +11,7 @@ ${CPPCHECK_TOOL_PATH} \
         -j ${CPPCHECK_PARALLEL} \
         --inline-suppr \
         -i ${_cpm_dir} --suppress=*:${_cpm_dir}/* \
+        -i ${PROJECT_BINARY_DIR}/_deps --suppress=*:${PROJECT_BINARY_DIR}/_deps/* \
         -i ${PROJECT_SOURCE_DIR}/ThirdParty --suppress=*:${PROJECT_SOURCE_DIR}/ThirdParty* \
         -i ${PROJECT_SOURCE_DIR}/Tests --suppress=*:*Tests/* \
         --suppress=missingIncludeSystem \
