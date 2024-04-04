@@ -508,9 +508,9 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific enthalpy of liquid phase and its components
-    cv.hCL = cpCL * T + dh_sol;
-    cv.hWL = cpWL * T;
-    enthalpy_data.h_L = xmCL * cv.hCL + mass_mole_fractions_data.xmWL * cv.hWL;
+    double const hCL = cpCL * T + dh_sol;
+    double const hWL = cpWL * T;
+    enthalpy_data.h_L = xmCL * hCL + mass_mole_fractions_data.xmWL * hWL;
 
     // specific inner energies of liquid phase
     cv.uL = enthalpy_data.h_L;

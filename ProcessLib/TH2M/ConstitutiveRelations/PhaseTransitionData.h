@@ -64,8 +64,6 @@ struct PhaseTransitionData
     // specific enthalpies
     double hCG = 0;
     double hWG = 0;
-    double hCL = 0;
-    double hWL = 0;
 
     double dh_G_dT = 0;
     double dh_L_dT = 0;
