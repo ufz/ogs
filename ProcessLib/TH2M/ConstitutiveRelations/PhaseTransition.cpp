@@ -247,8 +247,8 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     variables.molar_mass = MG;
 
     // gas phase mass fractions
-    cv.xmWG = xnWG * M_W / MG;
-    mass_mole_fractions_data.xmCG = 1. - cv.xmWG;
+    double const xmWG = xnWG * M_W / MG;
+    mass_mole_fractions_data.xmCG = 1. - xmWG;
 
     auto const dxn_dxm_conversion = M_W * M_C / MG / MG;
     // gas phase mass fraction derivatives
@@ -302,7 +302,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // model is still consistent.
     constituent_density_data.rho_C_GR =
         mass_mole_fractions_data.xmCG * fluid_density_data.rho_GR;
-    constituent_density_data.rho_W_GR = cv.xmWG * fluid_density_data.rho_GR;
+    constituent_density_data.rho_W_GR = xmWG * fluid_density_data.rho_GR;
 
     // 'Air'-component partial density derivatives
     cv.drho_C_GR_dp_GR = mass_mole_fractions_data.xmCG * cv.drho_GR_dp_GR -
@@ -314,11 +314,11 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
 
     // Vapour-component partial density derivatives
     cv.drho_W_GR_dp_GR =
-        cv.xmWG * cv.drho_GR_dp_GR + cv.dxmWG_dpGR * fluid_density_data.rho_GR;
-    cv.drho_W_GR_dp_cap = cv.xmWG * cv.drho_GR_dp_cap +
-                          cv.dxmWG_dpCap * fluid_density_data.rho_GR;
+        xmWG * cv.drho_GR_dp_GR + cv.dxmWG_dpGR * fluid_density_data.rho_GR;
+    cv.drho_W_GR_dp_cap =
+        xmWG * cv.drho_GR_dp_cap + cv.dxmWG_dpCap * fluid_density_data.rho_GR;
     cv.drho_W_GR_dT =
-        cv.xmWG * cv.drho_GR_dT + cv.dxmWG_dT * fluid_density_data.rho_GR;
+        xmWG * cv.drho_GR_dT + cv.dxmWG_dT * fluid_density_data.rho_GR;
 
     // specific heat capacities of dry air and vapour
     auto const cpCG =
@@ -335,8 +335,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.hWG = cpWG * T + dh_evap;
 
     // specific enthalpy of gas phase
-    enthalpy_data.h_G =
-        mass_mole_fractions_data.xmCG * cv.hCG + cv.xmWG * cv.hWG;
+    enthalpy_data.h_G = mass_mole_fractions_data.xmCG * cv.hCG + xmWG * cv.hWG;
     cv.dh_G_dT = 0;
 
     // specific inner energies of gas phase

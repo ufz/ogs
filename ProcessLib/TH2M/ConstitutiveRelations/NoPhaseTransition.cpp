@@ -66,12 +66,11 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     vapour_pressure_data.pWGR = 0;
 
     // C-component is only component in the gas phase
-    cv.xmWG = 0.;
     cv.dxmWG_dpGR = 0.;
     cv.dxmWG_dpCap = 0.;
     cv.dxmWG_dT = 0.;
     mass_mole_fractions_data.xnCG = 1.;
-    mass_mole_fractions_data.xmCG = 1. - cv.xmWG;
+    mass_mole_fractions_data.xmCG = 1.;
 
     auto const M =
         gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)

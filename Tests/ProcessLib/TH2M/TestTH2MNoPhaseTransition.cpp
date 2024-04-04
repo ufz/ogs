@@ -149,9 +149,8 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ASSERT_NEAR(rhoCGR, constituent_density.rho_C_GR, 1.0e-10);
     ASSERT_NEAR(rhoWGR, constituent_density.rho_W_GR, 1.0e-10);
     ASSERT_NEAR(rhoCLR, constituent_density.rho_C_LR, 1.0e-10);
-    ASSERT_NEAR(xmCG, 1. - cv.xmWG, 1.e-10);
     ASSERT_NEAR(xmCG, mass_mole_fractions.xmCG, 1.e-10);
-    ASSERT_NEAR(xmWG, cv.xmWG, 1.e-10);
+    ASSERT_NEAR(xmWG, 1 - mass_mole_fractions.xmCG, 1.e-10);
     ASSERT_NEAR(dxmWG_dpGR, cv.dxmWG_dpGR, 1.0e-10);
     ASSERT_NEAR(dxmCG_dpGR, -cv.dxmWG_dpGR, 1.0e-10);
     ASSERT_NEAR(dxmWG_dT, cv.dxmWG_dT, 1.0e-10);

@@ -295,11 +295,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                            : -phi_G / ip_out.mass_mole_fractions_data.xmCG *
                                  c.diffusion_coefficient_vapour * gradxmCG;
 
-        ip_data.d_WG =
-            c.xmWG == 0.
-                ? 0. * gradxmWG  // Keep d_WG's dimension and prevent
-                                 // division by zero
-                : -phi_G / c.xmWG * c.diffusion_coefficient_vapour * gradxmWG;
+        ip_data.d_WG = ip_out.mass_mole_fractions_data.xmCG == 1.
+                           ? 0. * gradxmWG  // Keep d_WG's dimension and prevent
+                                            // division by zero
+                           : -phi_G /
+                                 (1 - ip_out.mass_mole_fractions_data.xmCG) *
+                                 c.diffusion_coefficient_vapour * gradxmWG;
 
         ip_data.d_CL =
             xmCL == 0.

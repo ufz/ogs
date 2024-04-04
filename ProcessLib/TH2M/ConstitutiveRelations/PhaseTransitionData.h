@@ -43,9 +43,6 @@ struct PhaseTransitionData
     double drho_W_LR_dT = nan;
     double drho_W_LR_dp_LR = nan;
 
-    // constituent mass and molar fractions
-    double xmWG = nan;
-
     // mass fraction derivatives
     double dxmWG_dpGR = nan;
     double dxmWG_dpCap = nan;

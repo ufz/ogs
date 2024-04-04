@@ -250,7 +250,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
                   mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        auto xmWG_plus = cv.xmWG;
+        auto xmWG_plus = 1 - mass_mole_fractions.xmCG;
         auto rhoGR_plus = fluid_density.rho_GR;
         auto rhoCGR_plus = constituent_density.rho_C_GR;
         auto rhoWGR_plus = constituent_density.rho_W_GR;
@@ -262,7 +262,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
                   mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        auto xmWG_minus = cv.xmWG;
+        auto xmWG_minus = 1 - mass_mole_fractions.xmCG;
         auto rhoGR_minus = fluid_density.rho_GR;
         auto rhoCGR_minus = constituent_density.rho_C_GR;
         auto rhoWGR_minus = constituent_density.rho_W_GR;
@@ -300,7 +300,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
-        xmWG_plus = cv.xmWG;
+        xmWG_plus = 1 - mass_mole_fractions.xmCG;
         rhoGR_plus = fluid_density.rho_GR;
         rhoCGR_plus = constituent_density.rho_C_GR;
         rhoWGR_plus = constituent_density.rho_W_GR;
@@ -313,7 +313,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
-        xmWG_minus = cv.xmWG;
+        xmWG_minus = 1 - mass_mole_fractions.xmCG;
         rhoGR_minus = fluid_density.rho_GR;
         rhoCGR_minus = constituent_density.rho_C_GR;
         rhoWGR_minus = constituent_density.rho_W_GR;
@@ -352,7 +352,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
                   enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        xmWG_plus = cv.xmWG;
+        xmWG_plus = 1 - mass_mole_fractions.xmCG;
         rhoGR_plus = fluid_density.rho_GR;
         rhoCGR_plus = constituent_density.rho_C_GR;
         rhoWGR_plus = constituent_density.rho_W_GR;
@@ -364,7 +364,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
                   enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        xmWG_minus = cv.xmWG;
+        xmWG_minus = 1 - mass_mole_fractions.xmCG;
         rhoGR_minus = fluid_density.rho_GR;
         rhoCGR_minus = constituent_density.rho_C_GR;
         rhoWGR_minus = constituent_density.rho_W_GR;
@@ -404,12 +404,12 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // must be equal to the mass fraction of those constituents in both
         // phases.
         ASSERT_NEAR(constituent_density.rho_W_GR / fluid_density.rho_GR,
-                    cv.xmWG, 1.e-10);
+                    1 - mass_mole_fractions.xmCG, 1.e-10);
         ASSERT_NEAR(rhoWLR() / fluid_density.rho_LR, mass_mole_fractions.xmWL,
                     1.e-10);
 
         ASSERT_NEAR(constituent_density.rho_C_GR / fluid_density.rho_GR,
-                    1. - cv.xmWG, 1.e-10);
+                    mass_mole_fractions.xmCG, 1.e-10);
         ASSERT_NEAR(constituent_density.rho_C_LR / fluid_density.rho_LR,
                     1. - mass_mole_fractions.xmWL, 1.e-10);
 
@@ -518,7 +518,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                   mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        auto xmWG_plus = cv.xmWG;
+        auto xmWG_plus = 1 - mass_mole_fractions.xmCG;
         auto rhoCGR_plus = constituent_density.rho_C_GR;
         auto rhoWGR_plus = constituent_density.rho_W_GR;
 
@@ -529,7 +529,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                   mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        auto xmWG_minus = cv.xmWG;
+        auto xmWG_minus = 1 - mass_mole_fractions.xmCG;
         auto rhoCGR_minus = constituent_density.rho_C_GR;
         auto rhoWGR_minus = constituent_density.rho_W_GR;
 
@@ -565,7 +565,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
-        xmWG_plus = cv.xmWG;
+        xmWG_plus = 1 - mass_mole_fractions.xmCG;
         rhoCGR_plus = constituent_density.rho_C_GR;
         rhoWGR_plus = constituent_density.rho_W_GR;
 
@@ -577,7 +577,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                   viscosity, enthalpy, mass_mole_fractions, fluid_density,
                   vapour_pressure, constituent_density, cv);
 
-        xmWG_minus = cv.xmWG;
+        xmWG_minus = 1 - mass_mole_fractions.xmCG;
         rhoCGR_minus = constituent_density.rho_C_GR;
         rhoWGR_minus = constituent_density.rho_W_GR;
 
@@ -614,7 +614,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                   enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        xmWG_plus = cv.xmWG;
+        xmWG_plus = 1 - mass_mole_fractions.xmCG;
         rhoCGR_plus = constituent_density.rho_C_GR;
         rhoWGR_plus = constituent_density.rho_W_GR;
 
@@ -625,7 +625,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
                   enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
                   constituent_density, cv);
 
-        xmWG_minus = cv.xmWG;
+        xmWG_minus = 1 - mass_mole_fractions.xmCG;
         rhoCGR_minus = constituent_density.rho_C_GR;
         rhoWGR_minus = constituent_density.rho_W_GR;
 
@@ -663,12 +663,12 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // must be equal to the mass fraction of those constituents in both
         // phases.
         ASSERT_NEAR(constituent_density.rho_W_GR / fluid_density.rho_GR,
-                    cv.xmWG, 1.e-10);
+                    1 - mass_mole_fractions.xmCG, 1.e-10);
         ASSERT_NEAR(rhoWLR() / fluid_density.rho_LR, mass_mole_fractions.xmWL,
                     1.e-10);
 
         ASSERT_NEAR(constituent_density.rho_C_GR / fluid_density.rho_GR,
-                    1. - cv.xmWG, 1.e-10);
+                    mass_mole_fractions.xmCG, 1.e-10);
         ASSERT_NEAR(constituent_density.rho_C_LR / fluid_density.rho_LR,
                     1. - mass_mole_fractions.xmWL, 1.e-10);
 
