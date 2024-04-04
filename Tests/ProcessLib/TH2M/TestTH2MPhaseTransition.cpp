@@ -397,7 +397,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
         // phase pressure
         auto const refence_xnWG =
             std::clamp(vapour_pressure.pWGR / pGR, 0., 1.);
-        ASSERT_NEAR(refence_xnWG, cv.xnWG, 1.e-10);
+        auto const xnWG = 1. - mass_mole_fractions.xnCG;
+        ASSERT_NEAR(refence_xnWG, xnWG, 1.e-10);
 
         // The quotient of constituent partial densities and phase densities
         // must be equal to the mass fraction of those constituents in both
@@ -424,8 +425,8 @@ TEST(ProcessLib, TH2MPhaseTransition)
 
         // Gas density (ideal gas in this test):
         constexpr double R = MaterialLib::PhysicalConstant::IdealGasConstant;
-        auto const xnCG = 1. - cv.xnWG;
-        auto const MG = cv.xnWG * molar_mass_water + xnCG * molar_mass_air;
+        auto const MG =
+            xnWG * molar_mass_water + mass_mole_fractions.xnCG * molar_mass_air;
         auto const rhoGR = pGR * MG / R / T;
         ASSERT_NEAR(rhoGR, fluid_density.rho_GR, 1.e-10);
 
@@ -655,7 +656,8 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
         // phase pressure
         auto const refence_xnWG =
             std::clamp(vapour_pressure.pWGR / pGR, 0., 1.);
-        ASSERT_NEAR(refence_xnWG, cv.xnWG, 1.e-10);
+        auto const xnWG = 1. - mass_mole_fractions.xnCG;
+        ASSERT_NEAR(refence_xnWG, xnWG, 1.e-10);
 
         // The quotient of constituent partial densities and phase densities
         // must be equal to the mass fraction of those constituents in both

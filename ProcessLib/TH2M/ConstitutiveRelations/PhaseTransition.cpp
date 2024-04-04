@@ -233,9 +233,9 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                  // of the mass balance on the diagonal of the local element
                  // matrix to be zero). The value is simply made up, seems
                  // reasonable.
-    cv.xnWG =
+    double const xnWG =
         std::clamp(vapour_pressure_data.pWGR / pGR, xnWG_min, 1. - xnWG_min);
-    mass_mole_fractions_data.xnCG = 1. - cv.xnWG;
+    mass_mole_fractions_data.xnCG = 1. - xnWG;
 
     // gas phase molar fraction derivatives
     auto const dxnWG_dpGR = -vapour_pressure_data.pWGR / pGR / pGR;
@@ -243,11 +243,11 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     auto const dxnWG_dT = dpWGR_dT / pGR;
 
     // molar mass of the gas phase as a mixture of 'air' and vapour
-    auto const MG = mass_mole_fractions_data.xnCG * M_C + cv.xnWG * M_W;
+    auto const MG = mass_mole_fractions_data.xnCG * M_C + xnWG * M_W;
     variables.molar_mass = MG;
 
     // gas phase mass fractions
-    cv.xmWG = cv.xnWG * M_W / MG;
+    cv.xmWG = xnWG * M_W / MG;
     mass_mole_fractions_data.xmCG = 1. - cv.xmWG;
 
     auto const dxn_dxm_conversion = M_W * M_C / MG / MG;
