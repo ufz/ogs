@@ -115,7 +115,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const& medium =
         *this->process_data_.media_map.getMedium(this->element_.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
     ConstitutiveRelations::MediaData media_data{medium};
 
     unsigned const n_integration_points =
@@ -160,7 +159,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap};
         ConstitutiveRelations::ReferenceTemperatureData const T0{
             this->process_data_.reference_temperature(t, pos)[0]};
-        double const pLR = pGR - pCap;
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
         GlobalDimVectorType const gradT = gradNp * temperature;
@@ -252,21 +250,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cv.porosity_d_data, current_state.S_L_data, ip_cv.dS_L_dp_cap,
             ip_cv.thermal_conductivity_data);
 
-        MPL::VariableArray vars;
-        MPL::VariableArray vars_prev;
-        vars.temperature = T;
-        vars.gas_phase_pressure = pGR;
-        vars.capillary_pressure = pCap;
-        vars.liquid_phase_pressure = pLR;
-
-        // Set volumetric strain for the general case without swelling.
-        vars.volumetric_strain = Invariants::trace(eps);
-
-        vars.liquid_saturation = current_state.S_L_data.S_L;
-        vars_prev.liquid_saturation = prev_state.S_L_data->S_L;
-
-        vars.porosity = ip_out.porosity_data.phi;
-
         auto const& c = ip_cv.phase_transition_data;
 
         auto const phi_L =
@@ -333,15 +316,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
         // ---------------------------------------------------------------------
-        auto const drho_LR_dT =
-            liquid_phase.property(MPL::PropertyType::density)
-                .template dValue<double>(vars, MPL::Variable::temperature, pos,
-                                         t, dt);
-
         ip_cv.drho_u_eff_dT =
             phi_G * c.drho_GR_dT * c.uG +
             phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dT +
-            phi_L * drho_LR_dT * c.uL +
+            phi_L * c.drho_LR_dT * c.uL +
             phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dT +
             phi_S * ip_cv.solid_density_d_data.drho_SR_dT * u_S +
             phi_S * ip_out.solid_density_data.rho_SR *
@@ -393,7 +371,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_G * ip_out.fluid_density_data.rho_GR * c.dh_G_dT +
             dphi_L_dT * ip_out.fluid_density_data.rho_LR *
                 ip_out.enthalpy_data.h_L +
-            phi_L * drho_LR_dT * ip_out.enthalpy_data.h_L +
+            phi_L * c.drho_LR_dT * ip_out.enthalpy_data.h_L +
             phi_L * ip_out.fluid_density_data.rho_LR * c.dh_L_dT -
             ip_cv.porosity_d_data.dphi_dT * ip_out.solid_density_data.rho_SR *
                 ip_data.h_S +
@@ -469,7 +447,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_cv.drho_GR_h_w_eff_dT =
             c.drho_GR_dT * ip_out.enthalpy_data.h_G * ip_data.w_GS +
             ip_out.fluid_density_data.rho_GR * c.dh_G_dT * ip_data.w_GS +
-            drho_LR_dT * ip_out.enthalpy_data.h_L * ip_data.w_LS +
+            c.drho_LR_dT * ip_out.enthalpy_data.h_L * ip_data.w_LS +
             ip_out.fluid_density_data.rho_LR * c.dh_L_dT * ip_data.w_LS;
         // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
         // drho_LR_dT * b

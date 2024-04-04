@@ -152,7 +152,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     cv.drho_C_LR_dp_GR = 0;
     cv.drho_C_GR_dT = drho_GR_dT;
 
-    auto const drho_LR_dT =
+    cv.drho_LR_dT =
         liquid_phase[MaterialPropertyLib::PropertyType::density]
             .template dValue<double>(variables,
                                      MaterialPropertyLib::Variable::temperature,
@@ -169,7 +169,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
 
     cv.drho_W_LR_dp_LR = cv.drho_LR_dp_LR;
     cv.drho_W_LR_dp_GR = cv.drho_LR_dp_GR;
-    cv.drho_W_LR_dT = drho_LR_dT;
+    cv.drho_W_LR_dT = cv.drho_LR_dT;
     cv.drho_W_GR_dT = 0;
     cv.drho_W_GR_dp_GR = 0;
     cv.drho_W_GR_dp_cap = 0;

@@ -465,7 +465,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // liquid phase density derivatives
     auto const drhoLR_dpGR = rho_ref_betaP + rho_ref_betaC * dcCL_dpGR;
     auto const drhoLR_dpCap = -rho_ref_betaP;
-    auto const drhoLR_dT = rho_ref_betaT + rho_ref_betaC * dcCL_dT;
+    cv.drho_LR_dT = rho_ref_betaT + rho_ref_betaC * dcCL_dT;
 
     // solvent partial density derivatives
     auto const drhoWLR_dpGR = rho_ref_betaP;
@@ -480,7 +480,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
         1. / fluid_density_data.rho_LR *
         (drhoWLR_dpCap - mass_mole_fractions_data.xmWL * drhoLR_dpCap);
     cv.dxmWL_dT = 1. / fluid_density_data.rho_LR *
-                  (drhoWLR_dT - mass_mole_fractions_data.xmWL * drhoLR_dT);
+                  (drhoWLR_dT - mass_mole_fractions_data.xmWL * cv.drho_LR_dT);
 
     // liquid phase molar fractions and derivatives
     mass_mole_fractions_data.xnWL =
