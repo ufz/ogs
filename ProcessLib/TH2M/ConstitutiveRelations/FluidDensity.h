@@ -19,10 +19,10 @@ namespace ConstitutiveRelations
 struct FluidDensityData
 {
     // gas phase density
-    double rho_GR = 0.;
+    double rho_GR = nan;
 
     // liquid phase density
-    double rho_LR = 0.;
+    double rho_LR = nan;
 
     static auto reflect()
     {

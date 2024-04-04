@@ -18,10 +18,10 @@ namespace ConstitutiveRelations
 {
 struct MassMoleFractionsData
 {
-    double xnCG = 0.;
-    double xmCG = 0.;
-    double xnWL = 0.;
-    double xmWL = 0.;
+    double xnCG = nan;
+    double xmCG = nan;
+    double xnWL = nan;
+    double xmWL = nan;
 
     static auto reflect()
     {

@@ -47,8 +47,8 @@ struct MediaData
 
 struct TemperatureData
 {
-    double T;
-    double T_prev;
+    double T = nan;
+    double T_prev = nan;
 };
 
 using ReferenceTemperatureData =
