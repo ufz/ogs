@@ -317,7 +317,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
         mesh_space_dimension,
         *aperture_size_parameter,
         isothermal,
-    };
+        NumLib::ShapeMatrixCache{integration_order}};
 
     SecondaryVariableCollection secondary_variables;
 
