@@ -143,7 +143,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
         _process_data.specific_body_force;
 
-    auto const& N = _shape_matrix_cache
+    auto const& N = _process_data.shape_matrix_cache
                         .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -295,7 +295,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
         _process_data.specific_body_force;
 
-    auto const& N = _shape_matrix_cache
+    auto const& N = _process_data.shape_matrix_cache
                         .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)

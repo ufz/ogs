@@ -137,7 +137,7 @@ public:
         const unsigned integration_point) const override
     {
         auto const& N =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         // assumes N is stored contiguously in memory
