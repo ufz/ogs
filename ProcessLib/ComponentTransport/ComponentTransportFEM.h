@@ -245,7 +245,6 @@ public:
         NumLib::GenericIntegrationMethod const& integration_method,
         bool is_axially_symmetric,
         ComponentTransportProcessData const& process_data,
-        NumLib::ShapeMatrixCache const& shape_matrix_cache,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
             transport_process_variables)
         : temperature_index(process_data.isothermal ? -1
@@ -255,7 +254,6 @@ public:
                                         : 2 * ShapeFunction::NPOINTS),
           _element(element),
           _process_data(process_data),
-          _shape_matrix_cache(shape_matrix_cache),
           _integration_method(integration_method),
           _transport_process_variables(transport_process_variables)
     {
@@ -2021,7 +2019,6 @@ public:
 private:
     MeshLib::Element const& _element;
     ComponentTransportProcessData const& _process_data;
-    NumLib::ShapeMatrixCache const& _shape_matrix_cache;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<std::reference_wrapper<ProcessVariable>> const
