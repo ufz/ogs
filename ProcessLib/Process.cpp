@@ -21,6 +21,22 @@
 #include "ParameterLib/Parameter.h"
 #include "ProcessVariable.h"
 
+namespace
+{
+void setLocalAccessibleVectors(std::vector<GlobalVector*> const& x,
+                               std::vector<GlobalVector*> const& x_prev)
+{
+    for (auto* const solution : x)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
+    for (auto* const solution : x_prev)
+    {
+        MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
+}
+}  // namespace
+
 namespace ProcessLib
 {
 const std::string Process::constant_one_parameter_name = "constant_one";
@@ -253,11 +269,8 @@ void Process::assemble(const double t, double const dt,
                        GlobalVector& b)
 {
     assert(x.size() == x_prev.size());
-    for (std::size_t i = 0; i < x.size(); i++)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*x[i]);
-        MathLib::LinAlg::setLocalAccessibleVector(*x_prev[i]);
-    }
+
+    setLocalAccessibleVectors(x, x_prev);
 
     assembleConcreteProcess(t, dt, x, x_prev, process_id, M, K, b);
 
@@ -278,11 +291,8 @@ void Process::assembleWithJacobian(const double t, double const dt,
                                    GlobalMatrix& Jac)
 {
     assert(x.size() == x_prev.size());
-    for (std::size_t i = 0; i < x.size(); i++)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*x[i]);
-        MathLib::LinAlg::setLocalAccessibleVector(*x_prev[i]);
-    }
+
+    setLocalAccessibleVectors(x, x_prev);
 
     assembleWithJacobianConcreteProcess(t, dt, x, x_prev, process_id, M, K, b,
                                         Jac);
@@ -446,14 +456,7 @@ void Process::postTimestep(std::vector<GlobalVector*> const& x,
                            const double t, const double delta_t,
                            int const process_id)
 {
-    for (auto* const solution : x)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    }
-    for (auto* const solution : x_prev)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    }
+    setLocalAccessibleVectors(x, x_prev);
 
     postTimestepConcreteProcess(x, x_prev, t, delta_t, process_id);
 
@@ -465,14 +468,7 @@ void Process::postNonLinearSolver(std::vector<GlobalVector*> const& x,
                                   const double t, double const dt,
                                   int const process_id)
 {
-    for (auto* const solution : x)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    }
-    for (auto* const solution : x_prev)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    }
+    setLocalAccessibleVectors(x, x_prev);
 
     postNonLinearSolverConcreteProcess(x, x_prev, t, dt, process_id);
 }
