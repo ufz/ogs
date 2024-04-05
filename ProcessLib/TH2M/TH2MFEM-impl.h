@@ -223,10 +223,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.phase_transition_model.eval(
             {pos, t, dt}, media_data, pGR_data, pCap_data, T_data,
-            current_state.rho_W_LR, ip_cv.viscosity_data, ip_out.enthalpy_data,
+            current_state.rho_W_LR, ip_out.enthalpy_data,
             ip_out.mass_mole_fractions_data, ip_out.fluid_density_data,
             ip_out.vapour_pressure_data, current_state.constituent_density_data,
             ip_cv.phase_transition_data);
+
+        models.viscosity_model.eval({pos, t, dt}, media_data, T_data,
+                                    ip_out.mass_mole_fractions_data,
+                                    ip_cv.viscosity_data);
 
         models.porosity_model.eval({pos, t, dt}, media_data,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION

@@ -43,7 +43,6 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                              CapillaryPressureData const& p_cap,
                              TemperatureData const& T_data,
                              PureLiquidDensityData const& rho_W_LR,
-                             ViscosityData& viscosity_data,
                              EnthalpyData& enthalpy_data,
                              MassMoleFractionsData& mass_mole_fractions_data,
                              FluidDensityData& fluid_density_data,
@@ -81,9 +80,6 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     fluid_density_data.rho_GR =
         gas_phase.property(MaterialPropertyLib::PropertyType::density)
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
-    viscosity_data.mu_GR =
-        gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     constituent_density_data.rho_C_GR = fluid_density_data.rho_GR;
     constituent_density_data.rho_W_GR = 0;
@@ -99,10 +95,6 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
     variables.liquid_phase_pressure = pLR;
     fluid_density_data.rho_LR = rho_W_LR();
     variables.density = fluid_density_data.rho_LR;
-
-    viscosity_data.mu_LR =
-        liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific heat capacities
     auto const cpG =

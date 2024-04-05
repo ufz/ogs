@@ -112,11 +112,10 @@ PhaseTransition::PhaseTransition(
     std::array const required_solvent_component_properties = {
         MaterialPropertyLib::specific_heat_capacity};
 
-    std::array const required_gas_properties = {MaterialPropertyLib::density,
-                                                MaterialPropertyLib::viscosity};
+    std::array const required_gas_properties = {MaterialPropertyLib::density};
 
     std::array const required_liquid_properties = {
-        MaterialPropertyLib::density, MaterialPropertyLib::viscosity};
+        MaterialPropertyLib::density};
 
     checkRequiredProperties(
         gas_phase.component(gas_phase_vapour_component_index_),
@@ -140,7 +139,6 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            CapillaryPressureData const& p_cap,
                            TemperatureData const& T_data,
                            PureLiquidDensityData const& rho_W_LR,
-                           ViscosityData& viscosity_data,
                            EnthalpyData& enthalpy_data,
                            MassMoleFractionsData& mass_mole_fractions_data,
                            FluidDensityData& fluid_density_data,
@@ -357,11 +355,6 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
 
     variables.molar_fraction = mass_mole_fractions_data.xnCG;
 
-    // gas phase viscosity
-    viscosity_data.mu_GR =
-        gas_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
-
     // Dissolution part -- Liquid phase properties
     // -------------------------------------------
 
@@ -525,11 +518,6 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
     cv.diffusion_coefficient_solute =
         tortuosity * D_C_L_m;  // Note here that D_C_L = D_W_L.
-
-    // liquid phase viscosity
-    viscosity_data.mu_LR =
-        liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
-            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // Some default initializations.
     cv.drho_LR_dp_LR = 0;

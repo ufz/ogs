@@ -34,9 +34,6 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     auto const diffusion_coefficient_vapour = 0.0;
 
-    auto const viscosity_air = 1.e-5;
-    auto const viscosity_water = 1.e-3;
-
     m << "<medium>\n";
     m << "  <phases>\n";
 
@@ -54,7 +51,6 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     // gas phase properties
     m << "<properties>\n";
-    m << Tests::makeConstantPropertyElement("viscosity", viscosity_air);
     m << Tests::makeConstantPropertyElement("density", density_air);
     m << Tests::makeConstantPropertyElement("specific_heat_capacity",
                                             specific_heat_capacity_air);
@@ -69,7 +65,6 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
 
     // liquid phase properties
     m << "<properties>\n";
-    m << Tests::makeConstantPropertyElement("viscosity", viscosity_water);
     m << Tests::makeConstantPropertyElement("density", density_water);
     m << Tests::makeConstantPropertyElement("specific_heat_capacity",
                                             specific_heat_capacity_water);
@@ -113,7 +108,6 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
                       rhoWLR);
     ASSERT_NEAR(density_water, rhoWLR(), 1e-10);
 
-    CR::ViscosityData viscosity;
     CR::EnthalpyData enthalpy;
     CR::MassMoleFractionsData mass_mole_fractions;
     CR::FluidDensityData fluid_density;
@@ -122,8 +116,8 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     CR::PhaseTransitionData cv;
     ptm->eval(x_t, media_data, CR::GasPressureData{pGR},
               CR::CapillaryPressureData{pGR}, CR::TemperatureData{T, T}, rhoWLR,
-              viscosity, enthalpy, mass_mole_fractions, fluid_density,
-              vapour_pressure, constituent_density, cv);
+              enthalpy, mass_mole_fractions, fluid_density, vapour_pressure,
+              constituent_density, cv);
 
     // reference values
     double const rhoCGR = density_air;
@@ -141,8 +135,6 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     double const hL = specific_heat_capacity_water * T;
     double const uG = hG - pGR / density_air;
     double const uL = hL;
-    double const muGR = viscosity_air;
-    double const muLR = viscosity_water;
 
     ASSERT_NEAR(density_air, fluid_density.rho_GR, 1.0e-10);
     ASSERT_NEAR(density_water, fluid_density.rho_LR, 1.0e-10);
@@ -163,6 +155,4 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     ASSERT_NEAR(uL, cv.uL, 1.0e-10);
     ASSERT_NEAR(diffusion_coefficient_vapour, cv.diffusion_coefficient_vapour,
                 1.0e-10);
-    ASSERT_NEAR(muGR, viscosity.mu_GR, 1.0e-10);
-    ASSERT_NEAR(muLR, viscosity.mu_LR, 1.0e-10);
 }

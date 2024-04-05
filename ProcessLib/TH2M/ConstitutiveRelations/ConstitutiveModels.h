@@ -62,6 +62,7 @@ struct ConstitutiveModels
     PermeabilityModel<DisplacementDim> permeability_model;
     PureLiquidDensityModel pure_liquid_density_model;
     PhaseTransitionModel const& phase_transition_model;
+    ViscosityModel viscosity_model;
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
     PorosityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>
         porosity_model;

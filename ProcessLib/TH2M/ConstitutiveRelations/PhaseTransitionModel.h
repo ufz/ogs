@@ -17,7 +17,6 @@
 #include "PhaseTransitionData.h"
 #include "PureLiquidDensity.h"
 #include "VapourPartialPressure.h"
-#include "Viscosity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -33,9 +32,9 @@ struct PhaseTransitionModel
 
         // check for minimum requirement definitions in media object
         std::array const required_gas_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
+            MaterialPropertyLib::density};
         std::array const required_liquid_properties = {
-            MaterialPropertyLib::viscosity, MaterialPropertyLib::density};
+            MaterialPropertyLib::density};
 
         for (auto const& m : media)
         {
@@ -53,7 +52,6 @@ struct PhaseTransitionModel
                       CapillaryPressureData const& p_cap,
                       TemperatureData const& T_data,
                       PureLiquidDensityData const& rho_W_LR,
-                      ViscosityData& viscosity_data,
                       EnthalpyData& enthalpy_data,
                       MassMoleFractionsData& mass_mole_fractions_data,
                       FluidDensityData& fluid_density_data,
