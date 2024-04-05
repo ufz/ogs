@@ -147,7 +147,6 @@ private:
             this->solid_material_.initializeInternalStateVariables(
                 t, x_position, *material_state.material_state_variables);
 
-            ip_data.pushBackState();
             material_state.pushBackState();
         }
 
@@ -167,7 +166,6 @@ private:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
             this->material_states_[ip].pushBackState();
         }
 

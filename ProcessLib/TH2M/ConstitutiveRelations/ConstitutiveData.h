@@ -16,6 +16,7 @@
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
 #include "FluidDensity.h"
+#include "InternalEnergy.h"
 #include "MassMoleFractions.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
@@ -52,6 +53,7 @@ struct StatefulData
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
     PureLiquidDensityData rho_W_LR;
     ConstituentDensityData constituent_density_data;
+    InternalEnergyData internal_energy_data;
 
     static auto reflect()
     {
@@ -72,6 +74,7 @@ struct StatefulDataPrev
     PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
     PrevState<PureLiquidDensityData> rho_W_LR;
     PrevState<ConstituentDensityData> constituent_density_data;
+    PrevState<InternalEnergyData> internal_energy_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
@@ -82,6 +85,7 @@ struct StatefulDataPrev
         mechanical_strain_data = state.mechanical_strain_data;
         rho_W_LR = state.rho_W_LR;
         constituent_density_data = state.constituent_density_data;
+        internal_energy_data = state.internal_energy_data;
 
         return *this;
     }

@@ -265,9 +265,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ip_out.enthalpy_data.h_S = ip_cv.solid_heat_capacity_data() * T;
         auto const u_S = ip_out.enthalpy_data.h_S;
 
-        ip_data.rho_u_eff = phi_G * ip_out.fluid_density_data.rho_GR * c.uG +
-                            phi_L * ip_out.fluid_density_data.rho_LR * c.uL +
-                            phi_S * ip_out.solid_density_data.rho_SR * u_S;
+        current_state.internal_energy_data() =
+            phi_G * ip_out.fluid_density_data.rho_GR * c.uG +
+            phi_L * ip_out.fluid_density_data.rho_LR * c.uL +
+            phi_S * ip_out.solid_density_data.rho_SR * u_S;
 
         ip_data.rho_G_h_G =
             phi_G * ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G;
@@ -898,9 +899,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
-        ip_data.pushBackState();
-
         this->material_states_[ip].pushBackState();
         this->prev_states_[ip] = this->current_states_[ip];
     }
@@ -1131,7 +1129,9 @@ void TH2MLocalAssembler<
 
         auto const rho_h_eff = ip.rho_G_h_G + ip.rho_L_h_L + ip.rho_S_h_S;
 
-        auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
+        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
+                                    **prev_state.internal_energy_data) /
+                                   dt;
 
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
@@ -1623,7 +1623,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const rho_h_eff = ip.rho_G_h_G + ip.rho_L_h_L + ip.rho_S_h_S;
 
-        auto const rho_u_eff_dot = (ip.rho_u_eff - ip.rho_u_eff_prev) / dt;
+        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
+                                    **prev_state.internal_energy_data) /
+                                   dt;
 
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /

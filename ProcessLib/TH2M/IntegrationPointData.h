@@ -41,10 +41,6 @@ struct IntegrationPointData final
     double rho_L_h_L = std::numeric_limits<double>::quiet_NaN();
     double rho_S_h_S = std::numeric_limits<double>::quiet_NaN();
 
-    // internal energies
-    double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
-    double rho_u_eff_prev = std::numeric_limits<double>::quiet_NaN();
-
     GlobalDimVectorType d_CG;
     GlobalDimVectorType d_WG;
     GlobalDimVectorType d_CL;
@@ -54,8 +50,6 @@ struct IntegrationPointData final
     GlobalDimVectorType w_LS;
 
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
-
-    void pushBackState() { rho_u_eff_prev = rho_u_eff; }
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
