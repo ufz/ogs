@@ -17,7 +17,6 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
-#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/ODESolver/ODESystem.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionCollection.h"
@@ -394,9 +393,6 @@ protected:
     /// single process, the size of the vector is one. For the staggered
     /// scheme, the size of vector is the number of the coupled processes.
     std::vector<BoundaryConditionCollection> _boundary_conditions;
-
-    /// caches for each mesh element type the shape matrix
-    NumLib::ShapeMatrixCache _shape_matrix_cache;
 
 private:
     /// Vector for nodal source term collections. For the monolithic scheme
