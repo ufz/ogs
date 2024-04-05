@@ -327,7 +327,7 @@ public:
         pos.setElementID(_element.getID());
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         unsigned const n_integration_points =
@@ -376,7 +376,7 @@ public:
         pos.setElementID(_element.getID());
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         unsigned const n_integration_points =
@@ -604,7 +604,7 @@ public:
         }
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -738,7 +738,7 @@ public:
                 typename ShapeFunction::MeshElement>(
                 _process_data.stabilizer,
                 _ip_data,
-                _shape_matrix_cache,
+                _process_data.shape_matrix_cache,
                 ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
@@ -768,7 +768,7 @@ public:
             _transport_process_variables[component_id].get().getName());
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -865,7 +865,7 @@ public:
         MaterialPropertyLib::VariableArray vars_prev;
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -993,7 +993,7 @@ public:
         ip_flux_vector.reserve(n_integration_points);
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ip++)
@@ -1073,8 +1073,8 @@ public:
         }
 
         NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
-            process_data.stabilizer, this->_ip_data, _shape_matrix_cache,
-            ip_flux_vector,
+            process_data.stabilizer, this->_ip_data,
+            _process_data.shape_matrix_cache, ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             local_K);
     }
@@ -1140,7 +1140,7 @@ public:
             _transport_process_variables[component_id].get().getName());
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -1276,8 +1276,8 @@ public:
         {
             NumLib::assembleAdvectionMatrix<
                 typename ShapeFunction::MeshElement>(
-                _process_data.stabilizer, _ip_data, _shape_matrix_cache,
-                ip_flux_vector,
+                _process_data.stabilizer, _ip_data,
+                _process_data.shape_matrix_cache, ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
                 KCC_Laplacian);
@@ -1342,7 +1342,7 @@ public:
         MaterialPropertyLib::VariableArray vars_prev;
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -1468,7 +1468,7 @@ public:
             _transport_process_variables[component_id].get().getName());
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -1556,8 +1556,8 @@ public:
         }
 
         NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
-            _process_data.stabilizer, _ip_data, _shape_matrix_cache,
-            ip_flux_vector,
+            _process_data.stabilizer, _ip_data,
+            _process_data.shape_matrix_cache, ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             KCC_Laplacian);
 
@@ -1597,7 +1597,7 @@ public:
         auto const component_id = transport_process_id - 1;
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
@@ -1718,7 +1718,7 @@ public:
         auto const& phase = medium.phase("AqueousLiquid");
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
@@ -1767,7 +1767,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrix_cache.NsHigherOrder<
+        auto const& N = _process_data.shape_matrix_cache.NsHigherOrder<
             typename ShapeFunction::MeshElement>()[integration_point];
 
         // assumes N is stored contiguously in memory
@@ -1950,7 +1950,7 @@ public:
             _transport_process_variables[component_id].get().getName());
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
