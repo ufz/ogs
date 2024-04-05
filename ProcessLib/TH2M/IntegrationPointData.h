@@ -36,9 +36,6 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
-    GlobalDimVectorType w_GS;
-    GlobalDimVectorType w_LS;
-
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;

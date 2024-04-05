@@ -163,13 +163,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
         _secondary_variables, getExtrapolator(), local_assemblers_);
 
-    add_secondary_variable(
-        "velocity_gas", mesh.getDimension(),
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityGas);
-    add_secondary_variable(
-        "velocity_liquid", mesh.getDimension(),
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityLiquid);
-
     //
     // enable output of internal variables defined by material models
     //

@@ -188,21 +188,6 @@ private:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
-    // TODO: Here is some refactoring potential. All secondary variables could
-    // be stored in some container to avoid defining one method for each
-    // variable.
-
-    std::vector<double> const& getIntPtDarcyVelocityGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDarcyVelocityLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
     std::tuple<
         std::vector<ConstitutiveRelations::ConstitutiveData<DisplacementDim>>,
         std::vector<
