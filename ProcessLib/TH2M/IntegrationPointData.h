@@ -10,19 +10,12 @@
 
 #pragma once
 
-#include <memory>
-
-#include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
-#include "MathLib/KelvinVector.h"
-#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
-#include "ParameterLib/Parameter.h"
-
 namespace ProcessLib
 {
 namespace TH2M
 {
-template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
-          typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
+template <typename ShapeMatrixTypeDisplacement,
+          typename ShapeMatricesTypePressure>
 struct IntegrationPointData final
 {
     using GlobalDimMatrixType =
@@ -37,8 +30,6 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
 
 }  // namespace TH2M

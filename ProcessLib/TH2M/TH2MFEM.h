@@ -201,11 +201,9 @@ private:
 private:
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
-    using IpData =
-        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
-                             ShapeMatricesTypePressure, DisplacementDim,
-                             ShapeFunctionDisplacement::NPOINTS>;
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    using IpData = IntegrationPointData<ShapeMatricesTypeDisplacement,
+                                        ShapeMatricesTypePressure>;
+    std::vector<IpData> _ip_data;
 
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
