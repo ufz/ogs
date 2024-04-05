@@ -202,26 +202,6 @@ private:
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocityVapourGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocityGasGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocitySoluteLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocityLiquidLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
 
     std::tuple<
         std::vector<ConstitutiveRelations::ConstitutiveData<DisplacementDim>>,

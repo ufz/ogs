@@ -12,6 +12,7 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "ConstitutiveDensity.h"
+#include "DiffusionVelocity.h"
 #include "ElasticTangentStiffnessData.h"
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
@@ -103,6 +104,7 @@ struct OutputData
     VapourPartialPressureData vapour_pressure_data;
     PorosityData porosity_data;
     SolidDensityData solid_density_data;
+    DiffusionVelocityData<DisplacementDim> diffusion_velocity_data;
 
     static auto reflect()
     {
@@ -115,7 +117,8 @@ struct OutputData
                                               &Self::fluid_density_data,
                                               &Self::vapour_pressure_data,
                                               &Self::porosity_data,
-                                              &Self::solid_density_data);
+                                              &Self::solid_density_data,
+                                              &Self::diffusion_velocity_data);
     }
 };
 

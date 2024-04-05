@@ -36,11 +36,6 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
-    GlobalDimVectorType d_CG;
-    GlobalDimVectorType d_WG;
-    GlobalDimVectorType d_CL;
-    GlobalDimVectorType d_WL;
-
     GlobalDimVectorType w_GS;
     GlobalDimVectorType w_LS;
 
