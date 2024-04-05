@@ -50,12 +50,10 @@ public:
           NumLib::GenericIntegrationMethod const& integration_method,
           bool const is_axially_symmetric,
           HTProcessData const& process_data,
-          NumLib::ShapeMatrixCache const& shape_matrix_cache,
           const unsigned dof_per_node)
         : HTLocalAssemblerInterface(),
           _element(element),
           _process_data(process_data),
-          _shape_matrix_cache(shape_matrix_cache),
           _integration_method(integration_method)
     {
         // This assertion is valid only if all nodal d.o.f. use the same shape
@@ -169,7 +167,6 @@ public:
 protected:
     MeshLib::Element const& _element;
     HTProcessData const& _process_data;
-    NumLib::ShapeMatrixCache const& _shape_matrix_cache;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
     std::vector<IntegrationPointData<GlobalDimNodalMatrixType>> _ip_data;
@@ -271,7 +268,7 @@ protected:
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
         auto const& Ns =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip = 0; ip < n_integration_points; ++ip)

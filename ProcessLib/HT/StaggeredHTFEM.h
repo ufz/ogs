@@ -58,11 +58,10 @@ public:
                    std::size_t const local_matrix_size,
                    NumLib::GenericIntegrationMethod const& integration_method,
                    bool is_axially_symmetric,
-                   HTProcessData const& process_data,
-                   NumLib::ShapeMatrixCache const& shape_matrix_cache)
-        : HTFEM<ShapeFunction, GlobalDim>(
-              element, local_matrix_size, integration_method,
-              is_axially_symmetric, process_data, shape_matrix_cache, 1)
+                   HTProcessData const& process_data)
+        : HTFEM<ShapeFunction, GlobalDim>(element, local_matrix_size,
+                                          integration_method,
+                                          is_axially_symmetric, process_data, 1)
     {
     }
 
