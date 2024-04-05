@@ -270,11 +270,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_L * ip_out.fluid_density_data.rho_LR * c.uL +
             phi_S * ip_out.solid_density_data.rho_SR * u_S;
 
-        ip_data.rho_G_h_G =
-            phi_G * ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G;
-        ip_data.rho_L_h_L =
-            phi_L * ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L;
-        ip_data.rho_S_h_S =
+        ip_cv.effective_volumetric_enthalpy_data.rho_h_eff =
+            phi_G * ip_out.fluid_density_data.rho_GR *
+                ip_out.enthalpy_data.h_G +
+            phi_L * ip_out.fluid_density_data.rho_LR *
+                ip_out.enthalpy_data.h_L +
             phi_S * ip_out.solid_density_data.rho_SR * ip_out.enthalpy_data.h_S;
 
         // for variable output
@@ -322,7 +322,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
         // ---------------------------------------------------------------------
-        ip_cv.drho_u_eff_dT =
+        ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dT =
             phi_G * c.drho_GR_dT * c.uG +
             phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dT +
             phi_L * c.drho_LR_dT * c.uL +
@@ -352,14 +352,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const drho_LR_dp_cap = -c.drho_LR_dp_LR;
         // drho_GR_dp_cap = 0;
 
-        ip_cv.drho_h_eff_dp_GR =
+        ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_GR =
             /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR *
                 ip_out.enthalpy_data.h_G +*/
             phi_G * c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G +
             /*(dphi_L_dp_GR = 0) * ip_out.fluid_density_data.rho_LR *
                 ip_out.enthalpy_data.h_L +*/
             phi_L * drho_LR_dp_GR * ip_out.enthalpy_data.h_L;
-        ip_cv.drho_h_eff_dp_cap =
+        ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_cap =
             dphi_G_dp_cap * ip_out.fluid_density_data.rho_GR *
                 ip_out.enthalpy_data.h_G +
             /*phi_G * (drho_GR_dp_cap = 0) * ip_out.enthalpy_data.h_G +*/
@@ -370,7 +370,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // TODO (naumov) Extend for temperature dependent porosities.
         constexpr double dphi_G_dT = 0;
         constexpr double dphi_L_dT = 0;
-        ip_cv.drho_h_eff_dT =
+        ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dT =
             dphi_G_dT * ip_out.fluid_density_data.rho_GR *
                 ip_out.enthalpy_data.h_G +
             phi_G * c.drho_GR_dT * ip_out.enthalpy_data.h_G +
@@ -386,7 +386,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_S * ip_out.solid_density_data.rho_SR *
                 ip_cv.solid_heat_capacity_data();
 
-        ip_cv.drho_u_eff_dp_GR =
+        ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dp_GR =
             /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR * c.uG +*/
             phi_G * c.drho_GR_dp_GR * c.uG +
             phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dp_GR +
@@ -394,7 +394,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_L * drho_LR_dp_GR * c.uL +
             phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dp_GR;
 
-        ip_cv.drho_u_eff_dp_cap =
+        ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dp_cap =
             dphi_G_dp_cap * ip_out.fluid_density_data.rho_GR * c.uG +
             /*phi_G * (drho_GR_dp_cap = 0) * c.uG +*/
             dphi_L_dp_cap * ip_out.fluid_density_data.rho_LR * c.uL +
@@ -1127,12 +1127,6 @@ void TH2MLocalAssembler<
         auto const rho_W_LR_dot =
             (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
 
-        auto const rho_h_eff = ip.rho_G_h_G + ip.rho_L_h_L + ip.rho_S_h_S;
-
-        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
-                                    **prev_state.internal_energy_data) /
-                                   dt;
-
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
             ip_cv.viscosity_data.mu_GR;
@@ -1318,11 +1312,16 @@ void TH2MLocalAssembler<
         //  - temperature equation
         // ---------------------------------------------------------------------
 
-        MTu.noalias() += NTT * rho_h_eff * mT * Bu * w;
+        MTu.noalias() += NTT *
+                         ip_cv.effective_volumetric_enthalpy_data.rho_h_eff *
+                         mT * Bu * w;
 
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
 
+        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
+                                    **prev_state.internal_energy_data) /
+                                   dt;
         fT.noalias() -= NTT * rho_u_eff_dot * w;
 
         fT.noalias() += gradNTT *
@@ -1620,12 +1619,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             dt;
         auto const rho_W_LR_dot =
             (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
-
-        auto const rho_h_eff = ip.rho_G_h_G + ip.rho_L_h_L + ip.rho_S_h_S;
-
-        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
-                                    **prev_state.internal_energy_data) /
-                                   dt;
 
         GlobalDimMatrixType const k_over_mu_G =
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
@@ -1961,28 +1954,36 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         //  - temperature equation
         // ---------------------------------------------------------------------
 
-        MTu.noalias() += NTT * rho_h_eff * mT * Bu * w;
+        MTu.noalias() += NTT *
+                         ip_cv.effective_volumetric_enthalpy_data.rho_h_eff *
+                         mT * Bu * w;
 
         // dfT_4/dp_GR
         // d (MTu * u_dot)/dp_GR
         local_Jac
             .template block<temperature_size, C_size>(temperature_index,
                                                       C_index)
-            .noalias() += NTT * ip_cv.drho_h_eff_dp_GR * div_u_dot * NT * w;
+            .noalias() +=
+            NTT * ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_GR *
+            div_u_dot * NT * w;
 
         // dfT_4/dp_cap
         // d (MTu * u_dot)/dp_cap
         local_Jac
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
-            .noalias() -= NTT * ip_cv.drho_h_eff_dp_cap * div_u_dot * NT * w;
+            .noalias() -=
+            NTT * ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_cap *
+            div_u_dot * NT * w;
 
         // dfT_4/dT
         // d (MTu * u_dot)/dT
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() += NTT * ip_cv.drho_h_eff_dT * div_u_dot * NT * w;
+            .noalias() +=
+            NTT * ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dT *
+            div_u_dot * NT * w;
 
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
@@ -2017,26 +2018,38 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                           gradT * NT * w;
 
         // fT_1
+        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
+                                    **prev_state.internal_energy_data) /
+                                   dt;
         fT.noalias() -= NTT * rho_u_eff_dot * w;
 
         // dfT_1/dp_GR
         local_Jac
             .template block<temperature_size, C_size>(temperature_index,
                                                       C_index)
-            .noalias() += NpT / dt * ip_cv.drho_u_eff_dp_GR * Np * w;
+            .noalias() += NpT * Np *
+                          (ip_cv.effective_volumetric_internal_energy_d_data
+                               .drho_u_eff_dp_GR /
+                           dt * w);
 
         // dfT_1/dp_cap
         local_Jac
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
-            .noalias() += NpT / dt * ip_cv.drho_u_eff_dp_cap * Np * w;
+            .noalias() += NpT * Np *
+                          (ip_cv.effective_volumetric_internal_energy_d_data
+                               .drho_u_eff_dp_cap /
+                           dt * w);
 
         // dfT_1/dT
         // MTT
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() += NTT * ip_cv.drho_u_eff_dT / dt * NT * w;
+            .noalias() +=
+            NTT * NT *
+            (ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dT /
+             dt * w);
 
         // fT_2
         fT.noalias() += gradNTT *

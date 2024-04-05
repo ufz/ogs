@@ -18,5 +18,12 @@ namespace ConstitutiveRelations
 {
 using InternalEnergyData =
     BaseLib::StrongType<double, struct InternalEnergyTag>;
+
+struct EffectiveVolumetricInternalEnergyDerivatives
+{
+    double drho_u_eff_dT = nan;
+    double drho_u_eff_dp_GR = nan;
+    double drho_u_eff_dp_cap = nan;
+};
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

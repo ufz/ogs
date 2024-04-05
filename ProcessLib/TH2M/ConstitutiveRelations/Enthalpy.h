@@ -33,5 +33,17 @@ struct EnthalpyData
     }
 };
 
+struct EffectiveVolumetricEnthalpy
+{
+    double rho_h_eff = nan;
+};
+
+struct EffectiveVolumetricEnthalpyDerivatives
+{
+    double drho_h_eff_dT = nan;
+    double drho_h_eff_dp_GR = nan;
+    double drho_h_eff_dp_cap = nan;
+};
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
