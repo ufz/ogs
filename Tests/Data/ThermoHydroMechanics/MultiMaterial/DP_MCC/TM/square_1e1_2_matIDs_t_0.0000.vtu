@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="IntegrationPointMetaData" NumberOfTuples="761" format="appended" RangeMin="34"                   RangeMax="125"                  offset="0"                   />
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="25" format="appended" RangeMin="45"                   RangeMax="121"                  offset="284"                 />
+      <DataArray type="Float64" Name="epsilon_ip" NumberOfComponents="4" NumberOfTuples="48" format="appended" RangeMin="0"                    RangeMax="0"                    offset="372"                 />
+      <DataArray type="Float64" Name="epsilon_m_ip" NumberOfComponents="4" NumberOfTuples="48" format="appended" RangeMin="0"                    RangeMax="0"                    offset="444"                 />
+      <DataArray type="Float64" Name="material_state_variable_ElasticStrain_ip" NumberOfComponents="4" NumberOfTuples="48" format="appended" RangeMin="0"                    RangeMax="0"                    offset="516"                 />
+      <DataArray type="Float64" Name="material_state_variable_EquivalentPlasticStrain_ip" NumberOfTuples="48" format="appended" RangeMin="0"                    RangeMax="0"                    offset="588"                 />
+      <DataArray type="Float64" Name="material_state_variable_PlasticVolumetricStrain_ip" NumberOfTuples="24" format="appended" RangeMin="0"                    RangeMax="0"                    offset="652"                 />
+      <DataArray type="Float64" Name="material_state_variable_PreConsolidationPressure_ip" NumberOfTuples="24" format="appended" RangeMin="200000"               RangeMax="200000"               offset="712"                 />
+      <DataArray type="Float64" Name="material_state_variable_VolumeRatio_ip" NumberOfTuples="24" format="appended" RangeMin="1.78"                 RangeMax="1.78"                 offset="780"                 />
+      <DataArray type="Float64" Name="sigma_ip" NumberOfComponents="4" NumberOfTuples="48" format="appended" RangeMin="0"                    RangeMax="0"                    offset="852"                 />
+    </FieldData>
+    <Piece NumberOfPoints="20"                   NumberOfCells="12"                  >
+      <PointData>
+        <DataArray type="Float64" Name="ElasticStrain" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="0"                    offset="924"                 />
+        <DataArray type="Float64" Name="EquivalentPlasticStrain" format="appended" RangeMin="0"                    RangeMax="0"                    offset="988"                 />
+        <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1048"                />
+        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1108"                />
+        <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1168"                />
+        <DataArray type="Float64" Name="PlasticVolumetricStrain" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1232"                />
+        <DataArray type="Float64" Name="PreConsolidationPressure" format="appended" RangeMin="0"                    RangeMax="200000"               offset="1292"                />
+        <DataArray type="Float64" Name="VolumeRatio" format="appended" RangeMin="0"                    RangeMax="1.78"                 offset="1384"                />
+        <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1484"                />
+        <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1548"                />
+        <DataArray type="Float64" Name="epsilon_m" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1612"                />
+        <DataArray type="Float64" Name="pressure" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1676"                />
+        <DataArray type="Float64" Name="pressure_interpolated" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1736"                />
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="0"                    offset="1796"                />
+        <DataArray type="Float64" Name="temperature" format="appended" RangeMin="273.15"               RangeMax="273.15"               offset="1860"                />
+        <DataArray type="Float64" Name="temperature_interpolated" format="appended" RangeMin="273.15"               RangeMax="273.15"               offset="1928"                />
+      </PointData>
+      <CellData>
+        <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="1"                    offset="1996"                />
+        <DataArray type="Float64" Name="fluid_density_avg" format="appended" RangeMin="1e+299"               RangeMax="-1e+299"              offset="2064"                />
+        <DataArray type="UInt8" Name="pressure_active" format="appended" RangeMin="0"                    RangeMax="0"                    offset="2132"                />
+        <DataArray type="Float64" Name="stress_avg" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="0"                    offset="2192"                />
+        <DataArray type="Float64" Name="viscosity_avg" format="appended" RangeMin="1e+299"               RangeMax="-1e+299"              offset="2256"                />
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.4142135624"         offset="2324"                />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="2472"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="2628"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="2728"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAAAAAAAAgAAAAAAAAPkCAAAAAAAAtAAAAAAAAAA=eF61jz0LwkAMhv/LzV0Up67iLgouIkfaxhK4u9RcriCl/93zY3FRUbvlzUuehwyGgmIroMTBdpyTBRE4R1Puh6eSpUEx5bwwATya0kRqPVjqTN4kX6FYPtqafccBg2bAYizeILCL5HLh/4P5CeJBUQicjZon20MOlUO7chCV6q0K0FSKU6IeXMasP5XNvpY9FDt2yaPKxDLBJYfIjprbZc4xJsFpbPefNter14LDeAEk3BwxAQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9A1NzbTTTc1NU0xTEky0UvJLCqpBABLoAbhAQAAAAAAAAAAgAAAAAAAAAAGAAAAAAAAFAAAAAAAAAA=eF5jYBgFo2AUjIJRMBIBAAYAAAE=AQAAAAAAAAAAgAAAAAAAAAAGAAAAAAAAFAAAAAAAAAA=eF5jYBgFo2AUjIJRMBIBAAYAAAE=AQAAAAAAAAAAgAAAAAAAAAAGAAAAAAAAFAAAAAAAAAA=eF5jYBgFo2AUjIJRMBIBAAYAAAE=AQAAAAAAAAAAgAAAAAAAAIABAAAAAAAADQAAAAAAAAA=eF5jYBgFAwkAAYAAAQ==AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAADAAAAAAAAAA=eF5jYBjaAAAAwAABAQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAAEgAAAAAAAAA=eF5jYACCLA5HhiFKAwAuYhDJAQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAAEwAAAAAAAAA=eF6rFlnn/rDqj331EKUB+3xicQ==AQAAAAAAAAAAgAAAAAAAAAAGAAAAAAAAFAAAAAAAAAA=eF5jYBgFo2AUjIJRMBIBAAYAAAE=AQAAAAAAAAAAgAAAAAAAAIACAAAAAAAADwAAAAAAAAA=eF5jYBgFo2DgAAACgAABAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAEABAAAAAAAADQAAAAAAAAA=eF5jYBgFlAAAAUAAAQ==AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAJAAAAAAAAAA=eF5jYMACsjgcGaE0E5TGpgwujk5ToO4/CGRyOP6D0gCzEBJbAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAKQAAAAAAAAA=eF5jYEAFVSLr3B9W/bGvhtI1UBpNGUMlVLwKjSZXXQVUHJ0GAN1jMSg=AQAAAAAAAAAAgAAAAAAAAEABAAAAAAAADQAAAAAAAAA=eF5jYBgFlAAAAUAAAQ==AQAAAAAAAAAAgAAAAAAAAIACAAAAAAAADwAAAAAAAAA=eF5jYBgFo2DgAAACgAABAQAAAAAAAAAAgAAAAAAAAIACAAAAAAAADwAAAAAAAAA=eF5jYBgFo2DgAAACgAABAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAADAAAAAAAAAA=eF5jYBjcAAAAoAABAQAAAAAAAAAAgAAAAAAAAIACAAAAAAAADwAAAAAAAAA=eF5jYBgFo2DgAAACgAABAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAEgAAAAAAAAA=eF5LSwMCoUKHtEFKAwBlfzcVAQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAEgAAAAAAAAA=eF5LSwMCoUKHtEFKAwBlfzcVAQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAEQAAAAAAAAA=eF5jYIAARiiGAVx8AAC0AAc=AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAEAAAAAAAAAA=eF5jYACBH/UMNKIBIzERlQ==AQAAAAAAAAAAgAAAAAAAAAwAAAAAAAAACwAAAAAAAAA=eF5jYEAAAAAMAAE=AQAAAAAAAAAAgAAAAAAAAIABAAAAAAAADQAAAAAAAAA=eF5jYBgFAwkAAYAAAQ==AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAEAAAAAAAAAA=eF5jYACBH/UMNKIBIzERlQ==AQAAAAAAAAAAgAAAAAAAAOABAAAAAAAATgAAAAAAAAA=eF590LEJACAMRNFs5hTuncY+jZAyIwiCiNHvdXlXHETkFy1vN3AHD3CROtNSr+XtBu7gAb52O+xmN3AHD/Ddn/f6c3YDd/C4fADMATcAAQAAAAAAAAAAgAAAAAAAAIABAAAAAAAAUwAAAAAAAAA=eF5djTcOwEAQhM45+xz+/1cXHhq2QUJotpT/mnAMB/k2nNThu3BWh+/DRR1/2NvCVZ69XR2evUMdnr+nOv6wd4VVnr1bHZ69Rx2ev6+6DwNvAck=AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAKAAAAAAAAAA=eF5jYYAADijNA6UFoLQIlJaA0jJQWgFKq0BpDSitA6UNoDQALeABOQ==AQAAAAAAAAAAgAAAAAAAAAwAAAAAAAAACwAAAAAAAAA=eF7j5EQAAALKAG0=
+  </AppendedData>
+</VTKFile>
