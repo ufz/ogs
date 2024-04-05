@@ -155,10 +155,7 @@ private:
     MeshLib::Element const& _element;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
-    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>,
-                Eigen::aligned_allocator<
-                    IntegrationPointData<GlobalDimNodalMatrixType>>>
-        _ip_data;
+    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>> _ip_data;
 
     /**
      *  Calculator of the Laplacian and the gravity term for anisotropic
