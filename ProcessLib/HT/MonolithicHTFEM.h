@@ -124,7 +124,7 @@ public:
         ip_flux_vector.reserve(n_integration_points);
 
         auto const& Ns =
-            this->_shape_matrix_cache
+            process_data.shape_matrix_cache
                 .template NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         for (unsigned ip(0); ip < n_integration_points; ip++)
@@ -217,8 +217,8 @@ public:
         }
 
         NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
-            process_data.stabilizer, this->_ip_data, this->_shape_matrix_cache,
-            ip_flux_vector,
+            process_data.stabilizer, this->_ip_data,
+            process_data.shape_matrix_cache, ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             KTT);
     }

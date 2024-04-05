@@ -91,7 +91,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _shape_matrix_cache.NsHigherOrder<
+        auto const& N = _process_data.shape_matrix_cache.NsHigherOrder<
             typename ShapeFunction::MeshElement>()[integration_point];
 
         // assumes N is stored contiguously in memory
