@@ -186,10 +186,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         &LocalAssemblerInterface<
             DisplacementDim>::getIntPtDiffusionVelocityLiquidLiquid);
 
-    add_secondary_variable(
-        "enthalpy_solid", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpySolid);
-
     //
     // enable output of internal variables defined by material models
     //

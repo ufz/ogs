@@ -41,9 +41,6 @@ struct IntegrationPointData final
     double rho_L_h_L = std::numeric_limits<double>::quiet_NaN();
     double rho_S_h_S = std::numeric_limits<double>::quiet_NaN();
 
-    // specific enthalpies
-    double h_S = std::numeric_limits<double>::quiet_NaN();
-
     // internal energies
     double rho_u_eff = std::numeric_limits<double>::quiet_NaN();
     double rho_u_eff_prev = std::numeric_limits<double>::quiet_NaN();

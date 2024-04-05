@@ -190,6 +190,10 @@ private:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
+    // TODO: Here is some refactoring potential. All secondary variables could
+    // be stored in some container to avoid defining one method for each
+    // variable.
+
     std::vector<double> const& getIntPtDarcyVelocityGas(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -230,20 +234,6 @@ private:
         double const t, double const dt,
         ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
             models);
-
-    // TODO: Here is some refactoring potential. All secondary variables could
-    // be stored in some container to avoid defining one method for each
-    // variable.
-
-    virtual std::vector<double> const& getIntPtEnthalpySolid(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::h_S,
-                                                         cache);
-    }
 
 private:
     using BMatricesType =
