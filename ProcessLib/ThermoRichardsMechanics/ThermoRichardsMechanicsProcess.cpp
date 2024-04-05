@@ -216,13 +216,9 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("SetInitialConditions ThermoRichardsMechanicsProcess.");
 
-    auto get_a_dof_table_func = [this](const int process_id) -> auto&
-    {
-        return getDOFTable(process_id);
-    };
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, local_assemblers_,
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, t, process_id);
+        getDOFTables(x.size()), x, t, process_id);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
@@ -292,15 +288,10 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("PostTimestep ThermoRichardsMechanicsProcess.");
 
-    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-    {
-        return getDOFTable(processe_id);
-    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
 
@@ -313,15 +304,10 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("Compute the secondary variables for ThermoRichardsMechanicsProcess.");
 
-    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-    {
-        return getDOFTable(processe_id);
-    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 }
 

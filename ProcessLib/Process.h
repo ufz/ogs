@@ -193,6 +193,9 @@ public:
     }
 
 protected:
+    std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
+        int const number_of_processes) const;
+
     NumLib::Extrapolator& getExtrapolator() const
     {
         return _extrapolator_data.getExtrapolator();

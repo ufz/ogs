@@ -15,7 +15,6 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
-#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -329,14 +328,9 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
-    auto get_a_dof_table_func = [this](const int process_id) -> auto&
-    {
-        return getDOFTable(process_id);
-    };
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, t, process_id);
+        pv.getActiveElementIDs(), getDOFTables(x.size()), x, t, process_id);
 }
 
 template <int DisplacementDim>
@@ -436,17 +430,12 @@ void RichardsMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     {
         DBUG("PostTimestep RichardsMechanicsProcess.");
 
-        auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-        {
-            return getDOFTable(processe_id);
-        };
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerIF::postTimestep, _local_assemblers,
-            pv.getActiveElementIDs(),
-            NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t,
-            dt, process_id);
+            pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
+            process_id);
     }
 }
 
@@ -464,15 +453,10 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
     DBUG("Compute the secondary variables for RichardsMechanicsProcess.");
 
-    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-    {
-        return getDOFTable(processe_id);
-    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 }
 

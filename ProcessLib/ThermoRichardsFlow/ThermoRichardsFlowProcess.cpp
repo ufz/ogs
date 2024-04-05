@@ -16,7 +16,6 @@
 #include "MeshLib/Elements/Utils.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
-#include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
@@ -120,13 +119,9 @@ void ThermoRichardsFlowProcess::setInitialConditionsConcreteProcess(
     }
     DBUG("SetInitialConditions ThermoRichardsFlowProcess.");
 
-    auto get_a_dof_table_func = [this](const int process_id) -> auto&
-    {
-        return getDOFTable(process_id);
-    };
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, t, process_id);
+        getDOFTables(x.size()), x, t, process_id);
 }
 
 void ThermoRichardsFlowProcess::assembleConcreteProcess(
@@ -188,15 +183,10 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
 
     DBUG("PostTimestep ThermoRichardsFlowProcess.");
 
-    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-    {
-        return getDOFTable(processe_id);
-    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
+        pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
 
@@ -212,16 +202,11 @@ void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
         "Compute the secondary variables for "
         "ThermoRichardsFlowProcess.");
 
-    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-    {
-        return getDOFTable(processe_id);
-    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
+        pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 }
 

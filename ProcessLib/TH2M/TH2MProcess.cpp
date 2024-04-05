@@ -268,14 +268,9 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
 
     DBUG("Set initial conditions of TH2MProcess.");
 
-    auto get_a_dof_table_func = [this](const int process_id) -> auto&
-    {
-        return getDOFTable(process_id);
-    };
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,
-        local_assemblers_, NumLib::getDOFTables(x.size(), get_a_dof_table_func),
-        x, t, process_id);
+        local_assemblers_, getDOFTables(x.size()), x, t, process_id);
 }
 
 template <int DisplacementDim>
@@ -335,16 +330,11 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
 {
     DBUG("PostTimestep TH2MProcess.");
 
-    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-    {
-        return getDOFTable(processe_id);
-    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
-        local_assemblers_, pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t, dt,
-        process_id);
+        local_assemblers_, pv.getActiveElementIDs(), getDOFTables(x.size()), x,
+        x_prev, t, dt, process_id);
 }
 
 template <int DisplacementDim>
@@ -359,16 +349,11 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     DBUG("Compute the secondary variables for TH2MProcess.");
 
-    auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-    {
-        return getDOFTable(processe_id);
-    };
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
-        local_assemblers_, pv.getActiveElementIDs(),
-        NumLib::getDOFTables(x.size(), get_a_dof_table_func), t, dt, x, x_prev,
-        process_id);
+        local_assemblers_, pv.getActiveElementIDs(), getDOFTables(x.size()), t,
+        dt, x, x_prev, process_id);
 }
 
 template <int DisplacementDim>

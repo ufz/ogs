@@ -379,17 +379,12 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
     {
         DBUG("PostTimestep HydroMechanicsProcess.");
 
-        auto get_a_dof_table_func = [this](const int processe_id) -> auto&
-        {
-            return getDOFTable(processe_id);
-        };
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
-            _local_assemblers, pv.getActiveElementIDs(),
-            NumLib::getDOFTables(x.size(), get_a_dof_table_func), x, x_prev, t,
-            dt, process_id);
+            _local_assemblers, pv.getActiveElementIDs(), getDOFTables(x.size()),
+            x, x_prev, t, dt, process_id);
     }
 
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
