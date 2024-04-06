@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "Advection.h"
 #include "Biot.h"
 #include "Bishops.h"
 #include "ElasticTangentStiffnessModel.h"
@@ -74,6 +75,7 @@ struct ConstitutiveModels
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
     SolidHeatCapacityModel solid_heat_capacity_model;
     ThermalConductivityModel<DisplacementDim> thermal_conductivity_model;
+    AdvectionModel<DisplacementDim> advection_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

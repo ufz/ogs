@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "Advection.h"
 #include "Biot.h"
 #include "Bishops.h"
 #include "ConstitutiveDensity.h"
@@ -156,6 +157,7 @@ struct ConstitutiveTempData
     EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
     EffectiveVolumetricInternalEnergyDerivatives
         effective_volumetric_internal_energy_d_data;
+    AdvectionData<DisplacementDim> advection_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
@@ -185,8 +187,6 @@ struct ConstitutiveTempData
     DisplacementDimMatrix dfC_4_LCpC_d_dp_GR;
     DisplacementDimMatrix dfC_4_LCpC_d_dp_cap;
     DisplacementDimMatrix dfC_4_LCpC_d_dT;
-    DisplacementDimMatrix dadvection_C_dp_GR;
-    DisplacementDimMatrix dadvection_C_dp_cap;
     DisplacementDimMatrix dk_over_mu_G_dp_cap;
     DisplacementDimMatrix dk_over_mu_L_dp_cap;
     double dfC_4_MCpG_dp_GR = std::numeric_limits<double>::quiet_NaN();
@@ -215,6 +215,7 @@ struct ConstitutiveTempData
 template <int DisplacementDim>
 struct DerivativesData
 {
+    AdvectionDerivativeData<DisplacementDim> advection_d_data;
 };
 
 }  // namespace ConstitutiveRelations
