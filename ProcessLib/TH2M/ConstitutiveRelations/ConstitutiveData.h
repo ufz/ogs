@@ -209,5 +209,13 @@ struct ConstitutiveTempData
     double dfW_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double dfW_3a_dT = std::numeric_limits<double>::quiet_NaN();
 };
+
+/// Data that stores intermediate values (derivatives), which are not needed
+/// outside the constitutive setting.
+template <int DisplacementDim>
+struct DerivativesData
+{
+};
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

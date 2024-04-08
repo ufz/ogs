@@ -723,6 +723,68 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
+std::vector<ConstitutiveRelations::DerivativesData<DisplacementDim>>
+TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                   DisplacementDim>::
+    updateConstitutiveVariablesDerivatives(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        std::vector<
+            ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>> const&
+            ip_constitutive_variables,
+        ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
+            models)
+{
+    [[maybe_unused]] auto const matrix_size =
+        gas_pressure_size + capillary_pressure_size + temperature_size +
+        displacement_size;
+
+    assert(local_x.size() == matrix_size);
+
+    auto const temperature =
+        local_x.template segment<temperature_size>(temperature_index);
+    auto const temperature_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
+
+    auto const& medium =
+        *this->process_data_.media_map.getMedium(this->element_.getID());
+    ConstitutiveRelations::MediaData media_data{medium};
+
+    unsigned const n_integration_points =
+        this->integration_method_.getNumberOfPoints();
+
+    std::vector<ConstitutiveRelations::DerivativesData<DisplacementDim>>
+        ip_d_data(n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& ip_data = _ip_data[ip];
+        auto& ip_dd = ip_d_data[ip];
+        auto const& ip_cv = ip_constitutive_variables[ip];
+        auto const& ip_out = this->output_data_[ip];
+        auto const& current_state = this->current_states_[ip];
+
+        auto const& Nu = ip_data.N_u;
+        auto const& Np = ip_data.N_p;
+        auto const& NT = Np;
+
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, this->element_.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, Nu))};
+
+        double const T = NT.dot(temperature);
+        double const T_prev = NT.dot(temperature_prev);
+        ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
+    }
+
+    return ip_d_data;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
 std::size_t TH2MLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::setIPDataInitialConditions(std::string_view name,
@@ -1515,10 +1577,17 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                               local_x_prev.size()),
             t, dt, models);
 
+    auto const ip_d_data = updateConstitutiveVariablesDerivatives(
+        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
+        Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                          local_x_prev.size()),
+        t, dt, ip_constitutive_variables, models);
+
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
         auto& ip = _ip_data[int_point];
         auto& ip_cd = ip_constitutive_data[int_point];
+        auto& ip_dd = ip_d_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
         auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
