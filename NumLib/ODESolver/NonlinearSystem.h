@@ -137,7 +137,7 @@ public:
 
     //! Returns whether the assembled matrix \f$A\f$ has changed and the linear
     //! solver must perform the MathLib::EigenLinearSolver::compute() step.
-    virtual bool linearSolverNeedsToCompute() const = 0;
+    virtual LinearSolverBehaviour linearSolverNeedsToCompute() const = 0;
 };
 
 //! @}

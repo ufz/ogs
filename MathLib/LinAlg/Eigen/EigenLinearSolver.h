@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "EigenOption.h"
+#include "NumLib/ODESolver/NonlinearSystem.h"
 
 namespace MathLib
 {
@@ -52,8 +53,8 @@ public:
      * I.e., computes the (LU) decomposition in case of a direct solver, or
      * computes the preconditioner of an iterative solver.
      */
-    bool compute(EigenMatrix& A);
-
+    bool compute(EigenMatrix& A,
+                 NumLib::LinearSolverBehaviour const linear_solver_behaviour);
     /**
      * Solves the linear system for the given right-hand side \c b and initial
      * guess \c x.
@@ -64,7 +65,11 @@ public:
     bool solve(EigenVector& b, EigenVector& x);
 
     /// Computes and solves in a single call.
-    bool solve(EigenMatrix& A, EigenVector& b, EigenVector& x);
+    bool solve(EigenMatrix& A,
+               EigenVector& b,
+               EigenVector& x,
+               NumLib::LinearSolverBehaviour const linear_solver_behaviour =
+                   NumLib::LinearSolverBehaviour::RECOMPUTE);
 
 protected:
     EigenOption option_;

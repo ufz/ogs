@@ -62,7 +62,8 @@ public:
         return success;
     }
 
-    bool compute(Matrix& A, EigenOption& opt)
+    bool compute(Matrix& A, EigenOption& opt,
+                 NumLib::LinearSolverBehaviour const linear_solver_behaviour)
     {
 #ifdef USE_EIGEN_UNSUPPORTED
         if (opt.scaling)
@@ -74,13 +75,15 @@ public:
         }
 #endif
 
-        return computeImpl(A, opt);
+        return computeImpl(A, opt, linear_solver_behaviour);
     }
 
 protected:
     virtual bool solveImpl(Vector const& b, Vector& x, EigenOption& opt) = 0;
 
-    virtual bool computeImpl(Matrix& A, EigenOption& opt) = 0;
+    virtual bool computeImpl(
+        Matrix& A, EigenOption& opt,
+        NumLib::LinearSolverBehaviour const linear_solver_behaviour) = 0;
 
 private:
 #ifdef USE_EIGEN_UNSUPPORTED
@@ -110,7 +113,9 @@ public:
         return true;
     }
 
-    bool computeImpl(Matrix& A, EigenOption& opt) override
+    bool computeImpl(Matrix& A, EigenOption& opt,
+                     [[maybe_unused]] NumLib::LinearSolverBehaviour const
+                         linear_solver_behaviour) override
     {
         INFO("-> compute with Eigen direct linear solver {:s}",
              EigenOption::getSolverName(opt.solver_type));
@@ -236,7 +241,9 @@ template <class T_SOLVER>
 class EigenIterativeLinearSolver final : public EigenLinearSolverBase
 {
 public:
-    bool computeImpl(Matrix& A, EigenOption& opt) override
+    bool computeImpl(
+        Matrix& A, EigenOption& opt,
+        NumLib::LinearSolverBehaviour const linear_solver_behaviour) override
     {
         INFO("-> compute with Eigen iterative linear solver {:s} (precon {:s})",
              EigenOption::getSolverName(opt.solver_type),
@@ -257,17 +264,27 @@ public:
             T_SOLVER>::setResidualUpdate(opt.residualupdate);
 #endif
 
-        // matrix must be copied, because Eigen's linear solver stores a
-        // reference to it cf.
-        // https://libeigen.gitlab.io/docs/classEigen_1_1IterativeSolverBase.html#a7dfa55c55e82d697bde227696a630914
-        A_ = A;
-
-        if (!A_.isCompressed())
+        if (linear_solver_behaviour ==
+            NumLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE)
         {
-            A_.makeCompressed();
+            // matrix must be copied, because Eigen's linear solver stores a
+            // reference to it cf.
+            // https://libeigen.gitlab.io/docs/classEigen_1_1IterativeSolverBase.html#a7dfa55c55e82d697bde227696a630914
+            A_ = A;
+
+            if (!A_.isCompressed())
+            {
+                A_.makeCompressed();
+            }
+
+            solver_.compute(A_);
+        }
+        else if (linear_solver_behaviour ==
+                 NumLib::LinearSolverBehaviour::RECOMPUTE)
+        {
+            solver_.compute(A);
         }
 
-        solver_.compute(A_);
         if (solver_.info() != Eigen::Success)
         {
             ERR("Failed during Eigen linear solver initialization");
@@ -466,12 +483,13 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
 
 EigenLinearSolver::~EigenLinearSolver() = default;
 
-bool EigenLinearSolver::compute(EigenMatrix& A)
+bool EigenLinearSolver::compute(
+    EigenMatrix& A, NumLib::LinearSolverBehaviour const linear_solver_behaviour)
 {
     INFO("------------------------------------------------------------------");
     INFO("*** Eigen solver compute()");
 
-    return solver_->compute(A.getRawMatrix(), option_);
+    return solver_->compute(A.getRawMatrix(), option_, linear_solver_behaviour);
 }
 
 bool EigenLinearSolver::solve(EigenVector& b, EigenVector& x)
@@ -482,9 +500,12 @@ bool EigenLinearSolver::solve(EigenVector& b, EigenVector& x)
     return solver_->solve(b.getRawVector(), x.getRawVector(), option_);
 }
 
-bool EigenLinearSolver::solve(EigenMatrix& A, EigenVector& b, EigenVector& x)
+bool EigenLinearSolver::solve(
+    EigenMatrix& A, EigenVector& b, EigenVector& x,
+    NumLib::LinearSolverBehaviour const linear_solver_behaviour)
 {
-    return solver_->compute(A.getRawMatrix(), option_) &&
+    return solver_->compute(A.getRawMatrix(), option_,
+                            linear_solver_behaviour) &&
            solver_->solve(b.getRawVector(), x.getRawVector(), option_);
 }
 
