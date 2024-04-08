@@ -19,14 +19,10 @@ container:
       if [[ "$CI_COMMIT_BRANCH" == "master" ]] ; then
         export DOCKER_TAG_SERIAL="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial:latest"
         export DOCKER_TAG_PETSC="--tag $CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-petsc:latest"
-        export DOCKER_TAG_JUPYTER="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-serial-jupyter:latest"
-        export DOCKER_TAG_JUPYTER_PETSC="$CI_REGISTRY/ogs/$CI_PROJECT_NAME/ogs-petsc-jupyter:latest"
         export ON_MASTER_ARGS="--upload -C"
       else
         export DOCKER_TAG_SERIAL="--tag ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-serial:latest"
         export DOCKER_TAG_PETSC="--tag ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc:latest"
-        export DOCKER_TAG_JUPYTER="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-serial-jupyter:latest"
-        export DOCKER_TAG_JUPYTER_PETSC="ci-$CI_PROJECT_NAME-$CI_COMMIT_BRANCH-petsc-jupyter:latest"
       fi
     # serial container
     - >
@@ -66,29 +62,7 @@ container:
       --cmake_args ' -DOGS_BUILD_UTILS=OFF -DOGS_BUILD_TESTING=OFF'
       --gui
       --boost-sourceforge
-    ### Jupyter container ###
-    # Serial image
-    - >
-      poetry run ogscm compiler.py ogs.py ogs_jupyter.py -B -R --ogs ../..
-      --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:23.04_3.10'
-      --boost-sourceforge
-      --tag $DOCKER_TAG_JUPYTER
-      $ON_MASTER_ARGS
-    # PETSc image
-    - >
-      poetry run ogscm compiler.py mpi.py ogs.py ogs_jupyter.py -B -R --ogs ../..
-      --build_args ' --progress=plain' --cvode --ccache --cpmcache --mfront --cpu-target $CPU_TARGET
-      --cmake_args ' -DOGS_CPU_ARCHITECTURE=OFF -DOGS_BUILD_TESTING=OFF'
-      --runtime_base_image 'registry.opengeosys.org/ogs/ogs/jupyter/base-notebook-ubuntu:23.04_3.10'
-      --mpi_no_entrypoint
-      --boost-sourceforge
-      --tag $DOCKER_TAG_JUPYTER_PETSC
-      $ON_MASTER_ARGS
   artifacts:
     name: container
     paths:
       - ThirdParty/container-maker/_out/images/*.sif
-    exclude:
-      - ThirdParty/container-maker/_out/images/*jupyter*.sif
