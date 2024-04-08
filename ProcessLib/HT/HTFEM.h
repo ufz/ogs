@@ -79,7 +79,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
-                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
@@ -89,7 +89,8 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N;
+        auto const& N = _process_data.shape_matrix_cache.NsHigherOrder<
+            typename ShapeFunction::MeshElement>()[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -168,11 +169,7 @@ protected:
     HTProcessData const& _process_data;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
-    std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>> _ip_data;
 
     double getHeatEnergyCoefficient(
         MaterialPropertyLib::VariableArray const& vars, const double porosity,
@@ -270,11 +267,15 @@ protected:
             *_process_data.media_map.getMedium(_element.getID());
         auto const& liquid_phase = medium.phase("AqueousLiquid");
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             auto const& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
+            auto const& N = Ns[ip];
 
             pos.setIntegrationPoint(ip);
 

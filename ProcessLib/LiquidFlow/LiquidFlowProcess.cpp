@@ -41,7 +41,6 @@ LiquidFlowProcess::LiquidFlowProcess(
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
       _process_data(std::move(process_data)),
-      _shape_matrix_cache{integration_order},
       _surfaceflux(std::move(surfaceflux)),
       _is_linear(is_linear)
 {
@@ -60,7 +59,7 @@ void LiquidFlowProcess::initializeConcreteProcess(
     ProcessLib::createLocalAssemblers<LiquidFlowLocalAssembler>(
         mesh_space_dimension, mesh.getElements(), dof_table, _local_assemblers,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
-        _process_data, _shape_matrix_cache);
+        _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",

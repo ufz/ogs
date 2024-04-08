@@ -218,7 +218,8 @@ std::unique_ptr<Process> createHTProcess(
                                std::move(stabilizer),
                                projected_specific_body_force_vectors,
                                mesh_space_dimension,
-                               *aperture_size_parameter};
+                               *aperture_size_parameter,
+                               NumLib::ShapeMatrixCache{integration_order}};
 
     SecondaryVariableCollection secondary_variables;
 

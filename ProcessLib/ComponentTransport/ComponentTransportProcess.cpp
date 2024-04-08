@@ -23,6 +23,7 @@
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/NumericalStability/FluxCorrectedTransport.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "NumLib/ODESolver/NonlinearSystem.h"

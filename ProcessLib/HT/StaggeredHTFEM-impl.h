@@ -79,13 +79,17 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
     unsigned const n_integration_points =
         this->_integration_method.getNumberOfPoints();
 
+    auto const& Ns =
+        process_data.shape_matrix_cache
+            .template NsHigherOrder<typename ShapeFunction::MeshElement>();
+
     for (unsigned ip(0); ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
 
         auto const& ip_data = this->_ip_data[ip];
-        auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
+        auto const& N = Ns[ip];
         auto const& w = ip_data.integration_weight;
 
         double p_int_pt = 0.0;
@@ -208,13 +212,17 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
     double average_velocity_norm = 0.0;
     ip_flux_vector.reserve(n_integration_points);
 
+    auto const& Ns =
+        process_data.shape_matrix_cache
+            .template NsHigherOrder<typename ShapeFunction::MeshElement>();
+
     for (unsigned ip(0); ip < n_integration_points; ip++)
     {
         pos.setIntegrationPoint(ip);
 
         auto const& ip_data = this->_ip_data[ip];
-        auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
+        auto const& N = Ns[ip];
         auto const& w = ip_data.integration_weight;
 
         double p_at_xi = 0.;
@@ -279,8 +287,9 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
         average_velocity_norm += velocity.norm();
     }
 
-    NumLib::assembleAdvectionMatrix(
-        process_data.stabilizer, this->_ip_data, ip_flux_vector,
+    NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
+        process_data.stabilizer, this->_ip_data,
+        process_data.shape_matrix_cache, ip_flux_vector,
         average_velocity_norm / static_cast<double>(n_integration_points),
         local_K);
 }

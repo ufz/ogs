@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Parameter.h"
@@ -43,6 +44,9 @@ struct HTProcessData final
     /// cross section area of 1D element. For 3D element, the value is set to 1.
     ParameterLib::Parameter<double> const& aperture_size =
         ParameterLib::ConstantParameter<double>("constant_one", 1.0);
+
+    /// caches for each mesh element type the shape matrix
+    NumLib::ShapeMatrixCache shape_matrix_cache;
 };
 
 }  // namespace HT

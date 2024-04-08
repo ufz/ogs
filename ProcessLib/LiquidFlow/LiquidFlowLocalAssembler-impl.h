@@ -143,15 +143,16 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
         _process_data.specific_body_force;
 
-    auto const& N = _shape_matrix_cache
-                        .NsHigherOrder<typename ShapeFunction::MeshElement>();
+    auto const& Ns = _process_data.shape_matrix_cache
+                         .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
+        auto const& N = Ns[ip];
 
         double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, N[ip], p);
+        NumLib::shapeFunctionInterpolate(local_x, N, p);
         vars.liquid_phase_pressure = p;
 
         // Compute density:
@@ -176,7 +177,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         // Assemble mass matrix, M
         local_M.noalias() +=
             (porosity * ddensity_dpressure / fluid_density + storage) *
-            N[ip].transpose() * N[ip] * ip_data.integration_weight;
+            N.transpose() * N * ip_data.integration_weight;
 
         // Compute viscosity:
         auto const viscosity =
@@ -295,14 +296,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
         _process_data.specific_body_force;
 
-    auto const& N = _shape_matrix_cache
-                        .NsHigherOrder<typename ShapeFunction::MeshElement>();
+    auto const& Ns = _process_data.shape_matrix_cache
+                         .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& ip_data = _ip_data[ip];
+        auto const& N = Ns[ip];
         double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, N[ip], p);
+        NumLib::shapeFunctionInterpolate(local_x, N, p);
         vars.liquid_phase_pressure = p;
 
         // Compute density:
@@ -333,8 +335,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::IsotropicCalculator::
     calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)
@@ -355,8 +356,7 @@ Eigen::Matrix<double, GlobalDim, 1>
 LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::IsotropicCalculator::
     calculateVelocity(
         Eigen::Map<const NodalVectorType> const& local_p,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)
@@ -377,8 +377,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::AnisotropicCalculator::
     calculateLaplacianAndGravityTerm(
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)
@@ -399,8 +398,7 @@ Eigen::Matrix<double, GlobalDim, 1>
 LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::AnisotropicCalculator::
     calculateVelocity(
         Eigen::Map<const NodalVectorType> const& local_p,
-        IntegrationPointData<NodalRowVectorType,
-                             GlobalDimNodalMatrixType> const& ip_data,
+        IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
         GlobalDimMatrixType const& permeability, double const mu,
         double const rho_L, GlobalDimVectorType const& specific_body_force,
         bool const has_gravity)

@@ -34,7 +34,7 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+template <typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
     explicit IntegrationPointData(GlobalDimNodalMatrixType const& dNdx_,
@@ -86,12 +86,10 @@ public:
         std::size_t const /*local_matrix_size*/,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        LiquidFlowData const& process_data,
-        NumLib::ShapeMatrixCache const& shape_matrix_cache)
+        LiquidFlowData const& process_data)
         : _element(element),
           _integration_method(integration_method),
-          _process_data(process_data),
-          _shape_matrix_cache(shape_matrix_cache)
+          _process_data(process_data)
     {
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -137,7 +135,7 @@ public:
         const unsigned integration_point) const override
     {
         auto const& N =
-            _shape_matrix_cache
+            _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
 
         // assumes N is stored contiguously in memory
@@ -155,11 +153,7 @@ private:
     MeshLib::Element const& _element;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
-    std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>> _ip_data;
 
     /**
      *  Calculator of the Laplacian and the gravity term for anisotropic
@@ -170,16 +164,14 @@ private:
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
         static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
             Eigen::Map<const NodalVectorType> const& local_p,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
@@ -194,16 +186,14 @@ private:
         static void calculateLaplacianAndGravityTerm(
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
         static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
             Eigen::Map<const NodalVectorType> const& local_p,
-            IntegrationPointData<NodalRowVectorType,
-                                 GlobalDimNodalMatrixType> const& ip_data,
+            IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
             GlobalDimMatrixType const& permeability, double const mu,
             double const rho_L, GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
@@ -231,7 +221,6 @@ private:
                               VelocityCacheType& darcy_velocity_at_ips) const;
 
     const LiquidFlowData& _process_data;
-    NumLib::ShapeMatrixCache const& _shape_matrix_cache;
 };
 
 }  // namespace LiquidFlow

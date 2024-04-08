@@ -152,7 +152,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         mesh_space_dimension,
         std::move(specific_body_force),
         has_gravity,
-        *aperture_size_parameter};
+        *aperture_size_parameter,
+        NumLib::ShapeMatrixCache{integration_order}};
 
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,

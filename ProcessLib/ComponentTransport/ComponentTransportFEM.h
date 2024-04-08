@@ -25,6 +25,7 @@
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "NumLib/Function/Interpolation.h"
 #include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
@@ -37,18 +38,16 @@ namespace ProcessLib
 {
 namespace ComponentTransport
 {
-template <typename NodalRowVectorType, typename GlobalDimNodalMatrixType>
+template <typename GlobalDimNodalMatrixType>
 struct IntegrationPointData final
 {
-    IntegrationPointData(NodalRowVectorType const& N_,
-                         GlobalDimNodalMatrixType const& dNdx_,
+    IntegrationPointData(GlobalDimNodalMatrixType const& dNdx_,
                          double const& integration_weight_)
-        : N(N_), dNdx(dNdx_), integration_weight(integration_weight_)
+        : dNdx(dNdx_), integration_weight(integration_weight_)
     {
     }
 
     void pushBackState() { porosity_prev = porosity; }
-    NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     double const integration_weight;
 
@@ -278,7 +277,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data.emplace_back(
-                shape_matrices[ip].N, shape_matrices[ip].dNdx,
+                shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
@@ -325,12 +324,17 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
+            auto const& N = Ns[ip];
             auto const& chemical_system_id = ip_data.chemical_system_id;
 
             auto const n_component = _transport_process_variables.size();
@@ -369,12 +373,17 @@ public:
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
+            auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
             auto const& chemical_system_id = ip_data.chemical_system_id;
@@ -592,13 +601,17 @@ public:
             ip_flux_vector.reserve(n_integration_points);
         }
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
+            auto const& N = Ns[ip];
             auto const& w = ip_data.integration_weight;
             auto& porosity = ip_data.porosity;
 
@@ -719,9 +732,11 @@ public:
 
         if (!_process_data.non_advective_form)
         {
-            NumLib::assembleAdvectionMatrix(
+            NumLib::assembleAdvectionMatrix<
+                typename ShapeFunction::MeshElement>(
                 _process_data.stabilizer,
                 _ip_data,
+                _process_data.shape_matrix_cache,
                 ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
@@ -750,11 +765,15 @@ public:
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& w = ip_data.integration_weight;
+            auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
 
             auto const retardation_factor =
@@ -843,14 +862,18 @@ public:
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
 
@@ -967,14 +990,18 @@ public:
         double average_velocity_norm = 0.0;
         ip_flux_vector.reserve(n_integration_points);
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ip++)
         {
             pos.setIntegrationPoint(ip);
 
             auto const& ip_data = this->_ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto const& N = Ns[ip];
 
             double p_at_xi = 0.;
             NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
@@ -1043,8 +1070,9 @@ public:
             average_velocity_norm += velocity.norm();
         }
 
-        NumLib::assembleAdvectionMatrix(
-            process_data.stabilizer, this->_ip_data, ip_flux_vector,
+        NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
+            process_data.stabilizer, this->_ip_data,
+            _process_data.shape_matrix_cache, ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             local_K);
     }
@@ -1109,14 +1137,18 @@ public:
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
 
@@ -1240,10 +1272,10 @@ public:
 
         if (!_process_data.non_advective_form)
         {
-            NumLib::assembleAdvectionMatrix(
-                _process_data.stabilizer,
-                _ip_data,
-                ip_flux_vector,
+            NumLib::assembleAdvectionMatrix<
+                typename ShapeFunction::MeshElement>(
+                _process_data.stabilizer, _ip_data,
+                _process_data.shape_matrix_cache, ip_flux_vector,
                 average_velocity_norm /
                     static_cast<double>(n_integration_points),
                 KCC_Laplacian);
@@ -1307,14 +1339,18 @@ public:
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto const& N = Ns[ip];
             auto& phi = ip_data.porosity;
             auto const& phi_prev = ip_data.porosity_prev;
 
@@ -1429,14 +1465,18 @@ public:
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
+            auto const& N = Ns[ip];
             auto& phi = ip_data.porosity;
             auto const& phi_prev = ip_data.porosity_prev;
 
@@ -1513,8 +1553,9 @@ public:
             average_velocity_norm += q.norm();
         }
 
-        NumLib::assembleAdvectionMatrix(
-            _process_data.stabilizer, _ip_data, ip_flux_vector,
+        NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
+            _process_data.stabilizer, _ip_data,
+            _process_data.shape_matrix_cache, ip_flux_vector,
             average_velocity_norm / static_cast<double>(n_integration_points),
             KCC_Laplacian);
 
@@ -1552,13 +1593,18 @@ public:
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
         auto const component_id = transport_process_id - 1;
+
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
             pos.setIntegrationPoint(ip);
 
             auto& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const w = ip_data.integration_weight;
+            auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
             auto const chemical_system_id = ip_data.chemical_system_id;
@@ -1669,11 +1715,15 @@ public:
             *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             auto const& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
+            auto const& N = Ns[ip];
             auto const& porosity = ip_data.porosity;
 
             pos.setIntegrationPoint(ip);
@@ -1715,7 +1765,8 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _ip_data[integration_point].N;
+        auto const& N = _process_data.shape_matrix_cache.NsHigherOrder<
+            typename ShapeFunction::MeshElement>()[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -1896,11 +1947,15 @@ public:
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             auto const& ip_data = _ip_data[ip];
-            auto const& N = ip_data.N;
             auto const& dNdx = ip_data.dNdx;
+            auto const& N = Ns[ip];
             auto const& phi = ip_data.porosity;
 
             pos.setIntegrationPoint(ip);
@@ -1969,11 +2024,7 @@ private:
     std::vector<std::reference_wrapper<ProcessVariable>> const
         _transport_process_variables;
 
-    std::vector<
-        IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>,
-        Eigen::aligned_allocator<
-            IntegrationPointData<NodalRowVectorType, GlobalDimNodalMatrixType>>>
-        _ip_data;
+    std::vector<IntegrationPointData<GlobalDimNodalMatrixType>> _ip_data;
 
     double getHeatEnergyCoefficient(
         MaterialPropertyLib::VariableArray const& vars, const double porosity,

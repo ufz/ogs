@@ -13,6 +13,7 @@
 #include <Eigen/Core>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -34,6 +35,9 @@ struct LiquidFlowData final
     /// It stores aperture size, which is the thickness of 2D element or the
     /// cross section area of 1D element. For 3D element, the value is set to 1.
     ParameterLib::Parameter<double> const& aperture_size;
+
+    /// caches for each mesh element type the shape matrix
+    NumLib::ShapeMatrixCache shape_matrix_cache;
 };
 
 }  // namespace LiquidFlow

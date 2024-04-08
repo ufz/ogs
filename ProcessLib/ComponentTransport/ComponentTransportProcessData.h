@@ -17,6 +17,7 @@
 #include "LookupTable.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "NumLib/Fem/ShapeMatrixCache.h"
 #include "NumLib/NumericalStability/NumericalStabilization.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Parameter.h"
@@ -83,6 +84,9 @@ struct ComponentTransportProcessData
         ParameterLib::ConstantParameter<double>("constant_one", 1.0);
 
     bool const isothermal;
+
+    /// caches for each mesh element type the shape matrix
+    NumLib::ShapeMatrixCache shape_matrix_cache;
 
     static const int hydraulic_process_id = 0;
     // Thermal process is optional, indicated by -1. If present, it is positive.
