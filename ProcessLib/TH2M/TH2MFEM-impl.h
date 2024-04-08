@@ -251,8 +251,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.thermal_conductivity_model.eval(
             {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
-            ip_cv.porosity_d_data, current_state.S_L_data, ip_cv.dS_L_dp_cap,
-            ip_cv.thermal_conductivity_data, ip_cv.thermal_conductivity_d_data);
+            current_state.S_L_data, ip_cv.thermal_conductivity_data);
 
         models.advection_model.eval(current_state.constituent_density_data,
                                     ip_out.permeability_data,
@@ -778,6 +777,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_cv.dS_L_dp_cap,
                                      ip_cv.phase_transition_data,
                                      ip_dd.advection_d_data);
+
+        models.thermal_conductivity_model.dEval(
+            {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
+            ip_cv.porosity_d_data, current_state.S_L_data, ip_cv.dS_L_dp_cap,
+            ip_dd.thermal_conductivity_d_data);
     }
 
     return ip_d_data;
@@ -2079,7 +2083,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
             .noalias() += gradNTT *
-                          ip_cv.thermal_conductivity_d_data.dlambda_dp_cap *
+                          ip_dd.thermal_conductivity_d_data.dlambda_dp_cap *
                           gradT * Np * w;
 
         // d KTT/dT * T
@@ -2087,7 +2091,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
             .noalias() += gradNTT *
-                          ip_cv.thermal_conductivity_d_data.dlambda_dT * gradT *
+                          ip_dd.thermal_conductivity_d_data.dlambda_dT * gradT *
                           NT * w;
 
         // fT_1

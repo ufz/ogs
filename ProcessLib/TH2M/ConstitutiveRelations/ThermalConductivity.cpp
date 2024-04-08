@@ -19,11 +19,8 @@ template <int DisplacementDim>
 void ThermalConductivityModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     TemperatureData const& T_data, PorosityData const& porosity_data,
-    PorosityDerivativeData const& porosity_d_data,
-    SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_dp_cap,
-    ThermalConductivityData<DisplacementDim>& thermal_conductivity_data,
-    ThermalConductivityDerivativeData<DisplacementDim>&
-        thermal_conductivity_d_data) const
+    SaturationData const& S_L_data,
+    ThermalConductivityData<DisplacementDim>& thermal_conductivity_data) const
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
@@ -36,6 +33,22 @@ void ThermalConductivityModel<DisplacementDim>::eval(
 
     thermal_conductivity_data.lambda = MPL::formEigenTensor<DisplacementDim>(
         mpl_thermal_conductivity.value(variables, x_t.x, x_t.t, x_t.dt));
+}
+
+template <int DisplacementDim>
+void ThermalConductivityModel<DisplacementDim>::dEval(
+    SpaceTimeData const& x_t, MediaData const& media_data,
+    TemperatureData const& T_data, PorosityData const& porosity_data,
+    PorosityDerivativeData const& porosity_d_data,
+    SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_dp_cap,
+    ThermalConductivityDerivativeData<DisplacementDim>&
+        thermal_conductivity_d_data) const
+{
+    namespace MPL = MaterialPropertyLib;
+    MPL::VariableArray variables;
+    variables.temperature = T_data.T;
+    variables.porosity = porosity_data.phi;
+    variables.liquid_saturation = S_L_data.S_L;
 
     // Derivatives computed here and not in the MPL property because various
     // derivatives are not available in the VariableArray.
@@ -108,6 +121,7 @@ void ThermalConductivityModel<DisplacementDim>::eval(
         +phi_L * dlambda_LR_dT - porosity_d_data.dphi_dT * lambdaSR +
         phi_S * dlambda_SR_dT;
 }
+
 template struct ThermalConductivityModel<2>;
 template struct ThermalConductivityModel<3>;
 }  // namespace ConstitutiveRelations

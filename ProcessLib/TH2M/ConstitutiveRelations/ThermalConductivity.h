@@ -37,14 +37,19 @@ struct ThermalConductivityDerivativeData
 template <int DisplacementDim>
 struct ThermalConductivityModel
 {
-    void eval(
-        SpaceTimeData const& x_t, MediaData const& media_data,
-        TemperatureData const& T_data, PorosityData const& porosity_data,
-        PorosityDerivativeData const& porosity_d_data,
-        SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_dp_cap,
-        ThermalConductivityData<DisplacementDim>& thermal_conductivity_data,
-        ThermalConductivityDerivativeData<DisplacementDim>&
-            thermal_conductivity_d_data) const;
+    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+              TemperatureData const& T_data, PorosityData const& porosity_data,
+              SaturationData const& S_L_data,
+              ThermalConductivityData<DisplacementDim>&
+                  thermal_conductivity_data) const;
+
+    void dEval(SpaceTimeData const& x_t, MediaData const& media_data,
+               TemperatureData const& T_data, PorosityData const& porosity_data,
+               PorosityDerivativeData const& porosity_d_data,
+               SaturationData const& S_L_data,
+               SaturationDataDeriv const& dS_L_dp_cap,
+               ThermalConductivityDerivativeData<DisplacementDim>&
+                   thermal_conductivity_d_data) const;
 };
 
 extern template struct ThermalConductivityModel<2>;
