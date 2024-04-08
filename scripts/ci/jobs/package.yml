@@ -1,8 +1,7 @@
 create cpm cache:
   stage: package
-  tags: [docker]
-  needs: [meta, ci_images]
-  image: $CONTAINER_GCC_PM_OFF_IMAGE
+  tags: [envinf, shell]
+  needs: [meta]
   rules:
     - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
       when: never
@@ -75,9 +74,8 @@ create cpm cache:
 
 offline configure:
   stage: package
-  tags: [docker]
-  needs: [meta, ci_images]
-  image: $CONTAINER_GCC_PM_OFF_IMAGE
+  tags: [envinf, shell]
+  needs: [meta]
   rules:
     # For testing: remove rules-directive
     - if: '$CI_COMMIT_BRANCH == "master"'

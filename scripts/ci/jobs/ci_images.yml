@@ -30,21 +30,13 @@ ci_images:
       dotenv: build.env
   script:
     - |
-      echo "CONTAINER_GCC_PM_OFF_IMAGE=${CONTAINER_REGISTRY}/gcc-pm-off:${CONTAINER_TAG}" >> build.env
       echo "XUNIT_TO_JUNIT_IMAGE=${CONTAINER_REGISTRY}/xunit-to-junit:${CONTAINER_TAG}" >> build.env
       echo "PRECOMMIT_IMAGE=${CONTAINER_REGISTRY}/pre-commit:${CONTAINER_TAG}" >> build.env
       echo "WEB_IMAGE=${CONTAINER_REGISTRY}/web:${CONTAINER_TAG}" >> build.env
       cat build.env
       if [ "${BUILD_CONTAINER}" != true ]; then exit 0; fi
     - source build.env
-    - !reference [.container-maker-setup, before_script]
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - poetry run ogscm compiler.py mpi.py ogs.py --build --ogs off
-      --pm off --ccache
-      --version_file ../../web/data/versions.json
-      --tag $CONTAINER_GCC_PM_OFF_IMAGE --upload
-      --cpu-target $CPU_TARGET
-      --packages build-essential jq moreutils
     - cd ${CI_PROJECT_DIR}
     - docker build --cache-from $XUNIT_TO_JUNIT_IMAGE -t $XUNIT_TO_JUNIT_IMAGE -f scripts/docker/saxon/Dockerfile scripts/docker/saxon
     - docker push $XUNIT_TO_JUNIT_IMAGE
