@@ -30,7 +30,6 @@ ci_images:
       dotenv: build.env
   script:
     - |
-      echo "CONTAINER_GCC_GUI_IMAGE=${CONTAINER_REGISTRY}/gcc-gui:${CONTAINER_TAG}" >> build.env
       echo "CONTAINER_GCC_PM_OFF_IMAGE=${CONTAINER_REGISTRY}/gcc-pm-off:${CONTAINER_TAG}" >> build.env
       echo "XUNIT_TO_JUNIT_IMAGE=${CONTAINER_REGISTRY}/xunit-to-junit:${CONTAINER_TAG}" >> build.env
       echo "PRECOMMIT_IMAGE=${CONTAINER_REGISTRY}/pre-commit:${CONTAINER_TAG}" >> build.env
@@ -40,12 +39,6 @@ ci_images:
     - source build.env
     - !reference [.container-maker-setup, before_script]
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - poetry run ogscm compiler.py ogs.py --build --ogs off
-      --cvode --cppcheck --docs --gcovr --gui --ccache
-      --version_file ../../web/data/versions.json
-      --tag $CONTAINER_GCC_GUI_IMAGE --upload
-      --cpu-target $CPU_TARGET
-      --packages build-essential
     - poetry run ogscm compiler.py mpi.py ogs.py --build --ogs off
       --pm off --ccache
       --version_file ../../web/data/versions.json
