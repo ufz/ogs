@@ -1,6 +1,3 @@
-[submodule "ThirdParty/container-maker"]
-	path = ThirdParty/container-maker
-	url = https://gitlab.opengeosys.org/ogs/container-maker.git
 [submodule "ThirdParty/ogs6py"]
 	path = ThirdParty/ogs6py
 	url = https://github.com/joergbuchwald/ogs6py.git

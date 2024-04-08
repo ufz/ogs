@@ -22,12 +22,6 @@ cmake -DCMAKE_BUILD_TYPE=Release -DOGS_USE_INSITU=ON \
   -DOGS_BUILD_PROCESSES=SteadyStateDiffusion ../ogs
 ```
 
-**OR:** Build with [ogs-container-maker](https://github.com/ufz/ogs-container-maker):
-
-```bash
-ogscm compiler.py ogs.py --cmake_args ' -DOGS_BUILD_PROCESSES=SteadyStateDiffusion' --insitu -B -C -R
-```
-
 ### Run benchmark
 
 ```bash
