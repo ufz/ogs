@@ -15,6 +15,14 @@
 
 namespace NumLib
 {
+
+enum class LinearSolverBehaviour : int
+{
+    RECOMPUTE,
+    RECOMPUTE_AND_STORE,
+    REUSE
+};
+
 //! \addtogroup ODESolver
 //! @{
 
