@@ -252,7 +252,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.thermal_conductivity_model.eval(
             {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
             ip_cv.porosity_d_data, current_state.S_L_data, ip_cv.dS_L_dp_cap,
-            ip_cv.thermal_conductivity_data);
+            ip_cv.thermal_conductivity_data, ip_cv.thermal_conductivity_d_data);
 
         models.advection_model.eval(current_state.constituent_density_data,
                                     ip_out.permeability_data,
@@ -2079,15 +2079,16 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
             .noalias() += gradNTT *
-                          ip_cv.thermal_conductivity_data.dlambda_dp_cap *
+                          ip_cv.thermal_conductivity_d_data.dlambda_dp_cap *
                           gradT * Np * w;
 
         // d KTT/dT * T
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() += gradNTT * ip_cv.thermal_conductivity_data.dlambda_dT *
-                          gradT * NT * w;
+            .noalias() += gradNTT *
+                          ip_cv.thermal_conductivity_d_data.dlambda_dT * gradT *
+                          NT * w;
 
         // fT_1
         auto const rho_u_eff_dot = (current_state.internal_energy_data() -

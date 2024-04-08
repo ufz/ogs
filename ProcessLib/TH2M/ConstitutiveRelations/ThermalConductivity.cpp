@@ -21,7 +21,9 @@ void ThermalConductivityModel<DisplacementDim>::eval(
     TemperatureData const& T_data, PorosityData const& porosity_data,
     PorosityDerivativeData const& porosity_d_data,
     SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_dp_cap,
-    ThermalConductivityData<DisplacementDim>& thermal_conductivity_data) const
+    ThermalConductivityData<DisplacementDim>& thermal_conductivity_data,
+    ThermalConductivityDerivativeData<DisplacementDim>&
+        thermal_conductivity_d_data) const
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
@@ -88,7 +90,7 @@ void ThermalConductivityModel<DisplacementDim>::eval(
     // dphi_L_dp_GR = ds_L_dp_GR * phi = 0;
     double const dphi_L_dp_cap = dS_L_dp_cap() * porosity_data.phi;
 
-    thermal_conductivity_data.dlambda_dp_cap =
+    thermal_conductivity_d_data.dlambda_dp_cap =
         dphi_G_dp_cap * lambdaGR + dphi_L_dp_cap * lambdaLR;
 
     double const phi_L = S_L_data.S_L * porosity_data.phi;
@@ -99,7 +101,7 @@ void ThermalConductivityModel<DisplacementDim>::eval(
     // dphi_G_dT = -dS_L/dT * phi + (1 - S_L) * dphi_dT = (1 - S_L) * dphi_dT
     // dphi_L_dT =  dS_L/dT * phi +      S_L  * dphi_dT        S_L  * dphi_dT
     // dphi_S_dT =                             -dphi_dT              -dphi_dT
-    thermal_conductivity_data.dlambda_dT =
+    thermal_conductivity_d_data.dlambda_dT =
         (1 - S_L_data.S_L) * porosity_d_data.dphi_dT * lambdaGR +
         phi_G * dlambda_GR_dT +
         S_L_data.S_L * porosity_d_data.dphi_dT * lambdaLR +

@@ -153,6 +153,8 @@ struct ConstitutiveTempData
     SolidDensityDerivativeData solid_density_d_data;
     SolidHeatCapacityData solid_heat_capacity_data;
     ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
+    ThermalConductivityDerivativeData<DisplacementDim>
+        thermal_conductivity_d_data;
     EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
     EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
     EffectiveVolumetricInternalEnergyDerivatives
