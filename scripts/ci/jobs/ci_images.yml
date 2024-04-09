@@ -1,11 +1,9 @@
 .ci_images_changes: &ci_images_changes
   changes:
-    - ThirdParty/container-maker
     - scripts/ci/jobs/ci_images.yml
     - scripts/docker/saxon/**/*
     - scripts/docker/Dockerfile.pre-commit
     - scripts/docker/Dockerfile.web
-    - web/data/versions.json
 
 ci_images:
   stage: preparation
