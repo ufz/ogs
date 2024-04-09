@@ -27,9 +27,15 @@ note = "Download and unpack .zip-file"
 icon = "fab fa-windows"
 
 [[head_downloads]]
-name = "Latest Singularity container CLI with Utilities"
-url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/ThirdParty/container-maker/_out/images?job=container"
-note = "Download and run .sif-file with [Singularity](/docs/userguide/basics/container/)"
+name = "Latest container CLI with Utilities"
+url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs-serial.squashfs"
+note = "Download and run .squashfs-file with [Singularity](/docs/userguide/basics/container/)"
+icon = "far fa-container-storage"
+
+[[head_downloads]]
+name = "Latest container CLI with PETSc-support and Utilities"
+url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs-petsc.squashfs"
+note = "Download and run .squashfs-file with [Singularity](/docs/userguide/basics/container/)"
 icon = "far fa-container-storage"
 
 [[head_downloads]]
