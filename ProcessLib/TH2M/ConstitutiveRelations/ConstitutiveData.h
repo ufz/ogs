@@ -155,8 +155,6 @@ struct ConstitutiveTempData
     ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
     EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
     EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
-    EffectiveVolumetricInternalEnergyDerivatives
-        effective_volumetric_internal_energy_d_data;
     AdvectionData<DisplacementDim> advection_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
@@ -218,6 +216,8 @@ struct DerivativesData
     AdvectionDerivativeData<DisplacementDim> advection_d_data;
     ThermalConductivityDerivativeData<DisplacementDim>
         thermal_conductivity_d_data;
+    EffectiveVolumetricInternalEnergyDerivatives
+        effective_volumetric_internal_energy_d_data;
 };
 
 }  // namespace ConstitutiveRelations
