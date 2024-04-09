@@ -12,6 +12,7 @@
 #include "Advection.h"
 #include "Biot.h"
 #include "Bishops.h"
+#include "CEquation.h"
 #include "ElasticTangentStiffnessModel.h"
 #include "Enthalpy.h"
 #include "InternalEnergy.h"
@@ -80,6 +81,7 @@ struct ConstitutiveModels
     AdvectionModel<DisplacementDim> advection_model;
     InternalEnergyModel internal_energy_model;
     EffectiveVolumetricEnthalpyModel effective_volumetric_enthalpy_model;
+    FC2aModel fC_2a_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

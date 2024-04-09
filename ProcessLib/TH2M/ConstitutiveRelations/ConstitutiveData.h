@@ -12,6 +12,7 @@
 #include "Advection.h"
 #include "Biot.h"
 #include "Bishops.h"
+#include "CEquation.h"
 #include "ConstitutiveDensity.h"
 #include "DarcyVelocity.h"
 #include "DiffusionVelocity.h"
@@ -154,6 +155,7 @@ struct ConstitutiveTempData
     ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
     EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
     AdvectionData<DisplacementDim> advection_data;
+    FC2aData fC_2a;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
@@ -192,9 +194,6 @@ struct ConstitutiveTempData
     double dfC_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfC_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
     double dfC_3a_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfC_2a_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double dfC_2a_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dfC_2a_dT = std::numeric_limits<double>::quiet_NaN();
     double dfW_2a_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfW_2b_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfW_2a_dp_cap = std::numeric_limits<double>::quiet_NaN();
@@ -218,6 +217,7 @@ struct DerivativesData
     EffectiveVolumetricInternalEnergyDerivatives
         effective_volumetric_internal_energy_d_data;
     EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
+    FC2aDerivativeData dfC_2a;
 };
 
 }  // namespace ConstitutiveRelations
