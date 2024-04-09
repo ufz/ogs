@@ -181,8 +181,6 @@ struct ConstitutiveTempData
     double drho_h_eff_dT = std::numeric_limits<double>::quiet_NaN();
     double drho_h_eff_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double drho_h_eff_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dh_G_dT = std::numeric_limits<double>::quiet_NaN();
-    double dh_L_dT = std::numeric_limits<double>::quiet_NaN();
     double dfC_4_MCpG_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfC_4_MCpG_dT = std::numeric_limits<double>::quiet_NaN();
     double dfC_4_MCT_dT = std::numeric_limits<double>::quiet_NaN();
