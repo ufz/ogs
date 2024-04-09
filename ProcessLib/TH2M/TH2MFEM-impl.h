@@ -348,8 +348,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             phi_L * drho_LR_dT * c.uL +
             phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dT +
             phi_S * ip_cv.solid_density_d_data.drho_SR_dT * u_S +
-            phi_S * ip_out.solid_density_data.rho_SR * cpS +
-            ip_cv.porosity_d_data.dphi_S_dT * ip_out.solid_density_data.rho_SR *
+            phi_S * ip_out.solid_density_data.rho_SR * cpS -
+            ip_cv.porosity_d_data.dphi_dT * ip_out.solid_density_data.rho_SR *
                 u_S;
 
         // ds_L_dp_GR = 0;
@@ -412,8 +412,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             dphi_G_dp_cap * lambdaGR + dphi_L_dp_cap * lambdaLR;
 
         ip_cv.dlambda_dT = phi_G * dlambda_GR_dT + phi_L * dlambda_LR_dT +
-                           phi_S * dlambda_SR_dT +
-                           ip_cv.porosity_d_data.dphi_S_dT * lambdaSR;
+                           phi_S * dlambda_SR_dT -
+                           ip_cv.porosity_d_data.dphi_dT * lambdaSR;
 
         // From p_LR = p_GR - p_cap it follows for
         // drho_LR/dp_GR = drho_LR/dp_LR * dp_LR/dp_GR
@@ -449,8 +449,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             dphi_L_dT * ip_out.fluid_density_data.rho_LR *
                 ip_out.enthalpy_data.h_L +
             phi_L * drho_LR_dT * ip_out.enthalpy_data.h_L +
-            phi_L * ip_out.fluid_density_data.rho_LR * c.dh_L_dT +
-            ip_cv.porosity_d_data.dphi_S_dT * ip_out.solid_density_data.rho_SR *
+            phi_L * ip_out.fluid_density_data.rho_LR * c.dh_L_dT -
+            ip_cv.porosity_d_data.dphi_dT * ip_out.solid_density_data.rho_SR *
                 ip_data.h_S +
             phi_S * ip_cv.solid_density_d_data.drho_SR_dT * ip_data.h_S +
             phi_S * ip_out.solid_density_data.rho_SR * cpS;
@@ -583,14 +583,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const drho_C_FR_dT = s_G * c.drho_C_GR_dT + s_L * c.drho_C_LR_dT;
         ip_cv.dfC_4_MCpG_dT =
             drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() +
-            rho_C_FR * ip_cv.porosity_d_data.dphi_S_dT * ip_cv.beta_p_SR();
+                ip_cv.beta_p_SR() -
+            rho_C_FR * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
 
         ip_cv.dfC_4_MCT_dT =
             drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
                 ip_cv.s_therm_exp_data.beta_T_SR
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            + rho_C_FR * (ip_cv.biot_data() + ip_cv.porosity_d_data.dphi_S_dT) *
+            + rho_C_FR * (ip_cv.biot_data() - ip_cv.porosity_d_data.dphi_dT) *
                   ip_cv.s_therm_exp_data.beta_T_SR
 #endif
             ;
@@ -619,15 +619,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ip_cv.beta_p_SR();
 
         ip_cv.dfC_2a_dT =
-            -ip_cv.porosity_d_data.dphi_S_dT *
+            ip_cv.porosity_d_data.dphi_dT *
                 (current_state.constituent_density_data.rho_C_LR -
                  current_state.constituent_density_data.rho_C_GR) +
             ip_out.porosity_data.phi * (c.drho_C_LR_dT - c.drho_C_GR_dT) -
             drho_C_FR_dT * pCap *
                 (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() -
-            rho_C_FR * pCap * ip_cv.porosity_d_data.dphi_S_dT *
-                ip_cv.beta_p_SR();
+                ip_cv.beta_p_SR() +
+            rho_C_FR * pCap * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
 
         ip_cv.dadvection_C_dp_GR = c.drho_C_GR_dp_GR * k_over_mu_G
                                    // + rhoCGR * (dk_over_mu_G_dp_GR = 0)
@@ -675,15 +674,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ip_cv.beta_p_SR();
 
         ip_cv.dfW_2a_dT =
-            -ip_cv.porosity_d_data.dphi_S_dT *
+            ip_cv.porosity_d_data.dphi_dT *
                 (current_state.rho_W_LR() -
                  current_state.constituent_density_data.rho_W_GR) +
             ip_out.porosity_data.phi * (c.drho_W_LR_dT - c.drho_W_GR_dT);
-        ip_cv.dfW_2b_dT = drho_W_FR_dT * pCap *
-                              (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                              ip_cv.beta_p_SR() +
-                          rho_W_FR * pCap * ip_cv.porosity_d_data.dphi_S_dT *
-                              ip_cv.beta_p_SR();
+        ip_cv.dfW_2b_dT =
+            drho_W_FR_dT * pCap *
+                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
+                ip_cv.beta_p_SR() -
+            rho_W_FR * pCap * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
 
         if (dt == 0.)
         {
@@ -1877,7 +1876,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
                 .noalias() += NpT *
-                              (-ip_cv.porosity_d_data.dphi_S_dT * a +
+                              (ip_cv.porosity_d_data.dphi_dT * a +
                                ip_out.porosity_data.phi * ip_cv.dfC_3a_dT) *
                               NT * w;
         }
@@ -2020,7 +2019,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
             .noalias() += NpT *
-                          (-ip_cv.porosity_d_data.dphi_S_dT *
+                          (ip_cv.porosity_d_data.dphi_dT *
                                (s_G * rho_W_GR_dot + s_L * rho_W_LR_dot) +
                            ip_out.porosity_data.phi * ip_cv.dfW_3a_dT) *
                           NT * w;

@@ -27,7 +27,7 @@ void PorosityModel::eval(SpaceTimeData const& x_t,
     porosity_data.phi =
         mpl_porosity.template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
-    porosity_d_data.dphi_S_dT = -mpl_porosity.template dValue<double>(
+    porosity_d_data.dphi_dT = mpl_porosity.template dValue<double>(
         variables, MaterialPropertyLib::Variable::temperature, x_t.x, x_t.t,
         x_t.dt);
 }
@@ -65,10 +65,9 @@ void PorosityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>::eval(
         variables, MaterialPropertyLib::Variable::temperature, x_t.x, x_t.t,
         x_t.dt);
 
-    auto const dphi_S_0_dT = -dphi_0_dT;
-    porosity_d_data.dphi_S_dT =
-        dphi_S_0_dT *
-            (1. + s_therm_exp_data.thermal_volume_strain - biot() * div_u) +
+    porosity_d_data.dphi_dT =
+        dphi_0_dT *
+            (1. + s_therm_exp_data.thermal_volume_strain - biot() * div_u) -
         (1. - phi_0) * s_therm_exp_data.beta_T_SR;
 }
 

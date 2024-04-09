@@ -21,7 +21,7 @@ namespace ConstitutiveRelations
 {
 struct PorosityDerivativeData
 {
-    double dphi_S_dT = nan;
+    double dphi_dT = nan;
 };
 
 struct PorosityData
