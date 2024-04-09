@@ -308,6 +308,6 @@ identifiers:
 repository-code: "https://github.com/ufz/ogs"
 url: "https://www.opengeosys.org"
 license: BSD-3-Clause
-version: 6.5.0
-date-released: "2023-30-11"
-doi: 10.5281/zenodo.2600042
+version: 6.5.1
+date-released: "2024-03-28"
+doi: 10.5281/zenodo.10890088
