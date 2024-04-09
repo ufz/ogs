@@ -43,8 +43,12 @@ struct SolidDensityModel
     void eval(SpaceTimeData const& x_t,
               MediaData const& media_data,
               TemperatureData const& T_data,
-              SolidDensityData& solid_density_data,
-              SolidDensityDerivativeData& solid_density_d_data) const;
+              SolidDensityData& solid_density_data) const;
+
+    void dEval(SpaceTimeData const& x_t,
+               MediaData const& media_data,
+               TemperatureData const& T_data,
+               SolidDensityDerivativeData& solid_density_d_data) const;
 };
 
 template <int DisplacementDim>
@@ -57,7 +61,15 @@ struct SolidDensityModelNonConstantSolidPhaseVolumeFraction
         BiotData const& biot,
         StrainData<DisplacementDim> const& strain_data,
         SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
-        SolidDensityData& solid_density_data,
+        SolidDensityData& solid_density_data) const;
+
+    void dEval(
+        SpaceTimeData const& x_t,
+        MediaData const& media_data,
+        TemperatureData const& T_data,
+        BiotData const& biot,
+        StrainData<DisplacementDim> const& strain_data,
+        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
         SolidDensityDerivativeData& solid_density_d_data) const;
 };
 

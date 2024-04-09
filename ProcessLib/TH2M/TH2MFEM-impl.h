@@ -239,12 +239,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
                                    ip_out.porosity_data, ip_cv.porosity_d_data);
 
-        models.solid_density_model.eval(
-            {pos, t, dt}, media_data, T_data,
+        models.solid_density_model.eval({pos, t, dt}, media_data, T_data,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_cv.biot_data, ip_out.eps_data, ip_cv.s_therm_exp_data,
+                                        ip_cv.biot_data, ip_out.eps_data,
+                                        ip_cv.s_therm_exp_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_out.solid_density_data, ip_cv.solid_density_d_data);
+                                        ip_out.solid_density_data);
 
         models.solid_heat_capacity_model.eval({pos, t, dt}, media_data, T_data,
                                               ip_cv.solid_heat_capacity_data);
@@ -715,6 +715,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cv.porosity_d_data, current_state.S_L_data, ip_cv.dS_L_dp_cap,
             ip_dd.thermal_conductivity_d_data);
 
+        models.solid_density_model.dEval({pos, t, dt}, media_data, T_data,
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+                                         ip_cv.biot_data, ip_out.eps_data,
+                                         ip_cv.s_therm_exp_data,
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+                                         ip_dd.solid_density_d_data);
+
         models.internal_energy_model.dEval(
             ip_out.enthalpy_data,
             ip_out.fluid_density_data,
@@ -724,7 +731,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.S_L_data,
             ip_cv.dS_L_dp_cap,
             ip_out.solid_density_data,
-            ip_cv.solid_density_d_data,
+            ip_dd.solid_density_d_data,
             ip_cv.solid_heat_capacity_data,
             ip_dd.effective_volumetric_internal_energy_d_data);
 
@@ -737,7 +744,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.S_L_data,
             ip_cv.dS_L_dp_cap,
             ip_out.solid_density_data,
-            ip_cv.solid_density_d_data,
+            ip_dd.solid_density_d_data,
             ip_cv.solid_heat_capacity_data,
             ip_dd.effective_volumetric_enthalpy_d_data);
     }
