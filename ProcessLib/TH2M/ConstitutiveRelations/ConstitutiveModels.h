@@ -13,6 +13,7 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "ElasticTangentStiffnessModel.h"
+#include "Enthalpy.h"
 #include "InternalEnergy.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityModel.h"
@@ -78,6 +79,7 @@ struct ConstitutiveModels
     ThermalConductivityModel<DisplacementDim> thermal_conductivity_model;
     AdvectionModel<DisplacementDim> advection_model;
     InternalEnergyModel internal_energy_model;
+    EffectiveVolumetricEnthalpyModel effective_volumetric_enthalpy_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

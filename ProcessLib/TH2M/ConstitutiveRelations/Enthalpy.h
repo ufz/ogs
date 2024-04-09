@@ -10,7 +10,14 @@
 #pragma once
 
 #include "Base.h"
+#include "Enthalpy.h"
+#include "FluidDensity.h"
+#include "PhaseTransitionData.h"
+#include "Porosity.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
+#include "Saturation.h"
+#include "SolidDensity.h"
+#include "SolidHeatCapacity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -45,5 +52,28 @@ struct EffectiveVolumetricEnthalpyDerivatives
     double drho_h_eff_dp_cap = nan;
 };
 
+struct EffectiveVolumetricEnthalpyModel
+{
+    void eval(
+        EnthalpyData const& enthalpy_data,
+        FluidDensityData const& fluid_density_data,
+        PorosityData const& porosity_data,
+        SaturationData const& S_L_data,
+        SolidDensityData const& solid_density_data,
+        EffectiveVolumetricEnthalpy& effective_volumetric_enthalpy_data) const;
+
+    void dEval(EnthalpyData const& enthalpy_data,
+               FluidDensityData const& fluid_density_data,
+               PhaseTransitionData const& phase_transition_data,
+               PorosityData const& porosity_data,
+               PorosityDerivativeData const& porosity_d_data,
+               SaturationData const& S_L_data,
+               SaturationDataDeriv const& dS_L_dp_cap,
+               SolidDensityData const& solid_density_data,
+               SolidDensityDerivativeData const& solid_density_d_data,
+               SolidHeatCapacityData const& solid_heat_capacity_data,
+               EffectiveVolumetricEnthalpyDerivatives&
+                   effective_volumetric_enthalpy_d_data) const;
+};
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
