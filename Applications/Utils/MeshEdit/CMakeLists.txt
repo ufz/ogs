@@ -30,15 +30,15 @@ set(TOOLS
 
 add_subdirectory(PVTU2VTU)
 
-ogs_add_executable(
-    RemoveGhostData RemoveGhostData.cpp
-    ${PROJECT_SOURCE_DIR}/ThirdParty/paraview/vtkCleanUnstructuredGrid.cpp
-)
-target_include_directories(
-    RemoveGhostData PRIVATE ${PROJECT_SOURCE_DIR}/ThirdParty/paraview
-)
+ogs_add_executable(RemoveGhostData RemoveGhostData.cpp)
 target_link_libraries(
-    RemoveGhostData GitInfoLib MeshLib MeshToolsLib tclap VTK::FiltersParallel
+    RemoveGhostData
+    GitInfoLib
+    MeshLib
+    MeshToolsLib
+    tclap
+    VTK::FiltersParallel
+    VTK::FiltersGeneral
 )
 install(TARGETS RemoveGhostData RUNTIME DESTINATION bin)
 
