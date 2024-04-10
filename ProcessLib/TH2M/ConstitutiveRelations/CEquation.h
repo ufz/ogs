@@ -123,5 +123,40 @@ struct FC4LCpGModel
 
 extern template struct FC4LCpGModel<2>;
 extern template struct FC4LCpGModel<3>;
+
+template <int DisplacementDim>
+struct FC4LCpCData
+{
+    GlobalDimMatrix<DisplacementDim> L;
+};
+
+template <int DisplacementDim>
+struct FC4LCpCDerivativeData
+{
+    GlobalDimMatrix<DisplacementDim> dp_GR;
+    GlobalDimMatrix<DisplacementDim> dp_cap;
+    GlobalDimMatrix<DisplacementDim> dT;
+};
+
+template <int DisplacementDim>
+struct FC4LCpCModel
+{
+    void eval(AdvectionData<DisplacementDim> const& advection_data,
+              FluidDensityData const& fluid_density_data,
+              PhaseTransitionData const& phase_transition_data,
+              PorosityData const& porosity_data,
+              SaturationData const& S_L_data,
+              FC4LCpCData<DisplacementDim>& fC_4_LCpC) const;
+
+    void dEval(ConstituentDensityData const& constituent_density_data,
+               PermeabilityData<DisplacementDim> const& permeability_data,
+               PhaseTransitionData const& phase_transition_data,
+               SaturationDataDeriv const& dS_L_dp_cap,
+               ViscosityData const& viscosity_data,
+               FC4LCpCDerivativeData<DisplacementDim>& dfC_4_LCpC) const;
+};
+
+extern template struct FC4LCpCModel<2>;
+extern template struct FC4LCpCModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

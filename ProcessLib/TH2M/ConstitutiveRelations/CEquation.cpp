@@ -212,5 +212,68 @@ void FC4LCpGModel<DisplacementDim>::dEval(
 
 template struct FC4LCpGModel<2>;
 template struct FC4LCpGModel<3>;
+
+template <int DisplacementDim>
+void FC4LCpCModel<DisplacementDim>::eval(
+    AdvectionData<DisplacementDim> const& advection_data,
+    FluidDensityData const& fluid_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    PorosityData const& porosity_data,
+    SaturationData const& S_L_data,
+    FC4LCpCData<DisplacementDim>& fC_4_LCpC) const
+{
+    double const sD_G = phase_transition_data.diffusion_coefficient_vapour;
+    double const sD_L = phase_transition_data.diffusion_coefficient_solute;
+
+    double const phi_G = (1 - S_L_data.S_L) * porosity_data.phi;
+    double const phi_L = S_L_data.S_L * porosity_data.phi;
+
+    double const diffusion_CGpCap = -phi_G * fluid_density_data.rho_GR * sD_G *
+                                    phase_transition_data.dxmWG_dpCap;
+    double const diffusion_CLpCap = -phi_L * fluid_density_data.rho_LR * sD_L *
+                                    phase_transition_data.dxmWL_dpCap;
+
+    double const diffusion_C_pCap = diffusion_CGpCap + diffusion_CLpCap;
+
+    auto const I =
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
+
+    fC_4_LCpC.L.noalias() = diffusion_C_pCap * I - advection_data.advection_C_L;
+}
+
+template <int DisplacementDim>
+void FC4LCpCModel<DisplacementDim>::dEval(
+    ConstituentDensityData const& constituent_density_data,
+    PermeabilityData<DisplacementDim> const& permeability_data,
+    PhaseTransitionData const& phase_transition_data,
+    SaturationDataDeriv const& dS_L_dp_cap,
+    ViscosityData const& viscosity_data,
+    FC4LCpCDerivativeData<DisplacementDim>& dfC_4_LCpC) const
+{
+    ////// Diffusion Part /////
+    // TODO (naumov) d(diffusion_C_pCap)/dX for dxmW*/d* != 0
+
+    ////// Advection part /////
+    GlobalDimMatrix<DisplacementDim> const k_over_mu_L =
+        permeability_data.Ki * permeability_data.k_rel_L / viscosity_data.mu_LR;
+
+    dfC_4_LCpC.dp_GR = phase_transition_data.drho_C_LR_dp_GR * k_over_mu_L
+        //+ rhoCLR * (dk_over_mu_L_dp_GR = 0)
+        ;
+
+    auto const dk_over_mu_L_dp_cap = permeability_data.Ki *
+                                     permeability_data.dk_rel_L_dS_L *
+                                     dS_L_dp_cap() / viscosity_data.mu_LR;
+
+    dfC_4_LCpC.dp_cap = -phase_transition_data.drho_C_LR_dp_LR * k_over_mu_L +
+                        constituent_density_data.rho_C_LR * dk_over_mu_L_dp_cap;
+
+    dfC_4_LCpC.dT = phase_transition_data.drho_W_LR_dT * k_over_mu_L
+        //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
+        ;
+}
+
+template struct FC4LCpCModel<2>;
+template struct FC4LCpCModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
