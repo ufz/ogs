@@ -9,13 +9,17 @@
 
 #pragma once
 
+#include "Advection.h"
 #include "Base.h"
 #include "Biot.h"
 #include "ConstitutiveDensity.h"
+#include "FluidDensity.h"
+#include "PermeabilityData.h"
 #include "PhaseTransitionData.h"
 #include "Porosity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
+#include "Viscosity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -86,5 +90,38 @@ struct FC3aModel
         FC3aDerivativeData& dfC_3a) const;
 };
 
+template <int DisplacementDim>
+struct FC4LCpGData
+{
+    GlobalDimMatrix<DisplacementDim> L;
+};
+
+template <int DisplacementDim>
+struct FC4LCpGDerivativeData
+{
+    GlobalDimMatrix<DisplacementDim> dp_GR;
+    GlobalDimMatrix<DisplacementDim> dp_cap;
+    GlobalDimMatrix<DisplacementDim> dT;
+};
+
+template <int DisplacementDim>
+struct FC4LCpGModel
+{
+    void eval(AdvectionData<DisplacementDim> const& advection_data,
+              FluidDensityData const& fluid_density_data,
+              PhaseTransitionData const& phase_transition_data,
+              PorosityData const& porosity_data,
+              SaturationData const& S_L_data,
+              FC4LCpGData<DisplacementDim>& fC_4_LCpG) const;
+
+    void dEval(PermeabilityData<DisplacementDim> const& permeability_data,
+               ViscosityData const& viscosity_data,
+               PhaseTransitionData const& phase_transition_data,
+               AdvectionDerivativeData<DisplacementDim> const& advection_d_data,
+               FC4LCpGDerivativeData<DisplacementDim>& dfC_4_LCpG) const;
+};
+
+extern template struct FC4LCpGModel<2>;
+extern template struct FC4LCpGModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

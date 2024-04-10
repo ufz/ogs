@@ -157,6 +157,7 @@ struct ConstitutiveTempData
     AdvectionData<DisplacementDim> advection_data;
     FC2aData fC_2a;
     FC3aData fC_3a;
+    FC4LCpGData<DisplacementDim> fC_4_LCpG;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
@@ -179,7 +180,6 @@ struct ConstitutiveTempData
     DisplacementDimMatrix dfW_4_LWpC_d_dp_GR;
     DisplacementDimMatrix dfW_4_LWpC_d_dp_cap;
     DisplacementDimMatrix dfW_4_LWpC_d_dT;
-    DisplacementDimMatrix dfC_4_LCpG_dT;
     DisplacementDimMatrix dfC_4_LCpC_a_dp_GR;
     DisplacementDimMatrix dfC_4_LCpC_a_dp_cap;
     DisplacementDimMatrix dfC_4_LCpC_a_dT;
@@ -217,6 +217,7 @@ struct DerivativesData
     EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
     FC2aDerivativeData dfC_2a;
     FC3aDerivativeData dfC_3a;
+    FC4LCpGDerivativeData<DisplacementDim> dfC_4_LCpG;
 };
 
 }  // namespace ConstitutiveRelations

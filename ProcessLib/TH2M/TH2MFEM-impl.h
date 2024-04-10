@@ -300,6 +300,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                 current_state.S_L_data,
                                 ip_cv.fC_3a);
 
+        models.fC_4_LCpG_model.eval(ip_cv.advection_data,
+                                    ip_out.fluid_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.fC_4_LCpG);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -459,11 +466,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ;
 
         ip_cv.dfC_4_MCu_dT = drho_C_FR_dT * ip_cv.biot_data();
-
-        ip_cv.dfC_4_LCpG_dT =
-            c.drho_C_GR_dT * k_over_mu_G + c.drho_C_LR_dT * k_over_mu_L
-            // + ip_cv.ddiffusion_C_p_dT TODO (naumov)
-            ;
 
         double const drho_W_FR_dp_GR =
             /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_W_GR
@@ -728,6 +730,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                  current_state.S_L_data,
                                  ip_cv.dS_L_dp_cap,
                                  ip_dd.dfC_3a);
+
+        models.fC_4_LCpG_model.dEval(ip_out.permeability_data,
+                                     ip_cv.viscosity_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_dd.advection_d_data,
+                                     ip_dd.dfC_4_LCpG);
     }
 
     return ip_d_data;
@@ -1174,11 +1182,6 @@ void TH2MLocalAssembler<
         using DisplacementDimMatrix =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
 
-        DisplacementDimMatrix const diffusion_CGpGR =
-            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpGR;
-        DisplacementDimMatrix const diffusion_CLpGR =
-            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpGR;
-
         DisplacementDimMatrix const diffusion_CGpCap =
             -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpCap;
         DisplacementDimMatrix const diffusion_CLpCap =
@@ -1189,19 +1192,13 @@ void TH2MLocalAssembler<
         DisplacementDimMatrix const diffusion_CLT =
             -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dT;
 
-        DisplacementDimMatrix const advection_C =
-            ip_cv.advection_data.advection_C_G +
-            ip_cv.advection_data.advection_C_L;
-        DisplacementDimMatrix const diffusion_C_pGR =
-            diffusion_CGpGR + diffusion_CLpGR;
         DisplacementDimMatrix const diffusion_C_pCap =
             diffusion_CGpCap + diffusion_CLpCap;
 
         DisplacementDimMatrix const diffusion_C_T =
             diffusion_CGT + diffusion_CLT;
 
-        LCpG.noalias() +=
-            gradNpT * (advection_C + diffusion_C_pGR) * gradNp * w;
+        LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
         LCpC.noalias() +=
             gradNpT * (diffusion_C_pCap - ip_cv.advection_data.advection_C_L) *
@@ -1681,29 +1678,21 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimMatrixType const diffusion_C_T =
             diffusion_C_G_T + diffusion_C_L_T;
 
-        LCpG.noalias() += gradNpT * (advection_C + diffusion_C_p) * gradNp * w;
+        LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
         // d (fC_4_LCpG * grad p_GR)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
-            gradNpT *
-            (ip_dd.advection_d_data.dadvection_C_dp_GR
-             // + ip_cv.ddiffusion_C_p_dp_GR TODO (naumov)
-             ) *
-            gradpGR * Np * w;
+            gradNpT * ip_dd.dfC_4_LCpG.dp_GR * gradpGR * Np * w;
 
         // d (fC_4_LCpG * grad p_GR)/d p_cap
         local_Jac.template block<C_size, W_size>(C_index, W_index).noalias() +=
-            gradNpT *
-            (ip_dd.advection_d_data.dadvection_C_dp_cap
-             // + ip_cv.ddiffusion_C_p_dp_GR TODO (naumov)
-             ) *
-            gradpGR * Np * w;
+            gradNpT * ip_dd.dfC_4_LCpG.dp_cap * gradpGR * Np * w;
 
         // d (fC_4_LCpG * grad p_GR)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += gradNpT * ip_cv.dfC_4_LCpG_dT * gradpGR * NT * w;
+            .noalias() += gradNpT * ip_dd.dfC_4_LCpG.dT * gradpGR * NT * w;
 
         // d (fC_4_MCpG * p_GR_dot)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
