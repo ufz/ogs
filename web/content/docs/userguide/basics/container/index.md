@@ -37,7 +37,14 @@ Simply download an image from the [releases]({{< ref "/releases" >}}) page.
 
 #### Option: Download image from the latest master-branch build
 
-Simply download an image from the [latest master-branch build](https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/ThirdParty/container-maker/_out/images?job=container) page.
+Simply download an image from the latest master-branch build:
+
+<!-- vale off -->
+* [ogs-serial.squashfs](https://minio.ufz.de/ogs/public/container/ogs/master/ogs-serial.squashfs)
+* [ogs-petsc.squashfs](https://minio.ufz.de/ogs/public/container/ogs/master/ogs-petsc.squashfs) (with PETSC-support)
+<!-- vale on -->
+
+Please note that these images have `.squashfs` as the file ending. Usage is the same as with `.sif`-files.
 
 ### Run OGS inside a Container (called from outside)
 

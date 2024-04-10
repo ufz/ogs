@@ -3,9 +3,8 @@ build gui linux:
     - .template-build-linux
     - .test-artifacts
   stage: build
-  image: $CONTAINER_GCC_GUI_IMAGE
-  needs: [meta, ci_images]
-  tags: [docker]
+  needs: [meta]
+  tags: [envinf, shell]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:

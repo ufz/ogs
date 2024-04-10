@@ -24,8 +24,6 @@ Each pipeline run is visualized as follows:
 
 Jobs belong to a stage and each job will get a status (success, warnings, failure). Some jobs are optional (see the gear icon) and can be manually triggered by pressing the play button.
 
-Some jobs run on native servers (e.g. on the `envinf[1,2,3]` Linux servers) and some run in [Docker containers]({{< relref "docker.md#prebuilt-ogs-6-docker-images" >}}).
-
 ## Automatic testing
 
 The master-branch of the main repository as well as all merge requests on that repository are automatically tested. See [the pipelines page](https://gitlab.opengeosys.org/ogs/ogs/pipelines).

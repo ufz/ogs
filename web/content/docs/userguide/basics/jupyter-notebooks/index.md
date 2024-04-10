@@ -15,34 +15,7 @@ OpenGeoSys with Jupyter Notebooks:
 
 ## Jupyter Notebooks container environments
 
-You can use a pre-defined container environment.
-
-Image `registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter` contains:
-
-- The Jupyter Notebook / Lab application
-- The latest OpenGeoSys application with MFront-support and tools
-- A set of Python packages:
-  - [ogs6py](https://github.com/joergbuchwald/ogs6py) — OGS model manipulation
-  - [VTUinterface](https://github.com/joergbuchwald/VTUinterface) — VTU / PVD IO
-  - [ogstools](https://pypi.org/project/ogstools/) — OGS-related helper scripts, e.g. `msh2vtu`: Gmsh to VTU conversion
-  - [h5py](https://docs.h5py.org/en/latest/index.html) — HDF5 IO
-  - [MFront python bindings](https://thelfer.github.io/tfel/web/mfront-python.html) – Material model manipulation
-  - [Matplotlib](https://matplotlib.org) — Plotting
-  - [NumPy](https://numpy.org) — Scientific computing
-  - [pandas](https://pandas.pydata.org) — Data analysis
-  - [SciPy](https://docs.scipy.org/doc/scipy/reference/) — Scientific computing
-  - [VTK](https://pypi.org/project/vtk/) — Visualization
-  - [PyVista][pyvista] — Visualization
-  - [Snakemake](https://snakemake.github.io) — Workflow management
-  - [meshio](https://github.com/nschloe/meshio) — Mesh conversions between many formats. Pulled in via ogstools.
-- Jupyter-related tools:
-  - [nbconvert](https://nbconvert.readthedocs.io) — Format conversion
-  - [nbdime](https://nbdime.readthedocs.io) — Diffs for notebooks
-- [Gmsh](https://gmsh.info) — Mesh generator (incl. Python bindings)
-
-Image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` additionally contains:
-
-- PETSc-support
+You can start with pre-defined container environment from one of the images
 
 ### Usage
 
@@ -50,10 +23,10 @@ With [Docker]({{< ref "container.md#with-docker" >}}):
 
 ```bash
 docker run --rm -p 8888:8888 -v $PWD:/home/jovyan/work --user `id -u $USER` \
-    --group-add users registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter
+    --group-add users quay.io/jupyter/scipy-notebook
 ```
 
-This mounts your current directory into `~/work` inside the container. Use image `registry.opengeosys.org/ogs/ogs/ogs-petsc-jupyter` for PETSc-support!
+This mounts your current directory into `~/work` inside the container.
 
 <div class="note">
 
@@ -78,7 +51,7 @@ The above command only works when you run Docker from within a WSL2 Linux shell!
 With [Singularity]({{< ref "container.md#with-singularity" >}}):
 
 ```bash
-singularity run docker://registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter
+singularity run docker://quay.io/jupyter/scipy-notebook
 ```
 
 Open the specified URL shown in the command output in your browser, e.g.
@@ -89,57 +62,12 @@ http://127.0.0.1:8888/lab?token=xxx
 
 You may have to modify the IP address if this is running on a remote machine.
 
-<div class="note">
+### Install ogs
 
-#### <i class="fab fa-windows"></i> Specific OGS version
-
-You can append a version number to the image name (applies both to Docker and Singularity) to get an image for a specific OGS
-release (starting with 6.4.1):
+Click on *Terminal* and install OGSTools (which also installs ogs itself):
 
 ```bash
-singularity run docker://registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter:6.4.1
+pip install ogstools
 ```
 
-Available images are [listed on GitLab](https://gitlab.opengeosys.org/ogs/ogs/container_registry/79).
-
-</div>
-
-### Browsing notebooks on GitLab
-
-In the file browser on the left-hand side of the Jupyter Lab interface there is a GitLab-tab which allows for browsing and
-opening notebooks from the [`ogs/ogs`](https://gitlab.opengeosys.org/ogs/ogs)-repository. You can directly modify and execute a
-notebook, but the notebook is not saved back to GitLab. You can change the browsed repository by typing into the top text field.
-
-If you would like to us this with private repositories you have to supply an [access token](https://gitlab.opengeosys.org/-/profile/personal_access_tokens) at container start-up:
-
-```bash
-docker run --rm -p 8888:8888 -v $PWD:/home/jovyan/work --user `id -u $USER` \
-    --group-add users registry.opengeosys.org/ogs/ogs/ogs-serial-jupyter \
-    --GitLabConfig.access_token="< YOUR_ACCESS_TOKEN >"
-```
-
-### Adding additional Python packages
-
-In a running container you can install additional Python packages with the Jupyter [magic command `%pip`](https://ipython.readthedocs.io/en/stable/interactive/magics.html#magic-pip):
-
-```python
-%pip install [package name]
-```
-
-Please note that this is a temporary installation. If you stop the container the environment is destroyed.
-
-### Rendering with PyVista
-
-When using [PyVista][pyvista] the container uses the (interactive) rendering backend [ipyvtklink](https://github.com/Kitware/ipyvtklink) per default. Other backends are currently not supported.
-
-The backend can be set via:
-
-```py
-import pyvista as pv
-
-pv.set_jupyter_backend('ipyvtklink') # default
-pv.set_jupyter_backend('pythreejs')  # see https://docs.pyvista.org/user-guide/jupyter/pythreejs.html
-pv.set_jupyter_backend('static')     # static images
-```
-
-[pyvista]: https://docs.pyvista.org
+You install other Python packages too. Please note that this is a temporary installation. If you stop the container the manually installed packages will be deleted.

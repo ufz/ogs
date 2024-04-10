@@ -28,7 +28,7 @@ build guix:
         guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-ssd --with-source=ogs-petsc-ssd@6.5.0-testing=$PWD
       fi
 
-deploy guix container eve:
+deploy container:
   stage: build
   tags: [guix]
   needs: []
@@ -43,18 +43,27 @@ deploy guix container eve:
     # Build phase, retry once if failed
     - guix time-machine -C scripts/guix/channels.scm -- build bash coreutils
     - if [ $? -ne 0 ]; then !!; fi
-    - guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc@6.5.0-testing=$PWD
+    - guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc=$PWD
     - if [ $? -ne 0 ]; then !!; fi
     # Pack phase
-    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils ogs-petsc --with-source=ogs-petsc@6.5.0-testing=$PWD | tee | tail -1 )
+    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils ogs-petsc --with-source=ogs-petsc=$PWD | tee | tail -1 )
     - echo "Image $image"
     - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
     - scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
+    # Minio upload
+    - mcli alias set minio https://minio.ufz.de $MINIO_PUBLIC_ACCESS_KEY $MINIO_PUBLIC_SECRET_KEY
+    - mcli cp $image minio/ogs/public/container/ogs/master/ogs-petsc.squashfs
+    # Build serial image
+    - guix time-machine -C scripts/guix/channels.scm -- build ogs --with-source=ogs=$PWD
+    - if [ $? -ne 0 ]; then !!; fi
+    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils ogs --with-source=ogs=$PWD | tee | tail -1 )
+    - echo "Image (serial) $image"
+    - mcli cp $image minio/ogs/public/container/ogs/master/ogs-serial.squashfs
 
-test guix container eve:
+test container eve:
   stage: build
   tags: [frontend2]
-  needs: ["deploy guix container eve"]
+  needs: ["deploy container"]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
   script:

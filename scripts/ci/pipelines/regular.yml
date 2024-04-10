@@ -7,7 +7,6 @@ include:
   - local: "/scripts/ci/pipelines/mac.yml"
   - local: "/scripts/ci/pipelines/win.yml"
   - local: "/scripts/ci/jobs/build-docs.yml"
-  - local: "/scripts/ci/jobs/build-container.yml"
   - local: "/scripts/ci/jobs/jupyter.yml"
   - local: "/scripts/ci/jobs/code-quality.yml"
   - local: "/scripts/ci/jobs/code-coverage.yml"
@@ -18,7 +17,6 @@ include:
   - local: "/scripts/ci/jobs/web-preview.yml"
   - local: "/scripts/ci/jobs/web-check.yml"
   - local: "/scripts/ci/jobs/web-deploy.yml"
-  - local: "/scripts/ci/jobs/container.yml"
   - local: "/scripts/ci/jobs/release.yml"
   - local: "/scripts/ci/jobs/package.yml"
 
