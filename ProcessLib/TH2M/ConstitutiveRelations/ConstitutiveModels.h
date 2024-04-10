@@ -82,6 +82,7 @@ struct ConstitutiveModels
     InternalEnergyModel internal_energy_model;
     EffectiveVolumetricEnthalpyModel effective_volumetric_enthalpy_model;
     FC2aModel fC_2a_model;
+    FC3aModel fC_3a_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

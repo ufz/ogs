@@ -86,5 +86,71 @@ void FC2aModel::dEval(BiotData const& biot_data,
                 rho_C_FR * pCap() * porosity_d_data.dphi_dT * beta_p_SR();
 }
 
+void FC3aModel::eval(
+    double const dt,
+    ConstituentDensityData const& constituent_density_data,
+    PrevState<ConstituentDensityData> const& constituent_density_data_prev,
+    SaturationData const& S_L_data,
+    FC3aData& fC_3a) const
+{
+    if (dt == 0.)
+    {
+        fC_3a.a = 0;
+        return;
+    }
+
+    double const rho_C_GR_dot = (constituent_density_data.rho_C_GR -
+                                 constituent_density_data_prev->rho_C_GR) /
+                                dt;
+    double const rho_C_LR_dot = (constituent_density_data.rho_C_LR -
+                                 constituent_density_data_prev->rho_C_LR) /
+                                dt;
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    fC_3a.a = S_G * rho_C_GR_dot + S_L * rho_C_LR_dot;
+}
+
+void FC3aModel::dEval(
+    double const dt,
+    ConstituentDensityData const& constituent_density_data,
+    PrevState<ConstituentDensityData> const& constituent_density_data_prev,
+    PhaseTransitionData const& phase_transition_data,
+    SaturationData const& S_L_data,
+    SaturationDataDeriv const& dS_L_dp_cap,
+    FC3aDerivativeData& dfC_3a) const
+{
+    if (dt == 0.)
+    {
+        dfC_3a.dp_GR = 0.;
+        dfC_3a.dp_cap = 0.;
+        dfC_3a.dT = 0.;
+        return;
+    }
+    double const rho_C_GR_dot = (constituent_density_data.rho_C_GR -
+                                 constituent_density_data_prev->rho_C_GR) /
+                                dt;
+    double const rho_C_LR_dot = (constituent_density_data.rho_C_LR -
+                                 constituent_density_data_prev->rho_C_LR) /
+                                dt;
+
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    dfC_3a.dp_GR =
+        /*(dS_G_dp_GR = 0) * rho_C_GR_dot +*/
+        S_G * phase_transition_data.drho_C_GR_dp_GR / dt +
+        /*(dS_L_dp_GR = 0) * rho_C_LR_dot +*/
+        S_L * phase_transition_data.drho_C_LR_dp_GR / dt;
+
+    double const dS_G_dp_cap = -dS_L_dp_cap();
+    // TODO (naumov) Extend for partially saturated media.
+    constexpr double drho_C_GR_dp_cap = 0;
+
+    dfC_3a.dp_cap = dS_G_dp_cap * rho_C_GR_dot + S_G * drho_C_GR_dp_cap / dt +
+                    dS_L_dp_cap() * rho_C_LR_dot -
+                    S_L * phase_transition_data.drho_C_LR_dp_LR / dt;
+
+    dfC_3a.dT = S_G * phase_transition_data.drho_C_GR_dT / dt +
+                S_L * phase_transition_data.drho_C_LR_dT / dt;
+}
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

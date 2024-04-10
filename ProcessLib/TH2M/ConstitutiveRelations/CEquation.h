@@ -55,5 +55,36 @@ struct FC2aModel
                FC2aDerivativeData& dfC_2a) const;
 };
 
+struct FC3aData
+{
+    double a = nan;
+};
+
+struct FC3aDerivativeData
+{
+    double dp_GR = nan;
+    double dp_cap = nan;
+    double dT = nan;
+};
+
+struct FC3aModel
+{
+    void eval(
+        double const dt,
+        ConstituentDensityData const& constituent_density_data,
+        PrevState<ConstituentDensityData> const& constituent_density_data_prev,
+        SaturationData const& S_L_data,
+        FC3aData& fC_3a) const;
+
+    void dEval(
+        double const dt,
+        ConstituentDensityData const& constituent_density_data,
+        PrevState<ConstituentDensityData> const& constituent_density_data_prev,
+        PhaseTransitionData const& phase_transition_data,
+        SaturationData const& S_L_data,
+        SaturationDataDeriv const& dS_L_dp_cap,
+        FC3aDerivativeData& dfC_3a) const;
+};
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

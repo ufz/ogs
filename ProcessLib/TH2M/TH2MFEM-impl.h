@@ -294,6 +294,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.beta_p_SR,
                                     ip_cv.fC_2a);
         }
+        models.fC_3a_model.eval(dt,
+                                current_state.constituent_density_data,
+                                prev_state.constituent_density_data,
+                                current_state.S_L_data,
+                                ip_cv.fC_3a);
 
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
@@ -426,37 +431,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const rho_W_FR =
             s_G * current_state.constituent_density_data.rho_W_GR +
             s_L * current_state.rho_W_LR();
-        // TODO (naumov) Extend for partially saturated media.
-        constexpr double drho_C_GR_dp_cap = 0;
-        if (dt == 0.)
-        {
-            ip_cv.dfC_3a_dp_GR = 0.;
-            ip_cv.dfC_3a_dp_cap = 0.;
-            ip_cv.dfC_3a_dT = 0.;
-        }
-        else
-        {
-            double const rho_C_GR_dot =
-                (current_state.constituent_density_data.rho_C_GR -
-                 prev_state.constituent_density_data->rho_C_GR) /
-                dt;
-            double const rho_C_LR_dot =
-                (current_state.constituent_density_data.rho_C_LR -
-                 prev_state.constituent_density_data->rho_C_LR) /
-                dt;
-            ip_cv.dfC_3a_dp_GR =
-                /*(ds_G_dp_GR = 0) * rho_C_GR_dot +*/ s_G * c.drho_C_GR_dp_GR /
-                    dt +
-                /*(ds_L_dp_GR = 0) * rho_C_LR_dot +*/ s_L * c.drho_C_LR_dp_GR /
-                    dt;
-
-            ip_cv.dfC_3a_dp_cap = ds_G_dp_cap * rho_C_GR_dot +
-                                  s_G * drho_C_GR_dp_cap / dt +
-                                  ip_cv.dS_L_dp_cap() * rho_C_LR_dot -
-                                  s_L * c.drho_C_LR_dp_LR / dt;
-            ip_cv.dfC_3a_dT =
-                s_G * c.drho_C_GR_dT / dt + s_L * c.drho_C_LR_dT / dt;
-        }
 
         double const drho_C_FR_dp_GR =
             /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_C_GR
@@ -671,6 +645,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& ip_cv = ip_constitutive_variables[ip];
         auto const& ip_out = this->output_data_[ip];
         auto const& current_state = this->current_states_[ip];
+        auto const& prev_state = this->prev_states_[ip];
 
         auto const& Nu = ip_data.N_u;
         auto const& Np = ip_data.N_p;
@@ -746,6 +721,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_cv.beta_p_SR,
                                      ip_dd.dfC_2a);
         }
+        models.fC_3a_model.dEval(dt,
+                                 current_state.constituent_density_data,
+                                 prev_state.constituent_density_data,
+                                 ip_cv.phase_transition_data,
+                                 current_state.S_L_data,
+                                 ip_cv.dS_L_dp_cap,
+                                 ip_dd.dfC_3a);
     }
 
     return ip_d_data;
@@ -1152,14 +1134,6 @@ void TH2MLocalAssembler<
             s_G * current_state.constituent_density_data.rho_W_GR +
             s_L * current_state.rho_W_LR();
 
-        auto const rho_C_GR_dot =
-            (current_state.constituent_density_data.rho_C_GR -
-             prev_state.constituent_density_data->rho_C_GR) /
-            dt;
-        auto const rho_C_LR_dot =
-            (current_state.constituent_density_data.rho_C_LR -
-             prev_state.constituent_density_data->rho_C_LR) /
-            dt;
         auto const rho_W_GR_dot =
             (current_state.constituent_density_data.rho_W_GR -
              prev_state.constituent_density_data->rho_W_GR) /
@@ -1245,8 +1219,7 @@ void TH2MLocalAssembler<
             fC.noalias() -= NpT * ip_cv.fC_2a.a * s_L_dot * w;
         }
         // fC_III
-        fC.noalias() -= NpT * ip_out.porosity_data.phi *
-                        (s_G * rho_C_GR_dot + s_L * rho_C_LR_dot) * w;
+        fC.noalias() -= NpT * ip_out.porosity_data.phi * ip_cv.fC_3a.a * w;
 
         // ---------------------------------------------------------------------
         // W-component equation
@@ -1643,14 +1616,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             s_G * current_state.constituent_density_data.rho_W_GR +
             s_L * current_state.rho_W_LR();
 
-        auto const rho_C_GR_dot =
-            (current_state.constituent_density_data.rho_C_GR -
-             prev_state.constituent_density_data->rho_C_GR) /
-            dt;
-        auto const rho_C_LR_dot =
-            (current_state.constituent_density_data.rho_C_LR -
-             prev_state.constituent_density_data->rho_C_LR) /
-            dt;
         auto const rho_W_GR_dot =
             (current_state.constituent_density_data.rho_W_GR -
              prev_state.constituent_density_data->rho_W_GR) /
@@ -1813,23 +1778,22 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         }
         {
             // fC_3 = \int phi * a
-            double const a = s_G * rho_C_GR_dot + s_L * rho_C_LR_dot;
-            fC.noalias() -= NpT * ip_out.porosity_data.phi * a * w;
+            fC.noalias() -= NpT * ip_out.porosity_data.phi * ip_cv.fC_3a.a * w;
 
             local_Jac.template block<C_size, C_size>(C_index, C_index)
                 .noalias() +=
-                NpT * ip_out.porosity_data.phi * ip_cv.dfC_3a_dp_GR * Np * w;
+                NpT * ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_GR * Np * w;
 
             local_Jac.template block<C_size, W_size>(C_index, W_index)
                 .noalias() +=
-                NpT * ip_out.porosity_data.phi * ip_cv.dfC_3a_dp_cap * Np * w;
+                NpT * ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_cap * Np * w;
 
             local_Jac
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
                 .noalias() += NpT *
-                              (ip_cv.porosity_d_data.dphi_dT * a +
-                               ip_out.porosity_data.phi * ip_cv.dfC_3a_dT) *
+                              (ip_cv.porosity_d_data.dphi_dT * ip_cv.fC_3a.a +
+                               ip_out.porosity_data.phi * ip_dd.dfC_3a.dT) *
                               NT * w;
         }
         // ---------------------------------------------------------------------
