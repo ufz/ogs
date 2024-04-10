@@ -12,7 +12,6 @@ ${CPPCHECK_TOOL_PATH} \
         --inline-suppr \
         -i ${_cpm_dir} --suppress=*:${_cpm_dir}/* \
         -i ${PROJECT_BINARY_DIR}/_deps --suppress=*:${PROJECT_BINARY_DIR}/_deps/* \
-        -i ${PROJECT_SOURCE_DIR}/ThirdParty --suppress=*:${PROJECT_SOURCE_DIR}/ThirdParty* \
         -i ${PROJECT_SOURCE_DIR}/Tests --suppress=*:*Tests/* \
         --suppress=missingIncludeSystem \
         --template='{\n  "description": "{message}",\n  "severity": "info",\n    "location": {\n    "path": "{file}",\n    "lines": {\n      "begin": {line}\n    }\n  }\n},' \

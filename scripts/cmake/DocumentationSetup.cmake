@@ -3,13 +3,9 @@ if(NOT DOXYGEN_FOUND)
 endif()
 
 set(DOXYGEN_EXCLUDE
-    ${PROJECT_SOURCE_DIR}/ThirdParty
-    ${PROJECT_SOURCE_DIR}/scripts
-    ${PROJECT_SOURCE_DIR}/Tests
-    ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile
-    ${PROJECT_SOURCE_DIR}/web
-    ${PROJECT_BINARY_DIR}/_deps
-    ${PROJECT_BINARY_DIR}/_ext
+    ${PROJECT_SOURCE_DIR}/scripts ${PROJECT_SOURCE_DIR}/Tests
+    ${PROJECT_SOURCE_DIR}/Documentation/ProjectFile ${PROJECT_SOURCE_DIR}/web
+    ${PROJECT_BINARY_DIR}/_deps ${PROJECT_BINARY_DIR}/_ext
 )
 set(DOXYGEN_FILE_PATTERNS *.h *.cpp *.tpp *.dox)
 set(DOXYGEN_PROJECT_NAME "OGS")

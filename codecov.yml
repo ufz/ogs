@@ -4,5 +4,4 @@ codecov:
 ignore:
   - "Applications/CLI"
   - "ProcessLib"
-  - "ThirdParty"
   - "*Tests/**/*"

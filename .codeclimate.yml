@@ -1,6 +1,5 @@
 version: "2"
 exclude_patterns:
-  - "ThirdParty/"
   - "Tests/"
 plugins:
   duplication:

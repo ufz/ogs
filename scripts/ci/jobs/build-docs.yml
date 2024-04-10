@@ -17,7 +17,7 @@ build docs:
     - NUM_LIZARD_ISSUES=`cat lizard.txt | wc -l`
     - echo "lizard_issues $NUM_LIZARD_ISSUES" >> metrics.txt
     - lizard -l cpp -t 8 --html -o Lizard.html
-    - lizard -EWordCount -x "./ThirdParty/*" -x "./Tests/*" || true # word-cloud
+    - lizard -EWordCount -x "./Tests/*" || true # word-cloud
     # build
     - cd build
     - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
