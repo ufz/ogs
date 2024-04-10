@@ -15,9 +15,11 @@
 #include "MechanicalStrain.h"
 #include "PermeabilityModel.h"
 #include "PhaseTransitionModel.h"
+#include "Porosity.h"
 #include "PureLiquidDensity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
+#include "SolidDensity.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
@@ -58,6 +60,15 @@ struct ConstitutiveModels
     PermeabilityModel<DisplacementDim> permeability_model;
     PureLiquidDensityModel pure_liquid_density_model;
     PhaseTransitionModel const& phase_transition_model;
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+    PorosityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>
+        porosity_model;
+    SolidDensityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>
+        solid_density_model;
+#else   // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+    PorosityModel porosity_model;
+    SolidDensityModel solid_density_model;
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

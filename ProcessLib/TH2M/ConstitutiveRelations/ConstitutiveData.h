@@ -20,12 +20,14 @@
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
 #include "PhaseTransitionData.h"
+#include "Porosity.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 #include "PureLiquidDensity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
+#include "SolidDensity.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
@@ -93,6 +95,8 @@ struct OutputData
     MassMoleFractionsData mass_mole_fractions_data;
     FluidDensityData fluid_density_data;
     VapourPartialPressureData vapour_pressure_data;
+    PorosityData porosity_data;
+    SolidDensityData solid_density_data;
 
     static auto reflect()
     {
@@ -103,7 +107,9 @@ struct OutputData
                                               &Self::enthalpy_data,
                                               &Self::mass_mole_fractions_data,
                                               &Self::fluid_density_data,
-                                              &Self::vapour_pressure_data);
+                                              &Self::vapour_pressure_data,
+                                              &Self::porosity_data,
+                                              &Self::solid_density_data);
     }
 };
 
@@ -130,6 +136,8 @@ struct ConstitutiveTempData
     EquivalentPlasticStrainData equivalent_plastic_strain_data;
     ViscosityData viscosity_data;
     PhaseTransitionData phase_transition_data;
+    PorosityDerivativeData porosity_d_data;
+    SolidDensityDerivativeData solid_density_d_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

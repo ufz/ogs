@@ -18,6 +18,7 @@ namespace ConstitutiveRelations
 template <int DisplacementDim>
 void SolidThermalExpansionModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
+    TemperatureData const& T_data, ReferenceTemperatureData T0,
     SolidThermalExpansionData<DisplacementDim>& out) const
 {
     namespace MPL = MaterialPropertyLib;
@@ -34,6 +35,9 @@ void SolidThermalExpansionModel<DisplacementDim>::eval(
     using Invariants = MathLib::KelvinVector::Invariants<KelvinVectorSize>;
     out.beta_T_SR =
         Invariants::trace(out.solid_linear_thermal_expansivity_vector);
+
+    double const delta_T = T_data.T - T0();
+    out.thermal_volume_strain = out.beta_T_SR * delta_T;
 }
 
 template struct SolidThermalExpansionModel<2>;
