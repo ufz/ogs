@@ -102,9 +102,7 @@ features:
   subfeatures:
     - headline: Setup a development environment
       textline: |
-        [Learn how to](/docs/devguide) obtain the source code, how to install required other software (e.g. compilers, code libraries), how to configure the software and how to generate the application binary.
-
-        We even provide [ready-to-use Docker images](/docs/devguide/advanced/docker/#prebuilt-ogs-6-docker-images) to get you started in seconds.
+        [Learn how to](/docs/devguide) obtain the source code, how to install required other software (e.g. compilers and tools), how to configure the software and how to generate the application binary.
     - headline: Contribute code
       textline: |
         Implement your new feature and [let the CI system](/docs/devguide/development-workflows/continuous-integration) run sophisticated tests automatically for you incorporating multiple computing platforms, a magnitude of software configurations and a whole array of CPU intensive complex test simulation runs.
