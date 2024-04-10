@@ -404,16 +404,40 @@ elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR GUIX_BUILD))
     find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
 endif()
 if(NOT VTK_FOUND)
-    if(APPLE AND "${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
-        # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
-        set(_loguru_patch PATCH_COMMAND git apply
-                          "${PROJECT_SOURCE_DIR}/scripts/cmake/loguru.patch"
-        )
-        message(DEBUG "Applying VTK loguru patch")
+    file(
+        DOWNLOAD
+        https://gitlab.kitware.com/bilke/vtk/-/commit/b70e3e103cf711e080f23171201c7d030187146b.patch
+        ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-win.patch
+    )
+    file(
+        DOWNLOAD
+        https://gitlab.kitware.com/bilke/vtk/-/commit/70b16fda87f82520fa29b48c6a62bafa405d8ee2.patch
+        ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch
+    )
+    if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
+        set(_vtk_patch PATCH_COMMAND git apply)
+        if(WIN32)
+            # Fixes https://gitlab.kitware.com/vtk/vtk/-/issues/19178
+            list(APPEND _vtk_patch
+                 "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-win.patch"
+            )
+            message(STATUS "Applying VTK Win patch")
+        endif()
+        if(APPLE)
+            # Fixes https://stackoverflow.com/questions/9894961
+            list(APPEND _vtk_patch
+                 "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch"
+            )
+            message(STATUS "Applying VTK Mac patch")
+        elseif(UNIX)
+            # No pacthes on Linux
+            unset(_vtk_patch)
+        endif()
     endif()
+
     BuildExternalProject(
         VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} ${_defaultCMakeArgs}
-                                      ${_loguru_patch} ${_cmake_generator}
+                                      ${_vtk_patch} ${_cmake_generator}
     )
     message(
         STATUS

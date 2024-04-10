@@ -15,7 +15,7 @@
     "boost": "1.73.0",
     "eigen": "3.4.0",
     "eigen-unsupported": "9441d94dccccd5db8d64179516fdc5b53994a047",
-    "vtk": "9.1.0",
+    "vtk": "9.3.0",
     "petsc": "3.18.6",
     "qt": "5.14.2",
     "python": "3.6",
@@ -103,6 +103,7 @@
             "ogscm": "True"
           },
           "cmake": [
+            "VTK_MODULE_ENABLE_VTK_FiltersGeneral=YES",
             "VTK_MODULE_ENABLE_VTK_FiltersParallel=YES"
           ]
         },
