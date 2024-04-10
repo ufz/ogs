@@ -133,7 +133,7 @@ if(OGS_USE_PETSC)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()
 
-        # apple clang 15 requires newer petsc, see
+    # apple clang 15 requires newer petsc, see
     # https://www.mail-archive.com/petsc-users@mcs.anl.gov/msg46980.html
     if(APPLE AND ${CMAKE_CXX_COMPILER_VERSION} GREATER_EQUAL 15)
         set(ogs.minimum_version.petsc 3.20.5)
@@ -256,8 +256,10 @@ if(NOT ZLIB_FOUND)
         if(CMAKE_BUILD_TYPE STREQUAL "Debug")
             set(_zlib_debug_postfix "d")
         endif()
-        # Remove zlib dll and corresponding lib, ZLIB_USE_STATIC_LIBS sometimes does not work
-        file(REMOVE
+        # Remove zlib dll and corresponding lib, ZLIB_USE_STATIC_LIBS sometimes
+        # does not work
+        file(
+            REMOVE
             ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlib${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX}
             ${build_dir_ZLIB}/${CMAKE_INSTALL_BINDIR}/zlib${_zlib_debug_postfix}${CMAKE_SHARED_LIBRARY_SUFFIX}
         )
@@ -265,7 +267,9 @@ if(NOT ZLIB_FOUND)
         set(ZLIB_USE_STATIC_LIBS "ON")
         set(ZLIB_ROOT ${build_dir_ZLIB})
         # Force local zlib build, found netcdf-installed zlib sometimes
-        set(ZLIB_LIBRARIES ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlibstatic${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX})
+        set(ZLIB_LIBRARIES
+            ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlibstatic${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX}
+        )
     endif()
     set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
     BuildExternalProject_find_package(ZLIB)
@@ -302,8 +306,8 @@ if(WIN32 OR HDF5_USE_STATIC_LIBRARIES)
     list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
 endif()
 
-# With apple clang 15 there are errors when the cpm compiled hdf5
-# has a different version than the one bundled with vtk, see
+# With apple clang 15 there are errors when the cpm compiled hdf5 has a
+# different version than the one bundled with vtk, see
 # https://gitlab.kitware.com/vtk/vtk/-/issues/19232.
 if(APPLE AND ${CMAKE_CXX_COMPILER_VERSION} GREATER_EQUAL 15)
     set(ogs.tested_version.hdf5 1.10.7)
