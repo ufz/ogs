@@ -320,6 +320,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    current_state.S_L_data,
                                    ip_cv.fC_4_LCT);
 
+        models.fC_4_MCpG_model.eval(ip_cv.biot_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fC_4_MCpG);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -452,22 +459,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             s_G * current_state.constituent_density_data.rho_W_GR +
             s_L * current_state.rho_W_LR();
 
-        double const drho_C_FR_dp_GR =
-            /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_C_GR
-               +*/
-            s_G * c.drho_C_GR_dp_GR +
-            /*(ds_L_dp_GR = 0) * current_state.constituent_density_data.rho_C_LR
-               +*/
-            s_L * c.drho_C_LR_dp_GR;
-        ip_cv.dfC_4_MCpG_dp_GR =
-            drho_C_FR_dp_GR * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-            ip_cv.beta_p_SR();
-
         double const drho_C_FR_dT = s_G * c.drho_C_GR_dT + s_L * c.drho_C_LR_dT;
-        ip_cv.dfC_4_MCpG_dT =
-            drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() -
-            rho_C_FR * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
 
         ip_cv.dfC_4_MCT_dT =
             drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
@@ -737,6 +729,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_cv.dS_L_dp_cap,
                                      ip_cv.viscosity_data,
                                      ip_dd.dfC_4_LCpC);
+
+        models.fC_4_MCpG_model.dEval(ip_cv.biot_data,
+                                     current_state.constituent_density_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_out.porosity_data,
+                                     ip_cv.porosity_d_data,
+                                     current_state.S_L_data,
+                                     ip_cv.beta_p_SR,
+                                     ip_dd.dfC_4_MCpG);
     }
 
     return ip_d_data;
@@ -1152,9 +1153,7 @@ void TH2MLocalAssembler<
         // C-component equation
         // ---------------------------------------------------------------------
 
-        MCpG.noalias() += NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
+        MCpG.noalias() += NpT * ip_cv.fC_4_MCpG.m * Np * w;
         MCpC.noalias() -= NpT * rho_C_FR *
                           (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
                           s_L * Np * w;
@@ -1603,9 +1602,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // C-component equation
         // ---------------------------------------------------------------------
 
-        MCpG.noalias() += NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
+        MCpG.noalias() += NpT * ip_cv.fC_4_MCpG.m * Np * w;
         MCpC.noalias() -= NpT * rho_C_FR *
                           (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
                           s_L * Np * w;
@@ -1658,14 +1655,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // d (fC_4_MCpG * p_GR_dot)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
-            NpT * ip_cv.dfC_4_MCpG_dp_GR * (pGR - pGR_prev) / dt * Np * w;
+            NpT * ip_dd.dfC_4_MCpG.dp_GR * (pGR - pGR_prev) / dt * Np * w;
 
         // d (fC_4_MCpG * p_GR_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
             .noalias() +=
-            NpT * ip_cv.dfC_4_MCpG_dT * (pGR - pGR_prev) / dt * NT * w;
+            NpT * ip_dd.dfC_4_MCpG.dT * (pGR - pGR_prev) / dt * NT * w;
 
         LCpC.noalias() -= gradNpT * ip_cv.fC_4_LCpC.L * gradNp * w;
 

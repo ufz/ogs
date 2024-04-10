@@ -86,6 +86,7 @@ struct ConstitutiveModels
     FC4LCpGModel<DisplacementDim> fC_4_LCpG_model;
     FC4LCpCModel<DisplacementDim> fC_4_LCpC_model;
     FC4LCTModel<DisplacementDim> fC_4_LCT_model;
+    FC4MCpGModel fC_4_MCpG_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

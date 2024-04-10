@@ -174,5 +174,35 @@ struct FC4LCTModel
               SaturationData const& S_L_data,
               FC4LCTData<DisplacementDim>& fC_4_LCT) const;
 };
+
+struct FC4MCpGData
+{
+    double m = nan;
+};
+
+struct FC4MCpGDerivativeData
+{
+    double dp_GR = nan;
+    double dT = nan;
+};
+
+struct FC4MCpGModel
+{
+    void eval(BiotData const& biot_data,
+              ConstituentDensityData const& constituent_density_data,
+              PorosityData const& porosity_data,
+              SaturationData const& S_L_data,
+              SolidCompressibilityData const& beta_p_SR,
+              FC4MCpGData& fC_4_MCpG) const;
+
+    void dEval(BiotData const& biot_data,
+               ConstituentDensityData const& constituent_density_data,
+               PhaseTransitionData const& phase_transition_data,
+               PorosityData const& porosity_data,
+               PorosityDerivativeData const& porosity_d_data,
+               SaturationData const& S_L_data,
+               SolidCompressibilityData const& beta_p_SR,
+               FC4MCpGDerivativeData& dfC_4_MCpG) const;
+};
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

@@ -305,5 +305,50 @@ void FC4LCTModel<DisplacementDim>::eval(
 
 template struct FC4LCTModel<2>;
 template struct FC4LCTModel<3>;
+
+void FC4MCpGModel::eval(BiotData const& biot_data,
+                        ConstituentDensityData const& constituent_density_data,
+                        PorosityData const& porosity_data,
+                        SaturationData const& S_L_data,
+                        SolidCompressibilityData const& beta_p_SR,
+                        FC4MCpGData& fC_4_MCpG) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    double const rho_C_FR = S_G * constituent_density_data.rho_C_GR +
+                            S_L * constituent_density_data.rho_C_LR;
+
+    fC_4_MCpG.m = rho_C_FR * (biot_data() - porosity_data.phi) * beta_p_SR();
+}
+
+void FC4MCpGModel::dEval(BiotData const& biot_data,
+                         ConstituentDensityData const& constituent_density_data,
+                         PhaseTransitionData const& phase_transition_data,
+                         PorosityData const& porosity_data,
+                         PorosityDerivativeData const& porosity_d_data,
+                         SaturationData const& S_L_data,
+                         SolidCompressibilityData const& beta_p_SR,
+                         FC4MCpGDerivativeData& dfC_4_MCpG) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    double const rho_C_FR = S_G * constituent_density_data.rho_C_GR +
+                            S_L * constituent_density_data.rho_C_LR;
+
+    double const drho_C_FR_dp_GR =
+        /*(dS_G_dp_GR = 0) * constituent_density_data.rho_C_GR +*/
+        S_G * phase_transition_data.drho_C_GR_dp_GR +
+        /*(dS_L_dp_GR = 0) * constituent_density_data.rho_C_LR +*/
+        S_L * phase_transition_data.drho_C_LR_dp_GR;
+
+    dfC_4_MCpG.dp_GR =
+        drho_C_FR_dp_GR * (biot_data() - porosity_data.phi) * beta_p_SR();
+
+    double const drho_C_FR_dT = S_G * phase_transition_data.drho_C_GR_dT +
+                                S_L * phase_transition_data.drho_C_LR_dT;
+    dfC_4_MCpG.dT =
+        drho_C_FR_dT * (biot_data() - porosity_data.phi) * beta_p_SR() -
+        rho_C_FR * porosity_d_data.dphi_dT * beta_p_SR();
+}
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
