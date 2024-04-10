@@ -159,6 +159,7 @@ struct ConstitutiveTempData
     FC3aData fC_3a;
     FC4LCpGData<DisplacementDim> fC_4_LCpG;
     FC4LCpCData<DisplacementDim> fC_4_LCpC;
+    FC4LCTData<DisplacementDim> fC_4_LCT;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

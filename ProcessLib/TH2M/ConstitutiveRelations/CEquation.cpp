@@ -275,5 +275,35 @@ void FC4LCpCModel<DisplacementDim>::dEval(
 
 template struct FC4LCpCModel<2>;
 template struct FC4LCpCModel<3>;
+
+template <int DisplacementDim>
+void FC4LCTModel<DisplacementDim>::eval(
+    FluidDensityData const& fluid_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    PorosityData const& porosity_data,
+    SaturationData const& S_L_data,
+    FC4LCTData<DisplacementDim>& fC_4_LCT) const
+{
+    double const sD_G = phase_transition_data.diffusion_coefficient_vapour;
+    double const sD_L = phase_transition_data.diffusion_coefficient_solute;
+
+    double const phi_G = (1 - S_L_data.S_L) * porosity_data.phi;
+    double const phi_L = S_L_data.S_L * porosity_data.phi;
+
+    double const diffusion_C_G_T = -phi_G * fluid_density_data.rho_GR * sD_G *
+                                   phase_transition_data.dxmWG_dT;
+    double const diffusion_C_L_T = -phi_L * fluid_density_data.rho_LR * sD_L *
+                                   phase_transition_data.dxmWL_dT;
+
+    double const diffusion_C_T = diffusion_C_G_T + diffusion_C_L_T;
+
+    auto const I =
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
+
+    fC_4_LCT.L.noalias() = diffusion_C_T * I;
+}
+
+template struct FC4LCTModel<2>;
+template struct FC4LCTModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

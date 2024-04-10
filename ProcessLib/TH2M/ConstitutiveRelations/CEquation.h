@@ -158,5 +158,21 @@ struct FC4LCpCModel
 
 extern template struct FC4LCpCModel<2>;
 extern template struct FC4LCpCModel<3>;
+
+template <int DisplacementDim>
+struct FC4LCTData
+{
+    GlobalDimMatrix<DisplacementDim> L;
+};
+
+template <int DisplacementDim>
+struct FC4LCTModel
+{
+    void eval(FluidDensityData const& fluid_density_data,
+              PhaseTransitionData const& phase_transition_data,
+              PorosityData const& porosity_data,
+              SaturationData const& S_L_data,
+              FC4LCTData<DisplacementDim>& fC_4_LCT) const;
+};
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
