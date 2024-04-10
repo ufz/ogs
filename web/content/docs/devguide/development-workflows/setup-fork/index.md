@@ -91,10 +91,9 @@ git config remote.pushdefault origin
 git config push.default current
 ```
 
-To streamline the updating workflow the `pull`-command is configured to rebase by default (instead of merge) and to handle local modifications automatically (`autostash`). See [this blog post](https://cscheng.info/2017/01/26/git-tip-autostash-with-git-pull-rebase.html) on more information about the `git pull --rebase --autostash`-functionality.
+To streamline the updating workflow the `rebase`-command is configured to handle local modifications automatically (`autostash`). See [this blog post](https://cscheng.info/2017/01/26/git-tip-autostash-with-git-pull-rebase.html) on more information about the `git rebase --autostash`-functionality.
 
 ```bash
-git config pull.rebase true
 git config rebase.autoStash true
 ```
 
@@ -180,10 +179,9 @@ gitGraph
 To keep up to date with the developments in the official repository it is recommended to rebase your feature-branch regularly (at least weekly) with:
 
 ```bash
-git pull upstream master
+git fetch upstream
+git rebase upstream/master
 ```
-
-We used `git pull` here which was configured to `rebase` by default (`git config pull.rebase true`)
 
 <div class="note">
 
