@@ -98,6 +98,7 @@ check docs links:
       --exclude gitlab.opengeosys.org/ogs/ogs
       --exclude github.com/ufz/ogs/commit/\%1
       --exclude search_opensearch.php
+      --exclude eigen.tuxfamily.org
       build/docs
     - lychee --cache --max-cache-age 14d
       --max-concurrency 2

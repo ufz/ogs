@@ -6,5 +6,6 @@ exclude = [
   "localhost:1313",
   "smartkd-concept\\.de",
   "all\\.css",
+  "eigen\\.tuxfamily.org",
 ]
 exclude_path = ["public/releases/"]
