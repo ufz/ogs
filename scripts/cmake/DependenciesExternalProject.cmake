@@ -100,6 +100,7 @@ if(OGS_USE_MFRONT)
                        "-Denable-testing=OFF"
                        ${_defaultCMakeArgs}
                        "${_tfel_cmake_args}"
+                       SKIP_FIND
         )
         message(
             STATUS
@@ -178,6 +179,7 @@ if(OGS_USE_PETSC)
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} all
             INSTALL_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} install
+                            SKIP_FIND
         )
         message(
             STATUS
@@ -272,7 +274,6 @@ if(NOT ZLIB_FOUND)
         )
     endif()
     set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
-    BuildExternalProject_find_package(ZLIB)
 endif()
 
 # HDF5
@@ -340,7 +341,8 @@ if(NOT _HDF5_FOUND AND NOT HDF5_FOUND)
     set(_HDF5_FOUND ON CACHE INTERNAL "")
 endif()
 if(_HDF5_FOUND)
-    BuildExternalProject_find_package(HDF5)
+    # Somehow needs an extra run of ..._find_package()
+    BuildExternalProject_find_package(HDF5 REQUIRED)
 endif()
 
 # VTK
@@ -448,7 +450,6 @@ if(NOT VTK_FOUND)
             "ExternalProject_Add(): added package VTK@${ogs.minimum_version.vtk}"
     )
     set(_EXT_LIBS ${_EXT_LIBS} VTK CACHE INTERNAL "")
-    BuildExternalProject_find_package(VTK)
 endif()
 
 # cmake-lint: disable=C0103

@@ -344,6 +344,7 @@ if(OGS_USE_PETSC)
     set(CMAKE_REQUIRED_LIBRARIES "${HDF5_LIBRARIES}")
     check_cxx_symbol_exists(H5Pset_fapl_mpio hdf5.h HAVE_H5Pset_fapl_mpio)
     unset(CMAKE_REQUIRED_INCLUDES)
+    unset(CMAKE_REQUIRED_LIBRARIES)
     if(NOT HAVE_H5Pset_fapl_mpio)
         message(FATAL_ERROR "HDF5 was not build with MPI support! "
                             "(Enable with HDF5_ENABLE_PARALLEL)"
