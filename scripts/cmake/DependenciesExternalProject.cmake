@@ -1,3 +1,7 @@
+# because of ogs.minimum_version variables:
+#
+# cmake-lint: disable=C0103
+
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.24)
     cmake_policy(SET CMP0135 NEW)
 endif()
