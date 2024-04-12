@@ -264,26 +264,37 @@ public:
             T_SOLVER>::setResidualUpdate(opt.residualupdate);
 #endif
 
-        if (linear_solver_behaviour ==
-            NumLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE)
+        auto compute = [this](Matrix& m)
         {
-            // matrix must be copied, because Eigen's linear solver stores a
-            // reference to it cf.
-            // https://libeigen.gitlab.io/docs/classEigen_1_1IterativeSolverBase.html#a7dfa55c55e82d697bde227696a630914
-            A_ = A;
-
-            if (!A_.isCompressed())
+            if (!m.isCompressed())
             {
-                A_.makeCompressed();
+                m.makeCompressed();
             }
 
-            solver_.compute(A_);
-        }
-        else if (linear_solver_behaviour ==
-                 NumLib::LinearSolverBehaviour::RECOMPUTE)
+            solver_.compute(m);
+        };
+
+        switch (linear_solver_behaviour)
         {
-            solver_.compute(A);
-        }
+            case NumLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE:
+            {
+                // matrix must be copied, because Eigen's linear solver stores a
+                // reference to it cf.
+                // https://libeigen.gitlab.io/docs/classEigen_1_1IterativeSolverBase.html#a7dfa55c55e82d697bde227696a630914
+                A_ = A;
+                compute(A_);
+                break;
+            }
+            case NumLib::LinearSolverBehaviour::RECOMPUTE:
+            {
+                compute(A);
+                break;
+            }
+            case NumLib::LinearSolverBehaviour::REUSE:
+                OGS_FATAL(
+                    "If NumLib::LinearSolverBehaviour::REUSE is set then "
+                    "EigenLinearSolver::compute() should never be executed");
+        };
 
         if (solver_.info() != Eigen::Success)
         {
