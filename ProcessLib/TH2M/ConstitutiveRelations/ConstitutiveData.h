@@ -163,6 +163,7 @@ struct ConstitutiveTempData
     FC4MCpGData fC_4_MCpG;
     FC4MCpCData fC_4_MCpC;
     FC4MCTData fC_4_MCT;
+    FC4MCuData fC_4_MCu;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
@@ -187,7 +188,6 @@ struct ConstitutiveTempData
     DisplacementDimMatrix dfW_4_LWpC_d_dT;
     DisplacementDimMatrix dk_over_mu_G_dp_cap;
     DisplacementDimMatrix dk_over_mu_L_dp_cap;
-    double dfC_4_MCu_dT = std::numeric_limits<double>::quiet_NaN();
     double dfW_2a_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfW_2b_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfW_2a_dp_cap = std::numeric_limits<double>::quiet_NaN();
@@ -217,6 +217,7 @@ struct DerivativesData
     FC4LCpCDerivativeData<DisplacementDim> dfC_4_LCpC;
     FC4MCpGDerivativeData dfC_4_MCpG;
     FC4MCTDerivativeData dfC_4_MCT;
+    FC4MCuDerivativeData dfC_4_MCu;
 };
 
 }  // namespace ConstitutiveRelations

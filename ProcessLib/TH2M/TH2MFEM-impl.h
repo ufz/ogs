@@ -343,6 +343,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    ip_cv.s_therm_exp_data,
                                    ip_cv.fC_4_MCT);
 
+        models.fC_4_MCu_model.eval(ip_cv.biot_data,
+                                   current_state.constituent_density_data,
+                                   current_state.S_L_data,
+                                   ip_cv.fC_4_MCu);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -471,10 +476,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const rho_W_FR =
             s_G * current_state.constituent_density_data.rho_W_GR +
             s_L * current_state.rho_W_LR();
-
-        double const drho_C_FR_dT = s_G * c.drho_C_GR_dT + s_L * c.drho_C_LR_dT;
-
-        ip_cv.dfC_4_MCu_dT = drho_C_FR_dT * ip_cv.biot_data();
 
         double const drho_W_FR_dp_GR =
             /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_W_GR
@@ -751,6 +752,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     current_state.S_L_data,
                                     ip_cv.s_therm_exp_data,
                                     ip_dd.dfC_4_MCT);
+
+        models.fC_4_MCu_model.dEval(ip_cv.biot_data,
+                                    ip_cv.phase_transition_data,
+                                    current_state.S_L_data,
+                                    ip_dd.dfC_4_MCu);
     }
 
     return ip_d_data;
@@ -1148,9 +1154,6 @@ void TH2MLocalAssembler<
                          phi_S * ip_out.solid_density_data.rho_SR;
 
         // abbreviations
-        const double rho_C_FR =
-            s_G * current_state.constituent_density_data.rho_C_GR +
-            s_L * current_state.constituent_density_data.rho_C_LR;
         const double rho_W_FR =
             s_G * current_state.constituent_density_data.rho_W_GR +
             s_L * current_state.rho_W_LR();
@@ -1179,7 +1182,7 @@ void TH2MLocalAssembler<
         }
 
         MCT.noalias() += NpT * ip_cv.fC_4_MCT.m * Np * w;
-        MCu.noalias() += NpT * rho_C_FR * alpha_B * mT * Bu * w;
+        MCu.noalias() += NpT * ip_cv.fC_4_MCu.m * mT * Bu * w;
 
         LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
@@ -1588,9 +1591,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                          phi_S * ip_out.solid_density_data.rho_SR;
 
         // abbreviations
-        const double rho_C_FR =
-            s_G * current_state.constituent_density_data.rho_C_GR +
-            s_L * current_state.constituent_density_data.rho_C_LR;
         const double rho_W_FR =
             s_G * current_state.constituent_density_data.rho_W_GR +
             s_L * current_state.rho_W_LR();
@@ -1625,12 +1625,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       temperature_index)
             .noalias() += NpT * ip_dd.dfC_4_MCT.dT * (T - T_prev) / dt * NT * w;
 
-        MCu.noalias() += NpT * rho_C_FR * alpha_B * mT * Bu * w;
+        MCu.noalias() += NpT * ip_cv.fC_4_MCu.m * mT * Bu * w;
         // d (fC_4_MCu * u_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += NpT * ip_cv.dfC_4_MCu_dT * div_u_dot * NT * w;
+            .noalias() += NpT * ip_dd.dfC_4_MCu.dT * div_u_dot * NT * w;
 
         LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 

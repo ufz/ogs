@@ -425,5 +425,30 @@ void FC4MCTModel<DisplacementDim>::dEval(
 
 template struct FC4MCTModel<2>;
 template struct FC4MCTModel<3>;
+
+void FC4MCuModel::eval(BiotData const& biot_data,
+                       ConstituentDensityData const& constituent_density_data,
+                       SaturationData const& S_L_data,
+                       FC4MCuData& fC_4_MCu) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    double const rho_C_FR = S_G * constituent_density_data.rho_C_GR +
+                            S_L * constituent_density_data.rho_C_LR;
+
+    fC_4_MCu.m = rho_C_FR * biot_data();
+}
+
+void FC4MCuModel::dEval(BiotData const& biot_data,
+                        PhaseTransitionData const& phase_transition_data,
+                        SaturationData const& S_L_data,
+                        FC4MCuDerivativeData& dfC_4_MCu) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    double const drho_C_FR_dT = S_G * phase_transition_data.drho_C_GR_dT +
+                                S_L * phase_transition_data.drho_C_LR_dT;
+    dfC_4_MCu.dT = drho_C_FR_dT * biot_data();
+}
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

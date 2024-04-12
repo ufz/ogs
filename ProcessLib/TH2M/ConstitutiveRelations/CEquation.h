@@ -255,6 +255,29 @@ struct FC4MCTModel
         FC4MCTDerivativeData& dfC_4_MCT) const;
 };
 
+struct FC4MCuData
+{
+    double m = nan;
+};
+
+struct FC4MCuDerivativeData
+{
+    double dT = nan;
+};
+
+struct FC4MCuModel
+{
+    void eval(BiotData const& biot_data,
+              ConstituentDensityData const& constituent_density_data,
+              SaturationData const& S_L_data,
+              FC4MCuData& fC_4_MCu) const;
+
+    void dEval(BiotData const& biot_data,
+               PhaseTransitionData const& phase_transition_data,
+               SaturationData const& S_L_data,
+               FC4MCuDerivativeData& dfC_4_MCu) const;
+};
+
 extern template struct FC4MCTModel<2>;
 extern template struct FC4MCTModel<3>;
 }  // namespace ConstitutiveRelations
