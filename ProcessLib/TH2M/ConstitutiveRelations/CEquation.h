@@ -222,5 +222,40 @@ struct FC4MCpCModel
               SolidCompressibilityData const& beta_p_SR,
               FC4MCpCData& fC_4_MCpC) const;
 };
+
+struct FC4MCTData
+{
+    double m = nan;
+};
+
+struct FC4MCTDerivativeData
+{
+    double dT = nan;
+};
+
+template <int DisplacementDim>
+struct FC4MCTModel
+{
+    void eval(
+        BiotData const& biot_data,
+        ConstituentDensityData const& constituent_density_data,
+        PorosityData const& porosity_data,
+        SaturationData const& S_L_data,
+        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+        FC4MCTData& fC_4_MCT) const;
+
+    void dEval(
+        BiotData const& biot_data,
+        ConstituentDensityData const& constituent_density_data,
+        PhaseTransitionData const& phase_transition_data,
+        PorosityData const& porosity_data,
+        PorosityDerivativeData const& porosity_d_data,
+        SaturationData const& S_L_data,
+        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+        FC4MCTDerivativeData& dfC_4_MCT) const;
+};
+
+extern template struct FC4MCTModel<2>;
+extern template struct FC4MCTModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

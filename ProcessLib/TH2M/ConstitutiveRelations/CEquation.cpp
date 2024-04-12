@@ -375,5 +375,55 @@ void FC4MCpCModel::eval(BiotData const& biot_data,
         (S_L - S_L_data_prev->S_L);
 }
 
+template <int DisplacementDim>
+void FC4MCTModel<DisplacementDim>::eval(
+    BiotData const& biot_data,
+    ConstituentDensityData const& constituent_density_data,
+    PorosityData const& porosity_data,
+    SaturationData const& S_L_data,
+    SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+    FC4MCTData& fC_4_MCT) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    double const rho_C_FR = S_G * constituent_density_data.rho_C_GR +
+                            S_L * constituent_density_data.rho_C_LR;
+
+    fC_4_MCT.m = -rho_C_FR * (biot_data() - porosity_data.phi) *
+                 s_therm_exp_data.beta_T_SR;
+}
+
+template <int DisplacementDim>
+void FC4MCTModel<DisplacementDim>::dEval(
+    BiotData const& biot_data,
+    [[maybe_unused]] ConstituentDensityData const& constituent_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    PorosityData const& porosity_data,
+    [[maybe_unused]] PorosityDerivativeData const& porosity_d_data,
+    SaturationData const& S_L_data,
+    SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+    FC4MCTDerivativeData& dfC_4_MCT) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+    double const rho_C_FR = S_G * constituent_density_data.rho_C_GR +
+                            S_L * constituent_density_data.rho_C_LR;
+#endif
+
+    double const drho_C_FR_dT = S_G * phase_transition_data.drho_C_GR_dT +
+                                S_L * phase_transition_data.drho_C_LR_dT;
+
+    dfC_4_MCT.dT = drho_C_FR_dT * (biot_data() - porosity_data.phi) *
+                       s_therm_exp_data.beta_T_SR
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+                   + rho_C_FR * (biot_data() - porosity_d_data.dphi_dT) *
+                         s_therm_exp_data.beta_T_SR
+#endif
+        ;
+}
+
+template struct FC4MCTModel<2>;
+template struct FC4MCTModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
