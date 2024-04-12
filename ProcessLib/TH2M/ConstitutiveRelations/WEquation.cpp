@@ -104,5 +104,70 @@ void FW2Model::dEval(BiotData const& biot_data,
 
     dfW_2.dT = dfW_2a_dT - dfW_2b_dT;
 }
+
+void FW3aModel::eval(
+    double const dt,
+    ConstituentDensityData const& constituent_density_data,
+    PrevState<ConstituentDensityData> const& constituent_density_data_prev,
+    PrevState<PureLiquidDensityData> const& rho_W_LR_prev,
+    PureLiquidDensityData const& rho_W_LR,
+    SaturationData const& S_L_data,
+    FW3aData& fW_3a) const
+{
+    if (dt == 0.)
+    {
+        fW_3a.a = 0;
+        return;
+    }
+
+    double const rho_W_GR_dot = (constituent_density_data.rho_W_GR -
+                                 constituent_density_data_prev->rho_W_GR) /
+                                dt;
+    double const rho_W_LR_dot = (rho_W_LR() - **rho_W_LR_prev) / dt;
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    fW_3a.a = S_G * rho_W_GR_dot + S_L * rho_W_LR_dot;
+}
+
+void FW3aModel::dEval(
+    double const dt,
+    ConstituentDensityData const& constituent_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    PrevState<ConstituentDensityData> const& constituent_density_data_prev,
+    PrevState<PureLiquidDensityData> const& rho_W_LR_prev,
+    PureLiquidDensityData const& rho_W_LR,
+    SaturationData const& S_L_data,
+    SaturationDataDeriv const& dS_L_dp_cap,
+    FW3aDerivativeData& dfW_3a) const
+{
+    if (dt == 0.)
+    {
+        dfW_3a.dp_GR = 0.;
+        dfW_3a.dp_cap = 0.;
+        dfW_3a.dT = 0.;
+        return;
+    }
+
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+
+    double const rho_W_GR_dot = (constituent_density_data.rho_W_GR -
+                                 constituent_density_data_prev->rho_W_GR) /
+                                dt;
+    double const rho_W_LR_dot = (rho_W_LR() - **rho_W_LR_prev) / dt;
+
+    dfW_3a.dp_GR = /*(ds_G_dp_GR = 0) * rho_W_GR_dot +*/
+        S_G * phase_transition_data.drho_W_GR_dp_GR / dt +
+        /*(ds_L_dp_GR = 0) * rho_W_LR_dot +*/
+        S_L * phase_transition_data.drho_W_LR_dp_GR / dt;
+
+    dfW_3a.dp_cap = -dS_L_dp_cap() * rho_W_GR_dot +
+                    S_G * phase_transition_data.drho_W_GR_dp_cap / dt +
+                    dS_L_dp_cap() * rho_W_LR_dot -
+                    S_L * phase_transition_data.drho_W_LR_dp_LR / dt;
+    dfW_3a.dT = S_G * phase_transition_data.drho_W_GR_dT / dt +
+                S_L * phase_transition_data.drho_W_LR_dT / dt;
+}
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
