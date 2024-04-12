@@ -113,5 +113,41 @@ struct FW3aModel
         FW3aDerivativeData& dfW_3a) const;
 };
 
+template <int DisplacementDim>
+struct FW4LWpGData
+{
+    GlobalDimMatrix<DisplacementDim> L;
+};
+
+template <int DisplacementDim>
+struct FW4LWpGDerivativeData
+{
+    GlobalDimMatrix<DisplacementDim> dp_GR;
+    GlobalDimMatrix<DisplacementDim> dp_cap;
+    GlobalDimMatrix<DisplacementDim> dT;
+};
+
+template <int DisplacementDim>
+struct FW4LWpGModel
+{
+    void eval(AdvectionData<DisplacementDim> const& advection_data,
+              FluidDensityData const& fluid_density_data,
+              PhaseTransitionData const& phase_transition_data,
+              PorosityData const& porosity_data,
+              SaturationData const& S_L_data,
+              FW4LWpGData<DisplacementDim>& fW_4_LWpG) const;
+
+    void dEval(ConstituentDensityData const& constituent_density_data,
+               PermeabilityData<DisplacementDim> const& permeability_data,
+               PhaseTransitionData const& phase_transition_data,
+               PureLiquidDensityData const& rho_W_LR,
+               SaturationDataDeriv const& dS_L_dp_cap,
+               ViscosityData const& viscosity_data,
+               FW4LWpGDerivativeData<DisplacementDim>& dfW_4_LWpG) const;
+};
+
+extern template struct FW4LWpGModel<2>;
+extern template struct FW4LWpGModel<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

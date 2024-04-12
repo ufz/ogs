@@ -169,5 +169,90 @@ void FW3aModel::dEval(
                 S_L * phase_transition_data.drho_W_LR_dT / dt;
 }
 
+template <int DisplacementDim>
+void FW4LWpGModel<DisplacementDim>::eval(
+    AdvectionData<DisplacementDim> const& advection_data,
+    FluidDensityData const& fluid_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    PorosityData const& porosity_data,
+    SaturationData const& S_L_data,
+    FW4LWpGData<DisplacementDim>& fW_4_LWpG) const
+{
+    GlobalDimMatrix<DisplacementDim> const advection_W =
+        advection_data.advection_W_G + advection_data.advection_W_L;
+
+    double const sD_G = phase_transition_data.diffusion_coefficient_vapour;
+    double const sD_L = phase_transition_data.diffusion_coefficient_solute;
+
+    double const phi_G = (1 - S_L_data.S_L) * porosity_data.phi;
+    double const phi_L = S_L_data.S_L * porosity_data.phi;
+
+    double const diffusion_WGpGR = phi_G * fluid_density_data.rho_GR * sD_G *
+                                   phase_transition_data.dxmWG_dpGR;
+    double const diffusion_WLpGR = phi_L * fluid_density_data.rho_LR * sD_L *
+                                   phase_transition_data.dxmWL_dpGR;
+    double const diffusion_W_pGR = diffusion_WGpGR + diffusion_WLpGR;
+
+    auto const I =
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
+    fW_4_LWpG.L.noalias() = diffusion_W_pGR * I + advection_W;
+}
+
+template <int DisplacementDim>
+void FW4LWpGModel<DisplacementDim>::dEval(
+    ConstituentDensityData const& constituent_density_data,
+    PermeabilityData<DisplacementDim> const& permeability_data,
+    PhaseTransitionData const& phase_transition_data,
+    PureLiquidDensityData const& rho_W_LR,
+    SaturationDataDeriv const& dS_L_dp_cap,
+    ViscosityData const& viscosity_data,
+    FW4LWpGDerivativeData<DisplacementDim>& dfW_4_LWpG) const
+{
+    ////// Diffusion Part /////
+    // TODO (naumov) d(diffusion_W_p)/dX for dxmW*/d* != 0
+
+    auto const k_over_mu_G =
+        permeability_data.Ki * permeability_data.k_rel_G / viscosity_data.mu_GR;
+    auto const k_over_mu_L =
+        permeability_data.Ki * permeability_data.k_rel_L / viscosity_data.mu_LR;
+
+    // dk_over_mu_G_dp_GR = ip_out.permeability_data.Ki *
+    //                      ip_out.permeability_data.dk_rel_G_dS_L *
+    //                      (ds_L_dp_GR = 0) /
+    //                      ip_cv.viscosity_data.mu_GR = 0;
+    // dk_over_mu_L_dp_GR = ip_out.permeability_data.Ki *
+    //                      ip_out.permeability_data.dk_rel_L_dS_L *
+    //                      (ds_L_dp_GR = 0) /
+    //                      ip_cv.viscosity_data.mu_LR = 0;
+    auto const dk_over_mu_G_dp_cap = permeability_data.Ki *
+                                     permeability_data.dk_rel_G_dS_L *
+                                     dS_L_dp_cap() / viscosity_data.mu_GR;
+
+    auto const dk_over_mu_L_dp_cap = permeability_data.Ki *
+                                     permeability_data.dk_rel_L_dS_L *
+                                     dS_L_dp_cap() / viscosity_data.mu_LR;
+
+    dfW_4_LWpG.dp_GR = phase_transition_data.drho_W_GR_dp_GR * k_over_mu_G
+                       // + rhoWGR * (dk_over_mu_G_dp_GR = 0)
+                       + phase_transition_data.drho_W_LR_dp_GR * k_over_mu_L
+        // + rhoWLR * (dk_over_mu_L_dp_GR = 0)
+        ;
+
+    dfW_4_LWpG.dp_cap =
+        phase_transition_data.drho_W_GR_dp_cap * k_over_mu_G +
+        constituent_density_data.rho_W_GR * dk_over_mu_G_dp_cap +
+        -phase_transition_data.drho_W_LR_dp_LR * k_over_mu_L +
+        rho_W_LR() * dk_over_mu_L_dp_cap;
+
+    dfW_4_LWpG.dT = phase_transition_data.drho_W_GR_dT * k_over_mu_G
+                    //+ rhoWGR * (dk_over_mu_G_dT != 0 TODO for mu_G(T))
+                    + phase_transition_data.drho_W_LR_dT * k_over_mu_L
+        //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_G(T))
+        ;
+}
+
+template struct FW4LWpGModel<2>;
+template struct FW4LWpGModel<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

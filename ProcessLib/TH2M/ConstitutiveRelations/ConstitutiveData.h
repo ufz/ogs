@@ -170,6 +170,7 @@ struct ConstitutiveTempData
     FW1Data<DisplacementDim> fW_1;
     FW2Data fW_2;
     FW3aData fW_3a;
+    FW4LWpGData<DisplacementDim> fW_4_LWpG;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
@@ -180,19 +181,12 @@ struct ConstitutiveTempData
     DisplacementDimVector drho_LR_h_w_eff_dp_cap_Npart;
     DisplacementDimMatrix drho_LR_h_w_eff_dp_cap_gradNpart;
     DisplacementDimVector drho_GR_h_w_eff_dT;
-    DisplacementDimMatrix dfW_4_LWpG_a_dp_GR;
-    DisplacementDimMatrix dfW_4_LWpG_a_dp_cap;
-    DisplacementDimMatrix dfW_4_LWpG_a_dT;
-    DisplacementDimMatrix dfW_4_LWpG_d_dp_GR;
-    DisplacementDimMatrix dfW_4_LWpG_d_dp_cap;
-    DisplacementDimMatrix dfW_4_LWpG_d_dT;
     DisplacementDimMatrix dfW_4_LWpC_a_dp_GR;
     DisplacementDimMatrix dfW_4_LWpC_a_dp_cap;
     DisplacementDimMatrix dfW_4_LWpC_a_dT;
     DisplacementDimMatrix dfW_4_LWpC_d_dp_GR;
     DisplacementDimMatrix dfW_4_LWpC_d_dp_cap;
     DisplacementDimMatrix dfW_4_LWpC_d_dT;
-    DisplacementDimMatrix dk_over_mu_G_dp_cap;
     DisplacementDimMatrix dk_over_mu_L_dp_cap;
 };
 
@@ -217,6 +211,7 @@ struct DerivativesData
     FC4MCuDerivativeData dfC_4_MCu;
     FW2DerivativeData dfW_2;
     FW3aDerivativeData dfW_3a;
+    FW4LWpGDerivativeData<DisplacementDim> dfW_4_LWpG;
 };
 
 }  // namespace ConstitutiveRelations
