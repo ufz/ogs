@@ -354,6 +354,18 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.fW_1_model.eval(ip_cv.advection_data, ip_out.fluid_density_data,
                                ip_cv.fW_1);
 
+        if (!this->process_data_.apply_mass_lumping)
+        {
+            models.fW_2_model.eval(ip_cv.biot_data,
+                                   pCap_data,
+                                   current_state.constituent_density_data,
+                                   ip_out.porosity_data,
+                                   current_state.rho_W_LR,
+                                   current_state.S_L_data,
+                                   ip_cv.beta_p_SR,
+                                   ip_cv.fW_2);
+        }
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -474,53 +486,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
         // drho_LR_dT * b
 
-        // Derivatives of s_G * rho_C_GR_dot + s_L * rho_C_LR_dot abbreviated
-        // here with S_rho_C_eff.
-        double const s_L = current_state.S_L_data.S_L;
-        double const s_G = 1. - s_L;
-        double const ds_G_dp_cap = -ip_cv.dS_L_dp_cap();
-        double const rho_W_FR =
-            s_G * current_state.constituent_density_data.rho_W_GR +
-            s_L * current_state.rho_W_LR();
-
-        double const drho_W_FR_dp_GR =
-            /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_W_GR
-               +*/
-            s_G * c.drho_W_GR_dp_GR +
-            /*(ds_L_dp_GR = 0) * current_state.rho_W_LR() +*/
-            s_L * c.drho_W_LR_dp_GR;
-        double const drho_W_FR_dp_cap =
-            ds_G_dp_cap * current_state.constituent_density_data.rho_W_GR +
-            s_G * c.drho_W_GR_dp_cap +
-            ip_cv.dS_L_dp_cap() * current_state.rho_W_LR() -
-            s_L * c.drho_W_LR_dp_LR;
-        double const drho_W_FR_dT = s_G * c.drho_W_GR_dT + s_L * c.drho_W_LR_dT;
-
-        ip_cv.dfW_2a_dp_GR =
-            ip_out.porosity_data.phi * (c.drho_W_LR_dp_GR - c.drho_W_GR_dp_GR);
-        ip_cv.dfW_2b_dp_GR = drho_W_FR_dp_GR * pCap *
-                             (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                             ip_cv.beta_p_SR();
-        ip_cv.dfW_2a_dp_cap = ip_out.porosity_data.phi *
-                              (-c.drho_W_LR_dp_LR - c.drho_W_GR_dp_cap);
-        ip_cv.dfW_2b_dp_cap =
-            drho_W_FR_dp_cap * pCap *
-                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() +
-            rho_W_FR * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR();
-
-        ip_cv.dfW_2a_dT =
-            ip_cv.porosity_d_data.dphi_dT *
-                (current_state.rho_W_LR() -
-                 current_state.constituent_density_data.rho_W_GR) +
-            ip_out.porosity_data.phi * (c.drho_W_LR_dT - c.drho_W_GR_dT);
-        ip_cv.dfW_2b_dT =
-            drho_W_FR_dT * pCap *
-                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() -
-            rho_W_FR * pCap * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
-
         if (dt == 0.)
         {
             ip_cv.dfW_3a_dp_GR = 0.;
@@ -529,6 +494,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         }
         else
         {
+            double const s_L = current_state.S_L_data.S_L;
+            double const s_G = 1. - s_L;
+            double const ds_G_dp_cap = -ip_cv.dS_L_dp_cap();
+
             double const rho_W_GR_dot =
                 (current_state.constituent_density_data.rho_W_GR -
                  prev_state.constituent_density_data->rho_W_GR) /
@@ -763,6 +732,21 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.phase_transition_data,
                                     current_state.S_L_data,
                                     ip_dd.dfC_4_MCu);
+
+        if (!this->process_data_.apply_mass_lumping)
+        {
+            models.fW_2_model.dEval(ip_cv.biot_data,
+                                    pCap_data,
+                                    current_state.constituent_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    ip_cv.porosity_d_data,
+                                    current_state.rho_W_LR,
+                                    current_state.S_L_data,
+                                    ip_cv.dS_L_dp_cap,
+                                    ip_cv.beta_p_SR,
+                                    ip_dd.dfW_2);
+        }
     }
 
     return ip_d_data;
@@ -1278,14 +1262,7 @@ void TH2MLocalAssembler<
 
         if (!this->process_data_.apply_mass_lumping)
         {
-            fW.noalias() -=
-                NpT *
-                (ip_out.porosity_data.phi *
-                     (current_state.rho_W_LR() -
-                      current_state.constituent_density_data.rho_W_GR) -
-                 rho_W_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                     beta_p_SR) *
-                s_L_dot * w;
+            fW.noalias() -= NpT * ip_cv.fW_2.a * s_L_dot * w;
         }
 
         fW.noalias() -= NpT * ip_out.porosity_data.phi *
@@ -1813,36 +1790,27 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // fW_1
         fW.noalias() += gradNpT * ip_cv.fW_1.A * b * w;
 
-        // fW_2 = \int (f - g) * s_L_dot
+        // fW_2 = \int a * s_L_dot
         if (!this->process_data_.apply_mass_lumping)
         {
-            double const f = ip_out.porosity_data.phi *
-                             (current_state.rho_W_LR() -
-                              current_state.constituent_density_data.rho_W_GR);
-            double const g = rho_W_FR * pCap *
-                             (alpha_B - ip_out.porosity_data.phi) * beta_p_SR;
-
-            fW.noalias() -= NpT * (f - g) * s_L_dot * w;
+            fW.noalias() -= NpT * ip_cv.fW_2.a * s_L_dot * w;
 
             local_Jac.template block<W_size, C_size>(W_index, C_index)
-                .noalias() += NpT * (ip_cv.dfW_2a_dp_GR - ip_cv.dfW_2b_dp_GR) *
-                              s_L_dot * Np * w;
+                .noalias() += NpT * ip_dd.dfW_2.dp_GR * s_L_dot * Np * w;
 
             // sign negated because of dp_cap = -dp_LR
             // TODO (naumov) Had to change the sign to get equal Jacobian WW
             // blocks in A2 Test. Where is the error?
             local_Jac.template block<W_size, W_size>(W_index, W_index)
-                .noalias() +=
-                NpT *
-                ((ip_cv.dfW_2a_dp_cap - ip_cv.dfW_2b_dp_cap) * s_L_dot +
-                 (f - g) * ip_cv.dS_L_dp_cap() / dt) *
-                Np * w;
+                .noalias() += NpT *
+                              (ip_dd.dfW_2.dp_cap * s_L_dot +
+                               ip_cv.fW_2.a * ip_cv.dS_L_dp_cap() / dt) *
+                              Np * w;
 
             local_Jac
                 .template block<W_size, temperature_size>(W_index,
                                                           temperature_index)
-                .noalias() +=
-                NpT * (ip_cv.dfW_2a_dT - ip_cv.dfW_2b_dT) * s_L_dot * Np * w;
+                .noalias() += NpT * ip_dd.dfW_2.dT * s_L_dot * Np * w;
         }
 
         // fW_3 = \int phi * a
