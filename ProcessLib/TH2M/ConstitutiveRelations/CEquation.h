@@ -25,6 +25,23 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
+template <int DisplacementDim>
+struct FC1Data
+{
+    GlobalDimMatrix<DisplacementDim> A;
+};
+
+template <int DisplacementDim>
+struct FC1Model
+{
+    void eval(AdvectionData<DisplacementDim> const& advection_data,
+              FluidDensityData const& fluid_density_data,
+              FC1Data<DisplacementDim>& fC_1) const;
+};
+
+extern template struct FC1Model<2>;
+extern template struct FC1Model<3>;
+
 struct FC2aData
 {
     double a = nan;

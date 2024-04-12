@@ -155,6 +155,7 @@ struct ConstitutiveTempData
     ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
     EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
     AdvectionData<DisplacementDim> advection_data;
+    FC1Data<DisplacementDim> fC_1;
     FC2aData fC_2a;
     FC3aData fC_3a;
     FC4LCpGData<DisplacementDim> fC_4_LCpG;

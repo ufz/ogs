@@ -81,6 +81,7 @@ struct ConstitutiveModels
     AdvectionModel<DisplacementDim> advection_model;
     InternalEnergyModel internal_energy_model;
     EffectiveVolumetricEnthalpyModel effective_volumetric_enthalpy_model;
+    FC1Model<DisplacementDim> fC_1_model;
     FC2aModel fC_2a_model;
     FC3aModel fC_3a_model;
     FC4LCpGModel<DisplacementDim> fC_4_LCpG_model;

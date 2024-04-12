@@ -13,6 +13,19 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
+template <int DisplacementDim>
+void FC1Model<DisplacementDim>::eval(
+    AdvectionData<DisplacementDim> const& advection_data,
+    FluidDensityData const& fluid_density_data,
+    FC1Data<DisplacementDim>& fC_1) const
+{
+    fC_1.A = advection_data.advection_C_G * fluid_density_data.rho_GR +
+             advection_data.advection_C_L * fluid_density_data.rho_LR;
+}
+
+template struct FC1Model<2>;
+template struct FC1Model<3>;
+
 void FC2aModel::eval(BiotData const biot_data,
                      CapillaryPressureData const pCap,
                      ConstituentDensityData const& constituent_density_data,

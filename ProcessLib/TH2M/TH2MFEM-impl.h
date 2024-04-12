@@ -284,6 +284,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.solid_density_data,
             ip_cv.effective_volumetric_enthalpy_data);
 
+        models.fC_1_model.eval(ip_cv.advection_data, ip_out.fluid_density_data,
+                               ip_cv.fC_1);
+
         if (!this->process_data_.apply_mass_lumping)
         {
             models.fC_2a_model.eval(ip_cv.biot_data,
@@ -1190,10 +1193,7 @@ void TH2MLocalAssembler<
 
         LCT.noalias() += gradNpT * ip_cv.fC_4_LCT.L * gradNp * w;
 
-        fC.noalias() += gradNpT *
-                        (ip_cv.advection_data.advection_C_G * rhoGR +
-                         ip_cv.advection_data.advection_C_L * rhoLR) *
-                        b * w;
+        fC.noalias() += gradNpT * ip_cv.fC_1.A * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
@@ -1678,10 +1678,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         LCT.noalias() += gradNpT * ip_cv.fC_4_LCT.L * gradNp * w;
 
         // fC_1
-        fC.noalias() += gradNpT *
-                        (ip_cv.advection_data.advection_C_G * rhoGR +
-                         ip_cv.advection_data.advection_C_L * rhoLR) *
-                        b * w;
+        fC.noalias() += gradNpT * ip_cv.fC_1.A * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
