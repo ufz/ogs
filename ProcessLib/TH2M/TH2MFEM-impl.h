@@ -327,6 +327,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.beta_p_SR,
                                     ip_cv.fC_4_MCpG);
 
+        models.fC_4_MCpC_model.eval(ip_cv.biot_data,
+                                    pCap_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    prev_state.S_L_data,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fC_4_MCpC);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -1154,22 +1163,14 @@ void TH2MLocalAssembler<
         // ---------------------------------------------------------------------
 
         MCpG.noalias() += NpT * ip_cv.fC_4_MCpG.m * Np * w;
-        MCpC.noalias() -= NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MCpC.noalias() += NpT * ip_cv.fC_4_MCpC.m * Np * w;
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.constituent_density_data.rho_C_LR -
-                          current_state.constituent_density_data.rho_C_GR) -
-                     rho_C_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NpT * ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * Np * w;
             }
         }
 
@@ -1603,22 +1604,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // ---------------------------------------------------------------------
 
         MCpG.noalias() += NpT * ip_cv.fC_4_MCpG.m * Np * w;
-        MCpC.noalias() -= NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MCpC.noalias() += NpT * ip_cv.fC_4_MCpC.m * Np * w;
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.constituent_density_data.rho_C_LR -
-                          current_state.constituent_density_data.rho_C_GR) -
-                     rho_C_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NpT * ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * Np * w;
             }
         }
 

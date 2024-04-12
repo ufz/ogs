@@ -204,5 +204,23 @@ struct FC4MCpGModel
                SolidCompressibilityData const& beta_p_SR,
                FC4MCpGDerivativeData& dfC_4_MCpG) const;
 };
+
+struct FC4MCpCData
+{
+    double m = nan;
+    double ml = nan;
+};
+
+struct FC4MCpCModel
+{
+    void eval(BiotData const& biot_data,
+              CapillaryPressureData const pCap,
+              ConstituentDensityData const& constituent_density_data,
+              PorosityData const& porosity_data,
+              PrevState<SaturationData> const& S_L_data_prev,
+              SaturationData const& S_L_data,
+              SolidCompressibilityData const& beta_p_SR,
+              FC4MCpCData& fC_4_MCpC) const;
+};
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
