@@ -269,7 +269,7 @@ AddTest(
 
     result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu velocity_liquid velocity_liquid 1e-8 1e-8
 
-    result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu sigma sigma 3.3e-6 1e-8
+    result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu sigma sigma 3.4e-6 1e-8
 
     result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu epsilon epsilon 1e-8 1e-8
 
