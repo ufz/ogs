@@ -41,6 +41,7 @@
 #include "TotalStress.h"
 #include "VapourPartialPressure.h"
 #include "Viscosity.h"
+#include "WEquation.h"
 
 namespace ProcessLib::TH2M
 {
@@ -165,6 +166,8 @@ struct ConstitutiveTempData
     FC4MCpCData fC_4_MCpC;
     FC4MCTData fC_4_MCT;
     FC4MCuData fC_4_MCu;
+
+    FW1Data<DisplacementDim> fW_1;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

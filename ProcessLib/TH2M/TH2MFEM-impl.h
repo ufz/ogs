@@ -351,6 +351,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    current_state.S_L_data,
                                    ip_cv.fC_4_MCu);
 
+        models.fW_1_model.eval(ip_cv.advection_data, ip_out.fluid_density_data,
+                               ip_cv.fW_1);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -1271,10 +1274,7 @@ void TH2MLocalAssembler<
 
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
-        fW.noalias() += gradNpT *
-                        (ip_cv.advection_data.advection_W_G * rhoGR +
-                         ip_cv.advection_data.advection_W_L * rhoLR) *
-                        b * w;
+        fW.noalias() += gradNpT * ip_cv.fW_1.A * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
@@ -1811,10 +1811,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
         // fW_1
-        fW.noalias() += gradNpT *
-                        (ip_cv.advection_data.advection_W_G * rhoGR +
-                         ip_cv.advection_data.advection_W_L * rhoLR) *
-                        b * w;
+        fW.noalias() += gradNpT * ip_cv.fW_1.A * b * w;
 
         // fW_2 = \int (f - g) * s_L_dot
         if (!this->process_data_.apply_mass_lumping)

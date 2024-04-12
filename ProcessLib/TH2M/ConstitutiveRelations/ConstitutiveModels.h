@@ -31,6 +31,7 @@
 #include "ThermalConductivity.h"
 #include "TotalStress.h"
 #include "Viscosity.h"
+#include "WEquation.h"
 
 namespace ProcessLib::TH2M
 {
@@ -91,6 +92,8 @@ struct ConstitutiveModels
     FC4MCpCModel fC_4_MCpC_model;
     FC4MCTModel<DisplacementDim> fC_4_MCT_model;
     FC4MCuModel fC_4_MCu_model;
+
+    FW1Model<DisplacementDim> fW_1_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
