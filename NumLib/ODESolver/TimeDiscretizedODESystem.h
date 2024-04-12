@@ -234,21 +234,21 @@ public:
         return _ode.getMatrixSpecifications(process_id);
     }
 
-    LinearSolverBehaviour linearSolverNeedsToCompute() const override
+    MathLib::LinearSolverBehaviour linearSolverNeedsToCompute() const override
     {
         if (_ode.shouldLinearSolverComputeOnlyUponTimestepChange() &&
             _time_disc.getCurrentTimeIncrement() !=
                 _time_disc.getPreviousTimeIncrement())
         {
-            return LinearSolverBehaviour::RECOMPUTE_AND_STORE;
+            return MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE;
         }
         if (_ode.shouldLinearSolverComputeOnlyUponTimestepChange() &&
             _time_disc.getCurrentTimeIncrement() ==
                 _time_disc.getPreviousTimeIncrement())
         {
-            return LinearSolverBehaviour::REUSE;
+            return MathLib::LinearSolverBehaviour::REUSE;
         }
-        return LinearSolverBehaviour::RECOMPUTE;
+        return MathLib::LinearSolverBehaviour::RECOMPUTE;
     }
 
 private:

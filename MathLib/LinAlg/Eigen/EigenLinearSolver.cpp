@@ -63,7 +63,7 @@ public:
     }
 
     bool compute(Matrix& A, EigenOption& opt,
-                 NumLib::LinearSolverBehaviour const linear_solver_behaviour)
+                 MathLib::LinearSolverBehaviour const linear_solver_behaviour)
     {
 #ifdef USE_EIGEN_UNSUPPORTED
         if (opt.scaling)
@@ -83,7 +83,7 @@ protected:
 
     virtual bool computeImpl(
         Matrix& A, EigenOption& opt,
-        NumLib::LinearSolverBehaviour const linear_solver_behaviour) = 0;
+        MathLib::LinearSolverBehaviour const linear_solver_behaviour) = 0;
 
 private:
 #ifdef USE_EIGEN_UNSUPPORTED
@@ -114,7 +114,7 @@ public:
     }
 
     bool computeImpl(Matrix& A, EigenOption& opt,
-                     [[maybe_unused]] NumLib::LinearSolverBehaviour const
+                     [[maybe_unused]] MathLib::LinearSolverBehaviour const
                          linear_solver_behaviour) override
     {
         INFO("-> compute with Eigen direct linear solver {:s}",
@@ -243,7 +243,7 @@ class EigenIterativeLinearSolver final : public EigenLinearSolverBase
 public:
     bool computeImpl(
         Matrix& A, EigenOption& opt,
-        NumLib::LinearSolverBehaviour const linear_solver_behaviour) override
+        MathLib::LinearSolverBehaviour const linear_solver_behaviour) override
     {
         INFO("-> compute with Eigen iterative linear solver {:s} (precon {:s})",
              EigenOption::getSolverName(opt.solver_type),
@@ -276,7 +276,7 @@ public:
 
         switch (linear_solver_behaviour)
         {
-            case NumLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE:
+            case MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE:
             {
                 // matrix must be copied, because Eigen's linear solver stores a
                 // reference to it cf.
@@ -285,12 +285,12 @@ public:
                 compute(A_);
                 break;
             }
-            case NumLib::LinearSolverBehaviour::RECOMPUTE:
+            case MathLib::LinearSolverBehaviour::RECOMPUTE:
             {
                 compute(A);
                 break;
             }
-            case NumLib::LinearSolverBehaviour::REUSE:
+            case MathLib::LinearSolverBehaviour::REUSE:
                 OGS_FATAL(
                     "If NumLib::LinearSolverBehaviour::REUSE is set then "
                     "EigenLinearSolver::compute() should never be executed");
@@ -495,7 +495,8 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
 EigenLinearSolver::~EigenLinearSolver() = default;
 
 bool EigenLinearSolver::compute(
-    EigenMatrix& A, NumLib::LinearSolverBehaviour const linear_solver_behaviour)
+    EigenMatrix& A,
+    MathLib::LinearSolverBehaviour const linear_solver_behaviour)
 {
     INFO("------------------------------------------------------------------");
     INFO("*** Eigen solver compute()");
@@ -513,7 +514,7 @@ bool EigenLinearSolver::solve(EigenVector& b, EigenVector& x)
 
 bool EigenLinearSolver::solve(
     EigenMatrix& A, EigenVector& b, EigenVector& x,
-    NumLib::LinearSolverBehaviour const linear_solver_behaviour)
+    MathLib::LinearSolverBehaviour const linear_solver_behaviour)
 {
     return solver_->compute(A.getRawMatrix(), option_,
                             linear_solver_behaviour) &&

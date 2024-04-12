@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "EigenOption.h"
-#include "NumLib/ODESolver/NonlinearSystem.h"
+#include "MathLib/LinAlg/LinearSolverBehaviour.h"
 
 namespace MathLib
 {
@@ -54,7 +54,7 @@ public:
      * computes the preconditioner of an iterative solver.
      */
     bool compute(EigenMatrix& A,
-                 NumLib::LinearSolverBehaviour const linear_solver_behaviour);
+                 MathLib::LinearSolverBehaviour const linear_solver_behaviour);
     /**
      * Solves the linear system for the given right-hand side \c b and initial
      * guess \c x.
@@ -68,8 +68,8 @@ public:
     bool solve(EigenMatrix& A,
                EigenVector& b,
                EigenVector& x,
-               NumLib::LinearSolverBehaviour const linear_solver_behaviour =
-                   NumLib::LinearSolverBehaviour::RECOMPUTE);
+               MathLib::LinearSolverBehaviour const linear_solver_behaviour =
+                   MathLib::LinearSolverBehaviour::RECOMPUTE);
 
 protected:
     EigenOption option_;
