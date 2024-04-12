@@ -11,6 +11,7 @@
 #pragma once
 
 #include "EquationSystem.h"
+#include "MathLib/LinAlg/LinearSolverBehaviour.h"
 #include "Types.h"
 
 namespace NumLib
@@ -129,7 +130,8 @@ public:
 
     //! Returns whether the assembled matrix \f$A\f$ has changed and the linear
     //! solver must perform the MathLib::EigenLinearSolver::compute() step.
-    virtual bool linearSolverNeedsToCompute() const = 0;
+    virtual MathLib::LinearSolverBehaviour linearSolverNeedsToCompute()
+        const = 0;
 };
 
 //! @}

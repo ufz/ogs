@@ -29,20 +29,23 @@ namespace detail
 #if !defined(USE_PETSC) && !defined(USE_LIS)
 bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
                  GlobalVector& rhs, GlobalVector& x,
-                 bool const compute_necessary)
+                 MathLib::LinearSolverBehaviour const linear_solver_behaviour)
 {
     BaseLib::RunTime time_linear_solver;
     time_linear_solver.start();
 
-    if (compute_necessary)
+    if (linear_solver_behaviour == MathLib::LinearSolverBehaviour::RECOMPUTE ||
+        linear_solver_behaviour ==
+            MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE)
     {
-        if (!linear_solver.compute(A))
+        if (!linear_solver.compute(A, linear_solver_behaviour))
         {
             ERR("Picard: The linear solver failed in the compute() step.");
             return false;
         }
     }
 
+    // REUSE the previously computed preconditioner or LU decomposition
     bool const iteration_succeeded = linear_solver.solve(rhs, x);
 
     INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());
@@ -58,9 +61,11 @@ bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
 #else
 bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
                  GlobalVector& rhs, GlobalVector& x,
-                 bool const compute_necessary)
+                 MathLib::LinearSolverBehaviour const linear_solver_behaviour)
 {
-    if (!compute_necessary)
+    if (linear_solver_behaviour ==
+            MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE ||
+        linear_solver_behaviour == MathLib::LinearSolverBehaviour::REUSE)
     {
         WARN(
             "The performance optimization to skip the linear solver compute() "
