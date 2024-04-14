@@ -204,5 +204,21 @@ struct FW4LWTModel
               FW4LWTData<DisplacementDim>& fW_4_LWT) const;
 };
 
+struct FW4MWpGData
+{
+    double m = nan;
+};
+
+struct FW4MWpGModel
+{
+    void eval(BiotData const& biot_data,
+              ConstituentDensityData const& constituent_density_data,
+              PorosityData const& porosity_data,
+              PureLiquidDensityData const& rho_W_LR,
+              SaturationData const& S_L_data,
+              SolidCompressibilityData const& beta_p_SR,
+              FW4MWpGData& fW_4_MWpG) const;
+};
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

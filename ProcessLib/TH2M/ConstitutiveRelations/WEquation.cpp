@@ -375,5 +375,22 @@ void FW4LWTModel<DisplacementDim>::eval(
 template struct FW4LWTModel<2>;
 template struct FW4LWTModel<3>;
 
+void FW4MWpGModel::eval(BiotData const& biot_data,
+                        ConstituentDensityData const& constituent_density_data,
+                        PorosityData const& porosity_data,
+                        PureLiquidDensityData const& rho_W_LR,
+                        SaturationData const& S_L_data,
+                        SolidCompressibilityData const& beta_p_SR,
+                        FW4MWpGData& fW_4_MWpG) const
+{
+    double const S_L = S_L_data.S_L;
+    double const S_G = 1. - S_L;
+
+    double const rho_W_FR =
+        S_G * constituent_density_data.rho_W_GR + S_L * rho_W_LR();
+
+    fW_4_MWpG.m = rho_W_FR * (biot_data() - porosity_data.phi) * beta_p_SR();
+}
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

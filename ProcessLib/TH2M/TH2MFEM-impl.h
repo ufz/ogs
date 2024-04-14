@@ -393,6 +393,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    current_state.S_L_data,
                                    ip_cv.fW_4_LWT);
 
+        models.fW_4_MWpG_model.eval(ip_cv.biot_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    current_state.rho_W_LR,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fW_4_MWpG);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -1137,9 +1145,7 @@ void TH2MLocalAssembler<
         // W-component equation
         // ---------------------------------------------------------------------
 
-        MWpG.noalias() += NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
+        MWpG.noalias() += NpT * ip_cv.fW_4_MWpG.m * Np * w;
         MWpC.noalias() -= NpT * rho_W_FR *
                           (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
                           s_L * Np * w;
@@ -1596,9 +1602,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // W-component equation
         // ---------------------------------------------------------------------
 
-        MWpG.noalias() += NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
+        MWpG.noalias() += NpT * ip_cv.fW_4_MWpG.m * Np * w;
         MWpC.noalias() -= NpT * rho_W_FR *
                           (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
                           s_L * Np * w;
