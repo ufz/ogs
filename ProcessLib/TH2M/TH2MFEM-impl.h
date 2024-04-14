@@ -387,6 +387,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     current_state.S_L_data,
                                     ip_cv.fW_4_LWpC);
 
+        models.fW_4_LWT_model.eval(ip_out.fluid_density_data,
+                                   ip_cv.phase_transition_data,
+                                   ip_out.porosity_data,
+                                   current_state.S_L_data,
+                                   ip_cv.fW_4_LWT);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -1067,17 +1073,6 @@ void TH2MLocalAssembler<
 
         double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
 
-        auto const I =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
-
-        double const sD_G =
-            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
-        double const sD_L =
-            ip_cv.phase_transition_data.diffusion_coefficient_solute;
-
-        GlobalDimMatrixType const D_W_G = sD_G * I;
-        GlobalDimMatrixType const D_W_L = sD_L * I;
-
         auto const s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
@@ -1169,22 +1164,11 @@ void TH2MLocalAssembler<
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
-        using DisplacementDimMatrix =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
-
-        DisplacementDimMatrix const diffusion_WGT =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
-        DisplacementDimMatrix const diffusion_WLT =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
-
-        DisplacementDimMatrix const diffusion_W_T =
-            diffusion_WGT + diffusion_WLT;
-
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
         LWpC.noalias() += gradNpT * ip_cv.fW_4_LWpC.L * gradNp * w;
 
-        LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
+        LWT.noalias() += gradNpT * ip_cv.fW_4_LWT.L * gradNp * w;
 
         fW.noalias() += gradNpT * ip_cv.fW_1.A * b * w;
 
@@ -1462,17 +1446,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const T_prev = NT.dot(temperature_prev);
         double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
 
-        auto const I =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
-
-        double const sD_G =
-            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
-        double const sD_L =
-            ip_cv.phase_transition_data.diffusion_coefficient_solute;
-
-        GlobalDimMatrixType const D_W_G = sD_G * I;
-        GlobalDimMatrixType const D_W_L = sD_L * I;
-
         auto& s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
@@ -1650,14 +1623,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
-        GlobalDimMatrixType const diffusion_W_G_T =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
-        GlobalDimMatrixType const diffusion_W_L_T =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
-
-        GlobalDimMatrixType const diffusion_W_T =
-            diffusion_W_G_T + diffusion_W_L_T;
-
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
         // fW_4 LWpG' parts; LWpG = \int grad (a + d) grad
@@ -1686,7 +1651,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       temperature_index)
             .noalias() -= gradNpT * ip_dd.dfW_4_LWpC.dT * gradpCap * NT * w;
 
-        LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
+        LWT.noalias() += gradNpT * ip_cv.fW_4_LWT.L * gradNp * w;
 
         // fW_1
         fW.noalias() += gradNpT * ip_cv.fW_1.A * b * w;

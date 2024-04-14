@@ -345,5 +345,35 @@ void FW4LWpCModel<DisplacementDim>::dEval(
 template struct FW4LWpCModel<2>;
 template struct FW4LWpCModel<3>;
 
+template <int DisplacementDim>
+void FW4LWTModel<DisplacementDim>::eval(
+    FluidDensityData const& fluid_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    PorosityData const& porosity_data,
+    SaturationData const& S_L_data,
+    FW4LWTData<DisplacementDim>& fW_4_LWT) const
+{
+    double const sD_G = phase_transition_data.diffusion_coefficient_vapour;
+    double const sD_L = phase_transition_data.diffusion_coefficient_solute;
+
+    double const phi_G = (1 - S_L_data.S_L) * porosity_data.phi;
+    double const phi_L = S_L_data.S_L * porosity_data.phi;
+
+    double const diffusion_W_G_T = phi_G * fluid_density_data.rho_GR * sD_G *
+                                   phase_transition_data.dxmWG_dT;
+    double const diffusion_W_L_T = phi_L * fluid_density_data.rho_LR * sD_L *
+                                   phase_transition_data.dxmWL_dT;
+
+    double const diffusion_W_T = diffusion_W_G_T + diffusion_W_L_T;
+
+    auto const I =
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
+
+    fW_4_LWT.L.noalias() = diffusion_W_T * I;
+}
+
+template struct FW4LWTModel<2>;
+template struct FW4LWTModel<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
