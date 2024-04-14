@@ -174,6 +174,7 @@ struct ConstitutiveTempData
     FW4LWpCData<DisplacementDim> fW_4_LWpC;
     FW4LWTData<DisplacementDim> fW_4_LWT;
     FW4MWpGData fW_4_MWpG;
+    FW4MWpCData fW_4_MWpC;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =

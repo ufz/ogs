@@ -220,5 +220,24 @@ struct FW4MWpGModel
               FW4MWpGData& fW_4_MWpG) const;
 };
 
+struct FW4MWpCData
+{
+    double m = nan;
+    double ml = nan;
+};
+
+struct FW4MWpCModel
+{
+    void eval(BiotData const& biot_data,
+              CapillaryPressureData const pCap,
+              ConstituentDensityData const& constituent_density_data,
+              PorosityData const& porosity_data,
+              PrevState<SaturationData> const& S_L_data_prev,
+              PureLiquidDensityData const& rho_W_LR,
+              SaturationData const& S_L_data,
+              SolidCompressibilityData const& beta_p_SR,
+              FW4MWpCData& fW_4_MWpC) const;
+};
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

@@ -392,5 +392,29 @@ void FW4MWpGModel::eval(BiotData const& biot_data,
     fW_4_MWpG.m = rho_W_FR * (biot_data() - porosity_data.phi) * beta_p_SR();
 }
 
+void FW4MWpCModel::eval(BiotData const& biot_data,
+                        CapillaryPressureData const pCap,
+                        ConstituentDensityData const& constituent_density_data,
+                        PorosityData const& porosity_data,
+                        PrevState<SaturationData> const& S_L_data_prev,
+                        PureLiquidDensityData const& rho_W_LR,
+                        SaturationData const& S_L_data,
+                        SolidCompressibilityData const& beta_p_SR,
+                        FW4MWpCData& fW_4_MWpC) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    double const rho_W_FR =
+        S_G * constituent_density_data.rho_W_GR + S_L * rho_W_LR();
+
+    fW_4_MWpC.m =
+        -rho_W_FR * (biot_data() - porosity_data.phi) * beta_p_SR() * S_L;
+
+    fW_4_MWpC.ml =
+        (porosity_data.phi * (rho_W_LR() - constituent_density_data.rho_W_GR) -
+         rho_W_FR * pCap() * (biot_data() - porosity_data.phi) * beta_p_SR()) *
+        (S_L - S_L_data_prev->S_L);
+}
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

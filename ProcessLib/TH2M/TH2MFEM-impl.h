@@ -401,6 +401,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.beta_p_SR,
                                     ip_cv.fW_4_MWpG);
 
+        models.fW_4_MWpC_model.eval(ip_cv.biot_data,
+                                    pCap_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    prev_state.S_L_data,
+                                    current_state.rho_W_LR,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fW_4_MWpC);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -1086,7 +1096,6 @@ void TH2MLocalAssembler<
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
         auto& alpha_B = ip_cv.biot_data();
-        auto& beta_p_SR = ip_cv.beta_p_SR();
 
         auto const& b = this->process_data_.specific_body_force;
 
@@ -1146,22 +1155,14 @@ void TH2MLocalAssembler<
         // ---------------------------------------------------------------------
 
         MWpG.noalias() += NpT * ip_cv.fW_4_MWpG.m * Np * w;
-        MWpC.noalias() -= NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MWpC.noalias() += NpT * ip_cv.fW_4_MWpC.m * Np * w;
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.rho_W_LR() -
-                          current_state.constituent_density_data.rho_W_GR) -
-                     rho_W_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NpT * ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * Np * w;
             }
         }
 
@@ -1457,7 +1458,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
         auto const alpha_B = ip_cv.biot_data();
-        auto const beta_p_SR = ip_cv.beta_p_SR();
 
         auto const& b = this->process_data_.specific_body_force;
 
@@ -1603,22 +1603,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // ---------------------------------------------------------------------
 
         MWpG.noalias() += NpT * ip_cv.fW_4_MWpG.m * Np * w;
-        MWpC.noalias() -= NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MWpC.noalias() += NpT * ip_cv.fW_4_MWpC.m * Np * w;
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.rho_W_LR() -
-                          current_state.constituent_density_data.rho_W_GR) -
-                     rho_W_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NpT * ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * Np * w;
             }
         }
 
