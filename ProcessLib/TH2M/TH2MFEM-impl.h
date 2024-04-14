@@ -380,6 +380,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     current_state.S_L_data,
                                     ip_cv.fW_4_LWpG);
 
+        models.fW_4_LWpC_model.eval(ip_cv.advection_data,
+                                    ip_out.fluid_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.fW_4_LWpC);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -436,11 +443,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
             ip_cv.viscosity_data.mu_LR;
 
-        ip_cv.dk_over_mu_L_dp_cap = ip_out.permeability_data.Ki *
-                                    ip_out.permeability_data.dk_rel_L_dS_L *
-                                    ip_cv.dS_L_dp_cap() /
-                                    ip_cv.viscosity_data.mu_LR;
-
         ip_out.darcy_velocity_data.w_GS =
             k_over_mu_G * ip_out.fluid_density_data.rho_GR * b -
             k_over_mu_G * gradpGR;
@@ -487,24 +489,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 ip_out.darcy_velocity_data.w_LS;
         // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
         // drho_LR_dT * b
-
-        ip_cv.dfW_4_LWpC_a_dp_GR = c.drho_W_LR_dp_GR * k_over_mu_L
-            //+ rhoWLR * (dk_over_mu_L_dp_GR = 0)
-            ;
-        ip_cv.dfW_4_LWpC_a_dp_cap =
-            -c.drho_W_LR_dp_LR * k_over_mu_L +
-            current_state.rho_W_LR() * ip_cv.dk_over_mu_L_dp_cap;
-        ip_cv.dfW_4_LWpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
-            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
-            ;
-
-        // TODO (naumov) for dxmW*/d* != 0
-        ip_cv.dfW_4_LWpC_d_dp_GR =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfW_4_LWpC_d_dp_cap =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfW_4_LWpC_d_dT =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
     }
 
     return {ip_constitutive_data, ip_constitutive_variables};
@@ -708,6 +692,17 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_cv.dS_L_dp_cap,
                                      ip_cv.viscosity_data,
                                      ip_dd.dfW_4_LWpG);
+
+        models.fW_4_LWpC_model.dEval(ip_cv.advection_data,
+                                     ip_out.fluid_density_data,
+                                     ip_out.permeability_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_out.porosity_data,
+                                     current_state.rho_W_LR,
+                                     current_state.S_L_data,
+                                     ip_cv.dS_L_dp_cap,
+                                     ip_cv.viscosity_data,
+                                     ip_dd.dfW_4_LWpC);
     }
 
     return ip_d_data;
@@ -1177,27 +1172,17 @@ void TH2MLocalAssembler<
         using DisplacementDimMatrix =
             Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
 
-        DisplacementDimMatrix const diffusion_WGpCap =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpCap;
-        DisplacementDimMatrix const diffusion_WLpCap =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpCap;
-
         DisplacementDimMatrix const diffusion_WGT =
             phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
         DisplacementDimMatrix const diffusion_WLT =
             phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
-
-        DisplacementDimMatrix const diffusion_W_pCap =
-            diffusion_WGpCap + diffusion_WLpCap;
 
         DisplacementDimMatrix const diffusion_W_T =
             diffusion_WGT + diffusion_WLT;
 
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
-        LWpC.noalias() +=
-            gradNpT * (diffusion_W_pCap - ip_cv.advection_data.advection_W_L) *
-            gradNp * w;
+        LWpC.noalias() += gradNpT * ip_cv.fW_4_LWpC.L * gradNp * w;
 
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 
@@ -1665,8 +1650,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
-        GlobalDimMatrixType const diffusion_W_L_p =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpLR;
         GlobalDimMatrixType const diffusion_W_G_T =
             phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
         GlobalDimMatrixType const diffusion_W_L_T =
@@ -1689,25 +1672,19 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       temperature_index)
             .noalias() += gradNpT * ip_dd.dfW_4_LWpG.dT * gradpGR * NT * w;
 
-        LWpC.noalias() -=
-            gradNpT * (ip_cv.advection_data.advection_W_L + diffusion_W_L_p) *
-            gradNp * w;
+        LWpC.noalias() += gradNpT * ip_cv.fW_4_LWpC.L * gradNp * w;
 
         // fW_4 LWp_cap' parts; LWpC = \int grad (a + d) grad
         local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() -=
-            gradNpT * (ip_cv.dfW_4_LWpC_a_dp_GR + ip_cv.dfW_4_LWpC_d_dp_GR) *
-            gradpCap * Np * w;
+            gradNpT * ip_dd.dfW_4_LWpC.dp_GR * gradpCap * Np * w;
 
         local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() -=
-            gradNpT * (ip_cv.dfW_4_LWpC_a_dp_cap + ip_cv.dfW_4_LWpC_d_dp_cap) *
-            gradpCap * Np * w;
+            gradNpT * ip_dd.dfW_4_LWpC.dp_cap * gradpCap * Np * w;
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
-            .noalias() -= gradNpT *
-                          (ip_cv.dfW_4_LWpC_a_dT + ip_cv.dfW_4_LWpC_d_dT) *
-                          gradpCap * NT * w;
+            .noalias() -= gradNpT * ip_dd.dfW_4_LWpC.dT * gradpCap * NT * w;
 
         LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
 

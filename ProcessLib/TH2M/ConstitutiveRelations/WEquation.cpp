@@ -254,5 +254,96 @@ void FW4LWpGModel<DisplacementDim>::dEval(
 template struct FW4LWpGModel<2>;
 template struct FW4LWpGModel<3>;
 
+template <int DisplacementDim>
+void FW4LWpCModel<DisplacementDim>::eval(
+    AdvectionData<DisplacementDim> const& advection_data,
+    FluidDensityData const& fluid_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    PorosityData const& porosity_data,
+    SaturationData const& S_L_data,
+    FW4LWpCData<DisplacementDim>& fW_4_LWpC) const
+{
+    double const sD_G = phase_transition_data.diffusion_coefficient_vapour;
+    double const sD_L = phase_transition_data.diffusion_coefficient_solute;
+
+    double const phi_G = (1 - S_L_data.S_L) * porosity_data.phi;
+    double const phi_L = S_L_data.S_L * porosity_data.phi;
+
+    double const diffusion_WGpCap = phi_G * fluid_density_data.rho_GR * sD_G *
+                                    phase_transition_data.dxmWG_dpCap;
+    double const diffusion_WLpCap = phi_L * fluid_density_data.rho_LR * sD_L *
+                                    phase_transition_data.dxmWL_dpCap;
+
+    double const diffusion_W_pCap = diffusion_WGpCap + diffusion_WLpCap;
+
+    auto const I =
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
+
+    fW_4_LWpC.L.noalias() = diffusion_W_pCap * I - advection_data.advection_W_L;
+
+    // Jac wrong?
+    // double const diffusion_W_L_p = phi_L * fluid_density_data.rho_LR * sD_L *
+    //                               phase_transition_data.dxmWL_dpLR;
+    //
+    // fW_4_LWpC.L.noalias() = diffusion_W_L_p * I +
+    // advection_data.advection_W_L;
+}
+
+template <int DisplacementDim>
+void FW4LWpCModel<DisplacementDim>::dEval(
+    AdvectionData<DisplacementDim> const& advection_data,
+    FluidDensityData const& fluid_density_data,
+    PermeabilityData<DisplacementDim> const& permeability_data,
+    PhaseTransitionData const& phase_transition_data,
+    PorosityData const& porosity_data,
+    PureLiquidDensityData const& rho_W_LR,
+    SaturationData const& S_L_data,
+    SaturationDataDeriv const& dS_L_dp_cap,
+    ViscosityData const& viscosity_data,
+    FW4LWpCDerivativeData<DisplacementDim>& dfW_4_LWpC) const
+{
+    ////// Diffusion Part /////
+    // TODO (naumov) d(diffusion_W_pCap)/dX for dxmW*/d* != 0
+
+    ////// Advection part /////
+    GlobalDimMatrix<DisplacementDim> const k_over_mu_L =
+        permeability_data.Ki * permeability_data.k_rel_L / viscosity_data.mu_LR;
+
+    dfW_4_LWpC.dp_GR = phase_transition_data.drho_W_LR_dp_GR * k_over_mu_L
+        //+ rhoWLR * (dk_over_mu_L_dp_GR = 0)
+        ;
+
+    double const sD_G = phase_transition_data.diffusion_coefficient_vapour;
+    double const sD_L = phase_transition_data.diffusion_coefficient_solute;
+
+    double const phi_G = (1 - S_L_data.S_L) * porosity_data.phi;
+    double const phi_L = S_L_data.S_L * porosity_data.phi;
+
+    double const diffusion_WGpCap = phi_G * fluid_density_data.rho_GR * sD_G *
+                                    phase_transition_data.dxmWG_dpCap;
+    double const diffusion_WLpCap = phi_L * fluid_density_data.rho_LR * sD_L *
+                                    phase_transition_data.dxmWL_dpCap;
+
+    double const diffusion_W_pCap = diffusion_WGpCap + diffusion_WLpCap;
+
+    auto const I =
+        Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
+
+    dfW_4_LWpC.dp_cap = diffusion_W_pCap * I - advection_data.advection_W_L;
+
+    auto const dk_over_mu_L_dp_cap = permeability_data.Ki *
+                                     permeability_data.dk_rel_L_dS_L *
+                                     dS_L_dp_cap() / viscosity_data.mu_LR;
+    dfW_4_LWpC.dp_cap = -phase_transition_data.drho_W_LR_dp_LR * k_over_mu_L +
+                        rho_W_LR() * dk_over_mu_L_dp_cap;
+
+    dfW_4_LWpC.dT = phase_transition_data.drho_W_LR_dT * k_over_mu_L
+        //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
+        ;
+}
+
+template struct FW4LWpCModel<2>;
+template struct FW4LWpCModel<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

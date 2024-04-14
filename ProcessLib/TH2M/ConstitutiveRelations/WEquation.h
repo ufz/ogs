@@ -149,5 +149,44 @@ struct FW4LWpGModel
 extern template struct FW4LWpGModel<2>;
 extern template struct FW4LWpGModel<3>;
 
+template <int DisplacementDim>
+struct FW4LWpCData
+{
+    GlobalDimMatrix<DisplacementDim> L;
+};
+
+template <int DisplacementDim>
+struct FW4LWpCDerivativeData
+{
+    GlobalDimMatrix<DisplacementDim> dp_GR;
+    GlobalDimMatrix<DisplacementDim> dp_cap;
+    GlobalDimMatrix<DisplacementDim> dT;
+};
+
+template <int DisplacementDim>
+struct FW4LWpCModel
+{
+    void eval(AdvectionData<DisplacementDim> const& advection_data,
+              FluidDensityData const& fluid_density_data,
+              PhaseTransitionData const& phase_transition_data,
+              PorosityData const& porosity_data,
+              SaturationData const& S_L_data,
+              FW4LWpCData<DisplacementDim>& fW_4_LWpC) const;
+
+    void dEval(AdvectionData<DisplacementDim> const& advection_data,
+               FluidDensityData const& fluid_density_data,
+               PermeabilityData<DisplacementDim> const& permeability_data,
+               PhaseTransitionData const& phase_transition_data,
+               PorosityData const& porosity_data,
+               PureLiquidDensityData const& rho_W_LR,
+               SaturationData const& S_L_data,
+               SaturationDataDeriv const& dS_L_dp_cap,
+               ViscosityData const& viscosity_data,
+               FW4LWpCDerivativeData<DisplacementDim>& dfW_4_LWpC) const;
+};
+
+extern template struct FW4LWpCModel<2>;
+extern template struct FW4LWpCModel<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
