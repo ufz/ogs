@@ -416,5 +416,27 @@ void FW4MWpCModel::eval(BiotData const& biot_data,
         (S_L - S_L_data_prev->S_L);
 }
 
+template <int DisplacementDim>
+void FW4MWTModel<DisplacementDim>::eval(
+    BiotData const& biot_data,
+    ConstituentDensityData const& constituent_density_data,
+    PorosityData const& porosity_data,
+    PureLiquidDensityData const& rho_W_LR,
+    SaturationData const& S_L_data,
+    SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+    FW4MWTData& fW_4_MWT) const
+{
+    auto const S_L = S_L_data.S_L;
+    auto const S_G = 1. - S_L;
+    double const rho_W_FR =
+        S_G * constituent_density_data.rho_W_GR + S_L * rho_W_LR();
+
+    fW_4_MWT.m = -rho_W_FR * (biot_data() - porosity_data.phi) *
+                 s_therm_exp_data.beta_T_SR;
+}
+
+template struct FW4MWTModel<2>;
+template struct FW4MWTModel<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

@@ -239,5 +239,26 @@ struct FW4MWpCModel
               FW4MWpCData& fW_4_MWpC) const;
 };
 
+struct FW4MWTData
+{
+    double m = nan;
+};
+
+template <int DisplacementDim>
+struct FW4MWTModel
+{
+    void eval(
+        BiotData const& biot_data,
+        ConstituentDensityData const& constituent_density_data,
+        PorosityData const& porosity_data,
+        PureLiquidDensityData const& rho_W_LR,
+        SaturationData const& S_L_data,
+        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+        FW4MWTData& fW_4_MWT) const;
+};
+
+extern template struct FW4MWTModel<2>;
+extern template struct FW4MWTModel<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

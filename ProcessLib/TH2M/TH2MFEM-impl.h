@@ -411,6 +411,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.beta_p_SR,
                                     ip_cv.fW_4_MWpC);
 
+        models.fW_4_MWT_model.eval(ip_cv.biot_data,
+                                   current_state.constituent_density_data,
+                                   ip_out.porosity_data,
+                                   current_state.rho_W_LR,
+                                   current_state.S_L_data,
+                                   ip_cv.s_therm_exp_data,
+                                   ip_cv.fW_4_MWT);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -1089,8 +1097,6 @@ void TH2MLocalAssembler<
         double const pCap = Np.dot(capillary_pressure);
         double const pCap_prev = Np.dot(capillary_pressure_prev);
 
-        double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
-
         auto const s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
@@ -1166,8 +1172,7 @@ void TH2MLocalAssembler<
             }
         }
 
-        MWT.noalias() -= NpT * rho_W_FR * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_T_SR * Np * w;
+        MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
@@ -1451,7 +1456,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const pGR_prev = Np.dot(gas_pressure_prev);
         double const pCap_prev = Np.dot(capillary_pressure_prev);
         double const T_prev = NT.dot(temperature_prev);
-        double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
 
         auto& s_L = current_state.S_L_data.S_L;
         auto const s_G = 1. - s_L;
@@ -1614,8 +1618,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             }
         }
 
-        MWT.noalias() -= NpT * rho_W_FR * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_T_SR * Np * w;
+        MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
 
         MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
 
