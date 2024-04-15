@@ -21,6 +21,7 @@ Tests/Data/_out
 web/.netlify
 
 CMakeUserPresets.json
+scripts/cmake/vtk-*.patch
 
 .snakemake
 

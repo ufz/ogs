@@ -15,7 +15,7 @@
     "boost": "1.73.0",
     "eigen": "3.4.0",
     "eigen-unsupported": "9441d94dccccd5db8d64179516fdc5b53994a047",
-    "vtk": "9.1.0",
+    "vtk": "9.3.0",
     "petsc": "3.18.6",
     "qt": "5.14.2",
     "python": "3.6",
@@ -71,8 +71,8 @@
     }
   },
   "cpm": {
-    "package_file_id": 1515,
-    "package_file_sha256": "ba39e2ad8e4928db1e74fca54236f97f1bd18f650073c053dd98a1a4a3aa80ce"
+    "package_file_id": 1517,
+    "package_file_sha256": "70dd7dc421092ca021bb2c992d919d1a1c91963bbf63cf3cc1fb7d7365f071ab"
   },
   "ext": {
     "cache_hash": "5063f1593404ca5e61365e327a09cb3a1edcea1c"
@@ -103,6 +103,7 @@
             "ogscm": "True"
           },
           "cmake": [
+            "VTK_MODULE_ENABLE_VTK_FiltersGeneral=YES",
             "VTK_MODULE_ENABLE_VTK_FiltersParallel=YES"
           ]
         },

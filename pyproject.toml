@@ -130,7 +130,7 @@ unfixable = [
   "F841", # Removes unused variables
 ]
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
-exclude = ["ThirdParty/", "scripts/doc", "*ci-skip*"]
+exclude = ["scripts/doc", "*ci-skip*"]
 flake8-unused-arguments.ignore-variadic-names = true
 line-length = 80
 

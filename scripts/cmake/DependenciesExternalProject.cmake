@@ -1,3 +1,7 @@
+# because of ogs.minimum_version variables:
+#
+# cmake-lint: disable=C0103
+
 if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.24)
     cmake_policy(SET CMP0135 NEW)
 endif()
@@ -100,6 +104,7 @@ if(OGS_USE_MFRONT)
                        "-Denable-testing=OFF"
                        ${_defaultCMakeArgs}
                        "${_tfel_cmake_args}"
+                       SKIP_FIND
         )
         message(
             STATUS
@@ -133,7 +138,7 @@ if(OGS_USE_PETSC)
         set(PETSC_EXECUTABLE_RUNS YES)
     endif()
 
-        # apple clang 15 requires newer petsc, see
+    # apple clang 15 requires newer petsc, see
     # https://www.mail-archive.com/petsc-users@mcs.anl.gov/msg46980.html
     if(APPLE AND ${CMAKE_CXX_COMPILER_VERSION} GREATER_EQUAL 15)
         set(ogs.minimum_version.petsc 3.20.5)
@@ -178,6 +183,7 @@ if(OGS_USE_PETSC)
             BUILD_IN_SOURCE ON
             BUILD_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} all
             INSTALL_COMMAND make -j$ENV{CMAKE_BUILD_PARALLEL_LEVEL} install
+                            SKIP_FIND
         )
         message(
             STATUS
@@ -256,8 +262,10 @@ if(NOT ZLIB_FOUND)
         if(CMAKE_BUILD_TYPE STREQUAL "Debug")
             set(_zlib_debug_postfix "d")
         endif()
-        # Remove zlib dll and corresponding lib, ZLIB_USE_STATIC_LIBS sometimes does not work
-        file(REMOVE
+        # Remove zlib dll and corresponding lib, ZLIB_USE_STATIC_LIBS sometimes
+        # does not work
+        file(
+            REMOVE
             ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlib${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX}
             ${build_dir_ZLIB}/${CMAKE_INSTALL_BINDIR}/zlib${_zlib_debug_postfix}${CMAKE_SHARED_LIBRARY_SUFFIX}
         )
@@ -265,10 +273,11 @@ if(NOT ZLIB_FOUND)
         set(ZLIB_USE_STATIC_LIBS "ON")
         set(ZLIB_ROOT ${build_dir_ZLIB})
         # Force local zlib build, found netcdf-installed zlib sometimes
-        set(ZLIB_LIBRARIES ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlibstatic${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX})
+        set(ZLIB_LIBRARIES
+            ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlibstatic${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX}
+        )
     endif()
     set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
-    BuildExternalProject_find_package(ZLIB)
 endif()
 
 # HDF5
@@ -302,8 +311,8 @@ if(WIN32 OR HDF5_USE_STATIC_LIBRARIES)
     list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
 endif()
 
-# With apple clang 15 there are errors when the cpm compiled hdf5
-# has a different version than the one bundled with vtk, see
+# With apple clang 15 there are errors when the cpm compiled hdf5 has a
+# different version than the one bundled with vtk, see
 # https://gitlab.kitware.com/vtk/vtk/-/issues/19232.
 if(APPLE AND ${CMAKE_CXX_COMPILER_VERSION} GREATER_EQUAL 15)
     set(ogs.tested_version.hdf5 1.10.7)
@@ -336,7 +345,8 @@ if(NOT _HDF5_FOUND AND NOT HDF5_FOUND)
     set(_HDF5_FOUND ON CACHE INTERNAL "")
 endif()
 if(_HDF5_FOUND)
-    BuildExternalProject_find_package(HDF5)
+    # Somehow needs an extra run of ..._find_package()
+    BuildExternalProject_find_package(HDF5 REQUIRED)
 endif()
 
 # VTK
@@ -404,23 +414,46 @@ elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR GUIX_BUILD))
     find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
 endif()
 if(NOT VTK_FOUND)
-    if(APPLE AND "${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
-        # Fixes https://stackoverflow.com/questions/9894961 on vismac05:
-        set(_loguru_patch PATCH_COMMAND git apply
-                          "${PROJECT_SOURCE_DIR}/scripts/cmake/loguru.patch"
-        )
-        message(DEBUG "Applying VTK loguru patch")
+    file(
+        DOWNLOAD
+        https://gitlab.kitware.com/bilke/vtk/-/commit/b70e3e103cf711e080f23171201c7d030187146b.patch
+        ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-win.patch
+    )
+    file(
+        DOWNLOAD
+        https://gitlab.kitware.com/bilke/vtk/-/commit/70b16fda87f82520fa29b48c6a62bafa405d8ee2.patch
+        ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch
+    )
+    if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
+        set(_vtk_patch PATCH_COMMAND git apply)
+        if(WIN32)
+            # Fixes https://gitlab.kitware.com/vtk/vtk/-/issues/19178
+            list(APPEND _vtk_patch
+                 "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-win.patch"
+            )
+            message(STATUS "Applying VTK Win patch")
+        endif()
+        if(APPLE)
+            # Fixes https://stackoverflow.com/questions/9894961
+            list(APPEND _vtk_patch
+                 "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch"
+            )
+            message(STATUS "Applying VTK Mac patch")
+        elseif(UNIX)
+            # No pacthes on Linux
+            unset(_vtk_patch)
+        endif()
     endif()
+
     BuildExternalProject(
         VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} ${_defaultCMakeArgs}
-                                      ${_loguru_patch} ${_cmake_generator}
+                                      ${_vtk_patch} ${_cmake_generator}
     )
     message(
         STATUS
             "ExternalProject_Add(): added package VTK@${ogs.minimum_version.vtk}"
     )
     set(_EXT_LIBS ${_EXT_LIBS} VTK CACHE INTERNAL "")
-    BuildExternalProject_find_package(VTK)
 endif()
 
 # cmake-lint: disable=C0103

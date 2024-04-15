@@ -357,12 +357,10 @@ AddTest(
     ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
 )
 
-if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND Python_FOUND)
-    add_custom_target(generate_invalid_project_files_ht
-        ${Python_EXECUTABLE}
-        ${PROJECT_SOURCE_DIR}/ThirdParty/ogs6py/generateInvalidMediaForHT.py
-                                                generateInvalidMediaForHT.py
-        WORKING_DIRECTORY ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/)
+if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND OGS_USE_PIP)
+    execute_process(COMMAND ${Python_EXECUTABLE}
+            ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/generateInvalidMediaForHT.py
+        WORKING_DIRECTORY ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles)
     file(GLOB HT_INVALID_PRJ_FILES ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj)
     foreach(ht_invalid_prj_file ${HT_INVALID_PRJ_FILES})
         string(REPLACE ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT "invalid" ht_invalid_prj_file_short ${ht_invalid_prj_file})
@@ -372,7 +370,6 @@ if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND Python_FOUND)
             EXECUTABLE ogs
             EXECUTABLE_ARGS ${ht_invalid_prj_file}
             RUNTIME 1
-            DEPENDS generate_invalid_project_files_ht
         )
         set_tests_properties(ogs-HT_${ht_invalid_prj_file_short} PROPERTIES WILL_FAIL TRUE)
     endforeach()
