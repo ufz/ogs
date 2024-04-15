@@ -260,5 +260,18 @@ struct FW4MWTModel
 extern template struct FW4MWTModel<2>;
 extern template struct FW4MWTModel<3>;
 
+struct FW4MWuData
+{
+    double m = nan;
+};
+
+struct FW4MWuModel
+{
+    void eval(BiotData const& biot_data,
+              ConstituentDensityData const& constituent_density_data,
+              PureLiquidDensityData const& rho_W_LR,
+              SaturationData const& S_L_data,
+              FW4MWuData& fW_4_MWu) const;
+};
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

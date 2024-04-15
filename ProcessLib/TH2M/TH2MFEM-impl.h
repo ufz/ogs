@@ -419,6 +419,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    ip_cv.s_therm_exp_data,
                                    ip_cv.fW_4_MWT);
 
+        models.fW_4_MWu_model.eval(ip_cv.biot_data,
+                                   current_state.constituent_density_data,
+                                   current_state.rho_W_LR,
+                                   current_state.S_L_data,
+                                   ip_cv.fW_4_MWu);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -1117,11 +1123,6 @@ void TH2MLocalAssembler<
         auto const rho = phi_G * rhoGR + phi_L * rhoLR +
                          phi_S * ip_out.solid_density_data.rho_SR;
 
-        // abbreviations
-        const double rho_W_FR =
-            s_G * current_state.constituent_density_data.rho_W_GR +
-            s_L * current_state.rho_W_LR();
-
         // ---------------------------------------------------------------------
         // C-component equation
         // ---------------------------------------------------------------------
@@ -1174,7 +1175,7 @@ void TH2MLocalAssembler<
 
         MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
 
-        MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
+        MWu.noalias() += NpT * ip_cv.fW_4_MWu.m * mT * Bu * w;
 
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
@@ -1477,11 +1478,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const rho = phi_G * rhoGR + phi_L * rhoLR +
                          phi_S * ip_out.solid_density_data.rho_SR;
 
-        // abbreviations
-        const double rho_W_FR =
-            s_G * current_state.constituent_density_data.rho_W_GR +
-            s_L * current_state.rho_W_LR();
-
         // ---------------------------------------------------------------------
         // C-component equation
         // ---------------------------------------------------------------------
@@ -1620,7 +1616,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
 
-        MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
+        MWu.noalias() += NpT * ip_cv.fW_4_MWu.m * mT * Bu * w;
 
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 

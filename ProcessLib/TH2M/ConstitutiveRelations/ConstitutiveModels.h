@@ -102,6 +102,7 @@ struct ConstitutiveModels
     FW4MWpGModel fW_4_MWpG_model;
     FW4MWpCModel fW_4_MWpC_model;
     FW4MWTModel<DisplacementDim> fW_4_MWT_model;
+    FW4MWuModel fW_4_MWu_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
