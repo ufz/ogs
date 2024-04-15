@@ -189,8 +189,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble PhaseFieldProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
     // For the staggered scheme
     if (process_id == 1)
@@ -205,8 +204,8 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
             "Assemble the equations of deformation in "
             "PhaseFieldProcess for the staggered scheme.");
     }
-    dof_tables.emplace_back(*_local_to_global_index_map_single_component);
-    dof_tables.emplace_back(*_local_to_global_index_map);
+    dof_tables.emplace_back(_local_to_global_index_map_single_component.get());
+    dof_tables.emplace_back(_local_to_global_index_map.get());
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -223,8 +222,7 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
     // For the staggered scheme
     if (process_id == 1)
@@ -239,8 +237,8 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
             "Assemble the Jacobian equations of deformation in "
             "PhaseFieldProcess for the staggered scheme.");
     }
-    dof_tables.emplace_back(*_local_to_global_index_map);
-    dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+    dof_tables.emplace_back(_local_to_global_index_map.get());
+    dof_tables.emplace_back(_local_to_global_index_map_single_component.get());
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
@@ -292,11 +290,11 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
         _process_data.surface_energy = 0.0;
         _process_data.pressure_work = 0.0;
 
-        std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-            dof_tables;
+        std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
-        dof_tables.emplace_back(*_local_to_global_index_map);
-        dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+        dof_tables.emplace_back(_local_to_global_index_map.get());
+        dof_tables.emplace_back(
+            _local_to_global_index_map_single_component.get());
 
         ProcessLib::ProcessVariable const& pv =
             getProcessVariables(process_id)[0];
@@ -350,11 +348,10 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
         return;
     }
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
-    dof_tables.emplace_back(*_local_to_global_index_map);
-    dof_tables.emplace_back(*_local_to_global_index_map_single_component);
+    dof_tables.emplace_back(_local_to_global_index_map.get());
+    dof_tables.emplace_back(_local_to_global_index_map_single_component.get());
 
     DBUG("PostNonLinearSolver crack volume computation.");
 

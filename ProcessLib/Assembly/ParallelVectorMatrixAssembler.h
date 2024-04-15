@@ -27,9 +27,7 @@ public:
         BaseLib::PolymorphicRandomAccessContainerView<
             LocalAssemblerInterface> const& local_assemblers,
         std::vector<std::size_t> const& active_elements,
-        std::vector<
-            std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
-            dof_tables,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         const double t, double const dt, std::vector<GlobalVector*> const& xs,
         std::vector<GlobalVector*> const& x_prevs, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac);

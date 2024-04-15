@@ -256,18 +256,18 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 
 template <typename ShapeFunction, int DisplacementDim>
 void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
-    computeCrackIntegral(std::size_t mesh_item_id,
-                         std::vector<std::reference_wrapper<
-                             NumLib::LocalToGlobalIndexMap>> const& dof_tables,
-                         std::vector<GlobalVector*> const& x,
-                         double const /*t*/, double& crack_volume)
+    computeCrackIntegral(
+        std::size_t mesh_item_id,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+        std::vector<GlobalVector*> const& x, double const /*t*/,
+        double& crack_volume)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
     std::transform(dof_tables.begin(), dof_tables.end(),
                    std::back_inserter(indices_of_processes),
-                   [&](NumLib::LocalToGlobalIndexMap const& dof_table)
-                   { return NumLib::getIndices(mesh_item_id, dof_table); });
+                   [&](auto const dof_table)
+                   { return NumLib::getIndices(mesh_item_id, *dof_table); });
 
     auto local_coupled_xs = getCoupledLocalSolutions(x, indices_of_processes);
     assert(local_coupled_xs.size() == displacement_size + phasefield_size);
@@ -308,8 +308,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 template <typename ShapeFunction, int DisplacementDim>
 void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
     std::size_t mesh_item_id,
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>> const&
-        dof_tables,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     std::vector<GlobalVector*> const& x, double const t, double& elastic_energy,
     double& surface_energy, double& pressure_work)
 {
@@ -317,8 +316,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
     indices_of_processes.reserve(dof_tables.size());
     std::transform(dof_tables.begin(), dof_tables.end(),
                    std::back_inserter(indices_of_processes),
-                   [&](NumLib::LocalToGlobalIndexMap const& dof_table)
-                   { return NumLib::getIndices(mesh_item_id, dof_table); });
+                   [&](auto const dof_table)
+                   { return NumLib::getIndices(mesh_item_id, *dof_table); });
 
     auto const local_coupled_xs =
         getCoupledLocalSolutions(x, indices_of_processes);

@@ -210,8 +210,8 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble ThermoMechanicsProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -230,15 +230,14 @@ void ThermoMechanicsProcess<DisplacementDim>::
 {
     DBUG("AssembleJacobian ThermoMechanicsProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     // For the monolithic scheme
     if (_use_monolithic_scheme)
     {
         DBUG(
             "Assemble the Jacobian of ThermoMechanics for the monolithic"
             " scheme.");
-        dof_tables.emplace_back(*_local_to_global_index_map);
+        dof_tables.emplace_back(_local_to_global_index_map.get());
     }
     else
     {
@@ -261,14 +260,14 @@ void ThermoMechanicsProcess<DisplacementDim>::
             0)  // First: the heat conduction process
         {
             dof_tables.emplace_back(
-                *_local_to_global_index_map_single_component);
-            dof_tables.emplace_back(*_local_to_global_index_map);
+                _local_to_global_index_map_single_component.get());
+            dof_tables.emplace_back(_local_to_global_index_map.get());
         }
         else  // vice versa
         {
-            dof_tables.emplace_back(*_local_to_global_index_map);
+            dof_tables.emplace_back(_local_to_global_index_map.get());
             dof_tables.emplace_back(
-                *_local_to_global_index_map_single_component);
+                _local_to_global_index_map_single_component.get());
         }
     }
 
@@ -284,13 +283,13 @@ void ThermoMechanicsProcess<DisplacementDim>::
     {
         if (_use_monolithic_scheme)
         {
-            transformVariableFromGlobalVector(b, variable_id, dof_tables[0],
+            transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
                                               output_vector,
                                               std::negate<double>());
         }
         else
         {
-            transformVariableFromGlobalVector(b, 0, dof_tables[process_id],
+            transformVariableFromGlobalVector(b, 0, *dof_tables[process_id],
                                               output_vector,
                                               std::negate<double>());
         }

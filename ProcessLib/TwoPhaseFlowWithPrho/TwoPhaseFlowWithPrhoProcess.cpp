@@ -65,8 +65,8 @@ void TwoPhaseFlowWithPrhoProcess::assembleConcreteProcess(
 {
     DBUG("Assemble TwoPhaseFlowWithPrhoProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -83,8 +83,8 @@ void TwoPhaseFlowWithPrhoProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian TwoPhaseFlowWithPrhoProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.

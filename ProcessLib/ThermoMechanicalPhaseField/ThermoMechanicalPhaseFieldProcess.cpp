@@ -198,8 +198,8 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 {
     DBUG("Assemble the equations for ThermoMechanicalPhaseFieldProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_table = {std::ref(*_local_to_global_index_map)};
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+        _local_to_global_index_map.get()};
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
@@ -216,8 +216,6 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
 {
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
     // For the staggered scheme
     if (process_id == _mechanics_related_process_id)
     {
@@ -239,11 +237,13 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
             "Assemble the Jacobian equations of heat conduction in "
             "ThermoMechanicalPhaseFieldProcess for the staggered scheme.");
     }
+
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     dof_tables.emplace_back(
-        getDOFTableByProcessID(_heat_conduction_process_id));
+        &getDOFTableByProcessID(_heat_conduction_process_id));
     dof_tables.emplace_back(
-        getDOFTableByProcessID(_mechanics_related_process_id));
-    dof_tables.emplace_back(getDOFTableByProcessID(_phase_field_process_id));
+        &getDOFTableByProcessID(_mechanics_related_process_id));
+    dof_tables.emplace_back(&getDOFTableByProcessID(_phase_field_process_id));
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 

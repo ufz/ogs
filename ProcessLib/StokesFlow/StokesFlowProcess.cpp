@@ -134,11 +134,10 @@ void StokesFlowProcess<GlobalDim>::assembleConcreteProcess(
 {
     DBUG("Assemble StokesFlowProcess.");
 
-    std::vector<std::reference_wrapper<NumLib::LocalToGlobalIndexMap>>
-        dof_tables;
+    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     assert(_use_monolithic_scheme);
     {
-        dof_tables.push_back(std::ref(*_local_to_global_index_map));
+        dof_tables.push_back(_local_to_global_index_map.get());
     }
 
     ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
