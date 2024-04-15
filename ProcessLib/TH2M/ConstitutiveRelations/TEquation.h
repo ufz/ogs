@@ -10,7 +10,12 @@
 #pragma once
 
 #include "Base.h"
+#include "DarcyVelocity.h"
+#include "Enthalpy.h"
+#include "FluidDensity.h"
 #include "InternalEnergy.h"
+#include "PermeabilityData.h"
+#include "Viscosity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -41,5 +46,42 @@ struct FT1Model
                FT1DerivativeData& dfT_1) const;
 };
 
+template <int DisplacementDim>
+struct FT2Data
+{
+    GlobalDimVector<DisplacementDim> A;
+};
+
+template <int DisplacementDim>
+struct FT2DerivativeData
+{
+    GlobalDimVector<DisplacementDim> dp_GR_Npart;
+    GlobalDimMatrix<DisplacementDim> dp_GR_gradNpart;
+    GlobalDimVector<DisplacementDim> dp_cap_Npart;
+    GlobalDimMatrix<DisplacementDim> dp_cap_gradNpart;
+    GlobalDimVector<DisplacementDim> dT;
+};
+
+template <int DisplacementDim>
+struct FT2Model
+{
+    void eval(DarcyVelocityData<DisplacementDim> const& darcy_velocity_data,
+              EnthalpyData const& enthalpy_data,
+              FluidDensityData const& fluid_density_data,
+              FT2Data<DisplacementDim>& fT_2) const;
+
+    void dEval(
+        DarcyVelocityData<DisplacementDim> const& darcy_velocity_data,
+        EnthalpyData const& enthalpy_data,
+        FluidDensityData const& fluid_density_data,
+        PermeabilityData<DisplacementDim> const& permeability_data,
+        PhaseTransitionData const& phase_transition_data,
+        SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+        ViscosityData const& viscosity_data,
+        FT2DerivativeData<DisplacementDim>& dfT_2) const;
+};
+
+extern template struct FT2Model<2>;
+extern template struct FT2Model<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

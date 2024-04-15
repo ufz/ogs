@@ -180,16 +180,7 @@ struct ConstitutiveTempData
     FW4MWuData fW_4_MWu;
 
     FT1Data fT_1;
-
-    using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
-    using DisplacementDimMatrix =
-        Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
-
-    DisplacementDimVector drho_GR_h_w_eff_dp_GR_Npart;
-    DisplacementDimMatrix drho_GR_h_w_eff_dp_GR_gradNpart;
-    DisplacementDimVector drho_LR_h_w_eff_dp_cap_Npart;
-    DisplacementDimMatrix drho_LR_h_w_eff_dp_cap_gradNpart;
-    DisplacementDimVector drho_GR_h_w_eff_dT;
+    FT2Data<DisplacementDim> fT_2;
 };
 
 /// Data that stores intermediate values (derivatives), which are not needed
@@ -216,6 +207,7 @@ struct DerivativesData
     FW4LWpGDerivativeData<DisplacementDim> dfW_4_LWpG;
     FW4LWpCDerivativeData<DisplacementDim> dfW_4_LWpC;
     FT1DerivativeData dfT_1;
+    FT2DerivativeData<DisplacementDim> dfT_2;
 };
 
 }  // namespace ConstitutiveRelations

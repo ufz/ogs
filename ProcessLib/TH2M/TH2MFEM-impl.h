@@ -494,44 +494,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             k_over_mu_L * ip_out.fluid_density_data.rho_LR * b -
             k_over_mu_L * gradpGR;
 
-        ip_cv.drho_GR_h_w_eff_dp_GR_Npart =
-            c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G *
-                ip_out.darcy_velocity_data.w_GS +
-            ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G *
-                k_over_mu_G * c.drho_GR_dp_GR * b;
-        ip_cv.drho_GR_h_w_eff_dp_GR_gradNpart =
-            ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G *
-                k_over_mu_G -
-            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
-                k_over_mu_L;
-
-        // From p_LR = p_GR - p_cap it follows for
-        // drho_LR/dp_GR = drho_LR/dp_LR * dp_LR/dp_GR
-        //               = drho_LR/dp_LR * (dp_GR/dp_GR - dp_cap/dp_GR)
-        //               = drho_LR/dp_LR * (1 - 0)
-        double const drho_LR_dp_cap = -c.drho_LR_dp_LR;
-
-        ip_cv.drho_LR_h_w_eff_dp_cap_Npart =
-            -drho_LR_dp_cap * ip_out.enthalpy_data.h_L *
-                ip_out.darcy_velocity_data.w_LS -
-            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
-                k_over_mu_L * drho_LR_dp_cap * b;
-        ip_cv.drho_LR_h_w_eff_dp_cap_gradNpart =
-            // TODO (naumov) why the minus sign??????
-            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
-            k_over_mu_L;
-
-        ip_cv.drho_GR_h_w_eff_dT =
-            c.drho_GR_dT * ip_out.enthalpy_data.h_G *
-                ip_out.darcy_velocity_data.w_GS +
-            ip_out.fluid_density_data.rho_GR * c.dh_G_dT *
-                ip_out.darcy_velocity_data.w_GS +
-            c.drho_LR_dT * ip_out.enthalpy_data.h_L *
-                ip_out.darcy_velocity_data.w_LS +
-            ip_out.fluid_density_data.rho_LR * c.dh_L_dT *
-                ip_out.darcy_velocity_data.w_LS;
-        // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
-        // drho_LR_dT * b
+        models.fT_2_model.eval(ip_out.darcy_velocity_data,
+                               ip_out.enthalpy_data,
+                               ip_out.fluid_density_data,
+                               ip_cv.fT_2);
     }
 
     return {ip_constitutive_data, ip_constitutive_variables};
@@ -749,6 +715,17 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.fT_1_model.dEval(
             dt, ip_dd.effective_volumetric_internal_energy_d_data, ip_dd.dfT_1);
+
+        models.fT_2_model.dEval(
+            ip_out.darcy_velocity_data,
+            ip_out.enthalpy_data,
+            ip_out.fluid_density_data,
+            ip_out.permeability_data,
+            ip_cv.phase_transition_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.viscosity_data,
+            ip_dd.dfT_2);
     }
 
     return ip_d_data;
@@ -1213,12 +1190,7 @@ void TH2MLocalAssembler<
 
         fT.noalias() -= NTT * ip_cv.fT_1.m * w;
 
-        fT.noalias() += gradNTT *
-                        (rhoGR * ip_out.enthalpy_data.h_G *
-                             ip_out.darcy_velocity_data.w_GS +
-                         rhoLR * ip_out.enthalpy_data.h_L *
-                             ip_out.darcy_velocity_data.w_LS) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_2.A * w;
 
         fT.noalias() += gradNTT *
                         (current_state.constituent_density_data.rho_C_GR *
@@ -1787,12 +1759,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() += NTT * NT * (ip_dd.dfT_1.dT * w);
 
         // fT_2
-        fT.noalias() += gradNTT *
-                        (rhoGR * ip_out.enthalpy_data.h_G *
-                             ip_out.darcy_velocity_data.w_GS +
-                         rhoLR * ip_out.enthalpy_data.h_L *
-                             ip_out.darcy_velocity_data.w_LS) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_2.A * w;
 
         // dfT_2/dp_GR
         local_Jac
@@ -1800,9 +1767,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       C_index)
             .noalias() -=
             // dfT_2/dp_GR first part
-            gradNTT * ip_cv.drho_GR_h_w_eff_dp_GR_Npart * Np * w +
+            gradNTT * ip_dd.dfT_2.dp_GR_Npart * Np * w +
             // dfT_2/dp_GR second part
-            gradNTT * ip_cv.drho_GR_h_w_eff_dp_GR_gradNpart * gradNp * w;
+            gradNTT * ip_dd.dfT_2.dp_GR_gradNpart * gradNp * w;
 
         // dfT_2/dp_cap
         local_Jac
@@ -1810,15 +1777,15 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       W_index)
             .noalias() -=
             // first part of dfT_2/dp_cap
-            gradNTT * (-ip_cv.drho_LR_h_w_eff_dp_cap_Npart) * Np * w +
+            gradNTT * (-ip_dd.dfT_2.dp_cap_Npart) * Np * w +
             // second part of dfT_2/dp_cap
-            gradNTT * (-ip_cv.drho_LR_h_w_eff_dp_cap_gradNpart) * gradNp * w;
+            gradNTT * (-ip_dd.dfT_2.dp_cap_gradNpart) * gradNp * w;
 
         // dfT_2/dT
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() -= gradNTT * ip_cv.drho_GR_h_w_eff_dT * NT * w;
+            .noalias() -= gradNTT * ip_dd.dfT_2.dT * NT * w;
 
         // fT_3
         fT.noalias() += NTT *
