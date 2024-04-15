@@ -28,6 +28,7 @@
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
+#include "TEquation.h"
 #include "ThermalConductivity.h"
 #include "TotalStress.h"
 #include "Viscosity.h"
@@ -103,6 +104,8 @@ struct ConstitutiveModels
     FW4MWpCModel fW_4_MWpC_model;
     FW4MWTModel<DisplacementDim> fW_4_MWT_model;
     FW4MWuModel fW_4_MWu_model;
+
+    FT1Model fT_1_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

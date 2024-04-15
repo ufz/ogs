@@ -37,6 +37,7 @@
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
+#include "TEquation.h"
 #include "ThermalConductivity.h"
 #include "TotalStress.h"
 #include "VapourPartialPressure.h"
@@ -178,6 +179,8 @@ struct ConstitutiveTempData
     FW4MWTData fW_4_MWT;
     FW4MWuData fW_4_MWu;
 
+    FT1Data fT_1;
+
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
@@ -212,6 +215,7 @@ struct DerivativesData
     FW3aDerivativeData dfW_3a;
     FW4LWpGDerivativeData<DisplacementDim> dfW_4_LWpG;
     FW4LWpCDerivativeData<DisplacementDim> dfW_4_LWpC;
+    FT1DerivativeData dfT_1;
 };
 
 }  // namespace ConstitutiveRelations

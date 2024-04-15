@@ -425,6 +425,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    current_state.S_L_data,
                                    ip_cv.fW_4_MWu);
 
+        models.fT_1_model.eval(dt,
+                               current_state.internal_energy_data,
+                               prev_state.internal_energy_data,
+                               ip_cv.fT_1);
+
         // for variable output
         auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
 
@@ -741,6 +746,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_cv.dS_L_dp_cap,
                                      ip_cv.viscosity_data,
                                      ip_dd.dfW_4_LWpC);
+
+        models.fT_1_model.dEval(
+            dt, ip_dd.effective_volumetric_internal_energy_d_data, ip_dd.dfT_1);
     }
 
     return ip_d_data;
@@ -1203,10 +1211,7 @@ void TH2MLocalAssembler<
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
 
-        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
-                                    **prev_state.internal_energy_data) /
-                                   dt;
-        fT.noalias() -= NTT * rho_u_eff_dot * w;
+        fT.noalias() -= NTT * ip_cv.fT_1.m * w;
 
         fT.noalias() += gradNTT *
                         (rhoGR * ip_out.enthalpy_data.h_G *
@@ -1760,38 +1765,26 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                           NT * w;
 
         // fT_1
-        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
-                                    **prev_state.internal_energy_data) /
-                                   dt;
-        fT.noalias() -= NTT * rho_u_eff_dot * w;
+        fT.noalias() -= NTT * ip_cv.fT_1.m * w;
 
         // dfT_1/dp_GR
         local_Jac
             .template block<temperature_size, C_size>(temperature_index,
                                                       C_index)
-            .noalias() += NpT * Np *
-                          (ip_dd.effective_volumetric_internal_energy_d_data
-                               .drho_u_eff_dp_GR /
-                           dt * w);
+            .noalias() += NpT * Np * (ip_dd.dfT_1.dp_GR * w);
 
         // dfT_1/dp_cap
         local_Jac
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
-            .noalias() += NpT * Np *
-                          (ip_dd.effective_volumetric_internal_energy_d_data
-                               .drho_u_eff_dp_cap /
-                           dt * w);
+            .noalias() += NpT * Np * (ip_dd.dfT_1.dp_cap * w);
 
         // dfT_1/dT
         // MTT
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() +=
-            NTT * NT *
-            (ip_dd.effective_volumetric_internal_energy_d_data.drho_u_eff_dT /
-             dt * w);
+            .noalias() += NTT * NT * (ip_dd.dfT_1.dT * w);
 
         // fT_2
         fT.noalias() += gradNTT *
