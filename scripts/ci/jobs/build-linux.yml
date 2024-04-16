@@ -26,6 +26,7 @@ build linux (no unity):
   needs: [meta]
   timeout: 3h
   variables:
+    BUILD_PACKAGE: "false"
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
     CHECK_WARNINGS: "true"
