@@ -358,7 +358,7 @@ if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
         NAME xdmf
         VERSION 3.0.0
         GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/xdmflib.git
-        GIT_TAG 92a851f1acb87ad5367eb62f9b97785bedb700bb
+        GIT_TAG 374ee63abf605ab4c6639989bebc5096881f4f57
         OPTIONS "XDMF_LIBNAME OgsXdmf" "CMAKE_MACOSX_RPATH ON"
                 "HDF5_C_INCLUDE_DIR ${HDF5_INCLUDE_DIRS}"
         EXCLUDE_FROM_ALL YES SYSTEM TRUE
