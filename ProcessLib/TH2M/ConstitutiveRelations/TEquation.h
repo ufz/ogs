@@ -10,7 +10,9 @@
 #pragma once
 
 #include "Base.h"
+#include "ConstitutiveDensity.h"
 #include "DarcyVelocity.h"
+#include "DiffusionVelocity.h"
 #include "Enthalpy.h"
 #include "FluidDensity.h"
 #include "InternalEnergy.h"
@@ -83,5 +85,28 @@ struct FT2Model
 
 extern template struct FT2Model<2>;
 extern template struct FT2Model<3>;
+
+template <int DisplacementDim>
+struct FT3Data
+{
+    double N = nan;
+    GlobalDimVector<DisplacementDim> gradN;
+};
+
+template <int DisplacementDim>
+struct FT3Model
+{
+    void eval(
+        ConstituentDensityData const& constituent_density_data,
+        DarcyVelocityData<DisplacementDim> const& darcy_velocity_data,
+        DiffusionVelocityData<DisplacementDim> const& diffusion_velocity_data,
+        FluidDensityData const& fluid_density_data,
+        PhaseTransitionData const& phase_transition_data,
+        SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+        FT3Data<DisplacementDim>& fT_3) const;
+};
+
+extern template struct FT3Model<2>;
+extern template struct FT3Model<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

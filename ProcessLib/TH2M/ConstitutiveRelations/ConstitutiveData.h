@@ -181,6 +181,7 @@ struct ConstitutiveTempData
 
     FT1Data fT_1;
     FT2Data<DisplacementDim> fT_2;
+    FT3Data<DisplacementDim> fT_3;
 };
 
 /// Data that stores intermediate values (derivatives), which are not needed

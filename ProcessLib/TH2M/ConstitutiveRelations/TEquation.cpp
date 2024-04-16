@@ -118,5 +118,30 @@ void FT2Model<DisplacementDim>::dEval(
 template struct FT2Model<2>;
 template struct FT2Model<3>;
 
+template <int DisplacementDim>
+void FT3Model<DisplacementDim>::eval(
+    ConstituentDensityData const& constituent_density_data,
+    DarcyVelocityData<DisplacementDim> const& darcy_velocity_data,
+    DiffusionVelocityData<DisplacementDim> const& diffusion_velocity_data,
+    FluidDensityData const& fluid_density_data,
+    PhaseTransitionData const& phase_transition_data,
+    SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+    FT3Data<DisplacementDim>& fT_3) const
+{
+    fT_3.N =
+        (fluid_density_data.rho_GR * darcy_velocity_data.w_GS.transpose() +
+         fluid_density_data.rho_LR * darcy_velocity_data.w_LS.transpose()) *
+        specific_body_force();
+
+    fT_3.gradN.noalias() =
+        constituent_density_data.rho_C_GR * phase_transition_data.hCG *
+            diffusion_velocity_data.d_CG +
+        constituent_density_data.rho_W_GR * phase_transition_data.hWG *
+            diffusion_velocity_data.d_WG;
+}
+
+template struct FT3Model<2>;
+template struct FT3Model<3>;
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

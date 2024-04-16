@@ -498,6 +498,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                ip_out.enthalpy_data,
                                ip_out.fluid_density_data,
                                ip_cv.fT_2);
+
+        models.fT_3_model.eval(
+            current_state.constituent_density_data,
+            ip_out.darcy_velocity_data,
+            ip_out.diffusion_velocity_data,
+            ip_out.fluid_density_data,
+            ip_cv.phase_transition_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.fT_3);
     }
 
     return {ip_constitutive_data, ip_constitutive_variables};
@@ -1192,19 +1202,9 @@ void TH2MLocalAssembler<
 
         fT.noalias() += gradNTT * ip_cv.fT_2.A * w;
 
-        fT.noalias() += gradNTT *
-                        (current_state.constituent_density_data.rho_C_GR *
-                             ip_cv.phase_transition_data.hCG *
-                             ip_out.diffusion_velocity_data.d_CG +
-                         current_state.constituent_density_data.rho_W_GR *
-                             ip_cv.phase_transition_data.hWG *
-                             ip_out.diffusion_velocity_data.d_WG) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_3.gradN * w;
 
-        fT.noalias() += NTT *
-                        (rhoGR * ip_out.darcy_velocity_data.w_GS.transpose() +
-                         rhoLR * ip_out.darcy_velocity_data.w_LS.transpose()) *
-                        b * w;
+        fT.noalias() += NTT * ip_cv.fT_3.N * w;
 
         // ---------------------------------------------------------------------
         //  - displacement equation
@@ -1788,19 +1788,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() -= gradNTT * ip_dd.dfT_2.dT * NT * w;
 
         // fT_3
-        fT.noalias() += NTT *
-                        (rhoGR * ip_out.darcy_velocity_data.w_GS.transpose() +
-                         rhoLR * ip_out.darcy_velocity_data.w_LS.transpose()) *
-                        b * w;
+        fT.noalias() += NTT * ip_cv.fT_3.N * w;
 
-        fT.noalias() += gradNTT *
-                        (current_state.constituent_density_data.rho_C_GR *
-                             ip_cv.phase_transition_data.hCG *
-                             ip_out.diffusion_velocity_data.d_CG +
-                         current_state.constituent_density_data.rho_W_GR *
-                             ip_cv.phase_transition_data.hWG *
-                             ip_out.diffusion_velocity_data.d_WG) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_3.gradN * w;
 
         // ---------------------------------------------------------------------
         //  - displacement equation

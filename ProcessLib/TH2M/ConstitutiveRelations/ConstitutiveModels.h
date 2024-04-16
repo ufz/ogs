@@ -107,6 +107,7 @@ struct ConstitutiveModels
 
     FT1Model fT_1_model;
     FT2Model<DisplacementDim> fT_2_model;
+    FT3Model<DisplacementDim> fT_3_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
