@@ -162,6 +162,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
         GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
         GlobalDimVectorType const gradT = gradNp * temperature;
+        ConstitutiveRelations::GasPressureGradientData<DisplacementDim> const
+            grad_p_GR{gradpGR};
+        ConstitutiveRelations::CapillaryPressureGradientData<
+            DisplacementDim> const grad_p_cap{gradpCap};
 
         // medium properties
         models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
@@ -487,21 +491,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // Derivatives for Jacobian
         // ---------------------------------------------------------------------
 
-        auto const& b = this->process_data_.specific_body_force;
-        GlobalDimMatrixType const k_over_mu_G =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip_cv.viscosity_data.mu_GR;
-        GlobalDimMatrixType const k_over_mu_L =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip_cv.viscosity_data.mu_LR;
-
-        ip_out.darcy_velocity_data.w_GS =
-            k_over_mu_G * ip_out.fluid_density_data.rho_GR * b -
-            k_over_mu_G * gradpGR;
-        ip_out.darcy_velocity_data.w_LS =
-            k_over_mu_L * gradpCap +
-            k_over_mu_L * ip_out.fluid_density_data.rho_LR * b -
-            k_over_mu_L * gradpGR;
+        models.darcy_velocity_model.eval(
+            grad_p_cap,
+            ip_out.fluid_density_data,
+            grad_p_GR,
+            ip_out.permeability_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.viscosity_data,
+            ip_out.darcy_velocity_data);
 
         models.fT_2_model.eval(ip_out.darcy_velocity_data,
                                ip_out.enthalpy_data,
