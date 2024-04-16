@@ -1,7 +1,7 @@
 build docs:
   stage: build
   needs: [meta]
-  tags: [shell, envinf23]
+  tags: [shell, envinf]
   timeout: 30 minutes
   variables:
     DOX_WARNINGS_THRESHOLD: 18

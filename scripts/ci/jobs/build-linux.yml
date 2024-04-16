@@ -2,7 +2,7 @@ linux ctest large:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [shell, envinf23]
+  tags: [shell, envinf]
   needs: [meta]
   rules:
     - when: manual
@@ -46,7 +46,7 @@ build linux debug with sanitizers:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [envinf23, shell]
+  tags: [envinf, shell]
   needs: [meta]
   variables:
     BUILD_PACKAGE: "false"

@@ -1,6 +1,6 @@
 code coverage:
   stage: check
-  tags: [shell, envinf23]
+  tags: [shell, envinf]
   needs: [meta]
   variables:
     CMAKE_PRESET: coverage

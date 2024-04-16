@@ -30,7 +30,6 @@ ruff:
 # Disabled, see !3053
 .code_quality:
   stage: check
-  tags: [envinf1]
   needs: []
   rules:
   variables:
