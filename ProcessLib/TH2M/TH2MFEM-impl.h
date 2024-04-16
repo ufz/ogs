@@ -259,6 +259,15 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.viscosity_data,
                                     ip_cv.advection_data);
 
+        models.gravity_model.eval(
+            ip_out.fluid_density_data,
+            ip_out.porosity_data,
+            current_state.S_L_data,
+            ip_out.solid_density_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.volumetric_body_force);
+
         auto const& c = ip_cv.phase_transition_data;
 
         auto const phi_L =
@@ -1099,24 +1108,11 @@ void TH2MLocalAssembler<
         double const pCap_prev = Np.dot(capillary_pressure_prev);
 
         auto const s_L = current_state.S_L_data.S_L;
-        auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
         auto& alpha_B = ip_cv.biot_data();
 
         auto const& b = this->process_data_.specific_body_force;
-
-        // volume fraction
-        auto const phi_G = s_G * ip_out.porosity_data.phi;
-        auto const phi_L = s_L * ip_out.porosity_data.phi;
-        auto const phi_S = 1. - ip_out.porosity_data.phi;
-
-        auto const rhoGR = ip_out.fluid_density_data.rho_GR;
-        auto const rhoLR = ip_out.fluid_density_data.rho_LR;
-
-        // effective density
-        auto const rho = phi_G * rhoGR + phi_L * rhoLR +
-                         phi_S * ip_out.solid_density_data.rho_SR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1214,9 +1210,10 @@ void TH2MLocalAssembler<
 
         KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
 
-        fU.noalias() -= (BuT * current_state.eff_stress_data.sigma -
-                         N_u_op(Nu).transpose() * rho * b) *
-                        w;
+        fU.noalias() -=
+            (BuT * current_state.eff_stress_data.sigma -
+             N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
+            w;
 
         if (this->process_data_.apply_mass_lumping)
         {
@@ -1435,25 +1432,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const pCap_prev = Np.dot(capillary_pressure_prev);
         double const T_prev = NT.dot(temperature_prev);
 
-        auto& s_L = current_state.S_L_data.S_L;
-        auto const s_G = 1. - s_L;
+        auto const& s_L = current_state.S_L_data.S_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
         auto const alpha_B = ip_cv.biot_data();
 
         auto const& b = this->process_data_.specific_body_force;
-
-        // volume fraction
-        auto const phi_G = s_G * ip_out.porosity_data.phi;
-        auto const phi_L = s_L * ip_out.porosity_data.phi;
-        auto const phi_S = 1. - ip_out.porosity_data.phi;
-
-        auto const rhoGR = ip_out.fluid_density_data.rho_GR;
-        auto const rhoLR = ip_out.fluid_density_data.rho_LR;
-
-        // effective density
-        auto const rho = phi_G * rhoGR + phi_L * rhoLR +
-                         phi_S * ip_out.solid_density_data.rho_SR;
 
         // ---------------------------------------------------------------------
         // C-component equation
@@ -1817,9 +1801,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() += BuT * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
 
         // fU_1
-        fU.noalias() -= (BuT * current_state.eff_stress_data.sigma -
-                         N_u_op(Nu).transpose() * rho * b) *
-                        w;
+        fU.noalias() -=
+            (BuT * current_state.eff_stress_data.sigma -
+             N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
+            w;
 
         // KuT
         local_Jac

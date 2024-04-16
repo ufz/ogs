@@ -20,6 +20,7 @@
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
 #include "FluidDensity.h"
+#include "Gravity.h"
 #include "InternalEnergy.h"
 #include "MassMoleFractions.h"
 #include "MechanicalStrain.h"
@@ -157,6 +158,7 @@ struct ConstitutiveTempData
     ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
     EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
     AdvectionData<DisplacementDim> advection_data;
+    VolumetricBodyForce<DisplacementDim> volumetric_body_force;
     FC1Data<DisplacementDim> fC_1;
     FC2aData fC_2a;
     FC3aData fC_3a;
