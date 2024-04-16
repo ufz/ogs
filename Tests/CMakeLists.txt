@@ -85,40 +85,39 @@ endif()
 
 ogs_add_executable(testrunner ${TEST_SOURCES})
 
-target_sources(testrunner
-  PRIVATE
-    ProcessLib/Graph/TestGet.cpp
-    ProcessLib/Graph/TestApply.cpp
+target_sources(
+    testrunner PRIVATE ProcessLib/Graph/TestGet.cpp
+                       ProcessLib/Graph/TestApply.cpp
 )
 
 target_link_libraries(
     testrunner
-    PRIVATE $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ApplicationsLib>
-            ApplicationsFileIO
-            autocheck
-            gmock
-            gtest
-            MeshToolsLib
-            MeshGeoToolsLib
-            MaterialLib
-            MathLib
-            MeshLib
-            MeshToolsLib
-            NumLib
-            ParameterLib
-            $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ProcessLib>
-            $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:Processes>
-            TestInfoLib
-            VTK::FiltersGeneral
-            VTK::FiltersSources
-            Boost::boost # TODO move OGSMFrontThermodynamicForcesView to
-                         # MathLib?
-            $<$<TARGET_EXISTS:LIE>:LIE>
-            $<$<TARGET_EXISTS:TH2M>:TH2M>
-            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
-            $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
-            $<$<TARGET_EXISTS:InSituLib>:InSituLib>
-            $<$<TARGET_EXISTS:petsc>:petsc>
+    PRIVATE
+        $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ApplicationsLib>
+        ApplicationsFileIO
+        autocheck
+        gmock
+        gtest
+        MeshToolsLib
+        MeshGeoToolsLib
+        MaterialLib
+        MathLib
+        MeshLib
+        MeshToolsLib
+        NumLib
+        ParameterLib
+        $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ProcessLib>
+        $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:Processes>
+        TestInfoLib
+        VTK::FiltersGeneral
+        VTK::FiltersSources
+        Boost::boost # TODO move OGSMFrontThermodynamicForcesView to MathLib?
+        $<$<TARGET_EXISTS:LIE>:LIE>
+        $<$<TARGET_EXISTS:TH2M>:TH2M>
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:MPI::MPI_CXX>>:MPI::MPI_CXX>
+        $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
+        $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+        $<$<TARGET_EXISTS:petsc>:petsc>
     PUBLIC $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
 )
 

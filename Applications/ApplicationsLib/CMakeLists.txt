@@ -7,8 +7,11 @@ ogs_add_library(ApplicationsLib ${LIB_SOURCES})
 
 target_link_libraries(
     ApplicationsLib
-    PUBLIC BaseLib GeoLib NumLib
-           $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
+    PUBLIC
+        BaseLib
+        GeoLib
+        NumLib
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::ParallelMPI>>:VTK::ParallelMPI>
     PRIVATE CMakeInfoLib
             MathLib
             MeshLib
