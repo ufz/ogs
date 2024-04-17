@@ -152,22 +152,19 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
-        double const pGR = Np.dot(gas_pressure);
-        double const pCap = Np.dot(capillary_pressure);
         ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
-        ConstitutiveRelations::GasPressureData const pGR_data{pGR};
-        ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap};
+        ConstitutiveRelations::GasPressureData const pGR_data{
+            Np.dot(gas_pressure)};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{
+            Np.dot(capillary_pressure)};
         ConstitutiveRelations::ReferenceTemperatureData const T0{
             this->process_data_.reference_temperature(t, pos)[0]};
-        GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
-        GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
-        GlobalDimVectorType const gradT = gradNp * temperature;
         ConstitutiveRelations::GasPressureGradientData<DisplacementDim> const
-            grad_p_GR{gradpGR};
+            grad_p_GR{gradNp * gas_pressure};
         ConstitutiveRelations::CapillaryPressureGradientData<
-            DisplacementDim> const grad_p_cap{gradpCap};
+            DisplacementDim> const grad_p_cap{gradNp * capillary_pressure};
         ConstitutiveRelations::TemperatureGradientData<DisplacementDim> const
-            grad_T{gradT};
+            grad_T{gradNp * temperature};
 
         // medium properties
         models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
@@ -181,8 +178,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = ip_out.eps_data.eps;
-        eps.noalias() = Bu * displacement;
+        ip_out.eps_data.eps.noalias() = Bu * displacement;
         models.S_L_model.eval({pos, t, dt}, media_data, pCap_data,
                               current_state.S_L_data, ip_cv.dS_L_dp_cap);
 
