@@ -41,8 +41,11 @@ struct PorosityModel
 {
     void eval(SpaceTimeData const& x_t,
               MediaData const& media_data,
-              PorosityData& porosity_data,
-              PorosityDerivativeData& porosity_d_data) const;
+              PorosityData& porosity_data) const;
+
+    void dEval(SpaceTimeData const& x_t,
+               MediaData const& media_data,
+               PorosityDerivativeData& porosity_d_data) const;
 };
 
 template <int DisplacementDim>
@@ -54,7 +57,14 @@ struct PorosityModelNonConstantSolidPhaseVolumeFraction
         BiotData const& biot,
         StrainData<DisplacementDim> const& strain_data,
         SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
-        PorosityData& porosity_data,
+        PorosityData& porosity_data) const;
+
+    void dEval(
+        SpaceTimeData const& x_t,
+        MediaData const& media_data,
+        BiotData const& biot,
+        StrainData<DisplacementDim> const& strain_data,
+        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
         PorosityDerivativeData& porosity_d_data) const;
 };
 

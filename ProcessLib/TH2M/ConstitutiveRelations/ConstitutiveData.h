@@ -155,7 +155,6 @@ struct ConstitutiveTempData
     EquivalentPlasticStrainData equivalent_plastic_strain_data;
     ViscosityData viscosity_data;
     PhaseTransitionData phase_transition_data;
-    PorosityDerivativeData porosity_d_data;
     SolidHeatCapacityData solid_heat_capacity_data;
     ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
     EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
@@ -197,6 +196,7 @@ struct DerivativesData
 {
     SaturationDataDeriv dS_L_dp_cap;
     AdvectionDerivativeData<DisplacementDim> advection_d_data;
+    PorosityDerivativeData porosity_d_data;
     ThermalConductivityDerivativeData<DisplacementDim>
         thermal_conductivity_d_data;
     SolidDensityDerivativeData solid_density_d_data;
