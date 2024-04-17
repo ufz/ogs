@@ -218,7 +218,7 @@ TEST(ProcessLib, TH2MPhaseTransition)
     CR::PureLiquidDensityData rhoWLR;
     CR::PureLiquidDensityModel rhoWLR_model;
 
-    CR::EnthalpyData enthalpy;
+    CR::FluidEnthalpyData enthalpy;
     CR::MassMoleFractionsData mass_mole_fractions;
     CR::FluidDensityData fluid_density;
     CR::VapourPartialPressureData vapour_pressure;
@@ -480,7 +480,7 @@ TEST(ProcessLib, TH2MPhaseTransitionConstRho)
     CR::PureLiquidDensityData rhoWLR;
     CR::PureLiquidDensityModel rhoWLR_model;
 
-    CR::EnthalpyData enthalpy;
+    CR::FluidEnthalpyData enthalpy;
     CR::MassMoleFractionsData mass_mole_fractions;
     CR::FluidDensityData fluid_density;
     CR::VapourPartialPressureData vapour_pressure;

@@ -68,14 +68,14 @@ template <int DisplacementDim>
 struct FT2Model
 {
     void eval(DarcyVelocityData<DisplacementDim> const& darcy_velocity_data,
-              EnthalpyData const& enthalpy_data,
               FluidDensityData const& fluid_density_data,
+              FluidEnthalpyData const& fluid_enthalpy_data,
               FT2Data<DisplacementDim>& fT_2) const;
 
     void dEval(
         DarcyVelocityData<DisplacementDim> const& darcy_velocity_data,
-        EnthalpyData const& enthalpy_data,
         FluidDensityData const& fluid_density_data,
+        FluidEnthalpyData const& fluid_enthalpy_data,
         PermeabilityData<DisplacementDim> const& permeability_data,
         PhaseTransitionData const& phase_transition_data,
         SpecificBodyForceData<DisplacementDim> const& specific_body_force,

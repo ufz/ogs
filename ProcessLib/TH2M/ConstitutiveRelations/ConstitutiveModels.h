@@ -87,6 +87,7 @@ struct ConstitutiveModels
     EffectiveVolumetricEnthalpyModel effective_volumetric_enthalpy_model;
     GravityModel<DisplacementDim> gravity_model;
     DiffusionVelocityModel<DisplacementDim> diffusion_velocity_model;
+    SolidEnthalpyModel solid_enthalpy_model;
     DarcyVelocityModel<DisplacementDim> darcy_velocity_model;
     FC1Model<DisplacementDim> fC_1_model;
     FC2aModel fC_2a_model;

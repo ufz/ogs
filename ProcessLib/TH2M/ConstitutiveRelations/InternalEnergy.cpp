@@ -13,19 +13,19 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-void InternalEnergyModel::eval(EnthalpyData const& enthalpy_data,
-                               FluidDensityData const& fluid_density_data,
+void InternalEnergyModel::eval(FluidDensityData const& fluid_density_data,
                                PhaseTransitionData const& phase_transition_data,
                                PorosityData const& porosity_data,
                                SaturationData const& S_L_data,
                                SolidDensityData const& solid_density_data,
+                               SolidEnthalpyData const& solid_enthalpy_data,
                                InternalEnergyData& internal_energy_data) const
 {
     auto const phi_L = S_L_data.S_L * porosity_data.phi;
     auto const phi_G = (1. - S_L_data.S_L) * porosity_data.phi;
     double const phi_S = 1. - porosity_data.phi;
 
-    auto const u_S = enthalpy_data.h_S;
+    auto const u_S = solid_enthalpy_data.h_S;
 
     internal_energy_data() =
         phi_G * fluid_density_data.rho_GR * phase_transition_data.uG +
@@ -34,7 +34,6 @@ void InternalEnergyModel::eval(EnthalpyData const& enthalpy_data,
 }
 
 void InternalEnergyModel::dEval(
-    EnthalpyData const& enthalpy_data,
     FluidDensityData const& fluid_density_data,
     PhaseTransitionData const& phase_transition_data,
     PorosityData const& porosity_data,
@@ -43,6 +42,7 @@ void InternalEnergyModel::dEval(
     SaturationDataDeriv const& dS_L_dp_cap,
     SolidDensityData const& solid_density_data,
     SolidDensityDerivativeData const& solid_density_d_data,
+    SolidEnthalpyData const& solid_enthalpy_data,
     SolidHeatCapacityData const& solid_heat_capacity_data,
     EffectiveVolumetricInternalEnergyDerivatives&
         effective_volumetric_internal_energy_d_data) const
@@ -51,7 +51,7 @@ void InternalEnergyModel::dEval(
     auto const phi_G = (1. - S_L_data.S_L) * porosity_data.phi;
     double const phi_S = 1. - porosity_data.phi;
 
-    auto const u_S = enthalpy_data.h_S;
+    auto const u_S = solid_enthalpy_data.h_S;
     effective_volumetric_internal_energy_d_data.drho_u_eff_dT =
         phi_G * phase_transition_data.drho_GR_dT * phase_transition_data.uG +
         phi_G * fluid_density_data.rho_GR * phase_transition_data.du_G_dT +

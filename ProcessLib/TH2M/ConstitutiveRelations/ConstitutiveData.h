@@ -104,7 +104,8 @@ struct OutputData
 {
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
-    EnthalpyData enthalpy_data;
+    FluidEnthalpyData fluid_enthalpy_data;
+    SolidEnthalpyData solid_enthalpy_data;
     MassMoleFractionsData mass_mole_fractions_data;
     FluidDensityData fluid_density_data;
     VapourPartialPressureData vapour_pressure_data;
@@ -119,7 +120,8 @@ struct OutputData
 
         return Reflection::reflectWithoutName(&Self::eps_data,
                                               &Self::permeability_data,
-                                              &Self::enthalpy_data,
+                                              &Self::fluid_enthalpy_data,
+                                              &Self::solid_enthalpy_data,
                                               &Self::mass_mole_fractions_data,
                                               &Self::fluid_density_data,
                                               &Self::vapour_pressure_data,

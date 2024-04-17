@@ -43,7 +43,7 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
                              CapillaryPressureData const& p_cap,
                              TemperatureData const& T_data,
                              PureLiquidDensityData const& rho_W_LR,
-                             EnthalpyData& enthalpy_data,
+                             FluidEnthalpyData& fluid_enthalpy_data,
                              MassMoleFractionsData& mass_mole_fractions_data,
                              FluidDensityData& fluid_density_data,
                              VapourPartialPressureData& vapour_pressure_data,
@@ -108,14 +108,14 @@ void NoPhaseTransition::eval(SpaceTimeData const& x_t,
             .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 
     // specific phase enthalpies
-    enthalpy_data.h_G = cpG * T;
-    enthalpy_data.h_L = cpL * T;
+    fluid_enthalpy_data.h_G = cpG * T;
+    fluid_enthalpy_data.h_L = cpL * T;
     cv.dh_G_dT = cpG;
     cv.dh_L_dT = cpL;
 
     // specific inner energies
-    cv.uG = enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
-    cv.uL = enthalpy_data.h_L;
+    cv.uG = fluid_enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
+    cv.uL = fluid_enthalpy_data.h_L;
 
     cv.drho_GR_dT =
         gas_phase[MaterialPropertyLib::PropertyType::density]

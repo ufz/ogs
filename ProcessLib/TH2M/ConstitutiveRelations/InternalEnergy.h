@@ -35,16 +35,15 @@ struct EffectiveVolumetricInternalEnergyDerivatives
 
 struct InternalEnergyModel
 {
-    void eval(EnthalpyData const& enthalpy_data,
-              FluidDensityData const& fluid_density_data,
+    void eval(FluidDensityData const& fluid_density_data,
               PhaseTransitionData const& phase_transition_data,
               PorosityData const& porosity_data,
               SaturationData const& S_L_data,
               SolidDensityData const& solid_density_data,
+              SolidEnthalpyData const& solid_enthalpy_data,
               InternalEnergyData& internal_energy_data) const;
 
-    void dEval(EnthalpyData const& enthalpy_data,
-               FluidDensityData const& fluid_density_data,
+    void dEval(FluidDensityData const& fluid_density_data,
                PhaseTransitionData const& phase_transition_data,
                PorosityData const& porosity_data,
                PorosityDerivativeData const& porosity_d_data,
@@ -52,6 +51,7 @@ struct InternalEnergyModel
                SaturationDataDeriv const& dS_L_dp_cap,
                SolidDensityData const& solid_density_data,
                SolidDensityDerivativeData const& solid_density_d_data,
+               SolidEnthalpyData const& solid_enthalpy_data,
                SolidHeatCapacityData const& solid_heat_capacity_data,
                EffectiveVolumetricInternalEnergyDerivatives&
                    effective_volumetric_internal_energy_d_data) const;

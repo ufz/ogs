@@ -108,7 +108,7 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
                       rhoWLR);
     ASSERT_NEAR(density_water, rhoWLR(), 1e-10);
 
-    CR::EnthalpyData enthalpy;
+    CR::FluidEnthalpyData enthalpy;
     CR::MassMoleFractionsData mass_mole_fractions;
     CR::FluidDensityData fluid_density;
     CR::VapourPartialPressureData vapour_pressure;

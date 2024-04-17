@@ -23,20 +23,31 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-struct EnthalpyData
+struct FluidEnthalpyData
 {
     double h_G = nan;
     double h_L = nan;
+
+    static auto reflect()
+    {
+        using Self = FluidEnthalpyData;
+        namespace R = ProcessLib::Reflection;
+
+        return std::tuple{R::makeReflectionData("enthalpy_gas", &Self::h_G),
+                          R::makeReflectionData("enthalpy_liquid", &Self::h_L)};
+    }
+};
+
+struct SolidEnthalpyData
+{
     double h_S = nan;
 
     static auto reflect()
     {
-        using Self = EnthalpyData;
+        using Self = SolidEnthalpyData;
         namespace R = ProcessLib::Reflection;
 
-        return std::tuple{R::makeReflectionData("enthalpy_gas", &Self::h_G),
-                          R::makeReflectionData("enthalpy_liquid", &Self::h_L),
-                          R::makeReflectionData("enthalpy_solid", &Self::h_S)};
+        return std::tuple{R::makeReflectionData("enthalpy_solid", &Self::h_S)};
     }
 };
 
@@ -55,15 +66,16 @@ struct EffectiveVolumetricEnthalpyDerivatives
 struct EffectiveVolumetricEnthalpyModel
 {
     void eval(
-        EnthalpyData const& enthalpy_data,
         FluidDensityData const& fluid_density_data,
+        FluidEnthalpyData const& fluid_enthalpy_data,
         PorosityData const& porosity_data,
         SaturationData const& S_L_data,
         SolidDensityData const& solid_density_data,
+        SolidEnthalpyData const& solid_enthalpy_data,
         EffectiveVolumetricEnthalpy& effective_volumetric_enthalpy_data) const;
 
-    void dEval(EnthalpyData const& enthalpy_data,
-               FluidDensityData const& fluid_density_data,
+    void dEval(FluidDensityData const& fluid_density_data,
+               FluidEnthalpyData const& fluid_enthalpy_data,
                PhaseTransitionData const& phase_transition_data,
                PorosityData const& porosity_data,
                PorosityDerivativeData const& porosity_d_data,
@@ -71,9 +83,17 @@ struct EffectiveVolumetricEnthalpyModel
                SaturationDataDeriv const& dS_L_dp_cap,
                SolidDensityData const& solid_density_data,
                SolidDensityDerivativeData const& solid_density_d_data,
+               SolidEnthalpyData const& solid_enthalpy_data,
                SolidHeatCapacityData const& solid_heat_capacity_data,
                EffectiveVolumetricEnthalpyDerivatives&
                    effective_volumetric_enthalpy_d_data) const;
+};
+
+struct SolidEnthalpyModel
+{
+    void eval(SolidHeatCapacityData const& solid_heat_capacity_data,
+              TemperatureData const& T_data,
+              SolidEnthalpyData& solid_enthalpy_data) const;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

@@ -225,7 +225,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.phase_transition_model.eval(
             {pos, t, dt}, media_data, pGR_data, pCap_data, T_data,
-            current_state.rho_W_LR, ip_out.enthalpy_data,
+            current_state.rho_W_LR, ip_out.fluid_enthalpy_data,
             ip_out.mass_mole_fractions_data, ip_out.fluid_density_data,
             ip_out.vapour_pressure_data, current_state.constituent_density_data,
             ip_cv.phase_transition_data);
@@ -279,22 +279,24 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                              grad_T,
                                              ip_out.diffusion_velocity_data);
 
-        ip_out.enthalpy_data.h_S = ip_cv.solid_heat_capacity_data() * T;
+        models.solid_enthalpy_model.eval(ip_cv.solid_heat_capacity_data, T_data,
+                                         ip_out.solid_enthalpy_data);
 
-        models.internal_energy_model.eval(ip_out.enthalpy_data,
-                                          ip_out.fluid_density_data,
+        models.internal_energy_model.eval(ip_out.fluid_density_data,
                                           ip_cv.phase_transition_data,
                                           ip_out.porosity_data,
                                           current_state.S_L_data,
                                           ip_out.solid_density_data,
+                                          ip_out.solid_enthalpy_data,
                                           current_state.internal_energy_data);
 
         models.effective_volumetric_enthalpy_model.eval(
-            ip_out.enthalpy_data,
             ip_out.fluid_density_data,
+            ip_out.fluid_enthalpy_data,
             ip_out.porosity_data,
             current_state.S_L_data,
             ip_out.solid_density_data,
+            ip_out.solid_enthalpy_data,
             ip_cv.effective_volumetric_enthalpy_data);
 
         models.fC_1_model.eval(ip_cv.advection_data, ip_out.fluid_density_data,
@@ -458,8 +460,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.darcy_velocity_data);
 
         models.fT_2_model.eval(ip_out.darcy_velocity_data,
-                               ip_out.enthalpy_data,
                                ip_out.fluid_density_data,
+                               ip_out.fluid_enthalpy_data,
                                ip_cv.fT_2);
 
         models.fT_3_model.eval(
@@ -561,7 +563,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                          ip_dd.solid_density_d_data);
 
         models.internal_energy_model.dEval(
-            ip_out.enthalpy_data,
             ip_out.fluid_density_data,
             ip_cv.phase_transition_data,
             ip_out.porosity_data,
@@ -570,12 +571,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cv.dS_L_dp_cap,
             ip_out.solid_density_data,
             ip_dd.solid_density_d_data,
+            ip_out.solid_enthalpy_data,
             ip_cv.solid_heat_capacity_data,
             ip_dd.effective_volumetric_internal_energy_d_data);
 
         models.effective_volumetric_enthalpy_model.dEval(
-            ip_out.enthalpy_data,
             ip_out.fluid_density_data,
+            ip_out.fluid_enthalpy_data,
             ip_cv.phase_transition_data,
             ip_out.porosity_data,
             ip_cv.porosity_d_data,
@@ -583,6 +585,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cv.dS_L_dp_cap,
             ip_out.solid_density_data,
             ip_dd.solid_density_d_data,
+            ip_out.solid_enthalpy_data,
             ip_cv.solid_heat_capacity_data,
             ip_dd.effective_volumetric_enthalpy_d_data);
         if (!this->process_data_.apply_mass_lumping)
@@ -691,8 +694,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.fT_2_model.dEval(
             ip_out.darcy_velocity_data,
-            ip_out.enthalpy_data,
             ip_out.fluid_density_data,
+            ip_out.fluid_enthalpy_data,
             ip_out.permeability_data,
             ip_cv.phase_transition_data,
             ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
