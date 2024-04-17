@@ -52,17 +52,17 @@ ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
 target_link_libraries(
     ogs
-    PRIVATE ApplicationsLib
-            BaseLib
-            CMakeInfoLib
-            GitInfoLib
-            MeshLib
-            ProcessLib
-            $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
-            $<$<TARGET_EXISTS:InSituLib>:InSituLib>
-            $<$<TARGET_EXISTS:petsc>:petsc>
-            $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-            tclap
+    PRIVATE
+        ApplicationsLib
+        BaseLib
+        CMakeInfoLib
+        GitInfoLib
+        MeshLib
+        ProcessLib
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:MPI::MPI_CXX>>:MPI::MPI_CXX>
+        $<$<TARGET_EXISTS:InSituLib>:InSituLib>
+        $<$<TARGET_EXISTS:petsc>:petsc>
+        tclap
 )
 
 # ---- Tests ----

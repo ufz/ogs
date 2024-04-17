@@ -303,7 +303,6 @@ if("${ZLIB_INCLUDE_DIRS}" MATCHES "${build_dir_ZLIB}")
     endif()
 endif()
 if(OGS_USE_MPI)
-    set(HDF5_PREFER_PARALLEL ON)
     list(APPEND _hdf5_options "-DHDF5_ENABLE_PARALLEL=ON")
 endif()
 if(WIN32 OR HDF5_USE_STATIC_LIBRARIES)
@@ -327,15 +326,18 @@ set(_hdf5_source GIT_REPOSITORY https://github.com/HDFGroup/hdf5.git GIT_TAG
 set(_hdf5_source_file
     ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/hdf5-${ogs.tested_version.hdf5}.zip
 )
+
+set(HDF5_PREFER_PARALLEL ON)
+
 if(EXISTS ${_hdf5_source_file})
     set(_hdf5_source URL ${_hdf5_source_file})
 elseif(NOT OGS_BUILD_HDF5)
-    find_package(HDF5 ${ogs.minimum_version.hdf5})
+    find_package(HDF5 ${ogs.minimum_version.hdf5} COMPONENTS C)
 endif()
 if(NOT _HDF5_FOUND AND NOT HDF5_FOUND)
     BuildExternalProject(
         HDF5 ${_hdf5_source} CMAKE_ARGS ${_hdf5_options} ${_defaultCMakeArgs}
-                                        ${_cmake_generator}
+                                        ${_cmake_generator} SKIP_FIND
     )
     message(
         STATUS
@@ -345,8 +347,28 @@ if(NOT _HDF5_FOUND AND NOT HDF5_FOUND)
     set(_HDF5_FOUND ON CACHE INTERNAL "")
 endif()
 if(_HDF5_FOUND)
-    # Somehow needs an extra run of ..._find_package()
-    BuildExternalProject_find_package(HDF5 REQUIRED)
+    # Use HDF-provided install method, see ext build directory /
+    # share/USING_HDF5_CMake.txt
+    if(HDF5_USE_STATIC_LIBRARIES)
+        set(_hdf5_LIB_TYPE STATIC) # or SHARED
+    else()
+        set(_hdf5_LIB_TYPE SHARED) # or SHARED
+    endif()
+    string(TOLOWER ${_hdf5_LIB_TYPE} _hdf5_SEARCH_TYPE)
+    set(HDF5_ROOT ${build_dir_HDF5})
+    find_package(
+        HDF5 REQUIRED NAMES hdf5
+        COMPONENTS C ${_hdf5_SEARCH_TYPE} NO_CMAKE_PATH
+                   NO_CMAKE_ENVIRONMENT_PATH NO_SYSTEM_ENVIRONMENT_PATH
+                   NO_CMAKE_SYSTEM_PATH
+    )
+    set(HDF5_INCLUDE_DIRS ${HDF5_INCLUDE_DIR})
+    set(HDF5_LIBRARIES ${HDF5_C_${_hdf5_LIB_TYPE}_LIBRARY})
+    set(HDF5_C_LIBRARIES ${HDF5_LIBRARIES})
+    if(WIN32)
+        set(HDF5_LIBRARIES ${HDF5_LIBRARIES} ${ZLIB_LIBRARIES})
+    endif()
+    message(STATUS "Using HDF5_LIBRARIES: ${HDF5_LIBRARIES}")
 endif()
 
 # VTK

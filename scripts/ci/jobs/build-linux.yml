@@ -2,7 +2,7 @@ linux ctest large:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [shell, envinf23]
+  tags: [shell, envinf]
   needs: [meta]
   rules:
     - when: manual
@@ -26,6 +26,7 @@ build linux (no unity):
   needs: [meta]
   timeout: 3h
   variables:
+    BUILD_PACKAGE: "false"
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
     CHECK_WARNINGS: "true"
@@ -46,27 +47,14 @@ build linux debug with sanitizers:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [envinf23, shell]
+  tags: [envinf, shell]
   needs: [meta]
   variables:
     BUILD_PACKAGE: "false"
-    CMAKE_PRESET: debug
+    CMAKE_PRESET: sanitizer
     CMAKE_ARGS: >-
-      -DCMAKE_C_COMPILER=/usr/bin/clang
-      -DCMAKE_CXX_COMPILER=/usr/bin/clang++
-      -DBUILD_SHARED_LIBS=ON
-      -DOGS_CXX_FLAGS=-O3;-fno-var-tracking
-      -DOGS_EIGEN_DYNAMIC_SHAPE_MATRICES=OFF
-      -DENABLE_ASAN=ON
-      -DENABLE_UBSAN=ON
-      -DENABLE_LSAN=ON
-      -DOGS_CTEST_MAX_RUNTIME=5
-      -DOGS_USE_PIP=ON
-      -DOGS_USE_MFRONT=ON
-      -DOGS_BUILD_TFEL=ON
-    UBSAN_OPTIONS: "print_stacktrace=1"
-    LSAN_OPTIONS: "suppressions=$CI_PROJECT_DIR/scripts/test/leak_sanitizer.suppressions"
-    CTEST_TIMEOUT: 120
+      -DOGS_CTEST_MAX_RUNTIME=60
+      -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
 
 build linux ubuntu perf:
   extends:

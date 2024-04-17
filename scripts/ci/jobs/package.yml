@@ -6,12 +6,7 @@ create cpm cache:
     - if: $CI_COMMIT_TITLE == "[versions] Updated cpm cache info."
       when: never
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      changes:
-        - scripts/cmake/CMakeSetup.cmake
-        - scripts/cmake/Dependencies.cmake
-        - scripts/ci/jobs/package.yml
-        - scripts/cmake/ExternalDependencies.cmake
-        - web/data/versions.json
+      when: manual
   variables:
     BUILD_DIR: "$CI_PROJECT_DIR/../build/cpm"
   allow_failure:

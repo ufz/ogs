@@ -9,16 +9,24 @@ append_source_files(SOURCES MeshQuality)
 ogs_add_library(MeshToolsLib ${SOURCES})
 
 target_link_libraries(
-    MeshToolsLib PUBLIC GeoLib
-                        MeshLib
-                        range-v3
-                        VTK::IOXML
-                        VTK::IOLegacy
-                        $<$<TARGET_EXISTS:VTK::IOParallelXML>:VTK::IOParallelXML>
-                        $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-                 PRIVATE BaseLib MathLib NumLib GitInfoLib
+    MeshToolsLib
+    PUBLIC
+        GeoLib
+        MeshLib
+        range-v3
+        VTK::IOXML
+        VTK::IOLegacy
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::IOParallelXML>>:VTK::IOParallelXML>
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::ParallelMPI>>:VTK::ParallelMPI>
+    PRIVATE BaseLib MathLib NumLib GitInfoLib
 )
 
-target_precompile_headers(MeshToolsLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] [["MeshLib/Mesh.h"]]
-    [["MeshLib/Elements/Element.h"]])
+target_precompile_headers(
+    MeshToolsLib
+    PRIVATE
+    [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]]
+    [["MeshLib/Mesh.h"]]
+    [["MeshLib/Elements/Element.h"]]
+)

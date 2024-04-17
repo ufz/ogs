@@ -2,7 +2,7 @@ build linux arch:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [shell, envinf23]
+  tags: [shell, envinf]
   needs: [meta]
   timeout: 3h
   variables:

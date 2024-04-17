@@ -34,18 +34,19 @@ ogs_add_library(MeshLib ${SOURCES})
 
 target_link_libraries(
     MeshLib
-    PUBLIC BaseLib
-           GeoLib
-           GitInfoLib
-           ${HDF5_LIBRARIES}
-           MathLib
-           VTK::IOXML
-           VTK::IOLegacy
-           range-v3
-           $<$<TARGET_EXISTS:VTK::IOParallelXML>:VTK::IOParallelXML>
-           $<$<TARGET_EXISTS:VTK::ParallelMPI>:VTK::ParallelMPI>
-           $<$<TARGET_EXISTS:MPI::MPI_CXX>:MPI::MPI_CXX>
-           $<$<TARGET_EXISTS:petsc>:petsc>
+    PUBLIC
+        BaseLib
+        GeoLib
+        GitInfoLib
+        ${HDF5_LIBRARIES}
+        MathLib
+        VTK::IOXML
+        VTK::IOLegacy
+        range-v3
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::IOParallelXML>>:VTK::IOParallelXML>
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::ParallelMPI>>:VTK::ParallelMPI>
+        $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:MPI::MPI_CXX>>:MPI::MPI_CXX>
+        $<$<TARGET_EXISTS:petsc>:petsc>
     PRIVATE nlohmann_json::nlohmann_json
 )
 
@@ -54,7 +55,7 @@ target_include_directories(MeshLib PUBLIC ${HDF5_INCLUDE_DIRS})
 target_compile_definitions(
     MeshLib
     PUBLIC
-        $<$<AND:$<BOOL:$ENV{VTK_USE_64BIT_IDS}>,$<NOT:$<BOOL:VTK_ADDED>>>:VTK_USE_64BIT_IDS>
+        $<$<AND:$<BOOL:$ENV{VTK_USE_64BIT_IDS}>,$<NOT:$<BOOL:${VTK_ADDED}>>>:VTK_USE_64BIT_IDS>
 )
 
 target_precompile_headers(

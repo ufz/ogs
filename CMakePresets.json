@@ -215,6 +215,27 @@
         "OGS_USE_MFRONT": "ON",
         "BUILD_SHARED_LIBS": "ON"
       }
+    },
+    {
+      "name": "sanitizer",
+      "inherits": "debug-all",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "ON",
+        "OGS_CXX_FLAGS": "-O3;-fno-var-tracking",
+        "OGS_EIGEN_DYNAMIC_SHAPE_MATRICES": "OFF",
+        "ENABLE_ASAN": "ON",
+        "ENABLE_UBSAN": "ON",
+        "ENABLE_LSAN": "ON",
+        "OGS_BUILD_TFEL": "ON",
+        "OGS_BUILD_VTK": "ON",
+        "OGS_BUILD_HDF5": "ON"
+      },
+      "environment": {
+        "CC": "clang",
+        "CXX": "clang++",
+        "UBSAN_OPTIONS": "print_stacktrace=1",
+        "LSAN_OPTIONS": "suppressions=${sourceDir}/scripts/test/leak_sanitizer.suppressions"
+      }
     }
   ],
   "buildPresets": [
@@ -314,6 +335,10 @@
     {
       "name": "wheel",
       "configurePreset": "wheel"
+    },
+    {
+      "name": "sanitizer",
+      "configurePreset": "sanitizer"
     }
   ],
   "testPresets": [
@@ -326,6 +351,9 @@
       "filter": {
         "include": {
           "label": "default"
+        },
+        "exclude": {
+          "name": "nb-"
         }
       },
       "execution": {
@@ -400,6 +428,13 @@
     {
       "name": "release-all",
       "configurePreset": "release-all",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
+      "name": "sanitizer",
+      "configurePreset": "sanitizer",
       "inherits": [
         "release"
       ]
