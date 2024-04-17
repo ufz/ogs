@@ -149,7 +149,6 @@ struct ConstitutiveTempData
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
     SolidCompressibilityData beta_p_SR;
-    SaturationDataDeriv dS_L_dp_cap;
     BishopsData chi_S_L;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     TotalStressData<DisplacementDim> total_stress_data;
@@ -196,6 +195,7 @@ struct ConstitutiveTempData
 template <int DisplacementDim>
 struct DerivativesData
 {
+    SaturationDataDeriv dS_L_dp_cap;
     AdvectionDerivativeData<DisplacementDim> advection_d_data;
     ThermalConductivityDerivativeData<DisplacementDim>
         thermal_conductivity_d_data;
