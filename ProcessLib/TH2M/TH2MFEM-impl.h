@@ -1076,8 +1076,6 @@ void TH2MLocalAssembler<
         auto const s_L = current_state.S_L_data.S_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
-        auto& alpha_B = ip_cv.biot_data();
-
         auto const& b = this->process_data_.specific_body_force;
 
         // ---------------------------------------------------------------------
@@ -1172,7 +1170,7 @@ void TH2MLocalAssembler<
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
+        KUpG.noalias() -= (BuT * ip_cv.biot_data() * m * Np) * w;
 
         KUpC.noalias() +=
             BuT * Invariants::identity2 * Np * (ip_cv.fu_2_KupC.m * w);
@@ -1401,8 +1399,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const& s_L = current_state.S_L_data.S_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
-
-        auto const alpha_B = ip_cv.biot_data();
 
         auto const& b = this->process_data_.specific_body_force;
 
@@ -1747,7 +1743,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
+        KUpG.noalias() -= (BuT * ip_cv.biot_data() * m * Np) * w;
 
         // dfU_2/dp_GR = dKUpG/dp_GR * p_GR + KUpG. The former is zero, the
         // latter is handled below.
