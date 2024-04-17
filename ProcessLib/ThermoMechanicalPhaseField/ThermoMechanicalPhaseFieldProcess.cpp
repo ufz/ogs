@@ -315,7 +315,7 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), x, x_prev, t, dt,
+        pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
 

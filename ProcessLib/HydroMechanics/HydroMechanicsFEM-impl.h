@@ -874,8 +874,8 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeFunctionPressure, DisplacementDim>::
-    postNonLinearSolverConcrete(std::vector<double> const& local_x,
-                                std::vector<double> const& local_x_prev,
+    postNonLinearSolverConcrete(Eigen::VectorXd const& local_x,
+                                Eigen::VectorXd const& local_x_prev,
                                 double const t, double const dt,
                                 int const process_id)
 {
@@ -894,14 +894,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         if (!staggered_scheme_ptr->fixed_stress_over_time_step)
         {
             auto const p =
-                Eigen::Map<typename ShapeMatricesTypePressure::
-                               template VectorType<pressure_size> const>(
-                    local_x.data(), pressure_size);
-
+                local_x.template segment<pressure_size>(pressure_index);
             auto const p_prev =
-                Eigen::Map<typename ShapeMatricesTypePressure::
-                               template VectorType<pressure_size> const>(
-                    local_x_prev.data(), pressure_size);
+                local_x_prev.template segment<pressure_size>(pressure_index);
 
             for (int ip = 0; ip < n_integration_points; ip++)
             {
@@ -928,12 +923,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(MPL::EmptyVariableArray, x_position, t,
                                         dt);
 
-        const int displacement_offset =
-            (!staggered_scheme_ptr) ? displacement_index : 0;
-
-        auto u = Eigen::Map<typename ShapeMatricesTypeDisplacement::
-                                template VectorType<displacement_size> const>(
-            local_x.data() + displacement_offset, displacement_size);
+        auto const u =
+            local_x.template segment<displacement_size>(displacement_index);
 
         MPL::VariableArray vars;
         vars.temperature = T_ref;
