@@ -473,6 +473,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
                 this->process_data_.specific_body_force},
             ip_cv.fT_3);
+
+        models.fu_2_KupC_model.eval(ip_cv.biot_data, ip_cv.chi_S_L,
+                                    ip_cv.fu_2_KupC);
     }
 
     return {ip_constitutive_data, ip_constitutive_variables};
@@ -540,8 +543,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
         ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
-        double const pCap = Np.dot(capillary_pressure);
-        ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{
+            Np.dot(capillary_pressure)};
 
         models.advection_model.dEval(current_state.constituent_density_data,
                                      ip_out.permeability_data,
@@ -702,6 +705,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 this->process_data_.specific_body_force},
             ip_cv.viscosity_data,
             ip_dd.dfT_2);
+
+        models.fu_2_KupC_model.dEval(ip_cv.biot_data,
+                                     ip_cv.chi_S_L,
+                                     pCap_data,
+                                     ip_cv.dS_L_dp_cap,
+                                     ip_dd.dfu_2_KupC);
     }
 
     return ip_d_data;
@@ -1165,7 +1174,8 @@ void TH2MLocalAssembler<
 
         KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
 
-        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
+        KUpC.noalias() +=
+            BuT * Invariants::identity2 * Np * (ip_cv.fu_2_KupC.m * w);
 
         fU.noalias() -=
             (BuT * current_state.eff_stress_data.sigma -
@@ -1742,15 +1752,16 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // dfU_2/dp_GR = dKUpG/dp_GR * p_GR + KUpG. The former is zero, the
         // latter is handled below.
 
-        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
+        KUpC.noalias() +=
+            BuT * Invariants::identity2 * Np * (ip_cv.fu_2_KupC.m * w);
 
         // dfU_2/dp_cap = dKUpC/dp_cap * p_cap + KUpC. The former is handled
         // here, the latter below.
         local_Jac
             .template block<displacement_size, W_size>(displacement_index,
                                                        W_index)
-            .noalias() += BuT * alpha_B * ip_cv.chi_S_L.dchi_dS_L *
-                          ip_cv.dS_L_dp_cap() * pCap * m * Np * w;
+            .noalias() +=
+            BuT * Invariants::identity2 * Np * (ip_dd.dfu_2_KupC.dp_cap * w);
 
         local_Jac
             .template block<displacement_size, displacement_size>(

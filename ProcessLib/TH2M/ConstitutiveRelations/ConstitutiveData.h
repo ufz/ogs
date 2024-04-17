@@ -41,6 +41,7 @@
 #include "TEquation.h"
 #include "ThermalConductivity.h"
 #include "TotalStress.h"
+#include "UEquation.h"
 #include "VapourPartialPressure.h"
 #include "Viscosity.h"
 #include "WEquation.h"
@@ -186,6 +187,8 @@ struct ConstitutiveTempData
     FT1Data fT_1;
     FT2Data<DisplacementDim> fT_2;
     FT3Data<DisplacementDim> fT_3;
+
+    FU2KUpCData fu_2_KupC;
 };
 
 /// Data that stores intermediate values (derivatives), which are not needed
@@ -213,6 +216,7 @@ struct DerivativesData
     FW4LWpCDerivativeData<DisplacementDim> dfW_4_LWpC;
     FT1DerivativeData dfT_1;
     FT2DerivativeData<DisplacementDim> dfT_2;
+    FU2KUpCDerivativeData dfu_2_KupC;
 };
 
 }  // namespace ConstitutiveRelations

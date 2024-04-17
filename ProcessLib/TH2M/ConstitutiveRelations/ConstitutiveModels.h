@@ -33,6 +33,7 @@
 #include "TEquation.h"
 #include "ThermalConductivity.h"
 #include "TotalStress.h"
+#include "UEquation.h"
 #include "Viscosity.h"
 #include "WEquation.h"
 
@@ -114,6 +115,8 @@ struct ConstitutiveModels
     FT1Model fT_1_model;
     FT2Model<DisplacementDim> fT_2_model;
     FT3Model<DisplacementDim> fT_3_model;
+
+    FU2KUpCModel fu_2_KupC_model;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
