@@ -1053,10 +1053,6 @@ void TH2MLocalAssembler<
 
         auto const& w = ip.integration_weight;
 
-        auto const& m = Invariants::identity2;
-
-        auto const mT = m.transpose().eval();
-
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -1095,7 +1091,8 @@ void TH2MLocalAssembler<
         }
 
         MCT.noalias() += NpT * ip_cv.fC_4_MCT.m * Np * w;
-        MCu.noalias() += NpT * ip_cv.fC_4_MCu.m * mT * Bu * w;
+        MCu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
+                         (ip_cv.fC_4_MCu.m * w);
 
         LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
@@ -1130,7 +1127,8 @@ void TH2MLocalAssembler<
 
         MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
 
-        MWu.noalias() += NpT * ip_cv.fW_4_MWu.m * mT * Bu * w;
+        MWu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
+                         (ip_cv.fW_4_MWu.m * w);
 
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
@@ -1151,9 +1149,9 @@ void TH2MLocalAssembler<
         //  - temperature equation
         // ---------------------------------------------------------------------
 
-        MTu.noalias() += NTT *
-                         ip_cv.effective_volumetric_enthalpy_data.rho_h_eff *
-                         mT * Bu * w;
+        MTu.noalias() +=
+            NTT * Invariants::identity2.transpose() * Bu *
+            (ip_cv.effective_volumetric_enthalpy_data.rho_h_eff * w);
 
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
@@ -1170,7 +1168,8 @@ void TH2MLocalAssembler<
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -= (BuT * ip_cv.biot_data() * m * Np) * w;
+        KUpG.noalias() -=
+            BuT * Invariants::identity2 * Np * (ip_cv.biot_data() * w);
 
         KUpC.noalias() +=
             BuT * Invariants::identity2 * Np * (ip_cv.fu_2_KupC.m * w);
@@ -1366,9 +1365,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const& w = ip.integration_weight;
 
-        auto const& m = Invariants::identity2;
-        auto const mT = m.transpose().eval();
-
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -1425,7 +1421,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       temperature_index)
             .noalias() += NpT * ip_dd.dfC_4_MCT.dT * (T - T_prev) / dt * NT * w;
 
-        MCu.noalias() += NpT * ip_cv.fC_4_MCu.m * mT * Bu * w;
+        MCu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
+                         (ip_cv.fC_4_MCu.m * w);
         // d (fC_4_MCu * u_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
@@ -1540,7 +1537,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
 
-        MWu.noalias() += NpT * ip_cv.fW_4_MWu.m * mT * Bu * w;
+        MWu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
+                         (ip_cv.fW_4_MWu.m * w);
 
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
@@ -1619,9 +1617,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         //  - temperature equation
         // ---------------------------------------------------------------------
 
-        MTu.noalias() += NTT *
-                         ip_cv.effective_volumetric_enthalpy_data.rho_h_eff *
-                         mT * Bu * w;
+        MTu.noalias() +=
+            NTT * Invariants::identity2.transpose() * Bu *
+            (ip_cv.effective_volumetric_enthalpy_data.rho_h_eff * w);
 
         // dfT_4/dp_GR
         // d (MTu * u_dot)/dp_GR
@@ -1743,7 +1741,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -= (BuT * ip_cv.biot_data() * m * Np) * w;
+        KUpG.noalias() -=
+            BuT * Invariants::identity2 * Np * (ip_cv.biot_data() * w);
 
         // dfU_2/dp_GR = dKUpG/dp_GR * p_GR + KUpG. The former is zero, the
         // latter is handled below.
