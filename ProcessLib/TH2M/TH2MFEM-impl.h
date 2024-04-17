@@ -1079,7 +1079,8 @@ void TH2MLocalAssembler<
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto const BuT = Bu.transpose().eval();
+        auto const NTN = (Np.transpose() * Np).eval();
+        auto const BTI2N = (Bu.transpose() * Invariants::identity2 * Np).eval();
 
         double const pCap = Np.dot(capillary_pressure);
         double const pCap_prev = Np.dot(capillary_pressure_prev);
@@ -1093,21 +1094,20 @@ void TH2MLocalAssembler<
         // C-component equation
         // ---------------------------------------------------------------------
 
-        MCpG.noalias() += NpT * ip_cv.fC_4_MCpG.m * Np * w;
-        MCpC.noalias() += NpT * ip_cv.fC_4_MCpC.m * Np * w;
+        MCpG.noalias() += NTN * (ip_cv.fC_4_MCpG.m * w);
+        MCpC.noalias() += NTN * (ip_cv.fC_4_MCpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
-                    NpT * ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MCT.noalias() += NpT * ip_cv.fC_4_MCT.m * Np * w;
-        MCu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
-                         (ip_cv.fC_4_MCu.m * w);
+        MCT.noalias() += NTN * (ip_cv.fC_4_MCT.m * w);
+        MCu.noalias() += BTI2N.transpose() * (ip_cv.fC_4_MCu.m * w);
 
         LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
@@ -1119,31 +1119,30 @@ void TH2MLocalAssembler<
 
         if (!this->process_data_.apply_mass_lumping)
         {
-            fC.noalias() -= NpT * ip_cv.fC_2a.a * s_L_dot * w;
+            fC.noalias() -= NpT * (ip_cv.fC_2a.a * s_L_dot * w);
         }
         // fC_III
-        fC.noalias() -= NpT * ip_out.porosity_data.phi * ip_cv.fC_3a.a * w;
+        fC.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fC_3a.a * w);
 
         // ---------------------------------------------------------------------
         // W-component equation
         // ---------------------------------------------------------------------
 
-        MWpG.noalias() += NpT * ip_cv.fW_4_MWpG.m * Np * w;
-        MWpC.noalias() += NpT * ip_cv.fW_4_MWpC.m * Np * w;
+        MWpG.noalias() += NTN * (ip_cv.fW_4_MWpG.m * w);
+        MWpC.noalias() += NTN * (ip_cv.fW_4_MWpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
-                    NpT * ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
+        MWT.noalias() += NTN * (ip_cv.fW_4_MWT.m * w);
 
-        MWu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
-                         (ip_cv.fW_4_MWu.m * w);
+        MWu.noalias() += BTI2N.transpose() * (ip_cv.fW_4_MWu.m * w);
 
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
@@ -1155,42 +1154,40 @@ void TH2MLocalAssembler<
 
         if (!this->process_data_.apply_mass_lumping)
         {
-            fW.noalias() -= NpT * ip_cv.fW_2.a * s_L_dot * w;
+            fW.noalias() -= NpT * (ip_cv.fW_2.a * s_L_dot * w);
         }
 
-        fW.noalias() -= NpT * ip_out.porosity_data.phi * ip_cv.fW_3a.a * w;
+        fW.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fW_3a.a * w);
 
         // ---------------------------------------------------------------------
         //  - temperature equation
         // ---------------------------------------------------------------------
 
         MTu.noalias() +=
-            NTT * Invariants::identity2.transpose() * Bu *
+            BTI2N.transpose() *
             (ip_cv.effective_volumetric_enthalpy_data.rho_h_eff * w);
 
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
 
-        fT.noalias() -= NTT * ip_cv.fT_1.m * w;
+        fT.noalias() -= NTT * (ip_cv.fT_1.m * w);
 
         fT.noalias() += gradNTT * ip_cv.fT_2.A * w;
 
         fT.noalias() += gradNTT * ip_cv.fT_3.gradN * w;
 
-        fT.noalias() += NTT * ip_cv.fT_3.N * w;
+        fT.noalias() += NTT * (ip_cv.fT_3.N * w);
 
         // ---------------------------------------------------------------------
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -=
-            BuT * Invariants::identity2 * Np * (ip_cv.biot_data() * w);
+        KUpG.noalias() -= BTI2N * (ip_cv.biot_data() * w);
 
-        KUpC.noalias() +=
-            BuT * Invariants::identity2 * Np * (ip_cv.fu_2_KupC.m * w);
+        KUpC.noalias() += BTI2N * (ip_cv.fu_2_KupC.m * w);
 
         fU.noalias() -=
-            (BuT * current_state.eff_stress_data.sigma -
+            (Bu.transpose() * current_state.eff_stress_data.sigma -
              N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
             w;
 
@@ -1391,7 +1388,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto const BuT = Bu.transpose().eval();
+        auto const NTN = (Np.transpose() * Np).eval();
+        auto const BTI2N = (Bu.transpose() * Invariants::identity2 * Np).eval();
 
         double const div_u_dot =
             Invariants::trace(Bu * (displacement - displacement_prev) / dt);
@@ -1417,32 +1415,31 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // C-component equation
         // ---------------------------------------------------------------------
 
-        MCpG.noalias() += NpT * ip_cv.fC_4_MCpG.m * Np * w;
-        MCpC.noalias() += NpT * ip_cv.fC_4_MCpC.m * Np * w;
+        MCpG.noalias() += NTN * (ip_cv.fC_4_MCpG.m * w);
+        MCpC.noalias() += NTN * (ip_cv.fC_4_MCpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
-                    NpT * ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MCT.noalias() += NpT * ip_cv.fC_4_MCT.m * Np * w;
+        MCT.noalias() += NTN * (ip_cv.fC_4_MCT.m * w);
         // d (fC_4_MCT * T_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += NpT * ip_dd.dfC_4_MCT.dT * (T - T_prev) / dt * NT * w;
+            .noalias() += NTN * (ip_dd.dfC_4_MCT.dT * (T - T_prev) / dt * w);
 
-        MCu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
-                         (ip_cv.fC_4_MCu.m * w);
+        MCu.noalias() += BTI2N.transpose() * (ip_cv.fC_4_MCu.m * w);
         // d (fC_4_MCu * u_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += NpT * ip_dd.dfC_4_MCu.dT * div_u_dot * NT * w;
+            .noalias() += NTN * (ip_dd.dfC_4_MCu.dT * div_u_dot * w);
 
         LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
@@ -1462,14 +1459,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // d (fC_4_MCpG * p_GR_dot)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
-            NpT * ip_dd.dfC_4_MCpG.dp_GR * (pGR - pGR_prev) / dt * Np * w;
+            NTN * (ip_dd.dfC_4_MCpG.dp_GR * (pGR - pGR_prev) / dt * w);
 
         // d (fC_4_MCpG * p_GR_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
             .noalias() +=
-            NpT * ip_dd.dfC_4_MCpG.dT * (pGR - pGR_prev) / dt * NT * w;
+            NTN * (ip_dd.dfC_4_MCpG.dT * (pGR - pGR_prev) / dt * w);
 
         LCpC.noalias() -= gradNpT * ip_cv.fC_4_LCpC.L * gradNp * w;
 
@@ -1495,65 +1492,65 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         if (!this->process_data_.apply_mass_lumping)
         {
             // fC_2 = \int a * s_L_dot
-            fC.noalias() -= NpT * ip_cv.fC_2a.a * s_L_dot * w;
+            fC.noalias() -= NpT * (ip_cv.fC_2a.a * s_L_dot * w);
 
             local_Jac.template block<C_size, C_size>(C_index, C_index)
-                .noalias() += NpT *
-                              (ip_dd.dfC_2a.dp_GR * s_L_dot
-                               /*- ip_cv.fC_2a.a * (ds_L_dp_GR = 0) / dt*/) *
-                              Np * w;
+                .noalias() +=
+                NTN * ((ip_dd.dfC_2a.dp_GR * s_L_dot
+                        /*- ip_cv.fC_2a.a * (ds_L_dp_GR = 0) / dt*/) *
+                       w);
 
             local_Jac.template block<C_size, W_size>(C_index, W_index)
-                .noalias() += NpT *
-                              (ip_dd.dfC_2a.dp_cap * s_L_dot +
-                               ip_cv.fC_2a.a * ip_dd.dS_L_dp_cap() / dt) *
-                              Np * w;
+                .noalias() +=
+                NTN * ((ip_dd.dfC_2a.dp_cap * s_L_dot +
+                        ip_cv.fC_2a.a * ip_dd.dS_L_dp_cap() / dt) *
+                       w);
 
             local_Jac
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
-                .noalias() += NpT * ip_dd.dfC_2a.dT * s_L_dot * NT * w;
+                .noalias() += NTN * (ip_dd.dfC_2a.dT * s_L_dot * w);
         }
         {
             // fC_3 = \int phi * a
-            fC.noalias() -= NpT * ip_out.porosity_data.phi * ip_cv.fC_3a.a * w;
+            fC.noalias() -=
+                NpT * (ip_out.porosity_data.phi * ip_cv.fC_3a.a * w);
 
             local_Jac.template block<C_size, C_size>(C_index, C_index)
                 .noalias() +=
-                NpT * ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_GR * Np * w;
+                NTN * (ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_GR * w);
 
             local_Jac.template block<C_size, W_size>(C_index, W_index)
                 .noalias() +=
-                NpT * ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_cap * Np * w;
+                NTN * (ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_cap * w);
 
             local_Jac
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
-                .noalias() += NpT *
-                              (ip_dd.porosity_d_data.dphi_dT * ip_cv.fC_3a.a +
-                               ip_out.porosity_data.phi * ip_dd.dfC_3a.dT) *
-                              NT * w;
+                .noalias() +=
+                NTN * ((ip_dd.porosity_d_data.dphi_dT * ip_cv.fC_3a.a +
+                        ip_out.porosity_data.phi * ip_dd.dfC_3a.dT) *
+                       w);
         }
         // ---------------------------------------------------------------------
         // W-component equation
         // ---------------------------------------------------------------------
 
-        MWpG.noalias() += NpT * ip_cv.fW_4_MWpG.m * Np * w;
-        MWpC.noalias() += NpT * ip_cv.fW_4_MWpC.m * Np * w;
+        MWpG.noalias() += NTN * (ip_cv.fW_4_MWpG.m * w);
+        MWpC.noalias() += NTN * (ip_cv.fW_4_MWpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
-                    NpT * ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MWT.noalias() += NpT * ip_cv.fW_4_MWT.m * Np * w;
+        MWT.noalias() += NTN * (ip_cv.fW_4_MWT.m * w);
 
-        MWu.noalias() += NpT * Invariants::identity2.transpose() * Bu *
-                         (ip_cv.fW_4_MWu.m * w);
+        MWu.noalias() += BTI2N.transpose() * (ip_cv.fW_4_MWu.m * w);
 
         LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
@@ -1591,49 +1588,48 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // fW_2 = \int a * s_L_dot
         if (!this->process_data_.apply_mass_lumping)
         {
-            fW.noalias() -= NpT * ip_cv.fW_2.a * s_L_dot * w;
+            fW.noalias() -= NpT * (ip_cv.fW_2.a * s_L_dot * w);
 
             local_Jac.template block<W_size, C_size>(W_index, C_index)
-                .noalias() += NpT * ip_dd.dfW_2.dp_GR * s_L_dot * Np * w;
+                .noalias() += NTN * (ip_dd.dfW_2.dp_GR * s_L_dot * w);
 
             // sign negated because of dp_cap = -dp_LR
             // TODO (naumov) Had to change the sign to get equal Jacobian WW
             // blocks in A2 Test. Where is the error?
             local_Jac.template block<W_size, W_size>(W_index, W_index)
-                .noalias() += NpT *
-                              (ip_dd.dfW_2.dp_cap * s_L_dot +
-                               ip_cv.fW_2.a * ip_dd.dS_L_dp_cap() / dt) *
-                              Np * w;
+                .noalias() += NTN * ((ip_dd.dfW_2.dp_cap * s_L_dot +
+                                      ip_cv.fW_2.a * ip_dd.dS_L_dp_cap() / dt) *
+                                     w);
 
             local_Jac
                 .template block<W_size, temperature_size>(W_index,
                                                           temperature_index)
-                .noalias() += NpT * ip_dd.dfW_2.dT * s_L_dot * Np * w;
+                .noalias() += NTN * (ip_dd.dfW_2.dT * s_L_dot * w);
         }
 
         // fW_3 = \int phi * a
-        fW.noalias() -= NpT * ip_out.porosity_data.phi * ip_cv.fW_3a.a * w;
+        fW.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fW_3a.a * w);
 
         local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() +=
-            NpT * ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_GR * Np * w;
+            NTN * (ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_GR * w);
 
         local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() +=
-            NpT * ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_cap * Np * w;
+            NTN * (ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_cap * w);
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
-            .noalias() += NpT *
-                          (ip_dd.porosity_d_data.dphi_dT * ip_cv.fW_3a.a +
-                           ip_out.porosity_data.phi * ip_dd.dfW_3a.dT) *
-                          NT * w;
+            .noalias() +=
+            NTN * ((ip_dd.porosity_d_data.dphi_dT * ip_cv.fW_3a.a +
+                    ip_out.porosity_data.phi * ip_dd.dfW_3a.dT) *
+                   w);
 
         // ---------------------------------------------------------------------
         //  - temperature equation
         // ---------------------------------------------------------------------
 
         MTu.noalias() +=
-            NTT * Invariants::identity2.transpose() * Bu *
+            BTI2N.transpose() *
             (ip_cv.effective_volumetric_enthalpy_data.rho_h_eff * w);
 
         // dfT_4/dp_GR
@@ -1642,8 +1638,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, C_size>(temperature_index,
                                                       C_index)
             .noalias() +=
-            NTT * ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_GR *
-            div_u_dot * NT * w;
+            NTN * (ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_GR *
+                   div_u_dot * w);
 
         // dfT_4/dp_cap
         // d (MTu * u_dot)/dp_cap
@@ -1651,8 +1647,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
             .noalias() -=
-            NTT * ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_cap *
-            div_u_dot * NT * w;
+            NTN *
+            (ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_cap *
+             div_u_dot * w);
 
         // dfT_4/dT
         // d (MTu * u_dot)/dT
@@ -1660,8 +1657,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
             .noalias() +=
-            NTT * ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dT *
-            div_u_dot * NT * w;
+            NTN * (ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dT *
+                   div_u_dot * w);
 
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
@@ -1697,26 +1694,26 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                           NT * w;
 
         // fT_1
-        fT.noalias() -= NTT * ip_cv.fT_1.m * w;
+        fT.noalias() -= NTT * (ip_cv.fT_1.m * w);
 
         // dfT_1/dp_GR
         local_Jac
             .template block<temperature_size, C_size>(temperature_index,
                                                       C_index)
-            .noalias() += NpT * Np * (ip_dd.dfT_1.dp_GR * w);
+            .noalias() += NTN * (ip_dd.dfT_1.dp_GR * w);
 
         // dfT_1/dp_cap
         local_Jac
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
-            .noalias() += NpT * Np * (ip_dd.dfT_1.dp_cap * w);
+            .noalias() += NTN * (ip_dd.dfT_1.dp_cap * w);
 
         // dfT_1/dT
         // MTT
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() += NTT * NT * (ip_dd.dfT_1.dT * w);
+            .noalias() += NTN * (ip_dd.dfT_1.dT * w);
 
         // fT_2
         fT.noalias() += gradNTT * ip_cv.fT_2.A * w;
@@ -1748,7 +1745,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .noalias() -= gradNTT * ip_dd.dfT_2.dT * NT * w;
 
         // fT_3
-        fT.noalias() += NTT * ip_cv.fT_3.N * w;
+        fT.noalias() += NTT * (ip_cv.fT_3.N * w);
 
         fT.noalias() += gradNTT * ip_cv.fT_3.gradN * w;
 
@@ -1756,31 +1753,29 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -=
-            BuT * Invariants::identity2 * Np * (ip_cv.biot_data() * w);
+        KUpG.noalias() -= BTI2N * (ip_cv.biot_data() * w);
 
         // dfU_2/dp_GR = dKUpG/dp_GR * p_GR + KUpG. The former is zero, the
         // latter is handled below.
 
-        KUpC.noalias() +=
-            BuT * Invariants::identity2 * Np * (ip_cv.fu_2_KupC.m * w);
+        KUpC.noalias() += BTI2N * (ip_cv.fu_2_KupC.m * w);
 
         // dfU_2/dp_cap = dKUpC/dp_cap * p_cap + KUpC. The former is handled
         // here, the latter below.
         local_Jac
             .template block<displacement_size, W_size>(displacement_index,
                                                        W_index)
-            .noalias() +=
-            BuT * Invariants::identity2 * Np * (ip_dd.dfu_2_KupC.dp_cap * w);
+            .noalias() += BTI2N * (ip_dd.dfu_2_KupC.dp_cap * w);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)
-            .noalias() += BuT * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
+            .noalias() +=
+            Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
 
         // fU_1
         fU.noalias() -=
-            (BuT * current_state.eff_stress_data.sigma -
+            (Bu.transpose() * current_state.eff_stress_data.sigma -
              N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
             w;
 
@@ -1788,7 +1783,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<displacement_size, temperature_size>(
                 displacement_index, temperature_index)
-            .noalias() -= BuT * ip_dd.dfu_1_KuT.dT * NT * w;
+            .noalias() -= Bu.transpose() * ip_dd.dfu_1_KuT.dT * NT * w;
 
         /* TODO (naumov) Test with gravity needed to check this Jacobian part.
         local_Jac
