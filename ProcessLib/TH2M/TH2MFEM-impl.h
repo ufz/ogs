@@ -490,6 +490,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
         double const t, double const dt,
         std::vector<
+            ConstitutiveRelations::ConstitutiveData<DisplacementDim>> const&
+            ip_constitutive_data,
+        std::vector<
             ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>> const&
             ip_constitutive_variables,
         ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
@@ -524,6 +527,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     {
         auto const& ip_data = _ip_data[ip];
         auto& ip_dd = ip_d_data[ip];
+        auto const& ip_cd = ip_constitutive_data[ip];
         auto const& ip_cv = ip_constitutive_variables[ip];
         auto const& ip_out = this->output_data_[ip];
         auto const& current_state = this->current_states_[ip];
@@ -713,6 +717,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 this->process_data_.specific_body_force},
             ip_cv.viscosity_data,
             ip_dd.dfT_2);
+
+        models.fu_1_KuT_model.dEval(ip_cd.s_mech_data, ip_cv.s_therm_exp_data,
+                                    ip_dd.dfu_1_KuT);
 
         models.fu_2_KupC_model.dEval(ip_cv.biot_data,
                                      ip_cv.chi_S_L,
@@ -1339,7 +1346,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
         Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
                                           local_x_prev.size()),
-        t, dt, ip_constitutive_variables, models);
+        t, dt, ip_constitutive_data, ip_constitutive_variables, models);
 
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
@@ -1781,11 +1788,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_Jac
             .template block<displacement_size, temperature_size>(
                 displacement_index, temperature_index)
-            .noalias() -=
-            BuT *
-            (ip_cd.s_mech_data.stiffness_tensor *
-             ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector) *
-            NT * w;
+            .noalias() -= BuT * ip_dd.dfu_1_KuT.dT * NT * w;
 
         /* TODO (naumov) Test with gravity needed to check this Jacobian part.
         local_Jac

@@ -13,11 +13,31 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "Saturation.h"
+#include "SolidMechanics.h"
+#include "SolidThermalExpansion.h"
 
 namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
+template <int DisplacementDim>
+struct FU1KUTDerivativeData
+{
+    KelvinVector<DisplacementDim> dT;
+};
+
+template <int DisplacementDim>
+struct FU1KUTModel
+{
+    void dEval(
+        SolidMechanicsDataStateless<DisplacementDim> const& s_mech_data,
+        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+        FU1KUTDerivativeData<DisplacementDim>& dfu_1_KuT) const;
+};
+
+extern template struct FU1KUTModel<2>;
+extern template struct FU1KUTModel<3>;
+
 struct FU2KUpCData
 {
     double m = nan;

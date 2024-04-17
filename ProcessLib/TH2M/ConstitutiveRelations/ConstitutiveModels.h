@@ -116,6 +116,7 @@ struct ConstitutiveModels
     FT2Model<DisplacementDim> fT_2_model;
     FT3Model<DisplacementDim> fT_3_model;
 
+    FU1KUTModel<DisplacementDim> fu_1_KuT_model;
     FU2KUpCModel fu_2_KupC_model;
 };
 }  // namespace ConstitutiveRelations

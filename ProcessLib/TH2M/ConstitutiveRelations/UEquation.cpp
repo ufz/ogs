@@ -13,6 +13,19 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
+template <int DisplacementDim>
+void FU1KUTModel<DisplacementDim>::dEval(
+    SolidMechanicsDataStateless<DisplacementDim> const& s_mech_data,
+    SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+    FU1KUTDerivativeData<DisplacementDim>& dfu_1_KuT) const
+{
+    dfu_1_KuT.dT = s_mech_data.stiffness_tensor *
+                   s_therm_exp_data.solid_linear_thermal_expansivity_vector;
+}
+
+template struct FU1KUTModel<2>;
+template struct FU1KUTModel<3>;
+
 void FU2KUpCModel::eval(BiotData const& biot_data,
                         BishopsData const& chi_S_L,
                         FU2KUpCData& fu_2_KupC) const

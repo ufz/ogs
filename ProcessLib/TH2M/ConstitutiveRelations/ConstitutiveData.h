@@ -216,6 +216,7 @@ struct DerivativesData
     FW4LWpCDerivativeData<DisplacementDim> dfW_4_LWpC;
     FT1DerivativeData dfT_1;
     FT2DerivativeData<DisplacementDim> dfT_2;
+    FU1KUTDerivativeData<DisplacementDim> dfu_1_KuT;
     FU2KUpCDerivativeData dfu_2_KupC;
 };
 
