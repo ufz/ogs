@@ -67,6 +67,10 @@ template <int DisplacementDim>
 using CapillaryPressureGradientData =
     BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
                         struct CapillaryPressureGradientTag>;
+template <int DisplacementDim>
+using TemperatureGradientData =
+    BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
+                        struct TemperatureGradientTag>;
 
 template <int DisplacementDim>
 using SpecificBodyForceData =

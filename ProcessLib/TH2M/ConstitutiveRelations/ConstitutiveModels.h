@@ -13,6 +13,7 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "CEquation.h"
+#include "DiffusionVelocity.h"
 #include "ElasticTangentStiffnessModel.h"
 #include "Enthalpy.h"
 #include "Gravity.h"
@@ -85,6 +86,7 @@ struct ConstitutiveModels
     InternalEnergyModel internal_energy_model;
     EffectiveVolumetricEnthalpyModel effective_volumetric_enthalpy_model;
     GravityModel<DisplacementDim> gravity_model;
+    DiffusionVelocityModel<DisplacementDim> diffusion_velocity_model;
     DarcyVelocityModel<DisplacementDim> darcy_velocity_model;
     FC1Model<DisplacementDim> fC_1_model;
     FC2aModel fC_2a_model;

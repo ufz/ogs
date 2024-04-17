@@ -166,6 +166,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             grad_p_GR{gradpGR};
         ConstitutiveRelations::CapillaryPressureGradientData<
             DisplacementDim> const grad_p_cap{gradpCap};
+        ConstitutiveRelations::TemperatureGradientData<DisplacementDim> const
+            grad_T{gradT};
 
         // medium properties
         models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
@@ -272,12 +274,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 this->process_data_.specific_body_force},
             ip_cv.volumetric_body_force);
 
-        auto const& c = ip_cv.phase_transition_data;
-
-        auto const phi_L =
-            current_state.S_L_data.S_L * ip_out.porosity_data.phi;
-        auto const phi_G =
-            (1. - current_state.S_L_data.S_L) * ip_out.porosity_data.phi;
+        models.diffusion_velocity_model.eval(grad_p_cap,
+                                             grad_p_GR,
+                                             ip_out.mass_mole_fractions_data,
+                                             ip_cv.phase_transition_data,
+                                             ip_out.porosity_data,
+                                             current_state.S_L_data,
+                                             grad_T,
+                                             ip_out.diffusion_velocity_data);
 
         ip_out.enthalpy_data.h_S = ip_cv.solid_heat_capacity_data() * T;
 
@@ -442,50 +446,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                current_state.internal_energy_data,
                                prev_state.internal_energy_data,
                                ip_cv.fT_1);
-
-        // for variable output
-        auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
-
-        const GlobalDimVectorType gradxmWG = c.dxmWG_dpGR * gradpGR +
-                                             c.dxmWG_dpCap * gradpCap +
-                                             c.dxmWG_dT * gradT;
-        const GlobalDimVectorType gradxmCG = -gradxmWG;
-
-        const GlobalDimVectorType gradxmWL = c.dxmWL_dpGR * gradpGR +
-                                             c.dxmWL_dpCap * gradpCap +
-                                             c.dxmWL_dT * gradT;
-        const GlobalDimVectorType gradxmCL = -gradxmWL;
-
-        // Todo: factor -phiAlpha / xmZetaAlpha * DZetaAlpha can be evaluated in
-        // the respective phase transition model, here only the multiplication
-        // with the gradient of the mass fractions should take place.
-
-        ip_out.diffusion_velocity_data.d_CG =
-            ip_out.mass_mole_fractions_data.xmCG == 0.
-                ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
-                                 // division by zero
-                : -phi_G / ip_out.mass_mole_fractions_data.xmCG *
-                      c.diffusion_coefficient_vapour * gradxmCG;
-
-        ip_out.diffusion_velocity_data.d_WG =
-            ip_out.mass_mole_fractions_data.xmCG == 1.
-                ? 0. * gradxmWG  // Keep d_WG's dimension and prevent
-                                 // division by zero
-                : -phi_G / (1 - ip_out.mass_mole_fractions_data.xmCG) *
-                      c.diffusion_coefficient_vapour * gradxmWG;
-
-        ip_out.diffusion_velocity_data.d_CL =
-            xmCL == 0.
-                ? 0. * gradxmCL  // Keep d_CL's dimension and
-                                 // prevent division by zero
-                : -phi_L / xmCL * c.diffusion_coefficient_solute * gradxmCL;
-
-        ip_out.diffusion_velocity_data.d_WL =
-            ip_out.mass_mole_fractions_data.xmWL == 0.
-                ? 0. * gradxmWL  // Keep d_WG's dimension and prevent
-                                 // division by zero
-                : -phi_L / ip_out.mass_mole_fractions_data.xmWL *
-                      c.diffusion_coefficient_solute * gradxmWL;
 
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
