@@ -124,12 +124,12 @@ void incorporateFixedTimesForOutput(
             begin(delta_ts), begin(delta_ts) + interval_number, t_initial);
         auto const upper_bound = lower_bound + delta_ts[interval_number];
         if (fixed_time_for_output - lower_bound <=
-            std::numeric_limits<double>::epsilon())
+            TimeStep::minimalTimeStepSize)
         {
             continue;
         }
         if (upper_bound - fixed_time_for_output <=
-            std::numeric_limits<double>::epsilon())
+            TimeStep::minimalTimeStepSize)
         {
             continue;
         }
