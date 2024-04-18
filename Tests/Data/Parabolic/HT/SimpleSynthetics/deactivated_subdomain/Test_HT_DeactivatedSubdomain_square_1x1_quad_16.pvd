@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="0.19" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_19_t_0.190000.vtu"/>
+    <DataSet timestep="0.29" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_29_t_0.290000.vtu"/>
+    <DataSet timestep="0.31" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_31_t_0.310000.vtu"/>
+    <DataSet timestep="0.59" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_59_t_0.590000.vtu"/>
+    <DataSet timestep="0.69" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_69_t_0.690000.vtu"/>
+    <DataSet timestep="0.71" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_71_t_0.710000.vtu"/>
+    <DataSet timestep="1" group="" part="0" file="Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_100_t_1.000000.vtu"/>
+  </Collection>
+</VTKFile>
