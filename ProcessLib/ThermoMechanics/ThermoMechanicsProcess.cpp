@@ -212,12 +212,11 @@ void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -271,12 +270,10 @@ void ThermoMechanicsProcess<DisplacementDim>::
         }
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     // TODO (naumov): Refactor the copy rhs part. This is copy from HM.
     auto copyRhs = [&](int const variable_id, auto& output_vector)
@@ -313,16 +310,14 @@ void ThermoMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep ThermoMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     assert(process_id < 2);
 
     if (process_id == _process_data.mechanics_process_id)
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::preTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), *_local_to_global_index_map,
-            *x[process_id], t, dt);
+            getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
+            t, dt);
         return;
     }
 }
@@ -347,10 +342,9 @@ void ThermoMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         dof_tables.push_back(&getDOFTable(process_id));
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
+        getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
 }
 
 template <int DisplacementDim>

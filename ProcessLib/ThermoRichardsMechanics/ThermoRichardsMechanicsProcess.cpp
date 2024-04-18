@@ -266,10 +266,9 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("PostTimestep ThermoRichardsMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, local_assemblers_,
-        pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
+        getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
 
@@ -282,10 +281,9 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 {
     DBUG("Compute the secondary variables for ThermoRichardsMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
+        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 
     computeCellAverages<DisplacementDim>(cell_average_data_, local_assemblers_);

@@ -165,14 +165,12 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
 {
     DBUG("Assemble HeatTransportBHE process.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -185,13 +183,12 @@ void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 }
 
 void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
@@ -205,11 +202,10 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     std::generate_n(std::back_inserter(dof_tables), x.size(),
                     [&]() { return _local_to_global_index_map.get(); });
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id);
 }
 
 NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(

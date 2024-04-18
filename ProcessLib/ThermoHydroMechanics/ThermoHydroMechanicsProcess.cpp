@@ -344,11 +344,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -389,14 +387,12 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
         }
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     auto const dof_tables = getDOFTables(x.size());
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -456,10 +452,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     DBUG("PostTimestep ThermoHydroMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTables(x.size()), x,
+        _local_assemblers, getActiveElementIDs(), getDOFTables(x.size()), x,
         x_prev, t, dt, process_id);
 }
 
@@ -477,11 +472,10 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     DBUG("Compute the secondary variables for ThermoHydroMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTables(x.size()), t,
-        dt, x, x_prev, process_id);
+        _local_assemblers, getActiveElementIDs(), getDOFTables(x.size()), t, dt,
+        x, x_prev, process_id);
 }
 
 template <int DisplacementDim>

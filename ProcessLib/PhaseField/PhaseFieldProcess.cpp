@@ -207,13 +207,11 @@ void PhaseFieldProcess<DisplacementDim>::assembleConcreteProcess(
     dof_tables.emplace_back(_local_to_global_index_map_single_component.get());
     dof_tables.emplace_back(_local_to_global_index_map.get());
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
-        K, b);
+        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M, K,
+        b);
 }
 
 template <int DisplacementDim>
@@ -240,13 +238,11 @@ void PhaseFieldProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     dof_tables.emplace_back(_local_to_global_index_map.get());
     dof_tables.emplace_back(_local_to_global_index_map_single_component.get());
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     if (process_id == 0)
     {
@@ -268,12 +264,9 @@ void PhaseFieldProcess<DisplacementDim>::preTimestepConcreteProcess(
     _x_previous_timestep =
         MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*x[process_id]);
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t,
-        dt);
+        getActiveElementIDs(), getDOFTable(process_id), *x[process_id], t, dt);
 }
 
 template <int DisplacementDim>
@@ -296,12 +289,9 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
         dof_tables.emplace_back(
             _local_to_global_index_map_single_component.get());
 
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
-
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface::computeEnergy, _local_assemblers,
-            pv.getActiveElementIDs(), dof_tables, x, t,
+            getActiveElementIDs(), dof_tables, x, t,
             _process_data.elastic_energy, _process_data.surface_energy,
             _process_data.pressure_work);
 
@@ -355,10 +345,9 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
     DBUG("PostNonLinearSolver crack volume computation.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeCrackIntegral, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, t, _process_data.crack_volume);
+        getActiveElementIDs(), dof_tables, x, t, _process_data.crack_volume);
 
 #ifdef USE_PETSC
     double const crack_volume = _process_data.crack_volume;

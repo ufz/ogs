@@ -379,12 +379,10 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
     {
         DBUG("PostTimestep HydroMechanicsProcess.");
 
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &HydroMechanicsLocalAssemblerInterface::postTimestep,
-            _local_assemblers, pv.getActiveElementIDs(), getDOFTables(x.size()),
-            x, x_prev, t, dt, process_id);
+            _local_assemblers, getActiveElementIDs(), getDOFTables(x.size()), x,
+            x_prev, t, dt, process_id);
     }
 
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
@@ -467,15 +465,13 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HydroMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     // Call global assembler for each local assembly item.
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -495,12 +491,10 @@ void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep HydroMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HydroMechanicsLocalAssemblerInterface::preTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
-        t, dt);
+        getActiveElementIDs(), *_local_to_global_index_map, *x[process_id], t,
+        dt);
 }
 
 // ------------------------------------------------------------------------------------

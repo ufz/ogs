@@ -396,11 +396,10 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     std::generate_n(std::back_inserter(dof_tables), x.size(),
                     [&]() { return _local_to_global_index_map.get(); });
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id);
 }
 
 template <int DisplacementDim>
@@ -417,14 +416,12 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble SmallDeformationProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 template <int DisplacementDim>
@@ -436,15 +433,13 @@ void SmallDeformationProcess<DisplacementDim>::
 {
     DBUG("AssembleWithJacobian SmallDeformationProcess.");
 
-    // Call global assembler for each local assembly item.
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
+    // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 }
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
@@ -453,11 +448,10 @@ void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
 {
     DBUG("PreTimestep SmallDeformationProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::preTimestep,
-        _local_assemblers, pv.getActiveElementIDs(),
-        *_local_to_global_index_map, *x[process_id], t, dt);
+        _local_assemblers, getActiveElementIDs(), *_local_to_global_index_map,
+        *x[process_id], t, dt);
 }
 // ------------------------------------------------------------------------------------
 // template instantiation

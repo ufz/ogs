@@ -244,8 +244,6 @@ void ComponentTransportProcess::assembleConcreteProcess(
 {
     DBUG("Assemble ComponentTransportProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     if (_use_monolithic_scheme)
     {
@@ -260,7 +258,7 @@ void ComponentTransportProcess::assembleConcreteProcess(
 
     _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_tables,
                             _global_assembler, _local_assemblers,
-                            pv.getActiveElementIDs());
+                            getActiveElementIDs());
 
     // TODO (naumov) What about temperature? A test with FCT would reveal any
     // problems.
@@ -289,8 +287,6 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
             "implemented only for staggered scheme.");
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
     std::generate_n(std::back_inserter(dof_tables), _process_variables.size(),
@@ -299,8 +295,8 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     // b is the negated residumm used in the Newton's method.
     // Here negating b is to recover the primitive residuum.
@@ -393,11 +389,10 @@ void ComponentTransportProcess::solveReactionEquation(
     K.setZero();
     b.setZero();
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::assembleReactionEquation,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, t, dt, M, K,
-        b, process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, x, t, dt, M, K, b,
+        process_id);
 
     // todo (renchao): incorporate Neumann boundary condition
     MathLib::finalizeMatrixAssembly(M);
@@ -457,11 +452,10 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     std::generate_n(std::back_inserter(dof_tables), x.size(),
                     [&]() { return _local_to_global_index_map.get(); });
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id);
 
     if (!_chemical_solver_interface)
     {
@@ -491,18 +485,17 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
     std::generate_n(std::back_inserter(dof_tables), x.size(),
                     [&]() { return _local_to_global_index_map.get(); });
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, x, x_prev, t,
-        dt, process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
+        process_id);
 
     if (!_surfaceflux)  // computing the surfaceflux is optional
     {
         return;
     }
     _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
-                            pv.getActiveElementIDs());
+                            getActiveElementIDs());
 }
 
 void ComponentTransportProcess::preOutputConcreteProcess(

@@ -100,14 +100,12 @@ void HeatConductionProcess::assembleConcreteProcess(
 {
     DBUG("Assemble HeatConductionProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
 
     _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, M, K, b, dof_table,
                             _global_assembler, _local_assemblers,
-                            pv.getActiveElementIDs());
+                            getActiveElementIDs());
 }
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
@@ -117,15 +115,13 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HeatConductionProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_table, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     transformVariableFromGlobalVector(b, 0 /*variable id*/,
                                       *_local_to_global_index_map, *_heat_flux,
@@ -143,11 +139,10 @@ void HeatConductionProcess::computeSecondaryVariableConcrete(
     std::generate_n(std::back_inserter(dof_tables), x.size(),
                     [&]() { return _local_to_global_index_map.get(); });
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id);
 }
 
 void HeatConductionProcess::preOutputConcreteProcess(

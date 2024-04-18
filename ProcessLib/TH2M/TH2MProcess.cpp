@@ -272,12 +272,9 @@ void TH2MProcess<DisplacementDim>::preTimestepConcreteProcess(
 
     if (hasMechanicalProcess(process_id))
     {
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
-
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerInterface<DisplacementDim>::preTimestep,
-            local_assemblers_, pv.getActiveElementIDs(),
+            local_assemblers_, getActiveElementIDs(),
             *_local_to_global_index_map, *x[process_id], t, dt);
     }
 
@@ -293,10 +290,9 @@ void TH2MProcess<DisplacementDim>::postTimestepConcreteProcess(
 {
     DBUG("PostTimestep TH2MProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
-        local_assemblers_, pv.getActiveElementIDs(), getDOFTables(x.size()), x,
+        local_assemblers_, getActiveElementIDs(), getDOFTables(x.size()), x,
         x_prev, t, dt, process_id);
 }
 
@@ -312,11 +308,10 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     DBUG("Compute the secondary variables for TH2MProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
-        local_assemblers_, pv.getActiveElementIDs(), getDOFTables(x.size()), t,
-        dt, x, x_prev, process_id);
+        local_assemblers_, getActiveElementIDs(), getDOFTables(x.size()), t, dt,
+        x, x_prev, process_id);
 
     computeCellAverages<DisplacementDim>(cell_average_data_, local_assemblers_);
 }
