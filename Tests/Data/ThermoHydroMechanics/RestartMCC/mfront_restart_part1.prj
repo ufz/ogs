@@ -9,7 +9,7 @@
     </meshes>
     <processes>
         <process>
-            <name>THM</name>
+            <name>HM</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>2</integration_order>
             <constitutive_relation>
@@ -123,12 +123,12 @@
     </media>
     <time_loop>
         <processes>
-            <process ref="THM">
+            <process ref="HM">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-9 1e-9 1e-12 1e-12</abstols>
+                    <abstols>1e-15 1e-9 1e-14 1e-14</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
