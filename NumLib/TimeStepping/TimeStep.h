@@ -96,6 +96,9 @@ public:
     void setAccepted(bool const accepted) { _is_accepted = accepted; }
     bool isAccepted() const { return _is_accepted; }
 
+    static constexpr double minimalTimeStepSize =
+        1000 * std::numeric_limits<double>::epsilon();
+
 private:
     /// previous time step
     double _previous;
