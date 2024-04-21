@@ -280,13 +280,6 @@ void FW4LWpCModel<DisplacementDim>::eval(
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
 
     fW_4_LWpC.L.noalias() = diffusion_W_pCap * I - advection_data.advection_W_L;
-
-    // Jac wrong?
-    // double const diffusion_W_L_p = phi_L * fluid_density_data.rho_LR * sD_L *
-    //                               phase_transition_data.dxmWL_dpLR;
-    //
-    // fW_4_LWpC.L.noalias() = diffusion_W_L_p * I +
-    // advection_data.advection_W_L;
 }
 
 template <int DisplacementDim>
