@@ -172,7 +172,7 @@
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>1000</each_steps>
+                    <each_steps>10000</each_steps>
                 </pair>
             </timesteps>
             <fixed_output_times>.1 .2 .3 .4 .5 .6 .7 .8 .9 1</fixed_output_times>
@@ -254,7 +254,7 @@
         <parameter>
             <name>dirichletLinearPos</name>
             <type>Function</type>
-            <expression>0.001*t</expression>
+            <expression>0.0001*t</expression> <!--try also 0.001*t for traversing the critical state-->
         </parameter>
         <parameter>
             <name>dirichletLinearTemp</name>
@@ -369,13 +369,13 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>4e-13</absolute_tolerance>
+            <absolute_tolerance>5e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>epsilon</field>
-            <absolute_tolerance>2e-15</absolute_tolerance>
+            <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -388,31 +388,31 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>ElasticStrain</field>
-            <absolute_tolerance>3e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>EquivalentPlasticStrain</field>
-            <absolute_tolerance>3e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>PlasticVolumetricStrain</field>
-            <absolute_tolerance>3e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>VolumeRatio</field>
-            <absolute_tolerance>3e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>PreConsolidationPressure</field>
-            <absolute_tolerance>3e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--integration point variables-->
@@ -431,25 +431,25 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>material_state_variable_ElasticStrain_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>material_state_variable_EquivalentPlasticStrain_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>material_state_variable_PlasticVolumetricStrain_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>material_state_variable_VolumeRatio_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

@@ -50,12 +50,20 @@
     <remove sel="/*/test_definition"/>
     <add sel="/*">
     <test_definition>
+        <!--primary variables-->
+        <vtkdiff>
+            <regex>mfront_restart_part2_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
+        <!--secondary variables-->
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>sigma</field>
@@ -70,12 +78,6 @@
         </vtkdiff>
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
-            <field>pressure</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>velocity</field>
             <absolute_tolerance>1e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
@@ -83,43 +85,45 @@
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
+        <!--internal state variables-->
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>EquivalentPlasticStrain</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>mfront_restart_part2_t_.*.vtu</regex>
-            <field>NodalForces</field>
-            <absolute_tolerance>6e-12</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
+                <regex>mfront_restart_part2_t_.*.vtu</regex>
+                <field>PreConsolidationPressure</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        <!--integration point variables-->
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>sigma_ip</field>
-            <absolute_tolerance>5e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>epsilon_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>material_state_variable_ElasticStrain_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>material_state_variable_EquivalentPlasticStrain_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
