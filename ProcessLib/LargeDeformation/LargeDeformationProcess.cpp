@@ -207,6 +207,9 @@ void LargeDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+
+    cell_average_data_.computeSecondaryVariable(DisplacementDim,
+                                                _local_assemblers);
 }
 template class LargeDeformationProcess<2>;
 template class LargeDeformationProcess<3>;
