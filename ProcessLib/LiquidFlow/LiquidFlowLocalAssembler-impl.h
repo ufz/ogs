@@ -16,7 +16,7 @@
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/VariableType.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 
 namespace ProcessLib
 {

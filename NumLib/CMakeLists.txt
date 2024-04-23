@@ -11,7 +11,6 @@ append_source_files(SOURCES NumericalStability)
 append_source_files(SOURCES TimeStepping)
 append_source_files(SOURCES TimeStepping/Algorithms)
 append_source_files(SOURCES StaggeredCoupling)
-append_source_files(SOURCES Function)
 append_source_files(SOURCES ODESolver)
 append_source_files(SOURCES Extrapolation)
 

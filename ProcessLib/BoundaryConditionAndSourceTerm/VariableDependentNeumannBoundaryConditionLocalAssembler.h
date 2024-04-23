@@ -13,7 +13,7 @@
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ParameterLib/MeshNodeParameter.h"
 
 namespace ProcessLib

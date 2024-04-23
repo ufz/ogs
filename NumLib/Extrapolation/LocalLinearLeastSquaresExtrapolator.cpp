@@ -18,7 +18,7 @@
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "NumLib/Assembler/SerialExecutor.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 
 namespace NumLib
 {

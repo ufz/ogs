@@ -13,7 +13,7 @@
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib

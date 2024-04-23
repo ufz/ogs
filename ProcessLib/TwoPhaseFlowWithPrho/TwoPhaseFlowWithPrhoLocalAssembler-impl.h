@@ -12,7 +12,7 @@
 
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "TwoPhaseFlowWithPrhoLocalAssembler.h"
 #include "TwoPhaseFlowWithPrhoProcessData.h"
 

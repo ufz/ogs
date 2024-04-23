@@ -20,7 +20,7 @@
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
 #include "NumLib/NumericalStability/HydrodynamicDispersion.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"

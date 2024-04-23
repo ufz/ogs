@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "TESLocalAssemblerInner-fwd.h"
 #include "TESOGS5MaterialModels.h"
 #include "TESReactionAdaptor.h"

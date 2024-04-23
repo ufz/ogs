@@ -13,10 +13,10 @@
 #include <array>
 #include <cassert>
 
-#include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
-#include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
-#include "NumLib/Fem/InitShapeMatrices.h"
-#include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "CoordinatesMapping/NaturalNodeCoordinates.h"
+#include "FiniteElement/TemplateIsoparametric.h"
+#include "InitShapeMatrices.h"
+#include "ShapeMatrixPolicy.h"
 
 namespace NumLib
 {
