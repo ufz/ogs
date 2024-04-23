@@ -9,9 +9,7 @@ create cpm cache:
       when: manual
   variables:
     BUILD_DIR: "$CI_PROJECT_DIR/../build/cpm"
-  allow_failure:
-    exit_codes:
-      - 255
+  allow_failure: true
   script:
     - _versions_file=$CI_PROJECT_DIR/web/data/versions.json
     - TFEL_RLIV_VERSION=$(jq -r '.minimum_version."tfel-rliv"' ${_versions_file})
@@ -48,7 +46,6 @@ create cpm cache:
         git add ${_versions_file}
         git commit -n -m "[versions] Updated cpm cache info."
         git push "https://project_120_bot2:${REPO_WRITE_KEY}@${CI_SERVER_HOST}/${CI_MERGE_REQUEST_SOURCE_PROJECT_PATH}" HEAD:${CI_COMMIT_REF_NAME}
-        exit 255 # marks with warning
       fi
     # external dependencies:
     - cd $BUILD_DIR
