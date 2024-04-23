@@ -156,29 +156,6 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
             process_data_.solid_materials, local_assemblers_,
             _integration_point_writer, integration_order);
 
-    process_data_.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
-        MeshLib::MeshItemType::Cell, 1);
-
-    process_data_.element_porosity = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
-        MeshLib::MeshItemType::Cell, 1);
-
-    process_data_.element_liquid_density =
-        MeshLib::getOrCreateMeshProperty<double>(
-            const_cast<MeshLib::Mesh&>(mesh), "liquid_density_avg",
-            MeshLib::MeshItemType::Cell, 1);
-
-    process_data_.element_viscosity = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "viscosity_avg",
-        MeshLib::MeshItemType::Cell, 1);
-
-    process_data_.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "stress_avg",
-        MeshLib::MeshItemType::Cell,
-        MathLib::KelvinVector::KelvinVectorType<
-            DisplacementDim>::RowsAtCompileTime);
-
     process_data_.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
@@ -309,6 +286,9 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
         pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
+
+    cell_average_data_.computeSecondaryVariable(DisplacementDim,
+                                                local_assemblers_);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
