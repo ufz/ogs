@@ -21,6 +21,7 @@
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryConditionCollection.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/SourceTermCollection.h"
+#include "ProcessLib/Output/CellAverageData.h"
 #include "ProcessLib/Output/ExtrapolatorData.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessVariable.h"
@@ -360,6 +361,8 @@ protected:
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> _local_to_global_index_map;
 
     SecondaryVariableCollection _secondary_variables;
+
+    CellAverageData cell_average_data_;
 
     // TODO (CL) switch to the parallel vector matrix assembler here, once
     // feature complete, or use the assembly mixin and remove these two members.
