@@ -27,18 +27,13 @@
         <parameter>
             <name>pressure_bc</name>
             <type>Constant</type>
-            <value>-5e4</value>
+            <value>1e3</value>
         </parameter>
     </add>
 
     <remove sel="/*/process_variables/process_variable[name='pressure']/boundary_conditions"/>
     <add sel="/*/process_variables/process_variable[name='pressure']">
         <boundary_conditions>
-            <boundary_condition>
-                <mesh>square_1x1_quad_1e0_top</mesh>
-                <type>Dirichlet</type>
-                <parameter>pressure_bc</parameter>
-            </boundary_condition>
             <boundary_condition>
                 <mesh>square_1x1_quad_1e0_bottom</mesh>
                 <type>Dirichlet</type>

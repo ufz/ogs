@@ -6,9 +6,11 @@
     <DataSet timestep="200" group="" part="0" file="mfront_restart_part1_t_200.000000.vtu"/>
     <DataSet timestep="300" group="" part="0" file="mfront_restart_part1_t_300.000000.vtu"/>
     <DataSet timestep="400" group="" part="0" file="mfront_restart_part1_t_400.000000.vtu"/>
-    <DataSet timestep="520" group="" part="0" file="mfront_restart_part1_t_520.000000.vtu"/>
-    <DataSet timestep="664" group="" part="0" file="mfront_restart_part1_t_664.000000.vtu"/>
-    <DataSet timestep="836.8" group="" part="0" file="mfront_restart_part1_t_836.800000.vtu"/>
+    <DataSet timestep="500" group="" part="0" file="mfront_restart_part1_t_500.000000.vtu"/>
+    <DataSet timestep="600" group="" part="0" file="mfront_restart_part1_t_600.000000.vtu"/>
+    <DataSet timestep="700" group="" part="0" file="mfront_restart_part1_t_700.000000.vtu"/>
+    <DataSet timestep="800" group="" part="0" file="mfront_restart_part1_t_800.000000.vtu"/>
+    <DataSet timestep="900" group="" part="0" file="mfront_restart_part1_t_900.000000.vtu"/>
     <DataSet timestep="1000" group="" part="0" file="mfront_restart_part1_t_1000.000000.vtu"/>
   </Collection>
 </VTKFile>

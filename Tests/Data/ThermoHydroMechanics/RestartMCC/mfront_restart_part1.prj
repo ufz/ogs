@@ -128,20 +128,21 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-15 1e-9 1e-14 1e-14</abstols>
+                    <abstols>1e-15 1e-10 1e-14 1e-14</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                    <type>IterationNumberBasedTimeStepping</type>
+                    <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
                     <t_end>1000</t_end>
-                    <initial_dt>100</initial_dt>
-                    <minimum_dt>10</minimum_dt>
-                    <maximum_dt>1000</maximum_dt>
-                    <number_iterations>1   5   10   15</number_iterations>
-                    <multiplier>1.2 1.0 0.8 0.6</multiplier>
+                    <timesteps>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>100</delta_t>
+                        </pair>
+                    </timesteps>
                 </time_stepping>
             </process>
         </processes>
@@ -196,15 +197,16 @@
             <type>Constant</type>
             <value>1.76</value>
         </parameter>
-        <!-- Initial and boundary values -->
+        <!-- Initial effective stress field -->
         <parameter>
             <name>sigma0</name>
             <type>Function</type>
-            <expression>-5e3</expression>
-            <expression>-5e3</expression>
-            <expression>-5e3</expression>
+            <expression>-5e4</expression>
+            <expression>-5e4</expression>
+            <expression>-5e4</expression>
             <expression>0</expression>
         </parameter>
+        <!-- Initial and boundary values -->
         <parameter>
             <name>displacement0</name>
             <type>Constant</type>
@@ -221,14 +223,14 @@
             <value>293.15</value>
         </parameter>
         <parameter>
-            <name>top_pressure</name>
+            <name>total_axial_stress</name>
             <type>Constant</type>
-            <value>-2.7e5</value>
+            <value>-3.35e5</value>
         </parameter>
         <parameter>
             <name>pressure_ic</name>
             <type>Constant</type>
-            <value>-5e3</value>
+            <value>5e4</value>
         </parameter>
     </parameters>
     <process_variables>
@@ -274,6 +276,13 @@
                     <component>0</component>
                     <parameter>zero</parameter>
                 </boundary_condition>
+                <!--fix right in radial direction-->
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0_right</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
                 <!--fix bottom in axial direction-->
                 <boundary_condition>
                     <mesh>square_1x1_quad_1e0_bottom</mesh>
@@ -286,14 +295,7 @@
                     <mesh>square_1x1_quad_1e0_top</mesh>
                     <type>Neumann</type>
                     <component>1</component>
-                    <parameter>top_pressure</parameter>
-                </boundary_condition>
-                <!--compression in -radial direction-->
-                <boundary_condition>
-                    <mesh>square_1x1_quad_1e0_right</mesh>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>zero</parameter>
+                    <parameter>total_axial_stress</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
