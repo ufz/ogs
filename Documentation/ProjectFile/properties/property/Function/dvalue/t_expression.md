@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::Function::dvalue_expressions_
+\copydoc MaterialPropertyLib::Function::Implementation<D>::dvalue_expressions

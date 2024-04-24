@@ -45,9 +45,15 @@ public:
     ~Function();
 
 private:
+    template <int D>
     class Implementation;
 
-    std::unique_ptr<Implementation> impl_ptr_;
+    std::unique_ptr<Implementation<2>> impl2_;
+    std::unique_ptr<Implementation<3>> impl3_;
+
+    std::variant<Function::Implementation<2>*, Function::Implementation<3>*>
+    getImplementationForDimensionOfVariableArray(
+        VariableArray const& variable_array) const;
 
     /// Variables used in the exprtk expressions.
     std::vector<Variable> variables_;
