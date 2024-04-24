@@ -32,9 +32,9 @@ target_link_libraries(
            $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
            $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
            $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
-           $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>
            Eigen3::Eigen
            $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
+    PRIVATE $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>
 )
 if(OGS_USE_MKL AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     # Otherwise required MKL libs get stripped out (don't show up in ldd):
@@ -57,8 +57,13 @@ target_compile_definitions(
         $<$<BOOL:${OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN}>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
         $<$<CONFIG:Debug>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
         $<$<AND:$<BOOL:${OGS_USE_MKL}>,$<BOOL:${OGS_EIGEN_USE_MKL}>>:EIGEN_USE_MKL_ALL>
-    PRIVATE $<$<BOOL:${OGS_USE_MKL}>:USE_MKL>
 )
+if(OGS_USE_MKL)
+    set_source_files_properties(
+        LinAlg/Eigen/EigenLinearSolver.cpp PROPERTIES COMPILE_DEFINITIONS
+                                                      USE_MKL
+    )
+endif()
 
 target_precompile_headers(
     MathLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
