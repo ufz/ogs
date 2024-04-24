@@ -495,18 +495,18 @@ void TimeLoop::initialize()
 
     updateDeactivatedSubdomains(_per_process_data, _start_time);
 
-    // Output initial conditions
-    {
-        preOutputInitialConditions(_start_time);
-        outputSolutions(0, _start_time, &Output::doOutput);
-    }
-
     auto const time_step_constraints = generateOutputTimeStepConstraints(
         calculateUniqueFixedTimesForAllOutputs(_outputs));
 
     std::tie(_dt, _last_step_rejected) =
         computeTimeStepping(0.0, _current_time, _accepted_steps,
                             _rejected_steps, time_step_constraints);
+
+    // Output initial conditions
+    {
+        preOutputInitialConditions(_start_time, _dt);
+        outputSolutions(0, _start_time, &Output::doOutput);
+    }
 
     calculateNonEquilibriumInitialResiduum(
         _per_process_data, _process_solutions, _process_solutions_prev);
@@ -752,7 +752,7 @@ TimeLoop::~TimeLoop()
     }
 }
 
-void TimeLoop::preOutputInitialConditions(const double t) const
+void TimeLoop::preOutputInitialConditions(const double t, const double dt) const
 {
     for (auto const& process_data : _per_process_data)
     {
@@ -766,9 +766,6 @@ void TimeLoop::preOutputInitialConditions(const double t) const
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        // dummy value to handle the time derivative terms more or less
-        // correctly, i.e. to ignore them.
-        double const dt = 1;
         process_data->time_disc->nextTimestep(t, dt);
 
         pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
