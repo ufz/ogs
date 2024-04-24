@@ -61,7 +61,8 @@ public:
                                              const double S_L_r,
                                              const double S_n_r,
                                              const double m,
-                                             const double krel_min);
+                                             const double krel_min,
+                                             const double a);
 
     void checkScale() const override
     {
@@ -98,5 +99,6 @@ private:
     const double krel_min_;  ///< Minimum relative permeability.
     const double
         S_L_for_krel_min_;  ///< Liquid saturation that gives \c krel_min_.
+    const double a_;
 };
 }  // namespace MaterialPropertyLib

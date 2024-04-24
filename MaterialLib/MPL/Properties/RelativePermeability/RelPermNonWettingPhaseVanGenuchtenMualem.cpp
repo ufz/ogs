@@ -34,12 +34,14 @@ RelPermNonWettingPhaseVanGenuchtenMualem::
                                              const double S_L_r,
                                              const double S_n_r,
                                              const double m,
-                                             const double krel_min)
+                                             const double krel_min,
+                                             const double a)
     : S_L_r_(S_L_r),
       S_L_max_(1. - S_n_r),
       m_(m),
       krel_min_(krel_min),
-      S_L_for_krel_min_(computeSaturationForMinimumRelativePermeability())
+      S_L_for_krel_min_(computeSaturationForMinimumRelativePermeability()),
+      a_(a)
 {
     name_ = std::move(name);
     checkVanGenuchtenExponentRange(m_);
@@ -55,7 +57,7 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::value(
 
     const double krel =
         computeVanGenuchtenMualemValue(S_L, S_L_r_, S_L_max_, m_);
-    return std::max(krel_min_, krel);
+    return std::max(krel_min_, a_ * krel);
 }
 
 PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::dValue(
@@ -86,7 +88,7 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::dValue(
     const double val1 = std::sqrt(1.0 - Se);
     const double val2 = 1.0 - std::pow(Se, 1.0 / m_);
 
-    return (-0.5 * std::pow(val2, 2.0 * m_) / val1 -
+    return a_ * (-0.5 * std::pow(val2, 2.0 * m_) / val1 -
             2.0 * std::pow(Se, -1.0 + 1.0 / m_) * val1 *
                 std::pow(val2, 2.0 * m_ - 1.0)) /
            (S_L_max_ - S_L_r_);
