@@ -19,8 +19,8 @@ template <int DisplacementDim>
 struct SolidThermalExpansionData
 {
     KelvinVector<DisplacementDim> solid_linear_thermal_expansivity_vector;
-    double beta_T_SR = nan;  /// Isotropic solid phase volumetric thermal
-                             /// expansion coefficient.
+    double beta_T_SR = nan;  /// Solid phase volumetric thermal expansion
+                             /// coefficient.
     double thermal_volume_strain = nan;
 };
 
