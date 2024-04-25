@@ -27,8 +27,9 @@ void PorosityModel::eval(SpaceTimeData const& x_t,
         mpl_porosity.template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 }
 
-void PorosityModel::dEval(SpaceTimeData const& x_t,
-                          MediaData const& media_data,
+void PorosityModel::dEval(SpaceTimeData const& x_t, MediaData const& media_data,
+                          PorosityData const& porosity_data,
+                          SaturationDataDeriv const& dS_L_dp_cap,
                           PorosityDerivativeData& porosity_d_data) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -39,6 +40,8 @@ void PorosityModel::dEval(SpaceTimeData const& x_t,
     porosity_d_data.dphi_dT = mpl_porosity.template dValue<double>(
         variables, MaterialPropertyLib::Variable::temperature, x_t.x, x_t.t,
         x_t.dt);
+
+    porosity_d_data.dphi_L_dp_cap = dS_L_dp_cap() * porosity_data.phi;
 }
 
 template <int DisplacementDim>
@@ -74,9 +77,11 @@ template <int DisplacementDim>
 void PorosityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>::dEval(
     SpaceTimeData const& x_t,
     MediaData const& media_data,
+    PorosityData const& porosity_data,
+    SaturationDataDeriv const& dS_L_dp_cap,
     BiotData const& biot,
-    StrainData<DisplacementDim> const& strain_data,
     SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
+    StrainData<DisplacementDim> const& strain_data,
     PorosityDerivativeData& porosity_d_data) const
 {
     MaterialPropertyLib::VariableArray variables;
@@ -100,6 +105,8 @@ void PorosityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>::dEval(
         dphi_0_dT *
             (1. + s_therm_exp_data.thermal_volume_strain - biot() * div_u) -
         (1. - phi_0) * s_therm_exp_data.beta_T_SR;
+
+    porosity_d_data.dphi_L_dp_cap = dS_L_dp_cap() * porosity_data.phi;
 }
 
 template struct PorosityModelNonConstantSolidPhaseVolumeFraction<2>;

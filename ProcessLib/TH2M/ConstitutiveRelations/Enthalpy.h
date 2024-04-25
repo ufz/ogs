@@ -80,7 +80,6 @@ struct EffectiveVolumetricEnthalpyModel
                PorosityData const& porosity_data,
                PorosityDerivativeData const& porosity_d_data,
                SaturationData const& S_L_data,
-               SaturationDataDeriv const& dS_L_dp_cap,
                SolidDensityData const& solid_density_data,
                SolidDensityDerivativeData const& solid_density_d_data,
                SolidEnthalpyData const& solid_enthalpy_data,

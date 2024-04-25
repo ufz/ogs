@@ -556,16 +556,16 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_cv.phase_transition_data,
                                      ip_dd.advection_d_data);
 
-        models.porosity_model.dEval({pos, t, dt}, media_data,
+        models.porosity_model.dEval(
+            {pos, t, dt}, media_data, ip_out.porosity_data, ip_dd.dS_L_dp_cap,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                    ip_cv.biot_data, ip_out.eps_data,
-                                    ip_cv.s_therm_exp_data,
+            ip_cv.biot_data, ip_out.eps_data, ip_cv.s_therm_exp_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                    ip_dd.porosity_d_data);
+            ip_dd.porosity_d_data);
 
         models.thermal_conductivity_model.dEval(
             {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
-            ip_dd.porosity_d_data, current_state.S_L_data, ip_dd.dS_L_dp_cap,
+            ip_dd.porosity_d_data, current_state.S_L_data,
             ip_dd.thermal_conductivity_d_data);
 
         models.solid_density_model.dEval({pos, t, dt}, media_data, T_data,
@@ -581,7 +581,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.porosity_data,
             ip_dd.porosity_d_data,
             current_state.S_L_data,
-            ip_dd.dS_L_dp_cap,
             ip_out.solid_density_data,
             ip_dd.solid_density_d_data,
             ip_out.solid_enthalpy_data,
@@ -595,7 +594,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.porosity_data,
             ip_dd.porosity_d_data,
             current_state.S_L_data,
-            ip_dd.dS_L_dp_cap,
             ip_out.solid_density_data,
             ip_dd.solid_density_d_data,
             ip_out.solid_enthalpy_data,

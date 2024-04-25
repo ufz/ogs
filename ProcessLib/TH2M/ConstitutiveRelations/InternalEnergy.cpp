@@ -39,7 +39,6 @@ void InternalEnergyModel::dEval(
     PorosityData const& porosity_data,
     PorosityDerivativeData const& porosity_d_data,
     SaturationData const& S_L_data,
-    SaturationDataDeriv const& dS_L_dp_cap,
     SolidDensityData const& solid_density_data,
     SolidDensityDerivativeData const& solid_density_d_data,
     SolidEnthalpyData const& solid_enthalpy_data,
@@ -61,11 +60,6 @@ void InternalEnergyModel::dEval(
         phi_S * solid_density_data.rho_SR * solid_heat_capacity_data() -
         porosity_d_data.dphi_dT * solid_density_data.rho_SR * u_S;
 
-    // dphi_G_dp_GR = -ds_L_dp_GR * porosity_data.phi = 0;
-    double const dphi_G_dp_cap = -dS_L_dp_cap() * porosity_data.phi;
-    // dphi_L_dp_GR = ds_L_dp_GR * porosity_data.phi = 0;
-    double const dphi_L_dp_cap = dS_L_dp_cap() * porosity_data.phi;
-
     // From p_LR = p_GR - p_cap it follows for
     // drho_LR/dp_GR = drho_LR/dp_LR * dp_LR/dp_GR
     //               = drho_LR/dp_LR * (dp_GR/dp_GR - dp_cap/dp_GR)
@@ -85,9 +79,11 @@ void InternalEnergyModel::dEval(
         phi_L * fluid_density_data.rho_LR * phase_transition_data.du_L_dp_GR;
 
     effective_volumetric_internal_energy_d_data.drho_u_eff_dp_cap =
-        dphi_G_dp_cap * fluid_density_data.rho_GR * phase_transition_data.uG +
+        -porosity_d_data.dphi_L_dp_cap * fluid_density_data.rho_GR *
+            phase_transition_data.uG +
         /*phi_G * (drho_GR_dp_cap = 0) * phase_transition_data.uG +*/
-        dphi_L_dp_cap * fluid_density_data.rho_LR * phase_transition_data.uL +
+        porosity_d_data.dphi_L_dp_cap * fluid_density_data.rho_LR *
+            phase_transition_data.uL +
         phi_L * drho_LR_dp_cap * phase_transition_data.uL +
         phi_L * fluid_density_data.rho_LR * phase_transition_data.du_L_dp_cap;
 }

@@ -40,7 +40,7 @@ void ThermalConductivityModel<DisplacementDim>::dEval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     TemperatureData const& T_data, PorosityData const& porosity_data,
     PorosityDerivativeData const& porosity_d_data,
-    SaturationData const& S_L_data, SaturationDataDeriv const& dS_L_dp_cap,
+    SaturationData const& S_L_data,
     ThermalConductivityDerivativeData<DisplacementDim>&
         thermal_conductivity_d_data) const
 {
@@ -98,13 +98,9 @@ void ThermalConductivityModel<DisplacementDim>::dEval(
                               x_t.t, x_t.dt))
             : MPL::formEigenTensor<DisplacementDim>(0.);
 
-    // dphi_G_dp_GR = -ds_L_dp_GR * phi = 0;
-    double const dphi_G_dp_cap = -dS_L_dp_cap() * porosity_data.phi;
-    // dphi_L_dp_GR = ds_L_dp_GR * phi = 0;
-    double const dphi_L_dp_cap = dS_L_dp_cap() * porosity_data.phi;
-
     thermal_conductivity_d_data.dlambda_dp_cap =
-        dphi_G_dp_cap * lambdaGR + dphi_L_dp_cap * lambdaLR;
+        -porosity_d_data.dphi_L_dp_cap * lambdaGR +
+        porosity_d_data.dphi_L_dp_cap * lambdaLR;
 
     double const phi_L = S_L_data.S_L * porosity_data.phi;
     double const phi_G = (1. - S_L_data.S_L) * porosity_data.phi;

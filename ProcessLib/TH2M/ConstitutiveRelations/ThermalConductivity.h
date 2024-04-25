@@ -47,7 +47,6 @@ struct ThermalConductivityModel
                TemperatureData const& T_data, PorosityData const& porosity_data,
                PorosityDerivativeData const& porosity_d_data,
                SaturationData const& S_L_data,
-               SaturationDataDeriv const& dS_L_dp_cap,
                ThermalConductivityDerivativeData<DisplacementDim>&
                    thermal_conductivity_d_data) const;
 };
