@@ -95,9 +95,16 @@ void ThermalConductivityModel<DisplacementDim>::eval(
     double const phi_G = (1. - S_L_data.S_L) * porosity_data.phi;
     double const phi_S = 1. - porosity_data.phi;
 
+    // Assuming dS_L/dT = 0, then:
+    // dphi_G_dT = -dS_L/dT * phi + (1 - S_L) * dphi_dT = (1 - S_L) * dphi_dT
+    // dphi_L_dT =  dS_L/dT * phi +      S_L  * dphi_dT        S_L  * dphi_dT
+    // dphi_S_dT =                             -dphi_dT              -dphi_dT
     thermal_conductivity_data.dlambda_dT =
-        phi_G * dlambda_GR_dT + phi_L * dlambda_LR_dT + phi_S * dlambda_SR_dT -
-        porosity_d_data.dphi_dT * lambdaSR;
+        (1 - S_L_data.S_L) * porosity_d_data.dphi_dT * lambdaGR +
+        phi_G * dlambda_GR_dT +
+        S_L_data.S_L * porosity_d_data.dphi_dT * lambdaLR +
+        +phi_L * dlambda_LR_dT - porosity_d_data.dphi_dT * lambdaSR +
+        phi_S * dlambda_SR_dT;
 }
 template struct ThermalConductivityModel<2>;
 template struct ThermalConductivityModel<3>;
