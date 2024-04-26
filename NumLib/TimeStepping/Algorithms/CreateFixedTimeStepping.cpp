@@ -40,7 +40,7 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
         OGS_FATAL("no timesteps have been given");
     }
 
-    std::vector<std::pair<std::size_t, double>> repeat_dt_pairs;
+    std::vector<RepeatDtPair> repeat_dt_pairs;
     for (auto const pair : range)
     {
         repeat_dt_pairs.emplace_back(

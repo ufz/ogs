@@ -19,6 +19,8 @@
 
 namespace NumLib
 {
+using RepeatDtPair = std::tuple<std::size_t, double>;
+
 /**
  * \brief Fixed time stepping algorithm
  *
@@ -46,10 +48,9 @@ public:
      * Constructor with user-specified time step sizes including additional time
      * steps for output.
      */
-    FixedTimeStepping(
-        double t0, double tn,
-        std::vector<std::pair<std::size_t, double>> const& repeat_dt_pairs,
-        std::vector<double> const& fixed_times_for_output);
+    FixedTimeStepping(double t0, double tn,
+                      std::vector<RepeatDtPair> const& repeat_dt_pairs,
+                      std::vector<double> const& fixed_times_for_output);
 
     std::tuple<bool, double> next(double solution_error, int number_iterations,
                                   NumLib::TimeStep& ts_previous,

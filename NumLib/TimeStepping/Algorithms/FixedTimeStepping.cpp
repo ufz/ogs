@@ -141,8 +141,7 @@ void incorporateFixedTimesForOutput(
 }
 
 FixedTimeStepping::FixedTimeStepping(
-    double t0, double tn,
-    std::vector<std::pair<std::size_t, double>> const& repeat_dt_pairs,
+    double t0, double tn, std::vector<RepeatDtPair> const& repeat_dt_pairs,
     std::vector<double> const& fixed_times_for_output)
     : TimeStepAlgorithm(t0, tn)
 {
@@ -168,7 +167,7 @@ FixedTimeStepping::FixedTimeStepping(
     // append last delta_t until t_end is reached
     if (t_curr <= _t_end)
     {
-        auto const delta_t = repeat_dt_pairs.back().second;
+        auto const delta_t = std::get<1>(repeat_dt_pairs.back());
         auto const repeat =
             static_cast<std::size_t>(std::ceil((_t_end - t_curr) / delta_t));
         addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
