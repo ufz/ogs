@@ -10,8 +10,11 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <cmath>
 
+#include "MeshLib/Elements/Elements.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 
 namespace ProcessLib
@@ -81,5 +84,127 @@ BMatrixType computeBMatrix(DNDX_Type const& dNdx,
 
     return B;
 }
+
+template <int DisplacementDim, int NPOINTS, typename ShapeFunction,
+          typename BBarMatrixType, typename ShapeMatricesType, typename IpData>
+BBarMatrixType computeDilatationalBbar(
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> const& ip_data,
+    MeshLib::Element const& element,
+    NumLib::GenericIntegrationMethod const& integration_method,
+    const bool is_axially_symmetric)
+{
+    unsigned const n_integration_points =
+        integration_method.getNumberOfPoints();
+
+    BBarMatrixType B_bar = BBarMatrixType::Zero(3, ShapeFunction::NPOINTS);
+
+    // Compute the element volume
+    double volume = 0.0;
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& w = ip_data[ip].integration_weight;
+        volume += w;
+    }
+
+    for (int i = 0; i < NPOINTS; i++)
+    {
+        auto B_bar_i = B_bar.col(i);
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto const& N = ip_data[ip].N_u;
+            auto const& dNdx = ip_data[ip].dNdx_u;
+
+            auto const dNidx = dNdx.col(i);
+
+            auto const& w = ip_data[ip].integration_weight;
+            B_bar_i.template segment<DisplacementDim>(0) += dNidx * w;
+
+            if (is_axially_symmetric)
+            {
+                auto const x_coord =
+                    NumLib::interpolateXCoordinate<ShapeFunction,
+                                                   ShapeMatricesType>(element,
+                                                                      N);
+                B_bar_i[2] += w * N(i) / x_coord;
+            }
+        }
+    }
+
+    return B_bar / volume;
+}
+
+namespace detail
+{
+template <int DisplacementDim, int NPOINTS, typename BBarMatrixType,
+          typename BMatrixType>
+void applyBbar(BBarMatrixType const& B_bar, BMatrixType& B,
+               const bool is_axially_symmetric)
+{
+    if (DisplacementDim == 3)
+    {
+        for (int i = 0; i < NPOINTS; ++i)
+        {
+            auto const B_bar_i = B_bar.col(i);
+
+            // The following loop is based on the following facts:
+            // B1 (dN/dx) is the 1st element of the 1st column of B,
+            // B2 (dN/dy) is the 2nd element of the 2nd column of B,
+            // B3 (dN/dz) is the 3rd element of the 3rd column of B.
+            for (int k = 0; k < 3; k++)
+            {
+                // k-th column of B matrix at node i
+                auto B_i_k = B.col(k * NPOINTS + i);
+
+                B_i_k.template segment<3>(0) -=
+                    Eigen::Vector3d::Constant((B_i_k[k] - B_bar_i[k]) / 3.0);
+            }
+        }
+
+        return;
+    }
+
+    for (int i = 0; i < NPOINTS; ++i)
+    {
+        auto B_i_0 = B.col(i);
+        auto B_i_1 = B.col(NPOINTS + i);
+
+        auto const B_bar_i = B_bar.col(i);
+
+        double const b0_dil_pertubation =
+            is_axially_symmetric
+                ? (B_i_0[0] - B_bar_i[0] + B_i_0[2] - B_bar_i[2])
+                : (B_i_0[0] - B_bar_i[0]);
+
+        B_i_0.template segment<3>(0) -=
+            Eigen::Vector3d::Constant((b0_dil_pertubation) / 3.);
+        B_i_1.template segment<3>(0) -=
+            Eigen::Vector3d::Constant((B_i_1[1] - B_bar_i[1]) / 3.);
+    }
+}
+}  // namespace detail
+
+/// Fills a B matrix, or a B bar matrix if required.
+template <int DisplacementDim, int NPOINTS, typename BBarMatrixType,
+          typename BMatrixType, typename N_Type, typename DNDX_Type>
+BMatrixType computeBMatrixPossiblyWithBbar(DNDX_Type const& dNdx,
+                                           N_Type const& N,
+                                           BBarMatrixType const& B_dil_bar,
+                                           const double radius,
+                                           const bool is_axially_symmetric,
+                                           const bool use_b_bar)
+{
+    auto B = computeBMatrix<DisplacementDim, NPOINTS, BMatrixType, N_Type,
+                            DNDX_Type>(dNdx, N, radius, is_axially_symmetric);
+    if (!use_b_bar)
+    {
+        return B;
+    }
+
+    detail::applyBbar<DisplacementDim, NPOINTS, BBarMatrixType, BMatrixType>(
+        B_dil_bar, B, is_axially_symmetric);
+
+    return B;
+}
+
 }  // namespace LinearBMatrix
 }  // namespace ProcessLib
