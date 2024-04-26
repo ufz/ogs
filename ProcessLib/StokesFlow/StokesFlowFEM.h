@@ -22,8 +22,8 @@
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "NumLib/Function/Interpolation.h"
 #include "StokesFlowProcessData.h"
 
 namespace ProcessLib::StokesFlow

@@ -20,7 +20,7 @@
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "RigidElasticityModel.h"
 #include "UniaxialElasticityModel.h"

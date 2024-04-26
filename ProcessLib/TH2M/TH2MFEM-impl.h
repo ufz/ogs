@@ -19,7 +19,7 @@
 #include "MaterialLib/PhysicalConstant.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "TH2MProcessData.h"

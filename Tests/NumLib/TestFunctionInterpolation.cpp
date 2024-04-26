@@ -14,9 +14,9 @@
 #include "MeshLib/Elements/Element.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
 #include "NumLib/Fem/Integration/GaussLegendreIntegrationPolicy.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "NumLib/Function/Interpolation.h"
 
 TEST(NumLibFunctionInterpolationTest, TwoVariablesTwoNodes)
 {

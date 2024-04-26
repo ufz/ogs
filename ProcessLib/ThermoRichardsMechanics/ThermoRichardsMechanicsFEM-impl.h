@@ -21,7 +21,7 @@
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MathLib/KelvinVector.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Graph/Get.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidDensity.h"

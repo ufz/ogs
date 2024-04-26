@@ -14,7 +14,7 @@
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/LIE/Common/LevelSetFunction.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 

@@ -16,7 +16,7 @@
 #include "MathLib/KelvinVector.h"
 #include "MeshLib/ElementStatus.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 

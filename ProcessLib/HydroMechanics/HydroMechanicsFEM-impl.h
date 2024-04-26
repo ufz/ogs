@@ -21,7 +21,7 @@
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
-#include "NumLib/Function/Interpolation.h"
+#include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 
 namespace ProcessLib

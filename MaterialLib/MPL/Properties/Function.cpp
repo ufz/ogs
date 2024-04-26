@@ -25,7 +25,6 @@ static std::vector<exprtk::expression<T>> compileExpressions(
     exprtk::parser<T> parser;
 
     std::vector<exprtk::expression<T>> expressions(string_expressions.size());
-    expressions.resize(string_expressions.size());
     for (unsigned i = 0; i < string_expressions.size(); ++i)
     {
         expressions[i].register_symbol_table(symbol_table);
