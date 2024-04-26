@@ -15,6 +15,7 @@
 #include <tclap/CmdLine.h>
 
 #include <chrono>
+#include <filesystem>
 #include <sstream>
 
 #include "CommandLineArgumentParser.h"
@@ -63,6 +64,20 @@ int main(int argc, char* argv[])
 
     INFO("This is OpenGeoSys-6 version {:s}.",
          GitInfoLib::GitInfo::ogs_version);
+
+    {
+        std::error_code mkdir_err;
+        if (std::filesystem::create_directories(cli_arg.outdir, mkdir_err))
+        {
+            INFO("Output directory {:s} created.", cli_arg.outdir);
+        }
+        else if (mkdir_err.value() != 0)
+        {
+            WARN(
+                "Could not create output directory {:s}. Error code {:d}, {:s}",
+                cli_arg.outdir, mkdir_err.value(), mkdir_err.message());
+        }
+    }
 
     BaseLib::RunTime run_time;
 
