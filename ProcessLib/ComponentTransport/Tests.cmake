@@ -929,3 +929,4 @@ endif()
 
 OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_c.prj RUNTIME 1)
 OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/grad_c_and_grad_p.prj RUNTIME 3)
+OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_p.prj RUNTIME 1)
