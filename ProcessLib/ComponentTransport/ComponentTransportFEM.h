@@ -1993,7 +1993,7 @@ public:
                 _process_data.stabilizer, _element.getID(), Dp, q, phi, alpha_T,
                 alpha_L);
 
-            cache_mat.col(ip).noalias() = q * c_ip - phi * D * dNdx * c;
+            cache_mat.col(ip).noalias() = q * c_ip - D * dNdx * c;
         }
 
         return cache;
