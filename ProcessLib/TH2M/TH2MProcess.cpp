@@ -163,33 +163,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
         LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
         _secondary_variables, getExtrapolator(), local_assemblers_);
 
-    add_secondary_variable(
-        "velocity_gas", mesh.getDimension(),
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityGas);
-    add_secondary_variable(
-        "velocity_liquid", mesh.getDimension(),
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtDarcyVelocityLiquid);
-    add_secondary_variable(
-        "diffusion_velocity_vapour_gas", mesh.getDimension(),
-        &LocalAssemblerInterface<
-            DisplacementDim>::getIntPtDiffusionVelocityVapourGas);
-    add_secondary_variable(
-        "diffusion_velocity_gas_gas", mesh.getDimension(),
-        &LocalAssemblerInterface<
-            DisplacementDim>::getIntPtDiffusionVelocityGasGas);
-    add_secondary_variable(
-        "diffusion_velocity_solute_liquid", mesh.getDimension(),
-        &LocalAssemblerInterface<
-            DisplacementDim>::getIntPtDiffusionVelocitySoluteLiquid);
-    add_secondary_variable(
-        "diffusion_velocity_liquid_liquid", mesh.getDimension(),
-        &LocalAssemblerInterface<
-            DisplacementDim>::getIntPtDiffusionVelocityLiquidLiquid);
-
-    add_secondary_variable(
-        "enthalpy_solid", 1,
-        &LocalAssemblerInterface<DisplacementDim>::getIntPtEnthalpySolid);
-
     //
     // enable output of internal variables defined by material models
     //

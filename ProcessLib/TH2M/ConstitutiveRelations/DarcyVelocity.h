@@ -16,24 +16,21 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-struct FluidDensityData
+template <int DisplacementDim>
+struct DarcyVelocityData
 {
-    // gas phase density
-    double rho_GR = nan;
-
-    // liquid phase density
-    double rho_LR = nan;
+    GlobalDimVector<DisplacementDim> w_GS;
+    GlobalDimVector<DisplacementDim> w_LS;
 
     static auto reflect()
     {
-        using Self = FluidDensityData;
+        using Self = DarcyVelocityData<DisplacementDim>;
         namespace R = ProcessLib::Reflection;
 
         return std::tuple{
-            R::makeReflectionData("gas_density", &Self::rho_GR),
-            R::makeReflectionData("liquid_density", &Self::rho_LR)};
+            R::makeReflectionData("velocity_gas", &Self::w_GS),
+            R::makeReflectionData("velocity_liquid", &Self::w_LS)};
     }
 };
-
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

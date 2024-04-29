@@ -1,0 +1,47 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2024, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+
+#pragma once
+
+#include "Base.h"
+#include "Porosity.h"
+#include "Saturation.h"
+
+namespace ProcessLib::TH2M
+{
+namespace ConstitutiveRelations
+{
+
+template <int DisplacementDim>
+struct ThermalConductivityData
+{
+    GlobalDimMatrix<DisplacementDim> lambda;
+    // Currently unused, but there is a comment in TH2MFEM-impl.h referring to
+    // this matrix
+    // GlobalDimMatrix<DisplacementDim> dlambda_dp_GR;
+    GlobalDimMatrix<DisplacementDim> dlambda_dp_cap;
+    GlobalDimMatrix<DisplacementDim> dlambda_dT;
+};
+
+template <int DisplacementDim>
+struct ThermalConductivityModel
+{
+    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+              TemperatureData const& T_data, PorosityData const& porosity_data,
+              PorosityDerivativeData const& porosity_d_data,
+              SaturationData const& S_L_data,
+              SaturationDataDeriv const& dS_L_dp_cap,
+              ThermalConductivityData<DisplacementDim>&
+                  thermal_conductivity_data) const;
+};
+
+extern template struct ThermalConductivityModel<2>;
+extern template struct ThermalConductivityModel<3>;
+}  // namespace ConstitutiveRelations
+}  // namespace ProcessLib::TH2M

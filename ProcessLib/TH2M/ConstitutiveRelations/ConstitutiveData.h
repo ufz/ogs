@@ -12,10 +12,13 @@
 #include "Biot.h"
 #include "Bishops.h"
 #include "ConstitutiveDensity.h"
+#include "DarcyVelocity.h"
+#include "DiffusionVelocity.h"
 #include "ElasticTangentStiffnessData.h"
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
 #include "FluidDensity.h"
+#include "InternalEnergy.h"
 #include "MassMoleFractions.h"
 #include "MechanicalStrain.h"
 #include "PermeabilityData.h"
@@ -28,9 +31,11 @@
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidDensity.h"
+#include "SolidHeatCapacity.h"
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
+#include "ThermalConductivity.h"
 #include "TotalStress.h"
 #include "VapourPartialPressure.h"
 #include "Viscosity.h"
@@ -50,6 +55,7 @@ struct StatefulData
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
     PureLiquidDensityData rho_W_LR;
     ConstituentDensityData constituent_density_data;
+    InternalEnergyData internal_energy_data;
 
     static auto reflect()
     {
@@ -70,6 +76,7 @@ struct StatefulDataPrev
     PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
     PrevState<PureLiquidDensityData> rho_W_LR;
     PrevState<ConstituentDensityData> constituent_density_data;
+    PrevState<InternalEnergyData> internal_energy_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
@@ -80,6 +87,7 @@ struct StatefulDataPrev
         mechanical_strain_data = state.mechanical_strain_data;
         rho_W_LR = state.rho_W_LR;
         constituent_density_data = state.constituent_density_data;
+        internal_energy_data = state.internal_energy_data;
 
         return *this;
     }
@@ -97,6 +105,8 @@ struct OutputData
     VapourPartialPressureData vapour_pressure_data;
     PorosityData porosity_data;
     SolidDensityData solid_density_data;
+    DiffusionVelocityData<DisplacementDim> diffusion_velocity_data;
+    DarcyVelocityData<DisplacementDim> darcy_velocity_data;
 
     static auto reflect()
     {
@@ -109,7 +119,9 @@ struct OutputData
                                               &Self::fluid_density_data,
                                               &Self::vapour_pressure_data,
                                               &Self::porosity_data,
-                                              &Self::solid_density_data);
+                                              &Self::solid_density_data,
+                                              &Self::diffusion_velocity_data,
+                                              &Self::darcy_velocity_data);
     }
 };
 
@@ -138,14 +150,17 @@ struct ConstitutiveTempData
     PhaseTransitionData phase_transition_data;
     PorosityDerivativeData porosity_d_data;
     SolidDensityDerivativeData solid_density_d_data;
+    SolidHeatCapacityData solid_heat_capacity_data;
+    ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
+    EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
+    EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
+    EffectiveVolumetricInternalEnergyDerivatives
+        effective_volumetric_internal_energy_d_data;
 
     using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
     using DisplacementDimMatrix =
         Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
 
-    DisplacementDimMatrix dlambda_dp_GR;
-    DisplacementDimMatrix dlambda_dp_cap;
-    DisplacementDimMatrix dlambda_dT;
     DisplacementDimVector drho_GR_h_w_eff_dp_GR_Npart;
     DisplacementDimMatrix drho_GR_h_w_eff_dp_GR_gradNpart;
     DisplacementDimVector drho_LR_h_w_eff_dp_cap_Npart;
@@ -174,14 +189,6 @@ struct ConstitutiveTempData
     DisplacementDimMatrix dadvection_C_dp_cap;
     DisplacementDimMatrix dk_over_mu_G_dp_cap;
     DisplacementDimMatrix dk_over_mu_L_dp_cap;
-    double drho_u_eff_dT = std::numeric_limits<double>::quiet_NaN();
-    double drho_u_eff_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double drho_u_eff_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double drho_h_eff_dT = std::numeric_limits<double>::quiet_NaN();
-    double drho_h_eff_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double drho_h_eff_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dh_G_dT = std::numeric_limits<double>::quiet_NaN();
-    double dh_L_dT = std::numeric_limits<double>::quiet_NaN();
     double dfC_4_MCpG_dp_GR = std::numeric_limits<double>::quiet_NaN();
     double dfC_4_MCpG_dT = std::numeric_limits<double>::quiet_NaN();
     double dfC_4_MCT_dT = std::numeric_limits<double>::quiet_NaN();

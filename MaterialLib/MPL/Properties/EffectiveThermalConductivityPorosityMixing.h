@@ -39,9 +39,9 @@ public:
                            double const dt) const override;
     PropertyDataType dValue(VariableArray const& variable_array,
                             Variable const variable,
-                            ParameterLib::SpatialPosition const& /*pos*/,
-                            double const /*t*/,
-                            double const /*dt*/) const override;
+                            ParameterLib::SpatialPosition const& pos,
+                            double const t,
+                            double const dt) const override;
 
 private:
     ParameterLib::CoordinateSystem const* const local_coordinate_system_;

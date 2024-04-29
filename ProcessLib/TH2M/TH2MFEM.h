@@ -147,7 +147,6 @@ private:
             this->solid_material_.initializeInternalStateVariables(
                 t, x_position, *material_state.material_state_variables);
 
-            ip_data.pushBackState();
             material_state.pushBackState();
         }
 
@@ -167,7 +166,6 @@ private:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
             this->material_states_[ip].pushBackState();
         }
 
@@ -190,37 +188,6 @@ private:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
-    std::vector<double> const& getIntPtDarcyVelocityGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDarcyVelocityLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocityVapourGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocityGasGas(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocitySoluteLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-    std::vector<double> const& getIntPtDiffusionVelocityLiquidLiquid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
     std::tuple<
         std::vector<ConstitutiveRelations::ConstitutiveData<DisplacementDim>>,
         std::vector<
@@ -231,28 +198,12 @@ private:
         ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
             models);
 
-    // TODO: Here is some refactoring potential. All secondary variables could
-    // be stored in some container to avoid defining one method for each
-    // variable.
-
-    virtual std::vector<double> const& getIntPtEnthalpySolid(
-        const double /*t*/,
-        std::vector<GlobalVector*> const& /*x*/,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
-        std::vector<double>& cache) const override
-    {
-        return ProcessLib::getIntegrationPointScalarData(_ip_data, &IpData::h_S,
-                                                         cache);
-    }
-
 private:
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
-    using IpData =
-        IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
-                             ShapeMatricesTypePressure, DisplacementDim,
-                             ShapeFunctionDisplacement::NPOINTS>;
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    using IpData = IntegrationPointData<ShapeMatricesTypeDisplacement,
+                                        ShapeMatricesTypePressure>;
+    std::vector<IpData> _ip_data;
 
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>

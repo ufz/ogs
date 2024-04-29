@@ -32,6 +32,9 @@ template <int DisplacementDim>
 using GlobalDimMatrix =
     Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>;
 
+template <int DisplacementDim>
+using GlobalDimVector = Eigen::Vector<double, DisplacementDim>;
+
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
@@ -47,8 +50,8 @@ struct MediaData
 
 struct TemperatureData
 {
-    double T;
-    double T_prev;
+    double T = nan;
+    double T_prev = nan;
 };
 
 using ReferenceTemperatureData =

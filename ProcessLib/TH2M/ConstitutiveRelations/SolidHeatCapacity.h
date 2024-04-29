@@ -10,24 +10,23 @@
 #pragma once
 
 #include "Base.h"
-#include "MassMoleFractions.h"
+#include "BaseLib/StrongType.h"
 
 namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-struct ViscosityData
+
+using SolidHeatCapacityData =
+    BaseLib::StrongType<double, struct SolidHeatCapacityTag>;
+
+struct SolidHeatCapacityModel
 {
-    double mu_GR = nan;
-    double mu_LR = nan;
+    void eval(SpaceTimeData const& x_t,
+              MediaData const& media_data,
+              TemperatureData const& T_data,
+              SolidHeatCapacityData& solid_heat_capacity) const;
 };
 
-struct ViscosityModel
-{
-    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              TemperatureData const& T_data,
-              MassMoleFractionsData const& mass_mole_fractions_data,
-              ViscosityData& viscosity_data) const;
-};
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
