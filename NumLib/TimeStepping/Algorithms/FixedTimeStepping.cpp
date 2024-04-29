@@ -147,17 +147,12 @@ FixedTimeStepping::FixedTimeStepping(
 {
     double t_curr = _t_initial;
 
+    if (!areRepeatDtPairsValid(repeat_dt_pairs))
+    {
+        OGS_FATAL("FixedTimeStepping: Couldn't construct object from data");
+    }
     for (auto const& [repeat, delta_t] : repeat_dt_pairs)
     {
-        if (repeat == 0)
-        {
-            OGS_FATAL("<repeat> is zero.");
-        }
-        if (delta_t <= 0.0)
-        {
-            OGS_FATAL("timestep <delta_t> is <= 0.0.");
-        }
-
         if (t_curr <= _t_end)
         {
             t_curr = addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
@@ -228,6 +223,30 @@ std::tuple<bool, double> FixedTimeStepping::next(
     }
 
     return std::make_tuple(true, dt);
+}
+
+bool FixedTimeStepping::areRepeatDtPairsValid(
+    std::vector<RepeatDtPair> const& repeat_dt_pairs)
+{
+    if (repeat_dt_pairs.empty())
+    {
+        return false;
+    }
+
+    for (auto const& [repeat, delta_t] : repeat_dt_pairs)
+    {
+        if (repeat == 0)
+        {
+            ERR("FixedTimeStepping: <repeat> is zero.");
+            return false;
+        }
+        if (delta_t <= 0.0)
+        {
+            ERR("FixedTimeStepping: timestep <delta_t> is <= 0.0.");
+            return false;
+        }
+    }
+    return true;
 }
 
 }  // namespace NumLib

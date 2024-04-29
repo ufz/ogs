@@ -56,6 +56,9 @@ public:
                                   NumLib::TimeStep& ts_previous,
                                   NumLib::TimeStep& ts_current) override;
 
+    static bool areRepeatDtPairsValid(
+        std::vector<RepeatDtPair> const& repeat_dt_pairs);
+
 private:
     /// a vector of time step sizes
     std::vector<double> _dt_vector;
