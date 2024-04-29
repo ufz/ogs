@@ -113,6 +113,13 @@ set(_eigen_version ${ogs.minimum_version.eigen})
 set(_eigen_url
     https://gitlab.com/libeigen/eigen/-/archive/${_eigen_version}/eigen-${_eigen_version}.tar.gz
 )
+if(OGS_EIGEN_PARALLEL_BACKEND STREQUAL "MKL" AND NOT OGS_USE_EIGEN_UNSUPPORTED)
+    message(
+        FATAL_ERROR
+            "OGS_EIGEN_PARALLEL_BACKEND=MKL requires OGS_USE_EIGEN_UNSUPPORTED!"
+    )
+endif()
+
 if(OGS_USE_EIGEN_UNSUPPORTED)
     set(_eigen_version 3.4.90)
     set(_eigen_url
@@ -133,8 +140,16 @@ if(Eigen3_ADDED)
     add_library(Eigen3::Eigen INTERFACE IMPORTED)
     target_include_directories(
         Eigen3::Eigen SYSTEM INTERFACE ${Eigen3_SOURCE_DIR}
-                                       ${OpenMP_CXX_INCLUDE_DIRS}
     )
+    if(${OGS_EIGEN_PARALLEL_BACKEND} STREQUAL "OpenMP")
+        target_include_directories(
+            Eigen3::Eigen SYSTEM INTERFACE ${OpenMP_CXX_INCLUDE_DIRS}
+        )
+    else()
+        target_include_directories(
+            Eigen3::Eigen SYSTEM INTERFACE ${MKL_INCLUDE}
+        )
+    endif()
 endif()
 
 if(OGS_USE_MFRONT)

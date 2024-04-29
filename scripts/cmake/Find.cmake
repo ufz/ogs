@@ -59,26 +59,34 @@ endif()
 # geotiff ##
 find_package(GEOTIFF)
 
-cmake_dependent_option(
-    OGS_USE_PETSC_MKL_EIGEN_OPENMP
-    "When PETSc and MKL is used, shall OpenMP be used for Eigen (or Intels iomp if false (default))?"
-    OFF
-    "OGS_USE_PETSC;OGS_USE_MKL"
-    OFF
+# blas / lapack / MKL
+set(_eigen_parallel_backend OpenMP MKL)
+if(OGS_USE_MKL)
+    set(OGS_EIGEN_PARALLEL_BACKEND MKL
+        CACHE STRING "The parallelization backend of Eigen."
+    )
+else()
+    set(OGS_EIGEN_PARALLEL_BACKEND OpenMP
+        CACHE STRING "The parallelization backend of Eigen."
+    )
+endif()
+set_property(
+    CACHE OGS_EIGEN_PARALLEL_BACKEND PROPERTY STRINGS
+                                              ${_eigen_parallel_backend}
 )
-if(NOT (OGS_USE_PETSC AND OGS_USE_MKL) OR OGS_USE_PETSC_MKL_EIGEN_OPENMP)
+if(OGS_EIGEN_PARALLEL_BACKEND STREQUAL "OpenMP")
     # this pulls in libgomp dependency, when MKL is enabled libiomp5 is used.
     find_package(OpenMP COMPONENTS C CXX)
 endif()
 
-# blas / lapack / MKL
 if(OGS_USE_MKL)
     if(APPLE)
         set(_mac_ld_prefix "DY")
     endif()
-    if(NOT GUIX_BUILD AND (NOT DEFINED ENV{MKLROOT} OR
-                          (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}"
-                                    MATCHES "intel" AND NOT WIN32))
+    if(NOT GUIX_BUILD
+       AND (NOT DEFINED ENV{MKLROOT}
+            OR (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}" MATCHES "intel"
+                AND NOT WIN32))
     )
         message(
             FATAL_ERROR
@@ -115,13 +123,17 @@ if(OGS_USE_MKL)
         endif()
         set(PKG_CONFIG_ARGN "--define-variable=MKLROOT=${MKLROOT}")
         set(ENV{PKG_CONFIG_PATH} ${MKLROOT}/bin/pkgconfig)
-        # TODO: Using -seq instead of -iomp; library iomp5 is missing
-        # See https://gitlab.opengeosys.org/ogs/inf/guix-ogs/-/issues/1
-        pkg_search_module(MKL REQUIRED IMPORTED_TARGET mkl-dynamic-${MKL_INTERFACE}-seq)
+        # TODO: Using -seq instead of -iomp; library iomp5 is missing See
+        # https://gitlab.opengeosys.org/ogs/inf/guix-ogs/-/issues/1
+        pkg_search_module(
+            MKL REQUIRED IMPORTED_TARGET mkl-dynamic-${MKL_INTERFACE}-seq
+        )
         add_library(MKL::MKL ALIAS PkgConfig::MKL)
     else()
         find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT} ${MKLROOT})
-        find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT}/../.. NO_DEFAULT_PATH)
+        find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT}/../..
+                  NO_DEFAULT_PATH
+        )
     endif()
 endif()
 
