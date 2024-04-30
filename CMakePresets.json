@@ -351,9 +351,6 @@
       "filter": {
         "include": {
           "label": "default"
-        },
-        "exclude": {
-          "name": "nb-"
         }
       },
       "execution": {
@@ -437,7 +434,12 @@
       "configurePreset": "sanitizer",
       "inherits": [
         "release"
-      ]
+      ],
+      "filter": {
+        "exclude": {
+          "name": "nb-"
+        }
+      }
     }
   ]
 }
