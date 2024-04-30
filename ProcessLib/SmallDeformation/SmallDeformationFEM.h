@@ -68,6 +68,7 @@ public:
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
 
     using BMatrixType = typename BMatricesType::BMatrixType;
+    using BBarMatrixType = typename BMatricesType::BBarMatrixType;
     using StiffnessMatrixType = typename BMatricesType::StiffnessMatrixType;
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
     using NodalDisplacementVectorType =
@@ -178,18 +179,20 @@ public:
             prev_state,
         MaterialStateData<DisplacementDim>& material_state,
         typename ConstitutiveRelations::OutputData<DisplacementDim>&
-            output_data) const
+            output_data,
+        BBarMatrixType const& B_dil_bar) const
     {
         auto const& N = ip_data.N_u;
         auto const& dNdx = ip_data.dNdx_u;
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 this->element_, N);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunction::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, this->is_axially_symmetric_);
+
+        auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
+            typename BMatricesType::BMatrixType>(dNdx, N, B_dil_bar, x_coord,
+                                                 this->is_axially_symmetric_,
+                                                 true /*use B bar*/);
 
         double const T_ref =
             this->process_data_.reference_temperature
@@ -253,6 +256,12 @@ public:
         auto const& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
 
+        auto const B_dil_bar = LinearBMatrix::computeDilatationalBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
+            BBarMatrixType, ShapeMatricesType, IpData>(
+            _ip_data, this->element_, this->integration_method_,
+            this->is_axially_symmetric_);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
@@ -264,16 +273,17 @@ public:
                 NumLib::interpolateXCoordinate<ShapeFunction,
                                                ShapeMatricesType>(
                     this->element_, N);
-            auto const B = LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunction::NPOINTS,
+            auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+                DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, this->is_axially_symmetric_);
+                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_,
+                true /*use B bar*/);
 
             auto const CD = updateConstitutiveRelations(
                 u, u_prev, x_position, t, dt, _ip_data[ip],
                 constitutive_setting, medium, this->current_states_[ip],
                 this->prev_states_[ip], this->material_states_[ip],
-                this->output_data_[ip]);
+                this->output_data_[ip], B_dil_bar);
 
             auto const& sigma = this->current_states_[ip].stress_data.sigma;
             auto const& b = *CD.volumetric_body_force;
@@ -302,6 +312,12 @@ public:
         auto const& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
 
+        auto const B_dil_bar = LinearBMatrix::computeDilatationalBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
+            BBarMatrixType, ShapeMatricesType, IpData>(
+            _ip_data, this->element_, this->integration_method_,
+            this->is_axially_symmetric_);
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
@@ -310,7 +326,7 @@ public:
                 local_x, local_x_prev, x_position, t, dt, _ip_data[ip],
                 constitutive_setting, medium, this->current_states_[ip],
                 this->prev_states_[ip], this->material_states_[ip],
-                this->output_data_[ip]);
+                this->output_data_[ip], B_dil_bar);
 
             this->material_states_[ip].pushBackState();
         }
