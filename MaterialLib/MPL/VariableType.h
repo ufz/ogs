@@ -206,6 +206,6 @@ private:
 static const VariableArray EmptyVariableArray{};
 
 /// This function converts a string (e.g. a string from the configuration-tree)
-/// into one of the entries of the VariableType enumerator.
+/// into one of the entries of the Variable enumerator.
 Variable convertStringToVariable(std::string const& string);
 }  // namespace MaterialPropertyLib
