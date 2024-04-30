@@ -37,7 +37,10 @@ install(
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
     PRE_EXCLUDE_REGEXES "api-ms-" "ext-ms-" ${OGS_INSTALL_DEPENDENCIES_PRE_EXCLUDES}
-    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll" "/usr/lib/libtbb.so.12" ${OGS_INSTALL_DEPENDENCIES_POST_EXCLUDES}
+    POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
+                         "/usr/lib/libtbb.so.12"
+                         "/opt/intel/oneapi/tbb/latest/lib/intel64/gcc4.8/libtbb.so.12"
+                         ${OGS_INSTALL_DEPENDENCIES_POST_EXCLUDES}
   )
   find_program(PATCHELF_TOOL patchelf)
   foreach(_lib ${_r_deps})
