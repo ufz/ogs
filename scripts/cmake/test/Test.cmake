@@ -48,7 +48,10 @@ NotebookTest(
     TRUE
 )
 
-set(_ctest_parameter -T Test --force-new-ctest-process --output-on-failure)
+# output 25 kb of tailed logs on failure
+set(_ctest_parameter -T Test --force-new-ctest-process --output-on-failure
+                     --test-output-size-failed 25
+)
 if(CMAKE_CONFIGURATION_TYPES)
     list(APPEND _ctest_parameter --build-config "$<CONFIGURATION>")
 endif()
