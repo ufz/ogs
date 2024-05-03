@@ -55,13 +55,6 @@ public:
                                   NumLib::TimeStep& ts_previous,
                                   NumLib::TimeStep& ts_current) override;
 
-    /// reset the current step size from the previous time
-    void resetCurrentTimeStep(const double dt, TimeStep& /*ts_previous*/,
-                              TimeStep& /*ts_current*/) override
-    {
-        _dt_vector.push_back(dt);
-    }
-
 private:
     /// a vector of time step sizes
     std::vector<double> _dt_vector;

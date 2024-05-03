@@ -143,6 +143,18 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     )
 endforeach()
 
+# Test FixedTimeStepping and fixed output times
+AddTest(
+    NAME SteadyStateDiffusion_square_1x1_quad_1e1_FixedTimeStepping_FixedOutputTimes
+    PATH Elliptic/square_1x1_SteadyStateDiffusion/FixedTimeSteppingFixedOutputTimes
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS square_1e1-fixed_timestepping-fixed_output_times.prj -m ../
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    GLOB square_1e1_ts_*.vtu pressure pressure 1e-15 1e-15
+)
+
 # Quadratic hex element.
 AddTest(
     NAME SteadyStateDiffusion_cube_1x1x1_1e0_QuadraticHex

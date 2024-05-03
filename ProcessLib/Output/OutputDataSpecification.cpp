@@ -10,6 +10,8 @@
 
 #include "OutputDataSpecification.h"
 
+#include "NumLib/TimeStepping/TimeStep.h"
+
 namespace ProcessLib
 {
 OutputDataSpecification::OutputDataSpecification(
@@ -49,11 +51,12 @@ bool OutputDataSpecification::isOutputStep(int timestep,
 {
     auto isFixedOutputStep = [this](double const time) -> bool
     {
-        auto const fixed_output_time = std::lower_bound(
-            cbegin(fixed_output_times), cend(fixed_output_times), time);
-        return ((fixed_output_time != cend(fixed_output_times)) &&
-                (std::abs(*fixed_output_time - time) <
-                 std::numeric_limits<double>::epsilon()));
+        return std::any_of(cbegin(fixed_output_times), cend(fixed_output_times),
+                           [&](auto fixed_output_time)
+                           {
+                               return (std::abs(fixed_output_time - time) <
+                                       NumLib::TimeStep::minimalTimeStepSize);
+                           });
     };
 
     auto isPairRepeatsEachTimeStepOutput = [this](int timestep) -> bool
