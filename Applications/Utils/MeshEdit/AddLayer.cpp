@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 
     INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
     auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
-        MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
+        MeshLib::IO::readMeshFromFile(mesh_arg.getValue(), true));
     if (!subsfc_mesh)
     {
         ERR("Error reading mesh '{:s}'.", mesh_arg.getValue());
