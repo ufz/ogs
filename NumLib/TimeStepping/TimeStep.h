@@ -13,6 +13,7 @@
 #pragma once
 
 #include <cstddef>
+#include <limits>
 
 namespace NumLib
 {
