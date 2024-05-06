@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="square_1e1_2_matIDs.prj">
+    <replace sel="/*/mesh/text()">square_1e1_2_matIDs_t_0.7000.vtu</replace>
+
+    <!-- <remove sel="/*/processes/process/constitutive_relation[2]/initial_values"/> -->
+    <remove sel="/*/processes/process/constitutive_relation[@id='1']/initial_values"/>
+    <!-- For a restart simulation, the initial values are transferred automatically.-->
+
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">0.7</replace>
+    <!-- The step size from the non-restart version (see base_file) **after** t =0.7 s. is constant 1.e-2.
+         Else, the exact adaptive value must be used to meet the tolerances set in this test: -->
+    <!--<replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">0.01</replace>-->
+    <replace sel="/*/time_loop/output/prefix/text()">square_1e1_2_matIDs_restart</replace>
+    <replace sel="/*/time_loop/output/fixed_output_times/text()">.7 .8 .9 1</replace>
+
+    <remove sel="/*/parameters/parameter[name='temperature0']"/>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>temperature0</name>
+            <type>MeshNode</type>
+            <field_name>temperature</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/parameters/parameter[name='displacement0']"/>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>displacement0</name>
+            <type>MeshNode</type>
+            <field_name>displacement</field_name>
+        </parameter>
+    </add>
+
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <!--primary variables-->
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>temperature</field>
+                <absolute_tolerance>2e-13</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>displacement</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <!--secondary variables-->
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>sigma</field>
+                <absolute_tolerance>2e-8</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>epsilon</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>NodalForces</field>
+                <absolute_tolerance>2e-5</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <!--internal state variables-->
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>ElasticStrain</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>EquivalentPlasticStrain</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>PlasticVolumetricStrain</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>VolumeRatio</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>PreConsolidationPressure</field>
+                <absolute_tolerance>1e-8</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <!--integration point variables-->
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>sigma_ip</field>
+                <absolute_tolerance>3e-8</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>epsilon_ip</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>material_state_variable_ElasticStrain_ip</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>material_state_variable_EquivalentPlasticStrain_ip</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>material_state_variable_PlasticVolumetricStrain_ip</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>material_state_variable_VolumeRatio_ip</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
+                <field>material_state_variable_PreConsolidationPressure_ip</field>
+                <absolute_tolerance>1e-8</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+
+</OpenGeoSysProjectDiff>
