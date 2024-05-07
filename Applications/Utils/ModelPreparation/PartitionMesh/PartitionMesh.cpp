@@ -15,6 +15,8 @@
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
+#include <filesystem>
+
 #ifdef USE_PETSC
 #include <mpi.h>
 #endif
@@ -115,6 +117,21 @@ int main(int argc, char* argv[])
             OGS_FATAL("spdlog logger error occurred.");
         });
 
+    const auto output_directory = output_directory_arg.getValue();
+    {
+        std::error_code mkdir_err;
+        if (std::filesystem::create_directories(output_directory, mkdir_err))
+        {
+            INFO("Output directory {:s} created.", output_directory);
+        }
+        else if (mkdir_err.value() != 0)
+        {
+            WARN(
+                "Could not create output directory {:s}. Error code {:d}, {:s}",
+                output_directory, mkdir_err.value(), mkdir_err.message());
+        }
+    }
+
     BaseLib::RunTime run_timer;
     run_timer.start();
     BaseLib::CPUTime CPU_timer;
@@ -130,7 +147,7 @@ int main(int argc, char* argv[])
          mesh_ptr->getNumberOfElements());
 
     std::string const output_file_name_wo_extension = BaseLib::joinPaths(
-        output_directory_arg.getValue(),
+        output_directory,
         BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
 
     if (ogs2metis_flag.getValue())
@@ -219,7 +236,7 @@ int main(int argc, char* argv[])
 
         std::string const other_mesh_output_file_name_wo_extension =
             BaseLib::joinPaths(
-                output_directory_arg.getValue(),
+                output_directory,
                 BaseLib::extractBaseNameWithoutExtension(filename));
         auto partitions = mesh_partitioner.partitionOtherMesh(*mesh);
 
