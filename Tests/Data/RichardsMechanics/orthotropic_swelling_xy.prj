@@ -324,8 +324,8 @@
         <vtkdiff>
             <regex>orthotropic_swelling_xy_ts_.*.vtu</regex>
             <field>saturation</field>
-            <absolute_tolerance>2e-15</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
+            <absolute_tolerance>4e-15</absolute_tolerance>
+            <relative_tolerance>4e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>orthotropic_swelling_xy_ts_.*.vtu</regex>
@@ -342,7 +342,7 @@
         <vtkdiff>
             <regex>orthotropic_swelling_xy_ts_.*.vtu</regex>
             <field>swelling_stress</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>2e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

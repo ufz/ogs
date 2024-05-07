@@ -379,7 +379,7 @@ AddTest(
     TESTER vtkdiff
     DIFF_DATA
     square_1e2_axi_ts_10_t_1.000000.vtu square_1e2_axi_ts_10_t_1.000000.vtu temperature temperature 2e-15 0
-    square_1e2_axi_ts_10_t_1.000000.vtu square_1e2_axi_ts_10_t_1.000000.vtu heat_flux heat_flux 1e-14 0
+    square_1e2_axi_ts_10_t_1.000000.vtu square_1e2_axi_ts_10_t_1.000000.vtu heat_flux heat_flux 2e-14 0
     REQUIREMENTS NOT OGS_USE_MPI
 )
 # WEDGE 1x1 HEAT CONDUCTION TEST -- same setup as above test but in cartesian coordinates

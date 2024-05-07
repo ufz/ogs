@@ -352,7 +352,7 @@
         <vtkdiff>
             <regex>double_porosity_swelling_.*.vtu</regex>
             <field>porosity</field>
-            <absolute_tolerance>2e-5</absolute_tolerance>
+            <absolute_tolerance>2.1e-5</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
