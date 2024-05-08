@@ -63,8 +63,30 @@ public:
     }
 
     bool compute(Matrix& A, EigenOption& opt,
-                 MathLib::LinearSolverBehaviour const linear_solver_behaviour)
+                 MathLib::LinearSolverBehaviour linear_solver_behaviour)
     {
+        if (linear_solver_behaviour == MathLib::LinearSolverBehaviour::REUSE)
+        {
+            // Checking if this is the first compute() call should work both for
+            // direct solvers (that factorize the matrix A) and for iterative
+            // solvers (that store a reference to A in the preconditioner).
+            if (is_first_compute_call_)
+            {
+                // There is nothing there, yet, to be reused. Hence, we compute
+                // and store the result.
+                linear_solver_behaviour =
+                    MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        // TODO (CL) That might not work under all circumstances, e.g., if the
+        // linear solver fails subsequently. Time will tell.
+        is_first_compute_call_ = false;
+
 #ifdef USE_EIGEN_UNSUPPORTED
         if (opt.scaling)
         {
@@ -89,6 +111,8 @@ private:
 #ifdef USE_EIGEN_UNSUPPORTED
     std::unique_ptr<Eigen::IterScaling<EigenMatrix::RawMatrixType>> scaling_;
 #endif
+
+    bool is_first_compute_call_ = true;
 };
 
 namespace details

@@ -34,18 +34,12 @@ bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
     BaseLib::RunTime time_linear_solver;
     time_linear_solver.start();
 
-    if (linear_solver_behaviour == MathLib::LinearSolverBehaviour::RECOMPUTE ||
-        linear_solver_behaviour ==
-            MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE)
+    if (!linear_solver.compute(A, linear_solver_behaviour))
     {
-        if (!linear_solver.compute(A, linear_solver_behaviour))
-        {
-            ERR("Picard: The linear solver failed in the compute() step.");
-            return false;
-        }
+        ERR("Picard: The linear solver failed in the compute() step.");
+        return false;
     }
 
-    // REUSE the previously computed preconditioner or LU decomposition
     bool const iteration_succeeded = linear_solver.solve(rhs, x);
 
     INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());

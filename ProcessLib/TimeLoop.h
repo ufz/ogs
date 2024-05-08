@@ -122,7 +122,7 @@ private:
 private:
     std::vector<std::function<double(double, double)>>
     generateOutputTimeStepConstraints(std::vector<double>&& fixed_times) const;
-    void preOutputInitialConditions(const double t) const;
+    void preOutputInitialConditions(const double t, const double dt) const;
     std::vector<GlobalVector*> _process_solutions;
     std::vector<GlobalVector*> _process_solutions_prev;
     std::vector<Output> _outputs;
