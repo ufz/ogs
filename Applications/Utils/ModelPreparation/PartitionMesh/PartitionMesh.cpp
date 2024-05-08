@@ -118,6 +118,7 @@ int main(int argc, char* argv[])
         });
 
     const auto output_directory = output_directory_arg.getValue();
+    if (output_directory.length() > 0)
     {
         std::error_code mkdir_err;
         if (std::filesystem::create_directories(output_directory, mkdir_err))
