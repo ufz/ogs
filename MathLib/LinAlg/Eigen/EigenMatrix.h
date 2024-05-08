@@ -11,6 +11,7 @@
 #pragma once
 
 #include <Eigen/Sparse>
+#include <cassert>
 #include <iosfwd>
 #include <string>
 
