@@ -152,11 +152,25 @@
 
 namespace
 {
-void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects)
+void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects,
+                  std::string const& dir_first, std::string const& dir_second)
 {
     DBUG("Reading geometry file '{:s}'.", fname);
     GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
-    gml_reader.readFile(fname);
+    std::string geometry_file = BaseLib::copyPathToFileName(fname, dir_first);
+    if (!BaseLib::IsFileExisting(geometry_file))
+    {
+        // Fallback to reading gml from prj-file directory
+        geometry_file = BaseLib::copyPathToFileName(fname, dir_second);
+        WARN("File {:s} not found in {:s}! Trying reading from {:s}.", fname,
+             dir_first, dir_second);
+        if (!BaseLib::IsFileExisting(geometry_file))
+        {
+            OGS_FATAL("Could not read geometry file {:s} in {:s}.", fname,
+                      dir_second);
+        }
+    }
+    gml_reader.readFile(geometry_file);
 }
 
 std::unique_ptr<MeshLib::Mesh> readSingleMesh(
@@ -192,7 +206,8 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
 }
 
 std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
-    BaseLib::ConfigTree const& config, std::string const& directory)
+    BaseLib::ConfigTree const& config, std::string const& directory,
+    std::string const& project_directory)
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 
@@ -213,9 +228,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
                 //! \ogs_file_param{prj__geometry}
             config.getConfigParameterOptional<std::string>("geometry"))
         {
-            std::string const geometry_file =
-                BaseLib::copyPathToFileName(*geometry_file_name, directory);
-            readGeometry(geometry_file, geoObjects);
+            readGeometry(*geometry_file_name, geoObjects, directory,
+                         project_directory);
         }
     }
     else
@@ -224,11 +238,11 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
             //! \ogs_file_param{prj__mesh}
             readSingleMesh(config.getConfigParameter("mesh"), directory));
 
-        std::string const geometry_file = BaseLib::copyPathToFileName(
+        auto const geometry_file_name =
             //! \ogs_file_param{prj__geometry}
-            config.getConfigParameter<std::string>("geometry"),
-            directory);
-        readGeometry(geometry_file, geoObjects);
+            config.getConfigParameter<std::string>("geometry");
+        readGeometry(geometry_file_name, geoObjects, directory,
+                     project_directory);
     }
 
     {  // generate meshes from geometries
@@ -332,7 +346,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
                          std::string const& output_directory,
                          std::string const& mesh_directory,
                          [[maybe_unused]] std::string const& script_directory)
-    : _mesh_vec(readMeshes(project_config, mesh_directory)),
+    : _mesh_vec(readMeshes(project_config, mesh_directory, project_directory)),
       _named_rasters(readRasters(project_config, project_directory,
                                  GeoLib::AABB(_mesh_vec[0]->getNodes().begin(),
                                               _mesh_vec[0]->getNodes().end())

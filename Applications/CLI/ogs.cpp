@@ -65,6 +65,7 @@ int main(int argc, char* argv[])
     INFO("This is OpenGeoSys-6 version {:s}.",
          GitInfoLib::GitInfo::ogs_version);
 
+    if (cli_arg.outdir.length() > 0)
     {
         std::error_code mkdir_err;
         if (std::filesystem::create_directories(cli_arg.outdir, mkdir_err))
