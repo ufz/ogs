@@ -13,6 +13,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <cassert>
 #include <limits>
 
 #include "mathlib_export.h"

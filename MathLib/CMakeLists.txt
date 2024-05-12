@@ -27,13 +27,14 @@ set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(
     MathLib
-    PUBLIC BaseLib
-           $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
-           $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
-           $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
-           $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
-           Eigen3::Eigen
-           $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
+    PUBLIC
+        BaseLib
+        $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
+        $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
+        $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
+        $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
+        Eigen3::Eigen
+        $<$<AND:$<TARGET_EXISTS:OpenMP::OpenMP_CXX>,$<BOOL:$<STREQUAL:${OGS_EIGEN_PARALLEL_BACKEND},OpenMP>>>:OpenMP::OpenMP_CXX>
     PRIVATE $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>
 )
 if(OGS_USE_MKL AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
@@ -56,7 +57,7 @@ target_compile_definitions(
         $<$<BOOL:${OGS_USE_EIGEN_UNSUPPORTED}>:USE_EIGEN_UNSUPPORTED>
         $<$<BOOL:${OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN}>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
         $<$<CONFIG:Debug>:EIGEN_INITIALIZE_MATRICES_BY_NAN>
-        $<$<AND:$<BOOL:${OGS_USE_MKL}>,$<BOOL:${OGS_EIGEN_USE_MKL}>>:EIGEN_USE_MKL_ALL>
+        $<$<AND:$<BOOL:${OGS_USE_MKL}>,$<BOOL:$<STREQUAL:${OGS_EIGEN_PARALLEL_BACKEND},MKL>>>:EIGEN_USE_MKL_ALL>
 )
 if(OGS_USE_MKL)
     set_source_files_properties(

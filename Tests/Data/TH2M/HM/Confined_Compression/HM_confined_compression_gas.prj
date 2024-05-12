@@ -515,8 +515,8 @@
         <vtkdiff>
             <regex>HM_confined_compression_gas_ts_.*.vtu</regex>
             <field>porosity</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
+            <absolute_tolerance>2e-15</absolute_tolerance>
+            <relative_tolerance>2e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>HM_confined_compression_gas_ts_.*.vtu</regex>

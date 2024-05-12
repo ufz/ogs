@@ -76,9 +76,7 @@ if(WIN32)
          DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
 else()
-    file(INSTALL ${Python_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR}
-         FOLLOW_SYMLINK_CHAIN
-    )
+    install(FILES ${Python_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
