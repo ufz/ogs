@@ -11,11 +11,56 @@
 #include "ConstitutiveSetting.h"
 
 #include "ProcessLib/Graph/Apply.h"
+#include "ProcessLib/Graph/CheckEvalOrderRT.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
+
+template <int DisplacementDim>
+static bool checkCorrectModelEvalOrder()
+{
+    INFO(
+        "Checking correct model evaluation order in the constitutive setting.");
+
+    using namespace boost::mp11;
+
+    constexpr auto D = DisplacementDim;
+
+    using Inputs =
+        mp_list<SpaceTimeData, MediaData, TemperatureData<D>,
+                CapillaryPressureData<D>, StrainData<D>
+                //, MaterialStateData<D> /*TODO material state data is a special
+                // case: it's both input and output data.*/
+                >;
+
+    using InputsAndPrevState = mp_append<Inputs, StatefulDataPrev<D>>;
+
+    bool const is_correct = ProcessLib::Graph::isEvalOrderCorrectRT<
+        ConstitutiveModels<DisplacementDim>, InputsAndPrevState>();
+
+    if (!is_correct)
+    {
+        OGS_FATAL("The constitutive setting has a wrong evaluation order.");
+    }
+
+    INFO("Model evaluation order is correct.");
+
+    return is_correct;
+}
+
+template <int DisplacementDim>
+void ConstitutiveSetting<DisplacementDim>::init(
+    ConstitutiveModels<DisplacementDim>&, double const /*t*/,
+    double const /*dt*/, ParameterLib::SpatialPosition const&, MediaData const&,
+    TemperatureData<DisplacementDim> const&, StatefulData<DisplacementDim>&,
+    StatefulDataPrev<DisplacementDim>&) const
+{
+    [[maybe_unused]] static const bool model_order_correct =
+        checkCorrectModelEvalOrder<DisplacementDim>();
+}
+
 template <int DisplacementDim>
 void ConstitutiveSetting<DisplacementDim>::eval(
     ConstitutiveModels<DisplacementDim>& models, double const t,
