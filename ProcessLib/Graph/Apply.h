@@ -16,33 +16,40 @@ namespace ProcessLib::Graph
 namespace detail
 {
 template <typename Function>
-struct GetFunctionArgumentTypesPlain  // plain, i.e., without cvref
+struct GetFunctionArgumentTypes
     /** \cond */
-    : GetFunctionArgumentTypesPlain<decltype(&Function::operator())>
+    : GetFunctionArgumentTypes<decltype(&Function::operator())>
 /** \endcond */
 {
 };
 
 // member function
 template <typename Result, typename Class, typename... Args>
-struct GetFunctionArgumentTypesPlain<Result (Class::*)(Args...)>
+struct GetFunctionArgumentTypes<Result (Class::*)(Args...)>
 {
-    using type = boost::mp11::mp_list<std::remove_cvref_t<Args>...>;
+    using type = boost::mp11::mp_list<Args...>;
 };
 
 // const member function
 template <typename Result, typename Class, typename... Args>
-struct GetFunctionArgumentTypesPlain<Result (Class::*)(Args...) const>
+struct GetFunctionArgumentTypes<Result (Class::*)(Args...) const>
 {
-    using type = boost::mp11::mp_list<std::remove_cvref_t<Args>...>;
+    using type = boost::mp11::mp_list<Args...>;
 };
 
 // standalone function
 template <typename Result, typename... Args>
-struct GetFunctionArgumentTypesPlain<Result (*)(Args...)>
+struct GetFunctionArgumentTypes<Result (*)(Args...)>
 {
-    using type = boost::mp11::mp_list<std::remove_cvref_t<Args>...>;
+    using type = boost::mp11::mp_list<Args...>;
 };
+
+// plain, i.e., without cvref
+template <typename Function>
+using GetFunctionArgumentTypesPlain =
+    std::type_identity<boost::mp11::mp_transform<
+        std::remove_cvref_t,
+        typename GetFunctionArgumentTypes<Function>::type>>;
 
 template <typename Function>
 struct GetFunctionReturnType
