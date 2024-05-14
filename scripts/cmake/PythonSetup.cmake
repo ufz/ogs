@@ -96,6 +96,7 @@ if(OGS_USE_PIP)
         list(APPEND OGS_PYTHON_PACKAGES
              "snakemake==${ogs.minimum_version.snakemake}"
              "pulp==2.7.0" # https://github.com/snakemake/snakemake/issues/2607
+             "setuptools"  # https://github.com/glenfant/stopit/issues/32
         )
         set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH ""
                                                                   FORCE
