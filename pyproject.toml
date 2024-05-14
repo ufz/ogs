@@ -9,7 +9,7 @@ description = "OpenGeoSys Python wheel"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 authors = [{ email = "info@opengeosys.org" }, { name = "OpenGeoSys Community" }]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 
 [project.urls]
 homepage = "https://opengeosys.org"
@@ -52,11 +52,8 @@ norecursedirs = ["Tests/Data"]
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = ["cp3{8,9,10,11}-*"]
-skip = [
-  "*musllinux*",
-  "cp38-macosx_x86_64",
-] # otherwise error: 'is not a supported wheel on this platform'archs = "auto64"
+build = ["cp3{9,10,11,12}-*"]
+skip = ["*musllinux*"]
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
 build-verbosity = "1"
