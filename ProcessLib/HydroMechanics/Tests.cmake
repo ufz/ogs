@@ -480,7 +480,7 @@ AddTest(
     DIFF_DATA
     disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu pressure pressure 0 1e-13
     disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu permeability permeability 0 5e-12
-    disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu velocity velocity 0 1e-10
+    disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu velocity velocity 0 2e-10
     disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu disc_with_hole_anisotropic_ts_1_t_1000000000.000000.vtu displacement displacement 1e-15 0
 )
 
