@@ -41,37 +41,39 @@ void computeGMatrix(DNDX_Type const& dNdx,
             // (1,1), (1,2), (1,3)
             // (2,1), (2,2), (2,3)
             // (3,1), (3,2), (3,3)
-            for (int d = 0; d < DisplacementDim; ++d)
+            for (int i = 0; i < NPOINTS; ++i)
             {
-                for (int i = 0; i < NPOINTS; ++i)
-                {
-                    g_matrix(d + 0 * DisplacementDim, i + 0 * NPOINTS) =
-                        dNdx(d, i);
-                    g_matrix(d + 1 * DisplacementDim, i + 1 * NPOINTS) =
-                        dNdx(d, i);
-                    g_matrix(d + 2 * DisplacementDim, i + 2 * NPOINTS) =
-                        dNdx(d, i);
-                }
+                auto G_col0 = g_matrix.col(i);
+                auto G_col1 = g_matrix.col(i + NPOINTS);
+                auto G_col2 = g_matrix.col(i + 2 * NPOINTS);
+                auto const dNidx = dNdx.col(i);
+
+                G_col0.template segment<DisplacementDim>(0).noalias() = dNidx;
+                G_col1.template segment<DisplacementDim>(DisplacementDim)
+                    .noalias() = dNidx;
+                G_col2.template segment<DisplacementDim>(2 * DisplacementDim)
+                    .noalias() = dNidx;
             }
+
             break;
         case 2:
             // The gradient coordinates are organized in the following order:
             // (1,1), (1,2)
             // (2,1), (2,2)
             // (3,3)
-            for (int d = 0; d < DisplacementDim; ++d)
+            for (int i = 0; i < NPOINTS; ++i)
             {
-                for (int i = 0; i < NPOINTS; ++i)
+                auto G_col0 = g_matrix.col(i);
+                auto G_col1 = g_matrix.col(i + NPOINTS);
+                auto const dNidx = dNdx.col(i);
+
+                G_col0.template segment<DisplacementDim>(0).noalias() = dNidx;
+                G_col1.template segment<DisplacementDim>(DisplacementDim)
+                    .noalias() = dNidx;
+
+                if (is_axially_symmetric)
                 {
-                    g_matrix(d, i) = dNdx(d, i);
-                    g_matrix(d + DisplacementDim, i + NPOINTS) = dNdx(d, i);
-                }
-            }
-            if (is_axially_symmetric)
-            {
-                for (int i = 0; i < NPOINTS; ++i)
-                {
-                    g_matrix(4, i) = N[i] / radius;
+                    G_col0[4] = N[i] / radius;
                 }
             }
             break;
