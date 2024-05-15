@@ -183,11 +183,29 @@ void ComponentTransportProcess::initializeConcreteProcess(
             mesh_space_dimension, getExtrapolator(), _local_assemblers,
             &ComponentTransportLocalAssemblerInterface::getIntPtDarcyVelocity));
 
-    _secondary_variables.addSecondaryVariable(
-        "molar_flux",
-        makeExtrapolator(
-            mesh_space_dimension, getExtrapolator(), _local_assemblers,
-            &ComponentTransportLocalAssemblerInterface::getIntPtMolarFlux));
+    for (std::size_t component_id = 0;
+         component_id < transport_process_variables.size();
+         ++component_id)
+    {
+        auto const& pv = transport_process_variables[component_id].get();
+
+        auto integration_point_values_accessor = [component_id](
+            ComponentTransportLocalAssemblerInterface const& loc_asm,
+            const double t,
+            std::vector<GlobalVector*> const& x,
+            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+            std::vector<double>& cache) -> auto const&
+        {
+            return loc_asm.getIntPtMolarFlux(t, x, dof_tables, cache,
+                                             component_id);
+        };
+
+        _secondary_variables.addSecondaryVariable(
+            pv.getName() + "Flux",
+            makeExtrapolator(mesh_space_dimension, getExtrapolator(),
+                             _local_assemblers,
+                             integration_point_values_accessor));
+    }
 }
 
 void ComponentTransportProcess::setInitialConditionsConcreteProcess(

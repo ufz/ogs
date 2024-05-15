@@ -926,3 +926,8 @@ if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.ipynb RUNTIME 16)
     NotebookTest(NOTEBOOKFILE Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/heatpipe.ipynb RUNTIME 10)
 endif()
+
+OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_c.prj RUNTIME 1)
+OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/grad_c_and_grad_p.prj RUNTIME 3)
+OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_p.prj RUNTIME 1)
+OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/grad_c_and_grad_p_and_r.prj RUNTIME 3)

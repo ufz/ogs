@@ -8,7 +8,7 @@
       <PointData>
         <DataArray type="Float64" Name="HTO" format="appended" RangeMin="1.251477596e-05"      RangeMax="1"                    offset="84"                  />
         <DataArray type="Float64" Name="HTOFlowRate" format="appended" RangeMin="-1.4694036401e-20"    RangeMax="1.3001968678e-08"     offset="40612"               />
-        <DataArray type="Float64" Name="molar_flux" format="appended" RangeMin="1.4286296581e-20"     RangeMax="4.6704358623e-12"     offset="53656"               />
+        <DataArray type="Float64" Name="HTOFlux" format="appended" RangeMin="1.4286296581e-20"     RangeMax="4.6704358623e-12"     offset="53656"               />
         <DataArray type="Float64" Name="pressure" format="appended" RangeMin="100000"               RangeMax="100000"               offset="94184"               />
       </PointData>
       <CellData>

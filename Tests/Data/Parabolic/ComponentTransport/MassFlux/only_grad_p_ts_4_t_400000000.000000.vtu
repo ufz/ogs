@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="44" NumberOfCells="10">
+      <PointData Scalars="pressure">
+        <DataArray type="Float64" Name="pressure" format="binary" RangeMin="-4.470348341500951e-9" RangeMax="0.3">
+          AQAAAACAAABgAQAAXAAAAA==eJwzNgaBy/ZAQnSd+0X79LS0d4E7ztmnpaVtcn94CkSX2XIdB9F6xsaH7c+dOfMncMc+EJ1jy7XdfvbMmZJBO9bZmwMNCNwxz/7///+GQOY+41FzweYCAJipnj0=
+        </DataArray>
+        <DataArray type="Float64" Name="C" format="binary" RangeMin="1" RangeMax="1">
+          AQAAAACAAABgAQAAEgAAAA==eJxjYACBD/YMozRNaABeMTQV
+        </DataArray>
+        <DataArray type="Float64" Name="CFlux" NumberOfComponents="3" format="binary" RangeMin="3.75e-10" RangeMax="3.75e-10">
+          AQAAAACAAAAgBAAAHQAAAA==eJy772h1R/DoT1sGNHB/VHxUfFR8xIsDALkEu1k=
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              3.75e-10
+            </Value>
+            <Value index="1">
+              3.75e-10
+            </Value>
+          </InformationKey>
+        </DataArray>
+        <DataArray type="Float64" Name="darcy_velocity" NumberOfComponents="3" format="binary" RangeMin="3.75e-10" RangeMax="3.75e-10">
+          AQAAAACAAAAgBAAAHQAAAA==eJy772h1R/DoT1sGNHB/VHxUfFR8xIsDALkEu1k=
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              3.75e-10
+            </Value>
+            <Value index="1">
+              3.75e-10
+            </Value>
+          </InformationKey>
+        </DataArray>
+      </PointData>
+      <CellData Scalars="CFlux_residual">
+        <DataArray type="Float64" Name="CFlux_residual" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAADwAAAADAAAAA==eJxjYBhZAAAA8AAB
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              0
+            </Value>
+            <Value index="1">
+              0
+            </Value>
+          </InformationKey>
+        </DataArray>
+        <DataArray type="Float64" Name="darcy_velocity_residual" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAADwAAAADAAAAA==eJxjYBhZAAAA8AAB
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              0
+            </Value>
+            <Value index="1">
+              0
+            </Value>
+          </InformationKey>
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="0.8079604065183404">
+          AQAAAACAAAAgBAAArAAAAA==eJx90rEJwzAUhGHXmSKLmGSFrOMqjYdwlyFSZADVrtSkERYIjMgSqR48H/+zG+MPccLHDUP43Ov0vrEn8u3xWYPzmfy1LN8gp5Bf518N8hv5c7zswb2d3OUd/tu+wRO59QDnM7n1ADmF3HqA/EZuPcC9nTzq46SXRK57cOczue7B5RRy3YPLb+S6B3dvJ4/+/+SdyHUP2oO67kF7UNc9aA/qugft4eB/jXzcvQ==
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              0
+            </Value>
+            <Value index="1">
+              0.80796040652
+            </Value>
+          </InformationKey>
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="43">
+          AQAAAACAAACAAgAAbgAAAA==eJxdyzcCggAQAEGMmEHBgGJWDPz/fxZeNdtsNUnyrxOfxmfxTXwbv8ZvuC5ujtvh7rgeboGrcA9cH5fh9rgnboDLcQdcgxvilrga98KluBXuiHvjRrgCd8J9cGNciTvjvrgJbo274Nr4D5lpBrk=
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="8" RangeMax="80">
+          AQAAAACAAABQAAAAIwAAAA==eJzjYIAAASgtAaUVoLQGlDaA0hZQ2gFKe0DpACgNADdQAbk=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="11" RangeMax="11">
+          AQAAAACAAAAKAAAACwAAAA==eJzj5oYBAAJnAG8=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

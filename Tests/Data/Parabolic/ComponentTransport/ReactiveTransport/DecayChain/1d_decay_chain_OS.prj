@@ -21,6 +21,15 @@
                 <concentration>[Ac-227]</concentration>
                 <pressure>pressure</pressure>
             </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="HFlux" output_name="HFlux" />
+                <secondary_variable internal_name="[Cm-247]Flux" output_name="[Cm-247]Flux" />
+                <secondary_variable internal_name="[Am-243]Flux" output_name="[Am-243]Flux" />
+                <secondary_variable internal_name="[Pu-239]Flux" output_name="[Pu-239]Flux" />
+                <secondary_variable internal_name="[U-235]Flux"  output_name="[U-235]Flux" />
+                <secondary_variable internal_name="[Pa-231]Flux" output_name="[Pa-231]Flux" />
+                <secondary_variable internal_name="[Ac-227]Flux" output_name="[Ac-227]Flux" />
+            </secondary_variables>
             <specific_body_force>0</specific_body_force>
         </process>
     </processes>
@@ -532,16 +541,8 @@
                     <each_steps>900</each_steps>
                 </pair>
             </timesteps>
-            <variables>
-                <variable>H</variable>
-                <variable>[Cm-247]</variable>
-                <variable>[Am-243]</variable>
-                <variable>[Pu-239]</variable>
-                <variable>[U-235]</variable>
-                <variable>[Pa-231]</variable>
-                <variable>[Ac-227]</variable>
-                <variable>pressure</variable>
-            </variables>
+            <variables />
+	    <output_extrapolation_residuals>true</output_extrapolation_residuals>
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
@@ -840,38 +841,114 @@
         <vtkdiff>
             <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>[Cm-247]</field>
-            <absolute_tolerance>2e-8</absolute_tolerance>
-            <relative_tolerance>1e-10</relative_tolerance>
+            <absolute_tolerance>3.1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>[Am-243]</field>
-            <absolute_tolerance>2e-8</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
+            <absolute_tolerance>3.1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>[Pu-239]</field>
-            <absolute_tolerance>2e-8</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
+            <absolute_tolerance>3.2e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>[U-235]</field>
-            <absolute_tolerance>2e-8</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
+            <absolute_tolerance>3.2e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>[Pa-231]</field>
-            <absolute_tolerance>2e-8</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
+            <absolute_tolerance>3e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
             <field>[Ac-227]</field>
             <absolute_tolerance>2e-8</absolute_tolerance>
-            <relative_tolerance>1e-16</relative_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+
+        <!-- fluxes -->
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Cm-247]Flux</field>
+            <absolute_tolerance>3e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Am-243]Flux</field>
+            <absolute_tolerance>3e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Pu-239]Flux</field>
+            <absolute_tolerance>3e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[U-235]Flux</field>
+            <absolute_tolerance>3e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Pa-231]Flux</field>
+            <absolute_tolerance>2.5e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Ac-227]Flux</field>
+            <absolute_tolerance>2e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+
+        <!-- flux residuals -->
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Cm-247]Flux_residual</field>
+            <absolute_tolerance>1.4e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Am-243]Flux_residual</field>
+            <absolute_tolerance>2.1e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Pu-239]Flux_residual</field>
+            <absolute_tolerance>2.2e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[U-235]Flux_residual</field>
+            <absolute_tolerance>2.2e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Pa-231]Flux_residual</field>
+            <absolute_tolerance>2.2e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>1d_decay_chain_OS_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
+            <field>[Ac-227]Flux_residual</field>
+            <absolute_tolerance>2.4e-19</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

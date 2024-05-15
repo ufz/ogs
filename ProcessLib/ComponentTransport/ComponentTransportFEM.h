@@ -184,10 +184,9 @@ public:
         std::vector<double>& cache) const = 0;
 
     virtual std::vector<double> const& getIntPtMolarFlux(
-        const double t,
-        std::vector<GlobalVector*> const& x,
+        const double t, std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const = 0;
+        std::vector<double>& cache, int const component_id) const = 0;
 
 private:
     virtual void initializeChemicalSystemConcrete(
@@ -1898,10 +1897,9 @@ public:
     }
 
     std::vector<double> const& getIntPtMolarFlux(
-        const double t,
-        std::vector<GlobalVector*> const& x,
+        const double t, std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-        std::vector<double>& cache) const override
+        std::vector<double>& cache, int const component_id) const override
     {
         std::vector<double> local_x_vec;
 
@@ -1920,7 +1918,7 @@ public:
 
         auto const p = local_x.template segment<pressure_size>(pressure_index);
         auto const c = local_x.template segment<concentration_size>(
-            first_concentration_index);
+            first_concentration_index + component_id * concentration_size);
 
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -1943,7 +1941,6 @@ public:
             *_process_data.media_map.getMedium(_element.getID());
         auto const& phase = medium.phase("AqueousLiquid");
 
-        int const component_id = 0;
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
@@ -1996,7 +1993,7 @@ public:
                 _process_data.stabilizer, _element.getID(), Dp, q, phi, alpha_T,
                 alpha_L);
 
-            cache_mat.col(ip).noalias() = q * c_ip - phi * D * dNdx * c;
+            cache_mat.col(ip).noalias() = q * c_ip - D * dNdx * c;
         }
 
         return cache;
