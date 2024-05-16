@@ -809,49 +809,11 @@ TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
     // 'std::unique_ptr<LocAsm,std::default_delete<LocAsm>>
     // std::make_unique<LocAsm,const size_t&,0>(const size_t &)' being compiled
     loc_asms.emplace_back(new LocAsm{num_int_pts});
-    auto& loc_asm = *loc_asms.front();
 
     std::unique_ptr<MeshLib::Mesh> mesh{
         MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 1)};
 
     auto const ref = ReferenceData<dim>::create(*loc_asms.front(), true);
-
-    // compute cell average reference data /////////////////////////////////////
-
-    std::map<std::string, std::vector<double>> map_name_to_cell_average;
-
-    ProcessLib::Reflection::forEachReflectedFlattenedIPDataAccessor<dim,
-                                                                    LocAsm>(
-        LocAsm::reflect(),
-        [&loc_asm, &map_name_to_cell_average](std::string const& name,
-                                              unsigned const num_comp,
-                                              auto&& double_vec_from_loc_asm)
-        {
-            auto [it, emplaced] =
-                map_name_to_cell_average.emplace(name, num_comp);
-
-            EXPECT_TRUE(emplaced)
-                << '\'' << name
-                << "' seems to exist twice in the reflection data.";
-
-            auto const& ip_data = double_vec_from_loc_asm(loc_asm);
-            ASSERT_EQ(num_int_pts * num_comp, ip_data.size());
-
-            // TODO this implementation in the unit test might be too close to
-            // the production code. In fact, it's almost the same code.
-
-            // each integration point corresponds to a column in the mapped
-            // matrix, vector components/matrix entries are stored contiguously
-            // in memory.
-            Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic,
-                                           Eigen::Dynamic, Eigen::ColMajor>>
-                ip_data_mat{ip_data.data(), num_comp, num_int_pts};
-
-            Eigen::Map<Eigen::VectorXd> cell_avg_vec{it->second.data(),
-                                                     num_comp};
-
-            cell_avg_vec = ip_data_mat.rowwise().mean();
-        });
 
     // function under test /////////////////////////////////////////////////////
 
@@ -860,17 +822,24 @@ TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
 
     // checks //////////////////////////////////////////////////////////////////
 
-    auto check = [&map_name_to_cell_average, &mesh](
-                     std::string const& name, unsigned const num_comp_expected,
-                     std::vector<double> const& /*ip_data_expected*/)
+    auto check = [&mesh](std::string const& name,
+                         unsigned const num_comp_expected,
+                         std::vector<double> const& ip_data)
     {
-        auto const it = map_name_to_cell_average.find(name);
+        ASSERT_EQ(num_int_pts * num_comp_expected, ip_data.size());
 
-        ASSERT_NE(map_name_to_cell_average.end(), it)
-            << "No cell average reference data found for data with name '"
-            << name << "'";
+        // TODO the implementation here in the unit test computing cell average
+        // reference data might be too similar to the production code. In fact,
+        // it's almost the same code.
 
-        auto const& cell_avg_expected = it->second;
+        // each integration point corresponds to a column in the mapped
+        // matrix, vector components/matrix entries are stored contiguously
+        // in memory.
+        Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
+                                       Eigen::ColMajor>>
+            ip_data_mat{ip_data.data(), num_comp_expected, num_int_pts};
+
+        Eigen::VectorXd const cell_avg_expected = ip_data_mat.rowwise().mean();
 
         auto const& props = mesh->getProperties();
 
