@@ -740,7 +740,6 @@ TYPED_TEST(ProcessLib_ReflectIPData, IPWriterTest)
     // 'std::unique_ptr<LocAsm,std::default_delete<LocAsm>>
     // std::make_unique<LocAsm,const size_t&,0>(const size_t &)' being compiled
     loc_asms.emplace_back(new LocAsm{num_int_pts});
-    auto& loc_asm = *loc_asms.front();
 
     std::unique_ptr<MeshLib::Mesh> mesh{
         MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 1)};
@@ -761,9 +760,9 @@ TYPED_TEST(ProcessLib_ReflectIPData, IPWriterTest)
 
     // checks //////////////////////////////////////////////////////////////////
 
-    auto check = [&loc_asm, &mesh](std::string const& name,
-                                   unsigned const num_comp,
-                                   std::vector<double> const& values_expected)
+    auto check = [&mesh](std::string const& name,
+                         unsigned const num_comp,
+                         std::vector<double> const& values_expected)
     {
         auto const& props = mesh->getProperties();
 
