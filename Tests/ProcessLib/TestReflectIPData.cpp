@@ -14,6 +14,8 @@
 #include <numeric>
 #include <random>
 
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "ProcessLib/Output/CellAverageData.h"
 #include "ProcessLib/Reflection/ReflectionIPData.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
 
@@ -130,6 +132,8 @@ struct LocAsmIF
             makeReflectionData(&LocAsmIF::ip_data_level1),
             makeReflectionData(&LocAsmIF::ip_data_level1b)};
     }
+
+    static auto getReflectionDataForOutput() { return reflect(); }
 };
 
 template <int dim>
@@ -699,4 +703,122 @@ TYPED_TEST(ProcessLib_ReflectIPData, RawDataTypes)
         !PRD::is_raw_data<Eigen::Matrix<double, kv_size, dim>>::value);
     static_assert(
         !PRD::is_raw_data<Eigen::Matrix<double, kv_size, kv_size>>::value);
+}
+
+TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
+{
+    constexpr int dim = TypeParam::value;
+    auto constexpr kv_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(dim);
+
+    using LocAsm = LocAsmIF<dim>;
+
+    std::size_t const num_int_pts = 8;
+    std::vector<std::unique_ptr<LocAsm>> loc_asms;
+    loc_asms.push_back(std::make_unique<LocAsm>(num_int_pts));
+    auto& loc_asm = *loc_asms.front();
+
+    std::unique_ptr<MeshLib::Mesh> mesh{
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 1)};
+
+    auto const ref = ReferenceData<dim>::create(*loc_asms.front(), true);
+
+    // compute cell average reference data /////////////////////////////////////
+
+    std::map<std::string, std::vector<double>> map_name_to_cell_average;
+
+    ProcessLib::Reflection::forEachReflectedFlattenedIPDataAccessor<dim,
+                                                                    LocAsm>(
+        LocAsm::reflect(),
+        [&loc_asm, &map_name_to_cell_average](std::string const& name,
+                                              unsigned const num_comp,
+                                              auto&& double_vec_from_loc_asm)
+        {
+            auto [it, emplaced] =
+                map_name_to_cell_average.emplace(name, num_comp);
+
+            EXPECT_TRUE(emplaced)
+                << '\'' << name
+                << "' seems to exist twice in the reflection data.";
+
+            auto const& ip_data = double_vec_from_loc_asm(loc_asm);
+            ASSERT_EQ(num_int_pts * num_comp, ip_data.size());
+
+            // TODO this implementation in the unit test might be too close to
+            // the production code. In fact, it's almost the same code.
+
+            // each integration point corresponds to a column in the mapped
+            // matrix, vector components/matrix entries are stored contiguously
+            // in memory.
+            Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic,
+                                           Eigen::Dynamic, Eigen::ColMajor>>
+                ip_data_mat{ip_data.data(), num_comp, num_int_pts};
+
+            Eigen::Map<Eigen::VectorXd> cell_avg_vec{it->second.data(),
+                                                     num_comp};
+
+            cell_avg_vec = ip_data_mat.rowwise().mean();
+        });
+
+    // function under test /////////////////////////////////////////////////////
+
+    ProcessLib::CellAverageData cell_average_data{*mesh};
+    cell_average_data.computeSecondaryVariable(dim, loc_asms);
+
+    // checks //////////////////////////////////////////////////////////////////
+
+    auto check = [&map_name_to_cell_average, &mesh](
+                     std::string const& name, unsigned const num_comp_expected)
+    {
+        auto const it = map_name_to_cell_average.find(name);
+
+        ASSERT_NE(map_name_to_cell_average.end(), it)
+            << "No cell average reference data found for data with name '"
+            << name << "'";
+
+        auto const& cell_avg_expected = it->second;
+
+        auto const& props = mesh->getProperties();
+
+        ASSERT_TRUE(props.existsPropertyVector<double>(name + "_avg"))
+            << "Property vector '" << name + "_avg"
+            << "' does not exist in the mesh.";
+
+        auto const& cell_avg_actual =
+            *props.getPropertyVector<double>(name + "_avg");
+
+        ASSERT_EQ(MeshLib::MeshItemType::Cell,
+                  cell_avg_actual.getMeshItemType());
+        ASSERT_EQ(mesh->getNumberOfElements(),
+                  cell_avg_actual.getNumberOfTuples());
+        ASSERT_EQ(num_comp_expected,
+                  cell_avg_actual.getNumberOfGlobalComponents());
+
+        EXPECT_THAT(cell_avg_actual,
+                    testing::Pointwise(testing::DoubleEq(), cell_avg_expected))
+            << "Values differ for cell average data with name '" << name << "'";
+    };
+
+    // level 0
+    check("scalar", 1);
+    check("vector", dim);
+    check("kelvin", kv_size);
+
+    // level 1
+    check("scalar1", 1);
+    check("vector1", dim);
+    check("kelvin1", kv_size);
+
+    // level 3
+    check("scalar3", 1);
+    check("vector3", dim);
+    check("kelvin3", kv_size);
+    check("matrix3", dim * 4);
+    check("matrix3_1", dim * 4);
+    check("matrix3_2", 4);
+
+    // b levels
+    check("scalar1b", 1);
+    check("scalar2b", 1);
+    check("scalar3b", 1);
 }
