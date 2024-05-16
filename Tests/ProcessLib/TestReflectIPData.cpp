@@ -16,6 +16,7 @@
 
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "ProcessLib/Output/CellAverageData.h"
+#include "ProcessLib/Reflection/ReflectionForIPWriters.h"
 #include "ProcessLib/Reflection/ReflectionIPData.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
 
@@ -703,6 +704,78 @@ TYPED_TEST(ProcessLib_ReflectIPData, RawDataTypes)
         !PRD::is_raw_data<Eigen::Matrix<double, kv_size, dim>>::value);
     static_assert(
         !PRD::is_raw_data<Eigen::Matrix<double, kv_size, kv_size>>::value);
+}
+
+TYPED_TEST(ProcessLib_ReflectIPData, IPWriterTest)
+{
+    constexpr int dim = TypeParam::value;
+
+    using LocAsm = LocAsmIF<dim>;
+
+    std::size_t const num_int_pts = 8;
+    std::vector<std::unique_ptr<LocAsm>> loc_asms;
+    loc_asms.push_back(std::make_unique<LocAsm>(num_int_pts));
+    auto& loc_asm = *loc_asms.front();
+
+    std::unique_ptr<MeshLib::Mesh> mesh{
+        MeshToolsLib::MeshGenerator::generateLineMesh(1.0, 1)};
+
+    auto const ref = ReferenceData<dim>::create(*loc_asms.front(), true);
+
+    // function under test /////////////////////////////////////////////////////
+
+    std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>>
+        integration_point_writers;
+    constexpr int integration_order = 0xc0ffee;  // dummy value
+    ProcessLib::Reflection::addReflectedIntegrationPointWriters<dim>(
+        LocAsm::getReflectionDataForOutput(), integration_point_writers,
+        integration_order, loc_asms);
+
+    // this finally invokes the IP writers
+    MeshLib::addIntegrationPointDataToMesh(*mesh, integration_point_writers);
+
+    // checks //////////////////////////////////////////////////////////////////
+
+    auto check = [&loc_asm, &mesh](std::string const& name,
+                                   std::size_t const num_int_pts,
+                                   std::vector<double> const& values_expected)
+    {
+        auto const& props = mesh->getProperties();
+
+        ASSERT_TRUE(props.existsPropertyVector<double>(name + "_ip"))
+            << "Property vector '" << name + "_ip"
+            << "' does not exist in the mesh.";
+
+        ASSERT_EQ(0, values_expected.size() % num_int_pts);
+        auto const num_comp = values_expected.size() / num_int_pts;
+
+        auto const& ip_data_actual =
+            *props.getPropertyVector<double>(name + "_ip");
+
+        ASSERT_EQ(MeshLib::MeshItemType::IntegrationPoint,
+                  ip_data_actual.getMeshItemType());
+        ASSERT_EQ(mesh->getNumberOfElements() * num_int_pts,
+                  ip_data_actual.getNumberOfTuples());
+        ASSERT_EQ(num_comp, ip_data_actual.getNumberOfGlobalComponents());
+
+        EXPECT_THAT(ip_data_actual,
+                    testing::Pointwise(testing::DoubleEq(), values_expected))
+            << "Values differ for ip data with name '" << name << "'";
+    };
+
+    check("scalar1", num_int_pts, ref.scalar1);
+    check("vector1", num_int_pts, ref.vector1);
+    check("kelvin1", num_int_pts, ref.kelvin1);
+
+    check("scalar3", num_int_pts, ref.scalar3);
+    check("vector3", num_int_pts, ref.vector3);
+    check("kelvin3", num_int_pts, ref.kelvin3);
+    check("matrix3", num_int_pts, ref.matrix3);
+    check("matrix3_1", num_int_pts, ref.matrix3_1);
+    check("matrix3_2", num_int_pts, ref.matrix3_2);
+
+    check("scalar2b", num_int_pts, ref.scalar2b);
+    check("scalar3b", num_int_pts, ref.scalar3b);
 }
 
 TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
