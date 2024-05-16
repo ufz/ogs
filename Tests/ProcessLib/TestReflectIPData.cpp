@@ -497,6 +497,45 @@ public:
     }
 };
 
+template <int dim>
+void checkAll(ReferenceData<dim> const& ref, auto&& checker,
+              bool const check_level_0_data = true)
+{
+    auto constexpr kv_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(dim);
+
+    // The storage of "level 0 data" (i.e., non-reflected data directly in the
+    // local assembler, e.g. a std::vector<double> of integration point data of
+    // a scalar value) is not compatible with the implemented IP data input
+    // logic. Therefore we don't test level 0 data in that case.
+    // This incompatibility is not a problem in practice, as such data is not
+    // used ATM in OGS's local assemblers.
+    if (check_level_0_data)
+    {
+        checker("scalar", 1, ref.scalar);
+        checker("vector", dim, ref.vector);
+        checker("kelvin", kv_size, ref.kelvin);
+    }
+
+    // level 1
+    checker("scalar1", 1, ref.scalar1);
+    checker("vector1", dim, ref.vector1);
+    checker("kelvin1", kv_size, ref.kelvin1);
+
+    // level 3
+    checker("scalar3", 1, ref.scalar3);
+    checker("vector3", dim, ref.vector3);
+    checker("kelvin3", kv_size, ref.kelvin3);
+    checker("matrix3", dim * 4, ref.matrix3);
+    checker("matrix3_1", dim * 4, ref.matrix3_1);
+    checker("matrix3_2", 4, ref.matrix3_2);
+
+    // b levels
+    checker("scalar1b", 1, ref.scalar1b);
+    checker("scalar2b", 1, ref.scalar2b);
+    checker("scalar3b", 1, ref.scalar3b);
+}
+
 template <class Dim>
 struct ProcessLib_ReflectIPData : ::testing::Test
 {
@@ -512,8 +551,6 @@ TYPED_TEST_SUITE(ProcessLib_ReflectIPData, ProcessLib_ReflectIPData_TestCases);
 TYPED_TEST(ProcessLib_ReflectIPData, ReadTest)
 {
     constexpr int dim = TypeParam::value;
-    auto constexpr kv_size =
-        MathLib::KelvinVector::kelvin_vector_dimensions(dim);
 
     using LocAsm = LocAsmIF<dim>;
 
@@ -561,28 +598,7 @@ TYPED_TEST(ProcessLib_ReflectIPData, ReadTest)
             << "Values differ for ip data with name '" << name << "'";
     };
 
-    // level 0
-    check("scalar", 1, ref.scalar);
-    check("vector", dim, ref.vector);
-    check("kelvin", kv_size, ref.kelvin);
-
-    // level 1
-    check("scalar1", 1, ref.scalar1);
-    check("vector1", dim, ref.vector1);
-    check("kelvin1", kv_size, ref.kelvin1);
-
-    // level 3
-    check("scalar3", 1, ref.scalar3);
-    check("vector3", dim, ref.vector3);
-    check("kelvin3", kv_size, ref.kelvin3);
-    check("matrix3", dim * 4, ref.matrix3);
-    check("matrix3_1", dim * 4, ref.matrix3_1);
-    check("matrix3_2", 4, ref.matrix3_2);
-
-    // b levels
-    check("scalar1b", 1, ref.scalar1b);
-    check("scalar2b", 1, ref.scalar2b);
-    check("scalar3b", 1, ref.scalar3b);
+    checkAll(ref, check);
 }
 
 TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
@@ -617,7 +633,7 @@ TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
     // checks //////////////////////////////////////////////////////////////////
 
     auto check = [&map_name_to_num_comp_and_function, &loc_asm](
-                     std::string const& name, std::size_t const size_expected,
+                     std::string const& name, unsigned const num_comp,
                      std::vector<double> const& values_plain)
     {
         auto const it = map_name_to_num_comp_and_function.find(name);
@@ -625,23 +641,34 @@ TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
         ASSERT_NE(map_name_to_num_comp_and_function.end(), it)
             << "No accessor found for ip data with name '" << name << "'";
 
-        auto const& [num_comp, fct] = it->second;
+        auto const& [num_comp_2, fct] = it->second;
+
+        // consistency checks
+        ASSERT_EQ(num_comp, num_comp_2);
+        ASSERT_EQ(0, values_plain.size() % num_comp);
+        auto const num_int_pts_expected = values_plain.size() / num_comp;
 
         EXPECT_THAT(fct(loc_asm), testing::Each(testing::IsNan()))
-            << "All values must be initialize to NaN in this unit test. Check "
+            << "All values must be initialized to NaN in this unit test. Check "
                "failed for ip data with name '"
             << name << "'";
 
         // function under test /////////////////////////////////////////////////
 
-        auto const size = ProcessLib::Reflection::reflectSetIPData<dim>(
-            name, values_plain.data(), loc_asm.ip_data_level1);
+        auto const num_int_pts_actual =
+            ProcessLib::Reflection::reflectSetIPData<dim>(
+                name, values_plain.data(), loc_asm.ip_data_level1);
+        auto const num_int_pts_actual_1 =
+            ProcessLib::Reflection::reflectSetIPData<dim>(
+                name, values_plain.data(), loc_asm.ip_data_level1b);
 
         // end function under test /////////////////////////////////////////////
 
-        EXPECT_EQ(size_expected, size)
-            << "Unexpected size obtained for ip data with name '" << name
-            << "'";
+        ASSERT_EQ(num_int_pts_expected, num_int_pts_actual)
+            << "Unexpected number of integration points obtained for ip data "
+               "with name '"
+            << name << "'";
+        ASSERT_EQ(num_int_pts_expected, num_int_pts_actual_1);
 
         // check set values via round-trip with getter tested in previous unit
         // test
@@ -651,19 +678,7 @@ TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
             << "'";
     };
 
-    check("scalar1", num_int_pts, ref.scalar1);
-    check("vector1", num_int_pts, ref.vector1);
-    check("kelvin1", num_int_pts, ref.kelvin1);
-
-    check("scalar3", num_int_pts, ref.scalar3);
-    check("vector3", num_int_pts, ref.vector3);
-    check("kelvin3", num_int_pts, ref.kelvin3);
-    check("matrix3", num_int_pts, ref.matrix3);
-    check("matrix3_1", num_int_pts, ref.matrix3_1);
-    check("matrix3_2", num_int_pts, ref.matrix3_2);
-
-    check("scalar2b", num_int_pts, ref.scalar2b);
-    check("scalar3b", num_int_pts, ref.scalar3b);
+    checkAll(ref, check, false);
 }
 
 TYPED_TEST(ProcessLib_ReflectIPData, RawDataTypes)
@@ -737,7 +752,7 @@ TYPED_TEST(ProcessLib_ReflectIPData, IPWriterTest)
     // checks //////////////////////////////////////////////////////////////////
 
     auto check = [&loc_asm, &mesh](std::string const& name,
-                                   std::size_t const num_int_pts,
+                                   unsigned const num_comp,
                                    std::vector<double> const& values_expected)
     {
         auto const& props = mesh->getProperties();
@@ -746,8 +761,8 @@ TYPED_TEST(ProcessLib_ReflectIPData, IPWriterTest)
             << "Property vector '" << name + "_ip"
             << "' does not exist in the mesh.";
 
-        ASSERT_EQ(0, values_expected.size() % num_int_pts);
-        auto const num_comp = values_expected.size() / num_int_pts;
+        ASSERT_EQ(0, values_expected.size() % num_comp);
+        auto const num_int_pts = values_expected.size() / num_comp;
 
         auto const& ip_data_actual =
             *props.getPropertyVector<double>(name + "_ip");
@@ -763,26 +778,12 @@ TYPED_TEST(ProcessLib_ReflectIPData, IPWriterTest)
             << "Values differ for ip data with name '" << name << "'";
     };
 
-    check("scalar1", num_int_pts, ref.scalar1);
-    check("vector1", num_int_pts, ref.vector1);
-    check("kelvin1", num_int_pts, ref.kelvin1);
-
-    check("scalar3", num_int_pts, ref.scalar3);
-    check("vector3", num_int_pts, ref.vector3);
-    check("kelvin3", num_int_pts, ref.kelvin3);
-    check("matrix3", num_int_pts, ref.matrix3);
-    check("matrix3_1", num_int_pts, ref.matrix3_1);
-    check("matrix3_2", num_int_pts, ref.matrix3_2);
-
-    check("scalar2b", num_int_pts, ref.scalar2b);
-    check("scalar3b", num_int_pts, ref.scalar3b);
+    checkAll(ref, check);
 }
 
 TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
 {
     constexpr int dim = TypeParam::value;
-    auto constexpr kv_size =
-        MathLib::KelvinVector::kelvin_vector_dimensions(dim);
 
     using LocAsm = LocAsmIF<dim>;
 
@@ -841,7 +842,8 @@ TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
     // checks //////////////////////////////////////////////////////////////////
 
     auto check = [&map_name_to_cell_average, &mesh](
-                     std::string const& name, unsigned const num_comp_expected)
+                     std::string const& name, unsigned const num_comp_expected,
+                     std::vector<double> const& /*ip_data_expected*/)
     {
         auto const it = map_name_to_cell_average.find(name);
 
@@ -872,26 +874,5 @@ TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
             << "Values differ for cell average data with name '" << name << "'";
     };
 
-    // level 0
-    check("scalar", 1);
-    check("vector", dim);
-    check("kelvin", kv_size);
-
-    // level 1
-    check("scalar1", 1);
-    check("vector1", dim);
-    check("kelvin1", kv_size);
-
-    // level 3
-    check("scalar3", 1);
-    check("vector3", dim);
-    check("kelvin3", kv_size);
-    check("matrix3", dim * 4);
-    check("matrix3_1", dim * 4);
-    check("matrix3_2", 4);
-
-    // b levels
-    check("scalar1b", 1);
-    check("scalar2b", 1);
-    check("scalar3b", 1);
+    checkAll(ref, check);
 }
