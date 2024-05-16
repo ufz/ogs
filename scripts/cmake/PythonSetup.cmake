@@ -1,11 +1,5 @@
 # cmake-lint: disable=C0103
 
-set(_python_version_max "...<3.12")
-if(WIN32 AND NOT OGS_BUILD_WHEEL)
-    # 3.11 crashes at initialization on Windows.
-    set(_python_version_max "...<3.11")
-endif()
-
 if(OGS_USE_PIP)
     set(LOCAL_VIRTUALENV_DIR ${PROJECT_BINARY_DIR}/.venv CACHE INTERNAL "")
     set(Python_ROOT_DIR ${LOCAL_VIRTUALENV_DIR})
@@ -14,7 +8,7 @@ if(OGS_USE_PIP)
         execute_process(
             COMMAND
                 ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
-                -Dpython_version=${ogs.minimum_version.python}${_python_version_max}
+                -Dpython_version=${ogs.minimum_version.python}
                 -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/PythonCreateVirtualEnv.cmake
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR} COMMAND_ECHO STDOUT
@@ -71,7 +65,7 @@ if(NOT OGS_BUILD_WHEEL)
 endif()
 
 find_package(
-    Python ${ogs.minimum_version.python}${_python_version_max}
+    Python ${ogs.minimum_version.python}
     COMPONENTS ${_python_componets} REQUIRED
 )
 
@@ -102,6 +96,7 @@ if(OGS_USE_PIP)
         list(APPEND OGS_PYTHON_PACKAGES
              "snakemake==${ogs.minimum_version.snakemake}"
              "pulp==2.7.0" # https://github.com/snakemake/snakemake/issues/2607
+             "setuptools"  # https://github.com/glenfant/stopit/issues/32
         )
         set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH ""
                                                                   FORCE
