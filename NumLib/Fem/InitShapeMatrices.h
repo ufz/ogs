@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <vector>
 
 #include "FiniteElement/TemplateIsoparametric.h"
@@ -65,6 +66,25 @@ initShapeMatrices(MeshLib::Element const& e, bool const is_axially_symmetric,
     return computeShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim,
                                 SelectedShapeMatrixType>(
         e, is_axially_symmetric, points);
+}
+
+// Returned vector only contains one element.
+template <typename ShapeFunction, typename ShapeMatricesType, int GlobalDim,
+          ShapeMatrixType SelectedShapeMatrixType = ShapeMatrixType::ALL>
+typename ShapeMatricesType::ShapeMatrices initShapeMatricesAtElementCenter(
+    MeshLib::Element const& e, bool const is_axially_symmetric)
+{
+    std::array<double, ShapeFunction::DIM> const center =
+        ShapeFunction::getReferenceElementCenter();
+
+    MathLib::WeightedPoint center_pt(center, 1.0);
+    std::vector<MathLib::WeightedPoint> points{std::move(center_pt)};
+
+    auto const shape_matrices =
+        computeShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim,
+                             SelectedShapeMatrixType>(e, is_axially_symmetric,
+                                                      points);
+    return shape_matrices[0];
 }
 
 template <typename ShapeFunction, typename ShapeMatricesType>
