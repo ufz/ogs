@@ -1910,23 +1910,10 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                          temperature,
                          *this->process_data_.temperature_interpolated);
 
-    unsigned const n_integration_points =
-        this->integration_method_.getNumberOfPoints();
-
-    double saturation_avg = 0;
-
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
         this->solid_material_, *this->process_data_.phase_transition_model_};
 
     updateConstitutiveVariables(local_x, local_x_prev, t, dt, models);
-
-    for (unsigned ip = 0; ip < n_integration_points; ip++)
-    {
-        saturation_avg += this->current_states_[ip].S_L_data.S_L;
-    }
-    saturation_avg /= n_integration_points;
-    (*this->process_data_.element_saturation)[this->element_.getID()] =
-        saturation_avg;
 }
 
 }  // namespace TH2M
