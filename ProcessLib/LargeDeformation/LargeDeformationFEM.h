@@ -179,12 +179,13 @@ public:
 
     typename ConstitutiveRelations::ConstitutiveData<DisplacementDim>
     updateConstitutiveRelations(
+        BMatrixType const&
+            B /*B_{linear}+B_{nonlinear}/2 for Green-Lagrange strain*/,
+        GradientMatrixType const& G, GradientVectorType const& grad_u,
         Eigen::Ref<Eigen::VectorXd const> const& u,
         Eigen::Ref<Eigen::VectorXd const> const& u_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
-        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
-            ip_data,
         typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>&
             CS,
         MaterialPropertyLib::Medium const& medium,
@@ -196,35 +197,6 @@ public:
         typename ConstitutiveRelations::OutputData<DisplacementDim>&
             output_data) const
     {
-        auto const& N = ip_data.N;
-        auto const& dNdx = ip_data.dNdx;
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                this->element_, N);
-
-        // For the 2D case the 33-component is needed (and the four entries
-        // of the non-symmetric matrix); In 3d there are nine entries.
-        GradientMatrixType G(
-            DisplacementDim * DisplacementDim + (DisplacementDim == 2 ? 1 : 0),
-            ShapeFunction::NPOINTS * DisplacementDim);
-        Deformation::computeGMatrix<DisplacementDim, ShapeFunction::NPOINTS>(
-            dNdx, G, this->is_axially_symmetric_, N, x_coord);
-
-        GradientVectorType const grad_u = G * u;
-
-        auto const B_0 =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunction::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, this->is_axially_symmetric_);
-
-        auto const B_N = NonLinearBMatrix::computeBMatrix<
-            DisplacementDim, ShapeFunction::NPOINTS,
-            typename BMatricesType::BMatrixType>(dNdx, N, grad_u, x_coord,
-                                                 this->is_axially_symmetric_);
-
-        auto const B = B_0 + 0.5 * B_N;  // For Green-Lagrange strain.
-
         double const T_ref =
             this->process_data_.reference_temperature
                 ? (*this->process_data_.reference_temperature)(t, x_position)[0]
@@ -236,6 +208,7 @@ public:
             tmp;
         typename ConstitutiveRelations::ConstitutiveData<DisplacementDim> CD;
 
+        // Note: Here B=B_{linear}+B_{nonlinear}/2  For Green-Lagrange strain.
         output_data.eps_data.eps = B * u;
         output_data.deformation_gradient_data.deformation_gradient =
             grad_u + MathLib::VectorizedTensor::identity<DisplacementDim>();
@@ -329,13 +302,13 @@ public:
                 typename BMatricesType::BMatrixType>(
                 dNdx, N, grad_u, x_coord, this->is_axially_symmetric_);
 
-            auto const B = B_0 + B_N;
-
             auto const CD = updateConstitutiveRelations(
-                u, u_prev, x_position, t, dt, _ip_data[ip],
+                B_0 + 0.5 * B_N, G, grad_u, u, u_prev, x_position, t, dt,
                 constitutive_setting, medium, this->current_states_[ip],
                 this->prev_states_[ip], this->material_states_[ip],
                 this->output_data_[ip]);
+
+            auto const B = B_0 + B_N;
 
             auto const& sigma = this->current_states_[ip].stress_data.sigma;
             auto const& b = *CD.volumetric_body_force;
@@ -374,9 +347,38 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
+            auto const& N = _ip_data[ip].N;
+            auto const& dNdx = _ip_data[ip].dNdx;
+            auto const x_coord =
+                NumLib::interpolateXCoordinate<ShapeFunction,
+                                               ShapeMatricesType>(
+                    this->element_, N);
+
+            // For the 2D case the 33-component is needed (and the four entries
+            // of the non-symmetric matrix); In 3d there are nine entries.
+            GradientMatrixType G(DisplacementDim * DisplacementDim +
+                                     (DisplacementDim == 2 ? 1 : 0),
+                                 ShapeFunction::NPOINTS * DisplacementDim);
+            Deformation::computeGMatrix<DisplacementDim,
+                                        ShapeFunction::NPOINTS>(
+                dNdx, G, this->is_axially_symmetric_, N, x_coord);
+
+            GradientVectorType const grad_u = G * local_x;
+
+            // B for Green-Lagrange strain.
+            auto B = LinearBMatrix::computeBMatrix<
+                DisplacementDim, ShapeFunction::NPOINTS,
+                typename BMatricesType::BMatrixType>(
+                dNdx, N, x_coord, this->is_axially_symmetric_);
+
+            B.noalias() += 0.5 * NonLinearBMatrix::computeBMatrix<
+                                     DisplacementDim, ShapeFunction::NPOINTS,
+                                     typename BMatricesType::BMatrixType>(
+                                     dNdx, N, grad_u, x_coord,
+                                     this->is_axially_symmetric_);
 
             updateConstitutiveRelations(
-                local_x, local_x_prev, x_position, t, dt, _ip_data[ip],
+                B, G, grad_u, local_x, local_x_prev, x_position, t, dt,
                 constitutive_setting, medium, this->current_states_[ip],
                 this->prev_states_[ip], this->material_states_[ip],
                 this->output_data_[ip]);
