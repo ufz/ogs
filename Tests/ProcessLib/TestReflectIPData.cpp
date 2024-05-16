@@ -251,6 +251,7 @@ std::vector<double> initKelvin(LocAsmIF<dim>& loc_asm,
         for (std::size_t ip = 0; ip < num_int_pts; ++ip)
         {
             ip_data_accessor(loc_asm, ip) =
+                // the local assembler stores Kelvin vector data...
                 MathLib::KelvinVector::symmetricTensorToKelvinVector(
                     Eigen::Vector<double, kv_size>::LinSpaced(
                         kv_size, ip * kv_size + start_value,
@@ -268,6 +269,7 @@ std::vector<double> initKelvin(LocAsmIF<dim>& loc_asm,
     }
 
     // prepare reference data
+    // ... the reference data used in the tests is not Kelvin-mapped!
     std::vector<double> vector_expected(num_int_pts * kv_size);
     iota(begin(vector_expected), end(vector_expected), start_value);
     return vector_expected;
@@ -329,6 +331,10 @@ std::vector<double> initMatrix(LocAsmIF<dim>& loc_asm,
 template <int dim>
 struct ReferenceData
 {
+private:
+    ReferenceData() = default;
+
+public:
     std::vector<double> scalar;
     std::vector<double> vector;
     std::vector<double> kelvin;
@@ -348,6 +354,8 @@ struct ReferenceData
     std::vector<double> scalar2b;
     std::vector<double> scalar3b;
 
+    // Computes reference data and initializes the internal (integration point)
+    // data of the passed \c loc_asm.
     static ReferenceData<dim> create(LocAsmIF<dim>& loc_asm,
                                      bool const for_read_test)
     {
@@ -583,7 +591,8 @@ TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
 
     auto const ref = ReferenceData<dim>::create(loc_asm, false);
 
-    // data getters - used for checks //////////////////////////////////////////
+    // set up data getters - used for checks ///////////////////////////////////
+    // that critically relies on the read test above being successful!
 
     std::map<std::string, NumCompAndFunction<dim>>
         map_name_to_num_comp_and_function;
@@ -618,8 +627,12 @@ TYPED_TEST(ProcessLib_ReflectIPData, WriteTest)
                "failed for ip data with name '"
             << name << "'";
 
+        // function under test /////////////////////////////////////////////////
+
         auto const size = ProcessLib::Reflection::reflectSetIPData<dim>(
             name, values_plain.data(), loc_asm.ip_data_level1);
+
+        // end function under test /////////////////////////////////////////////
 
         EXPECT_EQ(size_expected, size)
             << "Unexpected size obtained for ip data with name '" << name
