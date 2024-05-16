@@ -729,7 +729,17 @@ TYPED_TEST(ProcessLib_ReflectIPData, IPWriterTest)
 
     std::size_t const num_int_pts = 8;
     std::vector<std::unique_ptr<LocAsm>> loc_asms;
-    loc_asms.push_back(std::make_unique<LocAsm>(num_int_pts));
+    // emplace...new is a workaround for an MSVC compiler warning:
+    // C:\Program Files (x86)\Microsoft Visual
+    // Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\memory(3382):
+    // warning C4244: 'argument': conversion from 'const uintptr_t' to 'const
+    // unsigned int', possible loss of data
+    // C:/Users/gitlab/gitlab/_b/bg4d5s_d/0/ogs/ogs/Tests/ProcessLib/
+    // TestReflectIPData.cpp(792):
+    // note: see reference to function template instantiation
+    // 'std::unique_ptr<LocAsm,std::default_delete<LocAsm>>
+    // std::make_unique<LocAsm,const size_t&,0>(const size_t &)' being compiled
+    loc_asms.emplace_back(new LocAsm{num_int_pts});
     auto& loc_asm = *loc_asms.front();
 
     std::unique_ptr<MeshLib::Mesh> mesh{
@@ -789,7 +799,17 @@ TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
 
     std::size_t const num_int_pts = 8;
     std::vector<std::unique_ptr<LocAsm>> loc_asms;
-    loc_asms.push_back(std::make_unique<LocAsm>(num_int_pts));
+    // emplace...new is a workaround for an MSVC compiler warning:
+    // C:\Program Files (x86)\Microsoft Visual
+    // Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\memory(3382):
+    // warning C4244: 'argument': conversion from 'const uintptr_t' to 'const
+    // unsigned int', possible loss of data
+    // C:/Users/gitlab/gitlab/_b/bg4d5s_d/0/ogs/ogs/Tests/ProcessLib/
+    // TestReflectIPData.cpp(792):
+    // note: see reference to function template instantiation
+    // 'std::unique_ptr<LocAsm,std::default_delete<LocAsm>>
+    // std::make_unique<LocAsm,const size_t&,0>(const size_t &)' being compiled
+    loc_asms.emplace_back(new LocAsm{num_int_pts});
     auto& loc_asm = *loc_asms.front();
 
     std::unique_ptr<MeshLib::Mesh> mesh{
