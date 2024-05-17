@@ -357,7 +357,7 @@ void forEachReflectedFlattenedIPDataAccessor(
             }
             else
             {
-                static_assert(is_raw_data<Member>::value,
+                static_assert(is_raw_data_v<Member>,
                               "The current member is not reflectable, so we "
                               "expect it to be raw data.");
 
@@ -443,7 +443,7 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
             }
             else
             {
-                static_assert(detail::is_raw_data<Member>::value,
+                static_assert(detail::is_raw_data_v<Member>,
                               "The current member is not reflectable, so we "
                               "expect it to be raw data.");
 
