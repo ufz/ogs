@@ -56,7 +56,7 @@ build = ["cp3{9,10,11,12}-*"]
 skip = ["*musllinux*"]
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
-build-verbosity = "1"
+build-verbosity = 1
 
 [tool.cibuildwheel.linux]
 # quay.io/pypa/manylinux_2_28 works too
