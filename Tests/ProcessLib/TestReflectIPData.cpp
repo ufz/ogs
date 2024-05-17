@@ -15,7 +15,7 @@
 #include <random>
 
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
-#include "ProcessLib/Output/CellAverageData.h"
+#include "ProcessLib/Output/CellAverageAlgorithm.h"
 #include "ProcessLib/Reflection/ReflectionForIPWriters.h"
 #include "ProcessLib/Reflection/ReflectionIPData.h"
 #include "ProcessLib/Reflection/ReflectionSetIPData.h"
@@ -818,7 +818,7 @@ TYPED_TEST(ProcessLib_ReflectIPData, CellAverageTest)
     // function under test /////////////////////////////////////////////////////
 
     ProcessLib::CellAverageData cell_average_data{*mesh};
-    cell_average_data.computeSecondaryVariable(dim, loc_asms);
+    computeCellAverages(cell_average_data, dim, loc_asms);
 
     // checks //////////////////////////////////////////////////////////////////
 
