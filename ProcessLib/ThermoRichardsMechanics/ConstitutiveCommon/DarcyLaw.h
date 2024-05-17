@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "BaseLib/StrongType.h"
 #include "LiquidDensity.h"
 #include "LiquidViscosity.h"
 #include "PermeabilityData.h"
@@ -19,18 +20,13 @@
 namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
-struct DarcyLawData
+using DarcyLawData = BaseLib::StrongType<Eigen::Vector<double, DisplacementDim>,
+                                         struct DarcyLawDataTag>;
+
+constexpr std::string_view ioName(struct DarcyLawDataTag*)
 {
-    Eigen::Vector<double, DisplacementDim> v_darcy;
-
-    static auto reflect()
-    {
-        using Self = DarcyLawData<DisplacementDim>;
-
-        return ProcessLib::Reflection::reflectWithName("velocity",
-                                                       &Self::v_darcy);
-    }
-};
+    return "velocity";
+}
 
 template <int DisplacementDim>
 struct DarcyLawModel

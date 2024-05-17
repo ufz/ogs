@@ -10,8 +10,6 @@
 
 #include "DarcyLaw.h"
 
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-
 namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
@@ -23,10 +21,10 @@ void DarcyLawModel<DisplacementDim>::eval(
     ThermoOsmosisData<DisplacementDim> const& th_osmosis_data,
     DarcyLawData<DisplacementDim>& out) const
 {
-    out.v_darcy = perm_data.Ki / mu_L_data.viscosity *
-                      (perm_data.k_rel *
-                       (p_cap_data.grad_p_cap + rho_L_data.rho_LR * b_)) +
-                  th_osmosis_data.seepage_velocity_contribution;
+    *out = perm_data.Ki / mu_L_data.viscosity *
+               (perm_data.k_rel *
+                (p_cap_data.grad_p_cap + rho_L_data.rho_LR * b_)) +
+           th_osmosis_data.seepage_velocity_contribution;
 }
 
 template struct DarcyLawModel<2>;
