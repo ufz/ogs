@@ -191,8 +191,8 @@ for notebook_file in args.notebooks:
             ep.preprocess(nb, {"metadata": {"path": notebook_file_path.parent}})
         except DeadKernelError:
             out = None
-            msg = 'Error executing the notebook "%s".\n\n' % notebook_filename
-            msg += 'See notebook "%s" for the traceback.' % convert_notebook_file
+            msg = f'Error executing the notebook "{notebook_filename}".\n\n'
+            msg += f'See notebook "{convert_notebook_file}" for the traceback.'
             print(msg)
             notebook_success = False
             with convert_notebook_file.open(mode="w", encoding="utf-8") as f:
