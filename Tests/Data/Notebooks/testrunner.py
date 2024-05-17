@@ -9,10 +9,11 @@ from timeit import default_timer as timer
 
 import jupytext
 import nbformat
+import papermill
 import toml
 from nbclient.exceptions import DeadKernelError
 from nbconvert import HTMLExporter
-from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
+from nbconvert.preprocessors import CellExecutionError
 
 
 def save_to_website(exec_notebook_file):
@@ -182,13 +183,23 @@ for notebook_file in args.notebooks:
         else:
             with notebook_file_path.open(encoding="utf-8") as f:
                 nb = nbformat.read(f, as_version=4)
-        ep = ExecutePreprocessor(kernel_name="python3")
 
         # Run the notebook
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
-            ep.preprocess(nb, {"metadata": {"path": notebook_file_path.parent}})
+            # Run with papermill instead of nbconvert for printing notebook
+            # outputs on the command line
+            nb = papermill.execute.execute_notebook(
+                nb,
+                None,
+                kernel_name="python3",
+                cwd=notebook_file_path.parent,
+                log_output=True,
+                progress_bar=False,
+                stdout_file=sys.stdout,
+                stderr_file=sys.stderr,
+            )
         except DeadKernelError:
             out = None
             msg = f'Error executing the notebook "{notebook_filename}".\n\n'
@@ -200,6 +211,7 @@ for notebook_file in args.notebooks:
         except CellExecutionError:
             notebook_success = False
         end = timer()
+        print(f"[End]  {notebook_filename}")
 
         # Write new notebook
         with convert_notebook_file.open(mode="w", encoding="utf-8") as f:
