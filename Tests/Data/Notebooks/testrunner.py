@@ -108,11 +108,7 @@ def check_and_modify_frontmatter():
             src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
         This page is based on a Jupyter notebook."""
     if is_jupytext:
-        download_file_name = (
-            Path(convert_notebook_file)
-            .rename(Path(convert_notebook_file).with_suffix(".ipynb"))
-            .name
-        )
+        download_file_name = Path(convert_notebook_file).name
         text += f"""
 <a href="./{download_file_name}" download="{download_file_name}"><img class="no-fancybox" style="display: inline; margin-top: 0; margin-bottom: 0; margin-left: 1em;" src="https://img.shields.io/static/v1?label=Download:&message={download_file_name}&color=blue" /></a>"""
     text += f"""
