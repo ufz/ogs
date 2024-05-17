@@ -15,6 +15,7 @@
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
+#include "ProcessLib/Output/CellAverageAlgorithm.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
 #include "ProcessLib/Reflection/ReflectionForIPWriters.h"
@@ -217,8 +218,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
 
-    cell_average_data_.computeSecondaryVariable(DisplacementDim,
-                                                _local_assemblers);
+    computeCellAverages(cell_average_data_, DisplacementDim, _local_assemblers);
 }
 template class SmallDeformationProcess<2>;
 template class SmallDeformationProcess<3>;
