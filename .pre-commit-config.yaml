@@ -84,7 +84,7 @@ repos:
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
-        args: [--show-source]
+        args: [--output-format=full]
   # A variant of the ruff hook above that automatically applies proposed fixes.
   # Runs only manually.
   # Run this hook (and all other manual hooks if any) with:
@@ -94,7 +94,7 @@ repos:
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
-        args: [--show-source, --fix, --exit-non-zero-on-fix]
+        args: [--output-format=full, --fix, --exit-non-zero-on-fix]
         stages: [manual]
   # Enable on demand, run with
   #     pre-commit run --all-files clang-format
