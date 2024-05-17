@@ -72,9 +72,19 @@ struct Level2b
 };
 
 template <int Dim>
+using Kelvin1Data =
+    BaseLib::StrongType<MathLib::KelvinVector::KelvinVectorType<Dim>,
+                        struct Kelvin1DataTag>;
+
+constexpr std::string_view ioName(struct Kelvin1DataTag*)
+{
+    return "kelvin1";
+}
+
+template <int Dim>
 struct Level1
 {
-    MathLib::KelvinVector::KelvinVectorType<Dim> kelvin1;
+    Kelvin1Data<Dim> kelvin1;
     Eigen::Vector<double, Dim> vector1;
     double scalar1;
     Level2<Dim> level2;
@@ -83,7 +93,7 @@ struct Level1
     static auto reflect()
     {
         using namespace ProcessLib::Reflection;
-        return std::tuple{makeReflectionData("kelvin1", &Level1::kelvin1),
+        return std::tuple{makeReflectionData(&Level1::kelvin1),
                           makeReflectionData("vector1", &Level1::vector1),
                           makeReflectionData("scalar1", &Level1::scalar1),
                           makeReflectionData(&Level1::level2),
@@ -103,6 +113,13 @@ struct Level1b
     }
 };
 
+using ScalarData = BaseLib::StrongType<double, struct ScalarDataTag>;
+
+constexpr std::string_view ioName(struct ScalarDataTag*)
+{
+    return "scalar";
+}
+
 template <int Dim>
 struct LocAsmIF
 {
@@ -117,7 +134,7 @@ struct LocAsmIF
 
     std::size_t numIPs() const { return ip_data_scalar.size(); }
 
-    std::vector<double> ip_data_scalar;
+    std::vector<ScalarData> ip_data_scalar;
     std::vector<Eigen::Vector<double, Dim>> ip_data_vector;
     std::vector<MathLib::KelvinVector::KelvinVectorType<Dim>> ip_data_kelvin;
     std::vector<Level1<Dim>> ip_data_level1;
@@ -127,7 +144,7 @@ struct LocAsmIF
     {
         using namespace ProcessLib::Reflection;
         return std::tuple{
-            makeReflectionData("scalar", &LocAsmIF::ip_data_scalar),
+            makeReflectionData(&LocAsmIF::ip_data_scalar),
             makeReflectionData("vector", &LocAsmIF::ip_data_vector),
             makeReflectionData("kelvin", &LocAsmIF::ip_data_kelvin),
             makeReflectionData(&LocAsmIF::ip_data_level1),
@@ -376,7 +393,7 @@ public:
         ref.scalar = initScalar(
             loc_asm, start_value(),
             [](auto& loc_asm, unsigned const ip) -> auto& {
-                return loc_asm.ip_data_scalar[ip];
+                return *loc_asm.ip_data_scalar[ip];
             },
             for_read_test);
 
@@ -413,7 +430,7 @@ public:
         ref.kelvin1 = initKelvin(
             loc_asm, start_value(),
             [](auto& loc_asm, unsigned const ip) -> auto& {
-                return loc_asm.ip_data_level1[ip].kelvin1;
+                return *loc_asm.ip_data_level1[ip].kelvin1;
             },
             for_read_test);
 
