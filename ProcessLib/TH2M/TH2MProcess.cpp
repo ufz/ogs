@@ -19,6 +19,7 @@
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
+#include "ProcessLib/Output/CellAverageAlgorithm.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
 #include "ProcessLib/Reflection/ReflectionForIPWriters.h"
@@ -317,8 +318,7 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
         local_assemblers_, pv.getActiveElementIDs(), getDOFTables(x.size()), t,
         dt, x, x_prev, process_id);
 
-    cell_average_data_.computeSecondaryVariable(DisplacementDim,
-                                                local_assemblers_);
+    computeCellAverages(cell_average_data_, DisplacementDim, local_assemblers_);
 }
 
 template <int DisplacementDim>
