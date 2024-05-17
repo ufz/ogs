@@ -12,6 +12,7 @@
 
 #include <boost/mp11.hpp>
 
+#include "BaseLib/StrongType.h"
 #include "MathLib/KelvinVector.h"
 #include "ReflectionData.h"
 
@@ -19,34 +20,6 @@ namespace ProcessLib::Reflection
 {
 namespace detail
 {
-template <typename T>
-concept has_reflect = requires { T::reflect(); };
-
-template <typename... Ts>
-auto reflect(std::type_identity<std::tuple<Ts...>>)
-{
-    using namespace boost::mp11;
-
-    // The types Ts... must be unique. Duplicate types are incompatible with the
-    // concept of "reflected" I/O: they would lead to duplicate names for the
-    // I/O data.
-    static_assert(mp_is_set<mp_list<Ts...>>::value);
-
-    return reflectWithoutName<std::tuple<Ts...>>(
-        [](auto& tuple_) -> auto& { return std::get<Ts>(tuple_); }...);
-}
-
-template <has_reflect T>
-auto reflect(std::type_identity<T>)
-{
-    return T::reflect();
-}
-
-template <typename T>
-concept is_reflectable = requires {
-    ProcessLib::Reflection::detail::reflect(std::type_identity<T>{});
-};
-
 /**
  * Raw data is data that will be read or written, e.g., double values or Eigen
  * vectors.
@@ -124,6 +97,79 @@ struct NumberOfComponents
     : std::integral_constant<unsigned,
                              NumberOfRows<T>::value * NumberOfColumns<T>::value>
 {
+};
+
+template <typename T>
+concept has_reflect = requires
+{
+    T::reflect();
+};
+
+template <typename... Ts>
+auto reflect(std::type_identity<std::tuple<Ts...>>)
+{
+    using namespace boost::mp11;
+
+    // The types Ts... must be unique. Duplicate types are incompatible with the
+    // concept of "reflected" I/O: they would lead to duplicate names for the
+    // I/O data.
+    static_assert(mp_is_set<mp_list<Ts...>>::value);
+
+    return reflectWithoutName<std::tuple<Ts...>>(
+        [](auto& tuple_) -> auto& { return std::get<Ts>(tuple_); }...);
+}
+
+template <has_reflect T>
+auto reflect(std::type_identity<T>)
+{
+    return T::reflect();
+}
+
+template <typename T>
+concept has_ioName = requires(T* t)
+{
+    ioName(t);
+};
+
+template <typename T, typename Tag>
+auto reflect(std::type_identity<BaseLib::StrongType<T, Tag>>)
+{
+    using ST = BaseLib::StrongType<T, Tag>;
+
+    auto accessor = [](auto& o) -> auto&
+    {
+        return *o;
+    };
+
+    // Maybe in the future we might want to lift the following two constraints.
+    // But beware: that generalization has to be tested thoroughly such that we
+    // don't accidentally produce I/O data without name and the like.
+    static_assert(
+        has_ioName<Tag>,
+        /* We use ioName(Tag* tag), because it works with an incomplete type
+         * Tag, as opposed to ioName(Tag tag), i.e. declaring
+         *   std::string_view ioName(struct SomeTag*);
+         * is possible, whereas
+         *   std::string_view ioName(struct SomeTag);
+         * is not.
+         * This choice makes the code for every ioName() definition rather
+         * compact.
+         */
+        "For I/O of StrongType<T, Tag> you have to define an ioName(Tag* tag) "
+        "function returning the name used for I/O.");
+    static_assert(
+        is_raw_data_v<T>,
+        "I/O of StrongTypes is supported only for StrongTypes wrapping 'raw "
+        "data' such as double values, vectors and matrices.");
+
+    return std::tuple{makeReflectionData<ST>(
+        std::string{ioName(static_cast<Tag*>(nullptr))}, std::move(accessor))};
+}
+
+template <typename T>
+concept is_reflectable = requires
+{
+    ProcessLib::Reflection::detail::reflect(std::type_identity<T>{});
 };
 
 /** A function object taking a local assembler as its argument and returning a
@@ -432,7 +478,9 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
             auto accessor_ip_data_vec_in_loc_asm =
                 [ip_data_vector_accessor =
                      refl_data.accessor](LocAsmIF const& loc_asm) -> auto const&
-            { return ip_data_vector_accessor(loc_asm); };
+            {
+                return ip_data_vector_accessor(loc_asm);
+            };
 
             if constexpr (detail::is_reflectable<Member>)
             {
