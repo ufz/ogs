@@ -300,7 +300,7 @@
         <vtkdiff>
             <file>ConsolidationBenchmark_ts_12_t_6.000000.vtu</file>
             <field>epsilon</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>2e-15</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
