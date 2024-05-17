@@ -375,6 +375,13 @@ void forEachReflectedFlattenedIPDataAccessor(
     Accessor_CurrentLevelFromIPDataVecElement const&
         accessor_current_level_from_ip_data_vec_element)
 {
+    static_assert(boost::mp11::mp_is_list_v<ReflectionDataTuple>,
+                  "The passed reflection data is not a std::tuple.");
+    static_assert(
+        std::is_same_v<ReflectionDataTuple,
+                       boost::mp11::mp_rename<ReflectionDataTuple, std::tuple>>,
+        "The passed reflection data is not a std::tuple.");
+
     boost::mp11::tuple_for_each(
         reflection_data,
         [&accessor_ip_data_vec_in_loc_asm,
@@ -449,7 +456,14 @@ template <int Dim, typename LocAsmIF, typename Callback, typename ReflData>
 void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
                                              Callback const& callback)
 {
-    boost::mp11::tuple_for_each(
+    using namespace boost::mp11;
+
+    static_assert(mp_is_list_v<ReflData>,
+                  "The passed reflection data is not a std::tuple.");
+    static_assert(std::is_same_v<ReflData, mp_rename<ReflData, std::tuple>>,
+                  "The passed reflection data is not a std::tuple.");
+
+    tuple_for_each(
         reflection_data,
         [&callback]<typename Class, typename Accessor>(
             ReflectionData<Class, Accessor> const& refl_data)
@@ -469,9 +483,8 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
                                                 // SomeAllocator> is a list in
                                                 // the Boost MP11 sense
             static_assert(
-                std::is_same_v<
-                    AccessorResult,
-                    boost::mp11::mp_rename<AccessorResult, std::vector>>,
+                std::is_same_v<AccessorResult,
+                               mp_rename<AccessorResult, std::vector>>,
                 "We expect a std::vector, here.");
             // Now, we know that AccessorResult is std::vector<Member>. To be
             // more specific, AccessorResult is a std::vector<IPData> and Member
