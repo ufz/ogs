@@ -410,6 +410,7 @@ void forEachReflectedFlattenedIPDataAccessor(
 
                 constexpr unsigned num_comp = NumberOfComponents<Member>::value;
 
+                assert(!refl_data.name.empty());
                 callback(refl_data.name, num_comp,
                          getFlattenedIPDataFromLocAsm<Dim>(
                              accessor_ip_data_vec_in_loc_asm,
@@ -500,6 +501,7 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
                 constexpr unsigned num_comp =
                     detail::NumberOfComponents<Member>::value;
 
+                assert(!refl_data.name.empty());
                 callback(refl_data.name, num_comp,
                          detail::getFlattenedIPDataFromLocAsm<Dim>(
                              accessor_ip_data_vec_in_loc_asm));
