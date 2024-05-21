@@ -59,6 +59,23 @@ using ReferenceTemperatureData =
 using GasPressureData = BaseLib::StrongType<double, struct GasPressureTag>;
 using CapillaryPressureData =
     BaseLib::StrongType<double, struct CapillaryPressureTag>;
+template <int DisplacementDim>
+using GasPressureGradientData =
+    BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
+                        struct GasPressureGradientTag>;
+template <int DisplacementDim>
+using CapillaryPressureGradientData =
+    BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
+                        struct CapillaryPressureGradientTag>;
+template <int DisplacementDim>
+using TemperatureGradientData =
+    BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
+                        struct TemperatureGradientTag>;
+
+template <int DisplacementDim>
+using SpecificBodyForceData =
+    BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
+                        struct SpecificBodyForceTag>;
 
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

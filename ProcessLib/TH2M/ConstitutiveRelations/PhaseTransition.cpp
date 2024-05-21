@@ -139,7 +139,7 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
                            CapillaryPressureData const& p_cap,
                            TemperatureData const& T_data,
                            PureLiquidDensityData const& rho_W_LR,
-                           EnthalpyData& enthalpy_data,
+                           FluidEnthalpyData& fluid_enthalpy_data,
                            MassMoleFractionsData& mass_mole_fractions_data,
                            FluidDensityData& fluid_density_data,
                            VapourPartialPressureData& vapour_pressure_data,
@@ -333,11 +333,12 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.hWG = cpWG * T + dh_evap;
 
     // specific enthalpy of gas phase
-    enthalpy_data.h_G = mass_mole_fractions_data.xmCG * cv.hCG + xmWG * cv.hWG;
+    fluid_enthalpy_data.h_G =
+        mass_mole_fractions_data.xmCG * cv.hCG + xmWG * cv.hWG;
     cv.dh_G_dT = 0;
 
     // specific inner energies of gas phase
-    cv.uG = enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
+    cv.uG = fluid_enthalpy_data.h_G - pGR / fluid_density_data.rho_GR;
     cv.du_G_dT = 0;
     cv.du_G_dp_GR = 0;
 
@@ -505,11 +506,11 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     // specific enthalpy of liquid phase and its components
     double const hCL = cpCL * T + dh_sol;
     double const hWL = cpWL * T;
-    enthalpy_data.h_L = xmCL * hCL + mass_mole_fractions_data.xmWL * hWL;
+    fluid_enthalpy_data.h_L = xmCL * hCL + mass_mole_fractions_data.xmWL * hWL;
     cv.dh_L_dT = 0;
 
     // specific inner energies of liquid phase
-    cv.uL = enthalpy_data.h_L;
+    cv.uL = fluid_enthalpy_data.h_L;
     cv.du_L_dT = 0;
 
     // diffusion

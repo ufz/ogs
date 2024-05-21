@@ -51,10 +51,6 @@ struct PhaseTransitionData
     double dxmWL_dpGR = nan;
     double dxmWL_dpCap = nan;
     double dxmWL_dT = nan;
-    // TODO (naumov) This is zero in both models but used in the assembly.
-    // Remove it and simplify assembly or correct the expressions in the phase
-    // transition models?
-    static constexpr double dxmWL_dpLR = 0.;
 
     double diffusion_coefficient_vapour = nan;
     double diffusion_coefficient_solute = nan;

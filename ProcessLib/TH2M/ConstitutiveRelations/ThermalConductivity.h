@@ -22,6 +22,11 @@ template <int DisplacementDim>
 struct ThermalConductivityData
 {
     GlobalDimMatrix<DisplacementDim> lambda;
+};
+
+template <int DisplacementDim>
+struct ThermalConductivityDerivativeData
+{
     // Currently unused, but there is a comment in TH2MFEM-impl.h referring to
     // this matrix
     // GlobalDimMatrix<DisplacementDim> dlambda_dp_GR;
@@ -34,11 +39,16 @@ struct ThermalConductivityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
               TemperatureData const& T_data, PorosityData const& porosity_data,
-              PorosityDerivativeData const& porosity_d_data,
               SaturationData const& S_L_data,
-              SaturationDataDeriv const& dS_L_dp_cap,
               ThermalConductivityData<DisplacementDim>&
                   thermal_conductivity_data) const;
+
+    void dEval(SpaceTimeData const& x_t, MediaData const& media_data,
+               TemperatureData const& T_data, PorosityData const& porosity_data,
+               PorosityDerivativeData const& porosity_d_data,
+               SaturationData const& S_L_data,
+               ThermalConductivityDerivativeData<DisplacementDim>&
+                   thermal_conductivity_d_data) const;
 };
 
 extern template struct ThermalConductivityModel<2>;

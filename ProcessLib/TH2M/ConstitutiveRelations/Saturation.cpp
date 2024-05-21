@@ -16,8 +16,7 @@ namespace ConstitutiveRelations
 void SaturationModel::eval(SpaceTimeData const& x_t,
                            MediaData const& media_data,
                            CapillaryPressureData const& p_cap,
-                           SaturationData& S_L_data,
-                           SaturationDataDeriv& dS_L_data) const
+                           SaturationData& S_L_data) const
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
@@ -27,6 +26,18 @@ void SaturationModel::eval(SpaceTimeData const& x_t,
 
     S_L_data.S_L = medium.property(MPL::PropertyType::saturation)
                        .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+}
+
+void SaturationModel::dEval(SpaceTimeData const& x_t,
+                            MediaData const& media_data,
+                            CapillaryPressureData const& p_cap,
+                            SaturationDataDeriv& dS_L_data) const
+{
+    namespace MPL = MaterialPropertyLib;
+    MPL::VariableArray variables;
+    variables.capillary_pressure = p_cap();
+
+    auto const& medium = media_data.medium;
 
     dS_L_data() = medium.property(MPL::PropertyType::saturation)
                       .template dValue<double>(

@@ -198,6 +198,19 @@ private:
         ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
             models);
 
+    std::vector<ConstitutiveRelations::DerivativesData<DisplacementDim>>
+    updateConstitutiveVariablesDerivatives(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        std::vector<
+            ConstitutiveRelations::ConstitutiveData<DisplacementDim>> const&
+            ip_constitutive_data,
+        std::vector<
+            ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>> const&
+            ip_constitutive_variables,
+        ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
+            models);
+
 private:
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;

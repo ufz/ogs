@@ -34,8 +34,12 @@ using SaturationDataDeriv =
 struct SaturationModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              CapillaryPressureData const& p_cap, SaturationData& S_L_data,
-              SaturationDataDeriv& dS_L_data) const;
+              CapillaryPressureData const& p_cap,
+              SaturationData& S_L_data) const;
+
+    void dEval(SpaceTimeData const& x_t, MediaData const& media_data,
+               CapillaryPressureData const& p_cap,
+               SaturationDataDeriv& dS_L_data) const;
 };
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

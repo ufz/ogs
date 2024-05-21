@@ -9,8 +9,10 @@
 
 #pragma once
 
+#include "Advection.h"
 #include "Biot.h"
 #include "Bishops.h"
+#include "CEquation.h"
 #include "ConstitutiveDensity.h"
 #include "DarcyVelocity.h"
 #include "DiffusionVelocity.h"
@@ -18,6 +20,7 @@
 #include "Enthalpy.h"
 #include "EquivalentPlasticStrainData.h"
 #include "FluidDensity.h"
+#include "Gravity.h"
 #include "InternalEnergy.h"
 #include "MassMoleFractions.h"
 #include "MechanicalStrain.h"
@@ -35,10 +38,13 @@
 #include "SolidMechanics.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
+#include "TEquation.h"
 #include "ThermalConductivity.h"
 #include "TotalStress.h"
+#include "UEquation.h"
 #include "VapourPartialPressure.h"
 #include "Viscosity.h"
+#include "WEquation.h"
 
 namespace ProcessLib::TH2M
 {
@@ -99,7 +105,8 @@ struct OutputData
 {
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
-    EnthalpyData enthalpy_data;
+    FluidEnthalpyData fluid_enthalpy_data;
+    SolidEnthalpyData solid_enthalpy_data;
     MassMoleFractionsData mass_mole_fractions_data;
     FluidDensityData fluid_density_data;
     VapourPartialPressureData vapour_pressure_data;
@@ -114,7 +121,8 @@ struct OutputData
 
         return Reflection::reflectWithoutName(&Self::eps_data,
                                               &Self::permeability_data,
-                                              &Self::enthalpy_data,
+                                              &Self::fluid_enthalpy_data,
+                                              &Self::solid_enthalpy_data,
                                               &Self::mass_mole_fractions_data,
                                               &Self::fluid_density_data,
                                               &Self::vapour_pressure_data,
@@ -141,73 +149,76 @@ struct ConstitutiveTempData
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
     SolidCompressibilityData beta_p_SR;
-    SaturationDataDeriv dS_L_dp_cap;
     BishopsData chi_S_L;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     TotalStressData<DisplacementDim> total_stress_data;
     EquivalentPlasticStrainData equivalent_plastic_strain_data;
     ViscosityData viscosity_data;
     PhaseTransitionData phase_transition_data;
-    PorosityDerivativeData porosity_d_data;
-    SolidDensityDerivativeData solid_density_d_data;
     SolidHeatCapacityData solid_heat_capacity_data;
     ThermalConductivityData<DisplacementDim> thermal_conductivity_data;
     EffectiveVolumetricEnthalpy effective_volumetric_enthalpy_data;
-    EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
+    AdvectionData<DisplacementDim> advection_data;
+    VolumetricBodyForce<DisplacementDim> volumetric_body_force;
+    FC1Data<DisplacementDim> fC_1;
+    FC2aData fC_2a;
+    FC3aData fC_3a;
+    FC4LCpGData<DisplacementDim> fC_4_LCpG;
+    FC4LCpCData<DisplacementDim> fC_4_LCpC;
+    FC4LCTData<DisplacementDim> fC_4_LCT;
+    FC4MCpGData fC_4_MCpG;
+    FC4MCpCData fC_4_MCpC;
+    FC4MCTData fC_4_MCT;
+    FC4MCuData fC_4_MCu;
+
+    FW1Data<DisplacementDim> fW_1;
+    FW2Data fW_2;
+    FW3aData fW_3a;
+    FW4LWpGData<DisplacementDim> fW_4_LWpG;
+    FW4LWpCData<DisplacementDim> fW_4_LWpC;
+    FW4LWTData<DisplacementDim> fW_4_LWT;
+    FW4MWpGData fW_4_MWpG;
+    FW4MWpCData fW_4_MWpC;
+    FW4MWTData fW_4_MWT;
+    FW4MWuData fW_4_MWu;
+
+    FT1Data fT_1;
+    FT2Data<DisplacementDim> fT_2;
+    FT3Data<DisplacementDim> fT_3;
+
+    FU2KUpCData fu_2_KupC;
+};
+
+/// Data that stores intermediate values (derivatives), which are not needed
+/// outside the constitutive setting.
+template <int DisplacementDim>
+struct DerivativesData
+{
+    SaturationDataDeriv dS_L_dp_cap;
+    AdvectionDerivativeData<DisplacementDim> advection_d_data;
+    PorosityDerivativeData porosity_d_data;
+    ThermalConductivityDerivativeData<DisplacementDim>
+        thermal_conductivity_d_data;
+    SolidDensityDerivativeData solid_density_d_data;
     EffectiveVolumetricInternalEnergyDerivatives
         effective_volumetric_internal_energy_d_data;
-
-    using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
-    using DisplacementDimMatrix =
-        Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
-
-    DisplacementDimVector drho_GR_h_w_eff_dp_GR_Npart;
-    DisplacementDimMatrix drho_GR_h_w_eff_dp_GR_gradNpart;
-    DisplacementDimVector drho_LR_h_w_eff_dp_cap_Npart;
-    DisplacementDimMatrix drho_LR_h_w_eff_dp_cap_gradNpart;
-    DisplacementDimVector drho_GR_h_w_eff_dT;
-    DisplacementDimMatrix dfW_4_LWpG_a_dp_GR;
-    DisplacementDimMatrix dfW_4_LWpG_a_dp_cap;
-    DisplacementDimMatrix dfW_4_LWpG_a_dT;
-    DisplacementDimMatrix dfW_4_LWpG_d_dp_GR;
-    DisplacementDimMatrix dfW_4_LWpG_d_dp_cap;
-    DisplacementDimMatrix dfW_4_LWpG_d_dT;
-    DisplacementDimMatrix dfW_4_LWpC_a_dp_GR;
-    DisplacementDimMatrix dfW_4_LWpC_a_dp_cap;
-    DisplacementDimMatrix dfW_4_LWpC_a_dT;
-    DisplacementDimMatrix dfW_4_LWpC_d_dp_GR;
-    DisplacementDimMatrix dfW_4_LWpC_d_dp_cap;
-    DisplacementDimMatrix dfW_4_LWpC_d_dT;
-    DisplacementDimMatrix dfC_4_LCpG_dT;
-    DisplacementDimMatrix dfC_4_LCpC_a_dp_GR;
-    DisplacementDimMatrix dfC_4_LCpC_a_dp_cap;
-    DisplacementDimMatrix dfC_4_LCpC_a_dT;
-    DisplacementDimMatrix dfC_4_LCpC_d_dp_GR;
-    DisplacementDimMatrix dfC_4_LCpC_d_dp_cap;
-    DisplacementDimMatrix dfC_4_LCpC_d_dT;
-    DisplacementDimMatrix dadvection_C_dp_GR;
-    DisplacementDimMatrix dadvection_C_dp_cap;
-    DisplacementDimMatrix dk_over_mu_G_dp_cap;
-    DisplacementDimMatrix dk_over_mu_L_dp_cap;
-    double dfC_4_MCpG_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double dfC_4_MCpG_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfC_4_MCT_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfC_4_MCu_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfC_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double dfC_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dfC_3a_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfC_2a_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double dfC_2a_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dfC_2a_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfW_2a_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double dfW_2b_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double dfW_2a_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dfW_2b_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dfW_2a_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfW_2b_dT = std::numeric_limits<double>::quiet_NaN();
-    double dfW_3a_dp_GR = std::numeric_limits<double>::quiet_NaN();
-    double dfW_3a_dp_cap = std::numeric_limits<double>::quiet_NaN();
-    double dfW_3a_dT = std::numeric_limits<double>::quiet_NaN();
+    EffectiveVolumetricEnthalpyDerivatives effective_volumetric_enthalpy_d_data;
+    FC2aDerivativeData dfC_2a;
+    FC3aDerivativeData dfC_3a;
+    FC4LCpGDerivativeData<DisplacementDim> dfC_4_LCpG;
+    FC4LCpCDerivativeData<DisplacementDim> dfC_4_LCpC;
+    FC4MCpGDerivativeData dfC_4_MCpG;
+    FC4MCTDerivativeData dfC_4_MCT;
+    FC4MCuDerivativeData dfC_4_MCu;
+    FW2DerivativeData dfW_2;
+    FW3aDerivativeData dfW_3a;
+    FW4LWpGDerivativeData<DisplacementDim> dfW_4_LWpG;
+    FW4LWpCDerivativeData<DisplacementDim> dfW_4_LWpC;
+    FT1DerivativeData dfT_1;
+    FT2DerivativeData<DisplacementDim> dfT_2;
+    FU1KUTDerivativeData<DisplacementDim> dfu_1_KuT;
+    FU2KUpCDerivativeData dfu_2_KupC;
 };
+
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

@@ -52,7 +52,7 @@ struct PhaseTransitionModel
                       CapillaryPressureData const& p_cap,
                       TemperatureData const& T_data,
                       PureLiquidDensityData const& rho_W_LR,
-                      EnthalpyData& enthalpy_data,
+                      FluidEnthalpyData& fluid_enthalpy_data,
                       MassMoleFractionsData& mass_mole_fractions_data,
                       FluidDensityData& fluid_density_data,
                       VapourPartialPressureData& vapour_pressure_data,

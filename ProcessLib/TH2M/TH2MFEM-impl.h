@@ -152,16 +152,19 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
-        double const pGR = Np.dot(gas_pressure);
-        double const pCap = Np.dot(capillary_pressure);
         ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
-        ConstitutiveRelations::GasPressureData const pGR_data{pGR};
-        ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap};
+        ConstitutiveRelations::GasPressureData const pGR_data{
+            Np.dot(gas_pressure)};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{
+            Np.dot(capillary_pressure)};
         ConstitutiveRelations::ReferenceTemperatureData const T0{
             this->process_data_.reference_temperature(t, pos)[0]};
-        GlobalDimVectorType const gradpGR = gradNp * gas_pressure;
-        GlobalDimVectorType const gradpCap = gradNp * capillary_pressure;
-        GlobalDimVectorType const gradT = gradNp * temperature;
+        ConstitutiveRelations::GasPressureGradientData<DisplacementDim> const
+            grad_p_GR{gradNp * gas_pressure};
+        ConstitutiveRelations::CapillaryPressureGradientData<
+            DisplacementDim> const grad_p_cap{gradNp * capillary_pressure};
+        ConstitutiveRelations::TemperatureGradientData<DisplacementDim> const
+            grad_T{gradNp * temperature};
 
         // medium properties
         models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
@@ -175,10 +178,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = ip_out.eps_data.eps;
-        eps.noalias() = Bu * displacement;
+        ip_out.eps_data.eps.noalias() = Bu * displacement;
         models.S_L_model.eval({pos, t, dt}, media_data, pCap_data,
-                              current_state.S_L_data, ip_cv.dS_L_dp_cap);
+                              current_state.S_L_data);
 
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
                                   current_state.S_L_data, ip_cv.chi_S_L);
@@ -223,7 +225,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.phase_transition_model.eval(
             {pos, t, dt}, media_data, pGR_data, pCap_data, T_data,
-            current_state.rho_W_LR, ip_out.enthalpy_data,
+            current_state.rho_W_LR, ip_out.fluid_enthalpy_data,
             ip_out.mass_mole_fractions_data, ip_out.fluid_density_data,
             ip_out.vapour_pressure_data, current_state.constituent_density_data,
             ip_cv.phase_transition_data);
@@ -237,488 +239,496 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                    ip_cv.biot_data, ip_out.eps_data,
                                    ip_cv.s_therm_exp_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                   ip_out.porosity_data, ip_cv.porosity_d_data);
+                                   ip_out.porosity_data);
 
-        models.solid_density_model.eval(
-            {pos, t, dt}, media_data, T_data,
+        models.solid_density_model.eval({pos, t, dt}, media_data, T_data,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_cv.biot_data, ip_out.eps_data, ip_cv.s_therm_exp_data,
+                                        ip_cv.biot_data, ip_out.eps_data,
+                                        ip_cv.s_therm_exp_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_out.solid_density_data, ip_cv.solid_density_d_data);
+                                        ip_out.solid_density_data);
 
         models.solid_heat_capacity_model.eval({pos, t, dt}, media_data, T_data,
                                               ip_cv.solid_heat_capacity_data);
 
         models.thermal_conductivity_model.eval(
             {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
-            ip_cv.porosity_d_data, current_state.S_L_data, ip_cv.dS_L_dp_cap,
-            ip_cv.thermal_conductivity_data);
+            current_state.S_L_data, ip_cv.thermal_conductivity_data);
 
-        auto const& c = ip_cv.phase_transition_data;
+        models.advection_model.eval(current_state.constituent_density_data,
+                                    ip_out.permeability_data,
+                                    current_state.rho_W_LR,
+                                    ip_cv.viscosity_data,
+                                    ip_cv.advection_data);
 
-        auto const phi_L =
-            current_state.S_L_data.S_L * ip_out.porosity_data.phi;
-        auto const phi_G =
-            (1. - current_state.S_L_data.S_L) * ip_out.porosity_data.phi;
-        double const phi_S = 1. - ip_out.porosity_data.phi;
+        models.gravity_model.eval(
+            ip_out.fluid_density_data,
+            ip_out.porosity_data,
+            current_state.S_L_data,
+            ip_out.solid_density_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.volumetric_body_force);
 
-        ip_out.enthalpy_data.h_S = ip_cv.solid_heat_capacity_data() * T;
-        auto const u_S = ip_out.enthalpy_data.h_S;
+        models.diffusion_velocity_model.eval(grad_p_cap,
+                                             grad_p_GR,
+                                             ip_out.mass_mole_fractions_data,
+                                             ip_cv.phase_transition_data,
+                                             ip_out.porosity_data,
+                                             current_state.S_L_data,
+                                             grad_T,
+                                             ip_out.diffusion_velocity_data);
 
-        current_state.internal_energy_data() =
-            phi_G * ip_out.fluid_density_data.rho_GR * c.uG +
-            phi_L * ip_out.fluid_density_data.rho_LR * c.uL +
-            phi_S * ip_out.solid_density_data.rho_SR * u_S;
+        models.solid_enthalpy_model.eval(ip_cv.solid_heat_capacity_data, T_data,
+                                         ip_out.solid_enthalpy_data);
 
-        ip_cv.effective_volumetric_enthalpy_data.rho_h_eff =
-            phi_G * ip_out.fluid_density_data.rho_GR *
-                ip_out.enthalpy_data.h_G +
-            phi_L * ip_out.fluid_density_data.rho_LR *
-                ip_out.enthalpy_data.h_L +
-            phi_S * ip_out.solid_density_data.rho_SR * ip_out.enthalpy_data.h_S;
+        models.internal_energy_model.eval(ip_out.fluid_density_data,
+                                          ip_cv.phase_transition_data,
+                                          ip_out.porosity_data,
+                                          current_state.S_L_data,
+                                          ip_out.solid_density_data,
+                                          ip_out.solid_enthalpy_data,
+                                          current_state.internal_energy_data);
 
-        // for variable output
-        auto const xmCL = 1. - ip_out.mass_mole_fractions_data.xmWL;
+        models.effective_volumetric_enthalpy_model.eval(
+            ip_out.fluid_density_data,
+            ip_out.fluid_enthalpy_data,
+            ip_out.porosity_data,
+            current_state.S_L_data,
+            ip_out.solid_density_data,
+            ip_out.solid_enthalpy_data,
+            ip_cv.effective_volumetric_enthalpy_data);
 
-        const GlobalDimVectorType gradxmWG = c.dxmWG_dpGR * gradpGR +
-                                             c.dxmWG_dpCap * gradpCap +
-                                             c.dxmWG_dT * gradT;
-        const GlobalDimVectorType gradxmCG = -gradxmWG;
+        models.fC_1_model.eval(ip_cv.advection_data, ip_out.fluid_density_data,
+                               ip_cv.fC_1);
 
-        const GlobalDimVectorType gradxmWL = c.dxmWL_dpGR * gradpGR +
-                                             c.dxmWL_dpCap * gradpCap +
-                                             c.dxmWL_dT * gradT;
-        const GlobalDimVectorType gradxmCL = -gradxmWL;
+        if (!this->process_data_.apply_mass_lumping)
+        {
+            models.fC_2a_model.eval(ip_cv.biot_data,
+                                    pCap_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fC_2a);
+        }
+        models.fC_3a_model.eval(dt,
+                                current_state.constituent_density_data,
+                                prev_state.constituent_density_data,
+                                current_state.S_L_data,
+                                ip_cv.fC_3a);
 
-        // Todo: factor -phiAlpha / xmZetaAlpha * DZetaAlpha can be evaluated in
-        // the respective phase transition model, here only the multiplication
-        // with the gradient of the mass fractions should take place.
+        models.fC_4_LCpG_model.eval(ip_cv.advection_data,
+                                    ip_out.fluid_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.fC_4_LCpG);
 
-        ip_out.diffusion_velocity_data.d_CG =
-            ip_out.mass_mole_fractions_data.xmCG == 0.
-                ? 0. * gradxmCG  // Keep d_CG's dimension and prevent
-                                 // division by zero
-                : -phi_G / ip_out.mass_mole_fractions_data.xmCG *
-                      c.diffusion_coefficient_vapour * gradxmCG;
+        models.fC_4_LCpC_model.eval(ip_cv.advection_data,
+                                    ip_out.fluid_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.fC_4_LCpC);
 
-        ip_out.diffusion_velocity_data.d_WG =
-            ip_out.mass_mole_fractions_data.xmCG == 1.
-                ? 0. * gradxmWG  // Keep d_WG's dimension and prevent
-                                 // division by zero
-                : -phi_G / (1 - ip_out.mass_mole_fractions_data.xmCG) *
-                      c.diffusion_coefficient_vapour * gradxmWG;
+        models.fC_4_LCT_model.eval(ip_out.fluid_density_data,
+                                   ip_cv.phase_transition_data,
+                                   ip_out.porosity_data,
+                                   current_state.S_L_data,
+                                   ip_cv.fC_4_LCT);
 
-        ip_out.diffusion_velocity_data.d_CL =
-            xmCL == 0.
-                ? 0. * gradxmCL  // Keep d_CL's dimension and
-                                 // prevent division by zero
-                : -phi_L / xmCL * c.diffusion_coefficient_solute * gradxmCL;
+        models.fC_4_MCpG_model.eval(ip_cv.biot_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fC_4_MCpG);
 
-        ip_out.diffusion_velocity_data.d_WL =
-            ip_out.mass_mole_fractions_data.xmWL == 0.
-                ? 0. * gradxmWL  // Keep d_WG's dimension and prevent
-                                 // division by zero
-                : -phi_L / ip_out.mass_mole_fractions_data.xmWL *
-                      c.diffusion_coefficient_solute * gradxmWL;
+        models.fC_4_MCpC_model.eval(ip_cv.biot_data,
+                                    pCap_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    prev_state.S_L_data,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fC_4_MCpC);
+
+        models.fC_4_MCT_model.eval(ip_cv.biot_data,
+                                   current_state.constituent_density_data,
+                                   ip_out.porosity_data,
+                                   current_state.S_L_data,
+                                   ip_cv.s_therm_exp_data,
+                                   ip_cv.fC_4_MCT);
+
+        models.fC_4_MCu_model.eval(ip_cv.biot_data,
+                                   current_state.constituent_density_data,
+                                   current_state.S_L_data,
+                                   ip_cv.fC_4_MCu);
+
+        models.fW_1_model.eval(ip_cv.advection_data, ip_out.fluid_density_data,
+                               ip_cv.fW_1);
+
+        if (!this->process_data_.apply_mass_lumping)
+        {
+            models.fW_2_model.eval(ip_cv.biot_data,
+                                   pCap_data,
+                                   current_state.constituent_density_data,
+                                   ip_out.porosity_data,
+                                   current_state.rho_W_LR,
+                                   current_state.S_L_data,
+                                   ip_cv.beta_p_SR,
+                                   ip_cv.fW_2);
+        }
+        models.fW_3a_model.eval(dt,
+                                current_state.constituent_density_data,
+                                prev_state.constituent_density_data,
+                                prev_state.rho_W_LR,
+                                current_state.rho_W_LR,
+                                current_state.S_L_data,
+                                ip_cv.fW_3a);
+
+        models.fW_4_LWpG_model.eval(ip_cv.advection_data,
+                                    ip_out.fluid_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.fW_4_LWpG);
+
+        models.fW_4_LWpC_model.eval(ip_cv.advection_data,
+                                    ip_out.fluid_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    current_state.S_L_data,
+                                    ip_cv.fW_4_LWpC);
+
+        models.fW_4_LWT_model.eval(ip_out.fluid_density_data,
+                                   ip_cv.phase_transition_data,
+                                   ip_out.porosity_data,
+                                   current_state.S_L_data,
+                                   ip_cv.fW_4_LWT);
+
+        models.fW_4_MWpG_model.eval(ip_cv.biot_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    current_state.rho_W_LR,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fW_4_MWpG);
+
+        models.fW_4_MWpC_model.eval(ip_cv.biot_data,
+                                    pCap_data,
+                                    current_state.constituent_density_data,
+                                    ip_out.porosity_data,
+                                    prev_state.S_L_data,
+                                    current_state.rho_W_LR,
+                                    current_state.S_L_data,
+                                    ip_cv.beta_p_SR,
+                                    ip_cv.fW_4_MWpC);
+
+        models.fW_4_MWT_model.eval(ip_cv.biot_data,
+                                   current_state.constituent_density_data,
+                                   ip_out.porosity_data,
+                                   current_state.rho_W_LR,
+                                   current_state.S_L_data,
+                                   ip_cv.s_therm_exp_data,
+                                   ip_cv.fW_4_MWT);
+
+        models.fW_4_MWu_model.eval(ip_cv.biot_data,
+                                   current_state.constituent_density_data,
+                                   current_state.rho_W_LR,
+                                   current_state.S_L_data,
+                                   ip_cv.fW_4_MWu);
+
+        models.fT_1_model.eval(dt,
+                               current_state.internal_energy_data,
+                               prev_state.internal_energy_data,
+                               ip_cv.fT_1);
 
         // ---------------------------------------------------------------------
         // Derivatives for Jacobian
         // ---------------------------------------------------------------------
-        ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dT =
-            phi_G * c.drho_GR_dT * c.uG +
-            phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dT +
-            phi_L * c.drho_LR_dT * c.uL +
-            phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dT +
-            phi_S * ip_cv.solid_density_d_data.drho_SR_dT * u_S +
-            phi_S * ip_out.solid_density_data.rho_SR *
-                ip_cv.solid_heat_capacity_data() -
-            ip_cv.porosity_d_data.dphi_dT * ip_out.solid_density_data.rho_SR *
-                u_S;
 
-        // ds_L_dp_GR = 0;
-        // ds_G_dp_GR = -ds_L_dp_GR;
-        double const ds_G_dp_cap = -ip_cv.dS_L_dp_cap();
+        models.darcy_velocity_model.eval(
+            grad_p_cap,
+            ip_out.fluid_density_data,
+            grad_p_GR,
+            ip_out.permeability_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.viscosity_data,
+            ip_out.darcy_velocity_data);
 
-        // dphi_G_dp_GR = -ds_L_dp_GR * ip_out.porosity_data.phi = 0;
-        double const dphi_G_dp_cap =
-            -ip_cv.dS_L_dp_cap() * ip_out.porosity_data.phi;
-        // dphi_L_dp_GR = ds_L_dp_GR * ip_out.porosity_data.phi = 0;
-        double const dphi_L_dp_cap =
-            ip_cv.dS_L_dp_cap() * ip_out.porosity_data.phi;
+        models.fT_2_model.eval(ip_out.darcy_velocity_data,
+                               ip_out.fluid_density_data,
+                               ip_out.fluid_enthalpy_data,
+                               ip_cv.fT_2);
 
-        // From p_LR = p_GR - p_cap it follows for
-        // drho_LR/dp_GR = drho_LR/dp_LR * dp_LR/dp_GR
-        //               = drho_LR/dp_LR * (dp_GR/dp_GR - dp_cap/dp_GR)
-        //               = drho_LR/dp_LR * (1 - 0)
-        double const drho_LR_dp_GR = c.drho_LR_dp_LR;
-        double const drho_LR_dp_cap = -c.drho_LR_dp_LR;
-        // drho_GR_dp_cap = 0;
+        models.fT_3_model.eval(
+            current_state.constituent_density_data,
+            ip_out.darcy_velocity_data,
+            ip_out.diffusion_velocity_data,
+            ip_out.fluid_density_data,
+            ip_cv.phase_transition_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.fT_3);
 
-        ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_GR =
-            /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR *
-                ip_out.enthalpy_data.h_G +*/
-            phi_G * c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G +
-            /*(dphi_L_dp_GR = 0) * ip_out.fluid_density_data.rho_LR *
-                ip_out.enthalpy_data.h_L +*/
-            phi_L * drho_LR_dp_GR * ip_out.enthalpy_data.h_L;
-        ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_cap =
-            dphi_G_dp_cap * ip_out.fluid_density_data.rho_GR *
-                ip_out.enthalpy_data.h_G +
-            /*phi_G * (drho_GR_dp_cap = 0) * ip_out.enthalpy_data.h_G +*/
-            dphi_L_dp_cap * ip_out.fluid_density_data.rho_LR *
-                ip_out.enthalpy_data.h_L +
-            phi_L * drho_LR_dp_cap * ip_out.enthalpy_data.h_L;
-
-        // TODO (naumov) Extend for temperature dependent porosities.
-        constexpr double dphi_G_dT = 0;
-        constexpr double dphi_L_dT = 0;
-        ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dT =
-            dphi_G_dT * ip_out.fluid_density_data.rho_GR *
-                ip_out.enthalpy_data.h_G +
-            phi_G * c.drho_GR_dT * ip_out.enthalpy_data.h_G +
-            phi_G * ip_out.fluid_density_data.rho_GR * c.dh_G_dT +
-            dphi_L_dT * ip_out.fluid_density_data.rho_LR *
-                ip_out.enthalpy_data.h_L +
-            phi_L * c.drho_LR_dT * ip_out.enthalpy_data.h_L +
-            phi_L * ip_out.fluid_density_data.rho_LR * c.dh_L_dT -
-            ip_cv.porosity_d_data.dphi_dT * ip_out.solid_density_data.rho_SR *
-                ip_out.enthalpy_data.h_S +
-            phi_S * ip_cv.solid_density_d_data.drho_SR_dT *
-                ip_out.enthalpy_data.h_S +
-            phi_S * ip_out.solid_density_data.rho_SR *
-                ip_cv.solid_heat_capacity_data();
-
-        ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dp_GR =
-            /*(dphi_G_dp_GR = 0) * ip_out.fluid_density_data.rho_GR * c.uG +*/
-            phi_G * c.drho_GR_dp_GR * c.uG +
-            phi_G * ip_out.fluid_density_data.rho_GR * c.du_G_dp_GR +
-            /*(dphi_L_dp_GR = 0) * ip_out.fluid_density_data.rho_LR * c.uL +*/
-            phi_L * drho_LR_dp_GR * c.uL +
-            phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dp_GR;
-
-        ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dp_cap =
-            dphi_G_dp_cap * ip_out.fluid_density_data.rho_GR * c.uG +
-            /*phi_G * (drho_GR_dp_cap = 0) * c.uG +*/
-            dphi_L_dp_cap * ip_out.fluid_density_data.rho_LR * c.uL +
-            phi_L * drho_LR_dp_cap * c.uL +
-            phi_L * ip_out.fluid_density_data.rho_LR * c.du_L_dp_cap;
-
-        auto const& b = this->process_data_.specific_body_force;
-        GlobalDimMatrixType const k_over_mu_G =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip_cv.viscosity_data.mu_GR;
-        GlobalDimMatrixType const k_over_mu_L =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip_cv.viscosity_data.mu_LR;
-
-        // dk_over_mu_G_dp_GR = ip_out.permeability_data.Ki *
-        //                      ip_out.permeability_data.dk_rel_G_dS_L *
-        //                      (ds_L_dp_GR = 0) /
-        //                      ip_cv.viscosity_data.mu_GR = 0;
-        // dk_over_mu_L_dp_GR = ip_out.permeability_data.Ki *
-        //                      ip_out.permeability_data.dk_rel_L_dS_L *
-        //                      (ds_L_dp_GR = 0) /
-        //                      ip_cv.viscosity_data.mu_LR = 0;
-        ip_cv.dk_over_mu_G_dp_cap = ip_out.permeability_data.Ki *
-                                    ip_out.permeability_data.dk_rel_G_dS_L *
-                                    ip_cv.dS_L_dp_cap() /
-                                    ip_cv.viscosity_data.mu_GR;
-        ip_cv.dk_over_mu_L_dp_cap = ip_out.permeability_data.Ki *
-                                    ip_out.permeability_data.dk_rel_L_dS_L *
-                                    ip_cv.dS_L_dp_cap() /
-                                    ip_cv.viscosity_data.mu_LR;
-
-        ip_out.darcy_velocity_data.w_GS =
-            k_over_mu_G * ip_out.fluid_density_data.rho_GR * b -
-            k_over_mu_G * gradpGR;
-        ip_out.darcy_velocity_data.w_LS =
-            k_over_mu_L * gradpCap +
-            k_over_mu_L * ip_out.fluid_density_data.rho_LR * b -
-            k_over_mu_L * gradpGR;
-
-        ip_cv.drho_GR_h_w_eff_dp_GR_Npart =
-            c.drho_GR_dp_GR * ip_out.enthalpy_data.h_G *
-                ip_out.darcy_velocity_data.w_GS +
-            ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G *
-                k_over_mu_G * c.drho_GR_dp_GR * b;
-        ip_cv.drho_GR_h_w_eff_dp_GR_gradNpart =
-            ip_out.fluid_density_data.rho_GR * ip_out.enthalpy_data.h_G *
-                k_over_mu_G -
-            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
-                k_over_mu_L;
-
-        ip_cv.drho_LR_h_w_eff_dp_cap_Npart =
-            -drho_LR_dp_cap * ip_out.enthalpy_data.h_L *
-                ip_out.darcy_velocity_data.w_LS -
-            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
-                k_over_mu_L * drho_LR_dp_cap * b;
-        ip_cv.drho_LR_h_w_eff_dp_cap_gradNpart =
-            // TODO (naumov) why the minus sign??????
-            ip_out.fluid_density_data.rho_LR * ip_out.enthalpy_data.h_L *
-            k_over_mu_L;
-
-        ip_cv.drho_GR_h_w_eff_dT =
-            c.drho_GR_dT * ip_out.enthalpy_data.h_G *
-                ip_out.darcy_velocity_data.w_GS +
-            ip_out.fluid_density_data.rho_GR * c.dh_G_dT *
-                ip_out.darcy_velocity_data.w_GS +
-            c.drho_LR_dT * ip_out.enthalpy_data.h_L *
-                ip_out.darcy_velocity_data.w_LS +
-            ip_out.fluid_density_data.rho_LR * c.dh_L_dT *
-                ip_out.darcy_velocity_data.w_LS;
-        // TODO (naumov) + k_over_mu_G * drho_GR_dT * b + k_over_mu_L *
-        // drho_LR_dT * b
-
-        // Derivatives of s_G * rho_C_GR_dot + s_L * rho_C_LR_dot abbreviated
-        // here with S_rho_C_eff.
-        double const s_L = current_state.S_L_data.S_L;
-        double const s_G = 1. - s_L;
-        double const rho_C_FR =
-            s_G * current_state.constituent_density_data.rho_C_GR +
-            s_L * current_state.constituent_density_data.rho_C_LR;
-        double const rho_W_FR =
-            s_G * current_state.constituent_density_data.rho_W_GR +
-            s_L * current_state.rho_W_LR();
-        // TODO (naumov) Extend for partially saturated media.
-        constexpr double drho_C_GR_dp_cap = 0;
-        if (dt == 0.)
-        {
-            ip_cv.dfC_3a_dp_GR = 0.;
-            ip_cv.dfC_3a_dp_cap = 0.;
-            ip_cv.dfC_3a_dT = 0.;
-        }
-        else
-        {
-            double const rho_C_GR_dot =
-                (current_state.constituent_density_data.rho_C_GR -
-                 prev_state.constituent_density_data->rho_C_GR) /
-                dt;
-            double const rho_C_LR_dot =
-                (current_state.constituent_density_data.rho_C_LR -
-                 prev_state.constituent_density_data->rho_C_LR) /
-                dt;
-            ip_cv.dfC_3a_dp_GR =
-                /*(ds_G_dp_GR = 0) * rho_C_GR_dot +*/ s_G * c.drho_C_GR_dp_GR /
-                    dt +
-                /*(ds_L_dp_GR = 0) * rho_C_LR_dot +*/ s_L * c.drho_C_LR_dp_GR /
-                    dt;
-            ip_cv.dfC_3a_dp_cap = ds_G_dp_cap * rho_C_GR_dot +
-                                  s_G * drho_C_GR_dp_cap / dt +
-                                  ip_cv.dS_L_dp_cap() * rho_C_LR_dot -
-                                  s_L * c.drho_C_LR_dp_LR / dt;
-            ip_cv.dfC_3a_dT =
-                s_G * c.drho_C_GR_dT / dt + s_L * c.drho_C_LR_dT / dt;
-        }
-
-        double const drho_C_FR_dp_GR =
-            /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_C_GR
-               +*/
-            s_G * c.drho_C_GR_dp_GR +
-            /*(ds_L_dp_GR = 0) * current_state.constituent_density_data.rho_C_LR
-               +*/
-            s_L * c.drho_C_LR_dp_GR;
-        ip_cv.dfC_4_MCpG_dp_GR =
-            drho_C_FR_dp_GR * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-            ip_cv.beta_p_SR();
-
-        double const drho_C_FR_dT = s_G * c.drho_C_GR_dT + s_L * c.drho_C_LR_dT;
-        ip_cv.dfC_4_MCpG_dT =
-            drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() -
-            rho_C_FR * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
-
-        ip_cv.dfC_4_MCT_dT =
-            drho_C_FR_dT * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.s_therm_exp_data.beta_T_SR
-#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            + rho_C_FR * (ip_cv.biot_data() - ip_cv.porosity_d_data.dphi_dT) *
-                  ip_cv.s_therm_exp_data.beta_T_SR
-#endif
-            ;
-
-        ip_cv.dfC_4_MCu_dT = drho_C_FR_dT * ip_cv.biot_data();
-
-        ip_cv.dfC_2a_dp_GR =
-            -ip_out.porosity_data.phi * c.drho_C_GR_dp_GR -
-            drho_C_FR_dp_GR * pCap *
-                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR();
-
-        double const drho_C_FR_dp_cap =
-            ds_G_dp_cap * current_state.constituent_density_data.rho_C_GR +
-            s_G * drho_C_GR_dp_cap +
-            ip_cv.dS_L_dp_cap() *
-                current_state.constituent_density_data.rho_C_LR -
-            s_L * c.drho_C_LR_dp_LR;
-
-        ip_cv.dfC_2a_dp_cap =
-            ip_out.porosity_data.phi * (-c.drho_C_LR_dp_LR - drho_C_GR_dp_cap) -
-            drho_C_FR_dp_cap * pCap *
-                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() +
-            rho_C_FR * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR();
-
-        ip_cv.dfC_2a_dT =
-            ip_cv.porosity_d_data.dphi_dT *
-                (current_state.constituent_density_data.rho_C_LR -
-                 current_state.constituent_density_data.rho_C_GR) +
-            ip_out.porosity_data.phi * (c.drho_C_LR_dT - c.drho_C_GR_dT) -
-            drho_C_FR_dT * pCap *
-                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() +
-            rho_C_FR * pCap * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
-
-        ip_cv.dadvection_C_dp_GR = c.drho_C_GR_dp_GR * k_over_mu_G
-                                   // + rhoCGR * (dk_over_mu_G_dp_GR = 0)
-                                   // + rhoCLR * (dk_over_mu_L_dp_GR = 0)
-                                   + c.drho_C_LR_dp_GR * k_over_mu_L;
-
-        ip_cv.dadvection_C_dp_cap =
-            //(drho_C_GR_dp_cap = 0) * k_over_mu_G
-            current_state.constituent_density_data.rho_C_GR *
-                ip_cv.dk_over_mu_G_dp_cap +
-            (-c.drho_C_LR_dp_LR) * k_over_mu_L +
-            current_state.constituent_density_data.rho_C_LR *
-                ip_cv.dk_over_mu_L_dp_cap;
-
-        ip_cv.dfC_4_LCpG_dT =
-            c.drho_C_GR_dT * k_over_mu_G + c.drho_C_LR_dT * k_over_mu_L
-            // + ip_cv.ddiffusion_C_p_dT TODO (naumov)
-            ;
-
-        double const drho_W_FR_dp_GR =
-            /*(ds_G_dp_GR = 0) * current_state.constituent_density_data.rho_W_GR
-               +*/
-            s_G * c.drho_W_GR_dp_GR +
-            /*(ds_L_dp_GR = 0) * current_state.rho_W_LR() +*/
-            s_L * c.drho_W_LR_dp_GR;
-        double const drho_W_FR_dp_cap =
-            ds_G_dp_cap * current_state.constituent_density_data.rho_W_GR +
-            s_G * c.drho_W_GR_dp_cap +
-            ip_cv.dS_L_dp_cap() * current_state.rho_W_LR() -
-            s_L * c.drho_W_LR_dp_LR;
-        double const drho_W_FR_dT = s_G * c.drho_W_GR_dT + s_L * c.drho_W_LR_dT;
-
-        ip_cv.dfW_2a_dp_GR =
-            ip_out.porosity_data.phi * (c.drho_W_LR_dp_GR - c.drho_W_GR_dp_GR);
-        ip_cv.dfW_2b_dp_GR = drho_W_FR_dp_GR * pCap *
-                             (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                             ip_cv.beta_p_SR();
-        ip_cv.dfW_2a_dp_cap = ip_out.porosity_data.phi *
-                              (-c.drho_W_LR_dp_LR - c.drho_W_GR_dp_cap);
-        ip_cv.dfW_2b_dp_cap =
-            drho_W_FR_dp_cap * pCap *
-                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() +
-            rho_W_FR * (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR();
-
-        ip_cv.dfW_2a_dT =
-            ip_cv.porosity_d_data.dphi_dT *
-                (current_state.rho_W_LR() -
-                 current_state.constituent_density_data.rho_W_GR) +
-            ip_out.porosity_data.phi * (c.drho_W_LR_dT - c.drho_W_GR_dT);
-        ip_cv.dfW_2b_dT =
-            drho_W_FR_dT * pCap *
-                (ip_cv.biot_data() - ip_out.porosity_data.phi) *
-                ip_cv.beta_p_SR() -
-            rho_W_FR * pCap * ip_cv.porosity_d_data.dphi_dT * ip_cv.beta_p_SR();
-
-        if (dt == 0.)
-        {
-            ip_cv.dfW_3a_dp_GR = 0.;
-            ip_cv.dfW_3a_dp_cap = 0.;
-            ip_cv.dfW_3a_dT = 0.;
-        }
-        else
-        {
-            double const rho_W_GR_dot =
-                (current_state.constituent_density_data.rho_W_GR -
-                 prev_state.constituent_density_data->rho_W_GR) /
-                dt;
-            double const rho_W_LR_dot =
-                (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
-
-            ip_cv.dfW_3a_dp_GR =
-                /*(ds_G_dp_GR = 0) * rho_W_GR_dot +*/ s_G * c.drho_W_GR_dp_GR /
-                    dt +
-                /*(ds_L_dp_GR = 0) * rho_W_LR_dot +*/ s_L * c.drho_W_LR_dp_GR /
-                    dt;
-            ip_cv.dfW_3a_dp_cap = ds_G_dp_cap * rho_W_GR_dot +
-                                  s_G * c.drho_W_GR_dp_cap / dt +
-                                  ip_cv.dS_L_dp_cap() * rho_W_LR_dot -
-                                  s_L * c.drho_W_LR_dp_LR / dt;
-            ip_cv.dfW_3a_dT =
-                s_G * c.drho_W_GR_dT / dt + s_L * c.drho_W_LR_dT / dt;
-        }
-
-        ip_cv.dfW_4_LWpG_a_dp_GR = c.drho_W_GR_dp_GR * k_over_mu_G
-                                   // + rhoWGR * (dk_over_mu_G_dp_GR = 0)
-                                   + c.drho_W_LR_dp_GR * k_over_mu_L
-            // + rhoWLR * (dk_over_mu_L_dp_GR = 0)
-            ;
-        ip_cv.dfW_4_LWpG_a_dp_cap =
-            c.drho_W_GR_dp_cap * k_over_mu_G +
-            current_state.constituent_density_data.rho_W_GR *
-                ip_cv.dk_over_mu_G_dp_cap +
-            -c.drho_W_LR_dp_LR * k_over_mu_L +
-            current_state.rho_W_LR() * ip_cv.dk_over_mu_L_dp_cap;
-
-        ip_cv.dfW_4_LWpG_a_dT =
-            c.drho_W_GR_dT * k_over_mu_G
-            //+ rhoWGR * (dk_over_mu_G_dT != 0 TODO for mu_G(T))
-            + c.drho_W_LR_dT * k_over_mu_L
-            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_G(T))
-            ;
-
-        // TODO (naumov) for dxmW*/d* != 0
-        ip_cv.dfW_4_LWpG_d_dp_GR =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfW_4_LWpG_d_dp_cap =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfW_4_LWpG_d_dT =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-
-        ip_cv.dfW_4_LWpC_a_dp_GR = c.drho_W_LR_dp_GR * k_over_mu_L
-            //+ rhoWLR * (dk_over_mu_L_dp_GR = 0)
-            ;
-        ip_cv.dfW_4_LWpC_a_dp_cap =
-            -c.drho_W_LR_dp_LR * k_over_mu_L +
-            current_state.rho_W_LR() * ip_cv.dk_over_mu_L_dp_cap;
-        ip_cv.dfW_4_LWpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
-            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
-            ;
-
-        // TODO (naumov) for dxmW*/d* != 0
-        ip_cv.dfW_4_LWpC_d_dp_GR =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfW_4_LWpC_d_dp_cap =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfW_4_LWpC_d_dT =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-
-        ip_cv.dfC_4_LCpC_a_dp_GR = c.drho_C_LR_dp_GR * k_over_mu_L
-            //+ rhoCLR * (dk_over_mu_L_dp_GR = 0)
-            ;
-        ip_cv.dfC_4_LCpC_a_dp_cap =
-            -c.drho_C_LR_dp_LR * k_over_mu_L +
-            current_state.constituent_density_data.rho_C_LR *
-                ip_cv.dk_over_mu_L_dp_cap;
-        ip_cv.dfC_4_LCpC_a_dT = c.drho_W_LR_dT * k_over_mu_L
-            //+ rhoWLR * (dk_over_mu_L_dT != 0 TODO for mu_L(T))
-            ;
-
-        // TODO (naumov) for dxmW*/d* != 0
-        ip_cv.dfC_4_LCpC_d_dp_GR =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfC_4_LCpC_d_dp_cap =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
-        ip_cv.dfC_4_LCpC_d_dT =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Zero();
+        models.fu_2_KupC_model.eval(ip_cv.biot_data, ip_cv.chi_S_L,
+                                    ip_cv.fu_2_KupC);
     }
 
     return {ip_constitutive_data, ip_constitutive_variables};
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+std::vector<ConstitutiveRelations::DerivativesData<DisplacementDim>>
+TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
+                   DisplacementDim>::
+    updateConstitutiveVariablesDerivatives(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        std::vector<
+            ConstitutiveRelations::ConstitutiveData<DisplacementDim>> const&
+            ip_constitutive_data,
+        std::vector<
+            ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>> const&
+            ip_constitutive_variables,
+        ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
+            models)
+{
+    [[maybe_unused]] auto const matrix_size =
+        gas_pressure_size + capillary_pressure_size + temperature_size +
+        displacement_size;
+
+    assert(local_x.size() == matrix_size);
+
+    auto const temperature =
+        local_x.template segment<temperature_size>(temperature_index);
+    auto const temperature_prev =
+        local_x_prev.template segment<temperature_size>(temperature_index);
+
+    auto const capillary_pressure =
+        local_x.template segment<capillary_pressure_size>(
+            capillary_pressure_index);
+
+    auto const& medium =
+        *this->process_data_.media_map.getMedium(this->element_.getID());
+    ConstitutiveRelations::MediaData media_data{medium};
+
+    unsigned const n_integration_points =
+        this->integration_method_.getNumberOfPoints();
+
+    std::vector<ConstitutiveRelations::DerivativesData<DisplacementDim>>
+        ip_d_data(n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& ip_data = _ip_data[ip];
+        auto& ip_dd = ip_d_data[ip];
+        auto const& ip_cd = ip_constitutive_data[ip];
+        auto const& ip_cv = ip_constitutive_variables[ip];
+        auto const& ip_out = this->output_data_[ip];
+        auto const& current_state = this->current_states_[ip];
+        auto const& prev_state = this->prev_states_[ip];
+
+        auto const& Nu = ip_data.N_u;
+        auto const& Np = ip_data.N_p;
+        auto const& NT = Np;
+
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, this->element_.getID(), ip,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, Nu))};
+
+        double const T = NT.dot(temperature);
+        double const T_prev = NT.dot(temperature_prev);
+        ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{
+            Np.dot(capillary_pressure)};
+
+        models.S_L_model.dEval({pos, t, dt}, media_data, pCap_data,
+                               ip_dd.dS_L_dp_cap);
+
+        models.advection_model.dEval(current_state.constituent_density_data,
+                                     ip_out.permeability_data,
+                                     ip_cv.viscosity_data,
+                                     ip_dd.dS_L_dp_cap,
+                                     ip_cv.phase_transition_data,
+                                     ip_dd.advection_d_data);
+
+        models.porosity_model.dEval(
+            {pos, t, dt}, media_data, ip_out.porosity_data, ip_dd.dS_L_dp_cap,
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+            ip_cv.biot_data, ip_out.eps_data, ip_cv.s_therm_exp_data,
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+            ip_dd.porosity_d_data);
+
+        models.thermal_conductivity_model.dEval(
+            {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
+            ip_dd.porosity_d_data, current_state.S_L_data,
+            ip_dd.thermal_conductivity_d_data);
+
+        models.solid_density_model.dEval({pos, t, dt}, media_data, T_data,
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+                                         ip_cv.biot_data, ip_out.eps_data,
+                                         ip_cv.s_therm_exp_data,
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+                                         ip_dd.solid_density_d_data);
+
+        models.internal_energy_model.dEval(
+            ip_out.fluid_density_data,
+            ip_cv.phase_transition_data,
+            ip_out.porosity_data,
+            ip_dd.porosity_d_data,
+            current_state.S_L_data,
+            ip_out.solid_density_data,
+            ip_dd.solid_density_d_data,
+            ip_out.solid_enthalpy_data,
+            ip_cv.solid_heat_capacity_data,
+            ip_dd.effective_volumetric_internal_energy_d_data);
+
+        models.effective_volumetric_enthalpy_model.dEval(
+            ip_out.fluid_density_data,
+            ip_out.fluid_enthalpy_data,
+            ip_cv.phase_transition_data,
+            ip_out.porosity_data,
+            ip_dd.porosity_d_data,
+            current_state.S_L_data,
+            ip_out.solid_density_data,
+            ip_dd.solid_density_d_data,
+            ip_out.solid_enthalpy_data,
+            ip_cv.solid_heat_capacity_data,
+            ip_dd.effective_volumetric_enthalpy_d_data);
+        if (!this->process_data_.apply_mass_lumping)
+        {
+            models.fC_2a_model.dEval(ip_cv.biot_data,
+                                     pCap_data,
+                                     current_state.constituent_density_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_out.porosity_data,
+                                     ip_dd.porosity_d_data,
+                                     current_state.S_L_data,
+                                     ip_dd.dS_L_dp_cap,
+                                     ip_cv.beta_p_SR,
+                                     ip_dd.dfC_2a);
+        }
+        models.fC_3a_model.dEval(dt,
+                                 current_state.constituent_density_data,
+                                 prev_state.constituent_density_data,
+                                 ip_cv.phase_transition_data,
+                                 current_state.S_L_data,
+                                 ip_dd.dS_L_dp_cap,
+                                 ip_dd.dfC_3a);
+
+        models.fC_4_LCpG_model.dEval(ip_out.permeability_data,
+                                     ip_cv.viscosity_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_dd.advection_d_data,
+                                     ip_dd.dfC_4_LCpG);
+
+        models.fC_4_LCpC_model.dEval(current_state.constituent_density_data,
+                                     ip_out.permeability_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_dd.dS_L_dp_cap,
+                                     ip_cv.viscosity_data,
+                                     ip_dd.dfC_4_LCpC);
+
+        models.fC_4_MCpG_model.dEval(ip_cv.biot_data,
+                                     current_state.constituent_density_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_out.porosity_data,
+                                     ip_dd.porosity_d_data,
+                                     current_state.S_L_data,
+                                     ip_cv.beta_p_SR,
+                                     ip_dd.dfC_4_MCpG);
+
+        models.fC_4_MCT_model.dEval(ip_cv.biot_data,
+                                    current_state.constituent_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    ip_dd.porosity_d_data,
+                                    current_state.S_L_data,
+                                    ip_cv.s_therm_exp_data,
+                                    ip_dd.dfC_4_MCT);
+
+        models.fC_4_MCu_model.dEval(ip_cv.biot_data,
+                                    ip_cv.phase_transition_data,
+                                    current_state.S_L_data,
+                                    ip_dd.dfC_4_MCu);
+
+        if (!this->process_data_.apply_mass_lumping)
+        {
+            models.fW_2_model.dEval(ip_cv.biot_data,
+                                    pCap_data,
+                                    current_state.constituent_density_data,
+                                    ip_cv.phase_transition_data,
+                                    ip_out.porosity_data,
+                                    ip_dd.porosity_d_data,
+                                    current_state.rho_W_LR,
+                                    current_state.S_L_data,
+                                    ip_dd.dS_L_dp_cap,
+                                    ip_cv.beta_p_SR,
+                                    ip_dd.dfW_2);
+        }
+
+        models.fW_3a_model.dEval(dt,
+                                 current_state.constituent_density_data,
+                                 ip_cv.phase_transition_data,
+                                 prev_state.constituent_density_data,
+                                 prev_state.rho_W_LR,
+                                 current_state.rho_W_LR,
+                                 current_state.S_L_data,
+                                 ip_dd.dS_L_dp_cap,
+                                 ip_dd.dfW_3a);
+
+        models.fW_4_LWpG_model.dEval(current_state.constituent_density_data,
+                                     ip_out.permeability_data,
+                                     ip_cv.phase_transition_data,
+                                     current_state.rho_W_LR,
+                                     ip_dd.dS_L_dp_cap,
+                                     ip_cv.viscosity_data,
+                                     ip_dd.dfW_4_LWpG);
+
+        models.fW_4_LWpC_model.dEval(ip_cv.advection_data,
+                                     ip_out.fluid_density_data,
+                                     ip_out.permeability_data,
+                                     ip_cv.phase_transition_data,
+                                     ip_out.porosity_data,
+                                     current_state.rho_W_LR,
+                                     current_state.S_L_data,
+                                     ip_dd.dS_L_dp_cap,
+                                     ip_cv.viscosity_data,
+                                     ip_dd.dfW_4_LWpC);
+
+        models.fT_1_model.dEval(
+            dt, ip_dd.effective_volumetric_internal_energy_d_data, ip_dd.dfT_1);
+
+        models.fT_2_model.dEval(
+            ip_out.darcy_velocity_data,
+            ip_out.fluid_density_data,
+            ip_out.fluid_enthalpy_data,
+            ip_out.permeability_data,
+            ip_cv.phase_transition_data,
+            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
+                this->process_data_.specific_body_force},
+            ip_cv.viscosity_data,
+            ip_dd.dfT_2);
+
+        models.fu_1_KuT_model.dEval(ip_cd.s_mech_data, ip_cv.s_therm_exp_data,
+                                    ip_dd.dfu_1_KuT);
+
+        models.fu_2_KupC_model.dEval(ip_cv.biot_data,
+                                     ip_cv.chi_S_L,
+                                     pCap_data,
+                                     ip_dd.dS_L_dp_cap,
+                                     ip_dd.dfu_2_KupC);
+    }
+
+    return ip_d_data;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1058,10 +1068,6 @@ void TH2MLocalAssembler<
 
         auto const& w = ip.integration_weight;
 
-        auto const& m = Invariants::identity2;
-
-        auto const mT = m.transpose().eval();
-
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -1073,299 +1079,117 @@ void TH2MLocalAssembler<
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto const BuT = Bu.transpose().eval();
+        auto const NTN = (Np.transpose() * Np).eval();
+        auto const BTI2N = (Bu.transpose() * Invariants::identity2 * Np).eval();
 
         double const pCap = Np.dot(capillary_pressure);
         double const pCap_prev = Np.dot(capillary_pressure_prev);
 
-        double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
-
-        auto const I =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
-
-        double const sD_G =
-            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
-        double const sD_L =
-            ip_cv.phase_transition_data.diffusion_coefficient_solute;
-
-        GlobalDimMatrixType const D_C_G = sD_G * I;
-        GlobalDimMatrixType const D_W_G = sD_G * I;
-        GlobalDimMatrixType const D_C_L = sD_L * I;
-        GlobalDimMatrixType const D_W_L = sD_L * I;
-
         auto const s_L = current_state.S_L_data.S_L;
-        auto const s_G = 1. - s_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
-        auto& alpha_B = ip_cv.biot_data();
-        auto& beta_p_SR = ip_cv.beta_p_SR();
-
         auto const& b = this->process_data_.specific_body_force;
-
-        // volume fraction
-        auto const phi_G = s_G * ip_out.porosity_data.phi;
-        auto const phi_L = s_L * ip_out.porosity_data.phi;
-        auto const phi_S = 1. - ip_out.porosity_data.phi;
-
-        auto const rhoGR = ip_out.fluid_density_data.rho_GR;
-        auto const rhoLR = ip_out.fluid_density_data.rho_LR;
-
-        // effective density
-        auto const rho = phi_G * rhoGR + phi_L * rhoLR +
-                         phi_S * ip_out.solid_density_data.rho_SR;
-
-        // abbreviations
-        const double rho_C_FR =
-            s_G * current_state.constituent_density_data.rho_C_GR +
-            s_L * current_state.constituent_density_data.rho_C_LR;
-        const double rho_W_FR =
-            s_G * current_state.constituent_density_data.rho_W_GR +
-            s_L * current_state.rho_W_LR();
-
-        auto const rho_C_GR_dot =
-            (current_state.constituent_density_data.rho_C_GR -
-             prev_state.constituent_density_data->rho_C_GR) /
-            dt;
-        auto const rho_C_LR_dot =
-            (current_state.constituent_density_data.rho_C_LR -
-             prev_state.constituent_density_data->rho_C_LR) /
-            dt;
-        auto const rho_W_GR_dot =
-            (current_state.constituent_density_data.rho_W_GR -
-             prev_state.constituent_density_data->rho_W_GR) /
-            dt;
-        auto const rho_W_LR_dot =
-            (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
-
-        GlobalDimMatrixType const k_over_mu_G =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip_cv.viscosity_data.mu_GR;
-        GlobalDimMatrixType const k_over_mu_L =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip_cv.viscosity_data.mu_LR;
 
         // ---------------------------------------------------------------------
         // C-component equation
         // ---------------------------------------------------------------------
 
-        MCpG.noalias() += NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
-        MCpC.noalias() -= NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MCpG.noalias() += NTN * (ip_cv.fC_4_MCpG.m * w);
+        MCpC.noalias() += NTN * (ip_cv.fC_4_MCpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.constituent_density_data.rho_C_LR -
-                          current_state.constituent_density_data.rho_C_GR) -
-                     rho_C_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MCT.noalias() -= NpT * rho_C_FR * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_T_SR * Np * w;
-        MCu.noalias() += NpT * rho_C_FR * alpha_B * mT * Bu * w;
+        MCT.noalias() += NTN * (ip_cv.fC_4_MCT.m * w);
+        MCu.noalias() += BTI2N.transpose() * (ip_cv.fC_4_MCu.m * w);
 
-        using DisplacementDimMatrix =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
+        LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
-        DisplacementDimMatrix const advection_C_G =
-            current_state.constituent_density_data.rho_C_GR * k_over_mu_G;
-        DisplacementDimMatrix const advection_C_L =
-            current_state.constituent_density_data.rho_C_LR * k_over_mu_L;
+        LCpC.noalias() += gradNpT * ip_cv.fC_4_LCpC.L * gradNp * w;
 
-        DisplacementDimMatrix const diffusion_CGpGR =
-            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpGR;
-        DisplacementDimMatrix const diffusion_CLpGR =
-            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpGR;
+        LCT.noalias() += gradNpT * ip_cv.fC_4_LCT.L * gradNp * w;
 
-        DisplacementDimMatrix const diffusion_CGpCap =
-            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpCap;
-        DisplacementDimMatrix const diffusion_CLpCap =
-            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpCap;
-
-        DisplacementDimMatrix const diffusion_CGT =
-            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dT;
-        DisplacementDimMatrix const diffusion_CLT =
-            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dT;
-
-        DisplacementDimMatrix const advection_C = advection_C_G + advection_C_L;
-        DisplacementDimMatrix const diffusion_C_pGR =
-            diffusion_CGpGR + diffusion_CLpGR;
-        DisplacementDimMatrix const diffusion_C_pCap =
-            diffusion_CGpCap + diffusion_CLpCap;
-
-        DisplacementDimMatrix const diffusion_C_T =
-            diffusion_CGT + diffusion_CLT;
-
-        LCpG.noalias() +=
-            gradNpT * (advection_C + diffusion_C_pGR) * gradNp * w;
-
-        LCpC.noalias() +=
-            gradNpT * (diffusion_C_pCap - advection_C_L) * gradNp * w;
-
-        LCT.noalias() += gradNpT * (diffusion_C_T)*gradNp * w;
-
-        fC.noalias() +=
-            gradNpT * (advection_C_G * rhoGR + advection_C_L * rhoLR) * b * w;
+        fC.noalias() += gradNpT * ip_cv.fC_1.A * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
-            fC.noalias() -=
-                NpT *
-                (ip_out.porosity_data.phi *
-                     (current_state.constituent_density_data.rho_C_LR -
-                      current_state.constituent_density_data.rho_C_GR) -
-                 rho_C_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                     beta_p_SR) *
-                s_L_dot * w;
+            fC.noalias() -= NpT * (ip_cv.fC_2a.a * s_L_dot * w);
         }
         // fC_III
-        fC.noalias() -= NpT * ip_out.porosity_data.phi *
-                        (s_G * rho_C_GR_dot + s_L * rho_C_LR_dot) * w;
+        fC.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fC_3a.a * w);
 
         // ---------------------------------------------------------------------
         // W-component equation
         // ---------------------------------------------------------------------
 
-        MWpG.noalias() += NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
-        MWpC.noalias() -= NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MWpG.noalias() += NTN * (ip_cv.fW_4_MWpG.m * w);
+        MWpC.noalias() += NTN * (ip_cv.fW_4_MWpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.rho_W_LR() -
-                          current_state.constituent_density_data.rho_W_GR) -
-                     rho_W_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MWT.noalias() -= NpT * rho_W_FR * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_T_SR * Np * w;
+        MWT.noalias() += NTN * (ip_cv.fW_4_MWT.m * w);
 
-        MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
+        MWu.noalias() += BTI2N.transpose() * (ip_cv.fW_4_MWu.m * w);
 
-        DisplacementDimMatrix const advection_W_G =
-            current_state.constituent_density_data.rho_W_GR * k_over_mu_G;
-        DisplacementDimMatrix const advection_W_L =
-            current_state.rho_W_LR() * k_over_mu_L;
+        LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
-        DisplacementDimMatrix const diffusion_WGpGR =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpGR;
-        DisplacementDimMatrix const diffusion_WLpGR =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpGR;
+        LWpC.noalias() += gradNpT * ip_cv.fW_4_LWpC.L * gradNp * w;
 
-        DisplacementDimMatrix const diffusion_WGpCap =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpCap;
-        DisplacementDimMatrix const diffusion_WLpCap =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpCap;
+        LWT.noalias() += gradNpT * ip_cv.fW_4_LWT.L * gradNp * w;
 
-        DisplacementDimMatrix const diffusion_WGT =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
-        DisplacementDimMatrix const diffusion_WLT =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
-
-        DisplacementDimMatrix const advection_W = advection_W_G + advection_W_L;
-        DisplacementDimMatrix const diffusion_W_pGR =
-            diffusion_WGpGR + diffusion_WLpGR;
-        DisplacementDimMatrix const diffusion_W_pCap =
-            diffusion_WGpCap + diffusion_WLpCap;
-
-        DisplacementDimMatrix const diffusion_W_T =
-            diffusion_WGT + diffusion_WLT;
-
-        LWpG.noalias() +=
-            gradNpT * (advection_W + diffusion_W_pGR) * gradNp * w;
-
-        LWpC.noalias() +=
-            gradNpT * (diffusion_W_pCap - advection_W_L) * gradNp * w;
-
-        LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
-
-        fW.noalias() +=
-            gradNpT * (advection_W_G * rhoGR + advection_W_L * rhoLR) * b * w;
+        fW.noalias() += gradNpT * ip_cv.fW_1.A * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
-            fW.noalias() -=
-                NpT *
-                (ip_out.porosity_data.phi *
-                     (current_state.rho_W_LR() -
-                      current_state.constituent_density_data.rho_W_GR) -
-                 rho_W_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                     beta_p_SR) *
-                s_L_dot * w;
+            fW.noalias() -= NpT * (ip_cv.fW_2.a * s_L_dot * w);
         }
 
-        fW.noalias() -= NpT * ip_out.porosity_data.phi *
-                        (s_G * rho_W_GR_dot + s_L * rho_W_LR_dot) * w;
+        fW.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fW_3a.a * w);
 
         // ---------------------------------------------------------------------
         //  - temperature equation
         // ---------------------------------------------------------------------
 
-        MTu.noalias() += NTT *
-                         ip_cv.effective_volumetric_enthalpy_data.rho_h_eff *
-                         mT * Bu * w;
+        MTu.noalias() +=
+            BTI2N.transpose() *
+            (ip_cv.effective_volumetric_enthalpy_data.rho_h_eff * w);
 
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
 
-        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
-                                    **prev_state.internal_energy_data) /
-                                   dt;
-        fT.noalias() -= NTT * rho_u_eff_dot * w;
+        fT.noalias() -= NTT * (ip_cv.fT_1.m * w);
 
-        fT.noalias() += gradNTT *
-                        (rhoGR * ip_out.enthalpy_data.h_G *
-                             ip_out.darcy_velocity_data.w_GS +
-                         rhoLR * ip_out.enthalpy_data.h_L *
-                             ip_out.darcy_velocity_data.w_LS) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_2.A * w;
 
-        fT.noalias() += gradNTT *
-                        (current_state.constituent_density_data.rho_C_GR *
-                             ip_cv.phase_transition_data.hCG *
-                             ip_out.diffusion_velocity_data.d_CG +
-                         current_state.constituent_density_data.rho_W_GR *
-                             ip_cv.phase_transition_data.hWG *
-                             ip_out.diffusion_velocity_data.d_WG) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_3.gradN * w;
 
-        fT.noalias() += NTT *
-                        (rhoGR * ip_out.darcy_velocity_data.w_GS.transpose() +
-                         rhoLR * ip_out.darcy_velocity_data.w_LS.transpose()) *
-                        b * w;
+        fT.noalias() += NTT * (ip_cv.fT_3.N * w);
 
         // ---------------------------------------------------------------------
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
+        KUpG.noalias() -= BTI2N * (ip_cv.biot_data() * w);
 
-        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
+        KUpC.noalias() += BTI2N * (ip_cv.fu_2_KupC.m * w);
 
-        fU.noalias() -= (BuT * current_state.eff_stress_data.sigma -
-                         N_u_op(Nu).transpose() * rho * b) *
-                        w;
+        fU.noalias() -=
+            (Bu.transpose() * current_state.eff_stress_data.sigma -
+             N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
+            w;
 
         if (this->process_data_.apply_mass_lumping)
         {
@@ -1515,10 +1339,17 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                               local_x_prev.size()),
             t, dt, models);
 
+    auto const ip_d_data = updateConstitutiveVariablesDerivatives(
+        Eigen::Map<Eigen::VectorXd const>(local_x.data(), local_x.size()),
+        Eigen::Map<Eigen::VectorXd const>(local_x_prev.data(),
+                                          local_x_prev.size()),
+        t, dt, ip_constitutive_data, ip_constitutive_variables, models);
+
     for (unsigned int_point = 0; int_point < n_integration_points; int_point++)
     {
         auto& ip = _ip_data[int_point];
         auto& ip_cd = ip_constitutive_data[int_point];
+        auto& ip_dd = ip_d_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
         auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
@@ -1546,9 +1377,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         auto const& w = ip.integration_weight;
 
-        auto const& m = Invariants::identity2;
-        auto const mT = m.transpose().eval();
-
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -1560,7 +1388,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto const BuT = Bu.transpose().eval();
+        auto const NTN = (Np.transpose() * Np).eval();
+        auto const BTI2N = (Bu.transpose() * Invariants::identity2 * Np).eval();
 
         double const div_u_dot =
             Invariants::trace(Bu * (displacement - displacement_prev) / dt);
@@ -1576,402 +1405,232 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         double const pGR_prev = Np.dot(gas_pressure_prev);
         double const pCap_prev = Np.dot(capillary_pressure_prev);
         double const T_prev = NT.dot(temperature_prev);
-        double const beta_T_SR = ip_cv.s_therm_exp_data.beta_T_SR;
 
-        auto const I =
-            Eigen::Matrix<double, DisplacementDim, DisplacementDim>::Identity();
-
-        double const sD_G =
-            ip_cv.phase_transition_data.diffusion_coefficient_vapour;
-        double const sD_L =
-            ip_cv.phase_transition_data.diffusion_coefficient_solute;
-
-        GlobalDimMatrixType const D_C_G = sD_G * I;
-        GlobalDimMatrixType const D_W_G = sD_G * I;
-        GlobalDimMatrixType const D_C_L = sD_L * I;
-        GlobalDimMatrixType const D_W_L = sD_L * I;
-
-        auto& s_L = current_state.S_L_data.S_L;
-        auto const s_G = 1. - s_L;
+        auto const& s_L = current_state.S_L_data.S_L;
         auto const s_L_dot = (s_L - prev_state.S_L_data->S_L) / dt;
 
-        auto const alpha_B = ip_cv.biot_data();
-        auto const beta_p_SR = ip_cv.beta_p_SR();
-
         auto const& b = this->process_data_.specific_body_force;
-
-        // volume fraction
-        auto const phi_G = s_G * ip_out.porosity_data.phi;
-        auto const phi_L = s_L * ip_out.porosity_data.phi;
-        auto const phi_S = 1. - ip_out.porosity_data.phi;
-
-        auto const rhoGR = ip_out.fluid_density_data.rho_GR;
-        auto const rhoLR = ip_out.fluid_density_data.rho_LR;
-
-        // effective density
-        auto const rho = phi_G * rhoGR + phi_L * rhoLR +
-                         phi_S * ip_out.solid_density_data.rho_SR;
-
-        // abbreviations
-        const double rho_C_FR =
-            s_G * current_state.constituent_density_data.rho_C_GR +
-            s_L * current_state.constituent_density_data.rho_C_LR;
-        const double rho_W_FR =
-            s_G * current_state.constituent_density_data.rho_W_GR +
-            s_L * current_state.rho_W_LR();
-
-        auto const rho_C_GR_dot =
-            (current_state.constituent_density_data.rho_C_GR -
-             prev_state.constituent_density_data->rho_C_GR) /
-            dt;
-        auto const rho_C_LR_dot =
-            (current_state.constituent_density_data.rho_C_LR -
-             prev_state.constituent_density_data->rho_C_LR) /
-            dt;
-        auto const rho_W_GR_dot =
-            (current_state.constituent_density_data.rho_W_GR -
-             prev_state.constituent_density_data->rho_W_GR) /
-            dt;
-        auto const rho_W_LR_dot =
-            (current_state.rho_W_LR() - **prev_state.rho_W_LR) / dt;
-
-        GlobalDimMatrixType const k_over_mu_G =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_G /
-            ip_cv.viscosity_data.mu_GR;
-        GlobalDimMatrixType const k_over_mu_L =
-            ip_out.permeability_data.Ki * ip_out.permeability_data.k_rel_L /
-            ip_cv.viscosity_data.mu_LR;
 
         // ---------------------------------------------------------------------
         // C-component equation
         // ---------------------------------------------------------------------
 
-        MCpG.noalias() += NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
-        MCpC.noalias() -= NpT * rho_C_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MCpG.noalias() += NTN * (ip_cv.fC_4_MCpG.m * w);
+        MCpC.noalias() += NTN * (ip_cv.fC_4_MCpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MCpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.constituent_density_data.rho_C_LR -
-                          current_state.constituent_density_data.rho_C_GR) -
-                     rho_C_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fC_4_MCpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MCT.noalias() -= NpT * rho_C_FR * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_T_SR * Np * w;
+        MCT.noalias() += NTN * (ip_cv.fC_4_MCT.m * w);
         // d (fC_4_MCT * T_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += NpT * ip_cv.dfC_4_MCT_dT * (T - T_prev) / dt * NT * w;
+            .noalias() += NTN * (ip_dd.dfC_4_MCT.dT * (T - T_prev) / dt * w);
 
-        MCu.noalias() += NpT * rho_C_FR * alpha_B * mT * Bu * w;
+        MCu.noalias() += BTI2N.transpose() * (ip_cv.fC_4_MCu.m * w);
         // d (fC_4_MCu * u_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += NpT * ip_cv.dfC_4_MCu_dT * div_u_dot * NT * w;
+            .noalias() += NTN * (ip_dd.dfC_4_MCu.dT * div_u_dot * w);
 
-        GlobalDimMatrixType const advection_C_G =
-            current_state.constituent_density_data.rho_C_GR * k_over_mu_G;
-        GlobalDimMatrixType const advection_C_L =
-            current_state.constituent_density_data.rho_C_LR * k_over_mu_L;
-        GlobalDimMatrixType const diffusion_C_G_p =
-            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dpGR;
-        GlobalDimMatrixType const diffusion_C_L_p =
-            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dpLR;
-        GlobalDimMatrixType const diffusion_C_G_T =
-            -phi_G * rhoGR * D_C_G * ip_cv.phase_transition_data.dxmWG_dT;
-        GlobalDimMatrixType const diffusion_C_L_T =
-            -phi_L * rhoLR * D_C_L * ip_cv.phase_transition_data.dxmWL_dT;
-
-        GlobalDimMatrixType const advection_C = advection_C_G + advection_C_L;
-        GlobalDimMatrixType const diffusion_C_p =
-            diffusion_C_G_p + diffusion_C_L_p;
-        GlobalDimMatrixType const diffusion_C_T =
-            diffusion_C_G_T + diffusion_C_L_T;
-
-        LCpG.noalias() += gradNpT * (advection_C + diffusion_C_p) * gradNp * w;
+        LCpG.noalias() += gradNpT * ip_cv.fC_4_LCpG.L * gradNp * w;
 
         // d (fC_4_LCpG * grad p_GR)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
-            gradNpT *
-            (ip_cv.dadvection_C_dp_GR
-             // + ip_cv.ddiffusion_C_p_dp_GR TODO (naumov)
-             ) *
-            gradpGR * Np * w;
+            gradNpT * ip_dd.dfC_4_LCpG.dp_GR * gradpGR * Np * w;
 
         // d (fC_4_LCpG * grad p_GR)/d p_cap
         local_Jac.template block<C_size, W_size>(C_index, W_index).noalias() +=
-            gradNpT *
-            (ip_cv.dadvection_C_dp_cap
-             // + ip_cv.ddiffusion_C_p_dp_GR TODO (naumov)
-             ) *
-            gradpGR * Np * w;
+            gradNpT * ip_dd.dfC_4_LCpG.dp_cap * gradpGR * Np * w;
 
         // d (fC_4_LCpG * grad p_GR)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += gradNpT * ip_cv.dfC_4_LCpG_dT * gradpGR * NT * w;
+            .noalias() += gradNpT * ip_dd.dfC_4_LCpG.dT * gradpGR * NT * w;
 
         // d (fC_4_MCpG * p_GR_dot)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
-            NpT * ip_cv.dfC_4_MCpG_dp_GR * (pGR - pGR_prev) / dt * Np * w;
+            NTN * (ip_dd.dfC_4_MCpG.dp_GR * (pGR - pGR_prev) / dt * w);
 
         // d (fC_4_MCpG * p_GR_dot)/d T
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
             .noalias() +=
-            NpT * ip_cv.dfC_4_MCpG_dT * (pGR - pGR_prev) / dt * NT * w;
+            NTN * (ip_dd.dfC_4_MCpG.dT * (pGR - pGR_prev) / dt * w);
 
-        LCpC.noalias() -=
-            gradNpT * (advection_C_L + diffusion_C_L_p) * gradNp * w;
+        LCpC.noalias() -= gradNpT * ip_cv.fC_4_LCpC.L * gradNp * w;
 
         /* TODO (naumov) This part is not tested by any of the current ctests.
         // d (fC_4_LCpC * grad p_cap)/d p_GR
         local_Jac.template block<C_size, C_size>(C_index, C_index).noalias() +=
-            gradNpT *
-            (ip_cv.dfC_4_LCpC_a_dp_GR
-             // + ip_cv.dfC_4_LCpC_d_dp_GR TODO (naumov)
-             ) *
-            gradpCap * Np * w;
+            gradNpT * ip_dd.dfC_4_LCpC.dp_GR * gradpCap * Np * w;
         // d (fC_4_LCpC * grad p_cap)/d p_cap
         local_Jac.template block<C_size, W_size>(C_index, W_index).noalias() +=
-            gradNpT *
-            (ip_cv.dfC_4_LCpC_a_dp_cap
-             // + ip_cv.dfC_4_LCpC_d_dp_cap TODO (naumov)
-             ) *
-            gradpCap * Np * w;
+            gradNpT * ip_dd.dfC_4_LCpC.dp_cap * gradpCap * Np * w;
 
         local_Jac
             .template block<C_size, temperature_size>(C_index,
                                                       temperature_index)
-            .noalias() += gradNpT *
-                          (ip_cv.dfC_4_LCpC_a_dT
-                           // + ip_cv.dfC_4_LCpC_d_dT TODO (naumov)
-                           ) *
-                          gradpCap * Np * w;
+            .noalias() += gradNpT * ip_dd.dfC_4_LCpC.dT * gradpCap * Np * w;
         */
 
-        LCT.noalias() += gradNpT * diffusion_C_T * gradNp * w;
+        LCT.noalias() += gradNpT * ip_cv.fC_4_LCT.L * gradNp * w;
 
         // fC_1
-        fC.noalias() +=
-            gradNpT * (advection_C_G * rhoGR + advection_C_L * rhoLR) * b * w;
+        fC.noalias() += gradNpT * ip_cv.fC_1.A * b * w;
 
         if (!this->process_data_.apply_mass_lumping)
         {
             // fC_2 = \int a * s_L_dot
-            auto const a =
-                ip_out.porosity_data.phi *
-                    (current_state.constituent_density_data.rho_C_LR -
-                     current_state.constituent_density_data.rho_C_GR) -
-                rho_C_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                    beta_p_SR;
-            fC.noalias() -= NpT * a * s_L_dot * w;
+            fC.noalias() -= NpT * (ip_cv.fC_2a.a * s_L_dot * w);
 
             local_Jac.template block<C_size, C_size>(C_index, C_index)
                 .noalias() +=
-                NpT *
-                (ip_cv.dfC_2a_dp_GR * s_L_dot /*- a * (ds_L_dp_GR = 0) / dt*/) *
-                Np * w;
+                NTN * ((ip_dd.dfC_2a.dp_GR * s_L_dot
+                        /*- ip_cv.fC_2a.a * (ds_L_dp_GR = 0) / dt*/) *
+                       w);
 
             local_Jac.template block<C_size, W_size>(C_index, W_index)
                 .noalias() +=
-                NpT *
-                (ip_cv.dfC_2a_dp_cap * s_L_dot + a * ip_cv.dS_L_dp_cap() / dt) *
-                Np * w;
+                NTN * ((ip_dd.dfC_2a.dp_cap * s_L_dot +
+                        ip_cv.fC_2a.a * ip_dd.dS_L_dp_cap() / dt) *
+                       w);
 
             local_Jac
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
-                .noalias() += NpT * ip_cv.dfC_2a_dT * s_L_dot * NT * w;
+                .noalias() += NTN * (ip_dd.dfC_2a.dT * s_L_dot * w);
         }
         {
             // fC_3 = \int phi * a
-            double const a = s_G * rho_C_GR_dot + s_L * rho_C_LR_dot;
-            fC.noalias() -= NpT * ip_out.porosity_data.phi * a * w;
+            fC.noalias() -=
+                NpT * (ip_out.porosity_data.phi * ip_cv.fC_3a.a * w);
 
             local_Jac.template block<C_size, C_size>(C_index, C_index)
                 .noalias() +=
-                NpT * ip_out.porosity_data.phi * ip_cv.dfC_3a_dp_GR * Np * w;
+                NTN * (ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_GR * w);
 
             local_Jac.template block<C_size, W_size>(C_index, W_index)
                 .noalias() +=
-                NpT * ip_out.porosity_data.phi * ip_cv.dfC_3a_dp_cap * Np * w;
+                NTN * (ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_cap * w);
 
             local_Jac
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
-                .noalias() += NpT *
-                              (ip_cv.porosity_d_data.dphi_dT * a +
-                               ip_out.porosity_data.phi * ip_cv.dfC_3a_dT) *
-                              NT * w;
+                .noalias() +=
+                NTN * ((ip_dd.porosity_d_data.dphi_dT * ip_cv.fC_3a.a +
+                        ip_out.porosity_data.phi * ip_dd.dfC_3a.dT) *
+                       w);
         }
         // ---------------------------------------------------------------------
         // W-component equation
         // ---------------------------------------------------------------------
 
-        MWpG.noalias() += NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          Np * w;
-        MWpC.noalias() -= NpT * rho_W_FR *
-                          (alpha_B - ip_out.porosity_data.phi) * beta_p_SR *
-                          s_L * Np * w;
+        MWpG.noalias() += NTN * (ip_cv.fW_4_MWpG.m * w);
+        MWpC.noalias() += NTN * (ip_cv.fW_4_MWpC.m * w);
 
         if (this->process_data_.apply_mass_lumping)
         {
             if (pCap - pCap_prev != 0.)  // avoid division by Zero
             {
                 MWpC.noalias() +=
-                    NpT *
-                    (ip_out.porosity_data.phi *
-                         (current_state.rho_W_LR() -
-                          current_state.constituent_density_data.rho_W_GR) -
-                     rho_W_FR * pCap * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_p_SR) *
-                    s_L_dot * dt / (pCap - pCap_prev) * Np * w;
+                    NTN * (ip_cv.fW_4_MWpC.ml / (pCap - pCap_prev) * w);
             }
         }
 
-        MWT.noalias() -= NpT * rho_W_FR * (alpha_B - ip_out.porosity_data.phi) *
-                         beta_T_SR * Np * w;
+        MWT.noalias() += NTN * (ip_cv.fW_4_MWT.m * w);
 
-        MWu.noalias() += NpT * rho_W_FR * alpha_B * mT * Bu * w;
+        MWu.noalias() += BTI2N.transpose() * (ip_cv.fW_4_MWu.m * w);
 
-        GlobalDimMatrixType const advection_W_G =
-            current_state.constituent_density_data.rho_W_GR * k_over_mu_G;
-        GlobalDimMatrixType const advection_W_L =
-            current_state.rho_W_LR() * k_over_mu_L;
-        GlobalDimMatrixType const diffusion_W_G_p =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dpGR;
-        GlobalDimMatrixType const diffusion_W_L_p =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dpLR;
-        GlobalDimMatrixType const diffusion_W_G_T =
-            phi_G * rhoGR * D_W_G * ip_cv.phase_transition_data.dxmWG_dT;
-        GlobalDimMatrixType const diffusion_W_L_T =
-            phi_L * rhoLR * D_W_L * ip_cv.phase_transition_data.dxmWL_dT;
-
-        GlobalDimMatrixType const advection_W = advection_W_G + advection_W_L;
-        GlobalDimMatrixType const diffusion_W_p =
-            diffusion_W_G_p + diffusion_W_L_p;
-        GlobalDimMatrixType const diffusion_W_T =
-            diffusion_W_G_T + diffusion_W_L_T;
-
-        LWpG.noalias() += gradNpT * (advection_W + diffusion_W_p) * gradNp * w;
+        LWpG.noalias() += gradNpT * ip_cv.fW_4_LWpG.L * gradNp * w;
 
         // fW_4 LWpG' parts; LWpG = \int grad (a + d) grad
         local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() +=
-            gradNpT * (ip_cv.dfW_4_LWpG_a_dp_GR + ip_cv.dfW_4_LWpG_d_dp_GR) *
-            gradpGR * Np * w;
+            gradNpT * ip_dd.dfW_4_LWpG.dp_GR * gradpGR * Np * w;
 
         local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() +=
-            gradNpT * (ip_cv.dfW_4_LWpG_a_dp_cap + ip_cv.dfW_4_LWpG_d_dp_cap) *
-            gradpGR * Np * w;
+            gradNpT * ip_dd.dfW_4_LWpG.dp_cap * gradpGR * Np * w;
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
-            .noalias() += gradNpT *
-                          (ip_cv.dfW_4_LWpG_a_dT + ip_cv.dfW_4_LWpG_d_dT) *
-                          gradpGR * NT * w;
+            .noalias() += gradNpT * ip_dd.dfW_4_LWpG.dT * gradpGR * NT * w;
 
-        LWpC.noalias() -=
-            gradNpT * (advection_W_L + diffusion_W_L_p) * gradNp * w;
+        LWpC.noalias() += gradNpT * ip_cv.fW_4_LWpC.L * gradNp * w;
 
         // fW_4 LWp_cap' parts; LWpC = \int grad (a + d) grad
         local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() -=
-            gradNpT * (ip_cv.dfW_4_LWpC_a_dp_GR + ip_cv.dfW_4_LWpC_d_dp_GR) *
-            gradpCap * Np * w;
+            gradNpT * ip_dd.dfW_4_LWpC.dp_GR * gradpCap * Np * w;
 
         local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() -=
-            gradNpT * (ip_cv.dfW_4_LWpC_a_dp_cap + ip_cv.dfW_4_LWpC_d_dp_cap) *
-            gradpCap * Np * w;
+            gradNpT * ip_dd.dfW_4_LWpC.dp_cap * gradpCap * Np * w;
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
-            .noalias() -= gradNpT *
-                          (ip_cv.dfW_4_LWpC_a_dT + ip_cv.dfW_4_LWpC_d_dT) *
-                          gradpCap * NT * w;
+            .noalias() -= gradNpT * ip_dd.dfW_4_LWpC.dT * gradpCap * NT * w;
 
-        LWT.noalias() += gradNpT * (diffusion_W_T)*gradNp * w;
+        LWT.noalias() += gradNpT * ip_cv.fW_4_LWT.L * gradNp * w;
 
         // fW_1
-        fW.noalias() +=
-            gradNpT * (advection_W_G * rhoGR + advection_W_L * rhoLR) * b * w;
+        fW.noalias() += gradNpT * ip_cv.fW_1.A * b * w;
 
-        // fW_2 = \int (f - g) * s_L_dot
+        // fW_2 = \int a * s_L_dot
         if (!this->process_data_.apply_mass_lumping)
         {
-            double const f = ip_out.porosity_data.phi *
-                             (current_state.rho_W_LR() -
-                              current_state.constituent_density_data.rho_W_GR);
-            double const g = rho_W_FR * pCap *
-                             (alpha_B - ip_out.porosity_data.phi) * beta_p_SR;
-
-            fW.noalias() -= NpT * (f - g) * s_L_dot * w;
+            fW.noalias() -= NpT * (ip_cv.fW_2.a * s_L_dot * w);
 
             local_Jac.template block<W_size, C_size>(W_index, C_index)
-                .noalias() += NpT * (ip_cv.dfW_2a_dp_GR - ip_cv.dfW_2b_dp_GR) *
-                              s_L_dot * Np * w;
+                .noalias() += NTN * (ip_dd.dfW_2.dp_GR * s_L_dot * w);
 
             // sign negated because of dp_cap = -dp_LR
             // TODO (naumov) Had to change the sign to get equal Jacobian WW
             // blocks in A2 Test. Where is the error?
             local_Jac.template block<W_size, W_size>(W_index, W_index)
-                .noalias() +=
-                NpT *
-                ((ip_cv.dfW_2a_dp_cap - ip_cv.dfW_2b_dp_cap) * s_L_dot +
-                 (f - g) * ip_cv.dS_L_dp_cap() / dt) *
-                Np * w;
+                .noalias() += NTN * ((ip_dd.dfW_2.dp_cap * s_L_dot +
+                                      ip_cv.fW_2.a * ip_dd.dS_L_dp_cap() / dt) *
+                                     w);
 
             local_Jac
                 .template block<W_size, temperature_size>(W_index,
                                                           temperature_index)
-                .noalias() +=
-                NpT * (ip_cv.dfW_2a_dT - ip_cv.dfW_2b_dT) * s_L_dot * Np * w;
+                .noalias() += NTN * (ip_dd.dfW_2.dT * s_L_dot * w);
         }
 
         // fW_3 = \int phi * a
-        fW.noalias() -= NpT * ip_out.porosity_data.phi *
-                        (s_G * rho_W_GR_dot + s_L * rho_W_LR_dot) * w;
+        fW.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fW_3a.a * w);
 
         local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() +=
-            NpT * ip_out.porosity_data.phi * ip_cv.dfW_3a_dp_GR * Np * w;
+            NTN * (ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_GR * w);
 
         local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() +=
-            NpT * ip_out.porosity_data.phi * ip_cv.dfW_3a_dp_cap * Np * w;
+            NTN * (ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_cap * w);
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
-            .noalias() += NpT *
-                          (ip_cv.porosity_d_data.dphi_dT *
-                               (s_G * rho_W_GR_dot + s_L * rho_W_LR_dot) +
-                           ip_out.porosity_data.phi * ip_cv.dfW_3a_dT) *
-                          NT * w;
+            .noalias() +=
+            NTN * ((ip_dd.porosity_d_data.dphi_dT * ip_cv.fW_3a.a +
+                    ip_out.porosity_data.phi * ip_dd.dfW_3a.dT) *
+                   w);
 
         // ---------------------------------------------------------------------
         //  - temperature equation
         // ---------------------------------------------------------------------
 
-        MTu.noalias() += NTT *
-                         ip_cv.effective_volumetric_enthalpy_data.rho_h_eff *
-                         mT * Bu * w;
+        MTu.noalias() +=
+            BTI2N.transpose() *
+            (ip_cv.effective_volumetric_enthalpy_data.rho_h_eff * w);
 
         // dfT_4/dp_GR
         // d (MTu * u_dot)/dp_GR
@@ -1979,8 +1638,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, C_size>(temperature_index,
                                                       C_index)
             .noalias() +=
-            NTT * ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_GR *
-            div_u_dot * NT * w;
+            NTN * (ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_GR *
+                   div_u_dot * w);
 
         // dfT_4/dp_cap
         // d (MTu * u_dot)/dp_cap
@@ -1988,8 +1647,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
             .noalias() -=
-            NTT * ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_cap *
-            div_u_dot * NT * w;
+            NTN *
+            (ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dp_cap *
+             div_u_dot * w);
 
         // dfT_4/dT
         // d (MTu * u_dot)/dT
@@ -1997,8 +1657,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
             .noalias() +=
-            NTT * ip_cv.effective_volumetric_enthalpy_d_data.drho_h_eff_dT *
-            div_u_dot * NT * w;
+            NTN * (ip_dd.effective_volumetric_enthalpy_d_data.drho_h_eff_dT *
+                   div_u_dot * w);
 
         KTT.noalias() +=
             gradNTT * ip_cv.thermal_conductivity_data.lambda * gradNT * w;
@@ -2022,57 +1682,41 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
             .noalias() += gradNTT *
-                          ip_cv.thermal_conductivity_data.dlambda_dp_cap *
+                          ip_dd.thermal_conductivity_d_data.dlambda_dp_cap *
                           gradT * Np * w;
 
         // d KTT/dT * T
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() += gradNTT * ip_cv.thermal_conductivity_data.dlambda_dT *
-                          gradT * NT * w;
+            .noalias() += gradNTT *
+                          ip_dd.thermal_conductivity_d_data.dlambda_dT * gradT *
+                          NT * w;
 
         // fT_1
-        auto const rho_u_eff_dot = (current_state.internal_energy_data() -
-                                    **prev_state.internal_energy_data) /
-                                   dt;
-        fT.noalias() -= NTT * rho_u_eff_dot * w;
+        fT.noalias() -= NTT * (ip_cv.fT_1.m * w);
 
         // dfT_1/dp_GR
         local_Jac
             .template block<temperature_size, C_size>(temperature_index,
                                                       C_index)
-            .noalias() += NpT * Np *
-                          (ip_cv.effective_volumetric_internal_energy_d_data
-                               .drho_u_eff_dp_GR /
-                           dt * w);
+            .noalias() += NTN * (ip_dd.dfT_1.dp_GR * w);
 
         // dfT_1/dp_cap
         local_Jac
             .template block<temperature_size, W_size>(temperature_index,
                                                       W_index)
-            .noalias() += NpT * Np *
-                          (ip_cv.effective_volumetric_internal_energy_d_data
-                               .drho_u_eff_dp_cap /
-                           dt * w);
+            .noalias() += NTN * (ip_dd.dfT_1.dp_cap * w);
 
         // dfT_1/dT
         // MTT
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() +=
-            NTT * NT *
-            (ip_cv.effective_volumetric_internal_energy_d_data.drho_u_eff_dT /
-             dt * w);
+            .noalias() += NTN * (ip_dd.dfT_1.dT * w);
 
         // fT_2
-        fT.noalias() += gradNTT *
-                        (rhoGR * ip_out.enthalpy_data.h_G *
-                             ip_out.darcy_velocity_data.w_GS +
-                         rhoLR * ip_out.enthalpy_data.h_L *
-                             ip_out.darcy_velocity_data.w_LS) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_2.A * w;
 
         // dfT_2/dp_GR
         local_Jac
@@ -2080,9 +1724,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       C_index)
             .noalias() -=
             // dfT_2/dp_GR first part
-            gradNTT * ip_cv.drho_GR_h_w_eff_dp_GR_Npart * Np * w +
+            gradNTT * ip_dd.dfT_2.dp_GR_Npart * Np * w +
             // dfT_2/dp_GR second part
-            gradNTT * ip_cv.drho_GR_h_w_eff_dp_GR_gradNpart * gradNp * w;
+            gradNTT * ip_dd.dfT_2.dp_GR_gradNpart * gradNp * w;
 
         // dfT_2/dp_cap
         local_Jac
@@ -2090,69 +1734,56 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                       W_index)
             .noalias() -=
             // first part of dfT_2/dp_cap
-            gradNTT * (-ip_cv.drho_LR_h_w_eff_dp_cap_Npart) * Np * w +
+            gradNTT * (-ip_dd.dfT_2.dp_cap_Npart) * Np * w +
             // second part of dfT_2/dp_cap
-            gradNTT * (-ip_cv.drho_LR_h_w_eff_dp_cap_gradNpart) * gradNp * w;
+            gradNTT * (-ip_dd.dfT_2.dp_cap_gradNpart) * gradNp * w;
 
         // dfT_2/dT
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)
-            .noalias() -= gradNTT * ip_cv.drho_GR_h_w_eff_dT * NT * w;
+            .noalias() -= gradNTT * ip_dd.dfT_2.dT * NT * w;
 
         // fT_3
-        fT.noalias() += NTT *
-                        (rhoGR * ip_out.darcy_velocity_data.w_GS.transpose() +
-                         rhoLR * ip_out.darcy_velocity_data.w_LS.transpose()) *
-                        b * w;
+        fT.noalias() += NTT * (ip_cv.fT_3.N * w);
 
-        fT.noalias() += gradNTT *
-                        (current_state.constituent_density_data.rho_C_GR *
-                             ip_cv.phase_transition_data.hCG *
-                             ip_out.diffusion_velocity_data.d_CG +
-                         current_state.constituent_density_data.rho_W_GR *
-                             ip_cv.phase_transition_data.hWG *
-                             ip_out.diffusion_velocity_data.d_WG) *
-                        w;
+        fT.noalias() += gradNTT * ip_cv.fT_3.gradN * w;
 
         // ---------------------------------------------------------------------
         //  - displacement equation
         // ---------------------------------------------------------------------
 
-        KUpG.noalias() -= (BuT * alpha_B * m * Np) * w;
+        KUpG.noalias() -= BTI2N * (ip_cv.biot_data() * w);
 
         // dfU_2/dp_GR = dKUpG/dp_GR * p_GR + KUpG. The former is zero, the
         // latter is handled below.
 
-        KUpC.noalias() += (BuT * alpha_B * ip_cv.chi_S_L.chi_S_L * m * Np) * w;
+        KUpC.noalias() += BTI2N * (ip_cv.fu_2_KupC.m * w);
 
         // dfU_2/dp_cap = dKUpC/dp_cap * p_cap + KUpC. The former is handled
         // here, the latter below.
         local_Jac
             .template block<displacement_size, W_size>(displacement_index,
                                                        W_index)
-            .noalias() += BuT * alpha_B * ip_cv.chi_S_L.dchi_dS_L *
-                          ip_cv.dS_L_dp_cap() * pCap * m * Np * w;
+            .noalias() += BTI2N * (ip_dd.dfu_2_KupC.dp_cap * w);
 
         local_Jac
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)
-            .noalias() += BuT * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
+            .noalias() +=
+            Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
 
         // fU_1
-        fU.noalias() -= (BuT * current_state.eff_stress_data.sigma -
-                         N_u_op(Nu).transpose() * rho * b) *
-                        w;
+        fU.noalias() -=
+            (Bu.transpose() * current_state.eff_stress_data.sigma -
+             N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
+            w;
 
         // KuT
         local_Jac
             .template block<displacement_size, temperature_size>(
                 displacement_index, temperature_index)
-            .noalias() -=
-            BuT *
-            (ip_cd.s_mech_data.stiffness_tensor *
-             ip_cv.s_therm_exp_data.solid_linear_thermal_expansivity_vector) *
-            NT * w;
+            .noalias() -= Bu.transpose() * ip_dd.dfu_1_KuT.dT * NT * w;
 
         /* TODO (naumov) Test with gravity needed to check this Jacobian part.
         local_Jac
