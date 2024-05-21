@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include <exprtk.hpp>
 #include <utility>
 #include <vector>
 
@@ -43,18 +42,15 @@ public:
                             double const t,
                             double const dt) const override;
 
-private:
-    using Expression = exprtk::expression<double>;
+    ~Function();
 
-    /// Mapping from variable array index to symbol table values.
-    std::vector<std::pair<Variable, double*>> symbol_values_;
-    /// Value expressions.
-    /// Multiple expressions are representing vector-valued functions.
-    std::vector<Expression> value_expressions_;
-    /// Derivative expressions with respect to the variable.
-    /// Multiple expressions are representing vector-valued functions.
-    std::vector<std::pair<Variable, std::vector<Expression>>>
-        dvalue_expressions_;
+private:
+    class Implementation;
+
+    std::unique_ptr<Implementation> impl_ptr_;
+
+    /// Variables used in the exprtk expressions.
+    std::vector<Variable> variables_;
 
     mutable std::mutex mutex_;
 };

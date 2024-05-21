@@ -9,7 +9,10 @@
 
 #include "MaterialLib/MPL/Properties/Function.h"
 
+#include <exprtk.hpp>
 #include <numeric>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Algorithm.h"
 
@@ -38,52 +41,142 @@ static std::vector<exprtk::expression<T>> compileExpressions(
     return expressions;
 }
 
-static void updateVariableValues(
-    std::vector<std::pair<Variable, double*>> const& symbol_values,
-    VariableArray const& variable_array)
+class Function::Implementation
 {
-    for (auto const& [variable, value_ptr] : symbol_values)
+public:
+    using Expression = exprtk::expression<double>;
+
+public:
+    Implementation(
+        std::vector<std::string> const& variables,
+        std::vector<std::string> const& value_string_expressions,
+        std::vector<std::pair<std::string, std::vector<std::string>>> const&
+            dvalue_string_expressions);
+
+private:
+    /// Create symbol table for given variables and populates the variable_array
+    /// as needed.
+    exprtk::symbol_table<double> createSymbolTable(
+        std::vector<std::string> const& variables);
+
+public:
+    /// Value expressions.
+    /// Multiple expressions are representing vector-valued functions.
+    std::vector<Expression> value_expressions;
+
+    /// Derivative expressions with respect to the variable.
+    /// Multiple expressions are representing vector-valued functions.
+    std::vector<std::pair<Variable, std::vector<Expression>>>
+        dvalue_expressions;
+
+    /// Stores values for evaluation of vectorial quantities. Needed for
+    /// constant pointers for exprtk.
+    mutable VariableArray variable_array;
+};
+
+exprtk::symbol_table<double> Function::Implementation::createSymbolTable(
+    std::vector<std::string> const& variables)
+{
+    exprtk::symbol_table<double> symbol_table;
+
+    for (auto const& v : variables)
     {
-        std::visit(
-            [&variable = variable, &value_ptr = value_ptr](auto&& v)
+        auto add_scalar = [&v, &symbol_table](double& value)
+        { symbol_table.add_variable(v, value); };
+
+        Variable const variable = convertStringToVariable(v);
+
+        auto add_any_variable = [&add_scalar, &variable]<typename T>(T* address)
+        {
+            if constexpr (std::is_same_v<VariableArray::Scalar, T>)
             {
-                using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::monostate>)
+                add_scalar(*address);
+            }
+            else
+            {
+                OGS_FATAL(
+                    "Function property: Non-scalar quantities (for variable "
+                    "{:s}) are not handled by the implementation yet.",
+                    variable_enum_to_string[static_cast<int>(variable)]);
+            }
+        };
+
+        std::visit(add_any_variable, variable_array.address_of(variable));
+    }
+    return symbol_table;
+}
+
+Function::Implementation::Implementation(
+    std::vector<std::string> const& variables,
+    std::vector<std::string> const& value_string_expressions,
+    std::vector<std::pair<std::string, std::vector<std::string>>> const&
+        dvalue_string_expressions)
+{
+    auto symbol_table = createSymbolTable(variables);
+
+    // value expressions.
+    value_expressions =
+        compileExpressions(symbol_table, value_string_expressions);
+
+    // dValue expressions.
+    for (auto const& [variable_name, string_expressions] :
+         dvalue_string_expressions)
+    {
+        dvalue_expressions.emplace_back(
+            convertStringToVariable(variable_name),
+            compileExpressions(symbol_table, string_expressions));
+    }
+}
+
+static void updateVariableArrayValues(std::vector<Variable> const& variables,
+                                      VariableArray const& new_variable_array,
+                                      VariableArray& variable_array)
+{
+    for (auto const& variable : variables)
+    {
+        auto assign_variable =
+            [&variable, &new_variable_array]<typename T>(T* address)
+        {
+            if constexpr (std::is_same_v<VariableArray::Scalar, T>)
+            {
+                double const value = *std::get<VariableArray::Scalar const*>(
+                    new_variable_array.address_of(variable));
+
+                if (std::isnan(value))
                 {
                     OGS_FATAL(
-                        "Function property: variable {:s} value needed for "
-                        "evaluation of the expression was not set by the "
-                        "caller.",
+                        "Function property: Scalar variable '{:s}' is not "
+                        "initialized.",
                         variable_enum_to_string[static_cast<int>(variable)]);
                 }
-                else if constexpr (std::is_same_v<T, double>)
-                {
-                    *value_ptr = v;
-                }
-                else
-                {
-                    OGS_FATAL(
-                        "Function property: not implemented handling for a "
-                        "type {:s} of variable {:s}.",
-                        typeid(T).name(),
-                        variable_enum_to_string[static_cast<int>(variable)]);
-                }
-            },
-            variable_array[variable]);
+
+                *address = value;
+            }
+            else
+            {
+                OGS_FATAL(
+                    "Function property: Non-scalar quantities (for variable "
+                    "{:s}) are not handled by the implementation yet.",
+                    variable_enum_to_string[static_cast<int>(variable)]);
+            }
+        };
+        std::visit(assign_variable, variable_array.address_of(variable));
     }
 }
 
 static PropertyDataType evaluateExpressions(
-    std::vector<std::pair<Variable, double*>> const& symbol_values,
-    VariableArray const& variable_array,
+    std::vector<Variable> const& variables,
+    VariableArray const& new_variable_array,
     std::vector<exprtk::expression<double>> const& expressions,
+    VariableArray& variable_array,
     std::mutex& mutex)
 {
     std::vector<double> result(expressions.size());
 
     {
         std::lock_guard lock_guard(mutex);
-        updateVariableValues(symbol_values, variable_array);
+        updateVariableArrayValues(variables, new_variable_array,
+                                  variable_array);
 
         std::transform(begin(expressions), end(expressions), begin(result),
                        [](auto const& e) { return e.value(); });
@@ -135,7 +228,9 @@ static std::vector<std::string> collectVariables(
         {
             if (!exprtk::collect_variables(string_expression, variables))
             {
-                OGS_FATAL("Collecting variables didn't work.");
+                OGS_FATAL(
+                    "Collecting variables from expression '{}' didn't work.",
+                    string_expression);
             }
         }
     };
@@ -158,40 +253,25 @@ Function::Function(
 {
     name_ = std::move(name);
 
-    // Create symbol table for used variables.
-    exprtk::symbol_table<double> symbol_table;
+    auto const variables =
+        collectVariables(value_string_expressions, dvalue_string_expressions);
+    variables_ =
+        variables |
+        ranges::views::transform([](std::string const& s)
+                                 { return convertStringToVariable(s); }) |
+        ranges::to<std::vector>;
 
-    for (auto const& v :
-         collectVariables(value_string_expressions, dvalue_string_expressions))
-    {
-        symbol_table.create_variable(v);
-        // Store variable in the variable array and the pointer to the value in
-        // the symbol table for fast access later.
-        Variable const variable = convertStringToVariable(v);
-        symbol_values_.emplace_back(variable,
-                                    &symbol_table.get_variable(v)->ref());
-    }
-
-    // value expressions.
-    value_expressions_ =
-        compileExpressions(symbol_table, value_string_expressions);
-
-    // dValue expressions.
-    for (auto const& [variable_name, string_expressions] :
-         dvalue_string_expressions)
-    {
-        dvalue_expressions_.emplace_back(
-            convertStringToVariable(variable_name),
-            compileExpressions(symbol_table, string_expressions));
-    }
+    impl_ptr_ = std::make_unique<Implementation>(
+        variables, value_string_expressions, dvalue_string_expressions);
 }
 
 PropertyDataType Function::value(VariableArray const& variable_array,
                                  ParameterLib::SpatialPosition const& /*pos*/,
                                  double const /*t*/, double const /*dt*/) const
 {
-    return evaluateExpressions(symbol_values_, variable_array,
-                               value_expressions_, mutex_);
+    return evaluateExpressions(variables_, variable_array,
+                               impl_ptr_->value_expressions,
+                               impl_ptr_->variable_array, mutex_);
 }
 
 PropertyDataType Function::dValue(VariableArray const& variable_array,
@@ -199,12 +279,12 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                                   ParameterLib::SpatialPosition const& /*pos*/,
                                   double const /*t*/, double const /*dt*/) const
 {
-    auto const it = std::find_if(begin(dvalue_expressions_),
-                                 end(dvalue_expressions_),
+    auto const it = std::find_if(begin(impl_ptr_->dvalue_expressions),
+                                 end(impl_ptr_->dvalue_expressions),
                                  [&variable](auto const& v)
                                  { return v.first == variable; });
 
-    if (it == end(dvalue_expressions_))
+    if (it == end(impl_ptr_->dvalue_expressions))
     {
         OGS_FATAL(
             "Requested derivative with respect to the variable {:s} not "
@@ -212,8 +292,10 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
             variable_enum_to_string[static_cast<int>(variable)], name_);
     }
 
-    return evaluateExpressions(symbol_values_, variable_array, it->second,
-                               mutex_);
+    return evaluateExpressions(variables_, variable_array, it->second,
+                               impl_ptr_->variable_array, mutex_);
 }
+
+Function::~Function() = default;
 
 }  // namespace MaterialPropertyLib

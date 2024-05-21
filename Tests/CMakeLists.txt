@@ -119,7 +119,6 @@ target_link_libraries(
         $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
         $<$<TARGET_EXISTS:petsc>:petsc>
-        exprtk
     PUBLIC $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
 )
 
