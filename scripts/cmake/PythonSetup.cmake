@@ -146,6 +146,18 @@ function(setup_venv)
             OUTPUT_VARIABLE _out
             ERROR_VARIABLE _err
         )
+        if(${_return_code} EQUAL 0)
+            set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
+                CACHE INTERNAL ""
+            )
+            message(STATUS "${_out}")
+        else()
+            message(
+                FATAL_ERROR
+                    "Installation of Python packages via pip failed!\n"
+                    "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
+            )
+        endif()
         if(DEFINED ENV{CI} AND UNIX AND NOT APPLE)
             execute_process(
                 COMMAND
@@ -173,6 +185,7 @@ function(setup_venv)
     endif()
 endfunction()
 
+# Sets up ctest which are dependent on the virtual env, e.g. using ogs6py
 function(setup_venv_dependent_ctests)
     if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND OGS_BUILD_PROCESS_HT)
         execute_process(
