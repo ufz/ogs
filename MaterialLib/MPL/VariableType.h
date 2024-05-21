@@ -95,6 +95,16 @@ using VariableType = std::variant<std::monostate,
 class VariableArray
 {
 public:
+    using Scalar = double;
+    using KelvinVector = std::variant<std::monostate,
+                                      Eigen::Matrix<double, 4, 1>,
+                                      Eigen::Matrix<double, 6, 1>>;
+    // Compare to GMatrixPolicy::GradientVectorType. The 1d case = Matrix<3, 1>
+    // is not used so far.
+    using DeformationGradient = std::variant<std::monostate,
+                                             Eigen::Matrix<double, 5, 1>,
+                                             Eigen::Matrix<double, 9, 1>>;
+
     /// Read-only access.
     /// \note The returned value is a temporary.
     VariableType operator[](Variable const variable) const
@@ -162,12 +172,7 @@ public:
 
     double capillary_pressure = nan_;
     double concentration = nan_;
-    // Compare to GMatrixPolicy::GradientVectorType. The 1d case = Matrix<3, 1>
-    // is not used so far.
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 5, 1>,
-                 Eigen::Matrix<double, 9, 1>>
-        deformation_gradient;
+    DeformationGradient deformation_gradient;
     double density = nan_;
     double effective_pore_pressure = nan_;
     double enthalpy = nan_;
@@ -176,29 +181,17 @@ public:
     double grain_compressibility = nan_;
     double liquid_phase_pressure = nan_;
     double liquid_saturation = nan_;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        mechanical_strain;
+    KelvinVector mechanical_strain;
     double molar_mass = nan_;
     double molar_mass_derivative = nan_;
     double molar_fraction = nan_;
     double gas_phase_pressure = nan_;
     double porosity = nan_;
     double solid_grain_pressure = nan_;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        stress;
+    KelvinVector stress;
     double temperature = nan_;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        total_strain;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        total_stress;
+    KelvinVector total_strain;
+    KelvinVector total_stress;
     double transport_porosity = nan_;
     double vapour_pressure = nan_;
     double volumetric_strain = nan_;
