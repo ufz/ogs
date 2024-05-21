@@ -221,6 +221,7 @@ include(UnityBuildSettings)
 
 if(OGS_USE_PIP)
     setup_venv()
+    setup_venv_dependent_ctests()
 endif()
 
 message(STATUS "${_benchmark_run_commands}")

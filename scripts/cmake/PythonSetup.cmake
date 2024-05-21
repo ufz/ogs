@@ -8,8 +8,7 @@ if(OGS_USE_PIP)
         execute_process(
             COMMAND
                 ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
-                -Dpython_version=${ogs.minimum_version.python}
-                -P
+                -Dpython_version=${ogs.minimum_version.python} -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/PythonCreateVirtualEnv.cmake
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR} COMMAND_ECHO STDOUT
                               ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
@@ -65,8 +64,8 @@ if(NOT OGS_BUILD_WHEEL)
 endif()
 
 find_package(
-    Python ${ogs.minimum_version.python}
-    COMPONENTS ${_python_componets} REQUIRED
+    Python ${ogs.minimum_version.python} COMPONENTS ${_python_componets}
+    REQUIRED
 )
 
 if(OGS_USE_PIP)
@@ -93,10 +92,12 @@ if(OGS_USE_PIP)
         file(STRINGS Tests/Data/requirements-dev.txt _requirements_dev)
         list(APPEND OGS_PYTHON_PACKAGES ${_requirements} ${_requirements_dev})
 
-        list(APPEND OGS_PYTHON_PACKAGES
-             "snakemake==${ogs.minimum_version.snakemake}"
-             "pulp==2.7.0" # https://github.com/snakemake/snakemake/issues/2607
-             "setuptools"  # https://github.com/glenfant/stopit/issues/32
+        list(
+            APPEND
+            OGS_PYTHON_PACKAGES
+            "snakemake==${ogs.minimum_version.snakemake}"
+            "pulp==2.7.0" # https://github.com/snakemake/snakemake/issues/2607
+            "setuptools" # https://github.com/glenfant/stopit/issues/32
         )
         set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH ""
                                                                   FORCE
@@ -145,11 +146,24 @@ function(setup_venv)
             OUTPUT_VARIABLE _out
             ERROR_VARIABLE _err
         )
+        if(${_return_code} EQUAL 0)
+            set(_OGS_PYTHON_PACKAGES_SHA1 "${_ogs_python_packages_sha1}"
+                CACHE INTERNAL ""
+            )
+            message(STATUS "${_out}")
+        else()
+            message(
+                FATAL_ERROR
+                    "Installation of Python packages via pip failed!\n"
+                    "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
+            )
+        endif()
         if(DEFINED ENV{CI} AND UNIX AND NOT APPLE)
             execute_process(
-                COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
-                    --force-reinstall
-                    -r ${PROJECT_SOURCE_DIR}/Tests/Data/requirements-gmsh-nox.txt
+                COMMAND
+                    ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
+                    --force-reinstall -r
+                    ${PROJECT_SOURCE_DIR}/Tests/Data/requirements-gmsh-nox.txt
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                 RESULT_VARIABLE _return_code
                 OUTPUT_VARIABLE _out
@@ -168,5 +182,38 @@ function(setup_venv)
                     "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
             )
         endif()
+    endif()
+endfunction()
+
+# Sets up ctest which are dependent on the virtual env, e.g. using ogs6py
+function(setup_venv_dependent_ctests)
+    if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND OGS_BUILD_PROCESS_HT)
+        execute_process(
+            COMMAND
+                ${Python_EXECUTABLE}
+                ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/generateInvalidMediaForHT.py
+            WORKING_DIRECTORY
+                ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles
+        )
+        file(GLOB HT_INVALID_PRJ_FILES
+             ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj
+        )
+        foreach(ht_invalid_prj_file ${HT_INVALID_PRJ_FILES})
+            string(
+                REPLACE ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT
+                        "invalid" ht_invalid_prj_file_short
+                        ${ht_invalid_prj_file}
+            )
+            AddTest(
+                NAME HT_${ht_invalid_prj_file_short}
+                PATH Parabolic/HT/InvalidProjectFiles
+                EXECUTABLE ogs
+                EXECUTABLE_ARGS ${ht_invalid_prj_file}
+                RUNTIME 1
+            )
+            set_tests_properties(
+                ogs-HT_${ht_invalid_prj_file_short} PROPERTIES WILL_FAIL TRUE
+            )
+        endforeach()
     endif()
 endfunction()
