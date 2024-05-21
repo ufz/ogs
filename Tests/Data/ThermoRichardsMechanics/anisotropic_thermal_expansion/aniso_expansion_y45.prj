@@ -334,6 +334,7 @@
             <name>general_linear_solver</name>
             <eigen>
                 <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
             </eigen>
         </linear_solver>
     </linear_solvers>
