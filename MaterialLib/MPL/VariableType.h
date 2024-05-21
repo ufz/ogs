@@ -105,69 +105,48 @@ public:
                                              Eigen::Matrix<double, 5, 1>,
                                              Eigen::Matrix<double, 9, 1>>;
 
+    using VariablePointerConst = std::
+        variant<Scalar const*, KelvinVector const*, DeformationGradient const*>;
+
+    VariablePointerConst address_of(Variable const v) const;
+
+    using VariablePointer =
+        std::variant<Scalar*, KelvinVector*, DeformationGradient*>;
+
+    VariablePointer address_of(Variable const v);
+
     /// Read-only access.
     /// \note The returned value is a temporary.
     VariableType operator[](Variable const variable) const
     {
-        auto identity = [](auto&& arg) -> VariableType { return arg; };
-        switch (variable)
-        {
-            case Variable::capillary_pressure:
-                return capillary_pressure;
-            case Variable::concentration:
-                return concentration;
-            case Variable::deformation_gradient:
-                return std::visit(identity, deformation_gradient);
-            case Variable::density:
-                return density;
-            case Variable::effective_pore_pressure:
-                return effective_pore_pressure;
-            case Variable::enthalpy:
-                return enthalpy;
-            case Variable::enthalpy_of_evaporation:
-                return enthalpy_of_evaporation;
-            case Variable::equivalent_plastic_strain:
-                return equivalent_plastic_strain;
-            case Variable::grain_compressibility:
-                return grain_compressibility;
-            case Variable::liquid_phase_pressure:
-                return liquid_phase_pressure;
-            case Variable::liquid_saturation:
-                return liquid_saturation;
-            case Variable::mechanical_strain:
-                return std::visit(identity, mechanical_strain);
-            case Variable::molar_mass:
-                return molar_mass;
-            case Variable::molar_mass_derivative:
-                return molar_mass_derivative;
-            case Variable::molar_fraction:
-                return molar_fraction;
-            case Variable::gas_phase_pressure:
-                return gas_phase_pressure;
-            case Variable::porosity:
-                return porosity;
-            case Variable::solid_grain_pressure:
-                return solid_grain_pressure;
-            case Variable::stress:
-                return std::visit(identity, stress);
-            case Variable::temperature:
-                return temperature;
-            case Variable::total_strain:
-                return std::visit(identity, total_strain);
-            case Variable::total_stress:
-                return std::visit(identity, total_stress);
-            case Variable::transport_porosity:
-                return transport_porosity;
-            case Variable::vapour_pressure:
-                return vapour_pressure;
-            case Variable::volumetric_strain:
-                return volumetric_strain;
-            default:
-                OGS_FATAL(
-                    "No conversion to VariableType is provided for variable "
-                    "{:d}",
-                    static_cast<int>(variable));
-        };
+        return std::visit(
+            []<typename T>(T* ptr) -> VariableType
+            {
+                auto identity = [](auto const& arg) -> VariableType
+                { return arg; };
+                if constexpr (std::is_same_v<Scalar const, T>)
+                {
+                    return *ptr;
+                }
+                else if constexpr (std::is_same_v<KelvinVector const, T>)
+                {
+                    return std::visit(identity, *ptr);
+                }
+                else if constexpr (std::is_same_v<DeformationGradient const, T>)
+                {
+                    return std::visit(identity, *ptr);
+                }
+                else
+                {
+                    static_assert(
+                        !std::is_same_v<T, T>,
+                        "Non-exhaustive visitor! The variable type (in the "
+                        "std::is_same_v expression) must be one of the "
+                        "VariableArray::{Scalar, KelvinVector, "
+                        "DeformationGradient}.");
+                }
+            },
+            address_of(variable));
     }
 
     double capillary_pressure = nan_;
