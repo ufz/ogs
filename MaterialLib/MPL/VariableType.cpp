@@ -14,6 +14,14 @@
 
 #include "BaseLib/Error.h"
 
+/// Returns true if the argument is uninitialized or has Rows number of rows.
+template <int Rows>
+static bool maybeHasSize(const auto& arg)
+{
+    return std::holds_alternative<std::monostate>(arg) ||
+           std::holds_alternative<Eigen::Matrix<double, Rows, 1>>(arg);
+}
+
 namespace MaterialPropertyLib
 {
 Variable convertStringToVariable(std::string const& string)
@@ -106,6 +114,24 @@ static VariableArray::VariablePointer dropConst(
 VariableArray::VariablePointer VariableArray::address_of(Variable const v)
 {
     return dropConst(const_cast<const VariableArray&>(*this).address_of(v));
+}
+
+bool VariableArray::is2D() const
+{
+    return maybeHasSize<5>(deformation_gradient) &&  //
+           maybeHasSize<4>(mechanical_strain) &&     //
+           maybeHasSize<4>(stress) &&                //
+           maybeHasSize<4>(total_strain) &&          //
+           maybeHasSize<4>(total_stress);
+}
+
+bool VariableArray::is3D() const
+{
+    return maybeHasSize<9>(deformation_gradient) &&  //
+           maybeHasSize<6>(mechanical_strain) &&     //
+           maybeHasSize<6>(stress) &&                //
+           maybeHasSize<6>(total_strain) &&          //
+           maybeHasSize<6>(total_stress);
 }
 
 }  // namespace MaterialPropertyLib

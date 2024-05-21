@@ -175,6 +175,9 @@ public:
     double vapour_pressure = nan_;
     double volumetric_strain = nan_;
 
+    bool is2D() const;
+    bool is3D() const;
+
 private:
     static constexpr auto nan_ = std::numeric_limits<double>::signaling_NaN();
 };
