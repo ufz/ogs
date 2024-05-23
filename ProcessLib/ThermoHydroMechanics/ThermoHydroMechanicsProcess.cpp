@@ -219,6 +219,12 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         &LocalAssemblerInterface<DisplacementDim>::getIntPtSigmaIce);
 
     add_secondary_variable(
+        "epsilon_0",
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilon0);
+
+    add_secondary_variable(
         "epsilon_m",
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime,
