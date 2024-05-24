@@ -56,7 +56,7 @@ build = ["cp3{9,10,11,12}-*"]
 skip = ["*musllinux*"]
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
-build-verbosity = "1"
+build-verbosity = 1
 
 [tool.cibuildwheel.linux]
 # quay.io/pypa/manylinux_2_28 works too
@@ -85,6 +85,11 @@ environment-pass = [
 "cmake.args" = "-G;Visual Studio 16 2019;--preset;wheel"
 
 [tool.ruff]
+include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
+exclude = ["scripts/doc", "*ci-skip*"]
+line-length = 80
+
+[tool.ruff.lint]
 select = [
   "E",
   "F",
@@ -120,21 +125,16 @@ extend-ignore = [
   # https://github.com/charliermarsh/ruff/issues/2142:
   "RUF005",
 ]
-target-version = "py39"
 typing-modules = ["mypackage._compat.typing"]
 unfixable = [
   "T20",  # Removes print statements
   "F841", # Removes unused variables
 ]
-include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
-exclude = ["scripts/doc", "*ci-skip*"]
 flake8-unused-arguments.ignore-variadic-names = true
-line-length = 80
 
-[tool.ruff.lint]
 # allow en-dash
 allowed-confusables = ["–"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "tests/**" = ["T20"]
 "*.ipynb" = ["E402"] # Top-level imports

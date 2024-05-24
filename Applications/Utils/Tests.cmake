@@ -1423,9 +1423,11 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md
-                 PYTHON_PACKAGES openpyxl
-                 RUNTIME 10)
+    if(NOT WIN32)
+        NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md
+                     PYTHON_PACKAGES openpyxl
+                     RUNTIME 10)
+    endif()
     NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/mesh_tutorial/notebook-mesh_tutorial.md
                  RUNTIME 10)
     NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/Inclined_bhe_meshing/notebook-inclined_bhe_meshing.md

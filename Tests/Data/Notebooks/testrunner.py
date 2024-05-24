@@ -9,10 +9,11 @@ from timeit import default_timer as timer
 
 import jupytext
 import nbformat
+import papermill
 import toml
 from nbclient.exceptions import DeadKernelError
 from nbconvert import HTMLExporter
-from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
+from nbconvert.preprocessors import CellExecutionError
 
 
 def save_to_website(exec_notebook_file):
@@ -108,11 +109,7 @@ def check_and_modify_frontmatter():
             src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
         This page is based on a Jupyter notebook."""
     if is_jupytext:
-        download_file_name = (
-            Path(convert_notebook_file)
-            .rename(Path(convert_notebook_file).with_suffix(".ipynb"))
-            .name
-        )
+        download_file_name = Path(convert_notebook_file).name
         text += f"""
 <a href="./{download_file_name}" download="{download_file_name}"><img class="no-fancybox" style="display: inline; margin-top: 0; margin-bottom: 0; margin-left: 1em;" src="https://img.shields.io/static/v1?label=Download:&message={download_file_name}&color=blue" /></a>"""
     text += f"""
@@ -186,17 +183,27 @@ for notebook_file in args.notebooks:
         else:
             with notebook_file_path.open(encoding="utf-8") as f:
                 nb = nbformat.read(f, as_version=4)
-        ep = ExecutePreprocessor(kernel_name="python3")
 
         # Run the notebook
         print(f"[Start]  {notebook_filename}")
         start = timer()
         try:
-            ep.preprocess(nb, {"metadata": {"path": notebook_file_path.parent}})
+            # Run with papermill instead of nbconvert for printing notebook
+            # outputs on the command line
+            nb = papermill.execute.execute_notebook(
+                nb,
+                None,
+                kernel_name="python3",
+                cwd=notebook_file_path.parent,
+                log_output=True,
+                progress_bar=False,
+                stdout_file=sys.stdout,
+                stderr_file=sys.stderr,
+            )
         except DeadKernelError:
             out = None
-            msg = 'Error executing the notebook "%s".\n\n' % notebook_filename
-            msg += 'See notebook "%s" for the traceback.' % convert_notebook_file
+            msg = f'Error executing the notebook "{notebook_filename}".\n\n'
+            msg += f'See notebook "{convert_notebook_file}" for the traceback.'
             print(msg)
             notebook_success = False
             with convert_notebook_file.open(mode="w", encoding="utf-8") as f:
@@ -204,6 +211,7 @@ for notebook_file in args.notebooks:
         except CellExecutionError:
             notebook_success = False
         end = timer()
+        print(f"[End]  {notebook_filename}")
 
         # Write new notebook
         with convert_notebook_file.open(mode="w", encoding="utf-8") as f:
