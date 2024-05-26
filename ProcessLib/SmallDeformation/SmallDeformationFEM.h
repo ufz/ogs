@@ -226,6 +226,20 @@ public:
             "implemented.");
     }
 
+    BBarMatrixType getDilatationalBBarMatrix() const
+    {
+        if (!(this->process_data_.use_b_bar))
+        {
+            return {};
+        }
+
+        return LinearBMatrix::computeDilatationalBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
+            BBarMatrixType, ShapeMatricesType, IpData>(
+            _ip_data, this->element_, this->integration_method_,
+            this->is_axially_symmetric_);
+    }
+
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_x_prev,
@@ -256,11 +270,7 @@ public:
         auto const& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
 
-        auto const B_dil_bar = LinearBMatrix::computeDilatationalBbar<
-            DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
-            BBarMatrixType, ShapeMatricesType, IpData>(
-            _ip_data, this->element_, this->integration_method_,
-            this->is_axially_symmetric_);
+        auto const B_dil_bar = getDilatationalBBarMatrix();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -312,11 +322,7 @@ public:
         auto const& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
 
-        auto const B_dil_bar = LinearBMatrix::computeDilatationalBbar<
-            DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
-            BBarMatrixType, ShapeMatricesType, IpData>(
-            _ip_data, this->element_, this->integration_method_,
-            this->is_axially_symmetric_);
+        auto const B_dil_bar = getDilatationalBBarMatrix();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
