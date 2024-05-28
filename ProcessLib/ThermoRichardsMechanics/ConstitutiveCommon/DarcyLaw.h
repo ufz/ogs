@@ -13,6 +13,7 @@
 #include "LiquidDensity.h"
 #include "LiquidViscosity.h"
 #include "PermeabilityData.h"
+#include "SpecificBodyForceData.h"
 #include "ThermoOsmosis.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
@@ -46,6 +47,12 @@ struct DarcyLawModel
               PermeabilityData<DisplacementDim> const& perm_data,
               ThermoOsmosisData<DisplacementDim> const& th_osmosis_data,
               DarcyLawData<DisplacementDim>& out) const;
+
+    static DarcyLawModel create(
+        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+    {
+        return DarcyLawModel{specific_body_force_data.specific_body_force};
+    }
 
 private:
     /// Gravity vector (specific body force).

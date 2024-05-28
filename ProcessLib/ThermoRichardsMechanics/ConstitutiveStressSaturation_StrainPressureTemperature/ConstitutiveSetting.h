@@ -24,9 +24,7 @@ struct ConstitutiveSetting
               double const /*dt*/, ParameterLib::SpatialPosition const&,
               MediaData const&, TemperatureData<DisplacementDim> const&,
               StatefulData<DisplacementDim>&,
-              StatefulDataPrev<DisplacementDim>&) const
-    {
-    }
+              StatefulDataPrev<DisplacementDim>&) const;
 
     /// Evaluate the constitutive setting.
     void eval(ConstitutiveModels<DisplacementDim>& models, double const t,

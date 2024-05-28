@@ -44,12 +44,18 @@ struct ConstitutiveTraits
         ConstitutiveStress_StrainTemperature::ConstitutiveModels<
             DisplacementDim>;
 
+    template <typename TRMProcessData>
+    static ConstitutiveModels createConstitutiveModels(
+        TRMProcessData const& process_data,
+        SolidConstitutiveRelation const& solid_material)
+    {
+        return ProcessLib::ThermoRichardsMechanics::
+            ConstitutiveStress_StrainTemperature::createConstitutiveModels<
+                DisplacementDim>(process_data, solid_material);
+    }
+
     using ConstitutiveSetting = ProcessLib::ThermoRichardsMechanics::
         ConstitutiveStress_StrainTemperature::ConstitutiveSetting<
-            DisplacementDim>;
-
-    using ElasticTangentStiffnessModel = ProcessLib::ThermoRichardsMechanics::
-        ConstitutiveStress_StrainTemperature::ElasticTangentStiffnessModel<
             DisplacementDim>;
 };
 }  // namespace ConstitutiveStress_StrainTemperature

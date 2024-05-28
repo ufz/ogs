@@ -48,6 +48,17 @@ struct ConstitutiveTraits
         ConstitutiveStressSaturation_StrainPressureTemperature::
             ConstitutiveModels<DisplacementDim>;
 
+    template <typename TRMProcessData>
+    static ConstitutiveModels createConstitutiveModels(
+        TRMProcessData const& process_data,
+        SolidConstitutiveRelation const& solid_material)
+    {
+        return ProcessLib::ThermoRichardsMechanics::
+            ConstitutiveStressSaturation_StrainPressureTemperature::
+                createConstitutiveModels<DisplacementDim>(process_data,
+                                                          solid_material);
+    }
+
     using ConstitutiveSetting = ProcessLib::ThermoRichardsMechanics::
         ConstitutiveStressSaturation_StrainPressureTemperature::
             ConstitutiveSetting<DisplacementDim>;

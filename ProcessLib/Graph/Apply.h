@@ -16,33 +16,40 @@ namespace ProcessLib::Graph
 namespace detail
 {
 template <typename Function>
-struct GetFunctionArgumentTypesPlain  // plain, i.e., without cvref
+struct GetFunctionArgumentTypes
     /** \cond */
-    : GetFunctionArgumentTypesPlain<decltype(&Function::operator())>
+    : GetFunctionArgumentTypes<decltype(&Function::operator())>
 /** \endcond */
 {
 };
 
 // member function
 template <typename Result, typename Class, typename... Args>
-struct GetFunctionArgumentTypesPlain<Result (Class::*)(Args...)>
+struct GetFunctionArgumentTypes<Result (Class::*)(Args...)>
 {
-    using type = boost::mp11::mp_list<std::remove_cvref_t<Args>...>;
+    using type = boost::mp11::mp_list<Args...>;
 };
 
 // const member function
 template <typename Result, typename Class, typename... Args>
-struct GetFunctionArgumentTypesPlain<Result (Class::*)(Args...) const>
+struct GetFunctionArgumentTypes<Result (Class::*)(Args...) const>
 {
-    using type = boost::mp11::mp_list<std::remove_cvref_t<Args>...>;
+    using type = boost::mp11::mp_list<Args...>;
 };
 
 // standalone function
 template <typename Result, typename... Args>
-struct GetFunctionArgumentTypesPlain<Result (*)(Args...)>
+struct GetFunctionArgumentTypes<Result (*)(Args...)>
 {
-    using type = boost::mp11::mp_list<std::remove_cvref_t<Args>...>;
+    using type = boost::mp11::mp_list<Args...>;
 };
+
+// plain, i.e., without cvref
+template <typename Function>
+using GetFunctionArgumentTypesPlain =
+    std::type_identity<boost::mp11::mp_transform<
+        std::remove_cvref_t,
+        typename GetFunctionArgumentTypes<Function>::type>>;
 
 template <typename Function>
 struct GetFunctionReturnType
@@ -272,5 +279,20 @@ auto eval(Function& f, Tuples&... ts) ->
                   "In the argument ts... there must be only std::tuple's.");
 
     return detail::applyImpl(&Function::eval, f, ts...);
+}
+
+/**
+ * Invokes the eval() method of the passed objects \c fs with arguments taken
+ * from the passed tuples.
+ *
+ * \c fs must be a tuple of objects having an eval() method. The method
+ * invocation proceeds in the order of the objects in the tuple.
+ *
+ * \see eval()
+ */
+template <typename Functions, typename... Tuples>
+void evalAllInOrder(Functions& fs, Tuples&... ts)
+{
+    boost::mp11::tuple_for_each(fs, [&ts...](auto& f) { eval(f, ts...); });
 }
 }  // namespace ProcessLib::Graph

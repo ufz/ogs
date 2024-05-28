@@ -11,11 +11,55 @@
 #include "ConstitutiveSetting.h"
 
 #include "ProcessLib/Graph/Apply.h"
+#include "ProcessLib/Graph/CheckEvalOrderRT.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
+template <int DisplacementDim>
+static bool checkCorrectModelEvalOrder()
+{
+    INFO(
+        "Checking correct model evaluation order in the constitutive setting.");
+
+    using namespace boost::mp11;
+
+    constexpr auto D = DisplacementDim;
+
+    using Inputs =
+        mp_list<SpaceTimeData, MediaData, TemperatureData<D>,
+                CapillaryPressureData<D>, StrainData<D>
+                //, MaterialStateData<D> /*TODO material state data is a special
+                // case: it's both input and output data.*/
+                >;
+
+    using InputsAndPrevState = mp_append<Inputs, StatefulDataPrev<D>>;
+
+    bool const is_correct = ProcessLib::Graph::isEvalOrderCorrectRT<
+        ConstitutiveModels<DisplacementDim>, InputsAndPrevState>();
+
+    if (!is_correct)
+    {
+        OGS_FATAL("The constitutive setting has a wrong evaluation order.");
+    }
+
+    INFO("Model evaluation order is correct.");
+
+    return is_correct;
+}
+
+template <int DisplacementDim>
+void ConstitutiveSetting<DisplacementDim>::init(
+    ConstitutiveModels<DisplacementDim>&, double const /*t*/,
+    double const /*dt*/, ParameterLib::SpatialPosition const&, MediaData const&,
+    TemperatureData<DisplacementDim> const&, StatefulData<DisplacementDim>&,
+    StatefulDataPrev<DisplacementDim>&) const
+{
+    [[maybe_unused]] static const bool model_order_correct =
+        checkCorrectModelEvalOrder<DisplacementDim>();
+}
+
 template <int DisplacementDim>
 void ConstitutiveSetting<DisplacementDim>::eval(
     ConstitutiveModels<DisplacementDim>& models, double const t,
@@ -31,8 +75,6 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     OutputData<DisplacementDim>& out,
     ConstitutiveData<DisplacementDim>& cd) const
 {
-    namespace G = ProcessLib::Graph;
-
     auto const aux_data = std::tuple{SpaceTimeData{x_position, t, dt},
                                      MediaData{medium}, T_data, p_cap_data};
 
@@ -42,19 +84,11 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     // solving the global equation system)
     std::get<StrainData<DisplacementDim>>(state).eps.noalias() = eps_arg;
 
-    G::eval(models.biot_model, aux_data, tmp);
+    ProcessLib::Graph::evalAllInOrder(models, aux_data, cd, mat_state_tuple,
+                                      out, prev_state, state, tmp);
 
-    G::eval(models.s_mech_model, aux_data, tmp, state, prev_state,
-            mat_state_tuple, cd);
+    // TODO why not ordinary state tracking for BishopsPrevModel?
 
-    G::eval(models.solid_compressibility_model, aux_data, tmp, cd);
-
-    G::eval(models.bishops_model, aux_data, state, tmp);
-    // TODO why not ordinary state tracking?
-    G::eval(models.bishops_prev_model, aux_data, prev_state, tmp);
-    G::eval(models.poro_model, aux_data, tmp, state, prev_state);
-
-    // TODO move to local assembler?
     {
         auto const& biot_data = std::get<BiotData>(tmp);
         auto const& poro_data = std::get<PorosityData>(state);
@@ -69,26 +103,9 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         }
     }
 
-    G::eval(models.rho_L_model, aux_data, out);
-    G::eval(models.rho_S_model, aux_data, state, out);
-    G::eval(models.grav_model, state, out, tmp, cd);
-    G::eval(models.mu_L_model, aux_data, out);
-    G::eval(models.transport_poro_model, aux_data, tmp, state, prev_state);
-    G::eval(models.perm_model, aux_data, state, out, cd, tmp);
-    G::eval(models.th_osmosis_model, aux_data, out, cd);
-    G::eval(models.darcy_model, aux_data, out, tmp, cd);
-    G::eval(models.heat_storage_and_flux_model, aux_data, out, state, tmp, cd);
-    G::eval(models.vapor_diffusion_model, aux_data, out, state, tmp, cd);
-
-    // TODO Not needed for solid mechanics (solid thermal expansion is computed
-    // by the solid material model), but for fluid expansion. This duplication
-    // should be avoided in the future.
-    G::eval(models.s_therm_exp_model, aux_data, tmp);
-
-    G::eval(models.f_therm_exp_model, aux_data, tmp, state, out);
-    G::eval(models.storage_model, aux_data, tmp, state, out, prev_state, cd);
-    G::eval(models.eq_p_model, aux_data, state, tmp, out, cd);
-    G::eval(models.eq_T_model, cd);
+    // TODO Solid thermal expansion is not needed for solid mechanics (it is
+    // computed by the solid material model itself), but for fluid expansion.
+    // This duplication should be avoided in the future.
 }
 
 template struct ConstitutiveSetting<2>;

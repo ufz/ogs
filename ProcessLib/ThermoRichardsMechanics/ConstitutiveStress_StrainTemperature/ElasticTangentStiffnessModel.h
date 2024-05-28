@@ -31,6 +31,12 @@ struct ElasticTangentStiffnessModel
               TemperatureData<DisplacementDim> const& T_data,
               ElasticTangentStiffnessData<DisplacementDim>& out) const;
 
+    static ElasticTangentStiffnessModel create(
+        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
+    {
+        return ElasticTangentStiffnessModel{solid_material};
+    }
+
 private:
     SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
 };

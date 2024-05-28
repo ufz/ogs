@@ -13,6 +13,7 @@
 #include "LiquidDensity.h"
 #include "Saturation.h"
 #include "SolidDensity.h"
+#include "SpecificBodyForceData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -38,6 +39,12 @@ struct GravityModel
               SaturationData const& S_L_data,
               SaturationDataDeriv const& dS_L_data,
               GravityData<DisplacementDim>& out) const;
+
+    static GravityModel create(
+        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+    {
+        return GravityModel{specific_body_force_data.specific_body_force};
+    }
 
 private:
     Eigen::Vector<double, DisplacementDim> const specific_body_force_;
