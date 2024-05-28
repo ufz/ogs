@@ -205,6 +205,7 @@
                 <variable>NodalForces</variable>
                 <variable>pressure_interpolated</variable>
                 <variable>saturation_avg</variable>
+                <variable>sigma_avg</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
@@ -352,6 +353,12 @@
             <regex>RichardsFlow_2d_small_ts_.*.vtu</regex>
             <field>sigma</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>RichardsFlow_2d_small_ts_.*.vtu</regex>
+            <field>sigma_avg</field>
+            <absolute_tolerance>2.8e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
