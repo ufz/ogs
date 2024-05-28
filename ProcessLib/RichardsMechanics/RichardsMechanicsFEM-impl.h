@@ -15,6 +15,7 @@
 #include <cassert>
 
 #include "ComputeMicroPorosity.h"
+#include "ConstitutiveRelations/ConstitutiveModels.h"
 #include "IntegrationPointData.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -774,6 +775,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _integration_method.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
+        [[maybe_unused]] ConstitutiveData<DisplacementDim> CD;
+        [[maybe_unused]] auto models = createConstitutiveModels(
+            _process_data, _ip_data[ip].solid_material);
+
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
