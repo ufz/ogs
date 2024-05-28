@@ -41,10 +41,9 @@ void computeCellAverages(CellAverageData& cell_average_data,
 }
 }  // namespace detail
 
-template <typename LAIntf>
+template <int dim, typename LAIntf>
 void computeCellAverages(
     CellAverageData& cell_average_data,
-    int const dim,
     std::vector<std::unique_ptr<LAIntf>> const& local_assemblers)
 {
     auto const callback = [&cell_average_data, &local_assemblers](
@@ -57,24 +56,8 @@ void computeCellAverages(
                                     local_assemblers);
     };
 
-    if (dim == 2)
-    {
-        ProcessLib::Reflection::forEachReflectedFlattenedIPDataAccessor<2,
-                                                                        LAIntf>(
-            LAIntf::getReflectionDataForOutput(), callback);
-    }
-    else if (dim == 3)
-    {
-        ProcessLib::Reflection::forEachReflectedFlattenedIPDataAccessor<3,
-                                                                        LAIntf>(
-            LAIntf::getReflectionDataForOutput(), callback);
-    }
-    else
-    {
-        OGS_FATAL(
-            "Generic averaged output is only implemented for dimensions 2 "
-            "and 3 ATM. You requested dim = {}.",
-            dim);
-    }
+    ProcessLib::Reflection::forEachReflectedFlattenedIPDataAccessor<dim,
+                                                                    LAIntf>(
+        LAIntf::getReflectionDataForOutput(), callback);
 }
 }  // namespace ProcessLib

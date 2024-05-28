@@ -288,7 +288,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
         pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 
-    computeCellAverages(cell_average_data_, DisplacementDim, local_assemblers_);
+    computeCellAverages<DisplacementDim>(cell_average_data_, local_assemblers_);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

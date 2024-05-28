@@ -218,7 +218,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
 
-    computeCellAverages(cell_average_data_, DisplacementDim, _local_assemblers);
+    computeCellAverages<DisplacementDim>(cell_average_data_, _local_assemblers);
 }
 template class SmallDeformationProcess<2>;
 template class SmallDeformationProcess<3>;
