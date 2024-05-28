@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "BaseLib/StrongType.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MathLib/KelvinVector.h"
 #include "ParameterLib/SpatialPosition.h"
@@ -63,13 +64,7 @@ struct MediaData
     MaterialPropertyLib::Phase const& solid;
 };
 
-template <int DisplacementDim>
-struct TemperatureData
-{
-    double T;
-    double T_prev;
-    Eigen::Vector<double, DisplacementDim> grad_T;
-};
+using TemperatureData = BaseLib::StrongType<double, struct TemperatureDataTag>;
 
 template <int DisplacementDim>
 struct CapillaryPressureData

@@ -24,8 +24,7 @@ struct ConstitutiveSetting
     void eval(
         ConstitutiveModels<DisplacementDim>& models, double const t,
         double const dt, ParameterLib::SpatialPosition const& x_position,
-        MaterialPropertyLib::Medium const& medium,
-        TemperatureData<DisplacementDim> const& T_data,
+        MaterialPropertyLib::Medium const& medium, TemperatureData const T_data,
         CapillaryPressureData<DisplacementDim> const& p_cap_data,
         KelvinVector<DisplacementDim> const& eps_arg,
         StatefulData<DisplacementDim>& state,

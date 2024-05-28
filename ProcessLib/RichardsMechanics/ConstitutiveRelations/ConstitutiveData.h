@@ -10,7 +10,17 @@
 
 #pragma once
 
+#include "Density.h"
+#include "LiquidDensity.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
+#include "SaturationSecantDerivative.h"
+#include "StiffnessTensor.h"
 
 namespace ProcessLib::RichardsMechanics
 {
@@ -29,7 +39,18 @@ using OutputData = std::tuple<>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
-using ConstitutiveData = std::tuple<>;
+using ConstitutiveData = std::tuple<
+    // TODO (CL) check if all that data should stay here
+    StiffnessTensor<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::PorosityData, Density, LiquidDensity,
+    ProcessLib::ThermoRichardsMechanics::BiotData,
+    ProcessLib::ThermoRichardsMechanics::SaturationDataDeriv,
+    ProcessLib::ThermoRichardsMechanics::LiquidViscosityData,
+    ProcessLib::ThermoRichardsMechanics::SolidCompressibilityData,
+    ProcessLib::ThermoRichardsMechanics::BishopsData,
+    PrevState<ProcessLib::ThermoRichardsMechanics::BishopsData>,
+    ProcessLib::ThermoRichardsMechanics::PermeabilityData<DisplacementDim>,
+    SaturationSecantDerivative>;
 
 /// Data that stores intermediate values, which are not needed outside the
 /// constitutive setting.
