@@ -52,7 +52,6 @@ struct TH2MProcessData
 
     const bool use_TaylorHood_elements;
 
-    MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* gas_pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* capillary_pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* temperature_interpolated = nullptr;

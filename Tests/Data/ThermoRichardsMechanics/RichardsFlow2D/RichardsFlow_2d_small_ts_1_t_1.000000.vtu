@@ -27,7 +27,7 @@
         <DataArray type="Int32" Name="MaterialIDs" format="appended" RangeMin="0"                    RangeMax="0"                    offset="76136"               />
         <DataArray type="Float64" Name="porosity_avg" format="appended" RangeMin="0.38"                 RangeMax="0.38"                 offset="76200"               />
         <DataArray type="Float64" Name="saturation_avg" format="appended" RangeMin="0.29769080019"        RangeMax="0.62977672082"        offset="76276"               />
-        <DataArray type="Float64" Name="stress_avg" NumberOfComponents="4" format="appended" RangeMin="0.13873837932"        RangeMax="135.9312842"          offset="76588"               />
+        <DataArray type="Float64" Name="sigma_avg" NumberOfComponents="4" format="appended" RangeMin="0.13873837932"        RangeMax="135.9312842"          offset="76588"               />
       </CellData>
       <Points>
         <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="2.00039996"           offset="79764"               />

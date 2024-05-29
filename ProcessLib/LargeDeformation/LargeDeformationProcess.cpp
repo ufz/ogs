@@ -18,6 +18,7 @@
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
+#include "ProcessLib/Output/CellAverageAlgorithm.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
 #include "ProcessLib/Reflection/ReflectionForIPWriters.h"
@@ -207,6 +208,8 @@ void LargeDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
         pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+
+    computeCellAverages<DisplacementDim>(cell_average_data_, _local_assemblers);
 }
 template class LargeDeformationProcess<2>;
 template class LargeDeformationProcess<3>;

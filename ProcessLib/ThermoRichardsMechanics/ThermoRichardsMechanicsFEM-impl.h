@@ -541,14 +541,6 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    double saturation_avg = 0;
-    double porosity_avg = 0;
-    double liquid_density_avg = 0;
-    double viscosity_avg = 0;
-
-    using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
-    KV sigma_avg = KV::Zero();
-
     typename ConstitutiveTraits::ConstitutiveSetting constitutive_setting;
 
     auto models = ConstitutiveTraits::createConstitutiveModels(
@@ -603,29 +595,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   eps, current_state, this->prev_states_[ip],
                                   this->material_states_[ip], tmp, output_data,
                                   CD);
-
-        saturation_avg += std::get<SaturationData>(current_state).S_L;
-        porosity_avg += std::get<PorosityData>(current_state).phi;
-
-        liquid_density_avg += std::get<LiquidDensityData>(output_data).rho_LR;
-        viscosity_avg += std::get<LiquidViscosityData>(output_data).viscosity;
-        sigma_avg += ConstitutiveTraits::ConstitutiveSetting::statefulStress(
-            current_state);
     }
-    saturation_avg /= n_integration_points;
-    porosity_avg /= n_integration_points;
-    viscosity_avg /= n_integration_points;
-    liquid_density_avg /= n_integration_points;
-    sigma_avg /= n_integration_points;
-
-    (*process_data.element_saturation)[e_id] = saturation_avg;
-    (*process_data.element_porosity)[e_id] = porosity_avg;
-    (*process_data.element_liquid_density)[e_id] = liquid_density_avg;
-    (*process_data.element_viscosity)[e_id] = viscosity_avg;
-
-    Eigen::Map<KV>(
-        &(*process_data.element_stresses)[e_id * KV::RowsAtCompileTime]) =
-        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunction, typename ShapeFunctionDisplacement::MeshElement,

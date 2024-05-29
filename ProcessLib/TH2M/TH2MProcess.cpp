@@ -19,6 +19,7 @@
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
+#include "ProcessLib/Output/CellAverageAlgorithm.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
 #include "ProcessLib/Reflection/ReflectionForIPWriters.h"
@@ -175,10 +176,6 @@ void TH2MProcess<DisplacementDim>::initializeConcreteProcess(
             _process_data.solid_materials, local_assemblers_,
             _integration_point_writer, integration_order);
 
-    _process_data.element_saturation = MeshLib::getOrCreateMeshProperty<double>(
-        const_cast<MeshLib::Mesh&>(mesh), "saturation_avg",
-        MeshLib::MeshItemType::Cell, 1);
-
     _process_data.gas_pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "gas_pressure_interpolated",
@@ -320,6 +317,8 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
         local_assemblers_, pv.getActiveElementIDs(), getDOFTables(x.size()), t,
         dt, x, x_prev, process_id);
+
+    computeCellAverages<DisplacementDim>(cell_average_data_, local_assemblers_);
 }
 
 template <int DisplacementDim>

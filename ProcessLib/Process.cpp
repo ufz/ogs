@@ -54,6 +54,7 @@ Process::Process(
     : name(std::move(name_)),
       _mesh(mesh),
       _secondary_variables(std::move(secondary_variables)),
+      cell_average_data_(mesh),
       _jacobian_assembler(std::move(jacobian_assembler)),
       _global_assembler(*_jacobian_assembler),
       _use_monolithic_scheme(use_monolithic_scheme),
