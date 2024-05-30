@@ -142,6 +142,23 @@ AddTest(
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu epsilon epsilon 1e-5 1e-5
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu sigma sigma 1e-5 1e-5
 )
+# ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation, variation with a Python source term
+AddTest(
+    NAME ThermoHydroMechanics_point_heat_injection_py_st
+    PATH ThermoHydroMechanics/Linear/Point_injection/with-python-source-term
+    RUNTIME 45
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS pointheatsource_quadratic-mesh.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu temperature temperature 1e-5 1e-5
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu epsilon epsilon 1e-5 1e-5
+    expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu sigma sigma 1e-5 1e-5
+)
 # ThermoHydroMechanics; Small deformation, linear elastic, porosity=0, anisotropic thermal expansion
 AddTest(
     NAME ThermoHydroMechanics_cube_ortho-thermal-expansion-phi0
