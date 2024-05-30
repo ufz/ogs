@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <BaseLib/Algorithm.h>
 #include <BaseLib/Error.h>
 
 #include <Eigen/Core>
@@ -115,38 +116,36 @@ public:
 
     VariablePointer address_of(Variable const v);
 
+    template <typename Visitor>
+    auto visitVariable(Visitor&& visitor, Variable const variable) const
+    {
+        return std::visit(
+            BaseLib::Overloaded{
+                std::forward<Visitor>(visitor),
+                []<typename T>(T const*)
+                {
+                    static_assert(!std::is_same_v<T, T>,
+                                  "Non-exhaustive visitor! The variable type "
+                                  "must be one of the VariableArray::{Scalar, "
+                                  "KelvinVector, DeformationGradient}.");
+                }},
+            address_of(variable));
+    }
+
     /// Read-only access.
     /// \note The returned value is a temporary.
     VariableType operator[](Variable const variable) const
     {
-        return std::visit(
-            []<typename T>(T* ptr) -> VariableType
-            {
-                auto identity = [](auto const& arg) -> VariableType
-                { return arg; };
-                if constexpr (std::is_same_v<Scalar const, T>)
-                {
-                    return *ptr;
-                }
-                else if constexpr (std::is_same_v<KelvinVector const, T>)
-                {
-                    return std::visit(identity, *ptr);
-                }
-                else if constexpr (std::is_same_v<DeformationGradient const, T>)
-                {
-                    return std::visit(identity, *ptr);
-                }
-                else
-                {
-                    static_assert(
-                        !std::is_same_v<T, T>,
-                        "Non-exhaustive visitor! The variable type (in the "
-                        "std::is_same_v expression) must be one of the "
-                        "VariableArray::{Scalar, KelvinVector, "
-                        "DeformationGradient}.");
-                }
-            },
-            address_of(variable));
+        auto identity = [](auto const& arg) -> VariableType { return arg; };
+
+        return visitVariable(
+            BaseLib::Overloaded{
+                [](Scalar const* ptr) -> VariableType { return *ptr; },
+                [&identity](KelvinVector const* ptr) -> VariableType
+                { return std::visit(identity, *ptr); },
+                [&identity](DeformationGradient const* ptr) -> VariableType
+                { return std::visit(identity, *ptr); }},
+            variable);
     }
 
     double capillary_pressure = nan_;
