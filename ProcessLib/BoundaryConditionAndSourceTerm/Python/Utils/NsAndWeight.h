@@ -91,13 +91,19 @@ struct NsAndWeight<ShapeFunction, ShapeFunction, ShapeMatrix, ShapeMatrix>
 
     Eigen::Ref<const Eigen::RowVectorXd> N(unsigned order) const
     {
-        if (order >= 2)
+        // For point elements shape functions are the same for all orders, so
+        // this specialization will be selected, which is OK for any shape
+        // function order for point elements.
+        if constexpr (!std::is_same_v<ShapeFunction, NumLib::ShapePoint1>)
         {
-            OGS_FATAL(
-                "Only shape functions of order < 2 are available in the "
-                "current setting. You have requested order {}. Maybe there is "
-                "an error in the OGS project file.",
-                order);
+            if (order >= 2)
+            {
+                OGS_FATAL(
+                    "Only shape functions of order < 2 are available in the "
+                    "current setting. You have requested order {}. Maybe there "
+                    "is an error in the OGS project file.",
+                    order);
+            }
         }
 
         return N_;

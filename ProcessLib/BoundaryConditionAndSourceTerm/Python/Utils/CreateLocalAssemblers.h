@@ -33,10 +33,6 @@ void createLocalAssemblersPython(
     NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
-    static_assert(
-        GlobalDim == 1 || GlobalDim == 2 || GlobalDim == 3,
-        "Meshes with dimension greater than three are not supported.");
-
     using LocAsmFactory =
         LocalAssemblerFactoryPython<LocalAssemblerInterface,
                                     LocalAssemblerImplementation, GlobalDim,
@@ -82,6 +78,12 @@ void createLocalAssemblersPython(
 
     switch (dimension)
     {
+        case 0:
+            detail::createLocalAssemblersPython<0,
+                                                LocalAssemblerImplementation>(
+                dof_table, mesh_elements, local_assemblers, integration_order,
+                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
+            break;
         case 1:
             detail::createLocalAssemblersPython<1,
                                                 LocalAssemblerImplementation>(

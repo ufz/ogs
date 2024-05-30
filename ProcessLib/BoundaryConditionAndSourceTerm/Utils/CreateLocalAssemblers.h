@@ -33,10 +33,6 @@ void createLocalAssemblers(
     NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
-    static_assert(
-        GlobalDim == 1 || GlobalDim == 2 || GlobalDim == 3,
-        "Meshes with dimension greater than three are not supported.");
-
     using LocalAssemblerFactory =
         LocalAssemblerFactory<LocalAssemblerInterface,
                               LocalAssemblerImplementation, GlobalDim,
@@ -83,6 +79,12 @@ void createLocalAssemblers(
 
     switch (dimension)
     {
+        case 0:
+            detail::createLocalAssemblers<0, LocalAssemblerImplementation>(
+                dof_table, shapefunction_order, mesh_elements, local_assemblers,
+                integration_order,
+                std::forward<ExtraCtorArgs>(extra_ctor_args)...);
+            break;
         case 1:
             detail::createLocalAssemblers<1, LocalAssemblerImplementation>(
                 dof_table, shapefunction_order, mesh_elements, local_assemblers,
