@@ -310,4 +310,14 @@ constexpr bool none_of(List const& values)
     return !any_of(values);
 }
 
+/// A utility to combine multiple lambda functions into a single overloaded
+/// function object.
+/// Can be used with `std::visit` or similar functions requiring a callable that
+/// handles multiple types.
+template <class... Ts>
+struct Overloaded : Ts...
+{
+    using Ts::operator()...;
+};
+
 }  // namespace BaseLib
