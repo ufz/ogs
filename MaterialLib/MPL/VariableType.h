@@ -87,23 +87,23 @@ static const std::array<std::string,
 /// data.
 using VariableType = std::variant<std::monostate,
                                   double,
-                                  Eigen::Matrix<double, 4, 1>,
-                                  Eigen::Matrix<double, 5, 1>,
-                                  Eigen::Matrix<double, 6, 1>,
-                                  Eigen::Matrix<double, 9, 1>>;
+                                  Eigen::Vector<double, 4>,
+                                  Eigen::Vector<double, 5>,
+                                  Eigen::Vector<double, 6>,
+                                  Eigen::Vector<double, 9>>;
 
 class VariableArray
 {
 public:
     using Scalar = double;
     using KelvinVector = std::variant<std::monostate,
-                                      Eigen::Matrix<double, 4, 1>,
-                                      Eigen::Matrix<double, 6, 1>>;
-    // Compare to GMatrixPolicy::GradientVectorType. The 1d case = Matrix<3, 1>
+                                      Eigen::Vector<double, 4>,
+                                      Eigen::Vector<double, 6>>;
+    // Compare to GMatrixPolicy::GradientVectorType. The 1d case = Vector<3>
     // is not used so far.
     using DeformationGradient = std::variant<std::monostate,
-                                             Eigen::Matrix<double, 5, 1>,
-                                             Eigen::Matrix<double, 9, 1>>;
+                                             Eigen::Vector<double, 5>,
+                                             Eigen::Vector<double, 9>>;
 
     using VariablePointerConst = std::
         variant<Scalar const*, KelvinVector const*, DeformationGradient const*>;
