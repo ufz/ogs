@@ -65,7 +65,7 @@ PropertyDataType RelPermGeneralizedPowerNonwettingPhase::value(
 
     auto const S_e_g = (1. - S_e);
 
-    return a_ * std::pow(S_e_g, lambda_);
+    return std::max(a_ * std::pow(S_e_g, lambda_), min_relative_permeability_);
 }
 PropertyDataType RelPermGeneralizedPowerNonwettingPhase::dValue(
     VariableArray const& variable_array, Variable const variable,

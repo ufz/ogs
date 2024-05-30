@@ -62,7 +62,7 @@ PropertyDataType RelPermGeneralizedPower::value(
         return min_relative_permeability_;
     }
 
-    return a_ * std::pow(S_e, lambda_);
+    return std::max(a_ * std::pow(S_e, lambda_), min_relative_permeability_);
 }
 PropertyDataType RelPermGeneralizedPower::dValue(
     VariableArray const& variable_array, Variable const variable,

@@ -88,7 +88,8 @@ PropertyDataType RelPermNonWettingPhaseVanGenuchtenMualem::dValue(
     const double val1 = std::sqrt(1.0 - Se);
     const double val2 = 1.0 - std::pow(Se, 1.0 / m_);
 
-    return a_ * (-0.5 * std::pow(val2, 2.0 * m_) / val1 -
+    return a_ *
+           (-0.5 * std::pow(val2, 2.0 * m_) / val1 -
             2.0 * std::pow(Se, -1.0 + 1.0 / m_) * val1 *
                 std::pow(val2, 2.0 * m_ - 1.0)) /
            (S_L_max_ - S_L_r_);
