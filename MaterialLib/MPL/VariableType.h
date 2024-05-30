@@ -117,6 +117,22 @@ public:
     VariablePointer address_of(Variable const v);
 
     template <typename Visitor>
+    auto visitVariable(Visitor&& visitor, Variable const variable)
+    {
+        return std::visit(
+            BaseLib::Overloaded{
+                std::forward<Visitor>(visitor),
+                []<typename T>(T*)
+                {
+                    static_assert(!std::is_same_v<T, T>,
+                                  "Non-exhaustive visitor! The variable type "
+                                  "must be one of the VariableArray::{Scalar, "
+                                  "KelvinVector, DeformationGradient}.");
+                }},
+            address_of(variable));
+    }
+
+    template <typename Visitor>
     auto visitVariable(Visitor&& visitor, Variable const variable) const
     {
         return std::visit(

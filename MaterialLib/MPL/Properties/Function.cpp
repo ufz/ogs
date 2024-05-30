@@ -93,41 +93,27 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
             [&v, &symbol_table](double* ptr, std::size_t const size)
         { symbol_table.add_vector(v, ptr, size); };
 
-        auto add_any_variable =
-            [&add_scalar, &add_vector]<typename T>(T* address)
-        {
-            if constexpr (std::is_same_v<VariableArray::Scalar, T>)
-            {
-                add_scalar(*address);
-            }
-            else if constexpr (std::is_same_v<VariableArray::KelvinVector, T>)
+        auto add_any_variable = BaseLib::Overloaded{
+            [&add_scalar](VariableArray::Scalar* address)
+            { add_scalar(*address); },
+            [&add_vector](VariableArray::KelvinVector* address)
             {
                 auto constexpr size =
                     MathLib::KelvinVector::kelvin_vector_dimensions(D);
                 auto& result =
                     address->template emplace<Eigen::Matrix<double, size, 1>>();
                 add_vector(result.data(), size);
-            }
-            else if constexpr (std::is_same_v<
-                                   VariableArray::DeformationGradient, T>)
+            },
+            [&add_vector](VariableArray::DeformationGradient* address)
             {
                 auto constexpr size = MathLib::VectorizedTensor::size(D);
                 auto& result =
                     address->template emplace<Eigen::Matrix<double, size, 1>>();
                 add_vector(result.data(), size);
-            }
-            else
-            {
-                static_assert(!std::is_same_v<T, T>,
-                              "Non-exhaustive visitor! The variable type (in "
-                              "the std::is_same_v expression) must be one of "
-                              "the VariableArray::{Scalar, KelvinVector, "
-                              "DeformationGradient}.");
-            }
-        };
+            }};
 
         Variable const variable = convertStringToVariable(v);
-        std::visit(add_any_variable, variable_array.address_of(variable));
+        variable_array.visitVariable(add_any_variable, variable);
     }
     return symbol_table;
 }
@@ -161,102 +147,95 @@ static void updateVariableArrayValues(std::vector<Variable> const& variables,
 {
     for (auto const& variable : variables)
     {
-        auto assign_variable =
-            [&variable, &new_variable_array]<typename T>(T* address)
+        auto assign_scalar =
+            [&variable, &new_variable_array](VariableArray::Scalar* address)
         {
-            if constexpr (std::is_same_v<VariableArray::Scalar, T>)
-            {
-                double const value = *std::get<VariableArray::Scalar const*>(
-                    new_variable_array.address_of(variable));
+            double const value = *std::get<VariableArray::Scalar const*>(
+                new_variable_array.address_of(variable));
 
-                if (std::isnan(value))
+            if (std::isnan(value))
+            {
+                OGS_FATAL(
+                    "Function property: Scalar variable '{:s}' is not "
+                    "initialized.",
+                    variable_enum_to_string[static_cast<int>(variable)]);
+            }
+
+            *address = value;
+        };
+        auto assign_kelvin_vector = [&variable, &new_variable_array](
+                                        VariableArray::KelvinVector* address)
+        {
+            auto assign_value = [&destination = *address,
+                                 &variable]<typename S>(S const& source)
+            {
+                if constexpr (std::is_same_v<S, std::monostate>)
                 {
                     OGS_FATAL(
-                        "Function property: Scalar variable '{:s}' is not "
-                        "initialized.",
+                        "Function property: Kelvin vector variable '{:s}' is "
+                        "not initialized.",
                         variable_enum_to_string[static_cast<int>(variable)]);
                 }
-
-                *address = value;
-            }
-            else if constexpr (std::is_same_v<VariableArray::KelvinVector, T>)
-            {
-                auto assign_value = [&destination = *address,
-                                     &variable]<typename S>(S const& source)
+                else
                 {
-                    if constexpr (std::is_same_v<S, std::monostate>)
+                    if (std::holds_alternative<S>(destination))
                     {
-                        OGS_FATAL(
-                            "Function property: Kelvin vector variable '{:s}' "
-                            "is not initialized.",
-                            variable_enum_to_string[static_cast<int>(
-                                variable)]);
+                        std::get<S>(destination) = MathLib::KelvinVector::
+                            kelvinVectorToSymmetricTensor(source);
                     }
                     else
                     {
-                        if (std::holds_alternative<S>(destination))
-                        {
-                            std::get<S>(destination) = MathLib::KelvinVector::
-                                kelvinVectorToSymmetricTensor(source);
-                        }
-                        else
-                        {
-                            OGS_FATAL(
-                                "Function property: Mismatch of Kelvin vector "
-                                "sizes for variable {:s}.",
-                                variable_enum_to_string[static_cast<int>(
-                                    variable)]);
-                        }
-                    }
-                };
-                std::visit(assign_value,
-                           *std::get<VariableArray::KelvinVector const*>(
-                               new_variable_array.address_of(variable)));
-            }
-            else if constexpr (std::is_same_v<
-                                   VariableArray::DeformationGradient, T>)
-            {
-                auto assign_value = [&destination = *address,
-                                     &variable]<typename S>(S const& source)
-                {
-                    if constexpr (std::is_same_v<S, std::monostate>)
-                    {
                         OGS_FATAL(
-                            "Function property: Vectorized tensor variable "
-                            "'{:s}' is not initialized.",
+                            "Function property: Mismatch of Kelvin vector "
+                            "sizes for variable {:s}.",
                             variable_enum_to_string[static_cast<int>(
                                 variable)]);
                     }
-                    else
-                    {
-                        if (std::holds_alternative<S>(destination))
-                        {
-                            std::get<S>(destination) = source;
-                        }
-                        else
-                        {
-                            OGS_FATAL(
-                                "Function property: Mismatch of vectorized "
-                                "tensor sizes for variable {:s}.",
-                                variable_enum_to_string[static_cast<int>(
-                                    variable)]);
-                        }
-                    }
-                };
-                std::visit(assign_value,
-                           *std::get<VariableArray::DeformationGradient const*>(
-                               new_variable_array.address_of(variable)));
-            }
-            else
-            {
-                static_assert(!std::is_same_v<T, T>,
-                              "Non-exhaustive visitor! The variable type (in "
-                              "the std::is_same_v expression) must be one of "
-                              "the VariableArray::{Scalar, KelvinVector, "
-                              "DeformationGradient}.");
-            }
+                }
+            };
+            std::visit(assign_value,
+                       *std::get<VariableArray::KelvinVector const*>(
+                           new_variable_array.address_of(variable)));
         };
-        std::visit(assign_variable, variable_array.address_of(variable));
+        auto assign_deformation_gradient =
+            [&variable,
+             &new_variable_array](VariableArray::DeformationGradient* address)
+        {
+            auto assign_value = [&destination = *address,
+                                 &variable]<typename S>(S const& source)
+            {
+                if constexpr (std::is_same_v<S, std::monostate>)
+                {
+                    OGS_FATAL(
+                        "Function property: Vectorized tensor variable '{:s}' "
+                        "is not initialized.",
+                        variable_enum_to_string[static_cast<int>(variable)]);
+                }
+                else
+                {
+                    if (std::holds_alternative<S>(destination))
+                    {
+                        std::get<S>(destination) = source;
+                    }
+                    else
+                    {
+                        OGS_FATAL(
+                            "Function property: Mismatch of vectorized tensor "
+                            "sizes for variable {:s}.",
+                            variable_enum_to_string[static_cast<int>(
+                                variable)]);
+                    }
+                }
+            };
+            std::visit(assign_value,
+                       *std::get<VariableArray::DeformationGradient const*>(
+                           new_variable_array.address_of(variable)));
+        };
+
+        variable_array.visitVariable(
+            BaseLib::Overloaded{assign_scalar, assign_kelvin_vector,
+                                assign_deformation_gradient},
+            variable);
     }
 }
 
