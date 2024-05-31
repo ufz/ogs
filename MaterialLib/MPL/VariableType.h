@@ -114,8 +114,6 @@ public:
     using VariablePointer =
         std::variant<Scalar*, KelvinVector*, DeformationGradient*>;
 
-    VariablePointer address_of(Variable const v);
-
     template <typename Visitor>
     auto visitVariable(Visitor&& visitor, Variable const variable)
     {
@@ -164,6 +162,10 @@ public:
             variable);
     }
 
+private:
+    VariablePointer address_of(Variable const v);
+
+public:
     double capillary_pressure = nan_;
     double concentration = nan_;
     DeformationGradient deformation_gradient;
