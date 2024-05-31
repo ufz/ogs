@@ -1,4 +1,5 @@
 get_source_files(SOURCES)
+append_source_files(SOURCES ConstitutiveRelations)
 
 ogs_add_library(RichardsMechanics ${SOURCES})
 target_link_libraries(RichardsMechanics PUBLIC ProcessLib PRIVATE ParameterLib)

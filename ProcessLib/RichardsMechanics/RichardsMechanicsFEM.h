@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+#include "ConstitutiveRelations/Base.h"
+#include "ConstitutiveRelations/ConstitutiveData.h"
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
 #include "MaterialLib/MPL/VariableType.h"
@@ -328,6 +330,14 @@ private:
     getMaterialStateVariablesAt(unsigned integration_point) const override;
 
 private:
+    void assembleWithJacobianEvalConstitutiveSetting(
+        double const t, double const dt,
+        ParameterLib::SpatialPosition const& x_position, IpData& ip_data,
+        MPL::VariableArray& variables, MPL::VariableArray& variables_prev,
+        MPL::Medium const* const medium, TemperatureData const T_data,
+        CapillaryPressureData<DisplacementDim> const& p_cap_data,
+        ConstitutiveData<DisplacementDim>& CD);
+
     RichardsMechanicsProcessData<DisplacementDim>& _process_data;
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
