@@ -40,7 +40,7 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
         OGS_FATAL("no timesteps have been given");
     }
 
-    std::vector<std::pair<std::size_t, double>> repeat_dt_pairs;
+    std::vector<RepeatDtPair> repeat_dt_pairs;
     for (auto const pair : range)
     {
         repeat_dt_pairs.emplace_back(
@@ -48,6 +48,12 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
             pair.getConfigParameter<std::size_t>("repeat"),
             //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__delta_t}
             pair.getConfigParameter<double>("delta_t"));
+    }
+    if (!FixedTimeStepping::areRepeatDtPairsValid(repeat_dt_pairs))
+    {
+        OGS_FATAL(
+            "CreateFixedTimeStepping: invalid specification of (repeat, "
+            "delta_t) pairs");
     }
 
     return std::make_unique<FixedTimeStepping>(

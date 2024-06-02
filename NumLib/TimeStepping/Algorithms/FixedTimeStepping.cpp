@@ -141,24 +141,18 @@ void incorporateFixedTimesForOutput(
 }
 
 FixedTimeStepping::FixedTimeStepping(
-    double t0, double tn,
-    std::vector<std::pair<std::size_t, double>> const& repeat_dt_pairs,
+    double t0, double tn, std::vector<RepeatDtPair> const& repeat_dt_pairs,
     std::vector<double> const& fixed_times_for_output)
     : TimeStepAlgorithm(t0, tn)
 {
     double t_curr = _t_initial;
 
+    if (!areRepeatDtPairsValid(repeat_dt_pairs))
+    {
+        OGS_FATAL("FixedTimeStepping: Couldn't construct object from data");
+    }
     for (auto const& [repeat, delta_t] : repeat_dt_pairs)
     {
-        if (repeat == 0)
-        {
-            OGS_FATAL("<repeat> is zero.");
-        }
-        if (delta_t <= 0.0)
-        {
-            OGS_FATAL("timestep <delta_t> is <= 0.0.");
-        }
-
         if (t_curr <= _t_end)
         {
             t_curr = addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
@@ -168,7 +162,7 @@ FixedTimeStepping::FixedTimeStepping(
     // append last delta_t until t_end is reached
     if (t_curr <= _t_end)
     {
-        auto const delta_t = repeat_dt_pairs.back().second;
+        auto const delta_t = std::get<1>(repeat_dt_pairs.back());
         auto const repeat =
             static_cast<std::size_t>(std::ceil((_t_end - t_curr) / delta_t));
         addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
@@ -229,6 +223,30 @@ std::tuple<bool, double> FixedTimeStepping::next(
     }
 
     return std::make_tuple(true, dt);
+}
+
+bool FixedTimeStepping::areRepeatDtPairsValid(
+    std::vector<RepeatDtPair> const& repeat_dt_pairs)
+{
+    if (repeat_dt_pairs.empty())
+    {
+        return false;
+    }
+
+    for (auto const& [repeat, delta_t] : repeat_dt_pairs)
+    {
+        if (repeat == 0)
+        {
+            ERR("FixedTimeStepping: <repeat> is zero.");
+            return false;
+        }
+        if (delta_t <= 0.0)
+        {
+            ERR("FixedTimeStepping: timestep <delta_t> is <= 0.0.");
+            return false;
+        }
+    }
+    return true;
 }
 
 }  // namespace NumLib
