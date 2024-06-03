@@ -53,5 +53,7 @@ public:
         MatrixType<_kelvin_vector_size, _kelvin_vector_size>;
 
     using BMatrixType = MatrixType<_kelvin_vector_size, _number_of_dof>;
+
+    using BBarMatrixType = MatrixType<3, ShapeFunction::NPOINTS>;
 };
 }  // namespace ProcessLib
