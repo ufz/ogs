@@ -310,4 +310,22 @@ constexpr bool none_of(List const& values)
     return !any_of(values);
 }
 
+/// A utility to combine multiple lambda functions into a single overloaded
+/// function object.
+/// Can be used with `std::visit` or similar functions requiring a callable that
+/// handles multiple types.
+template <class... Ts>
+struct Overloaded : Ts...
+{
+    using Ts::operator()...;
+};
+#if defined(__clang__)
+#if ((__clang_major__ == 16 && !defined(__apple_build_version__)) || \
+     (__clang_major__ == 15 && defined(__apple_build_version__)))
+/// Explicit deduction guide needed for apple's clang-15 and clang-16.
+template <class... Ts>
+Overloaded(Ts...) -> Overloaded<Ts...>;
+#endif
+#endif
+
 }  // namespace BaseLib

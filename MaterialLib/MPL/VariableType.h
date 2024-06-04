@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <BaseLib/Algorithm.h>
 #include <BaseLib/Error.h>
 
 #include <Eigen/Core>
@@ -47,6 +48,7 @@ enum class Variable : int
     solid_grain_pressure,
     stress,
     temperature,
+    total_strain,
     total_stress,
     transport_porosity,
     vapour_pressure,
@@ -76,6 +78,7 @@ static const std::array<std::string,
                              "solid_grain_pressure",
                              "stress",
                              "temperature",
+                             "total_strain",
                              "total_stress",
                              "transport_porosity",
                              "vapour_pressure",
@@ -85,85 +88,87 @@ static const std::array<std::string,
 /// data.
 using VariableType = std::variant<std::monostate,
                                   double,
-                                  Eigen::Matrix<double, 4, 1>,
-                                  Eigen::Matrix<double, 5, 1>,
-                                  Eigen::Matrix<double, 6, 1>,
-                                  Eigen::Matrix<double, 9, 1>>;
+                                  Eigen::Vector<double, 4>,
+                                  Eigen::Vector<double, 5>,
+                                  Eigen::Vector<double, 6>,
+                                  Eigen::Vector<double, 9>>;
 
 class VariableArray
 {
 public:
+    using Scalar = double;
+    using KelvinVector = std::variant<std::monostate,
+                                      Eigen::Vector<double, 4>,
+                                      Eigen::Vector<double, 6>>;
+    // Compare to GMatrixPolicy::GradientVectorType. The 1d case = Vector<3>
+    // is not used so far.
+    using DeformationGradient = std::variant<std::monostate,
+                                             Eigen::Vector<double, 5>,
+                                             Eigen::Vector<double, 9>>;
+
+    using VariablePointerConst = std::
+        variant<Scalar const*, KelvinVector const*, DeformationGradient const*>;
+
+    VariablePointerConst address_of(Variable const v) const;
+
+    using VariablePointer =
+        std::variant<Scalar*, KelvinVector*, DeformationGradient*>;
+
+    template <typename Visitor>
+    auto visitVariable(Visitor&& visitor, Variable const variable)
+    {
+        return std::visit(
+            BaseLib::Overloaded{
+                std::forward<Visitor>(visitor),
+                []<typename T>(T*)
+                {
+                    static_assert(!std::is_same_v<T, T>,
+                                  "Non-exhaustive visitor! The variable type "
+                                  "must be one of the VariableArray::{Scalar, "
+                                  "KelvinVector, DeformationGradient}.");
+                }},
+            address_of(variable));
+    }
+
+    template <typename Visitor>
+    auto visitVariable(Visitor&& visitor, Variable const variable) const
+    {
+        return std::visit(
+            BaseLib::Overloaded{
+                std::forward<Visitor>(visitor),
+                []<typename T>(T const*)
+                {
+                    static_assert(!std::is_same_v<T, T>,
+                                  "Non-exhaustive visitor! The variable type "
+                                  "must be one of the VariableArray::{Scalar, "
+                                  "KelvinVector, DeformationGradient}.");
+                }},
+            address_of(variable));
+    }
+
     /// Read-only access.
     /// \note The returned value is a temporary.
     VariableType operator[](Variable const variable) const
     {
-        auto identity = [](auto&& arg) -> VariableType { return arg; };
-        switch (variable)
-        {
-            case Variable::capillary_pressure:
-                return capillary_pressure;
-            case Variable::concentration:
-                return concentration;
-            case Variable::deformation_gradient:
-                return std::visit(identity, deformation_gradient);
-            case Variable::density:
-                return density;
-            case Variable::effective_pore_pressure:
-                return effective_pore_pressure;
-            case Variable::enthalpy:
-                return enthalpy;
-            case Variable::enthalpy_of_evaporation:
-                return enthalpy_of_evaporation;
-            case Variable::equivalent_plastic_strain:
-                return equivalent_plastic_strain;
-            case Variable::grain_compressibility:
-                return grain_compressibility;
-            case Variable::liquid_phase_pressure:
-                return liquid_phase_pressure;
-            case Variable::liquid_saturation:
-                return liquid_saturation;
-            case Variable::mechanical_strain:
-                return std::visit(identity, mechanical_strain);
-            case Variable::molar_mass:
-                return molar_mass;
-            case Variable::molar_mass_derivative:
-                return molar_mass_derivative;
-            case Variable::molar_fraction:
-                return molar_fraction;
-            case Variable::gas_phase_pressure:
-                return gas_phase_pressure;
-            case Variable::porosity:
-                return porosity;
-            case Variable::solid_grain_pressure:
-                return solid_grain_pressure;
-            case Variable::stress:
-                return std::visit(identity, stress);
-            case Variable::temperature:
-                return temperature;
-            case Variable::total_stress:
-                return std::visit(identity, total_stress);
-            case Variable::transport_porosity:
-                return transport_porosity;
-            case Variable::vapour_pressure:
-                return vapour_pressure;
-            case Variable::volumetric_strain:
-                return volumetric_strain;
-            default:
-                OGS_FATAL(
-                    "No conversion to VariableType is provided for variable "
-                    "{:d}",
-                    static_cast<int>(variable));
-        };
+        auto identity = [](auto const& arg) -> VariableType { return arg; };
+
+        return visitVariable(
+            BaseLib::Overloaded{
+                [](Scalar const* ptr) -> VariableType { return *ptr; },
+                [&identity](KelvinVector const* ptr) -> VariableType
+                { return std::visit(identity, *ptr); },
+                [&identity](DeformationGradient const* ptr) -> VariableType
+                { return std::visit(identity, *ptr); }},
+            variable);
     }
 
+private:
+    VariablePointer address_of(Variable const v);
+
+public:
     double capillary_pressure = nan_;
     double concentration = nan_;
-    // Compare to GMatrixPolicy::GradientVectorType. The 1d case = Matrix<3, 1>
-    // is not used so far.
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 5, 1>,
-                 Eigen::Matrix<double, 9, 1>>
-        deformation_gradient;
+    DeformationGradient deformation_gradient;
     double density = nan_;
     double effective_pore_pressure = nan_;
     double enthalpy = nan_;
@@ -172,32 +177,23 @@ public:
     double grain_compressibility = nan_;
     double liquid_phase_pressure = nan_;
     double liquid_saturation = nan_;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        mechanical_strain;
+    KelvinVector mechanical_strain;
     double molar_mass = nan_;
     double molar_mass_derivative = nan_;
     double molar_fraction = nan_;
     double gas_phase_pressure = nan_;
     double porosity = nan_;
     double solid_grain_pressure = nan_;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        stress;
+    KelvinVector stress;
     double temperature = nan_;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        total_strain;
-    std::variant<std::monostate,
-                 Eigen::Matrix<double, 4, 1>,
-                 Eigen::Matrix<double, 6, 1>>
-        total_stress;
+    KelvinVector total_strain;
+    KelvinVector total_stress;
     double transport_porosity = nan_;
     double vapour_pressure = nan_;
     double volumetric_strain = nan_;
+
+    bool is2D() const;
+    bool is3D() const;
 
 private:
     static constexpr auto nan_ = std::numeric_limits<double>::signaling_NaN();
@@ -206,6 +202,6 @@ private:
 static const VariableArray EmptyVariableArray{};
 
 /// This function converts a string (e.g. a string from the configuration-tree)
-/// into one of the entries of the VariableType enumerator.
+/// into one of the entries of the Variable enumerator.
 Variable convertStringToVariable(std::string const& string);
 }  // namespace MaterialPropertyLib

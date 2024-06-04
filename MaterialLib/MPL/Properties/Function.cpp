@@ -9,9 +9,15 @@
 
 #include "MaterialLib/MPL/Properties/Function.h"
 
+#include <exprtk.hpp>
 #include <numeric>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
+#include <typeinfo>
 
 #include "BaseLib/Algorithm.h"
+#include "MathLib/KelvinVector.h"
+#include "MathLib/VectorizedTensor.h"
 
 namespace MaterialPropertyLib
 {
@@ -38,52 +44,214 @@ static std::vector<exprtk::expression<T>> compileExpressions(
     return expressions;
 }
 
-static void updateVariableValues(
-    std::vector<std::pair<Variable, double*>> const& symbol_values,
-    VariableArray const& variable_array)
+template <int D>
+class Function::Implementation
 {
-    for (auto const& [variable, value_ptr] : symbol_values)
+public:
+    using Expression = exprtk::expression<double>;
+
+public:
+    Implementation(
+        std::vector<std::string> const& variables,
+        std::vector<std::string> const& value_string_expressions,
+        std::vector<std::pair<std::string, std::vector<std::string>>> const&
+            dvalue_string_expressions);
+
+private:
+    /// Create symbol table for given variables and populates the variable_array
+    /// as needed.
+    exprtk::symbol_table<double> createSymbolTable(
+        std::vector<std::string> const& variables);
+
+public:
+    /// Value expressions.
+    /// Multiple expressions are representing vector-valued functions.
+    std::vector<Expression> value_expressions;
+
+    /// Derivative expressions with respect to the variable.
+    /// Multiple expressions are representing vector-valued functions.
+    std::vector<std::pair<Variable, std::vector<Expression>>>
+        dvalue_expressions;
+
+    /// Stores values for evaluation of vectorial quantities. Needed for
+    /// constant pointers for exprtk.
+    mutable VariableArray variable_array;
+};
+
+template <int D>
+exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
+    std::vector<std::string> const& variables)
+{
+    exprtk::symbol_table<double> symbol_table;
+
+    for (auto const& v : variables)
     {
-        std::visit(
-            [&variable = variable, &value_ptr = value_ptr](auto&& v)
+        auto add_scalar = [&v, &symbol_table](double& value)
+        { symbol_table.add_variable(v, value); };
+
+        auto add_vector =
+            [&v, &symbol_table](double* ptr, std::size_t const size)
+        { symbol_table.add_vector(v, ptr, size); };
+
+        auto add_any_variable = BaseLib::Overloaded{
+            [&add_scalar](VariableArray::Scalar* address)
+            { add_scalar(*address); },
+            [&add_vector](VariableArray::KelvinVector* address)
             {
-                using T = std::decay_t<decltype(v)>;
-                if constexpr (std::is_same_v<T, std::monostate>)
+                auto constexpr size =
+                    MathLib::KelvinVector::kelvin_vector_dimensions(D);
+                auto& result =
+                    address->template emplace<Eigen::Matrix<double, size, 1>>();
+                add_vector(result.data(), size);
+            },
+            [&add_vector](VariableArray::DeformationGradient* address)
+            {
+                auto constexpr size = MathLib::VectorizedTensor::size(D);
+                auto& result =
+                    address->template emplace<Eigen::Matrix<double, size, 1>>();
+                add_vector(result.data(), size);
+            }};
+
+        Variable const variable = convertStringToVariable(v);
+        variable_array.visitVariable(add_any_variable, variable);
+    }
+    return symbol_table;
+}
+
+template <int D>
+Function::Implementation<D>::Implementation(
+    std::vector<std::string> const& variables,
+    std::vector<std::string> const& value_string_expressions,
+    std::vector<std::pair<std::string, std::vector<std::string>>> const&
+        dvalue_string_expressions)
+{
+    auto symbol_table = createSymbolTable(variables);
+
+    // value expressions.
+    value_expressions =
+        compileExpressions(symbol_table, value_string_expressions);
+
+    // dValue expressions.
+    for (auto const& [variable_name, string_expressions] :
+         dvalue_string_expressions)
+    {
+        dvalue_expressions.emplace_back(
+            convertStringToVariable(variable_name),
+            compileExpressions(symbol_table, string_expressions));
+    }
+}
+
+static void updateVariableArrayValues(std::vector<Variable> const& variables,
+                                      VariableArray const& new_variable_array,
+                                      VariableArray& variable_array)
+{
+    for (auto const& variable : variables)
+    {
+        auto assign_scalar =
+            [&variable, &new_variable_array](VariableArray::Scalar* address)
+        {
+            double const value = *std::get<VariableArray::Scalar const*>(
+                new_variable_array.address_of(variable));
+
+            if (std::isnan(value))
+            {
+                OGS_FATAL(
+                    "Function property: Scalar variable '{:s}' is not "
+                    "initialized.",
+                    variable_enum_to_string[static_cast<int>(variable)]);
+            }
+
+            *address = value;
+        };
+        auto assign_kelvin_vector = [&variable, &new_variable_array](
+                                        VariableArray::KelvinVector* address)
+        {
+            auto assign_value = [&destination = *address,
+                                 &variable]<typename S>(S const& source)
+            {
+                if constexpr (std::is_same_v<S, std::monostate>)
                 {
                     OGS_FATAL(
-                        "Function property: variable {:s} value needed for "
-                        "evaluation of the expression was not set by the "
-                        "caller.",
+                        "Function property: Kelvin vector variable '{:s}' is "
+                        "not initialized.",
                         variable_enum_to_string[static_cast<int>(variable)]);
-                }
-                else if constexpr (std::is_same_v<T, double>)
-                {
-                    *value_ptr = v;
                 }
                 else
                 {
+                    if (std::holds_alternative<S>(destination))
+                    {
+                        std::get<S>(destination) = MathLib::KelvinVector::
+                            kelvinVectorToSymmetricTensor(source);
+                    }
+                    else
+                    {
+                        OGS_FATAL(
+                            "Function property: Mismatch of Kelvin vector "
+                            "sizes for variable {:s}.",
+                            variable_enum_to_string[static_cast<int>(
+                                variable)]);
+                    }
+                }
+            };
+            std::visit(assign_value,
+                       *std::get<VariableArray::KelvinVector const*>(
+                           new_variable_array.address_of(variable)));
+        };
+        auto assign_deformation_gradient =
+            [&variable,
+             &new_variable_array](VariableArray::DeformationGradient* address)
+        {
+            auto assign_value = [&destination = *address,
+                                 &variable]<typename S>(S const& source)
+            {
+                if constexpr (std::is_same_v<S, std::monostate>)
+                {
                     OGS_FATAL(
-                        "Function property: not implemented handling for a "
-                        "type {:s} of variable {:s}.",
-                        typeid(T).name(),
+                        "Function property: Vectorized tensor variable '{:s}' "
+                        "is not initialized.",
                         variable_enum_to_string[static_cast<int>(variable)]);
                 }
-            },
-            variable_array[variable]);
+                else
+                {
+                    if (std::holds_alternative<S>(destination))
+                    {
+                        std::get<S>(destination) = source;
+                    }
+                    else
+                    {
+                        OGS_FATAL(
+                            "Function property: Mismatch of vectorized tensor "
+                            "sizes for variable {:s}.",
+                            variable_enum_to_string[static_cast<int>(
+                                variable)]);
+                    }
+                }
+            };
+            std::visit(assign_value,
+                       *std::get<VariableArray::DeformationGradient const*>(
+                           new_variable_array.address_of(variable)));
+        };
+
+        variable_array.visitVariable(
+            BaseLib::Overloaded{assign_scalar, assign_kelvin_vector,
+                                assign_deformation_gradient},
+            variable);
     }
 }
 
 static PropertyDataType evaluateExpressions(
-    std::vector<std::pair<Variable, double*>> const& symbol_values,
-    VariableArray const& variable_array,
+    std::vector<Variable> const& variables,
+    VariableArray const& new_variable_array,
     std::vector<exprtk::expression<double>> const& expressions,
+    VariableArray& variable_array,
     std::mutex& mutex)
 {
     std::vector<double> result(expressions.size());
 
     {
         std::lock_guard lock_guard(mutex);
-        updateVariableValues(symbol_values, variable_array);
+        updateVariableArrayValues(variables, new_variable_array,
+                                  variable_array);
 
         std::transform(begin(expressions), end(expressions), begin(result),
                        [](auto const& e) { return e.value(); });
@@ -135,7 +303,9 @@ static std::vector<std::string> collectVariables(
         {
             if (!exprtk::collect_variables(string_expression, variables))
             {
-                OGS_FATAL("Collecting variables didn't work.");
+                OGS_FATAL(
+                    "Collecting variables from expression '{}' didn't work.",
+                    string_expression);
             }
         }
     };
@@ -158,40 +328,50 @@ Function::Function(
 {
     name_ = std::move(name);
 
-    // Create symbol table for used variables.
-    exprtk::symbol_table<double> symbol_table;
+    auto const variables =
+        collectVariables(value_string_expressions, dvalue_string_expressions);
+    variables_ =
+        variables |
+        ranges::views::transform([](std::string const& s)
+                                 { return convertStringToVariable(s); }) |
+        ranges::to<std::vector>;
 
-    for (auto const& v :
-         collectVariables(value_string_expressions, dvalue_string_expressions))
+    impl2_ = std::make_unique<Implementation<2>>(
+        variables, value_string_expressions, dvalue_string_expressions);
+    impl3_ = std::make_unique<Implementation<3>>(
+        variables, value_string_expressions, dvalue_string_expressions);
+}
+
+std::variant<Function::Implementation<2>*, Function::Implementation<3>*>
+Function::getImplementationForDimensionOfVariableArray(
+    VariableArray const& variable_array) const
+{
+    if (variable_array.is2D())
     {
-        symbol_table.create_variable(v);
-        // Store variable in the variable array and the pointer to the value in
-        // the symbol table for fast access later.
-        Variable const variable = convertStringToVariable(v);
-        symbol_values_.emplace_back(variable,
-                                    &symbol_table.get_variable(v)->ref());
+        return impl2_.get();
+    }
+    if (variable_array.is3D())
+    {
+        return impl3_.get();
     }
 
-    // value expressions.
-    value_expressions_ =
-        compileExpressions(symbol_table, value_string_expressions);
-
-    // dValue expressions.
-    for (auto const& [variable_name, string_expressions] :
-         dvalue_string_expressions)
-    {
-        dvalue_expressions_.emplace_back(
-            convertStringToVariable(variable_name),
-            compileExpressions(symbol_table, string_expressions));
-    }
+    OGS_FATAL(
+        "Variable array has vectors for 2 and 3 dimensions simultaneously. "
+        "Mixed dimensions cannot be dealt within Function evaluation.");
 }
 
 PropertyDataType Function::value(VariableArray const& variable_array,
                                  ParameterLib::SpatialPosition const& /*pos*/,
                                  double const /*t*/, double const /*dt*/) const
 {
-    return evaluateExpressions(symbol_values_, variable_array,
-                               value_expressions_, mutex_);
+    return std::visit(
+        [&](auto&& impl_ptr)
+        {
+            return evaluateExpressions(variables_, variable_array,
+                                       impl_ptr->value_expressions,
+                                       impl_ptr->variable_array, mutex_);
+        },
+        getImplementationForDimensionOfVariableArray(variable_array));
 }
 
 PropertyDataType Function::dValue(VariableArray const& variable_array,
@@ -199,21 +379,29 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                                   ParameterLib::SpatialPosition const& /*pos*/,
                                   double const /*t*/, double const /*dt*/) const
 {
-    auto const it = std::find_if(begin(dvalue_expressions_),
-                                 end(dvalue_expressions_),
-                                 [&variable](auto const& v)
-                                 { return v.first == variable; });
+    return std::visit(
+        [&](auto&& impl_ptr)
+        {
+            auto const it = std::find_if(begin(impl_ptr->dvalue_expressions),
+                                         end(impl_ptr->dvalue_expressions),
+                                         [&variable](auto const& v)
+                                         { return v.first == variable; });
 
-    if (it == end(dvalue_expressions_))
-    {
-        OGS_FATAL(
-            "Requested derivative with respect to the variable {:s} not "
-            "provided for Function-type property {:s}.",
-            variable_enum_to_string[static_cast<int>(variable)], name_);
-    }
+            if (it == end(impl_ptr->dvalue_expressions))
+            {
+                OGS_FATAL(
+                    "Requested derivative with respect to the variable {:s} "
+                    "not "
+                    "provided for Function-type property {:s}.",
+                    variable_enum_to_string[static_cast<int>(variable)], name_);
+            }
 
-    return evaluateExpressions(symbol_values_, variable_array, it->second,
-                               mutex_);
+            return evaluateExpressions(variables_, variable_array, it->second,
+                                       impl_ptr->variable_array, mutex_);
+        },
+        getImplementationForDimensionOfVariableArray(variable_array));
 }
+
+Function::~Function() = default;
 
 }  // namespace MaterialPropertyLib
