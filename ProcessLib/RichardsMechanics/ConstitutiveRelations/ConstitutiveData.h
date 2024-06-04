@@ -19,15 +19,18 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 #include "SaturationSecantDerivative.h"
 #include "StiffnessTensor.h"
 
 namespace ProcessLib::RichardsMechanics
 {
-// TODO directly declare these type aliases in Traits.h
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
-using StatefulData = std::tuple<>;
+using StatefulData = std::tuple<
+    StrainData<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
+        EffectiveStressData<DisplacementDim>>;
 
 template <int DisplacementDim>
 using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<

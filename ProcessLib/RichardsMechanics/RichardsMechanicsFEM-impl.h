@@ -221,7 +221,13 @@ std::size_t RichardsMechanicsLocalAssembler<
                 this->process_data_.initial_stress->name);
         }
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::sigma_eff);
+            values, this->current_states_, [](auto& tuple) -> auto& {
+                return std::get<ProcessLib::ThermoRichardsMechanics::
+                                    ConstitutiveStress_StrainTemperature::
+                                        EffectiveStressData<DisplacementDim>>(
+                           tuple)
+                    .sigma_eff;
+            });
     }
 
     if (name == "saturation")
@@ -247,7 +253,9 @@ std::size_t RichardsMechanicsLocalAssembler<
     if (name == "epsilon")
     {
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
-            values, _ip_data, &IpData::eps);
+            values, this->current_states_, [](auto& tuple) -> auto& {
+                return std::get<StrainData<DisplacementDim>>(tuple).eps;
+            });
     }
     if (name.starts_with("material_state_variable_"))
     {
@@ -339,7 +347,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // restart.
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature);
-        auto& eps = _ip_data[ip].eps;
+        auto& eps =
+            std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
+                .eps;
         auto& sigma_sw = _ip_data[ip].sigma_sw;
 
         _ip_data[ip].eps_m_prev.noalias() =
@@ -438,9 +448,10 @@ void RichardsMechanicsLocalAssembler<
                                           typename BMatricesType::BMatrixType>(
                 dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = _ip_data[ip].eps;
+        auto& eps =
+            std::get<StrainData<DisplacementDim>>(this->current_states_[ip]);
         auto& eps_m = _ip_data[ip].eps_m;
-        eps.noalias() = B * u;
+        eps.eps.noalias() = B * u;
 
         auto& S_L = _ip_data[ip].saturation;
         auto const S_L_prev = _ip_data[ip].saturation_prev;
@@ -513,7 +524,7 @@ void RichardsMechanicsLocalAssembler<
         variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
-        variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
+        variables.volumetric_strain = Invariants::trace(eps.eps);
         variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
@@ -585,7 +596,12 @@ void RichardsMechanicsLocalAssembler<
                 .template value<double>(variables, x_position, t, dt);
 
         auto const& sigma_sw = _ip_data[ip].sigma_sw;
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
+        auto const& sigma_eff =
+            std::get<ProcessLib::ThermoRichardsMechanics::
+                         ConstitutiveStress_StrainTemperature::
+                             EffectiveStressData<DisplacementDim>>(
+                this->current_states_[ip])
+                .sigma_eff;
 
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
@@ -614,14 +630,29 @@ void RichardsMechanicsLocalAssembler<
         //
         eps_m.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-                ? eps + C_el.inverse() * sigma_sw
-                : eps;
+                ? eps.eps + C_el.inverse() * sigma_sw
+                : eps.eps;
         variables.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
-                                                temperature);
+        {
+            auto& SD = this->current_states_[ip];
+            auto const& SD_prev = this->prev_states_[ip];
+            auto& sigma_eff =
+                std::get<ProcessLib::ThermoRichardsMechanics::
+                             ConstitutiveStress_StrainTemperature::
+                                 EffectiveStressData<DisplacementDim>>(SD);
+            auto const& sigma_eff_prev = std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::
+                              ConstitutiveStress_StrainTemperature::
+                                  EffectiveStressData<DisplacementDim>>>(
+                SD_prev);
+
+            _ip_data[ip].updateConstitutiveRelation(variables, t, x_position,
+                                                    dt, temperature, sigma_eff,
+                                                    sigma_eff_prev);
+        }
 
         // p_SR
         variables.solid_grain_pressure =
@@ -700,7 +731,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MPL::VariableArray& variables, MPL::VariableArray& variables_prev,
         MPL::Medium const* const medium, TemperatureData const T_data,
         CapillaryPressureData<DisplacementDim> const& p_cap_data,
-        ConstitutiveData<DisplacementDim>& CD)
+        ConstitutiveData<DisplacementDim>& CD,
+        StatefulData<DisplacementDim>& SD,
+        StatefulDataPrev<DisplacementDim> const& SD_prev)
 {
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -713,7 +746,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     double const p_cap_ip = p_cap_data.p_cap;
     double const p_cap_prev_ip = p_cap_data.p_cap_prev;
 
-    auto& eps = ip_data.eps;
+    auto const& eps = std::get<StrainData<DisplacementDim>>(SD);
     auto& eps_m = ip_data.eps_m;
     auto& S_L = ip_data.saturation;
     auto const S_L_prev = ip_data.saturation_prev;
@@ -785,10 +818,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
     // Set volumetric strain rate for the general case without swelling.
-    variables.volumetric_strain = Invariants::trace(ip_data.eps);
+    variables.volumetric_strain = Invariants::trace(eps.eps);
     // TODO (CL) changed that, using eps_prev for the moment, not B * u_prev
     // variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
-    variables_prev.volumetric_strain = Invariants::trace(ip_data.eps_prev);
+    variables_prev.volumetric_strain = Invariants::trace(
+        std::get<PrevState<StrainData<DisplacementDim>>>(SD_prev)->eps);
 
     auto& phi = ip_data.porosity;
     {  // Porosity update
@@ -842,8 +876,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // Set mechanical variables for the intrinsic permeability model
     // For stress dependent permeability.
     {
+        // TODO mechanical constitutive relation will be evaluated afterwards
         auto const sigma_total =
-            (ip_data.sigma_eff + alpha * p_FR * identity2).eval();
+            (std::get<ProcessLib::ThermoRichardsMechanics::
+                          ConstitutiveStress_StrainTemperature::
+                              EffectiveStressData<DisplacementDim>>(SD)
+                 .sigma_eff +
+             alpha * p_FR * identity2)
+                .eval();
         // For stress dependent permeability.
         variables.total_stress.emplace<SymmetricTensor>(
             MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_total));
@@ -876,20 +916,38 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     eps_m.noalias() =
         solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
-            ? eps + C_el.inverse() * sigma_sw
-            : eps;
+            ? eps.eps + C_el.inverse() * sigma_sw
+            : eps.eps;
     variables.mechanical_strain
         .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
             eps_m);
 
-    auto C = ip_data.updateConstitutiveRelation(variables, t, x_position, dt,
-                                                temperature);
+    {
+        auto& sigma_eff =
+            std::get<ProcessLib::ThermoRichardsMechanics::
+                         ConstitutiveStress_StrainTemperature::
+                             EffectiveStressData<DisplacementDim>>(SD);
+        auto const& sigma_eff_prev =
+            std::get<PrevState<ProcessLib::ThermoRichardsMechanics::
+                                   ConstitutiveStress_StrainTemperature::
+                                       EffectiveStressData<DisplacementDim>>>(
+                SD_prev);
 
-    *std::get<StiffnessTensor<DisplacementDim>>(CD) = std::move(C);
+        auto C = ip_data.updateConstitutiveRelation(variables, t, x_position,
+                                                    dt, temperature, sigma_eff,
+                                                    sigma_eff_prev);
+
+        *std::get<StiffnessTensor<DisplacementDim>>(CD) = std::move(C);
+    }
 
     // p_SR
     variables.solid_grain_pressure =
-        p_FR - ip_data.sigma_eff.dot(identity2) / (3 * (1 - phi));
+        p_FR -
+        std::get<ProcessLib::ThermoRichardsMechanics::
+                     ConstitutiveStress_StrainTemperature::EffectiveStressData<
+                         DisplacementDim>>(SD)
+                .sigma_eff.dot(identity2) /
+            (3 * (1 - phi));
     auto const rho_SR =
         solid_phase.property(MPL::PropertyType::density)
             .template value<double>(variables, x_position, t, dt);
@@ -990,6 +1048,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         ConstitutiveData<DisplacementDim> CD;
+        auto& SD = this->current_states_[ip];
+        auto const& SD_prev = this->prev_states_[ip];
         [[maybe_unused]] auto models = createConstitutiveModels(
             this->process_data_, _ip_data[ip].solid_material);
 
@@ -1029,8 +1089,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
         variables.temperature = temperature;
 
-        auto& eps = _ip_data[ip].eps;
-        eps.noalias() = B * u;
+        std::get<StrainData<DisplacementDim>>(SD).eps.noalias() = B * u;
 
         assembleWithJacobianEvalConstitutiveSetting(
             t, dt, x_position, _ip_data[ip], variables, variables_prev, medium,
@@ -1038,7 +1097,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             CapillaryPressureData<DisplacementDim>{
                 p_cap_ip, p_cap_prev_ip,
                 Eigen::Vector<double, DisplacementDim>::Zero()},
-            CD);
+            CD, SD, SD_prev);
 
         {
             auto const& C = *std::get<StiffnessTensor<DisplacementDim>>(CD);
@@ -1051,7 +1110,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& b = this->process_data_.specific_body_force;
 
         {
-            auto const& sigma_eff = _ip_data[ip].sigma_eff;
+            auto const& sigma_eff =
+                std::get<ProcessLib::ThermoRichardsMechanics::
+                             ConstitutiveStress_StrainTemperature::
+                                 EffectiveStressData<DisplacementDim>>(
+                    this->current_states_[ip])
+                    .sigma_eff;
             double const rho = *std::get<Density>(CD);
             local_rhs.template segment<displacement_size>(displacement_index)
                 .noalias() -= (B.transpose() * sigma_eff -
@@ -1321,7 +1385,14 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::sigma_eff, cache);
+        this->current_states_,
+        [](auto& tuple) -> auto& {
+            return std::get<ProcessLib::ThermoRichardsMechanics::
+                                ConstitutiveStress_StrainTemperature::
+                                    EffectiveStressData<DisplacementDim>>(tuple)
+                .sigma_eff;
+        },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1392,7 +1463,11 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
-        _ip_data, &IpData::eps, cache);
+        this->current_states_,
+        [](auto& tuple) -> auto& {
+            return std::get<StrainData<DisplacementDim>>(tuple).eps;
+        },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1716,7 +1791,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
         variables.temperature = temperature;
 
-        auto& eps = _ip_data[ip].eps;
+        auto& eps =
+            std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
+                .eps;
         eps.noalias() = B * u;
         auto& eps_m = _ip_data[ip].eps_m;
         auto& S_L = _ip_data[ip].saturation;
@@ -1752,7 +1829,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables_prev.effective_pore_pressure = -chi_S_L_prev * p_cap_prev_ip;
 
         // Set volumetric strain rate for the general case without swelling.
-        variables.volumetric_strain = Invariants::trace(_ip_data[ip].eps);
+        variables.volumetric_strain = Invariants::trace(eps);
         variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
         auto& phi = _ip_data[ip].porosity;
@@ -1797,12 +1874,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             variables.transport_porosity = phi;
         }
 
+        auto const& sigma_eff =
+            std::get<ProcessLib::ThermoRichardsMechanics::
+                         ConstitutiveStress_StrainTemperature::
+                             EffectiveStressData<DisplacementDim>>(
+                this->current_states_[ip])
+                .sigma_eff;
+
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
         {
-            auto const sigma_total = (_ip_data[ip].sigma_eff +
-                                      alpha * chi_S_L * identity2 * p_cap_ip)
-                                         .eval();
+            auto const sigma_total =
+                (sigma_eff + alpha * chi_S_L * identity2 * p_cap_ip).eval();
             // For stress dependent permeability.
             variables.total_stress.emplace<SymmetricTensor>(
                 MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
@@ -1822,7 +1905,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         GlobalDimMatrixType const K_over_mu = k_rel * K_intrinsic / mu;
 
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
         double const p_FR = -chi_S_L * p_cap_ip;
         // p_SR
         variables.solid_grain_pressure =
@@ -1842,8 +1924,23 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m);
 
-        _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
-                                                temperature);
+        {
+            auto& SD = this->current_states_[ip];
+            auto const& SD_prev = this->prev_states_[ip];
+            auto& sigma_eff =
+                std::get<ProcessLib::ThermoRichardsMechanics::
+                             ConstitutiveStress_StrainTemperature::
+                                 EffectiveStressData<DisplacementDim>>(SD);
+            auto const& sigma_eff_prev = std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::
+                              ConstitutiveStress_StrainTemperature::
+                                  EffectiveStressData<DisplacementDim>>>(
+                SD_prev);
+
+            _ip_data[ip].updateConstitutiveRelation(variables, t, x_position,
+                                                    dt, temperature, sigma_eff,
+                                                    sigma_eff_prev);
+        }
 
         auto const& b = this->process_data_.specific_body_force;
 
