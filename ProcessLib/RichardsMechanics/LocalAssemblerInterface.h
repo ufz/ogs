@@ -10,9 +10,11 @@
 
 #pragma once
 
+#include "ConstitutiveRelations/ConstitutiveData.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
 
 namespace ProcessLib
 {
@@ -116,7 +118,14 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
     virtual typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
     getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
-};
 
+protected:
+    std::vector<StatefulData<DisplacementDim>> current_states_;
+    std::vector<StatefulDataPrev<DisplacementDim>> prev_states_;
+    std::vector<
+        ProcessLib::ThermoRichardsMechanics::MaterialStateData<DisplacementDim>>
+        material_states_;
+    std::vector<OutputData<DisplacementDim>> output_data_;
+};
 }  // namespace RichardsMechanics
 }  // namespace ProcessLib
