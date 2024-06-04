@@ -1045,12 +1045,16 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .noalias() += B.transpose() * C * B * w;
         }
 
-        auto const& sigma_eff = _ip_data[ip].sigma_eff;
-        double const rho = *std::get<Density>(CD);
         auto const& b = _process_data.specific_body_force;
-        local_rhs.template segment<displacement_size>(displacement_index)
-            .noalias() -=
-            (B.transpose() * sigma_eff - N_u_op(N_u).transpose() * rho * b) * w;
+
+        {
+            auto const& sigma_eff = _ip_data[ip].sigma_eff;
+            double const rho = *std::get<Density>(CD);
+            local_rhs.template segment<displacement_size>(displacement_index)
+                .noalias() -= (B.transpose() * sigma_eff -
+                               N_u_op(N_u).transpose() * rho * b) *
+                              w;
+        }
 
         //
         // displacement equation, pressure part
