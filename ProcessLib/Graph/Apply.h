@@ -229,14 +229,14 @@ auto applyImpl(Function&& f, Args&&... args) ->
         mp_transform<std::remove_cvref_t, FlattenedTuple>;
 
     static_assert(
-        boost::mp11::mp_is_set<FlattenedTupleOfPlainTypes>::value,
+        mp_is_set_v<FlattenedTupleOfPlainTypes>,
         "The types of all elements of all passed tuples must be unique.");
 
     using FunctionArgumentTypesPlain =
         typename detail::GetFunctionArgumentTypesPlain<FunctionPlain>::type;
 
     static_assert(
-        boost::mp11::mp_is_set<FunctionArgumentTypesPlain>::value,
+        mp_is_set_v<FunctionArgumentTypesPlain>,
         "The argument types of the function to be called must be unique.");
 
     return unpackAndInvoke(FunctionArgumentTypesPlain{},

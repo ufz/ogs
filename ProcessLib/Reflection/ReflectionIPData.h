@@ -12,6 +12,7 @@
 
 #include <boost/mp11.hpp>
 
+#include "BaseLib/BoostMP11Utils.h"
 #include "BaseLib/StrongType.h"
 #include "MathLib/KelvinVector.h"
 #include "ReflectionData.h"
@@ -113,7 +114,7 @@ auto reflect(std::type_identity<std::tuple<Ts...>>)
     // The types Ts... must be unique. Duplicate types are incompatible with the
     // concept of "reflected" I/O: they would lead to duplicate names for the
     // I/O data.
-    static_assert(mp_is_set<mp_list<Ts...>>::value);
+    static_assert(mp_is_set_v<mp_list<Ts...>>);
 
     return reflectWithoutName<std::tuple<Ts...>>(
         [](auto& tuple_) -> auto& { return std::get<Ts>(tuple_); }...);
@@ -462,9 +463,10 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
 
             // AccessorResult must be a std::vector<SomeType, SomeAllocator>. We
             // check that, now.
-            static_assert(boost::mp11::mp_is_list<AccessorResult>::
-                              value);  // std::vector<SomeType, SomeAllocator>
-                                       // is a list in the Boost MP11 sense
+            static_assert(
+                mp_is_list_v<AccessorResult>);  // std::vector<SomeType,
+                                                // SomeAllocator> is a list in
+                                                // the Boost MP11 sense
             static_assert(
                 std::is_same_v<
                     AccessorResult,
