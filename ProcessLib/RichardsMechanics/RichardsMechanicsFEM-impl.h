@@ -25,6 +25,7 @@
 #include "NumLib/Fem/Interpolation.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
+#include "RichardsMechanicsFEM.h"
 
 namespace ProcessLib
 {
@@ -1036,11 +1037,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 Eigen::Vector<double, DisplacementDim>::Zero()},
             CD);
 
-        auto const& C = *std::get<StiffnessTensor<DisplacementDim>>(CD);
-        local_Jac
-            .template block<displacement_size, displacement_size>(
-                displacement_index, displacement_index)
-            .noalias() += B.transpose() * C * B * w;
+        {
+            auto const& C = *std::get<StiffnessTensor<DisplacementDim>>(CD);
+            local_Jac
+                .template block<displacement_size, displacement_size>(
+                    displacement_index, displacement_index)
+                .noalias() += B.transpose() * C * B * w;
+        }
 
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
         double const rho = *std::get<Density>(CD);
