@@ -1058,24 +1058,28 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const alpha =
             *std::get<ProcessLib::ThermoRichardsMechanics::BiotData>(CD);
-        double const chi_S_L =
-            std::get<ProcessLib::ThermoRichardsMechanics::BishopsData>(CD)
-                .chi_S_L;
-        Kup.noalias() += B.transpose() * alpha * chi_S_L * identity2 * N_p * w;
-
-        double const dchi_dS_L =
-            std::get<ProcessLib::ThermoRichardsMechanics::BishopsData>(CD)
-                .dchi_dS_L;
         double const dS_L_dp_cap =
             std::get<ProcessLib::ThermoRichardsMechanics::SaturationDataDeriv>(
                 CD)
                 .dS_L_dp_cap;
-        local_Jac
-            .template block<displacement_size, pressure_size>(
-                displacement_index, pressure_index)
-            .noalias() -= B.transpose() * alpha *
-                          (chi_S_L + dchi_dS_L * p_cap_ip * dS_L_dp_cap) *
-                          identity2 * N_p * w;
+
+        {
+            double const chi_S_L =
+                std::get<ProcessLib::ThermoRichardsMechanics::BishopsData>(CD)
+                    .chi_S_L;
+            Kup.noalias() +=
+                B.transpose() * alpha * chi_S_L * identity2 * N_p * w;
+            double const dchi_dS_L =
+                std::get<ProcessLib::ThermoRichardsMechanics::BishopsData>(CD)
+                    .dchi_dS_L;
+
+            local_Jac
+                .template block<displacement_size, pressure_size>(
+                    displacement_index, pressure_index)
+                .noalias() -= B.transpose() * alpha *
+                              (chi_S_L + dchi_dS_L * p_cap_ip * dS_L_dp_cap) *
+                              identity2 * N_p * w;
+        }
 
         double const phi =
             std::get<ProcessLib::ThermoRichardsMechanics::PorosityData>(CD).phi;
