@@ -123,13 +123,11 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
         RichardsMechanicsProcessData<DisplacementDim>& process_data)
-    : _process_data(process_data),
-      _integration_method(integration_method),
-      _element(e),
-      _is_axially_symmetric(is_axially_symmetric)
+    : LocalAssemblerInterface<DisplacementDim>{
+          e, integration_method, is_axially_symmetric, process_data}
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     _ip_data.reserve(n_integration_points);
     _secondary_data.N_u.resize(n_integration_points);
@@ -138,22 +136,23 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
                                   ShapeMatricesTypeDisplacement,
                                   DisplacementDim>(e, is_axially_symmetric,
-                                                   _integration_method);
+                                                   this->integration_method_);
 
     auto const shape_matrices_p =
         NumLib::initShapeMatrices<ShapeFunctionPressure,
                                   ShapeMatricesTypePressure, DisplacementDim>(
-            e, is_axially_symmetric, _integration_method);
+            e, is_axially_symmetric, this->integration_method_);
 
     auto const& solid_material =
         MaterialLib::Solids::selectSolidConstitutiveRelation(
-            _process_data.solid_materials, _process_data.material_ids,
-            e.getID());
+            this->process_data_.solid_materials,
+            this->process_data_.material_ids, e.getID());
 
-    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& medium =
+        this->process_data_.media_map.getMedium(this->element_.getID());
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(this->element_.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -161,7 +160,7 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         _ip_data[ip].integration_weight =
-            _integration_method.getWeightedPoint(ip).getWeight() *
+            this->integration_method_.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
         ip_data.N_u = sm_u.N;
@@ -202,24 +201,24 @@ std::size_t RichardsMechanicsLocalAssembler<
                                                  int const integration_order)
 {
     if (integration_order !=
-        static_cast<int>(_integration_method.getIntegrationOrder()))
+        static_cast<int>(this->integration_method_.getIntegrationOrder()))
     {
         OGS_FATAL(
             "Setting integration point initial conditions; The integration "
             "order of the local assembler for element {:d} is different "
             "from the integration order in the initial condition.",
-            _element.getID());
+            this->element_.getID());
     }
 
     if (name == "sigma")
     {
-        if (_process_data.initial_stress != nullptr)
+        if (this->process_data_.initial_stress != nullptr)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
                 "point data and from a parameter '{:s}' is not possible "
                 "simultaneously.",
-                _process_data.initial_stress->name);
+                this->process_data_.initial_stress->name);
         }
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::sigma_eff);
@@ -289,16 +288,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const p_L = local_x.template segment<pressure_size>(pressure_index);
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
-    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& medium =
+        this->process_data_.media_map.getMedium(this->element_.getID());
     MPL::VariableArray variables;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(this->element_.getID());
 
     auto const& solid_phase = medium->phase("Solid");
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -405,17 +405,18 @@ void RichardsMechanicsLocalAssembler<
         MathLib::KelvinVector::kelvin_vector_dimensions(
             DisplacementDim)>::identity2;
 
-    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& medium =
+        this->process_data_.media_map.getMedium(this->element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(this->element_.getID());
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -430,12 +431,12 @@ void RichardsMechanicsLocalAssembler<
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+                this->element_, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
 
         auto& eps = _ip_data[ip].eps;
         auto& eps_m = _ip_data[ip].eps_m;
@@ -477,7 +478,7 @@ void RichardsMechanicsLocalAssembler<
                 .template value<double>(variables, x_position, t, dt);
         variables.density = rho_LR;
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = this->process_data_.specific_body_force;
 
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
@@ -529,7 +530,7 @@ void RichardsMechanicsLocalAssembler<
             OGS_FATAL(
                 "RichardsMechanics: Biot-coefficient {} is smaller than "
                 "porosity {} in element/integration point {}/{}.",
-                alpha, phi, _element.getID(), ip);
+                alpha, phi, this->element_.getID(), ip);
         }
 
         // Swelling and possibly volumetric strain rate update.
@@ -678,7 +679,7 @@ void RichardsMechanicsLocalAssembler<
                           identity2.transpose() * B * w;
     }
 
-    if (_process_data.apply_mass_lumping)
+    if (this->process_data_.apply_mass_lumping)
     {
         auto Mpp = M.template block<pressure_size, pressure_size>(
             pressure_index, pressure_index);
@@ -805,7 +806,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         OGS_FATAL(
             "RichardsMechanics: Biot-coefficient {} is smaller than "
             "porosity {} in element/integration point {}/{}.",
-            alpha, phi, _element.getID(), -1 /*ip*/ /* TODO (CL) re-enable */);
+            alpha, phi, this->element_.getID(),
+            -1 /*ip*/ /* TODO (CL) re-enable */);
     }
 
     auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
@@ -816,7 +818,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // Swelling and possibly volumetric strain rate update.
     updateSwellingStressAndVolumetricStrain<DisplacementDim>(
         ip_data, *medium, solid_phase, C_el, rho_LR, mu,
-        _process_data.micro_porosity_parameters, alpha, phi, p_cap_ip,
+        this->process_data_.micro_porosity_parameters, alpha, phi, p_cap_ip,
         variables, variables_prev, x_position, t, dt);
 
     if (medium->hasProperty(MPL::PropertyType::transport_porosity))
@@ -973,22 +975,23 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             pressure_size, displacement_size>::Zero(pressure_size,
                                                     displacement_size);
 
-    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& medium =
+        this->process_data_.media_map.getMedium(this->element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(this->element_.getID());
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         ConstitutiveData<DisplacementDim> CD;
         [[maybe_unused]] auto models = createConstitutiveModels(
-            _process_data, _ip_data[ip].solid_material);
+            this->process_data_, _ip_data[ip].solid_material);
 
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
@@ -1002,12 +1005,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+                this->element_, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -1045,7 +1048,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .noalias() += B.transpose() * C * B * w;
         }
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = this->process_data_.specific_body_force;
 
         {
             auto const& sigma_eff = _ip_data[ip].sigma_eff;
@@ -1125,7 +1128,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // pressure equation, displacement part.
         //
         double const S_L = _ip_data[ip].saturation;
-        if (_process_data.explicit_hm_coupling_in_unsaturated_zone)
+        if (this->process_data_.explicit_hm_coupling_in_unsaturated_zone)
         {
             double const chi_S_L_prev = std::get<PrevState<
                 ProcessLib::ThermoRichardsMechanics::BishopsData>>(CD)
@@ -1203,7 +1206,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
              specific_storage_a_S * dS_L_dp_cap) /
             dt * N_p * w;
 
-        if (!_process_data.explicit_hm_coupling_in_unsaturated_zone)
+        if (!this->process_data_.explicit_hm_coupling_in_unsaturated_zone)
         {
             local_Jac
                 .template block<pressure_size, pressure_size>(pressure_index,
@@ -1237,8 +1240,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         if (medium->hasProperty(MPL::PropertyType::saturation_micro))
         {
-            double const alpha_bar = _process_data.micro_porosity_parameters
-                                         ->mass_exchange_coefficient;
+            double const alpha_bar =
+                this->process_data_.micro_porosity_parameters
+                    ->mass_exchange_coefficient;
             auto const p_L_m = _ip_data[ip].liquid_pressure_m;
             local_rhs.template segment<pressure_size>(pressure_index)
                 .noalias() -=
@@ -1261,7 +1265,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
     }
 
-    if (_process_data.apply_mass_lumping)
+    if (this->process_data_.apply_mass_lumping)
     {
         storage_p_a_p = storage_p_a_p.colwise().sum().eval().asDiagonal();
         storage_p_a_S = storage_p_a_S.colwise().sum().eval().asDiagonal();
@@ -1397,9 +1401,9 @@ int RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                     ShapeFunctionPressure,
                                     DisplacementDim>::getMaterialID() const
 {
-    return _process_data.material_ids == nullptr
+    return this->process_data_.material_ids == nullptr
                ? 0
-               : (*_process_data.material_ids)[_element.getID()];
+               : (*this->process_data_.material_ids)[this->element_.getID()];
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1428,7 +1432,7 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     cache.clear();
     auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
@@ -1659,17 +1663,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         MathLib::KelvinVector::kelvin_vector_dimensions(
             DisplacementDim)>::identity2;
 
-    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& medium =
+        this->process_data_.media_map.getMedium(this->element_.getID());
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
     ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
+    x_position.setElementID(this->element_.getID());
 
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        this->integration_method_.getNumberOfPoints();
 
     double saturation_avg = 0;
     double porosity_avg = 0;
@@ -1687,12 +1692,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+                this->element_, N_u);
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
                                           typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+                dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -1770,7 +1775,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Swelling and possibly volumetric strain rate update.
         updateSwellingStressAndVolumetricStrain<DisplacementDim>(
             _ip_data[ip], *medium, solid_phase, C_el, rho_LR, mu,
-            _process_data.micro_porosity_parameters, alpha, phi, p_cap_ip,
+            this->process_data_.micro_porosity_parameters, alpha, phi, p_cap_ip,
             variables, variables_prev, x_position, t, dt);
 
         if (medium->hasProperty(MPL::PropertyType::transport_porosity))
@@ -1840,7 +1845,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _ip_data[ip].updateConstitutiveRelation(variables, t, x_position, dt,
                                                 temperature);
 
-        auto const& b = _process_data.specific_body_force;
+        auto const& b = this->process_data_.specific_body_force;
 
         // Compute the velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
@@ -1855,17 +1860,20 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     porosity_avg /= n_integration_points;
     sigma_avg /= n_integration_points;
 
-    (*_process_data.element_saturation)[_element.getID()] = saturation_avg;
-    (*_process_data.element_porosity)[_element.getID()] = porosity_avg;
+    (*this->process_data_.element_saturation)[this->element_.getID()] =
+        saturation_avg;
+    (*this->process_data_.element_porosity)[this->element_.getID()] =
+        porosity_avg;
 
-    Eigen::Map<KV>(&(*_process_data.element_stresses)[_element.getID() *
-                                                      KV::RowsAtCompileTime]) =
+    Eigen::Map<KV>(
+        &(*this->process_data_.element_stresses)[this->element_.getID() *
+                                                 KV::RowsAtCompileTime]) =
         MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
-        DisplacementDim>(_element, _is_axially_symmetric, p_L,
-                         *_process_data.pressure_interpolated);
+        DisplacementDim>(this->element_, this->is_axially_symmetric_, p_L,
+                         *this->process_data_.pressure_interpolated);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1874,7 +1882,7 @@ unsigned RichardsMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::getNumberOfIntegrationPoints() const
 {
-    return _integration_method.getNumberOfPoints();
+    return this->integration_method_.getNumberOfPoints();
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
