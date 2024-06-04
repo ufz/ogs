@@ -12,6 +12,7 @@
 
 #include <Eigen/Core>
 #include <cmath>
+#include <optional>
 
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
@@ -140,7 +141,7 @@ template <int DisplacementDim, int NPOINTS, typename BBarMatrixType,
 void applyBbar(BBarMatrixType const& B_bar, BMatrixType& B,
                const bool is_axially_symmetric)
 {
-    if (DisplacementDim == 3)
+    if constexpr (DisplacementDim == 3)
     {
         for (int i = 0; i < NPOINTS; ++i)
         {
@@ -163,6 +164,7 @@ void applyBbar(BBarMatrixType const& B_bar, BMatrixType& B,
         return;
     }
 
+    // 2D or axisymmetry
     for (int i = 0; i < NPOINTS; ++i)
     {
         auto B_i_0 = B.col(i);
@@ -186,22 +188,23 @@ void applyBbar(BBarMatrixType const& B_bar, BMatrixType& B,
 /// Fills a B matrix, or a B bar matrix if required.
 template <int DisplacementDim, int NPOINTS, typename BBarMatrixType,
           typename BMatrixType, typename N_Type, typename DNDX_Type>
-BMatrixType computeBMatrixPossiblyWithBbar(DNDX_Type const& dNdx,
-                                           N_Type const& N,
-                                           BBarMatrixType const& B_dil_bar,
-                                           const double radius,
-                                           const bool is_axially_symmetric,
-                                           const bool use_b_bar)
+BMatrixType computeBMatrixPossiblyWithBbar(
+    DNDX_Type const& dNdx,
+    N_Type const& N,
+    std::optional<BBarMatrixType> const& B_dil_bar,
+    const double radius,
+    const bool is_axially_symmetric)
 {
     auto B = computeBMatrix<DisplacementDim, NPOINTS, BMatrixType, N_Type,
                             DNDX_Type>(dNdx, N, radius, is_axially_symmetric);
-    if (!use_b_bar)
+
+    if (!B_dil_bar)
     {
         return B;
     }
 
     detail::applyBbar<DisplacementDim, NPOINTS, BBarMatrixType, BMatrixType>(
-        B_dil_bar, B, is_axially_symmetric);
+        *B_dil_bar, B, is_axially_symmetric);
 
     return B;
 }

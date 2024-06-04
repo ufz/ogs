@@ -12,6 +12,7 @@
 
 #include <limits>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "LocalAssemblerInterface.h"
@@ -211,11 +212,11 @@ public:
             "implemented.");
     }
 
-    BBarMatrixType getDilatationalBBarMatrix() const
+    std::optional<BBarMatrixType> getDilatationalBBarMatrix() const
     {
         if (!(this->process_data_.use_b_bar))
         {
-            return {};
+            return std::nullopt;
         }
 
         return LinearBMatrix::computeDilatationalBbar<
@@ -271,8 +272,7 @@ public:
             auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(
-                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_,
-                this->process_data_.use_b_bar);
+                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_);
 
             auto const CD = updateConstitutiveRelations(
                 B, u, u_prev, x_position, t, dt, constitutive_setting, medium,
@@ -321,8 +321,7 @@ public:
             auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(
-                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_,
-                this->process_data_.use_b_bar);
+                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_);
 
             updateConstitutiveRelations(
                 B, local_x, local_x_prev, x_position, t, dt,
