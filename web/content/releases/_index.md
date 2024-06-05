@@ -15,27 +15,39 @@ icon = "far fa-arrow-right"
 
 # url encode job name, https://www.w3schools.com/tags/ref_urlencode.ASP
 [[head_downloads]]
-name = "Latest Windows CLI with Utilities"
+name = "Latest Windows CLI"
 url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/build/release?job=build+win"
 note = "Download and unpack .zip-file"
 icon = "fab fa-windows"
 
 [[head_downloads]]
-name = "Latest Windows Data Explorer with Utilities"
+name = "Latest Windows Data Explorer"
 url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/build/release-gui?job=build+gui+win"
 note = "Download and unpack .zip-file"
 icon = "fab fa-windows"
 
 [[head_downloads]]
-name = "Latest container CLI with Utilities"
-url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs-serial.squashfs"
-note = "Download and run .squashfs-file with [Singularity](/docs/userguide/basics/container/)"
+name = "Latest container CLI"
+url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs.squashfs"
+note = "Download and run .squashfs-file with [Singularity / Apptainer](/docs/userguide/basics/container/)"
 icon = "far fa-container-storage"
 
 [[head_downloads]]
-name = "Latest container CLI with PETSc-support and Utilities"
+name = "Latest container CLI with PETSc-support"
 url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs-petsc.squashfs"
-note = "Download and run .squashfs-file with [Singularity](/docs/userguide/basics/container/)"
+note = "Download and run .squashfs-file with [Singularity / Apptainer](/docs/userguide/basics/container/)"
+icon = "far fa-container-storage"
+
+[[head_downloads]]
+name = "Latest container CLI with Intel MKL-support"
+url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs-mkl.squashfs"
+note = "Download and run .squashfs-file with [Singularity / Apptainer](/docs/userguide/basics/container/)"
+icon = "far fa-container-storage"
+
+[[head_downloads]]
+name = "Latest container CLI with PETSc- and Intel MKL-support"
+url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs-petsc-mkl.squashfs"
+note = "Download and run .squashfs-file with [Singularity / Apptainer](/docs/userguide/basics/container/)"
 icon = "far fa-container-storage"
 
 [[head_downloads]]
