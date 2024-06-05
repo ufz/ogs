@@ -84,6 +84,20 @@ publish wheels:
       --username ${PYPI_USER} --password ${PYPI_PW}
       wheelhouse/*
 
+publish wheels to pypi (dev):
+  stage: release
+  needs: ["build wheels linux", "build wheels mac", "build wheels win"]
+  tags: [envinf, shell]
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: manual
+  script:
+    - pipx run build --sdist --outdir wheelhouse
+    - >
+      pipx run twine upload --repository pypi
+      --username __token__ --password ${PYPI_TOKEN}
+      wheelhouse/*
+
 test notebooks via wheel:
   stage: test
   needs: ["build wheels linux"]
