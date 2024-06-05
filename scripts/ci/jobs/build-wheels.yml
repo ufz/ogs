@@ -111,4 +111,4 @@ test notebooks via wheel:
     - pip install -r requirements.txt
     - pip install --force-reinstall -r requirements-gmsh-nox.txt
     - pip install -r requirements-dev.txt
-    - pip install ${CI_PROJECT_DIR}/wheelhouse/ogs-*-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+    - pip install ${CI_PROJECT_DIR}/wheelhouse/ogs-*-cp310-cp310-manylinux_2_28_x86_64.whl
