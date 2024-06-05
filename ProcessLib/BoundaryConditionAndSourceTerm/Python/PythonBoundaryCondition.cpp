@@ -106,48 +106,56 @@ void PythonBoundaryCondition::getEssentialBCValues(
 
     std::vector<double> primary_variables;
 
-    for (auto const* boundary_node : boundary_nodes)
+    try
     {
-        auto const boundary_node_id = boundary_node->getID();
-        auto const dof_idx = getDofIdx(boundary_node_id);
-
-        if (dof_idx == NumLib::MeshComponentMap::nop)
+        for (auto const* boundary_node : boundary_nodes)
         {
-            // This d.o.f. has not been found. This can be the case, e.g., for
-            // Taylor-Hood elements, where the lower order field has no d.o.f.
-            // on higher order nodes.
-            continue;
+            auto const boundary_node_id = boundary_node->getID();
+            auto const dof_idx = getDofIdx(boundary_node_id);
+
+            if (dof_idx == NumLib::MeshComponentMap::nop)
+            {
+                // This d.o.f. has not been found. This can be the case, e.g.,
+                // for Taylor-Hood elements, where the lower order field has no
+                // d.o.f. on higher order nodes.
+                continue;
+            }
+
+            if (dof_idx < 0)
+            {
+                // For the DDC approach (e.g. with PETSc option) a negative
+                // index means that this entry is a ghost entry and should be
+                // dropped.
+                continue;
+            }
+
+            collectPrimaryVariables(primary_variables, *boundary_node, x);
+
+            auto const [apply_bc, bc_value] = bc_object->getDirichletBCValue(
+                t,
+                {(*boundary_node)[0], (*boundary_node)[1], (*boundary_node)[2]},
+                boundary_node_id, primary_variables);
+
+            if (!bc_object->isOverriddenEssential())
+            {
+                DBUG(
+                    "Method `getDirichletBCValue' not overridden in Python "
+                    "script.");
+                return;
+            }
+
+            if (!apply_bc)
+            {
+                continue;
+            }
+
+            bc_values.ids.emplace_back(dof_idx);
+            bc_values.values.emplace_back(bc_value);
         }
-
-        if (dof_idx < 0)
-        {
-            // For the DDC approach (e.g. with PETSc option) a negative
-            // index means that this entry is a ghost entry and should be
-            // dropped.
-            continue;
-        }
-
-        collectPrimaryVariables(primary_variables, *boundary_node, x);
-
-        auto const [apply_bc, bc_value] = bc_object->getDirichletBCValue(
-            t, {(*boundary_node)[0], (*boundary_node)[1], (*boundary_node)[2]},
-            boundary_node_id, primary_variables);
-
-        if (!bc_object->isOverriddenEssential())
-        {
-            DBUG(
-                "Method `getDirichletBCValue' not overridden in Python "
-                "script.");
-            return;
-        }
-
-        if (!apply_bc)
-        {
-            continue;
-        }
-
-        bc_values.ids.emplace_back(dof_idx);
-        bc_values.values.emplace_back(bc_value);
+    }
+    catch (pybind11::error_already_set const& e)
+    {
+        OGS_FATAL("Error evaluating Dirichlet BC in Python: {}", e.what());
     }
 }
 
@@ -250,6 +258,10 @@ void PythonBoundaryCondition::applyNaturalBC(
     catch (MethodNotOverriddenInDerivedClassException const& /*e*/)
     {
         DBUG("Method `getFlux' not overridden in Python script.");
+    }
+    catch (pybind11::error_already_set const& e)
+    {
+        OGS_FATAL("Error evaluating natural BC in Python: {}", e.what());
     }
 }
 

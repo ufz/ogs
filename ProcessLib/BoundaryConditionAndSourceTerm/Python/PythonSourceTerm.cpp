@@ -48,9 +48,16 @@ void PythonSourceTerm::integrate(const double t, const GlobalVector& x,
 {
     FlushStdoutGuard guard(_flush_stdout);
 
-    GlobalExecutor::executeMemberOnDereferenced(
-        &PythonSourceTermLocalAssemblerInterface::assemble, _local_assemblers,
-        *_source_term_dof_table, t, x, b, Jac);
+    try
+    {
+        GlobalExecutor::executeMemberOnDereferenced(
+            &PythonSourceTermLocalAssemblerInterface::assemble,
+            _local_assemblers, *_source_term_dof_table, t, x, b, Jac);
+    }
+    catch (pybind11::error_already_set const& e)
+    {
+        OGS_FATAL("Error evaluating source term in Python: {}", e.what());
+    }
 }
 
 }  // namespace Python
