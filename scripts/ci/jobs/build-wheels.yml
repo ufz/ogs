@@ -42,7 +42,7 @@ include:
       - wheelhouse/
 
 build wheels linux:
-  tags: [envinf3-shell]
+  tags: [envinf, shell, fast]
   variables:
     CPM_SOURCE_CACHE: /host/cibuildwheel_cache/cpm
     CCACHE_DIR: /host/cibuildwheel_cache/ccache
