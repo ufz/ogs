@@ -59,10 +59,8 @@ test-command = "pytest {project}/Tests/Python"
 build-verbosity = 1
 
 [tool.cibuildwheel.linux]
-# quay.io/pypa/manylinux_2_28 works too
-manylinux-x86_64-image = "quay.io/pypa/manylinux2014_x86_64"
-manylinux-aarch64-image = "quay.io/pypa/manylinux2014_x86_64"
-before-all = "yum install -y ccache"
+manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
+before-all = "dnf install -y epel-release && dnf install -y ccache"
 # See https://github.com/NixOS/patchelf/issues/446, wait for patchelf 0.19
 before-build = "pipx install --force 'patchelf<0.17'"
 environment-pass = [
