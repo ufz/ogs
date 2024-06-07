@@ -12,6 +12,7 @@
 
 #include <limits>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "IntegrationPointData.h"
@@ -31,6 +32,7 @@
 #include "ProcessLib/Deformation/GMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/Deformation/NonLinearBMatrix.h"
+#include "ProcessLib/Deformation/NonLinearFbar.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 
@@ -83,6 +85,8 @@ public:
     using ShapeMatricesType =
         ShapeMatrixPolicyType<ShapeFunction, DisplacementDim>;
     using NodalMatrixType = typename ShapeMatricesType::NodalMatrixType;
+    using GlobalDimNodalMatrixType =
+        typename ShapeMatricesType::GlobalDimNodalMatrixType;
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
@@ -177,7 +181,8 @@ public:
         }
     }
 
-    void computeOutputStrainData(
+    double computeOutputStrainData(
+        double const detF0,
         BMatrixType const&
             B /*B_{linear}+B_{nonlinear}/2 for Green-Lagrange strain*/,
         GradientVectorType const& grad_u,
@@ -192,11 +197,26 @@ public:
         output_data.deformation_gradient_data.volume_ratio =
             MathLib::VectorizedTensor::determinant(
                 output_data.deformation_gradient_data.deformation_gradient);
+
+        if (!this->process_data_.use_f_bar)
+        {
+            return 1.0;
+        }
+
+        double const detF = output_data.deformation_gradient_data.volume_ratio;
+        // double const alpha = std::cbrt(detF0 / detF);
+        double const alpha = DisplacementDim == 3 ? std::cbrt(detF0 / detF)
+                                                  : std::sqrt(detF0 / detF);
+
+        output_data.deformation_gradient_data.deformation_gradient *= alpha;
+        output_data.deformation_gradient_data.volume_ratio *=
+            std::pow(alpha, DisplacementDim);
+        return alpha;
     }
 
     typename ConstitutiveRelations::ConstitutiveData<DisplacementDim>
     updateConstitutiveRelations(
-        GradientMatrixType const& G,
+        double const alpha, GradientMatrixType const& G,
         Eigen::Ref<Eigen::VectorXd const> const& u_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
@@ -227,7 +247,8 @@ public:
             medium,                                 //
             T_ref,                                  //
             output_data.deformation_gradient_data,  //
-            G * u_prev + MathLib::VectorizedTensor::identity<DisplacementDim>(),
+            alpha * (G * u_prev +
+                     MathLib::VectorizedTensor::identity<DisplacementDim>()),
             current_state, prev_state, material_state, tmp, CD);
 
         return CD;
@@ -243,6 +264,22 @@ public:
         OGS_FATAL(
             "LargeDeformationLocalAssembler: assembly without jacobian is not "
             "implemented.");
+    }
+
+    std::optional<std::tuple<double, GlobalDimNodalMatrixType>>
+    computeFBarVariables(bool const compute_detF0_only,
+                         Eigen::VectorXd const& local_x) const
+    {
+        if (!(this->process_data_.use_f_bar))
+        {
+            return std::nullopt;
+        }
+
+        return NonLinearFbar::computeFBarInitialVariables<
+            DisplacementDim, GradientVectorType, GradientMatrixType,
+            GlobalDimNodalMatrixType, ShapeFunction, ShapeMatricesType>(
+            compute_detF0_only, local_x, this->integration_method_,
+            this->element_, this->is_axially_symmetric_);
     }
 
     void assembleWithJacobian(double const t, double const dt,
@@ -272,6 +309,9 @@ public:
             constitutive_setting;
         auto const& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
+
+        auto const f_bar_variables =
+            computeFBarVariables(/*compute_detF0_only?*/ false, u);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -306,12 +346,14 @@ public:
                 typename BMatricesType::BMatrixType>(
                 dNdx, N, grad_u, x_coord, this->is_axially_symmetric_);
 
-            computeOutputStrainData(B_0 + 0.5 * B_N, grad_u, u,
-                                    this->output_data_[ip]);
+            double const detF0 =
+                f_bar_variables ? std::get<double>(*f_bar_variables) : 0.0;
+            double const alpha = computeOutputStrainData(
+                detF0, B_0 + 0.5 * B_N, grad_u, u, this->output_data_[ip]);
 
             auto const CD = updateConstitutiveRelations(
-                G, u_prev, x_position, t, dt, constitutive_setting, medium,
-                this->current_states_[ip], this->prev_states_[ip],
+                alpha, G, u_prev, x_position, t, dt, constitutive_setting,
+                medium, this->current_states_[ip], this->prev_states_[ip],
                 this->material_states_[ip], this->output_data_[ip]);
 
             auto const B = B_0 + B_N;
@@ -329,7 +371,26 @@ public:
 
             local_Jac.noalias() += G.transpose() * sigma_geom * G * w;
 
-            local_Jac.noalias() += B.transpose() * C * B * w;
+            local_Jac.noalias() += alpha * alpha * B.transpose() * C * B * w;
+
+            if (f_bar_variables)
+            {
+                auto const F0InvN =
+                    std::get<GlobalDimNodalMatrixType>(*f_bar_variables);
+                auto const BFbar = NonLinearFbar::computeBFbarMatrix<
+                    DisplacementDim, ShapeFunction::NPOINTS,
+                    GlobalDimNodalMatrixType, GradientVectorType,
+                    typename BMatricesType::BMatrixType,
+                    typename ShapeMatricesType::GlobalDimNodalMatrixType>(
+                    alpha, dNdx,
+                    this->output_data_[ip]
+                            .deformation_gradient_data.deformation_gradient /
+                        alpha,
+                    F0InvN, this->output_data_[ip].eps_data.eps,
+                    this->is_axially_symmetric_);
+
+                local_Jac.noalias() += B.transpose() * C * BFbar * w;
+            }
         }
     }
 
@@ -349,6 +410,9 @@ public:
 
         auto& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
+
+        auto const f_bar_variables =
+            computeFBarVariables(/*compute_detF0_only?*/ true, local_x);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -383,10 +447,13 @@ public:
                                      dNdx, N, grad_u, x_coord,
                                      this->is_axially_symmetric_);
 
-            computeOutputStrainData(B, grad_u, local_x, this->output_data_[ip]);
+            double const detF0 =
+                f_bar_variables ? std::get<double>(*f_bar_variables) : 0.0;
+            double const alpha = computeOutputStrainData(
+                detF0, B, grad_u, local_x, this->output_data_[ip]);
 
             updateConstitutiveRelations(
-                G, local_x_prev, x_position, t, dt, constitutive_setting,
+                alpha, G, local_x_prev, x_position, t, dt, constitutive_setting,
                 medium, this->current_states_[ip], this->prev_states_[ip],
                 this->material_states_[ip], this->output_data_[ip]);
 
