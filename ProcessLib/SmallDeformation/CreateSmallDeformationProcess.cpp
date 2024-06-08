@@ -111,6 +111,9 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
+    //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__use_b_bar}
+    auto const use_b_bar = config.getConfigParameter<bool>("use_b_bar", false);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
     DBUG(
@@ -144,7 +147,8 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         std::move(solid_constitutive_relations),
         initial_stress,
         specific_body_force,
-        reference_temperature};
+        reference_temperature,
+        use_b_bar};
 
     SecondaryVariableCollection secondary_variables;
 

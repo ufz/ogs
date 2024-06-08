@@ -53,15 +53,15 @@ std::vector<double> const& getMaterialForces(
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sigma = stress_data[ip].stress_data.sigma;
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& N = _ip_data[ip].N_u;
+        auto const& dNdx = _ip_data[ip].dNdx_u;
 
         auto const& psi =
             output_data[ip].free_energy_density_data.free_energy_density;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                element, _ip_data[ip].N);
+                element, _ip_data[ip].N_u);
 
         // For the 2D case the 33-component is needed (and the four entries
         // of the non-symmetric matrix); In 3d there are nine entries.

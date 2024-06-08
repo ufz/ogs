@@ -51,6 +51,10 @@ struct SmallDeformationProcessData
 
     ParameterLib::Parameter<double> const* const reference_temperature;
 
+    /// An indicator to use the B bar method \cite hughes1980generalization to
+    /// tackle the  volumetric locking.
+    const bool use_b_bar;
+
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
         nullptr, nullptr, nullptr};
     MeshLib::PropertyVector<double>* principal_stress_values = nullptr;

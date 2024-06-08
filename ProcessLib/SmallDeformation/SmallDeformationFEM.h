@@ -12,6 +12,7 @@
 
 #include <limits>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "LocalAssemblerInterface.h"
@@ -41,8 +42,8 @@ template <typename BMatricesType, typename ShapeMatricesType,
 struct IntegrationPointData final
 {
     double integration_weight;
-    typename ShapeMatricesType::NodalRowVectorType N;
-    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
+    typename ShapeMatricesType::NodalRowVectorType N_u;
+    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx_u;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -68,6 +69,7 @@ public:
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
 
     using BMatrixType = typename BMatricesType::BMatrixType;
+    using BBarMatrixType = typename BMatricesType::BBarMatrixType;
     using StiffnessMatrixType = typename BMatricesType::StiffnessMatrixType;
     using NodalForceVectorType = typename BMatricesType::NodalForceVectorType;
     using NodalDisplacementVectorType =
@@ -114,8 +116,8 @@ public:
                 this->integration_method_.getWeightedPoint(ip).getWeight() *
                 sm.integralMeasure * sm.detJ;
 
-            ip_data.N = sm.N;
-            ip_data.dNdx = sm.dNdx;
+            ip_data.N_u = sm.N;
+            ip_data.dNdx_u = sm.dNdx;
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -134,7 +136,7 @@ public:
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<ShapeFunction,
                                                    ShapeMatricesType>(
-                        this->element_, ip_data.N))};
+                        this->element_, ip_data.N_u))};
 
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress != nullptr)
@@ -163,12 +165,10 @@ public:
 
     typename ConstitutiveRelations::ConstitutiveData<DisplacementDim>
     updateConstitutiveRelations(
-        Eigen::Ref<Eigen::VectorXd const> const& u,
+        BMatrixType const& B, Eigen::Ref<Eigen::VectorXd const> const& u,
         Eigen::Ref<Eigen::VectorXd const> const& u_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
-        IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>&
-            ip_data,
         typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>&
             CS,
         MaterialPropertyLib::Medium const& medium,
@@ -180,17 +180,6 @@ public:
         typename ConstitutiveRelations::OutputData<DisplacementDim>&
             output_data) const
     {
-        auto const& N = ip_data.N;
-        auto const& dNdx = ip_data.dNdx;
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                this->element_, N);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunction::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, this->is_axially_symmetric_);
-
         double const T_ref =
             this->process_data_.reference_temperature
                 ? (*this->process_data_.reference_temperature)(t, x_position)[0]
@@ -223,6 +212,20 @@ public:
             "implemented.");
     }
 
+    std::optional<BBarMatrixType> getDilatationalBBarMatrix() const
+    {
+        if (!(this->process_data_.use_b_bar))
+        {
+            return std::nullopt;
+        }
+
+        return LinearBMatrix::computeDilatationalBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
+            BBarMatrixType, ShapeMatricesType, IpData>(
+            _ip_data, this->element_, this->integration_method_,
+            this->is_axially_symmetric_);
+    }
+
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_x_prev,
@@ -253,27 +256,28 @@ public:
         auto const& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
 
+        auto const B_dil_bar = getDilatationalBBarMatrix();
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
-            auto const& N = _ip_data[ip].N;
-            auto const& dNdx = _ip_data[ip].dNdx;
+            auto const& N = _ip_data[ip].N_u;
+            auto const& dNdx = _ip_data[ip].dNdx_u;
 
             auto const x_coord =
                 NumLib::interpolateXCoordinate<ShapeFunction,
                                                ShapeMatricesType>(
                     this->element_, N);
-            auto const B = LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunction::NPOINTS,
+            auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+                DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, this->is_axially_symmetric_);
+                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_);
 
             auto const CD = updateConstitutiveRelations(
-                u, u_prev, x_position, t, dt, _ip_data[ip],
-                constitutive_setting, medium, this->current_states_[ip],
-                this->prev_states_[ip], this->material_states_[ip],
-                this->output_data_[ip]);
+                B, u, u_prev, x_position, t, dt, constitutive_setting, medium,
+                this->current_states_[ip], this->prev_states_[ip],
+                this->material_states_[ip], this->output_data_[ip]);
 
             auto const& sigma = this->current_states_[ip].stress_data.sigma;
             auto const& b = *CD.volumetric_body_force;
@@ -302,12 +306,25 @@ public:
         auto const& medium =
             *this->process_data_.media_map.getMedium(this->element_.getID());
 
+        auto const B_dil_bar = getDilatationalBBarMatrix();
+
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
+            auto const& N = _ip_data[ip].N_u;
+            auto const& dNdx = _ip_data[ip].dNdx_u;
+
+            auto const x_coord =
+                NumLib::interpolateXCoordinate<ShapeFunction,
+                                               ShapeMatricesType>(
+                    this->element_, N);
+            auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+                DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
+                typename BMatricesType::BMatrixType>(
+                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_);
 
             updateConstitutiveRelations(
-                local_x, local_x_prev, x_position, t, dt, _ip_data[ip],
+                B, local_x, local_x_prev, x_position, t, dt,
                 constitutive_setting, medium, this->current_states_[ip],
                 this->prev_states_[ip], this->material_states_[ip],
                 this->output_data_[ip]);
