@@ -125,25 +125,29 @@ public:
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            auto& SD = this->current_states_[ip];
             auto& ip_data = _ip_data[ip];
 
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, _element.getID(), ip,
-                MathLib::Point3d(
-                    NumLib::interpolateCoordinates<
-                        ShapeFunctionDisplacement,
-                        ShapeMatricesTypeDisplacement>(_element, ip_data.N_u))};
+                std::nullopt, this->element_.getID(), ip,
+                MathLib::Point3d(NumLib::interpolateCoordinates<
+                                 ShapeFunctionDisplacement,
+                                 ShapeMatricesTypeDisplacement>(this->element_,
+                                                                ip_data.N_u))};
 
             /// Set initial stress from parameter.
-            if (_process_data.initial_stress != nullptr)
+            if (this->process_data_.initial_stress != nullptr)
             {
-                ip_data.sigma_eff =
+                std::get<ProcessLib::ThermoRichardsMechanics::
+                             ConstitutiveStress_StrainTemperature::
+                                 EffectiveStressData<DisplacementDim>>(SD)
+                    .sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*_process_data.initial_stress)(
+                        DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
                             double>::quiet_NaN() /* time independent */,
                         x_position));
@@ -154,6 +158,8 @@ public:
                 t, x_position, *ip_data.material_state_variables);
 
             ip_data.pushBackState();
+
+            this->prev_states_[ip] = SD;
         }
     }
 
@@ -163,11 +169,17 @@ public:
                               int const /*process_id*/) override
     {
         unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
+            this->integration_method_.getNumberOfPoints();
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             _ip_data[ip].pushBackState();
+        }
+
+        // TODO move to the local assembler interface
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            this->prev_states_[ip] = this->current_states_[ip];
         }
     }
 
@@ -336,15 +348,12 @@ private:
         MPL::VariableArray& variables, MPL::VariableArray& variables_prev,
         MPL::Medium const* const medium, TemperatureData const T_data,
         CapillaryPressureData<DisplacementDim> const& p_cap_data,
-        ConstitutiveData<DisplacementDim>& CD);
-
-    RichardsMechanicsProcessData<DisplacementDim>& _process_data;
+        ConstitutiveData<DisplacementDim>& CD,
+        StatefulData<DisplacementDim>& SD,
+        StatefulDataPrev<DisplacementDim> const& SD_prev);
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
-    NumLib::GenericIntegrationMethod const& _integration_method;
-    MeshLib::Element const& _element;
-    bool const _is_axially_symmetric;
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
         _secondary_data;

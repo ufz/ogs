@@ -32,20 +32,14 @@ struct IntegrationPointData final
         // Initialize current time step values
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-        sigma_eff.setZero(kelvin_vector_size);
         sigma_sw.setZero(kelvin_vector_size);
-        eps.setZero(kelvin_vector_size);
         eps_m.setZero(kelvin_vector_size);
 
         // Previous time step values are not initialized and are set later.
-        eps_prev.resize(kelvin_vector_size);
         eps_m_prev.resize(kelvin_vector_size);
-        sigma_eff_prev.resize(kelvin_vector_size);
     }
 
-    typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType sigma_sw, sigma_sw_prev;
-    typename BMatricesType::KelvinVectorType eps, eps_prev;
     typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
@@ -80,9 +74,7 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        eps_prev = eps;
         eps_m_prev = eps_m;
-        sigma_eff_prev = sigma_eff;
         sigma_sw_prev = sigma_sw;
         saturation_prev = saturation;
         saturation_m_prev = saturation_m;
@@ -134,12 +126,16 @@ struct IntegrationPointData final
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        double const temperature)
+        double const temperature,
+        ProcessLib::ThermoRichardsMechanics::
+            ConstitutiveStress_StrainTemperature::EffectiveStressData<
+                DisplacementDim>& sigma_eff,
+        PrevState<ProcessLib::ThermoRichardsMechanics::
+                      ConstitutiveStress_StrainTemperature::EffectiveStressData<
+                          DisplacementDim>> const& sigma_eff_prev)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
-        variable_array_prev.stress
-            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                sigma_eff_prev);
+        variable_array_prev.stress = sigma_eff_prev->sigma_eff;
         variable_array_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m_prev);
@@ -155,7 +151,8 @@ struct IntegrationPointData final
         }
 
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-        std::tie(sigma_eff, material_state_variables, C) = std::move(*solution);
+        std::tie(sigma_eff.sigma_eff, material_state_variables, C) =
+            std::move(*solution);
 
         return C;
     }
