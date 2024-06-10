@@ -39,28 +39,33 @@ deploy container:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       allow_failure: true
+  parallel:
+    matrix:
+      - GUIX_PACKAGE: ["ogs", "ogs-petsc", "ogs-mkl", "ogs-petsc-mkl"]
   script:
     - which guix
     - guix describe
+    - |
+      if [[ "$GUIX_PACKAGE" =~ .*-mkl ]]; then
+        GUIX_ARGS="--with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk-9.3=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF"
+      fi
     # Build phase, retry once if failed
     - guix time-machine -C scripts/guix/channels.scm -- build bash coreutils
     - if [ $? -ne 0 ]; then !!; fi
-    - guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc=$PWD
+    - guix time-machine -C scripts/guix/channels.scm -- build ${GUIX_PACKAGE} --with-source=${GUIX_PACKAGE}=$PWD ${GUIX_ARGS}
     - if [ $? -ne 0 ]; then !!; fi
     # Pack phase
-    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils ogs-petsc --with-source=ogs-petsc=$PWD | tee | tail -1 )
-    - echo "Image $image"
-    - ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
-    - scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
-    # Minio upload
     - mcli alias set minio https://minio.ufz.de $MINIO_PUBLIC_ACCESS_KEY $MINIO_PUBLIC_SECRET_KEY
-    - mcli cp $image minio/ogs/public/container/ogs/master/ogs-petsc.squashfs
-    # Build serial image
-    - guix time-machine -C scripts/guix/channels.scm -- build ogs --with-source=ogs=$PWD
-    - if [ $? -ne 0 ]; then !!; fi
-    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils ogs --with-source=ogs=$PWD | tee | tail -1 )
-    - echo "Image (serial) $image"
-    - mcli cp $image minio/ogs/public/container/ogs/master/ogs-serial.squashfs
+    # Pack serial image
+    - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils ${GUIX_PACKAGE} --with-source=${GUIX_PACKAGE}=$PWD ${GUIX_ARGS} | tee | tail -1 )
+    - echo "Image (${GUIX_PACKAGE}) $image"
+    - mcli cp $image minio/ogs/public/container/ogs/master/${GUIX_PACKAGE}.squashfs
+    # Copy petsc image to eve as well
+    - |
+      if [[ "$GUIX_PACKAGE" == ogs-petsc ]]; then
+        ssh sonjenk@frontend2.eve.ufz.de rm -f ${GUIX_PETSC_CONTAINER}
+        scp $image sonjenk@frontend2.eve.ufz.de:${GUIX_PETSC_CONTAINER}
+      fi
 
 test container eve:
   stage: build

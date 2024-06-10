@@ -320,9 +320,8 @@ struct Overloaded : Ts...
     using Ts::operator()...;
 };
 #if defined(__clang__)
-#if ((__clang_major__ == 16 && !defined(__apple_build_version__)) || \
-     (__clang_major__ == 15 && defined(__apple_build_version__)))
-/// Explicit deduction guide needed for apple's clang-15 and clang-16.
+#if (__clang_major__ <= 16)
+/// Explicit deduction guide needed for clang <= 16.
 template <class... Ts>
 Overloaded(Ts...) -> Overloaded<Ts...>;
 #endif
