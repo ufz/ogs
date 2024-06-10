@@ -11,6 +11,8 @@
 
 #include <boost/mp11.hpp>
 
+#include "BaseLib/BoostMP11Utils.h"
+
 namespace ProcessLib::Graph
 {
 namespace detail
@@ -43,16 +45,6 @@ struct GetFlattenedTupleTypes
 
     using type = boost::mp11::mp_flatten<std::tuple<Tuples...>>;
 };
-
-// Alias to be used together with static_assert to improve possible compile
-// error messages.
-template <typename List, typename Elem>
-constexpr bool mp_contains_v = boost::mp11::mp_contains<List, Elem>::value;
-
-// Alias to be used together with static_assert to improve possible compile
-// error messages
-template <typename Set>
-constexpr bool mp_is_set_v = boost::mp11::mp_is_set<Set>::value;
 }  // namespace detail
 
 /// Type-based access of an element of any of the passed tuples.
@@ -77,10 +69,10 @@ auto& get(Tuples&... ts)
         mp_transform<std::remove_cvref_t, FlattenedTuple>;
 
     static_assert(
-        detail::mp_is_set_v<FlattenedTupleOfPlainTypes>,
+        mp_is_set_v<FlattenedTupleOfPlainTypes>,
         "The types of all elements of all passed tuples must be unique.");
 
-    static_assert(detail::mp_contains_v<FlattenedTupleOfPlainTypes, T>,
+    static_assert(mp_contains_v<FlattenedTupleOfPlainTypes, T>,
                   "Type T must be inside any of the passed tuples.");
 
     return detail::getImpl<T>(ts...);

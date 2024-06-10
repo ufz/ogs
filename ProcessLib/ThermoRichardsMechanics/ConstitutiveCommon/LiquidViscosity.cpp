@@ -24,9 +24,8 @@ void LiquidViscosityModel<DisplacementDim>::eval(
     variables.temperature = T_data.T;
     variables.density = rho_L_data.rho_LR;
 
-    out.viscosity =
-        media_data.liquid.property(MPL::PropertyType::viscosity)
-            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    *out = media_data.liquid.property(MPL::PropertyType::viscosity)
+               .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
 }
 
 template struct LiquidViscosityModel<2>;

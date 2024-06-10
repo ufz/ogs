@@ -29,14 +29,14 @@ void EqPModel<DisplacementDim>::eval(
 {
     out.M_pu_X_BTI2N = S_L_data.S_L * rho_L_data.rho_LR * biot_data();
 
-    out.K_pp_Laplace = perm_data.k_rel * rho_L_data.rho_LR * perm_data.Ki /
-                       mu_L_data.viscosity;
+    out.K_pp_Laplace =
+        perm_data.k_rel * rho_L_data.rho_LR * perm_data.Ki / mu_L_data();
 
     out.J_pp_X_BTI2NT_u_dot_N =
         -rho_L_data.rho_LR * dS_L_data.dS_L_dp_cap * biot_data();
 
     out.J_pp_dNT_V_N =
-        perm_data.Ki / mu_L_data.viscosity *
+        perm_data.Ki / mu_L_data() *
         (rho_L_data.rho_LR * perm_data.dk_rel_dS_L * dS_L_data.dS_L_dp_cap *
          (p_cap_data.grad_p_cap + rho_L_data.rho_LR * b_));
 

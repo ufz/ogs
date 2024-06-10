@@ -63,16 +63,15 @@ void TRMHeatStorageAndFluxModel<DisplacementDim>::eval(
 
     // Unit is J / m^2 / s / K. It's not a heat flux, but related.
     out.advective_heat_flux_contribution_to_K_liquid =
-        volumetric_heat_capacity_liquid * darcy_data.v_darcy;
+        volumetric_heat_capacity_liquid * darcy_data();
 
     //
     // temperature equation, pressure part
     //
     out.K_Tp_NT_V_dN = -volumetric_heat_capacity_liquid * perm.k_rel /
-                       mu_L_data.viscosity *
-                       (perm.Ki.transpose() * T_data.grad_T);
+                       mu_L_data() * (perm.Ki.transpose() * T_data.grad_T);
     out.K_Tp_X_NTN = -volumetric_heat_capacity_liquid *
-                     darcy_data.v_darcy.dot(T_data.grad_T) / perm.k_rel *
+                     darcy_data().dot(T_data.grad_T) / perm.k_rel *
                      perm.dk_rel_dS_L * dS_L_data.dS_L_dp_cap;
 }
 

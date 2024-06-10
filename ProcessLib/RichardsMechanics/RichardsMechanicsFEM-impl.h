@@ -809,8 +809,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
                         .template value<double>(variables, x_position, t, dt);
-    std::get<ProcessLib::ThermoRichardsMechanics::LiquidViscosityData>(CD)
-        .viscosity = mu;
+    *std::get<ProcessLib::ThermoRichardsMechanics::LiquidViscosityData>(CD) =
+        mu;
 
     // Swelling and possibly volumetric strain rate update.
     updateSwellingStressAndVolumetricStrain<DisplacementDim>(
@@ -1141,9 +1141,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 DisplacementDim>>(CD)
                 .Ki;
         double const mu =
-            std::get<ProcessLib::ThermoRichardsMechanics::LiquidViscosityData>(
-                CD)
-                .viscosity;
+            *std::get<ProcessLib::ThermoRichardsMechanics::LiquidViscosityData>(
+                CD);
 
         GlobalDimMatrixType const rho_Ki_over_mu = K_intrinsic * rho_LR / mu;
 

@@ -11,20 +11,18 @@
 #pragma once
 
 #include "Base.h"
+#include "BaseLib/StrongType.h"
 #include "LiquidDensity.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct LiquidViscosityData
-{
-    double viscosity;
+using LiquidViscosityData =
+    BaseLib::StrongType<double, struct LiquidViscosityDataTag>;
 
-    static auto reflect()
-    {
-        return ProcessLib::Reflection::reflectWithName(
-            "viscosity", &LiquidViscosityData::viscosity);
-    }
-};
+constexpr std::string_view ioName(struct LiquidViscosityDataTag*)
+{
+    return "viscosity";
+}
 
 template <int DisplacementDim>
 struct LiquidViscosityModel

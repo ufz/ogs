@@ -12,6 +12,8 @@
 
 #include <boost/mp11.hpp>
 
+#include "BaseLib/BoostMP11Utils.h"
+#include "BaseLib/StrongType.h"
 #include "MathLib/KelvinVector.h"
 #include "ReflectionData.h"
 
@@ -19,34 +21,6 @@ namespace ProcessLib::Reflection
 {
 namespace detail
 {
-template <typename T>
-concept has_reflect = requires { T::reflect(); };
-
-template <typename... Ts>
-auto reflect(std::type_identity<std::tuple<Ts...>>)
-{
-    using namespace boost::mp11;
-
-    // The types Ts... must be unique. Duplicate types are incompatible with the
-    // concept of "reflected" I/O: they would lead to duplicate names for the
-    // I/O data.
-    static_assert(mp_is_set<mp_list<Ts...>>::value);
-
-    return reflectWithoutName<std::tuple<Ts...>>(
-        [](auto& tuple_) -> auto& { return std::get<Ts>(tuple_); }...);
-}
-
-template <has_reflect T>
-auto reflect(std::type_identity<T>)
-{
-    return T::reflect();
-}
-
-template <typename T>
-concept is_reflectable = requires {
-    ProcessLib::Reflection::detail::reflect(std::type_identity<T>{});
-};
-
 /**
  * Raw data is data that will be read or written, e.g., double values or Eigen
  * vectors.
@@ -124,6 +98,79 @@ struct NumberOfComponents
     : std::integral_constant<unsigned,
                              NumberOfRows<T>::value * NumberOfColumns<T>::value>
 {
+};
+
+template <typename T>
+concept has_reflect = requires
+{
+    T::reflect();
+};
+
+template <typename... Ts>
+auto reflect(std::type_identity<std::tuple<Ts...>>)
+{
+    using namespace boost::mp11;
+
+    // The types Ts... must be unique. Duplicate types are incompatible with the
+    // concept of "reflected" I/O: they would lead to duplicate names for the
+    // I/O data.
+    static_assert(mp_is_set_v<mp_list<Ts...>>);
+
+    return reflectWithoutName<std::tuple<Ts...>>(
+        [](auto& tuple_) -> auto& { return std::get<Ts>(tuple_); }...);
+}
+
+template <has_reflect T>
+auto reflect(std::type_identity<T>)
+{
+    return T::reflect();
+}
+
+template <typename T>
+concept has_ioName = requires(T* t)
+{
+    ioName(t);
+};
+
+template <typename T, typename Tag>
+auto reflect(std::type_identity<BaseLib::StrongType<T, Tag>>)
+{
+    using ST = BaseLib::StrongType<T, Tag>;
+
+    auto accessor = [](auto& o) -> auto&
+    {
+        return *o;
+    };
+
+    // Maybe in the future we might want to lift the following two constraints.
+    // But beware: that generalization has to be tested thoroughly such that we
+    // don't accidentally produce I/O data without name and the like.
+    static_assert(
+        has_ioName<Tag>,
+        /* We use ioName(Tag* tag), because it works with an incomplete type
+         * Tag, as opposed to ioName(Tag tag), i.e. declaring
+         *   std::string_view ioName(struct SomeTag*);
+         * is possible, whereas
+         *   std::string_view ioName(struct SomeTag);
+         * is not.
+         * This choice makes the code for every ioName() definition rather
+         * compact.
+         */
+        "For I/O of StrongType<T, Tag> you have to define an ioName(Tag* tag) "
+        "function returning the name used for I/O.");
+    static_assert(
+        is_raw_data_v<T>,
+        "I/O of StrongTypes is supported only for StrongTypes wrapping 'raw "
+        "data' such as double values, vectors and matrices.");
+
+    return std::tuple{makeReflectionData<ST>(
+        std::string{ioName(static_cast<Tag*>(nullptr))}, std::move(accessor))};
+}
+
+template <typename T>
+concept is_reflectable = requires
+{
+    ProcessLib::Reflection::detail::reflect(std::type_identity<T>{});
 };
 
 /** A function object taking a local assembler as its argument and returning a
@@ -328,6 +375,13 @@ void forEachReflectedFlattenedIPDataAccessor(
     Accessor_CurrentLevelFromIPDataVecElement const&
         accessor_current_level_from_ip_data_vec_element)
 {
+    static_assert(boost::mp11::mp_is_list_v<ReflectionDataTuple>,
+                  "The passed reflection data is not a std::tuple.");
+    static_assert(
+        std::is_same_v<ReflectionDataTuple,
+                       boost::mp11::mp_rename<ReflectionDataTuple, std::tuple>>,
+        "The passed reflection data is not a std::tuple.");
+
     boost::mp11::tuple_for_each(
         reflection_data,
         [&accessor_ip_data_vec_in_loc_asm,
@@ -357,12 +411,13 @@ void forEachReflectedFlattenedIPDataAccessor(
             }
             else
             {
-                static_assert(is_raw_data<Member>::value,
+                static_assert(is_raw_data_v<Member>,
                               "The current member is not reflectable, so we "
                               "expect it to be raw data.");
 
                 constexpr unsigned num_comp = NumberOfComponents<Member>::value;
 
+                assert(!refl_data.name.empty());
                 callback(refl_data.name, num_comp,
                          getFlattenedIPDataFromLocAsm<Dim>(
                              accessor_ip_data_vec_in_loc_asm,
@@ -401,7 +456,14 @@ template <int Dim, typename LocAsmIF, typename Callback, typename ReflData>
 void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
                                              Callback const& callback)
 {
-    boost::mp11::tuple_for_each(
+    using namespace boost::mp11;
+
+    static_assert(mp_is_list_v<ReflData>,
+                  "The passed reflection data is not a std::tuple.");
+    static_assert(std::is_same_v<ReflData, mp_rename<ReflData, std::tuple>>,
+                  "The passed reflection data is not a std::tuple.");
+
+    tuple_for_each(
         reflection_data,
         [&callback]<typename Class, typename Accessor>(
             ReflectionData<Class, Accessor> const& refl_data)
@@ -416,13 +478,13 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
 
             // AccessorResult must be a std::vector<SomeType, SomeAllocator>. We
             // check that, now.
-            static_assert(boost::mp11::mp_is_list<AccessorResult>::
-                              value);  // std::vector<SomeType, SomeAllocator>
-                                       // is a list in the Boost MP11 sense
             static_assert(
-                std::is_same_v<
-                    AccessorResult,
-                    boost::mp11::mp_rename<AccessorResult, std::vector>>,
+                mp_is_list_v<AccessorResult>);  // std::vector<SomeType,
+                                                // SomeAllocator> is a list in
+                                                // the Boost MP11 sense
+            static_assert(
+                std::is_same_v<AccessorResult,
+                               mp_rename<AccessorResult, std::vector>>,
                 "We expect a std::vector, here.");
             // Now, we know that AccessorResult is std::vector<Member>. To be
             // more specific, AccessorResult is a std::vector<IPData> and Member
@@ -432,7 +494,9 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
             auto accessor_ip_data_vec_in_loc_asm =
                 [ip_data_vector_accessor =
                      refl_data.accessor](LocAsmIF const& loc_asm) -> auto const&
-            { return ip_data_vector_accessor(loc_asm); };
+            {
+                return ip_data_vector_accessor(loc_asm);
+            };
 
             if constexpr (detail::is_reflectable<Member>)
             {
@@ -443,13 +507,14 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
             }
             else
             {
-                static_assert(detail::is_raw_data<Member>::value,
+                static_assert(detail::is_raw_data_v<Member>,
                               "The current member is not reflectable, so we "
                               "expect it to be raw data.");
 
                 constexpr unsigned num_comp =
                     detail::NumberOfComponents<Member>::value;
 
+                assert(!refl_data.name.empty());
                 callback(refl_data.name, num_comp,
                          detail::getFlattenedIPDataFromLocAsm<Dim>(
                              accessor_ip_data_vec_in_loc_asm));
