@@ -40,8 +40,6 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
-    double dry_density_solid = std::numeric_limits<double>::quiet_NaN();
-
     MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>

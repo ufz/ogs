@@ -1889,7 +1889,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::dry_density_solid, cache);
+        this->output_data_,
+        [](auto& tuple) -> auto& { return *std::get<DrySolidDensity>(tuple); },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -2195,7 +2197,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const rho_SR =
             solid_phase.property(MPL::PropertyType::density)
                 .template value<double>(variables, x_position, t, dt);
-        _ip_data[ip].dry_density_solid = (1 - phi) * rho_SR;
+        *std::get<DrySolidDensity>(this->output_data_[ip]) = (1 - phi) * rho_SR;
 
         {
             auto& SD = this->current_states_[ip];

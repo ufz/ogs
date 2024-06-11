@@ -11,6 +11,7 @@
 #pragma once
 
 #include "Density.h"
+#include "DrySolidDensity.h"
 #include "LiquidDensity.h"
 #include "MicroPressure.h"
 #include "MicroSaturation.h"
@@ -51,7 +52,8 @@ using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
 using OutputData = std::tuple<
-    ProcessLib::ThermoRichardsMechanics::DarcyLawData<DisplacementDim>>;
+    ProcessLib::ThermoRichardsMechanics::DarcyLawData<DisplacementDim>,
+    DrySolidDensity>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
