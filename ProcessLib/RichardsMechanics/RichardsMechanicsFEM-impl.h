@@ -1718,7 +1718,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        cache_matrix.col(ip).noalias() = _ip_data[ip].v_darcy;
+        cache_matrix.col(ip).noalias() = *std::get<
+            ProcessLib::ThermoRichardsMechanics::DarcyLawData<DisplacementDim>>(
+            this->output_data_[ip]);
     }
 
     return cache;
@@ -2247,8 +2249,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Compute the velocity
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
-        _ip_data[ip].v_darcy.noalias() =
-            -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
+        std::get<
+            ProcessLib::ThermoRichardsMechanics::DarcyLawData<DisplacementDim>>(
+            this->output_data_[ip])
+            ->noalias() = -K_over_mu * dNdx_p * p_L + rho_LR * K_over_mu * b;
 
         saturation_avg += S_L;
         porosity_avg += phi;

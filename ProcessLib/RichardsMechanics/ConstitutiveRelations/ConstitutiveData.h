@@ -16,6 +16,7 @@
 #include "MicroSaturation.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
@@ -49,7 +50,8 @@ using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
-using OutputData = std::tuple<>;
+using OutputData = std::tuple<
+    ProcessLib::ThermoRichardsMechanics::DarcyLawData<DisplacementDim>>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>

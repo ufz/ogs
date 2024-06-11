@@ -40,8 +40,6 @@ struct IntegrationPointData final
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
-    typename ShapeMatricesTypePressure::GlobalDimVectorType v_darcy;
-
     double dry_density_solid = std::numeric_limits<double>::quiet_NaN();
     double dry_density_pellet_saturated =
         std::numeric_limits<double>::quiet_NaN();
