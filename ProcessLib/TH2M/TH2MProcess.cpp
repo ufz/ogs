@@ -278,8 +278,7 @@ void TH2MProcess<DisplacementDim>::preTimestepConcreteProcess(
             *_local_to_global_index_map, *x[process_id], t, dt);
     }
 
-    AssemblyMixin<TH2MProcess<DisplacementDim>>::updateActiveElements(
-        process_id);
+    AssemblyMixin<TH2MProcess<DisplacementDim>>::updateActiveElements();
 }
 
 template <int DisplacementDim>

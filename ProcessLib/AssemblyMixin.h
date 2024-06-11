@@ -56,7 +56,7 @@ protected:
         std::vector<std::string> const& residuum_names,
         std::vector<std::reference_wrapper<ProcessVariable>> const& pvs);
 
-    void updateActiveElements(ProcessLib::ProcessVariable const& pv);
+    void updateActiveElements(ProcessLib::Process const& process);
 
     static void copyResiduumVectorsToBulkMesh(
         GlobalVector const& rhs,
@@ -70,7 +70,7 @@ protected:
         SubmeshAssemblyData const& sad);
 
 private:
-    void updateActiveElementsImpl(ProcessLib::ProcessVariable const& pv);
+    void updateActiveElementsImpl(Process const& process);
 
 protected:
     std::vector<SubmeshAssemblyData> submesh_assembly_data_;
@@ -131,14 +131,9 @@ public:
             derived().getProcessVariables(process_id));
     }
 
-    void updateActiveElements(const int process_id)
+    void updateActiveElements()
     {
-        // convention: process variable 0 governs where assembly takes place
-        // (active element IDs)
-        ProcessLib::ProcessVariable const& pv =
-            derived().getProcessVariables(process_id)[0];
-
-        AssemblyMixinBase::updateActiveElements(pv);
+        AssemblyMixinBase::updateActiveElements(derived());
     }
 
     // cppcheck-suppress functionStatic

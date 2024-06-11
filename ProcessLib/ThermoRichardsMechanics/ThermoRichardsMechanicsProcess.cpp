@@ -233,10 +233,10 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     preTimestepConcreteProcess(std::vector<GlobalVector*> const& /*x*/,
                                const double /*t*/,
                                const double /*dt*/,
-                               const int process_id)
+                               const int /*process_id*/)
 {
     AssemblyMixin<ThermoRichardsMechanicsProcess<
-        DisplacementDim, ConstitutiveTraits>>::updateActiveElements(process_id);
+        DisplacementDim, ConstitutiveTraits>>::updateActiveElements();
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
