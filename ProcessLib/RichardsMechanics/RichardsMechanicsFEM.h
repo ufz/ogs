@@ -196,69 +196,6 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
 
-    std::vector<double> getSigma() const override;
-
-    std::vector<double> const& getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getSaturation() const override;
-    std::vector<double> const& getIntPtSaturation(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getMicroSaturation() const override;
-    std::vector<double> const& getIntPtMicroSaturation(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getMicroPressure() const override;
-    std::vector<double> const& getIntPtMicroPressure(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getPorosity() const override;
-    std::vector<double> const& getIntPtPorosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getTransportPorosity() const override;
-    std::vector<double> const& getIntPtTransportPorosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> const& getIntPtSigma(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getSwellingStress() const override;
-    std::vector<double> const& getIntPtSwellingStress(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getEpsilon() const override;
-    std::vector<double> const& getIntPtEpsilon(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
     int getMaterialID() const override;
 
     std::vector<double> getMaterialStateVariableInternalState(
@@ -266,12 +203,6 @@ public:
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
                 MaterialStateVariables&)> const& get_values_span,
         int const& n_components) const override;
-
-    std::vector<double> const& getIntPtDryDensitySolid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
 
 private:
     /**

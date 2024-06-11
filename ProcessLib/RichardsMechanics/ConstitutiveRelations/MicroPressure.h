@@ -10,9 +10,16 @@
 
 #pragma once
 
+#include <string_view>
+
 #include "BaseLib/StrongType.h"
 
 namespace ProcessLib::RichardsMechanics
 {
 using MicroPressure = BaseLib::StrongType<double, struct MicroPressureTag>;
+
+constexpr std::string_view ioName(struct MicroPressureTag*)
+{
+    return "micro_pressure";
+}
 }  // namespace ProcessLib::RichardsMechanics
