@@ -158,26 +158,6 @@ public:
         }
     }
 
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_prev*/,
-                              double const /*t*/, double const /*dt*/,
-                              int const /*process_id*/) override
-    {
-        unsigned const n_integration_points =
-            this->integration_method_.getNumberOfPoints();
-
-        for (auto& s : this->material_states_)
-        {
-            s.pushBackState();
-        }
-
-        // TODO move to the local assembler interface
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            this->prev_states_[ip] = this->current_states_[ip];
-        }
-    }
-
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_prev) override;
@@ -190,14 +170,6 @@ public:
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
-
-    int getMaterialID() const override;
-
-    std::vector<double> getMaterialStateVariableInternalState(
-        std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const override;
 
 private:
     /**
@@ -260,12 +232,6 @@ private:
         Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
-
-    unsigned getNumberOfIntegrationPoints() const override;
-
-    typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned integration_point) const override;
 
 private:
     static void assembleWithJacobianEvalConstitutiveSetting(

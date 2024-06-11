@@ -114,20 +114,38 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
             name, values, current_states_);
     }
 
-    virtual std::vector<double> getMaterialStateVariableInternalState(
+    std::vector<double> getMaterialStateVariableInternalState(
         std::function<std::span<double>(
             typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
                 MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const = 0;
+        int const& n_components) const
+    {
+        return ProcessLib::getIntegrationPointDataMaterialStateVariables(
+            material_states_,
+            &ProcessLib::ThermoRichardsMechanics::MaterialStateData<
+                DisplacementDim>::material_state_variables,
+            get_values_span, n_components);
+    }
 
     // TODO move to NumLib::ExtrapolatableElement
-    virtual unsigned getNumberOfIntegrationPoints() const = 0;
+    unsigned getNumberOfIntegrationPoints() const
+    {
+        return integration_method_.getNumberOfPoints();
+    }
 
-    virtual int getMaterialID() const = 0;
+    int getMaterialID() const
+    {
+        return process_data_.material_ids == nullptr
+                   ? 0
+                   : (*process_data_.material_ids)[element_.getID()];
+    }
 
-    virtual typename MaterialLib::Solids::MechanicsBase<
+    typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned /*integration_point*/) const = 0;
+    getMaterialStateVariablesAt(unsigned integration_point) const
+    {
+        return *material_states_[integration_point].material_state_variables;
+    }
 
     static auto getReflectionDataForOutput()
     {
@@ -135,6 +153,25 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
         return ProcessLib::Reflection::reflectWithoutName(
             &Self::current_states_, &Self::output_data_);
+    }
+
+    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
+                              Eigen::VectorXd const& /*local_x_prev*/,
+                              double const /*t*/, double const /*dt*/,
+                              int const /*process_id*/) override final
+    {
+        unsigned const n_integration_points =
+            integration_method_.getNumberOfPoints();
+
+        for (auto& s : material_states_)
+        {
+            s.pushBackState();
+        }
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            prev_states_[ip] = current_states_[ip];
+        }
     }
 
 protected:

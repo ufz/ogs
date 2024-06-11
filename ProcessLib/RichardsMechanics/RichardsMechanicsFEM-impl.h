@@ -1445,34 +1445,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
-int RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                    ShapeFunctionPressure,
-                                    DisplacementDim>::getMaterialID() const
-{
-    return this->process_data_.material_ids == nullptr
-               ? 0
-               : (*this->process_data_.material_ids)[this->element_.getID()];
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int DisplacementDim>
-std::vector<double> RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    getMaterialStateVariableInternalState(
-        std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const
-{
-    return ProcessLib::getIntegrationPointDataMaterialStateVariables(
-        this->material_states_,
-        &ProcessLib::ThermoRichardsMechanics::MaterialStateData<
-            DisplacementDim>::material_state_variables,
-        get_values_span, n_components);
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianForPressureEquations(
@@ -1857,26 +1829,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,
         DisplacementDim>(this->element_, this->is_axially_symmetric_, p_L,
                          *this->process_data_.pressure_interpolated);
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int DisplacementDim>
-unsigned RichardsMechanicsLocalAssembler<
-    ShapeFunctionDisplacement, ShapeFunctionPressure,
-    DisplacementDim>::getNumberOfIntegrationPoints() const
-{
-    return this->integration_method_.getNumberOfPoints();
-}
-
-template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int DisplacementDim>
-typename MaterialLib::Solids::MechanicsBase<
-    DisplacementDim>::MaterialStateVariables const&
-RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
-                                ShapeFunctionPressure, DisplacementDim>::
-    getMaterialStateVariablesAt(unsigned integration_point) const
-{
-    return *this->material_states_[integration_point].material_state_variables;
 }
 }  // namespace RichardsMechanics
 }  // namespace ProcessLib
