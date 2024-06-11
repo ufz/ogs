@@ -16,7 +16,9 @@
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
+#include "ProcessLib/Reflection/ReflectionSetIPData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MaterialState.h"
+#include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "RichardsMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -60,9 +62,57 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         }
     }
 
-    virtual std::size_t setIPDataInitialConditions(
-        std::string_view const name, double const* values,
-        int const integration_order) = 0;
+    std::size_t setIPDataInitialConditions(std::string_view name,
+                                           double const* values,
+                                           int const integration_order)
+    {
+        if (integration_order !=
+            static_cast<int>(integration_method_.getIntegrationOrder()))
+        {
+            OGS_FATAL(
+                "Setting integration point initial conditions; The integration "
+                "order of the local assembler for element {:d} is different "
+                "from the integration order in the initial condition.",
+                element_.getID());
+        }
+
+        if (name == "sigma" && process_data_.initial_stress != nullptr)
+        {
+            OGS_FATAL(
+                "Setting initial conditions for stress from integration "
+                "point data and from a parameter '{:s}' is not possible "
+                "simultaneously.",
+                process_data_.initial_stress->name);
+        }
+
+        if (name.starts_with("material_state_variable_"))
+        {
+            name.remove_prefix(24);
+
+            auto const& internal_variables =
+                solid_material_.getInternalVariables();
+            if (auto const iv = std::find_if(
+                    begin(internal_variables), end(internal_variables),
+                    [&name](auto const& iv) { return iv.name == name; });
+                iv != end(internal_variables))
+            {
+                DBUG("Setting material state variable '{:s}'", name);
+                return ProcessLib::
+                    setIntegrationPointDataMaterialStateVariables(
+                        values, material_states_,
+                        &ProcessLib::ThermoRichardsMechanics::MaterialStateData<
+                            DisplacementDim>::material_state_variables,
+                        iv->reference);
+            }
+            return 0;
+        }
+
+        // TODO this logic could be pulled out of the local assembler into the
+        // process. That might lead to a slightly better performance due to less
+        // string comparisons.
+        return ProcessLib::Reflection::reflectSetIPData<DisplacementDim>(
+            name, values, current_states_);
+    }
 
     virtual std::vector<double> getMaterialStateVariableInternalState(
         std::function<std::span<double>(

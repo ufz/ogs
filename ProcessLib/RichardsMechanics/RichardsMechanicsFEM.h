@@ -90,12 +90,6 @@ public:
         bool const is_axially_symmetric,
         RichardsMechanicsProcessData<DisplacementDim>& process_data);
 
-    /// \return the number of read integration points.
-    std::size_t setIPDataInitialConditions(
-        std::string_view const name,
-        double const* values,
-        int const integration_order) override;
-
     void setInitialConditionsConcrete(Eigen::VectorXd const local_x,
                                       double const t,
                                       int const process_id) override;
