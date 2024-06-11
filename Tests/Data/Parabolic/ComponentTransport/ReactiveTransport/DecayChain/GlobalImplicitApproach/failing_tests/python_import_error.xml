@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="../1d_decay_chain_GIA.prj">
+    <add sel="/*">
+        <python_script>import_error.py</python_script>
+    </add>
+</OpenGeoSysProjectDiff>

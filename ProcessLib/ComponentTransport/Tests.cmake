@@ -787,6 +787,36 @@ if (NOT OGS_USE_MPI)
         PASS_REGULAR_EXPRESSION "More than one porous medium definition.*but no MaterialIDs are present in the bulk mesh"
         RUNTIME 1
     )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/failing_tests/non_existent_python_script.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "File \".*[/\\]Tests[/\\]Data[/\\]Parabolic[/\\]ComponentTransport[/\\]ReactiveTransport[/\\]DecayChain[/\\]GlobalImplicitApproach[/\\]failing_tests[/\\]nonexistent.py\" could not be opened!"
+        RUNTIME 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/failing_tests/python_import_error.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "Error evaluating python script .*[/\\]Tests[/\\]Data[/\\]Parabolic[/\\]ComponentTransport[/\\]ReactiveTransport[/\\]DecayChain[/\\]GlobalImplicitApproach[/\\]failing_tests[/\\]import_error.py: ImportError: this script raises an error on purpose"
+        RUNTIME 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/failing_tests/python_error_Dirichlet.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "error: Error evaluating Dirichlet BC in Python: RuntimeError: this exception is thrown on purpose"
+        RUNTIME 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/failing_tests/python_error_Neumann.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "error: Error evaluating natural BC in Python: RuntimeError: this exception is thrown on purpose"
+        RUNTIME 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/failing_tests/python_error_source_term.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "error: Error evaluating source term in Python: RuntimeError: this exception is thrown on purpose"
+        RUNTIME 1
+    )
 
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvection.prj RUNTIME 23)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDecay.prj RUNTIME 23)

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="../1d_decay_chain_GIA.prj">
+    <add sel="/*">
+        <python_script>python_error_source_term.py</python_script>
+    </add>
+    <add sel="//process_variable[name='pressure']">
+        <source_terms>
+            <source_term>
+                <type>Python</type>
+                <source_term_object>st</source_term_object>
+                <mesh>1d_decay_chain_ReactiveDomain</mesh>
+            </source_term>
+        </source_terms>
+    </add>
+</OpenGeoSysProjectDiff>

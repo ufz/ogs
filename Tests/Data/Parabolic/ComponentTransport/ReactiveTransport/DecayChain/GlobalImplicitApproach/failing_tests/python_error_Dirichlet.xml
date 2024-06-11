@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="../1d_decay_chain_GIA.prj">
+    <add sel="/*">
+        <python_script>python_error_Dirichlet.py</python_script>
+    </add>
+    <add sel="//process_variable[name='pressure']/boundary_conditions">
+        <boundary_condition>
+            <type>Python</type>
+            <bc_object>bc</bc_object>
+            <mesh>1d_decay_chain_upstream</mesh>
+        </boundary_condition>
+    </add>
+</OpenGeoSysProjectDiff>
