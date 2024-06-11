@@ -31,9 +31,9 @@ namespace ProcessLib
 {
 namespace RichardsMechanics
 {
-template <int DisplacementDim, typename IPData>
+template <int DisplacementDim>
 void updateSwellingStressAndVolumetricStrain(
-    IPData& ip_data, MaterialPropertyLib::Medium const& medium,
+    MaterialPropertyLib::Medium const& medium,
     MaterialPropertyLib::Phase const& solid_phase,
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> const& C_el,
     double const rho_LR, double const mu,
@@ -1007,11 +1007,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const S_L_m_prev = std::get<PrevState<MicroSaturation>>(SD_prev);
 
         updateSwellingStressAndVolumetricStrain<DisplacementDim>(
-            ip_data, *medium, solid_phase, C_el, rho_LR, mu,
-            micro_porosity_parameters, alpha, phi, p_cap_ip, variables,
-            variables_prev, x_position, t, dt, sigma_sw, sigma_sw_prev,
-            transport_porosity_prev, phi_prev, transport_porosity, p_L_m_prev,
-            S_L_m_prev, p_L_m, S_L_m);
+            *medium, solid_phase, C_el, rho_LR, mu, micro_porosity_parameters,
+            alpha, phi, p_cap_ip, variables, variables_prev, x_position, t, dt,
+            sigma_sw, sigma_sw_prev, transport_porosity_prev, phi_prev,
+            transport_porosity, p_L_m_prev, S_L_m_prev, p_L_m, S_L_m);
     }
 
     if (medium->hasProperty(MPL::PropertyType::transport_porosity))
@@ -2120,7 +2119,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 std::get<PrevState<MicroSaturation>>(this->prev_states_[ip]);
 
             updateSwellingStressAndVolumetricStrain<DisplacementDim>(
-                _ip_data[ip], *medium, solid_phase, C_el, rho_LR, mu,
+                *medium, solid_phase, C_el, rho_LR, mu,
                 this->process_data_.micro_porosity_parameters, alpha, phi,
                 p_cap_ip, variables, variables_prev, x_position, t, dt,
                 sigma_sw, sigma_sw_prev, transport_porosity_prev, phi_prev,
