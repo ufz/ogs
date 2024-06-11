@@ -786,7 +786,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         CapillaryPressureData<DisplacementDim> const& p_cap_data,
         ConstitutiveData<DisplacementDim>& CD,
         StatefulData<DisplacementDim>& SD,
-        StatefulDataPrev<DisplacementDim> const& SD_prev)
+        StatefulDataPrev<DisplacementDim> const& SD_prev,
+        std::optional<MicroPorosityParameters> const& micro_porosity_parameters)
 {
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -889,11 +890,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     if (alpha < phi)
     {
+        auto const eid =
+            x_position.getElementID()
+                ? static_cast<std::ptrdiff_t>(*x_position.getElementID())
+                : static_cast<std::ptrdiff_t>(-1);
+        auto const ip =
+            x_position.getIntegrationPoint()
+                ? static_cast<std::ptrdiff_t>(*x_position.getIntegrationPoint())
+                : static_cast<std::ptrdiff_t>(-1);
         OGS_FATAL(
             "RichardsMechanics: Biot-coefficient {} is smaller than "
             "porosity {} in element/integration point {}/{}.",
-            alpha, phi, this->element_.getID(),
-            -1 /*ip*/ /* TODO (CL) re-enable */);
+            alpha, phi, eid, ip);
     }
 
     auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
@@ -915,9 +923,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         updateSwellingStressAndVolumetricStrain<DisplacementDim>(
             ip_data, *medium, solid_phase, C_el, rho_LR, mu,
-            this->process_data_.micro_porosity_parameters, alpha, phi, p_cap_ip,
-            variables, variables_prev, x_position, t, dt, sigma_sw,
-            sigma_sw_prev);
+            micro_porosity_parameters, alpha, phi, p_cap_ip, variables,
+            variables_prev, x_position, t, dt, sigma_sw, sigma_sw_prev);
     }
 
     if (medium->hasProperty(MPL::PropertyType::transport_porosity))
@@ -1183,7 +1190,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             CapillaryPressureData<DisplacementDim>{
                 p_cap_ip, p_cap_prev_ip,
                 Eigen::Vector<double, DisplacementDim>::Zero()},
-            CD, SD, SD_prev);
+            CD, SD, SD_prev, this->process_data_.micro_porosity_parameters);
 
         {
             auto const& C = *std::get<StiffnessTensor<DisplacementDim>>(CD);

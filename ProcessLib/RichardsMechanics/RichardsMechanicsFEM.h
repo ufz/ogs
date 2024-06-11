@@ -342,7 +342,7 @@ private:
     getMaterialStateVariablesAt(unsigned integration_point) const override;
 
 private:
-    void assembleWithJacobianEvalConstitutiveSetting(
+    static void assembleWithJacobianEvalConstitutiveSetting(
         double const t, double const dt,
         ParameterLib::SpatialPosition const& x_position, IpData& ip_data,
         MPL::VariableArray& variables, MPL::VariableArray& variables_prev,
@@ -350,7 +350,9 @@ private:
         CapillaryPressureData<DisplacementDim> const& p_cap_data,
         ConstitutiveData<DisplacementDim>& CD,
         StatefulData<DisplacementDim>& SD,
-        StatefulDataPrev<DisplacementDim> const& SD_prev);
+        StatefulDataPrev<DisplacementDim> const& SD_prev,
+        std::optional<MicroPorosityParameters> const&
+            micro_porosity_parameters);
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
