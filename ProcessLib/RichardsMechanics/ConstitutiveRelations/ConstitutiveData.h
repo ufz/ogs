@@ -19,6 +19,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 #include "SaturationSecantDerivative.h"
 #include "StiffnessTensor.h"
@@ -34,7 +35,10 @@ using StatefulData = std::tuple<
     ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
         SwellingDataStateful<DisplacementDim>,
     ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
-        MechanicalStrainData<DisplacementDim>>;
+        MechanicalStrainData<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::SaturationData,
+    ProcessLib::ThermoRichardsMechanics::PorosityData,
+    ProcessLib::ThermoRichardsMechanics::TransportPorosityData>;
 
 template <int DisplacementDim>
 using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<

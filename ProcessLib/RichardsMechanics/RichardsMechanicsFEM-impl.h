@@ -46,7 +46,11 @@ void updateSwellingStressAndVolumetricStrain(
         SwellingDataStateful<DisplacementDim>& sigma_sw,
     PrevState<ProcessLib::ThermoRichardsMechanics::
                   ConstitutiveStress_StrainTemperature::SwellingDataStateful<
-                      DisplacementDim>> const& sigma_sw_prev)
+                      DisplacementDim>> const& sigma_sw_prev,
+    PrevState<ProcessLib::ThermoRichardsMechanics::TransportPorosityData>
+        phi_M_prev,
+    PrevState<ProcessLib::ThermoRichardsMechanics::PorosityData> phi_prev,
+    ProcessLib::ThermoRichardsMechanics::TransportPorosityData& phi_M)
 {
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -81,9 +85,7 @@ void updateSwellingStressAndVolumetricStrain(
     // the micro_porosity_parameters.
     if (medium.hasProperty(MPL::PropertyType::saturation_micro))
     {
-        double const phi_M_prev = ip_data.transport_porosity_prev;
-        double const phi_prev = ip_data.porosity_prev;
-        double const phi_m_prev = phi_prev - phi_M_prev;
+        double const phi_m_prev = phi_prev->phi - phi_M_prev->phi;
         double const p_L_m_prev = ip_data.liquid_pressure_m_prev;
 
         auto const S_L_m_prev = ip_data.saturation_m_prev;
@@ -96,10 +98,9 @@ void updateSwellingStressAndVolumetricStrain(
                 medium.property(MPL::PropertyType::saturation_micro),
                 solid_phase.property(MPL::PropertyType::swelling_stress_rate));
 
-        auto& phi_M = ip_data.transport_porosity;
-        phi_M = phi - (phi_m_prev + delta_phi_m);
-        variables_prev.transport_porosity = phi_M_prev;
-        variables.transport_porosity = phi_M;
+        phi_M.phi = phi - (phi_m_prev + delta_phi_m);
+        variables_prev.transport_porosity = phi_M_prev->phi;
+        variables.transport_porosity = phi_M.phi;
 
         auto& p_L_m = ip_data.liquid_pressure_m;
         p_L_m = p_L_m_prev + delta_p_L_m;
@@ -174,17 +175,25 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
 
         // Initial porosity. Could be read from integration point data or mesh.
-        ip_data.porosity =
-            medium->property(MPL::porosity)
-                .template initialValue<double>(
-                    x_position,
-                    std::numeric_limits<
-                        double>::quiet_NaN() /* t independent */);
+        auto& porosity =
+            std::get<ProcessLib::ThermoRichardsMechanics::PorosityData>(
+                this->current_states_[ip])
+                .phi;
+        porosity = medium->property(MPL::porosity)
+                       .template initialValue<double>(
+                           x_position,
+                           std::numeric_limits<
+                               double>::quiet_NaN() /* t independent */);
 
-        ip_data.transport_porosity = ip_data.porosity;
+        auto& transport_porosity =
+            std::get<
+                ProcessLib::ThermoRichardsMechanics::TransportPorosityData>(
+                this->current_states_[ip])
+                .phi;
+        transport_porosity = porosity;
         if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
-            ip_data.transport_porosity =
+            transport_porosity =
                 medium->property(MPL::transport_porosity)
                     .template initialValue<double>(
                         x_position,
@@ -236,18 +245,38 @@ std::size_t RichardsMechanicsLocalAssembler<
 
     if (name == "saturation")
     {
-        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
-                                                         &IpData::saturation);
+        return ProcessLib::setIntegrationPointScalarData(
+            values, this->current_states_,
+            [](auto& tuple) -> auto&
+            {
+                return std::get<
+                           ProcessLib::ThermoRichardsMechanics::SaturationData>(
+                           tuple)
+                    .S_L;
+            });
     }
     if (name == "porosity")
     {
-        return ProcessLib::setIntegrationPointScalarData(values, _ip_data,
-                                                         &IpData::porosity);
+        return ProcessLib::setIntegrationPointScalarData(
+            values, this->current_states_,
+            [](auto& tuple) -> auto&
+            {
+                return std::get<
+                           ProcessLib::ThermoRichardsMechanics::PorosityData>(
+                           tuple)
+                    .phi;
+            });
     }
     if (name == "transport_porosity")
     {
         return ProcessLib::setIntegrationPointScalarData(
-            values, _ip_data, &IpData::transport_porosity);
+            values, this->current_states_,
+            [](auto& tuple) -> auto&
+            {
+                return std::get<ProcessLib::ThermoRichardsMechanics::
+                                    TransportPorosityData>(tuple)
+                    .phi;
+            });
     }
     if (name == "swelling_stress")
     {
@@ -341,9 +370,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
         variables.temperature = temperature;
 
-        _ip_data[ip].saturation_prev =
-            medium->property(MPL::PropertyType::saturation)
-                .template value<double>(variables, x_position, t, dt);
+        auto& S_L_prev =
+            std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::SaturationData>>(
+                this->prev_states_[ip])
+                ->S_L;
+        S_L_prev = medium->property(MPL::PropertyType::saturation)
+                       .template value<double>(variables, x_position, t, dt);
 
         if (medium->hasProperty(MPL::PropertyType::saturation_micro))
         {
@@ -475,8 +508,15 @@ void RichardsMechanicsLocalAssembler<
             std::get<StrainData<DisplacementDim>>(this->current_states_[ip]);
         eps.eps.noalias() = B * u;
 
-        auto& S_L = _ip_data[ip].saturation;
-        auto const S_L_prev = _ip_data[ip].saturation_prev;
+        auto& S_L =
+            std::get<ProcessLib::ThermoRichardsMechanics::SaturationData>(
+                this->current_states_[ip])
+                .S_L;
+        auto const S_L_prev =
+            std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::SaturationData>>(
+                this->prev_states_[ip])
+                ->S_L;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -549,9 +589,15 @@ void RichardsMechanicsLocalAssembler<
         variables.volumetric_strain = Invariants::trace(eps.eps);
         variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
-        auto& phi = _ip_data[ip].porosity;
+        auto& phi = std::get<ProcessLib::ThermoRichardsMechanics::PorosityData>(
+                        this->current_states_[ip])
+                        .phi;
         {  // Porosity update
-            variables_prev.porosity = _ip_data[ip].porosity_prev;
+            auto const phi_prev = std::get<PrevState<
+                ProcessLib::ThermoRichardsMechanics::PorosityData>>(
+                                      this->prev_states_[ip])
+                                      ->phi;
+            variables_prev.porosity = phi_prev;
             phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
@@ -604,14 +650,23 @@ void RichardsMechanicsLocalAssembler<
 
             if (medium->hasProperty(MPL::PropertyType::transport_porosity))
             {
-                variables_prev.transport_porosity =
-                    _ip_data[ip].transport_porosity_prev;
+                auto& transport_porosity =
+                    std::get<ProcessLib::ThermoRichardsMechanics::
+                                 TransportPorosityData>(
+                        this->current_states_[ip])
+                        .phi;
+                auto const transport_porosity_prev =
+                    std::get<PrevState<ProcessLib::ThermoRichardsMechanics::
+                                           TransportPorosityData>>(
+                        this->prev_states_[ip])
+                        ->phi;
+                variables_prev.transport_porosity = transport_porosity_prev;
 
-                _ip_data[ip].transport_porosity =
+                transport_porosity =
                     medium->property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
-                variables.transport_porosity = _ip_data[ip].transport_porosity;
+                variables.transport_porosity = transport_porosity;
             }
             else
             {
@@ -801,8 +856,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     double const p_cap_prev_ip = p_cap_data.p_cap_prev;
 
     auto const& eps = std::get<StrainData<DisplacementDim>>(SD);
-    auto& S_L = ip_data.saturation;
-    auto const S_L_prev = ip_data.saturation_prev;
+    auto& S_L =
+        std::get<ProcessLib::ThermoRichardsMechanics::SaturationData>(SD).S_L;
+    auto const S_L_prev =
+        std::get<
+            PrevState<ProcessLib::ThermoRichardsMechanics::SaturationData>>(
+            SD_prev)
+            ->S_L;
     auto const alpha =
         medium->property(MPL::PropertyType::biot_coefficient)
             .template value<double>(variables, x_position, t, dt);
@@ -877,10 +937,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     variables_prev.volumetric_strain = Invariants::trace(
         std::get<PrevState<StrainData<DisplacementDim>>>(SD_prev)->eps);
 
-    auto& phi = ip_data.porosity;
+    auto& phi =
+        std::get<ProcessLib::ThermoRichardsMechanics::PorosityData>(SD).phi;
     {  // Porosity update
-
-        variables_prev.porosity = ip_data.porosity_prev;
+        auto const phi_prev =
+            std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::PorosityData>>(
+                SD_prev)
+                ->phi;
+        variables_prev.porosity = phi_prev;
         phi = medium->property(MPL::PropertyType::porosity)
                   .template value<double>(variables, variables_prev, x_position,
                                           t, dt);
@@ -920,24 +985,42 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                    ConstitutiveStress_StrainTemperature::
                                        SwellingDataStateful<DisplacementDim>>>(
                 SD_prev);
+        auto const transport_porosity_prev = std::get<PrevState<
+            ProcessLib::ThermoRichardsMechanics::TransportPorosityData>>(
+            SD_prev);
+        auto const phi_prev = std::get<
+            PrevState<ProcessLib::ThermoRichardsMechanics::PorosityData>>(
+            SD_prev);
+        auto& transport_porosity = std::get<
+            ProcessLib::ThermoRichardsMechanics::TransportPorosityData>(SD);
 
         updateSwellingStressAndVolumetricStrain<DisplacementDim>(
             ip_data, *medium, solid_phase, C_el, rho_LR, mu,
             micro_porosity_parameters, alpha, phi, p_cap_ip, variables,
-            variables_prev, x_position, t, dt, sigma_sw, sigma_sw_prev);
+            variables_prev, x_position, t, dt, sigma_sw, sigma_sw_prev,
+            transport_porosity_prev, phi_prev, transport_porosity);
     }
 
     if (medium->hasProperty(MPL::PropertyType::transport_porosity))
     {
         if (!medium->hasProperty(MPL::PropertyType::saturation_micro))
         {
-            variables_prev.transport_porosity = ip_data.transport_porosity_prev;
+            auto& transport_porosity =
+                std::get<
+                    ProcessLib::ThermoRichardsMechanics::TransportPorosityData>(
+                    SD)
+                    .phi;
+            auto const transport_porosity_prev = std::get<PrevState<
+                ProcessLib::ThermoRichardsMechanics::TransportPorosityData>>(
+                                                     SD_prev)
+                                                     ->phi;
+            variables_prev.transport_porosity = transport_porosity_prev;
 
-            ip_data.transport_porosity =
+            transport_porosity =
                 medium->property(MPL::PropertyType::transport_porosity)
                     .template value<double>(variables, variables_prev,
                                             x_position, t, dt);
-            variables.transport_porosity = ip_data.transport_porosity;
+            variables.transport_porosity = transport_porosity;
         }
     }
     else
@@ -1284,7 +1367,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         //
         // pressure equation, displacement part.
         //
-        double const S_L = _ip_data[ip].saturation;
+        double const S_L =
+            std::get<ProcessLib::ThermoRichardsMechanics::SaturationData>(
+                this->current_states_[ip])
+                .S_L;
         if (this->process_data_.explicit_hm_coupling_in_unsaturated_zone)
         {
             double const chi_S_L_prev = std::get<PrevState<
@@ -1356,7 +1442,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .noalias() += N_p.transpose() * (p_cap_ip - p_cap_prev_ip) / dt *
                           rho_LR * dspecific_storage_a_p_dp_cap * N_p * w;
 
-        double const S_L_prev = _ip_data[ip].saturation_prev;
+        double const S_L_prev =
+            std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::SaturationData>>(
+                this->prev_states_[ip])
+                ->S_L;
         storage_p_a_S_Jpp.noalias() -=
             N_p.transpose() * rho_LR *
             ((S_L - S_L_prev) * dspecific_storage_a_S_dp_cap +
@@ -1642,7 +1732,15 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::saturation, cache);
+        this->current_states_,
+        [](auto& tuple) -> auto&
+        {
+            return std::get<
+                       ProcessLib::ThermoRichardsMechanics::SaturationData>(
+                       tuple)
+                .S_L;
+        },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1716,8 +1814,15 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
         std::vector<double>& cache) const
 {
-    return ProcessLib::getIntegrationPointScalarData(_ip_data,
-                                                     &IpData::porosity, cache);
+    return ProcessLib::getIntegrationPointScalarData(
+        this->current_states_,
+        [](auto& tuple) -> auto&
+        {
+            return std::get<ProcessLib::ThermoRichardsMechanics::PorosityData>(
+                       tuple)
+                .phi;
+        },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1742,7 +1847,15 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::transport_porosity, cache);
+        this->current_states_,
+        [](auto& tuple) -> auto&
+        {
+            return std::
+                get<ProcessLib::ThermoRichardsMechanics::TransportPorosityData>(
+                       tuple)
+                    .phi;
+        },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1893,8 +2006,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
                 .eps;
         eps.noalias() = B * u;
-        auto& S_L = _ip_data[ip].saturation;
-        auto const S_L_prev = _ip_data[ip].saturation_prev;
+        auto& S_L =
+            std::get<ProcessLib::ThermoRichardsMechanics::SaturationData>(
+                this->current_states_[ip])
+                .S_L;
+        auto const S_L_prev =
+            std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::SaturationData>>(
+                this->prev_states_[ip])
+                ->S_L;
         S_L = medium->property(MPL::PropertyType::saturation)
                   .template value<double>(variables, x_position, t, dt);
         variables.liquid_saturation = S_L;
@@ -1929,9 +2049,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         variables.volumetric_strain = Invariants::trace(eps);
         variables_prev.volumetric_strain = Invariants::trace(B * u_prev);
 
-        auto& phi = _ip_data[ip].porosity;
+        auto& phi = std::get<ProcessLib::ThermoRichardsMechanics::PorosityData>(
+                        this->current_states_[ip])
+                        .phi;
         {  // Porosity update
-            variables_prev.porosity = _ip_data[ip].porosity_prev;
+            auto const phi_prev = std::get<PrevState<
+                ProcessLib::ThermoRichardsMechanics::PorosityData>>(
+                                      this->prev_states_[ip])
+                                      ->phi;
+            variables_prev.porosity = phi_prev;
             phi = medium->property(MPL::PropertyType::porosity)
                       .template value<double>(variables, variables_prev,
                                               x_position, t, dt);
@@ -1958,26 +2084,46 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                               ConstitutiveStress_StrainTemperature::
                                   SwellingDataStateful<DisplacementDim>>>(
                 this->prev_states_[ip]);
+            auto const transport_porosity_prev = std::get<PrevState<
+                ProcessLib::ThermoRichardsMechanics::TransportPorosityData>>(
+                this->prev_states_[ip]);
+            auto const phi_prev = std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::PorosityData>>(
+                this->prev_states_[ip]);
+            auto& transport_porosity = std::get<
+                ProcessLib::ThermoRichardsMechanics::TransportPorosityData>(
+                this->current_states_[ip]);
 
             updateSwellingStressAndVolumetricStrain<DisplacementDim>(
                 _ip_data[ip], *medium, solid_phase, C_el, rho_LR, mu,
                 this->process_data_.micro_porosity_parameters, alpha, phi,
                 p_cap_ip, variables, variables_prev, x_position, t, dt,
-                sigma_sw, sigma_sw_prev);
+                sigma_sw, sigma_sw_prev, transport_porosity_prev, phi_prev,
+                transport_porosity);
         }
 
         if (medium->hasProperty(MPL::PropertyType::transport_porosity))
         {
             if (!medium->hasProperty(MPL::PropertyType::saturation_micro))
             {
-                variables_prev.transport_porosity =
-                    _ip_data[ip].transport_porosity_prev;
+                auto& transport_porosity =
+                    std::get<ProcessLib::ThermoRichardsMechanics::
+                                 TransportPorosityData>(
+                        this->current_states_[ip])
+                        .phi;
+                auto const transport_porosity_prev =
+                    std::get<PrevState<ProcessLib::ThermoRichardsMechanics::
+                                           TransportPorosityData>>(
+                        this->prev_states_[ip])
+                        ->phi;
 
-                _ip_data[ip].transport_porosity =
+                variables_prev.transport_porosity = transport_porosity_prev;
+
+                transport_porosity =
                     medium->property(MPL::PropertyType::transport_porosity)
                         .template value<double>(variables, variables_prev,
                                                 x_position, t, dt);
-                variables.transport_porosity = _ip_data[ip].transport_porosity;
+                variables.transport_porosity = transport_porosity;
             }
         }
         else

@@ -44,14 +44,9 @@ struct IntegrationPointData final
 
     double liquid_pressure_m = std::numeric_limits<double>::quiet_NaN();
     double liquid_pressure_m_prev = std::numeric_limits<double>::quiet_NaN();
-    double saturation = std::numeric_limits<double>::quiet_NaN();
-    double saturation_prev = std::numeric_limits<double>::quiet_NaN();
     double saturation_m = std::numeric_limits<double>::quiet_NaN();
     double saturation_m_prev = std::numeric_limits<double>::quiet_NaN();
-    double porosity = std::numeric_limits<double>::quiet_NaN();
-    double porosity_prev = std::numeric_limits<double>::quiet_NaN();
-    double transport_porosity = std::numeric_limits<double>::quiet_NaN();
-    double transport_porosity_prev = std::numeric_limits<double>::quiet_NaN();
+
     double dry_density_solid = std::numeric_limits<double>::quiet_NaN();
     double dry_density_pellet_saturated =
         std::numeric_limits<double>::quiet_NaN();
@@ -66,10 +61,7 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        saturation_prev = saturation;
         saturation_m_prev = saturation_m;
-        porosity_prev = porosity;
-        transport_porosity_prev = transport_porosity;
         liquid_pressure_m_prev = liquid_pressure_m;
         material_state_variables->pushBackState();
     }
