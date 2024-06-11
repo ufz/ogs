@@ -33,16 +33,16 @@ struct IntegrationPointData final
 
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
-    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
-    computeElasticTangentStiffness(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature,
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material,
-        typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-            MaterialStateVariables const& material_state_variables)
+    MathLib::KelvinVector::
+        KelvinMatrixType<DisplacementDim> static computeElasticTangentStiffness(
+            double const t,
+            ParameterLib::SpatialPosition const& x_position,
+            double const dt,
+            double const temperature,
+            MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+                solid_material,
+            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+                MaterialStateVariables const& material_state_variables)
     {
         namespace MPL = MaterialPropertyLib;
 
@@ -74,7 +74,7 @@ struct IntegrationPointData final
         return C;
     }
 
-    typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
+    static typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray const& variable_array,
         double const t,
         ParameterLib::SpatialPosition const& x_position,
