@@ -2,7 +2,14 @@
   {{- $map := split . "." }}
   {{- $url := index $.Site.Data $map -}}
   {{- if $url -}}
-{{- $url -}}
+    {# Second parameter allows to get a version component, starting with index 1 #}
+    {{- with $.Get 1 -}}
+      {# Start with index 1, subtract 1 to get zero-based index #}
+      {{- $index := math.Sub . 1 -}}
+      {{- $version_comps := split $url "." -}}
+      {{- $url = index $version_comps $index -}}
+    {{- end -}}
+    {{- $url -}}
   {{- else -}}
 {{- errorf "No data for key %s" . -}}
   {{- end -}}
