@@ -57,33 +57,33 @@ On Debian-based (we recommend using Ubuntu {{< dataFile "versions.tested_version
 sudo apt install build-essential
 ```
 
-You need to have at least **GCC {{< dataFile "versions.minimum_version.gcc" >}}** which you can check with `gcc --version` (Ubuntu {{< dataFile "versions.tested_version.ubuntu" >}} has already version 11).
+You need to have at least **GCC {{< dataFile "versions.minimum_version.gcc" >}}** which you can check with `gcc --version`.
 
 <div class='note'>
 
 ### Install the required compiler on older Ubuntu versions
 
-If you are on an older Ubuntu version you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository (with the following steps e.g. you can install GCC 10.3.0 on Ubuntu 20.04):
+If you are on an older Ubuntu version than {{< dataFile "versions.tested_version.ubuntu" >}} you can install a newer compiler from the `ubuntu-toolchain-r/test`-repository (with the following steps e.g. you can install GCC {{< dataFile "versions.minimum_version.gcc" 1 >}} on Ubuntu 20.04):
 
 ```bash
 sudo apt-get install software-properties-common
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
-sudo apt-get install gcc-10
-sudo apt-get install g++-10
+sudo apt-get install gcc-{{< dataFile "versions.minimum_version.gcc" 1 >}}
+sudo apt-get install g++-{{< dataFile "versions.minimum_version.gcc" 1 >}}
 ```
 
 To make the newly installed compiler the default one:
 
 ```bash
-sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 60 \
-  --slave /usr/bin/g++ g++ /usr/bin/g++-10
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-{{< dataFile "versions.minimum_version.gcc" 1 >}} 60 \
+  --slave /usr/bin/g++ g++ /usr/bin/g++-{{< dataFile "versions.minimum_version.gcc" 1 >}}
 ```
 
 If you do not do this you have to specify the compiler during the first CMake run:
 
 ```bash
-CC=gcc-10 CXX=c++-10 cmake ../ogs [more CMake options]
+CC=gcc-{{< dataFile "versions.minimum_version.gcc" 1 >}} CXX=c++-{{< dataFile "versions.minimum_version.gcc" 1 >}} cmake ../ogs [more CMake options]
 ```
 
 </div>
