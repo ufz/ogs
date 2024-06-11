@@ -132,7 +132,7 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    _ip_data.reserve(n_integration_points);
+    _ip_data.resize(n_integration_points);
     _secondary_data.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
@@ -146,11 +146,6 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                   ShapeMatricesTypePressure, DisplacementDim>(
             e, is_axially_symmetric, this->integration_method_);
 
-    auto const& solid_material =
-        MaterialLib::Solids::selectSolidConstitutiveRelation(
-            this->process_data_.solid_materials,
-            this->process_data_.material_ids, e.getID());
-
     auto const& medium =
         this->process_data_.media_map.getMedium(this->element_.getID());
 
@@ -159,7 +154,6 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
-        _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         _ip_data[ip].integration_weight =
@@ -399,7 +393,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            t, x_position, dt, temperature, this->solid_material_,
+            *this->material_states_[ip].material_state_variables);
         auto& eps =
             std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
                 .eps;
@@ -547,11 +542,11 @@ void RichardsMechanicsLocalAssembler<
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            t, x_position, dt, temperature, this->solid_material_,
+            *this->material_states_[ip].material_state_variables);
 
-        auto const beta_SR =
-            (1 - alpha) /
-            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+        auto const beta_SR = (1 - alpha) / this->solid_material_.getBulkModulus(
+                                               t, x_position, &C_el);
         variables.grain_compressibility = beta_SR;
 
         auto const rho_LR =
@@ -715,7 +710,8 @@ void RichardsMechanicsLocalAssembler<
         }
 
         variables.equivalent_plastic_strain =
-            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+            this->material_states_[ip]
+                .material_state_variables->getEquivalentPlasticStrain();
 
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             medium->property(MPL::PropertyType::permeability)
@@ -767,7 +763,8 @@ void RichardsMechanicsLocalAssembler<
 
             _ip_data[ip].updateConstitutiveRelation(
                 variables, t, x_position, dt, temperature, sigma_eff,
-                sigma_eff_prev, eps_m, eps_m_prev);
+                sigma_eff_prev, eps_m, eps_m_prev, this->solid_material_,
+                this->material_states_[ip].material_state_variables);
         }
 
         // p_SR
@@ -850,7 +847,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ConstitutiveData<DisplacementDim>& CD,
         StatefulData<DisplacementDim>& SD,
         StatefulDataPrev<DisplacementDim> const& SD_prev,
-        std::optional<MicroPorosityParameters> const& micro_porosity_parameters)
+        std::optional<MicroPorosityParameters> const& micro_porosity_parameters,
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material,
+        ProcessLib::ThermoRichardsMechanics::MaterialStateData<DisplacementDim>&
+            material_state_data)
 {
     auto const& liquid_phase = medium->phase("AqueousLiquid");
     auto const& solid_phase = medium->phase("Solid");
@@ -876,11 +877,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .template value<double>(variables, x_position, t, dt);
     *std::get<ProcessLib::ThermoRichardsMechanics::BiotData>(CD) = alpha;
 
-    auto const C_el =
-        ip_data.computeElasticTangentStiffness(t, x_position, dt, temperature);
+    auto const C_el = ip_data.computeElasticTangentStiffness(
+        t, x_position, dt, temperature, solid_material,
+        *material_state_data.material_state_variables);
 
-    auto const beta_SR = (1 - alpha) / ip_data.solid_material.getBulkModulus(
-                                           t, x_position, &C_el);
+    auto const beta_SR =
+        (1 - alpha) / solid_material.getBulkModulus(t, x_position, &C_el);
     variables.grain_compressibility = beta_SR;
     std::get<ProcessLib::ThermoRichardsMechanics::SolidCompressibilityData>(CD)
         .beta_SR = beta_SR;
@@ -1057,7 +1059,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     }
 
     variables.equivalent_plastic_strain =
-        ip_data.material_state_variables->getEquivalentPlasticStrain();
+        material_state_data.material_state_variables
+            ->getEquivalentPlasticStrain();
 
     double const k_rel =
         medium->property(MPL::PropertyType::relative_permeability)
@@ -1123,7 +1126,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto C = ip_data.updateConstitutiveRelation(
             variables, t, x_position, dt, temperature, sigma_eff,
-            sigma_eff_prev, eps_m, eps_m_prev);
+            sigma_eff_prev, eps_m, eps_m_prev, solid_material,
+            material_state_data.material_state_variables);
 
         *std::get<StiffnessTensor<DisplacementDim>>(CD) = std::move(C);
     }
@@ -1239,7 +1243,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& SD = this->current_states_[ip];
         auto const& SD_prev = this->prev_states_[ip];
         [[maybe_unused]] auto models = createConstitutiveModels(
-            this->process_data_, _ip_data[ip].solid_material);
+            this->process_data_, this->solid_material_);
 
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
@@ -1285,7 +1289,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             CapillaryPressureData<DisplacementDim>{
                 p_cap_ip, p_cap_prev_ip,
                 Eigen::Vector<double, DisplacementDim>::Zero()},
-            CD, SD, SD_prev, this->process_data_.micro_porosity_parameters);
+            CD, SD, SD_prev, this->process_data_.micro_porosity_parameters,
+            this->solid_material_, this->material_states_[ip]);
 
         {
             auto const& C = *std::get<StiffnessTensor<DisplacementDim>>(CD);
@@ -1579,8 +1584,10 @@ std::vector<double> RichardsMechanicsLocalAssembler<
         int const& n_components) const
 {
     return ProcessLib::getIntegrationPointDataMaterialStateVariables(
-        _ip_data, &IpData::material_state_variables, get_values_span,
-        n_components);
+        this->material_states_,
+        &ProcessLib::ThermoRichardsMechanics::MaterialStateData<
+            DisplacementDim>::material_state_variables,
+        get_values_span, n_components);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1746,11 +1753,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .template value<double>(variables, x_position, t, dt);
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature);
+            t, x_position, dt, temperature, this->solid_material_,
+            *this->material_states_[ip].material_state_variables);
 
-        auto const beta_SR =
-            (1 - alpha) /
-            _ip_data[ip].solid_material.getBulkModulus(t, x_position, &C_el);
+        auto const beta_SR = (1 - alpha) / this->solid_material_.getBulkModulus(
+                                               t, x_position, &C_el);
         variables.grain_compressibility = beta_SR;
 
         variables.effective_pore_pressure = -chi_S_L * p_cap_ip;
@@ -1867,7 +1874,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         variables.equivalent_plastic_strain =
-            _ip_data[ip].material_state_variables->getEquivalentPlasticStrain();
+            this->material_states_[ip]
+                .material_state_variables->getEquivalentPlasticStrain();
 
         auto const K_intrinsic = MPL::formEigenTensor<DisplacementDim>(
             medium->property(MPL::PropertyType::permeability)
@@ -1933,7 +1941,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
             _ip_data[ip].updateConstitutiveRelation(
                 variables, t, x_position, dt, temperature, sigma_eff,
-                sigma_eff_prev, eps_m, eps_m_prev);
+                sigma_eff_prev, eps_m, eps_m_prev, this->solid_material_,
+                this->material_states_[ip].material_state_variables);
         }
 
         auto const& b = this->process_data_.specific_body_force;
@@ -1986,7 +1995,7 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                 ShapeFunctionPressure, DisplacementDim>::
     getMaterialStateVariablesAt(unsigned integration_point) const
 {
-    return *_ip_data[integration_point].material_state_variables;
+    return *this->material_states_[integration_point].material_state_variables;
 }
 }  // namespace RichardsMechanics
 }  // namespace ProcessLib

@@ -154,10 +154,11 @@ public:
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
-            ip_data.solid_material.initializeInternalStateVariables(
-                t, x_position, *ip_data.material_state_variables);
+            this->solid_material_.initializeInternalStateVariables(
+                t, x_position,
+                *this->material_states_[ip].material_state_variables);
 
-            ip_data.pushBackState();
+            this->material_states_[ip].pushBackState();
 
             this->prev_states_[ip] = SD;
         }
@@ -171,9 +172,9 @@ public:
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
 
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        for (auto& s : this->material_states_)
         {
-            _ip_data[ip].pushBackState();
+            s.pushBackState();
         }
 
         // TODO move to the local assembler interface
@@ -282,8 +283,11 @@ private:
         ConstitutiveData<DisplacementDim>& CD,
         StatefulData<DisplacementDim>& SD,
         StatefulDataPrev<DisplacementDim> const& SD_prev,
-        std::optional<MicroPorosityParameters> const&
-            micro_porosity_parameters);
+        std::optional<MicroPorosityParameters> const& micro_porosity_parameters,
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material,
+        ProcessLib::ThermoRichardsMechanics::MaterialStateData<DisplacementDim>&
+            material_state_data);
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 

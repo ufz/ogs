@@ -25,35 +25,24 @@ template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
           typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
 struct IntegrationPointData final
 {
-    explicit IntegrationPointData(
-        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
-            solid_material)
-        : solid_material(solid_material),
-          material_state_variables(
-              solid_material.createMaterialStateVariables())
-    {
-    }
-
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
 
     typename ShapeMatricesTypePressure::NodalRowVectorType N_p;
     typename ShapeMatricesTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
-    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material;
-    std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables>
-        material_state_variables;
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
-
-    void pushBackState() { material_state_variables->pushBackState(); }
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     computeElasticTangentStiffness(
         double const t,
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
-        double const temperature)
+        double const temperature,
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material,
+        typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
+            MaterialStateVariables const& material_state_variables)
     {
         namespace MPL = MaterialPropertyLib;
 
@@ -72,7 +61,7 @@ struct IntegrationPointData final
 
         auto&& solution = solid_material.integrateStress(
             variable_array_prev, variable_array, t, x_position, dt,
-            *material_state_variables);
+            material_state_variables);
 
         if (!solution)
         {
@@ -104,7 +93,11 @@ struct IntegrationPointData final
         PrevState<
             ProcessLib::ThermoRichardsMechanics::
                 ConstitutiveStress_StrainTemperature::MechanicalStrainData<
-                    DisplacementDim>> const& eps_m_prev)
+                    DisplacementDim>> const& eps_m_prev,
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material,
+        std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
+            DisplacementDim>::MaterialStateVariables>& material_state_variables)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev.stress = sigma_eff_prev->sigma_eff;

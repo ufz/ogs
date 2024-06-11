@@ -35,7 +35,10 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         : process_data_(process_data),
           integration_method_(integration_method),
           element_(e),
-          is_axially_symmetric_(is_axially_symmetric)
+          is_axially_symmetric_(is_axially_symmetric),
+          solid_material_(MaterialLib::Solids::selectSolidConstitutiveRelation(
+              process_data_.solid_materials, process_data_.material_ids,
+              e.getID()))
     {
         unsigned const n_integration_points =
             integration_method_.getNumberOfPoints();
@@ -46,15 +49,10 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
         material_states_.reserve(n_integration_points);
 
-        auto const& solid_material =
-            MaterialLib::Solids::selectSolidConstitutiveRelation(
-                process_data_.solid_materials, process_data_.material_ids,
-                e.getID());
-
         for (unsigned ip = 0; ip < n_integration_points; ++ip)
         {
             material_states_.emplace_back(
-                solid_material.createMaterialStateVariables());
+                solid_material_.createMaterialStateVariables());
 
             // Set initial strain field to zero.
             std::get<StrainData<DisplacementDim>>(current_states_[ip]).eps =
@@ -94,6 +92,8 @@ protected:
     NumLib::GenericIntegrationMethod const& integration_method_;
     MeshLib::Element const& element_;
     bool const is_axially_symmetric_;
+
+    MaterialLib::Solids::MechanicsBase<DisplacementDim> const& solid_material_;
 
     std::vector<StatefulData<DisplacementDim>> current_states_;
     std::vector<StatefulDataPrev<DisplacementDim>> prev_states_;
