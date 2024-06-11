@@ -42,11 +42,6 @@ struct IntegrationPointData final
 
     typename ShapeMatricesTypePressure::GlobalDimVectorType v_darcy;
 
-    double liquid_pressure_m = std::numeric_limits<double>::quiet_NaN();
-    double liquid_pressure_m_prev = std::numeric_limits<double>::quiet_NaN();
-    double saturation_m = std::numeric_limits<double>::quiet_NaN();
-    double saturation_m_prev = std::numeric_limits<double>::quiet_NaN();
-
     double dry_density_solid = std::numeric_limits<double>::quiet_NaN();
     double dry_density_pellet_saturated =
         std::numeric_limits<double>::quiet_NaN();
@@ -59,12 +54,7 @@ struct IntegrationPointData final
         material_state_variables;
     double integration_weight = std::numeric_limits<double>::quiet_NaN();
 
-    void pushBackState()
-    {
-        saturation_m_prev = saturation_m;
-        liquid_pressure_m_prev = liquid_pressure_m;
-        material_state_variables->pushBackState();
-    }
+    void pushBackState() { material_state_variables->pushBackState(); }
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
     computeElasticTangentStiffness(

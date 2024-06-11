@@ -47,10 +47,13 @@ void updateSwellingStressAndVolumetricStrain(
     PrevState<ProcessLib::ThermoRichardsMechanics::
                   ConstitutiveStress_StrainTemperature::SwellingDataStateful<
                       DisplacementDim>> const& sigma_sw_prev,
-    PrevState<ProcessLib::ThermoRichardsMechanics::TransportPorosityData>
+    PrevState<ProcessLib::ThermoRichardsMechanics::TransportPorosityData> const
         phi_M_prev,
-    PrevState<ProcessLib::ThermoRichardsMechanics::PorosityData> phi_prev,
-    ProcessLib::ThermoRichardsMechanics::TransportPorosityData& phi_M)
+    PrevState<ProcessLib::ThermoRichardsMechanics::PorosityData> const phi_prev,
+    ProcessLib::ThermoRichardsMechanics::TransportPorosityData& phi_M,
+    PrevState<MicroPressure> const p_L_m_prev,
+    PrevState<MicroSaturation> const S_L_m_prev, MicroPressure& p_L_m,
+    MicroSaturation& S_L_m)
 {
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -86,15 +89,12 @@ void updateSwellingStressAndVolumetricStrain(
     if (medium.hasProperty(MPL::PropertyType::saturation_micro))
     {
         double const phi_m_prev = phi_prev->phi - phi_M_prev->phi;
-        double const p_L_m_prev = ip_data.liquid_pressure_m_prev;
-
-        auto const S_L_m_prev = ip_data.saturation_m_prev;
 
         auto const [delta_phi_m, delta_e_sw, delta_p_L_m, delta_sigma_sw] =
             computeMicroPorosity<DisplacementDim>(
                 identity2.transpose() * C_el.inverse(), rho_LR, mu,
-                *micro_porosity_parameters, alpha, phi, -p_cap_ip, p_L_m_prev,
-                variables_prev, S_L_m_prev, phi_m_prev, x_position, t, dt,
+                *micro_porosity_parameters, alpha, phi, -p_cap_ip, **p_L_m_prev,
+                variables_prev, **S_L_m_prev, phi_m_prev, x_position, t, dt,
                 medium.property(MPL::PropertyType::saturation_micro),
                 solid_phase.property(MPL::PropertyType::swelling_stress_rate));
 
@@ -102,17 +102,15 @@ void updateSwellingStressAndVolumetricStrain(
         variables_prev.transport_porosity = phi_M_prev->phi;
         variables.transport_porosity = phi_M.phi;
 
-        auto& p_L_m = ip_data.liquid_pressure_m;
-        p_L_m = p_L_m_prev + delta_p_L_m;
+        *p_L_m = **p_L_m_prev + delta_p_L_m;
         {  // Update micro saturation.
             MPL::VariableArray variables_prev;
-            variables_prev.capillary_pressure = -p_L_m_prev;
+            variables_prev.capillary_pressure = -**p_L_m_prev;
             MPL::VariableArray variables;
-            variables.capillary_pressure = -p_L_m;
+            variables.capillary_pressure = -*p_L_m;
 
-            ip_data.saturation_m =
-                medium.property(MPL::PropertyType::saturation_micro)
-                    .template value<double>(variables, x_position, t, dt);
+            *S_L_m = medium.property(MPL::PropertyType::saturation_micro)
+                         .template value<double>(variables, x_position, t, dt);
         }
         sigma_sw.sigma_sw = sigma_sw_prev->sigma_sw + delta_sigma_sw;
     }
@@ -362,8 +360,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         // setting pG to 1 atm
         // TODO : rewrite equations s.t. p_L = pG-p_cap
         variables.gas_phase_pressure = 1.0e5;
-        _ip_data[ip].liquid_pressure_m_prev = -p_cap_ip;
-        _ip_data[ip].liquid_pressure_m = -p_cap_ip;
+
+        {
+            auto& p_L_m = std::get<MicroPressure>(this->current_states_[ip]);
+            auto& p_L_m_prev =
+                std::get<PrevState<MicroPressure>>(this->prev_states_[ip]);
+            **p_L_m_prev = -p_cap_ip;
+            *p_L_m = -p_cap_ip;
+        }
 
         auto const temperature =
             medium->property(MPL::PropertyType::reference_temperature)
@@ -382,10 +386,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         {
             MPL::VariableArray vars;
             vars.capillary_pressure = p_cap_ip;
-            double const S_L_m =
-                medium->property(MPL::PropertyType::saturation_micro)
-                    .template value<double>(vars, x_position, t, dt);
-            _ip_data[ip].saturation_m_prev = S_L_m;
+
+            auto& S_L_m = std::get<MicroSaturation>(this->current_states_[ip]);
+            auto& S_L_m_prev =
+                std::get<PrevState<MicroSaturation>>(this->prev_states_[ip]);
+
+            *S_L_m = medium->property(MPL::PropertyType::saturation_micro)
+                         .template value<double>(vars, x_position, t, dt);
+            *S_L_m_prev = S_L_m;
         }
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
@@ -993,12 +1001,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             SD_prev);
         auto& transport_porosity = std::get<
             ProcessLib::ThermoRichardsMechanics::TransportPorosityData>(SD);
+        auto& p_L_m = std::get<MicroPressure>(SD);
+        auto const p_L_m_prev = std::get<PrevState<MicroPressure>>(SD_prev);
+        auto& S_L_m = std::get<MicroSaturation>(SD);
+        auto const S_L_m_prev = std::get<PrevState<MicroSaturation>>(SD_prev);
 
         updateSwellingStressAndVolumetricStrain<DisplacementDim>(
             ip_data, *medium, solid_phase, C_el, rho_LR, mu,
             micro_porosity_parameters, alpha, phi, p_cap_ip, variables,
             variables_prev, x_position, t, dt, sigma_sw, sigma_sw_prev,
-            transport_porosity_prev, phi_prev, transport_porosity);
+            transport_porosity_prev, phi_prev, transport_porosity, p_L_m_prev,
+            S_L_m_prev, p_L_m, S_L_m);
     }
 
     if (medium->hasProperty(MPL::PropertyType::transport_porosity))
@@ -1490,7 +1503,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             double const alpha_bar =
                 this->process_data_.micro_porosity_parameters
                     ->mass_exchange_coefficient;
-            auto const p_L_m = _ip_data[ip].liquid_pressure_m;
+            auto const p_L_m =
+                *std::get<MicroPressure>(this->current_states_[ip]);
             local_rhs.template segment<pressure_size>(pressure_index)
                 .noalias() -=
                 N_p.transpose() * alpha_bar / mu * (-p_cap_ip - p_L_m) * w;
@@ -1501,7 +1515,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .noalias() += N_p.transpose() * alpha_bar / mu * N_p * w;
             if (p_cap_ip != p_cap_prev_ip)
             {
-                double const p_L_m_prev = _ip_data[ip].liquid_pressure_m_prev;
+                auto const p_L_m_prev = **std::get<PrevState<MicroPressure>>(
+                    this->prev_states_[ip]);
                 local_Jac
                     .template block<pressure_size, pressure_size>(
                         pressure_index, pressure_index)
@@ -1765,7 +1780,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::saturation_m, cache);
+        this->current_states_,
+        [](auto& tuple) -> auto& { return *std::get<MicroSaturation>(tuple); },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -1790,7 +1807,9 @@ std::vector<double> const& RichardsMechanicsLocalAssembler<
         std::vector<double>& cache) const
 {
     return ProcessLib::getIntegrationPointScalarData(
-        _ip_data, &IpData::liquid_pressure_m, cache);
+        this->current_states_,
+        [](auto& tuple) -> auto& { return *std::get<MicroPressure>(tuple); },
+        cache);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -2093,13 +2112,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             auto& transport_porosity = std::get<
                 ProcessLib::ThermoRichardsMechanics::TransportPorosityData>(
                 this->current_states_[ip]);
+            auto& p_L_m = std::get<MicroPressure>(this->current_states_[ip]);
+            auto const p_L_m_prev =
+                std::get<PrevState<MicroPressure>>(this->prev_states_[ip]);
+            auto& S_L_m = std::get<MicroSaturation>(this->current_states_[ip]);
+            auto const S_L_m_prev =
+                std::get<PrevState<MicroSaturation>>(this->prev_states_[ip]);
 
             updateSwellingStressAndVolumetricStrain<DisplacementDim>(
                 _ip_data[ip], *medium, solid_phase, C_el, rho_LR, mu,
                 this->process_data_.micro_porosity_parameters, alpha, phi,
                 p_cap_ip, variables, variables_prev, x_position, t, dt,
                 sigma_sw, sigma_sw_prev, transport_porosity_prev, phi_prev,
-                transport_porosity);
+                transport_porosity, p_L_m_prev, S_L_m_prev, p_L_m, S_L_m);
         }
 
         if (medium->hasProperty(MPL::PropertyType::transport_porosity))
