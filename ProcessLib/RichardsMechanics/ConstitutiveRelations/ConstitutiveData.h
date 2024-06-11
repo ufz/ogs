@@ -30,7 +30,11 @@ template <int DisplacementDim>
 using StatefulData = std::tuple<
     StrainData<DisplacementDim>,
     ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
-        EffectiveStressData<DisplacementDim>>;
+        EffectiveStressData<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
+        SwellingDataStateful<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
+        MechanicalStrainData<DisplacementDim>>;
 
 template <int DisplacementDim>
 using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<

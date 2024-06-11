@@ -29,18 +29,7 @@ struct IntegrationPointData final
           material_state_variables(
               solid_material.createMaterialStateVariables())
     {
-        // Initialize current time step values
-        static const int kelvin_vector_size =
-            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
-        sigma_sw.setZero(kelvin_vector_size);
-        eps_m.setZero(kelvin_vector_size);
-
-        // Previous time step values are not initialized and are set later.
-        eps_m_prev.resize(kelvin_vector_size);
     }
-
-    typename BMatricesType::KelvinVectorType sigma_sw, sigma_sw_prev;
-    typename BMatricesType::KelvinVectorType eps_m, eps_m_prev;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
@@ -74,8 +63,6 @@ struct IntegrationPointData final
 
     void pushBackState()
     {
-        eps_m_prev = eps_m;
-        sigma_sw_prev = sigma_sw;
         saturation_prev = saturation;
         saturation_m_prev = saturation_m;
         porosity_prev = porosity;
@@ -132,13 +119,21 @@ struct IntegrationPointData final
                 DisplacementDim>& sigma_eff,
         PrevState<ProcessLib::ThermoRichardsMechanics::
                       ConstitutiveStress_StrainTemperature::EffectiveStressData<
-                          DisplacementDim>> const& sigma_eff_prev)
+                          DisplacementDim>> const& sigma_eff_prev,
+        ProcessLib::ThermoRichardsMechanics::
+            ConstitutiveStress_StrainTemperature::MechanicalStrainData<
+                DisplacementDim> const&
+        /*eps_m*/,
+        PrevState<
+            ProcessLib::ThermoRichardsMechanics::
+                ConstitutiveStress_StrainTemperature::MechanicalStrainData<
+                    DisplacementDim>> const& eps_m_prev)
     {
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev.stress = sigma_eff_prev->sigma_eff;
         variable_array_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-                eps_m_prev);
+                eps_m_prev->eps_m);
         variable_array_prev.temperature = temperature;
 
         auto&& solution = solid_material.integrateStress(
