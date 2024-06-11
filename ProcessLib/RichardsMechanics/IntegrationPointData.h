@@ -12,7 +12,10 @@
 
 #include <memory>
 
+#include "ConstitutiveRelations/Base.h"
+#include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MathLib/KelvinVector.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 
 namespace ProcessLib
 {
