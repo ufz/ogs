@@ -559,12 +559,14 @@
         <parameter>
             <name>b0</name>
             <type>Constant</type>
-            <values> 0.829037572555042 0.559192903470747</values>
+            <!-- 34 degrees bedding angle -->
+            <values> 0.829037572555041692 0.55919290347074683016</values>
         </parameter>
         <parameter>
             <name>b1</name>
             <type>Constant</type>
-            <values>-0.559192903470747 0.829037572555042</values>
+            <!-- 34 degrees bedding angle -->
+            <values>-0.55919290347074683016 0.829037572555041692</values>
         </parameter>
         <parameter>
             <name>ThermalConductivityClay</name>
