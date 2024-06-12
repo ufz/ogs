@@ -289,6 +289,7 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.ipynb RUNTIME 1)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.md RUNTIME 15)
     if(NOT WIN32)
