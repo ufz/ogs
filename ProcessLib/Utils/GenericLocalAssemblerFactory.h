@@ -123,6 +123,11 @@ public:
                 integration_method_provider
                     .template getIntegrationMethod<MeshElement>(e);
 
+            static_assert(!std::is_abstract_v<LocAsmImpl>,
+                          "The given local assembler implementation is an "
+                          "abstract class, which cannot be instantiated. Make "
+                          "sure to implement all virtual methods!");
+
             static_assert(
                 std::is_constructible_v<
                     LocAsmImpl, MeshLib::Element const&, std::size_t,

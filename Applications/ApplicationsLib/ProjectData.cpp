@@ -381,7 +381,15 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         globals["ogs_prj_directory"] = project_directory;
         globals["ogs_mesh_directory"] = mesh_directory;
         globals["ogs_script_directory"] = script_directory;
-        py::eval_file(script_path, scope);
+        try
+        {
+            py::eval_file(script_path, scope);
+        }
+        catch (py::error_already_set const& e)
+        {
+            OGS_FATAL("Error evaluating python script {}: {}", script_path,
+                      e.what());
+        }
     }
 
     //! \ogs_file_param{prj__curves}
