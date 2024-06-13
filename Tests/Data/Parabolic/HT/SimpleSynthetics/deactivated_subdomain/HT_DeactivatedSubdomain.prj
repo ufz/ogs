@@ -197,11 +197,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-                    <t_end>10</t_end>
+                    <t_end>1</t_end>
                     <timesteps>
                         <pair>
                             <repeat>1000</repeat>
-                            <delta_t>0.1</delta_t>
+                            <delta_t>0.01</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -211,16 +211,8 @@
             <type>VTK</type>
             <prefix>Test_HT_DeactivatedSubdomain_{:meshname}</prefix>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
-            <timesteps>
-                <pair>
-                    <repeat> 1 </repeat>
-                    <each_steps> 40 </each_steps>
-                </pair>
-            </timesteps>
+            <fixed_output_times>0.19 0.29 0.31 0.59 0.69 0.71 1</fixed_output_times>
             <variables>
-                <variable>T</variable>
-                <variable>p</variable>
-                <variable>darcy_velocity</variable>
             </variables>
             <meshes>
                 <mesh>square_1x1_quad_16</mesh>
@@ -234,9 +226,14 @@
             <expression>0</expression>
         </parameter>
         <parameter>
+            <name>T1</name>
+            <type>Function</type>
+            <expression>1</expression>
+        </parameter>
+        <parameter>
             <name>P0</name>
             <type>Function</type>
-            <expression>0</expression>
+            <expression>1</expression>
         </parameter>
         <parameter>
             <name>PressureLeft</name>
@@ -246,12 +243,12 @@
         <parameter>
             <name>PressureRight</name>
             <type>Function</type>
-            <expression>1</expression>
+            <expression>10*t</expression>
         </parameter>
         <parameter>
             <name>TemperatureLeft</name>
             <type>Function</type>
-            <expression>t</expression>
+            <expression>10*t</expression>
         </parameter>
     </parameters>
     <process_variables>
@@ -263,10 +260,11 @@
             <deactivated_subdomains>
                 <deactivated_subdomain>
                     <time_interval>
-                        <start>2</start>
-                        <end>3</end>
+                        <start>0.2</start>
+                        <end>0.3</end>
                     </time_interval>
                     <material_ids>1</material_ids>
+                    <boundary_parameter>P0</boundary_parameter>
                 </deactivated_subdomain>
             </deactivated_subdomains>
             <boundary_conditions>
@@ -290,10 +288,11 @@
             <deactivated_subdomains>
                 <deactivated_subdomain>
                     <time_interval>
-                        <start>6</start>
-                        <end>7</end>
+                        <start>0.6</start>
+                        <end>0.7</end>
                     </time_interval>
                     <material_ids>1</material_ids>
+                    <boundary_parameter>T1</boundary_parameter>
                 </deactivated_subdomain>
             </deactivated_subdomains>
             <boundary_conditions>
@@ -338,9 +337,27 @@
         </vtkdiff>
         <vtkdiff>
             <regex>Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</regex>
-            <field>T</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <field>darcy_velocity</field>
+            <absolute_tolerance>5e-14</absolute_tolerance>
             <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</regex>
+            <field>T</field>
+            <absolute_tolerance>2e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</regex>
+            <field>p_active</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</regex>
+            <field>T_active</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

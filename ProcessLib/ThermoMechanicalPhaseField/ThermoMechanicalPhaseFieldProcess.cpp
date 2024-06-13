@@ -200,12 +200,11 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -245,12 +244,10 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
         &getDOFTableByProcessID(_mechanics_related_process_id));
     dof_tables.emplace_back(&getDOFTableByProcessID(_phase_field_process_id));
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 }
 
 template <int DisplacementDim>
@@ -267,11 +264,9 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
         return;
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::preTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTable(process_id),
+        _local_assemblers, getActiveElementIDs(), getDOFTable(process_id),
         *x[process_id], t, dt);
 }
 
@@ -290,10 +285,9 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 
     DBUG("PostTimestep ThermoMechanicalPhaseFieldProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ThermoMechanicalPhaseFieldLocalAssemblerInterface::postTimestep,
-        _local_assemblers, pv.getActiveElementIDs(), getDOFTables(x.size()), x,
+        _local_assemblers, getActiveElementIDs(), getDOFTables(x.size()), x,
         x_prev, t, dt, process_id);
 }
 
@@ -311,11 +305,10 @@ void ThermoMechanicalPhaseFieldProcess<DisplacementDim>::
 
     DBUG("PostNonLinearSolver ThermoMechanicalPhaseFieldProcess.");
     // Calculate strain, stress or other internal variables of mechanics.
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::postNonLinearSolver, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
+        getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
 

@@ -133,12 +133,11 @@ void ThermoRichardsFlowProcess::assembleConcreteProcess(
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -154,9 +153,7 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
         "scheme.");
     dof_tables.emplace_back(_local_to_global_index_map.get());
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
-    _pvma.assembleWithJacobian(_local_assemblers, pv.getActiveElementIDs(),
+    _pvma.assembleWithJacobian(_local_assemblers, getActiveElementIDs(),
                                dof_tables, t, dt, x, x_prev, process_id, M, K,
                                b, Jac);
 
@@ -182,10 +179,9 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
 
     DBUG("PostTimestep ThermoRichardsFlowProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
+        getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
 
@@ -197,15 +193,11 @@ void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
     {
         return;
     }
-    DBUG(
-        "Compute the secondary variables for "
-        "ThermoRichardsFlowProcess.");
-
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
+    DBUG("Compute the secondary variables for ThermoRichardsFlowProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
+        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 }
 

@@ -77,11 +77,8 @@ public:
             return;
         }
 
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
-
         _surfaceflux->integrate(x, t, *this, process_id, _integration_order,
-                                _mesh, pv.getActiveElementIDs());
+                                _mesh, getActiveElementIDs());
     }
 
 private:

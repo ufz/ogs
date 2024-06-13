@@ -14,6 +14,7 @@
 
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "Process.h"
 
 namespace
 {
@@ -88,19 +89,18 @@ void AssemblyMixinBase::initializeAssemblyOnSubmeshes(
         createResiduumVectors(bulk_mesh, residuum_names, pvs);
 }
 
-void AssemblyMixinBase::updateActiveElements(
-    ProcessLib::ProcessVariable const& pv)
+void AssemblyMixinBase::updateActiveElements(Process const& process)
 {
-    DBUG("AssemblyMixinBase updateActiveElements().");
+    DBUG("AssemblyMixin updateActiveElements().");
 
     if (ids_state_ == ActiveElementIDsState::UNINITIALIZED)
     {
-        updateActiveElementsImpl(pv);
+        updateActiveElementsImpl(process);
         return;
     }
 
     ActiveElementIDsState const new_state =
-        pv.getActiveElementIDs().empty()
+        process.getActiveElementIDs().empty()
             ? ActiveElementIDsState::NO_DEACTIVATED_SUBDOMAINS
             : ActiveElementIDsState::HAS_DEACTIVATED_SUBDOMAINS;
 
@@ -117,15 +117,14 @@ void AssemblyMixinBase::updateActiveElements(
     // * no -> yes - now there are deactivated subdomains
     // * yes -> no - no deactivated subdomains anymore
     // * yes -> yes - deactivated subdomains might have changed
-    updateActiveElementsImpl(pv);
+    updateActiveElementsImpl(process);
 }
 
-void AssemblyMixinBase::updateActiveElementsImpl(
-    ProcessLib::ProcessVariable const& pv)
+void AssemblyMixinBase::updateActiveElementsImpl(Process const& process)
 {
     DBUG("AssemblyMixinBase updateActiveElementsImpl().");
 
-    auto const& active_element_ids = pv.getActiveElementIDs();
+    auto const& active_element_ids = process.getActiveElementIDs();
 
     ActiveElementIDsState const new_state =
         active_element_ids.empty()

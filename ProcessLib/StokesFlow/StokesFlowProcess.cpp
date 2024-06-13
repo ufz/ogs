@@ -140,12 +140,11 @@ void StokesFlowProcess<GlobalDim>::assembleConcreteProcess(
         dof_tables.push_back(_local_to_global_index_map.get());
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
-        K, b);
+        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M, K,
+        b);
 }
 
 template <int GlobalDim>
@@ -181,11 +180,10 @@ void StokesFlowProcess<GlobalDim>::computeSecondaryVariableConcrete(
         dof_tables.push_back(_local_to_global_index_map.get());
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &StokesFlowLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id);
 }
 
 template <int GlobalDim>
@@ -208,10 +206,9 @@ void StokesFlowProcess<GlobalDim>::postTimestepConcreteProcess(
         dof_tables.push_back(_local_to_global_index_map.get());
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &StokesFlowLocalAssemblerInterface::postTimestep, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
+        getActiveElementIDs(), dof_tables, x, x_prev, t, dt, process_id);
 }
 
 template <int GlobalDim>

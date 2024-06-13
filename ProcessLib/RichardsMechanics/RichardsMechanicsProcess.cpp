@@ -326,11 +326,9 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
     DBUG("SetInitialConditions RichardsMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::setInitialConditions, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTables(x.size()), x, t, process_id);
+        getActiveElementIDs(), getDOFTables(x.size()), x, t, process_id);
 }
 
 template <int DisplacementDim>
@@ -343,12 +341,11 @@ void RichardsMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
 
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
         b);
 }
 
@@ -383,13 +380,11 @@ void RichardsMechanicsProcess<DisplacementDim>::
         }
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     auto const dof_tables = getDOFTables(x.size());
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -426,11 +421,9 @@ void RichardsMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     {
         DBUG("PostTimestep RichardsMechanicsProcess.");
 
-        ProcessLib::ProcessVariable const& pv =
-            getProcessVariables(process_id)[0];
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &LocalAssemblerIF::postTimestep, _local_assemblers,
-            pv.getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
+            getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
             process_id);
     }
 }
@@ -449,10 +442,9 @@ void RichardsMechanicsProcess<DisplacementDim>::
 
     DBUG("Compute the secondary variables for RichardsMechanicsProcess.");
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
-        pv.getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
+        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 }
 

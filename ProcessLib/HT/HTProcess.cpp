@@ -102,12 +102,11 @@ void HTProcess::assembleConcreteProcess(
         dof_tables.emplace_back(_local_to_global_index_map.get());
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        pv.getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M,
-        K, b);
+        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id, M, K,
+        b);
 }
 
 void HTProcess::assembleWithJacobianConcreteProcess(
@@ -129,11 +128,10 @@ void HTProcess::assembleWithJacobianConcreteProcess(
     }
 
     // Call global assembler for each local assembly item.
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-        x_prev, process_id, M, K, b, Jac);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        process_id, M, K, b, Jac);
 }
 
 std::tuple<NumLib::LocalToGlobalIndexMap*, bool>
@@ -203,10 +201,8 @@ void HTProcess::postTimestepConcreteProcess(
         return;
     }
 
-    ProcessLib::ProcessVariable const& pv = getProcessVariables(process_id)[0];
-
     _surfaceflux->integrate(x, t, *this, process_id, _integration_order, _mesh,
-                            pv.getActiveElementIDs());
+                            getActiveElementIDs());
 }
 }  // namespace HT
 }  // namespace ProcessLib
