@@ -185,8 +185,19 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
         mesh_file, true /* compute_element_neighbors */));
     if (!mesh)
     {
+        std::filesystem::path abspath{mesh_file};
+        try
+        {
+            abspath = std::filesystem::absolute(mesh_file);
+        }
+        catch (std::filesystem::filesystem_error const& e)
+        {
+            ERR("Determining the absolute path of '{}' failed: {}", mesh_file,
+                e.what());
+        }
+
         OGS_FATAL("Could not read mesh from '{:s}' file. No mesh added.",
-                  mesh_file);
+                  abspath.string());
     }
 
 #ifdef DOXYGEN_DOCU_ONLY

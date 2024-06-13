@@ -203,12 +203,7 @@ bool hasFileExtension(std::string const& extension, std::string const& filename)
 std::string copyPathToFileName(const std::string& file_name,
                                const std::string& source)
 {
-    auto filePath = std::filesystem::path(file_name);
-    if (filePath.has_parent_path())
-    {
-        return filePath.string();
-    }
-    return (std::filesystem::path(source) /= filePath).string();
+    return (std::filesystem::path(source) / file_name).string();
 }
 
 std::string extractPath(std::string const& pathname)
