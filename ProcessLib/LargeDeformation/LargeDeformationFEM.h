@@ -177,12 +177,26 @@ public:
         }
     }
 
-    typename ConstitutiveRelations::ConstitutiveData<DisplacementDim>
-    updateConstitutiveRelations(
+    void computeOutputStrainData(
         BMatrixType const&
             B /*B_{linear}+B_{nonlinear}/2 for Green-Lagrange strain*/,
-        GradientMatrixType const& G, GradientVectorType const& grad_u,
+        GradientVectorType const& grad_u,
         Eigen::Ref<Eigen::VectorXd const> const& u,
+        typename ConstitutiveRelations::OutputData<DisplacementDim>&
+            output_data) const
+    {
+        // Note: Here B=B_{linear}+B_{nonlinear}/2  For Green-Lagrange strain.
+        output_data.eps_data.eps = B * u;
+        output_data.deformation_gradient_data.deformation_gradient =
+            grad_u + MathLib::VectorizedTensor::identity<DisplacementDim>();
+        output_data.deformation_gradient_data.volume_ratio =
+            MathLib::VectorizedTensor::determinant(
+                output_data.deformation_gradient_data.deformation_gradient);
+    }
+
+    typename ConstitutiveRelations::ConstitutiveData<DisplacementDim>
+    updateConstitutiveRelations(
+        GradientMatrixType const& G,
         Eigen::Ref<Eigen::VectorXd const> const& u_prev,
         ParameterLib::SpatialPosition const& x_position, double const t,
         double const dt,
@@ -207,14 +221,6 @@ public:
         typename ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>
             tmp;
         typename ConstitutiveRelations::ConstitutiveData<DisplacementDim> CD;
-
-        // Note: Here B=B_{linear}+B_{nonlinear}/2  For Green-Lagrange strain.
-        output_data.eps_data.eps = B * u;
-        output_data.deformation_gradient_data.deformation_gradient =
-            grad_u + MathLib::VectorizedTensor::identity<DisplacementDim>();
-        output_data.deformation_gradient_data.volume_ratio =
-            MathLib::VectorizedTensor::determinant(
-                output_data.deformation_gradient_data.deformation_gradient);
 
         CS.eval(
             models, t, dt, x_position,              //
@@ -300,11 +306,13 @@ public:
                 typename BMatricesType::BMatrixType>(
                 dNdx, N, grad_u, x_coord, this->is_axially_symmetric_);
 
+            computeOutputStrainData(B_0 + 0.5 * B_N, grad_u, u,
+                                    this->output_data_[ip]);
+
             auto const CD = updateConstitutiveRelations(
-                B_0 + 0.5 * B_N, G, grad_u, u, u_prev, x_position, t, dt,
-                constitutive_setting, medium, this->current_states_[ip],
-                this->prev_states_[ip], this->material_states_[ip],
-                this->output_data_[ip]);
+                G, u_prev, x_position, t, dt, constitutive_setting, medium,
+                this->current_states_[ip], this->prev_states_[ip],
+                this->material_states_[ip], this->output_data_[ip]);
 
             auto const B = B_0 + B_N;
 
@@ -375,11 +383,12 @@ public:
                                      dNdx, N, grad_u, x_coord,
                                      this->is_axially_symmetric_);
 
+            computeOutputStrainData(B, grad_u, local_x, this->output_data_[ip]);
+
             updateConstitutiveRelations(
-                B, G, grad_u, local_x, local_x_prev, x_position, t, dt,
-                constitutive_setting, medium, this->current_states_[ip],
-                this->prev_states_[ip], this->material_states_[ip],
-                this->output_data_[ip]);
+                G, local_x_prev, x_position, t, dt, constitutive_setting,
+                medium, this->current_states_[ip], this->prev_states_[ip],
+                this->material_states_[ip], this->output_data_[ip]);
 
             this->material_states_[ip].pushBackState();
         }
