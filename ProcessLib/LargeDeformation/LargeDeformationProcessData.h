@@ -53,6 +53,9 @@ struct LargeDeformationProcessData
 
     ParameterLib::Parameter<double> const* const reference_temperature;
 
+    /// An indicator to use the F bar method to tackle the  volumetric locking.
+    const bool use_f_bar;
+
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
         nullptr, nullptr, nullptr};
     MeshLib::PropertyVector<double>* principal_stress_values = nullptr;
