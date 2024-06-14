@@ -243,6 +243,9 @@ authors:
       family-names: Urpi
 identifiers:
     - type: doi
+      value: 10.5281/zenodo.11652195
+      description: Zenodo DOI for 6.5.2
+    - type: doi
       value: 10.5281/zenodo.10890088
       description: Zenodo DOI for 6.5.1
     - type: doi
@@ -310,4 +313,4 @@ url: "https://www.opengeosys.org"
 license: BSD-3-Clause
 version: 6.5.2
 date-released: "2024-06-14"
-doi: 10.5281/zenodo.10890088
+doi: 10.5281/zenodo.591265
