@@ -324,23 +324,31 @@ namespace MaterialLib::Solids::MFront
 MFrontConfig createMFrontConfig(
     int const displacement_dim,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    BaseLib::ConfigTree const& config,
-    bool const library_path_is_relative_to_prj_file)
+    BaseLib::ConfigTree const& config)
 {
     INFO("### MFRONT ########################################################");
 
     //! \ogs_file_param{material__solid__constitutive_relation__type}
     config.checkConfigParameter("type", "MFront");
 
-    auto const library_name =
-        //! \ogs_file_param{material__solid__constitutive_relation__MFront__library}
-        config.getConfigParameterOptional<std::string>("library");
+    //! \ogs_file_param{material__solid__constitutive_relation__MFront__library}
+    auto const library = config.getConfigSubtreeOptional("library");
+
+    bool const library_path_is_relative_to_prj_file =
+        library /* If no library tag is specified in the prj file, the lib
+                   shipped with OGS is used, whose path is not relative to the
+                   project file. */
+        &&
+        //! \ogs_file_attr{material__solid__constitutive_relation__MFront__library__path_is_relative_to_prj_file}
+        library->getConfigAttribute("path_is_relative_to_prj_file", true);
+
+    std::string const library_name =
+        library ? library->getValue<std::string>() : "libOgsMFrontBehaviour";
+
     auto const lib_path =
-        library_name ? (library_path_is_relative_to_prj_file
-                            ? BaseLib::joinPaths(BaseLib::getProjectDirectory(),
-                                                 *library_name)
-                            : *library_name)
-                     : "libOgsMFrontBehaviour";
+        library_path_is_relative_to_prj_file
+            ? BaseLib::joinPaths(BaseLib::getProjectDirectory(), library_name)
+            : library_name;
 
     mgis::behaviour::Hypothesis hypothesis;
     if (displacement_dim == 2)

@@ -131,7 +131,7 @@ static auto createMFront(
         3, boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
         boost::mp11::mp_list<MSM::Stress, MSM::Saturation>,
         boost::mp11::mp_list<MSM::Temperature>>(
-        parameters, local_coordinate_system, config_tree, false);
+        parameters, local_coordinate_system, config_tree);
 }
 
 TEST(MaterialLib_ThermoPoroElasticityMFront, IsochoricDrainedHeating)

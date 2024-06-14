@@ -27,13 +27,10 @@ std::unique_ptr<SolidConstitutiveRelation<DisplacementDim>> createMFrontGeneric(
     namespace MSM = MaterialLib::Solids::MFront;
     using namespace boost::mp11;
 
-    bool const library_path_is_relative_to_prj_file = true;
-
     return MSM::createMFrontGeneric<
         DisplacementDim, mp_list<MSM::Strain, MSM::LiquidPressure>,
         mp_list<MSM::Stress, MSM::Saturation>, mp_list<MSM::Temperature>>(
-        parameters, local_coordinate_system, config,
-        library_path_is_relative_to_prj_file);
+        parameters, local_coordinate_system, config);
 }
 
 template <int DisplacementDim>

@@ -29,7 +29,7 @@ auto createMFront(std::string const& behaviour)
     auto const xml = fmt::format(R"XML(
         <type>MFront</type>
         <behaviour>{}</behaviour>
-        <library>libOgsMFrontBehaviourForUnitTests</library>
+        <library path_is_relative_to_prj_file="false">libOgsMFrontBehaviourForUnitTests</library>
         <material_properties />
         )XML",
                                  behaviour);
@@ -41,7 +41,7 @@ auto createMFront(std::string const& behaviour)
     return MSM::createMFrontGeneric<
         3, boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
         boost::mp11::mp_list<MSM::Stress, MSM::Saturation>, ExtStateVars>(
-        parameters, local_coordinate_system, config_tree, false);
+        parameters, local_coordinate_system, config_tree);
 }
 
 struct TestDataBase
