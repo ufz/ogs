@@ -78,7 +78,7 @@ deploy docs:
         cp scripts/doc/_redirects build/docs
         netlify deploy --prod --dir=build/docs --site $DOXYGEN_NETLIFY_SITE_ID
       else
-        netlify link --name ogs-doxygen-${$CI_COMMIT_TAG//./-}
+        netlify link --name ogs-doxygen-${CI_COMMIT_TAG//./-}
         netlify deploy --prod --dir=build/docs
       fi
 
