@@ -469,29 +469,45 @@ if(OGS_BUILD_UTILS)
 endif()
 
 if(OGS_USE_NETCDF)
-    find_package(netCDF CONFIG REQUIRED)
-    find_library(NETCDF_LIBRARIES_CXX NAMES netcdf_c++4 netcdf-cxx4)
-    if(NOT NETCDF_LIBRARIES_CXX)
-        CPMAddPackage(
-            NAME netcdf-cxx4
-            GIT_REPOSITORY https://github.com/Unidata/netcdf-cxx4
-            VERSION 4.3.1
-            EXCLUDE_FROM_ALL YES SOURCE_SUBDIR cxx4
-            OPTIONS "NCXX_ENABLE_TESTS OFF" SYSTEM TRUE
-        )
-        set_target_properties(
-            netCDF::netcdf PROPERTIES INTERFACE_LINK_LIBRARIES ""
-        ) # fix win installed config
-        target_link_libraries(netcdf-cxx4 netCDF::netcdf)
+    if(NOT GUIX_BUILD)
+        find_package(netCDF CONFIG REQUIRED)
+        find_library(NETCDF_LIBRARIES_CXX NAMES netcdf_c++4 netcdf-cxx4)
+        if(NOT NETCDF_LIBRARIES_CXX)
+            CPMAddPackage(
+                NAME netcdf-cxx4
+                GIT_REPOSITORY https://github.com/Unidata/netcdf-cxx4
+                VERSION 4.3.1
+                EXCLUDE_FROM_ALL YES SOURCE_SUBDIR cxx4
+                OPTIONS "NCXX_ENABLE_TESTS OFF" SYSTEM TRUE
+            )
+            set_target_properties(
+                netCDF::netcdf PROPERTIES INTERFACE_LINK_LIBRARIES ""
+            ) # fix win installed config
+            target_link_libraries(netcdf-cxx4 netCDF::netcdf)
+        else()
+            find_path(NETCDF_INCLUDES_CXX NAMES netcdf)
+            add_library(netcdf-cxx4 INTERFACE IMPORTED)
+            target_include_directories(
+                netcdf-cxx4 SYSTEM INTERFACE ${NETCDF_INCLUDES_CXX}
+            )
+            target_link_libraries(
+                netcdf-cxx4 INTERFACE ${NETCDF_LIBRARIES_CXX} netCDF::netcdf
+            )
+        endif()
     else()
-        find_path(NETCDF_INCLUDES_CXX NAMES netcdf)
+        find_library(
+            NETCDF_LIBRARIES_CXX NAMES netcdf_c++4 netcdf-cxx4 REQUIRED
+        )
+        find_path(NETCDF_INCLUDES_CXX "ncVar.h" REQUIRED)
+        message(
+            STATUS
+                "NetCDF-cxx4: ${NETCDF_LIBRARIES_CXX} | ${NETCDF_INCLUDES_CXX}"
+        )
         add_library(netcdf-cxx4 INTERFACE IMPORTED)
         target_include_directories(
             netcdf-cxx4 SYSTEM INTERFACE ${NETCDF_INCLUDES_CXX}
         )
-        target_link_libraries(
-            netcdf-cxx4 INTERFACE ${NETCDF_LIBRARIES_CXX} netCDF::netcdf
-        )
+        target_link_libraries(netcdf-cxx4 INTERFACE ${NETCDF_LIBRARIES_CXX})
     endif()
 endif()
 
