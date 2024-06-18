@@ -18,7 +18,7 @@ repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
-test = ["pytest", "numpy"]
+test = ["pytest", "numpy<2"]
 
 [tool.scikit-build]
 build-dir = "_skbuild/{wheel_tag}"

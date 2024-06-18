@@ -23,11 +23,11 @@ build guix:
     # SteadyStateDiffusion only!
     - |
       if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci::guix\ only.* ]]; then
-        guix time-machine -C scripts/guix/channels.scm -- build ogs --with-source=ogs@6.5.0-testing=$PWD
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc@6.5.0-testing=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-serial --with-source=ogs=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc=$PWD
       else
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-ssd --with-source=ogs-ssd@6.5.0-testing=$PWD
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-ssd --with-source=ogs-petsc-ssd@6.5.0-testing=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-ssd --with-source=ogs-ssd=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-ssd --with-source=ogs-petsc-ssd=$PWD
       fi
 
 deploy container:
@@ -42,7 +42,7 @@ deploy container:
     - if: $CI_COMMIT_TAG
   parallel:
     matrix:
-      - GUIX_PACKAGE: ["ogs", "ogs-petsc", "ogs-mkl", "ogs-petsc-mkl"]
+      - GUIX_PACKAGE: ["ogs-serial", "ogs-petsc", "ogs-mkl", "ogs-petsc-mkl"]
   script:
     - which guix
     - guix describe
