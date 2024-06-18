@@ -28,7 +28,7 @@ The package definitions for OGS are defined in [this repo](https://gitlab.openge
 ```bash
 # builds ogs serial config
 guix time-machine -C scripts/guix/channels.scm -- \
-  build ogs --with-source=ogs@6.4.4-testing=$PWD
+  build ogs-serial --with-source=ogs@6.4.4-testing=$PWD
 # SteadyStateDiffuion process only:
 guix time-machine -C scripts/guix/channels.scm -- \
   build ogs-ssd --with-source=ogs-ssd@6.4.4-testing=$PWD
@@ -40,7 +40,7 @@ guix time-machine -C scripts/guix/channels.scm -- \
 The version string starting after `@` can be set individually. To get the dependency tree:
 
 ```bash
-guix time-machine -C scripts/guix/channels.scm -- graph ogs | dot -Tpdf > dag.pdf
+guix time-machine -C scripts/guix/channels.scm -- graph ogs-serial | dot -Tpdf > dag.pdf
 ```
 
 ### From web URL
@@ -55,7 +55,7 @@ guix time-machine -C ./channels.scm -- build ogs \
 
 ```bash
 guix time-machine -C scripts/guix/channels.scm -- \
-  shell --container --nesting --network --development ogs \ # OR ogs-petsc
+  shell --container --nesting --network --development ogs-serial \ # OR ogs-petsc
   openssl nss-certs coreutils bash git
 # Now in guix shell with all dependencies installed:
 export CMAKE_PRESET_BUILD_DIR_PREFIX=guix/ # presets then create e.g. ../build/guix/release
@@ -66,7 +66,7 @@ cmake --build --preset release
 As a shortcut you can use this script:
 
 ```bash
-./scripts/guix/ogs-env.sh ogs # for serial or `ogs-petsc` for parallel
+./scripts/guix/ogs-env.sh ogs-serial # or `ogs-petsc` for parallel
 ```
 
 You can also play with e.g. different versions of dependencies, here changing OpenMPI to 4.1.6:
