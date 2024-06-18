@@ -15,4 +15,4 @@ module load Python/3.10.8
 # Python dependencies
 virtualenv .venv
 source .venv/bin/activate
-pip install numpy<2
+pip install "numpy<2"
