@@ -11,14 +11,19 @@
 #pragma once
 
 #include "Density.h"
+#include "DrySolidDensity.h"
 #include "LiquidDensity.h"
+#include "MicroPressure.h"
+#include "MicroSaturation.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 #include "SaturationSecantDerivative.h"
 #include "StiffnessTensor.h"
@@ -30,7 +35,15 @@ template <int DisplacementDim>
 using StatefulData = std::tuple<
     StrainData<DisplacementDim>,
     ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
-        EffectiveStressData<DisplacementDim>>;
+        EffectiveStressData<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
+        SwellingDataStateful<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
+        MechanicalStrainData<DisplacementDim>,
+    ProcessLib::ThermoRichardsMechanics::SaturationData,
+    ProcessLib::ThermoRichardsMechanics::PorosityData,
+    ProcessLib::ThermoRichardsMechanics::TransportPorosityData, MicroPressure,
+    MicroSaturation>;
 
 template <int DisplacementDim>
 using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<
@@ -38,7 +51,9 @@ using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
-using OutputData = std::tuple<>;
+using OutputData = std::tuple<
+    ProcessLib::ThermoRichardsMechanics::DarcyLawData<DisplacementDim>,
+    DrySolidDensity>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>

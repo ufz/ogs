@@ -16,6 +16,8 @@
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
+#include "ProcessLib/Reflection/ReflectionForExtrapolation.h"
+#include "ProcessLib/Reflection/ReflectionForIPWriters.h"
 #include "ProcessLib/Utils/CreateLocalAssemblersTaylorHood.h"
 #include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 #include "RichardsMechanicsFEM.h"
@@ -48,43 +50,10 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
-    // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
-    // properties, s.t. there is no "overlapping" with cell/point data.
-    // See getOrCreateMeshProperty.
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "sigma_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers, &LocalAssemblerIF::getSigma));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "saturation_ip", 1 /*n components*/, integration_order,
-            _local_assemblers, &LocalAssemblerIF::getSaturation));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "porosity_ip", 1 /*n components*/, integration_order,
-            _local_assemblers, &LocalAssemblerIF::getPorosity));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "transport_porosity_ip", 1 /*n components*/, integration_order,
-            _local_assemblers, &LocalAssemblerIF::getTransportPorosity));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "swelling_stress_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
-            &LocalAssemblerIF::getSwellingStress));
-
-    _integration_point_writer.emplace_back(
-        std::make_unique<MeshLib::IntegrationPointWriter>(
-            "epsilon_ip",
-            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
-            &LocalAssemblerIF::getEpsilon));
+    ProcessLib::Reflection::addReflectedIntegrationPointWriters<
+        DisplacementDim>(LocalAssemblerIF::getReflectionDataForOutput(),
+                         _integration_point_writer, integration_order,
+                         _local_assemblers);
 }
 
 template <int DisplacementDim>
@@ -202,6 +171,10 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
+    ProcessLib::Reflection::addReflectedSecondaryVariables<DisplacementDim>(
+        LocalAssemblerIF::getReflectionDataForOutput(), _secondary_variables,
+        getExtrapolator(), _local_assemblers);
+
     auto add_secondary_variable = [&](std::string const& name,
                                       int const num_components,
                                       auto get_ip_values_function)
@@ -212,41 +185,6 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
                              _local_assemblers,
                              std::move(get_ip_values_function)));
     };
-
-    add_secondary_variable("sigma",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerIF::getIntPtSigma);
-
-    add_secondary_variable("swelling_stress",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerIF::getIntPtSwellingStress);
-
-    add_secondary_variable("epsilon",
-                           MathLib::KelvinVector::KelvinVectorType<
-                               DisplacementDim>::RowsAtCompileTime,
-                           &LocalAssemblerIF::getIntPtEpsilon);
-
-    add_secondary_variable("velocity", DisplacementDim,
-                           &LocalAssemblerIF::getIntPtDarcyVelocity);
-
-    add_secondary_variable("saturation", 1,
-                           &LocalAssemblerIF::getIntPtSaturation);
-
-    add_secondary_variable("micro_saturation", 1,
-                           &LocalAssemblerIF::getIntPtMicroSaturation);
-
-    add_secondary_variable("micro_pressure", 1,
-                           &LocalAssemblerIF::getIntPtMicroPressure);
-
-    add_secondary_variable("porosity", 1, &LocalAssemblerIF::getIntPtPorosity);
-
-    add_secondary_variable("transport_porosity", 1,
-                           &LocalAssemblerIF::getIntPtTransportPorosity);
-
-    add_secondary_variable("dry_density_solid", 1,
-                           &LocalAssemblerIF::getIntPtDryDensitySolid);
 
     //
     // enable output of internal variables defined by material models

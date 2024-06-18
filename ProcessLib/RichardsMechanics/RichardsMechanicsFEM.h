@@ -90,12 +90,6 @@ public:
         bool const is_axially_symmetric,
         RichardsMechanicsProcessData<DisplacementDim>& process_data);
 
-    /// \return the number of read integration points.
-    std::size_t setIPDataInitialConditions(
-        std::string_view const name,
-        double const* values,
-        int const integration_order) override;
-
     void setInitialConditionsConcrete(Eigen::VectorXd const local_x,
                                       double const t,
                                       int const process_id) override;
@@ -154,32 +148,13 @@ public:
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
-            ip_data.solid_material.initializeInternalStateVariables(
-                t, x_position, *ip_data.material_state_variables);
+            this->solid_material_.initializeInternalStateVariables(
+                t, x_position,
+                *this->material_states_[ip].material_state_variables);
 
-            ip_data.pushBackState();
+            this->material_states_[ip].pushBackState();
 
             this->prev_states_[ip] = SD;
-        }
-    }
-
-    void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
-                              Eigen::VectorXd const& /*local_x_prev*/,
-                              double const /*t*/, double const /*dt*/,
-                              int const /*process_id*/) override
-    {
-        unsigned const n_integration_points =
-            this->integration_method_.getNumberOfPoints();
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            _ip_data[ip].pushBackState();
-        }
-
-        // TODO move to the local assembler interface
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            this->prev_states_[ip] = this->current_states_[ip];
         }
     }
 
@@ -195,83 +170,6 @@ public:
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
     }
-
-    std::vector<double> getSigma() const override;
-
-    std::vector<double> const& getIntPtDarcyVelocity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getSaturation() const override;
-    std::vector<double> const& getIntPtSaturation(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getMicroSaturation() const override;
-    std::vector<double> const& getIntPtMicroSaturation(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getMicroPressure() const override;
-    std::vector<double> const& getIntPtMicroPressure(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getPorosity() const override;
-    std::vector<double> const& getIntPtPorosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getTransportPorosity() const override;
-    std::vector<double> const& getIntPtTransportPorosity(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> const& getIntPtSigma(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getSwellingStress() const override;
-    std::vector<double> const& getIntPtSwellingStress(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    std::vector<double> getEpsilon() const override;
-    std::vector<double> const& getIntPtEpsilon(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
-
-    int getMaterialID() const override;
-
-    std::vector<double> getMaterialStateVariableInternalState(
-        std::function<std::span<double>(
-            typename MaterialLib::Solids::MechanicsBase<DisplacementDim>::
-                MaterialStateVariables&)> const& get_values_span,
-        int const& n_components) const override;
-
-    std::vector<double> const& getIntPtDryDensitySolid(
-        const double t,
-        std::vector<GlobalVector*> const& x,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
-        std::vector<double>& cache) const override;
 
 private:
     /**
@@ -335,14 +233,8 @@ private:
         std::vector<double>& local_K_data, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
-    unsigned getNumberOfIntegrationPoints() const override;
-
-    typename MaterialLib::Solids::MechanicsBase<
-        DisplacementDim>::MaterialStateVariables const&
-    getMaterialStateVariablesAt(unsigned integration_point) const override;
-
 private:
-    void assembleWithJacobianEvalConstitutiveSetting(
+    static void assembleWithJacobianEvalConstitutiveSetting(
         double const t, double const dt,
         ParameterLib::SpatialPosition const& x_position, IpData& ip_data,
         MPL::VariableArray& variables, MPL::VariableArray& variables_prev,
@@ -350,7 +242,12 @@ private:
         CapillaryPressureData<DisplacementDim> const& p_cap_data,
         ConstitutiveData<DisplacementDim>& CD,
         StatefulData<DisplacementDim>& SD,
-        StatefulDataPrev<DisplacementDim> const& SD_prev);
+        StatefulDataPrev<DisplacementDim> const& SD_prev,
+        std::optional<MicroPorosityParameters> const& micro_porosity_parameters,
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            solid_material,
+        ProcessLib::ThermoRichardsMechanics::MaterialStateData<DisplacementDim>&
+            material_state_data);
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
