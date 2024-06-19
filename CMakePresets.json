@@ -345,9 +345,6 @@
     {
       "name": "release",
       "configurePreset": "release",
-      "output": {
-        "outputOnFailure": true
-      },
       "filter": {
         "include": {
           "label": "default"

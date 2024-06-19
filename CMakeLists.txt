@@ -237,7 +237,6 @@ endif()
 set(_envrc_content
     "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source ${PROJECT_BINARY_DIR}/.venv/bin/activate"
     "export PATH=$PATH:${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
-    "export CTEST_OUTPUT_ON_FAILURE=1"
 )
 if(TFEL_WITH_PYTHON)
     set(_envrc_content "${_envrc_content}"
