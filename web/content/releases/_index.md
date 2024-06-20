@@ -28,7 +28,7 @@ icon = "fab fa-windows"
 
 [[head_downloads]]
 name = "Latest container CLI"
-url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs.squashfs"
+url = "https://minio.ufz.de/ogs/public/container/ogs/master/ogs-serial.squashfs"
 note = "Download and run .squashfs-file with [Singularity / Apptainer](/docs/userguide/basics/container/)"
 icon = "far fa-container-storage"
 
