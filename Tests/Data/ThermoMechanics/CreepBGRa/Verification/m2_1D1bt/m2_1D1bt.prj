@@ -85,10 +85,6 @@
                             <delta_t>7.5e-3</delta_t>
                         </pair>
                         <pair>
-                            <repeat>1</repeat>
-                            <delta_t>7.49999999999866773e-3</delta_t>
-                        </pair>
-                        <pair>
                             <repeat>205</repeat>
                             <delta_t>7.5e-3</delta_t>
                         </pair>
