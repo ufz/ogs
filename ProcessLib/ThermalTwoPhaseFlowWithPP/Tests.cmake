@@ -1,3 +1,6 @@
+# Disabled until issue https://gitlab.opengeosys.org/ogs/ogs/-/issues/3486 is
+# resolved.
+set(ISSUE_3486_RESOLVED FALSE)
 AddTest(
     NAME 2D_Thermal_TwoPhase_heatpipe_small
     PATH Parabolic/ThermalTwoPhaseFlowPP/HeatPipe
@@ -5,7 +8,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS Twophase_HeatPipe_quad_curve_small.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT OGS_USE_MPI AND ISSUE_3486_RESOLVED
     DIFF_DATA
     ref_t_10000.000000.vtu thermaltwophaseflow_small_ts_100_t_10000.000000.vtu capillary_pressure capillary_pressure 1e-8 1e-10
     ref_t_10000.000000.vtu thermaltwophaseflow_small_ts_100_t_10000.000000.vtu gas_pressure gas_pressure 1e-8 1e-10
@@ -19,7 +22,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS Twophase_HeatPipe_quad_curve_large.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT OGS_USE_MPI AND ISSUE_3486_RESOLVED
     DIFF_DATA
     ref_t_1400000.000000.vtu thermaltwophaseflow_large_ts_1400_t_1400000.000000.vtu capillary_pressure capillary_pressure 9e-5 5e-10
     ref_t_1400000.000000.vtu thermaltwophaseflow_large_ts_1400_t_1400000.000000.vtu gas_pressure gas_pressure 5e-7 1e-10
