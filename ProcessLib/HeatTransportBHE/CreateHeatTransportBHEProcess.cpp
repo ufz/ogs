@@ -104,6 +104,39 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__use_server_communication}
         config.getConfigParameter<bool>("use_server_communication", false);
 
+    auto const using_algebraic_bc =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__use_algebraic_bc}
+        config.getConfigParameter<bool>("use_algebraic_bc", false);
+
+    auto const weighting_factor =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__weighting_factor}
+        config.getConfigParameter<float>("weighting_factor", 100.0);
+
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__linear}
+        config.getConfigParameter<bool>("linear", false);
+    if (is_linear)
+    {
+        if (!using_algebraic_bc)
+        {
+            OGS_FATAL(
+                "You specified that the process simulated by OGS is linear. "
+                "For the Heat-Transport-BHE process this can only be done "
+                "together with setting the use_algebraic_bc option to true.")
+        }
+        else
+        {
+            WARN(
+                "You specified that the process simulated by OGS is linear. "
+                "With that optimization the process will be assembled only "
+                "once and the non-linear solver will do only one iteration per "
+                "time step. No non-linearities will be resolved and OGS will "
+                "not detect if there are any non-linearities. It is your "
+                "responsibility to ensure that the assembled equation systems "
+                "are linear, indeed! There is no safety net!");
+        }
+    }
+
     for (
         auto const& bhe_config :
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
@@ -218,7 +251,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     HeatTransportBHEProcessData process_data(
         std::move(media_map), std::move(bhes), py_object, using_tespy,
-        using_server_communication);
+        using_server_communication,
+        {using_algebraic_bc, weighting_factor, is_linear});
 
     SecondaryVariableCollection secondary_variables;
 
