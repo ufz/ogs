@@ -42,7 +42,7 @@ else()
     )
 endif()
 
-if(GUIX_BUILD)
+if(GUIX_BUILD OR CONDA_BUILD)
     add_library(tclap INTERFACE IMPORTED) # header-only, nothing else to do
 else()
     CPMFindPackage(
@@ -69,7 +69,7 @@ else()
         NAME tetgen GITHUB_REPOSITORY ufz/tetgen
         GIT_TAG 213548f5bca1ec00269603703f0fec1272181587 SYSTEM TRUE
     )
-    if(tetgen_ADDED)
+    if(tetgen_ADDED AND NOT CONDA_BUILD)
         install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
     endif()
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
@@ -153,7 +153,7 @@ if(Eigen3_ADDED)
 endif()
 
 if(OGS_USE_MFRONT)
-    if(GUIX_BUILD)
+    if(GUIX_BUILD OR CONDA_BUILD)
         find_package(MFrontGenericInterface REQUIRED)
     else()
         set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
@@ -316,7 +316,7 @@ endif()
 #     find_package(ParaView REQUIRED)
 # endif()
 # ~~~
-if(GUIX_BUILD)
+if(GUIX_BUILD OR CONDA_BUILD)
     add_library(exprtk INTERFACE IMPORTED)
 else()
     CPMAddPackage(
@@ -331,7 +331,7 @@ else()
     endif()
 endif()
 
-if(GUIX_BUILD)
+if(GUIX_BUILD OR CONDA_BUILD)
     find_package(range-v3 REQUIRED)
 else()
     CPMFindPackage(
@@ -343,13 +343,15 @@ else()
     )
 endif()
 
-if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
-    CPMAddPackage(
-        NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-        GIT_TAG 9754b4da43c6adfb65d201ed920b5f6ea27b38b9
-    )
-    if(vtkdiff_ADDED)
-        install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
+if(NOT (GUIX_BUILD OR CONDA_BUILD))
+    if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS))
+        CPMAddPackage(
+            NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
+            GIT_TAG 9754b4da43c6adfb65d201ed920b5f6ea27b38b9
+        )
+        if(vtkdiff_ADDED)
+            install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
+        endif()
     endif()
 endif()
 
@@ -419,7 +421,7 @@ if(MSVC)
 endif()
 
 if(OGS_BUILD_UTILS)
-    if(NOT GUIX_BUILD)
+    if(NOT GUIX_BUILD AND NOT CONDA_BUILD)
         set(_metis_options "MSVC ${WIN32}")
         if(WIN32)
             list(APPEND _metis_options "BUILD_SHARED_LIBS OFF")
@@ -469,7 +471,7 @@ if(OGS_BUILD_UTILS)
 endif()
 
 if(OGS_USE_NETCDF)
-    if(NOT GUIX_BUILD)
+    if(NOT GUIX_BUILD AND NOT CONDA_BUILD)
         find_package(netCDF CONFIG REQUIRED)
         find_library(NETCDF_LIBRARIES_CXX NAMES netcdf_c++4 netcdf-cxx4)
         if(NOT NETCDF_LIBRARIES_CXX)

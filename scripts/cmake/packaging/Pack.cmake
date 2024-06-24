@@ -75,16 +75,18 @@ if(WIN32)
     file(COPY ${PYTHON_RUNTIME_LIBS}
          DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
     )
-elseif(NOT GUIX_BUILD)
+elseif(NOT GUIX_BUILD AND NOT CONDA_BUILD)
     install(FILES ${Python_LIBRARIES} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()
 
 configure_file(Documentation/README.txt.in ${PROJECT_BINARY_DIR}/README.txt)
-install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
 
-if(NOT GUIX_BUILD)
+if(NOT GUIX_BUILD AND NOT CONDA_BUILD)
     # May contain machine specific content, e.g. MPIEXEC_MAX_NUMPROCS
     install(FILES ${PROJECT_BINARY_DIR}/CMakeCache.txt TYPE INFO)
+    install(FILES ${PROJECT_BINARY_DIR}/cmake_args TYPE INFO OPTIONAL)
 endif()
-install(FILES ${PROJECT_BINARY_DIR}/cmake_args TYPE INFO OPTIONAL)
-install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses.txt TYPE INFO)
+if(NOT CONDA_BUILD)
+    install(FILES ${PROJECT_BINARY_DIR}/third_party_licenses.txt TYPE INFO)
+    install(FILES ${PROJECT_BINARY_DIR}/README.txt DESTINATION .)
+endif()
