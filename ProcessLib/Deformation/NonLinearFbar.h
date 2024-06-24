@@ -25,10 +25,45 @@ namespace ProcessLib
 {
 namespace NonLinearFbar
 {
+template <int DisplacementDim, int NPOINTS, typename VectorTypeForFbar,
+          typename GradientVectorType, typename DNDX_Type>
+VectorTypeForFbar computeQVector(DNDX_Type const& dNdx,
+                                 GradientVectorType const& F,
+                                 bool const /*is_axially_symmetric*/)
+{
+    // Note: MathLib::VectorizedTensor::toTensor returns a (3 x 3) matrix by
+    //       Eigen::Matrix3D. The size of the return matrix is wrong, which
+    //       should be (DisplacementDim x DisplacementDim).
+    // Besides, Eigen::Matrix member inverse does not work with the mapped
+    // matrix, e.g. that by using topLeftCorner. Therefore a hard copy is
+    // needed for the following inverse, i.e. declaring F0inv as type
+    // Eigen::MatrixXd instead of type auto.
+    //
+    Eigen::MatrixXd const F_matrix =
+        MathLib::VectorizedTensor::toTensor<DisplacementDim>(F)
+            .template topLeftCorner<DisplacementDim, DisplacementDim>();
+    auto const Finv = F_matrix.inverse();
+
+    VectorTypeForFbar FInvN =
+        VectorTypeForFbar::Zero(DisplacementDim * NPOINTS);
+    for (int i = 0; i < NPOINTS; ++i)
+    {
+        auto const dNidx = dNdx.col(i);
+        for (int k = 0; k < DisplacementDim; k++)
+        {
+            auto const Finv_k_col = Finv.col(k);
+
+            FInvN[k * NPOINTS + i] = Finv_k_col.dot(dNidx);
+        }
+    }
+
+    return FInvN;
+}
+
 template <int DisplacementDim, typename GradientVectorType,
-          typename GradientMatrixType, typename GlobalDimNodalMatrixType,
+          typename GradientMatrixType, typename VectorTypeForFbar,
           typename ShapeFunction, typename ShapeMatricesType>
-std::tuple<double, GlobalDimNodalMatrixType> computeFBarInitialVariables(
+std::tuple<double, VectorTypeForFbar> computeFBarInitialVariables(
     bool const compute_detF0_only, Eigen::VectorXd const& u,
     NumLib::GenericIntegrationMethod const& integration_method,
     MeshLib::Element const& element, bool const is_axially_symmetric)
@@ -62,89 +97,45 @@ std::tuple<double, GlobalDimNodalMatrixType> computeFBarInitialVariables(
         return {MathLib::VectorizedTensor::determinant(F0), {}};
     }
 
-    // Note: MathLib::VectorizedTensor::toTensor returns a (3 x 3) matrix by
-    //       Eigen::Matrix3D. The size of the return matrix is wrong, which
-    //       should be (DisplacementDim x DisplacementDim).
-    // Besides, Eigen::Matrix member inverse does not work with the mapped
-    // matrix, e.g. that by using topLeftCorner. Therefore a hard copy is
-    // needed for the following inverse, i.e. declaring F0inv as type
-    // Eigen::MatrixXd instead of type auto.
-    //
-    Eigen::MatrixXd const F0_matrix =
-        MathLib::VectorizedTensor::toTensor<DisplacementDim>(F0)
-            .template topLeftCorner<DisplacementDim, DisplacementDim>();
-    auto const F0inv = F0_matrix.inverse();
-
-    GlobalDimNodalMatrixType F0InvN =
-        GlobalDimNodalMatrixType::Zero(DisplacementDim, ShapeFunction::NPOINTS);
-
-    for (unsigned i = 0; i < ShapeFunction::NPOINTS; ++i)
-    {
-        auto const dNidx_0 = dNdx_0.col(i);
-
-        for (int k = 0; k < DisplacementDim; k++)
-        {
-            auto const Finv_k_col = F0inv.col(k);
-            F0InvN(k, i) = Finv_k_col.transpose() * dNidx_0;
-        }
-    }
+    VectorTypeForFbar F0InvN =
+        computeQVector<DisplacementDim, ShapeFunction::NPOINTS,
+                       VectorTypeForFbar, GradientVectorType,
+                       typename ShapeMatricesType::GlobalDimNodalMatrixType>(
+            dNdx_0, F0, is_axially_symmetric);
 
     return {MathLib::VectorizedTensor::determinant(F0), F0InvN};
 }
 
-template <int DisplacementDim, int NPOINTS, typename GlobalDimNodalMatrixType,
-          typename GradientVectorType, typename BMatrixType, typename DNDX_Type>
-BMatrixType computeBFbarMatrix(
-    double const alpha, DNDX_Type const& dNdx, GradientVectorType const& F,
-    GlobalDimNodalMatrixType const& F0InvN,
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps,
+template <int DisplacementDim>
+MathLib::KelvinVector::KelvinVectorType<DisplacementDim> identityForF(
     bool const is_axially_symmetric)
 {
-    BMatrixType BFbar = BMatrixType::Zero(
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
-        NPOINTS * DisplacementDim);
-
-    // Note: MathLib::VectorizedTensor::toTensor returns a (3 x 3) matrix by
-    //       Eigen::Matrix3D. The size of the return matrix is wrong, which
-    //       should be (DisplacementDim x DisplacementDim).
-    // Besides, Eigen::Matrix member inverse does not work with the mapped
-    // matrix, e.g. that by using topLeftCorner. Therefore a hard copy is
-    // needed for the following inverse, i.e. declaring F0inv as type
-    // Eigen::MatrixXd instead of type auto.
-    //
-    Eigen::MatrixXd const F_matrix =
-        MathLib::VectorizedTensor::toTensor<DisplacementDim>(F)
-            .template topLeftCorner<DisplacementDim, DisplacementDim>();
-    auto const Finv = F_matrix.inverse();
-
-    double const fac = alpha * alpha / 3;
-    for (int i = 0; i < NPOINTS; ++i)
+    if (DisplacementDim == 3 || is_axially_symmetric)
     {
-        auto const dNidx = dNdx.col(i);
-        for (int k = 0; k < DisplacementDim; k++)
-        {
-            // K_{col k}
-            //
-            // (F^{-1})_{nk} in vector form
-            auto const Finv_k_col = Finv.col(k);
-            // (F^{-1})_{nk}\cdot \nabla N^{i}
-            double const Finv_nk_grad_N_i =
-                F0InvN(k, i) - Finv_k_col.transpose() * dNidx;
-
-            auto BFbar_col = BFbar.col(i + k * NPOINTS);
-            BFbar_col = 2.0 * eps;
-            BFbar_col.template segment<3>(0) += Eigen::Vector3d::Constant(1.0);
-            BFbar_col *= fac * Finv_nk_grad_N_i;
-
-            if constexpr (DisplacementDim == 2)
-            {
-                BFbar_col(2) = 0.0;
-            }
-        }
+        return MathLib::KelvinVector::Invariants<
+            MathLib::KelvinVector::kelvin_vector_dimensions(
+                DisplacementDim)>::identity2;
     }
 
-    (void)is_axially_symmetric;  // Not considered yet
-    return BFbar;
+    auto identity2 = MathLib::KelvinVector::Invariants<
+        MathLib::KelvinVector::kelvin_vector_dimensions(
+            DisplacementDim)>::identity2;
+
+    identity2[2] = 0.0;
+
+    return identity2;
 }
+
+template <int DisplacementDim>
+MathLib::KelvinVector::KelvinVectorType<DisplacementDim> compute2EPlusI(
+    double const alpha_p2,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& eps_bar,
+    bool const is_axially_symmetric)
+{
+    return (2.0 * eps_bar +
+            identityForF<DisplacementDim>(is_axially_symmetric)) /
+           alpha_p2;
+}
+
 }  // namespace NonLinearFbar
 }  // namespace ProcessLib

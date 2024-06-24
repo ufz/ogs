@@ -100,6 +100,9 @@ public:
     using GMatricesType = GMatrixPolicyType<ShapeFunction, DisplacementDim>;
     using GradientVectorType = typename GMatricesType::GradientVectorType;
     using GradientMatrixType = typename GMatricesType::GradientMatrixType;
+
+    using VectorTypeForFbar = typename BMatricesType::NodalForceVectorType;
+
     using IpData =
         IntegrationPointData<BMatricesType, ShapeMatricesType, DisplacementDim>;
 
@@ -204,13 +207,30 @@ public:
         }
 
         double const detF = output_data.deformation_gradient_data.volume_ratio;
-        // double const alpha = std::cbrt(detF0 / detF);
-        double const alpha = DisplacementDim == 3 ? std::cbrt(detF0 / detF)
-                                                  : std::sqrt(detF0 / detF);
+        double const J_ratio = detF0 / detF;
 
-        output_data.deformation_gradient_data.deformation_gradient *= alpha;
+        if (J_ratio < .0)
+        {
+            OGS_FATAL(
+                "det(F0)/det(F) is negative with det(F0) = {:g}, and det(F) = "
+                "{:g} ",
+                detF0, detF);
+        }
+
+        double const alpha =
+            DisplacementDim == 3 ? std::cbrt(J_ratio) : std::sqrt(J_ratio);
+
+        output_data.deformation_gradient_data.deformation_gradient
+            .template segment<DisplacementDim * DisplacementDim>(0) *= alpha;
         output_data.deformation_gradient_data.volume_ratio *=
             std::pow(alpha, DisplacementDim);
+
+        double const alpha_p2 = alpha * alpha;
+        output_data.eps_data.eps =
+            alpha_p2 * output_data.eps_data.eps +
+            0.5 * (alpha_p2 - 1) *
+                NonLinearFbar::identityForF<DisplacementDim>(
+                    this->is_axially_symmetric_);
         return alpha;
     }
 
@@ -266,9 +286,8 @@ public:
             "implemented.");
     }
 
-    std::optional<std::tuple<double, GlobalDimNodalMatrixType>>
-    computeFBarVariables(bool const compute_detF0_only,
-                         Eigen::VectorXd const& local_x) const
+    std::optional<std::tuple<double, VectorTypeForFbar>> computeFBarVariables(
+        bool const compute_detF0_only, Eigen::VectorXd const& local_x) const
     {
         if (!(this->process_data_.use_f_bar))
         {
@@ -277,7 +296,7 @@ public:
 
         return NonLinearFbar::computeFBarInitialVariables<
             DisplacementDim, GradientVectorType, GradientMatrixType,
-            GlobalDimNodalMatrixType, ShapeFunction, ShapeMatricesType>(
+            VectorTypeForFbar, ShapeFunction, ShapeMatricesType>(
             compute_detF0_only, local_x, this->integration_method_,
             this->element_, this->is_axially_symmetric_);
     }
@@ -356,40 +375,71 @@ public:
                 medium, this->current_states_[ip], this->prev_states_[ip],
                 this->material_states_[ip], this->output_data_[ip]);
 
-            auto const B = B_0 + B_N;
+            BMatrixType B = B_0 + B_N;
 
             auto const& sigma = this->current_states_[ip].stress_data.sigma;
             auto const& b = *CD.volumetric_body_force;
             auto const& C = CD.s_mech_data.stiffness_tensor;
 
-            local_b.noalias() -=
-                (B.transpose() * sigma - N_u_op(N).transpose() * b) * w;
-
             auto const sigma_geom =
                 computeSigmaGeom<DisplacementDim, ShapeMatricesType>(
                     MathLib::KelvinVector::kelvinVectorToTensor(sigma));
 
-            local_Jac.noalias() += G.transpose() * sigma_geom * G * w;
-
-            local_Jac.noalias() += alpha * alpha * B.transpose() * C * B * w;
-
-            if (f_bar_variables)
+            if (!f_bar_variables)
             {
-                auto const F0InvN =
-                    std::get<GlobalDimNodalMatrixType>(*f_bar_variables);
-                auto const BFbar = NonLinearFbar::computeBFbarMatrix<
-                    DisplacementDim, ShapeFunction::NPOINTS,
-                    GlobalDimNodalMatrixType, GradientVectorType,
-                    typename BMatricesType::BMatrixType,
-                    typename ShapeMatricesType::GlobalDimNodalMatrixType>(
-                    alpha, dNdx,
-                    this->output_data_[ip]
-                            .deformation_gradient_data.deformation_gradient /
-                        alpha,
-                    F0InvN, this->output_data_[ip].eps_data.eps,
-                    this->is_axially_symmetric_);
+                local_b.noalias() -=
+                    (B.transpose() * sigma - N_u_op(N).transpose() * b) * w;
 
-                local_Jac.noalias() += B.transpose() * C * BFbar * w;
+                local_Jac.noalias() += G.transpose() * sigma_geom * G * w;
+
+                local_Jac.noalias() += B.transpose() * C * B * w;
+            }
+            else  // with F bar
+            {
+                double const alpha_p2 = alpha * alpha;
+                local_Jac.noalias() +=
+                    alpha_p2 * G.transpose() * sigma_geom * G * w;
+
+                auto const q0 = std::get<VectorTypeForFbar>(*f_bar_variables);
+
+                auto const& F =
+                    this->output_data_[ip]
+                        .deformation_gradient_data.deformation_gradient;
+                VectorTypeForFbar q = NonLinearFbar::computeQVector<
+                    DisplacementDim, ShapeFunction::NPOINTS, VectorTypeForFbar,
+                    GradientVectorType,
+                    typename ShapeMatricesType::GlobalDimNodalMatrixType>(
+                    dNdx, F, this->is_axially_symmetric_);
+
+                auto const q0_q = q0 - q;
+
+                auto const S_q = sigma * (q0_q).transpose();
+
+                local_Jac.noalias() +=
+                    2.0 * alpha_p2 * S_q.transpose() * B * w / DisplacementDim;
+
+                auto const twoEplsI =
+                    NonLinearFbar::compute2EPlusI<DisplacementDim>(
+                        alpha_p2, this->output_data_[ip].eps_data.eps,
+                        this->is_axially_symmetric_);
+
+                // B bar:
+                BMatrixType const Bbar =
+                    alpha_p2 *
+                    (B + twoEplsI * (q0_q).transpose() / DisplacementDim);
+
+                local_Jac.noalias() +=
+                    2.0 * Bbar.transpose() * S_q * w / DisplacementDim;
+
+                local_Jac.noalias() += Bbar.transpose() * C * Bbar * w;
+
+                local_Jac.noalias() -=
+                    alpha_p2 * sigma.dot(twoEplsI) *
+                    (q0 * q0.transpose() - q * q.transpose()) * w /
+                    DisplacementDim;
+
+                local_b.noalias() -=
+                    (Bbar.transpose() * sigma - N_u_op(N).transpose() * b) * w;
             }
         }
     }
