@@ -12,6 +12,7 @@
 
 #include <vector>
 
+#include "BaseLib/CompilerWorkarounds.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "Parameter.h"
@@ -98,10 +99,11 @@ Parameter<ParameterDataType>* findParameterOptional(
 ///
 /// \see The documentation of the other findParameter() function.
 template <typename ParameterDataType>
-Parameter<ParameterDataType>& findParameter(
+OGS_NO_DANGLING Parameter<ParameterDataType>& findParameter(
     std::string const& parameter_name,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    int const num_components, MeshLib::Mesh const* const mesh = nullptr)
+    int const num_components,
+    MeshLib::Mesh const* const mesh = nullptr)
 {
     auto* parameter = findParameterOptional<ParameterDataType>(
         parameter_name, parameters, num_components, mesh);
@@ -130,10 +132,12 @@ Parameter<ParameterDataType>& findParameter(
 /// and return a reference to that parameter. Additionally it checks for the
 /// type of the found parameter.
 template <typename ParameterDataType>
-Parameter<ParameterDataType>& findParameter(
-    BaseLib::ConfigTree const& process_config, std::string const& tag,
+OGS_NO_DANGLING Parameter<ParameterDataType>& findParameter(
+    BaseLib::ConfigTree const& process_config,
+    std::string const& tag,
     std::vector<std::unique_ptr<ParameterBase>> const& parameters,
-    int const num_components, MeshLib::Mesh const* const mesh = nullptr)
+    int const num_components,
+    MeshLib::Mesh const* const mesh = nullptr)
 {
     // Find parameter name in process config.
     //! \ogs_file_special

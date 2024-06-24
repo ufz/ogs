@@ -21,6 +21,7 @@
 #include <typeinfo>
 #include <utility>
 
+#include "CompilerWorkarounds.h"
 #include "Error.h"
 
 namespace BaseLib
@@ -110,8 +111,8 @@ void insertIfKeyUniqueElseError(Map& map, Key const& key, Value&& value,
 //! otherwise an \c error_message is printed and the program is aborted.
 //! Cf. also the const overload below.
 template <typename Map, typename Key>
-typename Map::mapped_type& getOrError(Map& map, Key const& key,
-                                      std::string const& error_message)
+OGS_NO_DANGLING typename Map::mapped_type& getOrError(
+    Map& map, Key const& key, std::string const& error_message)
 {
     auto it = map.find(key);
     if (it == map.end())
@@ -131,8 +132,8 @@ typename Map::mapped_type& getOrError(Map& map, Key const& key,
 }
 //! \overload
 template <typename Map, typename Key>
-typename Map::mapped_type const& getOrError(Map const& map, Key const& key,
-                                            std::string const& error_message)
+OGS_NO_DANGLING typename Map::mapped_type const& getOrError(
+    Map const& map, Key const& key, std::string const& error_message)
 {
     auto it = map.find(key);
     if (it == map.end())
@@ -155,7 +156,7 @@ typename Map::mapped_type const& getOrError(Map const& map, Key const& key,
 //! the \c predicate exists;
 //! otherwise an \c error_message is printed and the program is aborted.
 template <typename Container, typename Predicate>
-typename Container::value_type const& getIfOrError(
+OGS_NO_DANGLING typename Container::value_type const& getIfOrError(
     Container const& container,
     Predicate&& predicate,
     std::string const& error_message)
