@@ -123,20 +123,8 @@ template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string_view name) const
 {
-    auto it(_properties.find(std::string(name)));
-    if (it == _properties.end())
-    {
-        OGS_FATAL("The PropertyVector '{:s}' is not available in the mesh.",
-                  name);
-    }
-    if (!dynamic_cast<PropertyVector<T> const*>(it->second))
-    {
-        OGS_FATAL(
-            "The PropertyVector '{:s}' has a different type than the requested "
-            "PropertyVector.",
-            name);
-    }
-    return dynamic_cast<PropertyVector<T> const*>(it->second);
+    return const_cast<PropertyVector<T> const*>(
+        const_cast<Properties*>(this)->getPropertyVector<T>(name));
 }
 
 template <typename T>
