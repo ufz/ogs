@@ -136,10 +136,7 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
         const double residuum_tolerance(1.e-14);
         const double increment_tolerance(0);
 
-        auto newton_solver = NumLib::NewtonRaphson<
-            decltype(linear_solver), LocalJacobianMatrix,
-            decltype(update_jacobian), LocalResidualVector,
-            decltype(update_residual), decltype(update_solution)>(
+        auto newton_solver = NumLib::NewtonRaphson(
             linear_solver, update_jacobian, update_residual, update_solution,
             {maximum_iterations, residuum_tolerance, increment_tolerance});
 

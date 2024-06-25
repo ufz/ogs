@@ -28,11 +28,36 @@ struct NewtonRaphsonSolverParameters
 /// library.
 /// The current implementation does not update the solution itself, but calls a
 /// function for the solution's update with the current increment.
-template <typename LinearSolver, typename JacobianMatrix,
-          typename JacobianMatrixUpdate, typename ResidualVector,
+template <typename LinearSolver, typename JacobianMatrixUpdate,
           typename ResidualUpdate, typename SolutionUpdate>
 class NewtonRaphson final
 {
+private:
+    template <typename T>
+    struct FirstArgument
+    {
+        static_assert(
+            !std::is_same_v<T, T>,
+            "For the type T in the expression !std::is_same_v<T, T>: Could not "
+            "find overload for FirstArgument<T>. Expected T to be a callable "
+            "with one argument. Could be a missing overload of FirstArgument "
+            "for the type T.");
+    };
+
+    // Specialization for lambdas and functors with const operator()
+    template <typename C, typename R, typename Arg, typename... Args>
+    struct FirstArgument<R (C::*)(Arg, Args...) const>
+    {
+        using type = std::remove_reference_t<Arg>;
+    };
+
+    template <typename F>
+    using FirstArgumentType = typename FirstArgument<
+        decltype(&std::remove_reference_t<F>::operator())>::type;
+
+    using JacobianMatrix = FirstArgumentType<JacobianMatrixUpdate>;
+    using ResidualVector = FirstArgumentType<ResidualUpdate>;
+
 public:
     NewtonRaphson(LinearSolver& linear_solver,
                   JacobianMatrixUpdate jacobian_update,
