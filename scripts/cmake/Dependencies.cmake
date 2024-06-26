@@ -43,7 +43,11 @@ else()
 endif()
 
 if(GUIX_BUILD OR CONDA_BUILD)
-    add_library(tclap INTERFACE IMPORTED) # header-only, nothing else to do
+    find_path(_tclap_include UnlabeledValueArg.h PATH_SUFFIXES tclap REQUIRED)
+    add_library(tclap INTERFACE IMPORTED)
+    target_include_directories(
+        tclap SYSTEM INTERFACE ${_tclap_include} ${_tclap_include}/..
+    )
 else()
     CPMFindPackage(
         NAME tclap
