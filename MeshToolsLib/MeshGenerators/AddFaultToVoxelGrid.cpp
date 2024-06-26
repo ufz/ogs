@@ -7,15 +7,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "MeshToolsLib/MeshGenerators/AddFaultToVoxelGrid.h"
+
+#include <Eigen/Geometry>
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
-
-#include <Eigen/Geometry>
 
 #include "GeoLib/AABB.h"
 #include "InfoLib/GitInfo.h"
@@ -25,7 +23,6 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
-#include "MeshToolsLib/MeshGenerators/AddFaultToVoxelGrid.h"
 
 namespace
 {
