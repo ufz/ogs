@@ -10,6 +10,8 @@
  *
  */
 
+#include <typeinfo>
+
 template <typename T>
 PropertyVector<T>* Properties::createNewPropertyVector(
     std::string_view name, MeshItemType mesh_item_type,
@@ -94,14 +96,24 @@ bool Properties::existsPropertyVector(std::string_view name,
     auto property = dynamic_cast<PropertyVector<T>*>(it->second);
     if (property == nullptr)
     {
+        WARN("Property {} exists but does not have the requested type {}.",
+             name, typeid(T).name());
         return false;
     }
     if (property->getMeshItemType() != mesh_item_type)
     {
+        WARN(
+            "Property {} exists but does not have the requested mesh item type "
+            "{}.",
+            name, toString(mesh_item_type));
         return false;
     }
     if (property->getNumberOfGlobalComponents() != number_of_components)
     {
+        WARN(
+            "Property {} exists but does not have the requested number of "
+            "components {}",
+            name, number_of_components);
         return false;
     }
     return true;
@@ -111,20 +123,8 @@ template <typename T>
 PropertyVector<T> const* Properties::getPropertyVector(
     std::string_view name) const
 {
-    auto it(_properties.find(std::string(name)));
-    if (it == _properties.end())
-    {
-        OGS_FATAL("The PropertyVector '{:s}' is not available in the mesh.",
-                  name);
-    }
-    if (!dynamic_cast<PropertyVector<T> const*>(it->second))
-    {
-        OGS_FATAL(
-            "The PropertyVector '{:s}' has a different type than the requested "
-            "PropertyVector.",
-            name);
-    }
-    return dynamic_cast<PropertyVector<T> const*>(it->second);
+    return const_cast<PropertyVector<T> const*>(
+        const_cast<Properties*>(this)->getPropertyVector<T>(name));
 }
 
 template <typename T>
@@ -181,9 +181,10 @@ PropertyVector<T> const* Properties::getPropertyVector(
     if (property == nullptr)
     {
         OGS_FATAL(
-            "Could not cast the data type of the PropertyVector '{:s}' to "
-            "requested data type.",
-            name);
+            "Could not cast the data type of the PropertyVector '{:s}' (type: "
+            "'{:s}') to the requested data type '{:s}'.",
+            name, typeid(decltype(*it->second)).name(),
+            typeid(PropertyVector<T>).name());
     }
     if (property->getMeshItemType() != item_type)
     {
