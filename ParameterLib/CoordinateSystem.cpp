@@ -17,6 +17,7 @@
 #include <limits>
 #include <typeinfo>
 
+#include "MathLib/FormattingUtils.h"
 #include "Parameter.h"
 
 namespace ParameterLib
@@ -40,6 +41,18 @@ static void checkTransformationIsSON(
             "tolerance of '{:g}'. Please adjust the accuracy of the local "
             "system bases",
             t.determinant(), tolerance);
+    }
+    if (((t * t.transpose() - Eigen::Matrix<double, Dim, Dim>::Identity())
+             .array() > 2 * tolerance)
+            .any())
+    {
+        OGS_FATAL(
+            "The transformation is not orthogonal because the difference "
+            "A*A^T - I is:\n{}\nand at least one component deviates from zero "
+            "by more then '{:g}'.",
+            (t * t.transpose() - Eigen::Matrix<double, Dim, Dim>::Identity())
+                .eval(),
+            2 * tolerance);
     }
 }
 
