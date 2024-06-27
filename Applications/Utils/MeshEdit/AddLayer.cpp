@@ -68,7 +68,21 @@ int main(int argc, char* argv[])
         false);
     cmd.add(copy_material_ids_arg);
 
+    TCLAP::ValueArg<int> set_material_arg("", "set-material-id",
+                                          "the material id of the new layer",
+                                          false, 0, "integer value");
+    cmd.add(set_material_arg);
     cmd.parse(argc, argv);
+
+    if (set_material_arg.isSet() && copy_material_ids_arg.isSet())
+    {
+        ERR("It is not possiblo to set both options '--copy-material-ids' and "
+            "'--set-material-id'.");
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
+        return EXIT_FAILURE;
+    }
 
 #ifdef USE_PETSC
     MPI_Init(&argc, &argv);
@@ -87,9 +101,16 @@ int main(int argc, char* argv[])
     }
     INFO("done.");
 
+    std::optional<int> layer_id;
+    if (set_material_arg.isSet())
+    {
+        layer_id = set_material_arg.getValue();
+    }
+
     std::unique_ptr<MeshLib::Mesh> result(MeshToolsLib::addLayerToMesh(
         *subsfc_mesh, layer_thickness_arg.getValue(), mesh_out_arg.getValue(),
-        layer_position_arg.getValue(), copy_material_ids_arg.getValue()));
+        layer_position_arg.getValue(), copy_material_ids_arg.getValue(),
+        layer_id));
     if (!result)
     {
         ERR("Failure while adding layer.");
