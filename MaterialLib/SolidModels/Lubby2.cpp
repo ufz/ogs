@@ -168,10 +168,7 @@ Lubby2<DisplacementDim>::integrateStress(
             local_lubby2_properties.update(sig_eff);
         };
 
-        auto newton_solver = NumLib::NewtonRaphson<
-            decltype(linear_solver), LocalJacobianMatrix,
-            decltype(update_jacobian), LocalResidualVector,
-            decltype(update_residual), decltype(update_solution)>(
+        auto newton_solver = NumLib::NewtonRaphson(
             linear_solver, update_jacobian, update_residual, update_solution,
             _nonlinear_solver_parameters);
 

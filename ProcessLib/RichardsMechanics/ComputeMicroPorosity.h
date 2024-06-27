@@ -198,13 +198,9 @@ MicroPorosityStateSpace<DisplacementDim> computeMicroPorosity(
     auto const update_solution = [&](ResidualVectorType const& increment)
     { solution += increment; };
 
-    auto newton_solver =
-        NumLib::NewtonRaphson<decltype(linear_solver), JacobianMatrix,
-                              decltype(update_jacobian), ResidualVectorType,
-                              decltype(update_residual),
-                              decltype(update_solution)>(
-            linear_solver, update_jacobian, update_residual, update_solution,
-            micro_porosity_parameters.nonlinear_solver_parameters);
+    auto newton_solver = NumLib::NewtonRaphson(
+        linear_solver, update_jacobian, update_residual, update_solution,
+        micro_porosity_parameters.nonlinear_solver_parameters);
 
     auto const success_iterations = newton_solver.solve(jacobian);
 

@@ -40,13 +40,9 @@ TEST(NumLibNewtonRaphson, Sqrt3)
     auto const update_solution = [&state](LocalResidualVector const& increment)
     { state += increment[0]; };
 
-    auto const newton_solver =
-        NumLib::NewtonRaphson<decltype(linear_solver), LocalJacobianMatrix,
-                              decltype(update_jacobian), LocalResidualVector,
-                              decltype(update_residual),
-                              decltype(update_solution)>(
-            linear_solver, update_jacobian, update_residual, update_solution,
-            {maximum_iterations, tolerance, 0.0});
+    auto const newton_solver = NumLib::NewtonRaphson(
+        linear_solver, update_jacobian, update_residual, update_solution,
+        {maximum_iterations, tolerance, 0.0});
     auto const success_iterations = newton_solver.solve(jacobian);
 
     EXPECT_TRUE(static_cast<bool>(success_iterations));
