@@ -22,6 +22,7 @@ namespace NumLib
 {
 class ConvergenceCriterion;
 class StaggeredCoupling;
+struct Time;
 }
 
 namespace ChemistryLib
@@ -40,7 +41,7 @@ public:
     TimeLoop(std::vector<Output>&& outputs,
              std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
              std::unique_ptr<NumLib::StaggeredCoupling>&& staggered_coupling,
-             const double start_time, const double end_time);
+             const NumLib::Time& start_time, const NumLib::Time& end_time);
 
     void initialize();
     void outputLastTimeStep() const;
@@ -58,12 +59,12 @@ public:
     /// otherwise.
     bool calculateNextTimeStep();
 
-    double endTime() const { return _end_time; }
-    double currentTime() const { return _current_time; }
+    double endTime() const { return _end_time(); }
+    double currentTime() const { return _current_time(); }
     bool successful_time_step = false;
 
 private:
-    bool preTsNonlinearSolvePostTs(double const t, double const dt,
+    bool preTsNonlinearSolvePostTs(NumLib::Time const& t, double const dt,
                                    std::size_t const timesteps);
 
     /**
@@ -78,7 +79,7 @@ private:
      *                    false: if any of nonlinear solvers divergences.
      */
     NumLib::NonlinearSolverStatus solveUncoupledEquationSystems(
-        const double t, const double dt, const std::size_t timestep_id);
+        const NumLib::Time& t, const double dt, const std::size_t timestep_id);
 
     /**
      * \brief Member to solver coupled systems of equations by the staggered
@@ -91,7 +92,7 @@ private:
      *                    false:  if any of nonlinear solvers divergences.
      */
     NumLib::NonlinearSolverStatus solveCoupledEquationSystemsByStaggeredScheme(
-        const double t, const double dt, const std::size_t timestep_id);
+        const NumLib::Time& t, const double dt, const std::size_t timestep_id);
 
     /**
      *  Find the minimum time step size among the predicted step sizes of
@@ -109,9 +110,9 @@ private:
      *  rejected
      */
     std::pair<double, bool> computeTimeStepping(
-        const double prev_dt, double& t, std::size_t& accepted_steps,
+        const double prev_dt, NumLib::Time& t, std::size_t& accepted_steps,
         std::size_t& rejected_steps,
-        std::vector<std::function<double(double, double)>> const&
+        std::vector<std::function<double(NumLib::Time const&, double)>> const&
             time_step_constraints);
 
     template <typename OutputClassMember>
@@ -120,17 +121,18 @@ private:
                          OutputClassMember output_class_member) const;
 
 private:
-    std::vector<std::function<double(double, double)>>
+    std::vector<std::function<double(NumLib::Time const&, double)>>
     generateOutputTimeStepConstraints(std::vector<double>&& fixed_times) const;
-    void preOutputInitialConditions(const double t, const double dt) const;
+    void preOutputInitialConditions(NumLib::Time const& t,
+                                    const double dt) const;
     std::vector<GlobalVector*> _process_solutions;
     std::vector<GlobalVector*> _process_solutions_prev;
     std::vector<Output> _outputs;
     std::vector<std::unique_ptr<ProcessData>> _per_process_data;
 
-    const double _start_time;
-    const double _end_time;
-    double _current_time = _start_time;
+    const NumLib::Time _start_time;
+    const NumLib::Time _end_time;
+    NumLib::Time _current_time = _start_time;
     std::size_t _accepted_steps = 0;
     std::size_t _rejected_steps = 0;
     double _dt = 0;
