@@ -47,10 +47,10 @@ target_link_libraries(
            $<IF:$<BOOL:${OGS_BUILD_WHEEL}>,pybind11::module,pybind11::embed>
 )
 
-if(OGS_BUILD_WHEEL OR (APPLE AND OGS_USE_PETSC))
+if(BUILD_SHARED_LIBS AND (MSVC OR APPLE))
     target_link_options(
         ProcessLibBoundaryConditionAndSourceTermPython PRIVATE
-        $<$<CXX_COMPILER_ID:AppleClang>:-undefined dynamic_lookup>
+        $<$<PLATFORM_ID:Darwin>:-undefined dynamic_lookup>
         $<$<CXX_COMPILER_ID:MSVC>:/FORCE:UNRESOLVED>
     )
 endif()
