@@ -133,20 +133,15 @@ Eigen::Matrix<double, 2, 2> getTransformationFromSingleBase2D(
     Parameter<double> const& unit_direction, SpatialPosition const& pos)
 {
     auto const& normal = unit_direction(0 /* time independent */, pos);
-
-#ifndef NDEBUG
     checkNormalization(Eigen::Map<Eigen::Vector2d const>(normal.data()),
                        unit_direction.name);
-#endif  // NDEBUG
 
     Eigen::Matrix<double, 2, 2> t;
     // base 0: ( normal[1], -normal[0])^T
     // base 1: ( normal[0], normal[1])^T
     t << normal[1], normal[0], -normal[0], normal[1];
 
-#ifndef NDEBUG
     checkTransformationIsSON(t);
-#endif  // NDEBUG
     return t;
 }
 
@@ -172,9 +167,7 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
     t.col(1) = Eigen::Map<Eigen::Vector2d>(
         (*_base[1])(0 /* time independent */, pos).data());
 
-#ifndef NDEBUG
     checkTransformationIsSON(t);
-#endif  // NDEBUG
     return t;
 }
 
@@ -184,9 +177,7 @@ Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
     auto const& e2 = unit_direction(0 /* time independent */, pos);
 
     auto const eigen_mapped_e2 = Eigen::Map<Eigen::Vector3d const>(e2.data());
-#ifndef NDEBUG
     checkNormalization(eigen_mapped_e2, unit_direction.name);
-#endif  // NDEBUG
 
     // Find the id of the first non-zero component of e2:
     auto const it = std::max_element(e2.begin(), e2.end(),
@@ -227,9 +218,7 @@ Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
     t.col(1) = e1;
     t.col(2) = eigen_mapped_e2;
 
-#ifndef NDEBUG
     checkTransformationIsSON(t);
-#endif  // NDEBUG
 
     return t;
 }
@@ -258,9 +247,7 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
     t.col(2) = Eigen::Map<Eigen::Vector3d>(
         (*_base[2])(0 /* time independent */, pos).data());
 
-#ifndef NDEBUG
     checkTransformationIsSON(t);
-#endif  // NDEBUG
     return t;
 }
 
@@ -298,9 +285,7 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation_3d(
     Eigen::Matrix<double, 3, 3> t = Eigen::Matrix<double, 3, 3>::Identity();
     t.template topLeftCorner<2, 2>() << e0[0], e1[0], e0[1], e1[1];
 
-#ifndef NDEBUG
     checkTransformationIsSON(t);
-#endif  // NDEBUG
     return t;
 }
 
