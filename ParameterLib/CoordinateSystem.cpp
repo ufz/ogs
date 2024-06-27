@@ -23,15 +23,25 @@ namespace ParameterLib
 {
 static double const tolerance = std::numeric_limits<double>::epsilon();
 #ifndef NDEBUG
-static constexpr char error_info[] =
-    "The determinant of the coordinate system transformation matrix is '{:g}', "
-    "which is not sufficiently close to unity with the tolerance of '{:g}'. "
-    "Please adjust the accuracy of the local system bases";
-
 static constexpr char normalization_error_info[] =
     "The direction vector given by parameter {:s} for local_coordinate_system "
     "is not normalized to unit length";
 #endif  // NDEBUG
+
+template <int Dim>
+static void checkTransformationIsSON(
+    Eigen::Matrix<double, Dim, Dim> const& t)
+{
+    if (std::abs(t.determinant() - 1) > tolerance)
+    {
+        OGS_FATAL(
+            "The determinant of the coordinate system transformation matrix is "
+            "'{:g}', which is not sufficiently close to unity with the "
+            "tolerance of '{:g}'. Please adjust the accuracy of the local "
+            "system bases",
+            t.determinant(), tolerance);
+    }
+}
 
 CoordinateSystem::CoordinateSystem(Parameter<double> const& unit_direction)
     : _base{nullptr, nullptr, &unit_direction}, _has_implicit_base(true)
@@ -117,10 +127,7 @@ Eigen::Matrix<double, 2, 2> getTransformationFromSingleBase2D(
     t << normal[1], normal[0], -normal[0], normal[1];
 
 #ifndef NDEBUG
-    if (std::abs(t.determinant() - 1) > tolerance)
-    {
-        OGS_FATAL(error_info, t.determinant(), tolerance);
-    }
+    checkTransformationIsSON(t);
 #endif  // NDEBUG
     return t;
 }
@@ -148,10 +155,7 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
         (*_base[1])(0 /* time independent */, pos).data());
 
 #ifndef NDEBUG
-    if (std::abs(t.determinant() - 1) > tolerance)
-    {
-        OGS_FATAL(error_info, t.determinant(), tolerance);
-    }
+    checkTransformationIsSON(t);
 #endif  // NDEBUG
     return t;
 }
@@ -210,12 +214,7 @@ Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
     t.col(2) = eigen_mapped_e2;
 
 #ifndef NDEBUG
-
-    if (std::abs(t.determinant() - 1) > tolerance)
-    {
-        OGS_FATAL(error_info, t.determinant(), tolerance);
-    }
-
+    checkTransformationIsSON(t);
 #endif  // NDEBUG
 
     return t;
@@ -246,10 +245,7 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation<3>(
         (*_base[2])(0 /* time independent */, pos).data());
 
 #ifndef NDEBUG
-    if (std::abs(t.determinant() - 1) > tolerance)
-    {
-        OGS_FATAL(error_info, t.determinant(), tolerance);
-    }
+    checkTransformationIsSON(t);
 #endif  // NDEBUG
     return t;
 }
@@ -289,10 +285,7 @@ Eigen::Matrix<double, 3, 3> CoordinateSystem::transformation_3d(
     t.template topLeftCorner<2, 2>() << e0[0], e1[0], e0[1], e1[1];
 
 #ifndef NDEBUG
-    if (std::abs(t.determinant() - 1) > tolerance)
-    {
-        OGS_FATAL(error_info, t.determinant(), tolerance);
-    }
+    checkTransformationIsSON(t);
 #endif  // NDEBUG
     return t;
 }
