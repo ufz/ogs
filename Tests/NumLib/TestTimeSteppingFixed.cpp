@@ -24,7 +24,8 @@
 namespace NumLib
 {
 extern void incorporateFixedTimesForOutput(
-    double t_initial, double t_end, std::vector<double>& timesteps,
+    NumLib::Time const t_initial, NumLib::Time const t_end,
+    std::vector<double>& timesteps,
     std::vector<double> const& fixed_times_for_output);
 }
 

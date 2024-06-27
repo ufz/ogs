@@ -147,19 +147,19 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize(
     auto fixed_output_time_it = std::find_if(
         std::begin(_fixed_times_for_output), std::end(_fixed_times_for_output),
         [&ts_current](auto const fixed_output_time)
-        { return ts_current.current() < fixed_output_time; });
+        { return ts_current.current()() < fixed_output_time; });
 
     if (fixed_output_time_it != _fixed_times_for_output.end())
     {
         // check if the fixed output time is in the interval
         // (current time, current time + dt)
-        if (*fixed_output_time_it < ts_current.current() + dt)
+        if (*fixed_output_time_it < ts_current.current()() + dt)
         {
             // check if the potential adjusted time step is larger than zero
-            if (std::abs(*fixed_output_time_it - ts_current.current()) >
-                std::numeric_limits<double>::epsilon() * ts_current.current())
+            if (std::abs(*fixed_output_time_it - ts_current.current()()) >
+                std::numeric_limits<double>::epsilon() * ts_current.current()())
             {
-                return *fixed_output_time_it - ts_current.current();
+                return *fixed_output_time_it - ts_current.current()();
             }
         }
     }

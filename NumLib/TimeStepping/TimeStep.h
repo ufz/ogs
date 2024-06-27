@@ -15,6 +15,8 @@
 #include <cstddef>
 #include <limits>
 
+#include "Time.h"
+
 namespace NumLib
 {
 /**
@@ -32,10 +34,10 @@ public:
      * Initialize a time step
      * @param current_time     current time
      */
-    explicit TimeStep(double current_time)
+    explicit TimeStep(Time const& current_time)
         : _previous(current_time),
           _current(current_time),
-          _dt(_current - _previous),
+          _dt(0.0),
           _time_step_number(0)
     {
     }
@@ -46,10 +48,10 @@ public:
      * @param current_time     current time
      * @param n                the number of time steps
      */
-    TimeStep(double previous_time, double current_time, std::size_t n)
+    TimeStep(Time const& previous_time, Time const& current_time, std::size_t n)
         : _previous(previous_time),
           _current(current_time),
-          _dt(_current - _previous),
+          _dt(_current() - _previous()),
           _time_step_number(n)
     {
     }
@@ -83,12 +85,12 @@ public:
     /// compare current time
     bool operator==(TimeStep const& ts) const
     {
-        return (_current == ts._current);
+        return _current == ts._current;
     }
     /// return previous time step
-    double previous() const { return _previous; }
+    Time previous() const { return _previous; }
     /// return current time step
-    double current() const { return _current; }
+    Time current() const { return _current; }
     /// time step size from _previous
     double dt() const { return _dt; }
     /// the time step number
@@ -97,14 +99,11 @@ public:
     void setAccepted(bool const accepted) { _is_accepted = accepted; }
     bool isAccepted() const { return _is_accepted; }
 
-    static constexpr double minimalTimeStepSize =
-        1000 * std::numeric_limits<double>::epsilon();
-
 private:
     /// previous time step
-    double _previous;
+    Time _previous;
     /// current time step
-    double _current;
+    Time _current;
     /// time step size
     double _dt;
     /// the number of time steps

@@ -142,25 +142,26 @@ double EvolutionaryPIDcontroller::limitStepSize(
         return limited_h;
     }
 
-    // find first fixed timestep for output larger than the current time, i.e.,
+    // find first fixed output time larger than the current time, i.e.,
     // current time < fixed output time
     auto fixed_output_time_it = std::find_if(
         std::begin(_fixed_times_for_output), std::end(_fixed_times_for_output),
         [&timestep_current](auto const fixed_output_time)
-        { return timestep_current.current() < fixed_output_time; });
+        { return timestep_current.current() < Time{fixed_output_time}; });
 
     if (fixed_output_time_it != _fixed_times_for_output.end())
     {
         // check if the fixed output time is in the interval
         // (current time, current time + limited_h)
-        if (*fixed_output_time_it < timestep_current.current() + limited_h)
+        if (Time{*fixed_output_time_it} <
+            timestep_current.current() + limited_h)
         {
             // check if the potential adjusted time step is larger than zero
-            if (std::abs(*fixed_output_time_it - timestep_current.current()) >
+            if (std::abs(*fixed_output_time_it - timestep_current.current()()) >
                 std::numeric_limits<double>::epsilon() *
-                    timestep_current.current())
+                    timestep_current.current()())
             {
-                return *fixed_output_time_it - timestep_current.current();
+                return *fixed_output_time_it - timestep_current.current()();
             }
         }
     }

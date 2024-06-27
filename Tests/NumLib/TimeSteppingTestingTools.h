@@ -58,8 +58,8 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         }
 
         timestepper_dt =
-            (current_timestep.current() + timestepper_dt > end_time)
-                ? end_time - current_timestep.current()
+            (current_timestep.current()() + timestepper_dt > end_time)
+                ? end_time - current_timestep.current()()
                 : timestepper_dt;
 
         NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
@@ -73,7 +73,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         }
         if (current_timestep.isAccepted())
         {
-            vec_t.push_back(current_timestep.current());
+            vec_t.push_back(current_timestep.current()());
         }
         else
         {

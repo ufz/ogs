@@ -17,11 +17,14 @@
 #include <limits>
 #include <numeric>
 
+#include "NumLib/TimeStepping/Time.h"
+
 namespace
 {
 /// Returns sum of the newly added time increments.
-double addTimeIncrement(std::vector<double>& delta_ts, std::size_t const repeat,
-                        double const delta_t, double const t_curr)
+NumLib::Time addTimeIncrement(std::vector<double>& delta_ts,
+                              std::size_t const repeat, double const delta_t,
+                              NumLib::Time const t_curr)
 {
     auto const new_size = delta_ts.size() + repeat;
     try
@@ -48,7 +51,7 @@ double addTimeIncrement(std::vector<double>& delta_ts, std::size_t const repeat,
 
 namespace NumLib
 {
-std::size_t findDeltatInterval(double const t_initial,
+std::size_t findDeltatInterval(NumLib::Time const t_initial,
                                std::vector<double> const& delta_ts,
                                double const fixed_output_time)
 {
@@ -72,7 +75,8 @@ std::size_t findDeltatInterval(double const t_initial,
 }
 
 void incorporateFixedTimesForOutput(
-    double const t_initial, double const t_end, std::vector<double>& delta_ts,
+    NumLib::Time const t_initial, NumLib::Time const t_end,
+    std::vector<double>& delta_ts,
     std::vector<double> const& fixed_times_for_output)
 {
     if (fixed_times_for_output.empty())
@@ -89,18 +93,19 @@ void incorporateFixedTimesForOutput(
             "Request for output at times {}, but the simulation's start time "
             "is {}. Output will be skipped.",
             fmt::join(begin(fixed_times_for_output), lower_bound, ", "),
-            t_initial);
+            t_initial());
     }
 
-    if (auto upper_bound = std::upper_bound(begin(fixed_times_for_output),
-                                            end(fixed_times_for_output), t_end);
+    if (auto upper_bound =
+            std::upper_bound(begin(fixed_times_for_output),
+                             end(fixed_times_for_output), t_end());
         upper_bound != end(fixed_times_for_output))
     {
         WARN(
             "Request for output at times {}, but simulation's end time is {}. "
             "Output will be skipped.",
             fmt::join(upper_bound, end(fixed_times_for_output), ", "),
-            t_end);
+            t_end());
     }
 
     if (delta_ts.empty())
@@ -120,23 +125,23 @@ void incorporateFixedTimesForOutput(
                  fixed_time_for_output);
             continue;
         }
+
         auto const lower_bound = std::accumulate(
             begin(delta_ts), begin(delta_ts) + interval_number, t_initial);
         auto const upper_bound = lower_bound + delta_ts[interval_number];
-        if (fixed_time_for_output - lower_bound <=
-            TimeStep::minimalTimeStepSize)
+        // in order to use the comparison from struct Time
+        if (NumLib::Time(fixed_time_for_output) == lower_bound)
         {
             continue;
         }
-        if (upper_bound - fixed_time_for_output <=
-            TimeStep::minimalTimeStepSize)
+        if (upper_bound == NumLib::Time(fixed_time_for_output))
         {
             continue;
         }
-        delta_ts[interval_number] = fixed_time_for_output - lower_bound;
+        delta_ts[interval_number] = fixed_time_for_output - lower_bound();
 
         delta_ts.insert(delta_ts.begin() + interval_number + 1,
-                        upper_bound - fixed_time_for_output);
+                        upper_bound() - fixed_time_for_output);
     }
 }
 
@@ -145,7 +150,7 @@ FixedTimeStepping::FixedTimeStepping(
     std::vector<double> const& fixed_times_for_output)
     : TimeStepAlgorithm(t0, tn)
 {
-    double t_curr = _t_initial;
+    Time t_curr = _t_initial;
 
     if (!areRepeatDtPairsValid(repeat_dt_pairs))
     {
@@ -163,8 +168,8 @@ FixedTimeStepping::FixedTimeStepping(
     if (t_curr <= _t_end)
     {
         auto const delta_t = std::get<1>(repeat_dt_pairs.back());
-        auto const repeat =
-            static_cast<std::size_t>(std::ceil((_t_end - t_curr) / delta_t));
+        auto const repeat = static_cast<std::size_t>(
+            std::ceil((_t_end() - t_curr()) / delta_t));
         addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
     }
 
@@ -210,16 +215,15 @@ std::tuple<bool, double> FixedTimeStepping::next(
 {
     // check if last time step
     if (ts_current.timeStepNumber() == _dt_vector.size() ||
-        std::abs(ts_current.current() - end()) <
-            std::numeric_limits<double>::epsilon())
+        ts_current.current() >= end())
     {
         return std::make_tuple(true, 0.0);
     }
 
     double dt = _dt_vector[ts_current.timeStepNumber()];
-    if (ts_current.current() + dt > end())
+    if (ts_current.current()() + dt > end())
     {  // upper bound by t_end
-        dt = end() - ts_current.current();
+        dt = end() - ts_current.current()();
     }
 
     return std::make_tuple(true, dt);

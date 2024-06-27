@@ -117,9 +117,8 @@ TEST_F(NumLibFixedTimeStepping, next)
             // expected time is larger than the minimal time step size then the
             // step size should be larger
             // if next is true then the step
-            if (is_next && std::abs((ts_current.current() + step_size) -
-                                    expected_time_point) >
-                               NumLib::TimeStep::minimalTimeStepSize)
+            if (is_next &&
+                (ts_current.current() + step_size) != expected_time_point)
             {
                 return false;
             }
@@ -185,9 +184,8 @@ TEST_F(NumLibFixedTimeStepping, next_StaticTest)
         // expected time is larger than the minimal time step size then the
         // step size should be larger
         // if next is true then the step
-        ASSERT_FALSE(is_next && std::abs((ts_current.current() + step_size) -
-                                         expected_time_point) >
-                                    NumLib::TimeStep::minimalTimeStepSize);
+        ASSERT_FALSE(is_next &&
+                     (ts_current.current() + step_size) != expected_time_point);
 
         // if next is true then the step size should be larger than zero
         ASSERT_FALSE(is_next && step_size == 0.0);

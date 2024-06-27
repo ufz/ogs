@@ -21,6 +21,8 @@
 
 namespace NumLib
 {
+struct Time;
+
 /**
  * \brief Interface of time stepping algorithms
  */
@@ -35,9 +37,9 @@ public:
     virtual ~TimeStepAlgorithm() = default;
 
     /// return the beginning of time steps
-    double begin() const { return _t_initial; }
+    double begin() const { return _t_initial(); }
     /// return the end of time steps
-    double end() const { return _t_end; }
+    double end() const { return _t_end(); }
     /// reset the current step size from the previous time
     virtual void resetCurrentTimeStep(const double /*dt*/,
                                       TimeStep& /*ts_previous*/,
@@ -73,9 +75,9 @@ public:
 
 protected:
     /// initial time
-    const double _t_initial;
+    const Time _t_initial;
     /// end time
-    const double _t_end;
+    const Time _t_end;
 };
 
 /// If any of the fixed times will be reached with given time increment, it will
@@ -85,7 +87,7 @@ protected:
 /// \param dt Suggested time increment.
 /// \param fixed_output_times Sorted list of times which are to be reached.
 double possiblyClampDtToNextFixedTime(
-    double const t, double const dt,
+    Time const& t, double const dt,
     std::vector<double> const& fixed_output_times);
 
 bool canReduceTimestepSize(TimeStep const& timestep_previous,

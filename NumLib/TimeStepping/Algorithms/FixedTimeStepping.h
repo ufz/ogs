@@ -64,7 +64,7 @@ private:
     std::vector<double> _dt_vector;
 };
 
-std::size_t findDeltatInterval(double const t_initial,
+std::size_t findDeltatInterval(NumLib::Time const t_initial,
                                std::vector<double> const& delta_ts,
                                double const fixed_output_time);
 }  // namespace NumLib
