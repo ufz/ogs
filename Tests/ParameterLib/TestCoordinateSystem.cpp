@@ -214,10 +214,10 @@ TEST(CoordinateSystem, test3D)
 {
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
 
-    std::vector<double> e0{-0.8191520442889918, 0.0, -0.573576436351046};
+    std::vector<double> e0{0.8191520442889918, 0.0, 0.573576436351046};
     parameters.emplace_back(
         std::make_unique<ParameterLib::ConstantParameter<double>>("e0", e0));
-    std::vector<double> e1{0.0, -1.0, 0.0};
+    std::vector<double> e1{0.0, 1.0, 0.0};
     parameters.emplace_back(
         std::make_unique<ParameterLib::ConstantParameter<double>>("e1", e1));
     std::vector<double> e2{-0.573576436351046, 0.0, 0.8191520442889918};

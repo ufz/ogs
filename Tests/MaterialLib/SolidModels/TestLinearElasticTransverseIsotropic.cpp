@@ -241,9 +241,8 @@ TEST_F(LinearElasticTransverseIsotropic, test_agaist_ElasticOrthotropic)
     }
     {  // 3D
         ParameterLib::ConstantParameter<double> const e1{
-            "e1", {-0.8191520442889918, 0.0, -0.573576436351046}};
-        ParameterLib::ConstantParameter<double> const e2{"e2",
-                                                         {0.0, -1.0, 0.0}};
+            "e1", {0.8191520442889918, 0.0, 0.573576436351046}};
+        ParameterLib::ConstantParameter<double> const e2{"e2", {0.0, 1.0, 0.0}};
         ParameterLib::ConstantParameter<double> const e3{
             "e3", {-0.573576436351046, 0.0, 0.8191520442889918}};
         ParameterLib::CoordinateSystem const coordinate_system{e1, e2, e3};
