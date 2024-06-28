@@ -173,21 +173,24 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
 Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
     Parameter<double> const& unit_direction, SpatialPosition const& pos)
 {
-    auto const& e2 = unit_direction(0 /* time independent */, pos);
+    auto const& normal = unit_direction(0 /* time independent */, pos);
 
-    auto const eigen_mapped_e2 = Eigen::Map<Eigen::Vector3d const>(e2.data());
-    checkNormalization(eigen_mapped_e2, unit_direction.name);
+    Eigen::Matrix<double, 3, 3> t;
+    auto e2 = t.col(2);
+    e2 = Eigen::Map<Eigen::Vector3d const>(normal.data());
+    checkNormalization(e2, unit_direction.name);
 
     // Find the id of the first non-zero component of e2:
     int id;
-    eigen_mapped_e2.cwiseAbs().maxCoeff(&id);
+    e2.cwiseAbs().maxCoeff(&id);
 
     // Get other two component ids:
     const auto id_a = (id + 1) % 3;
     const auto id_b = (id + 2) % 3;
 
     // Compute basis vector e1 orthogonal to e2
-    Eigen::Vector3d e1 = Eigen::Vector3d::Zero();
+    auto e1 = t.col(1);
+    e1 = Eigen::Vector3d::Zero();
 
     if (std::abs(e2[id_a]) < tolerance)
     {
@@ -205,15 +208,10 @@ Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
 
     e1.normalize();
 
-    auto e0 = e1.cross(eigen_mapped_e2);
     // |e0| = |e1 x e2| = |e1||e2|sin(theta) with theta the angle between e1 and
     // e2. Since |e1| = |e2| = 1.0, and theta = pi/2, we have |e0|=1. Therefore
     // e0 is normalized by nature.
-
-    Eigen::Matrix<double, 3, 3> t;
-    t.col(0) = e0;
-    t.col(1) = e1;
-    t.col(2) = eigen_mapped_e2;
+    t.col(0) = e1.cross(e2);
 
     checkTransformationIsSON(t);
 
