@@ -1486,6 +1486,21 @@ AddTest(
     DIFF_DATA AREHS_3D_AABB_inverted.vtu AREHS_3D_AABB_inverted.vtu 1.e-16
 )
 
+AddTest(
+    NAME AddLayer_test_set-material-id_option
+    PATH MeshGeoToolsLib/Naegelstedt
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE AddLayer
+    EXECUTABLE_ARGS -i SmallTest.vtu
+                    --add-layer-on-bottom
+                    -t 10
+                    --set-material-id 10
+                    -o ${Data_BINARY_DIR}/<PATH>/SmallTest_WithAdditionalBottomLayer.vtu
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA SmallTest_WithAdditionalBottomLayer.vtu SmallTest_WithAdditionalBottomLayer.vtu 1.e-16
+)
+
 if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Utils/partmesh/partmesh_roundtrip.md RUNTIME 10 SKIP_WEB)
 endif()

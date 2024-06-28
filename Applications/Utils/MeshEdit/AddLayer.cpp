@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
 
     if (set_material_arg.isSet() && copy_material_ids_arg.isSet())
     {
-        ERR("It is not possiblo to set both options '--copy-material-ids' and "
+        ERR("It is not possible to set both options '--copy-material-ids' and "
             "'--set-material-id'.");
 #ifdef USE_PETSC
         MPI_Finalize();
