@@ -25,7 +25,7 @@ static double const tolerance = std::numeric_limits<double>::epsilon();
 
 template <int Dim>
 static void checkTransformationIsSON(
-    Eigen::Matrix<double, Dim, Dim> const& t)
+    Eigen::Matrix<double, Dim, Dim, Eigen::ColMajor, Dim, Dim> const& t)
 {
     if (std::abs(t.determinant() - 1) > tolerance)
     {
