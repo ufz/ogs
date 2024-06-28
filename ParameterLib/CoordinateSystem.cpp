@@ -12,8 +12,7 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
-#include <algorithm>
-#include <iterator>
+#include <cmath>
 #include <limits>
 #include <typeinfo>
 
@@ -180,17 +179,15 @@ Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
     checkNormalization(eigen_mapped_e2, unit_direction.name);
 
     // Find the id of the first non-zero component of e2:
-    auto const it = std::max_element(e2.begin(), e2.end(),
-                                     [](const double a, const double b)
-                                     { return std::abs(a) < std::abs(b); });
-    const auto id = std::distance(e2.begin(), it);
+    int id;
+    eigen_mapped_e2.cwiseAbs().maxCoeff(&id);
+
     // Get other two component ids:
     const auto id_a = (id + 1) % 3;
     const auto id_b = (id + 2) % 3;
 
     // Compute basis vector e1 orthogonal to e2
-    using Vector3 = Eigen::Vector3d;
-    Vector3 e1(0.0, 0.0, 0.0);
+    Eigen::Vector3d e1 = Eigen::Vector3d::Zero();
 
     if (std::abs(e2[id_a]) < tolerance)
     {
