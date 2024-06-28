@@ -23,11 +23,6 @@
 namespace ParameterLib
 {
 static double const tolerance = std::numeric_limits<double>::epsilon();
-#ifndef NDEBUG
-static constexpr char normalization_error_info[] =
-    "The direction vector given by parameter {:s} for local_coordinate_system "
-    "is not normalized to unit length";
-#endif  // NDEBUG
 
 template <int Dim>
 static void checkTransformationIsSON(
@@ -53,6 +48,20 @@ static void checkTransformationIsSON(
             (t * t.transpose() - Eigen::Matrix<double, Dim, Dim>::Identity())
                 .eval(),
             2 * tolerance);
+    }
+}
+
+template <typename Derived>
+static void checkNormalization(Eigen::MatrixBase<Derived> const& vec,
+                               std::string_view const parmeter_name)
+{
+    if (std::abs(vec.squaredNorm() - 1.0) > tolerance)
+    {
+        OGS_FATAL(
+            "The direction vector given by parameter {:s} for the "
+            "local_coordinate_system is not normalized to unit length. Vector "
+            "norm is {:g} and |v|^2-1 = {:g}.",
+            parmeter_name, vec.norm(), vec.squaredNorm() - 1.0);
     }
 }
 
@@ -123,18 +132,14 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
 Eigen::Matrix<double, 2, 2> getTransformationFromSingleBase2D(
     Parameter<double> const& unit_direction, SpatialPosition const& pos)
 {
-    Eigen::Matrix<double, 2, 2> t;
+    auto const& normal = unit_direction(0 /* time independent */, pos);
+
 #ifndef NDEBUG
-    if (std::abs(Eigen::Map<Eigen::Vector2d>(
-                     unit_direction(0 /* time independent */, pos).data())
-                     .norm() -
-                 1) > tolerance)
-    {
-        OGS_FATAL(normalization_error_info, unit_direction.name);
-    }
+    checkNormalization(Eigen::Map<Eigen::Vector2d const>(normal.data()),
+                       unit_direction.name);
 #endif  // NDEBUG
 
-    auto normal = unit_direction(0 /* time independent */, pos);
+    Eigen::Matrix<double, 2, 2> t;
     // base 0: ( normal[1], -normal[0])^T
     // base 1: ( normal[0], normal[1])^T
     t << normal[1], normal[0], -normal[0], normal[1];
@@ -176,14 +181,12 @@ Eigen::Matrix<double, 2, 2> CoordinateSystem::transformation<2>(
 Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
     Parameter<double> const& unit_direction, SpatialPosition const& pos)
 {
-    auto e2 = unit_direction(0 /* time independent */, pos);
+    auto const& e2 = unit_direction(0 /* time independent */, pos);
+
+    auto const eigen_mapped_e2 = Eigen::Map<Eigen::Vector3d const>(e2.data());
 #ifndef NDEBUG
-    if (std::abs(Eigen::Map<Eigen::Vector3d>(e2.data()).norm() - 1.0) >
-        tolerance)
-    {
-        OGS_FATAL(normalization_error_info, unit_direction.name);
-    }
-#endif
+    checkNormalization(eigen_mapped_e2, unit_direction.name);
+#endif  // NDEBUG
 
     // Find the id of the first non-zero component of e2:
     auto const it = std::max_element(e2.begin(), e2.end(),
@@ -213,8 +216,6 @@ Eigen::Matrix<double, 3, 3> getTransformationFromSingleBase3D(
     }
 
     e1.normalize();
-
-    auto eigen_mapped_e2 = Eigen::Map<Vector3>(e2.data());
 
     auto e0 = e1.cross(eigen_mapped_e2);
     // |e0| = |e1 x e2| = |e1||e2|sin(theta) with theta the angle between e1 and
