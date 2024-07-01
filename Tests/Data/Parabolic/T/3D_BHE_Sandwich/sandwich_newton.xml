@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="sandwich.prj">
+    <replace sel="/*/time_loop/processes/process/nonlinear_solver/text()">newton_nonlinear_solver</replace>
+    <replace sel="/*/time_loop/processes/process/convergence_criterion/type/text()">Residual</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">sandwich_newton</replace>
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver/name/text()">newton_nonlinear_solver</replace>
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver/type/text()">Newton</replace>
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver/max_iter/text()">10</replace>
+</OpenGeoSysProjectDiff>

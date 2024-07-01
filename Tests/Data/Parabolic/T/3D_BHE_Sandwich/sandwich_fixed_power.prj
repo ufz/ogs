@@ -8,7 +8,6 @@
             <name>HeatTransportBHE</name>
             <type>HEAT_TRANSPORT_BHE</type>
             <integration_order>2</integration_order>
-            <use_algebraic_bc>true</use_algebraic_bc>
             <process_variables>
                 <process_variable>temperature_soil</process_variable>
                 <process_variable>temperature_BHE1</process_variable>
@@ -17,9 +16,9 @@
                 <borehole_heat_exchanger>
                     <type>1U</type>
                     <flow_and_temperature_control>
-                        <type>TemperatureCurveConstantFlow</type>
+                        <type>FixedPowerConstantFlow</type>
                         <flow_rate>1e-3</flow_rate>
-                        <temperature_curve>fluid_temperature</temperature_curve>
+                        <power>10</power>
                     </flow_and_temperature_control>
                     <borehole>
                         <length>3.0</length>
@@ -147,11 +146,11 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 10800 </t_end>
+                    <t_end> 600 </t_end>
                     <timesteps>
                         <pair>
-                            <repeat>1</repeat>
-                            <delta_t>3600</delta_t>
+                            <repeat>10</repeat>
+                            <delta_t>60</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -159,7 +158,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>sandwich</prefix>
+            <prefix>sandwich_fixed_power</prefix>
             <timesteps>
                 <pair>
                     <repeat> 1 </repeat>
@@ -229,15 +228,4 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
-    <curves>
-        <curve>
-            <name>fluid_temperature</name>
-            <coords>
-            0  864000
-            </coords>
-            <values>
-            273.15 273.15
-            </values>
-        </curve>
-    </curves>
 </OpenGeoSysProject>

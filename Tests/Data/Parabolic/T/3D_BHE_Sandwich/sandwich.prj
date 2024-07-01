@@ -8,7 +8,6 @@
             <name>HeatTransportBHE</name>
             <type>HEAT_TRANSPORT_BHE</type>
             <integration_order>2</integration_order>
-            <use_algebraic_bc>false</use_algebraic_bc>
             <process_variables>
                 <process_variable>temperature_soil</process_variable>
                 <process_variable>temperature_BHE1</process_variable>
@@ -141,17 +140,17 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltol>1.e-6</reltol>
+                    <reltol>1.e-10</reltol>
                 </convergence_criterion>
                 <time_discretization><type>BackwardEuler</type></time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 10800 </t_end>
+                    <t_end> 600 </t_end>
                     <timesteps>
                         <pair>
                             <repeat>1</repeat>
-                            <delta_t>3600</delta_t>
+                            <delta_t>60</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>

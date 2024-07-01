@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<OpenGeoSysProjectDiff base_file="fixed_power_constant_flow.prj">
+<OpenGeoSysProjectDiff base_file="sandwich.prj">
     <add sel="/*/processes/process">
         <use_algebraic_bc>true</use_algebraic_bc>
     </add>
@@ -9,7 +9,7 @@
     <add sel="/*/processes/process">
         <linear>true</linear>
     </add>
-    <replace sel="/*/time_loop/output/prefix/text()">fixed_power_constant_flow_algebraic_bc</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">sandwich_algebraic_bc</replace>
     <replace sel="/*/linear_solvers/linear_solver/eigen/solver_type/text()">CG</replace>
     <replace sel="/*/linear_solvers/linear_solver/eigen/precon_type/text()">DIAGONAL</replace>
 </OpenGeoSysProjectDiff>
