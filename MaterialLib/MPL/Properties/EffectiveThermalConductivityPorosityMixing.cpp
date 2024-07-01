@@ -176,11 +176,9 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
     if (local_coordinate_system_ &&
         (solid_thermal_conductivity.cols() == GlobalDim))
     {
-        Eigen::Matrix<double, GlobalDim, GlobalDim> const e =
-            local_coordinate_system_->transformation<GlobalDim>(pos);
-
         solid_thermal_conductivity =
-            e.transpose() * solid_thermal_conductivity * e;
+            local_coordinate_system_->rotateTensor<GlobalDim>(
+                solid_thermal_conductivity, pos);
     }
     auto const I = Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity();
     Eigen::Matrix<double, GlobalDim, GlobalDim> const
