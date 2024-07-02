@@ -294,7 +294,7 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingRot90deg)
         medium
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
-    ASSERT_NEAR(eff_th_cond(0, 0), 0.467280, 1.e-10);
-    ASSERT_NEAR(eff_th_cond(1, 1), 0.7832, 1.e-10);
-    ASSERT_NEAR(eff_th_cond(2, 2), 0.81224, 1.e-10);
+    ASSERT_NEAR(eff_th_cond(0, 0), 0.7832, 1.e-10);
+    ASSERT_NEAR(eff_th_cond(1, 1), 0.81224, 1.e-10);
+    ASSERT_NEAR(eff_th_cond(2, 2), 0.467280, 1.e-10);
 }
