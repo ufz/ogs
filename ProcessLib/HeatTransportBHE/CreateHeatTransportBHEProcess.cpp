@@ -10,6 +10,7 @@
 
 #include "CreateHeatTransportBHEProcess.h"
 
+#include <algorithm>
 #include <pybind11/pybind11.h>
 
 #include <vector>

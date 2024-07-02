@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <pybind11/embed.h>
 
 #include "BaseLib/ExportSymbol.h"

@@ -10,6 +10,7 @@
 
 #include "CreatePythonSourceTerm.h"
 
+#include <algorithm>
 #include <pybind11/pybind11.h>
 
 #include "BaseLib/ConfigTree.h"

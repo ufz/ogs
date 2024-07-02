@@ -9,6 +9,7 @@
  */
 
 #pragma once
+#include <algorithm>
 #include <pybind11/pybind11.h>
 
 #include <algorithm>

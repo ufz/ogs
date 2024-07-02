@@ -10,6 +10,7 @@
 
 #include "ogs_embedded_python.h"
 
+#include <algorithm>
 #include <pybind11/embed.h>
 
 #include "BaseLib/Logging.h"
