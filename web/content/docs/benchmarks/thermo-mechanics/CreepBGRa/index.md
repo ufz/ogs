@@ -125,10 +125,12 @@ We see that $$\begin{aligned}
 If the model is used for the thermo-mechanical problems and the problems
 are solved by the monolithic scheme, the displacement-temperature block
 of the global Jacobian can be derived as
-$$\begin{aligned}
 
+$$
+\begin{aligned}
   -2G\dfrac{Q}{R} {{\int}_{\Omega} \dfrac{b}{T^2} {\left\Vert{\mathbf s}^{n+1}\right\Vert}^{m-1}  \mathbf{B}^T  {\mathbf s}^{n+1} \mathrm{d} \Omega}
 \end{aligned}
+$$
 
 *Note*: The above rate form of stress integration is implemented in OGS.
  Alternatively, one can use an absolute stress integration form, which can be found in the attached
