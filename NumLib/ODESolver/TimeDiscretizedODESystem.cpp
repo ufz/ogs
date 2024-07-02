@@ -152,6 +152,28 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     MathLib::applyKnownSolution(Jac, res, minus_delta_x, ids, values);
 }
 
+void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                              NonlinearSolverTag::Newton>::
+    applyKnownSolutionsPETScSNES(GlobalMatrix& Jac, GlobalVector& res,
+                                 GlobalVector& x) const
+{
+    if (!_known_solutions)
+    {
+        return;
+    }
+
+    using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
+    std::vector<IndexType> ids;
+    for (auto const& bc : *_known_solutions)
+    {
+        ids.insert(end(ids), begin(bc.ids), end(bc.ids));
+    }
+
+    // For the Newton method the values must be zero
+    std::vector<double> values(ids.size(), 0);
+    MathLib::applyKnownSolution(Jac, res, x, ids, values);
+}
+
 TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Picard>::
     TimeDiscretizedODESystem(const int process_id, ODE& ode,
