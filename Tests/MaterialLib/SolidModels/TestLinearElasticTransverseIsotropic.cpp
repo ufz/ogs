@@ -13,6 +13,7 @@
 
 #include <cmath>
 #include <memory>
+#include <numbers>
 #include <range/v3/all.hpp>
 #include <string>
 #include <tuple>
@@ -53,6 +54,8 @@ constexpr char xml_iso[] =
 
 using Tensor4R =
     std::array<std::array<std::array<std::array<double, 3>, 3>, 3>, 3>;
+
+constexpr double phi = 35 * std::numbers::pi / 180.0;
 
 std::vector<std::unique_ptr<ParameterLib::ParameterBase>>
 setParametersForLinearElasticTransverseIsotropic(double const E_i,
@@ -406,19 +409,19 @@ TEST_F(LinearElasticTransverseIsotropic, test_agaist_ElasticOrthotropic)
 {
     {  // 2D
         ParameterLib::ConstantParameter<double> const e1{
-            "e1", {0.8191520442889918, 0.573576436351046}};
+            "e1", {std::cos(phi), std::sin(phi)}};
         ParameterLib::ConstantParameter<double> const e2{
-            "e2", {-0.573576436351046, 0.8191520442889918}};
+            "e2", {-std::sin(phi), std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{e1, e2};
 
         compareWithElasticOrthotropic<2>(coordinate_system);
     }
     {  // 3D
         ParameterLib::ConstantParameter<double> const e1{
-            "e1", {0.8191520442889918, 0.0, -0.573576436351046}};
+            "e1", {std::cos(phi), 0.0, -std::sin(phi)}};
         ParameterLib::ConstantParameter<double> const e2{"e2", {0.0, 1.0, 0.0}};
         ParameterLib::ConstantParameter<double> const e3{
-            "e3", {0.573576436351046, 0.0, 0.8191520442889918}};
+            "e3", {std::sin(phi), 0.0, std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{e1, e2, e3};
 
         compareWithElasticOrthotropic<3>(coordinate_system);
@@ -428,11 +431,10 @@ TEST_F(LinearElasticTransverseIsotropic, test_agaist_ElasticOrthotropic)
 TEST_F(LinearElasticTransverseIsotropic, test_Rotation_ElasticOrthotropic)
 {
     {  // 2D
-       // z: 35°
         ParameterLib::ConstantParameter<double> const e1{
-            "e1", {0.8191520442889918, 0.573576436351046}};
+            "e1", {std::cos(phi), std::sin(phi)}};
         ParameterLib::ConstantParameter<double> const e2{
-            "e2", {-0.573576436351046, 0.8191520442889918}};
+            "e2", {-std::sin(phi), std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{e1, e2};
 
         checkRotationElasticOrthotropic<2>(coordinate_system);
@@ -458,14 +460,14 @@ TEST_F(LinearElasticTransverseIsotropic,
 {
     {  // 2D
         ParameterLib::ConstantParameter<double> const line_direction{
-            "e3", {-0.573576436351046, 0.8191520442889918}};
+            "e3", {-std::sin(phi), std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{line_direction};
 
         compareWithElasticOrthotropic<2>(coordinate_system);
     }
     {  // 3D
         ParameterLib::ConstantParameter<double> const line_direction{
-            "e3", {-0.573576436351046, 0.0, 0.8191520442889918}};
+            "e3", {-std::sin(phi), 0.0, std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{line_direction};
 
         compareWithElasticOrthotropic<3>(coordinate_system);
