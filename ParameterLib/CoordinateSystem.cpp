@@ -293,8 +293,7 @@ Eigen::Matrix<double, Dimension, Dimension> CoordinateSystem::rotateTensor(
     auto const tensor =
         Eigen::Map<Eigen::Matrix<double, Dimension, Dimension> const>(
             values.data(), Dimension, Dimension);
-    auto const R = transformation<Dimension>(pos);
-    return R * tensor * R.transpose();
+    return rotateTensor<Dimension>(tensor, pos);
 }
 
 template <int Dimension>

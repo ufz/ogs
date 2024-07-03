@@ -72,6 +72,11 @@ struct CoordinateSystem final
     Eigen::Matrix<double, Dimension, Dimension> rotateTensor(
         std::vector<double> const& values, SpatialPosition const& pos) const;
 
+    template <int Dimension, typename Derived>
+    Eigen::Matrix<double, Dimension, Dimension> rotateTensor(
+        Eigen::MatrixBase<Derived> const& tensor,
+        SpatialPosition const& pos) const;
+
     template <int Dimension>
     Eigen::Matrix<double, Dimension, Dimension> rotateDiagonalTensor(
         std::vector<double> const& values, SpatialPosition const& pos) const;
@@ -83,6 +88,14 @@ private:
     Eigen::Matrix<double, 3, 3> transformationFromSingleBase_3d(
         SpatialPosition const& pos) const;
 };
+
+template <int Dimension, typename Derived>
+Eigen::Matrix<double, Dimension, Dimension> CoordinateSystem::rotateTensor(
+    Eigen::MatrixBase<Derived> const& tensor, SpatialPosition const& pos) const
+{
+    auto const R = transformation<Dimension>(pos);
+    return R * tensor * R.transpose();
+}
 
 extern template Eigen::Matrix<double, 2, 2> CoordinateSystem::rotateTensor<2>(
     std::vector<double> const& values, SpatialPosition const& pos) const;
