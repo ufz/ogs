@@ -396,7 +396,7 @@ private:
                 {
                     fac = 0.5;
                 }
-                ASSERT_LE(std::abs(C(i, j) * fac - c[k][l][m][n]), 5e-6);
+                ASSERT_NEAR(C(i, j) * fac, c[k][l][m][n], 5e-6);
             }
         }
     }
