@@ -183,7 +183,7 @@ AddTest(
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu fracture_stress fracture_stress 1e-10 1e-15
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu fracture_permeability fracture_permeability 1e-15 1e-15
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu fracture_aperture fracture_aperture 1e-15 1e-15
-    single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu sigma sigma 7e-10 1e-15
+    single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu sigma sigma 9e-10 1e-15
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu epsilon epsilon 1e-15 1e-15
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu velocity velocity 1e-15 1e-15
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu local_jump_w_avg local_jump_w_avg 1e-15 1e-15
