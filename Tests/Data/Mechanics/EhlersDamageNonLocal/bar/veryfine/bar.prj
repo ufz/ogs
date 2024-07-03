@@ -342,7 +342,7 @@
         <vtkdiff>
             <file>out_bar_veryfine_ED_ts_70_t_0.700000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>1e-6</absolute_tolerance>
+            <absolute_tolerance>2e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

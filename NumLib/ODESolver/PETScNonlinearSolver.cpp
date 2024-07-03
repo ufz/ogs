@@ -67,7 +67,7 @@ PetscErrorCode updateResidual(SNES /*snes*/, Vec x, Vec petsc_r,
     context->J->finalizeAssembly();
 
     context->system->getJacobian(*context->J);
-    context->system->applyKnownSolutionsNewton(
+    context->system->applyKnownSolutionsPETScSNES(
         *context->J, *context->r, *context->x[context->process_id]);
 
     VecCopy(context->r->getRawVector(), petsc_r);

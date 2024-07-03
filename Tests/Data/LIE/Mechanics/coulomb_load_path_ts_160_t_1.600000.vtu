@@ -8,28 +8,28 @@
       <PointData>
         <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="6.0827625303e-06"     offset="88"                  />
         <DataArray type="Float64" Name="displacement_jump1" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="6.0827624546e-06"     offset="212"                 />
-        <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="1.5517621616e-14"     RangeMax="3.6681403465e-14"     offset="304"                 />
-        <DataArray type="Float64" Name="fracture_aperture" format="appended" RangeMin="0"                    RangeMax="9.0000000326e-06"     offset="544"                 />
-        <DataArray type="Float64" Name="fracture_stress" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="41646.88895"          offset="620"                 />
-        <DataArray type="Float64" Name="sigma" NumberOfComponents="4" format="appended" RangeMin="24524.346901"         RangeMax="101166.72399"         offset="712"                 />
+        <DataArray type="Float64" Name="epsilon" NumberOfComponents="4" format="appended" RangeMin="1.5517621613e-14"     RangeMax="3.6681403465e-14"     offset="304"                 />
+        <DataArray type="Float64" Name="fracture_aperture" format="appended" RangeMin="0"                    RangeMax="9.0000000326e-06"     offset="528"                 />
+        <DataArray type="Float64" Name="fracture_stress" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="41646.88895"          offset="604"                 />
+        <DataArray type="Float64" Name="sigma" NumberOfComponents="4" format="appended" RangeMin="24524.346409"         RangeMax="101166.72708"         offset="688"                 />
       </PointData>
       <CellData>
-        <DataArray type="Float64" Name="fracture_aperture_avg" format="appended" RangeMin="0"                    RangeMax="9.0000000326e-06"     offset="988"                 />
-        <DataArray type="Float64" Name="fracture_stress_avg" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="41646.88895"          offset="1060"                />
-        <DataArray type="Float64" Name="local_jump_w_avg" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="6.0827624546e-06"     offset="1140"                />
-        <DataArray type="Float64" Name="sigma_avg" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="44043.031072"         offset="1220"                />
+        <DataArray type="Float64" Name="fracture_aperture_avg" format="appended" RangeMin="0"                    RangeMax="9.0000000326e-06"     offset="968"                 />
+        <DataArray type="Float64" Name="fracture_stress_avg" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="41646.88895"          offset="1040"                />
+        <DataArray type="Float64" Name="local_jump_w_avg" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="6.0827624546e-06"     offset="1120"                />
+        <DataArray type="Float64" Name="sigma_avg" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="44043.030653"         offset="1200"                />
       </CellData>
       <Points>
-        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="2.2360679775"         offset="1356"                />
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="2.2360679775"         offset="1336"                />
       </Points>
       <Cells>
-        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="1436"                />
-        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1520"                />
-        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1588"                />
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="1416"                />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1500"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1568"                />
       </Cells>
     </Piece>
   </UnstructuredGrid>
   <AppendedData encoding="base64">
-   _AQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9A1NjPSTTdKTrJIMzZN1UvJLCqpBABN8gcQAQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAOwAAAAAAAAA=eF5jYMAPkp8IFBZr3bTrfbt1wfdjG/ah812XJBQUa520qy9eN+P7sQX7GlQOFoL4s9L3rgDxAZErJJg=AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAIwAAAAAAAAA=eF5jYKAMSFnw5BRr3dzH+KZ9+vdjG+wkofz/ryF8AO8PEGU=AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAAkwAAAAAAAAA=eF47suL79tmXlloqMDA8KM94tIcBChgZGDZsCBS07fvy93qWwhLL////z642VdzLgABzNl4Ws2VgcBDtsFlszWB+SK4CSf+1pN9LQPoFomaxhu9ytp54Z/IsZP2s5nGzQfqvvG/byMzBZtt/Z7IEc4wQXF7luJ7aF74PNp66SctB8gXKb2SR5XfJZQqC5AGoTTzHAQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAFgAAAAAAAAA=eF5jYMAPCrM/Tb12/5EdjAYAV/IKcQ==AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAIgAAAAAAAAA=eF5jYKAMbLoppeYgdMHhx12nbt11jw5sgPK/Q/kABlUQlg==AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAArAAAAAAAAAA=eF6rNEzOsM9ZdICT/+RPz7qtBxqg/JXSob+CZa47PI7QkmWxfHiAcy+b0i3xLwceQvk7/1YYXS+959C4qvSGDVD9Vw2elSD9k2ZoFdsB+V9cF74G6Y9dwioNUs8qaqYA0i/3MQ/MPyu10BCk/8hu9gs8aXsdvC79WmVx8/6BjFVaX4H8A5GV0i9X5W514PBz6gbJ/yzq3AOSZ7x5V44XKH9scvJZkDwAYURdtA==AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAEwAAAAAAAAA=eF4rzP409dr9R3YMaAAAapkFOQ==AQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAGwAAAAAAAAA=eF7bcFNKzUHogsOPu07duuseHWAgAABKBghLAQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAGwAAAAAAAAA=eF6TsuDJKda6acfwpn3692Mb9jEQAAAoYge0AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAARQAAAAAAAAA=eF5jYMAPohmPH+3k2XZA/+bUHt11jw5cdtEO9t558kDDZz91B6ELDgf5+VtB8i+9GrpB8iuYND1A8mt5WJVA8gADox4aAQAAAAAAAAAAgAAAAAAAAJAAAAAAAAAAGwAAAAAAAAA=eF5jYMAHPtgTEHfALo9LHN08GB8hDgBcugZsAQAAAAAAAAAAgAAAAAAAAFAAAAAAAAAAHAAAAAAAAAA=eF5jZYAAFgZUwAilWdHkmdH4MHkmKA0ABegAIg==AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAEAAAAAAAAAA=eF5jYoAANijNBaUBAPgAEw==AQAAAAAAAAAAgAAAAAAAAAMAAAAAAAAACwAAAAAAAAA=eF5j5uQEAAAnABY=
+   _AQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9A1NTDVTTe0tExONE9M1kvJLCqpBABM4AcPAQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAOwAAAAAAAAA=eF5jYMAPkp8IFBZr3bTrfbt1wfdjG/ah892WJBQUa520ayheN+P7sQX7mlQOFoL4s9P3rgDxAZGLJJ0=AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAIgAAAAAAAAA=eF5jYKAMSFvw5BRr3dzH+KZ9+vdjG+xg/P+vIXwA708QaA==AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAAhgAAAAAAAAA=eF5jYACBBTvZGBgelGc82sMABX/+/1+9IVDQFsI7sfPf//+zq00V98Lk/wP5Gy+LgeRFO2yWW3vUn3uJrN9vw6mlEP0Ce7Ns5+7mkFg8C1n/55wbYP2X3rcdZOZgswXKSzDHCMHlq/ltpb7wfbA5kGW7FiT/8/kcKWR5i2mKfCB5AFzJPFc=AQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAFgAAAAAAAAA=eF5jYMAPCrM/Tb12/5EdjAYAV/IKcQ==AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAAHgAAAAAAAAA=eF5jYKAMbLgppeYgdMHhx12nbt11jw6g8wEGHRCVAQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAArwAAAAAAAAA=eF5LN0zOsM9ZdOAt38mfnnVbD2RB+d/X/vsSLHPd4WGEliyL5cMDrHvZlG6JfzlwD8rf/7fC6HrpPYdkUWY+G6B6/ueG3iD9V+/K/bMF8v883foGpP+c2kdbkPpdpgfUQfoF7udpgfhX9VzA+hsPtEjxpu11eLJfZrHFzfsHXgslXuVJ23ugxF775qrcrQ5hLHc2A/kOGUcebATJnw94ygpUf8DGl/kkSB4AIEdgWw==AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAEwAAAAAAAAA=eF4rzP409dr9R3YMaAAAapkFOQ==AQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAGwAAAAAAAAA=eF7bcFNKzUHogsOPu07duuseHWAgAABKBghLAQAAAAAAAAAAgAAAAAAAADAAAAAAAAAAGwAAAAAAAAA=eF6TtuDJKda6acfwpn3692Mb9jEQAAAokge1AQAAAAAAAAAAgAAAAAAAAGAAAAAAAAAARQAAAAAAAAA=eF5jYMAP9jNmLejk2XZAoGBql+66RwfCFmh6e+88eWD1nsUqDkIXHPhSMueC5IWdtnaC5GsCV3qC5Pla7RRB8gDbEx2sAQAAAAAAAAAAgAAAAAAAAJAAAAAAAAAAGwAAAAAAAAA=eF5jYMAHPtgTEHfALo9LHN08GB8hDgBcugZsAQAAAAAAAAAAgAAAAAAAAFAAAAAAAAAAHAAAAAAAAAA=eF5jZYAAFgZUwAilWdHkmdH4MHkmKA0ABegAIg==AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAEAAAAAAAAAA=eF5jYoAANijNBaUBAPgAEw==AQAAAAAAAAAAgAAAAAAAAAMAAAAAAAAACwAAAAAAAAA=eF5j5uQEAAAnABY=
   </AppendedData>
 </VTKFile>

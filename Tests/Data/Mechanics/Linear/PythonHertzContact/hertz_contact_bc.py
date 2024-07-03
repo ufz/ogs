@@ -45,6 +45,10 @@ class HertzContactBC(OpenGeoSys.BoundaryCondition):
                 # BCs for the current nonlinear solver iteration, i.e., the
                 # applied BCs and the information based on which the BCs are
                 # applied are off by one iteration.
+
+                # Reset left side to x_with_y_excess value, which in some cases
+                # might be lower
+                self._a_range[0] = min(self._a_range[0], self._max_x_with_y_excess)
                 self._a_range[1] = self._max_x_with_y_excess
                 assert self._a_range[0] <= self._a_range[1]
                 self._tendency_is_up = False

@@ -361,7 +361,7 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>2e-12</absolute_tolerance>
+            <absolute_tolerance>3e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>

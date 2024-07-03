@@ -304,7 +304,7 @@
         <vtkdiff>
             <file>out_beam_coarse_ED_ts_10_t_0.100000.vtu</file>
             <field>sigma</field>
-            <absolute_tolerance>5e-8</absolute_tolerance>
+            <absolute_tolerance>9e-8</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

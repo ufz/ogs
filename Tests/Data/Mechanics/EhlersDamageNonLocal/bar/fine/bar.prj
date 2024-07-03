@@ -61,7 +61,7 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-8</abstol>
+                    <abstol>1e-7</abstol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
