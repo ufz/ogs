@@ -223,9 +223,22 @@ private:
                 return DisplacementDim;
             case VT::TENSOR:
                 return MaterialPropertyLib::tensorSize(DisplacementDim);
+            case VT::VECTOR_1D:
+            case VT::VECTOR_2D:
+            case VT::VECTOR_3D:
+            case VT::STENSOR_1D:
+            case VT::STENSOR_2D:
+            case VT::STENSOR_3D:
+            case VT::TENSOR_1D:
+            case VT::TENSOR_2D:
+            case VT::TENSOR_3D:
+            case VT::HIGHER_ORDER_TENSOR:
+            case VT::ARRAY:
+                break;  // Unsupported variable types
         }
 
-        OGS_FATAL("Unsupported variable type {}", BaseLib::to_underlying(vt));
+        OGS_FATAL("Unsupported MGIS variable type {}.",
+                  BaseLib::to_underlying(vt));
     }
 
     /// Computes the index of a tangent operator block in the #offsets_ array.
