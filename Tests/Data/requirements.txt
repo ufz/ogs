@@ -13,4 +13,4 @@ pyvista[all,jupyter,trame]>=0.39
 seaborn>=0.12
 git+https://github.com/joergbuchwald/VTUinterface@05793c7be84fbcb7d9f8f740c3dc667089a61505#egg=vtuinterface
 trame-vtk>=2.4
-vtk-osmesa==9.2.6;platform_system=='Linux'
+vtk-osmesa>=9.2.6;platform_system=='Linux'
