@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>bar.vtu</mesh>
-        <mesh>bar_left.vtu</mesh>
-        <mesh>bar_right.vtu</mesh>
+        <mesh>../bar.vtu</mesh>
+        <mesh>../bar_left.vtu</mesh>
+        <mesh>../bar_right.vtu</mesh>
     </meshes>
     <processes>
         <process>
