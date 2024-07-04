@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="CooksMembrane.prj">
+    <replace msel="/*/mesh/text()"> mesh_n30.vtu</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">cooks_membrane_ld_refined_mesh_30</replace>
+    <replace msel="/*/test_definition/vtkdiff[1]/file/text()">cooks_membrane_ld_refined_mesh_30_ts_1_t_1.000000.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[2]/file/text()">cooks_membrane_ld_refined_mesh_30_ts_1_t_1.000000.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[3]/file/text()">cooks_membrane_ld_refined_mesh_30_ts_1_t_1.000000.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[1]/absolute_tolerance/text()">2e-12</replace>
+    <replace msel="/*/test_definition/vtkdiff[2]/absolute_tolerance/text()">3e-9</replace>
+    <replace msel="/*/test_definition/vtkdiff[3]/relative_tolerance/text()">2e-5</replace>
+</OpenGeoSysProjectDiff>
