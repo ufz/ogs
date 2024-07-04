@@ -13,7 +13,11 @@
 
 #include <cmath>
 #include <memory>
+#include <numbers>
+#include <range/v3/all.hpp>
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include "CreateTestConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/CreateLinearElasticIsotropic.h"
@@ -47,6 +51,11 @@ constexpr char xml_iso[] =
     "    <youngs_modulus>E</youngs_modulus>"
     "    <poissons_ratio>nu</poissons_ratio>"
     "</constitutive_relation> ";
+
+using Tensor4R =
+    std::array<std::array<std::array<std::array<double, 3>, 3>, 3>, 3>;
+
+constexpr double phi = 35 * std::numbers::pi / 180.0;
 
 std::vector<std::unique_ptr<ParameterLib::ParameterBase>>
 setParametersForLinearElasticTransverseIsotropic(double const E_i,
@@ -202,6 +211,112 @@ public:
             << "Calculated bulk modulus by the isotropic elastic model:" << k_i;
     }
 
+    template <int Dim>
+    void checkRotationElasticOrthotropic(
+        std::optional<ParameterLib::CoordinateSystem> const& coordinate_system)
+    {
+        // read in moduli
+        ParameterLib::SpatialPosition const pos;
+        auto const parameters_orth =
+            getParametersForLinearElasticOrthotropic(Dim);
+        double const E1 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[0])(t_, pos)[0];
+        double const E2 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[0])(t_, pos)[1];
+        double const E3 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[0])(t_, pos)[2];
+        double const nu12 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[1])(t_, pos)[0];
+        double const nu23 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[1])(t_, pos)[1];
+        double const nu13 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[1])(t_, pos)[2];
+        double const G12 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[2])(t_, pos)[0];
+        double const G23 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[2])(t_, pos)[1];
+        double const G13 = static_cast<ParameterLib::Parameter<double> const&>(
+            *parameters_orth[2])(t_, pos)[2];
+
+        double const nu21 = nu12 * E2 / E1;
+        double const nu32 = nu23 * E3 / E2;
+        double const nu31 = nu13 * E3 / E1;
+        double const D = (1 - nu12 * nu21 - nu23 * nu32 - nu31 * nu13 -
+                          2 * nu12 * nu23 * nu31) /
+                         (E1 * E2 * E3);
+
+        // set rotation matrix for 2D and 3D
+        Eigen::Matrix3d R_c = Eigen::Matrix3d::Zero();
+        if (Dim == 3)
+        {
+            R_c = coordinate_system->transformation<3>(pos);
+        }
+        else
+        {
+            R_c.topLeftCorner<2, 2>() =
+                coordinate_system->transformation<2>(pos);
+            R_c(2, 2) = 1.0;
+        }
+
+        std::optional<ParameterLib::CoordinateSystem> const
+            local_coordinate_system{};
+
+        // set orthotropic model in material coordinates
+        auto const elastic_model_orthotropic_local_material =
+            Tests::createTestConstitutiveRelation<
+                MaterialLib::Solids::LinearElasticOrthotropic<Dim>>(
+                xml_orth, parameters_orth, local_coordinate_system, false,
+                MaterialLib::Solids::createLinearElasticOrthotropic<Dim>);
+
+        auto const C_orthotropic_local_material =
+            elastic_model_orthotropic_local_material->getElasticTensor(t_, pos,
+                                                                       T_ref_);
+
+        // set orthotropic model in global coordinates
+        auto const elastic_model_orthotropic_global =
+            Tests::createTestConstitutiveRelation<
+                MaterialLib::Solids::LinearElasticOrthotropic<Dim>>(
+                xml_orth, parameters_orth, coordinate_system, false,
+                MaterialLib::Solids::createLinearElasticOrthotropic<Dim>);
+        auto const C_orthotropic_global =
+            elastic_model_orthotropic_global->getElasticTensor(t_, pos, T_ref_);
+
+        Tensor4R tensor_local_material = {};
+
+        // set tensor elements
+        tensor_local_material[0][0][0][0] = (1 - nu23 * nu32) / (E2 * E3 * D);
+        tensor_local_material[0][0][1][1] =
+            (nu21 + nu31 * nu23) / (E2 * E3 * D);
+        tensor_local_material[0][0][2][2] =
+            (nu31 + nu21 * nu32) / (E2 * E3 * D);
+        tensor_local_material[1][1][0][0] =
+            (nu12 + nu13 * nu32) / (E1 * E3 * D);
+        tensor_local_material[1][1][1][1] = (1 - nu31 * nu13) / (E1 * E3 * D);
+        tensor_local_material[1][1][2][2] =
+            (nu32 + nu31 * nu12) / (E1 * E3 * D);
+        tensor_local_material[2][2][0][0] =
+            (nu13 + nu12 * nu23) / (E1 * E2 * D);
+        tensor_local_material[2][2][1][1] =
+            (nu23 + nu13 * nu21) / (E1 * E2 * D);
+        tensor_local_material[2][2][2][2] = (1 - nu12 * nu21) / (E1 * E2 * D);
+        tensor_local_material[1][2][1][2] = G23;
+        tensor_local_material[2][1][1][2] = tensor_local_material[1][2][1][2];
+        tensor_local_material[1][2][2][1] = tensor_local_material[1][2][1][2];
+        tensor_local_material[2][1][2][1] = tensor_local_material[1][2][1][2];
+        tensor_local_material[0][2][0][2] = G13;
+        tensor_local_material[2][0][0][2] = tensor_local_material[0][2][0][2];
+        tensor_local_material[0][2][2][0] = tensor_local_material[0][2][0][2];
+        tensor_local_material[2][0][2][0] = tensor_local_material[0][2][0][2];
+        tensor_local_material[0][1][0][1] = G12;
+        tensor_local_material[1][0][0][1] = tensor_local_material[0][1][0][1];
+        tensor_local_material[0][1][1][0] = tensor_local_material[0][1][0][1];
+        tensor_local_material[1][0][1][0] = tensor_local_material[0][1][0][1];
+
+        checkTensors<Dim>(C_orthotropic_local_material, tensor_local_material);
+        auto const tensor_global = rotateTensor(tensor_local_material, R_c);
+        checkTensors<Dim>(C_orthotropic_global, tensor_global);
+    }
+
 private:
     double const t_ = std::numeric_limits<double>::quiet_NaN();
     double const T_ref_ = std::numeric_limits<double>::quiet_NaN();
@@ -226,28 +341,117 @@ private:
         std::vector<double> G0{2.962962962963e+09, 1.2e9, 1.2e9};
         return setParametersForLinearElasticOrthotropic(E0, nu0, G0);
     }
+
+    Tensor4R rotateTensor(Tensor4R c, Eigen::Matrix<double, 3, 3> R)
+    {
+        Tensor4R c_rot = {};
+
+        auto outer_indices =
+            ranges::views::cartesian_product(ranges::views::iota(0, 3),
+                                             ranges::views::iota(0, 3),
+                                             ranges::views::iota(0, 3),
+                                             ranges::views::iota(0, 3));
+        auto inner_indices = outer_indices;
+
+        for (const auto& [i, j, k, l] : outer_indices)
+        {
+            for (const auto& [r, s, t, u] : inner_indices)
+            {
+                c_rot[i][j][k][l] +=
+                    R(i, r) * R(j, s) * R(k, t) * R(l, u) * c[r][s][t][u];
+            }
+        }
+        return c_rot;
+    }
+
+    std::tuple<int, int> kelvinVectorIndexTo2ndRankTensorIndices(int i)
+    {
+        switch (i)
+        {
+            case 3:
+                return {0, 1};
+            case 4:
+                return {1, 2};
+            case 5:
+                return {0, 2};
+            default:
+                return {i, i};
+        }
+    }
+
+    template <int Dimension>
+    void checkTensors(MaterialLib::Solids::LinearElasticOrthotropic<
+                          Dimension>::KelvinMatrix C,
+                      Tensor4R c)
+    {
+        for (int i = 0; i < C.cols(); i++)
+        {
+            for (int j = 0; j < C.rows(); j++)
+            {
+                double fac = 1.0;
+                auto const [k, l] = kelvinVectorIndexTo2ndRankTensorIndices(i);
+                auto const [m, n] = kelvinVectorIndexTo2ndRankTensorIndices(j);
+                if ((i < 3 && j > 2) || (j < 3 && i > 2))
+                {
+                    fac = 1 / std::sqrt(2);
+                }
+                else if ((i > 2) && (j > 2))
+                {
+                    fac = 0.5;
+                }
+                ASSERT_NEAR(C(i, j) * fac, c[k][l][m][n], 5e-6);
+            }
+        }
+    }
 };
 
 TEST_F(LinearElasticTransverseIsotropic, test_agaist_ElasticOrthotropic)
 {
     {  // 2D
         ParameterLib::ConstantParameter<double> const e1{
-            "e1", {0.8191520442889918, 0.573576436351046}};
+            "e1", {std::cos(phi), std::sin(phi)}};
         ParameterLib::ConstantParameter<double> const e2{
-            "e2", {-0.573576436351046, 0.8191520442889918}};
+            "e2", {-std::sin(phi), std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{e1, e2};
 
         compareWithElasticOrthotropic<2>(coordinate_system);
     }
     {  // 3D
         ParameterLib::ConstantParameter<double> const e1{
-            "e1", {0.8191520442889918, 0.0, 0.573576436351046}};
+            "e1", {std::cos(phi), 0.0, -std::sin(phi)}};
         ParameterLib::ConstantParameter<double> const e2{"e2", {0.0, 1.0, 0.0}};
         ParameterLib::ConstantParameter<double> const e3{
-            "e3", {-0.573576436351046, 0.0, 0.8191520442889918}};
+            "e3", {std::sin(phi), 0.0, std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{e1, e2, e3};
 
         compareWithElasticOrthotropic<3>(coordinate_system);
+    }
+}
+
+TEST_F(LinearElasticTransverseIsotropic, test_Rotation_ElasticOrthotropic)
+{
+    {  // 2D
+        ParameterLib::ConstantParameter<double> const e1{
+            "e1", {std::cos(phi), std::sin(phi)}};
+        ParameterLib::ConstantParameter<double> const e2{
+            "e2", {-std::sin(phi), std::cos(phi)}};
+        ParameterLib::CoordinateSystem const coordinate_system{e1, e2};
+
+        checkRotationElasticOrthotropic<2>(coordinate_system);
+    }
+    {  // 3D
+       // x: 15.3° y: 35° z: 44.9°
+        ParameterLib::ConstantParameter<double> const e1{
+            "e1", {0.5802380261233806, 0.5782161401269231, -0.573576436351046}};
+        ParameterLib::ConstantParameter<double> const e2{
+            "e2",
+            {-0.5736454596106133, 0.7900690700491165, 0.21615214831190652}};
+        ParameterLib::ConstantParameter<double> const e3{
+            "e3",
+            {0.5781476625470101, 0.20360982257358468, 0.7901191811638179}};
+        ParameterLib::CoordinateSystem const coordinate_system{e1, e2, e3};
+
+        checkRotationElasticOrthotropic<3>(coordinate_system);
     }
 }
 
@@ -256,14 +460,14 @@ TEST_F(LinearElasticTransverseIsotropic,
 {
     {  // 2D
         ParameterLib::ConstantParameter<double> const line_direction{
-            "e3", {-0.573576436351046, 0.8191520442889918}};
+            "e3", {-std::sin(phi), std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{line_direction};
 
         compareWithElasticOrthotropic<2>(coordinate_system);
     }
     {  // 3D
         ParameterLib::ConstantParameter<double> const line_direction{
-            "e3", {-0.573576436351046, 0.0, 0.8191520442889918}};
+            "e3", {-std::sin(phi), 0.0, std::cos(phi)}};
         ParameterLib::CoordinateSystem const coordinate_system{line_direction};
 
         compareWithElasticOrthotropic<3>(coordinate_system);
