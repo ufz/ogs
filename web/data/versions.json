@@ -21,7 +21,7 @@
     "python": "3.9",
     "hdf5": "1.10.7",
     "libxml2": "2.9.12",
-    "tfel-rliv": "4.0",
+    "tfel-rliv": "4.2",
     "tfel-repo": "thelfer",
     "lis": "1.7.37",
     "gtest": "1.13.0",
