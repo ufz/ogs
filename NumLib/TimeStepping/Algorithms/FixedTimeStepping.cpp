@@ -213,7 +213,7 @@ std::tuple<bool, double> FixedTimeStepping::next(
         std::abs(ts_current.current() - end()) <
             std::numeric_limits<double>::epsilon())
     {
-        return std::make_tuple(false, 0.0);
+        return std::make_tuple(true, 0.0);
     }
 
     double dt = _dt_vector[ts_current.timeStepNumber()];
