@@ -307,7 +307,7 @@ public:
                 this->is_axially_symmetric_);
         }
 
-        return NonLinearFbar::computeFBarInitialVariables<
+        return NonLinearFbar::computeFBarInitialVariablesElementCenter<
             DisplacementDim, GradientVectorType, GradientMatrixType,
             VectorTypeForFbar, ShapeFunction, ShapeMatricesType>(
             compute_detF0_only, local_x, this->element_,

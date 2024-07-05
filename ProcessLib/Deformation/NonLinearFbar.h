@@ -154,7 +154,7 @@ std::tuple<double, VectorTypeForFbar> computeFBarInitialVariablesAverage(
 template <int DisplacementDim, typename GradientVectorType,
           typename GradientMatrixType, typename VectorTypeForFbar,
           typename ShapeFunction, typename ShapeMatricesType>
-std::tuple<double, VectorTypeForFbar> computeFBarInitialVariables(
+std::tuple<double, VectorTypeForFbar> computeFBarInitialVariablesElementCenter(
     bool const compute_detF0_only, Eigen::VectorXd const& u,
     MeshLib::Element const& element, bool const is_axially_symmetric)
 {
