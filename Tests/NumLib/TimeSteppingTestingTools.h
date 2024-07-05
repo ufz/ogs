@@ -17,6 +17,7 @@
 
 #include "BaseLib/Logging.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "NumLib/TimeStepping/TimeStep.h"
 
 namespace
@@ -47,6 +48,11 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         auto [step_accepted, timestepper_dt] = algorithm.next(
             solution_error, i, previous_timestep, current_timestep);
         if (!step_accepted)
+        {
+            break;
+        }
+        if (current_timestep.current() + timestepper_dt ==
+            current_timestep.current())
         {
             break;
         }
