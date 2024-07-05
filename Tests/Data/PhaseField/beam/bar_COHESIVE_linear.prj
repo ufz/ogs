@@ -2,9 +2,9 @@
 <OpenGeoSysProject>
     <!-- element size == 0.01 -->
     <meshes>
-        <mesh>bar_cohesive_linear.vtu</mesh>
-        <mesh>bar_cohesive_linear_left.vtu</mesh>
-        <mesh>bar_cohesive_linear_right.vtu</mesh>
+        <mesh>bar.vtu</mesh>
+        <mesh>bar_left.vtu</mesh>
+        <mesh>bar_right.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -113,7 +113,7 @@
                 <variable>epsilon</variable>
             </variables>
             <type>VTK</type>
-            <prefix>bar_COHESIVE_linear</prefix>
+            <prefix>bar_cohesive_linear</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -205,14 +205,14 @@
             <initial_condition>phasefield_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>bar_cohesive_linear</geometrical_set>
+                    <geometrical_set>bar</geometrical_set>
                     <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>bar_cohesive_linear</geometrical_set>
+                    <geometrical_set>bar</geometrical_set>
                     <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
@@ -227,14 +227,14 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <geometrical_set>bar_cohesive_linear</geometrical_set>
+                    <geometrical_set>bar</geometrical_set>
                     <geometry>left</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <geometrical_set>bar_cohesive_linear</geometrical_set>
+                    <geometrical_set>bar</geometrical_set>
                     <geometry>right</geometry>
                     <type>Dirichlet</type>
                     <component>0</component>
