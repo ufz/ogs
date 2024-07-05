@@ -10,12 +10,10 @@
 
 #pragma once
 
-#include <Eigen/Core>
 #include <cmath>
 #include <optional>
 
-#include "MeshLib/Elements/Elements.h"
-#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
+#include "NumLib/Fem/AverageGradShapeFunction.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 
 namespace ProcessLib
@@ -109,26 +107,10 @@ BBarMatrixType computeDilatationalBbar(
 
     for (int i = 0; i < NPOINTS; i++)
     {
-        auto B_bar_i = B_bar.col(i);
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            auto const& N = ip_data[ip].N_u;
-            auto const& dNdx = ip_data[ip].dNdx_u;
-
-            auto const dNidx = dNdx.col(i);
-
-            auto const& w = ip_data[ip].integration_weight;
-            B_bar_i.template segment<DisplacementDim>(0) += dNidx * w;
-
-            if (is_axially_symmetric)
-            {
-                auto const x_coord =
-                    NumLib::interpolateXCoordinate<ShapeFunction,
-                                                   ShapeMatricesType>(element,
-                                                                      N);
-                B_bar_i[2] += w * N(i) / x_coord;
-            }
-        }
+        B_bar.col(i).noalias() +=
+            NumLib::averageGradShapeFunction<DisplacementDim, ShapeFunction,
+                                             ShapeMatricesType, IpData>(
+                i, element, integration_method, ip_data, is_axially_symmetric);
     }
 
     return B_bar / volume;
