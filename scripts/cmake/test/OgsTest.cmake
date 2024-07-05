@@ -90,7 +90,7 @@ function(OgsTest)
     endif()
 endfunction()
 
-# Add a ctest and sets properties
+# Adds a ctest and sets properties
 macro(_ogs_add_test TEST_NAME)
     if("${TEST_NAME}" MATCHES "-omp")
         set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}-omp")
@@ -100,6 +100,10 @@ macro(_ogs_add_test TEST_NAME)
     file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
     file(TO_NATIVE_PATH "${OgsTest_BINARY_DIR}" OgsTest_BINARY_DIR_NATIVE)
     string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
+
+    isTestCommandExpectedToSucceed(${TEST_NAME} ${OgsTest_PROPERTIES})
+    message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -107,7 +111,9 @@ macro(_ogs_add_test TEST_NAME)
             "-DEXECUTABLE_ARGS=${_exe_args}"
             "-DWRAPPER_COMMAND=${OgsTest_WRAPPER}"
             -DWORKING_DIRECTORY=${OgsTest_BINARY_DIR}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME_UNDERSCORE}.txt
+            "-DLOG_FILE_BASENAME=${TEST_NAME_UNDERSCORE}.txt"
+            "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
+            "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
