@@ -11,7 +11,9 @@
 
 #pragma once
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <cmath>
+#include <string_view>
 #include <tuple>
 
 #include "GMatrix.h"
@@ -25,6 +27,17 @@ namespace ProcessLib
 {
 namespace NonLinearFbar
 {
+
+enum class BarDetFType
+{
+    ELEMENT_CENTER_VALUE,
+    ELEMENT_AVERAGE,
+    NONE
+};
+
+BarDetFType convertStringToDetFBarType(
+    std::string_view const bar_det_f_type_name);
+
 template <int DisplacementDim, int NPOINTS, typename VectorTypeForFbar,
           typename GradientVectorType, typename DNDX_Type>
 VectorTypeForFbar computeQVector(DNDX_Type const& dNdx,

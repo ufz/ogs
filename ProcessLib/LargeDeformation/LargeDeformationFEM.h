@@ -201,7 +201,8 @@ public:
             MathLib::VectorizedTensor::determinant(
                 output_data.deformation_gradient_data.deformation_gradient);
 
-        if (!this->process_data_.use_f_bar)
+        if (this->process_data_.bar_det_f_type ==
+            NonLinearFbar::BarDetFType::NONE)
         {
             return 1.0;
         }
@@ -289,7 +290,8 @@ public:
     std::optional<std::tuple<double, VectorTypeForFbar>> computeFBarVariables(
         bool const compute_detF0_only, Eigen::VectorXd const& local_x) const
     {
-        if (!(this->process_data_.use_f_bar))
+        if (this->process_data_.bar_det_f_type ==
+            NonLinearFbar::BarDetFType::NONE)
         {
             return std::nullopt;
         }

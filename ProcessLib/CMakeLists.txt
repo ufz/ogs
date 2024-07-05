@@ -46,6 +46,13 @@ foreach(process ${_enabled_processes})
     endif()
 endforeach()
 
+foreach(process ${_enabled_processes})
+    if (process STREQUAL "LargeDeformation")
+        append_source_files(SOURCES Deformation)
+        break()
+    endif()
+endforeach()
+
 ogs_add_library(ProcessLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 add_subdirectory(BoundaryConditionAndSourceTerm/Python)
