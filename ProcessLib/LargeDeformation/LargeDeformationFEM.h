@@ -296,11 +296,22 @@ public:
             return std::nullopt;
         }
 
+        if (this->process_data_.bar_det_f_type ==
+            NonLinearFbar::BarDetFType::ELEMENT_AVERAGE)
+        {
+            return NonLinearFbar::computeFBarInitialVariablesAverage<
+                DisplacementDim, GradientVectorType, VectorTypeForFbar,
+                NodalVectorType, ShapeFunction, ShapeMatricesType, IpData>(
+                _ip_data, compute_detF0_only, local_x,
+                this->integration_method_, this->element_,
+                this->is_axially_symmetric_);
+        }
+
         return NonLinearFbar::computeFBarInitialVariables<
             DisplacementDim, GradientVectorType, GradientMatrixType,
             VectorTypeForFbar, ShapeFunction, ShapeMatricesType>(
-            compute_detF0_only, local_x, this->integration_method_,
-            this->element_, this->is_axially_symmetric_);
+            compute_detF0_only, local_x, this->element_,
+            this->is_axially_symmetric_);
     }
 
     void assembleWithJacobian(double const t, double const dt,

@@ -20,6 +20,7 @@
 #include "MathLib/KelvinVector.h"
 #include "MathLib/VectorizedTensor.h"
 #include "MeshLib/Elements/Element.h"
+#include "NumLib/Fem/AverageGradShapeFunction.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 
@@ -27,7 +28,6 @@ namespace ProcessLib
 {
 namespace NonLinearFbar
 {
-
 enum class BarDetFType
 {
     ELEMENT_CENTER_VALUE,
@@ -64,9 +64,7 @@ VectorTypeForFbar computeQVector(DNDX_Type const& dNdx,
         auto const dNidx = dNdx.col(i);
         for (int k = 0; k < DisplacementDim; k++)
         {
-            auto const Finv_k_col = Finv.col(k);
-
-            FInvN[k * NPOINTS + i] = Finv_k_col.dot(dNidx);
+            FInvN[k * NPOINTS + i] = Finv.col(k).dot(dNidx);
         }
     }
 
@@ -74,17 +72,96 @@ VectorTypeForFbar computeQVector(DNDX_Type const& dNdx,
 }
 
 template <int DisplacementDim, typename GradientVectorType,
+          typename VectorTypeForFbar, typename NodalVectorType,
+          typename ShapeFunction, typename ShapeMatricesType, typename IpData>
+std::tuple<double, VectorTypeForFbar> computeFBarInitialVariablesAverage(
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> const& ip_data,
+    bool const compute_detF0_only, Eigen::VectorXd const& u,
+    NumLib::GenericIntegrationMethod const& integration_method,
+    MeshLib::Element const& element, bool const is_axially_symmetric)
+{
+    unsigned const n_integration_points =
+        integration_method.getNumberOfPoints();
+    // Compute the element volume
+    double volume = 0.0;
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& w = ip_data[ip].integration_weight;
+        volume += w;
+    }
+
+    VectorTypeForFbar averaged_grad_N =
+        VectorTypeForFbar::Zero(DisplacementDim * ShapeFunction::NPOINTS);
+    NodalVectorType averaged_N_div_r;
+    if (is_axially_symmetric)
+    {
+        averaged_N_div_r = NodalVectorType::Zero(ShapeFunction::NPOINTS);
+    }
+
+    GradientVectorType F0 =
+        MathLib::VectorizedTensor::identity<DisplacementDim>();
+
+    for (unsigned i = 0; i < ShapeFunction::NPOINTS; i++)
+    {
+        Eigen::Vector3d const bar_gradN =
+            NumLib::averageGradShapeFunction<DisplacementDim, ShapeFunction,
+                                             ShapeMatricesType, IpData>(
+                i, element, integration_method, ip_data, is_axially_symmetric) /
+            volume;
+        averaged_grad_N.template segment<DisplacementDim>(i * DisplacementDim) =
+            bar_gradN.template segment<DisplacementDim>(0);
+
+        for (int k = 0; k < DisplacementDim; k++)
+        {
+            F0.template segment<DisplacementDim>(k * DisplacementDim) +=
+                u[k * ShapeFunction::NPOINTS + i] *
+                bar_gradN.template segment<DisplacementDim>(0);
+        }
+        if (is_axially_symmetric)
+        {
+            averaged_N_div_r[i] = bar_gradN[2];
+            F0[4] += bar_gradN[2] * u[i];
+        }
+    }
+
+    if (compute_detF0_only)
+    {
+        return {MathLib::VectorizedTensor::determinant(F0), {}};
+    }
+
+    VectorTypeForFbar F0InvN =
+        VectorTypeForFbar::Zero(DisplacementDim * ShapeFunction::NPOINTS);
+
+    Eigen::MatrixXd const F_matrix =
+        MathLib::VectorizedTensor::toTensor<DisplacementDim>(F0)
+            .template topLeftCorner<DisplacementDim, DisplacementDim>();
+    auto const Finv = F_matrix.inverse();
+
+    for (unsigned i = 0; i < ShapeFunction::NPOINTS; ++i)
+    {
+        auto const dNidx = averaged_grad_N.template segment<DisplacementDim>(
+            i * DisplacementDim);
+        for (int k = 0; k < DisplacementDim; k++)
+        {
+            F0InvN[k * ShapeFunction::NPOINTS + i] = Finv.col(k).dot(dNidx);
+        }
+        // TODO: if(is_axially_symmetric)
+    }
+
+    return {MathLib::VectorizedTensor::determinant(F0), F0InvN};
+}
+
+template <int DisplacementDim, typename GradientVectorType,
           typename GradientMatrixType, typename VectorTypeForFbar,
           typename ShapeFunction, typename ShapeMatricesType>
 std::tuple<double, VectorTypeForFbar> computeFBarInitialVariables(
     bool const compute_detF0_only, Eigen::VectorXd const& u,
-    NumLib::GenericIntegrationMethod const& integration_method,
     MeshLib::Element const& element, bool const is_axially_symmetric)
 {
     auto const shape_matrices_at_element_center =
         NumLib::initShapeMatricesAtElementCenter<
             ShapeFunction, ShapeMatricesType, DisplacementDim>(
-            element, is_axially_symmetric, integration_method);
+            element, is_axially_symmetric);
 
     auto const N_0 = shape_matrices_at_element_center.N;
     auto const dNdx_0 = shape_matrices_at_element_center.dNdx;
