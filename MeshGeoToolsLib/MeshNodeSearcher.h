@@ -13,6 +13,7 @@
 #include <memory>
 #include <vector>
 
+#include "BaseLib/CompilerWorkarounds.h"
 #include "GeoLib/Grid.h"
 #include "MathLib/Point3dWithID.h"
 #include "MeshGeoToolsLib/SearchAllNodes.h"
@@ -87,10 +88,11 @@ public:
      * Returns a (possibly new) mesh node searcher for the mesh.
      * A new one will be created, if it does not already exists.
      */
-    static MeshNodeSearcher const& getMeshNodeSearcher(
-        MeshLib::Mesh const& mesh,
-        std::unique_ptr<MeshGeoToolsLib::SearchLength>&&
-            search_length_algorithm);
+    OGS_NO_DANGLING
+    static MeshNodeSearcher const&
+    getMeshNodeSearcher(MeshLib::Mesh const& mesh,
+                        std::unique_ptr<MeshGeoToolsLib::SearchLength>&&
+                            search_length_algorithm);
 
 private:
     MeshLib::Mesh const& _mesh;

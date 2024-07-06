@@ -11,6 +11,7 @@
  *
  */
 
+#include <algorithm>
 #include <pybind11/pybind11.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>

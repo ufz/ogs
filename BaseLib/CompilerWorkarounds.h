@@ -5,18 +5,12 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
 
-#include <algorithm>
-#include <pybind11/pybind11.h>
-
-#include "BaseLib/ExportSymbol.h"
-
-namespace ProcessLib
-{
-//! Creates Python bindings for the Python BC class.
-OGS_EXPORT_SYMBOL void pythonBindBoundaryCondition(pybind11::module& m);
-}  // namespace ProcessLib
+#if defined(__GNUC__) && __GNUC__ == 14
+#define OGS_NO_DANGLING [[gnu::no_dangling]]
+#else
+#define OGS_NO_DANGLING
+#endif

@@ -103,7 +103,7 @@ bool substituteKeyword(std::string& result,
     type_specification[std::type_index(typeid(std::string))] = 's';
 
     auto const& b = precision_specification.back();
-    // see https://fmt.dev/latest/syntax.html#formatspec
+    // see https://fmt.dev/latest/syntax/#format-specification-mini-language
     if (b == 'e' || b == 'E' || b == 'f' || b == 'F' || b == 'g' || b == 'G')
     {
         type_specification[std::type_index(typeid(double))] = b;
