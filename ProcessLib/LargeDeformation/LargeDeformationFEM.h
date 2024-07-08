@@ -134,8 +134,8 @@ public:
                 this->integration_method_.getWeightedPoint(ip).getWeight() *
                 sm.integralMeasure * sm.detJ;
 
-            ip_data.N = sm.N;
-            ip_data.dNdx = sm.dNdx;
+            ip_data.N_u = sm.N;
+            ip_data.dNdx_u = sm.dNdx;
 
             _secondary_data.N[ip] = shape_matrices[ip].N;
         }
@@ -154,7 +154,7 @@ public:
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<ShapeFunction,
                                                    ShapeMatricesType>(
-                        this->element_, ip_data.N))};
+                        this->element_, ip_data.N_u))};
 
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress != nullptr)
@@ -271,8 +271,8 @@ public:
         {
             x_position.setIntegrationPoint(ip);
             auto const& w = _ip_data[ip].integration_weight;
-            auto const& N = _ip_data[ip].N;
-            auto const& dNdx = _ip_data[ip].dNdx;
+            auto const& N = _ip_data[ip].N_u;
+            auto const& dNdx = _ip_data[ip].dNdx_u;
 
             auto const x_coord =
                 NumLib::interpolateXCoordinate<ShapeFunction,
@@ -345,8 +345,8 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             x_position.setIntegrationPoint(ip);
-            auto const& N = _ip_data[ip].N;
-            auto const& dNdx = _ip_data[ip].dNdx;
+            auto const& N = _ip_data[ip].N_u;
+            auto const& dNdx = _ip_data[ip].dNdx_u;
             auto const x_coord =
                 NumLib::interpolateXCoordinate<ShapeFunction,
                                                ShapeMatricesType>(
