@@ -14,5 +14,6 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE LargeDeformation/CooksMembrane/CooksMembraneLDRefinedMesh30.xml RUNTIME 4)
     OgsTest(PROJECTFILE LargeDeformation/CooksMembrane/3D/CooksMembraneLD_3D.prj RUNTIME 4)
     OgsTest(PROJECTFILE LargeDeformation/RubberIndentation/RubberIndentation.prj RUNTIME 4)
+    OgsTest(PROJECTFILE LargeDeformation/Indentation3D/Indentation3D.prj RUNTIME 30)
 endif()
 
