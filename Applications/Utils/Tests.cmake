@@ -1501,6 +1501,50 @@ AddTest(
     DIFF_DATA SmallTest_WithAdditionalBottomLayer.vtu SmallTest_WithAdditionalBottomLayer.vtu 1.e-16
 )
 
+AddTest( # with option --copy-material_ids instead of --set-material-id
+    NAME AddLayer_test_copy-material-ids_option
+    PATH MeshGeoToolsLib/Naegelstedt
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE AddLayer
+    EXECUTABLE_ARGS -i SmallTest.vtu
+                    --add-layer-on-bottom
+                    -t 10
+                    --copy-material-ids
+                    -o ${Data_BINARY_DIR}/<PATH>/SmallTest_WithAdditionalBottomLayer.vtu
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA SmallTest_WithAdditionalBottomLayer.vtu SmallTest_WithAdditionalBottomLayer.vtu 1.e-16
+)
+
+AddTest( # without options --copy-material_ids and --set-material-id
+    NAME AddLayer_test_without_copy-material-ids_and_set-material-id_options
+    PATH MeshGeoToolsLib/Naegelstedt
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE AddLayer
+    EXECUTABLE_ARGS -i SmallTest.vtu
+                    --add-layer-on-bottom
+                    -t 10
+                    -o ${Data_BINARY_DIR}/<PATH>/SmallTest_WithAdditionalBottomLayer.vtu
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA SmallTest_WithAdditionalBottomLayer.vtu SmallTest_WithAdditionalBottomLayer.vtu 1.e-16
+)
+AddTest( # with options --copy-material_ids and --set-material-id 10 should fail
+    NAME AddLayer_test_set-material-id_and_copy-material-ids_failing
+    PATH MeshGeoToolsLib/Naegelstedt
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE AddLayer
+    EXECUTABLE_ARGS -i SmallTest.vtu
+                    --add-layer-on-bottom
+                    -t 10
+                    --set-material-id 10
+                    --copy-material-ids
+                    -o ${Data_BINARY_DIR}/<PATH>/SmallTest_WithAdditionalBottomLayer.vtu
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    PROPERTIES
+    PASS_REGULAR_EXPRESSION "It is not possible to set both options"
+)
+
 if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Utils/partmesh/partmesh_roundtrip.md RUNTIME 10 SKIP_WEB)
 endif()
