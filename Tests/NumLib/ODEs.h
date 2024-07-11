@@ -115,6 +115,8 @@ public:
         return true;
     }
 
+    bool requiresNormalization() const override { return false; }
+
     std::size_t const N = 2;
 };
 
@@ -204,6 +206,8 @@ public:
     {
         return false;
     }
+
+    bool requiresNormalization() const override { return false; }
 
     std::size_t const N = 1;
 };
@@ -332,6 +336,8 @@ public:
     {
         return false;
     }
+
+    bool requiresNormalization() const override { return false; }
 
     std::size_t const N = 2;
 };

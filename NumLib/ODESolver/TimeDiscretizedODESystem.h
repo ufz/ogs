@@ -120,6 +120,11 @@ public:
 
     bool isLinear() const override { return _ode.isLinear(); }
 
+    bool requiresNormalization() const override
+    {
+        return _ode.requiresNormalization();
+    }
+
     void preIteration(const unsigned iter, GlobalVector const& x) override
     {
         _ode.preIteration(iter, x);
@@ -207,6 +212,11 @@ public:
         _mat_trans->computeRhs(*_M, *_K, *_b, x_prev, rhs);
     }
 
+    void getAandRhsNormalized(GlobalMatrix& A, GlobalVector& rhs) const override
+    {
+        _mat_trans->normalizeAandRhs(A, rhs);
+    }
+
     void computeKnownSolutions(GlobalVector const& x,
                                int const process_id) override;
 
@@ -216,6 +226,11 @@ public:
                                    GlobalVector& x) const override;
 
     bool isLinear() const override { return _ode.isLinear(); }
+
+    bool requiresNormalization() const override
+    {
+        return _ode.requiresNormalization();
+    }
 
     void preIteration(const unsigned iter, GlobalVector const& x) override
     {

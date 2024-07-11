@@ -39,6 +39,15 @@ public:
      */
     virtual bool isLinear() const = 0;
 
+    /*! Check whether normalization of A and rhs is required.
+     *
+     * \remark
+     * In some processes, a normalization operation is required, to calculate
+     * A^T * A, and overwrite A; also calculate A^T * rhs and overwrite rhs.
+     * This parameter reflect whether such operation is required.
+     */
+    virtual bool requiresNormalization() const = 0;
+
     /*! Prepares a new iteration in the solution process of this equation.
      *
      * \param iter the current iteration number, starting from 1.

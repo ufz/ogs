@@ -167,6 +167,34 @@ void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
                v3.getRawVector());
 }
 
+void linearSysNormalize(PETScMatrix const& /*A*/, PETScMatrix& /*new_A*/,
+                        PETScVector const& /*b*/, PETScVector& /*new_b*/)
+{
+    // The following block is deactivated, because there is no tests yet for the
+    // normalization operation in PETSc. This will be a task for later.
+    /*
+    assert(&A != &new_A);
+    assert(&b != &new_b);
+
+    PetscInt n_rows(0);
+    PetscInt n_cols(0);
+    MatGetSize(A.getRawMatrix(), &n_rows, &n_cols);
+    // only when A matrix is not square
+    if (n_rows != n_cols)
+    {
+        // new_b = A^T * b
+        MatMultTranspose(A.getRawMatrix(), b.getRawVector(),
+                         new_b.getRawVector());
+        // new_A = A^T * A
+        MatTranspose(A.getRawMatrix(), MAT_INITIAL_MATRIX,
+                     &(new_A.getRawMatrix()));
+    }
+    */
+    OGS_FATAL(
+        "Normalization operation is not implemented yet for PETSc library! "
+        "Program terminated.");
+}
+
 void finalizeAssembly(PETScMatrix& A)
 {
     A.finalizeAssembly(MAT_FINAL_ASSEMBLY);
@@ -311,6 +339,25 @@ void matMultAdd(EigenMatrix const& A, EigenVector const& v1,
     // TODO: does that break anything?
     v3.getRawVector() =
         v2.getRawVector() + A.getRawMatrix() * v1.getRawVector();
+}
+
+void linearSysNormalize(EigenMatrix const& A, EigenMatrix& new_A,
+                        EigenVector const& b, EigenVector& new_b)
+{
+    // make sure that new_A and new_b are not the same memory
+    assert(&A != &new_A);
+    assert(&b != &new_b);
+
+    if (A.getRawMatrix().rows() == A.getRawMatrix().cols())
+    {
+        WARN(
+            "The number of rows and columns are the same for the LHS matrix."
+            "Are you sure you still need to normalize the LHS matrix and RHS "
+            "vector? ");
+    }
+
+    new_b.getRawVector() = A.getRawMatrix().transpose() * b.getRawVector();
+    new_A.getRawMatrix() = A.getRawMatrix().transpose() * A.getRawMatrix();
 }
 
 void finalizeAssembly(EigenMatrix& x)

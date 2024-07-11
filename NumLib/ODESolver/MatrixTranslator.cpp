@@ -44,6 +44,25 @@ void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
 }
 
 void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
+    normalizeAandRhs(GlobalMatrix& A, GlobalVector& b) const
+{
+    namespace LinAlg = MathLib::LinAlg;
+
+    // check whether A is square?
+
+    GlobalMatrix new_A(A);
+    GlobalVector new_b(b);
+    LinAlg::copy(A, new_A);
+    LinAlg::copy(b, new_b);
+    // rhs = A^T * rhs
+    // A = A^T * A
+    LinAlg::linearSysNormalize(A, new_A, b, new_b);
+
+    LinAlg::copy(new_A, A);
+    LinAlg::copy(new_b, b);
+}
+
+void MatrixTranslatorGeneral<ODESystemTag::FirstOrderImplicitQuasilinear>::
     computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,
                     GlobalVector const& b, double const dt,
                     GlobalVector const& x_curr, GlobalVector const& x_prev,
