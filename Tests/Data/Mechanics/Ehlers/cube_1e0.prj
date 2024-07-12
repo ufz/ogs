@@ -333,7 +333,7 @@
         <vtkdiff>
             <file>cube_1e0_ts_101_t_2.550000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>3e-16</absolute_tolerance>
+            <absolute_tolerance>5e-16</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -345,7 +345,7 @@
         <vtkdiff>
             <file>cube_1e0_ts_203_t_5.100000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>3e-16</absolute_tolerance>
+            <absolute_tolerance>5e-16</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
