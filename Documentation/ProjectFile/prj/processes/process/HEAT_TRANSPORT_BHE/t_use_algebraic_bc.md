@@ -1,0 +1,1 @@
+The default setting is false. When algebraic boundary condition is activated, the inflow temperatures at the top and bottom of the BHE are no longer imposed as a Dirichlet type boundary condition. Instead, the linear equation system will be enlarged to accommodate the numerical constrains. The effect of this feature is to accelerate BHE simulations.
