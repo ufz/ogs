@@ -23,7 +23,7 @@ build guix:
     # SteadyStateDiffusion only!
     - |
       if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci::guix\ only.* ]]; then
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-serial --with-source=ogs=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-serial --with-source=ogs-serial=$PWD
         guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc=$PWD
       else
         guix time-machine -C scripts/guix/channels.scm -- build ogs-ssd --with-source=ogs-ssd=$PWD
@@ -48,7 +48,7 @@ deploy container:
     - guix describe
     - |
       if [[ "$GUIX_PACKAGE" =~ .*-mkl ]]; then
-        GUIX_ARGS="--with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://github.com/Kitware/VTK/archive/refs/tags/v9.3.0.tar.gz"
+        GUIX_ARGS="--with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF"
       fi
       # Add openmpi package for mpirun
       if [[ "$GUIX_PACKAGE" =~ .*petsc.* ]]; then
