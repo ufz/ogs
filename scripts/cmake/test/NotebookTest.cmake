@@ -98,6 +98,9 @@ function(NotebookTest)
         endif()
     endif()
 
+    isTestCommandExpectedToSucceed(${TEST_NAME} ${NotebookTest_PROPERTIES})
+    message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -105,7 +108,9 @@ function(NotebookTest)
             # TODO: only works if notebook is in a leaf directory
             -DEXECUTABLE=${Python_EXECUTABLE} "-DEXECUTABLE_ARGS=${_exe_args}"
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${NotebookTest_NAME_WE}.txt
+            "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
+            "-DLOG_FILE_BASENAME=${NotebookTest_NAME_WE}.txt"
+            "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 

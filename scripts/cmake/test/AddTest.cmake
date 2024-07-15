@@ -346,6 +346,9 @@ macro(_add_test TEST_NAME)
         )
     endif()
 
+    isTestCommandExpectedToSucceed(${TEST_NAME} ${AddTest_PROPERTIES})
+    message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -355,8 +358,10 @@ macro(_add_test TEST_NAME)
             -DBINARY_PATH=${_binary_path} -DWRAPPER_COMMAND=${WRAPPER_COMMAND}
             "-DWRAPPER_ARGS=${AddTest_WRAPPER_ARGS}"
             -DWORKING_DIRECTORY=${AddTest_WORKING_DIRECTORY}
-            -DLOG_FILE=${PROJECT_BINARY_DIR}/logs/${TEST_NAME}.txt -P
-            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
+            "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
+            "-DLOG_FILE_BASENAME=${TEST_NAME}.txt"
+            "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
+            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
     if(DEFINED AddTest_DEPENDS)
@@ -607,3 +612,47 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                                   ${AddTest_DISABLED} LABELS "tester;${labels}"
     )
 endmacro()
+
+# Checks if a test is expected to succeed based on the properties WILL_FAIL,
+# PASS_REGULAR_EXPRESSION and FAIL_REGULAR_EXPRESSION.
+# The function expects the test name (used only for debugging purposes) and the
+# test properties as arguments.
+# The test does not need to exist, yet. This function does not query any test
+# case, but only uses the passed list of properties
+function(isTestCommandExpectedToSucceed TEST_NAME)
+    set(options WILL_FAIL)
+    set(oneValueArgs PASS_REGULAR_EXPRESSION FAIL_REGULAR_EXPRESSION)
+    set(multiValueArgs)
+    cmake_parse_arguments(TEST_FAILURE "${options}" "${oneValueArgs}"
+        "${multiValueArgs}" ${ARGN})
+
+    message(DEBUG "failure properties for test ${TEST_NAME}:")
+    list(APPEND CMAKE_MESSAGE_INDENT "  ")
+    message(DEBUG "WILL_FAIL: ${TEST_FAILURE_WILL_FAIL}")
+    message(DEBUG "PASS_RE: ${TEST_FAILURE_PASS_REGULAR_EXPRESSION}")
+    message(DEBUG "FAIL_RE: ${TEST_FAILURE_FAIL_REGULAR_EXPRESSION}")
+    list(POP_BACK CMAKE_MESSAGE_INDENT)
+
+    if (${TEST_FAILURE_WILL_FAIL})
+        if (DEFINED TEST_FAILURE_PASS_REGULAR_EXPRESSION)
+            # Note: if the test property PASS_REGULAR_EXPRESSION is set, the
+            # process return code will be ignored, see https://cmake.org/cmake/help/latest/prop_test/PASS_REGULAR_EXPRESSION.html
+            message(SEND_ERROR "Error in test '${TEST_NAME}': Please do not use both WILL_FAIL and PASS_REGULAR_EXPRESSION in the same test. The logic will be unclear, then.")
+        endif()
+        if (DEFINED TEST_FAILURE_FAIL_REGULAR_EXPRESSION)
+            message(SEND_ERROR "Error in test '${TEST_NAME}': Please do not use both WILL_FAIL and FAIL_REGULAR_EXPRESSION in the same test. The logic will be unclear, then.")
+        endif()
+
+        set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED false)
+    elseif(DEFINED TEST_FAILURE_PASS_REGULAR_EXPRESSION)
+        if (DEFINED TEST_FAILURE_FAIL_REGULAR_EXPRESSION)
+            message(SEND_ERROR "Error in test '${TEST_NAME}': Please do not use both PASS_REGULAR_EXPRESSION and FAIL_REGULAR_EXPRESSION in the same test. The logic will be unclear, then.")
+        endif()
+
+        set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED false)
+    else()
+        set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED true)
+    endif()
+
+    set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED "${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}" PARENT_SCOPE)
+endfunction()

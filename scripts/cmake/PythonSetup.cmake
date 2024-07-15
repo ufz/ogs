@@ -210,9 +210,7 @@ function(setup_venv_dependent_ctests)
                 EXECUTABLE ogs
                 EXECUTABLE_ARGS ${ht_invalid_prj_file}
                 RUNTIME 1
-            )
-            set_tests_properties(
-                ogs-HT_${ht_invalid_prj_file_short} PROPERTIES WILL_FAIL TRUE
+                PROPERTIES WILL_FAIL TRUE
             )
         endforeach()
     endif()

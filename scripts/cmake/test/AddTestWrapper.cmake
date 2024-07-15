@@ -1,4 +1,4 @@
-# IMPORTANT: multiple arguments in one variables have to be in list notation (;)
+# IMPORTANT: multiple arguments in a single variable have to be in list notation (;)
 # and have to be quoted when passed
 # "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
 execute_process(
@@ -12,9 +12,43 @@ execute_process(
     COMMAND_ECHO STDOUT
 )
 
-if(EXIT_CODE STREQUAL "0" AND NOT DEFINED ENV{CI})
-    file(WRITE ${LOG_FILE} "${LOG}")
-elseif(NOT EXIT_CODE STREQUAL "0")
-    file(WRITE ${LOG_FILE} "${LOG}")
+set(SAVE_LOG true)
+set(TEST_LOG_DIR "${LOG_ROOT}")
+
+if (TEST_COMMAND_IS_EXPECTED_TO_SUCCEED)
+    if (EXIT_CODE STREQUAL "0")
+        # expected: success, actual: success
+        if (DEFINED ENV{CI})
+            set(SAVE_LOG false)
+        endif()
+    else()
+        # expected: success, actual: failure
+        # use default settings
+    endif()
+else()
+    if (EXIT_CODE STREQUAL "0")
+        # expected: failure, actual: success
+        if (DEFINED ENV{CI})
+            set(TEST_LOG_DIR "${LOG_ROOT}/command_succeeded_but_was_expected_to_fail")
+        endif()
+    else()
+        # expected: failure, actual: failure
+        if (DEFINED ENV{CI})
+            set(TEST_LOG_DIR "${LOG_ROOT}/command_failed_as_expected")
+        endif()
+    endif()
+endif()
+
+set(LOG_FILE "${TEST_LOG_DIR}/${LOG_FILE_BASENAME}")
+
+if (SAVE_LOG)
+    if(NOT EXISTS "${TEST_LOG_DIR}")
+        file(MAKE_DIRECTORY "${TEST_LOG_DIR}")
+    endif()
+
+    file(WRITE "${LOG_FILE}" "${LOG}")
+endif()
+
+if(NOT EXIT_CODE STREQUAL "0")
     message(FATAL_ERROR "Exit code: ${EXIT_CODE}; log file: ${LOG_FILE}")
 endif()
