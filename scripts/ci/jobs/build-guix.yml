@@ -48,7 +48,10 @@ deploy container:
     - guix describe
     - |
       if [[ "$GUIX_PACKAGE" =~ .*-mkl ]]; then
-        GUIX_ARGS="--with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF"
+        # keep vtk source parameter: default vtk 9.3.0 download misses
+        # ThirdParty/eigen/vtkeigen subdirectory. Use explicit download
+        # from GitHub-tag.
+        GUIX_ARGS="--with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://github.com/Kitware/VTK/archive/refs/tags/v9.3.0.tar.gz"
       fi
       # Add openmpi package for mpirun
       if [[ "$GUIX_PACKAGE" =~ .*petsc.* ]]; then
