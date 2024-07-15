@@ -23,7 +23,7 @@ build guix:
     # SteadyStateDiffusion only!
     - |
       if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci::guix\ only.* ]]; then
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-serial --with-source=ogs=$PWD
+        guix time-machine -C scripts/guix/channels.scm -- build ogs-serial --with-source=ogs-serial=$PWD
         guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc=$PWD
       else
         guix time-machine -C scripts/guix/channels.scm -- build ogs-ssd --with-source=ogs-ssd=$PWD
