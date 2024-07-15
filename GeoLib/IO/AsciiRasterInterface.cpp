@@ -272,67 +272,43 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
     {
         return nullptr;
     }
+    double x_min = (*coords)[0];
+    double x_max = (*coords)[0];
+    double y_min = (*coords)[1];
+    double y_max = (*coords)[1];
+    double cellsize = std::numeric_limits<double>::max();
 
-    std::vector<double> values;
-    values.push_back((*coords)[2]);
-
-    auto coords2 = readCoordinates(in);
-    if (coords2 == std::nullopt)
-    {
-        return nullptr;
-    }
-    values.push_back((*coords2)[2]);
-    GeoLib::RasterHeader header{
-        0, 0, 1, GeoLib::Point(*coords), (*coords2)[0] - (*coords)[0], -9999};
-
-    std::size_t n_cols = 2, n_rows = 1;
     while ((coords = readCoordinates(in)))
     {
-        values.push_back((*coords)[2]);
-        if ((*coords)[0] > (*coords2)[0])
-        {
-            if ((*coords)[0] - (*coords2)[0] != header.cell_size)
-            {
-                ERR("Varying cell sizes or unordered pixel values found. "
-                    "Aborting...");
-                return nullptr;
-            }
-            n_cols++;
-        }
-        else  // new line
-        {
-            if ((*coords)[1] - (*coords2)[1] != header.cell_size)
-            {
-                ERR("Varying cell sizes or unordered pixel values found. "
-                    "Aborting...");
-                return nullptr;
-            }
-            n_rows++;
-            // define #columns
-            if (header.n_cols == 0)
-            {
-                header.n_cols = n_cols;
-            }
-            // just check if #columns is consistent
-            else
-            {
-                if (n_cols != header.n_cols)
-                {
-                    ERR("Different number of pixels per line. Aborting!");
-                    return nullptr;
-                }
-            }
-            n_cols = 1;
-        }
-        coords2 = coords;
+        double const diff = (*coords)[0] - x_min;
+        if (diff > 0)
+            cellsize = std::min(cellsize, diff);
+        x_min = std::min((*coords)[0], x_min);
+        x_max = std::max((*coords)[0], x_max);
+        y_min = std::min((*coords)[1], y_min);
+        y_max = std::max((*coords)[1], y_max);
     }
-    header.n_rows = n_rows;
-    if (header.n_cols == 0)
+    in.close();
+
+    GeoLib::RasterHeader header;
+    header.cell_size = cellsize;
+    header.no_data = -9999;
+    header.n_cols = static_cast<std::size_t>(((x_max - x_min) / cellsize) + 1);
+    header.n_rows = static_cast<std::size_t>(((y_max - y_min) / cellsize) + 1);
+    header.n_depth = 1;
+    header.origin[0] = x_min;
+    header.origin[1] = y_min;
+
+    std::vector<double> values(header.n_cols * header.n_rows, -9999);
+    in.open(fname);
+    while ((coords = readCoordinates(in)))
     {
-        ERR("Could not determine raster size. Note that minimum allowed raster "
-            "size is 2 x 2 pixels.");
-        return nullptr;
+        std::size_t idx = static_cast<std::size_t>(
+            (header.n_cols * (((*coords)[1] - y_min) / cellsize)) +
+            (((*coords)[0] - x_min) / cellsize));
+        values[idx] = (*coords)[2];
     }
+    in.close();
     return new GeoLib::Raster(header, values.begin(), values.end());
 }
 
