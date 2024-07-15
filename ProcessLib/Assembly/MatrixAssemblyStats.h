@@ -47,15 +47,11 @@ struct Stats
 
 struct MultiStats
 {
-    Stats M;
-    Stats K;
     Stats b;
     Stats Jac;
 
     MultiStats& operator+=(MultiStats const& other)
     {
-        M += other.M;
-        K += other.K;
         b += other.b;
         Jac += other.Jac;
 
@@ -64,8 +60,6 @@ struct MultiStats
 
     void print() const
     {
-        M.print("M");
-        K.print("K");
         b.print("b");
         Jac.print("J");
     }

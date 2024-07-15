@@ -55,10 +55,6 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 {
     _Jac = &NumLib::GlobalMatrixProvider::provider.getMatrix(
         _ode.getMatrixSpecifications(process_id), _Jac_id);
-    _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(process_id), _M_id);
-    _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(process_id), _K_id);
     _b = &NumLib::GlobalVectorProvider::provider.getVector(
         _ode.getMatrixSpecifications(process_id), _b_id);
 }
@@ -68,8 +64,6 @@ TimeDiscretizedODESystem<
     NonlinearSolverTag::Newton>::~TimeDiscretizedODESystem()
 {
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_Jac);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
     NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
 }
 
@@ -79,35 +73,29 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
              std::vector<GlobalVector*> const& x_prev,
              int const process_id)
 {
-    namespace LinAlg = MathLib::LinAlg;
-
     auto const t = _time_disc.getCurrentTime();
     auto const dt = _time_disc.getCurrentTimeIncrement();
     auto const& x_curr = *x_new_timestep[process_id];
 
-    _M->setZero();
-    _K->setZero();
     _b->setZero();
     _Jac->setZero();
 
     _ode.preAssemble(t, dt, x_curr);
-    _ode.assembleWithJacobian(t, dt, x_new_timestep, x_prev, process_id, *_M,
-                              *_K, *_b, *_Jac);
+    _ode.assembleWithJacobian(t, dt, x_new_timestep, x_prev, process_id, *_b,
+                              *_Jac);
 
-    LinAlg::finalizeAssembly(*_M);
-    LinAlg::finalizeAssembly(*_K);
-    LinAlg::finalizeAssembly(*_b);
+    MathLib::LinAlg::finalizeAssembly(*_b);
     MathLib::LinAlg::finalizeAssembly(*_Jac);
 }
 
-void TimeDiscretizedODESystem<
-    ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Newton>::getResidual(GlobalVector const& x_new_timestep,
-                                             GlobalVector const& x_prev,
-                                             GlobalVector& res) const
+void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                              NonlinearSolverTag::Newton>::
+    getResidual(GlobalVector const& /*x_new_timestep*/,
+                GlobalVector const& /*x_prev*/,
+                GlobalVector& res) const
 {
-    double const dt = _time_disc.getCurrentTimeIncrement();
-    _mat_trans->computeResidual(*_M, *_K, *_b, dt, x_new_timestep, x_prev, res);
+    MathLib::LinAlg::copy(*_b, res);   // res = b
+    MathLib::LinAlg::scale(res, -1.);  // res = -b
 }
 
 void TimeDiscretizedODESystem<

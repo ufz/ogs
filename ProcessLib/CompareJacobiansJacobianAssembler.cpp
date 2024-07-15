@@ -127,46 +127,26 @@ namespace ProcessLib
 void CompareJacobiansJacobianAssembler::assembleWithJacobian(
     LocalAssemblerInterface& local_assembler, double const t, double const dt,
     std::vector<double> const& local_x, std::vector<double> const& local_x_prev,
-    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
     ++_counter;
 
     auto const num_dof = local_x.size();
-    auto to_mat = [num_dof](std::vector<double> const& data)
-    {
-        if (data.empty())
-        {
-            return Eigen::Map<Eigen::Matrix<
-                double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> const>(
-                nullptr, 0, 0);
-        }
-
-        return MathLib::toMatrix(data, num_dof, num_dof);
-    };
 
     // First assembly -- the one whose results will be added to the global
     // equation system finally.
     _asm1->assembleWithJacobian(local_assembler, t, dt, local_x, local_x_prev,
-                                local_M_data, local_K_data, local_b_data,
-                                local_Jac_data);
+                                local_b_data, local_Jac_data);
 
-    auto const local_M1 = to_mat(local_M_data);
-    auto const local_K1 = to_mat(local_K_data);
     auto const local_b1 = MathLib::toVector(local_b_data);
 
-    std::vector<double> local_M_data2;
-    std::vector<double> local_K_data2;
     std::vector<double> local_b_data2;
     std::vector<double> local_Jac_data2;
 
     // Second assembly -- used for checking only.
     _asm2->assembleWithJacobian(local_assembler, t, dt, local_x, local_x_prev,
-                                local_M_data2, local_K_data2, local_b_data2,
-                                local_Jac_data2);
+                                local_b_data2, local_Jac_data2);
 
-    auto const local_M2 = to_mat(local_M_data2);
-    auto const local_K2 = to_mat(local_K_data2);
     auto const local_b2 = MathLib::toVector(local_b_data2);
 
     auto const local_Jac1 = MathLib::toMatrix(local_Jac_data, num_dof, num_dof);
@@ -242,35 +222,17 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
         }
     };
 
-    check_equality(local_M1, local_M2);
-    check_equality(local_K1, local_K2);
     check_equality(local_b1, local_b2);
 
     Eigen::VectorXd res1 = Eigen::VectorXd::Zero(num_dof);
     auto const x = MathLib::toVector(local_x);
     auto const x_dot = ((x - MathLib::toVector(local_x_prev)) / dt).eval();
-    if (local_M1.size() != 0)
-    {
-        res1.noalias() += local_M1 * x_dot;
-    }
-    if (local_K1.size() != 0)
-    {
-        res1.noalias() += local_K1 * x;
-    }
     if (local_b1.size() != 0)
     {
         res1.noalias() -= local_b1;
     }
 
     Eigen::VectorXd res2 = Eigen::VectorXd::Zero(num_dof);
-    if (local_M2.size() != 0)
-    {
-        res2.noalias() += local_M2 * x_dot;
-    }
-    if (local_K2.size() != 0)
-    {
-        res2.noalias() += local_K2 * x;
-    }
     if (local_b2.size() != 0)
     {
         res2.noalias() -= local_b2;
@@ -302,8 +264,8 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
                      "might be\n"
                   << "#              (a) that the assembly routine has side "
                      "effects or\n"
-                  << "#              (b) that the assembly routines for M, K "
-                     "and b themselves differ.\n"
+                  << "#              (b) that the assembly routines for b "
+                     "themselves differ.\n"
                   << "#######################################################\n"
                   << '\n';
     }
@@ -346,22 +308,6 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
         dump_py(_log_file, "rel_diff_mask", rel_diff_mask);
 
         _log_file << '\n';
-
-        dump_py(_log_file, "M_1", local_M1);
-        dump_py(_log_file, "M_2", local_M2);
-        if (fatal_error && local_M1.size() == local_M2.size())
-        {
-            dump_py(_log_file, "delta_M", local_M2 - local_M1);
-            _log_file << '\n';
-        }
-
-        dump_py(_log_file, "K_1", local_K1);
-        dump_py(_log_file, "K_2", local_K2);
-        if (fatal_error && local_K1.size() == local_K2.size())
-        {
-            dump_py(_log_file, "delta_K", local_K2 - local_K1);
-            _log_file << '\n';
-        }
 
         dump_py(_log_file, "b_1", local_b_data);
         dump_py(_log_file, "b_2", local_b_data2);

@@ -175,8 +175,8 @@ GlobalMatrixOutput::GlobalMatrixOutput()
 }
 
 void GlobalMatrixOutput::operator()(double const t, int const process_id,
-                                    GlobalMatrix const& M,
-                                    GlobalMatrix const& K,
+                                    GlobalMatrix const* M,
+                                    GlobalMatrix const* K,
                                     GlobalVector const& b,
                                     GlobalMatrix const* const Jac)
 {
@@ -188,20 +188,22 @@ void GlobalMatrixOutput::operator()(double const t, int const process_id,
 #ifndef USE_PETSC
     ++counter_;
 
+    if (M)
     {
         auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
                                              process_id, "M", "mat");
 
         fh << "M ";
-        outputGlobalMatrix(M, fh);
+        outputGlobalMatrix(*M, fh);
     }
 
+    if (K)
     {
         auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
                                              process_id, "K", "mat");
 
         fh << "K ";
-        outputGlobalMatrix(K, fh);
+        outputGlobalMatrix(*K, fh);
     }
 
     {
@@ -286,8 +288,8 @@ LocalMatrixOutput::LocalMatrixOutput()
 
 void LocalMatrixOutput::operator()(
     double const t, int const process_id, std::size_t const element_id,
-    std::vector<double> const& local_M_data,
-    std::vector<double> const& local_K_data,
+    std::vector<double> const* local_M_data,
+    std::vector<double> const* local_K_data,
     std::vector<double> const& local_b_data,
     std::vector<double> const* const local_Jac_data)
 {
@@ -305,16 +307,16 @@ void LocalMatrixOutput::operator()(
     fmt::print(fh, "## t = {:.15g}, process id = {}, element id = {}\n\n", t,
                process_id, element_id);
 
-    if (!local_M_data.empty())
+    if (local_M_data && !local_M_data->empty())
     {
         DBUG("... M");
-        fmt::print(fh, "# M\n{}\n\n", toSquareMatrixRowMajor(local_M_data));
+        fmt::print(fh, "# M\n{}\n\n", toSquareMatrixRowMajor(*local_M_data));
     }
 
-    if (!local_K_data.empty())
+    if (local_K_data && !local_K_data->empty())
     {
         DBUG("... K");
-        fmt::print(fh, "# K\n{}\n\n", toSquareMatrixRowMajor(local_K_data));
+        fmt::print(fh, "# K\n{}\n\n", toSquareMatrixRowMajor(*local_K_data));
     }
 
     if (!local_b_data.empty())

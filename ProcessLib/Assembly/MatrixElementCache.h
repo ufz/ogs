@@ -257,31 +257,21 @@ class MultiMatrixElementCache final
     using GlobalVectorView = ConcurrentMatrixView<1>;
 
 public:
-    MultiMatrixElementCache(GlobalMatrixView& M, GlobalMatrixView& K,
-                            GlobalVectorView& b, GlobalMatrixView& Jac,
+    MultiMatrixElementCache(GlobalVectorView& b, GlobalMatrixView& Jac,
                             MultiStats& stats)
-        : cache_M_(M, stats.M),
-          cache_K_(K, stats.K),
-          cache_b_(b, stats.b),
-          cache_Jac_(Jac, stats.Jac)
+        : cache_b_(b, stats.b), cache_Jac_(Jac, stats.Jac)
     {
     }
 
-    void add(std::vector<double> const& local_M_data,
-             std::vector<double> const& local_K_data,
-             std::vector<double> const& local_b_data,
+    void add(std::vector<double> const& local_b_data,
              std::vector<double> const& local_Jac_data,
              std::vector<GlobalIndexType> const& indices)
     {
-        cache_M_.add(local_M_data, indices);
-        cache_K_.add(local_K_data, indices);
         cache_b_.add(local_b_data, indices);
         cache_Jac_.add(local_Jac_data, indices);
     }
 
 private:
-    MatrixElementCache<2> cache_M_;
-    MatrixElementCache<2> cache_K_;
     MatrixElementCache<1> cache_b_;
     MatrixElementCache<2> cache_Jac_;
 };

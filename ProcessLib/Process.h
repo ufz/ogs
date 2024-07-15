@@ -123,8 +123,7 @@ public:
     void assembleWithJacobian(const double t, double const dt,
                               std::vector<GlobalVector*> const& x,
                               std::vector<GlobalVector*> const& x_prev,
-                              int const process_id, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              int const process_id, GlobalVector& b,
                               GlobalMatrix& Jac) final;
 
     /* Computes data necessary for output.
@@ -251,8 +250,7 @@ private:
     virtual void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev, int const process_id,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac) = 0;
+        GlobalVector& b, GlobalMatrix& Jac) = 0;
 
     virtual void preTimestepConcreteProcess(
         std::vector<GlobalVector*> const& /*x*/,

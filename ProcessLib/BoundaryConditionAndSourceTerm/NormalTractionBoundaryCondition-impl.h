@@ -62,7 +62,7 @@ template <int GlobalDim, template <typename /* shp fct */, int /* global dim */>
                          class LocalAssemblerImplementation>
 void NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
-                   int const /*process_id*/, GlobalMatrix& K, GlobalVector& b,
+                   int const /*process_id*/, GlobalMatrix* K, GlobalVector& b,
                    GlobalMatrix* Jac)
 {
     GlobalExecutor::executeMemberOnDereferenced(

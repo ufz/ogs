@@ -39,7 +39,7 @@ public:
     //! \c K and the vector \c b.
     virtual void applyNaturalBC(const double /*t*/,
                                 std::vector<GlobalVector*> const& /*x*/,
-                                int const /*process_id*/, GlobalMatrix& /*K*/,
+                                int const /*process_id*/, GlobalMatrix* /*K*/,
                                 GlobalVector& /*b*/, GlobalMatrix* /*Jac*/)
     {
         // By default it is assumed that the BC is not a natural BC. Therefore

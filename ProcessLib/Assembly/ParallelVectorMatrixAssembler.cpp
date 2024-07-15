@@ -27,7 +27,6 @@ void assembleWithJacobianOneElement(
     ProcessLib::LocalAssemblerInterface& local_assembler,
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
     const double dt, const GlobalVector& x, const GlobalVector& x_prev,
-    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
     std::vector<GlobalIndexType>& indices,
     ProcessLib::AbstractJacobianAssembler& jacobian_assembler,
@@ -35,16 +34,14 @@ void assembleWithJacobianOneElement(
 {
     indices = NumLib::getIndices(mesh_item_id, dof_table);
 
-    local_M_data.clear();
-    local_K_data.clear();
     local_b_data.clear();
     local_Jac_data.clear();
 
     auto const local_x = x.get(indices);
     auto const local_x_prev = x_prev.get(indices);
-    jacobian_assembler.assembleWithJacobian(
-        local_assembler, t, dt, local_x, local_x_prev, local_M_data,
-        local_K_data, local_b_data, local_Jac_data);
+    jacobian_assembler.assembleWithJacobian(local_assembler, t, dt, local_x,
+                                            local_x_prev, local_b_data,
+                                            local_Jac_data);
 
     if (local_Jac_data.empty())
     {
@@ -54,8 +51,7 @@ void assembleWithJacobianOneElement(
             "current process.");
     }
 
-    cache.add(local_M_data, local_K_data, local_b_data, local_Jac_data,
-              indices);
+    cache.add(local_b_data, local_Jac_data, indices);
 }
 
 int getNumberOfThreads()
@@ -121,7 +117,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& xs,
     std::vector<GlobalVector*> const& x_prevs, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     // checks //////////////////////////////////////////////////////////////////
     if (process_id != 0)
@@ -150,8 +146,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     // algorithm ///////////////////////////////////////////////////////////////
 
     auto stats = CumulativeStats<MultiStats>::create();
-    ConcurrentMatrixView M_view(M);
-    ConcurrentMatrixView K_view(K);
     ConcurrentMatrixView b_view(b);
     ConcurrentMatrixView Jac_view(Jac);
 
@@ -168,8 +162,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
 
         // temporary data only stored here in order to avoid frequent memory
         // reallocations.
-        std::vector<double> local_M_data;
-        std::vector<double> local_K_data;
         std::vector<double> local_b_data;
         std::vector<double> local_Jac_data;
         std::vector<GlobalIndexType> indices;
@@ -178,7 +170,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
         auto const jac_asm = jacobian_assembler_.copy();
         auto stats_this_thread = stats->clone();
 
-        MultiMatrixElementCache cache{M_view, K_view, b_view, Jac_view,
+        MultiMatrixElementCache cache{b_view, Jac_view,
                                       stats_this_thread->data};
 
         // TODO corner case: what if all elements on a submesh are deactivated?
@@ -204,8 +196,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                 {
                     assembleWithJacobianOneElement(
                         element_id, loc_asm, dof_table, t, dt, x, x_prev,
-                        local_M_data, local_K_data, local_b_data,
-                        local_Jac_data, indices, *jac_asm, cache);
+                        local_b_data, local_Jac_data, indices, *jac_asm, cache);
                 }
                 catch (...)
                 {
@@ -214,9 +205,8 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                     continue;
                 }
 
-                local_matrix_output_(t, process_id, element_id, local_M_data,
-                                     local_K_data, local_b_data,
-                                     &local_Jac_data);
+                local_matrix_output_(t, process_id, element_id, nullptr,
+                                     nullptr, local_b_data, &local_Jac_data);
             }
         }
         else
@@ -242,8 +232,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                 {
                     assembleWithJacobianOneElement(
                         element_id, loc_asm, dof_table, t, dt, x, x_prev,
-                        local_M_data, local_K_data, local_b_data,
-                        local_Jac_data, indices, *jac_asm, cache);
+                        local_b_data, local_Jac_data, indices, *jac_asm, cache);
                 }
                 catch (...)
                 {
@@ -252,16 +241,15 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                     continue;
                 }
 
-                local_matrix_output_(t, process_id, element_id, local_M_data,
-                                     local_K_data, local_b_data,
-                                     &local_Jac_data);
+                local_matrix_output_(t, process_id, element_id, nullptr,
+                                     nullptr, local_b_data, &local_Jac_data);
             }
         }
     }  // OpenMP parallel section
 
     stats->print();
 
-    global_matrix_output_(t, process_id, M, K, b, &Jac);
+    global_matrix_output_(t, process_id, nullptr, nullptr, b, &Jac);
     exception.rethrow();
 }
 }  // namespace ProcessLib::Assembly

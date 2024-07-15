@@ -99,7 +99,7 @@ void VectorMatrixAssembler::assemble(
         b->add(indices, _local_b_data);
     }
 
-    _local_output(t, process_id, mesh_item_id, _local_M_data, _local_K_data,
+    _local_output(t, process_id, mesh_item_id, &_local_M_data, &_local_K_data,
                   _local_b_data);
 }
 
@@ -108,7 +108,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix* M, GlobalMatrix* K, GlobalVector* b, GlobalMatrix* Jac)
+    GlobalVector* b, GlobalMatrix* Jac)
 {
     std::vector<std::vector<GlobalIndexType>> indices_of_processes;
     indices_of_processes.reserve(dof_tables.size());
@@ -119,8 +119,6 @@ void VectorMatrixAssembler::assembleWithJacobian(
 
     auto const& indices = indices_of_processes[process_id];
 
-    _local_M_data.clear();
-    _local_K_data.clear();
     _local_b_data.clear();
     _local_Jac_data.clear();
 
@@ -131,8 +129,8 @@ void VectorMatrixAssembler::assembleWithJacobian(
         auto const local_x = x[process_id]->get(indices);
         auto const local_x_prev = x_prev[process_id]->get(indices);
         _jacobian_assembler.assembleWithJacobian(
-            local_assembler, t, dt, local_x, local_x_prev, _local_M_data,
-            _local_K_data, _local_b_data, _local_Jac_data);
+            local_assembler, t, dt, local_x, local_x_prev, _local_b_data,
+            _local_Jac_data);
     }
     else  // Staggered scheme
     {
@@ -146,23 +144,13 @@ void VectorMatrixAssembler::assembleWithJacobian(
 
         _jacobian_assembler.assembleWithJacobianForStaggeredScheme(
             local_assembler, t, dt, local_x, local_x_prev, process_id,
-            _local_M_data, _local_K_data, _local_b_data, _local_Jac_data);
+            _local_b_data, _local_Jac_data);
     }
 
     auto const num_r_c = indices.size();
     auto const r_c_indices =
         NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices, indices);
 
-    if (M && !_local_M_data.empty())
-    {
-        auto const local_M = MathLib::toMatrix(_local_M_data, num_r_c, num_r_c);
-        M->add(r_c_indices, local_M);
-    }
-    if (K && !_local_K_data.empty())
-    {
-        auto const local_K = MathLib::toMatrix(_local_K_data, num_r_c, num_r_c);
-        K->add(r_c_indices, local_K);
-    }
     if (b && !_local_b_data.empty())
     {
         assert(_local_b_data.size() == num_r_c);
@@ -181,8 +169,8 @@ void VectorMatrixAssembler::assembleWithJacobian(
             "errors in the local assembler of the current process.");
     }
 
-    _local_output(t, process_id, mesh_item_id, _local_M_data, _local_K_data,
-                  _local_b_data, &_local_Jac_data);
+    _local_output(t, process_id, mesh_item_id, nullptr, nullptr, _local_b_data,
+                  &_local_Jac_data);
 }
 
 }  // namespace ProcessLib

@@ -69,7 +69,7 @@ public:
         NumLib::IndexValueVector<GlobalIndexType>& bc_values) const override;
 
     void applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
-                        int const process_id, GlobalMatrix& K, GlobalVector& b,
+                        int const process_id, GlobalMatrix* K, GlobalVector& b,
                         GlobalMatrix* Jac) override;
 
 private:

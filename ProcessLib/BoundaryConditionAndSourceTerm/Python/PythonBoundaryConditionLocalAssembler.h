@@ -40,7 +40,7 @@ public:
     void assemble(std::size_t const boundary_element_id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
                   double const t, std::vector<GlobalVector*> const& xs,
-                  int const process_id, GlobalMatrix& /*K*/, GlobalVector& b,
+                  int const process_id, GlobalMatrix* /*K*/, GlobalVector& b,
                   GlobalMatrix* const Jac) override
     {
         impl_.assemble(boundary_element_id, dof_table_boundary, t,

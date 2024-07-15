@@ -30,7 +30,7 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         const double t, double const dt, std::vector<GlobalVector*> const& xs,
         std::vector<GlobalVector*> const& x_prevs, int const process_id,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac);
+        GlobalVector& b, GlobalMatrix& Jac);
 
 private:
     AbstractJacobianAssembler& jacobian_assembler_;

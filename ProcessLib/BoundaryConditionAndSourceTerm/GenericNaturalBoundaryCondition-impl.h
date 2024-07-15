@@ -82,7 +82,7 @@ void GenericNaturalBoundaryCondition<BoundaryConditionData,
     applyNaturalBC(const double t,
                    std::vector<GlobalVector*> const& x,
                    int const process_id,
-                   GlobalMatrix& K,
+                   GlobalMatrix* K,
                    GlobalVector& b,
                    GlobalMatrix* Jac)
 {

@@ -103,55 +103,18 @@ public:
     void preAssemble(const double t, double const dt,
                      GlobalVector const& x) override = 0;
 
-    /*! Assemble \c M, \c K, \c b and the Jacobian
+    /*! Assemble \c b and the Jacobian
      * \f$ \mathtt{Jac} := \partial r/\partial x_N \f$
      * at the provided state (\c t, \c x).
      *
      * For the meaning of the other parameters refer to the the introductory
      * remarks on
      * \ref concept_time_discretization "time discretization".
-     *
-     * \remark
-     * \parblock
-     * The Jacobian will be generally of the following form:
-     * \f[ \mathtt{Jac} := \frac{\partial r(x_C, t_C)}{\partial x_N} =
-     *  M \cdot \frac{\partial \hat x}{\partial x_N}
-     *  + \frac{\partial M}{\partial x_N} \cdot \hat x
-     *  + K \cdot \frac{\partial x_C}{\partial x_N}
-     *  + \frac{\partial K}{\partial x_N} \cdot x_N
-     *  + \frac{\partial b}{\partial x_N},
-     *  \f]
-     * where \f$ M \f$, \f$ K \f$ and \f$ b \f$ are matrix-valued
-     * (vector-valued, respectively)
-     * functions that depend on \f$ x_C \f$ and \f$ t_C \f$.
-     *
-     * Due to the arguments provided to this method its implementation only has
-     * to
-     * compute the derivatives
-     * \f$ \frac{\partial M}{\partial x_N} \cdot \hat x \f$,
-     * \f$ \frac{\partial K}{\partial x_N} \cdot x_N    \f$ and
-     * \f$ \frac{\partial b}{\partial x_N} \f$.
-     * The other terms can be readily taken from the method parameters.
-     *
-     * In particular for the ForwardEuler time discretization scheme the
-     * equation will
-     * collapse to
-     * \f$ \mathtt{Jac} =
-     *  M \cdot \frac{\partial \hat x}{\partial x_N}
-     *  \f$
-     * since in that scheme \f$ x_N \neq x_C \f$.
-     *
-     * Of course, the implementation of this method is allowed to compute the
-     * Jacobian in a
-     * different way, as long as that is consistent with the definition of \f$
-     * \mathtt{Jac} \f$.
-     * \endparblock
      */
     virtual void assembleWithJacobian(const double t, double const dt,
                                       std::vector<GlobalVector*> const& x,
                                       std::vector<GlobalVector*> const& x_prev,
-                                      int const process_id, GlobalMatrix& M,
-                                      GlobalMatrix& K, GlobalVector& b,
+                                      int const process_id, GlobalVector& b,
                                       GlobalMatrix& Jac) = 0;
 };
 

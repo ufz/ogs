@@ -331,11 +331,12 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_xdot,
-                              std::vector<double>& local_M_data,
-                              std::vector<double>& local_K_data,
                               std::vector<double>& local_b_data,
                               std::vector<double>& local_Jac_data) override
     {
+        std::vector<double> local_M_data(local_Jac_data.size());
+        std::vector<double> local_K_data(local_Jac_data.size());
+
         assemble(t, dt, local_x, local_xdot, local_M_data, local_K_data,
                  local_b_data);
 
@@ -383,41 +384,17 @@ private:
 
         double const eps = std::numeric_limits<double>::epsilon();
 
-        std::vector<double> M_data_cd;
-        std::vector<double> K_data_cd;
         std::vector<double> b_data_cd;
         std::vector<double> Jac_data_cd;
-        std::vector<double> M_data_ana;
-        std::vector<double> K_data_ana;
         std::vector<double> b_data_ana;
         std::vector<double> Jac_data_ana;
         double const t = 0.0;
 
-        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_cd,
-                                        K_data_cd, b_data_cd, Jac_data_cd);
+        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_cd,
+                                        Jac_data_cd);
 
-        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_ana,
-                                         K_data_ana, b_data_ana, Jac_data_ana);
-
-        if (LocAsm::asmM)
-        {
-            ASSERT_EQ(x.size() * x.size(), M_data_cd.size());
-            ASSERT_EQ(x.size() * x.size(), M_data_ana.size());
-            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
-            {
-                EXPECT_NEAR(M_data_ana[i], M_data_cd[i], eps);
-            }
-        }
-
-        if (LocAsm::asmK)
-        {
-            ASSERT_EQ(x.size() * x.size(), K_data_cd.size());
-            ASSERT_EQ(x.size() * x.size(), K_data_ana.size());
-            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
-            {
-                EXPECT_NEAR(K_data_ana[i], K_data_cd[i], eps);
-            }
-        }
+        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_ana,
+                                         Jac_data_ana);
 
         if (LocAsm::asmb)
         {
@@ -467,41 +444,17 @@ private:
 
         double const eps = std::numeric_limits<double>::epsilon();
 
-        std::vector<double> M_data_cd;
-        std::vector<double> K_data_cd;
         std::vector<double> b_data_cd;
         std::vector<double> Jac_data_cd;
-        std::vector<double> M_data_ana;
-        std::vector<double> K_data_ana;
         std::vector<double> b_data_ana;
         std::vector<double> Jac_data_ana;
         double const t = 0.0;
 
-        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_cd,
-                                        K_data_cd, b_data_cd, Jac_data_cd);
+        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_cd,
+                                        Jac_data_cd);
 
-        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, M_data_ana,
-                                         K_data_ana, b_data_ana, Jac_data_ana);
-
-        if (LocAsm::asmM)
-        {
-            ASSERT_EQ(x.size() * x.size(), M_data_cd.size());
-            ASSERT_EQ(x.size() * x.size(), M_data_ana.size());
-            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
-            {
-                EXPECT_NEAR(M_data_ana[i], M_data_cd[i], eps);
-            }
-        }
-
-        if (LocAsm::asmK)
-        {
-            ASSERT_EQ(x.size() * x.size(), K_data_cd.size());
-            ASSERT_EQ(x.size() * x.size(), K_data_ana.size());
-            for (std::size_t i = 0; i < x.size() * x.size(); ++i)
-            {
-                EXPECT_NEAR(K_data_ana[i], K_data_cd[i], eps);
-            }
-        }
+        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_ana,
+                                         Jac_data_ana);
 
         if (LocAsm::asmb)
         {

@@ -155,8 +155,7 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<GlobalVector*> const& x,
                               std::vector<GlobalVector*> const& x_prev,
-                              int const process_id, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              int const process_id, GlobalVector& b,
                               GlobalMatrix& Jac)
     {
         DBUG("AssemblyMixin assembleWithJacobian(t={}, dt={}, process_id={}).",
@@ -179,7 +178,7 @@ public:
 
                 pvma_.assembleWithJacobian(loc_asms, sad.active_element_ids,
                                            dof_tables, t, dt, x, x_prev,
-                                           process_id, M, K, b_submesh, Jac);
+                                           process_id, b_submesh, Jac);
 
                 MathLib::LinAlg::axpy(b, 1.0, b_submesh);
 
@@ -198,7 +197,7 @@ public:
 
             pvma_.assembleWithJacobian(loc_asms, pv.getActiveElementIDs(),
                                        dof_tables, t, dt, x, x_prev, process_id,
-                                       M, K, b, Jac);
+                                       b, Jac);
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(

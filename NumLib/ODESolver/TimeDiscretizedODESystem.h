@@ -149,13 +149,9 @@ private:
         nullptr;  //!< stores precomputed values for known solutions
 
     GlobalMatrix* _Jac;  //!< the Jacobian of the residual
-    GlobalMatrix* _M;    //!< Matrix \f$ M \f$.
-    GlobalMatrix* _K;    //!< Matrix \f$ K \f$.
     GlobalVector* _b;    //!< Matrix \f$ b \f$.
 
     std::size_t _Jac_id = 0u;  //!< ID of the \c _Jac matrix.
-    std::size_t _M_id = 0u;    //!< ID of the \c _M matrix.
-    std::size_t _K_id = 0u;    //!< ID of the \c _K matrix.
     std::size_t _b_id = 0u;    //!< ID of the \c _b vector.
 };
 
