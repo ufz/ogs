@@ -73,8 +73,7 @@ private:
     void assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev, int const process_id,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
-        GlobalMatrix& Jac) override;
+        GlobalVector& b, GlobalMatrix& Jac) override;
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     double const t, double const dt,
                                     int const process_id) override;

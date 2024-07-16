@@ -1210,8 +1210,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_x_prev,
-                         std::vector<double>& /*local_M_data*/,
-                         std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
                          std::vector<double>& local_Jac_data)
 {

@@ -111,7 +111,7 @@ void HeatConductionProcess::assembleConcreteProcess(
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HeatConductionProcess.");
 
@@ -121,7 +121,7 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
-        process_id, &M, &K, &b, &Jac);
+        process_id, &b, &Jac);
 
     transformVariableFromGlobalVector(b, 0 /*variable id*/,
                                       *_local_to_global_index_map, *_heat_flux,

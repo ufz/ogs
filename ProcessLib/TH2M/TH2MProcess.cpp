@@ -252,7 +252,7 @@ template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     if (!_use_monolithic_scheme)
     {
@@ -260,7 +260,7 @@ void TH2MProcess<DisplacementDim>::assembleWithJacobianConcreteProcess(
     }
 
     AssemblyMixin<TH2MProcess<DisplacementDim>>::assembleWithJacobian(
-        t, dt, x, x_prev, process_id, M, K, b, Jac);
+        t, dt, x, x_prev, process_id, b, Jac);
 }
 
 template <int DisplacementDim>

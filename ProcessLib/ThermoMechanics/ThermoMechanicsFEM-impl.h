@@ -116,8 +116,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_x_prev,
-                         std::vector<double>& /*local_M_data*/,
-                         std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
                          std::vector<double>& local_Jac_data)
 {
@@ -329,12 +327,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
 
 template <typename ShapeFunction, int DisplacementDim>
 void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
-    assembleWithJacobianForStaggeredScheme(
-        const double t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_prev, int const process_id,
-        std::vector<double>& /*local_M_data*/,
-        std::vector<double>& /*local_K_data*/,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
+    assembleWithJacobianForStaggeredScheme(const double t, double const dt,
+                                           Eigen::VectorXd const& local_x,
+                                           Eigen::VectorXd const& local_x_prev,
+                                           int const process_id,
+                                           std::vector<double>& local_b_data,
+                                           std::vector<double>& local_Jac_data)
 {
     // For the equations with pressure
     if (process_id == _process_data.heat_conduction_process_id)
