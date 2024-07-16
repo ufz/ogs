@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <numbers>
+
 #include "GroutParameters.h"
 #include "Pipe.h"
 #include "RefrigerantProperties.h"
@@ -47,9 +49,10 @@ inline AdvectiveThermalResistanceCoaxial calculateAdvectiveThermalResistance(
     double const hydraulic_diameter =
         coaxialPipesAnnulusDiameter(inner_pipe, outer_pipe);
 
-    auto advective_thermal_resistance = [&](double Nu, double diameter_ratio) {
-        constexpr double pi = boost::math::constants::pi<double>();
-        return 1.0 / (Nu * fluid.thermal_conductivity * pi) * diameter_ratio;
+    auto advective_thermal_resistance = [&](double Nu, double diameter_ratio)
+    {
+        return 1.0 / (Nu * fluid.thermal_conductivity * std::numbers::pi) *
+               diameter_ratio;
     };
     return {advective_thermal_resistance(Nu_inner_pipe, 1.),
             advective_thermal_resistance(
@@ -70,8 +73,6 @@ calculateGroutAndGroutSoilExchangeThermalResistance(
     Pipe const& outer_pipe, GroutParameters const& grout_parameters,
     double const borehole_diameter)
 {
-    constexpr double pi = boost::math::constants::pi<double>();
-
     double const outer_pipe_outside_diameter = outer_pipe.outsideDiameter();
     double const chi =
         std::log(std::sqrt(borehole_diameter * borehole_diameter +
@@ -81,7 +82,7 @@ calculateGroutAndGroutSoilExchangeThermalResistance(
         std::log(borehole_diameter / outer_pipe_outside_diameter);
     double const R_g =
         std::log(borehole_diameter / outer_pipe_outside_diameter) / 2 /
-        (pi * grout_parameters.lambda_g);
+        (std::numbers::pi * grout_parameters.lambda_g);
     double const conductive_b = chi * R_g;
     double const grout_soil = (1 - chi) * R_g;
     return {conductive_b, grout_soil};

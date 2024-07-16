@@ -9,9 +9,9 @@
 
 #include <gtest/gtest.h>
 
-#include <boost/math/constants/constants.hpp>
 #include <cmath>
 #include <memory>
+#include <numbers>
 #include <numeric>
 #include <random>
 
@@ -103,7 +103,7 @@ TEST_F(TriElementQuality, EdgeRatio)
 
 TEST_F(TriElementQuality, EquiAngleSkew)
 {
-    using namespace boost::math::double_constants;
+    using namespace std::numbers;
     auto const type = MeshLib::MeshQualityType::EQUIANGLESKEW;
     auto const element_quality_vector =
         getElementQualityVectorFromRegularTriMesh(type);
@@ -112,11 +112,11 @@ TEST_F(TriElementQuality, EquiAngleSkew)
                                        std::pow(1.0 / n_subdivisions[1], 2));
     std::array const angles = {
         std::asin((1.0 / n_subdivisions[0]) / hypothenuse),
-        std::asin((1.0 / n_subdivisions[1]) / hypothenuse), half_pi};
+        std::asin((1.0 / n_subdivisions[1]) / hypothenuse), pi / 2};
     auto const& min_max = std::minmax_element(angles.begin(), angles.end());
     auto const expected_value =
-        std::max((*min_max.second - third_pi) / two_thirds_pi,
-                 (third_pi - *min_max.first) / third_pi);
+        std::max((*min_max.second - pi / 3) * 3 / (2 * pi),
+                 (pi / 3 - *min_max.first) * 3 / pi);
 
     for (auto const element_quality : element_quality_vector)
     {

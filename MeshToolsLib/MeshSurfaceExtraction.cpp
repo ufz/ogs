@@ -14,8 +14,8 @@
 
 #include "MeshSurfaceExtraction.h"
 
-#include <boost/math/constants/constants.hpp>
 #include <memory>
+#include <numbers>
 
 #include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Line.h"
@@ -311,8 +311,7 @@ void MeshSurfaceExtraction::get2DSurfaceElements(
 
     bool const complete_surface = (dir.dot(dir) == 0);
 
-    double const pi(boost::math::constants::pi<double>());
-    double const cos_theta(std::cos(angle * pi / 180.0));
+    double const cos_theta(std::cos(angle * std::numbers::pi / 180.0));
     Eigen::Vector3d const norm_dir(dir.normalized());
 
     for (auto const* elem : all_elements)

@@ -10,9 +10,9 @@
 #include <gtest/gtest.h>
 
 #include <Eigen/Core>
-#include <boost/math/constants/constants.hpp>
 #include <cmath>
 #include <memory>
+#include <numbers>
 #include <numeric>
 #include <random>
 
@@ -148,7 +148,7 @@ std::pair<double, double> getMinMaxAngleFromTriangle(Eigen::Vector3d n0,
 double computeCriterionForTet(Eigen::Vector3d n0, Eigen::Vector3d n1,
                               Eigen::Vector3d n2, Eigen::Vector3d n3)
 {
-    using namespace boost::math::double_constants;
+    using namespace std::numbers;
     auto const alpha0 = getMinMaxAngleFromTriangle(n0, n2, n1);
     auto const alpha1 = getMinMaxAngleFromTriangle(n0, n1, n3);
     auto const alpha2 = getMinMaxAngleFromTriangle(n1, n2, n3);
@@ -157,8 +157,7 @@ double computeCriterionForTet(Eigen::Vector3d n0, Eigen::Vector3d n1,
         std::min({alpha0.first, alpha1.first, alpha2.first, alpha3.first});
     auto const max =
         std::max({alpha0.second, alpha1.second, alpha2.second, alpha3.second});
-    return std::max((max - third_pi) / two_thirds_pi,
-                    (third_pi - min) / third_pi);
+    return std::max((max - pi / 3) * 3 / (2 * pi), (pi / 3 - min) * 3 / pi);
 }
 
 TEST_F(TetElementQuality, EquiAngleSkew)

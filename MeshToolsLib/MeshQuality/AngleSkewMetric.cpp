@@ -14,13 +14,11 @@
 
 #include "AngleSkewMetric.h"
 
-#include <boost/math/constants/constants.hpp>
 #include <cmath>
+#include <numbers>
 
 #include "MathLib/MathTools.h"
 #include "MeshLib/Node.h"
-
-using namespace boost::math::double_constants;
 
 namespace MeshToolsLib
 {
@@ -30,7 +28,7 @@ template <unsigned long N>
 std::tuple<double, double> getMinMaxAngle(
     std::array<MeshLib::Node, N> const& nodes)
 {
-    double min_angle(two_pi);
+    double min_angle(2 * std::numbers::pi);
     double max_angle(0.0);
 
     for (decltype(N) i = 0; i < N; ++i)
@@ -45,11 +43,11 @@ std::tuple<double, double> getMinMaxAngle(
 
 double checkTriangle(MeshLib::Element const& elem)
 {
+    using namespace std::numbers;
     std::array const nodes = {*elem.getNode(0), *elem.getNode(1),
                               *elem.getNode(2)};
     auto const& [min_angle, max_angle] = getMinMaxAngle(nodes);
-    return std::max((max_angle - third_pi) / two_thirds_pi,
-                    (third_pi - min_angle) / third_pi);
+    return std::max((max_angle - pi / 3) / 2, (pi / 3 - min_angle)) * 3 / pi;
 }
 
 double checkQuad(MeshLib::Element const& elem)
@@ -58,8 +56,8 @@ double checkQuad(MeshLib::Element const& elem)
                               *elem.getNode(2), *elem.getNode(3)};
     auto const& [min_angle, max_angle] = getMinMaxAngle(nodes);
 
-    return std::max((max_angle - half_pi) / half_pi,
-                    (half_pi - min_angle) / half_pi);
+    using namespace std::numbers;
+    return std::max((max_angle - pi / 2), (pi / 2 - min_angle)) * 2 / pi;
 }
 
 double checkTetrahedron(MeshLib::Element const& elem)
@@ -77,8 +75,8 @@ double checkTetrahedron(MeshLib::Element const& elem)
     double const min_angle = *std::min_element(min.begin(), min.end());
     double const max_angle = *std::max_element(max.begin(), max.end());
 
-    return std::max((max_angle - third_pi) / two_thirds_pi,
-                    (third_pi - min_angle) / third_pi);
+    using namespace std::numbers;
+    return std::max((max_angle - pi / 3) / 2, (pi / 3 - min_angle)) * 3 / pi;
 }
 
 double checkHexahedron(MeshLib::Element const& elem)
@@ -96,8 +94,8 @@ double checkHexahedron(MeshLib::Element const& elem)
     double const min_angle = *std::min_element(min.begin(), min.end());
     double const max_angle = *std::max_element(max.begin(), max.end());
 
-    return std::max((max_angle - half_pi) / half_pi,
-                    (half_pi - min_angle) / half_pi);
+    using namespace std::numbers;
+    return std::max((max_angle - pi / 2), (pi / 2 - min_angle)) * 2 / pi;
 }
 
 double checkPrism(MeshLib::Element const& elem)
@@ -117,9 +115,10 @@ double checkPrism(MeshLib::Element const& elem)
     auto const min_angle_tri = std::min(min_angle_tri0, min_angle_tri1);
     auto const max_angle_tri = std::max(max_angle_tri0, max_angle_tri1);
 
-    double const tri_criterion(
-        std::max((max_angle_tri - third_pi) / two_thirds_pi,
-                 (third_pi - min_angle_tri) / third_pi));
+    using namespace std::numbers;
+    double const tri_criterion =
+        std::max((max_angle_tri - pi / 3) / 2, (pi / 3 - min_angle_tri)) * 3 /
+        pi;
 
     std::array<double, 3> min;
     std::array<double, 3> max;
@@ -134,8 +133,9 @@ double checkPrism(MeshLib::Element const& elem)
     double const min_angle_quad = *std::min_element(min.begin(), min.end());
     double const max_angle_quad = *std::max_element(max.begin(), max.end());
 
-    double const quad_criterion(std::max((max_angle_quad - half_pi) / half_pi,
-                                         (half_pi - min_angle_quad) / half_pi));
+    using namespace std::numbers;
+    double const quad_criterion =
+        std::max((max_angle_quad - pi / 2), (pi / 2 - min_angle_quad)) * 2 / pi;
 
     return std::min(tri_criterion, quad_criterion);
 }

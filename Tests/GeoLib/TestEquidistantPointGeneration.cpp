@@ -10,7 +10,7 @@
 
 #include <gtest/gtest.h>
 
-#include <boost/math/constants/constants.hpp>
+#include <numbers>
 #include <random>
 
 #include "GeoLib/Utils.h"
@@ -22,7 +22,7 @@ struct GeoLibGenerateEquidistantPoints : public testing::Test
         // enable random engine
         std::random_device rd;
         std::mt19937 random_engine_mt19937(rd());
-        constexpr auto pi = boost::math::double_constants::pi;
+        constexpr auto pi = std::numbers::pi;
         std::normal_distribution<> normal_dist_phi(-pi, pi);  // azimuthal angle
         std::normal_distribution<> normal_dist_theta(0, pi);  // polar angle
         // generate point on unit sphere
