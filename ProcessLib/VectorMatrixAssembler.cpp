@@ -99,7 +99,7 @@ void VectorMatrixAssembler::assemble(
         b->add(indices, _local_b_data);
     }
 
-    _local_output(t, process_id, mesh_item_id, &_local_M_data, &_local_K_data,
+    _local_output(t, process_id, mesh_item_id, _local_M_data, _local_K_data,
                   _local_b_data);
 }
 
@@ -169,8 +169,7 @@ void VectorMatrixAssembler::assembleWithJacobian(
             "errors in the local assembler of the current process.");
     }
 
-    _local_output(t, process_id, mesh_item_id, nullptr, nullptr, _local_b_data,
-                  &_local_Jac_data);
+    _local_output(t, process_id, mesh_item_id, _local_b_data, _local_Jac_data);
 }
 
 }  // namespace ProcessLib

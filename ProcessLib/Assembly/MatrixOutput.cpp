@@ -286,12 +286,11 @@ LocalMatrixOutput::LocalMatrixOutput()
          outputFilename);
 }
 
-void LocalMatrixOutput::operator()(
-    double const t, int const process_id, std::size_t const element_id,
-    std::vector<double> const* local_M_data,
-    std::vector<double> const* local_K_data,
-    std::vector<double> const& local_b_data,
-    std::vector<double> const* const local_Jac_data)
+void LocalMatrixOutput::operator()(double const t, int const process_id,
+                                   std::size_t const element_id,
+                                   std::vector<double> const& local_M_data,
+                                   std::vector<double> const& local_K_data,
+                                   std::vector<double> const& local_b_data)
 {
     [[likely]] if (!isOutputRequested(element_id))
     {
@@ -307,16 +306,16 @@ void LocalMatrixOutput::operator()(
     fmt::print(fh, "## t = {:.15g}, process id = {}, element id = {}\n\n", t,
                process_id, element_id);
 
-    if (local_M_data && !local_M_data->empty())
+    if (!local_M_data.empty())
     {
         DBUG("... M");
-        fmt::print(fh, "# M\n{}\n\n", toSquareMatrixRowMajor(*local_M_data));
+        fmt::print(fh, "# M\n{}\n\n", toSquareMatrixRowMajor(local_M_data));
     }
 
-    if (local_K_data && !local_K_data->empty())
+    if (!local_K_data.empty())
     {
         DBUG("... K");
-        fmt::print(fh, "# K\n{}\n\n", toSquareMatrixRowMajor(*local_K_data));
+        fmt::print(fh, "# K\n{}\n\n", toSquareMatrixRowMajor(local_K_data));
     }
 
     if (!local_b_data.empty())
@@ -324,12 +323,38 @@ void LocalMatrixOutput::operator()(
         DBUG("... b");
         fmt::print(fh, "# b\n{}\n\n", MathLib::toVector(local_b_data));
     }
+}
 
-    if (local_Jac_data && !local_Jac_data->empty())
+void LocalMatrixOutput::operator()(double const t, int const process_id,
+                                   std::size_t const element_id,
+                                   std::vector<double> const& local_b_data,
+                                   std::vector<double> const& local_Jac_data)
+{
+    [[likely]] if (!isOutputRequested(element_id))
+    {
+        return;
+    }
+
+    std::lock_guard lock_guard{mutex_};
+
+    auto& fh = outputFile_;
+
+    DBUG("Writing to local matrix debug output file...");
+
+    fmt::print(fh, "## t = {:.15g}, process id = {}, element id = {}\n\n", t,
+               process_id, element_id);
+
+    if (!local_b_data.empty())
+    {
+        DBUG("... b");
+        fmt::print(fh, "# b\n{}\n\n", MathLib::toVector(local_b_data));
+    }
+
+    if (!local_Jac_data.empty())
     {
         DBUG("... Jac");
         fmt::print(fh, "# Jac\n{}\n\n\n",
-                   toSquareMatrixRowMajor(*local_Jac_data));
+                   toSquareMatrixRowMajor(local_Jac_data));
     }
 }
 

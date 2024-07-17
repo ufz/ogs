@@ -205,8 +205,8 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                     continue;
                 }
 
-                local_matrix_output_(t, process_id, element_id, nullptr,
-                                     nullptr, local_b_data, &local_Jac_data);
+                local_matrix_output_(t, process_id, element_id, local_b_data,
+                                     local_Jac_data);
             }
         }
         else
@@ -241,8 +241,8 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                     continue;
                 }
 
-                local_matrix_output_(t, process_id, element_id, nullptr,
-                                     nullptr, local_b_data, &local_Jac_data);
+                local_matrix_output_(t, process_id, element_id, local_b_data,
+                                     local_Jac_data);
             }
         }
     }  // OpenMP parallel section
