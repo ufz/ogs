@@ -41,6 +41,8 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
+      AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>{
+          *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
     nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
@@ -335,12 +337,10 @@ void HydroMechanicsProcess<DisplacementDim>::
         }
     }
 
-    auto const dof_tables = getDOFTables(x.size());
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id, &b, &Jac);
+    AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>::assembleWithJacobian(
+        t, dt, x, x_prev, process_id, b, Jac);
 
+    auto const dof_tables = getDOFTables(x.size());
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
         if (use_monolithic_scheme)

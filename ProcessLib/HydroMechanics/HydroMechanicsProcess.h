@@ -12,6 +12,7 @@
 
 #include "HydroMechanicsProcessData.h"
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
@@ -23,8 +24,12 @@ namespace HydroMechanics
 /// The mixture momentum balance and the mixture mass balance are solved under
 /// fully saturated conditions.
 template <int DisplacementDim>
-class HydroMechanicsProcess final : public Process
+class HydroMechanicsProcess final
+    : public Process,
+      private AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>
 {
+    friend class AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>;
+
 public:
     HydroMechanicsProcess(
         std::string name,
