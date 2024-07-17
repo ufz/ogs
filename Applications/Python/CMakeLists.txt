@@ -28,4 +28,22 @@ if(OGS_USE_PIP)
         PATTERN "__pycache__" EXCLUDE
         PATTERN "CMakeLists.txt" EXCLUDE
     )
+    # Fails with libGitInfoLib.so: undefined symbol: __asan_report_load8
+    if(NOT ENABLE_ASAN)
+        add_test(
+            NAME pytest
+            # TODO: currently failing with:
+            #
+            # Can't add new modules after the interpreter has been initialized
+            COMMAND pytest -c ${PROJECT_SOURCE_DIR}/pyproject.toml
+            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        )
+        set_tests_properties(pytest PROPERTIES LABELS "default")
+
+        add_dependencies(
+            ctest GMSH2OGS Layers2Grid AddFaultToVoxelGrid ExtractBoundary
+            vtkdiff
+        )
+    endif()
+
 endif()
