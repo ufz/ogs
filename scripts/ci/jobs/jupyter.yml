@@ -15,7 +15,7 @@ test notebooks via wheel:
     - |
       cd ../../web/content/docs/tutorials/advancing-glacier
       python mesh_basin.py
-      msh2vtu mesh_basin.msh --ogs --rdcd
+      msh2vtu mesh_basin.msh --reindex
       ogs OGSinput_basin.prj
       cd -
     # Append mtest install directory to PYTHONPATH
