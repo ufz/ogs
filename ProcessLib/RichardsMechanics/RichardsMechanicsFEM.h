@@ -104,15 +104,12 @@ public:
     void assembleWithJacobian(double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_x_prev,
-                              std::vector<double>& /*local_M_data*/,
-                              std::vector<double>& /*local_K_data*/,
                               std::vector<double>& local_rhs_data,
                               std::vector<double>& local_Jac_data) override;
 
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_prev, int const process_id,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
 
@@ -186,19 +183,13 @@ private:
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of an element.
      * @param local_x_prev    Nodal values of \f$x_{prev}\f$ of an element.
-     * @param local_M_data    Mass matrix of an element, which takes the form of
-     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
-     * @param local_K_data    Laplacian matrix of an element, which takes the
-     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
-     *                        Not used.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
      */
     void assembleWithJacobianForDeformationEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
     /**
@@ -218,19 +209,13 @@ private:
      * @param dt              Time increment
      * @param local_x         Nodal values of \f$x\f$ of an element.
      * @param local_x_prev    Nodal values of \f$x_{prev}\f$ of an element.
-     * @param local_M_data    Mass matrix of an element, which takes the form of
-     *                        \f$ \int N^T N\mathrm{d}\Omega\f$. Not used.
-     * @param local_K_data    Laplacian matrix of an element, which takes the
-     *         form of \f$ \int (\nabla N)^T K \nabla N\mathrm{d}\Omega\f$.
-     *                        Not used.
      * @param local_b_data    Right hand side vector of an element.
      * @param local_Jac_data  Element Jacobian matrix for the Newton-Raphson
      *                        method.
      */
     void assembleWithJacobianForPressureEquations(
         double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_M_data,
-        std::vector<double>& local_K_data, std::vector<double>& local_b_data,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data);
 
 private:

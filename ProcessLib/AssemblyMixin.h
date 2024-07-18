@@ -137,53 +137,30 @@ public:
     }
 
     // cppcheck-suppress functionStatic
-    void assemble(const double /*t*/, double const /*dt*/,
+    void assemble(double const t, double const dt,
                   std::vector<GlobalVector*> const& /*x*/,
                   std::vector<GlobalVector*> const& /*x_prev*/,
-                  int const /*process_id*/, GlobalMatrix& /*M*/,
+                  int const process_id, GlobalMatrix& /*M*/,
                   GlobalMatrix& /*K*/, GlobalVector& /*b*/)
     {
-        /*
         DBUG("AssemblyMixin assemble(t={}, dt={}, process_id={}).", t, dt,
              process_id);
 
-        assembleGeneric(&Assembly::ParallelVectorMatrixAssembler::assemble, t,
-        dt, x, x_prev, process_id, M, K, b);
-        */
-        OGS_FATAL("Not yet implemented.");
+        /// Implementation similar to assembleWithJacobian calling
+        /// Assembly::ParallelVectorMatrixAssembler::assemble function.
+        /// Residuum must be correctly computed.
+        OGS_FATAL("AssemblyMixin for Picard scheme is not yet implemented.");
     }
 
-    void assembleWithJacobian(const double t, double const dt,
+    void assembleWithJacobian(double const t, double const dt,
                               std::vector<GlobalVector*> const& x,
                               std::vector<GlobalVector*> const& x_prev,
-                              int const process_id, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              int const process_id, GlobalVector& b,
                               GlobalMatrix& Jac)
     {
         DBUG("AssemblyMixin assembleWithJacobian(t={}, dt={}, process_id={}).",
              t, dt, process_id);
 
-        assembleGeneric(
-            &Assembly::ParallelVectorMatrixAssembler::assembleWithJacobian, t,
-            dt, x, x_prev, process_id, M, K, b, Jac);
-    }
-
-private:
-    Process& derived() { return static_cast<Process&>(*this); }
-    Process const& derived() const
-    {
-        return static_cast<Process const&>(*this);
-    }
-
-    /// Generic assembly routine covering both the case with and without
-    /// Jacobian assembly.
-    template <typename Method, typename... Jac>
-    void assembleGeneric(Method global_assembler_method, const double t,
-                         double const dt, std::vector<GlobalVector*> const& x,
-                         std::vector<GlobalVector*> const& x_prev,
-                         int const process_id, GlobalMatrix& M, GlobalMatrix& K,
-                         GlobalVector& b, Jac&... jac_or_not_jac)
-    {
         // TODO why not getDOFTables(x.size()); ?
         std::vector<NumLib::LocalToGlobalIndexMap const*> const dof_tables{
             derived()._local_to_global_index_map.get()};
@@ -199,9 +176,9 @@ private:
             {
                 b_submesh.setZero();
 
-                (pvma_.*global_assembler_method)(
-                    loc_asms, sad.active_element_ids, dof_tables, t, dt, x,
-                    x_prev, process_id, M, K, b_submesh, jac_or_not_jac...);
+                pvma_.assembleWithJacobian(loc_asms, sad.active_element_ids,
+                                           dof_tables, t, dt, x, x_prev,
+                                           process_id, b_submesh, Jac);
 
                 MathLib::LinAlg::axpy(b, 1.0, b_submesh);
 
@@ -218,13 +195,20 @@ private:
             ProcessLib::ProcessVariable const& pv =
                 derived().getProcessVariables(process_id)[0];
 
-            (pvma_.*global_assembler_method)(
-                loc_asms, pv.getActiveElementIDs(), dof_tables, t, dt, x,
-                x_prev, process_id, M, K, b, jac_or_not_jac...);
+            pvma_.assembleWithJacobian(loc_asms, pv.getActiveElementIDs(),
+                                       dof_tables, t, dt, x, x_prev, process_id,
+                                       b, Jac);
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(
             b, *(dof_tables.front()), residuum_vectors_bulk_);
+    }
+
+private:
+    Process& derived() { return static_cast<Process&>(*this); }
+    Process const& derived() const
+    {
+        return static_cast<Process const&>(*this);
     }
 };
 

@@ -50,7 +50,7 @@ public:
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
                   double const t, std::vector<GlobalVector*> const& xs,
-                  int const process_id, GlobalMatrix& K, GlobalVector& b,
+                  int const process_id, GlobalMatrix* K, GlobalVector& b,
                   GlobalMatrix* Jac) override
     {
         _local_K.setZero();
@@ -116,11 +116,17 @@ public:
                                                                      indices),
                      _local_K);
         }
+        else if (K != nullptr)
+        {
+            K->add(NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
+                                                                   indices),
+                   _local_K);
+        }
         else
         {
-            K.add(NumLib::LocalToGlobalIndexMap::RowColumnIndices(indices,
-                                                                  indices),
-                  _local_K);
+            OGS_FATAL(
+                "In Robin boundary condition assembler, both, the Jacobian and "
+                "the K-matrices are null, but one matrix must be provided.");
         }
     }
 

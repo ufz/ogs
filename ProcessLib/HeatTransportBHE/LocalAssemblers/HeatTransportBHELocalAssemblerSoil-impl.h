@@ -195,9 +195,8 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
 template <typename ShapeFunction>
 void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assembleWithJacobian(
     double const t, double const dt, std::vector<double> const& local_x,
-    std::vector<double> const& local_x_prev, std::vector<double>& local_M_data,
-    std::vector<double>& local_K_data, std::vector<double>& local_rhs_data,
-    std::vector<double>& local_Jac_data)
+    std::vector<double> const& local_x_prev,
+    std::vector<double>& local_rhs_data, std::vector<double>& local_Jac_data)
 {
     assert(local_x.size() == ShapeFunction::NPOINTS);
     auto const local_matrix_size = local_x.size();
@@ -212,6 +211,8 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assembleWithJacobian(
     auto local_rhs = MathLib::createZeroedVector<NodalVectorType>(
         local_rhs_data, local_matrix_size);
 
+    std::vector<double> local_M_data(local_Jac_data.size());
+    std::vector<double> local_K_data(local_Jac_data.size());
     assemble(t, dt, local_x, local_x_prev, local_M_data, local_K_data,
              local_rhs_data /*not going to be used*/);
 

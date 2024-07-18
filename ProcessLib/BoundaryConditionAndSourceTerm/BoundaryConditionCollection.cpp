@@ -14,7 +14,7 @@ namespace ProcessLib
 {
 void BoundaryConditionCollection::applyNaturalBC(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
-    GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac) const
+    GlobalMatrix* K, GlobalVector& b, GlobalMatrix* Jac) const
 {
     for (auto const& bc : _boundary_conditions)
     {

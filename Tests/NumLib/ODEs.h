@@ -19,6 +19,43 @@
 template <class Ode>
 class ODETraits;
 
+inline GlobalVector computeResidumFromMKb(double const dt,
+                                          GlobalVector const& x_curr,
+                                          GlobalVector const& x_prev,
+                                          GlobalMatrix const& M,
+                                          GlobalMatrix const& K,
+                                          GlobalVector const& b)
+{
+    using namespace MathLib::LinAlg;
+    GlobalVector res(b);
+
+    // res = -M * x_dot - K * x_curr + b
+    GlobalVector x_dot;
+    copy(x_curr, x_dot);              // x_dot = x
+    axpy(x_dot, -1., x_prev);         // x_dot = x - x_prev
+    scale(x_dot, 1. / dt);            // x_dot = (x - x_prev)/dt
+    matMult(M, x_dot, res);           // res = M*x_dot
+    matMultAdd(K, x_curr, res, res);  // res = M*x_dot + K*x
+    axpy(res, -1., b);                // res = M*x_dot + K*x - b
+    scale(res, -1.);                  // res = -M*x_dot - K*x + b
+    return res;
+}
+
+inline GlobalMatrix computeJacobianFromMK(double const dt,
+                                          GlobalMatrix const& M,
+                                          GlobalMatrix const& K)
+{
+    using namespace MathLib::LinAlg;
+    GlobalMatrix J(M);
+    // compute J = M*1/dt + K
+    copy(M, J);
+    scale(J, 1. / dt);
+    axpy(J, 1., K);
+    finalizeAssembly(J);
+
+    return J;
+}
+
 // ODE 1 //////////////////////////////////////////////////////////
 class ODE1 final : public NumLib::ODESystem<
                        NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -48,22 +85,23 @@ public:
     }
 
     void assembleWithJacobian(const double /*t*/, double const dt,
-                              std::vector<GlobalVector*> const& /*x_curr*/,
-                              std::vector<GlobalVector*> const& /*xdot*/,
-                              int const /*process_id*/, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              std::vector<GlobalVector*> const& x_curr,
+                              std::vector<GlobalVector*> const& x_prev,
+                              int const process_id, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
-        namespace LinAlg = MathLib::LinAlg;
-
+        MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
+        GlobalMatrix M(Jac);
+        GlobalMatrix K(Jac);
         setMKbValues(M, K, b);
 
-        // compute Jac = M*1/dt + K
-        LinAlg::finalizeAssembly(M);
-        LinAlg::copy(M, Jac);
-        LinAlg::scale(Jac, 1. / dt);
-        LinAlg::finalizeAssembly(K);
-        LinAlg::axpy(Jac, 1., K);
+        MathLib::LinAlg::finalizeAssembly(M);
+        MathLib::LinAlg::finalizeAssembly(K);
+        MathLib::LinAlg::copy(computeJacobianFromMK(dt, M, K), Jac);
+        MathLib::LinAlg::copy(
+            computeResidumFromMKb(dt, *x_curr[process_id], *x_prev[process_id],
+                                  M, K, b),
+            b);
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
@@ -138,27 +176,23 @@ public:
     }
 
     void assembleWithJacobian(const double /*t*/, double const dt,
-                              std::vector<GlobalVector*> const& x,
-                              std::vector<GlobalVector*> const& /*xdot*/,
-                              int const process_id, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              std::vector<GlobalVector*> const& x_curr,
+                              std::vector<GlobalVector*> const& x_prev,
+                              int const process_id, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
-        MathLib::LinAlg::setLocalAccessibleVector(*x[process_id]);
-        setMKbValues(*x[process_id], M, K, b);
+        MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
+        GlobalMatrix M(Jac);
+        GlobalMatrix K(Jac);
+        setMKbValues(*x_curr[process_id], M, K, b);
 
-        namespace LinAlg = MathLib::LinAlg;
-
-        LinAlg::finalizeAssembly(M);
-        // compute Jac = M*1/dt + dK_dx + K
-        LinAlg::copy(M, Jac);
-        LinAlg::scale(Jac, 1. / dt);
-
-        MathLib::addToMatrix(Jac, {(*x[process_id])[0]});  // add dK_dx
-
-        LinAlg::finalizeAssembly(K);
-        LinAlg::finalizeAssembly(Jac);
-        LinAlg::axpy(Jac, 1., K);
+        MathLib::LinAlg::finalizeAssembly(M);
+        MathLib::LinAlg::finalizeAssembly(K);
+        MathLib::LinAlg::copy(computeJacobianFromMK(dt, M, K), Jac);
+        MathLib::LinAlg::copy(
+            computeResidumFromMKb(dt, *x_curr[process_id], *x_prev[process_id],
+                                  M, K, b),
+            b);
     }
 
     MathLib::MatrixSpecifications getMatrixSpecifications(
@@ -242,21 +276,22 @@ public:
 
     void assembleWithJacobian(const double /*t*/, double const dt,
                               std::vector<GlobalVector*> const& x_curr,
-                              std::vector<GlobalVector*> const& xdot,
-                              int const process_id, GlobalMatrix& M,
-                              GlobalMatrix& K, GlobalVector& b,
+                              std::vector<GlobalVector*> const& x_prev,
+                              int const process_id, GlobalVector& b,
                               GlobalMatrix& Jac) override
     {
         MathLib::LinAlg::setLocalAccessibleVector(*x_curr[process_id]);
-        MathLib::LinAlg::setLocalAccessibleVector(*xdot[process_id]);
+        MathLib::LinAlg::setLocalAccessibleVector(*x_prev[process_id]);
 
+        GlobalMatrix M(Jac);
+        GlobalMatrix K(Jac);
         setMKbValues(*x_curr[process_id], M, K, b);
 
         auto const u = (*x_curr[process_id])[0];
         auto const v = (*x_curr[process_id])[1];
 
-        auto const du = (*xdot[process_id])[0];
-        auto const dv = (*xdot[process_id])[1];
+        auto const du = (*x_prev[process_id])[0];
+        auto const dv = (*x_prev[process_id])[1];
 
         namespace LinAlg = MathLib::LinAlg;
 
@@ -264,15 +299,14 @@ public:
         // with dxdot/dx = 1/dt and dx/dx = 1
 
         LinAlg::finalizeAssembly(M);
-        LinAlg::copy(M, Jac);
-        LinAlg::scale(Jac, 1. / dt);  // Jac = M * 1/dt
+        LinAlg::finalizeAssembly(K);
+        LinAlg::copy(computeJacobianFromMK(dt, M, K), Jac);
+        LinAlg::copy(computeResidumFromMKb(dt, *x_curr[process_id],
+                                           *x_prev[process_id], M, K, b),
+                     b);
 
         // add dM/dx \cdot \dot x
         MathLib::addToMatrix(Jac, {du - dv, 0.0, 0.0, dv - du});
-
-        LinAlg::finalizeAssembly(K);
-        LinAlg::finalizeAssembly(Jac);
-        LinAlg::axpy(Jac, 1., K);  // add K
 
         // add dK/dx \cdot \dot x
         MathLib::addToMatrix(Jac, {-du - dv, -du, 0.0, du + 2.0 * dv});

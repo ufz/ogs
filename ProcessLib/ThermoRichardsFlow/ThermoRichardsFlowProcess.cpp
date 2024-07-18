@@ -137,14 +137,14 @@ void ThermoRichardsFlowProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
-        b);
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
+        &b);
 }
 
 void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
 
@@ -154,8 +154,8 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
     dof_tables.emplace_back(_local_to_global_index_map.get());
 
     _pvma.assembleWithJacobian(_local_assemblers, getActiveElementIDs(),
-                               dof_tables, t, dt, x, x_prev, process_id, M, K,
-                               b, Jac);
+                               dof_tables, t, dt, x, x_prev, process_id, b,
+                               Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {

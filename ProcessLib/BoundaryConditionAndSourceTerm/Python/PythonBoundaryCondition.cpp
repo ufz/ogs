@@ -245,7 +245,7 @@ double PythonBoundaryCondition::interpolateToHigherOrderNode(
 
 void PythonBoundaryCondition::applyNaturalBC(
     const double t, std::vector<GlobalVector*> const& x, int const process_id,
-    GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac)
+    GlobalMatrix* K, GlobalVector& b, GlobalMatrix* Jac)
 {
     FlushStdoutGuard guard(_flush_stdout);
 

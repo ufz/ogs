@@ -24,8 +24,8 @@ struct GlobalMatrixOutput
 {
     GlobalMatrixOutput();
 
-    void operator()(double const t, int const process_id, GlobalMatrix const& M,
-                    GlobalMatrix const& K, GlobalVector const& b,
+    void operator()(double const t, int const process_id, GlobalMatrix const* M,
+                    GlobalMatrix const* K, GlobalVector const& b,
                     GlobalMatrix const* const Jac = nullptr);
 
 private:
@@ -47,8 +47,12 @@ struct LocalMatrixOutput
                     std::size_t const element_id,
                     std::vector<double> const& local_M_data,
                     std::vector<double> const& local_K_data,
+                    std::vector<double> const& local_b_data);
+
+    void operator()(double const t, int const process_id,
+                    std::size_t const element_id,
                     std::vector<double> const& local_b_data,
-                    std::vector<double> const* const local_Jac_data = nullptr);
+                    std::vector<double> const& local_Jac_data);
 
     ~LocalMatrixOutput();
 

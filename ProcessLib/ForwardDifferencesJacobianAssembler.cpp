@@ -29,9 +29,11 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     LocalAssemblerInterface& local_assembler, const double t, double const dt,
     const std::vector<double>& local_x_data,
     const std::vector<double>& local_x_prev_data,
-    std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
 {
+    std::vector<double> local_M_data(local_Jac_data.size());
+    std::vector<double> local_K_data(local_Jac_data.size());
+
     // TODO do not check in every call.
     if (local_x_data.size() % _absolute_epsilons.size() != 0)
     {

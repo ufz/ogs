@@ -276,7 +276,7 @@ void Process::assemble(const double t, double const dt,
     assembleConcreteProcess(t, dt, x, x_prev, process_id, M, K, b);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
-    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
+    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, &K, b,
                                                     nullptr);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
@@ -287,20 +287,18 @@ void Process::assemble(const double t, double const dt,
 void Process::assembleWithJacobian(const double t, double const dt,
                                    std::vector<GlobalVector*> const& x,
                                    std::vector<GlobalVector*> const& x_prev,
-                                   int const process_id, GlobalMatrix& M,
-                                   GlobalMatrix& K, GlobalVector& b,
+                                   int const process_id, GlobalVector& b,
                                    GlobalMatrix& Jac)
 {
     assert(x.size() == x_prev.size());
 
     setLocalAccessibleVectors(x, x_prev);
 
-    assembleWithJacobianConcreteProcess(t, dt, x, x_prev, process_id, M, K, b,
-                                        Jac);
+    assembleWithJacobianConcreteProcess(t, dt, x, x_prev, process_id, b, Jac);
 
     // TODO: apply BCs to Jacobian.
-    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, K, b,
-                                                    &Jac);
+    _boundary_conditions[process_id].applyNaturalBC(t, x, process_id, nullptr,
+                                                    b, &Jac);
 
     // the last argument is for the jacobian, nullptr is for a unused jacobian
     _source_term_collections[process_id].integrate(t, *x[process_id], b, &Jac);

@@ -277,7 +277,6 @@ public:
     void assembleWithJacobianForStaggeredScheme(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_prev, int const process_id,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
         std::vector<double>& local_b_data,
         std::vector<double>& local_Jac_data) override;
 

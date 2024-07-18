@@ -1036,8 +1036,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     assembleWithJacobian(double const t, double const dt,
                          std::vector<double> const& local_x,
                          std::vector<double> const& local_x_prev,
-                         std::vector<double>& /*local_M_data*/,
-                         std::vector<double>& /*local_K_data*/,
                          std::vector<double>& local_rhs_data,
                          std::vector<double>& local_Jac_data)
 {
@@ -1451,8 +1449,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
         Eigen::VectorXd const& /*local_x_prev*/,
-        std::vector<double>& /*local_M_data*/,
-        std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
         std::vector<double>& /*local_Jac_data*/)
 {
@@ -1467,8 +1463,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         const double /*t*/, double const /*dt*/,
         Eigen::VectorXd const& /*local_x*/,
         Eigen::VectorXd const& /*local_x_prev*/,
-        std::vector<double>& /*local_M_data*/,
-        std::vector<double>& /*local_K_data*/,
         std::vector<double>& /*local_b_data*/,
         std::vector<double>& /*local_Jac_data*/)
 {
@@ -1479,24 +1473,23 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      ShapeFunctionPressure, DisplacementDim>::
-    assembleWithJacobianForStaggeredScheme(
-        double const t, double const dt, Eigen::VectorXd const& local_x,
-        Eigen::VectorXd const& local_x_prev, int const process_id,
-        std::vector<double>& local_M_data, std::vector<double>& local_K_data,
-        std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
+    assembleWithJacobianForStaggeredScheme(double const t, double const dt,
+                                           Eigen::VectorXd const& local_x,
+                                           Eigen::VectorXd const& local_x_prev,
+                                           int const process_id,
+                                           std::vector<double>& local_b_data,
+                                           std::vector<double>& local_Jac_data)
 {
     // For the equations with pressure
     if (process_id == 0)
     {
         assembleWithJacobianForPressureEquations(t, dt, local_x, local_x_prev,
-                                                 local_M_data, local_K_data,
                                                  local_b_data, local_Jac_data);
         return;
     }
 
     // For the equations with deformation
     assembleWithJacobianForDeformationEquations(t, dt, local_x, local_x_prev,
-                                                local_M_data, local_K_data,
                                                 local_b_data, local_Jac_data);
 }
 

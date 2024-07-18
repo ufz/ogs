@@ -218,14 +218,13 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     assembleWithJacobianConcreteProcess(
         const double t, double const dt, std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev, int const process_id,
-        GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+        GlobalVector& b, GlobalMatrix& Jac)
 {
     AssemblyMixin<ThermoRichardsMechanicsProcess<
         DisplacementDim, ConstitutiveTraits>>::assembleWithJacobian(t, dt, x,
                                                                     x_prev,
                                                                     process_id,
-                                                                    M, K, b,
-                                                                    Jac);
+                                                                    b, Jac);
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

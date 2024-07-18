@@ -55,7 +55,7 @@ public:
     void assemble(std::size_t const id,
                   NumLib::LocalToGlobalIndexMap const& dof_table_boundary,
                   double const t, std::vector<GlobalVector*> const& /*x*/,
-                  int const /*process_id*/, GlobalMatrix& /*K*/,
+                  int const /*process_id*/, GlobalMatrix* /*K*/,
                   GlobalVector& b, GlobalMatrix* /*Jac*/) override
     {
         _local_rhs.setZero();

@@ -175,8 +175,8 @@ GlobalMatrixOutput::GlobalMatrixOutput()
 }
 
 void GlobalMatrixOutput::operator()(double const t, int const process_id,
-                                    GlobalMatrix const& M,
-                                    GlobalMatrix const& K,
+                                    GlobalMatrix const* M,
+                                    GlobalMatrix const* K,
                                     GlobalVector const& b,
                                     GlobalMatrix const* const Jac)
 {
@@ -188,20 +188,22 @@ void GlobalMatrixOutput::operator()(double const t, int const process_id,
 #ifndef USE_PETSC
     ++counter_;
 
+    if (M)
     {
         auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
                                              process_id, "M", "mat");
 
         fh << "M ";
-        outputGlobalMatrix(M, fh);
+        outputGlobalMatrix(*M, fh);
     }
 
+    if (K)
     {
         auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
                                              process_id, "K", "mat");
 
         fh << "K ";
-        outputGlobalMatrix(K, fh);
+        outputGlobalMatrix(*K, fh);
     }
 
     {
@@ -284,12 +286,11 @@ LocalMatrixOutput::LocalMatrixOutput()
          outputFilename);
 }
 
-void LocalMatrixOutput::operator()(
-    double const t, int const process_id, std::size_t const element_id,
-    std::vector<double> const& local_M_data,
-    std::vector<double> const& local_K_data,
-    std::vector<double> const& local_b_data,
-    std::vector<double> const* const local_Jac_data)
+void LocalMatrixOutput::operator()(double const t, int const process_id,
+                                   std::size_t const element_id,
+                                   std::vector<double> const& local_M_data,
+                                   std::vector<double> const& local_K_data,
+                                   std::vector<double> const& local_b_data)
 {
     [[likely]] if (!isOutputRequested(element_id))
     {
@@ -322,12 +323,38 @@ void LocalMatrixOutput::operator()(
         DBUG("... b");
         fmt::print(fh, "# b\n{}\n\n", MathLib::toVector(local_b_data));
     }
+}
 
-    if (local_Jac_data && !local_Jac_data->empty())
+void LocalMatrixOutput::operator()(double const t, int const process_id,
+                                   std::size_t const element_id,
+                                   std::vector<double> const& local_b_data,
+                                   std::vector<double> const& local_Jac_data)
+{
+    [[likely]] if (!isOutputRequested(element_id))
+    {
+        return;
+    }
+
+    std::lock_guard lock_guard{mutex_};
+
+    auto& fh = outputFile_;
+
+    DBUG("Writing to local matrix debug output file...");
+
+    fmt::print(fh, "## t = {:.15g}, process id = {}, element id = {}\n\n", t,
+               process_id, element_id);
+
+    if (!local_b_data.empty())
+    {
+        DBUG("... b");
+        fmt::print(fh, "# b\n{}\n\n", MathLib::toVector(local_b_data));
+    }
+
+    if (!local_Jac_data.empty())
     {
         DBUG("... Jac");
         fmt::print(fh, "# Jac\n{}\n\n\n",
-                   toSquareMatrixRowMajor(*local_Jac_data));
+                   toSquareMatrixRowMajor(local_Jac_data));
     }
 }
 

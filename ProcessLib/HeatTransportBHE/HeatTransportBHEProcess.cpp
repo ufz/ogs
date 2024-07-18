@@ -170,14 +170,14 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
     // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, M, K,
-        b);
+        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
+        &b);
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b, GlobalMatrix& Jac)
+    GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HeatTransportBHE process.");
 
@@ -188,7 +188,7 @@ void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
-        process_id, M, K, b, Jac);
+        process_id, &b, &Jac);
 }
 
 void HeatTransportBHEProcess::computeSecondaryVariableConcrete(

@@ -27,7 +27,7 @@ public:
         std::size_t const id,
         NumLib::LocalToGlobalIndexMap const& dof_table_boundary, double const t,
         std::vector<GlobalVector*> const& x, int const process_id,
-        GlobalMatrix& K, GlobalVector& b, GlobalMatrix* Jac) = 0;
+        GlobalMatrix* K, GlobalVector& b, GlobalMatrix* Jac) = 0;
 };
 
 template <typename ShapeFunction, int GlobalDim>
