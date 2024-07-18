@@ -190,14 +190,9 @@ public:
         }
         else
         {
-            // convention: process variable 0 governs where assembly takes
-            // place (active element IDs)
-            ProcessLib::ProcessVariable const& pv =
-                derived().getProcessVariables(process_id)[0];
-
-            pvma_.assembleWithJacobian(loc_asms, pv.getActiveElementIDs(),
-                                       dof_tables, t, dt, x, x_prev, process_id,
-                                       b, Jac);
+            pvma_.assembleWithJacobian(
+                loc_asms, derived().getActiveElementIDs(), dof_tables, t, dt, x,
+                x_prev, process_id, b, Jac);
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(
