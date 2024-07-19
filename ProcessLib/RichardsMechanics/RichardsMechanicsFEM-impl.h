@@ -319,9 +319,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
-        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature, this->solid_material_,
-            *this->material_states_[ip].material_state_variables);
+        auto& SD = this->current_states_[ip];
+        variables.stress =
+            std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                DisplacementDim>>(SD)
+                .sigma_eff;
 
         auto const& N_u = ip_data_[ip].N_u;
         auto const& dNdx_u = ip_data_[ip].dNdx_u;
@@ -338,6 +340,15 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
                 .eps;
         eps.noalias() = B * u;
+
+        // Set mechanical strain temporary to compute tangent stiffness.
+        variables.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
+
+        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
+            variables, t, x_position, dt, this->solid_material_,
+            *this->material_states_[ip].material_state_variables);
 
         auto const& sigma_sw =
             std::get<ProcessLib::ThermoRichardsMechanics::
@@ -467,8 +478,17 @@ void RichardsMechanicsLocalAssembler<
         auto const alpha =
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
+        auto& SD = this->current_states_[ip];
+        variables.stress =
+            std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                DisplacementDim>>(SD)
+                .sigma_eff;
+        // Set mechanical strain temporary to compute tangent stiffness.
+        variables.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps.eps);
         auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature, this->solid_material_,
+            variables, t, x_position, dt, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
 
         auto const beta_SR = (1 - alpha) / this->solid_material_.getBulkModulus(
@@ -802,8 +822,16 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .template value<double>(variables, x_position, t, dt);
     *std::get<ProcessLib::ThermoRichardsMechanics::BiotData>(CD) = alpha;
 
+    variables.stress =
+        std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+            DisplacementDim>>(SD)
+            .sigma_eff;
+    // Set mechanical strain temporary to compute tangent stiffness.
+    variables.mechanical_strain
+        .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+            eps.eps);
     auto const C_el = ip_data.computeElasticTangentStiffness(
-        t, x_position, dt, temperature, solid_material,
+        variables, t, x_position, dt, solid_material,
         *material_state_data.material_state_variables);
 
     auto const beta_SR =
@@ -1606,9 +1634,17 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const alpha =
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
-
+        auto& SD = this->current_states_[ip];
+        variables.stress =
+            std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                DisplacementDim>>(SD)
+                .sigma_eff;
+        // Set mechanical strain temporary to compute tangent stiffness.
+        variables.mechanical_strain
+            .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+                eps);
         auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
-            t, x_position, dt, temperature, this->solid_material_,
+            variables, t, x_position, dt, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
 
         auto const beta_SR = (1 - alpha) / this->solid_material_.getBulkModulus(
