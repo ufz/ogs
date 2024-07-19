@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="double_porosity_swelling_t_0.000000.vtu"/>
+    <DataSet timestep="100" group="" part="0" file="double_porosity_swelling_t_100.000000.vtu"/>
+    <DataSet timestep="1000" group="" part="0" file="double_porosity_swelling_t_1000.000000.vtu"/>
+    <DataSet timestep="10000" group="" part="0" file="double_porosity_swelling_t_10000.000000.vtu"/>
+    <DataSet timestep="20000" group="" part="0" file="double_porosity_swelling_t_20000.000000.vtu"/>
+    <DataSet timestep="30000" group="" part="0" file="double_porosity_swelling_t_30000.000000.vtu"/>
+    <DataSet timestep="40000" group="" part="0" file="double_porosity_swelling_t_40000.000000.vtu"/>
+    <DataSet timestep="50000" group="" part="0" file="double_porosity_swelling_t_50000.000000.vtu"/>
+    <DataSet timestep="60000" group="" part="0" file="double_porosity_swelling_t_60000.000000.vtu"/>
+    <DataSet timestep="70000" group="" part="0" file="double_porosity_swelling_t_70000.000000.vtu"/>
+    <DataSet timestep="80000" group="" part="0" file="double_porosity_swelling_t_80000.000000.vtu"/>
+    <DataSet timestep="90000" group="" part="0" file="double_porosity_swelling_t_90000.000000.vtu"/>
+    <DataSet timestep="100000" group="" part="0" file="double_porosity_swelling_t_100000.000000.vtu"/>
+  </Collection>
+</VTKFile>
