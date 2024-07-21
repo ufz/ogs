@@ -31,10 +31,11 @@ namespace MathLib
 inline bool checkLisError(int err)
 {
     bool ok = (err == LIS_SUCCESS);
-    if (!ok) {
+    if (!ok)
+    {
         ERR("***ERROR: Lis error code = {:d}", err);
     }
     return ok;
 }
 
-} // MathLib
+}  // namespace MathLib

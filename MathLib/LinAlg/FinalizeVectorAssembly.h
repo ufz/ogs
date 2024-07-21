@@ -20,4 +20,4 @@ void finalizeVectorAssembly(VEC_T& /*unused*/)
 {
 }
 
-} // MathLib
+}  // namespace MathLib

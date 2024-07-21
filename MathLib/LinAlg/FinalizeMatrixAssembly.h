@@ -20,4 +20,4 @@ bool finalizeMatrixAssembly(MAT_T& /*unused*/)
     return true;
 }
 
-} // MathLib
+}  // namespace MathLib

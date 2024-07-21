@@ -16,11 +16,11 @@
 
 #pragma once
 
+#include <petscvec.h>
+
 #include <map>
 #include <string>
 #include <vector>
-
-#include <petscvec.h>
 
 namespace MathLib
 {
@@ -291,4 +291,4 @@ private:
 /// Function to finalize the vector assembly
 void finalizeVectorAssembly(PETScVector& vec);
 
-}  // end namespace
+}  // namespace MathLib

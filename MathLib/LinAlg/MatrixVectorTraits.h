@@ -11,11 +11,12 @@
 #pragma once
 
 #include <memory>
+
 #include "MatrixSpecifications.h"
 
 namespace MathLib
 {
-template<typename Matrix>
+template <typename Matrix>
 struct MatrixVectorTraits;
 }
 
@@ -40,8 +41,7 @@ namespace MathLib
 {
 SPECIALIZE_MATRIX_VECTOR_TRAITS(PETScMatrix, PETScMatrix::IndexType);
 SPECIALIZE_MATRIX_VECTOR_TRAITS(PETScVector, PETScVector::IndexType);
-}
-
+}  // namespace MathLib
 
 #else
 
@@ -52,7 +52,7 @@ namespace MathLib
 {
 SPECIALIZE_MATRIX_VECTOR_TRAITS(EigenMatrix, EigenMatrix::IndexType)
 SPECIALIZE_MATRIX_VECTOR_TRAITS(EigenVector, EigenVector::IndexType)
-}
+}  // namespace MathLib
 
 #endif
 

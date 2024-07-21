@@ -17,12 +17,13 @@
 namespace MathLib
 {
 
-/// Norm type. Not declared as class type in order to use the members as integers.
+/// Norm type. Not declared as class type in order to use the members as
+/// integers.
 enum class VecNormType
 {
-    NORM1,        ///< \f$\sum_i |x_i|\f$
-    NORM2,        ///< \f$\sqrt(\sum_i (x_i)^2)\f$
-    INFINITY_N,    ///< \f$\mathrm{max}_i |x_i|\f$
+    NORM1,       ///< \f$\sum_i |x_i|\f$
+    NORM2,       ///< \f$\sqrt(\sum_i (x_i)^2)\f$
+    INFINITY_N,  ///< \f$\mathrm{max}_i |x_i|\f$
     INVALID
 };
 
@@ -30,6 +31,6 @@ enum class VecNormType
 std::string convertVecNormTypeToString(VecNormType normType);
 
 /// convert string to VecNormType
-VecNormType convertStringToVecNormType(const std::string &str);
+VecNormType convertStringToVecNormType(const std::string& str);
 
-} // end namespace MathLib
+}  // end namespace MathLib

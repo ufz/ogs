@@ -58,4 +58,4 @@ struct PETScMatrixOption
     PetscInt o_nz;
 };
 
-}  // end namespace
+}  // namespace MathLib

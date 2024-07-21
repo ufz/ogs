@@ -17,4 +17,4 @@ namespace MathLib
 /// A vector telling how many nonzeros there are in each global matrix row.
 template <typename IndexType>
 using SparsityPattern = std::vector<IndexType>;
-}
+}  // namespace MathLib

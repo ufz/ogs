@@ -21,7 +21,8 @@ struct RowColumnIndices
     using LineIndex = typename std::vector<IDX_TYPE>;
     RowColumnIndices(LineIndex const& rows_, LineIndex const& columns_)
         : rows(rows_), columns(columns_)
-    { }
+    {
+    }
 
     LineIndex const& rows;
     LineIndex const& columns;
