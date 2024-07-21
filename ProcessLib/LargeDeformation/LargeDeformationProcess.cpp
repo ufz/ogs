@@ -145,7 +145,7 @@ void LargeDeformationProcess<DisplacementDim>::assembleConcreteProcess(
         getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
         &b);
 
-    _global_output(t, process_id, &M, &K, b);
+    _global_output(t, process_id, M, K, b);
 }
 
 template <int DisplacementDim>
@@ -168,7 +168,7 @@ void LargeDeformationProcess<DisplacementDim>::
     transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
                                       *_nodal_forces, std::negate<double>());
 
-    _global_output(t, process_id, nullptr, nullptr, b, &Jac);
+    _global_output(t, process_id, b, Jac);
 }
 
 template <int DisplacementDim>

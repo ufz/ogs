@@ -249,7 +249,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
 
     stats->print();
 
-    global_matrix_output_(t, process_id, nullptr, nullptr, b, &Jac);
+    global_matrix_output_(t, process_id, b, Jac);
     exception.rethrow();
 }
 }  // namespace ProcessLib::Assembly

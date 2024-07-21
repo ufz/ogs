@@ -24,9 +24,11 @@ struct GlobalMatrixOutput
 {
     GlobalMatrixOutput();
 
-    void operator()(double const t, int const process_id, GlobalMatrix const* M,
-                    GlobalMatrix const* K, GlobalVector const& b,
-                    GlobalMatrix const* const Jac = nullptr);
+    void operator()(double const t, int const process_id, GlobalMatrix const& M,
+                    GlobalMatrix const& K, GlobalVector const& b);
+
+    void operator()(double const t, int const process_id, GlobalVector const& b,
+                    GlobalMatrix const& Jac);
 
 private:
     std::string filenamePrefix_;
