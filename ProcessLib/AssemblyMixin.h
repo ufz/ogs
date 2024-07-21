@@ -161,9 +161,8 @@ public:
         DBUG("AssemblyMixin assembleWithJacobian(t={}, dt={}, process_id={}).",
              t, dt, process_id);
 
-        // TODO why not getDOFTables(x.size()); ?
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const dof_tables{
-            derived()._local_to_global_index_map.get()};
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const dof_tables =
+            derived().getDOFTables(x.size());
 
         auto const& loc_asms = derived().local_assemblers_;
 

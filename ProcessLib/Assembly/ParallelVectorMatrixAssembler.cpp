@@ -120,28 +120,14 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     GlobalVector& b, GlobalMatrix& Jac)
 {
     // checks //////////////////////////////////////////////////////////////////
-    if (process_id != 0)
+    if (dof_tables.size() != xs.size())
     {
-        OGS_FATAL("Process id is not 0 but {}", process_id);
+        OGS_FATAL("Different number of DOF tables and solution vectors.");
     }
 
-    if (dof_tables.size() != 1)
-    {
-        OGS_FATAL("More than 1 dof table");
-    }
-    auto const& dof_table = *(dof_tables.front());
-
-    if (xs.size() != 1)
-    {
-        OGS_FATAL("More than 1 solution vector");
-    }
-    auto const& x = *xs.front();
-
-    if (x_prevs.size() != 1)
-    {
-        OGS_FATAL("More than 1 x_prev vector");
-    }
-    auto const& x_prev = *x_prevs.front();
+    auto const& dof_table = *dof_tables[process_id];
+    auto const& x = *xs[process_id];
+    auto const& x_prev = *x_prevs[process_id];
 
     // algorithm ///////////////////////////////////////////////////////////////
 
