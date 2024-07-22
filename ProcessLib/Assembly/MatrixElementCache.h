@@ -78,38 +78,39 @@ public:
 
     void add(std::vector<MatrixElementCacheEntry<Dim>> const& entries)
     {
-        std::lock_guard<std::mutex> const lock(mutex_);
-
-        if constexpr (Dim == 2)
+#pragma omp critical
         {
-            auto const n_cols = mat_or_vec_.getNumberOfColumns();
-
-            // TODO would be more efficient if our global matrix and vector
-            // implementations supported batch addition of matrix elements with
-            // arbitrary indices (not restricted to (n x m) shaped submatrices).
-            for (auto const [rc, value] : entries)
+            if constexpr (Dim == 2)
             {
-                auto const [r, c] = rc;
+                auto const n_cols = mat_or_vec_.getNumberOfColumns();
 
-                auto const c_no_ghost =
-                    detail::transformToNonGhostIndex(c, n_cols);
+                // TODO would be more efficient if our global matrix and vector
+                // implementations supported batch addition of matrix elements
+                // with arbitrary indices (not restricted to (n x m) shaped
+                // submatrices).
+                for (auto const [rc, value] : entries)
+                {
+                    auto const [r, c] = rc;
 
-                mat_or_vec_.add(r, c_no_ghost, value);
+                    auto const c_no_ghost =
+                        detail::transformToNonGhostIndex(c, n_cols);
+
+                    mat_or_vec_.add(r, c_no_ghost, value);
+                }
             }
-        }
-        else
-        {
-            // TODO batch addition would be more efficient. That needs the
-            // refactoring of the matrix element cache.
-            for (auto const [r, value] : entries)
+            else
             {
-                mat_or_vec_.add(r.front(), value);
+                // TODO batch addition would be more efficient. That needs the
+                // refactoring of the matrix element cache.
+                for (auto const [r, value] : entries)
+                {
+                    mat_or_vec_.add(r.front(), value);
+                }
             }
         }
     }
 
 private:
-    std::mutex mutex_;
     GlobalMatOrVec& mat_or_vec_;
 };
 
