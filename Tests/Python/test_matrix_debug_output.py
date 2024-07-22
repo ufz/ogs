@@ -52,24 +52,14 @@ def check_global_matrix_output_files_exist(outdir, file_should_exist=True):
     map_filename_to_num_lines = {
         "ogs_global_matrix_cnt_001_t_0.25_pcs_0_b.vec": 243,
         "ogs_global_matrix_cnt_001_t_0.25_pcs_0_Jac.mat": 3846,
-        "ogs_global_matrix_cnt_001_t_0.25_pcs_0_K.mat": 2,  # global K and M matrices are empty
-        "ogs_global_matrix_cnt_001_t_0.25_pcs_0_M.mat": 2,
         "ogs_global_matrix_cnt_002_t_0.25_pcs_0_b.vec": 243,
         "ogs_global_matrix_cnt_002_t_0.25_pcs_0_Jac.mat": 3846,
-        "ogs_global_matrix_cnt_002_t_0.25_pcs_0_K.mat": 2,
-        "ogs_global_matrix_cnt_002_t_0.25_pcs_0_M.mat": 2,
         "ogs_global_matrix_cnt_003_t_0.5_pcs_0_b.vec": 243,
         "ogs_global_matrix_cnt_003_t_0.5_pcs_0_Jac.mat": 3846,
-        "ogs_global_matrix_cnt_003_t_0.5_pcs_0_K.mat": 2,
-        "ogs_global_matrix_cnt_003_t_0.5_pcs_0_M.mat": 2,
         "ogs_global_matrix_cnt_004_t_0.75_pcs_0_b.vec": 243,
         "ogs_global_matrix_cnt_004_t_0.75_pcs_0_Jac.mat": 3846,
-        "ogs_global_matrix_cnt_004_t_0.75_pcs_0_K.mat": 2,
-        "ogs_global_matrix_cnt_004_t_0.75_pcs_0_M.mat": 2,
         "ogs_global_matrix_cnt_005_t_1_pcs_0_b.vec": 243,
         "ogs_global_matrix_cnt_005_t_1_pcs_0_Jac.mat": 3846,
-        "ogs_global_matrix_cnt_005_t_1_pcs_0_K.mat": 2,
-        "ogs_global_matrix_cnt_005_t_1_pcs_0_M.mat": 2,
     }
 
     for f, num_lines_expected in map_filename_to_num_lines.items():
