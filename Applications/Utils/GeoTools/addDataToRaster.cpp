@@ -16,9 +16,9 @@
 #endif
 
 #include <algorithm>
-#include <boost/math/constants/constants.hpp>
 #include <cmath>
 #include <memory>
+#include <numbers>
 #include <numeric>
 
 #include "GeoLib/AABB.h"
@@ -45,10 +45,8 @@ double computeSinXSinY(GeoLib::Point const& point, GeoLib::AABB const& aabb)
     auto const aabb_size = aabb.getMaxPoint() - aabb.getMinPoint();
     auto const offset = aabb.getMinPoint();
 
-    return std::sin((point[0] - offset[0]) / aabb_size[0] *
-                    boost::math::double_constants::pi) *
-           std::sin((point[1] - offset[1]) / aabb_size[1] *
-                    boost::math::double_constants::pi);
+    return std::sin((point[0] - offset[0]) / aabb_size[0] * std::numbers::pi) *
+           std::sin((point[1] - offset[1]) / aabb_size[1] * std::numbers::pi);
 }
 
 double computeStepFunction(GeoLib::Point const& point, GeoLib::AABB const& aabb)

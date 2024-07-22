@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/math/constants/constants.hpp>
+#include <numbers>
 
 namespace BaseLib
 {
@@ -36,11 +36,7 @@ struct BoreholeGeometry
      */
     double const diameter;
 
-    double area() const
-    {
-        constexpr double pi = boost::math::constants::pi<double>();
-        return pi * diameter * diameter / 4;
-    }
+    double area() const { return std::numbers::pi * diameter * diameter / 4; }
 };
 
 BoreholeGeometry createBoreholeGeometry(BaseLib::ConfigTree const& config);

@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include <numbers>
+
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
@@ -238,7 +240,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
             case PhaseFieldModel::COHESIVE:
             {
                 auto const local_Jac_COHESIVE =
-                    (2.0 / boost::math::double_constants::pi * gc *
+                    (2.0 / std::numbers::pi * gc *
                      (-N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) *
                      w)
                         .eval();
@@ -381,7 +383,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
             case PhaseFieldModel::COHESIVE:
             {
                 element_surface_energy +=
-                    gc / boost::math::double_constants::pi *
+                    gc / std::numbers::pi *
                     ((1 - d_ip * d_ip) / ls + (dNdx * d).dot((dNdx * d)) * ls) *
                     w;
                 break;

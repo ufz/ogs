@@ -10,7 +10,8 @@
 
 #pragma once
 
-#include <boost/math/constants/constants.hpp>
+#include <cmath>
+#include <numbers>
 
 namespace BaseLib
 {
@@ -38,19 +39,16 @@ struct Pipe
 
     double wallThermalResistance() const
     {
-        constexpr double pi = boost::math::constants::pi<double>();
-
         double const outside_diameter = outsideDiameter();
 
         return std::log(outside_diameter / diameter) /
-               (2.0 * pi * wall_thermal_conductivity);
+               (2.0 * std::numbers::pi * wall_thermal_conductivity);
     }
 
 private:
     double circleArea(double const diameter) const
     {
-        constexpr double pi = boost::math::constants::pi<double>();
-        return pi * diameter * diameter / 4;
+        return std::numbers::pi * diameter * diameter / 4;
     }
 };
 

@@ -10,7 +10,7 @@
 
 #include "BHE_2U.h"
 
-#include <boost/math/constants/constants.hpp>
+#include <numbers>
 
 #include "FlowAndTemperatureControl.h"
 #include "Physics.h"
@@ -193,7 +193,7 @@ void BHE_2U::updateHeatTransferCoefficients(double const flow_rate)
 std::array<double, BHE_2U::number_of_unknowns> BHE_2U::calcThermalResistances(
     double const Nu)
 {
-    constexpr double pi = boost::math::constants::pi<double>();
+    constexpr double pi = std::numbers::pi;
 
     double const lambda_r = refrigerant.thermal_conductivity;
     double const lambda_g = grout.lambda_g;

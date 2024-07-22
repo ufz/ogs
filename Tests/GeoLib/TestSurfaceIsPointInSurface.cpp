@@ -12,8 +12,8 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <boost/math/constants/constants.hpp>
 #include <memory>
+#include <numbers>
 #include <random>
 #include <vector>
 
@@ -114,8 +114,7 @@ TEST(GeoLib, SurfaceIsPointInSurface)
                                                            n_steps, f));
 
         // random rotation angles
-        std::normal_distribution<> normal_dist_angles(
-            0, boost::math::double_constants::two_pi);
+        std::normal_distribution<> normal_dist_angles(0, 2. * std::numbers::pi);
         std::array<double, 3> euler_angles = {
             {normal_dist_angles(random_engine_mt19937),
              normal_dist_angles(random_engine_mt19937),

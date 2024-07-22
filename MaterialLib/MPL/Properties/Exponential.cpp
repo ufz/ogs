@@ -10,7 +10,6 @@
 
 #include "MaterialLib/MPL/Properties/Exponential.h"
 
-#include <boost/math/special_functions/pow.hpp>
 #include <cmath>
 
 namespace MaterialPropertyLib

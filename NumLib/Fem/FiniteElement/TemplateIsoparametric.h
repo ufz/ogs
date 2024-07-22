@@ -12,8 +12,8 @@
 
 #pragma once
 
-#include <boost/math/constants/constants.hpp>
 #include <cassert>
+#include <numbers>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
@@ -148,7 +148,7 @@ private:
         // located at edge of the unit triangle, it is possible that
         // r becomes zero.
         auto const r = interpolateZerothCoordinate(shape.N);
-        shape.integralMeasure = boost::math::constants::two_pi<double>() * r;
+        shape.integralMeasure = 2. * std::numbers::pi * r;
     }
 
     const MeshLib::Element* _ele;

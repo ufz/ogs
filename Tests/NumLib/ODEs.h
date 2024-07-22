@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <boost/math/constants/constants.hpp>
+#include <numbers>
 
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
@@ -142,8 +142,7 @@ public:
 
 const double ODETraits<ODE1>::t0 = 0.0;
 
-const double ODETraits<ODE1>::t_end =
-    2.0 * 3.141592653589793238462643383279502884197169399375105820974944;
+const double ODETraits<ODE1>::t_end = 2. * std::numbers::pi;
 // ODE 1 end //////////////////////////////////////////////////////
 
 // ODE 2 //////////////////////////////////////////////////////////
@@ -364,6 +363,5 @@ public:
 
 const double ODETraits<ODE3>::t0 = 0.0;
 
-const double ODETraits<ODE3>::t_end =
-    0.5 * boost::math::constants::pi<double>();
+const double ODETraits<ODE3>::t_end = std::numbers::pi / 2.;
 // ODE 3 end //////////////////////////////////////////////////////
