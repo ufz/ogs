@@ -19,7 +19,6 @@
     "petsc": "3.18.6",
     "qt": "5.14.2",
     "python": "3.9",
-    "snakemake": "8.2.4",
     "hdf5": "1.10.7",
     "libxml2": "2.9.12",
     "tfel-rliv": "4.0",
@@ -45,7 +44,6 @@
   "python": {
     "jupyter_image": {
       "conda_packages": [
-        "snakemake-minimal",
         "pyvista==0.34.2",
         "ipyvtklink",
         "pythreejs"

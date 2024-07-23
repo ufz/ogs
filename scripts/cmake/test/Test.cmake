@@ -84,18 +84,14 @@ set_target_properties(
                                                                    Testing
 )
 
-configure_file(
-    ${PROJECT_SOURCE_DIR}/scripts/test/buildinfo.in.yaml
-    ${PROJECT_BINARY_DIR}/buildinfo.yaml
-)
-
 file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/logs)
 
 # Files in Testing/Notes are submitted to cdash, supply additional build info.
 if(DEFINED ENV{CI_JOB_URL})
-    file(GENERATE OUTPUT ${PROJECT_BINARY_DIR}/Testing/Notes/buildinfo.txt
-        CONTENT
-"CI_JOB_URL=$ENV{CI_JOB_URL}
+    file(
+        GENERATE
+        OUTPUT ${PROJECT_BINARY_DIR}/Testing/Notes/buildinfo.txt
+        CONTENT "CI_JOB_URL=$ENV{CI_JOB_URL}
 COMMIT_URL=$ENV{CI_PROJECT_URL}/-/commit/$ENV{CI_COMMIT_SHA}
 CI_COMMIT_TIMESTAMP=$ENV{CI_COMMIT_TIMESTAMP}\n"
     )

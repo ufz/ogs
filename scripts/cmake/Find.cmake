@@ -26,12 +26,6 @@ find_program(CCACHE_TOOL_PATH ccache)
 
 find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 
-find_program(SNAKEMAKE snakemake)
-find_program(TEE_TOOL_PATH tee)
-if(OGS_BUILD_TESTING AND SNAKEMAKE AND NOT TEE_TOOL_PATH)
-    message(WARNING "tee tool was not found. Snakemake tests are disabled!")
-endif()
-
 find_program(GMSH gmsh)
 
 find_program(XMLSTARLET_TOOL_PATH xmlstarlet)
