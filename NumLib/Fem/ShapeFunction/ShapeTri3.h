@@ -20,6 +20,7 @@ namespace NumLib
 /**
  *  Shape function for a triangle element of three nodes in natural coordinates
  *
+ * \verbatim
  *  3 (0,1)
  *    *
  *  s | \
@@ -27,6 +28,7 @@ namespace NumLib
  *    |     \
  *    *------* r
  *  1 (0,0)    2 (1,0)
+ * \endverbatim
  */
 class ShapeTri3
 {
