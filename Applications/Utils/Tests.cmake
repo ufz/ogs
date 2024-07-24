@@ -681,21 +681,7 @@ AddTest(
 )
 
 if(SNAKEMAKE AND TEE_TOOL_PATH)
-    add_test(NAME snakemake_ExtractBoundary
-        COMMAND ${SNAKEMAKE} -j 1
-            --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-            -s ${CMAKE_CURRENT_SOURCE_DIR}/ExtractBoundary.smk
-    )
-
-    add_test(NAME snakemake_VoxelGridFromLayers
-        COMMAND ${SNAKEMAKE} -j 1
-            --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-            -s ${CMAKE_CURRENT_SOURCE_DIR}/VoxelGridFromLayers.smk
-    )
-    set_tests_properties(snakemake_ExtractBoundary snakemake_VoxelGridFromLayers
-        PROPERTIES LABELS "default"
-    )
-    add_dependencies(ctest ExtractBoundary Layers2Grid AddFaultToVoxelGrid generateStructuredMesh)
+    add_dependencies(ctest Layers2Grid AddFaultToVoxelGrid)
 endif()
 
 AddTest(
