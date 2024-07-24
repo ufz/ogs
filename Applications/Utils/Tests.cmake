@@ -1411,11 +1411,10 @@ endif()
 
 AddTest(
     NAME RemoveMeshElements_AABB_2D_regular
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_Layer17.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_2D_AABB_regular.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_Layer17.vtu
+                    -o AREHS_2D_AABB_regular.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
@@ -1424,11 +1423,10 @@ AddTest(
 
 AddTest(
     NAME RemoveMeshElements_AABB_2D_inverted
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_Layer17.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_2D_AABB_inverted.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_Layer17.vtu
+                    -o AREHS_2D_AABB_inverted.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000 --invert
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
@@ -1437,11 +1435,10 @@ AddTest(
 
 AddTest(
     NAME RemoveMeshElements_AABB_3D_regular
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_test.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_3D_AABB_regular.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_test.vtu
+                    -o AREHS_3D_AABB_regular.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000 --z-min -3000 --z-max -2000
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
@@ -1450,11 +1447,10 @@ AddTest(
 
 AddTest(
     NAME RemoveMeshElements_AABB_3D_inverted
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_test.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_3D_AABB_inverted.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_test.vtu
+                    -o AREHS_3D_AABB_inverted.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000 --z-min -3000 --z-max -2000 --invert
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
