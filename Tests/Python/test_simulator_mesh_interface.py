@@ -1,10 +1,11 @@
+import os
 import sys
 import tempfile
 from pathlib import Path
 
 import numpy as np
 import ogs.mesh as mesh  # noqa: F401
-from ogs import simulator
+import pytest
 
 
 def crossProduct(v, w):
@@ -78,7 +79,10 @@ def checkCells(cells, celltypes, points):
             )
 
 
+@pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
+    from ogs import simulator
+
     current_dir = Path(__file__).parent.resolve()
     arguments = [
         "",

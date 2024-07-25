@@ -3,29 +3,12 @@ import platform
 import tempfile
 from pathlib import Path
 
-import ogs.simulator as sim
 import pytest
+from ogs import cli
 
 
 def run(prjpath, outdir, expect_successful):
-    arguments = ["ogs", prjpath, "-o", outdir]
-
-    try:
-        while True:
-            print("Python OpenGeoSys.init ...")
-            status = sim.initialize(arguments)
-
-            if status != 0:
-                break
-
-            print("Python OpenGeoSys.executeSimulation ...")
-            status = sim.executeSimulation()
-
-            break
-    finally:
-        print("Python OpenGeoSys.finalize() ...")
-        sim.finalize()
-
+    status = cli.ogs(prjpath, o=outdir)
     status_expected = 0 if expect_successful else 1
     assert status == status_expected
 

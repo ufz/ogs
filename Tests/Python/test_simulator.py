@@ -1,10 +1,14 @@
+import os
 import tempfile
 from pathlib import Path
 
-import ogs.simulator as sim
+import pytest
 
 
+@pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
+    import ogs.simulator as sim
+
     current_dir = Path(__file__).parent.resolve()
     arguments = [
         "",
