@@ -1,6 +1,6 @@
 +++
 date = "2022-02-09T11:00:13+01:00"
-title = "Python wheel development"
+title = "Python bindings development"
 author = "Lars Bilke"
 weight = 1068
 
@@ -9,11 +9,36 @@ weight = 1068
     parent = "advanced"
 +++
 
-## Local setup
+There are two ways to build OGS with Python bindings:
 
-Python wheel builds are driven by [scikit-build](https://scikit-build.readthedocs.io/en/latest/) which basically is a `setuptools`-wrapper for CMake-based projects.
+- A regular build with `OGS_USE_PIP=ON`
+- A wheel build
 
-The entry point is `setup.py` in the root directory. It uses the `wheel` CMake preset. The preset can be overridden and even other CMake options can be passed via the environment variable `CMAKE_ARGS`.
+## Regular build
+
+- Configure your build with `-DOGS_USE_PIP=ON`
+- Build
+
+To run the Python-based tests:
+
+- Source `build-dir/.envrc` (activates the virtual environment and sets `OGS_USE_PATH` environment variable)
+- Run e.g. `pytest` from inside the source directory. On Windows run `Invoke-Expression build-dir/.envrc.ps1` in your PowerShell.
+- Run e.g. `pytest` from inside the source directory or `pytest ../path/to/source/dir`.
+- Alternatively you can also run the Python-based with `ctest`, e.g. `ctest -R pytest`.
+
+If you make modifications on the C++ side you need to run `make` or `ninja` in the build directory again. If you make modifications on the Python bindings you need to run `cmake .` again in the build directory. Modifications on the Python tests are immediately available to `pytest`.
+
+To get the output of a specific test:
+
+```bash
+pytest --capture=tee-sys ./Tests/Python/test_simulator_mesh_interface.py
+```
+
+## Wheel build
+
+Python wheel builds are driven by [scikit-build-core](https://scikit-build-core.readthedocs.io) which basically is a `setuptools`-wrapper for CMake-based projects.
+
+The entry point is `pyproject.toml` in the root directory. It uses the `wheel` CMake preset. The preset can be overridden and even other CMake options can be passed via the environment variable `CMAKE_ARGS` (see also the [scikit-build-core documentation](https://scikit-build-core.readthedocs.io/en/latest/configuration.html#configuring-cmake-arguments-and-defines)).
 
 You can locally develop and test with the following setup:
 
