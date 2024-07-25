@@ -381,9 +381,9 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     }
 
     // adjust step size considering external communciation_point_calculators
-    for (auto const& time_step_constain : time_step_constraints)
+    for (auto const& time_step_constraint : time_step_constraints)
     {
-        dt = std::min(dt, time_step_constain(t, dt));
+        dt = std::min(dt, time_step_constraint(t, dt));
     }
 
     // Check whether the time stepping is stabilized
