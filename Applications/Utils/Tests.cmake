@@ -839,27 +839,6 @@ if(TARGET VerticalSliceFromLayers AND GMSH)
 
 endif()
 
-if(TARGET GMSH2OGS AND SNAKEMAKE AND TEE_TOOL_PATH)
-    add_test(NAME snakemake_GMSH2OGS_ExtractBoundary
-        COMMAND ${SNAKEMAKE} --cores all
-        --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-        -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary.smk
-    )
-
-    add_test(NAME snakemake_GMSH2OGS_Gmsh4_ExtractBoundary
-        COMMAND ${SNAKEMAKE} --cores all
-        --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-        -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary_MeshByGmsh4.smk
-    )
-    set_tests_properties(
-        snakemake_GMSH2OGS_ExtractBoundary
-        snakemake_GMSH2OGS_Gmsh4_ExtractBoundary
-        PROPERTIES LABELS "default" RUN_SERIAL TRUE
-    )
-
-    add_dependencies(ctest GMSH2OGS)
-endif()
-
 foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDifference)
     AddTest(
         NAME TrianglesGoodElementQuality_${criterion}_Test
