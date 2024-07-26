@@ -3,6 +3,7 @@ import platform
 import tempfile
 from pathlib import Path
 
+import ogs
 import pytest
 from ogs import cli
 
@@ -153,6 +154,10 @@ def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_param
         ),  # set env var to a directory that does not exist
         ("", True, True),  # set env var to an empty string
     ],
+)
+@pytest.mark.skipif(
+    ogs.OGS_USE_PETSC == "ON",
+    reason="global matrix output is not implemented for PETSc matrices",
 )
 def test_global_matrix_debug_output(monkeypatch, prefix_parameter):
     srcdir = Path(__file__).parent.parent.parent
