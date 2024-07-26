@@ -8,7 +8,7 @@ endif()
 # wheel: Install into Python module root dir (enables 'import ogs.simulator')
 set(_py_install_location ogs)
 if(NOT OGS_BUILD_WHEEL)
-    set(_py_install_location "{_py_site_packages_dir}/ogs")
+    set(_py_install_location "${_py_site_packages_dir}/ogs")
 endif()
 
 add_subdirectory(ogs)
@@ -41,8 +41,13 @@ if(OGS_USE_PIP)
         set_tests_properties(pytest PROPERTIES LABELS "default")
 
         add_dependencies(
-            ctest GMSH2OGS Layers2Grid AddFaultToVoxelGrid ExtractBoundary
+            ctest
+            GMSH2OGS
+            Layers2Grid
+            AddFaultToVoxelGrid
+            ExtractBoundary
             vtkdiff
+            generateStructuredMesh
         )
     endif()
 
