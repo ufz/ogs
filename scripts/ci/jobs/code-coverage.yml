@@ -4,7 +4,7 @@ code coverage:
   needs: [meta]
   variables:
     CMAKE_PRESET: coverage
-    TARGETS: "tests ctest"
+    TARGETS: "all tests ctest"
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
       -DBUILD_SHARED_LIBS=ON
