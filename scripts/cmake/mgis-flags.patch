@@ -1,0 +1,13 @@
+diff --git a/cmake/modules/common-compiler-flags.cmake b/cmake/modules/common-compiler-flags.cmake
+index 12fd730..bcc978b 100644
+--- a/cmake/modules/common-compiler-flags.cmake
++++ b/cmake/modules/common-compiler-flags.cmake
+@@ -61,8 +61,6 @@ else(enable-developer-warnings)
+   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-missing-declarations")
+   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-weak-vtables")
+   tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS "Wno-unused-macros")
+-  tfel_enable_cxx_compiler_flag(COMPILER_WARNINGS
+-    "Wno-missing-variable-declarations")
+ endif(enable-developer-warnings)
+ 
+ 
