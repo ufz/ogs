@@ -171,7 +171,9 @@ if(OGS_USE_MFRONT)
             GIT_TAG rliv-2.0
             OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
                     "enable-website OFF"
-            EXCLUDE_FROM_ALL YES SYSTEM TRUE
+            EXCLUDE_FROM_ALL
+                YES SYSTEM TRUE PATCHES
+                    ${PROJECT_SOURCE_DIR}/scripts/cmake/mgis-flags.patch
         )
         list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
     endif()
@@ -355,7 +357,7 @@ if(NOT (GUIX_BUILD OR CONDA_BUILD))
     if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS))
         CPMAddPackage(
             NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-            GIT_TAG 9754b4da43c6adfb65d201ed920b5f6ea27b38b9
+            GIT_TAG 7cc474101bcee45804124df8010a2275022e2f3b
         )
         if(vtkdiff_ADDED)
             install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
