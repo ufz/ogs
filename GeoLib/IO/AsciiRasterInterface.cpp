@@ -249,10 +249,16 @@ std::optional<std::array<double, 3>> readCoordinates(std::istream& in)
     std::string line("");
     if (std::getline(in, line))
     {
-        std::stringstream str_stream(line);
         std::array<double, 3> coords;
-        str_stream >> coords[0] >> coords[1] >> coords[2];
-        return std::make_optional(coords);
+        if (std::sscanf(line.c_str(), "%lf %lf %lf", &coords[0], &coords[1],
+                        &coords[2]) == 3)
+        {
+            return coords;
+        }
+        else
+        {
+            OGS_FATAL("Could not parse coordinates in readCoordinates().");
+        }
     }
     return std::nullopt;
 }
