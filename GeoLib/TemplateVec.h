@@ -41,17 +41,16 @@ public:
     using NameIdMap = std::map<std::string, std::size_t>;
 
     /**
-     * Constructor of class TemlateVec.
      * \param name unique name of the project the elements belonging to.
      * In order to access the data elements a unique name is required.
      * \param data_vec Vector of data elements.
-     * \attention{TemplateVec will take the ownership of the vector
-     * and also its elements,
-     * i.e. delete its elements and delete the vector itself!}
      * \param elem_name_map Names of data elements can be given by a
-     * std::map<std::string, std::size_t>. Here the std::string is the name
-     * of the element and the value for std::size_t stands for an index in
-     * the data_vec.
+     * std::map<std::string, std::size_t>. Here the std::string is the name of
+     * the element and the value for std::size_t stands for an index in the
+     * data_vec.
+     *
+     * \attention TemplateVec will take the ownership of the vector and also its
+     * elements, i.e. delete its elements and delete the vector itself!
      */
     TemplateVec(std::string const& name, std::vector<T*>&& data_vec,
                 NameIdMap&& elem_name_map)

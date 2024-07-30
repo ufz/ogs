@@ -48,14 +48,17 @@ public:
      * @param name the name of the point set
      * @param points R-value reference to a vector of pointers to
      * GeoLib::Points.
-     * @attention{The PointVec object takes the ownership of the GeoLib::Points
-     * in the points vector, i.e. it delete the points during destruction!}
      * @param name_id_map A std::map that stores the relation name to point.
-     * @param type the type of the point, \sa enum PointType
+     * @param type the type of the point, defaults to
+     * PointVec::PointType::POINT.
      * @param rel_eps This is a relative error tolerance value for the test of
      * identical points. The size of the axis aligned bounding box multiplied
-     * with the value of rel_eps gives the real tolerance \f$tol\f$. Two points
-     * \f$p_0, p_1 \f$ are identical iff \f$|p_1 - p_0| \le tol.\f$
+     * with the \c rel_eps value gives the real tolerance \f$\varepsilon\f$. Two
+     * points \f$p_0\f$ and \f$p_1\f$ are considered identical if \f$|p_1 - p_0|
+     * \le \varepsilon.\f$
+     *
+     * @attention The PointVec object takes the ownership of the GeoLib::Points
+     * in the points vector, i.e. it delete the points during destruction!
      */
     PointVec(std::string const& name, std::vector<Point*>&& points,
              NameIdMap&& name_id_map,
