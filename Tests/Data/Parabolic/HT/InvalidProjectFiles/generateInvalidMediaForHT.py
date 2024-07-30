@@ -137,7 +137,7 @@ for solid_property in solid_properties:
                 + ".prj"
             )
             model.mesh.add_mesh(filename="square_1x1_quad_1e3.vtu")
-            model.geo.add_geom(filename="square_1x1.gml")
+            model.geometry.add_geometry(filename="square_1x1.gml")
             model.processes.set_process(
                 name="HT", type="HT", integration_order="2", specific_body_force="0 0"
             )
@@ -147,15 +147,15 @@ for solid_property in solid_properties:
             model.processes.add_process_variable(
                 process_variable="pressure", process_variable_name="pressure"
             )
-            model.processes.add_process_variable(
-                secondary_variable="darcy_velocity", output_name="darcy_velocity"
+            model.processes.add_secondary_variable(
+                internal_name="darcy_velocity", output_name="darcy_velocity"
             )
 
             addAqueousLiquidPropertiesForHT(aqueousfluid_property)
             addSolidPropertiesForHT(solid_property)
             addMediumPropertiesForHT(medium_property)
 
-            model.timeloop.add_process(
+            model.time_loop.add_process(
                 process="HT",
                 nonlinear_solver_name="basic_picard",
                 convergence_type="DeltaX",
@@ -163,7 +163,7 @@ for solid_property in solid_properties:
                 abstol="1e-15",
                 time_discretization="BackwardEuler",
             )
-            model.timeloop.set_stepping(
+            model.time_loop.set_stepping(
                 process="HT",
                 type="FixedTimeStepping",
                 t_initial="0",
@@ -171,7 +171,7 @@ for solid_property in solid_properties:
                 repeat="4",
                 delta_t="0.25",
             )
-            model.timeloop.add_output(
+            model.time_loop.add_output(
                 type="VTK",
                 prefix="HT_test_",
                 repeat="1",
@@ -188,13 +188,13 @@ for solid_property in solid_properties:
                 name="t_Dirichlet_bottom", type="Constant", value="2"
             )
             # model.parameters.add_parameter(name="t_Dirichlet_top", type="Constant", value="1")
-            model.processvars.set_ic(
+            model.process_variables.set_ic(
                 process_variable_name="temperature",
                 components="1",
                 order="1",
                 initial_condition="T0",
             )
-            model.processvars.add_bc(
+            model.process_variables.add_bc(
                 process_variable_name="temperature",
                 geometrical_set="square_1x1_geometry",
                 geometry="bottom",
@@ -202,19 +202,19 @@ for solid_property in solid_properties:
                 component="0",
                 parameter="t_Dirichlet_bottom",
             )
-            # model.processvars.add_bc(process_variable_name="temperature",
+            # model.process_variables.add_bc(process_variable_name="temperature",
             #                        geometrical_set="square_1x1_geometry",
             #                        geometry="top",
             #                        type="Dirichlet",
             #                        component="1",
             #                        parameter="t_Dirichlet_top")
-            model.processvars.set_ic(
+            model.process_variables.set_ic(
                 process_variable_name="pressure",
                 components="1",
                 order="1",
                 initial_condition="P0",
             )
-            model.processvars.add_bc(
+            model.process_variables.add_bc(
                 process_variable_name="pressure",
                 geometrical_set="square_1x1_geometry",
                 geometry="left",
@@ -222,19 +222,19 @@ for solid_property in solid_properties:
                 component="1",
                 parameter="p_Dirichlet_left",
             )
-            # model.processvars.addadd_bcBC(process_variable_name="pressure",
+            # model.process_variables.addadd_bcBC(process_variable_name="pressure",
             #                        geometrical_set="square_1x1_geometry",
             #                        geometry="right",
             #                        type="Dirichlet",
             #                        component="1",
             #                        parameter="p_Dirichlet_right")
-            model.nonlinsolvers.add_non_lin_solver(
+            model.nonlinear_solvers.add_non_lin_solver(
                 name="basic_picard",
                 type="Picard",
                 max_iter="4",
                 linear_solver="general_linear_solver",
             )
-            model.linsolvers.add_lin_solver(
+            model.linear_solvers.add_lin_solver(
                 name="general_linear_solver",
                 kind="lis",
                 solver_type="cg",
@@ -242,7 +242,7 @@ for solid_property in solid_properties:
                 max_iteration_step="10000",
                 error_tolerance="1e-16",
             )
-            model.linsolvers.add_lin_solver(
+            model.linear_solvers.add_lin_solver(
                 name="general_linear_solver",
                 kind="eigen",
                 solver_type="CG",
@@ -250,7 +250,7 @@ for solid_property in solid_properties:
                 max_iteration_step="10000",
                 error_tolerance="1e-16",
             )
-            model.linsolvers.add_lin_solver(
+            model.linear_solvers.add_lin_solver(
                 name="general_linear_solver",
                 kind="petsc",
                 solver_type="cg",
