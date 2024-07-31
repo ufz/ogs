@@ -175,6 +175,11 @@ function(setup_venv)
                     "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
             )
         endif()
+        # Uninstall ogs wheel
+        execute_process(
+            COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip uninstall
+                    --yes ogs WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        )
     endif()
 endfunction()
 
