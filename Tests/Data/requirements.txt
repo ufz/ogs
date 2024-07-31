@@ -12,3 +12,4 @@ pyvista[all]>=0.40.1
 seaborn>=0.12
 VTUinterface>=0.704
 vtk-osmesa>=9.2.6;platform_system=='Linux'
+git+https://github.com/drufat/triangle@5210b64ac5f2aff5673a66938cae56dc0a93a4ff#egg=triangle;platform_system=='Darwin'
