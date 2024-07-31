@@ -14,7 +14,7 @@ aliases = ["/docs/devguide/advanced/python-env"]
 In OGS we make use of Python packages at different stages, e.g.:
 
 - [TESPy]({{< ref "3d_3bhes_array.md#tespy" >}}) for simulating thermal engineering plants in a benchmark
-- [pvpython](https://kitware.github.io/paraview-docs/latest/python/) for pre- and post-processing
+- [pvpython](https://www.paraview.org/paraview-docs/latest/python/) for pre- and post-processing
 - [nbconvert](https://nbconvert.readthedocs.io/en/latest/) for testing Jupyter Notebooks
 - ...
 
