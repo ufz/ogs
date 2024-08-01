@@ -258,8 +258,8 @@ LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
               [&](auto const component_id)
               { return getGlobalComponent(variable_id, component_id); });
 
-    auto mesh_component_map = _mesh_component_map.getSubset(
-        _mesh_subsets, new_mesh_subset, global_component_ids);
+    auto mesh_component_map =
+        _mesh_component_map.getSubset(_mesh_subsets, new_mesh_subset);
 
     // Create copies of the new_mesh_subset for each of the global components.
     // The last component is moved after the for-loop.
@@ -294,8 +294,8 @@ LocalToGlobalIndexMap::deriveBoundaryConstrainedMap(
     std::vector<MeshLib::Element*> const& elements =
         new_mesh_subset.getMesh().getElements();
 
-    auto mesh_component_map = _mesh_component_map.getSubset(
-        _mesh_subsets, new_mesh_subset, global_component_ids);
+    auto mesh_component_map =
+        _mesh_component_map.getSubset(_mesh_subsets, new_mesh_subset);
 
     // Create copies of the new_mesh_subset for each of the global components.
     // The last component is moved after the for-loop.

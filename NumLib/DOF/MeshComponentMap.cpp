@@ -52,8 +52,7 @@ MeshComponentMap::MeshComponentMap(
 
 MeshComponentMap MeshComponentMap::getSubset(
     std::vector<MeshLib::MeshSubset> const& bulk_mesh_subsets,
-    MeshLib::MeshSubset const& new_mesh_subset,
-    std::vector<int> const& new_global_component_ids) const
+    MeshLib::MeshSubset const& new_mesh_subset) const
 {
     {  // Testing first an assumption met later in the code that the meshes for
        // all the bulk_mesh_subsets are equal.
