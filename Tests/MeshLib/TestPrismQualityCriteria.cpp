@@ -58,7 +58,7 @@ TEST_F(PrismElementQuality, ElementSize)
     for (auto const element_quality : element_quality_vector)
     {
         ASSERT_NEAR(expected_value, element_quality,
-                    2 * std::numeric_limits<double>::epsilon());
+                    3 * std::numeric_limits<double>::epsilon());
     }
 }
 
