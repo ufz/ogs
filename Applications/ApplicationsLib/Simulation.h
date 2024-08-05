@@ -38,8 +38,8 @@ public:
         bool nonfatal, std::string const& outdir, std::string const& mesh_dir,
         std::string const& script_dir, bool write_prj);
 
-    double currentTime() const;
-    double endTime() const;
+    OGS_EXPORT_SYMBOL double currentTime() const;
+    OGS_EXPORT_SYMBOL double endTime() const;
     OGS_EXPORT_SYMBOL bool executeTimeStep();
     OGS_EXPORT_SYMBOL bool executeSimulation();
     OGS_EXPORT_SYMBOL void outputLastTimeStep() const;
