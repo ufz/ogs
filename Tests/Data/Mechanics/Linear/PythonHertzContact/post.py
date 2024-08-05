@@ -177,7 +177,7 @@ for t, fn in zip(ts, fns):
             except:
                 print(max(xis), r_contact)
                 raise
-            avg_stress[i] = 1.0 / rho_max * np.trapz(x=rhos, y=stress_int(xis))
+            avg_stress[i] = 1.0 / rho_max * np.trapezoid(x=rhos, y=stress_int(xis))
         # avg_stress[-1] = 0.0
 
         return rs_int, avg_stress
@@ -187,7 +187,7 @@ for t, fn in zip(ts, fns):
         rs_int = np.linspace(min(rs), max(rs), max(len(rs), 200))
         stress_int = interp1d(rs, stress, bounds_error=False, fill_value=0.0)
 
-        return 2.0 * np.pi * np.trapz(x=rs_int, y=rs_int * stress_int(rs_int))
+        return 2.0 * np.pi * np.trapezoid(x=rs_int, y=rs_int * stress_int(rs_int))
 
     if t > 0:
         plane.SetOrigin(0, y_at_r_contact, 0)

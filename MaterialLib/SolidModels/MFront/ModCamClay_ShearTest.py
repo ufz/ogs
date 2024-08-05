@@ -143,7 +143,7 @@ fig, ax = plt.subplots()
 ax.set_title("Total volume/solid volume over time")
 for k in range(runs):
     ax.plot(
-        ltime, results[2][k], label=prelabel + "%.2f" % (valueList[k])
+        ltime, results[2][k], label=prelabel + f"{valueList[k]:.2f}"
     )  # OCR: pc0/valueList[k]
 ax.set_xlabel("$t$ / s")
 ax.set_ylabel("volume ratio")
@@ -155,7 +155,7 @@ fig.savefig("ModCamClay_ParamStudy_VolumeRatio.pdf")
 fig, ax = plt.subplots()
 ax.set_title("Porosity over time")
 for k in range(runs):
-    ax.plot(ltime, results[3][k], label=prelabel + "%.2f" % (valueList[k]))
+    ax.plot(ltime, results[3][k], label=prelabel + f"{valueList[k]:.2f}")
 ax.set_xlabel("$t$ / s")
 ax.set_ylabel(r"$\phi$")
 ax.grid()
@@ -165,7 +165,7 @@ fig.savefig("ModCamClay_ParamStudy_Porosity.pdf")
 fig, ax = plt.subplots()
 # ax.set_title('Shear stress over shear strain')
 for k in range(runs):
-    ax.plot(results[4][k], results[5][k], label=prelabel + "%.2f" % (valueList[k]))
+    ax.plot(results[4][k], results[5][k], label=prelabel + f"{valueList[k]:.2f}")
 ax.set_xlabel(r"$\epsilon_{xy}$")
 ax.set_ylabel(r"$\sigma_{xy}$ / MPa")
 ax.grid()
@@ -175,9 +175,7 @@ fig.savefig("ModCamClay_ParamStudy_ShearCurves.pdf")
 fig, ax = plt.subplots()
 # ax.set_title('Plastic volumetric strain over shear strain')
 for k in range(runs):
-    ax.plot(
-        results[4][k], results[7][k] * 100, label=prelabel + "%.2f" % (valueList[k])
-    )
+    ax.plot(results[4][k], results[7][k] * 100, label=prelabel + f"{valueList[k]:.2f}")
 ax.set_xlabel(r"$\epsilon_{xy}$")
 ax.set_ylabel(r"${\epsilon}_p^V$ / %")
 ax.grid()
@@ -187,11 +185,11 @@ fig.savefig("ModCamClay_ParamStudy_eplVCurves.pdf")
 fig, ax = plt.subplots()
 ax.set_title("Hydrostatic pressure and von-Mises stress over time")
 for k in range(runs):
-    ax.plot(ltime, results[0][k], label=prelabel + "%.2f" % (valueList[k]))
+    ax.plot(ltime, results[0][k], label=prelabel + f"{valueList[k]:.2f}")
     ax.plot(
         ltime,
         results[1][k],
-        label=prelabel + "%.2f" % (valueList[k]),
+        label=prelabel + f"{valueList[k]:.2f}",
         linestyle="dashed",
     )
 ax.set_xlabel("$t$ / s")
@@ -205,10 +203,10 @@ for k in range(runs):
     ax.plot(
         ltime,
         results[1][k],
-        label=prelabel + "%.2f" % (valueList[k]),
+        label=prelabel + f"{valueList[k]:.2f}",
         linestyle="dashed",
     )
-    ax.plot(ltime, results[6][k], label=prelabel + "%.2f" % (valueList[k]))
+    ax.plot(ltime, results[6][k], label=prelabel + f"{valueList[k]:.2f}")
 ax.set_xlabel("$t$ / s")
 ax.set_ylabel("$p, p_c$ / MPa")
 ax.grid()
@@ -221,9 +219,9 @@ ax.plot(pRange, qFunct, color="grey", label="Initial")
 ax.plot(pRange, M * pRange, color="black", label="CSL")
 for k in range(runs):
     # final yield surface
-    ax.scatter(pRangeFinal[k], qFunctFinal[k], label=prelabel + "%.2f" % (valueList[k]))
+    ax.scatter(pRangeFinal[k], qFunctFinal[k], label=prelabel + f"{valueList[k]:.2f}")
     # stress trajectory
-    ax.plot(results[1][k], results[0][k], label=prelabel + "%.2f" % (valueList[k]))
+    ax.plot(results[1][k], results[0][k], label=prelabel + f"{valueList[k]:.2f}")
 ax.set_xlabel("$p$ / MPa")
 ax.set_ylabel("$q$ / MPa")
 ax.grid()
