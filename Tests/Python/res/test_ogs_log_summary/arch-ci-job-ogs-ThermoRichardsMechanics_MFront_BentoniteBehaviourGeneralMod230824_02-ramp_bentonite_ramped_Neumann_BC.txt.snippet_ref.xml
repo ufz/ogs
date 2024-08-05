@@ -1,0 +1,295 @@
+<!-- summary of aggregated error norms:
+                                                                 abs_maximum_norm  rel_maximum_norm
+array
+HeatFlowRate                                                              5.1e-14               inf
+MassFlowRate                                                              1.2e-13           3.0e-13
+NodalForces                                                               1.8e-09           1.8e-15
+displacement                                                              2.3e-16               inf
+dry_density_solid_ip                                                      0.0e+00           0.0e+00
+epsilon                                                                   3.4e-16               inf
+epsilon_ip                                                                2.1e-16               inf
+intrinsic_permeability_ip                                                 0.0e+00           0.0e+00
+liquid_density_avg                                                        0.0e+00           0.0e+00
+liquid_density_ip                                                         0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[0]_ip           0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[1]_ip           0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[2]_ip           0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[3]_ip           0.0e+00           0.0e+00
+material_state_variable_SrM_ip                                            9.8e-17           1.1e-14
+material_state_variable_a_scan_ip                                         0.0e+00           0.0e+00
+material_state_variable_eM_ip                                             1.3e-15           3.0e-15
+material_state_variable_e_ip                                              1.4e-15           1.7e-15
+material_state_variable_em_ip                                             3.9e-16           1.5e-15
+material_state_variable_re_ip                                             2.3e-15           2.5e-15
+porosity_avg                                                              0.0e+00           0.0e+00
+porosity_ip                                                               0.0e+00           0.0e+00
+pressure                                                                  0.0e+00           0.0e+00
+pressure_interpolated                                                     0.0e+00           0.0e+00
+relative_permeability_ip                                                  0.0e+00           0.0e+00
+saturation_avg                                                            3.4e-16           1.1e-15
+saturation_ip                                                             7.8e-16           2.4e-15
+sigma_total                                                               2.1e-08               inf
+sigma_total_avg                                                           2.0e-09               inf
+sigma_total_ip                                                            2.1e-08               inf
+temperature                                                               0.0e+00           0.0e+00
+temperature_interpolated                                                  0.0e+00           0.0e+00
+transport_porosity_ip                                                     0.0e+00           0.0e+00
+velocity_ip                                                               3.0e-25               inf
+viscosity_avg                                                             0.0e+00           0.0e+00
+viscosity_ip                                                              0.0e+00           0.0e+00
+-->
+
+    <test_definition>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>HeatFlowRate</field>
+            <absolute_tolerance>5.1e-14</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>MassFlowRate</field>
+            <absolute_tolerance>1.2e-13</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 3e-13 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>NodalForces</field>
+            <absolute_tolerance>1.8e-09</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 1.8e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>displacement</field>
+            <absolute_tolerance>2.3e-16</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>dry_density_solid_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>epsilon</field>
+            <absolute_tolerance>3.4e-16</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>epsilon_ip</field>
+            <absolute_tolerance>2.1e-16</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>intrinsic_permeability_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>liquid_density_avg</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>liquid_density_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_RungeKutta_InternalStateVariables[0]_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_RungeKutta_InternalStateVariables[1]_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_RungeKutta_InternalStateVariables[2]_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_RungeKutta_InternalStateVariables[3]_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_SrM_ip</field>
+            <absolute_tolerance>9.8e-17</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 1.1e-14 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_a_scan_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_eM_ip</field>
+            <absolute_tolerance>1.3e-15</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 3e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_e_ip</field>
+            <absolute_tolerance>1.4e-15</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 1.7e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_em_ip</field>
+            <absolute_tolerance>3.9e-16</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 1.5e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>material_state_variable_re_ip</field>
+            <absolute_tolerance>2.3e-15</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 2.5e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>porosity_avg</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>porosity_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>pressure</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>pressure_interpolated</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>relative_permeability_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>saturation_avg</field>
+            <absolute_tolerance>3.4e-16</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 1.1e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>saturation_ip</field>
+            <absolute_tolerance>7.8e-16</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 2.4e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>sigma_total</field>
+            <absolute_tolerance>2.1e-08</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>sigma_total_avg</field>
+            <absolute_tolerance>2e-09</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>sigma_total_ip</field>
+            <absolute_tolerance>2.1e-08</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>temperature</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>temperature_interpolated</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>transport_porosity_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>velocity_ip</field>
+            <absolute_tolerance>3e-25</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>viscosity_avg</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
+            <field>viscosity_ip</field>
+            <absolute_tolerance>0.0</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+        </vtkdiff>
+    </test_definition>

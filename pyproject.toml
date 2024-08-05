@@ -10,6 +10,7 @@ readme = "README.md"
 license = { file = "LICENSE.txt" }
 authors = [{ email = "info@opengeosys.org" }, { name = "OpenGeoSys Community" }]
 requires-python = ">=3.9"
+dependencies = [ "pandas" ]
 
 [project.urls]
 homepage = "https://opengeosys.org"
