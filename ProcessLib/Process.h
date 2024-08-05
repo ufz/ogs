@@ -192,6 +192,8 @@ public:
     {
     }
 
+    bool requiresNormalization() const override { return false; }
+
 protected:
     std::vector<NumLib::LocalToGlobalIndexMap const*> getDOFTables(
         int const number_of_processes) const;
