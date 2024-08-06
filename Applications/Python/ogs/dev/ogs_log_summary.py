@@ -271,9 +271,13 @@ def aggregate_log_files(log_files_dirs):
 def run(log_files_dirs, xml_out_dir, verbose):
     map_prj_file_to_agg_vtkdiff_stats = aggregate_log_files(log_files_dirs)
 
-    for prj_file, df_vtkdiff_max in map_prj_file_to_agg_vtkdiff_stats.items():
+    for i, (prj_file, df_vtkdiff_max) in enumerate(
+        map_prj_file_to_agg_vtkdiff_stats.items()
+    ):
         if verbose:
-            print(f"\n###### {prj_file}\n")
+            if i != 0:
+                print()  # blank line as a separator
+            print(f"###### {prj_file}\n")
 
         df_vtkdiff_max = round_up_2_digits(df_vtkdiff_max)  # noqa: PLW2901
 
