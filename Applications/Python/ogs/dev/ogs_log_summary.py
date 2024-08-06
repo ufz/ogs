@@ -8,11 +8,8 @@ import sys
 from collections import defaultdict
 from decimal import ROUND_DOWN, ROUND_UP, Decimal
 from pathlib import Path
-from signal import SIG_DFL, SIGPIPE, signal
 
 import pandas as pd
-
-signal(SIGPIPE, SIG_DFL)
 
 logger = logging.getLogger(__name__)
 
@@ -324,4 +321,11 @@ if __name__ == "__main__":
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
-    run(args.log_files_dirs, snippet_out, args.verbose)
+    # suppress error message from Python interpreter, e.g., if a command
+    # pipeline exits early, see
+    # https://docs.python.org/3/library/signal.html#note-on-sigpipe
+    try:
+        run(args.log_files_dirs, snippet_out, args.verbose)
+    except BrokenPipeError:
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        os.dup2(devnull, sys.stdout.fileno())
