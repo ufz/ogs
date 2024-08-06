@@ -234,19 +234,30 @@ if(OGS_WRITE_BENCHMARK_COMMANDS)
 endif()
 
 # cmake-lint: disable=E1126
-set(_envrc_content
-    "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source ${PROJECT_BINARY_DIR}/.venv/bin/activate"
-    "export PATH=$PATH:${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
-    "export OGS_USE_PATH=1"
-    "export PYTHONPATH=${PROJECT_BINARY_DIR}/site-packages:$PYTHONPATH"
-)
-if(TFEL_WITH_PYTHON)
-    set(_envrc_content "${_envrc_content}"
-                       "export PYTHONPATH=${TFEL_WITH_PYTHON}:$PYTHONPATH"
+if(WIN32)
+    set(_envrc_file_ending ".ps1")
+    set(_envrc_content
+        "$Env:PYTHONPATH += \";${PROJECT_BINARY_DIR}/site-packages\""
+        "$Env:PATH += \";${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}\""
+        "$Env:PATH += \";C:/Program Files (x86)/Intel/oneAPI/compiler/latest/windows/redist/intel64_win/compiler\""
+        "$Env:OGS_USE_PATH = \"1\""
     )
+    string(REPLACE ";$" "\n$" _envrc_content "${_envrc_content}")
+else()
+    set(_envrc_content
+        "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source ${PROJECT_BINARY_DIR}/.venv/bin/activate"
+        "export PATH=$PATH:${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+        "export OGS_USE_PATH=1"
+        "export PYTHONPATH=${PROJECT_BINARY_DIR}/site-packages:$PYTHONPATH"
+    )
+    if(TFEL_WITH_PYTHON)
+        set(_envrc_content "${_envrc_content}"
+                           "export PYTHONPATH=${TFEL_WITH_PYTHON}:$PYTHONPATH"
+        )
+    endif()
+    string(REPLACE ";" "\n" _envrc_content "${_envrc_content}")
 endif()
-string(REPLACE ";" "\n" _envrc_content "${_envrc_content}")
-file(CONFIGURE OUTPUT .envrc CONTENT "${_envrc_content}")
+file(CONFIGURE OUTPUT .envrc${_envrc_file_ending} CONTENT "${_envrc_content}")
 
 check_header_compilation()
 

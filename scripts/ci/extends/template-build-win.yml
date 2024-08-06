@@ -12,7 +12,7 @@
     - $log_file = $build_directory_full + "\make.txt"
     - (rm -r -fo $build_directory_full)
     - cmd /c if not exist $build_directory_full mkdir $build_directory_full
-    - mkdir build  # We are inside the OGS source directory, now. This "build" dir will be, too.
+    - mkdir build # We are inside the OGS source directory, now. This "build" dir will be, too.
     # Create symlink https://stackoverflow.com/a/34905638/80480
     - cmd /c mklink /D $artifacts_dir $env:CI_PROJECT_DIR\$build_directory_full
     - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
@@ -23,6 +23,7 @@
       if (Test-Path  $build_directory_full\.venv\Scripts\Activate.ps1) {
         Invoke-Expression $build_directory_full\.venv\Scripts\Activate.ps1
       }
+    - Invoke-Expression $build_directory_full\.envrc.ps1
     - cmake --build --preset=$env:CMAKE_PRESET --target package | Tee-Object -FilePath $log_file
     - if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
     - $ctest_group = "Experimental"
