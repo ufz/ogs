@@ -314,9 +314,9 @@ if __name__ == "__main__":
     if snippet_out is not None:
         assert snippet_out.is_dir()
 
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
-    ch.setLevel(logging.DEBUG)
+    ch.setLevel(logging.INFO)
     formatter = logging.Formatter("[%(levelname)s] %(message)s")
     ch.setFormatter(formatter)
     logger.addHandler(ch)
