@@ -75,7 +75,7 @@ TEST(MeshLib, AddTopLayerToLineMesh)
     double const height(1);
     constexpr bool const copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", true, copy_material_ids));
+        *mesh, height, "mesh", true, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -96,7 +96,7 @@ TEST(MeshLib, AddBottomLayerToLineMesh)
     double const height(1);
     constexpr bool const copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", false, copy_material_ids));
+        *mesh, height, "mesh", false, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -131,7 +131,7 @@ TEST(MeshLib, AddTopLayerToTriMesh)
     double const height(1);
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", true, copy_material_ids));
+        *mesh, height, "mesh", true, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -162,7 +162,7 @@ TEST(MeshLib, AddBottomLayerToTriMesh)
     double const height(1);
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", false, copy_material_ids));
+        *mesh, height, "mesh", false, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -183,7 +183,7 @@ TEST(MeshLib, AddTopLayerToQuadMesh)
     double const height(1);
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", true, copy_material_ids));
+        *mesh, height, "mesh", true, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -204,7 +204,7 @@ TEST(MeshLib, AddBottomLayerToQuadMesh)
     double const height(1);
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", false, copy_material_ids));
+        *mesh, height, "mesh", false, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), result->getNumberOfNodes());
     ASSERT_EQ(2 * mesh->getNumberOfElements(), result->getNumberOfElements());
@@ -225,7 +225,7 @@ TEST(MeshLib, AddTopLayerToHexMesh)
     double const height(1);
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", true, copy_material_ids));
+        *mesh, height, "mesh", true, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes() - 36);
     ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements() - 25);
@@ -250,7 +250,7 @@ TEST(MeshLib, AddBottomLayerToHexMesh)
     double const height(1);
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh, height, "mesh", false, copy_material_ids));
+        *mesh, height, "mesh", false, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(mesh->getNumberOfNodes(), result->getNumberOfNodes() - 36);
     ASSERT_EQ(mesh->getNumberOfElements(), result->getNumberOfElements() - 25);
@@ -274,10 +274,10 @@ TEST(MeshLib, AddTopLayerToPrismMesh)
         MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const mesh2(MeshToolsLib::addLayerToMesh(
-        *mesh, 5, "mesh", true, copy_material_ids));
+        *mesh, 5, "mesh", true, copy_material_ids, std::nullopt));
     double const height(1);
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh2, height, "mesh", true, copy_material_ids));
+        *mesh2, height, "mesh", true, copy_material_ids, std::nullopt));
 
     ASSERT_EQ(mesh2->getNumberOfNodes() / 2.0 * 3, result->getNumberOfNodes());
     ASSERT_EQ(mesh2->getNumberOfElements() / 2.0 * 3,
@@ -303,7 +303,7 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
         MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
     constexpr bool copy_material_ids = false;
     std::unique_ptr<MeshLib::Mesh> const mesh2(MeshToolsLib::addLayerToMesh(
-        *mesh, 5, "mesh", true, copy_material_ids));
+        *mesh, 5, "mesh", true, copy_material_ids, std::nullopt));
     double const height(1);
     std::string const& mat_name("MaterialIDs");
     auto* const mats = mesh2->getProperties().createNewPropertyVector<int>(
@@ -314,7 +314,7 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
     }
 
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(
-        *mesh2, height, "mesh", false, copy_material_ids));
+        *mesh2, height, "mesh", false, copy_material_ids, std::nullopt));
     ASSERT_EQ(mesh2->getNumberOfNodes() / 2.0 * 3, result->getNumberOfNodes());
     ASSERT_EQ(mesh2->getNumberOfElements() / 2.0 * 3,
               result->getNumberOfElements());

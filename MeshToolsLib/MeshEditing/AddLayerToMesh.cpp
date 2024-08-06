@@ -81,9 +81,10 @@ MeshLib::Element* extrudeElement(
     return nullptr;
 }
 
-MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
-                              std::string const& name, bool on_top,
-                              bool copy_material_ids)
+MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double const thickness,
+                              std::string const& name, bool const on_top,
+                              bool const copy_material_ids,
+                              std::optional<int> const layer_id)
 {
     INFO("Extracting top surface of mesh '{:s}' ... ", mesh.getName());
     double const flag = on_top ? -1.0 : 1.0;
@@ -199,8 +200,11 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double thickness,
     }
     else
     {
-        int const new_layer_id(
-            *(std::max_element(materials->cbegin(), materials->cend())) + 1);
+        int const new_layer_id =
+            layer_id.has_value()
+                ? layer_id.value()
+                : *(std::max_element(materials->cbegin(), materials->cend())) +
+                      1;
         auto const n_new_props(subsfc_elements.size() -
                                mesh.getNumberOfElements());
         std::fill_n(std::back_inserter(*new_materials), n_new_props,
