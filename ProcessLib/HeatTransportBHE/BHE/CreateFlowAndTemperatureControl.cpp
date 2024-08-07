@@ -42,10 +42,7 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
             config.getConfigParameter<std::string>("temperature_curve"),
             "Required temperature curve not found.");
 
-        auto const is_power_bc = false;
-
-        return TemperatureCurveConstantFlow{flow_rate, temperature_curve,
-                                            is_power_bc};
+        return TemperatureCurveConstantFlow{flow_rate, temperature_curve};
     }
     if (type == "TemperatureCurveFlowCurve")
     {
@@ -61,10 +58,7 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
             config.getConfigParameter<std::string>("temperature_curve"),
             "Required temperature curve not found.");
 
-        auto const is_power_bc = false;
-
-        return TemperatureCurveFlowCurve{flow_rate_curve, temperature_curve,
-                                         is_power_bc};
+        return TemperatureCurveFlowCurve{flow_rate_curve, temperature_curve};
     }
     if (type == "FixedPowerConstantFlow")
     {
@@ -74,11 +68,9 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerConstantFlow__flow_rate}
         auto const flow_rate = config.getConfigParameter<double>("flow_rate");
 
-        auto const is_power_bc = true;
-
         return FixedPowerConstantFlow{flow_rate, power,
                                       refrigerant.specific_heat_capacity,
-                                      refrigerant.density, is_power_bc};
+                                      refrigerant.density};
     }
 
     if (type == "FixedPowerFlowCurve")
@@ -92,11 +84,9 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerFlowCurve__power}
         auto const power = config.getConfigParameter<double>("power");
 
-        auto const is_power_bc = true;
-
         return FixedPowerFlowCurve{flow_rate_curve, power,
                                    refrigerant.specific_heat_capacity,
-                                   refrigerant.density, is_power_bc};
+                                   refrigerant.density};
     }
 
     if (type == "PowerCurveConstantFlow")
@@ -110,11 +100,9 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__flow_rate}
         auto const flow_rate = config.getConfigParameter<double>("flow_rate");
 
-        auto const is_power_bc = true;
-
         return PowerCurveConstantFlow{power_curve, flow_rate,
                                       refrigerant.specific_heat_capacity,
-                                      refrigerant.density, is_power_bc};
+                                      refrigerant.density};
     }
 
     if (type == "PowerCurveFlowCurve")
@@ -131,11 +119,9 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
             config.getConfigParameter<std::string>("flow_rate_curve"),
             "Required flow rate curve not found.");
 
-        auto const is_power_bc = false;
-
         return PowerCurveFlowCurve{power_curve, flow_rate_curve,
                                    refrigerant.specific_heat_capacity,
-                                   refrigerant.density, is_power_bc};
+                                   refrigerant.density};
     }
 
     if (type == "BuildingPowerCurveConstantFlow")
@@ -158,12 +144,9 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__flow_rate}
         auto const flow_rate = config.getConfigParameter<double>("flow_rate");
 
-        auto const is_power_bc = true;
-
         return BuildingPowerCurveConstantFlow{
             building_power_curves, flow_rate,
-            refrigerant.specific_heat_capacity, refrigerant.density,
-            is_power_bc};
+            refrigerant.specific_heat_capacity, refrigerant.density};
     }
     OGS_FATAL("FlowAndTemperatureControl type '{:s}' is not implemented.",
               type);

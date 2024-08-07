@@ -35,7 +35,7 @@ struct TemperatureCurveConstantFlow
     }
     double flow_rate;
     MathLib::PiecewiseLinearInterpolation const& temperature_curve;
-    bool const is_power_bc = false;
+    static constexpr bool is_power_bc = false;
 };
 
 struct TemperatureCurveFlowCurve
@@ -48,7 +48,7 @@ struct TemperatureCurveFlowCurve
     }
     MathLib::PiecewiseLinearInterpolation const& flow_rate_curve;
     MathLib::PiecewiseLinearInterpolation const& temperature_curve;
-    bool const is_power_bc = false;
+    static constexpr bool is_power_bc = false;
 };
 
 struct FixedPowerConstantFlow
@@ -62,7 +62,7 @@ struct FixedPowerConstantFlow
     double power;  // Value is expected to be in Watt.
     double heat_capacity;
     double density;
-    bool const is_power_bc = true;
+    static constexpr bool is_power_bc = true;
 };
 
 struct FixedPowerFlowCurve
@@ -77,7 +77,7 @@ struct FixedPowerFlowCurve
     double power;  // Value is expected to be in Watt.
     double heat_capacity;
     double density;
-    bool const is_power_bc = true;
+    static constexpr bool is_power_bc = true;
 };
 
 struct PowerCurveConstantFlow
@@ -96,7 +96,7 @@ struct PowerCurveConstantFlow
     double flow_rate;
     double heat_capacity;
     double density;
-    bool const is_power_bc = true;
+    static constexpr bool is_power_bc = true;
 };
 
 struct PowerCurveFlowCurve
@@ -116,7 +116,7 @@ struct PowerCurveFlowCurve
 
     double heat_capacity;
     double density;
-    bool const is_power_bc = true;
+    static constexpr bool is_power_bc = true;
 };
 
 struct BuildingPowerCurveConstantFlow
@@ -140,7 +140,7 @@ struct BuildingPowerCurveConstantFlow
     double flow_rate;
     double heat_capacity;
     double density;
-    bool const is_power_bc = true;
+    static constexpr bool is_power_bc = true;
 };
 
 using FlowAndTemperatureControl = std::variant<TemperatureCurveConstantFlow,

@@ -43,7 +43,7 @@ struct BHECommon
     GroutParameters const grout;
     FlowAndTemperatureControl const flowAndTemperatureControl;
     bool const use_python_bcs;
-    bool isPowerBC() const
+    constexpr bool isPowerBC() const
     {
         return std::visit([](auto const& ftc) { return ftc.is_power_bc; },
                           flowAndTemperatureControl);
