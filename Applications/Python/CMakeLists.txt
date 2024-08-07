@@ -34,7 +34,9 @@ if(OGS_USE_PIP)
             COMMAND pytest -c ${PROJECT_SOURCE_DIR}/pyproject.toml
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         )
-        set_tests_properties(pytest PROPERTIES LABELS "default")
+        set_tests_properties(
+            pytest PROPERTIES LABELS "default;python" COST 10
+        )
 
         add_dependencies(
             ctest
