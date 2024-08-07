@@ -183,7 +183,7 @@ AddTest(
 AddTest(
     NAME HeatTransportBHE_3D_BHE_groundwater_advection
     PATH Parabolic/T/3D_BHE_GW_advection
-    RUNTIME 8
+    RUNTIME 4
     EXECUTABLE ogs
     EXECUTABLE_ARGS BHE_GW_advection.prj
     WRAPPER time
@@ -274,5 +274,5 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE Parabolic/T/BHE_1P/pipe_flow_ebhe.md RUNTIME 600)
+    NotebookTest(NOTEBOOKFILE Parabolic/T/BHE_1P/pipe_flow_ebhe.md RUNTIME 200)
 endif()
