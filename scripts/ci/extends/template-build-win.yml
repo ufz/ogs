@@ -8,12 +8,13 @@
   variables:
   script:
     - $build_directory_full = "..\build\" + $env:CMAKE_PRESET
+    - $artifacts_dir = "build\" + $env:CMAKE_PRESET + "-" + $env:CI_JOB_NAME_SLUG + "-" + $env:CI_JOB_ID
     - $log_file = $build_directory_full + "\make.txt"
     - (rm -r -fo $build_directory_full)
     - cmd /c if not exist $build_directory_full mkdir $build_directory_full
-    - mkdir build
+    - mkdir build  # We are inside the OGS source directory, now. This "build" dir will be, too.
     # Create symlink https://stackoverflow.com/a/34905638/80480
-    - cmd /c mklink /D build\$env:CMAKE_PRESET $env:CI_PROJECT_DIR\$build_directory_full
+    - cmd /c mklink /D $artifacts_dir $env:CI_PROJECT_DIR\$build_directory_full
     - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
     - $cmake_cmd
     - Invoke-Expression $cmake_cmd

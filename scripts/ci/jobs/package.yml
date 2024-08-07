@@ -64,6 +64,28 @@ create cpm cache:
       curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ext.tar.gz \
         ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/external-dependencies/${EXT_VERSION}/ext.tar.gz
 
+
+aggregate ctest logs:
+  stage: package
+  tags: [envinf, shell]
+  script:
+    - |
+      python -m venv .venv_custom_job
+      . .venv_custom_job/bin/activate
+      pip install pandas
+      mkdir -p build/log_summary
+      set -x
+      Applications/Python/ogs/dev/ogs_log_summary.py --snippet-out build/log_summary/ -v build/*/logs &>build/log_summary/ogs_log_summary.txt
+  rules:
+    - when: always
+  artifacts:
+    name: all-artifacts
+    paths:
+      - "build/**/*.txt"
+      - "build/log_summary/**"
+    expire_in: 12 hrs
+
+
 offline configure:
   stage: package
   tags: [envinf, shell]
