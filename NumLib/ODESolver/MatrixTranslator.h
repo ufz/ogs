@@ -49,6 +49,10 @@ public:
                             const GlobalVector& b, const GlobalVector& x_prev,
                             GlobalVector& rhs) const = 0;
 
+    //! Computes \f$ A = A^T \cdot A \f$, and
+    //! also \f$ rhs = A^T \cdot rhs \f$.
+    virtual void normalizeAandRhs(GlobalMatrix& A, GlobalVector& b) const = 0;
+
     /*! Computes \c res from \c M, \c K, \c b, \f$ \hat x \f$ and \f$ x_N \f$.
      * You might also want read the remarks on
      * \ref concept_time_discretization "time discretization".
@@ -104,6 +108,10 @@ public:
     void computeRhs(const GlobalMatrix& M, const GlobalMatrix& /*K*/,
                     const GlobalVector& b, const GlobalVector& x_prev,
                     GlobalVector& rhs) const override;
+
+    //! Computes \f$ A = A^T \cdot A \f$, and
+    //! also \f$ rhs = A^T \cdot rhs \f$.
+    void normalizeAandRhs(GlobalMatrix& A, GlobalVector& b) const override;
 
     //! Computes \f$ r = M \cdot \hat x + K \cdot x_C - b \f$.
     void computeResidual(GlobalMatrix const& M, GlobalMatrix const& K,

@@ -121,6 +121,12 @@ public:
     virtual void getRhs(GlobalVector const& x_prev,
                         GlobalVector& rhs) const = 0;
 
+    //! Writes the A_transposed times A into \c A
+    //! and also writes A_transposed times rhs into \c rhs
+    //! \pre getA() and getRhs must have been called before.
+    virtual void getAandRhsNormalized(GlobalMatrix& A,
+                                      GlobalVector& rhs) const = 0;
+
     //! Pre-compute known solutions and possibly store them internally.
     virtual void computeKnownSolutions(GlobalVector const& x,
                                        int const process_id) = 0;

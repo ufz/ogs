@@ -172,6 +172,13 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
         _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
         getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
         &b);
+    // Algebraic BC procedure.
+    if (_process_data._algebraic_BC_Setting._use_algebraic_bc)
+    {
+        algebraicBcConcreteProcess(t, dt, x, x_prev, process_id, M, K, b);
+    }
+
+    //_global_output(t, process_id, M, K, b);
 }
 
 void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
@@ -340,16 +347,120 @@ void HeatTransportBHEProcess::postTimestepConcreteProcess(
     }
 }
 
+void HeatTransportBHEProcess::algebraicBcConcreteProcess(
+    [[maybe_unused]] const double t, double const /*dt*/,
+    [[maybe_unused]] std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& /*xprev*/, int const /*process_id*/,
+    [[maybe_unused]] GlobalMatrix& M, [[maybe_unused]] GlobalMatrix& K,
+    [[maybe_unused]] GlobalVector& b)
+{
+#ifndef USE_PETSC
+    auto M_normal = M.getRawMatrix();
+    auto K_normal = K.getRawMatrix();
+    auto n_original_rows = K_normal.rows();
+    auto const n_BHE_bottom_pairs = _vec_bottom_BHE_node_indices.size();
+    auto const n_BHE_top_pairs = _vec_top_BHE_node_indices.size();
+
+    // apply weighting factor based on the max value from column wise inner
+    // product and scale it with user defined value
+    const double w_val =
+        _process_data._algebraic_BC_Setting._weighting_factor *
+        (Eigen::RowVectorXd::Ones(K_normal.rows()) * K_normal.cwiseAbs())
+            .maxCoeff();
+
+    M_normal.conservativeResize(
+        M_normal.rows() + n_BHE_bottom_pairs + n_BHE_top_pairs,
+        M_normal.cols());
+    K_normal.conservativeResize(
+        K_normal.rows() + n_BHE_bottom_pairs + n_BHE_top_pairs,
+        K_normal.cols());
+
+    for (std::size_t i = 0; i < n_BHE_bottom_pairs; i++)
+    {
+        Eigen::SparseVector<double> M_Plus(M_normal.cols());
+        M_Plus.setZero();
+        M_normal.row(n_original_rows + i) = M_Plus;
+
+        Eigen::SparseVector<double> K_Plus(K_normal.cols());
+        K_Plus.setZero();
+
+        auto const [bhe_idx, first_BHE_bottom_index, second_BHE_bottom_index] =
+            _vec_bottom_BHE_node_indices[i];
+
+        K_Plus.insert(first_BHE_bottom_index) = w_val;
+        K_Plus.insert(second_BHE_bottom_index) = -w_val;
+
+        K_normal.row(n_original_rows + i) = K_Plus;
+    }
+
+    auto b_normal = b.getRawVector();
+    Eigen::SparseVector<double> b_Plus(b_normal.rows() + n_BHE_bottom_pairs +
+                                       n_BHE_top_pairs);
+    b_Plus.setZero();
+
+    // Copy values from the original column vector to the modified one
+    for (int i = 0; i < b_normal.innerSize(); ++i)
+    {
+        b_Plus.insert(i) = b_normal.coeff(i);
+    }
+
+    for (std::size_t i = 0; i < n_BHE_top_pairs; i++)
+    {
+        Eigen::SparseVector<double> M_Plus(M_normal.cols());
+        M_Plus.setZero();
+        M_normal.row(n_original_rows + n_BHE_bottom_pairs + i) = M_Plus;
+
+        Eigen::SparseVector<double> K_Plus(K_normal.cols());
+        K_Plus.setZero();
+
+        auto const [bhe_idx, first_BHE_top_index, second_BHE_top_index] =
+            _vec_top_BHE_node_indices[i];
+
+        auto first_BHE_top_index_pair = first_BHE_top_index;
+        auto second_BHE_top_index_pair = second_BHE_top_index;
+
+        K_Plus.insert(first_BHE_top_index_pair) =
+            w_val;  // for power BC, the inflow node must be positive
+        K_Plus.insert(second_BHE_top_index_pair) =
+            -w_val;  // for power BC, the outflow node must be negative
+
+        K_normal.row(n_original_rows + n_BHE_bottom_pairs + i) = K_Plus;
+
+        // get the delta_T value here
+        double const T_out = (*x[0])[second_BHE_top_index_pair];
+
+        auto calculate_delta_T = [&](auto& bhe)
+        {
+            auto const T_in = bhe.updateFlowRateAndTemperature(T_out, t);
+            return T_in - T_out;
+        };
+        auto delta_T = std::visit(calculate_delta_T,
+                                  _process_data._vec_BHE_property[bhe_idx]);
+
+        b_Plus.insert(n_original_rows + n_BHE_bottom_pairs + i) =
+            delta_T * w_val;
+    }
+
+    M.getRawMatrix() = M_normal;
+    K.getRawMatrix() = K_normal;
+    b.getRawVector() = b_Plus;
+#else
+    OGS_FATAL(
+        "The Algebraic Boundary Condition is not implemented for use with "
+        "PETsc Library! Simulation will be terminated.");
+#endif
+}
+
 void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
     std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes)
 {
     const int process_id = 0;
     auto& bcs = _boundary_conditions[process_id];
 
-    int const n_BHEs = static_cast<int>(_process_data._vec_BHE_property.size());
+    std::size_t const n_BHEs = _process_data._vec_BHE_property.size();
 
     // for each BHE
-    for (int bhe_i = 0; bhe_i < n_BHEs; bhe_i++)
+    for (std::size_t bhe_i = 0; bhe_i < n_BHEs; bhe_i++)
     {
         auto const& bhe_nodes = all_bhe_nodes[bhe_i];
         // find the variable ID
@@ -434,6 +545,20 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                                  nodes_and_components[1].second));
         };
 
+        auto get_global_bhe_bc_indices_with_bhe_idx =
+            [&](std::size_t bhe_idx,
+                std::array<
+                    std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+                    nodes_and_components)
+        {
+            return std::make_tuple(
+                bhe_idx,
+                get_global_index(nodes_and_components[0].first,
+                                 nodes_and_components[0].second),
+                get_global_index(nodes_and_components[1].first,
+                                 nodes_and_components[1].second));
+        };
+
         auto createBCs =
             [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
              bc_bottom_node_id = bhe_boundary_nodes[1]->getID()](auto& bhe)
@@ -442,10 +567,11 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                  bhe.inflow_outflow_bc_component_ids)
             {
                 if (bhe.use_python_bcs ||
-                    _process_data._use_server_communication)
+                    this->_process_data._use_server_communication)
                 // call BHEPythonBoundarycondition
                 {
-                    if (_process_data.py_bc_object)  // the bc object exist
+                    if (this->_process_data
+                            .py_bc_object)  // the bc object exist
                     {
                         // apply the customized top, inflow BC.
                         bcs.addBoundaryCondition(
@@ -466,16 +592,33 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 }
                 else
                 {
-                    // Top, inflow, normal case
-                    bcs.addBoundaryCondition(
-                        createBHEInflowDirichletBoundaryCondition(
-                            get_global_bhe_bc_indices(
-                                bhe.getBHEInflowDirichletBCNodesAndComponents(
-                                    bc_top_node_id, bc_bottom_node_id,
-                                    in_out_component_id.first)),
-                            [&bhe](double const T, double const t) {
-                                return bhe.updateFlowRateAndTemperature(T, t);
-                            }));
+                    if (this->_process_data._algebraic_BC_Setting
+                            ._use_algebraic_bc &&
+                        bhe.isPowerBC())
+                    {
+                        // for algebraic_bc method, record the pair of indices
+                        // in a separate vector
+                        _vec_top_BHE_node_indices.push_back(
+                            get_global_bhe_bc_indices_with_bhe_idx(
+                                bhe_i,
+                                {{{bc_top_node_id, in_out_component_id.first},
+                                  {bc_top_node_id,
+                                   in_out_component_id.second}}}));
+                    }
+                    else
+                    {
+                        // Top, inflow, normal case
+                        bcs.addBoundaryCondition(
+                            createBHEInflowDirichletBoundaryCondition(
+                                get_global_bhe_bc_indices(
+                                    bhe.getBHEInflowDirichletBCNodesAndComponents(
+                                        bc_top_node_id, bc_bottom_node_id,
+                                        in_out_component_id.first)),
+                                [&bhe](double const T, double const t) {
+                                    return bhe.updateFlowRateAndTemperature(T,
+                                                                            t);
+                                }));
+                    }
                 }
 
                 auto const bottom_nodes_and_components =
@@ -484,9 +627,12 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                         in_out_component_id.first,
                         in_out_component_id.second);
 
-                if (bottom_nodes_and_components)
+                if (bottom_nodes_and_components &&
+                    !this->_process_data._algebraic_BC_Setting
+                         ._use_algebraic_bc)
                 {
-                    // Bottom, outflow, all cases
+                    // Bottom, outflow, all cases | not needed for algebraic_bc
+                    // method
                     bcs.addBoundaryCondition(
                         createBHEBottomDirichletBoundaryCondition(
                             get_global_bhe_bc_indices(
@@ -494,6 +640,19 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                                    in_out_component_id.first},
                                   {bc_bottom_node_id,
                                    in_out_component_id.second}}})));
+                }
+                else if (bottom_nodes_and_components &&
+                         this->_process_data._algebraic_BC_Setting
+                             ._use_algebraic_bc)
+                {
+                    // for algebraic_bc method, record the pair of indices in a
+                    // separate vector
+                    _vec_bottom_BHE_node_indices.push_back(
+                        get_global_bhe_bc_indices_with_bhe_idx(
+                            bhe_i,
+                            {{{bc_bottom_node_id, in_out_component_id.first},
+                              {bc_bottom_node_id,
+                               in_out_component_id.second}}}));
                 }
             }
         };

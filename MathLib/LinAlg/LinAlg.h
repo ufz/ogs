@@ -196,6 +196,11 @@ void matMult(PETScMatrix const& A, PETScVector const& x, PETScVector& y);
 void matMultAdd(PETScMatrix const& A, PETScVector const& v1,
                 PETScVector const& v2, PETScVector& v3);
 
+// new_A = A^T * A
+// new_b = A^T * b
+void linearSysNormalize(PETScMatrix const& A, PETScMatrix& new_A,
+                        PETScVector const& b, PETScVector& new_b);
+
 void finalizeAssembly(PETScMatrix& A);
 void finalizeAssembly(PETScVector& x);
 
@@ -264,7 +269,10 @@ void matMult(EigenMatrix const& A, EigenVector const& x, EigenVector& y);
 // v3 = A*v1 + v2
 void matMultAdd(EigenMatrix const& A, EigenVector const& v1,
                 EigenVector const& v2, EigenVector& v3);
-
+// new_A = A^T * A
+// new_b = A^T * b
+void linearSysNormalize(EigenMatrix const& A, EigenMatrix& new_A,
+                        EigenVector const& b, EigenVector& new_b);
 void finalizeAssembly(EigenMatrix& x);
 void finalizeAssembly(EigenVector& A);
 

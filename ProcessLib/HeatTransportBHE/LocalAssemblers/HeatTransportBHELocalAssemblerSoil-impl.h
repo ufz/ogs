@@ -211,8 +211,8 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assembleWithJacobian(
     auto local_rhs = MathLib::createZeroedVector<NodalVectorType>(
         local_rhs_data, local_matrix_size);
 
-    std::vector<double> local_M_data(local_Jac_data.size());
-    std::vector<double> local_K_data(local_Jac_data.size());
+    std::vector<double> local_M_data;
+    std::vector<double> local_K_data;
     assemble(t, dt, local_x, local_x_prev, local_M_data, local_K_data,
              local_rhs_data /*not going to be used*/);
 

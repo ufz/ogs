@@ -23,6 +23,15 @@ class Element;
 
 namespace ProcessLib::HeatTransportBHE
 {
+struct AlgebraicBCSetting
+{
+    const bool _use_algebraic_bc;
+
+    const double _weighting_factor;
+
+    const bool _is_linear;
+};
+
 struct HeatTransportBHEProcessData final
 {
     HeatTransportBHEProcessData(
@@ -31,12 +40,14 @@ struct HeatTransportBHEProcessData final
         BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object_ =
             nullptr,
         const bool use_tespy = false,
-        const bool use_server_communication = false)
+        const bool use_server_communication = false,
+        AlgebraicBCSetting algebraicBCSetting = {false, 100.0, false})
         : media_map(media_map_),
           _vec_BHE_property(std::move(vec_BHEs_)),
           py_bc_object(py_bc_object_),
           _use_tespy(use_tespy),
-          _use_server_communication(use_server_communication)
+          _use_server_communication(use_server_communication),
+          _algebraic_BC_Setting(algebraicBCSetting)
     {
     }
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
@@ -52,5 +63,7 @@ struct HeatTransportBHEProcessData final
     const bool _use_tespy;
 
     const bool _use_server_communication;
+
+    AlgebraicBCSetting const _algebraic_BC_Setting;
 };
 }  // namespace ProcessLib::HeatTransportBHE

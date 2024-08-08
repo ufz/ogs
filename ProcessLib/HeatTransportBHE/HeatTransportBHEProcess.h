@@ -39,7 +39,18 @@ public:
 
     //! \name ODESystem interface
     //! @{
-    bool isLinear() const override { return false; }
+    bool isLinear() const override
+    {
+        return _process_data._algebraic_BC_Setting._is_linear;
+    }
+
+    bool requiresNormalization() const override
+    {
+        // In the current setup, when using algebraic bc,
+        // then normalization is always required
+        return _process_data._algebraic_BC_Setting._use_algebraic_bc;
+    }
+    //! @}
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
@@ -76,6 +87,12 @@ private:
                                      const double t, const double dt,
                                      int const process_id) override;
 
+    void algebraicBcConcreteProcess(const double t, double const dt,
+                                    std::vector<GlobalVector*> const& x,
+                                    std::vector<GlobalVector*> const& xdot,
+                                    int const process_id, GlobalMatrix& M,
+                                    GlobalMatrix& K, GlobalVector& b);
+
     NumLib::IterationResult postIterationConcreteProcess(
         GlobalVector const& x) override;
 
@@ -89,6 +106,18 @@ private:
 
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
         _mesh_subset_BHE_soil_nodes;
+    // a vector of tuple structure containing the indices of BHE top nodes,
+    // used only for algebraic boundary conditions
+    // first object is the index of BHE
+    // second and third object is the global indices of a pair of unknowns,
+    // pointing to the inflow and outflow temperature
+    std::vector<std::tuple<std::size_t, GlobalIndexType, GlobalIndexType>>
+        _vec_top_BHE_node_indices;
+    // a vector of tuple structure containing the indices of BHE bottom nodes,
+    // used only for algebraic boundary conditions
+    // same structure as the top node vector
+    std::vector<std::tuple<std::size_t, GlobalIndexType, GlobalIndexType>>
+        _vec_bottom_BHE_node_indices;
 
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_soil_nodes;
 

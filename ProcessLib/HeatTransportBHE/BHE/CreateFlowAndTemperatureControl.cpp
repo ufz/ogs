@@ -67,6 +67,7 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
 
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerConstantFlow__flow_rate}
         auto const flow_rate = config.getConfigParameter<double>("flow_rate");
+
         return FixedPowerConstantFlow{flow_rate, power,
                                       refrigerant.specific_heat_capacity,
                                       refrigerant.density};

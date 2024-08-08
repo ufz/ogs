@@ -167,6 +167,11 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.assemble(x_new, x_prev, process_id);
         sys.getA(A);
         sys.getRhs(*x_prev[process_id], rhs);
+
+        // Normalize the linear equation system, if required
+        if (sys.requiresNormalization())
+            sys.getAandRhsNormalized(A, rhs);
+
         INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
 
         // Subtract non-equilibrium initial residuum if set
