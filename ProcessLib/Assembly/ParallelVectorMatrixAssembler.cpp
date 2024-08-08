@@ -12,6 +12,11 @@
 
 #include <cstdlib>
 #include <fstream>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip.hpp>
+#include <vector>
 
 #include "BaseLib/StringTools.h"
 #include "BaseLib/ThreadException.h"
@@ -52,6 +57,77 @@ void assembleWithJacobianOneElement(
     }
 
     cache.add(local_b_data, local_Jac_data, indices);
+}
+
+/// Returns a vector of active element ids with corresponding local assemblers.
+std::vector<
+    std::tuple<std::ptrdiff_t,
+               std::reference_wrapper<ProcessLib::LocalAssemblerInterface>>>
+collectActiveLocalAssemblers(
+    BaseLib::PolymorphicRandomAccessContainerView<
+        ProcessLib::LocalAssemblerInterface> const& local_assemblers,
+    std::vector<std::size_t> const& active_elements)
+{
+    auto id_and_local_asm = [&local_assemblers](std::size_t const id)
+        -> std::tuple<std::ptrdiff_t, std::reference_wrapper<
+                                          ProcessLib::LocalAssemblerInterface>>
+    { return {id, local_assemblers[id]}; };
+
+    auto create_ids_asm_pairs = [&](auto const& element_ids)
+    {
+        return element_ids | ranges::views::transform(id_and_local_asm) |
+               ranges::to<std::vector>();
+    };
+
+    if (active_elements.empty())
+    {
+        return create_ids_asm_pairs(ranges::views::iota(
+            static_cast<std::size_t>(0), local_assemblers.size()));
+    }
+    return create_ids_asm_pairs(active_elements);
+}
+
+void runAssemblyForEachLocalAssembler(
+    std::vector<std::tuple<
+        std::ptrdiff_t,
+        std::reference_wrapper<ProcessLib::LocalAssemblerInterface>>> const&
+        ids_local_assemblers,
+    NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
+    double const dt, GlobalVector const& x, GlobalVector const& x_prev,
+    std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+    std::vector<GlobalIndexType>& indices,
+    ProcessLib::AbstractJacobianAssembler& jac_asm, ThreadException& exception,
+    ProcessLib::Assembly::MultiMatrixElementCache& cache,
+    auto local_matrix_output)
+{
+    // due to MSVC++ error:
+    // error C3016: 'element_id': index variable in OpenMP 'for'
+    // statement must have signed integral type
+    std::ptrdiff_t n_elements =
+        static_cast<std::ptrdiff_t>(ids_local_assemblers.size());
+#pragma omp for nowait
+    for (std::ptrdiff_t i = 0; i < n_elements; ++i)
+    {
+        if (exception)
+        {
+            continue;
+        }
+        auto [element_id, loc_asm] = ids_local_assemblers[i];
+
+        try
+        {
+            assembleWithJacobianOneElement(
+                element_id, loc_asm, dof_table, t, dt, x, x_prev, local_b_data,
+                local_Jac_data, indices, jac_asm, cache);
+        }
+        catch (...)
+        {
+            exception.capture();
+            continue;
+        }
+
+        local_matrix_output(element_id);
+    }
 }
 
 int getNumberOfThreads()
@@ -158,77 +234,18 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
         MultiMatrixElementCache cache{b_view, Jac_view,
                                       stats_this_thread->data};
 
+        auto local_matrix_output = [&](std::ptrdiff_t element_id)
+        {
+            local_matrix_output_(t, process_id, element_id, local_b_data,
+                                 local_Jac_data);
+        };
+
         // TODO corner case: what if all elements on a submesh are deactivated?
-        if (active_elements.empty())
-        {
-            // due to MSVC++ error:
-            // error C3016: 'element_id': index variable in OpenMP 'for'
-            // statement must have signed integral type
-            std::ptrdiff_t const n_loc_asm =
-                static_cast<std::ptrdiff_t>(local_assemblers.size());
-
-#pragma omp for nowait
-            for (std::ptrdiff_t element_id = 0; element_id < n_loc_asm;
-                 ++element_id)
-            {
-                if (exception)
-                {
-                    continue;
-                }
-                auto& loc_asm = local_assemblers[element_id];
-
-                try
-                {
-                    assembleWithJacobianOneElement(
-                        element_id, loc_asm, dof_table, t, dt, x, x_prev,
-                        local_b_data, local_Jac_data, indices, *jac_asm, cache);
-                }
-                catch (...)
-                {
-                    exception.capture();
-                    continue;
-                }
-
-                local_matrix_output_(t, process_id, element_id, local_b_data,
-                                     local_Jac_data);
-            }
-        }
-        else
-        {
-            // due to MSVC++ error:
-            // error C3016: 'i': index variable in OpenMP 'for' statement must
-            // have signed integral type
-            std::ptrdiff_t const n_act_elem =
-                static_cast<std::ptrdiff_t>(active_elements.size());
-
-#pragma omp for nowait
-            for (std::ptrdiff_t i = 0; i < n_act_elem; ++i)
-            {
-                if (exception)
-                {
-                    continue;
-                }
-
-                auto const element_id = active_elements[i];
-                auto& loc_asm = local_assemblers[element_id];
-
-                try
-                {
-                    assembleWithJacobianOneElement(
-                        element_id, loc_asm, dof_table, t, dt, x, x_prev,
-                        local_b_data, local_Jac_data, indices, *jac_asm, cache);
-                }
-                catch (...)
-                {
-                    exception.capture();
-                    continue;
-                }
-
-                local_matrix_output_(t, process_id, element_id, local_b_data,
-                                     local_Jac_data);
-            }
-        }
-    }  // OpenMP parallel section
+        runAssemblyForEachLocalAssembler(
+            collectActiveLocalAssemblers(local_assemblers, active_elements),
+            dof_table, t, dt, x, x_prev, local_b_data, local_Jac_data, indices,
+            *jac_asm, exception, cache, local_matrix_output);
+    }
 
     stats->print();
 
