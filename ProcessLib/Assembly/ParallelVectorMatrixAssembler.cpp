@@ -136,7 +136,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     ConcurrentMatrixView Jac_view(Jac);
 
     ThreadException exception;
-    bool assembly_error = false;
 #pragma omp parallel num_threads(num_threads_)
     {
 #ifdef _OPENMP
@@ -172,7 +171,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
             for (std::ptrdiff_t element_id = 0; element_id < n_loc_asm;
                  ++element_id)
             {
-                if (assembly_error)
+                if (exception)
                 {
                     continue;
                 }
@@ -187,7 +186,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                 catch (...)
                 {
                     exception.capture();
-                    assembly_error = true;
                     continue;
                 }
 
@@ -206,7 +204,7 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
 #pragma omp for nowait
             for (std::ptrdiff_t i = 0; i < n_act_elem; ++i)
             {
-                if (assembly_error)
+                if (exception)
                 {
                     continue;
                 }
@@ -223,7 +221,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
                 catch (...)
                 {
                     exception.capture();
-                    assembly_error = true;
                     continue;
                 }
 
