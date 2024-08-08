@@ -33,11 +33,11 @@ void assembleWithJacobianOneElement(
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
     const double dt, const GlobalVector& x, const GlobalVector& x_prev,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-    std::vector<GlobalIndexType>& indices,
     ProcessLib::AbstractJacobianAssembler& jacobian_assembler,
     ProcessLib::Assembly::MultiMatrixElementCache& cache)
 {
-    indices = NumLib::getIndices(mesh_item_id, dof_table);
+    std::vector<GlobalIndexType> const& indices =
+        NumLib::getIndices(mesh_item_id, dof_table);
 
     local_b_data.clear();
     local_Jac_data.clear();
@@ -95,7 +95,6 @@ void runAssemblyForEachLocalAssembler(
     NumLib::LocalToGlobalIndexMap const& dof_table, double const t,
     double const dt, GlobalVector const& x, GlobalVector const& x_prev,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-    std::vector<GlobalIndexType>& indices,
     ProcessLib::AbstractJacobianAssembler& jac_asm, ThreadException& exception,
     ProcessLib::Assembly::MultiMatrixElementCache& cache,
     auto local_matrix_output)
@@ -116,9 +115,9 @@ void runAssemblyForEachLocalAssembler(
 
         try
         {
-            assembleWithJacobianOneElement(
-                element_id, loc_asm, dof_table, t, dt, x, x_prev, local_b_data,
-                local_Jac_data, indices, jac_asm, cache);
+            assembleWithJacobianOneElement(element_id, loc_asm, dof_table, t,
+                                           dt, x, x_prev, local_b_data,
+                                           local_Jac_data, jac_asm, cache);
         }
         catch (...)
         {
@@ -225,7 +224,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
         // reallocations.
         std::vector<double> local_b_data;
         std::vector<double> local_Jac_data;
-        std::vector<GlobalIndexType> indices;
 
         // copy to avoid concurrent access
         auto const jac_asm = jacobian_assembler_.copy();
@@ -243,8 +241,8 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
         // TODO corner case: what if all elements on a submesh are deactivated?
         runAssemblyForEachLocalAssembler(
             collectActiveLocalAssemblers(local_assemblers, active_elements),
-            dof_table, t, dt, x, x_prev, local_b_data, local_Jac_data, indices,
-            *jac_asm, exception, cache, local_matrix_output);
+            dof_table, t, dt, x, x_prev, local_b_data, local_Jac_data, *jac_asm,
+            exception, cache, local_matrix_output);
     }
 
     stats->print();
