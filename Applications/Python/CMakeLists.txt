@@ -28,11 +28,17 @@ if(OGS_USE_PIP)
     if(NOT ENABLE_ASAN)
         add_test(
             NAME pytest
-            # TODO: currently failing with:
-            #
-            # Can't add new modules after the interpreter has been initialized
-            COMMAND pytest -c ${PROJECT_SOURCE_DIR}/pyproject.toml
-            WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+            COMMAND
+                ${CMAKE_COMMAND} -DEXECUTABLE=pytest
+                "-DEXECUTABLE_ARGS=-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
+                                                                            # because
+                # passed as list see https://stackoverflow.com/a/33248574/80480
+                -DBINARY_PATH=${_binary_path}
+                -DWORKING_DIRECTORY=${PROJECT_SOURCE_DIR}
+                "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
+                "-DLOG_FILE_BASENAME=pytest.txt"
+                "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=TRUE" -P
+                ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
         )
         set_tests_properties(
             pytest PROPERTIES LABELS "default;python" COST 10
