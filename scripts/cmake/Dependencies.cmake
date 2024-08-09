@@ -437,7 +437,7 @@ if(OGS_BUILD_UTILS)
             list(APPEND _metis_options "BUILD_SHARED_LIBS OFF")
         else()
             list(APPEND _metis_options
-                 "CMAKE_C_FLAGS -D_POSIX_C_SOURCE=200809L"
+                 "CMAKE_C_FLAGS -D_POSIX_C_SOURCE=200809L" ${CPU_FLAGS}
             )
         endif()
         CPMFindPackage(
