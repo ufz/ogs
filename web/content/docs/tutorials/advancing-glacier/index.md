@@ -31,7 +31,7 @@ As a common programming language we use [Python](https://www.python.org).
 
 <!-- vale off -->
 
-* [mesh_basin.msh](mesh_basin.msh)
+* [mesh_basin.msh](https://ogsstorage.blob.core.windows.net/web/tutorials/advancing-glacier/mesh_basin.msh)
 * [mesh_basin.py](mesh_basin.py)
 * [OGSinput_basin.prj](OGSinput_basin.prj)
 * [timeBCs_glacier.py](timeBCs_glacier.py)
