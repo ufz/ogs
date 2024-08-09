@@ -85,6 +85,12 @@ MeshLib::Mesh* readMeshFromFile(const std::string& file_name,
         {
             std::unique_ptr<Mesh> mesh{
                 readMeshFromFileSerial(file_name, compute_element_neighbors)};
+
+            if (!mesh)
+            {
+                return nullptr;
+            }
+
             return new MeshLib::NodePartitionedMesh(*mesh);
         }
         return nullptr;
