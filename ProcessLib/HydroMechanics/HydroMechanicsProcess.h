@@ -113,6 +113,10 @@ private:
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
 
+    std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
+
     bool isMonolithicSchemeUsed() const override
     {
         return process_data_.isMonolithicSchemeUsed();
@@ -154,9 +158,6 @@ private:
     {
         return process_id == process_data_.mechanics_related_process_id;
     }
-
-    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
-    MeshLib::PropertyVector<double>* hydraulic_flow_ = nullptr;
 };
 
 extern template class HydroMechanicsProcess<2>;

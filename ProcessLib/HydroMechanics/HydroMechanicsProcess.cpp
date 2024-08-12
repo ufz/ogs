@@ -45,12 +45,6 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
           *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
-    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
-
-    hydraulic_flow_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
-
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
@@ -339,31 +333,6 @@ void HydroMechanicsProcess<DisplacementDim>::
 
     AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>::assembleWithJacobian(
         t, dt, x, x_prev, process_id, b, Jac);
-
-    auto const dof_tables = getDOFTables(x.size());
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
-    {
-        if (use_monolithic_scheme)
-        {
-            transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
-                                              output_vector,
-                                              std::negate<double>());
-        }
-        else
-        {
-            transformVariableFromGlobalVector(b, 0, *dof_tables[process_id],
-                                              output_vector,
-                                              std::negate<double>());
-        }
-    };
-    if (process_id == process_data_.hydraulic_process_id)
-    {
-        copyRhs(0, *hydraulic_flow_);
-    }
-    if (process_id == process_data_.mechanics_related_process_id)
-    {
-        copyRhs(1, *nodal_forces_);
-    }
 }
 
 template <int DisplacementDim>
@@ -380,6 +349,28 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
             getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
             t, dt);
     }
+}
+
+template <int DisplacementDim>
+std::vector<std::vector<std::string>>
+HydroMechanicsProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    INFO("HydroMechanicsProcess initializeSubmeshOutput().");
+    std::vector<std::vector<std::string>> per_process_residuum_names;
+    if (_process_variables.size() == 1)  // monolithic
+    {
+        per_process_residuum_names = {{"MassFlowRate", "NodalForces"}};
+    }
+    else  // staggered
+    {
+        per_process_residuum_names = {{"MassFlowRate"}, {"NodalForces"}};
+    }
+
+    AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>::
+        initializeAssemblyOnSubmeshes(meshes, per_process_residuum_names);
+
+    return per_process_residuum_names;
 }
 
 template <int DisplacementDim>
