@@ -239,19 +239,18 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>
-std::vector<std::string>
+std::vector<std::vector<std::string>>
 ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     initializeAssemblyOnSubmeshes(
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
 {
     INFO("TRM process initializeSubmeshOutput().");
-    const int process_id = 0;
-    std::vector<std::string> residuum_names{"HeatFlowRate", "MassFlowRate",
-                                            "NodalForces"};
+    std::vector<std::vector<std::string>> residuum_names{
+        {"HeatFlowRate", "MassFlowRate", "NodalForces"}};
 
     AssemblyMixin<
         ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>::
-        initializeAssemblyOnSubmeshes(process_id, meshes, residuum_names);
+        initializeAssemblyOnSubmeshes(meshes, residuum_names);
 
     return residuum_names;
 }

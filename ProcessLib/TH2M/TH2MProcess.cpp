@@ -316,17 +316,17 @@ void TH2MProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 }
 
 template <int DisplacementDim>
-std::vector<std::string>
+std::vector<std::vector<std::string>>
 TH2MProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
     std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
 {
     INFO("TH2M process initializeSubmeshOutput().");
-    const int process_id = 0;
-    std::vector<std::string> residuum_names{
-        "GasMassFlowRate", "LiquidMassFlowRate", "HeatFlowRate", "NodalForces"};
+    std::vector<std::vector<std::string>> residuum_names{
+        {"GasMassFlowRate", "LiquidMassFlowRate", "HeatFlowRate",
+         "NodalForces"}};
 
     AssemblyMixin<TH2MProcess<DisplacementDim>>::initializeAssemblyOnSubmeshes(
-        process_id, meshes, residuum_names);
+        meshes, residuum_names);
 
     return residuum_names;
 }
