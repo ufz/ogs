@@ -125,6 +125,7 @@ pacman
 Palandri
 parameteri[zs]ation
 ParaView
+Pardiso
 Parisio
 Parkhurst
 partmesh
