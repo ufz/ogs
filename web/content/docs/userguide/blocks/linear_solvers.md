@@ -33,3 +33,7 @@ For most cases value below $10^{-10}$ is recommended.
 ## Eigen
 
 <!-- TODO: Add description of Eigen -->
+
+## PETSc
+
+See [Running OGS with MPI]({{< ref "parallel_computing_mpi">}})-page for details.

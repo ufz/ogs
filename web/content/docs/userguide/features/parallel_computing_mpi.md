@@ -99,6 +99,24 @@ An introduction and a list of PETSc KSP solvers and preconditioners can be found
 
 <!-- TODO: At best explain the example above in more detail. This can be done by comments in the `xml`-code snippet. -->
 
+<div class="note">
+
+#### PETSc with Pardiso solver
+
+If you have configured OGS (`OGS_USE_MKL=ON`) and PETSc (`--with-mkl_pardiso-dir=... --with-mkl_cpardiso-dir=...`) with MKL support then you can run the parallel Pardiso solver with .e.g.:
+
+```xml
+<petsc>
+     <parameters>-mat_type mpiaij
+                 -pc_type lu
+                 -pc_factor_mat_solver_type mkl_cpardiso</parameters>
+</petsc>
+```
+
+See the [PETSc docs](https://petsc.org/release/overview/linear_solve_table/#direct-solvers) for more info on the solver settings. The [prebuilt containers]({{< relref "container" >}}#get-a-container-image) support this configuration.
+
+</div>
+
 ### 2. Launch MPI OGS
 
 For MPI launcher, either `mpiexec` or `mpirun` can be used to run OGS.
