@@ -52,7 +52,7 @@ def test_gmsh2ogs_extract_boundary(tmp_path, mesh, gmsh2_physical_id):
             )
             == 0
         )
-        if x in [1, 2]:  # inner boundarie
+        if x in [1, 2]:  # inner boundaries
             assert (
                 cli.vtkdiff(
                     f"{tmp_path}/A2_{x}.vtu",
@@ -65,7 +65,7 @@ def test_gmsh2ogs_extract_boundary(tmp_path, mesh, gmsh2_physical_id):
                 == 0
             )
 
-        if x in [0, 3, 4, 5, 6, 7]:  # outer boundarie
+        if x in [0, 3, 4, 5, 6, 7]:  # outer boundaries
             assert (
                 cli.vtkdiff(
                     f"{tmp_path}/A2_{x}.vtu",

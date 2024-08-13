@@ -21,12 +21,12 @@ There are two ways to build OGS with Python bindings:
 
 To run the Python-based tests:
 
-- Source `build-dir/.envrc` (activates the virtual environment and sets `OGS_USE_PATH` environment variable)
+- Source `build-dir/.envrc` (i.e., run `source build-dir/.envrc` in your terminal. This activates the virtual environment and sets `OGS_USE_PATH` environment variable).
 - Run e.g. `pytest` from inside the source directory. On Windows run `Invoke-Expression build-dir/.envrc.ps1` in your PowerShell.
 - Run e.g. `pytest` from inside the source directory or `pytest ../path/to/source/dir`.
 - Alternatively you can also run the Python-based with `ctest`, e.g. `ctest -R pytest`.
 
-If you make modifications on the C++ side you need to run `make` or `ninja` in the build directory again. If you make modifications on the Python bindings you need to run `cmake .` again in the build directory. Modifications on the Python tests are immediately available to `pytest`.
+If you make modifications on the C++ side you need to run `make` or `ninja` in the build directory again. If you modify Python code you need to run `cmake .` again in the build directory. Modifications on the Python tests are immediately available to `pytest`.
 
 To get the output of a specific test:
 
