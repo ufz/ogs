@@ -6,7 +6,9 @@ from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
 
 # Here, we assume that this script is installed, e.g., in a virtual environment
 # alongside a "bin" directory.
-OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
+OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"  # installed wheel
+if not OGS_BIN_DIR.exists():
+    OGS_BIN_DIR = OGS_BIN_DIR.parent  # build directory
 
 
 class CLI:

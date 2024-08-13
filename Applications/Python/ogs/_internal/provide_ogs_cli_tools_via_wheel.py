@@ -6,10 +6,6 @@ from pathlib import Path
 
 from . import OGS_USE_PATH
 
-# Here, we assume that this script is installed, e.g., in a virtual environment
-# alongside a "bin" directory.
-OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
-
 binaries_list = [
     "addDataToRaster",
     "AddElementQuality",
@@ -112,6 +108,12 @@ def ogs_with_args(argv):
 
 
 if "PEP517_BUILD_BACKEND" not in os.environ:
+    # Here, we assume that this script is installed, e.g., in a virtual environment
+    # alongside a "bin" directory.
+    OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"  # installed wheel
+    if not OGS_BIN_DIR.exists():
+        OGS_BIN_DIR = OGS_BIN_DIR.parent  # build directory
+
     if platform.system() == "Windows":
         os.add_dll_directory(OGS_BIN_DIR)
 
