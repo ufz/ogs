@@ -12,10 +12,7 @@
 
 #include <cstdlib>
 #include <fstream>
-#include <range/v3/range/conversion.hpp>
 #include <range/v3/view/iota.hpp>
-#include <range/v3/view/transform.hpp>
-#include <range/v3/view/zip.hpp>
 #include <vector>
 
 #include "BaseLib/StringTools.h"
@@ -115,15 +112,18 @@ collectActiveLocalAssemblers(
         ProcessLib::LocalAssemblerInterface> const& local_assemblers,
     std::vector<std::size_t> const& active_elements)
 {
-    auto id_and_local_asm = [&local_assemblers](std::size_t const id)
-        -> std::tuple<std::ptrdiff_t, std::reference_wrapper<
-                                          ProcessLib::LocalAssemblerInterface>>
-    { return {id, local_assemblers[id]}; };
-
     auto create_ids_asm_pairs = [&](auto const& element_ids)
     {
-        return element_ids | ranges::views::transform(id_and_local_asm) |
-               ranges::to<std::vector>();
+        std::vector<std::tuple<
+            std::ptrdiff_t,
+            std::reference_wrapper<ProcessLib::LocalAssemblerInterface>>>
+            result;
+        result.reserve(static_cast<std::size_t>(element_ids.size()));
+        for (auto const id : element_ids)
+        {
+            result.push_back({id, local_assemblers[id]});
+        }
+        return result;
     };
 
     if (active_elements.empty())
