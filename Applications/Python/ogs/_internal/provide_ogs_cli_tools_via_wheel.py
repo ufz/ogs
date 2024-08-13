@@ -119,7 +119,7 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
         exe = OGS_BIN_DIR / name
         if OGS_USE_PATH:
             exe = name
-        print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
+            print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
         return subprocess.run([exe] + args).returncode  # noqa: PLW1510
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
