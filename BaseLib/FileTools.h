@@ -120,13 +120,6 @@ std::string getFileExtension(std::string const& path);
 bool hasFileExtension(std::string const& extension,
                       std::string const& filename);
 
-/**
- * Checks if file_name already contains a qualified path and if not copies the
- * path from source.
- */
-std::string copyPathToFileName(const std::string& file_name,
-                               const std::string& source);
-
 /** Returns a string with file extension as found by getFileExtension()
  * dropped.
  */

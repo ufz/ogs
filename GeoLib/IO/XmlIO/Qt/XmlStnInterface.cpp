@@ -149,8 +149,8 @@ void XmlStnInterface::readStations(const QDomNode& stationsRoot,
                 s->setStationValue(stationValue);
                 if (!sensor_data_file_name.empty())
                 {
-                    s->addSensorDataFromCSV(BaseLib::copyPathToFileName(
-                        sensor_data_file_name, station_file_name));
+                    s->addSensorDataFromCSV(BaseLib::joinPaths(
+                        station_file_name, sensor_data_file_name));
                 }
                 stations.push_back(s);
             }
