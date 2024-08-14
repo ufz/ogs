@@ -81,7 +81,7 @@ inline bool operator<(Point3d const& a, Point3d const& b)
  * \param b second input point.
  * \param eps tolerance used in comparison of coordinates.
  *
- * \return true, if a is smaller then or equal to b according to the following
+ * \return true, if a is smaller than or equal to b according to the following
  * test \f$ |a_i - b_i| > \epsilon \cdot \min (|a_i|, |b_i|) \f$ \b and
  * \f$  |a_i - b_i| > \epsilon \f$ for all coordinates \f$ 0 \le i < 3 \f$.
  */
