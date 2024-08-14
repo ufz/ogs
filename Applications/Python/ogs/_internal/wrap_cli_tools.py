@@ -6,7 +6,9 @@ from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
 
 # Here, we assume that this script is installed, e.g., in a virtual environment
 # alongside a "bin" directory.
-OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
+OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"  # installed wheel
+if not OGS_BIN_DIR.exists():
+    OGS_BIN_DIR = OGS_BIN_DIR.parent  # build directory
 
 
 class CLI:
@@ -32,7 +34,7 @@ class CLI:
         >>> cli = CLI()
         >>> cli.ogs("--help") # prints a help text
         ...
-        >>> cli.ogs(help=None) # special, does the same
+        >>> cli.ogs(help=True) # flags without any additional value can be set to True
         ...
 
         A more useful example. The following will create a line mesh:
@@ -52,12 +54,25 @@ class CLI:
     @staticmethod
     def _format_kv(kwargs):
         for key, v in kwargs.items():
+            # Convert None to True
+            if v is None:
+                # TODO: Remove after 2025/08
+                print(
+                    f"Deprecation warning: Setting {v} to `None` is deprecated, set to `True` instead!"
+                )
+                v = True  # noqa: PLW2901
+
+            # If value is False then ignore
+            if isinstance(v, bool) and not v:
+                continue
+
             if len(key) == 1:
                 yield f"-{key}"
             else:
                 yield f"--{key}"
 
-            if v is not None:
+            # Pass value if not bool
+            if not isinstance(v, bool):
                 yield f"{v}"
 
     @staticmethod
@@ -74,6 +89,7 @@ class CLI:
             cmdline = CLI._get_cmdline(cmd, *args, **kwargs)
             return subprocess.call(cmdline)
 
+        # TODO: Only arguments with underscores work. Arguments with dashes not.
         run_cmd.__doc__ = f"""
             This function wraps the commandline tool {attr} for easy use from Python.
 
@@ -89,7 +105,7 @@ class CLI:
             >>> cli = CLI()
             >>> cli.{attr}("--help") # prints a help text
             ...
-            >>> cli.{attr}(help=None) # special, does the same
+            >>> cli.ogs(help=True) # flags without any additional value can be set to True
             ...
 
             A more useful example. The following will create a line mesh:

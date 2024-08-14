@@ -49,7 +49,7 @@ local_scheme = "no-local-version"
 
 [tool.pytest.ini_options]
 testpaths = ["Tests"]
-norecursedirs = ["Tests/Data"]
+python_files = ["test_*.py"]
 
 [tool.cibuildwheel]
 archs = "auto64"

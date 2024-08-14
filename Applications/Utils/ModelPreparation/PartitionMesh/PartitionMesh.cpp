@@ -198,8 +198,8 @@ int main(int argc, char* argv[])
         INFO("Path to mpmetis is: \n\t{:s}", exe_path);
 
         const std::string mpmetis_com =
-            BaseLib::joinPaths(exe_path, "mpmetis") + " -gtype=nodal " + "'" +
-            metis_mesh + ".mesh" + "' " + std::to_string(nparts.getValue());
+            BaseLib::joinPaths(exe_path, "mpmetis") + " -gtype=nodal " + "\"" +
+            metis_mesh + ".mesh" + "\" " + std::to_string(nparts.getValue());
 
         INFO("Running: {:s}", mpmetis_com);
         const int status = system(mpmetis_com.c_str());

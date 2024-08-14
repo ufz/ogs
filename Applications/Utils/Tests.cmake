@@ -531,17 +531,6 @@ AddTest(
 
 ################################################
 
-if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH)
-    add_test(NAME snakemake_partmesh_mixed_elements
-        COMMAND bash -c "export PATH=$<TARGET_FILE_DIR:partmesh>:$PATH && ${SNAKEMAKE} -j 4 \
-            --config input_dir=${Data_SOURCE_DIR}/Utils/GMSH2OGS \
-            -s ${PROJECT_SOURCE_DIR}/scripts/snakemake/workflows/partmesh.smk \
-            ${Data_BINARY_DIR}/Utils/GMSH2OGS/{linear,quadratic}_mesh/{2,4,8,12}"
-    )
-    set_tests_properties(snakemake_partmesh_mixed_elements
-        PROPERTIES LABELS "default")
-endif()
-
 if(SNAKEMAKE AND TEE_TOOL_PATH AND BASH_TOOL_PATH AND OGS_USE_MPI)
     add_test(NAME snakemake_reorder_mesh
         COMMAND bash -c "${SNAKEMAKE} -j 4 \
@@ -692,21 +681,7 @@ AddTest(
 )
 
 if(SNAKEMAKE AND TEE_TOOL_PATH)
-    add_test(NAME snakemake_ExtractBoundary
-        COMMAND ${SNAKEMAKE} -j 1
-            --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-            -s ${CMAKE_CURRENT_SOURCE_DIR}/ExtractBoundary.smk
-    )
-
-    add_test(NAME snakemake_VoxelGridFromLayers
-        COMMAND ${SNAKEMAKE} -j 1
-            --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-            -s ${CMAKE_CURRENT_SOURCE_DIR}/VoxelGridFromLayers.smk
-    )
-    set_tests_properties(snakemake_ExtractBoundary snakemake_VoxelGridFromLayers
-        PROPERTIES LABELS "default"
-    )
-    add_dependencies(ctest ExtractBoundary Layers2Grid AddFaultToVoxelGrid generateStructuredMesh)
+    add_dependencies(ctest Layers2Grid AddFaultToVoxelGrid)
 endif()
 
 AddTest(
@@ -862,27 +837,6 @@ if(TARGET VerticalSliceFromLayers AND GMSH)
         DIFF_DATA AmmerSlice.vtu AmmerSlice.vtu 1e-16
     )
 
-endif()
-
-if(TARGET GMSH2OGS AND SNAKEMAKE AND TEE_TOOL_PATH)
-    add_test(NAME snakemake_GMSH2OGS_ExtractBoundary
-        COMMAND ${SNAKEMAKE} --cores all
-        --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-        -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary.smk
-    )
-
-    add_test(NAME snakemake_GMSH2OGS_Gmsh4_ExtractBoundary
-        COMMAND ${SNAKEMAKE} --cores all
-        --configfile ${PROJECT_BINARY_DIR}/buildinfo.yaml
-        -s ${CMAKE_CURRENT_SOURCE_DIR}/GMSH2OGS_ExtractBoundary_MeshByGmsh4.smk
-    )
-    set_tests_properties(
-        snakemake_GMSH2OGS_ExtractBoundary
-        snakemake_GMSH2OGS_Gmsh4_ExtractBoundary
-        PROPERTIES LABELS "default" RUN_SERIAL TRUE
-    )
-
-    add_dependencies(ctest GMSH2OGS)
 endif()
 
 foreach(criterion ElementSize EdgeRatio EquiAngleSkew RadiusEdgeRatio SizeDifference)
@@ -1436,11 +1390,10 @@ endif()
 
 AddTest(
     NAME RemoveMeshElements_AABB_2D_regular
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_Layer17.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_2D_AABB_regular.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_Layer17.vtu
+                    -o AREHS_2D_AABB_regular.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
@@ -1449,11 +1402,10 @@ AddTest(
 
 AddTest(
     NAME RemoveMeshElements_AABB_2D_inverted
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_Layer17.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_2D_AABB_inverted.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_Layer17.vtu
+                    -o AREHS_2D_AABB_inverted.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000 --invert
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
@@ -1462,11 +1414,10 @@ AddTest(
 
 AddTest(
     NAME RemoveMeshElements_AABB_3D_regular
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_test.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_3D_AABB_regular.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_test.vtu
+                    -o AREHS_3D_AABB_regular.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000 --z-min -3000 --z-max -2000
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
@@ -1475,11 +1426,10 @@ AddTest(
 
 AddTest(
     NAME RemoveMeshElements_AABB_3D_inverted
-    PATH MeshLib
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    PATH Utils/VoxelGridFromLayers
     EXECUTABLE removeMeshElements
-    EXECUTABLE_ARGS -i AREHS_test.vtu
-                    -o ${Data_BINARY_DIR}/MeshLib/AREHS_3D_AABB_inverted.vtu
+    EXECUTABLE_ARGS -i <SOURCE_PATH>/AREHS_test.vtu
+                    -o AREHS_3D_AABB_inverted.vtu
                     --x-min 12000 --x-max 15000 --y-min 12000 --z-min -3000 --z-max -2000 --invert
     REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh

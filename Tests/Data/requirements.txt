@@ -1,16 +1,16 @@
 --extra-index-url https://gitlab.kitware.com/api/v4/projects/13/packages/pypi/simple
-ogstools==0.0.3
+git+https://gitlab.opengeosys.org/ogs/tools/ogstools@b4f3780274c464260ff43a248fac7379e49c8975#egg=ogstools
+git+https://github.com/bilke/ogs6py@66410a2acc6db77f33c78949e0601670895b0af6#egg=ogs6py
 gmsh>=4.11
 h5py>=3.8
 git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c#egg=heatsource-py
 jupyterlab==3.4.8
 matplotlib>=3.6
 numpy<2
-git+https://github.com/joergbuchwald/ogs6py@05acc329b90a002051104af8173384d41c63489c#egg=ogs6py
 pandas>=1.5
 ipywidgets
-pyvista[all,jupyter,trame]>=0.39
+pyvista[all]>=0.40.1
 seaborn>=0.12
-git+https://github.com/joergbuchwald/VTUinterface@05793c7be84fbcb7d9f8f740c3dc667089a61505#egg=vtuinterface
-trame-vtk>=2.4
+VTUinterface>=0.704
 vtk-osmesa>=9.2.6;platform_system=='Linux'
+git+https://github.com/drufat/triangle@5210b64ac5f2aff5673a66938cae56dc0a93a4ff#egg=triangle;platform_system=='Darwin'

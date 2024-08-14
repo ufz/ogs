@@ -1,7 +1,7 @@
 import tempfile
 from pathlib import Path
 
-import ogs.simulator as sim
+from ogs import cli
 
 
 def test_HM_ground_equil_TaylorHood_Python():
@@ -12,17 +12,8 @@ def test_HM_ground_equil_TaylorHood_Python():
     )
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        arguments = ["ogs", str(prjpath), "-o", tmpdirname]
-
-        try:
-            print("Python OpenGeoSys.init ...")
-            assert sim.initialize(arguments) == 0
-            print("Python OpenGeoSys.executeSimulation ...")
-            assert sim.executeSimulation() == 0
-        finally:
-            print("Python OpenGeoSys.finalize() ...")
-            sim.finalize()
-
+        status = cli.ogs(str(prjpath), o=tmpdirname)
+        assert status == 0
         assert (
             Path(tmpdirname) / "simHM_ground_quadBCu_python_ts_10_t_1000000.000000.vtu"
         ).exists()

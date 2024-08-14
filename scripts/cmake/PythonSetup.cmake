@@ -92,15 +92,8 @@ if(OGS_USE_PIP)
         file(STRINGS Tests/Data/requirements-dev.txt _requirements_dev)
         list(APPEND OGS_PYTHON_PACKAGES ${_requirements} ${_requirements_dev})
 
-        list(
-            APPEND
-            OGS_PYTHON_PACKAGES
-            "snakemake==${ogs.minimum_version.snakemake}"
-            "pulp==2.7.0" # https://github.com/snakemake/snakemake/issues/2607
-            "setuptools" # https://github.com/glenfant/stopit/issues/32
-        )
-        set(SNAKEMAKE ${LOCAL_VIRTUALENV_BIN_DIR}/snakemake CACHE FILEPATH ""
-                                                                  FORCE
+        list(APPEND OGS_PYTHON_PACKAGES
+             "setuptools" # https://github.com/glenfant/stopit/issues/32
         )
     endif()
 endif()
@@ -182,6 +175,11 @@ function(setup_venv)
                     "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
             )
         endif()
+        # Uninstall ogs wheel
+        execute_process(
+            COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip uninstall
+                    --yes ogs WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        )
     endif()
 endfunction()
 
@@ -209,8 +207,7 @@ function(setup_venv_dependent_ctests)
                 PATH Parabolic/HT/InvalidProjectFiles
                 EXECUTABLE ogs
                 EXECUTABLE_ARGS ${ht_invalid_prj_file}
-                RUNTIME 1
-                PROPERTIES WILL_FAIL TRUE
+                RUNTIME 1 PROPERTIES WILL_FAIL TRUE
             )
         endforeach()
     endif()

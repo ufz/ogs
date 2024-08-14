@@ -30,7 +30,7 @@ To manually add Python packages run the following inside your build-directory:
 .venv/bin/pip install python-package-name
 ```
 
-To activate the environment run `source .venv/bin/activate` inside your build directory. If you have the [`direnv`](https://direnv.net)-tool installed and setup the virtual environment will be activated automatically upon changing into the build directory.
+To activate the environment run `source .envrc` inside your build directory. If you have the [`direnv`](https://direnv.net)-tool installed and setup the virtual environment will be activated automatically upon changing into the build directory.
 
 ### Pip & Benchmarks
 

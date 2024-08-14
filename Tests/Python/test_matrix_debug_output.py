@@ -3,29 +3,13 @@ import platform
 import tempfile
 from pathlib import Path
 
-import ogs.simulator as sim
+import ogs
 import pytest
+from ogs import cli
 
 
 def run(prjpath, outdir, expect_successful):
-    arguments = ["ogs", prjpath, "-o", outdir]
-
-    try:
-        while True:
-            print("Python OpenGeoSys.init ...")
-            status = sim.initialize(arguments)
-
-            if status != 0:
-                break
-
-            print("Python OpenGeoSys.executeSimulation ...")
-            status = sim.executeSimulation()
-
-            break
-    finally:
-        print("Python OpenGeoSys.finalize() ...")
-        sim.finalize()
-
+    status = cli.ogs(prjpath, o=outdir)
     status_expected = 0 if expect_successful else 1
     assert status == status_expected
 
@@ -170,6 +154,10 @@ def test_local_matrix_debug_output(monkeypatch, prefix_parameter, elements_param
         ),  # set env var to a directory that does not exist
         ("", True, True),  # set env var to an empty string
     ],
+)
+@pytest.mark.skipif(
+    ogs.OGS_USE_PETSC == "ON",
+    reason="global matrix output is not implemented for PETSc matrices",
 )
 def test_global_matrix_debug_output(monkeypatch, prefix_parameter):
     srcdir = Path(__file__).parent.parent.parent

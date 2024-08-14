@@ -37,10 +37,10 @@
                             <type>Constant</type>
                             <value>1e-3</value>
                         </property>
-                         <property>
-                             <name>density</name>
-                             <type>Constant</type>
-                             <value>1000</value>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1000</value>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
@@ -335,6 +335,15 @@
             <eigen>
                 <solver_type>SparseLU</solver_type>
             </eigen>
+            <petsc>
+                <parameters>
+                    -ksp_type bcgs
+                    -pc_type lu
+                    -ksp_rtol 1e-8
+                    -ksp_atol 1e-12
+                    -ksp_max_it 4000
+                </parameters>
+            </petsc>
         </linear_solver>
     </linear_solvers>
 </OpenGeoSysProject>

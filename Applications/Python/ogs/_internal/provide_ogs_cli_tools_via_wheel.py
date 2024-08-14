@@ -6,10 +6,6 @@ from pathlib import Path
 
 from . import OGS_USE_PATH
 
-# Here, we assume that this script is installed, e.g., in a virtual environment
-# alongside a "bin" directory.
-OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"
-
 binaries_list = [
     "addDataToRaster",
     "AddElementQuality",
@@ -112,6 +108,12 @@ def ogs_with_args(argv):
 
 
 if "PEP517_BUILD_BACKEND" not in os.environ:
+    # Here, we assume that this script is installed, e.g., in a virtual environment
+    # alongside a "bin" directory.
+    OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"  # installed wheel
+    if not OGS_BIN_DIR.exists():
+        OGS_BIN_DIR = OGS_BIN_DIR.parent  # build directory
+
     if platform.system() == "Windows":
         os.add_dll_directory(OGS_BIN_DIR)
 
@@ -119,7 +121,7 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
         exe = OGS_BIN_DIR / name
         if OGS_USE_PATH:
             exe = name
-        print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
+            print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
         return subprocess.run([exe] + args).returncode  # noqa: PLW1510
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
