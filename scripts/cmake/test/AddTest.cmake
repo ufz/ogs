@@ -292,7 +292,7 @@ function(AddTest)
 
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if("${labels}" MATCHES "TH2M|ThermoRichards")
+    if("${labels}" MATCHES "TH2M|ThermoRichardsMechanics|^HydroMechanics")
         _add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
     endif()
@@ -323,7 +323,7 @@ function(AddTest)
 
     # Run the tester
     _add_test_tester(${TEST_NAME})
-    if("${labels}" MATCHES "TH2M|ThermoRichards")
+    if("${labels}" MATCHES "TH2M|ThermoRichardsMechanics|^HydroMechanics")
         _add_test_tester(${TEST_NAME}-omp)
     endif()
 

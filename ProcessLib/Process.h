@@ -151,6 +151,13 @@ public:
     }
 
     MeshLib::Mesh& getMesh() const { return _mesh; }
+
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>> const&
+    getProcessVariables() const
+    {
+        return _process_variables;
+    }
+
     std::vector<std::reference_wrapper<ProcessVariable>> const&
     getProcessVariables(const int process_id) const
     {

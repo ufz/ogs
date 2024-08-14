@@ -175,10 +175,9 @@ GlobalMatrixOutput::GlobalMatrixOutput()
 }
 
 void GlobalMatrixOutput::operator()(double const t, int const process_id,
-                                    GlobalMatrix const* M,
-                                    GlobalMatrix const* K,
-                                    GlobalVector const& b,
-                                    GlobalMatrix const* const Jac)
+                                    GlobalMatrix const& M,
+                                    GlobalMatrix const& K,
+                                    GlobalVector const& b)
 {
     if (!do_output_)
     {
@@ -188,22 +187,20 @@ void GlobalMatrixOutput::operator()(double const t, int const process_id,
 #ifndef USE_PETSC
     ++counter_;
 
-    if (M)
     {
         auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
                                              process_id, "M", "mat");
 
         fh << "M ";
-        outputGlobalMatrix(*M, fh);
+        outputGlobalMatrix(M, fh);
     }
 
-    if (K)
     {
         auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
                                              process_id, "K", "mat");
 
         fh << "K ";
-        outputGlobalMatrix(*K, fh);
+        outputGlobalMatrix(K, fh);
     }
 
     {
@@ -213,21 +210,47 @@ void GlobalMatrixOutput::operator()(double const t, int const process_id,
         fh << "b ";
         outputGlobalVector(b, fh);
     }
-
-    if (Jac)
-    {
-        auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
-                                             process_id, "Jac", "mat");
-
-        fh << "Jac ";
-        outputGlobalMatrix(*Jac, fh);
-    }
 #else
     // do nothing, warning message already printed in the constructor
     (void)t;
     (void)process_id;
     (void)M;
     (void)K;
+    (void)b;
+#endif
+}
+
+void GlobalMatrixOutput::operator()(double const t, int const process_id,
+                                    GlobalVector const& b,
+                                    GlobalMatrix const& Jac)
+{
+    if (!do_output_)
+    {
+        return;
+    }
+
+#ifndef USE_PETSC
+    ++counter_;
+
+    {
+        auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
+                                             process_id, "b", "vec");
+
+        fh << "b ";
+        outputGlobalVector(b, fh);
+    }
+
+    {
+        auto fh = openGlobalMatrixOutputFile(filenamePrefix_, counter_, t,
+                                             process_id, "Jac", "mat");
+
+        fh << "Jac ";
+        outputGlobalMatrix(Jac, fh);
+    }
+#else
+    // do nothing, warning message already printed in the constructor
+    (void)t;
+    (void)process_id;
     (void)b;
     (void)Jac;
 #endif

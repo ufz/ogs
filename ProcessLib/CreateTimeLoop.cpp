@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <range/v3/algorithm/any_of.hpp>
+#include <range/v3/view/join.hpp>
 #include <string>
 
 #include "BaseLib/ConfigTree.h"
@@ -61,7 +62,7 @@ std::unique_ptr<TimeLoop> createTimeLoop(
             auto const& residuum_vector_names =
                 process->initializeAssemblyOnSubmeshes(smroc.meshes);
 
-            for (auto const& name : residuum_vector_names)
+            for (auto const& name : residuum_vector_names | ranges::views::join)
             {
                 smroc.output.doNotProjectFromBulkMeshToSubmeshes(
                     name, MeshLib::MeshItemType::Node);

@@ -12,6 +12,8 @@
 
 #include <cstdlib>
 #include <fstream>
+#include <range/v3/view/iota.hpp>
+#include <vector>
 
 #include "BaseLib/StringTools.h"
 #include "BaseLib/ThreadException.h"
@@ -19,6 +21,7 @@
 #include "ProcessLib/Assembly/MatrixAssemblyStats.h"
 #include "ProcessLib/Assembly/MatrixElementCache.h"
 #include "ProcessLib/Assembly/MatrixOutput.h"
+#include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 
 namespace
 {
@@ -28,11 +31,11 @@ void assembleWithJacobianOneElement(
     const NumLib::LocalToGlobalIndexMap& dof_table, const double t,
     const double dt, const GlobalVector& x, const GlobalVector& x_prev,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
-    std::vector<GlobalIndexType>& indices,
     ProcessLib::AbstractJacobianAssembler& jacobian_assembler,
     ProcessLib::Assembly::MultiMatrixElementCache& cache)
 {
-    indices = NumLib::getIndices(mesh_item_id, dof_table);
+    std::vector<GlobalIndexType> const& indices =
+        NumLib::getIndices(mesh_item_id, dof_table);
 
     local_b_data.clear();
     local_Jac_data.clear();
@@ -52,6 +55,118 @@ void assembleWithJacobianOneElement(
     }
 
     cache.add(local_b_data, local_Jac_data, indices);
+}
+
+void assembleWithJacobianForStaggeredSchemeOneElement(
+    const std::size_t mesh_item_id,
+    ProcessLib::LocalAssemblerInterface& local_assembler,
+    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
+    const double t, const double dt, std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
+    std::vector<double>& local_b_data, std::vector<double>& local_Jac_data,
+    ProcessLib::AbstractJacobianAssembler& jacobian_assembler,
+    ProcessLib::Assembly::MultiMatrixElementCache& cache)
+{
+    std::vector<std::vector<GlobalIndexType>> indices_of_processes;
+    indices_of_processes.reserve(dof_tables.size());
+    transform(cbegin(dof_tables), cend(dof_tables),
+              back_inserter(indices_of_processes),
+              [&](auto const* dof_table)
+              { return NumLib::getIndices(mesh_item_id, *dof_table); });
+
+    auto local_coupled_xs =
+        ProcessLib::getCoupledLocalSolutions(x, indices_of_processes);
+    auto const local_x = MathLib::toVector(local_coupled_xs);
+
+    auto local_coupled_x_prevs =
+        ProcessLib::getCoupledLocalSolutions(x_prev, indices_of_processes);
+    auto const local_x_prev = MathLib::toVector(local_coupled_x_prevs);
+
+    std::vector<GlobalIndexType> const& indices =
+        indices_of_processes[process_id];
+
+    local_b_data.clear();
+    local_Jac_data.clear();
+
+    jacobian_assembler.assembleWithJacobianForStaggeredScheme(
+        local_assembler, t, dt, local_x, local_x_prev, process_id, local_b_data,
+        local_Jac_data);
+
+    if (local_Jac_data.empty())
+    {
+        OGS_FATAL(
+            "No Jacobian has been assembled! This might be due to "
+            "programming errors in the local assembler of the "
+            "current process.");
+    }
+
+    cache.add(local_b_data, local_Jac_data, indices);
+}
+
+/// Returns a vector of active element ids with corresponding local assemblers.
+std::vector<
+    std::tuple<std::ptrdiff_t,
+               std::reference_wrapper<ProcessLib::LocalAssemblerInterface>>>
+collectActiveLocalAssemblers(
+    BaseLib::PolymorphicRandomAccessContainerView<
+        ProcessLib::LocalAssemblerInterface> const& local_assemblers,
+    std::vector<std::size_t> const& active_elements)
+{
+    auto create_ids_asm_pairs = [&](auto const& element_ids)
+    {
+        std::vector<std::tuple<
+            std::ptrdiff_t,
+            std::reference_wrapper<ProcessLib::LocalAssemblerInterface>>>
+            result;
+        result.reserve(static_cast<std::size_t>(element_ids.size()));
+        for (auto const id : element_ids)
+        {
+            result.push_back({id, local_assemblers[id]});
+        }
+        return result;
+    };
+
+    if (active_elements.empty())
+    {
+        return create_ids_asm_pairs(ranges::views::iota(
+            static_cast<std::size_t>(0), local_assemblers.size()));
+    }
+    return create_ids_asm_pairs(active_elements);
+}
+
+void runAssembly(
+    std::vector<std::tuple<
+        std::ptrdiff_t,
+        std::reference_wrapper<ProcessLib::LocalAssemblerInterface>>> const&
+        ids_local_assemblers,
+    ThreadException& exception,
+    auto local_matrix_output,
+    auto assemble)
+{
+    std::ptrdiff_t n_elements =
+        static_cast<std::ptrdiff_t>(ids_local_assemblers.size());
+
+#pragma omp for nowait
+    for (std::ptrdiff_t i = 0; i < n_elements; ++i)
+    {
+        if (exception)
+        {
+            continue;
+        }
+        auto [element_id, loc_asm] = ids_local_assemblers[i];
+
+        try
+        {
+            assemble(element_id, loc_asm);
+        }
+        catch (...)
+        {
+            exception.capture();
+            continue;
+        }
+
+        local_matrix_output(element_id);
+    }
 }
 
 int getNumberOfThreads()
@@ -120,29 +235,12 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     GlobalVector& b, GlobalMatrix& Jac)
 {
     // checks //////////////////////////////////////////////////////////////////
-    if (process_id != 0)
+    if (dof_tables.size() != xs.size())
     {
-        OGS_FATAL("Process id is not 0 but {}", process_id);
+        OGS_FATAL("Different number of DOF tables and solution vectors.");
     }
 
-    if (dof_tables.size() != 1)
-    {
-        OGS_FATAL("More than 1 dof table");
-    }
-    auto const& dof_table = *(dof_tables.front());
-
-    if (xs.size() != 1)
-    {
-        OGS_FATAL("More than 1 solution vector");
-    }
-    auto const& x = *xs.front();
-
-    if (x_prevs.size() != 1)
-    {
-        OGS_FATAL("More than 1 x_prev vector");
-    }
-    auto const& x_prev = *x_prevs.front();
-
+    std::size_t const number_of_processes = xs.size();
     // algorithm ///////////////////////////////////////////////////////////////
 
     auto stats = CumulativeStats<MultiStats>::create();
@@ -150,7 +248,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
     ConcurrentMatrixView Jac_view(Jac);
 
     ThreadException exception;
-    bool assembly_error = false;
 #pragma omp parallel num_threads(num_threads_)
     {
 #ifdef _OPENMP
@@ -164,7 +261,6 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
         // reallocations.
         std::vector<double> local_b_data;
         std::vector<double> local_Jac_data;
-        std::vector<GlobalIndexType> indices;
 
         // copy to avoid concurrent access
         auto const jac_asm = jacobian_assembler_.copy();
@@ -173,83 +269,50 @@ void ParallelVectorMatrixAssembler::assembleWithJacobian(
         MultiMatrixElementCache cache{b_view, Jac_view,
                                       stats_this_thread->data};
 
+        auto local_matrix_output = [&](std::ptrdiff_t element_id)
+        {
+            local_matrix_output_(t, process_id, element_id, local_b_data,
+                                 local_Jac_data);
+        };
+
         // TODO corner case: what if all elements on a submesh are deactivated?
-        if (active_elements.empty())
+
+        // Monolithic scheme
+        if (number_of_processes == 1)
         {
-            // due to MSVC++ error:
-            // error C3016: 'element_id': index variable in OpenMP 'for'
-            // statement must have signed integral type
-            std::ptrdiff_t const n_loc_asm =
-                static_cast<std::ptrdiff_t>(local_assemblers.size());
+            assert(process_id == 0);
+            auto const& dof_table = *dof_tables[0];
+            auto const& x = *xs[0];
+            auto const& x_prev = *x_prevs[0];
 
-#pragma omp for nowait
-            for (std::ptrdiff_t element_id = 0; element_id < n_loc_asm;
-                 ++element_id)
-            {
-                if (assembly_error)
-                {
-                    continue;
-                }
-                auto& loc_asm = local_assemblers[element_id];
-
-                try
+            runAssembly(
+                collectActiveLocalAssemblers(local_assemblers, active_elements),
+                exception, local_matrix_output,
+                [&](auto element_id, auto& loc_asm)
                 {
                     assembleWithJacobianOneElement(
                         element_id, loc_asm, dof_table, t, dt, x, x_prev,
-                        local_b_data, local_Jac_data, indices, *jac_asm, cache);
-                }
-                catch (...)
-                {
-                    exception.capture();
-                    assembly_error = true;
-                    continue;
-                }
-
-                local_matrix_output_(t, process_id, element_id, local_b_data,
-                                     local_Jac_data);
-            }
+                        local_b_data, local_Jac_data, *jac_asm, cache);
+                });
         }
-        else
+        else  // Staggered scheme
         {
-            // due to MSVC++ error:
-            // error C3016: 'i': index variable in OpenMP 'for' statement must
-            // have signed integral type
-            std::ptrdiff_t const n_act_elem =
-                static_cast<std::ptrdiff_t>(active_elements.size());
-
-#pragma omp for nowait
-            for (std::ptrdiff_t i = 0; i < n_act_elem; ++i)
-            {
-                if (assembly_error)
+            runAssembly(
+                collectActiveLocalAssemblers(local_assemblers, active_elements),
+                exception, local_matrix_output,
+                [&](auto element_id, auto& loc_asm)
                 {
-                    continue;
-                }
-
-                auto const element_id = active_elements[i];
-                auto& loc_asm = local_assemblers[element_id];
-
-                try
-                {
-                    assembleWithJacobianOneElement(
-                        element_id, loc_asm, dof_table, t, dt, x, x_prev,
-                        local_b_data, local_Jac_data, indices, *jac_asm, cache);
-                }
-                catch (...)
-                {
-                    exception.capture();
-                    assembly_error = true;
-                    continue;
-                }
-
-                local_matrix_output_(t, process_id, element_id, local_b_data,
-                                     local_Jac_data);
-            }
+                    assembleWithJacobianForStaggeredSchemeOneElement(
+                        element_id, loc_asm, dof_tables, t, dt, xs, x_prevs,
+                        process_id, local_b_data, local_Jac_data, *jac_asm,
+                        cache);
+                });
         }
-    }  // OpenMP parallel section
+    }
 
     stats->print();
 
-    global_matrix_output_(t, process_id, nullptr, nullptr, b, &Jac);
+    global_matrix_output_(t, process_id, b, Jac);
     exception.rethrow();
 }
 }  // namespace ProcessLib::Assembly

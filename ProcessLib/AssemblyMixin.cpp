@@ -10,6 +10,10 @@
 
 #include "AssemblyMixin.h"
 
+#include <range/v3/view/enumerate.hpp>
+#include <range/v3/view/for_each.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip.hpp>
 #include <unordered_set>
 
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
@@ -18,30 +22,79 @@
 
 namespace
 {
-std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>
-createResiduumVectors(
-    MeshLib::Mesh& mesh,
-    std::vector<std::string> const& residuum_names,
-    std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
-        pvs)
+
+void checkResiduumNamesVsProcessVariables(
+    std::vector<std::vector<std::string>> const& per_process_residuum_names,
+    std::vector<
+        std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>> const&
+        per_process_pvs)
 {
-    auto const num_residua = residuum_names.size();
-
-    std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>
-        residuum_vectors;
-    residuum_vectors.reserve(num_residua);
-
-    for (std::size_t i = 0; i < num_residua; ++i)
+    if (per_process_pvs.size() != per_process_residuum_names.size())
     {
-        auto const& residuum_name = residuum_names[i];
-        auto const& pv = pvs[i].get();
-
-        residuum_vectors.emplace_back(*MeshLib::getOrCreateMeshProperty<double>(
-            mesh, residuum_name, MeshLib::MeshItemType::Node,
-            pv.getNumberOfGlobalComponents()));
+        OGS_FATAL(
+            "The number of passed residuum names ({}) does not match the "
+            "number of processes ({}).",
+            per_process_residuum_names.size(), per_process_pvs.size());
     }
 
-    return residuum_vectors;
+    auto check_sizes = [](std::size_t const process_id, auto const& rns_pvs)
+    {
+        auto const& [rns, pvs] = rns_pvs;
+
+        if (rns.size() != pvs.size())
+        {
+            OGS_FATAL(
+                "The number of passed residuum names ({}) does not match the "
+                "number of process variables ({}) for process {}.",
+                rns.size(), pvs.size(), process_id);
+        }
+    };
+    for (auto const& [process_id, rns_pvs] :
+         ranges::views::zip(per_process_residuum_names, per_process_pvs) |
+             ranges::views::enumerate)
+    {
+        check_sizes(process_id, rns_pvs);
+    }
+}
+
+std::vector<
+    std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>>
+createResiduumVectors(
+    MeshLib::Mesh& mesh,
+    std::vector<std::vector<std::string>> const& per_process_residuum_names,
+    std::vector<
+        std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>> const&
+        per_process_pvs)
+{
+    checkResiduumNamesVsProcessVariables(per_process_residuum_names,
+                                         per_process_pvs);
+
+    auto create_mesh_property_for_residuum =
+        [&mesh](std::pair<std::string const&,
+                          ProcessLib::ProcessVariable const&> const&
+                    residuum_name_process_variable)
+        -> std::reference_wrapper<MeshLib::PropertyVector<double>>
+    {
+        auto const& [rn, pv] = residuum_name_process_variable;
+        return *MeshLib::getOrCreateMeshProperty<double>(
+            mesh, rn, MeshLib::MeshItemType::Node,
+            pv.getNumberOfGlobalComponents());
+    };
+
+    auto create_mesh_properties =
+        [&create_mesh_property_for_residuum](auto const& rns_pvs)
+    {
+        auto const& [rns, pvs] = rns_pvs;
+        return ranges::views::zip(rns, pvs) |
+               ranges::views::transform(create_mesh_property_for_residuum) |
+               ranges::to<std::vector<
+                   std::reference_wrapper<MeshLib::PropertyVector<double>>>>;
+    };
+
+    return ranges::views::zip(per_process_residuum_names, per_process_pvs) |
+           ranges::views::transform(create_mesh_properties) |
+           ranges::to<std::vector<std::vector<
+               std::reference_wrapper<MeshLib::PropertyVector<double>>>>>;
 }
 }  // namespace
 
@@ -49,7 +102,8 @@ namespace ProcessLib
 {
 SubmeshAssemblyData::SubmeshAssemblyData(
     MeshLib::Mesh const& mesh,
-    std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>&&
+    std::vector<
+        std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>>&&
         residuum_vectors)
     : bulk_element_ids{*MeshLib::bulkElementIDs(mesh)},
       bulk_node_ids{*MeshLib::bulkNodeIDs(mesh)},
@@ -58,23 +112,13 @@ SubmeshAssemblyData::SubmeshAssemblyData(
 }
 
 void AssemblyMixinBase::initializeAssemblyOnSubmeshes(
-    const int process_id,
     MeshLib::Mesh& bulk_mesh,
     std::vector<std::reference_wrapper<MeshLib::Mesh>> const& submeshes,
-    std::vector<std::string> const& residuum_names,
-    std::vector<std::reference_wrapper<ProcessVariable>> const& pvs)
+    std::vector<std::vector<std::string>> const& residuum_names,
+    std::vector<std::vector<std::reference_wrapper<ProcessVariable>>> const&
+        pvs)
 {
     DBUG("AssemblyMixinBase initializeSubmeshOutput().");
-
-    auto const num_residua = residuum_names.size();
-
-    if (pvs.size() != num_residua)
-    {
-        OGS_FATAL(
-            "The number of passed residuum names does not match the number "
-            "of process variables for process id {}: {} != {}",
-            process_id, num_residua, pvs.size());
-    }
 
     submesh_assembly_data_.reserve(submeshes.size());
     for (auto& mesh_ref : submeshes)
@@ -184,16 +228,18 @@ void AssemblyMixinBase::copyResiduumVectorsToBulkMesh(
 }
 
 void AssemblyMixinBase::copyResiduumVectorsToSubmesh(
+    int const process_id,
     GlobalVector const& rhs,
     NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
     SubmeshAssemblyData const& sad)
 {
-    for (std::size_t variable_id = 0; variable_id < sad.residuum_vectors.size();
+    auto const& residuum_vectors = sad.residuum_vectors[process_id];
+    for (std::size_t variable_id = 0; variable_id < residuum_vectors.size();
          ++variable_id)
     {
         transformVariableFromGlobalVector(
             rhs, variable_id, local_to_global_index_map,
-            sad.residuum_vectors[variable_id].get(), sad.bulk_node_ids,
+            residuum_vectors[variable_id].get(), sad.bulk_node_ids,
             std::negate<double>());
     }
 }

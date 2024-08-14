@@ -84,7 +84,7 @@ function(OgsTest)
 
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if("${labels}" MATCHES "TH2M|ThermoRichards")
+    if("${labels}" MATCHES "TH2M|ThermoRichardsMechanics|^HydroMechanics")
         _ogs_add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
     endif()

@@ -24,13 +24,15 @@ struct SubmeshAssemblyData
 {
     explicit SubmeshAssemblyData(
         MeshLib::Mesh const& mesh,
-        std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>&&
+        std::vector<std::vector<
+            std::reference_wrapper<MeshLib::PropertyVector<double>>>>&&
             residuum_vectors);
 
     MeshLib::PropertyVector<std::size_t> const& bulk_element_ids;
     MeshLib::PropertyVector<std::size_t> const& bulk_node_ids;
     std::vector<std::size_t> active_element_ids;
-    std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>
+    std::vector<
+        std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>>
         residuum_vectors;
 };
 
@@ -50,11 +52,11 @@ protected:
         : pvma_{jacobian_assembler} {};
 
     void initializeAssemblyOnSubmeshes(
-        const int process_id,
         MeshLib::Mesh& bulk_mesh,
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& submeshes,
-        std::vector<std::string> const& residuum_names,
-        std::vector<std::reference_wrapper<ProcessVariable>> const& pvs);
+        std::vector<std::vector<std::string>> const& residuum_names,
+        std::vector<std::vector<std::reference_wrapper<ProcessVariable>>> const&
+            pvs);
 
     void updateActiveElements(ProcessLib::Process const& process);
 
@@ -65,6 +67,7 @@ protected:
             residuum_vectors);
 
     static void copyResiduumVectorsToSubmesh(
+        int const process_id,
         GlobalVector const& rhs,
         NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
         SubmeshAssemblyData const& sad);
@@ -74,7 +77,8 @@ private:
 
 protected:
     std::vector<SubmeshAssemblyData> submesh_assembly_data_;
-    std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>
+    std::vector<
+        std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>>
         residuum_vectors_bulk_;
 
     /// ID of the b vector on submeshes, cf. NumLib::VectorProvider.
@@ -122,13 +126,12 @@ public:
      * and staggered coupling.
      */
     void initializeAssemblyOnSubmeshes(
-        const int process_id,
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& submeshes,
-        std::vector<std::string> const& residuum_names)
+        std::vector<std::vector<std::string>> const& residuum_names)
     {
         AssemblyMixinBase::initializeAssemblyOnSubmeshes(
-            process_id, derived().getMesh(), submeshes, residuum_names,
-            derived().getProcessVariables(process_id));
+            derived().getMesh(), submeshes, residuum_names,
+            derived().getProcessVariables());
     }
 
     void updateActiveElements()
@@ -161,9 +164,8 @@ public:
         DBUG("AssemblyMixin assembleWithJacobian(t={}, dt={}, process_id={}).",
              t, dt, process_id);
 
-        // TODO why not getDOFTables(x.size()); ?
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const dof_tables{
-            derived()._local_to_global_index_map.get()};
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const dof_tables =
+            derived().getDOFTables(x.size());
 
         auto const& loc_asms = derived().local_assemblers_;
 
@@ -183,25 +185,20 @@ public:
                 MathLib::LinAlg::axpy(b, 1.0, b_submesh);
 
                 AssemblyMixinBase::copyResiduumVectorsToSubmesh(
-                    b_submesh, *(dof_tables.front()), sad);
+                    process_id, b_submesh, *(dof_tables[process_id]), sad);
             }
 
             NumLib::GlobalVectorProvider::provider.releaseVector(b_submesh);
         }
         else
         {
-            // convention: process variable 0 governs where assembly takes
-            // place (active element IDs)
-            ProcessLib::ProcessVariable const& pv =
-                derived().getProcessVariables(process_id)[0];
-
-            pvma_.assembleWithJacobian(loc_asms, pv.getActiveElementIDs(),
-                                       dof_tables, t, dt, x, x_prev, process_id,
-                                       b, Jac);
+            pvma_.assembleWithJacobian(
+                loc_asms, derived().getActiveElementIDs(), dof_tables, t, dt, x,
+                x_prev, process_id, b, Jac);
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(
-            b, *(dof_tables.front()), residuum_vectors_bulk_);
+            b, *(dof_tables[process_id]), residuum_vectors_bulk_[process_id]);
     }
 
 private:

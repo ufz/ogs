@@ -32,8 +32,10 @@ public:
     /// \attention \c meshes must be a must be a non-overlapping cover of the
     /// entire simulation domain (bulk mesh)!
     ///
-    /// \return The names of the residuum vectors that will be assembled.
-    virtual std::vector<std::string> initializeAssemblyOnSubmeshes(
+    /// \return The names of the residuum vectors that will be assembled for
+    /// each process: outer vector of size 1 for monolithic schemes and greater
+    /// for staggered schemes.
+    virtual std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
     {
         DBUG(

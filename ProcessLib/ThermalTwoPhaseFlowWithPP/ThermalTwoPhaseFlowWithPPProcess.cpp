@@ -96,7 +96,7 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleConcreteProcess(
         getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
         &b);
 
-    _global_output(t, process_id, &M, &K, b);
+    _global_output(t, process_id, M, K, b);
 }
 
 void ThermalTwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
@@ -115,7 +115,7 @@ void ThermalTwoPhaseFlowWithPPProcess::assembleWithJacobianConcreteProcess(
         _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
         process_id, &b, &Jac);
 
-    _global_output(t, process_id, nullptr, nullptr, b, &Jac);
+    _global_output(t, process_id, b, Jac);
 }
 
 void ThermalTwoPhaseFlowWithPPProcess::preTimestepConcreteProcess(
