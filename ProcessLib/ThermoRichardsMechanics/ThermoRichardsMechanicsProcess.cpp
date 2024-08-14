@@ -81,12 +81,12 @@ void ThermoRichardsMechanicsProcess<DisplacementDim,
                                     ConstitutiveTraits>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
-        _mesh, _mesh.getNodes(), process_data_.use_TaylorHood_elements);
+    _mesh_subset_all_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     // Create single component dof in the mesh's base nodes.
     base_nodes_ = MeshLib::getBaseNodes(_mesh.getElements());
-    mesh_subset_base_nodes_ = std::make_unique<MeshLib::MeshSubset>(
-        _mesh, base_nodes_, process_data_.use_TaylorHood_elements);
+    mesh_subset_base_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, base_nodes_);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
@@ -96,7 +96,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim,
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all__meshsubsets_single_component),
             // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
+            NumLib::ComponentOrder::BY_LOCATION,
+            process_data_.use_TaylorHood_elements);
 
     // For temperature, which is the first variable.
     std::vector<MeshLib::MeshSubset> all__meshsubsets{*mesh_subset_base_nodes_};
@@ -116,7 +117,8 @@ void ThermoRichardsMechanicsProcess<DisplacementDim,
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all__meshsubsets), vec_n_components,
-            NumLib::ComponentOrder::BY_LOCATION);
+            NumLib::ComponentOrder::BY_LOCATION,
+            process_data_.use_TaylorHood_elements);
     assert(_local_to_global_index_map);
 }
 

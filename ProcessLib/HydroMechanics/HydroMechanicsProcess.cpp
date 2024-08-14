@@ -101,13 +101,13 @@ template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     // Create single component dof in every of the mesh's nodes.
-    _mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
-        _mesh, _mesh.getNodes(), process_data_.use_taylor_hood_elements);
+    _mesh_subset_all_nodes =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
 
     // Create single component dof in the mesh's base nodes.
     base_nodes_ = MeshLib::getBaseNodes(_mesh.getElements());
-    mesh_subset_base_nodes_ = std::make_unique<MeshLib::MeshSubset>(
-        _mesh, base_nodes_, process_data_.use_taylor_hood_elements);
+    mesh_subset_base_nodes_ =
+        std::make_unique<MeshLib::MeshSubset>(_mesh, base_nodes_);
 
     // TODO move the two data members somewhere else.
     // for extrapolation of secondary variables of stress or strain
@@ -117,7 +117,8 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION);
+            NumLib::ComponentOrder::BY_LOCATION,
+            process_data_.use_taylor_hood_elements);
 
     if (process_data_.isMonolithicSchemeUsed())
     {
@@ -137,7 +138,8 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         _local_to_global_index_map =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
-                NumLib::ComponentOrder::BY_LOCATION);
+                NumLib::ComponentOrder::BY_LOCATION,
+                process_data_.use_taylor_hood_elements);
         assert(_local_to_global_index_map);
     }
     else
@@ -155,7 +157,8 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         _local_to_global_index_map =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
-                NumLib::ComponentOrder::BY_LOCATION);
+                NumLib::ComponentOrder::BY_LOCATION,
+                process_data_.use_taylor_hood_elements);
 
         // For pressure equation.
         // Collect the mesh subsets with base nodes in a vector.
@@ -165,7 +168,8 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets_base_nodes),
                 // by location order is needed for output
-                NumLib::ComponentOrder::BY_LOCATION);
+                NumLib::ComponentOrder::BY_LOCATION,
+                process_data_.use_taylor_hood_elements);
 
         sparsity_pattern_with_linear_element_ = NumLib::computeSparsityPattern(
             *local_to_global_index_map_with_base_nodes_, _mesh);

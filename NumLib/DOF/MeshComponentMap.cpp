@@ -17,7 +17,8 @@ using namespace detail;
 
 #ifdef USE_PETSC
 MeshComponentMap::MeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
+    bool const use_taylor_hood_elements)
 {
     // Use PETSc with single thread
     const MeshLib::NodePartitionedMesh& partitioned_mesh =
@@ -30,12 +31,14 @@ MeshComponentMap::MeshComponentMap(
     }
     else
     {
-        createParallelMeshComponentMap(components, order);
+        createParallelMeshComponentMap(components, order,
+                                       use_taylor_hood_elements);
     }
 }
 #else
 MeshComponentMap::MeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
+    [[maybe_unused]] bool const use_taylor_hood_elements)
 {
     createSerialMeshComponentMap(components, order);
 }
@@ -373,7 +376,8 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
 }
 
 void MeshComponentMap::createParallelMeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
+    bool const use_taylor_hood_elements)
 {
     if (order != ComponentOrder::BY_LOCATION)
     {
@@ -436,7 +440,7 @@ void MeshComponentMap::createParallelMeshComponentMap(
             const auto global_node_id =
                 partitioned_mesh.getGlobalNodeID(node_id);
             GlobalIndexType global_index =
-                (!c.useTaylorHoodElements())
+                (!use_taylor_hood_elements)
                     ? static_cast<GlobalIndexType>(
                           n_components * global_node_id + comp_id)
                     : getGlobalIndexWithTaylorHoodElement(
