@@ -19,6 +19,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
+#include "MathLib/Point3d.h"
 #include "GeoLib/Point.h"
 
 namespace FileIO
@@ -270,37 +271,24 @@ std::optional<std::array<double, 3>> readCoordinates(std::string const& line)
     }
 }
 
-GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
-    std::string const& fname)
+GeoLib::RasterHeader getXyzHeader(std::vector<std::string> lines)
 {
-    std::ifstream in(fname.c_str());
-    if (!in.is_open())
-    {
-        ERR("Raster::getRasterFromXyzFile() - Could not open file {:s}", fname);
-        return nullptr;
-    }
-
-    auto const string_lines = readFile(in);
-    in.close();
-
-    auto coords = readCoordinates(string_lines[0]);
-    if (coords == std::nullopt)
-    {
-        return nullptr;
-    }
-    double x_min = (*coords)[0];
-    double x_max = (*coords)[0];
-    double y_min = (*coords)[1];
-    double y_max = (*coords)[1];
+    double x_min = std::numeric_limits<double>::max();
+    double x_max = -std::numeric_limits<double>::max();
+    double y_min = std::numeric_limits<double>::max();
+    double y_max = -std::numeric_limits<double>::max();
     double cellsize = std::numeric_limits<double>::max();
+    std::optional<std::array<double, 3>> coords;
 
-    std::size_t const n_lines(string_lines.size());
-    for (std::size_t i = 1; i < n_lines; ++i)
+    std::size_t const n_lines(lines.size());
+    for (std::size_t i = 0; i < n_lines; ++i)
     {
-        coords = readCoordinates(string_lines[i]);
+        coords = readCoordinates(lines[i]);
         if (coords == std::nullopt)
         {
-            return nullptr;
+            MathLib::Point3d org(std::array<double, 3>{{0, 0, 0}});
+            GeoLib::RasterHeader fail = {0, 0, 0, org, 0, 0};
+            return fail;
         }
         double const diff = (*coords)[0] - x_min;
         if (diff > 0)
@@ -321,14 +309,37 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
     header.n_depth = 1;
     header.origin[0] = x_min;
     header.origin[1] = y_min;
+    return header;
+}
 
+GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
+    std::string const& fname)
+{
+    std::ifstream in(fname.c_str());
+    if (!in.is_open())
+    {
+        ERR("Raster::getRasterFromXyzFile() - Could not open file {:s}", fname);
+        return nullptr;
+    }
+
+    auto const string_lines = readFile(in);
+    in.close();
+
+    auto const header = getXyzHeader(string_lines);
+    if (header.n_cols == 0 && header.n_rows == 0)
+    {
+        return nullptr;
+    }
+
+    std::optional<std::array<double, 3>> coords;
     std::vector<double> values(header.n_cols * header.n_rows, -9999);
+    std::size_t const n_lines(string_lines.size());
     for (std::size_t i = 0; i < n_lines; ++i)
     {
         coords = readCoordinates(string_lines[i]);
         std::size_t const idx = static_cast<std::size_t>(
-            (header.n_cols * (((*coords)[1] - y_min) / cellsize)) +
-            (((*coords)[0] - x_min) / cellsize));
+            (header.n_cols * (((*coords)[1] - header.origin[1]) / header.cell_size)) +
+            (((*coords)[0] - header.origin[0]) / header.cell_size));
         values[idx] = (*coords)[2];
     }
     return new GeoLib::Raster(header, values.begin(), values.end());
