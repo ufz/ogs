@@ -244,23 +244,30 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromSurferFile(
     return new GeoLib::Raster(header, values.begin(), values.end());
 }
 
-std::optional<std::array<double, 3>> readCoordinates(std::istream& in)
+std::vector<std::string> readFile(std::istream& in)
 {
+    std::vector<std::string> lines;
     std::string line("");
-    if (std::getline(in, line))
+    while (std::getline(in, line))
     {
-        std::array<double, 3> coords;
-        if (std::sscanf(line.c_str(), "%lf %lf %lf", &coords[0], &coords[1],
-                        &coords[2]) == 3)
-        {
-            return coords;
-        }
-        else
-        {
-            OGS_FATAL("Could not parse coordinates in readCoordinates().");
-        }
+        lines.emplace_back(line);
     }
-    return std::nullopt;
+    return lines;
+}
+
+std::optional<std::array<double, 3>> readCoordinates(std::string const& line)
+{
+    std::array<double, 3> coords;
+    if (std::sscanf(line.c_str(), "%lf %lf %lf", &coords[0], &coords[1],
+                    &coords[2]) == 3)
+    {
+        return coords;
+    }
+    else
+    {
+        ERR("Raster::getRasterFromXyzFile() - Unexpected file format:\n{:s}, line");
+        return std::nullopt;
+    }
 }
 
 GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
@@ -273,7 +280,10 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
         return nullptr;
     }
 
-    auto coords = readCoordinates(in);
+    auto const string_lines = readFile(in);
+    in.close();
+
+    auto coords = readCoordinates(string_lines[0]);
     if (coords == std::nullopt)
     {
         return nullptr;
@@ -284,17 +294,24 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
     double y_max = (*coords)[1];
     double cellsize = std::numeric_limits<double>::max();
 
-    while ((coords = readCoordinates(in)))
+    std::size_t const n_lines(string_lines.size());
+    for (std::size_t i = 1; i < n_lines; ++i)
     {
+        coords = readCoordinates(string_lines[i]);
+        if (coords == std::nullopt)
+        {
+            return nullptr;
+        }
         double const diff = (*coords)[0] - x_min;
         if (diff > 0)
+        {
             cellsize = std::min(cellsize, diff);
+        }
         x_min = std::min((*coords)[0], x_min);
         x_max = std::max((*coords)[0], x_max);
         y_min = std::min((*coords)[1], y_min);
         y_max = std::max((*coords)[1], y_max);
     }
-    in.close();
 
     GeoLib::RasterHeader header;
     header.cell_size = cellsize;
@@ -306,15 +323,14 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
     header.origin[1] = y_min;
 
     std::vector<double> values(header.n_cols * header.n_rows, -9999);
-    in.open(fname);
-    while ((coords = readCoordinates(in)))
+    for (std::size_t i = 0; i < n_lines; ++i)
     {
-        std::size_t idx = static_cast<std::size_t>(
+        coords = readCoordinates(string_lines[i]);
+        std::size_t const idx = static_cast<std::size_t>(
             (header.n_cols * (((*coords)[1] - y_min) / cellsize)) +
             (((*coords)[0] - x_min) / cellsize));
         values[idx] = (*coords)[2];
     }
-    in.close();
     return new GeoLib::Raster(header, values.begin(), values.end());
 }
 
