@@ -262,6 +262,12 @@ public:
         }
     }
 
+    /// Returns number of read integration points.
+    std::size_t setIPDataInitialConditions(
+        std::string_view const name,
+        double const* values,
+        int const integration_order) override;
+
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
                   std::vector<double> const& /*local_x_prev*/,
@@ -287,7 +293,27 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            _ip_data[ip].pushBackState();
+            auto& ip_data = _ip_data[ip];
+
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, _element.getID(), ip,
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        _element, ip_data.N))};
+
+            /// Set initial stress from parameter.
+            if (_process_data.initial_stress.value)
+            {
+                ip_data.sigma =
+                    MathLib::KelvinVector::symmetricTensorToKelvinVector<
+                        DisplacementDim>((*_process_data.initial_stress.value)(
+                        std::numeric_limits<
+                            double>::quiet_NaN() /* time independent */,
+                        x_position));
+            }
+
+            ip_data.pushBackState();
         }
     }
 
@@ -326,6 +352,13 @@ public:
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
+
+    // TODO (naumov) This method is same as getIntPtSigma but for arguments and
+    // the ordering of the cache_mat.
+    // There should be only one.
+    std::vector<double> getSigma() const override;
+
+    std::vector<double> getEpsilon() const override;
 
 private:
     std::vector<double> const& getIntPtSigma(

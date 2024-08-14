@@ -415,5 +415,73 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
     surface_energy += element_surface_energy;
     pressure_work += element_pressure_work;
 }
+
+template <typename ShapeFunctionDisplacement, int DisplacementDim>
+std::size_t PhaseFieldLocalAssembler<
+    ShapeFunctionDisplacement,
+    DisplacementDim>::setIPDataInitialConditions(std::string_view const name,
+                                                 double const* values,
+                                                 int const integration_order)
+{
+    if (integration_order !=
+        static_cast<int>(_integration_method.getIntegrationOrder()))
+    {
+        OGS_FATAL(
+            "Setting integration point initial conditions; The integration "
+            "order of the local assembler for element {:d} is different from "
+            "the integration order in the initial condition.",
+            _element.getID());
+    }
+
+    if (name == "sigma")
+    {
+        if (_process_data.initial_stress.value != nullptr)
+        {
+            OGS_FATAL(
+                "Setting initial conditions for stress from integration "
+                "point data and from a parameter '{:s}' is not possible "
+                "simultaneously.",
+                _process_data.initial_stress.value->name);
+        }
+
+        return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
+            values, _ip_data, &IpData::sigma);
+    }
+
+    return 0;
+}
+
+template <typename ShapeFunctionDisplacement, int DisplacementDim>
+std::vector<double> PhaseFieldLocalAssembler<ShapeFunctionDisplacement,
+                                             DisplacementDim>::getSigma() const
+{
+    return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+        _ip_data, &IpData::sigma);
+}
+
+template <typename ShapeFunctionDisplacement, int DisplacementDim>
+std::vector<double> PhaseFieldLocalAssembler<
+    ShapeFunctionDisplacement, DisplacementDim>::getEpsilon() const
+{
+    auto const kelvin_vector_size =
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    std::vector<double> ip_epsilon_values;
+    auto cache_mat = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, Eigen::Dynamic, kelvin_vector_size, Eigen::RowMajor>>(
+        ip_epsilon_values, n_integration_points, kelvin_vector_size);
+
+    for (unsigned ip = 0; ip < n_integration_points; ++ip)
+    {
+        auto const& eps = _ip_data[ip].eps;
+        cache_mat.row(ip) =
+            MathLib::KelvinVector::kelvinVectorToSymmetricTensor(eps);
+    }
+
+    return ip_epsilon_values;
+}
+
 }  // namespace PhaseField
 }  // namespace ProcessLib

@@ -17,6 +17,7 @@
 #include "PhaseFieldFEM.h"
 #include "ProcessLib/Process.h"
 #include "ProcessLib/SmallDeformation/CreateLocalAssemblers.h"
+#include "ProcessLib/Utils/SetIPDataInitialConditions.h"
 
 namespace ProcessLib
 {
@@ -47,6 +48,13 @@ PhaseFieldProcess<DisplacementDim>::PhaseFieldProcess(
 
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
+            "sigma_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order, _local_assemblers,
+            &LocalAssemblerInterface::getSigma));
 }
 
 template <int DisplacementDim>
@@ -158,6 +166,9 @@ void PhaseFieldProcess<DisplacementDim>::initializeConcreteProcess(
                              DisplacementDim>::RowsAtCompileTime,
                          getExtrapolator(), _local_assemblers,
                          &LocalAssemblerInterface::getIntPtEpsilonTensile));
+
+    setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
+                               _local_assemblers);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(

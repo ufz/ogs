@@ -23,6 +23,14 @@ struct PhaseFieldLocalAssemblerInterface
     : public ProcessLib::LocalAssemblerInterface,
       public NumLib::ExtrapolatableElement
 {
+    virtual std::size_t setIPDataInitialConditions(
+        std::string_view const name, double const* values,
+        int const integration_order) = 0;
+
+    virtual std::vector<double> getSigma() const = 0;
+
+    virtual std::vector<double> getEpsilon() const = 0;
+
     virtual std::vector<double> const& getIntPtSigma(
         const double t,
         std::vector<GlobalVector*> const& x,
