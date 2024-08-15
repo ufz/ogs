@@ -367,9 +367,6 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         // Append to python's module search path
         auto py_path = py::module::import("sys").attr("path");
         py_path.attr("append")(script_directory);  // .prj or -s directory
-        // virtualenv
-        py_path.attr("append")(
-            CMakeInfoLib::CMakeInfo::python_virtualenv_sitepackages);
 
         auto const script_path =
             BaseLib::copyPathToFileName(*python_script, script_directory);
