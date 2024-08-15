@@ -94,12 +94,11 @@
             echo "ctest arguments: ${ctest_arguments}"
             maybe_run_with_xvfb ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
-                --test-dir "${build_dir_full}" -T Start -T Test \
+                --test-dir "${build_dir_full}" -T Start -T Test -T Submit \
                 ${ctest_arguments} \
                 --output-junit Tests/ctest.xml \
                 --stop-time "`date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`" \
                 --no-tests=error
-            ctest --test-dir "${build_dir_full}" -T Submit || true
           fi
         fi
 
