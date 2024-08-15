@@ -266,12 +266,12 @@ std::optional<std::array<double, 3>> readCoordinates(std::string const& line)
     }
     else
     {
-        ERR("Raster::getRasterFromXyzFile() - Unexpected file format:\n{:s}, line");
+        ERR("Raster::getRasterFromXyzFile() - Unexpected file format:\n{:s}", line);
         return std::nullopt;
     }
 }
 
-GeoLib::RasterHeader getXyzHeader(std::vector<std::string> lines)
+GeoLib::RasterHeader getXyzHeader(std::vector<std::string> const& lines)
 {
     double x_min = std::numeric_limits<double>::max();
     double x_max = -std::numeric_limits<double>::max();

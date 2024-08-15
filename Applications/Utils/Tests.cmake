@@ -1332,6 +1332,16 @@ AddTest(
 )
 
 AddTest(
+    NAME Incomplete_XYZ_Raster2asc_Test
+    PATH FileIO/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
+    EXECUTABLE Raster2ASC
+    EXECUTABLE_ARGS -i XyzIncompleteTest.xyz -o ${Data_BINARY_DIR}/FileIO/XyzIncompleteTest.asc
+    TESTER diff
+    DIFF_DATA XyzIncompleteTest.asc
+)
+
+AddTest(
     NAME grd2asc_Test
     PATH FileIO/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO
