@@ -10,8 +10,9 @@
 
 #include "ogs_embedded_python.h"
 
-#include <algorithm>
 #include <pybind11/embed.h>
+
+#include <algorithm>
 
 #include "BaseLib/Logging.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryConditionModule.h"
@@ -25,6 +26,19 @@ PYBIND11_EMBEDDED_MODULE(OpenGeoSys, m)
     ProcessLib::pythonBindBoundaryCondition(m);
     ProcessLib::bheInflowpythonBindBoundaryCondition(m);
     ProcessLib::SourceTerms::Python::pythonBindSourceTerm(m);
+
+    // Check for activated virtual environment and add it to sys.path
+    pybind11::exec(R"(
+        import os
+        import sys
+        if "VIRTUAL_ENV" in os.environ:
+            venv_site_packages_path = f"{os.environ['VIRTUAL_ENV']}/lib/python{sys.version_info.major}.{sys.version_info.minor}/site-packages"
+            if os.path.exists(venv_site_packages_path):
+                print(
+                    f"Virtual environment detected, adding {venv_site_packages_path} to sys.path."
+                )
+                sys.path.insert(0, venv_site_packages_path)
+    )");
 }
 
 #ifndef OGS_BUILD_SHARED_LIBS
