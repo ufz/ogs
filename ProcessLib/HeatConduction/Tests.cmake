@@ -452,6 +452,15 @@ AddTest(
     line_1_line_1e2_ts_500_t_39062500.000000_reference.vtu line_1_line_1e2_ts_500_t_39062500.000000.vtu temperature temperature 1e-10 0.0
 )
 
+# failing test - mesh not found
+AddTest(
+    NAME 1D_HeatConduction_dirichlet_SourceTerm_fail_mesh_not_found
+    PATH Parabolic/T/1D_dirichlet_source-term
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS line_1_line_1e2_source_term_fail_mesh_not_found.xml
+    PROPERTIES PASS_REGULAR_EXPRESSION "Could not read mesh from '.*' file[.] No mesh added[.]"
+)
+
 AddTest(
         NAME HeatConduction_t1_1Dsource
         PATH Parabolic/T/t1_1Dsource
