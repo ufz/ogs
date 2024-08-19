@@ -77,7 +77,7 @@ publish wheels:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
     - when: never
   script:
-    - pipx run build --sdist --outdir wheelhouse
+    - PEP517_BUILD_BACKEND=1 pipx run build --sdist --outdir wheelhouse
     - >
       pipx run twine upload
       ${PYPI_REPO}
@@ -92,7 +92,7 @@ publish wheels to pypi (dev):
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       when: manual
   script:
-    - pipx run build --sdist --outdir wheelhouse
+    - PEP517_BUILD_BACKEND=1 pipx run build --sdist --outdir wheelhouse
     - >
       pipx run twine upload --repository pypi
       --username __token__ --password ${PYPI_TOKEN}
