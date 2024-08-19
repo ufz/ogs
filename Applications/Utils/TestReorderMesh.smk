@@ -77,7 +77,7 @@ rule execute_ogs:
         """
         (
         cd cube_1x1x1_{wildcards.type}_{wildcards.lx}x{wildcards.ly}x{wildcards.lz}_{wildcards.number_of_partitions}
-        mpirun -np {wildcards.number_of_partitions} ogs {prj_base_name}.prj -o results/
+        mpirun --bind-to none -np {wildcards.number_of_partitions} ogs {prj_base_name}.prj -o results/
         )
         """
 

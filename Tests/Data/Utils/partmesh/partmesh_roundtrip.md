@@ -28,7 +28,7 @@ num_partitions = 4
 ```
 
 ```python
-! cd {out_dir} && mpirun -np {num_partitions} binaryToPVTU -i {input_mesh_basename} -o {input_mesh_basename}
+! cd {out_dir} && mpirun --bind-to none -np {num_partitions} binaryToPVTU -i {input_mesh_basename} -o {input_mesh_basename}
 ```
 
 Please note that `binaryToPVTU` has to be run with MPI and is therefore available on OGS PETSc configurations only.
