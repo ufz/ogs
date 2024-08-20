@@ -176,8 +176,9 @@ set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
 add_custom_target(tests-cleanup ${CMAKE_COMMAND} -E remove -f testrunner.xml)
 
 if(OGS_USE_PETSC)
+    set(MPIRUN_ARGS --bind-to none)
     if("${HOSTNAME}" MATCHES "frontend.*")
-        set(MPIRUN_ARGS --mca btl_openib_allow_ib 1 --bind-to none)
+        list(APPEND MPIRUN_ARGS --mca btl_openib_allow_ib 1)
     endif()
     set(TEST_FILTER_MPI --gtest_filter=-MPITest*)
     add_custom_target(tests

@@ -99,8 +99,9 @@ function(AddTest)
     if(NOT DEFINED AddTest_RUNTIME)
         set(AddTest_RUNTIME 1)
     elseif(AddTest_RUNTIME GREATER 750)
-        # Set a timeout on jobs larger than the default ctest timeout of 1500 (s).
-        # The allowed runtime is twice as long as the given RUNTIME parameter.
+        # Set a timeout on jobs larger than the default ctest timeout of 1500
+        # (s). The allowed runtime is twice as long as the given RUNTIME
+        # parameter.
         math(EXPR timeout "${AddTest_RUNTIME} * 2")
         set(timeout TIMEOUT ${timeout})
     endif()
@@ -152,10 +153,9 @@ function(AddTest)
     elseif(AddTest_WRAPPER STREQUAL "mpirun")
         if(MPIRUN_TOOL_PATH)
             if("${HOSTNAME}" MATCHES "frontend.*")
-                set(AddTest_WRAPPER_ARGS ${AddTest_WRAPPER_ARGS} --mca
-                                         btl_openib_allow_ib 1
-                )
+                list(APPEND AddTest_WRAPPER_ARGS --mca btl_openib_allow_ib 1)
             endif()
+            list(APPEND AddTest_WRAPPER_ARGS --bind-to none)
             set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
             if("${AddTest_WRAPPER_ARGS}" MATCHES "-np;([0-9]*)")
                 set(MPI_PROCESSORS ${CMAKE_MATCH_1})
@@ -347,7 +347,10 @@ macro(_add_test TEST_NAME)
     endif()
 
     isTestCommandExpectedToSucceed(${TEST_NAME} ${AddTest_PROPERTIES})
-    message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
+    message(
+        DEBUG
+        "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
+    )
 
     add_test(
         NAME ${TEST_NAME}
@@ -614,17 +617,17 @@ Use six arguments version of AddTest with absolute and relative tolerances"
 endmacro()
 
 # Checks if a test is expected to succeed based on the properties WILL_FAIL,
-# PASS_REGULAR_EXPRESSION and FAIL_REGULAR_EXPRESSION.
-# The function expects the test name (used only for debugging purposes) and the
-# test properties as arguments.
-# The test does not need to exist, yet. This function does not query any test
-# case, but only uses the passed list of properties
+# PASS_REGULAR_EXPRESSION and FAIL_REGULAR_EXPRESSION. The function expects the
+# test name (used only for debugging purposes) and the test properties as
+# arguments. The test does not need to exist, yet. This function does not query
+# any test case, but only uses the passed list of properties
 function(isTestCommandExpectedToSucceed TEST_NAME)
     set(options WILL_FAIL)
     set(oneValueArgs PASS_REGULAR_EXPRESSION FAIL_REGULAR_EXPRESSION)
     set(multiValueArgs)
-    cmake_parse_arguments(TEST_FAILURE "${options}" "${oneValueArgs}"
-        "${multiValueArgs}" ${ARGN})
+    cmake_parse_arguments(
+        TEST_FAILURE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
+    )
 
     message(DEBUG "failure properties for test ${TEST_NAME}:")
     list(APPEND CMAKE_MESSAGE_INDENT "  ")
@@ -633,20 +636,30 @@ function(isTestCommandExpectedToSucceed TEST_NAME)
     message(DEBUG "FAIL_RE: ${TEST_FAILURE_FAIL_REGULAR_EXPRESSION}")
     list(POP_BACK CMAKE_MESSAGE_INDENT)
 
-    if (${TEST_FAILURE_WILL_FAIL})
-        if (DEFINED TEST_FAILURE_PASS_REGULAR_EXPRESSION)
+    if(${TEST_FAILURE_WILL_FAIL})
+        if(DEFINED TEST_FAILURE_PASS_REGULAR_EXPRESSION)
             # Note: if the test property PASS_REGULAR_EXPRESSION is set, the
-            # process return code will be ignored, see https://cmake.org/cmake/help/latest/prop_test/PASS_REGULAR_EXPRESSION.html
-            message(SEND_ERROR "Error in test '${TEST_NAME}': Please do not use both WILL_FAIL and PASS_REGULAR_EXPRESSION in the same test. The logic will be unclear, then.")
+            # process return code will be ignored, see
+            # https://cmake.org/cmake/help/latest/prop_test/PASS_REGULAR_EXPRESSION.html
+            message(
+                SEND_ERROR
+                    "Error in test '${TEST_NAME}': Please do not use both WILL_FAIL and PASS_REGULAR_EXPRESSION in the same test. The logic will be unclear, then."
+            )
         endif()
-        if (DEFINED TEST_FAILURE_FAIL_REGULAR_EXPRESSION)
-            message(SEND_ERROR "Error in test '${TEST_NAME}': Please do not use both WILL_FAIL and FAIL_REGULAR_EXPRESSION in the same test. The logic will be unclear, then.")
+        if(DEFINED TEST_FAILURE_FAIL_REGULAR_EXPRESSION)
+            message(
+                SEND_ERROR
+                    "Error in test '${TEST_NAME}': Please do not use both WILL_FAIL and FAIL_REGULAR_EXPRESSION in the same test. The logic will be unclear, then."
+            )
         endif()
 
         set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED false)
     elseif(DEFINED TEST_FAILURE_PASS_REGULAR_EXPRESSION)
-        if (DEFINED TEST_FAILURE_FAIL_REGULAR_EXPRESSION)
-            message(SEND_ERROR "Error in test '${TEST_NAME}': Please do not use both PASS_REGULAR_EXPRESSION and FAIL_REGULAR_EXPRESSION in the same test. The logic will be unclear, then.")
+        if(DEFINED TEST_FAILURE_FAIL_REGULAR_EXPRESSION)
+            message(
+                SEND_ERROR
+                    "Error in test '${TEST_NAME}': Please do not use both PASS_REGULAR_EXPRESSION and FAIL_REGULAR_EXPRESSION in the same test. The logic will be unclear, then."
+            )
         endif()
 
         set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED false)
@@ -654,5 +667,7 @@ function(isTestCommandExpectedToSucceed TEST_NAME)
         set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED true)
     endif()
 
-    set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED "${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}" PARENT_SCOPE)
+    set(TEST_COMMAND_IS_EXPECTED_TO_SUCCEED
+        "${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}" PARENT_SCOPE
+    )
 endfunction()

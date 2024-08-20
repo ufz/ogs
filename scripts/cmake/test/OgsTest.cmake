@@ -60,6 +60,7 @@ function(OgsTest)
         string(REGEX MATCH "^[^ ]+" WRAPPER ${OgsTest_WRAPPER})
         if(WRAPPER STREQUAL "mpirun")
             set(TEST_NAME "${TEST_NAME}-mpi")
+            list(APPEND OgsTest_WRAPPER --bind-to none)
         endif()
     endif()
 
@@ -102,7 +103,10 @@ macro(_ogs_add_test TEST_NAME)
     string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
 
     isTestCommandExpectedToSucceed(${TEST_NAME} ${OgsTest_PROPERTIES})
-    message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
+    message(
+        DEBUG
+        "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
+    )
 
     add_test(
         NAME ${TEST_NAME}
