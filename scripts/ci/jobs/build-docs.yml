@@ -99,6 +99,7 @@ check docs links:
       --exclude github.com/ufz/ogs/commit/\%1
       --exclude search_opensearch.php
       --exclude eigen.tuxfamily.org
+      --exclude-path build/docs/d0/de3/citelist.html
       build/docs
     - lychee --cache --max-cache-age 14d
       --max-concurrency 2
