@@ -60,6 +60,7 @@ function(OgsTest)
         string(REGEX MATCH "^[^ ]+" WRAPPER ${OgsTest_WRAPPER})
         if(WRAPPER STREQUAL "mpirun")
             set(TEST_NAME "${TEST_NAME}-mpi")
+            list(APPEND OgsTest_WRAPPER --bind-to none)
         endif()
     endif()
 
