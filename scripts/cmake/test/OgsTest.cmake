@@ -103,7 +103,10 @@ macro(_ogs_add_test TEST_NAME)
     string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
 
     isTestCommandExpectedToSucceed(${TEST_NAME} ${OgsTest_PROPERTIES})
-    message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
+    message(
+        DEBUG
+        "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
+    )
 
     add_test(
         NAME ${TEST_NAME}
