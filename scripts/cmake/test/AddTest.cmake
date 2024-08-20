@@ -152,10 +152,9 @@ function(AddTest)
     elseif(AddTest_WRAPPER STREQUAL "mpirun")
         if(MPIRUN_TOOL_PATH)
             if("${HOSTNAME}" MATCHES "frontend.*")
-                set(AddTest_WRAPPER_ARGS ${AddTest_WRAPPER_ARGS} --mca
-                                         btl_openib_allow_ib 1
-                )
+                list(APPEND AddTest_WRAPPER_ARGS --mca btl_openib_allow_ib 1)
             endif()
+            list(APPEND AddTest_WRAPPER_ARGS --bind-to none)
             set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
             if("${AddTest_WRAPPER_ARGS}" MATCHES "-np;([0-9]*)")
                 set(MPI_PROCESSORS ${CMAKE_MATCH_1})
