@@ -3,6 +3,8 @@
 
 #include "MeshComponentMap.h"
 
+#include <numeric>
+#include <range/v3/algorithm/count_if.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/join.hpp>
 #include <range/v3/view/map.hpp>
@@ -10,6 +12,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Error.h"
+#include "BaseLib/MPI.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/Node.h"
 
@@ -80,8 +83,9 @@ MeshComponentMap::MeshComponentMap(
     }
     else
     {
+        BaseLib::MPI::Mpi const mpi;
         createParallelMeshComponentMap(components, order,
-                                       use_taylor_hood_elements);
+                                       use_taylor_hood_elements, mpi);
     }
 }
 #else
@@ -390,9 +394,32 @@ GlobalIndexType getGlobalIndexWithTaylorHoodElement(
            component_id_at_high_order_node;
 }
 
+static std::vector<std::size_t> numberOfRegularNodesPerComponent(
+    std::vector<MeshLib::MeshSubset> const& components)
+{
+    auto count_regular_nodes = [](MeshLib::MeshSubset const& c) -> std::size_t
+    {
+        auto const& mesh = partitionedMesh(c);
+        // The component is defined on all nodes of the mesh.
+        if (mesh.getNumberOfNodes() == c.getNodes().size())
+        {
+            return mesh.getNumberOfRegularNodes();
+        }
+        // The component is defined on a subset of the mesh nodes only, e.g. a
+        // linear variable on the base nodes of a quadratic mesh. Count the
+        // regular (non-ghost) nodes of that subset.
+        return ranges::count_if(c.getNodes() | MeshLib::views::ids,
+                                [&mesh](auto const n_id)
+                                { return !mesh.isGhostNode(n_id); });
+    };
+
+    return components | ranges::views::transform(count_regular_nodes) |
+           ranges::to<std::vector>;
+}
+
 void MeshComponentMap::createParallelMeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
-    bool const use_taylor_hood_elements)
+    bool const use_taylor_hood_elements, BaseLib::MPI::Mpi const& mpi)
 {
     if (order != ComponentOrder::BY_LOCATION)
     {
@@ -404,21 +431,28 @@ void MeshComponentMap::createParallelMeshComponentMap(
             "the order type of ComponentOrder::BY_LOCATION");
     }
 
+    std::vector<std::size_t> number_of_regular_nodes_per_component =
+        numberOfRegularNodesPerComponent(components);
+    _num_local_dof = std::reduce(number_of_regular_nodes_per_component.begin(),
+                                 number_of_regular_nodes_per_component.end());
+
+    // Sum up number of component's regular nodes over all ranks to get global
+    // number of regular nodes per component.
+    BaseLib::MPI::allreduceInplace(number_of_regular_nodes_per_component,
+                                   MPI_SUM, mpi);
+
+    _num_global_dof = std::reduce(number_of_regular_nodes_per_component.begin(),
+                                  number_of_regular_nodes_per_component.end());
+
     //
-    // get the number of unknowns and the number of components at extra node
+    // get the number of components at higher order nodes
     //
-    GlobalIndexType num_unknowns = 0;
     int components_at_high_order_nodes = 0;
     for (auto const& c : components)
     {
         if (partitionedMesh(c).getNumberOfNodes() == c.getNodes().size())
         {
             components_at_high_order_nodes++;
-            num_unknowns += partitionedMesh(c).getNumberOfGlobalNodes();
-        }
-        else
-        {
-            num_unknowns += partitionedMesh(c).getNumberOfGlobalBaseNodes();
         }
     }
 
@@ -428,8 +462,6 @@ void MeshComponentMap::createParallelMeshComponentMap(
 
     int comp_id = 0;
     int comp_id_at_high_order_node = 0;
-    _num_global_dof = 0;
-    _num_local_dof = 0;
     for (auto const& c : components)
     {
         auto const& partitioned_mesh = partitionedMesh(c);
@@ -464,12 +496,8 @@ void MeshComponentMap::createParallelMeshComponentMap(
                 // its index is set to the negative value of unknowns.
                 if (global_index == 0)
                 {
-                    global_index = -num_unknowns;
+                    global_index = -_num_global_dof;
                 }
-            }
-            else
-            {
-                _num_local_dof++;
             }
 
             _dict.insert(
@@ -477,16 +505,9 @@ void MeshComponentMap::createParallelMeshComponentMap(
                      comp_id, global_index));
         }
 
-        bool const use_whole_nodes =
-            (partitioned_mesh.getNumberOfNodes() == c.getNodes().size());
-        if (use_whole_nodes)
+        if (partitioned_mesh.getNumberOfNodes() == c.getNodes().size())
         {
-            _num_global_dof += partitioned_mesh.getNumberOfGlobalNodes();
             comp_id_at_high_order_node++;
-        }
-        else
-        {
-            _num_global_dof += partitioned_mesh.getNumberOfGlobalBaseNodes();
         }
 
         comp_id++;
