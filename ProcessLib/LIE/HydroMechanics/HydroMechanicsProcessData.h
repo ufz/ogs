@@ -56,6 +56,10 @@ struct HydroMechanicsProcessData
 
     double const reference_temperature;
 
+    /// An indicator to use the B bar method \cite hughes1980generalization to
+    /// tackle the  volumetric locking.
+    const bool use_b_bar;
+
     std::unique_ptr<MeshLib::ElementStatus> p_element_status = nullptr;
     ParameterLib::Parameter<double> const* p0 = nullptr;
 

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <optional>
 #include <vector>
 
 #include "HydroMechanicsLocalAssemblerInterface.h"
@@ -17,6 +18,7 @@
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
+#include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LIE/HydroMechanics/HydroMechanicsProcessData.h"
 
 namespace ProcessLib
@@ -159,6 +161,8 @@ protected:
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
 
+    using BBarMatrixType = typename BMatricesType::BBarMatrixType;
+
     // Types for pressure.
     using ShapeMatricesTypePressure =
         ShapeMatrixPolicyType<ShapeFunctionPressure, GlobalDim>;
@@ -169,6 +173,21 @@ protected:
                                    ShapeFunctionDisplacement::NPOINTS>;
 
     using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
+
+    std::optional<BBarMatrixType> getDilatationalBBarMatrix() const
+    {
+        if (!(_process_data.use_b_bar))
+        {
+            return std::nullopt;
+        }
+
+        return LinearBMatrix::computeDilatationalBbar<
+            GlobalDim, ShapeFunctionDisplacement::NPOINTS,
+            ShapeFunctionDisplacement, BBarMatrixType,
+            ShapeMatricesTypeDisplacement, IntegrationPointDataType>(
+            _ip_data, this->_element, this->_integration_method,
+            this->_is_axially_symmetric);
+    }
 
     HydroMechanicsProcessData<GlobalDim>& _process_data;
 
