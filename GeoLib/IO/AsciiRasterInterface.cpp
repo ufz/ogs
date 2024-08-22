@@ -19,7 +19,6 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
-#include "MathLib/Point3d.h"
 #include "GeoLib/Point.h"
 
 namespace FileIO
@@ -256,7 +255,7 @@ std::vector<std::string> readFile(std::istream& in)
     return lines;
 }
 
-std::optional<std::array<double, 3>> readCoordinates(std::string const& line)
+std::optional<std::array<double, 3>> readXyzCoordinates(std::string const& line)
 {
     std::array<double, 3> coords;
     if (std::sscanf(line.c_str(), "%lf %lf %lf", &coords[0], &coords[1],
@@ -266,7 +265,8 @@ std::optional<std::array<double, 3>> readCoordinates(std::string const& line)
     }
     else
     {
-        ERR("Raster::getRasterFromXyzFile() - Unexpected file format:\n{:s}", line);
+        ERR("Raster::readXyzCoordinates() - Unexpected file format:\n{:s}",
+            line);
         return std::nullopt;
     }
 }
@@ -283,7 +283,7 @@ GeoLib::RasterHeader getXyzHeader(std::vector<std::string> const& lines)
     std::size_t const n_lines(lines.size());
     for (std::size_t i = 0; i < n_lines; ++i)
     {
-        coords = readCoordinates(lines[i]);
+        coords = readXyzCoordinates(lines[i]);
         if (coords == std::nullopt)
         {
             MathLib::Point3d org(std::array<double, 3>{{0, 0, 0}});
@@ -336,9 +336,10 @@ GeoLib::Raster* AsciiRasterInterface::getRasterFromXyzFile(
     std::size_t const n_lines(string_lines.size());
     for (std::size_t i = 0; i < n_lines; ++i)
     {
-        coords = readCoordinates(string_lines[i]);
+        coords = readXyzCoordinates(string_lines[i]);
         std::size_t const idx = static_cast<std::size_t>(
-            (header.n_cols * (((*coords)[1] - header.origin[1]) / header.cell_size)) +
+            (header.n_cols *
+             (((*coords)[1] - header.origin[1]) / header.cell_size)) +
             (((*coords)[0] - header.origin[0]) / header.cell_size));
         values[idx] = (*coords)[2];
     }
