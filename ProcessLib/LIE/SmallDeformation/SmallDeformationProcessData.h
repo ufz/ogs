@@ -46,6 +46,10 @@ struct SmallDeformationProcessData
 
     double const reference_temperature;
 
+    /// An indicator to use the B bar method \cite hughes1980generalization to
+    /// tackle the  volumetric locking.
+    const bool use_b_bar;
+
     std::vector<JunctionProperty> junction_properties = {};
 
     MeshLib::PropertyVector<int> const* mesh_prop_materialIDs = nullptr;
