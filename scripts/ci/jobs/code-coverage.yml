@@ -11,6 +11,7 @@ code coverage:
   script:
     - !reference [.template-build-linux, script]
     - cmake --build --preset $CMAKE_PRESET -t process_coverage
+  after_script:
     - ln -s ../../build/coverage build/coverage
   coverage: '/lines: \d+\.\d+/'
   artifacts:
