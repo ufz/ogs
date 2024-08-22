@@ -157,11 +157,11 @@ void readGeometry(std::string const& fname, GeoLib::GEOObjects& geo_objects,
 {
     DBUG("Reading geometry file '{:s}'.", fname);
     GeoLib::IO::BoostXmlGmlInterface gml_reader(geo_objects);
-    std::string geometry_file = BaseLib::copyPathToFileName(fname, dir_first);
+    std::string geometry_file = BaseLib::joinPaths(dir_first, fname);
     if (!BaseLib::IsFileExisting(geometry_file))
     {
         // Fallback to reading gml from prj-file directory
-        geometry_file = BaseLib::copyPathToFileName(fname, dir_second);
+        geometry_file = BaseLib::joinPaths(dir_second, fname);
         WARN("File {:s} not found in {:s}! Trying reading from {:s}.", fname,
              dir_first, dir_second);
         if (!BaseLib::IsFileExisting(geometry_file))
@@ -177,16 +177,27 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
     BaseLib::ConfigTree const& mesh_config_parameter,
     std::string const& directory)
 {
-    std::string const mesh_file = BaseLib::copyPathToFileName(
-        mesh_config_parameter.getValue<std::string>(), directory);
+    std::string const mesh_file = BaseLib::joinPaths(
+        directory, mesh_config_parameter.getValue<std::string>());
     DBUG("Reading mesh file '{:s}'.", mesh_file);
 
     auto mesh = std::unique_ptr<MeshLib::Mesh>(MeshLib::IO::readMeshFromFile(
         mesh_file, true /* compute_element_neighbors */));
     if (!mesh)
     {
+        std::filesystem::path abspath{mesh_file};
+        try
+        {
+            abspath = std::filesystem::absolute(mesh_file);
+        }
+        catch (std::filesystem::filesystem_error const& e)
+        {
+            ERR("Determining the absolute path of '{}' failed: {}", mesh_file,
+                e.what());
+        }
+
         OGS_FATAL("Could not read mesh from '{:s}' file. No mesh added.",
-                  mesh_file);
+                  abspath.string());
     }
 
 #ifdef DOXYGEN_DOCU_ONLY
@@ -369,7 +380,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         py_path.attr("append")(script_directory);  // .prj or -s directory
 
         auto const script_path =
-            BaseLib::copyPathToFileName(*python_script, script_directory);
+            BaseLib::joinPaths(script_directory, *python_script);
 
         // Evaluate in scope of main module
         py::object scope = py::module::import("__main__").attr("__dict__");

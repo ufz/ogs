@@ -26,8 +26,7 @@ struct MFrontConfig
 MFrontConfig createMFrontConfig(
     int const displacement_dim,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    BaseLib::ConfigTree const& config,
-    bool const library_path_is_relative_to_prj_file);
+    BaseLib::ConfigTree const& config);
 
 template <int DisplacementDim, typename Gradients, typename TDynForces,
           typename ExtStateVars>
@@ -37,11 +36,9 @@ createMFrontGeneric(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
-    BaseLib::ConfigTree const& config,
-    bool const library_path_is_relative_to_prj_file)
+    BaseLib::ConfigTree const& config)
 {
-    auto conf = createMFrontConfig(DisplacementDim, parameters, config,
-                                   library_path_is_relative_to_prj_file);
+    auto conf = createMFrontConfig(DisplacementDim, parameters, config);
 
     return std::make_unique<
         MFrontGeneric<DisplacementDim, Gradients, TDynForces, ExtStateVars>>(

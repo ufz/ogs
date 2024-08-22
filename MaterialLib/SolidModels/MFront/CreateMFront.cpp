@@ -29,9 +29,7 @@ std::unique_ptr<MechanicsBase<DisplacementDim>> createMFront(
         local_coordinate_system,
     BaseLib::ConfigTree const& config)
 {
-    bool const library_path_is_relative_to_prj_file = true;
-    auto conf = createMFrontConfig(DisplacementDim, parameters, config,
-                                   library_path_is_relative_to_prj_file);
+    auto conf = createMFrontConfig(DisplacementDim, parameters, config);
 
     return std::make_unique<MFront<DisplacementDim>>(
         std::move(conf.behaviour), std::move(conf.material_properties),

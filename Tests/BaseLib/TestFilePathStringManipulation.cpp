@@ -13,30 +13,27 @@
 #include "BaseLib/FileTools.h"
 
 #ifdef WIN32
-TEST(BaseLib, CopyPathToFileNameWin)
+TEST(BaseLib, JoinPathsWin)
 {
-    ASSERT_EQ("extend\\file", BaseLib::copyPathToFileName("file", "extend"));
-    ASSERT_EQ("path\\file",
-              BaseLib::copyPathToFileName("path\\file", "extend"));
-    ASSERT_EQ("extend\\file", BaseLib::copyPathToFileName("file", "extend\\"));
-    ASSERT_EQ("path\\file",
-              BaseLib::copyPathToFileName("path\\file", "extend\\"));
-    ASSERT_EQ("extend\\smth\\file",
-              BaseLib::copyPathToFileName("file", "extend\\smth"));
-    ASSERT_EQ("path\\file",
-              BaseLib::copyPathToFileName("path\\file", "extend\\smth"));
+    ASSERT_EQ("extend\\file", BaseLib::joinPaths("extend", "file"));
+    ASSERT_EQ("extend\\path\\file", BaseLib::joinPaths("extend", "path\\file"));
+    ASSERT_EQ("extend\\file", BaseLib::joinPaths("extend\\", "file"));
+    ASSERT_EQ("extend\\path\\file",
+              BaseLib::joinPaths("extend\\", "path\\file"));
+    ASSERT_EQ("extend\\smth\\file", BaseLib::joinPaths("extend\\smth", "file"));
+    ASSERT_EQ("extend\\smth\\path\\file",
+              BaseLib::joinPaths("extend\\smth", "path\\file"));
 }
 #else
-TEST(BaseLib, CopyPathToFileNameUnix)
+TEST(BaseLib, JoinPathsUnix)
 {
-    ASSERT_EQ("extend/file", BaseLib::copyPathToFileName("file", "extend"));
-    ASSERT_EQ("path/file", BaseLib::copyPathToFileName("path/file", "extend"));
-    ASSERT_EQ("extend/file", BaseLib::copyPathToFileName("file", "extend/"));
-    ASSERT_EQ("path/file", BaseLib::copyPathToFileName("path/file", "extend/"));
+    ASSERT_EQ("extend/file", BaseLib::joinPaths("extend", "file"));
+    ASSERT_EQ("extend/path/file", BaseLib::joinPaths("extend", "path/file"));
+    ASSERT_EQ("extend/file", BaseLib::joinPaths("extend/", "file"));
+    ASSERT_EQ("extend/path/file", BaseLib::joinPaths("extend/", "path/file"));
 
-    ASSERT_EQ("extend/smth/file",
-              BaseLib::copyPathToFileName("file", "extend/smth"));
-    ASSERT_EQ("path/file",
-              BaseLib::copyPathToFileName("path/file", "extend/smth"));
+    ASSERT_EQ("extend/smth/file", BaseLib::joinPaths("extend/smth", "file"));
+    ASSERT_EQ("extend/smth/path/file",
+              BaseLib::joinPaths("extend/smth", "path/file"));
 }
 #endif

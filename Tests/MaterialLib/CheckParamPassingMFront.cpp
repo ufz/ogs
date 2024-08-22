@@ -97,7 +97,7 @@ auto createMFront(
     const char* xml = R"XML(
         <type>MFront</type>
         <behaviour>CheckParamPassing1</behaviour>
-        <library>libOgsMFrontBehaviourForUnitTests</library>
+        <library path_is_relative_to_prj_file="false">libOgsMFrontBehaviourForUnitTests</library>
         <material_properties>
             <material_property name="YoungModulus" parameter="E"/>
             <material_property name="PoissonRatio" parameter="nu"/>
@@ -113,7 +113,7 @@ auto createMFront(
         3, boost::mp11::mp_list<MSM::Strain, MSM::LiquidPressure>,
         boost::mp11::mp_list<MSM::Stress, MSM::Saturation>,
         boost::mp11::mp_list<MSM::Temperature>>(
-        parameters, local_coordinate_system, config_tree, false);
+        parameters, local_coordinate_system, config_tree);
 }
 
 TEST(MaterialLib_CheckParamPassingMFront, SuccessTest)

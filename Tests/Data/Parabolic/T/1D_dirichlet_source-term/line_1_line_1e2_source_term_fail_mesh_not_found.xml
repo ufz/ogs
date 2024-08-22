@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="line_1_line_1e2_source_term.prj">
+    <replace msel="/*/meshes/mesh[1]/text()">
+        NON_EXISTENT_MESH.vtu
+    </replace>
+</OpenGeoSysProjectDiff>
+

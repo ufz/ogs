@@ -200,17 +200,6 @@ bool hasFileExtension(std::string const& extension, std::string const& filename)
     return boost::iequals(extension, getFileExtension(filename));
 }
 
-std::string copyPathToFileName(const std::string& file_name,
-                               const std::string& source)
-{
-    auto filePath = std::filesystem::path(file_name);
-    if (filePath.has_parent_path())
-    {
-        return filePath.string();
-    }
-    return (std::filesystem::path(source) /= filePath).string();
-}
-
 std::string extractPath(std::string const& pathname)
 {
     return std::filesystem::path(pathname).parent_path().string();
