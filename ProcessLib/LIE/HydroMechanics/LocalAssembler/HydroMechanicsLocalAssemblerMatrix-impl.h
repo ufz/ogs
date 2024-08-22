@@ -39,7 +39,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         bool const is_axially_symmetric,
         HydroMechanicsProcessData<GlobalDim>& process_data)
     : HydroMechanicsLocalAssemblerInterface(
-          e, is_axially_symmetric,
+          e, is_axially_symmetric, integration_method,
           (n_variables - 1) * ShapeFunctionDisplacement::NPOINTS * GlobalDim +
               ShapeFunctionPressure::NPOINTS,
           dofIndex_to_localIndex),
