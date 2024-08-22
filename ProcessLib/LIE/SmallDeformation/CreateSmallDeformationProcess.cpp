@@ -181,10 +181,10 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         config.getConfigParameter<double>(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
-    SmallDeformationProcessData<DisplacementDim> process_data(
+    SmallDeformationProcessData<DisplacementDim> process_data{
         materialIDs(mesh), std::move(solid_constitutive_relations),
         std::move(fracture_model), std::move(fracture_properties),
-        reference_temperature);
+        reference_temperature};
 
     SecondaryVariableCollection secondary_variables;
 

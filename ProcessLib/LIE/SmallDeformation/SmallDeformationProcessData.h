@@ -32,36 +32,6 @@ namespace SmallDeformation
 template <int DisplacementDim>
 struct SmallDeformationProcessData
 {
-    SmallDeformationProcessData(
-        MeshLib::PropertyVector<int> const* const material_ids_,
-        std::map<int,
-                 std::unique_ptr<
-                     MaterialLib::Solids::MechanicsBase<DisplacementDim>>>&&
-            solid_materials_,
-        std::unique_ptr<
-            MaterialLib::Fracture::FractureModelBase<DisplacementDim>>&&
-            fracture_model,
-        std::vector<FractureProperty>&& fracture_properties_,
-        double const reference_temperature)
-        : material_ids(material_ids_),
-          solid_materials{std::move(solid_materials_)},
-          fracture_model{std::move(fracture_model)},
-          fracture_properties(std::move(fracture_properties_)),
-          reference_temperature(reference_temperature)
-    {
-    }
-
-    SmallDeformationProcessData(SmallDeformationProcessData&& other) = default;
-
-    //! Copies are forbidden.
-    SmallDeformationProcessData(SmallDeformationProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(SmallDeformationProcessData const&) = delete;
-
-    //! Assignments are not needed.
-    void operator=(SmallDeformationProcessData&&) = delete;
-
     MeshLib::PropertyVector<int> const* const material_ids;
 
     /// The constitutive relation for the mechanical part.
@@ -73,14 +43,17 @@ struct SmallDeformationProcessData
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
         fracture_model;
     std::vector<FractureProperty> fracture_properties;
-    std::vector<JunctionProperty> junction_properties;
+
+    double const reference_temperature;
+
+    std::vector<JunctionProperty> junction_properties = {};
 
     MeshLib::PropertyVector<int> const* mesh_prop_materialIDs = nullptr;
-    std::vector<int> map_materialID_to_fractureID;
+    std::vector<int> map_materialID_to_fractureID = {};
 
     // a table of connected fracture IDs for each element
-    std::vector<std::vector<int>> vec_ele_connected_fractureIDs;
-    std::vector<std::vector<int>> vec_ele_connected_junctionIDs;
+    std::vector<std::vector<int>> vec_ele_connected_fractureIDs = {};
+    std::vector<std::vector<int>> vec_ele_connected_junctionIDs = {};
 
     // mesh properties to output element's stress.
     MeshLib::PropertyVector<double>* element_stresses = nullptr;
@@ -89,8 +62,6 @@ struct SmallDeformationProcessData
 
     // mesh property for fracture aperture
     MeshLib::PropertyVector<double>* mesh_prop_b = nullptr;
-
-    double const reference_temperature;
 };
 
 }  // namespace SmallDeformation
