@@ -103,13 +103,13 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
         _secondary_data.N[ip] = sm.N;
     }
 
-    for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
+    for (auto fid : process_data.vec_ele_connected_fractureIDs[e.getID()])
     {
         _fracID_to_local.insert({fid, _fracture_props.size()});
         _fracture_props.push_back(&_process_data.fracture_properties[fid]);
     }
 
-    _junction_props = process_data._vec_ele_connected_junctionIDs[e.getID()] |
+    _junction_props = process_data.vec_ele_connected_junctionIDs[e.getID()] |
                       ranges::views::transform(
                           [&](auto const jid)
                           { return &_process_data.junction_properties[jid]; }) |
@@ -255,7 +255,7 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_prev);
-        variables_prev.temperature = _process_data._reference_temperature;
+        variables_prev.temperature = _process_data.reference_temperature;
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);

@@ -56,16 +56,16 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
     _ip_data.reserve(n_integration_points);
     _secondary_data.N.resize(n_integration_points);
 
-    auto mat_id = (*_process_data._mesh_prop_materialIDs)[e.getID()];
-    auto frac_id = _process_data._map_materialID_to_fractureID[mat_id];
+    auto mat_id = (*_process_data.mesh_prop_materialIDs)[e.getID()];
+    auto frac_id = _process_data.map_materialID_to_fractureID[mat_id];
     _fracture_property = &_process_data.fracture_properties[frac_id];
-    for (auto fid : process_data._vec_ele_connected_fractureIDs[e.getID()])
+    for (auto fid : process_data.vec_ele_connected_fractureIDs[e.getID()])
     {
         _fracID_to_local.insert({fid, _fracture_props.size()});
         _fracture_props.push_back(&_process_data.fracture_properties[fid]);
     }
 
-    _junction_props = process_data._vec_ele_connected_junctionIDs[e.getID()] |
+    _junction_props = process_data.vec_ele_connected_junctionIDs[e.getID()] |
                       ranges::views::transform(
                           [&](auto const jid)
                           { return &_process_data.junction_properties[jid]; }) |
@@ -77,7 +77,7 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
     {
         x_position.setIntegrationPoint(ip);
 
-        _ip_data.emplace_back(*_process_data._fracture_model);
+        _ip_data.emplace_back(*_process_data.fracture_model);
         auto const& sm = _shape_matrices[ip];
         auto& ip_data = _ip_data[ip];
         ip_data.integration_weight =
@@ -339,7 +339,7 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
     ele_b /= n_integration_points;
     ele_w /= n_integration_points;
     ele_sigma /= n_integration_points;
-    (*_process_data._mesh_prop_b)[_element.getID()] = ele_b;
+    (*_process_data.mesh_prop_b)[_element.getID()] = ele_b;
 
     Eigen::Map<GlobalDimVectorType>(
         &(*_process_data.element_fracture_stresses)[e_id * DisplacementDim]) =

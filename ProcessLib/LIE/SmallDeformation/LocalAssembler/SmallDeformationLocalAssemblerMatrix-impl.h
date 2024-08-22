@@ -151,7 +151,7 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_prev);
-        variables_prev.temperature = _process_data._reference_temperature;
+        variables_prev.temperature = _process_data.reference_temperature;
 
         auto&& solution = _ip_data[ip]._solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);

@@ -67,21 +67,21 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     // create a map from a material ID to a fracture ID
     auto max_frac_mat_id = std::max_element(_vec_fracture_mat_IDs.begin(),
                                             _vec_fracture_mat_IDs.end());
-    _process_data._map_materialID_to_fractureID.resize(*max_frac_mat_id + 1);
+    _process_data.map_materialID_to_fractureID.resize(*max_frac_mat_id + 1);
     for (unsigned i = 0; i < _vec_fracture_mat_IDs.size(); i++)
     {
-        _process_data._map_materialID_to_fractureID[_vec_fracture_mat_IDs[i]] =
+        _process_data.map_materialID_to_fractureID[_vec_fracture_mat_IDs[i]] =
             i;
     }
 
     // create a table of connected fracture IDs for each element
-    _process_data._vec_ele_connected_fractureIDs.resize(
+    _process_data.vec_ele_connected_fractureIDs.resize(
         mesh.getNumberOfElements());
     for (unsigned i = 0; i < _vec_fracture_matrix_elements.size(); i++)
     {
         for (auto e : _vec_fracture_matrix_elements[i])
         {
-            _process_data._vec_ele_connected_fractureIDs[e->getID()].push_back(
+            _process_data.vec_ele_connected_fractureIDs[e->getID()].push_back(
                 i);
         }
     }
@@ -103,10 +103,10 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         auto slave_matId = matID[1];
         auto& master_frac =
             _process_data.fracture_properties
-                [_process_data._map_materialID_to_fractureID[master_matId]];
+                [_process_data.map_materialID_to_fractureID[master_matId]];
         auto& slave_frac =
             _process_data.fracture_properties
-                [_process_data._map_materialID_to_fractureID[slave_matId]];
+                [_process_data.map_materialID_to_fractureID[slave_matId]];
 
         master_frac.branches_master.push_back(createBranchProperty(
             *mesh.getNode(vec_branch_nodeID), master_frac, slave_frac));
@@ -130,8 +130,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         auto const& material_ids = vec_junction_nodeID_matIDs[i].second;
         assert(material_ids.size() == 2);
         std::array<int, 2> fracture_ids{
-            {_process_data._map_materialID_to_fractureID[material_ids[0]],
-             _process_data._map_materialID_to_fractureID[material_ids[1]]}};
+            {_process_data.map_materialID_to_fractureID[material_ids[0]],
+             _process_data.map_materialID_to_fractureID[material_ids[1]]}};
 
         _process_data.junction_properties.emplace_back(
             i, *mesh.getNode(vec_junction_nodeID_matIDs[i].first),
@@ -139,7 +139,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     // create a table of connected junction IDs for each element
-    _process_data._vec_ele_connected_junctionIDs.resize(
+    _process_data.vec_ele_connected_junctionIDs.resize(
         mesh.getNumberOfElements());
     for (unsigned i = 0; i < vec_junction_nodeID_matIDs.size(); i++)
     {
@@ -147,7 +147,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
         for (auto id :
              mesh.getElementsConnectedToNode(*node) | MeshLib::views::ids)
         {
-            _process_data._vec_ele_connected_junctionIDs[id].push_back(i);
+            _process_data.vec_ele_connected_junctionIDs[id].push_back(i);
         }
     }
 
@@ -173,7 +173,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
 
     MeshLib::PropertyVector<int> const* material_ids(
         mesh.getProperties().getPropertyVector<int>("MaterialIDs"));
-    _process_data._mesh_prop_materialIDs = material_ids;
+    _process_data.mesh_prop_materialIDs = material_ids;
 }
 
 template <int DisplacementDim>
@@ -304,8 +304,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         std::vector<FractureProperty*> e_fracture_props;
         std::unordered_map<int, int> e_fracID_to_local;
         unsigned tmpi = 0;
-        for (auto fid :
-             _process_data._vec_ele_connected_fractureIDs[e->getID()])
+        for (auto fid : _process_data.vec_ele_connected_fractureIDs[e->getID()])
         {
             e_fracture_props.push_back(&_process_data.fracture_properties[fid]);
             e_fracID_to_local.insert({fid, tmpi++});
@@ -313,8 +312,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         std::vector<JunctionProperty*> e_junction_props;
         std::unordered_map<int, int> e_juncID_to_local;
         tmpi = 0;
-        for (auto fid :
-             _process_data._vec_ele_connected_junctionIDs[e->getID()])
+        for (auto fid : _process_data.vec_ele_connected_junctionIDs[e->getID()])
         {
             e_junction_props.push_back(&_process_data.junction_properties[fid]);
             e_juncID_to_local.insert({fid, tmpi++});
@@ -361,7 +359,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
         MeshLib::MeshItemType::Cell, 1);
 
     mesh_prop_b->resize(mesh.getNumberOfElements());
-    auto const& mesh_prop_matid = *_process_data._mesh_prop_materialIDs;
+    auto const& mesh_prop_matid = *_process_data.mesh_prop_materialIDs;
     for (auto const& fracture_prop : _process_data.fracture_properties)
     {
         for (MeshLib::Element const* e : _mesh.getElements())
@@ -382,7 +380,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
                     .mean();
         }
     }
-    _process_data._mesh_prop_b = mesh_prop_b;
+    _process_data.mesh_prop_b = mesh_prop_b;
 }
 
 template <int DisplacementDim>
