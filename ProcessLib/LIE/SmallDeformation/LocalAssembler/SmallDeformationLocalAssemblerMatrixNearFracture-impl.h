@@ -82,8 +82,8 @@ SmallDeformationLocalAssemblerMatrixNearFracture<ShapeFunction,
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm = shape_matrices[ip];
-        ip_data.N = sm.N;
-        ip_data.dNdx = sm.dNdx;
+        ip_data.N_u = sm.N;
+        ip_data.dNdx_u = sm.dNdx;
         ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm.integralMeasure * sm.detJ;
@@ -208,8 +208,8 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
         auto& ip_data = _ip_data[ip];
         auto const& w = _ip_data[ip].integration_weight;
 
-        auto const& N = ip_data.N;
-        auto const& dNdx = ip_data.dNdx;
+        auto const& N = ip_data.N_u;
+        auto const& dNdx = ip_data.dNdx_u;
 
         // levelset functions
         Eigen::Vector3d const ip_physical_coords(

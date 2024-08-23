@@ -67,8 +67,8 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm = shape_matrices[ip];
-        ip_data.N = sm.N;
-        ip_data.dNdx = sm.dNdx;
+        ip_data.N_u = sm.N;
+        ip_data.dNdx_u = sm.dNdx;
         ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm.integralMeasure * sm.detJ;
@@ -120,8 +120,8 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& N = _ip_data[ip].N_u;
+        auto const& dNdx = _ip_data[ip].dNdx_u;
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 _element, N);
