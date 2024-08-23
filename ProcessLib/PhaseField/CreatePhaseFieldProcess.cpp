@@ -17,6 +17,7 @@
 #include "ParameterLib/Utils.h"
 #include "PhaseFieldProcess.h"
 #include "PhaseFieldProcessData.h"
+#include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -210,6 +211,10 @@ std::unique_ptr<Process> createPhaseFieldProcess(
             phasefield_model_string.c_str());
     }();
 
+    // Initial stress conditions
+    auto initial_stress = ProcessLib::createInitialStress<DisplacementDim>(
+        config, parameters, mesh);
+
     auto const softening_curve = [&]
     {
         auto const softening_curve_string =
@@ -284,6 +289,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         crack_resistance,
         crack_length_scale,
         solid_density,
+        initial_stress,
         specific_body_force,
         pressurized_crack,
         propagating_pressurized_crack,

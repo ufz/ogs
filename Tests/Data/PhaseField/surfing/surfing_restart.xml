@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="surfing.prj">
+    <!-- Replace the mesh file -->
+    <replace sel="/*/meshes/mesh[1]/text()">surfing_ts_10_t_0.500000.vtu</replace>
+    <!-- Modify the displacement0 parameter -->
+    <replace sel="/*/parameters/parameter[name='displacement0']/type/text()">MeshNode</replace>
+    <remove sel="/*/parameters/parameter[name='displacement0']/values"/>
+    <add sel="/*/parameters/parameter[name='displacement0']">
+        <field_name>displacement</field_name>
+    </add>
+    <!-- Modify the phasefield_ic parameter -->
+    <replace sel="/*/parameters/parameter[name='phasefield_ic']/field_name/text()">phasefield</replace>
+    <!-- Modify the t_initial times:0 to 0.5 -->
+    <replace sel="/*/time_loop/processes/process[1]/time_stepping/t_initial/text()">0.5</replace>
+    <replace sel="/*/time_loop/processes/process[2]/time_stepping/t_initial/text()">0.5</replace>
+    <!-- Modify the output prefix -->
+    <replace sel="/*/time_loop/output/prefix/text()">surfing_restart</replace>
+</OpenGeoSysProjectDiff>

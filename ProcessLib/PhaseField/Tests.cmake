@@ -98,6 +98,21 @@ AddTest(
 )
 
 AddTest(
+    NAME PhaseField_2D_surfing_AT1_vd_restart
+    PATH PhaseField/surfing
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS surfing_restart.xml
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    RUNTIME 18
+    DIFF_DATA
+        expected_surfing_ts_20_t_1_000000_0.vtu surfing_restart_ts_10_t_1.000000.vtu displacement displacement 1e-10 0
+        expected_surfing_ts_20_t_1_000000_0.vtu surfing_restart_ts_10_t_1.000000.vtu phasefield phasefield 1e-10 0
+)
+
+AddTest(
     NAME PhaseField_2D_K_regime_HF_2cores
     PATH PhaseField/k_regime_HF
     EXECUTABLE ogs

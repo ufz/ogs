@@ -16,6 +16,7 @@
 
 #include "MeshLib/PropertyVector.h"
 #include "ParameterLib/Parameter.h"
+#include "ProcessLib/Common/HydroMechanics/InitialStress.h"
 
 namespace MaterialLib
 {
@@ -209,6 +210,10 @@ struct PhaseFieldProcessData
     ParameterLib::Parameter<double> const& crack_resistance;
     ParameterLib::Parameter<double> const& crack_length_scale;
     ParameterLib::Parameter<double> const& solid_density;
+    /// Optional, initial stress field. A symmetric tensor, short vector
+    /// representation of length 4 or 6, ParameterLib::Parameter<double>.
+    InitialStress const initial_stress;
+
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
     bool pressurized_crack = false;
     bool propagating_pressurized_crack = false;
