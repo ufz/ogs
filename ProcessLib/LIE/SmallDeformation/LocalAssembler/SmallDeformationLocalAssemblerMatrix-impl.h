@@ -115,6 +115,8 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const B_dil_bar = getDilatationalBBarMatrix();
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -125,11 +127,11 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 _element, N);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunction::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, _is_axially_symmetric);
+
+        auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
+            typename BMatricesType::BMatrixType>(dNdx, N, B_dil_bar, x_coord,
+                                                 this->_is_axially_symmetric);
 
         auto const& eps_prev = _ip_data[ip]._eps_prev;
         auto const& sigma_prev = _ip_data[ip]._sigma_prev;

@@ -44,6 +44,7 @@ public:
     using NodalVectorType = typename ShapeMatricesType::NodalVectorType;
     using ShapeMatrices = typename ShapeMatricesType::ShapeMatrices;
     using BMatricesType = BMatrixPolicyType<ShapeFunction, DisplacementDim>;
+    using BBarMatrixType = typename BMatricesType::BBarMatrixType;
 
     using BMatrixType = typename BMatricesType::BMatrixType;
     using StiffnessMatrixType = typename BMatricesType::StiffnessMatrixType;
@@ -158,6 +159,20 @@ private:
     MeshLib::Element const& _element;
     bool const _is_axially_symmetric;
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+
+    std::optional<BBarMatrixType> getDilatationalBBarMatrix() const
+    {
+        if (!(_process_data.use_b_bar))
+        {
+            return std::nullopt;
+        }
+
+        return LinearBMatrix::computeDilatationalBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
+            BBarMatrixType, ShapeMatricesType, IntegrationPointDataType>(
+            _ip_data, this->_element, this->_integration_method,
+            this->_is_axially_symmetric);
+    }
 };
 
 }  // namespace SmallDeformation
