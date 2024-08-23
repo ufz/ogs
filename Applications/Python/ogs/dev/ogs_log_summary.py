@@ -18,6 +18,9 @@ re_line_compare = re.compile(
     "Comparing data array `(?P<array_1>.+)' from file `(?P<file_1>.+)' to data array `(?P<array_2>.+)' from file `(?P<file_2>.+)'[.]"
 )
 re_line_max_norm = re.compile(r"(abs|rel) maximum norm = \[([-+.,0-9e infa]+)\]")
+re_line_error = re.compile(
+    r"Absolute and relative error [(]maximum norm[)] are larger than the corresponding thresholds .* and .*[.]"
+)
 
 # A typical OGS output file name is, e.g., ramped_Neumann_BC_ts_50_t_0.625000.vtu.
 # This regex matches the numerical parts of the file name including underscore
@@ -73,7 +76,7 @@ def parse_ogs_log(log_fh):
         if mode is None:
             if line.endswith("info: ---------- vtkdiff begin ----------"):
                 mode = "vtkdiff"
-                vtkdiff_rec = {}
+                vtkdiff_rec = {"check_succeeded": True}
             elif m := re_prj_file.search(line):
                 prj_file = m.group(1)
                 logger.debug(
@@ -96,6 +99,8 @@ def parse_ogs_log(log_fh):
                 abs_or_rel = m.group(1)
                 error_norm = [float(comp) for comp in m.group(2).split(",")]
                 vtkdiff_rec[abs_or_rel + "_maximum_norm"] = error_norm
+            elif re_line_error.search(line):
+                vtkdiff_rec["check_succeeded"] = False
 
     if mode is not None:
         logger.warning("File '%s' contains an incomplete vtkdiff block.", log_fn)
@@ -123,8 +128,13 @@ def parse_ogs_log(log_fh):
     return recs, prj_file
 
 
-def agg_max_by_field(df):
-    return df.groupby("array").max()
+def agg_by_field(df):
+    agg = {
+        col: "min" if col == "check_succeeded" else "max"
+        for col in df.columns
+        if col != "array"
+    }
+    return df.groupby("array").agg(agg)
 
 
 def round_up_2_digits(df):
@@ -166,8 +176,15 @@ def write_xml_snippet(df_max, xml_out_file):
         for tup in df_max.itertuples():
             file = Path(tup.file).name
             file_re = numbers_to_regexes(file)
+            error_msg = (
+                """
+        <!-- Check failed -->"""
+                if not tup.check_succeeded
+                else ""
+            )
+
             fh.write(
-                f"""
+                f"""{error_msg}
         <vtkdiff>
             <regex>{file_re}</regex>
             <!-- <file>{file}</file> -->
@@ -263,7 +280,7 @@ def aggregate_log_files(log_files_dirs):
     for prj_file, df_vtkdiff in map_prj_file_to_df_vtkdiff_combined.items():
         df_vtkdiff = remove_duplicate_columns(df_vtkdiff)  # noqa: PLW2901
 
-        map_prj_file_to_agg_vtkdiff_stats[prj_file] = agg_max_by_field(df_vtkdiff)
+        map_prj_file_to_agg_vtkdiff_stats[prj_file] = agg_by_field(df_vtkdiff)
 
     return map_prj_file_to_agg_vtkdiff_stats
 
