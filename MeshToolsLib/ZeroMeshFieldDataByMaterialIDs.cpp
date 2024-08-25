@@ -81,7 +81,7 @@ void zeroMeshFieldDataByMaterialIDs(
                 std::transform(element_ip_data_offsets.begin(),
                                element_ip_data_offsets.end(),
                                element_ip_data_offsets.begin(),
-                               [n = n_components](double const v)
+                               [n = n_components](std::size_t const v)
                                { return v / n; });
             }
 

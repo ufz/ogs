@@ -29,15 +29,20 @@
 
 namespace
 {
-std::size_t readMaterialID(std::istream& in)
+int readMaterialID(std::istream& in)
 {
     unsigned index;
     unsigned material_id;
-    if (!(in >> index >> material_id))
+
+    if (!(in >> index >> material_id) ||
+        material_id > static_cast<unsigned>(std::numeric_limits<int>::max()))
     {
-        return std::numeric_limits<std::size_t>::max();
+        // If read incorrectly or the material_id is not safely convertible to
+        // int.
+        return std::numeric_limits<int>::max();
     }
-    return material_id;
+    // Safe conversion was checked above.
+    return static_cast<int>(material_id);
 }
 
 MeshLib::Element* readElement(std::istream& in,
@@ -289,7 +294,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
     {
         std::vector<MeshLib::Node*> nodes;
         std::vector<MeshLib::Element*> elements;
-        std::vector<std::size_t> materials;
+        std::vector<int> materials;
 
         while (!in.eof())
         {
