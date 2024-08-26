@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "MaterialLib/FractureModels/FractureModelBase.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MeshLib/ElementStatus.h"
 #include "MeshLib/PropertyVector.h"
@@ -38,6 +39,9 @@ struct HydroMechanicsProcessData
     std::map<int,
              std::shared_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
         solid_materials;
+
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
+
     ParameterLib::Parameter<double> const& intrinsic_permeability;
     ParameterLib::Parameter<double> const& specific_storage;
     ParameterLib::Parameter<double> const& fluid_viscosity;

@@ -18,6 +18,8 @@
 #include "MaterialLib/FractureModels/CreateCoulomb.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
 #include "MaterialLib/FractureModels/Permeability/CreatePermeabilityModel.h"
+#include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -38,7 +40,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config)
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}
     config.checkConfigParameter("type", "HYDRO_MECHANICS_WITH_LIE");
@@ -326,9 +329,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__use_b_bar}
     auto const use_b_bar = config.getConfigParameter<bool>("use_b_bar", false);
 
+    auto media_map =
+        MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
+
     HydroMechanicsProcessData<GlobalDim> process_data{
         materialIDs(mesh),
         std::move(solid_constitutive_relations),
+        std::move(media_map),
         intrinsic_permeability,
         specific_storage,
         fluid_viscosity,
@@ -343,7 +350,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         initial_fracture_effective_stress,
         deactivate_matrix_in_flow,
         reference_temperature,
-        use_b_bar};
+        use_b_bar,
+    };
 
     SecondaryVariableCollection secondary_variables;
 
@@ -365,7 +373,9 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<2>(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
+
 template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     std::string const& name,
     MeshLib::Mesh& mesh,
@@ -375,7 +385,8 @@ template std::unique_ptr<Process> createHydroMechanicsProcess<3>(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
 }  // namespace HydroMechanics
 }  // namespace LIE
