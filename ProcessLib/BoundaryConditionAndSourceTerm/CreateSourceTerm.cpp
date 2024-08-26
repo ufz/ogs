@@ -10,6 +10,10 @@
 
 #include "CreateSourceTerm.h"
 
+#include <cassert>
+#include <numeric>
+
+#include "CreateAnchorTerm.h"
 #include "CreateNodalSourceTerm.h"
 #include "CreateVolumetricSourceTerm.h"
 #include "Python/CreatePythonSourceTerm.h"
@@ -75,7 +79,46 @@ std::unique_ptr<SourceTerm> createSourceTerm(
             source_term_mesh.getID(), variable_id, config.component_id,
             parameters);
     }
-
+    if (type == "Anchor")
+    {
+        const int number_of_components =
+            dof_table_bulk.getNumberOfVariableComponents(variable_id);
+        std::vector<int> component_ids(number_of_components);
+        std::iota(std::begin(component_ids), std::end(component_ids), 0);
+        auto dof_table_source_term =
+            dof_table_bulk.deriveBoundaryConstrainedMap(
+                variable_id, component_ids, std::move(source_term_mesh_subset));
+        const int bulk_mesh_dimension =
+            dof_table_bulk.getMeshSubset(variable_id, 0)
+                .getMesh()
+                .getDimension();
+        if (bulk_mesh_dimension != number_of_components)
+        {
+            OGS_FATAL(
+                "For the Anchor source term type,"
+                "the bulk mesh dimension needs to be the same "
+                "as the number of process variable components.");
+        }
+        switch (bulk_mesh_dimension)
+        {
+            case 2:
+                return ProcessLib::createAnchorTerm<2>(
+                    config.config, config.mesh,
+                    std::move(dof_table_source_term), source_term_mesh.getID(),
+                    variable_id, parameters);
+            case 3:
+                return ProcessLib::createAnchorTerm<3>(
+                    config.config, config.mesh,
+                    std::move(dof_table_source_term), source_term_mesh.getID(),
+                    variable_id, parameters);
+            default:
+                OGS_FATAL(
+                    "Anchor can not be instantiated "
+                    "for mesh dimensions other than two or three. "
+                    "{}-dimensional mesh was given.",
+                    bulk_mesh_dimension);
+        }
+    }
     if (type == "Line" || type == "Volumetric")
     {
         auto dof_table_source_term =
@@ -91,7 +134,6 @@ std::unique_ptr<SourceTerm> createSourceTerm(
             std::move(dof_table_source_term), parameters, integration_order,
             shapefunction_order);
     }
-
     if (type == "Python")
     {
         auto dof_table_source_term =

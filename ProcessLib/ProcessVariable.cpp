@@ -164,12 +164,20 @@ ProcessVariable::ProcessVariable(
             auto component_id =
                 //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__component}
                 st_config.getConfigParameterOptional<int>("component");
+            auto const type =
+                //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
+                st_config.peekConfigParameter<std::string>("type");
 
             if (!component_id)
             {
                 if (_n_components == 1)
                 {
                     // default value for single component vars.
+                    component_id = 0;
+                }
+                else if (type == "Anchor")
+                {
+                    // dummy value
                     component_id = 0;
                 }
                 else
