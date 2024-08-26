@@ -285,7 +285,7 @@ def aggregate_log_files(log_files_dirs):
     return map_prj_file_to_agg_vtkdiff_stats
 
 
-def run(log_files_dirs, xml_out_dir, verbose):
+def run(log_files_dirs, out_dir, *, snippet_out, csv_out, verbose):
     map_prj_file_to_agg_vtkdiff_stats = aggregate_log_files(log_files_dirs)
 
     for i, (prj_file, df_vtkdiff_max) in enumerate(
@@ -296,18 +296,25 @@ def run(log_files_dirs, xml_out_dir, verbose):
                 print()  # blank line as a separator
             print(f"###### {prj_file}\n")
 
-        df_vtkdiff_max = round_up_2_digits(df_vtkdiff_max)  # noqa: PLW2901
+        df_vtkdiff_max_rounded = round_up_2_digits(df_vtkdiff_max)
 
         if verbose:
-            print_table_summary(df_vtkdiff_max, sys.stdout)
+            print_table_summary(df_vtkdiff_max_rounded, sys.stdout)
 
-        if xml_out_dir is not None:
+        if out_dir is not None and (snippet_out or csv_out):
             prj_dir = Path(prj_file).parent
             assert not prj_dir.is_absolute()
-            this_xml_out_dir = xml_out_dir / prj_dir
-            this_xml_out_dir.mkdir(parents=True, exist_ok=True)
-            this_xml_out_file = this_xml_out_dir / Path(prj_file).name
-            write_xml_snippet(df_vtkdiff_max, this_xml_out_file)
+            this_out_dir = out_dir / prj_dir
+            this_out_dir.mkdir(parents=True, exist_ok=True)
+
+            if snippet_out:
+                this_xml_out_file = this_out_dir / Path(prj_file).name
+                write_xml_snippet(df_vtkdiff_max_rounded, this_xml_out_file)
+
+            if csv_out:
+                this_csv_out_file = this_out_dir / f"{Path(prj_file).name}.csv"
+                # for 17 digits precision cf. also https://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
+                df_vtkdiff_max.to_csv(this_csv_out_file, sep="\t", float_format="%.17g")
 
 
 if __name__ == "__main__":
@@ -319,7 +326,20 @@ if __name__ == "__main__":
         "--verbose", "-v", action="store_true", help="Produce verbose cmdline output"
     )
     parser.add_argument(
-        "--snippet-out", type=Path, help="OGS prj snippet output directory"
+        "-o",
+        "--out",
+        type=Path,
+        help="output directory root for prj file snippets and CSV files.",
+    )
+    parser.add_argument(
+        "--snippet-out",
+        action="store_true",
+        help="Output <test_definition> snippets for prj files.",
+    )
+    parser.add_argument(
+        "--csv-out",
+        action="store_true",
+        help="Output aggregated statistics as CSV files.",
     )
     parser.add_argument(
         "log_files_dirs",
@@ -331,9 +351,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     snippet_out = args.snippet_out
-
-    if snippet_out is not None:
-        assert snippet_out.is_dir()
+    csv_out = args.csv_out
+    outdir = args.out
 
     logger.setLevel(logging.INFO)
     ch = logging.StreamHandler()
@@ -342,11 +361,27 @@ if __name__ == "__main__":
     ch.setFormatter(formatter)
     logger.addHandler(ch)
 
+    if outdir and not (snippet_out or csv_out):
+        logger.INFO("Output directory will not be used.")
+
+    if (snippet_out or csv_out) and not outdir:
+        logger.ERROR("No output directory specified for XML and/or CSV output.")
+        sys.exit()
+
+    if outdir is not None:
+        assert outdir.is_dir()
+
     # suppress error message from Python interpreter, e.g., if a command
     # pipeline exits early, see
     # https://docs.python.org/3/library/signal.html#note-on-sigpipe
     try:
-        run(args.log_files_dirs, snippet_out, args.verbose)
+        run(
+            args.log_files_dirs,
+            outdir,
+            snippet_out=snippet_out,
+            csv_out=csv_out,
+            verbose=args.verbose,
+        )
     except BrokenPipeError:
         devnull = os.open(os.devnull, os.O_WRONLY)
         os.dup2(devnull, sys.stdout.fileno())
