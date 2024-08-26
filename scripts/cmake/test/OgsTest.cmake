@@ -26,11 +26,14 @@ function(OgsTest)
         )
     endif()
 
-    set(timeout ${ogs.ctest.large_runtime})
-    if(DEFINED OgsTest_RUNTIME)
-        math(EXPR timeout "${OgsTest_RUNTIME} * 3")
-    else()
+    if(NOT DEFINED OgsTest_RUNTIME)
         set(OgsTest_RUNTIME 1)
+    elseif(OgsTest_RUNTIME GREATER 750)
+        # Set a timeout on jobs larger than the default ctest timeout of 1500
+        # (s). The allowed runtime is twice as long as the given RUNTIME
+        # parameter.
+        math(EXPR timeout "${OgsTest_RUNTIME} * 2")
+        set(timeout TIMEOUT ${timeout})
     endif()
 
     if(DEFINED OGS_CTEST_MAX_RUNTIME)
@@ -132,6 +135,7 @@ macro(_ogs_add_test TEST_NAME)
                    ${OgsTest_DISABLED}
                    LABELS
                    "${labels}"
+                   ${timeout}
     )
 endmacro()
 
