@@ -17,6 +17,25 @@
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
 
+#ifdef USE_PETSC
+namespace
+{
+/// Partitioned mesh of a component. Checked downcast from MeshLib::Mesh.
+MeshLib::NodePartitionedMesh const& partitionedMesh(
+    MeshLib::MeshSubset const& c)
+{
+    auto const* const mesh =
+        dynamic_cast<MeshLib::NodePartitionedMesh const*>(&c.getMesh());
+    if (mesh == nullptr)
+    {
+        OGS_FATAL("The mesh '{:s}' of the component is not partitioned.",
+                  c.getMesh().getName());
+    }
+    return *mesh;
+}
+}  // namespace
+#endif
+
 namespace
 {
 /// Returns a range of lines for the given location.
@@ -385,10 +404,6 @@ void MeshComponentMap::createParallelMeshComponentMap(
             "the order type of ComponentOrder::BY_LOCATION");
     }
 
-    const MeshLib::NodePartitionedMesh& partitioned_mesh =
-        static_cast<const MeshLib::NodePartitionedMesh&>(
-            components[0].getMesh());
-
     //
     // get the number of unknowns and the number of components at extra node
     //
@@ -396,14 +411,14 @@ void MeshComponentMap::createParallelMeshComponentMap(
     int components_at_high_order_nodes = 0;
     for (auto const& c : components)
     {
-        if (partitioned_mesh.getNumberOfNodes() == c.getNodes().size())
+        if (partitionedMesh(c).getNumberOfNodes() == c.getNodes().size())
         {
             components_at_high_order_nodes++;
-            num_unknowns += partitioned_mesh.getNumberOfGlobalNodes();
+            num_unknowns += partitionedMesh(c).getNumberOfGlobalNodes();
         }
         else
         {
-            num_unknowns += partitioned_mesh.getNumberOfGlobalBaseNodes();
+            num_unknowns += partitionedMesh(c).getNumberOfGlobalBaseNodes();
         }
     }
 
@@ -417,11 +432,8 @@ void MeshComponentMap::createParallelMeshComponentMap(
     _num_local_dof = 0;
     for (auto const& c : components)
     {
-        assert(dynamic_cast<MeshLib::NodePartitionedMesh const*>(
-                   &c.getMesh()) != nullptr);
+        auto const& partitioned_mesh = partitionedMesh(c);
         std::size_t const mesh_id = c.getMeshID();
-        const MeshLib::NodePartitionedMesh& partitioned_mesh =
-            static_cast<const MeshLib::NodePartitionedMesh&>(c.getMesh());
         const auto& sub_mesh_nodes = c.getNodes();
 
         // mesh items are ordered first by node, cell, ....
