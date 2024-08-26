@@ -63,7 +63,7 @@ def test_xml_snippet(tmp_path, log_file, snippet_file_expected):
     # Note: this test uses pytest's tmp_path fixture, cf. https://docs.pytest.org/en/7.1.x/how-to/tmp_path.html
     log_path = res_path / log_file
 
-    run([log_path], tmp_path, False)
+    run([log_path], tmp_path, snippet_out=True, csv_out=False, verbose=False)
 
     snippet_path = tmp_path / snippet_file_expected
     assert snippet_path.exists()
