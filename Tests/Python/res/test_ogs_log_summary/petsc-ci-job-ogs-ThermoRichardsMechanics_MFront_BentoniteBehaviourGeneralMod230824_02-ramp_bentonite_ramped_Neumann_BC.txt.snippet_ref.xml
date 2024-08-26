@@ -1,42 +1,42 @@
 <!-- summary of aggregated error norms:
-                                                                 abs_maximum_norm  rel_maximum_norm
+                                                                 check_succeeded  abs_maximum_norm  rel_maximum_norm
 array
-HeatFlowRate                                                              5.1e-14               inf
-MassFlowRate                                                              1.1e-13           2.8e-13
-NodalForces                                                               1.7e-09           1.8e-15
-displacement                                                              3.5e-16               inf
-dry_density_solid_ip                                                      0.0e+00           0.0e+00
-epsilon                                                                   3.9e-16               inf
-epsilon_ip                                                                3.1e-16               inf
-intrinsic_permeability_ip                                                 0.0e+00           0.0e+00
-liquid_density_avg                                                        0.0e+00           0.0e+00
-liquid_density_ip                                                         0.0e+00           0.0e+00
-material_state_variable_RungeKutta_InternalStateVariables[0]_ip           0.0e+00           0.0e+00
-material_state_variable_RungeKutta_InternalStateVariables[1]_ip           0.0e+00           0.0e+00
-material_state_variable_RungeKutta_InternalStateVariables[2]_ip           0.0e+00           0.0e+00
-material_state_variable_RungeKutta_InternalStateVariables[3]_ip           0.0e+00           0.0e+00
-material_state_variable_SrM_ip                                            1.1e-16           1.1e-14
-material_state_variable_a_scan_ip                                         0.0e+00           0.0e+00
-material_state_variable_eM_ip                                             1.0e-15           2.3e-15
-material_state_variable_e_ip                                              1.3e-15           1.5e-15
-material_state_variable_em_ip                                             3.4e-16           1.3e-15
-material_state_variable_re_ip                                             1.9e-15           2.1e-15
-porosity_avg                                                              0.0e+00           0.0e+00
-porosity_ip                                                               0.0e+00           0.0e+00
-pressure                                                                  0.0e+00           0.0e+00
-pressure_interpolated                                                     0.0e+00           0.0e+00
-relative_permeability_ip                                                  0.0e+00           0.0e+00
-saturation_avg                                                            3.9e-16           1.2e-15
-saturation_ip                                                             6.7e-16           2.1e-15
-sigma_total                                                               2.6e-08               inf
-sigma_total_avg                                                           2.4e-09               inf
-sigma_total_ip                                                            2.0e-08               inf
-temperature                                                               0.0e+00           0.0e+00
-temperature_interpolated                                                  0.0e+00           0.0e+00
-transport_porosity_ip                                                     0.0e+00           0.0e+00
-velocity_ip                                                               3.0e-25               inf
-viscosity_avg                                                             0.0e+00           0.0e+00
-viscosity_ip                                                              0.0e+00           0.0e+00
+HeatFlowRate                                                                True           5.1e-14               inf
+MassFlowRate                                                                True           1.1e-13           2.8e-13
+NodalForces                                                                False           1.7e-09           1.8e-15
+displacement                                                               False           3.5e-16               inf
+dry_density_solid_ip                                                        True           0.0e+00           0.0e+00
+epsilon                                                                    False           3.9e-16               inf
+epsilon_ip                                                                 False           3.1e-16               inf
+intrinsic_permeability_ip                                                   True           0.0e+00           0.0e+00
+liquid_density_avg                                                          True           0.0e+00           0.0e+00
+liquid_density_ip                                                           True           0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[0]_ip             True           0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[1]_ip             True           0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[2]_ip             True           0.0e+00           0.0e+00
+material_state_variable_RungeKutta_InternalStateVariables[3]_ip             True           0.0e+00           0.0e+00
+material_state_variable_SrM_ip                                             False           1.1e-16           1.1e-14
+material_state_variable_a_scan_ip                                           True           0.0e+00           0.0e+00
+material_state_variable_eM_ip                                               True           1.0e-15           2.3e-15
+material_state_variable_e_ip                                                True           1.3e-15           1.5e-15
+material_state_variable_em_ip                                               True           3.4e-16           1.3e-15
+material_state_variable_re_ip                                               True           1.9e-15           2.1e-15
+porosity_avg                                                                True           0.0e+00           0.0e+00
+porosity_ip                                                                 True           0.0e+00           0.0e+00
+pressure                                                                    True           0.0e+00           0.0e+00
+pressure_interpolated                                                       True           0.0e+00           0.0e+00
+relative_permeability_ip                                                    True           0.0e+00           0.0e+00
+saturation_avg                                                             False           3.9e-16           1.2e-15
+saturation_ip                                                               True           6.7e-16           2.1e-15
+sigma_total                                                                False           2.6e-08               inf
+sigma_total_avg                                                             True           2.4e-09               inf
+sigma_total_ip                                                             False           2.0e-08               inf
+temperature                                                                 True           0.0e+00           0.0e+00
+temperature_interpolated                                                    True           0.0e+00           0.0e+00
+transport_porosity_ip                                                       True           0.0e+00           0.0e+00
+velocity_ip                                                                 True           3.0e-25               inf
+viscosity_avg                                                               True           0.0e+00           0.0e+00
+viscosity_ip                                                                True           0.0e+00           0.0e+00
 -->
 
     <test_definition>
@@ -54,6 +54,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>1.1e-13</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 2.8e-13 --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
@@ -61,6 +62,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>1.7e-09</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 1.8e-15 --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
@@ -75,6 +77,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>0.0</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
@@ -82,6 +85,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>3.9e-16</absolute_tolerance>
             <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
@@ -138,6 +142,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>0.0</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
@@ -215,6 +220,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>0.0</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
@@ -229,6 +235,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>6.7e-16</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 2.1e-15 --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
@@ -243,6 +250,7 @@ viscosity_ip                                                              0.0e+0
             <absolute_tolerance>2.4e-09</absolute_tolerance>
             <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
         </vtkdiff>
+        <!-- Check failed -->
         <vtkdiff>
             <regex>ramped_Neumann_BC_ts_.*_t_.*[.]vtu</regex>
             <!-- <file>ramped_Neumann_BC_ts_50_t_0.625000.vtu</file> -->
