@@ -38,9 +38,10 @@ void updateDeactivatedSubdomains(
 }
 
 bool isOutputStep(std::vector<ProcessLib::Output> const& outputs,
-                  const int timestep, const double t, const double end_time)
+                  const int timestep, const NumLib::Time& t,
+                  const NumLib::Time& end_time)
 {
-    if (std::abs(end_time - t) < std::numeric_limits<double>::epsilon())
+    if (end_time == t)
     {
         // the last timestep is an output step
         return true;

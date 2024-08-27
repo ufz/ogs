@@ -18,7 +18,8 @@ namespace ProcessLib
 /// Adds output data to a mesh.
 ///
 /// \note The mesh is passed via \c process_output_data.
-void addProcessDataToMesh(const double t, std::vector<GlobalVector*> const& xs,
+void addProcessDataToMesh(NumLib::Time const& t,
+                          std::vector<GlobalVector*> const& xs,
                           int const process_id,
                           ProcessOutputData const& process_output_data,
                           bool const output_secondary_variables,
