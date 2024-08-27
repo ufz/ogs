@@ -14,6 +14,7 @@
 #include <numeric>
 
 #include "NumLib/TimeStepping/Algorithms/FixedTimeStepping.h"
+#include "NumLib/TimeStepping/Time.h"
 
 namespace ac = autocheck;
 
@@ -98,8 +99,9 @@ TEST_F(NumLibFixedTimeStepping, next)
         NumLib::FixedTimeStepping fixed_time_stepping{
             t_initial, t_end, repeat_dt_pair, {}};
 
-        NumLib::TimeStep ts_dummy(0, 0, 0);
-        NumLib::TimeStep ts_current(0, t_initial, 0);
+        NumLib::TimeStep ts_dummy(NumLib::Time(0), NumLib::Time(0), 0);
+        NumLib::TimeStep ts_current(
+            NumLib::Time(0), NumLib::Time(t_initial), 0);
         for (auto const& expected_time_point : expected_time_points)
         {
             auto [is_next, step_size] =
@@ -107,23 +109,16 @@ TEST_F(NumLibFixedTimeStepping, next)
                                          0 /* number_of_iterations */,
                                          ts_dummy,
                                          ts_current);
-            // this only happens if the last time step was processed or the
-            // current time is already at the end time up to machine precision
-            if (!is_next && step_size != 0.0)
+            // check if the current time plus the computed step size is not
+            // equivalent (comparison with eps included) to the expected time
+            // point
+            if (ts_current.current() + step_size !=
+                NumLib::Time(expected_time_point))
             {
                 return false;
             }
-            // if the current time plus the computed step size minus the
-            // expected time is larger than the minimal time step size then the
-            // step size should be larger
-            // if next is true then the step
-            if (is_next &&
-                (ts_current.current() + step_size) != expected_time_point)
-            {
-                return false;
-            }
-            // if next is true then the step size should be larger than zero
-            if (is_next && step_size == 0.0)
+            // check if the step size is zero
+            if (step_size == 0.0)
             {
                 return false;
             }
@@ -167,8 +162,8 @@ TEST_F(NumLibFixedTimeStepping, next_StaticTest)
     NumLib::FixedTimeStepping fixed_time_stepping{
         t_initial, t_end, repeat_dt_pair, fixed_output_times};
 
-    NumLib::TimeStep ts_dummy(0, 0, 0);
-    NumLib::TimeStep ts_current(0, t_initial, 0);
+    NumLib::TimeStep ts_dummy(NumLib::Time(0), NumLib::Time(0), 0);
+    NumLib::TimeStep ts_current(NumLib::Time(0), NumLib::Time(t_initial), 0);
     for (auto const& expected_time_point : expected_time_points)
     {
         auto [is_next, step_size] =
@@ -176,19 +171,10 @@ TEST_F(NumLibFixedTimeStepping, next_StaticTest)
                                      0 /* number_of_iterations */,
                                      ts_dummy,
                                      ts_current);
-        // this only happens if the last time step was processed or the
-        // current time is already at the end time up to machine precision
-        ASSERT_FALSE(!is_next && step_size != 0.0);
+        ASSERT_TRUE(step_size != 0.0);
+        ASSERT_TRUE(ts_current.current() + step_size ==
+                    NumLib::Time(expected_time_point));
 
-        // if the current time plus the computed step size minus the
-        // expected time is larger than the minimal time step size then the
-        // step size should be larger
-        // if next is true then the step
-        ASSERT_FALSE(is_next &&
-                     (ts_current.current() + step_size) != expected_time_point);
-
-        // if next is true then the step size should be larger than zero
-        ASSERT_FALSE(is_next && step_size == 0.0);
         ts_current += step_size;
     }
     ASSERT_EQ(ts_current.timeStepNumber(), dts.size());

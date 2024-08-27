@@ -51,9 +51,9 @@ NumLib::Time addTimeIncrement(std::vector<double>& delta_ts,
 
 namespace NumLib
 {
-std::size_t findDeltatInterval(NumLib::Time const t_initial,
+std::size_t findDeltatInterval(Time const& t_initial,
                                std::vector<double> const& delta_ts,
-                               double const fixed_output_time)
+                               Time const& fixed_output_time)
 {
     if (fixed_output_time < t_initial)
     {
@@ -84,9 +84,11 @@ void incorporateFixedTimesForOutput(
         return;
     }
 
-    if (auto lower_bound =
-            std::lower_bound(begin(fixed_times_for_output),
-                             end(fixed_times_for_output), t_initial);
+    if (auto lower_bound = std::lower_bound(
+            begin(fixed_times_for_output), end(fixed_times_for_output),
+            t_initial,
+            [](auto const time, NumLib::Time const& initial_time)
+            { return NumLib::Time(time) < initial_time; });
         lower_bound != begin(fixed_times_for_output))
     {
         WARN(
@@ -117,8 +119,8 @@ void incorporateFixedTimesForOutput(
     // incorporate fixed output times into dts vector
     for (auto const fixed_time_for_output : fixed_times_for_output)
     {
-        auto const interval_number =
-            findDeltatInterval(t_initial, delta_ts, fixed_time_for_output);
+        auto const interval_number = findDeltatInterval(
+            t_initial, delta_ts, Time(fixed_time_for_output));
         if (interval_number == std::numeric_limits<std::size_t>::max())
         {
             WARN("Did not find interval for fixed output time {}",
@@ -221,9 +223,9 @@ std::tuple<bool, double> FixedTimeStepping::next(
     }
 
     double dt = _dt_vector[ts_current.timeStepNumber()];
-    if (ts_current.current()() + dt > end())
+    if (ts_current.current() + dt > end())
     {  // upper bound by t_end
-        dt = end() - ts_current.current()();
+        dt = end()() - ts_current.current()();
     }
 
     return std::make_tuple(true, dt);

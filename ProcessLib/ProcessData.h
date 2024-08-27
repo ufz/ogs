@@ -31,7 +31,7 @@ struct ProcessData
         std::unique_ptr<NumLib::TimeDiscretization>&& time_disc_,
         int const process_id_, std::string&& process_name_, Process& process_)
         : timestep_algorithm(std::move(timestep_algorithm_)),
-          timestep_previous(timestep_algorithm->begin()),
+          timestep_previous(NumLib::Time(timestep_algorithm->begin())),
           timestep_current(timestep_previous),
           nonlinear_solver_tag(nonlinear_solver_tag_),
           nonlinear_solver(nonlinear_solver_),

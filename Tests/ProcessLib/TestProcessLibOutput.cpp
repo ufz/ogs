@@ -12,6 +12,7 @@
 
 #include <autocheck/autocheck.hpp>
 
+#include "NumLib/TimeStepping/Time.h"
 #include "ProcessLib/Output/OutputDataSpecification.h"
 
 namespace ac = autocheck;
@@ -71,7 +72,8 @@ TEST_F(ProcessLibOutputDataSpecification,
         for (auto const fixed_output_time :
              output_data_specification.fixed_output_times)
         {
-            if (!output_data_specification.isOutputStep(1, fixed_output_time))
+            if (!output_data_specification.isOutputStep(
+                    1, NumLib::Time(fixed_output_time)))
             {
                 return false;
             }
@@ -97,7 +99,8 @@ TEST_F(ProcessLibOutputDataSpecification,
                           fixed_output_time_points.end(),
                           random_time) == fixed_output_time_points.end())
             {
-                if (output_data_specification.isOutputStep(1, random_time))
+                if (output_data_specification.isOutputStep(
+                        1, NumLib::Time(random_time)))
                 {
                     return false;
                 }
@@ -224,7 +227,8 @@ TEST_F(ProcessLibOutputDataSpecification,
         for (auto const fixed_output_time :
              output_data_specification.fixed_output_times)
         {
-            if (!output_data_specification.isOutputStep(1, fixed_output_time))
+            if (!output_data_specification.isOutputStep(
+                    1, NumLib::Time(fixed_output_time)))
             {
                 return false;
             }
@@ -236,7 +240,8 @@ TEST_F(ProcessLibOutputDataSpecification,
             for (int i = 0; i < repeats_each_steps_pair.repeat; ++i)
             {
                 step += repeats_each_steps_pair.each_steps;
-                if (!output_data_specification.isOutputStep(step, {}))
+                if (!output_data_specification.isOutputStep(step,
+                                                            NumLib::Time{0.0}))
                 {
                     return false;
                 }

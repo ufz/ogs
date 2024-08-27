@@ -37,9 +37,9 @@ public:
     virtual ~TimeStepAlgorithm() = default;
 
     /// return the beginning of time steps
-    double begin() const { return _t_initial(); }
+    Time begin() const { return _t_initial; }
     /// return the end of time steps
-    double end() const { return _t_end(); }
+    Time end() const { return _t_end; }
     /// reset the current step size from the previous time
     virtual void resetCurrentTimeStep(const double /*dt*/,
                                       TimeStep& /*ts_previous*/,

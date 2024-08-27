@@ -28,7 +28,7 @@ double possiblyClampDtToNextFixedTime(
         return dt;
     }
 
-    if ((t < *specific_time) && t + dt > *specific_time)
+    if ((t < Time(*specific_time)) && t + dt > Time(*specific_time))
     {
         double const t_to_specific_time = *specific_time - t();
         return t_to_specific_time;

@@ -22,8 +22,7 @@ namespace NumLib
 
 struct Time
 {
-    // TODO explicit
-    constexpr Time(double const time) : value_{time} {}
+    constexpr explicit Time(double const time) : value_{time} {}
 
     constexpr double operator()() const { return value_(); }
 

@@ -36,9 +36,9 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                                  T* obj = nullptr)
 {
     std::vector<double> vec_t;
-    vec_t.push_back(algorithm.begin());
+    vec_t.push_back(algorithm.begin()());
 
-    const double end_time = algorithm.end();
+    auto const end_time = algorithm.end();
     NumLib::TimeStep current_timestep(algorithm.begin());
     NumLib::TimeStep previous_timestep(algorithm.begin());
 
@@ -64,8 +64,8 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         }
 
         timestepper_dt =
-            (current_timestep.current()() + timestepper_dt > end_time)
-                ? end_time - current_timestep.current()()
+            (current_timestep.current() + timestepper_dt > end_time)
+                ? end_time() - current_timestep.current()()
                 : timestepper_dt;
 
         NumLib::updateTimeSteps(timestepper_dt, previous_timestep,

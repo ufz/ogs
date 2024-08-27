@@ -117,10 +117,10 @@ std::unique_ptr<TimeLoop> createTimeLoop(
                                 return (a->timestep_algorithm->end() <
                                         b->timestep_algorithm->end());
                             });
-    const double start_time =
+    auto const start_time =
         per_process_data[minmax_iter.first - per_process_data.begin()]
             ->timestep_algorithm->begin();
-    const double end_time =
+    auto const end_time =
         per_process_data[minmax_iter.second - per_process_data.begin()]
             ->timestep_algorithm->end();
 
