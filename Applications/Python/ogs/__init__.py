@@ -10,5 +10,4 @@ if "PEP517_BUILD_BACKEND" in os.environ:
     if config_spec is not None:
         from .config import *  # noqa: F403
 else:
-    print(os.environ)
     from .config import *  # noqa: F403
