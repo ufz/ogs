@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="bentonite_column.prj">
+    <replace sel="/*/meshes/mesh[1]/text()">bentonite_column_ts_0_t_41242.9_sec.vtu</replace>
+    <replace msel="//mesh[text()='column']/text()">bentonite_column_ts_0_t_41242.9_sec</replace>
+
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">41242.9</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_end/text()">44842.9</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">3600</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">bentonite_column</replace>
+
+    <remove sel="//constitutive_relation/initial_values" />
+    <remove sel="//process/initial_stress" />
+
+    <!-- We omit that setting and the result will be wrong. This is the only difference to the succeeding test case -->
+    <!--
+    <add sel="/*/processes/process">
+        <initialize_porosity_from_medium_property>false</initialize_porosity_from_medium_property>
+    </add>
+    -->
+
+    <remove sel="//property[name='saturation']" />
+
+    <remove sel="/*/parameters/parameter[name='temperature_IC']" />
+    <remove sel="/*/parameters/parameter[name='pressure_IC']" />
+    <remove sel="/*/parameters/parameter[name='displacement_IC']" />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>temperature_IC</name>
+            <type>MeshNode</type>
+            <mesh>bentonite_column_ts_0_t_41242.9_sec</mesh>
+            <field_name>temperature</field_name>
+        </parameter>
+        <parameter>
+            <name>pressure_IC</name>
+            <type>MeshNode</type>
+            <mesh>bentonite_column_ts_0_t_41242.9_sec</mesh>
+            <field_name>pressure</field_name>
+        </parameter>
+        <parameter>
+            <name>displacement_IC</name>
+            <type>MeshNode</type>
+            <mesh>bentonite_column_ts_0_t_41242.9_sec</mesh>
+            <field_name>displacement</field_name>
+        </parameter>
+    </add>
+
+    <replace sel="//output/prefix/text()">bentonite_column_restart_fail</replace>
+    <replace msel="//vtkdiff/regex/text()">bentonite_column_restart_fail_ts_.*_t_.*_sec[.]vtu</replace>
+
+
+    <remove msel="//vtkdiff[field != 'porosity' and field != 'porosity_avg' and field != 'porosity_ip']" />
+    <!-- We set the tolerances for the porosity fields to a relartively large value. Still, vtkdiff will fail. -->
+    <replace msel="//vtkdiff/absolute_tolerance/text()">
+        8e-3
+    </replace>
+    <replace msel="//vtkdiff/relative_tolerance/text()">
+        2e-2
+    </replace>
+</OpenGeoSysProjectDiff>
