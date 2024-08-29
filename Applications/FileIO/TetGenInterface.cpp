@@ -630,7 +630,7 @@ bool TetGenInterface::writeTetGenSmesh(
     }
 
     std::ofstream out(file_name.c_str(), std::ios::out);
-    out.precision(std::numeric_limits<double>::digits10);
+    out.precision(std::numeric_limits<double>::max_digits10);
     // the points header
     const std::size_t nPoints(points->size());
     out << nPoints << " 3\n";
@@ -700,7 +700,7 @@ bool TetGenInterface::writeTetGenSmesh(
     const std::vector<MeshLib::Node*>& nodes = mesh.getNodes();
 
     std::ofstream out(file_name.c_str(), std::ios::out);
-    out.precision(std::numeric_limits<double>::digits10);
+    out.precision(std::numeric_limits<double>::max_digits10);
     // the points header
     const std::size_t nPoints(nodes.size());
     out << nPoints << " 3\n";

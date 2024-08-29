@@ -359,7 +359,7 @@ void AsciiRasterInterface::writeRasterAsASC(GeoLib::Raster const& raster,
     out << "ncols " << nCols << "\n";
     out << "nrows " << nRows << "\n";
     auto const default_precision = out.precision();
-    out.precision(std::numeric_limits<double>::digits10);
+    out.precision(std::numeric_limits<double>::max_digits10);
     out << "xllcorner " << origin[0] << "\n";
     out << "yllcorner " << origin[1] << "\n";
     out << "cellsize " << header.cell_size << "\n";

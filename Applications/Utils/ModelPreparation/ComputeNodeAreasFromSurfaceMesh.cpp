@@ -45,8 +45,8 @@ static void writeToFile(
         OGS_FATAL("Unable to open the file '{:s}' - aborting.", csv_fname);
     }
 
-    ids_and_area_out.precision(std::numeric_limits<double>::digits10);
-    csv_out.precision(std::numeric_limits<double>::digits10);
+    ids_and_area_out.precision(std::numeric_limits<double>::max_digits10);
+    csv_out.precision(std::numeric_limits<double>::max_digits10);
 
     csv_out << "ID x y z area node_id\n";  // CSV header
     for (std::size_t k(0); k < ids_and_areas.size(); k++)

@@ -168,7 +168,7 @@ void TINInterface::writeSurfaceAsTIN(GeoLib::Surface const& surface,
         WARN("writeSurfaceAsTIN(): could not open stream to {:s}.", file_name);
         return;
     }
-    os.precision(std::numeric_limits<double>::digits10);
+    os.precision(std::numeric_limits<double>::max_digits10);
     const std::size_t n_tris(surface.getNumberOfTriangles());
     for (std::size_t l(0); l < n_tris; l++)
     {

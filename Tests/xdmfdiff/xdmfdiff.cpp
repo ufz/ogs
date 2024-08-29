@@ -246,7 +246,7 @@ bool compareValues(std::vector<double> const& points_a,
 
 int main(int argc, char* argv[])
 {
-    auto const digits10 = std::numeric_limits<double>::digits10;
+    auto const digits10 = std::numeric_limits<double>::max_digits10;
     auto const args = parseCommandLine(argc, argv);
 
     // Setup the standard output and error stream numerical formats.

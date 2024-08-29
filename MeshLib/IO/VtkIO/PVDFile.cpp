@@ -51,7 +51,7 @@ void PVDFile::addVTUFile(const std::string& vtu_fname, double timestep)
         OGS_FATAL("could not open file `{:s}'", pvd_filename);
     }
 
-    fh << std::setprecision(std::numeric_limits<double>::digits10);
+    fh << std::setprecision(std::numeric_limits<double>::max_digits10);
 
     fh << "<?xml version=\"1.0\"?>\n"
           "<VTKFile type=\"Collection\" version=\"0.1\" "

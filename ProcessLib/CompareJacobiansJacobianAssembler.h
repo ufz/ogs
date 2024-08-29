@@ -45,7 +45,7 @@ public:
           _fail_on_error(fail_on_error),
           _log_file(log_file_path)
     {
-        _log_file.precision(std::numeric_limits<double>::digits10);
+        _log_file.precision(std::numeric_limits<double>::max_digits10);
         _log_file << "#!/usr/bin/env python\n"
                      "import numpy as np\n"
                      "from numpy import nan\n"

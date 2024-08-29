@@ -298,13 +298,13 @@ bool XmlStnInterface::write()
         stationTag.setAttribute("id", QString::number(i));
         stationTag.setAttribute(
             "x", QString::number((*(*stations)[i])[0], 'f',
-                                 std::numeric_limits<double>::digits10));
+                                 std::numeric_limits<double>::max_digits10));
         stationTag.setAttribute(
             "y", QString::number((*(*stations)[i])[1], 'f',
-                                 std::numeric_limits<double>::digits10));
+                                 std::numeric_limits<double>::max_digits10));
         stationTag.setAttribute(
             "z", QString::number((*(*stations)[i])[2], 'f',
-                                 std::numeric_limits<double>::digits10));
+                                 std::numeric_limits<double>::max_digits10));
         stationsTag.appendChild(stationTag);
 
         QDomElement stationNameTag = doc.createElement("name");

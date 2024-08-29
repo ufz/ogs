@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
     MeshLib::IO::writeMeshToFile(*surface_mesh, result_file.getValue());
 
     std::ofstream result_out(result_file.getValue() + ".txt");
-    result_out.precision(std::numeric_limits<double>::digits10);
+    result_out.precision(std::numeric_limits<double>::max_digits10);
     for (auto const& p : direct_values)
     {
         result_out << p.first << " " << p.second << "\n";

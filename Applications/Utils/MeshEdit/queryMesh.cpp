@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     {
         std::stringstream out;
         out << std::scientific
-            << std::setprecision(std::numeric_limits<double>::digits10);
+            << std::setprecision(std::numeric_limits<double>::max_digits10);
         out << "--------------------------------------------------------"
             << std::endl;
         auto* ele = mesh->getElement(ele_id);
@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
     {
         std::stringstream out;
         out << std::scientific
-            << std::setprecision(std::numeric_limits<double>::digits10);
+            << std::setprecision(std::numeric_limits<double>::max_digits10);
         out << "--------------------------------------------------------"
             << std::endl;
         MeshLib::Node const* node = mesh->getNode(node_id);
