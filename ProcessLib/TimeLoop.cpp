@@ -294,8 +294,7 @@ bool computationOfChangeNeeded(
 std::pair<double, bool> TimeLoop::computeTimeStepping(
     const double prev_dt, NumLib::Time& t, std::size_t& accepted_steps,
     std::size_t& rejected_steps,
-    std::vector<std::function<double(NumLib::Time const&, double)>> const&
-        time_step_constraints)
+    std::vector<TimeStepConstraintCallback> const& time_step_constraints)
 {
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
@@ -441,24 +440,21 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     return {dt, last_step_rejected};
 }
 
-std::vector<std::function<double(NumLib::Time const&, double)>>
+std::vector<TimeLoop::TimeStepConstraintCallback>
 TimeLoop::generateOutputTimeStepConstraints(
     std::vector<double>&& fixed_times) const
 {
-    std::vector<std::function<double(NumLib::Time const&, double)>> const
-        time_step_constraints{
-            [fixed_times = std::move(fixed_times)](NumLib::Time t, double dt) {
-                return NumLib::possiblyClampDtToNextFixedTime(t, dt,
-                                                              fixed_times);
-            },
-            [this](NumLib::Time t, double dt) -> double
+    std::vector<TimeStepConstraintCallback> const time_step_constraints{
+        [fixed_times = std::move(fixed_times)](NumLib::Time const& t, double dt)
+        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
+        [this](NumLib::Time const& t, double dt) -> double
+        {
+            if (t < _end_time && _end_time < t + dt)
             {
-                if (t < _end_time && _end_time < t + dt)
-                {
-                    return _end_time() - t();
-                }
-                return dt;
-            }};
+                return _end_time() - t();
+            }
+            return dt;
+        }};
     return time_step_constraints;
 }
 

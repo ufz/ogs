@@ -94,6 +94,8 @@ private:
     NumLib::NonlinearSolverStatus solveCoupledEquationSystemsByStaggeredScheme(
         const NumLib::Time& t, const double dt, const std::size_t timestep_id);
 
+    using TimeStepConstraintCallback =
+        std::function<double(NumLib::Time const&, double)>;
     /**
      *  Find the minimum time step size among the predicted step sizes of
      *  processes and step it as common time step size.
@@ -112,8 +114,7 @@ private:
     std::pair<double, bool> computeTimeStepping(
         const double prev_dt, NumLib::Time& t, std::size_t& accepted_steps,
         std::size_t& rejected_steps,
-        std::vector<std::function<double(NumLib::Time const&, double)>> const&
-            time_step_constraints);
+        std::vector<TimeStepConstraintCallback> const& time_step_constraints);
 
     template <typename OutputClassMember>
     void outputSolutions(unsigned timestep,
@@ -121,8 +122,8 @@ private:
                          OutputClassMember output_class_member) const;
 
 private:
-    std::vector<std::function<double(NumLib::Time const&, double)>>
-    generateOutputTimeStepConstraints(std::vector<double>&& fixed_times) const;
+    std::vector<TimeStepConstraintCallback> generateOutputTimeStepConstraints(
+        std::vector<double>&& fixed_times) const;
     void preOutputInitialConditions(NumLib::Time const& t,
                                     const double dt) const;
     std::vector<GlobalVector*> _process_solutions;
