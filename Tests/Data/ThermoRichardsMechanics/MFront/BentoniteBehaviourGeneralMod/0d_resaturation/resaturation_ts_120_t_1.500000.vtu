@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Float64" Name="epsilon_ip" NumberOfComponents="6" NumberOfTuples="27" format="binary" RangeMin="2.7986003407994626e-35" RangeMax="2.7986003407994626e-35">
+        AQAAAACAAAAQBQAAMAAAAA==eJy78t7u3jz/3Tt8mEoW1t9abOH6bfvMHsvtFgw4wJVR9aPqR9WPqh+m6gF2QWFH
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            2.7986003408e-35
+          </Value>
+          <Value index="1">
+            2.7986003408e-35
+          </Value>
+        </InformationKey>
+      </DataArray>
+      <DataArray type="Float64" Name="sigma_total_ip" NumberOfComponents="6" NumberOfTuples="27" format="binary" RangeMin="3464101.6151377545" RangeMax="3464101.6151377545">
+        AQAAAACAAAAQBQAAIAAAAA==eJxjYGBgaGixO8iAhcYFRtWPqh9VP6p+OKoHAC/movQ=
+        <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+          <Value index="0">
+            3464101.6151
+          </Value>
+          <Value index="1">
+            3464101.6151
+          </Value>
+        </InformationKey>
+      </DataArray>
+      <DataArray type="Float64" Name="saturation_ip" NumberOfTuples="27" format="binary" RangeMin="0.299863322151391" RangeMax="0.299863322151391">
+        AQAAAACAAADYAAAAFAAAAA==eJxbZ1/17qvBZft1w4wGABlAesU=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_e_ip" NumberOfTuples="27" format="binary" RangeMin="0.9" RangeMax="0.9">
+        AQAAAACAAADYAAAAEQAAAA==eJw7ewYE3tifHWY0AFB9oL0=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_em_ip" NumberOfTuples="27" format="binary" RangeMin="0.263401003074267" RangeMax="0.263401003074267">
+        AQAAAACAAADYAAAAEwAAAA==eJzTZ6x52H/7gr3+MKMBxvNsow==
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_eM_ip" NumberOfTuples="27" format="binary" RangeMin="0.503877229301449" RangeMax="0.503877229301449">
+        AQAAAACAAADYAAAAFAAAAA==eJx73r9Q+bD8A/vnw4wGAKGacjo=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_SrM_ip" NumberOfTuples="27" format="binary" RangeMin="0.0101727883538282" RangeMax="0.0101727883538282">
+        AQAAAACAAADYAAAAEwAAAA==eJw72+jfVXG1xf7sMKMBXmtxzg==
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_a_scan_ip" NumberOfTuples="27" format="binary" RangeMin="0" RangeMax="0">
+        AQAAAACAAADYAAAADAAAAA==eJxjYBieAAAA2AAB
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_re_ip" NumberOfTuples="27" format="binary" RangeMin="1" RangeMax="1">
+        AQAAAACAAADYAAAAEQAAAA==eJxjYACBD/YMw4wGADZoH/Y=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_RungeKutta_InternalStateVariables[0]_ip" NumberOfTuples="27" format="binary" RangeMin="480" RangeMax="480">
+        AQAAAACAAADYAAAAEQAAAA==eJxjYACBOgeGYUYDAEa0FAs=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_RungeKutta_InternalStateVariables[1]_ip" NumberOfTuples="27" format="binary" RangeMin="120" RangeMax="120">
+        AQAAAACAAADYAAAAEQAAAA==eJxjYACBOAeGYUYDAODWEKs=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_RungeKutta_InternalStateVariables[2]_ip" NumberOfTuples="27" format="binary" RangeMin="1" RangeMax="1">
+        AQAAAACAAADYAAAAEQAAAA==eJxjYACBD/YMw4wGADZoH/Y=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_RungeKutta_InternalStateVariables[3]_ip" NumberOfTuples="27" format="binary" RangeMin="1" RangeMax="1">
+        AQAAAACAAADYAAAAEQAAAA==eJxjYACBD/YMw4wGADZoH/Y=
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_stored energy_ip" NumberOfTuples="27" format="binary" RangeMin="0" RangeMax="0">
+        AQAAAACAAADYAAAADAAAAA==eJxjYBieAAAA2AAB
+      </DataArray>
+      <DataArray type="Float64" Name="material_state_variable_disspated energy_ip" NumberOfTuples="27" format="binary" RangeMin="0" RangeMax="0">
+        AQAAAACAAADYAAAADAAAAA==eJxjYBieAAAA2AAB
+      </DataArray>
+    </FieldData>
+    <Piece NumberOfPoints="8" NumberOfCells="1">
+      <PointData Scalars="pressure">
+        <DataArray type="Float64" Name="pressure" format="binary" RangeMin="-82500000" RangeMax="-82500000">
+          AQAAAACAAABAAAAAEwAAAA==eJxjYGBoSFs9+SADmTQAyL4XKQ==
+        </DataArray>
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="1.7320508075688772">
+          AQAAAACAAADAAAAAHAAAAA==eJxjYMAHPtjjlcaQh/GJ1YdLPy51mDQAp2EONQ==
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              0
+            </Value>
+            <Value index="1">
+              1.7320508076
+            </Value>
+          </InformationKey>
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="7">
+          AQAAAACAAABAAAAAHgAAAA==eJxjYIAARijNDKWZoDQLlGaF0uxQmg1KAwAC8AAd
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="8" RangeMax="8">
+          AQAAAACAAAAIAAAACwAAAA==eJzjYIAAAABIAAk=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="12" RangeMax="12">
+          AQAAAACAAAABAAAACQAAAA==eJzjAQAADQAN
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>
