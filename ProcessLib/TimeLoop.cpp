@@ -519,9 +519,9 @@ bool TimeLoop::executeTimeStep()
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
     INFO(
-        "=== Time stepping at step #{:d} and time {:.18g} with step size "
+        "=== Time stepping at step #{:d} and time {} with step size "
         "{:.18g}",
-        timesteps, _current_time(), _dt);
+        timesteps, _current_time, _dt);
 
     updateDeactivatedSubdomains(_per_process_data, _current_time());
 
@@ -555,8 +555,8 @@ bool TimeLoop::calculateNextTimeStep()
     if (current_time == (_current_time + _dt))
     {
         ERR("Time step size of {:.18g} is too small.\n"
-            "Time stepping stops at step {:d} and at time of {:.18g}.",
-            _dt, timesteps, _current_time());
+            "Time stepping stops at step {:d} and at time of {}.",
+            _dt, timesteps, _current_time);
         return false;
     }
 
@@ -656,9 +656,9 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         process_data->nonlinear_solver_status = nonlinear_solver_status;
         if (!nonlinear_solver_status.error_norms_met)
         {
-            ERR("The nonlinear solver failed in time step #{:d} at t = {:.18g} "
-                "s for process #{:d}.",
-                timestep_id, t(), process_id);
+            ERR("The nonlinear solver failed in time step #{:d} at t = {} s "
+                "for process #{:d}.",
+                timestep_id, t, process_id);
 
             if (!process_data->timestep_algorithm->canReduceTimestepSize(
                     process_data->timestep_current,
