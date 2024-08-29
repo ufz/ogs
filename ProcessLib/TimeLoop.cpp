@@ -292,14 +292,14 @@ bool computationOfChangeNeeded(
     return timestep_algorithm.isSolutionErrorComputationNeeded();
 }
 
-std::pair<double, bool> TimeLoop::computeTimeStepping(
+std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
     const double prev_dt, NumLib::Time& t, std::size_t& accepted_steps,
     std::size_t& rejected_steps,
     std::vector<TimeStepConstraintCallback> const& time_step_constraints)
 {
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
-    double dt = std::numeric_limits<double>::max();
+    NumLib::TimeIncrement dt{std::numeric_limits<double>::max()};
     constexpr double eps = std::numeric_limits<double>::epsilon();
 
     bool const is_initial_step =
@@ -346,7 +346,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
 
         if (timestepper_dt > eps || t < timestep_algorithm.end())
         {
-            dt = std::min(timestepper_dt, dt);
+            dt = NumLib::TimeIncrement{std::min(timestepper_dt, dt())};
         }
     }
 
@@ -381,27 +381,26 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     // adjust step size considering external communciation_point_calculators
     for (auto const& time_step_constraint : time_step_constraints)
     {
-        dt = std::min(dt, time_step_constraint(t, dt));
+        dt = NumLib::TimeIncrement{
+            std::min(dt(), time_step_constraint(t, dt()))};
     }
 
     // Check whether the time stepping is stabilized
-    if (std::abs(dt - prev_dt) < eps)
+    if (std::abs(dt() - prev_dt) < eps)
     {
         if (last_step_rejected)
         {
             OGS_FATAL(
-                "The new step size of {:.18g} is the same as that of the "
-                "previous rejected time step. \nPlease re-run ogs with a "
-                "proper adjustment in the numerical settings, \ne.g those for "
-                "time stepper, local or global non-linear solver.",
+                "The new step size of {} is the same as that of the previous "
+                "rejected time step. \nPlease re-run ogs with a proper "
+                "adjustment in the numerical settings, \ne.g. those for time "
+                "stepper, local or global non-linear solver.",
                 dt);
         }
         else
         {
-            DBUG(
-                "The time stepping is stabilized with the step size of "
-                "{:.18g}.",
-                dt);
+            DBUG("The time stepping is stabilized with the step size of {}.",
+                 dt);
         }
     }
 
@@ -412,11 +411,11 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         if (all_process_steps_accepted)
         {
             auto& ppd = *_per_process_data[i];
-            NumLib::updateTimeSteps(dt, ppd.timestep_previous,
+            NumLib::updateTimeSteps(dt(), ppd.timestep_previous,
                                     ppd.timestep_current);
             auto& timestep_algorithm = ppd.timestep_algorithm;
-            timestep_algorithm->resetCurrentTimeStep(dt, ppd.timestep_previous,
-                                                     ppd.timestep_current);
+            timestep_algorithm->resetCurrentTimeStep(
+                dt(), ppd.timestep_previous, ppd.timestep_current);
         }
 
         auto& x = *_process_solutions[i];
@@ -501,7 +500,7 @@ void TimeLoop::initialize()
 
     // Output initial conditions
     {
-        preOutputInitialConditions(_start_time, _dt);
+        preOutputInitialConditions(_start_time, _dt());
         outputSolutions(0, _start_time(), &Output::doOutput);
     }
 
@@ -514,19 +513,17 @@ bool TimeLoop::executeTimeStep()
     BaseLib::RunTime time_timestep;
     time_timestep.start();
 
-    _current_time += _dt;
+    _current_time += _dt();
 
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
-    INFO(
-        "=== Time stepping at step #{:d} and time {} with step size "
-        "{:.18g}",
-        timesteps, _current_time, _dt);
+    INFO("=== Time stepping at step #{:d} and time {} with step size {}",
+         timesteps, _current_time, _dt);
 
     updateDeactivatedSubdomains(_per_process_data, _current_time());
 
     successful_time_step =
-        preTsNonlinearSolvePostTs(_current_time, _dt, timesteps);
+        preTsNonlinearSolvePostTs(_current_time, _dt(), timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
     return successful_time_step;
@@ -534,7 +531,7 @@ bool TimeLoop::executeTimeStep()
 
 bool TimeLoop::calculateNextTimeStep()
 {
-    const double prev_dt = _dt;
+    const double prev_dt = _dt();
     auto const current_time = _current_time;
 
     const std::size_t timesteps = _accepted_steps + 1;
@@ -552,15 +549,15 @@ bool TimeLoop::calculateNextTimeStep()
         outputSolutions(timesteps, current_time(), &Output::doOutput);
     }
 
-    if (current_time == (_current_time + _dt))
+    if (current_time == (_current_time + _dt()))
     {
-        ERR("Time step size of {:.18g} is too small.\n"
+        ERR("Time step size of {} is too small.\n"
             "Time stepping stops at step {:d} and at time of {}.",
             _dt, timesteps, _current_time);
         return false;
     }
 
-    if (_current_time >= _end_time || _current_time + _dt > _end_time)
+    if (_current_time >= _end_time || _current_time + _dt() > _end_time)
     {
         return false;
     }

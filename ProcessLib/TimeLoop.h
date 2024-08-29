@@ -15,6 +15,7 @@
 
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
+#include "NumLib/TimeStepping/TimeIncrement.h"
 #include "Process.h"
 #include "ProcessLib/Output/Output.h"
 
@@ -111,7 +112,7 @@ private:
      *  @return the time step size and the information if the last time step was
      *  rejected
      */
-    std::pair<double, bool> computeTimeStepping(
+    std::pair<NumLib::TimeIncrement, bool> computeTimeStepping(
         const double prev_dt, NumLib::Time& t, std::size_t& accepted_steps,
         std::size_t& rejected_steps,
         std::vector<TimeStepConstraintCallback> const& time_step_constraints);
@@ -136,7 +137,7 @@ private:
     NumLib::Time _current_time = _start_time;
     std::size_t _accepted_steps = 0;
     std::size_t _rejected_steps = 0;
-    double _dt = 0;
+    NumLib::TimeIncrement _dt{0.};
     int _repeating_times_of_rejected_step = 0;
     bool _last_step_rejected = false;
 
