@@ -75,7 +75,7 @@ aggregate ctest logs:
       pip install pandas
       mkdir -p build/log_summary
       set -x
-      Applications/Python/ogs/dev/ogs_log_summary.py --snippet-out build/log_summary/ -v build/*/logs &>build/log_summary/ogs_log_summary.txt
+      Applications/Python/ogs/dev/ogs_log_summary.py --snippet-out --out build/log_summary/ -v build/*/logs &>build/log_summary/ogs_log_summary.txt
   rules:
     - when: always
   artifacts:
