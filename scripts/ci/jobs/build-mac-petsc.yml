@@ -1,7 +1,5 @@
-build mac petsc arm64:
-  tags:
-    - mac
-    - arm64
+build mac petsc:
+  tags: [mac, arm64]
   extends:
     - .template-build-linux
     - .test-artifacts
@@ -13,22 +11,3 @@ build mac petsc arm64:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
-
-build mac petsc amd64:
-  tags:
-    - mac
-    - amd64
-  extends:
-    - .template-build-linux
-    - .test-artifacts
-  needs: [meta]
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-    - when: manual
-      allow_failure: true
-  variables:
-    CMAKE_PRESET: release-petsc
-    CMAKE_ARGS: >-
-      -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
-      -DOGS_BUILD_HDF5=ON
