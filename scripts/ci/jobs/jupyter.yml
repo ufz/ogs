@@ -7,7 +7,7 @@ test notebooks via wheel:
     - python -m venv --upgrade-deps .venv
     - source .venv/bin/activate
     - pip install -r requirements.txt
-    - pip install --force-reinstall -r requirements-gmsh-nox.txt
+    - pip install --force-reinstall --pre  --index-url https://gmsh.info/python-packages-dev-nox "gmsh>=4.11"
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
   script:
