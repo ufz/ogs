@@ -17,6 +17,11 @@
 
 #include "BaseLib/Error.h"
 
+namespace NumLib
+{
+struct Time;
+}
+
 namespace ProcessLib
 {
 struct PairRepeatEachSteps
@@ -52,7 +57,7 @@ struct OutputDataSpecification final
 
     //! Determines if there should be output at the given \c timestep or \c
     //! time.
-    bool isOutputStep(int timestep, double const time) const;
+    bool isOutputStep(int timestep, NumLib::Time const& time) const;
 };
 
 std::ostream& operator<<(std::ostream& os, OutputDataSpecification const& o);

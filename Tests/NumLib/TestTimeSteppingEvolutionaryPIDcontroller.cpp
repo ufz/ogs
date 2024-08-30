@@ -66,8 +66,8 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     double h_new = 0.01;
     double t_previous = 0.;
     ASSERT_EQ(1u, current_timestep.timeStepNumber());
-    ASSERT_EQ(t_previous, current_timestep.previous());
-    ASSERT_EQ(t_previous + h_new, current_timestep.current());
+    ASSERT_EQ(t_previous, current_timestep.previous()());
+    ASSERT_EQ(t_previous + h_new, current_timestep.current()());
     ASSERT_EQ(h_new, current_timestep.dt());
     ASSERT_TRUE(current_timestep.isAccepted());
     t_previous += h_new;
@@ -85,8 +85,8 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     h_new = current_timestep.dt();
     ASSERT_EQ(2u, current_timestep.timeStepNumber());
     const double tol = 1.e-16;
-    ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
-    ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
+    ASSERT_NEAR(t_previous, current_timestep.previous()(), tol);
+    ASSERT_NEAR(t_previous + h_new, current_timestep.current()(), tol);
     ASSERT_TRUE(current_timestep.isAccepted());
     t_previous += h_new;
 
@@ -102,8 +102,8 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     /// ts = PIDStepper->getTimeStep();
     h_new = current_timestep.dt();
     ASSERT_EQ(3u, current_timestep.timeStepNumber());
-    ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
-    ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
+    ASSERT_NEAR(t_previous, current_timestep.previous()(), tol);
+    ASSERT_NEAR(t_previous + h_new, current_timestep.current()(), tol);
     ASSERT_TRUE(current_timestep.isAccepted());
 
     // If error > solution_error, step is rejected and new step size is
@@ -118,8 +118,8 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_EQ(3u, current_timestep.timeStepNumber());
     // No change in current_timestep.previous(), which is the same as that of
     // the previous step.
-    ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
-    ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
+    ASSERT_NEAR(t_previous, current_timestep.previous()(), tol);
+    ASSERT_NEAR(t_previous + h_new, current_timestep.current()(), tol);
     ASSERT_FALSE(current_timestep.isAccepted());
     t_previous += h_new;
 
@@ -135,7 +135,7 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     /// ts = PIDStepper->getTimeStep();
     h_new = current_timestep.dt();
     ASSERT_EQ(4u, current_timestep.timeStepNumber());
-    ASSERT_NEAR(t_previous, current_timestep.previous(), tol);
-    ASSERT_NEAR(t_previous + h_new, current_timestep.current(), tol);
+    ASSERT_NEAR(t_previous, current_timestep.previous()(), tol);
+    ASSERT_NEAR(t_previous + h_new, current_timestep.current()(), tol);
     ASSERT_TRUE(current_timestep.isAccepted());
 }

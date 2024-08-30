@@ -12,24 +12,25 @@
 #include <algorithm>
 #include <limits>
 
+#include "NumLib/TimeStepping/Time.h"
+
 namespace NumLib
 {
 double possiblyClampDtToNextFixedTime(
-    double const t, double const dt,
+    Time const& t, double const dt,
     std::vector<double> const& fixed_output_times)
 {
     auto const specific_time = std::upper_bound(
-        std::cbegin(fixed_output_times), std::cend(fixed_output_times), t);
+        std::cbegin(fixed_output_times), std::cend(fixed_output_times), t());
 
     if (specific_time == std::cend(fixed_output_times))
     {
         return dt;
     }
 
-    double const t_to_specific_time = *specific_time - t;
-    if ((t_to_specific_time > std::numeric_limits<double>::epsilon()) &&
-        (t + dt - *specific_time > 0.0))
+    if ((t < Time(*specific_time)) && t + dt > Time(*specific_time))
     {
+        double const t_to_specific_time = *specific_time - t();
         return t_to_specific_time;
     }
 

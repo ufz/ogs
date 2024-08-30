@@ -24,6 +24,7 @@
 #include "BaseLib/RunTime.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
@@ -213,7 +214,7 @@ void Output::outputMeshes(
 
 MeshLib::Mesh const& Output::prepareSubmesh(
     std::string const& submesh_output_name, Process const& process,
-    const int process_id, double const t,
+    const int process_id, NumLib::Time const& t,
     std::vector<GlobalVector*> const& xs) const
 {
     auto& submesh = MeshLib::findMeshByName(_meshes.get(), submesh_output_name);
@@ -288,7 +289,7 @@ MeshLib::Mesh const& Output::prepareSubmesh(
 void Output::doOutputAlways(Process const& process,
                             const int process_id,
                             int const timestep,
-                            const double t,
+                            const NumLib::Time& t,
                             int const iteration,
                             std::vector<GlobalVector*> const& xs) const
 {
@@ -326,7 +327,7 @@ void Output::doOutputAlways(Process const& process,
         }
     }
 
-    outputMeshes(timestep, t, iteration, std::move(output_meshes));
+    outputMeshes(timestep, t(), iteration, std::move(output_meshes));
 
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
@@ -335,7 +336,7 @@ void Output::doOutputAlways(Process const& process,
 void Output::doOutput(Process const& process,
                       const int process_id,
                       int const timestep,
-                      const double t,
+                      const NumLib::Time& t,
                       int const iteration,
                       std::vector<GlobalVector*> const& xs) const
 {
@@ -354,7 +355,7 @@ void Output::doOutput(Process const& process,
 void Output::doOutputLastTimestep(Process const& process,
                                   const int process_id,
                                   int const timestep,
-                                  const double t,
+                                  const NumLib::Time& t,
                                   int const iteration,
                                   std::vector<GlobalVector*> const& xs) const
 {
@@ -370,7 +371,7 @@ void Output::doOutputLastTimestep(Process const& process,
 
 void Output::doOutputNonlinearIteration(
     Process const& process, const int process_id, int const timestep,
-    const double t, int const iteration,
+    const NumLib::Time& t, int const iteration,
     std::vector<GlobalVector*> const& xs) const
 {
     if (!_output_nonlinear_iteration_results)
@@ -394,7 +395,7 @@ void Output::doOutputNonlinearIteration(
     }
 
     std::string const output_file_name = _output_format->constructFilename(
-        process.getMesh().getName(), timestep, t, iteration);
+        process.getMesh().getName(), timestep, t(), iteration);
 
     std::string const output_file_path =
         BaseLib::joinPaths(_output_format->directory, output_file_name);
@@ -414,7 +415,7 @@ void Output::doOutputNonlinearIteration(
     INFO("[time] Output took {:g} s.", time_output.elapsed());
 }
 
-bool Output::isOutputStep(int const timestep, double const t) const
+bool Output::isOutputStep(int const timestep, NumLib::Time const& t) const
 {
     return _output_data_specification.isOutputStep(timestep, t);
 }

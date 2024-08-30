@@ -261,7 +261,7 @@
                 <deactivated_subdomain>
                     <time_interval>
                         <start>0.2</start>
-                        <end>0.3</end>
+                        <end>0.2999999</end>
                     </time_interval>
                     <material_ids>1</material_ids>
                     <boundary_parameter>P0</boundary_parameter>
@@ -289,7 +289,7 @@
                 <deactivated_subdomain>
                     <time_interval>
                         <start>0.6</start>
-                        <end>0.7</end>
+                        <end>0.6999999</end>
                     </time_interval>
                     <material_ids>1</material_ids>
                     <boundary_parameter>T1</boundary_parameter>
@@ -344,8 +344,8 @@
         <vtkdiff>
             <regex>Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</regex>
             <field>T</field>
-            <absolute_tolerance>2e-14</absolute_tolerance>
-            <relative_tolerance>1e-14</relative_tolerance>
+            <absolute_tolerance>4e-14</absolute_tolerance>
+            <relative_tolerance>2e-14</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>Test_HT_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</regex>

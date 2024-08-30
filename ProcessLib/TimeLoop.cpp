@@ -20,6 +20,7 @@
 #include "NumLib/ODESolver/PETScNonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/StaggeredCoupling/StaggeredCoupling.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "ProcessData.h"
 
 namespace
@@ -37,9 +38,10 @@ void updateDeactivatedSubdomains(
 }
 
 bool isOutputStep(std::vector<ProcessLib::Output> const& outputs,
-                  const int timestep, const double t, const double end_time)
+                  const int timestep, const NumLib::Time& t,
+                  const NumLib::Time& end_time)
 {
-    if (std::abs(end_time - t) < std::numeric_limits<double>::epsilon())
+    if (end_time == t)
     {
         // the last timestep is an output step
         return true;
@@ -50,7 +52,8 @@ bool isOutputStep(std::vector<ProcessLib::Output> const& outputs,
 }
 
 void preOutputForAllProcesses(
-    int const timestep, double const t, double const dt, const double end_time,
+    int const timestep, NumLib::Time const& t, double const dt,
+    const NumLib::Time& end_time,
     std::vector<std::unique_ptr<ProcessLib::ProcessData>> const&
         per_process_data,
     std::vector<GlobalVector*> const& process_solutions,
@@ -67,7 +70,7 @@ void preOutputForAllProcesses(
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        pcs.preOutput(t, dt, process_solutions, process_solutions_prev,
+        pcs.preOutput(t(), dt, process_solutions, process_solutions_prev,
                       process_id);
     }
 }
@@ -76,7 +79,7 @@ void preOutputForAllProcesses(
 namespace ProcessLib
 {
 void preTimestepForAllProcesses(
-    double const t, double const dt,
+    NumLib::Time const& t, double const dt,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<GlobalVector*> const& _process_solutions)
 {
@@ -84,12 +87,12 @@ void preTimestepForAllProcesses(
     {
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
-        pcs.preTimestep(_process_solutions, t, dt, process_id);
+        pcs.preTimestep(_process_solutions, t(), dt, process_id);
     }
 }
 
 void postTimestepForAllProcesses(
-    double const t, double const dt,
+    NumLib::Time const& t, double const dt,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
@@ -99,10 +102,10 @@ void postTimestepForAllProcesses(
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        pcs.computeSecondaryVariable(t, dt, process_solutions,
+        pcs.computeSecondaryVariable(t(), dt, process_solutions,
                                      *process_solutions_prev[process_id],
                                      process_id);
-        pcs.postTimestep(process_solutions, process_solutions_prev, t, dt,
+        pcs.postTimestep(process_solutions, process_solutions_prev, t(), dt,
                          process_id);
     }
 }
@@ -168,7 +171,7 @@ void setTimeDiscretizedODESystem(ProcessData& process_data)
 
 std::pair<std::vector<GlobalVector*>, std::vector<GlobalVector*>>
 setInitialConditions(
-    double const t0,
+    NumLib::Time const& t0,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data)
 {
     std::vector<GlobalVector*> process_solutions;
@@ -192,11 +195,11 @@ setInitialConditions(
     {
         auto& pcs = process_data->process;
         auto const process_id = process_data->process_id;
-        pcs.setInitialConditions(process_solutions, process_solutions_prev, t0,
-                                 process_id);
+        pcs.setInitialConditions(process_solutions, process_solutions_prev,
+                                 t0(), process_id);
 
         auto& time_disc = *process_data->time_disc;
-        time_disc.setInitialState(t0);  // push IC
+        time_disc.setInitialState(t0());  // push IC
     }
 
     return {process_solutions, process_solutions_prev};
@@ -245,8 +248,8 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
         // lead to some inconsistencies in the data compared to regular output.
         for (auto const& output : outputs)
         {
-            output.doOutputNonlinearIteration(process, process_id, timestep, t,
-                                              iteration, x);
+            output.doOutputNonlinearIteration(process, process_id, timestep,
+                                              NumLib::Time(t), iteration, x);
         }
     };
 
@@ -267,7 +270,7 @@ TimeLoop::TimeLoop(
     std::vector<Output>&& outputs,
     std::vector<std::unique_ptr<ProcessData>>&& per_process_data,
     std::unique_ptr<NumLib::StaggeredCoupling>&& staggered_coupling,
-    const double start_time, const double end_time)
+    const NumLib::Time& start_time, const NumLib::Time& end_time)
     : _outputs{std::move(outputs)},
       _per_process_data(std::move(per_process_data)),
       _start_time(start_time),
@@ -277,7 +280,8 @@ TimeLoop::TimeLoop(
 }
 
 bool computationOfChangeNeeded(
-    NumLib::TimeStepAlgorithm const& timestep_algorithm, double const time)
+    NumLib::TimeStepAlgorithm const& timestep_algorithm,
+    NumLib::Time const& time)
 {
     // for the first time step we can't compute the changes to the previous
     // time step
@@ -289,10 +293,9 @@ bool computationOfChangeNeeded(
 }
 
 std::pair<double, bool> TimeLoop::computeTimeStepping(
-    const double prev_dt, double& t, std::size_t& accepted_steps,
+    const double prev_dt, NumLib::Time& t, std::size_t& accepted_steps,
     std::size_t& rejected_steps,
-    std::vector<std::function<double(double, double)>> const&
-        time_step_constraints)
+    std::vector<TimeStepConstraintCallback> const& time_step_constraints)
 {
     bool all_process_steps_accepted = true;
     // Get minimum time step size among step sizes of all processes.
@@ -327,11 +330,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
             solution_error, ppd.nonlinear_solver_status.number_iterations,
             ppd.timestep_previous, ppd.timestep_current);
 
-        if (!previous_step_accepted &&
-            // In case of FixedTimeStepping, which makes
-            // timestep_algorithm.next(...) return false when the ending time
-            // is reached.
-            t + eps < timestep_algorithm.end())
+        if (!previous_step_accepted)
         {
             // Not all processes have accepted steps.
             all_process_steps_accepted = false;
@@ -345,8 +344,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
             all_process_steps_accepted = false;
         }
 
-        if (timestepper_dt > eps ||
-            std::abs(t - timestep_algorithm.end()) < eps)
+        if (timestepper_dt > eps || t < timestep_algorithm.end())
         {
             dt = std::min(timestepper_dt, dt);
         }
@@ -371,7 +369,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         }
         else
         {
-            if (t < _end_time || std::abs(t - _end_time) < eps)
+            if (t <= _end_time)
             {
                 t -= prev_dt;
                 rejected_steps++;
@@ -392,16 +390,18 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         if (last_step_rejected)
         {
             OGS_FATAL(
-                "The new step size of {:g} is the same as that of the previous "
-                "rejected time step. \nPlease re-run ogs with a proper "
-                "adjustment in the numerical settings, \ne.g those for time "
-                "stepper, local or global non-linear solver.",
+                "The new step size of {:.18g} is the same as that of the "
+                "previous rejected time step. \nPlease re-run ogs with a "
+                "proper adjustment in the numerical settings, \ne.g those for "
+                "time stepper, local or global non-linear solver.",
                 dt);
         }
         else
         {
-            DBUG("The time stepping is stabilized with the step size of {:g}.",
-                 dt);
+            DBUG(
+                "The time stepping is stabilized with the step size of "
+                "{:.18g}.",
+                dt);
         }
     }
 
@@ -427,7 +427,7 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
         }
         else
         {
-            if (t < _end_time || std::abs(t - _end_time) < eps)
+            if (t <= _end_time)
             {
                 WARN(
                     "Time step {:d} was rejected {:d} times and it will be "
@@ -441,24 +441,21 @@ std::pair<double, bool> TimeLoop::computeTimeStepping(
     return {dt, last_step_rejected};
 }
 
-std::vector<std::function<double(double, double)>>
+std::vector<TimeLoop::TimeStepConstraintCallback>
 TimeLoop::generateOutputTimeStepConstraints(
     std::vector<double>&& fixed_times) const
 {
-    std::vector<std::function<double(double, double)>> const
-        time_step_constraints{
-            [fixed_times = std::move(fixed_times)](double t, double dt) {
-                return NumLib::possiblyClampDtToNextFixedTime(t, dt,
-                                                              fixed_times);
-            },
-            [this](double t, double dt)
+    std::vector<TimeStepConstraintCallback> const time_step_constraints{
+        [fixed_times = std::move(fixed_times)](NumLib::Time const& t, double dt)
+        { return NumLib::possiblyClampDtToNextFixedTime(t, dt, fixed_times); },
+        [this](NumLib::Time const& t, double dt) -> double
+        {
+            if (t < _end_time && _end_time < t + dt)
             {
-                if (t < _end_time && t + dt > _end_time)
-                {
-                    return _end_time - t;
-                }
-                return dt;
-            }};
+                return _end_time() - t();
+            }
+            return dt;
+        }};
     return time_step_constraints;
 }
 
@@ -493,7 +490,7 @@ void TimeLoop::initialize()
         _staggered_coupling->initializeCoupledSolutions(_process_solutions);
     }
 
-    updateDeactivatedSubdomains(_per_process_data, _start_time);
+    updateDeactivatedSubdomains(_per_process_data, _start_time());
 
     auto const time_step_constraints = generateOutputTimeStepConstraints(
         calculateUniqueFixedTimesForAllOutputs(_outputs));
@@ -505,7 +502,7 @@ void TimeLoop::initialize()
     // Output initial conditions
     {
         preOutputInitialConditions(_start_time, _dt);
-        outputSolutions(0, _start_time, &Output::doOutput);
+        outputSolutions(0, _start_time(), &Output::doOutput);
     }
 
     calculateNonEquilibriumInitialResiduum(
@@ -522,11 +519,11 @@ bool TimeLoop::executeTimeStep()
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
     INFO(
-        "=== Time stepping at step #{:d} and time {:.15g} with step size "
-        "{:.15g}",
-        timesteps, _current_time, _dt);
+        "=== Time stepping at step #{:d} and time {:.18g} with step size "
+        "{:.18g}",
+        timesteps, _current_time(), _dt);
 
-    updateDeactivatedSubdomains(_per_process_data, _current_time);
+    updateDeactivatedSubdomains(_per_process_data, _current_time());
 
     successful_time_step =
         preTsNonlinearSolvePostTs(_current_time, _dt, timesteps);
@@ -538,7 +535,7 @@ bool TimeLoop::executeTimeStep()
 bool TimeLoop::calculateNextTimeStep()
 {
     const double prev_dt = _dt;
-    double const current_time = _current_time;
+    auto const current_time = _current_time;
 
     const std::size_t timesteps = _accepted_steps + 1;
 
@@ -552,22 +549,19 @@ bool TimeLoop::calculateNextTimeStep()
 
     if (!_last_step_rejected)
     {
-        outputSolutions(timesteps, current_time, &Output::doOutput);
+        outputSolutions(timesteps, current_time(), &Output::doOutput);
     }
 
-    if (std::abs(_current_time - _end_time) <
-            std::numeric_limits<double>::epsilon() ||
-        _current_time + _dt > _end_time)
+    if (current_time == (_current_time + _dt))
     {
+        ERR("Time step size of {:.18g} is too small.\n"
+            "Time stepping stops at step {:d} and at time of {:.18g}.",
+            _dt, timesteps, _current_time());
         return false;
     }
 
-    if (_dt < std::numeric_limits<double>::epsilon())
+    if (_current_time >= _end_time || _current_time + _dt > _end_time)
     {
-        WARN(
-            "Time step size of {:g} is too small.\n"
-            "Time stepping stops at step {:d} and at time of {:g}.",
-            _dt, timesteps, _current_time);
         return false;
     }
 
@@ -584,12 +578,12 @@ void TimeLoop::outputLastTimeStep() const
     // output last time step
     if (successful_time_step)
     {
-        outputSolutions(_accepted_steps + _rejected_steps, _current_time,
+        outputSolutions(_accepted_steps + _rejected_steps, _current_time(),
                         &Output::doOutputLastTimestep);
     }
 }
 
-bool TimeLoop::preTsNonlinearSolvePostTs(double const t, double const dt,
+bool TimeLoop::preTsNonlinearSolvePostTs(NumLib::Time const& t, double const dt,
                                          std::size_t const timesteps)
 {
     preTimestepForAllProcesses(t, dt, _per_process_data, _process_solutions);
@@ -627,7 +621,7 @@ bool TimeLoop::preTsNonlinearSolvePostTs(double const t, double const dt,
 }
 
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
-    const double t, const double dt, const std::size_t timestep_id,
+    const NumLib::Time& t, const double dt, const std::size_t timestep_id,
     ProcessData const& process_data, std::vector<GlobalVector*>& x,
     std::vector<GlobalVector*> const& x_prev,
     std::vector<Output> const& outputs)
@@ -636,7 +630,7 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     time_timestep_process.start();
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
-        x, x_prev, timestep_id, t, dt, process_data, outputs);
+        x, x_prev, timestep_id, t(), dt, process_data, outputs);
 
     INFO("[time] Solving process #{:d} took {:g} s in time step #{:d}",
          process_data.process_id, time_timestep_process.elapsed(), timestep_id);
@@ -648,7 +642,7 @@ static constexpr std::string_view timestepper_cannot_reduce_dt =
     "Time stepper cannot reduce the time step size further.";
 
 NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
-    const double t, const double dt, const std::size_t timestep_id)
+    const NumLib::Time& t, const double dt, const std::size_t timestep_id)
 {
     NumLib::NonlinearSolverStatus nonlinear_solver_status;
 
@@ -662,9 +656,9 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
         process_data->nonlinear_solver_status = nonlinear_solver_status;
         if (!nonlinear_solver_status.error_norms_met)
         {
-            ERR("The nonlinear solver failed in time step #{:d} at t = {:g} s "
-                "for process #{:d}.",
-                timestep_id, t, process_id);
+            ERR("The nonlinear solver failed in time step #{:d} at t = {:.18g} "
+                "s for process #{:d}.",
+                timestep_id, t(), process_id);
 
             if (!process_data->timestep_algorithm->canReduceTimestepSize(
                     process_data->timestep_current,
@@ -690,11 +684,11 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
 
 NumLib::NonlinearSolverStatus
 TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
-    const double t, const double dt, const std::size_t timestep_id)
+    const NumLib::Time& t, const double dt, const std::size_t timestep_id)
 {
     auto const nonlinear_solver_status =
         _staggered_coupling->execute<ProcessData, Output>(
-            t, dt, timestep_id, _process_solutions, _process_solutions_prev,
+            t(), dt, timestep_id, _process_solutions, _process_solutions_prev,
             _per_process_data, _outputs, &solveOneTimeStepOneProcess);
 
     _last_step_rejected = nonlinear_solver_status.error_norms_met;
@@ -706,7 +700,7 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             int const process_id = process_data->process_id;
             auto& ode_sys = *process_data->tdisc_ode_sys;
             pcs.solveReactionEquation(_process_solutions,
-                                      _process_solutions_prev, t, dt, ode_sys,
+                                      _process_solutions_prev, t(), dt, ode_sys,
                                       process_id);
         }
     }
@@ -733,7 +727,7 @@ void TimeLoop::outputSolutions(unsigned timestep, const double t,
         for (auto const& output_object : _outputs)
         {
             (output_object.*output_class_member)(
-                pcs, process_id, timestep, t,
+                pcs, process_id, timestep, NumLib::Time(t),
                 process_data->nonlinear_solver_status.number_iterations,
                 _process_solutions);
         }
@@ -752,7 +746,8 @@ TimeLoop::~TimeLoop()
     }
 }
 
-void TimeLoop::preOutputInitialConditions(const double t, const double dt) const
+void TimeLoop::preOutputInitialConditions(NumLib::Time const& t,
+                                          const double dt) const
 {
     for (auto const& process_data : _per_process_data)
     {
@@ -766,16 +761,16 @@ void TimeLoop::preOutputInitialConditions(const double t, const double dt) const
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        process_data->time_disc->nextTimestep(t, dt);
+        process_data->time_disc->nextTimestep(t(), dt);
 
-        pcs.preTimestep(_process_solutions, _start_time, dt, process_id);
+        pcs.preTimestep(_process_solutions, _start_time(), dt, process_id);
 
-        pcs.preOutput(_start_time, dt, _process_solutions,
+        pcs.preOutput(_start_time(), dt, _process_solutions,
                       _process_solutions_prev, process_id);
 
         // Update secondary variables, which might be uninitialized, before
         // output.
-        pcs.computeSecondaryVariable(_start_time, dt, _process_solutions,
+        pcs.computeSecondaryVariable(_start_time(), dt, _process_solutions,
                                      *_process_solutions_prev[process_id],
                                      process_id);
     }

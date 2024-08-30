@@ -17,6 +17,7 @@
 
 #include "BaseLib/Logging.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "NumLib/TimeStepping/TimeStep.h"
 
 namespace
@@ -35,9 +36,9 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                                  T* obj = nullptr)
 {
     std::vector<double> vec_t;
-    vec_t.push_back(algorithm.begin());
+    vec_t.push_back(algorithm.begin()());
 
-    const double end_time = algorithm.end();
+    auto const end_time = algorithm.end();
     NumLib::TimeStep current_timestep(algorithm.begin());
     NumLib::TimeStep previous_timestep(algorithm.begin());
 
@@ -50,6 +51,11 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         {
             break;
         }
+        if (current_timestep.current() + timestepper_dt ==
+            current_timestep.current())
+        {
+            break;
+        }
 
         if (!fixed_output_times.empty())
         {
@@ -59,7 +65,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
 
         timestepper_dt =
             (current_timestep.current() + timestepper_dt > end_time)
-                ? end_time - current_timestep.current()
+                ? end_time() - current_timestep.current()()
                 : timestepper_dt;
 
         NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
@@ -73,7 +79,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         }
         if (current_timestep.isAccepted())
         {
-            vec_t.push_back(current_timestep.current());
+            vec_t.push_back(current_timestep.current()());
         }
         else
         {

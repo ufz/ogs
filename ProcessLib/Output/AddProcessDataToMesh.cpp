@@ -13,6 +13,7 @@
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "ProcessLib/Output/SecondaryVariable.h"
 #include "ProcessLib/ProcessVariable.h"
 #ifdef USE_PETSC
@@ -33,7 +34,7 @@ static void addOgsVersion(MeshLib::Mesh& mesh)
 }
 
 static void addSecondaryVariableNodes(
-    double const t,
+    NumLib::Time const& t,
     std::vector<GlobalVector*> const& x,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     ProcessLib::SecondaryVariable const& var,
@@ -58,7 +59,7 @@ static void addSecondaryVariableNodes(
 
     std::unique_ptr<GlobalVector> result_cache;
     auto const& nodal_values =
-        var.fcts.eval_field(t, x, dof_tables, result_cache);
+        var.fcts.eval_field(t(), x, dof_tables, result_cache);
 
 #ifdef USE_PETSC
     std::size_t const global_vector_size =
@@ -79,7 +80,7 @@ static void addSecondaryVariableNodes(
 }
 
 static void addSecondaryVariableResiduals(
-    double const t,
+    NumLib::Time const& t,
     std::vector<GlobalVector*> const& x,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     ProcessLib::SecondaryVariable const& var,
@@ -110,7 +111,7 @@ static void addSecondaryVariableResiduals(
 
     std::unique_ptr<GlobalVector> result_cache;
     auto const& residuals =
-        var.fcts.eval_residuals(t, x, dof_table, result_cache);
+        var.fcts.eval_residuals(t(), x, dof_table, result_cache);
 #ifdef USE_PETSC
     std::size_t const global_vector_size =
         residuals.getLocalSize() + residuals.getGhostSize();
@@ -344,8 +345,9 @@ static std::set<std::string> addPrimaryVariablesToMesh(
 
 static void addSecondaryVariablesToMesh(
     ProcessLib::SecondaryVariableCollection const& secondary_variables,
-    std::set<std::string>& names_of_already_output_variables, const double t,
-    std::vector<GlobalVector*> const& xs, MeshLib::Mesh& mesh,
+    std::set<std::string>& names_of_already_output_variables,
+    NumLib::Time const& t, std::vector<GlobalVector*> const& xs,
+    MeshLib::Mesh& mesh,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     bool const output_residuals)
 {
@@ -371,7 +373,7 @@ static void addSecondaryVariablesToMesh(
 
 namespace ProcessLib
 {
-void addProcessDataToMesh(const double t,
+void addProcessDataToMesh(NumLib::Time const& t,
                           std::vector<GlobalVector*> const& xs,
                           int const process_id,
                           ProcessOutputData const& process_output_data,

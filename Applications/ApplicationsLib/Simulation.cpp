@@ -115,13 +115,13 @@ void Simulation::initializeDataStructures(
 double Simulation::currentTime() const
 {
     auto const& time_loop = project_data->getTimeLoop();
-    return time_loop.currentTime();
+    return time_loop.currentTime()();
 }
 
 double Simulation::endTime() const
 {
     auto const& time_loop = project_data->getTimeLoop();
-    return time_loop.endTime();
+    return time_loop.endTime()();
 }
 
 bool Simulation::executeTimeStep()

@@ -81,15 +81,7 @@
                     <t_end>1</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>349</repeat>
-                            <delta_t>0.002</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>1</repeat>
-                            <delta_t>0.00199999999999945</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>150</repeat>
+                            <repeat>500</repeat>
                             <delta_t>0.002</delta_t>
                         </pair>
                     </timesteps>
