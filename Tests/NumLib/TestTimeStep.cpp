@@ -37,5 +37,5 @@ TEST(NumLib, TimeStep)
     ASSERT_EQ(1u, t3.timeStepNumber());
 
     // comparison
-    ASSERT_TRUE(t2 == t3);
+    ASSERT_EQ(t2.current(), t3.current());
 }

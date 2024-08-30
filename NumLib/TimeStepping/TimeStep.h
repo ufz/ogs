@@ -72,21 +72,6 @@ public:
         return *this;
     }
 
-    /// compare current time
-    bool operator<(TimeStep const& ts) const
-    {
-        return (_current < ts._current);
-    }
-    /// compare current time
-    bool operator<=(TimeStep const& ts) const
-    {
-        return (_current <= ts._current);
-    }
-    /// compare current time
-    bool operator==(TimeStep const& ts) const
-    {
-        return _current == ts._current;
-    }
     /// return previous time step
     Time previous() const { return _previous; }
     /// return current time step
