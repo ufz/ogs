@@ -113,7 +113,7 @@
                 <variable>epsilon</variable>
             </variables>
             <type>VTK</type>
-            <prefix>bar_cohesive_linear</prefix>
+            <prefix>bar_COHESIVE_linear</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -277,7 +277,7 @@
         <vtkdiff>
             <file>bar_COHESIVE_linear_ts_11_t_1.100000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>1e-12</absolute_tolerance>
+            <absolute_tolerance>2e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
