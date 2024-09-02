@@ -17,6 +17,23 @@
 #include "MaterialLib/MPL/Properties/Density/CreateWaterVapourDensity.h"
 #include "TestMPL.h"
 
+static double centralDifferencesDerivative(
+    double const value, double MaterialPropertyLib::VariableArray::*variable,
+    double const value_increment, MaterialPropertyLib::Property const& property,
+    MaterialPropertyLib::VariableArray variable_array, const auto& pos,
+    double const t, double const dt)
+{
+    variable_array.*variable = value - value_increment;
+    double const value_minus =
+        property.template value<double>(variable_array, pos, t, dt);
+
+    variable_array.*variable = value + value_increment;
+    double const value_plus =
+        property.template value<double>(variable_array, pos, t, dt);
+
+    return 0.5 * (value_plus - value_minus) / value_increment;
+}
+
 TEST(MaterialPropertyLib, WaterVapourDensity)
 {
     char const xml[] =
@@ -62,17 +79,9 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 << "for expected water vapour density " << rho_vw_expected[i]
                 << " and for computed water vapour density " << rho_vw;
 
-            double const dT = 1.0e-4;
-            variable_array.temperature = T_i - dT;
-            double const rho_vw0 =
-                property.template value<double>(variable_array, pos, t, dt);
-
-            variable_array.temperature = T_i + dT;
-            double const rho_vw1 =
-                property.template value<double>(variable_array, pos, t, dt);
-
-            double const approximated_drho_wv_dT =
-                0.5 * (rho_vw1 - rho_vw0) / dT;
+            double const approximated_drho_wv_dT = centralDifferencesDerivative(
+                T_i, &MaterialPropertyLib::VariableArray::temperature, 1e-4,
+                property, variable_array, pos, t, dt);
 
             double const analytic_drho_wv_dT = property.template dValue<double>(
                 variable_array, MaterialPropertyLib::Variable::temperature, pos,
@@ -111,18 +120,9 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 << "for expected water vapour density " << rho_vw_expected[i]
                 << " and for computed water vapour density " << rho_vw;
 
-            double const dp = 1.0e-3;
-            variable_array.liquid_phase_pressure = p_i - dp;
-
-            double const rho_vw0 =
-                property.template value<double>(variable_array, pos, t, dt);
-
-            variable_array.liquid_phase_pressure = p_i + dp;
-            double const rho_vw1 =
-                property.template value<double>(variable_array, pos, t, dt);
-
-            double const approximated_drho_wv_dp =
-                0.5 * (rho_vw1 - rho_vw0) / dp;
+            double const approximated_drho_wv_dp = centralDifferencesDerivative(
+                p_i, &MaterialPropertyLib::VariableArray::liquid_phase_pressure,
+                1e-3, property, variable_array, pos, t, dt);
 
             double const analytic_drho_wv_dp = property.template dValue<double>(
                 variable_array,
