@@ -44,7 +44,9 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
 
     // The derivative of the water vapour with respect of temperature
     {
-        std::array const temperatures = {273.0, 293.0, 393.0, 420.0, 500.0};
+        // The first evaluation point 273.0001 is chosen to avoid lower limit
+        // (T=273K) of the function in when computing numerical derivative.
+        std::array const temperatures = {273.0001, 293.0, 393.0, 420.0, 500.0};
         std::array const rho_vw_expected = {4.875989e-03, 1.692871e-02,
                                             1.276865, 2.882635, 1.920386e+01};
 
