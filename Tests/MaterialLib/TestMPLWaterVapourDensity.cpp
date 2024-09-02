@@ -78,8 +78,8 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 variable_array, MaterialPropertyLib::Variable::temperature, pos,
                 t, dt);
 
-            ASSERT_LE(std::fabs(approximated_drho_wv_dT - analytic_drho_wv_dT),
-                      1e-6)
+            EXPECT_LE(std::fabs(approximated_drho_wv_dT - analytic_drho_wv_dT),
+                      1e-10)
                 << "for expected derivative of water vapour density with "
                    "respect to temperature "
                 << approximated_drho_wv_dT
@@ -129,8 +129,8 @@ TEST(MaterialPropertyLib, WaterVapourDensity)
                 MaterialPropertyLib::Variable::liquid_phase_pressure, pos, t,
                 dt);
 
-            ASSERT_LE(std::fabs(approximated_drho_wv_dp - analytic_drho_wv_dp),
-                      1e-7)
+            EXPECT_LE(std::fabs(approximated_drho_wv_dp - analytic_drho_wv_dp),
+                      1e-13)
                 << "for expected derivative of water vapour density with "
                    "respect to pressure "
                 << approximated_drho_wv_dp
