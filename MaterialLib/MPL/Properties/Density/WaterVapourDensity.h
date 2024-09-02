@@ -49,6 +49,9 @@ class Phase;
  *   equation are multiplied with \f$1-S\f$ with \f$ S \f$, the water
  * saturation. Therefore the application of the water vapour density model is
  * naturally restricted in the unsaturated zones.
+ *
+ * \note The temperature must be greater then the freezing temperature. In the
+ * paper the offset is 273K, not 273.15 which might cause small inconsistencies.
  */
 class WaterVapourDensity final : public Property
 {

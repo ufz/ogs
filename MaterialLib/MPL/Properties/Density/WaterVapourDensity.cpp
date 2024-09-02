@@ -46,7 +46,9 @@ PropertyDataType WaterVapourDensity::value(
 {
     double const p = variable_array.liquid_phase_pressure;
     double const T = variable_array.temperature;
+    assert(T >= 273.);
     double const water_density = variable_array.density;
+    assert(water_density > 0.);
 
     return humidity(T, p, water_density) * saturatedVaporDensity(T);
 }
@@ -58,7 +60,9 @@ PropertyDataType WaterVapourDensity::dValue(
 {
     double const p = variable_array.liquid_phase_pressure;
     double const T = variable_array.temperature;
+    assert(T >= 273.);
     double const water_density = variable_array.density;
+    assert(water_density > 0.);
 
     if (variable == Variable::temperature)
     {
