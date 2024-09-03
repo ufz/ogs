@@ -83,6 +83,9 @@
 #ifdef OGS_BUILD_PROCESS_HEATTRANSPORTBHE
 #include "ProcessLib/HeatTransportBHE/CreateHeatTransportBHEProcess.h"
 #endif
+#ifdef OGS_BUILD_PROCESS_WELLBORESIMULATOR
+#include "ProcessLib/WellboreSimulator/CreateWellboreSimulatorProcess.h"
+#endif
 #ifdef OGS_BUILD_PROCESS_HYDROMECHANICS
 #include "ProcessLib/HydroMechanics/CreateHydroMechanicsProcess.h"
 #endif
@@ -802,6 +805,24 @@ void ProjectData::parseProcesses(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _curves, _media);
+        }
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_WELLBORESIMULATOR
+            if (type == "WELLBORE_SIMULATOR")
+        {
+            if (_mesh_vec[0]->getDimension() != 1)
+            {
+                OGS_FATAL(
+                    "WELLBORE_SIMULATOR can only work with a 1-dimensional "
+                    "mesh!");
+            }
+
+            process =
+                ProcessLib::WellboreSimulator::createWellboreSimulatorProcess(
+                    name, *_mesh_vec[0], std::move(jacobian_assembler),
+                    _process_variables, _parameters, integration_order,
+                    process_config, _media);
         }
         else
 #endif

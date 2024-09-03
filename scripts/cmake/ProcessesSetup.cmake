@@ -25,6 +25,7 @@ set(_processes_list
     ThermoRichardsFlow
     TwoPhaseFlowWithPP
     TwoPhaseFlowWithPrho
+    WellboreSimulator
 )
 if(OGS_USE_MFRONT)
     set(_processes_list ${_processes_list} LargeDeformation)
