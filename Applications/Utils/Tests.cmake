@@ -1060,7 +1060,7 @@ AddTest(
     EXECUTABLE_ARGS -i square_1x1.gml -i line_intersecting_square.gml -o ${Data_BINARY_DIR}/MeshGeoToolsLib/geometryToGmshGeo/square_1x1_with_intersecting_line.geo
     PROPERTIES
         PASS_REGULAR_EXPRESSION
-        "point with id 5 and coordinates \\(1.001000000001, 0.6, 0\\) is outside of the polygon"
+        "point with id 5 and coordinates \\(1.001000000001, 0.59999999999999998, 0\\) is outside of the polygon"
 )
 AddTest(
     NAME ResetPropertiesInPolygonalRegion_AllElementNodesInPolygon
