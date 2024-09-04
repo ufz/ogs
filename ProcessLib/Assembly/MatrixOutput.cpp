@@ -33,19 +33,15 @@ std::string getSeparatorAfterFilenamePrefix(std::string const& filenamePrefix)
 #ifndef USE_PETSC
 static void outputGlobalMatrix(GlobalMatrix const& mat, std::ostream& os)
 {
-    auto const precision = os.precision();
-    os << std::setprecision(std::numeric_limits<double>::max_digits10) << "("
-       << mat.getNumberOfRows() << " x " << mat.getNumberOfColumns() << ")\n"
-       << std::setprecision(precision);
+    os << "(" << mat.getNumberOfRows() << " x " << mat.getNumberOfColumns()
+       << ")\n";
     mat.write(os);
 }
 
 static void outputGlobalVector(GlobalVector const& vec, std::ostream& os)
 {
-    auto const precision = os.precision();
-    os << std::setprecision(std::numeric_limits<double>::max_digits10) << "("
-       << vec.size() << ")\n";
-    os << vec.getRawVector() << '\n' << std::setprecision(precision);
+    os << "(" << vec.size() << ")\n";
+    os << vec.getRawVector() << '\n';
 }
 
 std::ofstream openGlobalMatrixOutputFile(std::string const& filenamePrefix,
@@ -67,6 +63,7 @@ std::ofstream openGlobalMatrixOutputFile(std::string const& filenamePrefix,
                   filename);
     }
 
+    fh << std::setprecision(std::numeric_limits<double>::max_digits10);
     return fh;
 }
 #endif
