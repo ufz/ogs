@@ -3,4 +3,5 @@ exclude = [".*"]
 exclude_path = [
   "public/index.html",
   "public/docs/devguide/development-workflows/setup-fork/index.html",
+  ".*ogs/ogs/-/jobs/artifacts/master/browse/build.*",
 ]
