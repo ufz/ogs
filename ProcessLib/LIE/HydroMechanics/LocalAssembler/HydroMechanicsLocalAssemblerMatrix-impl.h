@@ -39,7 +39,7 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         bool const is_axially_symmetric,
         HydroMechanicsProcessData<GlobalDim>& process_data)
     : HydroMechanicsLocalAssemblerInterface(
-          e, is_axially_symmetric,
+          e, is_axially_symmetric, integration_method,
           (n_variables - 1) * ShapeFunctionDisplacement::NPOINTS * GlobalDim +
               ShapeFunctionPressure::NPOINTS,
           dofIndex_to_localIndex),
@@ -190,6 +190,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const B_dil_bar = getDilatationalBBarMatrix();
+
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -207,11 +209,10 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
                 _element, N_u);
-        auto const B =
-            LinearBMatrix::computeBMatrix<GlobalDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+        auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+            GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
+            typename BMatricesType::BMatrixType>(
+            dNdx_u, N_u, B_dil_bar, x_coord, this->_is_axially_symmetric);
 
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
@@ -341,6 +342,8 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     velocity_avg.setZero();
 
     unsigned const n_integration_points = _ip_data.size();
+    auto const B_dil_bar = getDilatationalBBarMatrix();
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
@@ -361,11 +364,10 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
                 _element, N_u);
-        auto const B =
-            LinearBMatrix::computeBMatrix<GlobalDim,
-                                          ShapeFunctionDisplacement::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+        auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+            GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
+            typename BMatricesType::BMatrixType>(
+            dNdx_u, N_u, B_dil_bar, x_coord, this->_is_axially_symmetric);
 
         eps.noalias() = B * u;
 

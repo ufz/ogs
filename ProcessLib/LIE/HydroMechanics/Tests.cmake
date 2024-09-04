@@ -240,3 +240,24 @@ AddTest(
     great_cell_2D_embedded_fracture_ts_64_t_2500.000000.vtu great_cell_2D_embedded_fracture_ts_64_t_2500.000000.vtu epsilon epsilon 1e-15 1e-15
     great_cell_2D_embedded_fracture_ts_64_t_2500.000000.vtu great_cell_2D_embedded_fracture_ts_64_t_2500.000000.vtu velocity velocity 1e-15 1e-15
 )
+
+AddTest(
+    NAME LIE_HM_great_cell_2D_point_injection_embedded_fracture_F_PMMA
+    PATH LIE/HydroMechanics/GreatCellWithBBar
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS point_injection_embedded_fracture_F.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    RUNTIME 15
+    DIFF_DATA
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu pressure pressure 1e-10 1e-14
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu displacement displacement 1e-15 1e-15
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu displacement_jump1 displacement_jump1 1e-15 1e-15
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu fracture_stress fracture_stress 1e-9 1e-11
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu fracture_permeability fracture_permeability 1e-15 1e-15
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu fracture_aperture fracture_aperture 1e-15 1e-15
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu sigma sigma 1e-8 5e-11
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu epsilon epsilon 1e-15 1e-15
+    point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu velocity velocity 1e-15 1e-15
+)

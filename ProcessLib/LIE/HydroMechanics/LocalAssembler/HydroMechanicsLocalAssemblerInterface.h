@@ -16,6 +16,7 @@
 #include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
+#include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "ProcessLib/LocalAssemblerInterface.h"
 
 namespace ProcessLib
@@ -37,13 +38,16 @@ class HydroMechanicsLocalAssemblerInterface
       public NumLib::ExtrapolatableElement
 {
 public:
-    HydroMechanicsLocalAssemblerInterface(MeshLib::Element const& element,
-                                          bool const is_axially_symmetric,
-                                          std::size_t n_local_size,
-                                          std::vector<unsigned>
-                                              dofIndex_to_localIndex)
+    HydroMechanicsLocalAssemblerInterface(
+        MeshLib::Element const& element,
+        bool const is_axially_symmetric,
+        NumLib::GenericIntegrationMethod const& integration_method,
+        std::size_t n_local_size,
+        std::vector<unsigned>
+            dofIndex_to_localIndex)
         : _element(element),
           _is_axially_symmetric(is_axially_symmetric),
+          _integration_method(integration_method),
           _dofIndex_to_localIndex(std::move(dofIndex_to_localIndex))
     {
         _local_u.resize(n_local_size);
@@ -172,6 +176,7 @@ protected:
 
     MeshLib::Element const& _element;
     bool const _is_axially_symmetric;
+    NumLib::GenericIntegrationMethod const& _integration_method;
 
 private:
     Eigen::VectorXd _local_u;
