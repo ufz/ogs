@@ -241,6 +241,9 @@ authors:
           BGR
     - given-names: Luca
       family-names: Urpi
+    - given-names: Jäschke
+      family-names: Max
+      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
 identifiers:
     - type: doi
       value: 10.5281/zenodo.11652195

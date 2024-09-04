@@ -28,5 +28,5 @@ OpenGeoSys is distributed under the Modified BSD License. See the
 [ogs]: https://www.opengeosys.org
 [documentation]: https://www.opengeosys.org/docs/
 [docs-master]: https://doxygen.opengeosys.org/
-[docs-release]: https://doxygen.opengeosys.org/6.5.2
+[docs-release]: https://doxygen.opengeosys.org/6.5.3
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt

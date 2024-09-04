@@ -2,13 +2,21 @@
 
 ## Unreleased
 
-[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.2)
+[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.4)
+
+## 6.5.3
+
+[Changelog for OpenGeoSys 6.5.2](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.3)
+
+----
+
+## 6.5.2
+
+[Changelog for OpenGeoSys 6.5.2](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.2)
 
 ## 6.5.1
 
 [Changelog for OpenGeoSys 6.5.1](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.1)
-
-----
 
 ## 6.5.0
 
