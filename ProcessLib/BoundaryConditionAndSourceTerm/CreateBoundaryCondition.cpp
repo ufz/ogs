@@ -25,6 +25,7 @@
 #include "RobinBoundaryCondition.h"
 #include "SolutionDependentDirichletBoundaryCondition.h"
 #include "VariableDependentNeumannBoundaryCondition.h"
+#include "WellboreCompensateNeumannBoundaryCondition.h"
 
 namespace ProcessLib
 {
@@ -37,8 +38,7 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     const Process& process,
     [[maybe_unused]] std::vector<std::reference_wrapper<ProcessVariable>> const&
         all_process_variables_for_this_process,
-    std::map<int,
-             std::shared_ptr<MaterialPropertyLib::Medium>> const& /*media*/)
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // Surface mesh and bulk mesh must have equal axial symmetry flags!
     if (config.boundary_mesh.isAxiallySymmetric() !=
@@ -119,6 +119,13 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         return createPrimaryVariableConstraintDirichletBoundaryCondition(
             config.config, config.boundary_mesh, dof_table, variable_id,
             *config.component_id, parameters);
+    }
+    if (type == "WellboreCompensateNeumann")
+    {
+        return ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
+            config.config, config.boundary_mesh, dof_table, variable_id,
+            *config.component_id, integration_order, shapefunction_order,
+            bulk_mesh.getDimension(), media);
     }
     if (type == "SolutionDependentDirichlet")
     {
