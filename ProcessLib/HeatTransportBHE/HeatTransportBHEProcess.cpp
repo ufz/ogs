@@ -14,6 +14,7 @@
 
 #include "BoundaryConditions/BHEBottomDirichletBoundaryCondition.h"
 #include "BoundaryConditions/BHEInflowDirichletBoundaryCondition.h"
+#include "MeshLib/MeshSearch/ElementSearch.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryCondition.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/CreateLocalAssemblers.h"
@@ -157,6 +158,27 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
 
     // Create BHE boundary conditions for each of the BHEs
     createBHEBoundaryConditionTopBottom(_bheMeshData.BHE_nodes);
+
+    if (_process_data._mass_lumping)
+    {
+        std::vector<std::size_t> const bhes_node_ids =
+            _bheMeshData.BHE_nodes | ranges::views::join |
+            ranges::views::transform([](auto const* const node)
+                                     { return node->getID(); }) |
+            ranges::to<std::vector>;
+
+        // all connected soil elements and also the BHE elements.
+        MeshLib::ElementSearch es{mesh};
+        es.searchByNodeIDs(bhes_node_ids);
+
+        assert(_process_data.mass_lumping_soil_elements.empty());
+        _process_data.mass_lumping_soil_elements.resize(
+            mesh.getNumberOfElements(), false);
+        for (auto const id : es.getSearchedElementIDs())
+        {
+            _process_data.mass_lumping_soil_elements[id] = true;
+        }
+    }
 }
 
 void HeatTransportBHEProcess::assembleConcreteProcess(

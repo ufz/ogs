@@ -19,6 +19,7 @@
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Interpolation.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
+#include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcess.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
 #include "SecondaryData.h"
 
@@ -183,15 +184,21 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
                              (density_s * heat_capacity_s * (1 - porosity) +
                               density_f * heat_capacity_f * porosity);
     }
+
     if (_process_data._mass_lumping)
     {
-        local_M = local_M.colwise().sum().eval().asDiagonal();
+        // only mass lumping at the BHE connected soil elements
+        if (_process_data.mass_lumping_soil_elements[_element_id])
+        {
+            local_M = local_M.colwise().sum().eval().asDiagonal();
+        }
     }
-    // debugging
-    // std::string sep = "\n----------------------------------------\n";
-    // Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
-    // std::cout << local_K.format(CleanFmt) << sep;
-    // std::cout << local_M.format(CleanFmt) << sep;
+
+    //  debugging
+    //  std::string sep = "\n----------------------------------------\n";
+    //  Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");
+    //  std::cout << local_K.format(CleanFmt) << sep;
+    //  std::cout << local_M.format(CleanFmt) << sep;
 }
 
 template <typename ShapeFunction>

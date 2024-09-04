@@ -68,6 +68,8 @@ struct HeatTransportBHEProcessData final
 
     const bool _mass_lumping;
 
+    std::vector<bool> mass_lumping_soil_elements;
+
     AlgebraicBCSetting const _algebraic_BC_Setting;
 };
 }  // namespace ProcessLib::HeatTransportBHE
