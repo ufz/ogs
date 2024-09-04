@@ -183,7 +183,10 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
                              (density_s * heat_capacity_s * (1 - porosity) +
                               density_f * heat_capacity_f * porosity);
     }
-
+    if (_process_data._mass_lumping)
+    {
+        local_M = local_M.colwise().sum().eval().asDiagonal();
+    }
     // debugging
     // std::string sep = "\n----------------------------------------\n";
     // Eigen::IOFormat CleanFmt(4, 0, ", ", "\n", "[", "]");

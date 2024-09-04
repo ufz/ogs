@@ -176,6 +176,10 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__use_server_communication}
         config.getConfigParameter<bool>("use_server_communication", false);
 
+    auto const mass_lumping =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__mass_lumping}
+        config.getConfigParameter<bool>("mass_lumping", false);
+
     auto const using_algebraic_bc =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__use_algebraic_bc}
         config.getConfigParameter<bool>("use_algebraic_bc", false);
@@ -331,7 +335,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     HeatTransportBHEProcessData process_data(
         std::move(media_map), std::move(bhes), py_object, using_tespy,
-        using_server_communication,
+        using_server_communication, mass_lumping,
         {using_algebraic_bc, weighting_factor, is_linear});
 
     SecondaryVariableCollection secondary_variables;
