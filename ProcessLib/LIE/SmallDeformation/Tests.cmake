@@ -142,3 +142,20 @@ AddTest(
     sfrac_ts_1_t_1.000000.vtu sfrac_ts_1_t_1.000000.vtu displacement_jump4 displacement_jump4 1e-16 1e-16
     sfrac_ts_1_t_1.000000.vtu sfrac_ts_1_t_1.000000.vtu fracture_stress_avg fracture_stress_avg 1e-6 5e-6
 )
+
+AddTest(
+    NAME LIE_M_great_cell_2D_point_injection_embedded_fracture_F_PMMA
+    PATH LIE/Mechanics/GreatCellWithBBar
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS mechanics_embedded_fracture_F.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu displacement displacement 1e-15 1e-15
+    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-15 1e-15
+    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu sigma sigma 1e-8 1e-11
+    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu epsilon epsilon 1e-15 1e-15
+    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu fracture_stress fracture_stress 5e-8 1e-11
+    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu fracture_aperture fracture_aperture 1e-15 1e-15
+)

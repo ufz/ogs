@@ -67,8 +67,8 @@ SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm = shape_matrices[ip];
-        ip_data.N = sm.N;
-        ip_data.dNdx = sm.dNdx;
+        ip_data.N_u = sm.N;
+        ip_data.dNdx_u = sm.dNdx;
         ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm.integralMeasure * sm.detJ;
@@ -115,21 +115,23 @@ void SmallDeformationLocalAssemblerMatrix<ShapeFunction, DisplacementDim>::
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const B_dil_bar = getDilatationalBBarMatrix();
+
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& N = _ip_data[ip].N_u;
+        auto const& dNdx = _ip_data[ip].dNdx_u;
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 _element, N);
-        auto const B =
-            LinearBMatrix::computeBMatrix<DisplacementDim,
-                                          ShapeFunction::NPOINTS,
-                                          typename BMatricesType::BMatrixType>(
-                dNdx, N, x_coord, _is_axially_symmetric);
+
+        auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+            DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
+            typename BMatricesType::BMatrixType>(dNdx, N, B_dil_bar, x_coord,
+                                                 this->_is_axially_symmetric);
 
         auto const& eps_prev = _ip_data[ip]._eps_prev;
         auto const& sigma_prev = _ip_data[ip]._sigma_prev;

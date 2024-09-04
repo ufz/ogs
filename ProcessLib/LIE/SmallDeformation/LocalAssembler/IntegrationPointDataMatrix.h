@@ -44,8 +44,8 @@ struct IntegrationPointDataMatrix final
     typename BMatricesType::KelvinMatrixType _C;
     double integration_weight;
 
-    typename ShapeMatricesType::NodalRowVectorType N;
-    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
+    typename ShapeMatricesType::NodalRowVectorType N_u;
+    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx_u;
 
     void pushBackState()
     {

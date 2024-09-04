@@ -181,10 +181,13 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         config.getConfigParameter<double>(
             "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
+    //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__use_b_bar}
+    auto const use_b_bar = config.getConfigParameter<bool>("use_b_bar", false);
+
     SmallDeformationProcessData<DisplacementDim> process_data{
-        materialIDs(mesh), std::move(solid_constitutive_relations),
+        materialIDs(mesh),         std::move(solid_constitutive_relations),
         std::move(fracture_model), std::move(fracture_properties),
-        reference_temperature};
+        reference_temperature,     use_b_bar};
 
     SecondaryVariableCollection secondary_variables;
 
