@@ -25,7 +25,7 @@ namespace IO
 {
 Writer::Writer()
 {
-    out.precision(std::numeric_limits<double>::digits10);
+    out.precision(std::numeric_limits<double>::max_digits10);
 }
 
 std::string Writer::writeToString()

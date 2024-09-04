@@ -508,7 +508,7 @@ static bool snapPointToElementNode(MathLib::Point3d& p,
         {
 #ifdef DEBUG_GEOMAPPER
             std::stringstream out;
-            out.precision(std::numeric_limits<double>::digits10);
+            out.precision(std::numeric_limits<double>::max_digits10);
             out << "Segment point snapped from " << p;
 #endif
             p = node;

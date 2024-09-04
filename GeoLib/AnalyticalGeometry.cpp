@@ -519,7 +519,7 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
                 return {{c, d}};
             }
             std::stringstream err;
-            err.precision(std::numeric_limits<double>::digits10);
+            err.precision(std::numeric_limits<double>::max_digits10);
             err << ab << " x " << cd;
             OGS_FATAL(
                 "The case of parallel line segments ({:s}) is not handled yet. "
@@ -552,7 +552,7 @@ std::vector<MathLib::Point3d> lineSegmentIntersect2d(
             }
 
             std::stringstream err;
-            err.precision(std::numeric_limits<double>::digits10);
+            err.precision(std::numeric_limits<double>::max_digits10);
             err << ab << " x " << cd;
             OGS_FATAL(
                 "The case of parallel line segments ({:s}) is not handled yet. "

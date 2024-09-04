@@ -19,7 +19,16 @@
 
 namespace NumLib
 {
+struct Time;
+}
 
+template <>
+struct fmt::formatter<NumLib::Time> : fmt::ostream_formatter
+{
+};
+
+namespace NumLib
+{
 struct Time
 {
     constexpr explicit Time(double const time) : value_{time} {}
@@ -78,6 +87,14 @@ struct Time
     constexpr inline bool operator==(Time const& x) const
     {
         return (*this <=> x) == std::weak_ordering::equivalent;
+    }
+
+    friend inline std::ostream& operator<<(std::ostream& os, Time const& t)
+    {
+        auto const precision = os.precision();
+        return os << std::setprecision(
+                         std::numeric_limits<double>::max_digits10)
+                  << t() << std::setprecision(precision);
     }
 
 private:

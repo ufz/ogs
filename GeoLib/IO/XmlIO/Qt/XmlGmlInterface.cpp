@@ -308,15 +308,15 @@ bool XmlGmlInterface::write()
                 pointTag.setAttribute(
                     "x",
                     QString::number((*points[i])[0], 'f',
-                                    std::numeric_limits<double>::digits10));
+                                    std::numeric_limits<double>::max_digits10));
                 pointTag.setAttribute(
                     "y",
                     QString::number((*points[i])[1], 'f',
-                                    std::numeric_limits<double>::digits10));
+                                    std::numeric_limits<double>::max_digits10));
                 pointTag.setAttribute(
                     "z",
                     QString::number((*points[i])[2], 'f',
-                                    std::numeric_limits<double>::digits10));
+                                    std::numeric_limits<double>::max_digits10));
 
                 std::string const& point_name(pnt_vec->getItemNameByID(i));
                 if (!point_name.empty())

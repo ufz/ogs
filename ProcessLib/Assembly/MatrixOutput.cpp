@@ -33,14 +33,14 @@ std::string getSeparatorAfterFilenamePrefix(std::string const& filenamePrefix)
 #ifndef USE_PETSC
 static void outputGlobalMatrix(GlobalMatrix const& mat, std::ostream& os)
 {
-    os << std::setprecision(16) << "(" << mat.getNumberOfRows() << " x "
-       << mat.getNumberOfColumns() << ")\n";
+    os << "(" << mat.getNumberOfRows() << " x " << mat.getNumberOfColumns()
+       << ")\n";
     mat.write(os);
 }
 
 static void outputGlobalVector(GlobalVector const& vec, std::ostream& os)
 {
-    os << std::setprecision(16) << "(" << vec.size() << ")\n";
+    os << "(" << vec.size() << ")\n";
     os << vec.getRawVector() << '\n';
 }
 
@@ -63,6 +63,7 @@ std::ofstream openGlobalMatrixOutputFile(std::string const& filenamePrefix,
                   filename);
     }
 
+    fh << std::setprecision(std::numeric_limits<double>::max_digits10);
     return fh;
 }
 #endif
@@ -326,8 +327,9 @@ void LocalMatrixOutput::operator()(double const t, int const process_id,
 
     DBUG("Writing to local matrix debug output file...");
 
-    fmt::print(fh, "## t = {:.15g}, process id = {}, element id = {}\n\n", t,
-               process_id, element_id);
+    fmt::print(fh, "## t = {:.{}g}, process id = {}, element id = {}\n\n", t,
+               std::numeric_limits<double>::max_digits10, process_id,
+               element_id);
 
     if (!local_M_data.empty())
     {
@@ -364,8 +366,9 @@ void LocalMatrixOutput::operator()(double const t, int const process_id,
 
     DBUG("Writing to local matrix debug output file...");
 
-    fmt::print(fh, "## t = {:.15g}, process id = {}, element id = {}\n\n", t,
-               process_id, element_id);
+    fmt::print(fh, "## t = {:.{}g}, process id = {}, element id = {}\n\n", t,
+               std::numeric_limits<double>::max_digits10, process_id,
+               element_id);
 
     if (!local_b_data.empty())
     {

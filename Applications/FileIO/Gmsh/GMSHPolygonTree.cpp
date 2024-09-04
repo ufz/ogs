@@ -307,7 +307,7 @@ void GMSHPolygonTree::createGMSHPoints(std::vector<GMSHPoint*>& gmsh_pnts) const
 
     const std::size_t n_plys(_plys.size());
     std::stringstream error_messages;
-    error_messages.precision(std::numeric_limits<double>::digits10);
+    error_messages.precision(std::numeric_limits<double>::max_digits10);
     for (std::size_t k(0); k < n_plys; k++)
     {
         const std::size_t n_pnts_in_ply(_plys[k]->getNumberOfPoints());

@@ -84,7 +84,7 @@ TEST(MaterialPropertyLib, AverageMolarMass)
 
         m_composition << "<value>"
                       << std::setprecision(
-                             std::numeric_limits<double>::digits10)
+                             std::numeric_limits<double>::max_digits10)
                       << ref_molar_fraction_A[idx] << " "
                       << 1. - ref_molar_fraction_A[idx] << "</value>\n";
         std::stringstream m;

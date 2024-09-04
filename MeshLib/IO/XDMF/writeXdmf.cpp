@@ -216,19 +216,21 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         [](double const& time_value, auto const& geometry, auto const& topology,
            auto const& constant_attributes, auto const& variable_attributes)
     {
-        // Output of "Time Value" with sufficient precision.
-        static_assert(15 == std::numeric_limits<double>::digits10);
         return fmt::format(
             R"(
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="{time_value:.15g}"/>
+    <Time Value="{time_value:.{precision}g}"/>
 {geometry}
 {topology}
 {fix_attributes}
 {variable_attributes}
 </Grid>)",
-            "time_value"_a = time_value, "geometry"_a = geometry,
-            "topology"_a = topology, "fix_attributes"_a = constant_attributes,
+            "time_value"_a = time_value,
+            // Output of "Time Value" with sufficient precision.
+            "precision"_a = std::numeric_limits<double>::max_digits10,
+            "geometry"_a = geometry,
+            "topology"_a = topology,
+            "fix_attributes"_a = constant_attributes,
             "variable_attributes"_a = variable_attributes);
     };
 

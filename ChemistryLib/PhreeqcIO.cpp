@@ -468,7 +468,7 @@ void PhreeqcIO::writeInputsToFile(double const dt)
     }
 
     out << std::scientific
-        << std::setprecision(std::numeric_limits<double>::digits10);
+        << std::setprecision(std::numeric_limits<double>::max_digits10);
     out << (*this << dt);
 
     if (!out)

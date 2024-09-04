@@ -268,7 +268,7 @@ int GMSHInterface::writeGMSHInputFile(std::ostream& out)
     }
 
     std::stringstream error_messages;
-    error_messages.precision(std::numeric_limits<double>::digits10);
+    error_messages.precision(std::numeric_limits<double>::max_digits10);
     for (std::size_t k = 0; k < _gmsh_pnts.size(); ++k)
     {
         if (_gmsh_pnts[k] == nullptr)

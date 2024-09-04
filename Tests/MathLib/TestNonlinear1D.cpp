@@ -37,7 +37,11 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
     auto rf = NL::makeRegulaFalsi<TypeParam>(f, -0.1, 1.1);
     double old_range = rf.getRange();
 
-    DBUG(" 0 -- x ~ {:23.16g}, range = {:23.16g}", rf.getResult(), old_range);
+    auto format_double =
+        [p = std::numeric_limits<double>::max_digits10](double const value)
+    { return fmt::format("{:23.{}g}", value, p); };
+    DBUG(" 0 -- x ~ {}, range = {}", format_double(rf.getResult()),
+         format_double(old_range));
 
     for (unsigned n = 0; n < 10; ++n)
     {
@@ -46,8 +50,8 @@ TYPED_TEST(MathLibRegulaFalsi, QuadraticFunction)
         // expect that the interval of the root search shrinks
         EXPECT_GT(old_range, range);
         old_range = range;
-        DBUG("{:2d} -- x ~ {:23.16g}, range = {:23.16g}", n + 1, rf.getResult(),
-             range);
+        DBUG("{:2d} -- x ~ {}, range = {}", n + 1,
+             format_double(rf.getResult()), format_double(range));
 
         if (range < std::numeric_limits<double>::epsilon())
         {
