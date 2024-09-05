@@ -4,7 +4,7 @@ check web links:
   tags: [envinf4, docker] # pinning for cache
   extends:
     - .rules-master-manual
-  needs: [ci_images, "build linux arch", "build mac petsc arm64"]
+  needs: [ci_images, "build linux arch", "build mac petsc"]
   image: $WEB_IMAGE
   script:
     # Copy notebook pages

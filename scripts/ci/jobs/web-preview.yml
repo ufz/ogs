@@ -5,7 +5,7 @@ preview web site:
     - job: ci_images
     - job: "build linux arch"
       optional: true
-    - job: "build mac petsc arm64"
+    - job: "build mac petsc"
       optional: true
   variables:
     HUGO_ENVIRONMENT: "staging"
