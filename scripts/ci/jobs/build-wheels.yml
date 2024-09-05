@@ -50,14 +50,9 @@ build wheels linux:
   <<: *wheels_template
 
 build wheels mac:
-  tags:
-    - mac
-    - ${ARCHITECTURE}
+  tags: [mac, arm64]
   variables:
     CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
-  parallel:
-    matrix:
-      - ARCHITECTURE: ["amd64", "arm64"]
   <<: *wheels_template
 
 build wheels win:
