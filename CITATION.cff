@@ -246,6 +246,9 @@ authors:
       affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
 identifiers:
     - type: doi
+      value: 10.5281/zenodo.13685289
+      description: Zenodo DOI for 6.5.3
+    - type: doi
       value: 10.5281/zenodo.11652195
       description: Zenodo DOI for 6.5.2
     - type: doi
