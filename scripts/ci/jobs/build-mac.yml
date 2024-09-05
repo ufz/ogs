@@ -1,25 +1,11 @@
 build mac:
-  tags:
-    - mac
-    - ${ARCHITECTURE}
+  tags: [mac, arm64]
   extends:
     - .template-build-linux
     - .test-artifacts
   needs: [meta]
-  rules:
-    - if: '$ARCHITECTURE == "amd64"'
-      variables:
-        CTEST_ARGS: "-E LARGE" # disable large notebook tests
-    - if: '$ARCHITECTURE == "arm64"'
-    - if: '$CI_COMMIT_BRANCH == "master"'
-    - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
-    - when: manual
-      allow_failure: true
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DOGS_BUILD_HDF5=ON
-  parallel:
-    matrix:
-      - ARCHITECTURE: ["amd64", "arm64"]

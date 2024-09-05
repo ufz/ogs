@@ -5,16 +5,17 @@ build gui mac:
   stage: build
   tags:
     - mac
-    - ${ARCHITECTURE}
+    - arm64
   needs: [meta]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:
         - Applications/DataExplorer/**/*
+        - scripts/ci/jobs/build-gui-mac.yml
     - when: manual
       allow_failure: true
   variables:
     CMAKE_PRESET: release-gui
-  parallel:
-    matrix:
-      - ARCHITECTURE: ["amd64"] # "arm64" not supported yet
+    CMAKE_ARGS: >-
+      -DOGS_USE_NETCDF=OFF
+      -DQt5_DIR=/opt/qt/5.15.14/lib/cmake/Qt5

@@ -467,6 +467,10 @@ if(NOT VTK_FOUND)
         endif()
     endif()
 
+    if(DEFINED Qt5_DIR)
+        list(APPEND VTK_OPTIONS "-DQt5_DIR=${Qt5_DIR}")
+    endif()
+
     BuildExternalProject(
         VTK ${_vtk_source} CMAKE_ARGS ${VTK_OPTIONS} ${_defaultCMakeArgs}
                                       ${_vtk_patch} ${_cmake_generator}
