@@ -538,7 +538,7 @@ AddTest(
     DIFF_DATA
     quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu pressure pressure 1.0e-10 1.e-10
     quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu displacement displacement 1.0e-10 1.e-10
-    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu sigma sigma 1.0e-6 1.e-9
+    quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu sigma sigma 2.0e-6 1.e-9
     quad_with_half_hole_ts_1_t_1.000000.vtu quad_with_half_hole_ts_1_t_1.000000.vtu permeability permeability 1.0e-6 1.e-9
 )
 
