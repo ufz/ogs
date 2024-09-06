@@ -1,0 +1,3 @@
+<OpenGeoSysProjectDiff base_file="cube_1e3.prj">
+    <add sel="/*/mesh[1]" type="@axially_symmetric">true</add>
+</OpenGeoSysProjectDiff>

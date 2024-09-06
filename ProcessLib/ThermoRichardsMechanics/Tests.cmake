@@ -464,6 +464,16 @@ AddTest(
     expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_total_stess0_test_ts_10_t_864000.000000.vtu sigma sigma 5e-2 1e-8
 )
 
+AddTest(
+    NAME TRM_3D_and_axially_symmetric
+    PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
+    RUNTIME 1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS -p 3D_axially_symmetric_fail_test_patch.xml cube_1e3.prj
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION "3D mesh cannot be axially symmetric."
+)
+
 if(OGS_USE_MFRONT)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
