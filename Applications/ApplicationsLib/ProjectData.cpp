@@ -214,6 +214,10 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
             "axially_symmetric"))
     {
         mesh->setAxiallySymmetric(*axially_symmetric);
+        if (mesh->getDimension() == 3 && mesh->isAxiallySymmetric())
+        {
+            OGS_FATAL("3D mesh cannot be axially symmetric.");
+        }
     }
 
     return mesh;
