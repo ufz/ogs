@@ -559,6 +559,54 @@ AddTest(
 )
 
 AddTest(
+    NAME HydroMechanicsAnchorsTwo
+    PATH HydroMechanics/AnchorSourceTerm
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS two_anchors.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 5
+    DIFF_DATA
+    expected_two_anchors_ts_10_t_1.000000.vtu two_anchors_ts_10_t_1.000000.vtu pressure pressure 1.0e-10 1.e-10
+    expected_two_anchors_ts_10_t_1.000000.vtu two_anchors_ts_10_t_1.000000.vtu displacement displacement 1.0e-10 1.e-10
+    expected_two_anchors_ts_10_t_1.000000.vtu two_anchors_ts_10_t_1.000000.vtu sigma sigma 1.0e-6 1.e-9
+    expected_two_anchors_ts_10_t_1.000000.vtu two_anchors_ts_10_t_1.000000.vtu epsilon epsilon 1.0e-6 1.e-9
+)
+
+AddTest(
+    NAME HydroMechanicsAnchorsOne
+    PATH HydroMechanics/AnchorSourceTerm
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS one_anchor.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 5
+    DIFF_DATA
+    expected_one_anchor_ts_10_t_1.000000.vtu one_anchor_ts_10_t_1.000000.vtu pressure pressure 1.0e-10 1.e-10
+    expected_one_anchor_ts_10_t_1.000000.vtu one_anchor_ts_10_t_1.000000.vtu displacement displacement 1.0e-10 1.e-10
+    expected_one_anchor_ts_10_t_1.000000.vtu one_anchor_ts_10_t_1.000000.vtu sigma sigma 1.0e-6 1.e-9
+    expected_one_anchor_ts_10_t_1.000000.vtu one_anchor_ts_10_t_1.000000.vtu epsilon epsilon 1.0e-6 1.e-9
+)
+
+AddTest(
+    NAME HydroMechanicsAnchorsOneCube
+    PATH HydroMechanics/AnchorSourceTerm
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS one_anchor_cube.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 5
+    DIFF_DATA
+    expected_one_anchor_cube_ts_10_t_1.000000.vtu one_anchor_cube_ts_10_t_1.000000.vtu pressure pressure 1.0e-10 1.e-10
+    expected_one_anchor_cube_ts_10_t_1.000000.vtu one_anchor_cube_ts_10_t_1.000000.vtu displacement displacement 1.0e-10 1.e-10
+    expected_one_anchor_cube_ts_10_t_1.000000.vtu one_anchor_cube_ts_10_t_1.000000.vtu sigma sigma 1.0e-6 1.e-9
+    expected_one_anchor_cube_ts_10_t_1.000000.vtu one_anchor_cube_ts_10_t_1.000000.vtu epsilon epsilon 1.0e-6 1.e-9
+)
+
+AddTest(
     NAME MonolithicInjectionProduction1D
     PATH HydroMechanics/StaggeredScheme/InjectionProduction1D
     EXECUTABLE ogs
