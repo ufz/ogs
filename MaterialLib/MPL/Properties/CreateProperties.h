@@ -37,6 +37,7 @@
 #include "CreateLinear.h"
 #include "CreateOrthotropicEmbeddedFracturePermeability.h"
 #include "CreateParameter.h"
+#include "CreatePengRobinson.h"
 #include "CreatePermeabilityMohrCoulombFailureIndexModel.h"
 #include "CreatePermeabilityOrthotropicPowerLaw.h"
 #include "CreatePorosityFromMassBalance.h"
