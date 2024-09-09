@@ -14,6 +14,7 @@
 
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "NumLib/Exceptions.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Output/CellAverageAlgorithm.h"
 #include "ProcessLib/Process.h"
@@ -162,11 +163,20 @@ void SmallDeformationProcess<DisplacementDim>::
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
     // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
-        process_id, &b, &Jac);
-
+    try
+    {
+        GlobalExecutor::executeSelectedMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
+            _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x,
+            x_prev, process_id, &b, &Jac);
+    }
+    catch (NumLib::AssemblyException const&)
+    {
+        transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
+                                          *_nodal_forces,
+                                          std::negate<double>());
+        throw;
+    }
     transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
                                       *_nodal_forces, std::negate<double>());
 
