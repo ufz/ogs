@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <meshes>	
+    	<mesh>hexa_slope_domain.vtu</mesh>
+    	<mesh>hexa_slope_physical_group_bas.vtu</mesh>
+    	<mesh>hexa_slope_physical_group_devant.vtu</mesh>
+    	<mesh>hexa_slope_physical_group_derriere.vtu</mesh>
+	<mesh>hexa_slope_physical_group_cote.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>MohrCoulombAbboSloan</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="YoungModulus"/>
+                    <material_property name="PoissonRatio" parameter="PoissonRatio"/>
+                    <material_property name="Cohesion" parameter="Cohesion"/>
+                    <material_property name="FrictionAngle" parameter="FrictionAngle"/>
+                    <material_property name="DilatancyAngle" parameter="DilatancyAngle"/>
+                    <material_property name="TransitionAngle" parameter="TransitionAngle"/>
+                    <material_property name="TensionCutOffParameter" parameter="TensionCutOffParameter"/>
+                </material_properties>
+            </constitutive_relation>
+            <specific_body_force>0 -9.8 0</specific_body_force>
+            <reference_temperature>T_ref</reference_temperature>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltol>1e-13</reltol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>IterationNumberBasedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>5</t_end>
+                    <initial_dt>0.5</initial_dt>
+                    <minimum_dt>1e-3</minimum_dt>
+                    <maximum_dt>1.0</maximum_dt>
+                    <number_iterations>1 5 10 20 </number_iterations>
+                    <multiplier> 1.2 1.0 0.9 0.5</multiplier>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>slope</prefix>
+            <timesteps>
+                <pair>
+                    <repeat>10000</repeat>
+                    <each_steps>200</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+                <variable>displacement</variable>
+                <variable>sigma</variable>
+                <variable>epsilon</variable>
+                <variable>ElasticStrain</variable>
+                <variable>EquivalentPlasticStrain</variable>
+            </variables>
+            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+        </output>
+    </time_loop>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_sr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+        </medium>
+    </media>
+    <parameters>
+        <parameter>
+            <name>T_ref</name>
+            <type>Constant</type>
+            <values>293.15</values>
+        </parameter>
+        <parameter>
+            <name>YoungModulus</name>
+            <type>Constant</type>
+            <value>26e5</value>
+        </parameter>
+        <parameter>
+            <name>PoissonRatio</name>
+            <type>Constant</type>
+            <value>.3</value>
+        </parameter>
+        <parameter>
+            <name>Cohesion</name>
+            <type>CurveScaled</type>
+            <curve>cohesion_ramp</curve>
+            <parameter>cohesion_rs0</parameter>
+        </parameter>
+        <parameter>
+            <name>cohesion_rs0</name>
+            <type>Constant</type>
+            <value>5000</value>
+        </parameter>
+        <parameter>
+            <name>FrictionAngle</name>
+            <type>CurveScaled</type>
+            <curve>FrictionAngle_ramp</curve>
+            <parameter>FrictionAngle_rs0</parameter>
+        </parameter>
+        <parameter>
+            <name>FrictionAngle_rs0</name>
+            <type>Constant</type>
+            <value>20</value>
+        </parameter>
+        <parameter>
+            <name>DilatancyAngle</name>
+            <type>Constant</type>
+            <value>13</value>
+        </parameter>
+        <parameter>
+            <name>TransitionAngle</name>
+            <type>Constant</type>
+            <value>27</value>
+        </parameter>
+        <parameter>
+            <name>TensionCutOffParameter</name>
+            <type>CurveScaled</type>
+            <curve>TensionCutOffParameter_ramp</curve>
+            <parameter>TensionCutOffParameter_rs0</parameter>
+        </parameter>
+        <parameter>
+            <name>TensionCutOffParameter_rs0</name>
+            <type>Constant</type>
+            <value>13700</value>
+        </parameter>
+        <parameter>
+            <name>rho_sr</name>
+            <type>CurveScaled</type>
+            <curve>density_ramp</curve>
+            <parameter>rho_sr0</parameter>
+        </parameter>
+        <parameter>
+            <name>rho_sr0</name>
+            <type>Constant</type>
+            <value>1600</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0 0</values>
+        </parameter>
+        <parameter>
+            <name>dirichlet0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>top_load</name>
+            <type>CurveScaled</type>
+            <curve>top_load_ramp</curve>
+            <parameter>top_load0</parameter>
+        </parameter>
+        <parameter>
+            <name>top_load0</name>
+            <type>Constant</type>
+            <value>-30000</value>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>cohesion_ramp</name>
+            <coords>0 1 2 3 4 5 6 7</coords>
+            <values>1 1 0.9 0.8 0.7 0.6 0.5 0.4</values>
+        </curve>
+        <curve>
+            <name>FrictionAngle_ramp</name>
+            <coords>0 1 2 3 4 5 6 7</coords>
+            <values>1 1 0.906 0.812 0.715 0.616 0.516 0.414</values>
+        </curve>
+        <curve>
+            <name>TensionCutOffParameter_ramp</name>
+            <coords>0 1 2 3 4 5 6 7</coords>
+            <values>1 1 1 1 1 1 1 1</values>
+        </curve>
+        <curve>
+            <name>density_ramp</name>
+            <coords>0 1</coords>
+            <values>0 1</values>
+        </curve>
+        <curve>
+            <name>top_load_ramp</name>
+            <coords>0 1 2</coords>
+            <values>0 0 0</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>3</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>hexa_slope_physical_group_bas</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>hexa_slope_physical_group_bas</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>hexa_slope_physical_group_bas</mesh>
+                    <type>Dirichlet</type>
+                    <component>2</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>hexa_slope_physical_group_derriere</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>hexa_slope_physical_group_cote</mesh>
+                    <type>Dirichlet</type>
+                    <component>2</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>hexa_slope_physical_group_devant</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>50</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+	    <name>general_linear_solver</name>
+	    <lis>-i bicgstab -p jacobi -tol 1e-11 -maxiter 10000</lis>	
+            <eigen>
+		<solver_type>BiCGSTAB</solver_type>
+		<precon_type>DIAGONAL</precon_type>
+		<max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-14</error_tolerance>
+            </eigen>
+            <petsc>
+                <prefix>gw</prefix>
+                <parameters>-gw_ksp_type bcgs -gw_pc_type jacobi -gw_ksp_rtol 1.e-16 -gw_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>slope_ts_131_t_5_000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>2e-11</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
