@@ -99,6 +99,38 @@ cmake --build --preset release-petsc
 The ```release-petsc``` preset is based on the ```release``` preset.
 It can be customized by passing additional variable with ```-D``` flags to `cmake` command.
 
+<div class='win'>
+</div>
+<div class='linux'>
+</div>
+<div class='mac'>
+
+<div class='note'>
+
+### <i class="far fa-exclamation-triangle"></i> Additional remarks for Homebrew users
+
+If you use the `homebrew`-package manager please be aware that if you have installed the following packages:
+
+- `hdf5`
+- `vtk`
+
+Then you need to add these CMake-variables to your configuration:
+
+- `-DOGS_BUILD_HDF5=ON`
+- `-DOGS_BUILD_VTK=ON`
+
+Otherwise the `brew`-installed libraries are picked up which are built for the serial case and are therefore incompatible with the PETSc configuration of OGS.
+
+When building VTK locally you need to also install [git-lfs](https://git-lfs.com) via:
+
+```bash
+brew install git-lfs
+```
+
+</div>
+
+</div>
+
 If you want to install PETSc yourself, please see Section [Install PETSc](#install-petsc-manually).
 
 ### Manual way
