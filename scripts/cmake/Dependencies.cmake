@@ -165,15 +165,22 @@ if(OGS_USE_MFRONT)
         find_package(MFrontGenericInterface REQUIRED)
     else()
         set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
+        # Patch only works when CPM_SOURCE_CACHE is set. Following conditional
+        # logic can be removed if
+        # https://github.com/cpm-cmake/CPM.cmake/issues/577 is resolved.
+        if(NOT "${CPM_SOURCE_CACHE}" STREQUAL "")
+            set(_mgis_patch_args
+                PATCHES ${PROJECT_SOURCE_DIR}/scripts/cmake/mgis-flags.patch
+            )
+            message(STATUS "Adding mgis-flags.patch.")
+        endif()
         CPMAddPackage(
             NAME MGIS
             GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
             GIT_TAG rliv-2.0
             OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
                     "enable-website OFF"
-            EXCLUDE_FROM_ALL
-                YES SYSTEM TRUE PATCHES
-                    ${PROJECT_SOURCE_DIR}/scripts/cmake/mgis-flags.patch
+            EXCLUDE_FROM_ALL YES SYSTEM TRUE ${_mgis_patch_args}
         )
         list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
     endif()
