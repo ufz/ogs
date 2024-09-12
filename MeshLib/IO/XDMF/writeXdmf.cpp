@@ -205,7 +205,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     {
         return fmt::format(
             fmt::runtime("\n\t<Topology Dimensions=\"{dimensions}\" "
-                         "Type=\"Mixed\">{dataitem}\n\t</Topology>"),
+                         "Type={topology_type}>{dataitem}\n\t</Topology>"),
+            "topology_type"_a = "Mixed",
             "dataitem"_a = dataitem_transform(topology),
             "dimensions"_a = fmt::join(topology.global_block_dims, " "));
     };

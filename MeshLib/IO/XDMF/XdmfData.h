@@ -48,13 +48,15 @@ struct XdmfData final
      * Geometry, 3=Topology, 4>=Attribute
      * @param n_files specifies the number of files. If greater than 1 it groups
      * the data of each process to n_files
-     *
+     * @param parent_data_type specifies the type of the parent structure
+     * (e.g. Topology, DataItem, Grid)
      */
     XdmfData(std::size_t size_partitioned_dim, std::size_t size_tuple,
              MeshPropertyDataType mesh_property_data_type,
              std::string const& name,
              std::optional<MeshLib::MeshItemType> attribute_center,
-             unsigned int const index, unsigned int n_files);
+             unsigned int const index, unsigned int n_files,
+             std::optional<ParentDataType> parent_data_type);
     // a hyperslab is defined by starts and strides see
     // https://xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
     std::vector<XdmfDimType> starts;
@@ -64,6 +66,7 @@ struct XdmfData final
     std::string name;
     std::optional<MeshLib::MeshItemType> attribute_center;
     unsigned int index;
+    std::optional<ParentDataType> parent_data_type;
 };
 
 }  // namespace MeshLib::IO

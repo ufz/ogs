@@ -28,3 +28,13 @@ enum class MeshPropertyDataType
     uchar,
     enum_length
 };
+
+
+// See https://www.xdmf.org/index.php/XDMF_Model_and_Format - only relevant of
+// TopologyType(s) added, structure is open to be extended with GridType(s)
+// and ItemType(s).
+enum class ParentDataType
+{
+    Polyvertex=0,
+    Mixed,
+};
