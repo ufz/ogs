@@ -101,7 +101,7 @@ def check_and_modify_frontmatter():
     if "CI_MERGE_REQUEST_SOURCE_PROJECT_URL" in os.environ:
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
         branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
-    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/master?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}"
+    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/master?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1"
     text = """
 <div class="note">
     <p style="margin-top: 0; margin-bottom: 0;">
