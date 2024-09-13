@@ -468,6 +468,18 @@ AddTest(
     wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
 )
 
+# Serial XDMF output
+AddTest(
+    NAME SteadyStateDiffusion_cube_2
+    PATH Elliptic/cube_1x1x1_SteadyStateDiffusion/xdmf
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e4_anisotropic.prj
+    TESTER xdmfdiff
+    DIFF_DATA
+    cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf pressure pressure 1e-14 1e-14
+    cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf darcy_velocity darcy_velocity 1e-13 1e-13
+)
+
 # MPI groundwater flow tests
 AddTest(
     NAME ParallelFEM_GroundWaterFlow2D
