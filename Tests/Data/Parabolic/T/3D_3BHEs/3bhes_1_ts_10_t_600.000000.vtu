@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="20" format="appended" RangeMin="45"                   RangeMax="103"                  offset="0"                   />
+    </FieldData>
+    <Piece NumberOfPoints="11"                   NumberOfCells="10"                  >
+      <PointData>
+        <DataArray type="Float64" Name="temperature_BHE1" NumberOfComponents="4" format="appended" RangeMin="592.69083081"         RangeMax="592.78777354"         offset="84"                  />
+        <DataArray type="Float64" Name="temperature_BHE2" NumberOfComponents="8" format="appended" RangeMin="0"                    RangeMax="0"                    offset="556"                 />
+        <DataArray type="Float64" Name="temperature_BHE3" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="0"                    offset="620"                 />
+        <DataArray type="Float64" Name="temperature_soil" format="appended" RangeMin="304.01144167"         RangeMax="304.55046294"         offset="684"                 />
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="25.787593916"         RangeMax="58.008620049"         offset="852"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="972"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="1068"                />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="1160"                />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAAAAAAAAgAAAAAAAABQAAAAAAAAAHAAAAAAAAAA=eF4z0zPRM9Y1MTGx1E1PNk20TDIwTAIALskE5w==AQAAAAAAAAAAgAAAAAAAAGABAAAAAAAAQQEAAAAAAAA=eF5jYACCgiKHsvXXZRMqihyU361xjZ9e5JB9bFFZLZCeq5R0pAYor6RftogVKP928bb8ddOKHJYsKZx2EkhHXJ9T8gsoX51g9WFVeZED7wb/tgdAceGo8AU/gPRslqNXigqLHGSt+KR8gfL8X4OWXgWKT9J5sfMVkF7uttH+DVB+uuO7H+/KihysZggY3waKq6i9tXsLpHNzz8UkFBU5FFgyr+0FynN+nLwMJG/Avm4DSP+GqSGLrwLl/+WcYtQBytsnv+i+DxSPU9Se8BrkPtdFc12Lixzml2epHC8tcnjnUF14CygupD657DGQnpl1+P42oHyNhPjlRKB87uSvsV+B4qFv/8X9BtLzSyZdUyopcljdcsj9J5A+1bHi1gyg+NVFbPdmA+kjeeXGE0oQ9O+SaTN+gsLNajqYBgDjtqgrAQAAAAAAAAAAgAAAAAAAAMACAAAAAAAADwAAAAAAAAA=eF5jYBgFo2DoAgACwAABAQAAAAAAAAAAgAAAAAAAAGABAAAAAAAADQAAAAAAAAA=eF5jYBgFtAQAAWAAAQ==AQAAAAAAAAAAgAAAAAAAAFgAAAAAAAAAWwAAAAAAAAA=eF4z3BJ1tJS12MG57K2dCGOxQ2wR81kHpmKHbp4lMh+A/KMCgS1sQP7vR4Lb/gL5iY+5l3EB+bNuc52+D+S/4v4dXwfkm+8rvavHUOywUddq0zmOYgcA39EitQ==AQAAAAAAAAAAgAAAAAAAAAgBAAAAAAAAOAAAAAAAAAA=eF5jYAABiQNgisHSAUIzQPno4jI4xDVwiBviEDfDIW6NQ9wBu3iDEw71rjjUu+NQ73UAAIcmGfo=AQAAAAAAAAAAgAAAAAAAAKAAAAAAAAAAJgAAAAAAAAA=eF5dxTkCABAMALA6i/8/2MCULIl4Cldu3Hnw5OTFm8//Ahb4AGU=AQAAAAAAAAAAgAAAAAAAAFAAAAAAAAAAIwAAAAAAAAA=eF5jYoAAFijNBqU5oDQXlOaB0nxQWgBKC0FpESgNAA4QAG8=AQAAAAAAAAAAgAAAAAAAAAoAAAAAAAAACwAAAAAAAAA=eF5jZoYBAACvAB8=
+  </AppendedData>
+</VTKFile>
