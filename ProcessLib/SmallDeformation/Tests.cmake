@@ -93,6 +93,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh20.xml RUNTIME 4)
     OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh25.xml RUNTIME 4)
     OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh30.xml RUNTIME 4)
+    OgsTest(PROJECTFILE Mechanics/CooksMembrane/3D/CooksMembrane_3D.prj RUNTIME 1)
 endif()
 
 OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
