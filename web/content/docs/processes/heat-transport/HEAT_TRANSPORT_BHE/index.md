@@ -50,7 +50,15 @@ In the configuration of `HEAT_TRANSPORT_BHE` process, it is generally configured
     <process_variable>temperature_soil</process_variable>
     <process_variable>temperature_BHE1</process_variable>
 </process_variables>
+<borehole_heat_exchangers>
+  <borehole_heat_exchanger>
+  </borehole_heat_exchanger>
+<borehole_heat_exchangers>
 ```
+
+The parameters of the BHE needs to be defined inside of `<borehole_heat_exchanger>` and were described in the following subsections. Multiple BHE can be simply defined by multiple `<borehole_heat_exchanger>` inside of `<borehole_heat_exchangers>`.
+
+To use one BHE definition for multiple BHE, the id notation from the medium is supported. If one BHE is specified by id, then all BHE definitions must belong to this convention. The following line `<borehole_heat_exchanger id="0,2">` specifies for example the same parameters for BHE 0 and 2. If all BHE are exactly the same, then `<borehole_heat_exchanger id="*">` can be used to set the parameters of one BHE definition for all BHE in the model.
 
 ### `<borehole>`
 
