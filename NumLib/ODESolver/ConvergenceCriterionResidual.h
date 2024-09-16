@@ -32,12 +32,19 @@ public:
 
     bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return true; }
+    bool hasNonNegativeDamping() const override { return false; }
 
     /// The function will only do diagnostic output and no actual check of the
     /// solution increment is made
     void checkDeltaX(const GlobalVector& minus_delta_x,
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& residual) override;
+    double getDampingFactor(GlobalVector const& /*minus_delta_x*/,
+                            GlobalVector const& /*x*/,
+                            double damping_scalar) override
+    {
+        return damping_scalar;
+    }
 
 private:
     const std::optional<double> _abstol;

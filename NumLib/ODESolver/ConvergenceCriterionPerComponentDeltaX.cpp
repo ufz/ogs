@@ -22,10 +22,14 @@ namespace NumLib
 ConvergenceCriterionPerComponentDeltaX::ConvergenceCriterionPerComponentDeltaX(
     std::vector<double>&& absolute_tolerances,
     std::vector<double>&& relative_tolerances,
+    std::vector<double>&& damping_alpha,
+    bool damping_alpha_switch,
     const MathLib::VecNormType norm_type)
     : ConvergenceCriterionPerComponent(norm_type),
       _abstols(std::move(absolute_tolerances)),
-      _reltols(std::move(relative_tolerances))
+      _reltols(std::move(relative_tolerances)),
+      _damping_alpha(std::move(damping_alpha)),
+      _damping_alpha_switch(damping_alpha_switch)
 {
     if (_abstols.size() != _reltols.size())
     {
@@ -72,6 +76,42 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
     }
 }
 
+double ConvergenceCriterionPerComponentDeltaX::getDampingFactor(
+    const GlobalVector& minus_delta_x, GlobalVector const& x,
+    double damping_orig)
+{
+    if ((!_dof_table) || (!_mesh))
+    {
+        OGS_FATAL("D.o.f. table or mesh have not been set.");
+    }
+
+    double damping_final = 1;
+    for (unsigned global_component = 0;
+         global_component < _damping_alpha.size();
+         ++global_component)
+    {
+        auto const& ms = _dof_table->getMeshSubset(global_component);
+        assert(ms.getMeshID() == _mesh->getID());
+        DBUG("Non-negative damping for component: {:d} alpha: {:g}",
+             global_component, _damping_alpha[global_component]);
+        for (MeshLib::Node const* node : ms.getNodes())
+        {
+            MeshLib::Location const l{
+                _mesh->getID(), MeshLib::MeshItemType::Node, node->getID()};
+            auto index = _dof_table->getGlobalIndex(l, global_component);
+            auto const damping_tmp =
+                damping_orig / std::max(1.0, (minus_delta_x.get(index) *
+                                              _damping_alpha[global_component] /
+                                              x.get(index)));
+            damping_final =
+                (damping_tmp < damping_final) ? damping_tmp : damping_final;
+        }
+    }
+    DBUG("Final damping value due to non-negative damping: {:g}",
+         damping_final);
+    return damping_final;
+}
+
 void ConvergenceCriterionPerComponentDeltaX::setDOFTable(
     const LocalToGlobalIndexMap& dof_table, MeshLib::Mesh const& mesh)
 {
@@ -99,10 +139,14 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
     auto reltols =
         //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__PerComponentDeltaX__reltols}
         config.getConfigParameterOptional<std::vector<double>>("reltols");
+    auto damping_alpha =
+        //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__PerComponentDeltaX__damping_alpha}
+        config.getConfigParameterOptional<std::vector<double>>("damping_alpha");
     auto const norm_type_str =
         //! \ogs_file_param{prj__time_loop__processes__process__convergence_criterion__PerComponentDeltaX__norm_type}
         config.getConfigParameter<std::string>("norm_type");
 
+    bool damping_alpha_switch = true;
     if ((!abstols) && (!reltols))
     {
         OGS_FATAL(
@@ -117,6 +161,11 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
     {
         reltols = std::vector<double>(abstols->size());
     }
+    if (!damping_alpha)
+    {
+        damping_alpha = std::vector<double>(abstols->size(), 0.0);
+        damping_alpha_switch = false;
+    }
 
     auto const norm_type = MathLib::convertStringToVecNormType(norm_type_str);
 
@@ -126,7 +175,8 @@ createConvergenceCriterionPerComponentDeltaX(const BaseLib::ConfigTree& config)
     }
 
     return std::make_unique<ConvergenceCriterionPerComponentDeltaX>(
-        std::move(*abstols), std::move(*reltols), norm_type);
+        std::move(*abstols), std::move(*reltols), std::move(*damping_alpha),
+        damping_alpha_switch, norm_type);
 }
 
 }  // namespace NumLib
