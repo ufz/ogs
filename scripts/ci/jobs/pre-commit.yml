@@ -14,6 +14,8 @@ clang-format:
   stage: check
   image: $PRECOMMIT_IMAGE
   rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only \(fast.*/
+      when: never
     - if: $CI_MERGE_REQUEST_IID
   needs: [ci_images]
   script:
