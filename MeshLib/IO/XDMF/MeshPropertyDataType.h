@@ -2,7 +2,7 @@
  * \file
  * \author Tobias Meisel
  * \date   2020-12-15
- * \brief  Enum for all propertyVector data types
+ * \brief  Enum for all propertyVector data types and XDMF ParentDataTypes
  * \copyright
  * Copyright (c) 2012-2024, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
@@ -11,6 +11,8 @@
  */
 
 #pragma once
+
+#include <string>
 
 // TODO (tm) If used on several other places move definition of propertyVector
 enum class MeshPropertyDataType
@@ -29,12 +31,33 @@ enum class MeshPropertyDataType
     enum_length
 };
 
-
-// See https://www.xdmf.org/index.php/XDMF_Model_and_Format - only relevant of
+// See https://www.xdmf.org/index.php/XDMF_Model_and_Format - only relevant if
 // TopologyType(s) added, structure is open to be extended with GridType(s)
 // and ItemType(s).
 enum class ParentDataType
 {
-    Polyvertex=0,
-    Mixed,
+    MIXED = 0,
+    POLYVERTEX = 1,
+    POLYLINE = 2,
+    // POLYGON = 3, // not used in OGS
+    TRIANGLE = 4,
+    QUADRILATERAL = 5,
+    TETRAHEDRON = 6,
+    PYRAMID = 7,
+    WEDGE = 8,
+    HEXAHEDRON = 9,
+    // POLYHEDRON = 16,  // not used in OGS
+    EDGE_3 = 34,
+    QUADRILATERAL_9 = 35,
+    TRIANGLE_6 = 36,
+    QUADRILATERAL_8 = 37,
+    TETRAHEDRON_10 = 38,
+    PYRAMID_13 = 39,
+    WEDGE_15 = 40,
+    WEDGE_18 = 41,
+    HEXAHEDRON_20 = 48,
+    // HEXAHEDRON_24 = 49,  // not used in OGS
+    HEXAHEDRON_27 = 50
 };
+
+std::string ParentDataType2String(ParentDataType p);
