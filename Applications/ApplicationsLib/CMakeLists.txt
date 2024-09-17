@@ -12,13 +12,14 @@ target_link_libraries(
         GeoLib
         NumLib
         $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::ParallelMPI>>:VTK::ParallelMPI>
+        $<$<AND:$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>,$<BOOL:${OGS_BUILD_CLI}>>:ogs_embedded_python>
     PRIVATE CMakeInfoLib
             MathLib
             MeshLib
             MeshGeoToolsLib
             MeshToolsLib
-            pybind11::pybind11
             $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
+            pybind11::module
 )
 
 if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
@@ -46,7 +47,6 @@ target_compile_definitions(
 # see https://pybind11.readthedocs.io/en/stable/faq.html#someclass-declared-with-greater-visibility-than-the-type-of-its-field-someclass-member-wattributes
 # ~~~
 if(NOT OGS_BUILD_WHEEL AND OGS_BUILD_CLI)
-    target_link_libraries(ApplicationsLib PRIVATE ogs_embedded_python)
     set_target_properties(
         ApplicationsLib PROPERTIES CXX_VISIBILITY_PRESET hidden
     )
