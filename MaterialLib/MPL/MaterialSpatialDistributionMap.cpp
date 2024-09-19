@@ -11,6 +11,11 @@
  */
 #include "MaterialSpatialDistributionMap.h"
 
+#include <spdlog/fmt/bundled/core.h>
+#include <spdlog/fmt/bundled/ranges.h>
+
+#include <range/v3/view/map.hpp>
+
 #include "MeshLib/Mesh.h"
 
 namespace MaterialPropertyLib
@@ -28,7 +33,36 @@ Medium const* MaterialSpatialDistributionMap::getMedium(
     auto const material_id =
         material_ids_ == nullptr ? 0 : (*material_ids_)[element_id];
 
-    return media_.at(material_id).get();
+    assert(!media_.empty());
+
+    if (auto const it = media_.find(material_id); it != media_.end())
+    {
+        return it->second.get();
+    }
+
+    //
+    // Error handling until end of the function.
+    //
+
+    if (material_ids_ == nullptr)
+    {
+        assert(material_id == 0);
+        ERR("No MaterialIDs given in the mesh therefore default material id = "
+            "0 is used.");
+    }
+    auto keys = media_ | ranges::views::keys;
+
+    if (media_.size() == 1)
+    {
+        ERR("Single medium for material id {} is defined.",
+            fmt::join(keys, ", "));
+    }
+    else
+    {
+        ERR("Media for material ids {} are defined.", fmt::join(keys, ", "));
+    }
+    OGS_FATAL("No medium for material id {} found for element {}.", material_id,
+              element_id);
 }
 
 void MaterialSpatialDistributionMap::checkElementHasMedium(
