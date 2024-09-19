@@ -755,3 +755,16 @@ AddTest(
     DIFF_DATA
     fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu p p 1e-14 1e-14
 )
+
+AddTest(
+    NAME LiquidFlow_GasFlow
+    PATH Parabolic/LiquidFlow/GasFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS gas_flow.prj
+    RUNTIME 1
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    gas_flow_ts_1000_t_100.000000.vtu gas_flow_ts_1000_t_100.000000.vtu pressure pressure 1e-5 5e-6
+)
