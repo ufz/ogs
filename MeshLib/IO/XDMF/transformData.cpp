@@ -32,7 +32,7 @@ struct XdmfTopology
 {
     // https://xdmf.org/index.php/XDMF_Model_and_Format#Topology, Section
     // Arbitrary
-    unsigned int id;
+    ParentDataType id;
     unsigned int number_of_nodes;
 };
 
@@ -40,25 +40,42 @@ static constexpr auto elemOGSTypeToXDMFType()
 {
     std::array<XdmfTopology, to_underlying(MeshLib::CellType::enum_length)>
         elem_type{};
-    elem_type[to_underlying(MeshLib::CellType::POINT1)] = {0x1, 1};
-    elem_type[to_underlying(MeshLib::CellType::LINE2)] = {0x2, 2};
-    elem_type[to_underlying(MeshLib::CellType::LINE3)] = {0x2, 3};
-    elem_type[to_underlying(MeshLib::CellType::TRI3)] = {0x4, 3};
-    elem_type[to_underlying(MeshLib::CellType::TRI6)] = {0x24, 6};
-    elem_type[to_underlying(MeshLib::CellType::QUAD4)] = {0x5, 4};
-    elem_type[to_underlying(MeshLib::CellType::QUAD8)] = {0x25, 8};
-    elem_type[to_underlying(MeshLib::CellType::QUAD9)] = {0x23, 9};
-    elem_type[to_underlying(MeshLib::CellType::TET4)] = {0x6, 4};
-    elem_type[to_underlying(MeshLib::CellType::TET10)] = {0x26, 10};
-    elem_type[to_underlying(MeshLib::CellType::HEX8)] = {0x9, 8};
-    elem_type[to_underlying(MeshLib::CellType::HEX20)] = {0x30, 20};
-    elem_type[to_underlying(MeshLib::CellType::HEX27)] = {0x32, 27};
+    elem_type[to_underlying(MeshLib::CellType::POINT1)] = {
+        ParentDataType::POLYVERTEX, 1};
+    elem_type[to_underlying(MeshLib::CellType::LINE2)] = {
+        ParentDataType::POLYLINE, 2};
+    elem_type[to_underlying(MeshLib::CellType::LINE3)] = {
+        ParentDataType::EDGE_3, 3};
+    elem_type[to_underlying(MeshLib::CellType::TRI3)] = {
+        ParentDataType::TRIANGLE, 3};
+    elem_type[to_underlying(MeshLib::CellType::TRI6)] = {
+        ParentDataType::TRIANGLE_6, 6};
+    elem_type[to_underlying(MeshLib::CellType::QUAD4)] = {
+        ParentDataType::QUADRILATERAL, 4};
+    elem_type[to_underlying(MeshLib::CellType::QUAD8)] = {
+        ParentDataType::QUADRILATERAL_8, 8};
+    elem_type[to_underlying(MeshLib::CellType::QUAD9)] = {
+        ParentDataType::QUADRILATERAL_9, 9};
+    elem_type[to_underlying(MeshLib::CellType::TET4)] = {
+        ParentDataType::TETRAHEDRON, 4};
+    elem_type[to_underlying(MeshLib::CellType::TET10)] = {
+        ParentDataType::TETRAHEDRON_10, 10};
+    elem_type[to_underlying(MeshLib::CellType::HEX8)] = {
+        ParentDataType::HEXAHEDRON, 8};
+    elem_type[to_underlying(MeshLib::CellType::HEX20)] = {
+        ParentDataType::HEXAHEDRON_20, 20};
+    elem_type[to_underlying(MeshLib::CellType::HEX27)] = {
+        ParentDataType::HEXAHEDRON_27, 27};
     elem_type[to_underlying(MeshLib::CellType::PRISM6)] = {
-        0x8, 6};  // parallel triangle wedge
-    elem_type[to_underlying(MeshLib::CellType::PRISM15)] = {0x28, 15};
-    elem_type[to_underlying(MeshLib::CellType::PRISM18)] = {0x29, 18};
-    elem_type[to_underlying(MeshLib::CellType::PYRAMID5)] = {0x7, 5};
-    elem_type[to_underlying(MeshLib::CellType::PYRAMID13)] = {0x27, 13};
+        ParentDataType::WEDGE, 6};  // parallel triangle wedge
+    elem_type[to_underlying(MeshLib::CellType::PRISM15)] = {
+        ParentDataType::WEDGE_15, 15};
+    elem_type[to_underlying(MeshLib::CellType::PRISM18)] = {
+        ParentDataType::WEDGE_18, 18};
+    elem_type[to_underlying(MeshLib::CellType::PYRAMID5)] = {
+        ParentDataType::PYRAMID, 5};
+    elem_type[to_underlying(MeshLib::CellType::PYRAMID13)] = {
+        ParentDataType::PYRAMID_13, 13};
     return elem_type;
 }
 
