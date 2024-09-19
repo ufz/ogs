@@ -23,6 +23,7 @@
 #include <range/v3/action/unique.hpp>
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/adjacent_remove_if.hpp>
 #include <set>
 
 #include "BaseLib/Algorithm.h"
@@ -564,8 +565,26 @@ void ProjectData::parseMedia(
             //! \ogs_file_attr{prj__media__medium__id}
             medium_config.getConfigAttribute<std::string>("id", "0");
 
-        auto const material_ids_of_this_medium =
-            BaseLib::splitMaterialIdString(material_id_string);
+        std::vector<int> material_ids_of_this_medium;
+        if (material_id_string == "*")
+        {
+            auto const* const material_ids = materialIDs(*_mesh_vec[0]);
+            if (material_ids != nullptr)
+            {
+                material_ids_of_this_medium =
+                    *material_ids |
+                    ranges::views::adjacent_remove_if(std::equal_to<>()) |
+                    ranges::to_vector;
+                BaseLib::makeVectorUnique(material_ids_of_this_medium);
+                DBUG("Catch all medium definition for material ids {}.",
+                     fmt::join(material_ids_of_this_medium, ", "));
+            }
+        }
+        else
+        {
+            material_ids_of_this_medium =
+                BaseLib::splitMaterialIdString(material_id_string);
+        }
 
         for (auto const& id : material_ids_of_this_medium)
         {
