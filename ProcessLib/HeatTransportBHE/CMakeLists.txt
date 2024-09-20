@@ -8,7 +8,7 @@ ogs_add_library(HeatTransportBHE ${SOURCES})
 target_link_libraries(
     HeatTransportBHE PUBLIC ProcessLib
     PRIVATE ParameterLib
-            $<$<TARGET_EXISTS:pybind11::pybind11>:pybind11::pybind11>
+            $<$<TARGET_EXISTS:pybind11::pybind11>:pybind11::module>
 )
 
 target_precompile_headers(HeatTransportBHE PRIVATE [["BaseLib/Error.h"]]

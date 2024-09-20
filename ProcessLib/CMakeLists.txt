@@ -55,8 +55,8 @@ target_link_libraries(
         NumLib
         Boost::boost
         range-v3
-        $<$<TARGET_EXISTS:ProcessLibBoundaryConditionAndSourceTermPython>:ProcessLibBoundaryConditionAndSourceTermPython>
         $<$<TARGET_EXISTS:petsc>:petsc>
+        ProcessLibBoundaryConditionAndSourceTermPython
     PRIVATE ParameterLib GitInfoLib $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 

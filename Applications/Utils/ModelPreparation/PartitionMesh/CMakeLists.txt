@@ -5,7 +5,6 @@ if(OGS_USE_MPI)
     target_link_libraries(
         binaryToPVTU
         GitInfoLib
-        ProcessLib
         MeshLib
         MeshToolsLib
         tclap
