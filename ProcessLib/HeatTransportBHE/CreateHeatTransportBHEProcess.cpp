@@ -14,8 +14,6 @@
 
 #include <algorithm>
 #include <map>
-#include <range/v3/action/push_back.hpp>
-#include <range/v3/view/iota.hpp>
 #include <ranges>
 #include <vector>
 
@@ -27,6 +25,7 @@
 #include "HeatTransportBHEProcessData.h"
 #include "MaterialLib/Utils/MediaCreation.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 
 namespace ProcessLib
@@ -167,6 +166,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     /// \section parametersbhe Process Parameters
     // reading BHE parameters --------------------------------------------------
 
+    auto bhe_mesh_data = getBHEDataInMesh(mesh);
+
     auto const& bhe_configs =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
         config.getConfigSubtree("borehole_heat_exchangers");
@@ -222,8 +223,20 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
             bhe_config.getConfigAttribute<std::string>(
                 "id", std::to_string(bhe_iterator));
 
-        auto bhe_ids_of_this_bhe =
-            MaterialLib::splitMaterialIdString(bhe_id_string);
+        std::vector<int> bhe_ids_of_this_bhe;
+
+        if (bhe_id_string == "*")
+        {
+            int size = static_cast<int>(bhe_mesh_data.BHE_mat_IDs.size());
+            bhe_ids_of_this_bhe.resize(size);
+            std::iota(bhe_ids_of_this_bhe.begin(), bhe_ids_of_this_bhe.end(),
+                      0);
+        }
+        else
+        {
+            bhe_ids_of_this_bhe =
+                MaterialLib::splitMaterialIdString(bhe_id_string);
+        }
 
         // read in the parameters
         const std::string bhe_type =
@@ -317,7 +330,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     return std::make_unique<HeatTransportBHEProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables));
+        std::move(process_data), std::move(secondary_variables),
+        std::move(bhe_mesh_data));
 }
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
