@@ -34,7 +34,8 @@ wheels:
     - when: manual
       allow_failure: true
 
-ufz-bgr/hpc/tutorial:
+# disabled, downstream pipeline does not work currently
+.ufz-bgr/hpc/tutorial:
   stage: check
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
