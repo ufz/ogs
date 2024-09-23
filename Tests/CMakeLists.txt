@@ -145,6 +145,7 @@ if(OGS_BUILD_GUI)
                 VtkVisFilter
                 QtDataView
                 VTK::IOImage
+                pybind11::embed
     )
     if(GEOTIFF_FOUND)
         target_link_libraries(testrunner PRIVATE ${GEOTIFF_LIBRARIES})
