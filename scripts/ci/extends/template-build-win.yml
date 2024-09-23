@@ -15,7 +15,7 @@
     - mkdir build # We are inside the OGS source directory, now. This "build" dir will be, too.
     # Create symlink https://stackoverflow.com/a/34905638/80480
     - cmd /c mklink /D $artifacts_dir $env:CI_PROJECT_DIR\$build_directory_full
-    - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
+    - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS -DOGS_BUILD_DEPRECATED_PROCESSES=ON"
     - $cmake_cmd
     - Invoke-Expression $cmake_cmd
     # Activate .venv
