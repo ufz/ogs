@@ -2,7 +2,6 @@
 # processes to be build.
 set(_processes_list
     ComponentTransport
-    StokesFlow
     HT
     HeatConduction
     HeatTransportBHE
@@ -14,19 +13,25 @@ set(_processes_list
     RichardsFlow
     RichardsMechanics
     SmallDeformation
-    SmallDeformationNonlocal
     SteadyStateDiffusion
-    TES
     TH2M
     ThermalTwoPhaseFlowWithPP
     ThermoHydroMechanics
-    ThermoMechanicalPhaseField
     ThermoMechanics
     ThermoRichardsFlow
     TwoPhaseFlowWithPP
-    TwoPhaseFlowWithPrho
     WellboreSimulator
 )
+option(OGS_BUILD_DEPRECATED_PROCESSES "Build deprecated processes" OFF)
+if(OGS_BUILD_DEPRECATED_PROCESSES)
+    set(_deprecated_processes TwoPhaseFlowWithPrho SmallDeformationNonlocal
+        TES ThermoMechanicalPhaseField StokesFlow)
+    list(APPEND _processes_list ${_deprecated_processes})
+    foreach(process ${_deprecated_processes})
+        message(WARNING "${process} is deprecated and will be removed in OGS-6.5.5.")
+    endforeach()
+endif()
+
 if(OGS_USE_MFRONT)
     set(_processes_list ${_processes_list} LargeDeformation)
 endif()

@@ -731,6 +731,9 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_STOKESFLOW
             if (type == "StokesFlow")
         {
+            WARN(
+                "The StokesFlow process is deprecated and will be removed in "
+                "OGS-6.5.5.");
             switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
@@ -752,6 +755,9 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_TES
             if (type == "TES")
         {
+            WARN(
+                "The TES process is deprecated and will be removed in "
+                "OGS-6.5.5.");
             process = ProcessLib::TES::createTESProcess(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
@@ -1033,6 +1039,9 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_SMALLDEFORMATIONNONLOCAL
             if (type == "SMALL_DEFORMATION_NONLOCAL")
         {
+            WARN(
+                "The SMALL_DEFORMATION_NONLOCAL process is deprecated and will "
+                "be removed in OGS-6.5.5.");
             switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
@@ -1145,6 +1154,9 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
             if (type == "THERMO_MECHANICAL_PHASE_FIELD")
         {
+            WARN(
+                "The THERMO_MECHANICAL_PHASE_FIELD process is deprecated and "
+                "will be removed in OGS-6.5.5.");
             switch (_mesh_vec[0]->getDimension())
             {
                 case 2:
@@ -1290,6 +1302,9 @@ void ProjectData::parseProcesses(
 #ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPRHO
             if (type == "TWOPHASE_FLOW_PRHO")
         {
+            WARN(
+                "The TWOPHASE_FLOW_PRHO process is deprecated and will be "
+                "removed in OGS-6.5.5.");
             process = ProcessLib::TwoPhaseFlowWithPrho::
                 createTwoPhaseFlowWithPrhoProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
