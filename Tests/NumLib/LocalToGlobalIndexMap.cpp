@@ -97,6 +97,10 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, SubsetByComponent)
 TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
 #endif
 {
+    // need to store the size because the components will be moved into the
+    // DOF-table.
+    std::size_t components_size = components.size();
+
     dof_map = std::make_unique<NumLib::LocalToGlobalIndexMap>(
         std::move(components), NumLib::ComponentOrder::BY_COMPONENT);
 
@@ -121,7 +125,7 @@ TEST_F(NumLibLocalToGlobalIndexMapTest, DISABLED_SubsetByComponent)
 
     // There must be as many rows as nodes in the input times the number of
     // components.
-    ASSERT_EQ(boundary_mesh->getNodes().size(),
+    ASSERT_EQ(boundary_mesh->getNodes().size() * components_size,
               dof_map_subset->dofSizeWithGhosts());
 }
 

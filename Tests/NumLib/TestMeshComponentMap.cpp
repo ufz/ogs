@@ -183,14 +183,12 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
     MeshLib::MeshSubset const selected_component(boundary_mesh,
                                                  boundary_mesh.getNodes());
 
-    int const selected_component_id = 1;
-
     // Subset the original cmap.
-    MeshComponentMap const cmap_subset = cmap->getSubset(
-        components, selected_component, {selected_component_id});
+    MeshComponentMap const cmap_subset =
+        cmap->getSubset(components, selected_component);
 
     // Check number of components as selected
-    ASSERT_EQ(ids.size(), cmap_subset.dofSizeWithGhosts());
+    ASSERT_EQ(ids.size() * components.size(), cmap_subset.dofSizeWithGhosts());
 
     // .. and the content of the subset.
     for (auto const* n : boundary_mesh.getNodes())
@@ -221,14 +219,12 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
     MeshLib::MeshSubset const selected_component(boundary_mesh,
                                                  boundary_mesh.getNodes());
 
-    int const selected_component_id = 1;
-
     // Subset the original cmap.
-    MeshComponentMap const cmap_subset = cmap->getSubset(
-        components, selected_component, {selected_component_id});
+    MeshComponentMap const cmap_subset =
+        cmap->getSubset(components, selected_component);
 
     // Check number of components as selected
-    ASSERT_EQ(ids.size(), cmap_subset.dofSizeWithGhosts());
+    ASSERT_EQ(ids.size() * components.size(), cmap_subset.dofSizeWithGhosts());
 
     // .. and the content of the subset.
     for (auto const* n : boundary_mesh.getNodes())
@@ -262,49 +258,7 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_MulticomponentVariable)
     // Subset the original cmap.
     std::vector<int> const selected_component_ids = {0, 1};
     MeshComponentMap const cmap_subset =
-        cmap->getSubset(components, selected_component, selected_component_ids);
-
-    // Check number of components as selected
-    ASSERT_EQ(ids.size() * selected_component_ids.size(),
-              cmap_subset.dofSizeWithGhosts());
-
-    // .. and the content of the subset.
-    for (auto const* n : boundary_mesh.getNodes())
-    {
-        std::size_t const id = n->getID();
-        Location const l_bulk(mesh->getID(), MeshItemType::Node, ids[id]);
-        Location const l_boundary(boundary_mesh.getID(), MeshItemType::Node,
-                                  id);
-        for (auto const& c : selected_component_ids)
-        {
-            EXPECT_EQ(cmap->getGlobalIndex(l_bulk, c),
-                      cmap_subset.getGlobalIndex(l_boundary, c));
-        }
-    }
-}
-
-#ifndef USE_PETSC
-TEST_F(NumLibMeshComponentMapTest, MulticomponentVariableSingleComponent)
-#else
-TEST_F(NumLibMeshComponentMapTest,
-       DISABLED_MulticomponentVariableSingleComponent)
-#endif
-{
-    cmap =
-        new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION);
-
-    // Select some nodes from the full mesh.
-    std::vector<std::size_t> const ids = {0, 5, 9};
-    // A smaller mesh without elements containing the selected nodes.
-    auto boundary_mesh = createMeshFromSelectedNodes(*mesh, ids);
-
-    MeshLib::MeshSubset const selected_component(boundary_mesh,
-                                                 boundary_mesh.getNodes());
-
-    // Subset the original cmap.
-    std::vector<int> const selected_component_ids = {1};
-    MeshComponentMap const cmap_subset =
-        cmap->getSubset(components, selected_component, selected_component_ids);
+        cmap->getSubset(components, selected_component);
 
     // Check number of components as selected
     ASSERT_EQ(ids.size() * selected_component_ids.size(),

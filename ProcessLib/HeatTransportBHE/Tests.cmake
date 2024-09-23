@@ -181,6 +181,24 @@ AddTest(
 )
 
 AddTest(
+    NAME HeatTransportBHE_3D_3BHEs
+    PATH Parabolic/T/3D_3BHEs
+    RUNTIME 14
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 3bhes.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    3bhes_ts_10_t_600.000000.vtu 3bhes_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-12
+    3bhes_ts_10_t_600.000000.vtu 3bhes_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 0 1e-12
+    3bhes_ts_10_t_600.000000.vtu 3bhes_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 0 1e-12
+    3bhes_ts_10_t_600.000000.vtu 3bhes_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-12
+    3bhes_1_ts_10_t_600.000000.vtu 3bhes_1_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 2e-13 1e-12
+    3bhes_1_ts_10_t_600.000000.vtu 3bhes_1U_BHE_1_mesh_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 2e-13 1e-12
+)
+
+AddTest(
     NAME HeatTransportBHE_3D_BHE_groundwater_advection
     PATH Parabolic/T/3D_BHE_GW_advection
     RUNTIME 4

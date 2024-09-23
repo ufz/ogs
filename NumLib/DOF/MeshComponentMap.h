@@ -47,12 +47,9 @@ public:
     /// subset, one for each global component.
     /// \param new_mesh_subset The constraining mesh subset with a mapping of
     /// node ids to the bulk mesh nodes.
-    /// \param new_global_component_ids The components for which the
-    /// bulk_mesh_subsets should be intersected with the new_mesh_subset.
     MeshComponentMap getSubset(
         std::vector<MeshLib::MeshSubset> const& bulk_mesh_subsets,
-        MeshLib::MeshSubset const& new_mesh_subset,
-        std::vector<int> const& new_global_component_ids) const;
+        MeshLib::MeshSubset const& new_mesh_subset) const;
 
     /// The number of dofs including the those located in the ghost nodes.
     std::size_t dofSizeWithGhosts() const { return _dict.size(); }
