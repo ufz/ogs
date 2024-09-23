@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <array>
 #include <optional>
+#include <range/v3/action/push_back.hpp>
+#include <range/v3/view/transform.hpp>
 #include <string>
 
 #include "BaseLib/cpp23.h"
@@ -321,6 +323,15 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
     std::vector<int> values;
     values.reserve(elements.size());
 
+    auto const push_cellnode_ids_to_vector =
+        [&values, &offset](auto const& cell)
+    {
+        values |= ranges::actions::push_back(
+            cell->nodes() | MeshLib::views::ids |
+            ranges::views::transform([&offset](auto const node_id) -> int
+                                     { return node_id + offset; }));
+    };
+
     auto const topology_type = getTopologyType(mesh);
     if (topology_type == ParentDataType::MIXED)
     {
@@ -329,23 +340,23 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
             auto const ogs_cell_type = cell->getCellType();
             auto const xdmf_cell_id = cellTypeOGS2XDMF(ogs_cell_type).id;
             values.push_back(to_underlying(xdmf_cell_id));
-
-            for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
-            {
-                MeshLib::Node const* node = cell->getNode(i);
-                values.push_back(node->getID() + offset);
-            }
+            push_cellnode_ids_to_vector(cell);
+        }
+    }
+    else if (topology_type == ParentDataType::POLYVERTEX ||
+             topology_type == ParentDataType::POLYLINE)
+    {
+        for (auto const& cell : elements)
+        {
+            values.push_back(cell->getNumberOfNodes());
+            push_cellnode_ids_to_vector(cell);
         }
     }
     else
     {
         for (auto const& cell : elements)
         {
-            for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
-            {
-                MeshLib::Node const* node = cell->getNode(i);
-                values.push_back(node->getID() + offset);
-            }
+            push_cellnode_ids_to_vector(cell);
         }
     }
 
