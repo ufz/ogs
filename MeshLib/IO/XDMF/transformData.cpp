@@ -277,6 +277,26 @@ XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
 
+ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
+{
+    auto const& elements = mesh.getElements();
+
+    if (elements.empty())
+    {
+        return ParentDataType::MIXED;
+    }
+    auto const ogs_cell_type = elements[0]->getCellType();
+
+    if (std::any_of(elements.begin(), elements.end(),
+                    [&](auto const& cell)
+                    { return cell->getCellType() != ogs_cell_type; }))
+    {
+        return ParentDataType::MIXED;
+    }
+
+    return cellTypeOGS2XDMF(ogs_cell_type).id;
+}
+
 std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
                                          std::size_t const offset)
 {
@@ -284,23 +304,34 @@ std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
     std::vector<int> values;
     values.reserve(elements.size());
 
-    for (auto const& cell : elements)
+    auto topology_type = getTopologyType(mesh);
+    if (topology_type == ParentDataType::MIXED)
     {
-        auto const ogs_cell_type = cell->getCellType();
-        auto const xdmf_cell_id = cellTypeOGS2XDMF(ogs_cell_type).id;
-        values.push_back(xdmf_cell_id);
-        if (ogs_cell_type == MeshLib::CellType::LINE2 ||
-            ogs_cell_type == MeshLib::CellType::LINE3)
+        for (auto const& cell : elements)
         {
-            values.push_back(cellTypeOGS2XDMF(ogs_cell_type).number_of_nodes);
-        }
+            auto const ogs_cell_type = cell->getCellType();
+            auto const xdmf_cell_id = cellTypeOGS2XDMF(ogs_cell_type).id;
+            values.push_back(to_underlying(xdmf_cell_id));
 
-        for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
-        {
-            MeshLib::Node const* node = cell->getNode(i);
-            values.push_back(node->getID() + offset);
+            for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
+            {
+                MeshLib::Node const* node = cell->getNode(i);
+                values.push_back(node->getID() + offset);
+            }
         }
     }
+    else
+    {
+        for (auto const& cell : elements)
+        {
+            for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
+            {
+                MeshLib::Node const* node = cell->getNode(i);
+                values.push_back(node->getID() + offset);
+            }
+        }
+    }
+
     return values;
 }
 
