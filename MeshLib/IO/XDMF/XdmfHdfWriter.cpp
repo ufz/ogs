@@ -108,9 +108,9 @@ XdmfHdfWriter::XdmfHdfWriter(
         auto const geometry = transformGeometry(
             mesh, xdmf_conforming_data->flattened_geometry_values.data(),
             n_files, chunk_size_bytes);
-        auto const topology =
-            transformTopology(xdmf_conforming_data->flattened_topology_values,
-                              n_files, chunk_size_bytes);
+        auto const topology = transformTopology(
+            xdmf_conforming_data->flattened_topology_values,
+            xdmf_conforming_data->parent_data_type, n_files, chunk_size_bytes);
         auto const attributes =
             transformAttributes(mesh, n_files, chunk_size_bytes);
         return XdmfHdfMesh{std::move(geometry), std::move(topology),

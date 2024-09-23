@@ -353,6 +353,7 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
 }
 
 XdmfHdfData transformTopology(std::vector<int> const& values,
+                              ParentDataType const parent_data_type,
                               unsigned int const n_files,
                               unsigned int const chunk_size_bytes)
 {
@@ -367,7 +368,7 @@ XdmfHdfData transformTopology(std::vector<int> const& values,
                         std::nullopt,
                         3,
                         n_files,
-                        std::nullopt};
+                        parent_data_type};
 
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
