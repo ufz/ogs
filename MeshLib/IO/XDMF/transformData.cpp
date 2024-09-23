@@ -314,14 +314,14 @@ ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
     return cellTypeOGS2XDMF(ogs_cell_type).id;
 }
 
-std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
-                                         std::size_t const offset)
+std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
+    MeshLib::Mesh const& mesh, std::size_t const offset)
 {
     std::vector<MeshLib::Element*> const& elements = mesh.getElements();
     std::vector<int> values;
     values.reserve(elements.size());
 
-    auto topology_type = getTopologyType(mesh);
+    auto const topology_type = getTopologyType(mesh);
     if (topology_type == ParentDataType::MIXED)
     {
         for (auto const& cell : elements)
@@ -349,7 +349,7 @@ std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
         }
     }
 
-    return values;
+    return {values, topology_type};
 }
 
 XdmfHdfData transformTopology(std::vector<int> const& values,

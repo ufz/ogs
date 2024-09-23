@@ -75,8 +75,8 @@ std::vector<double> transformToXDMFGeometry(MeshLib::Mesh const& mesh);
  * \param mesh OGS mesh can be mesh or partitionedMesh
  * \param offset Local offset to transform local to global cell ID. Offset must
  * be zero in serial and must be defined for each process in parallel execution.
- * \return vector containing a copy of the data
+ * \return vector containing a copy of the data and the computed ParentDataType
  */
-std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
-                                         std::size_t const offset);
+std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
+    MeshLib::Mesh const& mesh, std::size_t const offset);
 }  // namespace MeshLib::IO
