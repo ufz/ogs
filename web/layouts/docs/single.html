@@ -43,11 +43,6 @@
       {{ end }}
 
       <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
-        {{ if eq .Params.toc true }}
-        <h2>Table of contents</h2>
-        {{.TableOfContents}}
-        <hr>
-        {{ end }}
         {{ .Content }}
       </div>
 
@@ -58,5 +53,14 @@
     </div>
   </div>
 
+  {{ if eq .Params.toc true }}
+  {{/* "hidden md:flex" hides on small screen sizes */}}
+  <div class="hidden md:flex md:shrink-0">
+    <div class="w-48 md:w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base overflow-y-auto h-screen sticky top-0 right-0">
+      <div class="mb-2 font-bold text-brand-500">On this page</div>
+      {{.TableOfContents}}
+    </div>
+    </div>
+  {{ end }}
 </div>
 {{ end }}
