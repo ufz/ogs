@@ -3,6 +3,7 @@ date = "2023-010-13T11:00:13+01:00"
 title = "Mesh Tutorial"
 author = "Christoph Lehmann, Feliks Kiszkurno, Frieder Loer"
 weight = 2
+toc = true
 +++
 
 
@@ -12,7 +13,7 @@ In this tutorial the user will learn to use some of the tools provided with Open
 
 ## Requirements
 
-- A running version of OpenGeoSys (it be installed via pip, as a container or as 'CLI with utilities' binary download
+- A running version of OpenGeoSys (it can be installed via `pip`, as a container or as 'CLI with utilities' binary download)
 - It is assumed, that regardless of how OGS is installed, it is added to the environment variables and is accessible from the shell.
 - In case of a problem, please consult the [installation]({{< ref "/docs/userguide/basics/introduction" >}}) and [troubleshooting]({{< ref "/docs/userguide/troubleshooting/get-support" >}}) pages.
 - For viewing a mesh with PyVista, Python is required.
@@ -349,7 +350,7 @@ For Finite Element simulations, we need to specify subdomains e.g. for boundary 
 One possibility is to precompute the subdomains as meshes by extracting them from our domain.  
 This way the subdomains additionally contain information to identify the corresponding bulk mesh entities like nodes, elements, and faces of elements.
 
-We can extract subdomains using the OGS tool [ExtractSurface]({{< ref "extract-surface" >}}).
+We can extract subdomains using the OGS tool [`ExtractBoundary`]({{< ref "extract-boundary" >}}).
 Type `! ExtractBoundary --help` for a basic documentation.
 
 ```python
@@ -464,6 +465,36 @@ plotter.add_mesh(pv.read(f"{out_dir}/hexes_zmax.vtu").shrink(0.8), lighting=Fals
 plotter.add_axes()
 plotter.window_size = [800,400]
 plotter.show()
+```
+
+### The special case: generating 0D boundary and source term meshes for OGS
+
+At the moment (Sep 2024) the [`ExtractBoundary`]({{< ref "extract-boundary" >}})
+tool unfortunately does not support extracting the zero dimensional boundary of
+a one dimensional mesh.
+To create such zero dimensional meshes suitable for source terms and boundary
+conditions in OGS the following can be done, among others.
+
+First, create a `gml` file with the following content. Change point coordinates
+to your needs.
+
+```xml
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="OpenGeoSysGLI.xsl"?>
+<OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
+    <name>geometry</name>
+    <points>
+        <point id="0" x="0.0"  y="0.0" z="0.0" name="source"/>
+    </points>
+</OpenGeoSysGLI>
+```
+
+Then, run [`constructMeshesFromGeometry`]({{< ref "constructmeshesfromgeometry" >}}),
+which will produce a mesh consisting of the single point and set up for use with
+OGS:
+
+```sh .noeval
+constructMeshesFromGeometry -m SIMULATION_DOMAIN.vtu -g THE_GML_FILE_YOU_JUST_CREATED.gml
 ```
 
 ### Next step
