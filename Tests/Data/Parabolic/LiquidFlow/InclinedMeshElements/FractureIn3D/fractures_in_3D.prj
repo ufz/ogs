@@ -10,6 +10,7 @@
             <name>LiquidFlow</name>
             <type>LIQUID_FLOW</type>
             <integration_order>2</integration_order>
+            <equation_balance_type>mass</equation_balance_type>
             <process_variables>
                 <process_variable>pressure</process_variable>
             </process_variables>
