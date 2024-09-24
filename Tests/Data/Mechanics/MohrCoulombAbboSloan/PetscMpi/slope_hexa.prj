@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <meshes>	
+    <meshes>
     	<mesh>hexa_slope_domain.vtu</mesh>
     	<mesh>hexa_slope_physical_group_bas.vtu</mesh>
     	<mesh>hexa_slope_physical_group_devant.vtu</mesh>
@@ -273,7 +273,7 @@
     <linear_solvers>
         <linear_solver>
 	    <name>general_linear_solver</name>
-	    <lis>-i bicgstab -p jacobi -tol 1e-11 -maxiter 10000</lis>	
+	    <lis>-i bicgstab -p jacobi -tol 1e-11 -maxiter 10000</lis>
             <eigen>
 		<solver_type>BiCGSTAB</solver_type>
 		<precon_type>DIAGONAL</precon_type>
@@ -288,7 +288,7 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>slope_ts_131_t_5_000000.vtu</file>
+            <file>slope_ts_129_t_5_000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
