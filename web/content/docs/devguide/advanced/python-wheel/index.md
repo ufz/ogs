@@ -53,9 +53,7 @@ pip install -v .[test]
 Successfully installed ogs-6.4.2.dev1207
 
 # To build with additional CMake arguments, e.g.:
-CMAKE_ARGS="-DOGS_BUILD_PROCESSES=SteadyStateDiffusion" pip install -v .[test]
-# OR
-pip install -v .[test] --config-settings=cmake.args="-DOGS_BUILD_PROCESSES=SteadyStateDiffusion"
+pip install -v .[test] --config-settings=cmake.define.OGS_BUILD_PROCESSES=SteadyStateDiffusion"
 ```
 
 The `pip install`-step starts a new CMake-based ogs build in `_skbuild`-subdirectory (inside the source code) using the `wheel`-preset. When the CMake build is done it installs the wheel into the activated virtual environment and you can interact with it.

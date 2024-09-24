@@ -7,11 +7,7 @@ string(REPLACE ";" "\n" _config_content "${_config_content}")
 set(_config_file ${PROJECT_BINARY_DIR}/site-packages/ogs/config.py)
 file(CONFIGURE OUTPUT ${_config_file} CONTENT "${_config_content}")
 
-if(OGS_BUILD_WHEEL)
-    install(FILES ${_config_file} DESTINATION ${SKBUILD_PLATLIB_DIR}/ogs)
-else()
-    install(FILES ${_config_file} DESTINATION ${_py_install_location})
-endif()
+install(FILES ${_config_file} DESTINATION ${_py_install_location})
 
 if(OGS_BUILD_WHEEL)
     return()

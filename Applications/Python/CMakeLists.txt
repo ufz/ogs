@@ -8,6 +8,14 @@ if(NOT OGS_BUILD_WHEEL)
     set(_py_build_location "${PROJECT_BINARY_DIR}/site-packages/ogs")
 endif()
 
+if(SKBUILD AND NOT OGS_BUILD_WHEEL)
+    message(
+        FATAL_ERROR
+            "Invalid configuration! Don't use --config-settings=cmake.args!"
+            "Use --config-settings=cmake.define instead or supply '--preset wheel` to cmake.args"
+    )
+endif()
+
 add_subdirectory(ogs)
 add_subdirectory(ogs.simulator)
 add_subdirectory(ogs.mesh)
