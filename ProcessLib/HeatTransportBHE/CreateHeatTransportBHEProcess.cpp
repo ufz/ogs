@@ -248,6 +248,17 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         bhe_iterator++;
     }
 
+    if (static_cast<int>(bhes_map.size()) - 1 != bhes_map.rbegin()->first)
+    {
+        OGS_FATAL(
+            "The maximum given BHE id '{:d}' did not match the number of given "
+            "BHE definitions '{:d}'. The BHE ids needs to be defined starting "
+            "from 0, so the maximum BHE id needs to be number of BHE "
+            "definitions minus 1. After all definitions there are no gaps "
+            "allowed between the given ids.",
+            bhes_map.rbegin()->first, bhes_map.size());
+    }
+
     std::vector<BHE::BHETypes> bhes;
     bhes.reserve(bhes_map.size());
     std::ranges::copy(bhes_map | std::views::values, std::back_inserter(bhes));
