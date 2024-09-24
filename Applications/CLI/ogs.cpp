@@ -11,13 +11,12 @@
  *
  */
 
-#include <algorithm>
 #include <pybind11/pybind11.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
+#include <algorithm>
 #include <chrono>
-#include <filesystem>
 #include <sstream>
 
 #include "CommandLineArgumentParser.h"
@@ -36,6 +35,7 @@
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
@@ -67,20 +67,7 @@ int main(int argc, char* argv[])
     INFO("This is OpenGeoSys-6 version {:s}.",
          GitInfoLib::GitInfo::ogs_version);
 
-    if (cli_arg.outdir.length() > 0)
-    {
-        std::error_code mkdir_err;
-        if (std::filesystem::create_directories(cli_arg.outdir, mkdir_err))
-        {
-            INFO("Output directory {:s} created.", cli_arg.outdir);
-        }
-        else if (mkdir_err.value() != 0)
-        {
-            WARN(
-                "Could not create output directory {:s}. Error code {:d}, {:s}",
-                cli_arg.outdir, mkdir_err.value(), mkdir_err.message());
-        }
-    }
+    BaseLib::createOutputDirectory(cli_arg.outdir);
 
     {
         auto const start_time = std::chrono::system_clock::now();

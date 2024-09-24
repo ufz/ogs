@@ -153,4 +153,7 @@ void removeFile(std::string const& filename);
 /// Remove files. If a file does not exist nothing will happen, other errors
 /// lead to OGS_FATAL call.
 void removeFiles(std::vector<std::string> const& files);
+
+// Creates the given directory. Returns true on success.
+bool createOutputDirectory(std::string const& dir);
 }  // end namespace BaseLib
