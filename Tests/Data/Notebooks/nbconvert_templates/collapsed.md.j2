@@ -8,9 +8,12 @@
 {%- endblock output_prompt %}
 
 {% block input %}
-{% if 'jupyter' in cell.metadata and 'source_hidden' in cell.metadata.jupyter and cell.metadata.jupyter.source_hidden == True  -%}
+{% if ('jupyter' in cell.metadata and 'source_hidden' in cell.metadata.jupyter and cell.metadata.jupyter.source_hidden == True) or (cell.source.splitlines() | length > 2)  -%}
 <details>
-<summary>Click to toggle input cell</summary>
+<summary>
+<code>{{ cell.source.splitlines()[0] | e }}</code>&hellip;
+<span class="italic text-gray-700 text-sm">(click to toggle)</span>
+</summary>
 <div>
 {% endif %}
 <div class="jupyter-input">
@@ -21,11 +24,11 @@
 {%- elif 'name' in nb.metadata.get('language_info', {}) -%}
     {{ nb.metadata.language_info.name }}
 {%- endif %}
-{{ cell.source}}
+{{ cell.source }}
 ```
 
 </div>
-{% if 'jupyter' in cell.metadata and 'source_hidden' in cell.metadata.jupyter and cell.metadata.jupyter.source_hidden == True  %}
+{% if ('jupyter' in cell.metadata and 'source_hidden' in cell.metadata.jupyter and cell.metadata.jupyter.source_hidden == True) or (cell.source.splitlines() | length > 2) %}
 </div>
 </details>
 {% endif %}
