@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
 <Domain>
-<Information Name="OGS_VERSION" Value="6.4.3-761-g38d23b54.dirty"/>
+<Information Name="OGS_VERSION" Value="6.5.3-47-g1893f23a"/>
 <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
 <Grid Name="Grid" GridType="Uniform">
     <Time Value="0"/>
@@ -10,25 +10,10 @@
 		<DataItem DataType="Float" Dimensions="121 3" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/geometry|0 0 0:1 1 1:1 121 3:2 121 3</DataItem>
 	</Geometry>
 
-	<Topology Dimensions="500" Type="Mixed">
-		<DataItem DataType="Int" Dimensions="500" Format="HDF" Precision="4">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/topology|0 0:1 1:1 500:2 500</DataItem>
+	<Topology Dimensions="400" Type="Quadrilateral">
+		<DataItem DataType="Int" Dimensions="400" Format="HDF" Precision="4">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/topology|0 0:1 1:1 400:2 400</DataItem>
 	</Topology>
 
-	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="D1_left_bottom_N1_right" Type="None">
-		<DataItem DataType="Float" Dimensions="121" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/D1_left_bottom_N1_right|0 0:1 1:1 121:2 121</DataItem>
-	</Attribute>
-	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="Linear_1_to_minus1" Type="None">
-		<DataItem DataType="Float" Dimensions="121" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/Linear_1_to_minus1|0 0:1 1:1 121:2 121</DataItem>
-	</Attribute>
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="100" Format="HDF" Precision="4">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/MaterialIDs|0 0:1 1:1 100:2 100</DataItem>
-	</Attribute>
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
-		<DataItem DataType="UInt" Dimensions="100" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/bulk_element_ids|0 0:1 1:1 100:2 100</DataItem>
-	</Attribute>
-	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
-		<DataItem DataType="UInt" Dimensions="121" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/bulk_node_ids|0 0:1 1:1 121:2 121</DataItem>
-	</Attribute>
 
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
 		<DataItem DataType="Float" Dimensions="121" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/pressure|0 0:1 1:1 121:2 121</DataItem>
@@ -44,11 +29,6 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
-	<xi:include xpointer="element(/1/1/2/1/6)"/>
-	<xi:include xpointer="element(/1/1/2/1/7)"/>
-	<xi:include xpointer="element(/1/1/2/1/8)"/>
 
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
 		<DataItem DataType="Float" Dimensions="121" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_quad_1e2/pressure|1 0:1 1:1 121:2 121</DataItem>
