@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
 <Domain>
-<Information Name="OGS_VERSION" Value="6.4.2-774-g5cffdf385.dirty"/>
+<Information Name="OGS_VERSION" Value="6.5.3-47-g1893f23a"/>
 <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
 <Grid Name="Grid" GridType="Uniform">
     <Time Value="0"/>
@@ -10,8 +10,8 @@
 		<DataItem DataType="Float" Dimensions="1089 3" Format="HDF" Precision="8">CoupledPressureParabolicTemperatureParabolicStaggered.h5:/meshes/square_1x1_quad_1e3/geometry|0 0 0:1 1 1:1 1089 3:11 1089 3</DataItem>
 	</Geometry>
 
-	<Topology Dimensions="5120" Type="Mixed">
-		<DataItem DataType="Int" Dimensions="5120" Format="HDF" Precision="4">CoupledPressureParabolicTemperatureParabolicStaggered.h5:/meshes/square_1x1_quad_1e3/topology|0 0:1 1:1 5120:11 5120</DataItem>
+	<Topology Dimensions="4096" Type="Quadrilateral">
+		<DataItem DataType="Int" Dimensions="4096" Format="HDF" Precision="4">CoupledPressureParabolicTemperatureParabolicStaggered.h5:/meshes/square_1x1_quad_1e3/topology|0 0:1 1:1 4096:11 4096</DataItem>
 	</Topology>
 
 
@@ -26,7 +26,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.1"/>
+    <Time Value="0.10000000000000001"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
@@ -44,7 +44,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.2"/>
+    <Time Value="0.20000000000000001"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
@@ -62,7 +62,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.3"/>
+    <Time Value="0.30000000000000004"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
@@ -80,7 +80,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.4"/>
+    <Time Value="0.40000000000000002"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
@@ -116,7 +116,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.6"/>
+    <Time Value="0.60000000000000009"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
@@ -134,7 +134,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.7"/>
+    <Time Value="0.70000000000000007"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
@@ -152,7 +152,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.8"/>
+    <Time Value="0.80000000000000004"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
@@ -170,7 +170,7 @@
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
-    <Time Value="0.9"/>
+    <Time Value="0.90000000000000002"/>
 
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
 
