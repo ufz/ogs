@@ -1,94 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
 <Domain>
-<Information Name="OGS_VERSION" Value="6.4.0-990-g029442524a"/>
+<Information Name="OGS_VERSION" Value="6.5.3-47-g1893f23a"/>
 <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
-<Grid Name="Grid">
-	<Time Value="0"/>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0"/>
+
 	<Geometry Origin="" Type="XYZ">
-		<DataItem DataType="Float" Dimensions="5 3" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/geometry|0 0 0:1 1 1:1 5 3:8 5 3</DataItem>
+		<DataItem DataType="Float" Dimensions="5 3" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/geometry|0 0 0:1 1 1:1 5 3:8 5 3</DataItem>
 	</Geometry>
-	<Topology Dimensions="16" Type="Mixed">
-		<DataItem DataType="Int" Dimensions="16" Format="HDF" Precision="4">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/topology|0 0:1 1:1 16:8 16</DataItem>
+
+	<Topology Dimensions="12" Type="Polyline" NodesPerElement="2">
+		<DataItem DataType="Int" Dimensions="12" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/topology|0 0:1 1:1 12:8 12</DataItem>
 	</Topology>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|0 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
 	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
-		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|0 0:1 1:1 4:8 4</DataItem>
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|0 0:1 1:1 4:8 4</DataItem>
 	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
-		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|0 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|0 0:1 1:1 5:8 5</DataItem>
 	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|0 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|0 0:1 1:1 5:8 5</DataItem>
 	</Attribute>
-</Grid>
-<Grid Name="Grid">
-	<Time Value="0.3"/>
-	<xi:include xpointer="element(/1/1/2/1/2)"/>
-	<xi:include xpointer="element(/1/1/2/1/3)"/>
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
-	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|1 0:1 1:1 5:8 5</DataItem>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|0 0 0:1 1 1:1 5 2:8 5 2</DataItem>
 	</Attribute>
 </Grid>
-<Grid Name="Grid">
-	<Time Value="0.6"/>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0.29999999999999999"/>
+
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|1 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|1 0:1 1:1 4:8 4</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|1 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|2 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|1 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|1 0 0:1 1 1:1 5 2:8 5 2</DataItem>
 	</Attribute>
 </Grid>
-<Grid Name="Grid">
-	<Time Value="0.8999999999999999"/>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0.59999999999999998"/>
+
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|2 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|2 0:1 1:1 4:8 4</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|2 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|3 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|2 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|2 0 0:1 1 1:1 5 2:8 5 2</DataItem>
 	</Attribute>
 </Grid>
-<Grid Name="Grid">
-	<Time Value="1.2"/>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0.89999999999999991"/>
+
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|3 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|3 0:1 1:1 4:8 4</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|3 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|4 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|3 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|3 0 0:1 1 1:1 5 2:8 5 2</DataItem>
 	</Attribute>
 </Grid>
-<Grid Name="Grid">
-	<Time Value="1.5"/>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="1.2"/>
+
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|4 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|4 0:1 1:1 4:8 4</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|4 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|5 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|4 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|4 0 0:1 1 1:1 5 2:8 5 2</DataItem>
 	</Attribute>
 </Grid>
-<Grid Name="Grid">
-	<Time Value="1.8"/>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="1.5"/>
+
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|5 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|5 0:1 1:1 4:8 4</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|5 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|6 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|5 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|5 0 0:1 1 1:1 5 2:8 5 2</DataItem>
 	</Attribute>
 </Grid>
-<Grid Name="Grid">
-	<Time Value="2"/>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="1.7999999999999998"/>
+
 	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
-	<xi:include xpointer="element(/1/1/2/1/4)"/>
-	<xi:include xpointer="element(/1/1/2/1/5)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|6 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|6 0:1 1:1 4:8 4</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|6 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:meshes/square_5x5_tris_32_right_boundary/pressure|7 0:1 1:1 5:8 5</DataItem>
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|6 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|6 0 0:1 1 1:1 5 2:8 5 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="2"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/VolumetricFlowRate|7 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_element_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="4" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_element_ids|7 0:1 1:1 4:8 4</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="bulk_node_ids" Type="None">
+		<DataItem DataType="UInt" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/bulk_node_ids|7 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="5" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/pressure|7 0:1 1:1 5:8 5</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="5 2" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32_right_boundary/v|7 0 0:1 1 1:1 5 2:8 5 2</DataItem>
 	</Attribute>
 </Grid>
 </Grid>
