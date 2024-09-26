@@ -276,6 +276,7 @@ if(NOT ZLIB_FOUND)
         set(ZLIB_LIBRARIES
             ${build_dir_ZLIB}/${CMAKE_INSTALL_LIBDIR}/zlibstatic${_zlib_debug_postfix}${CMAKE_STATIC_LIBRARY_SUFFIX}
         )
+        set(ZLIB_INCLUDE_DIRS ${build_dir_ZLIB})
     endif()
     set(_EXT_LIBS ${_EXT_LIBS} ZLIB CACHE INTERNAL "")
 endif()
