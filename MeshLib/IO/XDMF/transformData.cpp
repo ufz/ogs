@@ -321,7 +321,6 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
 {
     std::vector<MeshLib::Element*> const& elements = mesh.getElements();
     std::vector<int> values;
-    values.reserve(elements.size());
 
     auto const push_cellnode_ids_to_vector =
         [&values, &offset](auto const& cell)
@@ -335,6 +334,8 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
     auto const topology_type = getTopologyType(mesh);
     if (topology_type == ParentDataType::MIXED)
     {
+        values.reserve(elements.size() * 2);  // each cell has at least two
+                                              // numbers
         for (auto const& cell : elements)
         {
             auto const ogs_cell_type = cell->getCellType();
@@ -346,6 +347,8 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
     else if (topology_type == ParentDataType::POLYVERTEX ||
              topology_type == ParentDataType::POLYLINE)
     {
+        // '+ 1' for number of nodes of the cell
+        values.reserve(elements.size() * (elements[0]->getNumberOfNodes() + 1));
         for (auto const& cell : elements)
         {
             values.push_back(cell->getNumberOfNodes());
@@ -354,6 +357,7 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
     }
     else
     {
+        values.reserve(elements.size() * elements[0]->getNumberOfNodes());
         for (auto const& cell : elements)
         {
             push_cellnode_ids_to_vector(cell);
