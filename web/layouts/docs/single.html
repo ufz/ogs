@@ -42,6 +42,21 @@
       </div>
       {{ end }}
 
+      {{ if eq .Params.toc true }}
+      {{/* "block md:hidden" only shows on small screen sizes */}}
+      <div class="block md:hidden mb-4">
+        <details>
+          <summary>
+          <span class="font-bold text-brand-500">Table of Contents</span>
+          <span class="text-sm italic text-gray-700">(click to toggle)</span>
+          </summary>
+          <div class="ml-4 mt-2">
+          {{.TableOfContents}}
+          </div>
+        </details>
+        </div>
+      {{ end }}
+
       <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
         {{ .Content }}
       </div>
