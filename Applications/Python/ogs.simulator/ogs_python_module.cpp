@@ -10,11 +10,12 @@
  *
  */
 
-#include <algorithm>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
+
+#include <algorithm>
 
 #include "../ogs.mesh/OGSMesh.h"
 #include "Applications/ApplicationsLib/Simulation.h"
@@ -71,6 +72,8 @@ int initOGS(std::vector<std::string>& argv_str)
 
     INFO("This is OpenGeoSys-6 version {:s}.",
          GitInfoLib::GitInfo::ogs_version);
+
+    BaseLib::createOutputDirectory(cli_args.outdir);
 
     {
         auto const start_time = std::chrono::system_clock::now();

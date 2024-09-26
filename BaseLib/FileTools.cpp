@@ -256,6 +256,27 @@ void removeFiles(std::vector<std::string> const& files)
     }
 }
 
+bool createOutputDirectory(std::string const& dir)
+{
+    if (dir.empty())
+    {
+        return false;
+    }
+
+    std::error_code mkdir_err;
+    if (std::filesystem::create_directories(dir, mkdir_err))
+    {
+        INFO("Output directory {:s} created.", dir);
+    }
+    else if (mkdir_err.value() != 0)
+    {
+        WARN("Could not create output directory {:s}. Error code {:d}, {:s}",
+             dir, mkdir_err.value(), mkdir_err.message());
+        return false;
+    }
+    return true;
+}
+
 template <typename T>
 T readBinaryValue(std::istream& in)
 {
