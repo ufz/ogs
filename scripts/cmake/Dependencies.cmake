@@ -83,10 +83,14 @@ else()
     list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
 endif()
 
-CPMFindPackage(
-    NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
-    VERSION ${ogs.minimum_version.pybind11} SYSTEM TRUE
-)
+if(GUIX_BUILD)
+    find_package(pybind11 REQUIRED)
+else()
+    CPMFindPackage(
+        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
+        VERSION ${ogs.minimum_version.pybind11} SYSTEM TRUE
+    )
+endif()
 
 if(_build_chemistry_lib)
     if(GUIX_BUILD)
