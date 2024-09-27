@@ -19,6 +19,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "NumLib/CreateNewtonRaphsonSolverParameters.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "RichardsMechanicsProcess.h"
@@ -166,12 +167,9 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
     DBUG("Media properties verified.");
 
     // Initial stress conditions
-    auto const initial_stress = ParameterLib::findOptionalTagParameter<double>(
-        //! \ogs_file_param_special{prj__processes__process__RICHARDS_MECHANICS__initial_stress}
-        config, "initial_stress", parameters,
-        // Symmetric tensor size, 4 or 6, not a Kelvin vector.
-        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
-        &mesh);
+    auto const initial_stress =
+        ProcessLib::createInitialStress<DisplacementDim>(config, parameters,
+                                                         mesh);
 
     std::optional<MicroPorosityParameters> micro_porosity_parameters;
     if (auto const micro_porosity_config =

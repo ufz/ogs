@@ -131,17 +131,20 @@ public:
                                                                 ip_data.N_u))};
 
             /// Set initial stress from parameter.
-            if (this->process_data_.initial_stress != nullptr)
+            if (this->process_data_.initial_stress.value)
             {
                 std::get<ProcessLib::ThermoRichardsMechanics::
                              ConstitutiveStress_StrainTemperature::
                                  EffectiveStressData<DisplacementDim>>(SD)
                     .sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
-                        DisplacementDim>((*this->process_data_.initial_stress)(
-                        std::numeric_limits<
-                            double>::quiet_NaN() /* time independent */,
-                        x_position));
+                        DisplacementDim>(
+                        // The data in process_data_.initial_stress.value can
+                        // be total stress or effective stress.
+                        (*this->process_data_.initial_stress.value)(
+                            std::numeric_limits<
+                                double>::quiet_NaN() /* time independent */,
+                            x_position));
             }
 
             double const t = 0;  // TODO (naumov) pass t from top
