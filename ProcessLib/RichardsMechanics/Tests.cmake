@@ -68,3 +68,38 @@ AddTest(
     confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu velocity velocity 1e-16 0
     confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu velocity velocity 1e-16 0
 )
+
+AddTest(
+    NAME RichardsMechanics_A2_total_initial_stress
+    PATH RichardsMechanics
+    EXECUTABLE ogs
+    RUNTIME 15
+    EXECUTABLE_ARGS A2_total_stress0.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu displacement displacement 1e-16 0
+    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu displacement displacement 1e-16 0
+    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu displacement displacement 1e-16 0
+
+    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu pressure pressure 1e-16 1e-12
+    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu pressure pressure 1e-16 1e-12
+    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu pressure pressure 1e-16 1e-12
+
+    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu sigma sigma 5e-8 0
+    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu sigma sigma 5e-8 0
+    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu sigma sigma 5e-8 0
+
+    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu epsilon epsilon 5e-14 0
+    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu epsilon epsilon 5e-14 0
+    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu epsilon epsilon 5e-14 0
+
+    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu saturation saturation 4e-15 0
+    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu saturation saturation 4e-15 0
+    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu saturation saturation 4e-15 0
+
+    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu velocity velocity 1e-16 0
+    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu velocity velocity 1e-16 0
+    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu velocity velocity 1e-16 0
+)
