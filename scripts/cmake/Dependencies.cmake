@@ -190,20 +190,16 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
-CPMFindPackage(
-    NAME Boost
-    VERSION ${ogs.minimum_version.boost}
-    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/303158/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
-        SYSTEM TRUE
-)
-if(Boost_ADDED)
-    add_library(Boost::boost INTERFACE IMPORTED)
-    target_include_directories(
-        Boost::boost SYSTEM INTERFACE "${Boost_SOURCE_DIR}"
-    )
+if(GUIX_BUILD)
+    find_package(Boost REQUIRED)
 else()
-    target_include_directories(
-        Boost::boost SYSTEM INTERFACE "${Boost_INCLUDE_DIR}"
+    CPMFindPackage(
+        NAME Boost
+        VERSION ${ogs.minimum_version.boost}
+        URL https://github.com/boostorg/boost/releases/download/boost-${ogs.minimum_version.boost}/boost-${ogs.minimum_version.boost}.tar.xz
+        OPTIONS
+            "BOOST_ENABLE_CMAKE ON"
+            "BOOST_INCLUDE_LIBRARIES algorithm\\\;math\\\;multi_index\\\;property_tree\\\;smart_ptr"
     )
 endif()
 

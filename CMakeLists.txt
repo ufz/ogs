@@ -4,6 +4,9 @@ cmake_minimum_required(VERSION 3.22)
 if(CMAKE_VERSION GREATER_EQUAL 3.29)
     cmake_policy(SET CMP0156 NEW)
 endif()
+if(CMAKE_VERSION GREATER_EQUAL 3.30)
+    cmake_policy(SET CMP0167 NEW)
+endif()
 
 project(OGS-6)
 

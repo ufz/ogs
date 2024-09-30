@@ -12,7 +12,7 @@
     "git": "2.14",
     "cmake": "3.22",
     "hugo": "0.122.0",
-    "boost": "1.73.0",
+    "boost": "1.82.0",
     "eigen": "3.4.0",
     "eigen-unsupported": "9000b3767770f6dd0f4cfb12f4e19c71921885a4",
     "vtk": "9.3.0",
