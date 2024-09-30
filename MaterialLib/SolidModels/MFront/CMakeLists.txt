@@ -13,7 +13,7 @@ ogs_add_library(MaterialLib_SolidModels_MFront ${SOURCES})
 
 target_link_libraries(
     MaterialLib_SolidModels_MFront PUBLIC BaseLib NumLib MFrontGenericInterface
-                                          Boost::boost PRIVATE MathLib MeshLib
+                                          Boost::headers PRIVATE MathLib MeshLib
                                                                ParameterLib
 )
 target_include_directories(

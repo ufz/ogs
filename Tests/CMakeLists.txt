@@ -112,7 +112,7 @@ target_link_libraries(
         TestInfoLib
         VTK::FiltersGeneral
         VTK::FiltersSources
-        Boost::boost # TODO move OGSMFrontThermodynamicForcesView to MathLib?
+        Boost::headers # TODO move OGSMFrontThermodynamicForcesView to MathLib?
         $<$<TARGET_EXISTS:LIE>:LIE>
         $<$<TARGET_EXISTS:TH2M>:TH2M>
         $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:MPI::MPI_CXX>>:MPI::MPI_CXX>

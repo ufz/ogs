@@ -402,14 +402,15 @@ if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
             OgsXdmf SYSTEM PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
         )
 
-        target_link_libraries(OgsXdmf Boost::boost)
+        target_link_libraries(OgsXdmf Boost::headers)
         target_include_directories(
             OgsXdmfCore SYSTEM PUBLIC ${xdmf_SOURCE_DIR}/core
                                       ${xdmf_BINARY_DIR}/core
             PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
         target_link_libraries(
-            OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
+            OgsXdmfCore PUBLIC Boost::headers LibXml2::LibXml2
+                               ${HDF5_LIBRARIES}
         )
 
         set_target_properties(
