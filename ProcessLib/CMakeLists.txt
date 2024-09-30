@@ -18,18 +18,19 @@ append_source_files(SOURCES Output)
 append_source_files(SOURCES Utils)
 append_source_files(SOURCES Reflection)
 append_source_files(SOURCES Graph)
-### For processes that contains both hydraulical process and mechanical process
+# For processes that contains both hydraulical process and mechanical process
 # Define a function to check if enabled_processes contains LIE, HydroMechanics,
 # ThermoHydroMechanics, RichardsMechanics, or ThermoRichardsMechanics
 function(check_enabled_processes contains_hm_process)
     set(${contains_hm_process} FALSE PARENT_SCOPE)
     foreach(process ${_enabled_processes})
         if(process STREQUAL "LIE"
-             OR process STREQUAL "HydroMechanics"
-             OR process STREQUAL "ThermoHydroMechanics"
-             OR process STREQUAL "RichardsMechanics"
-             OR process STREQUAL "TH2M"
-             OR process STREQUAL "ThermoRichardsMechanics")
+           OR process STREQUAL "HydroMechanics"
+           OR process STREQUAL "ThermoHydroMechanics"
+           OR process STREQUAL "RichardsMechanics"
+           OR process STREQUAL "TH2M"
+           OR process STREQUAL "ThermoRichardsMechanics"
+        )
             set(${contains_hm_process} TRUE PARENT_SCOPE)
             return()
         endif()
@@ -46,17 +47,15 @@ add_subdirectory(BoundaryConditionAndSourceTerm/Python)
 
 target_link_libraries(
     ProcessLib
-    PUBLIC
-        BaseLib
-        MaterialLib
-        MathLib
-        MeshGeoToolsLib
-        MeshLib
-        NumLib
-        Boost::headers
-        range-v3
-        $<$<TARGET_EXISTS:petsc>:petsc>
-        ProcessLibBoundaryConditionAndSourceTermPython
+    PUBLIC BaseLib
+           MaterialLib
+           MathLib
+           MeshGeoToolsLib
+           MeshLib
+           NumLib
+           range-v3
+           $<$<TARGET_EXISTS:petsc>:petsc>
+           ProcessLibBoundaryConditionAndSourceTermPython
     PRIVATE ParameterLib GitInfoLib $<$<TARGET_EXISTS:InSituLib>:InSituLib>
 )
 

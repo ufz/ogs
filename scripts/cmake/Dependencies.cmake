@@ -193,13 +193,22 @@ endif()
 if(GUIX_BUILD)
     find_package(Boost REQUIRED)
 else()
+    # Boost libraries used by ogs, can be linked with Boost::[lib_name]
+    set(BOOST_INCLUDE_LIBRARIES
+        math
+        property_tree
+        algorithm
+        smart_ptr
+        tokenizer
+        assign
+        dynamic_bitset
+        range
+    )
     CPMFindPackage(
         NAME Boost
         VERSION ${ogs.minimum_version.boost}
         URL https://github.com/boostorg/boost/releases/download/boost-${ogs.minimum_version.boost}/boost-${ogs.minimum_version.boost}.tar.xz
-        OPTIONS
-            "BOOST_ENABLE_CMAKE ON"
-            "BOOST_INCLUDE_LIBRARIES algorithm\\\;math\\\;multi_index\\\;property_tree\\\;smart_ptr"
+        OPTIONS "BOOST_ENABLE_CMAKE ON"
     )
 endif()
 
@@ -402,15 +411,16 @@ if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
             OgsXdmf SYSTEM PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
         )
 
-        target_link_libraries(OgsXdmf Boost::headers)
+        target_link_libraries(OgsXdmf Boost::tokenizer)
         target_include_directories(
             OgsXdmfCore SYSTEM PUBLIC ${xdmf_SOURCE_DIR}/core
                                       ${xdmf_BINARY_DIR}/core
             PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
         target_link_libraries(
-            OgsXdmfCore PUBLIC Boost::headers LibXml2::LibXml2
-                               ${HDF5_LIBRARIES}
+            OgsXdmfCore PUBLIC LibXml2::LibXml2 ${HDF5_LIBRARIES} Boost::variant
+                               Boost::smart_ptr
+            PRIVATE Boost::tokenizer Boost::assign Boost::algorithm
         )
 
         set_target_properties(

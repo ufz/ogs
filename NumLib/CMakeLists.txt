@@ -19,8 +19,8 @@ ogs_add_library(NumLib GENERATE_EXPORT_HEADER ${SOURCES})
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(
-    NumLib PUBLIC BaseLib GeoLib MathLib MeshLib $<$<TARGET_EXISTS:petsc>:petsc>
-                  Boost::headers
+    NumLib PUBLIC BaseLib GeoLib MathLib MeshLib
+                  $<$<TARGET_EXISTS:petsc>:petsc>
 )
 
 target_precompile_headers(

@@ -10,7 +10,8 @@ ogs_add_library(BaseLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 target_link_libraries(
     BaseLib
-    PUBLIC Boost::headers
+    PUBLIC Boost::algorithm
+           Boost::property_tree
            spdlog
            tclap
            $<$<BOOL:${MSVC}>:WinMM> # needed for timeGetTime
