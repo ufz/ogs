@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <array>
 #include <optional>
+#include <range/v3/action/push_back.hpp>
+#include <range/v3/view/transform.hpp>
 #include <string>
 
 #include "BaseLib/cpp23.h"
@@ -32,7 +34,7 @@ struct XdmfTopology
 {
     // https://xdmf.org/index.php/XDMF_Model_and_Format#Topology, Section
     // Arbitrary
-    unsigned int id;
+    ParentDataType id;
     unsigned int number_of_nodes;
 };
 
@@ -40,25 +42,42 @@ static constexpr auto elemOGSTypeToXDMFType()
 {
     std::array<XdmfTopology, to_underlying(MeshLib::CellType::enum_length)>
         elem_type{};
-    elem_type[to_underlying(MeshLib::CellType::POINT1)] = {0x1, 1};
-    elem_type[to_underlying(MeshLib::CellType::LINE2)] = {0x2, 2};
-    elem_type[to_underlying(MeshLib::CellType::LINE3)] = {0x2, 3};
-    elem_type[to_underlying(MeshLib::CellType::TRI3)] = {0x4, 3};
-    elem_type[to_underlying(MeshLib::CellType::TRI6)] = {0x24, 6};
-    elem_type[to_underlying(MeshLib::CellType::QUAD4)] = {0x5, 4};
-    elem_type[to_underlying(MeshLib::CellType::QUAD8)] = {0x25, 8};
-    elem_type[to_underlying(MeshLib::CellType::QUAD9)] = {0x23, 9};
-    elem_type[to_underlying(MeshLib::CellType::TET4)] = {0x6, 4};
-    elem_type[to_underlying(MeshLib::CellType::TET10)] = {0x26, 10};
-    elem_type[to_underlying(MeshLib::CellType::HEX8)] = {0x9, 8};
-    elem_type[to_underlying(MeshLib::CellType::HEX20)] = {0x30, 20};
-    elem_type[to_underlying(MeshLib::CellType::HEX27)] = {0x32, 27};
+    elem_type[to_underlying(MeshLib::CellType::POINT1)] = {
+        ParentDataType::POLYVERTEX, 1};
+    elem_type[to_underlying(MeshLib::CellType::LINE2)] = {
+        ParentDataType::POLYLINE, 2};
+    elem_type[to_underlying(MeshLib::CellType::LINE3)] = {
+        ParentDataType::EDGE_3, 3};
+    elem_type[to_underlying(MeshLib::CellType::TRI3)] = {
+        ParentDataType::TRIANGLE, 3};
+    elem_type[to_underlying(MeshLib::CellType::TRI6)] = {
+        ParentDataType::TRIANGLE_6, 6};
+    elem_type[to_underlying(MeshLib::CellType::QUAD4)] = {
+        ParentDataType::QUADRILATERAL, 4};
+    elem_type[to_underlying(MeshLib::CellType::QUAD8)] = {
+        ParentDataType::QUADRILATERAL_8, 8};
+    elem_type[to_underlying(MeshLib::CellType::QUAD9)] = {
+        ParentDataType::QUADRILATERAL_9, 9};
+    elem_type[to_underlying(MeshLib::CellType::TET4)] = {
+        ParentDataType::TETRAHEDRON, 4};
+    elem_type[to_underlying(MeshLib::CellType::TET10)] = {
+        ParentDataType::TETRAHEDRON_10, 10};
+    elem_type[to_underlying(MeshLib::CellType::HEX8)] = {
+        ParentDataType::HEXAHEDRON, 8};
+    elem_type[to_underlying(MeshLib::CellType::HEX20)] = {
+        ParentDataType::HEXAHEDRON_20, 20};
+    elem_type[to_underlying(MeshLib::CellType::HEX27)] = {
+        ParentDataType::HEXAHEDRON_27, 27};
     elem_type[to_underlying(MeshLib::CellType::PRISM6)] = {
-        0x8, 6};  // parallel triangle wedge
-    elem_type[to_underlying(MeshLib::CellType::PRISM15)] = {0x28, 15};
-    elem_type[to_underlying(MeshLib::CellType::PRISM18)] = {0x29, 18};
-    elem_type[to_underlying(MeshLib::CellType::PYRAMID5)] = {0x7, 5};
-    elem_type[to_underlying(MeshLib::CellType::PYRAMID13)] = {0x27, 13};
+        ParentDataType::WEDGE, 6};  // parallel triangle wedge
+    elem_type[to_underlying(MeshLib::CellType::PRISM15)] = {
+        ParentDataType::WEDGE_15, 15};
+    elem_type[to_underlying(MeshLib::CellType::PRISM18)] = {
+        ParentDataType::WEDGE_18, 18};
+    elem_type[to_underlying(MeshLib::CellType::PYRAMID5)] = {
+        ParentDataType::PYRAMID, 5};
+    elem_type[to_underlying(MeshLib::CellType::PYRAMID13)] = {
+        ParentDataType::PYRAMID_13, 13};
     return elem_type;
 }
 
@@ -192,9 +211,9 @@ std::optional<XdmfHdfData> transformAttribute(
     HdfData hdf = {data_ptr,  num_of_tuples, ui_global_components, name,
                    data_type, n_files,       chunk_size_bytes};
 
-    XdmfData xdmf = {num_of_tuples, ui_global_components, data_type,
-                     name,          mesh_item_type,       0,
-                     n_files};
+    XdmfData xdmf{num_of_tuples, ui_global_components, data_type,
+                  name,          mesh_item_type,       0,
+                  n_files,       std::nullopt};
 
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
@@ -272,39 +291,84 @@ XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
     XdmfData const xdmf = {
         partition_dim, point_size,   MeshPropertyDataType::float64,
         name,          std::nullopt, 2,
-        n_files};
+        n_files,       std::nullopt};
 
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
 
-std::vector<int> transformToXDMFTopology(MeshLib::Mesh const& mesh,
-                                         std::size_t const offset)
+ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
+{
+    auto const& elements = mesh.getElements();
+
+    if (elements.empty())
+    {
+        return ParentDataType::MIXED;
+    }
+    auto const ogs_cell_type = elements[0]->getCellType();
+
+    if (std::any_of(elements.begin(), elements.end(),
+                    [&](auto const& cell)
+                    { return cell->getCellType() != ogs_cell_type; }))
+    {
+        return ParentDataType::MIXED;
+    }
+
+    return cellTypeOGS2XDMF(ogs_cell_type).id;
+}
+
+std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
+    MeshLib::Mesh const& mesh, std::size_t const offset)
 {
     std::vector<MeshLib::Element*> const& elements = mesh.getElements();
     std::vector<int> values;
-    values.reserve(elements.size());
 
-    for (auto const& cell : elements)
+    auto const push_cellnode_ids_to_vector =
+        [&values, &offset](auto const& cell)
     {
-        auto const ogs_cell_type = cell->getCellType();
-        auto const xdmf_cell_id = cellTypeOGS2XDMF(ogs_cell_type).id;
-        values.push_back(xdmf_cell_id);
-        if (ogs_cell_type == MeshLib::CellType::LINE2 ||
-            ogs_cell_type == MeshLib::CellType::LINE3)
-        {
-            values.push_back(cellTypeOGS2XDMF(ogs_cell_type).number_of_nodes);
-        }
+        values |= ranges::actions::push_back(
+            cell->nodes() | MeshLib::views::ids |
+            ranges::views::transform([&offset](auto const node_id) -> int
+                                     { return node_id + offset; }));
+    };
 
-        for (std::size_t i = 0; i < cell->getNumberOfNodes(); ++i)
+    auto const topology_type = getTopologyType(mesh);
+    if (topology_type == ParentDataType::MIXED)
+    {
+        values.reserve(elements.size() * 2);  // each cell has at least two
+                                              // numbers
+        for (auto const& cell : elements)
         {
-            MeshLib::Node const* node = cell->getNode(i);
-            values.push_back(node->getID() + offset);
+            auto const ogs_cell_type = cell->getCellType();
+            auto const xdmf_cell_id = cellTypeOGS2XDMF(ogs_cell_type).id;
+            values.push_back(to_underlying(xdmf_cell_id));
+            push_cellnode_ids_to_vector(cell);
         }
     }
-    return values;
+    else if (topology_type == ParentDataType::POLYVERTEX ||
+             topology_type == ParentDataType::POLYLINE)
+    {
+        // '+ 1' for number of nodes of the cell
+        values.reserve(elements.size() * (elements[0]->getNumberOfNodes() + 1));
+        for (auto const& cell : elements)
+        {
+            values.push_back(cell->getNumberOfNodes());
+            push_cellnode_ids_to_vector(cell);
+        }
+    }
+    else
+    {
+        values.reserve(elements.size() * elements[0]->getNumberOfNodes());
+        for (auto const& cell : elements)
+        {
+            push_cellnode_ids_to_vector(cell);
+        }
+    }
+
+    return {values, topology_type};
 }
 
 XdmfHdfData transformTopology(std::vector<int> const& values,
+                              ParentDataType const parent_data_type,
                               unsigned int const n_files,
                               unsigned int const chunk_size_bytes)
 {
@@ -312,9 +376,14 @@ XdmfHdfData transformTopology(std::vector<int> const& values,
     HdfData const hdf = {
         values.data(), values.size(),   1, name, MeshPropertyDataType::int32,
         n_files,       chunk_size_bytes};
-    XdmfData const xdmf = {
-        values.size(), 1, MeshPropertyDataType::int32, name, std::nullopt, 3,
-        n_files};
+    XdmfData const xdmf{values.size(),
+                        1,
+                        MeshPropertyDataType::int32,
+                        name,
+                        std::nullopt,
+                        3,
+                        n_files,
+                        parent_data_type};
 
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }

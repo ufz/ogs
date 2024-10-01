@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
+<Domain>
+<Information Name="OGS_VERSION" Value="6.5.3-38-g567bb547.dirty"/>
+<Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0"/>
+
+	<Geometry Origin="" Type="XYZ">
+		<DataItem DataType="Float" Dimensions="1 3" Format="HDF" Precision="8">cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups.h5:/meshes/cube_1x1x1_geometry_right_back_lower/geometry|0 0 0:1 1 1:1 1 3:2 1 3</DataItem>
+	</Geometry>
+
+	<Topology Dimensions="1" Type="Polyvertex">
+		<DataItem DataType="Int" Dimensions="1" Format="HDF" Precision="4">cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups.h5:/meshes/cube_1x1x1_geometry_right_back_lower/topology|0 0:1 1:1 1:2 1</DataItem>
+	</Topology>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="darcy_velocity" Type="None">
+		<DataItem DataType="Float" Dimensions="1 3" Format="HDF" Precision="8">cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups.h5:/meshes/cube_1x1x1_geometry_right_back_lower/darcy_velocity|0 0 0:1 1 1:1 1 3:2 1 3</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="1" Format="HDF" Precision="8">cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups.h5:/meshes/cube_1x1x1_geometry_right_back_lower/pressure|0 0:1 1:1 1:2 1</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="1"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="darcy_velocity" Type="None">
+		<DataItem DataType="Float" Dimensions="1 3" Format="HDF" Precision="8">cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups.h5:/meshes/cube_1x1x1_geometry_right_back_lower/darcy_velocity|1 0 0:1 1 1:1 1 3:2 1 3</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="1" Format="HDF" Precision="8">cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups.h5:/meshes/cube_1x1x1_geometry_right_back_lower/pressure|1 0:1 1:1 1:2 1</DataItem>
+	</Attribute>
+</Grid>
+</Grid>
+</Domain>
+</Xdmf>

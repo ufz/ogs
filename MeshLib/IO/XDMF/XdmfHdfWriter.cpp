@@ -27,6 +27,7 @@ struct TransformedMeshData final
 {
     std::vector<double> flattened_geometry_values;
     std::vector<int> flattened_topology_values;
+    ParentDataType parent_data_type;
 };
 struct XdmfHdfMesh final
 {
@@ -88,11 +89,11 @@ XdmfHdfWriter::XdmfHdfWriter(
         // actually this line is only needed to calculate the offset
         XdmfHdfData const& geometry = transformGeometry(
             mesh, flattened_geometry_values.data(), n_files, chunk_size_bytes);
-        auto const flattened_topology_values =
+        auto const [flattened_topology_values, parent_data_type] =
             transformToXDMFTopology(mesh, geometry.hdf.offsets[0]);
-        return std::make_unique<TransformedMeshData>(
-            TransformedMeshData{std::move(flattened_geometry_values),
-                                std::move(flattened_topology_values)});
+        return std::make_unique<TransformedMeshData>(TransformedMeshData{
+            std::move(flattened_geometry_values),
+            std::move(flattened_topology_values), parent_data_type});
     };
 
     // create metadata for transformed data and original ogs mesh data
@@ -107,9 +108,9 @@ XdmfHdfWriter::XdmfHdfWriter(
         auto const geometry = transformGeometry(
             mesh, xdmf_conforming_data->flattened_geometry_values.data(),
             n_files, chunk_size_bytes);
-        auto const topology =
-            transformTopology(xdmf_conforming_data->flattened_topology_values,
-                              n_files, chunk_size_bytes);
+        auto const topology = transformTopology(
+            xdmf_conforming_data->flattened_topology_values,
+            xdmf_conforming_data->parent_data_type, n_files, chunk_size_bytes);
         auto const attributes =
             transformAttributes(mesh, n_files, chunk_size_bytes);
         return XdmfHdfMesh{std::move(geometry), std::move(topology),

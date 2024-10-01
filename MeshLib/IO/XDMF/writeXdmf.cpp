@@ -199,15 +199,60 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             "dataitem"_a = dataitem_transform(geometry));
     };
 
-    // Define content of <Topology> in XDMF, same as attribute_transform
-    auto const topology_transform =
-        [](XdmfData const& topology, auto const& dataitem_transform)
+    auto tag_string = [](auto const& topology, int nodes_per_element,
+                         auto const& dataitem_transform)
     {
         return fmt::format(
             fmt::runtime("\n\t<Topology Dimensions=\"{dimensions}\" "
-                         "Type=\"Mixed\">{dataitem}\n\t</Topology>"),
+                         "Type=\"{topology_type}\" "
+                         "NodesPerElement=\"{nodes_per_element}\">{dataitem}"
+                         "\n\t</Topology>"),
+            "topology_type"_a =
+                ParentDataType2String(*topology.parent_data_type),
             "dataitem"_a = dataitem_transform(topology),
-            "dimensions"_a = fmt::join(topology.global_block_dims, " "));
+            "dimensions"_a = fmt::join(topology.global_block_dims, " "),
+            "nodes_per_element"_a = nodes_per_element);
+    };
+
+    // Define content of <Topology> in XDMF, same as attribute_transform
+    auto const topology_transform =
+        [&tag_string](XdmfData const& topology, auto const& dataitem_transform)
+    {
+        switch (*topology.parent_data_type)
+        {
+            case ParentDataType::POLYVERTEX:
+                return tag_string(topology, 1, dataitem_transform);
+            case ParentDataType::POLYLINE:
+                return tag_string(topology, 2, dataitem_transform);
+            case ParentDataType::MIXED:
+            case ParentDataType::EDGE_3:
+            case ParentDataType::TRIANGLE:
+            case ParentDataType::TRIANGLE_6:
+            case ParentDataType::QUADRILATERAL:
+            case ParentDataType::QUADRILATERAL_8:
+            case ParentDataType::QUADRILATERAL_9:
+            case ParentDataType::TETRAHEDRON:
+            case ParentDataType::TETRAHEDRON_10:
+            case ParentDataType::HEXAHEDRON:
+            case ParentDataType::HEXAHEDRON_20:
+            case ParentDataType::HEXAHEDRON_27:
+            case ParentDataType::WEDGE:
+            case ParentDataType::WEDGE_15:
+            case ParentDataType::WEDGE_18:
+            case ParentDataType::PYRAMID:
+            case ParentDataType::PYRAMID_13:
+                return fmt::format(
+                    fmt::runtime(
+                        "\n\t<Topology Dimensions=\"{dimensions}\" "
+                        "Type=\"{topology_type}\">{dataitem}\n\t</Topology>"),
+                    "topology_type"_a =
+                        ParentDataType2String(*topology.parent_data_type),
+                    "dataitem"_a = dataitem_transform(topology),
+                    "dimensions"_a =
+                        fmt::join(topology.global_block_dims, " "));
+        }
+        OGS_FATAL("Could not transform unknown XDMF topology type");
+        return std::string{};
     };
 
     // Defines content of <Grid> of a single time step, takes specific transform
