@@ -63,7 +63,7 @@ if(OGS_USE_MFRONT)
         set(_py_boost_comp
             "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
         )
-        find_package(Boost COMPONENTS ${_py_boost_comp})
+        find_package(Boost ${ogs.minimum_version.boost} COMPONENTS ${_py_boost_comp})
         if(Boost_${_py_boost_comp}_FOUND)
             set(_tfel_cmake_args
                 "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
