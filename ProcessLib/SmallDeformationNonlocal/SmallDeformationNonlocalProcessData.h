@@ -31,7 +31,7 @@ struct SmallDeformationNonlocalProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
-    std::map<int, std::unique_ptr<
+    std::map<int, std::shared_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
     /// Solid's density. A scalar quantity, ParameterLib::Parameter<double>.

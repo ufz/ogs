@@ -38,7 +38,7 @@ struct LargeDeformationProcessData
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     std::map<int,
-             std::unique_ptr<ConstitutiveRelations::SolidConstitutiveRelation<
+             std::shared_ptr<ConstitutiveRelations::SolidConstitutiveRelation<
                  DisplacementDim>>>
         solid_materials;
 

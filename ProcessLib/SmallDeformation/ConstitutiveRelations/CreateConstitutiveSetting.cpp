@@ -16,7 +16,7 @@ namespace ProcessLib::SmallDeformation
 namespace ConstitutiveRelations
 {
 template <int DisplacementDim>
-std::map<int, std::unique_ptr<SolidConstitutiveRelation<DisplacementDim>>>
+std::map<int, std::shared_ptr<SolidConstitutiveRelation<DisplacementDim>>>
 CreateConstitutiveSetting<DisplacementDim>::createSolidConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&

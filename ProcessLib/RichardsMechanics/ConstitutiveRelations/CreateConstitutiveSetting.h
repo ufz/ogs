@@ -22,7 +22,7 @@ struct CreateConstitutiveSetting
 {
     static std::map<
         int,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+        std::shared_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
     createSolidConstitutiveRelations(
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters,

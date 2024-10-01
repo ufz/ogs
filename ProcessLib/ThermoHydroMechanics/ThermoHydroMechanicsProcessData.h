@@ -39,13 +39,13 @@ struct ThermoHydroMechanicsProcessData
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// The constitutive relation for the mechanical part.
-    std::map<int, std::unique_ptr<
+    std::map<int, std::shared_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     /// The constitutive relation for the mechanical part of ice. When no
     /// freezing is configured, this is a nullptr.
-    std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
+    std::shared_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         ice_constitutive_relation;
 
     InitialStress const initial_stress;

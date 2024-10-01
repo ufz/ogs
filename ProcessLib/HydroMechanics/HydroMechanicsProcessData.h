@@ -66,7 +66,7 @@ struct HydroMechanicsProcessData
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// The constitutive relation for the mechanical part.
-    std::map<int, std::unique_ptr<
+    std::map<int, std::shared_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
