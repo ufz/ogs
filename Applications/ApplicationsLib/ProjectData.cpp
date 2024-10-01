@@ -356,6 +356,33 @@ std::vector<GeoLib::NamedRaster> readRasters(
 //    }
 //}
 
+std::vector<int> parseMaterialIdString(
+    std::string const& material_id_string,
+    MeshLib::PropertyVector<int> const* const material_ids)
+{
+    if (material_id_string == "*")
+    {
+        if (material_ids == nullptr)
+        {
+            OGS_FATAL(
+                "MaterialIDs property is not defined in the mesh but it is "
+                "required to parse '*' definition.");
+        }
+
+        std::vector<int> material_ids_of_this_medium =
+            *material_ids |
+            ranges::views::adjacent_remove_if(std::equal_to<>()) |
+            ranges::to_vector;
+        BaseLib::makeVectorUnique(material_ids_of_this_medium);
+        DBUG("Catch all medium definition for material ids {}.",
+             fmt::join(material_ids_of_this_medium, ", "));
+        return material_ids_of_this_medium;
+    }
+
+    // Usual case of ids separated by comma.
+    return BaseLib::splitMaterialIdString(material_id_string);
+}
+
 }  // namespace
 
 ProjectData::ProjectData() = default;
@@ -565,26 +592,9 @@ void ProjectData::parseMedia(
             //! \ogs_file_attr{prj__media__medium__id}
             medium_config.getConfigAttribute<std::string>("id", "0");
 
-        std::vector<int> material_ids_of_this_medium;
-        if (material_id_string == "*")
-        {
-            auto const* const material_ids = materialIDs(*_mesh_vec[0]);
-            if (material_ids != nullptr)
-            {
-                material_ids_of_this_medium =
-                    *material_ids |
-                    ranges::views::adjacent_remove_if(std::equal_to<>()) |
-                    ranges::to_vector;
-                BaseLib::makeVectorUnique(material_ids_of_this_medium);
-                DBUG("Catch all medium definition for material ids {}.",
-                     fmt::join(material_ids_of_this_medium, ", "));
-            }
-        }
-        else
-        {
-            material_ids_of_this_medium =
-                BaseLib::splitMaterialIdString(material_id_string);
-        }
+        std::vector<int> const material_ids_of_this_medium =
+            parseMaterialIdString(material_id_string,
+                                  materialIDs(*_mesh_vec[0]));
 
         for (auto const& id : material_ids_of_this_medium)
         {
