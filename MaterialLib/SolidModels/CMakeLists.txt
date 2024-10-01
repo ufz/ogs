@@ -2,8 +2,8 @@ get_source_files(SOURCES)
 
 ogs_add_library(MaterialLib_SolidModels ${SOURCES})
 target_link_libraries(
-    MaterialLib_SolidModels PUBLIC MathLib PRIVATE ParameterLib
-                                                   NumLib
+    MaterialLib_SolidModels PUBLIC MathLib Boost::math PRIVATE ParameterLib
+                                                               NumLib
 )
 
 if(OGS_USE_MFRONT)
@@ -14,5 +14,7 @@ if(OGS_USE_MFRONT)
     )
 endif()
 
-target_precompile_headers(MaterialLib_SolidModels PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)
+target_precompile_headers(
+    MaterialLib_SolidModels PRIVATE [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>
+)

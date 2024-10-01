@@ -190,21 +190,34 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
-CPMFindPackage(
-    NAME Boost
-    VERSION ${ogs.minimum_version.boost}
-    URL https://gitlab.opengeosys.org/ogs/libs/boost-subset/-/jobs/303158/artifacts/raw/ogs-boost-${ogs.minimum_version.boost}.tar.gz
-        SYSTEM TRUE
+# Boost libraries used by ogs, can be linked with Boost::[lib_name]
+set(BOOST_INCLUDE_LIBRARIES
+    math
+    property_tree
+    algorithm
+    smart_ptr
+    tokenizer
+    assign
+    dynamic_bitset
+    range
+    variant
 )
-if(Boost_ADDED)
-    add_library(Boost::boost INTERFACE IMPORTED)
-    target_include_directories(
-        Boost::boost SYSTEM INTERFACE "${Boost_SOURCE_DIR}"
-    )
+if(GUIX_BUILD)
+    find_package(Boost REQUIRED)
 else()
-    target_include_directories(
-        Boost::boost SYSTEM INTERFACE "${Boost_INCLUDE_DIR}"
+    CPMFindPackage(
+        NAME Boost
+        VERSION ${ogs.minimum_version.boost}
+        URL https://github.com/boostorg/boost/releases/download/boost-${ogs.minimum_version.boost}/boost-${ogs.minimum_version.boost}.tar.xz
+        OPTIONS "BOOST_ENABLE_CMAKE ON"
     )
+endif()
+if(NOT Boost_ADDED)
+    # Boost from system found. There are only Boost::headers and Boost::boost
+    # targets.
+    foreach(lib ${BOOST_INCLUDE_LIBRARIES})
+        add_library(Boost::${lib} ALIAS Boost::headers)
+    endforeach()
 endif()
 
 CPMFindPackage(
@@ -406,14 +419,16 @@ if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
             OgsXdmf SYSTEM PUBLIC ${xdmf_SOURCE_DIR} ${xdmf_BINARY_DIR}
         )
 
-        target_link_libraries(OgsXdmf Boost::boost)
+        target_link_libraries(OgsXdmf Boost::tokenizer)
         target_include_directories(
             OgsXdmfCore SYSTEM PUBLIC ${xdmf_SOURCE_DIR}/core
                                       ${xdmf_BINARY_DIR}/core
             PRIVATE ${xdmf_SOURCE_DIR}/CMake/VersionSuite
         )
         target_link_libraries(
-            OgsXdmfCore PUBLIC Boost::boost LibXml2::LibXml2 ${HDF5_LIBRARIES}
+            OgsXdmfCore PUBLIC LibXml2::LibXml2 ${HDF5_LIBRARIES} Boost::variant
+                               Boost::smart_ptr
+            PRIVATE Boost::tokenizer Boost::assign Boost::algorithm
         )
 
         set_target_properties(

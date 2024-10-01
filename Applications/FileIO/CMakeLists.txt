@@ -32,6 +32,7 @@ target_link_libraries(
            $<$<BOOL:${OGS_BUILD_GUI}>:QtBase>
            $<$<TARGET_EXISTS:shp>:shp>
            $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
+           Boost::dynamic_bitset
     PRIVATE MeshLib MeshToolsLib GitInfoLib
 )
 
