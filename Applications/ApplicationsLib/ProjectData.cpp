@@ -383,6 +383,34 @@ std::vector<int> parseMaterialIdString(
     return BaseLib::splitMaterialIdString(material_id_string);
 }
 
+template <typename T, typename CreateMedium>
+requires std::convertible_to<decltype(std::declval<CreateMedium>()(
+                                 std::declval<int>())),
+                             std::shared_ptr<T>>
+void createMediumForId(int const id,
+                       std::map<int, std::shared_ptr<T>>& _media,
+                       std::vector<int> const& material_ids_of_this_medium,
+                       CreateMedium&& create_medium)
+{
+    if (_media.find(id) != end(_media))
+    {
+        OGS_FATAL(
+            "Multiple media were specified for the same material id "
+            "'{:d}'. Keep in mind, that if no material id is "
+            "specified, it is assumed to be 0 by default.",
+            id);
+    }
+
+    if (id == material_ids_of_this_medium[0])
+    {
+        _media[id] = create_medium(id);
+    }
+    else
+    {
+        _media[id] = _media[material_ids_of_this_medium[0]];
+    }
+}
+
 }  // namespace
 
 ProjectData::ProjectData() = default;
@@ -588,7 +616,16 @@ void ProjectData::parseMedia(
          //! \ogs_file_param{prj__media__medium}
          media_config->getConfigSubtreeList("medium"))
     {
-        auto material_id_string =
+        auto create_medium = [dim = _mesh_vec[0]->getDimension(),
+                              &medium_config, this](int const id)
+        {
+            return MaterialPropertyLib::createMedium(
+                id, _mesh_vec[0]->getDimension(), medium_config, _parameters,
+                _local_coordinate_system ? &*_local_coordinate_system : nullptr,
+                _curves);
+        };
+
+        auto const material_id_string =
             //! \ogs_file_attr{prj__media__medium__id}
             medium_config.getConfigAttribute<std::string>("id", "0");
 
@@ -598,31 +635,8 @@ void ProjectData::parseMedia(
 
         for (auto const& id : material_ids_of_this_medium)
         {
-            if (_media.find(id) != end(_media))
-            {
-                OGS_FATAL(
-                    "Multiple media were specified for the same material id "
-                    "'{:d}'. Keep in mind, that if no material id is "
-                    "specified, it is assumed to be 0 by default.",
-                    id);
-            }
-
-            if (id == material_ids_of_this_medium[0])
-            {
-                _media[id] = MaterialPropertyLib::createMedium(
-                    id, _mesh_vec[0]->getDimension(), medium_config,
-                    _parameters,
-                    _local_coordinate_system ? &*_local_coordinate_system
-                                             : nullptr,
-                    _curves);
-            }
-            else
-            {
-                // This medium has multiple material IDs assigned and this is
-                // not the first material ID. Therefore we can reuse the medium
-                // we created before.
-                _media[id] = _media[material_ids_of_this_medium[0]];
-            }
+            createMediumForId(id, _media, material_ids_of_this_medium,
+                              create_medium);
         }
     }
 
