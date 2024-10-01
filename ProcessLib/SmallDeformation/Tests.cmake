@@ -16,6 +16,33 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj RUNTIME 2)
+        AddTest(
+            NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_list
+            PATH Mechanics/Linear/ElementDeactivation3D
+            RUNTIME 1
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS -p failcase_duplicate_id_list.xml element_deactivation_M_3D.prj
+            PROPERTIES
+                PASS_REGULAR_EXPRESSION "Multiple constitutive relations were specified for the same material id 1."
+        )
+        AddTest(
+            NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_0
+            PATH Mechanics/Linear/ElementDeactivation3D
+            RUNTIME 1
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS -p failcase_duplicate_id_0.xml element_deactivation_M_3D.prj
+            PROPERTIES
+                PASS_REGULAR_EXPRESSION "Multiple constitutive relations were specified for the same material id 0."
+        )
+        AddTest(
+            NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_1
+            PATH Mechanics/Linear/ElementDeactivation3D
+            RUNTIME 1
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS -p failcase_duplicate_id_1.xml element_deactivation_M_3D.prj
+            PROPERTIES
+                PASS_REGULAR_EXPRESSION "Multiple constitutive relations were specified for the same material id 1."
+        )
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e5.prj RUNTIME 200)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_quad8_traction_top.prj)

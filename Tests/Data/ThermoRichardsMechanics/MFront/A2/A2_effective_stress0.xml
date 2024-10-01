@@ -7,27 +7,10 @@
         <initial_stress type = "effective">sigma0</initial_stress>
     </add>
 
-    <!-- Remove in reverse order, because the later commands will operate on the modified XML tree -->
-    <remove sel="/*/processes/process/constitutive_relation[2]" />
-    <remove sel="/*/processes/process/constitutive_relation[1]" />
+    <remove sel="/*/processes/process/constitutive_relation[*]" />
 
     <add sel="/*/processes/process">
-        <constitutive_relation id="0">
-            <type>MFront</type>
-            <behaviour>ThermoPoroElasticity</behaviour>
-            <material_properties>
-                <material_property name="YoungModulus" parameter="E"/>
-                <material_property name="PoissonRatio" parameter="nu"/>
-                <material_property name="ThermalExpansion" parameter="alpha"/>
-                <material_property name="BiotCoefficient" parameter="alpha_B"/>
-                <material_property name="BishopsExponent" parameter="m_chi"/>
-                <material_property name="ResidualLiquidSaturation" parameter="S_L_res"/>
-                <material_property name="ResidualGasSaturation" parameter="S_G_res"/>
-                <material_property name="BubblePressure" parameter="p_b"/>
-                <material_property name="VanGenuchtenExponent_m" parameter="m_S"/>
-            </material_properties>
-        </constitutive_relation>
-        <constitutive_relation id="1">
+        <constitutive_relation id="0,1">
             <type>MFront</type>
             <behaviour>ThermoPoroElasticity</behaviour>
             <material_properties>
