@@ -7,14 +7,33 @@ module.exports = {
   ],
   theme: {
     extend: {
-      typography: {
-        DEFAULT: {
-          css: {
-            a: {
-              color: '#104EB2',
-            }
-          },
-        },
+      typography (theme) {
+        return {
+          DEFAULT: {
+            css: {
+              a: {
+                color: '#104EB2',
+              },
+              'code::before': {
+                content: 'none',
+              },
+              'code::after': {
+                content: 'none'
+              },
+              code: {
+                "font-weight": "normal",
+                borderRadius: theme('borderRadius.DEFAULT'),
+                paddingLeft: theme('spacing[1]'),
+                paddingRight: theme('spacing[1]'),
+                paddingTop: theme('spacing[0.5]'),
+                paddingBottom: theme('spacing[0.5]'),
+              },
+              'a code:hover': {
+                "font-weight": "bold",
+              },
+            },
+          }
+        };
       },
       fontFamily: {
         sans: ['Open Sans', ...defaultTheme.fontFamily.sans]
