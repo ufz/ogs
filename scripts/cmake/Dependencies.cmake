@@ -190,26 +190,34 @@ if(OGS_USE_MFRONT)
     endif()
 endif()
 
+# Boost libraries used by ogs, can be linked with Boost::[lib_name]
+set(BOOST_INCLUDE_LIBRARIES
+    math
+    property_tree
+    algorithm
+    smart_ptr
+    tokenizer
+    assign
+    dynamic_bitset
+    range
+    variant
+)
 if(GUIX_BUILD)
     find_package(Boost REQUIRED)
 else()
-    # Boost libraries used by ogs, can be linked with Boost::[lib_name]
-    set(BOOST_INCLUDE_LIBRARIES
-        math
-        property_tree
-        algorithm
-        smart_ptr
-        tokenizer
-        assign
-        dynamic_bitset
-        range
-    )
     CPMFindPackage(
         NAME Boost
         VERSION ${ogs.minimum_version.boost}
         URL https://github.com/boostorg/boost/releases/download/boost-${ogs.minimum_version.boost}/boost-${ogs.minimum_version.boost}.tar.xz
         OPTIONS "BOOST_ENABLE_CMAKE ON"
     )
+endif()
+if(NOT Boost_ADDED)
+    # Boost from system found. There are only Boost::headers and Boost::boost
+    # targets.
+    foreach(lib ${BOOST_INCLUDE_LIBRARIES})
+        add_library(Boost::${lib} ALIAS Boost::headers)
+    endforeach()
 endif()
 
 CPMFindPackage(
