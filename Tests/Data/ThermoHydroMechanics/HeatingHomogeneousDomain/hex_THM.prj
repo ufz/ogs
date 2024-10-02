@@ -33,7 +33,7 @@
         </process>
     </processes>
     <media>
-        <medium id="0">
+        <medium id="*">
             <phases>
                 <phase>
                     <type>AqueousLiquid</type>
