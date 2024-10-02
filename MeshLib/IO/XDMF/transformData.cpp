@@ -375,11 +375,11 @@ XdmfHdfData transformTopology(std::vector<std::size_t> const& values,
 {
     std::string const name = "topology";
     HdfData const hdf = {
-        values.data(), values.size(),   1, name, MeshPropertyDataType::int64,
+        values.data(), values.size(),   1, name, MeshPropertyDataType::uint64,
         n_files,       chunk_size_bytes};
     XdmfData const xdmf{values.size(),
                         1,
-                        MeshPropertyDataType::int64,
+                        MeshPropertyDataType::uint64,
                         name,
                         std::nullopt,
                         3,
