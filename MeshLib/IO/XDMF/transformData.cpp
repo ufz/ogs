@@ -316,18 +316,18 @@ ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
     return cellTypeOGS2XDMF(ogs_cell_type).id;
 }
 
-std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
+std::pair<std::vector<std::size_t>, ParentDataType> transformToXDMFTopology(
     MeshLib::Mesh const& mesh, std::size_t const offset)
 {
     std::vector<MeshLib::Element*> const& elements = mesh.getElements();
-    std::vector<int> values;
+    std::vector<std::size_t> values;
 
     auto const push_cellnode_ids_to_vector =
         [&values, &offset](auto const& cell)
     {
         values |= ranges::actions::push_back(
             cell->nodes() | MeshLib::views::ids |
-            ranges::views::transform([&offset](auto const node_id) -> int
+            ranges::views::transform([&offset](auto const node_id)
                                      { return node_id + offset; }));
     };
 
@@ -367,18 +367,18 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
     return {values, topology_type};
 }
 
-XdmfHdfData transformTopology(std::vector<int> const& values,
+XdmfHdfData transformTopology(std::vector<std::size_t> const& values,
                               ParentDataType const parent_data_type,
                               unsigned int const n_files,
                               unsigned int const chunk_size_bytes)
 {
     std::string const name = "topology";
     HdfData const hdf = {
-        values.data(), values.size(),   1, name, MeshPropertyDataType::int32,
+        values.data(), values.size(),   1, name, MeshPropertyDataType::int64,
         n_files,       chunk_size_bytes};
     XdmfData const xdmf{values.size(),
                         1,
-                        MeshPropertyDataType::int32,
+                        MeshPropertyDataType::int64,
                         name,
                         std::nullopt,
                         3,

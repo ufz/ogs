@@ -58,7 +58,7 @@ XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
  * Data will be split into chunks. The parameter specifies the size (in bytes)
  * of the largest chunk. \return Topology meta data
  */
-XdmfHdfData transformTopology(std::vector<int> const& values,
+XdmfHdfData transformTopology(std::vector<std::size_t> const& values,
                               ParentDataType const parent_data_type,
                               unsigned int n_files,
                               unsigned int chunk_size_bytes);
@@ -79,6 +79,6 @@ std::vector<double> transformToXDMFGeometry(MeshLib::Mesh const& mesh);
  * be zero in serial and must be defined for each process in parallel execution.
  * \return vector containing a copy of the data and the computed ParentDataType
  */
-std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
+std::pair<std::vector<std::size_t>, ParentDataType> transformToXDMFTopology(
     MeshLib::Mesh const& mesh, std::size_t const offset);
 }  // namespace MeshLib::IO

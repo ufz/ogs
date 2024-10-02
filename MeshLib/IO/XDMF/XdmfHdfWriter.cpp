@@ -26,7 +26,7 @@ namespace MeshLib::IO
 struct TransformedMeshData final
 {
     std::vector<double> flattened_geometry_values;
-    std::vector<int> flattened_topology_values;
+    std::vector<std::size_t> flattened_topology_values;
     ParentDataType parent_data_type;
 };
 struct XdmfHdfMesh final
