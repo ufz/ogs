@@ -156,6 +156,6 @@ AddTest(
     mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu displacement_jump1 displacement_jump1 1e-15 1e-15
     mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu sigma sigma 1e-8 1e-11
     mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu epsilon epsilon 1e-15 1e-15
-    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu fracture_stress fracture_stress 5e-8 1e-11
+    mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu fracture_stress fracture_stress 7e-8 1e-11
     mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu mechanics_embedded_fracture_F_PMMA_ts_1_t_1.000000.vtu fracture_aperture fracture_aperture 1e-15 1e-15
 )

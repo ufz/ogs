@@ -172,15 +172,22 @@ void applyBbar(BBarMatrixType const& B_bar, BMatrixType& B,
 
         auto const B_bar_i = B_bar.col(i);
 
-        double const b0_dil_pertubation =
-            is_axially_symmetric
-                ? (B_i_0[0] - B_bar_i[0] + B_i_0[2] - B_bar_i[2])
-                : (B_i_0[0] - B_bar_i[0]);
+        if (is_axially_symmetric)
+        {
+            double const b0_dil_pertubation =
+                (B_i_0[0] - B_bar_i[0] + B_i_0[2] - B_bar_i[2]);
+            B_i_0.template segment<3>(0) -=
+                Eigen::Vector3d::Constant((b0_dil_pertubation) / 3.);
+            B_i_1.template segment<3>(0) -=
+                Eigen::Vector3d::Constant((B_i_1[1] - B_bar_i[1]) / 3.);
+            continue;
+        }
 
-        B_i_0.template segment<3>(0) -=
-            Eigen::Vector3d::Constant((b0_dil_pertubation) / 3.);
-        B_i_1.template segment<3>(0) -=
-            Eigen::Vector3d::Constant((B_i_1[1] - B_bar_i[1]) / 3.);
+        // Plane strain
+        B_i_0.template segment<2>(0) -=
+            Eigen::Vector2d::Constant((B_i_0[0] - B_bar_i[0]) / 2.);
+        B_i_1.template segment<2>(0) -=
+            Eigen::Vector2d::Constant((B_i_1[1] - B_bar_i[1]) / 2.);
     }
 }
 }  // namespace detail

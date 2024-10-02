@@ -288,6 +288,36 @@ AddTest(
     arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu sigma sigma 1.e-9 5.e-7
 )
 
+AddTest(
+    NAME Mechanics_AxisymmetryBbar
+    PATH Mechanics/AxisymmetryBbar
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS axisymmetry_bbar.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 1
+    DIFF_DATA
+    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
+    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.e-5 5.e-7
+    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
+)
+
+AddTest(
+    NAME Mechanics_Simple3DBbar
+    PATH Mechanics/Simple3DBbar
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS simple_3d_bbar.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 1
+    DIFF_DATA
+    simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
+    simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.e-5 5.e-7
+    simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
+)
+
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.ipynb RUNTIME 1)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
