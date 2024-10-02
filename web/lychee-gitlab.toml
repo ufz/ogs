@@ -1,4 +1,7 @@
-include = ["gitlab\\.opengeosys\\.org", "discourse\\.opengeosys\\.org"]
+include = [
+  "^https://gitlab\\.opengeosys\\.org",
+  "^https://discourse\\.opengeosys\\.org",
+]
 exclude = [".*"]
 exclude_path = [
   "public/index.html",
