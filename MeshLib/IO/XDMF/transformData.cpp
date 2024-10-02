@@ -140,20 +140,21 @@ std::optional<XdmfHdfData> transformAttribute(
             data_type = MeshPropertyDataType::int32;
         }
         // ToDo (tm) These tests are platform specific and currently fail on
-        // Windows else if constexpr (std::is_same_v<long,
-        // decltype(basic_type)>)
-        //{
-        //    static_assert((std::numeric_limits<long>::digits == 63),
-        //                  "Signed int has 64-1 bits");
-        //    data_type = MeshPropertyDataType::int64;
-        //}
-        // else if constexpr (std::is_same_v<unsigned long,
-        // decltype(basic_type)>)
-        //{
-        //    static_assert((std::numeric_limits<unsigned long>::digits == 64),
-        //                  "Unsigned long has 64 bits");
-        //    data_type = MeshPropertyDataType::uint64;
-        //}
+        // Windows
+#if !defined(_WIN32)
+        else if constexpr (std::is_same_v<long, decltype(basic_type)>)
+        {
+            static_assert((std::numeric_limits<long>::digits == 63),
+                          "Signed int has 64-1 bits");
+            data_type = MeshPropertyDataType::int64;
+        }
+        else if constexpr (std::is_same_v<unsigned long, decltype(basic_type)>)
+        {
+            static_assert((std::numeric_limits<unsigned long>::digits == 64),
+                          "Unsigned long has 64 bits");
+            data_type = MeshPropertyDataType::uint64;
+        }
+#endif
         else if constexpr (std::is_same_v<unsigned int, decltype(basic_type)>)
         {
             static_assert((std::numeric_limits<unsigned int>::digits == 32),
