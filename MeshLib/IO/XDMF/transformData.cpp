@@ -97,7 +97,7 @@ std::optional<XdmfHdfData> transformAttribute(
     std::size_t num_of_tuples = 0;
     void const* data_ptr = 0;
 
-    // lambda f : Collects properties from the propertyVectorBase. It captures
+    // lambda f : Collects properties from the PropertyVectorBase. It captures
     // (and overwrites) data that can only be collected via the typed property.
     // It has boolean return type to allow kind of pipe using || operator.
     auto f = [&data_type, &num_of_tuples, &data_ptr,
