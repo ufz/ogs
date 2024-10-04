@@ -73,24 +73,31 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density};
 
+    // Check Constant-type density.
+    if (is_equation_type_volume)
+    {
+        for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
+        {
+            auto const& medium = *media_map.getMedium(element_id);
+            auto const& fluid_phase_density =
+                fluidPhase(medium)[MaterialPropertyLib::PropertyType::density];
+            if (typeid(fluid_phase_density) !=
+                typeid(MaterialPropertyLib::Constant))
+            {
+                OGS_FATAL(
+                    "Since `equation_balance_type` is set to `volume`,the "
+                    "phase density type must be `Constant`. Note: by "
+                    "default, "
+                    "`equation_balance_type` is set to `volume`.");
+            }
+        }
+    }
+
     for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
     {
         auto const& medium = *media_map.getMedium(element_id);
         checkRequiredProperties(medium, required_medium_properties);
         checkRequiredProperties(fluidPhase(medium), required_liquid_properties);
-
-        if (element_id == 0 && is_equation_type_volume)
-        {
-            auto const& fluid_phase = fluidPhase(medium);
-            if (typeid(fluid_phase[MaterialPropertyLib::PropertyType::density])
-                    .name() != typeid(MaterialPropertyLib::Constant).name())
-            {
-                OGS_FATAL(
-                    "Since `equation_balance_type` is set to `volume`,the "
-                    "phase density type must be `Constant`. Note: by default, "
-                    "`equation_balance_type` is set to `volume`.");
-            }
-        }
     }
     DBUG("Media properties verified.");
 }
