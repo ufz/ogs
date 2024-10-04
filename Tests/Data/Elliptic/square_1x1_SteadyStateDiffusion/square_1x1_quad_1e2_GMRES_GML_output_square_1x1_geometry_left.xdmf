@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
 <Domain>
-<Information Name="OGS_VERSION" Value="6.5.3-47-g1893f23a"/>
+<Information Name="OGS_VERSION" Value="6.5.3-237-g721feae5"/>
 <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
 <Grid Name="Grid" GridType="Uniform">
     <Time Value="0"/>
@@ -10,8 +10,8 @@
 		<DataItem DataType="Float" Dimensions="11 3" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_geometry_left/geometry|0 0 0:1 1 1:1 11 3:2 11 3</DataItem>
 	</Geometry>
 
-	<Topology Dimensions="30" Type="Polyline" NodesPerElement="2">
-		<DataItem DataType="Int" Dimensions="30" Format="HDF" Precision="4">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_geometry_left/topology|0 0:1 1:1 30:2 30</DataItem>
+	<Topology Type="Polyline" NodesPerElement="2" NumberOfElements="10">
+		<DataItem DataType="UInt" Dimensions="10 2" Format="HDF" Precision="8">square_1x1_quad_1e2_GMRES_GML_output.h5:/meshes/square_1x1_geometry_left/topology|0 0 0:1 1 1:1 10 2:2 10 2</DataItem>
 	</Topology>
 
 

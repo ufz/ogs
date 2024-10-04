@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
 <Domain>
-<Information Name="OGS_VERSION" Value="6.5.3-51-g80b3ad9a"/>
+<Information Name="OGS_VERSION" Value="6.5.3-264-gc2da67b2"/>
 <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
 <Grid Name="Grid" GridType="Uniform">
     <Time Value="0"/>
@@ -10,8 +10,8 @@
 		<DataItem DataType="Float" Dimensions="1637 3" Format="HDF" Precision="8">cube_1e3_np2.h5:/meshes/cube_1x1x1_hex_1e3/geometry|0 0 0:1 1 1:1 1637 3:2 1637 3</DataItem>
 	</Geometry>
 
-	<Topology Dimensions="9032" Type="Hexahedron">
-		<DataItem DataType="Int" Dimensions="9032" Format="HDF" Precision="4">cube_1e3_np2.h5:/meshes/cube_1x1x1_hex_1e3/topology|0 0:1 1:1 9032:2 9032</DataItem>
+	<Topology Type="Hexahedron">
+		<DataItem DataType="UInt" Dimensions="1129 8" Format="HDF" Precision="8">cube_1e3_np2.h5:/meshes/cube_1x1x1_hex_1e3/topology|0 0 0:1 1 1:1 1129 8:2 1129 8</DataItem>
 	</Topology>
 
 
