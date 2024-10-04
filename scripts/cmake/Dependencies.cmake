@@ -205,11 +205,14 @@ set(BOOST_INCLUDE_LIBRARIES
 if(GUIX_BUILD)
     find_package(Boost REQUIRED)
 else()
+    if(OGS_BUILD_WHEEL)
+        set(_boost_options "BUILD_SHARED_LIBS OFF")
+    endif()
     CPMFindPackage(
         NAME Boost
         VERSION ${ogs.minimum_version.boost}
         URL https://github.com/boostorg/boost/releases/download/boost-${ogs.minimum_version.boost}/boost-${ogs.minimum_version.boost}.tar.xz
-        OPTIONS "BOOST_ENABLE_CMAKE ON"
+        OPTIONS "BOOST_ENABLE_CMAKE ON" ${_boost_options}
     )
 endif()
 if(NOT Boost_ADDED)
@@ -403,7 +406,7 @@ if(OGS_USE_PETSC)
     endif()
 endif()
 
-if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS) AND NOT GUIX_BUILD)
+if(OGS_BUILD_TESTING AND NOT GUIX_BUILD)
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
