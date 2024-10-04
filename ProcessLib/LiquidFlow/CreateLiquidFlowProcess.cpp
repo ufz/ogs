@@ -12,6 +12,10 @@
 #include "CreateLiquidFlowProcess.h"
 
 #include <algorithm>
+#include <range/v3/algorithm/any_of.hpp>
+#include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 #include <typeinfo>
 
 #include "LiquidFlowProcess.h"
@@ -34,6 +38,31 @@ void checkMPLProperties(
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map,
     bool const is_equation_type_volume)
 {
+    // Check all of the elements have a medium defined.
+    ranges::for_each(mesh.getElements() | MeshLib::views::ids,
+                     [&](auto const& element_id)
+                     { media_map.checkElementHasMedium(element_id); });
+
+    // Collect phases of all elements...
+    auto all_phases =
+        mesh.getElements() | MeshLib::views::ids |
+        ranges::views::transform(
+            [&](auto const& element_id)
+            { return &fluidPhase(*media_map.getMedium(element_id)); }) |
+        ranges::to_vector;
+
+    assert(!all_phases.empty());
+
+    // ... and check if any of the phases are different by name.
+    if (ranges::any_of(all_phases,
+                       [p0 = all_phases.front()](auto const* const p)
+                       { return p->name != p0->name; }))
+    {
+        OGS_FATAL(
+            "You are mixing liquid and gas phases in your model domain. OGS "
+            "does not yet know how to handle this.");
+    }
+
     std::array const required_medium_properties = {
         MaterialPropertyLib::reference_temperature,
         MaterialPropertyLib::PropertyType::permeability,
@@ -44,34 +73,9 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density};
 
-    // setting default to suppress -maybe-uninitialized warning
-    MaterialPropertyLib::Variable phase_pressure =
-        MaterialPropertyLib::Variable::liquid_phase_pressure;
     for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
     {
-        media_map.checkElementHasMedium(element_id);
         auto const& medium = *media_map.getMedium(element_id);
-        if (element_id == 0)
-        {
-            phase_pressure =
-                medium.hasPhase("Gas")
-                    ? MaterialPropertyLib::Variable::gas_phase_pressure
-                    : MaterialPropertyLib::Variable::liquid_phase_pressure;
-        }
-        else
-        {
-            auto const phase_pressure_tmp =
-                medium.hasPhase("Gas")
-                    ? MaterialPropertyLib::Variable::gas_phase_pressure
-                    : MaterialPropertyLib::Variable::liquid_phase_pressure;
-            if (phase_pressure != phase_pressure_tmp)
-            {
-                OGS_FATAL(
-                    "You are mixing liquid and gas phases in your model domain."
-                    "OGS does not yet know how to handle this.");
-            }
-        }
-
         checkRequiredProperties(medium, required_medium_properties);
         checkRequiredProperties(fluidPhase(medium), required_liquid_properties);
 
