@@ -24,13 +24,12 @@ class Component;
  * \f[S_\text{eff}=\frac{S-S_r}{S_{\text{max}}-S_r}.\f]
  * Above, \f$S_r\f$ and \f$S_{\text{max}}\f$ are the residual and the maximum
  * saturations.
- * The exponent \f$m \in (0,1)\f$ and the pressure scaling parameter \f$p_b\f$
- * (it is equal to \f$\rho g/\alpha\f$ in original publication) are given by the
- * user.
- * The scaling parameter \f$p_b\f$ is given in same units as pressure.
+ * The (pressure) exponent \f$m \in (0,1)\f$ and the pressure scaling parameter
+ * \f$p_b\f$ (it is equal to \f$\rho g/\alpha\f$ in original publication) are
+ * given by the user. The scaling parameter \f$p_b\f$ is given in same units as
+ * pressure.
  *
- * In the original work another exponent \f$n\f$ is used, but usually set to
- * \f$n = 1 / (1 - m)\f$, and also in this implementation.
+ * Another (saturaton) exponent \f$n\f$ is usually set to \f$n = 1 / (1 - m)\f$.
  *
  * The saturation is computed from the capillary pressure as follows:
  * \f[S(p_c)=
@@ -49,7 +48,8 @@ public:
     SaturationVanGenuchten(std::string name,
                            double const residual_liquid_saturation,
                            double const residual_gas_saturation,
-                           double const exponent,
+                           double const pressure_exponent,
+                           double const saturation_exponent,
                            double const p_b);
 
     void checkScale() const override
@@ -83,6 +83,7 @@ private:
     double const S_L_res_;
     double const S_L_max_;
     double const m_;
+    double const n_;
     double const p_b_;
 };
 }  // namespace MaterialPropertyLib

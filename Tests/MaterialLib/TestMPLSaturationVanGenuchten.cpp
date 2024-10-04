@@ -20,12 +20,13 @@ TEST(MaterialPropertyLib, SaturationVanGenuchten)
 {
     double const residual_liquid_saturation = 0.1;
     double const residual_gas_saturation = 0.05;
-    double const exponent = 0.79;
+    double const pressure_exponent = 0.79;
+    double const saturation_exponent = 1. / (1. - pressure_exponent);
     double const p_b = 5000;
 
-    MPL::Property const& pressure_saturation =
-        MPL::SaturationVanGenuchten{"saturation", residual_liquid_saturation,
-                                    residual_gas_saturation, exponent, p_b};
+    MPL::Property const& pressure_saturation = MPL::SaturationVanGenuchten{
+        "saturation",      residual_liquid_saturation, residual_gas_saturation,
+        pressure_exponent, saturation_exponent,        p_b};
 
     MPL::VariableArray variable_array;
     ParameterLib::SpatialPosition const pos;
