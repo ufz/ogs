@@ -29,41 +29,15 @@ std::vector<double> readDoublesFromBinaryFile(const std::string& filename)
 {
     auto prj_dir = BaseLib::getProjectDirectory();
     std::string path_to_file = BaseLib::joinPaths(prj_dir, filename);
-
-    std::ifstream file(path_to_file, std::ios::binary);
-    if (!file)
+    std::string file_extension = BaseLib::getFileExtension(filename);
+    if (file_extension != ".bin")
     {
-        OGS_FATAL("File {:s} at path {:s} for curve definition not found",
-                  filename, prj_dir);
+        OGS_FATAL(
+            "Currently only binary files with extension '.bin' supported. The "
+            "specified file has extension {:s}.",
+            file_extension)
     }
-
-    // Determine file size
-    file.seekg(0, std::ios::end);
-    std::streamsize size = file.tellg();
-    file.seekg(0, std::ios::beg);
-
-    // Initialize vector with the right size
-    std::vector<double> result(size / sizeof(double));
-
-    // read data directly into the vector
-    if (!file.read(reinterpret_cast<char*>(result.data()), size))
-    {
-        OGS_FATAL("Could not read curve definition from file {:s}.", filename);
-    }
-
-    if constexpr (std::endian::native != std::endian::little)
-    {
-        // swap endians if needed
-        std::transform(
-            result.begin(), result.end(), result.begin(),
-            [](double value)
-            {
-                return std::bit_cast<double>(boost::endian::endian_reverse(
-                    std::bit_cast<uint64_t>(value)));
-            });
-    }
-
-    return result;
+    return BaseLib::readBinaryVector<double>(path_to_file);
 }
 
 PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
@@ -80,6 +54,7 @@ PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
         auto const coords_file_name =
             //! \ogs_file_param{curve__coords}
             config.getConfigParameter<std::string>("coords");
+
         auto const values_file_name =
             //! \ogs_file_param{curve__values}
             config.getConfigParameter<std::string>("values");

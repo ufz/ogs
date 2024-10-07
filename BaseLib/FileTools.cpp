@@ -17,6 +17,7 @@
 #include <spdlog/fmt/bundled/core.h>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/endian/conversion.hpp>
 #include <filesystem>
 #include <fstream>
 #include <typeindex>
@@ -331,6 +332,53 @@ std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
 // explicit template instantiation
 template std::vector<float> readBinaryArray<float>(std::string const&,
                                                    std::size_t const);
+
+template <typename T>
+std::vector<T> readBinaryVector(std::string const& filename)
+{
+    std::ifstream file(filename, std::ios::binary);
+    if (!file)
+    {
+        OGS_FATAL("File {:s} for curve definition not found", filename);
+    }
+
+    // Determine file size
+    file.seekg(0, std::ios::end);
+    std::streamsize size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    size_t num_elements = size / sizeof(T);
+
+    // Initialize vector with the right size
+    std::vector<T> result(num_elements);
+
+    // Read data directly into the vector
+    if (!file.read(reinterpret_cast<char*>(result.data()), size))
+    {
+        OGS_FATAL("Could not read data from file {:s}.", filename);
+    }
+
+    if constexpr (std::endian::native != std::endian::little)
+    {
+        boost::endian::endian_reverse_inplace(result);
+    }
+
+    std::streamsize bytes_read = file.gcount();
+
+    if (bytes_read != size)
+    {
+        OGS_FATAL(
+            "Incomplete read: Expected {:d} bytes, but read {:d} bytes "
+            "from "
+            "file {:s}.",
+            size, bytes_read, filename);
+    }
+    return result;
+}
+
+// explicit template instantiation
+template std::vector<float> readBinaryVector<float>(std::string const&);
+template std::vector<double> readBinaryVector<double>(std::string const&);
 
 template <typename T>
 void writeValueBinary(std::ostream& out, T const& val)

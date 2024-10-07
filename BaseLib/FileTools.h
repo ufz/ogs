@@ -92,6 +92,9 @@ template <typename T>
 std::vector<T> readBinaryArray(std::string const& filename,
                                std::size_t const n);
 
+template <typename T>
+std::vector<T> readBinaryVector(std::string const& filename);
+
 /**
  * Extracts basename from given pathname with extension.
  *
