@@ -1,0 +1,1 @@
+\copydoc ProcessLib::HMPhaseField::HMPhaseFieldProcessData::fixed_stress_stabilization_parameter
