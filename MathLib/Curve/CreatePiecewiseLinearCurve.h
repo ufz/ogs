@@ -28,6 +28,8 @@ struct PiecewiseLinearCurveConfig
     std::vector<double> ys;
 };
 
+std::vector<double> readDoublesFromBinaryFile(const std::string& filename);
+
 PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
     BaseLib::ConfigTree const& config);
 
