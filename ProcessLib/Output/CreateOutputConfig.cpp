@@ -14,7 +14,7 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/StringTools.h"  // required for splitMaterialIDString
+#include "MaterialLib/Utils/MediaCreation.h"  // required for splitMaterialIDString
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/createMaterialIDsBasedSubMesh.h"
 #include "MeshLib/Utils/transformMeshToNodePartitionedMesh.h"
@@ -50,7 +50,7 @@ std::string parseOutputMeshConfig(
     }
 
     auto const material_ids_for_output =
-        BaseLib::splitMaterialIdString(*material_id_string);
+        MaterialLib::splitMaterialIdString(*material_id_string);
 #ifdef USE_PETSC
     // this mesh isn't yet a NodePartitionedMesh
     auto subdomain_mesh = MeshLib::createMaterialIDsBasedSubMesh(

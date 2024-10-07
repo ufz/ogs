@@ -83,9 +83,4 @@ std::string randomString(std::size_t length);
 //! Append '-' and a number such that the name is unique.
 std::string getUniqueName(std::vector<std::string> const& existing_names,
                           std::string const& input_name);
-
-/// Parses a comma separated list of integers.
-/// Such lists occur in the medium definition in the OGS prj file.
-/// Error messages in this function refer to this specific purpose.
-std::vector<int> splitMaterialIdString(std::string const& material_id_string);
 }  // end namespace BaseLib

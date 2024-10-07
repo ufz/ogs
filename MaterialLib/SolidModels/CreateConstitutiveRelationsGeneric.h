@@ -11,7 +11,7 @@
 #pragma once
 
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/StringTools.h"
+#include "MaterialLib/Utils/MediaCreation.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialLib::Solids
@@ -44,7 +44,7 @@ createConstitutiveRelationsGeneric(
                                                                          "0");
 
         auto const material_ids_of_this_constitutive_relation =
-            BaseLib::splitMaterialIdString(material_id_string);
+            MaterialLib::splitMaterialIdString(material_id_string);
 
         auto first_relation_for_material_id = constitutive_relations.end();
         for (auto const& material_id :

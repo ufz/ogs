@@ -37,6 +37,7 @@
 #include "GeoLib/Raster.h"
 #include "InfoLib/CMakeInfo.h"
 #include "MaterialLib/MPL/CreateMedium.h"
+#include "MaterialLib/Utils/MediaCreation.h"
 #include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
 #if defined(USE_LIS)
 #include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
@@ -356,61 +357,6 @@ std::vector<GeoLib::NamedRaster> readRasters(
 //    }
 //}
 
-std::vector<int> parseMaterialIdString(
-    std::string const& material_id_string,
-    MeshLib::PropertyVector<int> const* const material_ids)
-{
-    if (material_id_string == "*")
-    {
-        if (material_ids == nullptr)
-        {
-            OGS_FATAL(
-                "MaterialIDs property is not defined in the mesh but it is "
-                "required to parse '*' definition.");
-        }
-
-        std::vector<int> material_ids_of_this_medium =
-            *material_ids |
-            ranges::views::adjacent_remove_if(std::equal_to<>()) |
-            ranges::to_vector;
-        BaseLib::makeVectorUnique(material_ids_of_this_medium);
-        DBUG("Catch all medium definition for material ids {}.",
-             fmt::join(material_ids_of_this_medium, ", "));
-        return material_ids_of_this_medium;
-    }
-
-    // Usual case of ids separated by comma.
-    return BaseLib::splitMaterialIdString(material_id_string);
-}
-
-template <typename T, typename CreateMedium>
-requires std::convertible_to<decltype(std::declval<CreateMedium>()(
-                                 std::declval<int>())),
-                             std::shared_ptr<T>>
-void createMediumForId(int const id,
-                       std::map<int, std::shared_ptr<T>>& _media,
-                       std::vector<int> const& material_ids_of_this_medium,
-                       CreateMedium&& create_medium)
-{
-    if (_media.find(id) != end(_media))
-    {
-        OGS_FATAL(
-            "Multiple media were specified for the same material id "
-            "'{:d}'. Keep in mind, that if no material id is "
-            "specified, it is assumed to be 0 by default.",
-            id);
-    }
-
-    if (id == material_ids_of_this_medium[0])
-    {
-        _media[id] = create_medium(id);
-    }
-    else
-    {
-        _media[id] = _media[material_ids_of_this_medium[0]];
-    }
-}
-
 }  // namespace
 
 ProjectData::ProjectData() = default;
@@ -630,13 +576,13 @@ void ProjectData::parseMedia(
             medium_config.getConfigAttribute<std::string>("id", "0");
 
         std::vector<int> const material_ids_of_this_medium =
-            parseMaterialIdString(material_id_string,
-                                  materialIDs(*_mesh_vec[0]));
+            MaterialLib::parseMaterialIdString(material_id_string,
+                                               materialIDs(*_mesh_vec[0]));
 
         for (auto const& id : material_ids_of_this_medium)
         {
-            createMediumForId(id, _media, material_ids_of_this_medium,
-                              create_medium);
+            MaterialLib::createMediumForId(
+                id, _media, material_ids_of_this_medium, create_medium);
         }
     }
 
