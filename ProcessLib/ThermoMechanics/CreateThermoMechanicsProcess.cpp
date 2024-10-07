@@ -135,7 +135,7 @@ std::unique_ptr<Process> createThermoMechanicsProcess(
     config.peekConfigParameter<std::string>("constitutive_relation");
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

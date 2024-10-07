@@ -138,7 +138,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
 
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     /// \section parametersrm Process Parameters
     // Specific body force

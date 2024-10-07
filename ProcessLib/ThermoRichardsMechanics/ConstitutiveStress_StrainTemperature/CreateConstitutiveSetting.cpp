@@ -12,6 +12,12 @@
 
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 
+namespace MeshLib
+{
+template <typename T>
+class PropertyVector;
+}
+
 namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStress_StrainTemperature
@@ -22,10 +28,11 @@ CreateConstitutiveSetting<DisplacementDim>::createSolidConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config)
 {
     return MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-        parameters, local_coordinate_system, config);
+        parameters, local_coordinate_system, material_ids, config);
 }
 
 template struct CreateConstitutiveSetting<2>;

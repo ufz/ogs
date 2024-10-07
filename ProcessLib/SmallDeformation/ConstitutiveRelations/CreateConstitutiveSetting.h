@@ -20,6 +20,11 @@ namespace BaseLib
 {
 class ConfigTree;
 }
+namespace MeshLib
+{
+template <typename T>
+class PropertyVector;
+}
 namespace ParameterLib
 {
 struct ParameterBase;
@@ -40,6 +45,7 @@ struct CreateConstitutiveSetting
             parameters,
         std::optional<ParameterLib::CoordinateSystem> const&
             local_coordinate_system,
+        MeshLib::PropertyVector<int> const* const material_ids,
         BaseLib::ConfigTree const& config);
 };
 }  // namespace ConstitutiveRelations

@@ -72,8 +72,8 @@ std::unique_ptr<Process> createLargeDeformationProcess(
     /// \section parametersld Process Parameters
     auto solid_constitutive_relations =
         ConstitutiveRelations::CreateConstitutiveSetting<DisplacementDim>::
-            createSolidConstitutiveRelations(parameters,
-                                             local_coordinate_system, config);
+            createSolidConstitutiveRelations(
+                parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

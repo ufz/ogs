@@ -20,6 +20,11 @@ namespace BaseLib
 {
 class ConfigTree;
 }
+namespace MeshLib
+{
+template <typename T>
+class PropertyVector;
+}
 
 namespace ParameterLib
 {
@@ -63,6 +68,7 @@ createConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config);
 
 extern template std::map<int,
@@ -71,6 +77,7 @@ createConstitutiveRelations<2>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config);
 
 extern template std::map<int,
@@ -79,6 +86,7 @@ createConstitutiveRelations<3>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config);
 }  // namespace Solids
 }  // namespace MaterialLib

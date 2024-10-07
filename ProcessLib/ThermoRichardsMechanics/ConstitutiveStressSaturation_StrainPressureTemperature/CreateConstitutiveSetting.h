@@ -12,6 +12,11 @@
 
 #include "TraitsBase.h"
 
+namespace MeshLib
+{
+template <typename T>
+class PropertyVector;
+}
 namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStressSaturation_StrainPressureTemperature
@@ -26,6 +31,7 @@ struct CreateConstitutiveSetting
             parameters,
         std::optional<ParameterLib::CoordinateSystem> const&
             local_coordinate_system,
+        MeshLib::PropertyVector<int> const* const material_ids,
         BaseLib::ConfigTree const& config);
 };
 }  // namespace ConstitutiveStressSaturation_StrainPressureTemperature

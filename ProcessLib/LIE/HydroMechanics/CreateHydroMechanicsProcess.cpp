@@ -135,7 +135,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     /// \section parametersliehm Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<GlobalDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // Intrinsic permeability
     auto& intrinsic_permeability = ParameterLib::findParameter<double>(

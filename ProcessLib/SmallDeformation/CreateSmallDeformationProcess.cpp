@@ -82,7 +82,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     /// \section parameterssd Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION__solid_density}
     if (config.getConfigParameterOptional<std::string>("solid_density"))

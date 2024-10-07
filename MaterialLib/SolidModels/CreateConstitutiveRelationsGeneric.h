@@ -12,6 +12,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/Utils/MediaCreation.h"
+#include "MeshLib/PropertyVector.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialLib::Solids
@@ -22,6 +23,7 @@ createConstitutiveRelationsGeneric(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config,
     std::unique_ptr<SolidConstitutiveRelation> (*create_constitutive_relation)(
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&,

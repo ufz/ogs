@@ -70,7 +70,7 @@ std::unique_ptr<Process> createSmallDeformationNonlocalProcess(
     /// \section parameterssdnl Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // Solid density
     auto const& solid_density = ParameterLib::findParameter<double>(

@@ -28,6 +28,7 @@ struct CreateConstitutiveSetting
             parameters,
         std::optional<ParameterLib::CoordinateSystem> const&
             local_coordinate_system,
+        MeshLib::PropertyVector<int> const* const material_ids,
         BaseLib::ConfigTree const& config);
 };
 }  // namespace ProcessLib::RichardsMechanics

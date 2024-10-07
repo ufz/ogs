@@ -176,7 +176,7 @@ std::unique_ptr<Process> createTH2MProcess(
     /// \section parametersth2m Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // reference temperature
     const auto& reference_temperature = ParameterLib::findParameter<double>(

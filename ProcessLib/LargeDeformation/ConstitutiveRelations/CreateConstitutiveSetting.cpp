@@ -38,10 +38,11 @@ CreateConstitutiveSetting<DisplacementDim>::createSolidConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config)
 {
     return MaterialLib::Solids::createConstitutiveRelationsGeneric(
-        parameters, local_coordinate_system, config,
+        parameters, local_coordinate_system, material_ids, config,
         createMFrontGeneric<DisplacementDim>);
 }
 
