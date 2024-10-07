@@ -114,6 +114,9 @@
 #ifdef OGS_BUILD_PROCESS_PHASEFIELD
 #include "ProcessLib/PhaseField/CreatePhaseFieldProcess.h"
 #endif
+#ifdef OGS_BUILD_PROCESS_HMPHASEFIELD
+#include "ProcessLib/HMPhaseField/CreateHMPhaseFieldProcess.h"
+#endif
 #ifdef OGS_BUILD_PROCESS_RICHARDSCOMPONENTTRANSPORT
 #include "ProcessLib/RichardsComponentTransport/CreateRichardsComponentTransportProcess.h"
 #endif
@@ -982,6 +985,31 @@ void ProjectData::parseProcesses(
                             _process_variables, _parameters,
                             _local_coordinate_system, integration_order,
                             process_config);
+                    break;
+            }
+        }
+        else
+#endif
+#ifdef OGS_BUILD_PROCESS_HMPHASEFIELD
+            if (type == "HM_PHASE_FIELD")
+        {
+            switch (_mesh_vec[0]->getDimension())
+            {
+                case 2:
+                    process =
+                        ProcessLib::HMPhaseField::createHMPhaseFieldProcess<2>(
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters,
+                            _local_coordinate_system, integration_order,
+                            process_config, _media);
+                    break;
+                case 3:
+                    process =
+                        ProcessLib::HMPhaseField::createHMPhaseFieldProcess<3>(
+                            name, *_mesh_vec[0], std::move(jacobian_assembler),
+                            _process_variables, _parameters,
+                            _local_coordinate_system, integration_order,
+                            process_config, _media);
                     break;
             }
         }
