@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="beam.prj">
+    <replace msel="/*/processes/process/phasefield_model/text()">AT2</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">AT2_iso_tension</replace>
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[1]/abstol/text()">1.e-4</replace>
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[3]/abstol/text()">1.e-1</replace>
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[3]/reltol/text()">1.e-1</replace>
+    <replace sel="/*/curves/curve[name='dirichlet_time']/values/text()">0  0.8</replace>
+</OpenGeoSysProjectDiff>

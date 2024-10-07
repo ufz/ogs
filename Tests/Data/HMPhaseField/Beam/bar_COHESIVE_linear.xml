@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="beam.prj">
+    <add sel="/*/processes/process">
+        <softening_curve>Linear</softening_curve>
+        <characteristic_length>0.4</characteristic_length>
+    </add>
+    <replace msel="/*/processes/process/phasefield_model/text()">COHESIVE</replace>
+    <replace msel="/*/processes/process/energy_split_model/text()">EffectiveStress</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">bar_COHESIVE_linear</replace>
+    <remove sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[1]/abstol"/>
+    <remove sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[3]/abstol"/>
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[1]/reltol/text()">1.e-8</replace>
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[3]/reltol/text()">1.e-8</replace>
+    <replace sel="/*/time_loop/processes/process[1]/time_stepping/t_end/text()">1.1</replace>
+    <replace sel="/*/time_loop/processes/process[2]/time_stepping/t_end/text()">1.1</replace>
+    <replace sel="/*/time_loop/processes/process[3]/time_stepping/t_end/text()">1.1</replace>
+    <replace sel="/*/parameters/parameter[name='E']/value/text()">3e10</replace>
+    <replace sel="/*/parameters/parameter[name='nu']/value/text()">0.2</replace>
+    <replace sel="/*/parameters/parameter[name='k']/value/text()">1e-16</replace>
+    <replace sel="/*/parameters/parameter[name='gc']/value/text()">120</replace>
+    <replace sel="/*/parameters/parameter[name='ls']/value/text()">0.05</replace>
+    <replace sel="/*/parameters/parameter[name='dirichlet_right']/value/text()">1.1e-4</replace>
+    <replace sel="/*/curves/curve[name='dirichlet_time']/values/text()">0  1.0</replace>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+            <file>bar_COHESIVE_linear_ts_11_t_1.100000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-9</absolute_tolerance>
+            <relative_tolerance>1e-6</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>bar_COHESIVE_linear_ts_11_t_1.100000.vtu</file>
+            <field>phasefield</field>
+            <absolute_tolerance>1e-9</absolute_tolerance>
+            <relative_tolerance>1e-6</relative_tolerance>
+        </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
