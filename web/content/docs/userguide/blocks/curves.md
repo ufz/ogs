@@ -47,7 +47,24 @@ Curves can be defined using the following block:
 </curves>
 ```
 
-and can be called in "Properties" and "Parameters" inside "Expression":
+or recommended for long curves definitions, they can be read from a binary file (double precision values in little endian format) placed in the project file directory:
+
+```xml
+<curves>
+    <curve>
+        <name>CurveName</name>
+        <read_from_file>true</read_from_file>
+        <coords>
+            coords_filename.bin
+        </coords>
+        <values>
+            values_filename.bin
+        </values>
+    </curve>
+</curves>
+```
+
+They can be called in "Properties" and "Parameters" inside "Expression":
 `CurveName(evaluation_value)`
 
 where `evaluation_value` is always exactly one value and refers to values provided inside `<coords> </coords>`.
