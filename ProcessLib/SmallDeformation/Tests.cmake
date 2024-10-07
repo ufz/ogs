@@ -23,7 +23,7 @@ if (NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS -p failcase_duplicate_id_list.xml element_deactivation_M_3D.prj
             PROPERTIES
-                PASS_REGULAR_EXPRESSION "Multiple constitutive relations were specified for the same material id 1."
+                PASS_REGULAR_EXPRESSION "Multiple media were specified for the same material id '1'."
         )
         AddTest(
             NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_0
@@ -32,7 +32,7 @@ if (NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS -p failcase_duplicate_id_0.xml element_deactivation_M_3D.prj
             PROPERTIES
-                PASS_REGULAR_EXPRESSION "Multiple constitutive relations were specified for the same material id 0."
+                PASS_REGULAR_EXPRESSION "Multiple media were specified for the same material id '0'."
         )
         AddTest(
             NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_1
@@ -41,7 +41,7 @@ if (NOT OGS_USE_MPI)
             EXECUTABLE ogs
             EXECUTABLE_ARGS -p failcase_duplicate_id_1.xml element_deactivation_M_3D.prj
             PROPERTIES
-                PASS_REGULAR_EXPRESSION "Multiple constitutive relations were specified for the same material id 1."
+                PASS_REGULAR_EXPRESSION "Multiple media were specified for the same material id '1'."
         )
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e5.prj RUNTIME 200)
