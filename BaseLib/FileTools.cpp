@@ -291,49 +291,6 @@ template float readBinaryValue<float>(std::istream&);
 template double readBinaryValue<double>(std::istream&);
 
 template <typename T>
-std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
-{
-    std::ifstream in(filename.c_str());
-    if (!in)
-    {
-        ERR("readBinaryArray(): Error while reading from file '{:s}'.",
-            filename);
-        ERR("Could not open file '{:s}' for input.", filename);
-        in.close();
-        return std::vector<T>();
-    }
-
-    std::vector<T> result;
-    result.reserve(n);
-
-    for (std::size_t p = 0; in && !in.eof() && p < n; ++p)
-    {
-        result.push_back(BaseLib::readBinaryValue<T>(in));
-    }
-
-    if (result.size() == n)
-    {
-        return result;
-    }
-
-    ERR("readBinaryArray(): Error while reading from file '{:s}'.", filename);
-    ERR("Read different number of values. Expected {:d}, got {:d}.",
-        n,
-        result.size());
-
-    if (!in.eof())
-    {
-        ERR("EOF reached.\n");
-    }
-
-    return std::vector<T>();
-}
-
-// explicit template instantiation
-template std::vector<float> readBinaryArray<float>(std::string const&,
-                                                   std::size_t const);
-
-template <typename T>
 std::vector<T> readBinaryVector(std::string const& filename)
 {
     std::ifstream file(filename, std::ios::binary);

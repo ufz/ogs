@@ -505,7 +505,7 @@ void GocadSGridReader::readElementPropertiesBinary()
             continue;
         }
         std::vector<float> float_properties =
-            BaseLib::readBinaryArray<float>(fname, _index_calculator._n_cells);
+            BaseLib::readBinaryVector<float>(fname);
         DBUG(
             "GocadSGridReader::readElementPropertiesBinary(): Read {:d} float "
             "properties from binary file.",
