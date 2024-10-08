@@ -12,10 +12,16 @@
 #include "CreateLiquidFlowProcess.h"
 
 #include <algorithm>
+#include <range/v3/algorithm/any_of.hpp>
+#include <range/v3/algorithm/for_each.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
+#include <typeinfo>
 
 #include "LiquidFlowProcess.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Properties/Constant.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
@@ -29,8 +35,33 @@ namespace LiquidFlow
 {
 void checkMPLProperties(
     MeshLib::Mesh const& mesh,
-    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map,
+    bool const is_equation_type_volume)
 {
+    // Check all of the elements have a medium defined.
+    ranges::for_each(mesh.getElements() | MeshLib::views::ids,
+                     [&](auto const& element_id)
+                     { media_map.checkElementHasMedium(element_id); });
+
+    // Collect phases of all elements...
+    auto all_phases =
+        media_map.media() |
+        ranges::views::transform([&](auto const& medium)
+                                 { return &fluidPhase(*medium); }) |
+        ranges::to_vector;
+
+    assert(!all_phases.empty());
+
+    // ... and check if any of the phases are different by name.
+    if (ranges::any_of(all_phases,
+                       [p0 = all_phases.front()](auto const* const p)
+                       { return p->name != p0->name; }))
+    {
+        OGS_FATAL(
+            "You are mixing liquid and gas phases in your model domain. OGS "
+            "does not yet know how to handle this.");
+    }
+
     std::array const required_medium_properties = {
         MaterialPropertyLib::reference_temperature,
         MaterialPropertyLib::PropertyType::permeability,
@@ -41,16 +72,49 @@ void checkMPLProperties(
         MaterialPropertyLib::PropertyType::viscosity,
         MaterialPropertyLib::PropertyType::density};
 
-    std::array<MaterialPropertyLib::PropertyType, 0> const
-        required_solid_properties{};
+    // Check Constant-type density.
+    if (is_equation_type_volume)
+    {
+        for (auto const& medium : media_map.media())
+        {
+            // auto const& medium = *media_map.getMedium(element_id);
+            auto const& fluid_phase_density =
+                fluidPhase(*medium)[MaterialPropertyLib::PropertyType::density];
+            if (typeid(fluid_phase_density) !=
+                typeid(MaterialPropertyLib::Constant))
+            {
+                OGS_FATAL(
+                    "Since `equation_balance_type` is set to `volume`,the "
+                    "phase density type must be `Constant`. Note: by "
+                    "default, `equation_balance_type` is set to `volume`.");
+            }
+        }
+    }
 
-    std::array<MaterialPropertyLib::PropertyType, 0> const
-        required_gas_properties{};
-
-    MaterialPropertyLib::checkMaterialSpatialDistributionMap(
-        mesh, media_map, required_medium_properties, required_solid_properties,
-        required_liquid_properties, required_gas_properties);
+    for (auto const& medium : media_map.media())
+    {
+        checkRequiredProperties(*medium, required_medium_properties);
+        checkRequiredProperties(fluidPhase(*medium),
+                                required_liquid_properties);
+    }
+    DBUG("Media properties verified.");
 }
+
+EquationBalanceType covertEquationBalanceTypeFromString(
+    std::string_view const type_in_string)
+{
+    if (type_in_string == "volume")
+    {
+        return EquationBalanceType::volume;
+    }
+    if (type_in_string == "mass")
+    {
+        return EquationBalanceType::mass;
+    }
+    OGS_FATAL(
+        "The value of `equation_balance_type` must be either `volume` or "
+        "`mass`");
+};
 
 std::unique_ptr<Process> createLiquidFlowProcess(
     std::string const& name,
@@ -128,8 +192,13 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         INFO("LiquidFlow process is set to be linear.");
     }
 
+    auto const equation_balance_type_str =
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__equation_balance_type}
+        config.getConfigParameter<std::string>("equation_balance_type",
+                                               "volume");
+
     DBUG("Check the media properties of LiquidFlow process ...");
-    checkMPLProperties(mesh, media_map);
+    checkMPLProperties(mesh, media_map, equation_balance_type_str == "volume");
     DBUG("Media properties verified.");
 
     auto const* aperture_size_parameter = &ParameterLib::findParameter<double>(
@@ -146,6 +215,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     }
 
     LiquidFlowData process_data{
+        covertEquationBalanceTypeFromString(equation_balance_type_str),
         std::move(media_map),
         MeshLib::getElementRotationMatrices(
             mesh_space_dimension, mesh.getDimension(), mesh.getElements()),

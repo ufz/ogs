@@ -13,6 +13,7 @@
 
 #include <map>
 #include <memory>
+#include <range/v3/view.hpp>
 #include <vector>
 
 namespace MeshLib
@@ -34,6 +35,8 @@ public:
         : media_(media), material_ids_(material_ids)
     {
     }
+
+    auto media() const { return media_ | ranges::views::values; }
 
     Medium* getMedium(std::size_t element_id);
     Medium const* getMedium(std::size_t element_id) const;

@@ -20,8 +20,24 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
+
+/// Governing equation balance type
+enum class EquationBalanceType
+{
+    volume,
+    mass
+};
+
 struct LiquidFlowData final
 {
+    /// This indicates whether the governing equation is a volume balance or a
+    /// mass balance. Its value can be `volume` or `mass`. If it is set to
+    /// `volume`, note that the phase density must be constant, and the unit of
+    /// the Neumann boundary condition is m/s. Otherwise, the unit of the
+    /// Neumann boundary condition is kg/m³·m/s = kg/m²/s. By default, it is set
+    /// to `volume`.
+    EquationBalanceType const equation_balance_type;
+
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// A vector of the rotation matrices for all elements.

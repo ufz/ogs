@@ -33,25 +33,51 @@ namespace ProcessLib
 namespace LiquidFlow
 {
 /**
- * \brief A class to simulate the liquid flow process in porous media described
- * by
+ * \brief A class to simulate the single phase flow process
+ *  in porous media described by the governing equation:
  *
  * \f[
- *     \frac{\partial n \rho_l}{\partial T} \frac{\partial T}{\partial t}/\rho_l
- *       + (\frac{\partial n \rho_l}{\partial p}/\rho_l + \beta_s)
+ *        \left(\frac{\partial}{\partial p}(\phi \rho) + \rho \beta_s\right)
  *          \frac{\partial p}{\partial t}
- *       -\nabla (\frac{K}{\mu}(\nabla p + \rho_l g \nabla z) ) = Q
- * \f]
- * where
- *    \f{eqnarray*}{
- *       &p:&        \mbox{pore pressure,}\\
- *       &T: &       \mbox{Temperature,}\\
- *       &\rho_l:&   \mbox{liquid density,}\\
- *       &\beta_s:&  \mbox{specific storage,}\\
- *       &K:&        \mbox{permeability,}\\
- *       &\mu:&      \mbox{viscosity,}\\
+ *       -\nabla \left(\rho\frac{\mathbf K}{\mu}(\nabla p + \rho g \nabla
+ * z)\right ) = \rho Q, \f] where \f{eqnarray*}{
+ *       &p:&       \mbox{pore pressure,}\\
+ *       &\phi:&    \mbox{porosity,}\\
+ *       &\rho:&    \mbox{liquid or gas density,}\\
+ *       &\beta_s:& \mbox{specific storage,}\\
+ *       &{\mathbf K}:&  \mbox{permeability,}\\
+ *       &\mu:&     \mbox{viscosity,}\\
+ *       &g:&       \mbox{gravitational constant,}\\
+ *       &Q:&       \mbox{Source/sink term in m}^3/{\text s}.\\
  *    \f}
- */
+ * This governing equation represents the mass balance.
+ *
+ * If the density is assumed constant, for example for a groundwater modelling,
+ *  the governing equation is scaled with the density, and it becomes volume
+ *  balanced as:
+ * \f[
+ *        \left(\frac{1}{\rho}\frac{\partial}{\partial p}(\phi \rho)
+ *          +  \beta_s\right)
+ *          \frac{\partial p}{\partial t}
+ *       -\nabla \left(\frac{\mathbf K}{\mu}(\nabla p + \rho g \nabla z)\right )
+ *      =  Q,
+ * \f]
+ *
+ * An optional input tag `equation_balance_type` of this process can be used to
+ * select whether to use the volume balanced equation or the mass balanced
+ * equation. <b>By default, we assume that volume balanced equation is used</b>.
+ *
+ * Be aware that the Neumann condition is
+ *    \f{eqnarray*}{
+ *       & -\frac{\mathbf K}{\mu}(\nabla p + \rho g \nabla z)
+ *          \cdot \mathbf n = q_v [\text{m/s}]: &
+ *          \mbox{ for the volume balance equation,}\\
+ *       & -\rho\frac{\mathbf K}{\mu}(\nabla p + \rho g \nabla z)
+ *          \cdot \mathbf n = q_f [\text{kg/m²/s}]: &
+ *            \mbox{for the mass balance equation,}
+ *    \f}
+ *   with \f$ \mathbf n \f$ the outer normal of the boundary.
+ *  */
 class LiquidFlowProcess final : public Process
 {
 public:

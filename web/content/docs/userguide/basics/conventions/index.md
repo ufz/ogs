@@ -84,8 +84,13 @@ That applies to all of OpenGeoSys's processes; currently there are no processes 
 
 **Pressure (Liquid Flow Process):**
 
-The liquid flow process uses a volume-based PDE, not a mass-based one.
-Therefore, the list above does not apply to the liquid flow process, but you have to divide all units of natural boundary conditions and source terms by density, leading to the following list:
+The liquid flow process uses either a volume-based or a mass-based PDE, which
+ can be selected by setting `equation_balance_type` to `volume` or `mass`
+ correspondingly in the project file. For the mass-based PDE, the
+ **pressure**-section above applies to the liquid flow process as well. For the
+ volume-based formulation, you have to keep in mind that the density must be
+ constant, and have to divide all units of natural boundary conditions and
+ source terms by density. This leads to the following list:
 
 * [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
 * [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to impose a volume flux through a domain boundary (Units: $\mathrm{L} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{m} \cdot \mathrm{s}^{-1} = \mathrm{m}^3 \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).

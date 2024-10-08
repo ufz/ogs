@@ -81,7 +81,7 @@ Eigen::Vector3d LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getFlux(
     pos.setElementID(_element.getID());
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& fluid_phase = fluidPhase(medium);
 
     MaterialPropertyLib::VariableArray vars;
 
@@ -94,7 +94,7 @@ Eigen::Vector3d LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getFlux(
             medium[MaterialPropertyLib::PropertyType::permeability].value(
                 vars, pos, t, dt));
     auto const viscosity =
-        liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
+        fluid_phase[MaterialPropertyLib::PropertyType::viscosity]
             .template value<double>(vars, pos, t, dt);
 
     Eigen::Vector3d flux(0.0, 0.0, 0.0);
@@ -123,6 +123,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         local_K_data, local_matrix_size, local_matrix_size);
     auto local_b = MathLib::createZeroedVector<NodalVectorType>(
         local_b_data, local_matrix_size);
+    const auto local_p_vec =
+        MathLib::toVector<NodalVectorType>(local_x, local_matrix_size);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -131,9 +133,16 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     pos.setElementID(_element.getID());
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& fluid_phase = fluidPhase(medium);
+    bool is_gas_phase = medium.hasPhase("Gas");
+    auto const fluid_pressure_variable =
+        is_gas_phase ? MaterialPropertyLib::Variable::gas_phase_pressure
+                     : MaterialPropertyLib::Variable::liquid_phase_pressure;
 
     MaterialPropertyLib::VariableArray vars;
+    auto& phase_pressue =
+        is_gas_phase ? vars.gas_phase_pressure : vars.liquid_phase_pressure;
+
     vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
@@ -151,38 +160,36 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& ip_data = _ip_data[ip];
         auto const& N = Ns[ip];
 
-        double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, N, p);
-        vars.liquid_phase_pressure = p;
+        phase_pressue = N.dot(local_p_vec);
 
-        // Compute density:
-        auto const fluid_density =
-            liquid_phase[MaterialPropertyLib::PropertyType::density]
-                .template value<double>(vars, pos, t, dt);
-        assert(fluid_density > 0.);
-        vars.density = fluid_density;
-
-        auto const ddensity_dpressure =
-            liquid_phase[MaterialPropertyLib::PropertyType::density]
-                .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::liquid_phase_pressure,
-                    pos, t, dt);
+        auto const [fluid_density, viscosity] =
+            getFluidDensityAndViscosity(t, dt, pos, fluid_phase, vars);
 
         auto const porosity =
             medium[MaterialPropertyLib::PropertyType::porosity]
                 .template value<double>(vars, pos, t, dt);
-        auto const storage = medium[MaterialPropertyLib::PropertyType::storage]
-                                 .template value<double>(vars, pos, t, dt);
-
-        // Assemble mass matrix, M
-        local_M.noalias() +=
-            (porosity * ddensity_dpressure / fluid_density + storage) *
-            N.transpose() * N * ip_data.integration_weight;
-
-        // Compute viscosity:
-        auto const viscosity =
-            liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
+        auto const specific_storage =
+            medium[MaterialPropertyLib::PropertyType::storage]
                 .template value<double>(vars, pos, t, dt);
+
+        auto const get_drho_dp = [&]()
+        {
+            return fluid_phase[MaterialPropertyLib::PropertyType::density]
+                .template dValue<double>(vars, fluid_pressure_variable, pos, t,
+                                         dt);
+        };
+        auto const storage =
+            _process_data.equation_balance_type == EquationBalanceType::volume
+                ? specific_storage
+                : specific_storage + porosity * get_drho_dp() / fluid_density;
+
+        double const scaling_factor =
+            _process_data.equation_balance_type == EquationBalanceType::volume
+                ? 1.0
+                : fluid_density;
+        // Assemble mass matrix, M
+        local_M.noalias() += scaling_factor * storage * N.transpose() * N *
+                             ip_data.integration_weight;
 
         pos.setIntegrationPoint(ip);
         GlobalDimMatrixType const permeability =
@@ -192,8 +199,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         // Assemble Laplacian, K, and RHS by the gravitational term
         LaplacianGravityVelocityCalculator::calculateLaplacianAndGravityTerm(
-            local_K, local_b, ip_data, permeability, viscosity, fluid_density,
-            projected_body_force_vector, _process_data.has_gravity);
+            local_K, local_b, ip_data, scaling_factor * permeability, viscosity,
+            fluid_density, projected_body_force_vector,
+            _process_data.has_gravity);
     }
 }
 
@@ -284,9 +292,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         _integration_method.getNumberOfPoints();
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& fluid_phase = fluidPhase(medium);
 
     MaterialPropertyLib::VariableArray vars;
+    auto& phase_pressue = medium.hasPhase("Gas") ? vars.gas_phase_pressure
+                                                 : vars.liquid_phase_pressure;
+
     vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
             .template value<double>(vars, pos, t, dt);
@@ -303,20 +314,11 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     {
         auto const& ip_data = _ip_data[ip];
         auto const& N = Ns[ip];
-        double p = 0.;
-        NumLib::shapeFunctionInterpolate(local_x, N, p);
-        vars.liquid_phase_pressure = p;
 
-        // Compute density:
-        auto const fluid_density =
-            liquid_phase[MaterialPropertyLib::PropertyType::density]
-                .template value<double>(vars, pos, t, dt);
-        vars.density = fluid_density;
+        phase_pressue = N.dot(local_p_vec);
 
-        // Compute viscosity:
-        auto const viscosity =
-            liquid_phase[MaterialPropertyLib::PropertyType::viscosity]
-                .template value<double>(vars, pos, t, dt);
+        auto const [fluid_density, viscosity] =
+            getFluidDensityAndViscosity(t, dt, pos, fluid_phase, vars);
 
         GlobalDimMatrixType const permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -336,11 +338,11 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::IsotropicCalculator::
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
         IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
-        GlobalDimMatrixType const& permeability, double const mu,
-        double const rho_L, GlobalDimVectorType const& specific_body_force,
-        bool const has_gravity)
+        GlobalDimMatrixType const& permeability_with_density_factor,
+        double const mu, double const rho_L,
+        GlobalDimVectorType const& specific_body_force, bool const has_gravity)
 {
-    const double K = permeability(0, 0) / mu;
+    const double K = permeability_with_density_factor(0, 0) / mu;
     const double fac = K * ip_data.integration_weight;
     local_K.noalias() += fac * ip_data.dNdx.transpose() * ip_data.dNdx;
 
@@ -378,18 +380,19 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::AnisotropicCalculator::
         Eigen::Map<NodalMatrixType>& local_K,
         Eigen::Map<NodalVectorType>& local_b,
         IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
-        GlobalDimMatrixType const& permeability, double const mu,
-        double const rho_L, GlobalDimVectorType const& specific_body_force,
-        bool const has_gravity)
+        GlobalDimMatrixType const& permeability_with_density_factor,
+        double const mu, double const rho_L,
+        GlobalDimVectorType const& specific_body_force, bool const has_gravity)
 {
     const double fac = ip_data.integration_weight / mu;
-    local_K.noalias() +=
-        fac * ip_data.dNdx.transpose() * permeability * ip_data.dNdx;
+    local_K.noalias() += fac * ip_data.dNdx.transpose() *
+                         permeability_with_density_factor * ip_data.dNdx;
 
     if (has_gravity)
     {
         local_b.noalias() += (fac * rho_L) * ip_data.dNdx.transpose() *
-                             permeability * specific_body_force;
+                             permeability_with_density_factor *
+                             specific_body_force;
     }
 }
 

@@ -13,6 +13,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <tuple>
 #include <vector>
 
 #include "LiquidFlowData.h"
@@ -165,8 +166,9 @@ private:
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b,
             IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
-            GlobalDimMatrixType const& permeability, double const mu,
-            double const rho_L, GlobalDimVectorType const& specific_body_force,
+            GlobalDimMatrixType const& permeability_with_density_factor,
+            double const mu, double const rho_L,
+            GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
         static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
@@ -187,8 +189,9 @@ private:
             Eigen::Map<NodalMatrixType>& local_K,
             Eigen::Map<NodalVectorType>& local_b,
             IntegrationPointData<GlobalDimNodalMatrixType> const& ip_data,
-            GlobalDimMatrixType const& permeability, double const mu,
-            double const rho_L, GlobalDimVectorType const& specific_body_force,
+            GlobalDimMatrixType const& permeability_with_density_factor,
+            double const mu, double const rho_L,
+            GlobalDimVectorType const& specific_body_force,
             bool const has_gravity);
 
         static Eigen::Matrix<double, GlobalDim, 1> calculateVelocity(
@@ -222,6 +225,11 @@ private:
 
     const LiquidFlowData& _process_data;
 };
+
+std::tuple<double, double> getFluidDensityAndViscosity(
+    double const t, double const dt, ParameterLib::SpatialPosition const& pos,
+    MaterialPropertyLib::Phase const& fluid_phase,
+    MaterialPropertyLib::VariableArray& vars);
 
 }  // namespace LiquidFlow
 }  // namespace ProcessLib
