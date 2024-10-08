@@ -45,10 +45,9 @@ void checkMPLProperties(
 
     // Collect phases of all elements...
     auto all_phases =
-        mesh.getElements() | MeshLib::views::ids |
-        ranges::views::transform(
-            [&](auto const& element_id)
-            { return &fluidPhase(*media_map.getMedium(element_id)); }) |
+        media_map.media() |
+        ranges::views::transform([&](auto const& medium)
+                                 { return &fluidPhase(*medium); }) |
         ranges::to_vector;
 
     assert(!all_phases.empty());
@@ -76,28 +75,27 @@ void checkMPLProperties(
     // Check Constant-type density.
     if (is_equation_type_volume)
     {
-        for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
+        for (auto const& medium : media_map.media())
         {
-            auto const& medium = *media_map.getMedium(element_id);
+            // auto const& medium = *media_map.getMedium(element_id);
             auto const& fluid_phase_density =
-                fluidPhase(medium)[MaterialPropertyLib::PropertyType::density];
+                fluidPhase(*medium)[MaterialPropertyLib::PropertyType::density];
             if (typeid(fluid_phase_density) !=
                 typeid(MaterialPropertyLib::Constant))
             {
                 OGS_FATAL(
                     "Since `equation_balance_type` is set to `volume`,the "
                     "phase density type must be `Constant`. Note: by "
-                    "default, "
-                    "`equation_balance_type` is set to `volume`.");
+                    "default, `equation_balance_type` is set to `volume`.");
             }
         }
     }
 
-    for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
+    for (auto const& medium : media_map.media())
     {
-        auto const& medium = *media_map.getMedium(element_id);
-        checkRequiredProperties(medium, required_medium_properties);
-        checkRequiredProperties(fluidPhase(medium), required_liquid_properties);
+        checkRequiredProperties(*medium, required_medium_properties);
+        checkRequiredProperties(fluidPhase(*medium),
+                                required_liquid_properties);
     }
     DBUG("Media properties verified.");
 }
