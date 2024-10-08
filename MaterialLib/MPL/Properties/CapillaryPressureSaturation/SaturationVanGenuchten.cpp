@@ -21,11 +21,13 @@ SaturationVanGenuchten::SaturationVanGenuchten(
     std::string name,
     double const residual_liquid_saturation,
     double const residual_gas_saturation,
-    double const exponent,
+    double const pressure_exponent,
+    double const saturation_exponent,
     double const p_b)
     : S_L_res_(residual_liquid_saturation),
       S_L_max_(1. - residual_gas_saturation),
-      m_(exponent),
+      m_(pressure_exponent),
+      n_(saturation_exponent),
       p_b_(p_b)
 {
     name_ = std::move(name);
@@ -33,9 +35,17 @@ SaturationVanGenuchten::SaturationVanGenuchten(
     if (!(m_ > 0 && m_ < 1))
     {
         OGS_FATAL(
-            "The exponent value m = {:g} of van Genuchten saturation model, is "
-            "out of its range of (0, 1)",
+            "The pressure exponent value m = {:g} of van Genuchten saturation "
+            "model, is out of its range of (0, 1)",
             m_);
+    }
+
+    if (n_ < 1)
+    {
+        OGS_FATAL(
+            "The saturation exponent value n = {:g} of van Genuchten "
+            "saturation model, is out of its range of [1, +inf)",
+            n_);
     }
 }
 
@@ -52,8 +62,7 @@ PropertyDataType SaturationVanGenuchten::value(
     }
 
     double const p = p_cap / p_b_;
-    double const n = 1. / (1. - m_);
-    double const p_to_n = std::pow(p, n);
+    double const p_to_n = std::pow(p, n_);
 
     double const S_eff = std::pow(p_to_n + 1., -m_);
     double const S = S_eff * S_L_max_ - S_eff * S_L_res_ + S_L_res_;
@@ -80,8 +89,7 @@ PropertyDataType SaturationVanGenuchten::dValue(
     }
 
     double const p = p_cap / p_b_;
-    double const n = 1. / (1. - m_);
-    double const p_to_n = std::pow(p, n);
+    double const p_to_n = std::pow(p, n_);
 
     double const S_eff = std::pow(p_to_n + 1., -m_);
     double const S = S_eff * S_L_max_ - S_eff * S_L_res_ + S_L_res_;
@@ -91,9 +99,8 @@ PropertyDataType SaturationVanGenuchten::dValue(
         return 0.;
     }
 
-    double const dS_eff_dp_cap = -m_ * std::pow(p, n - 1) *
-                                 std::pow(1 + p_to_n, -1. - m_) /
-                                 (p_b_ * (1. - m_));
+    double const dS_eff_dp_cap =
+        -m_ * n_ * p_to_n * S_eff / (p_cap * (p_to_n + 1.));
     return dS_eff_dp_cap * (S_L_max_ - S_L_res_);
 }
 
@@ -117,8 +124,7 @@ PropertyDataType SaturationVanGenuchten::d2Value(
     }
 
     double const p = p_cap / p_b_;
-    double const n = 1. / (1. - m_);
-    double const p_to_n = std::pow(p, n);
+    double const p_to_n = std::pow(p, n_);
 
     double const S_eff = std::pow(p_to_n + 1., -m_);
     double const S = S_eff * S_L_max_ - S_eff * S_L_res_ + S_L_res_;
@@ -129,8 +135,8 @@ PropertyDataType SaturationVanGenuchten::d2Value(
     }
 
     double const d2S_eff_dp_cap2 =
-        m_ * p_to_n * std::pow(p_to_n + 1., -m_ - 2.) * (p_to_n - m_) /
-        (p_cap * p_cap * (m_ - 1.) * (m_ - 1.));
+        m_ * n_ * n_ * p_to_n * S_eff * (p_to_n - m_) /
+        ((p_cap * p_to_n + p_cap) * (p_cap * p_to_n + p_cap));
     return d2S_eff_dp_cap2 * (S_L_max_ - S_L_res_);
 }
 }  // namespace MaterialPropertyLib

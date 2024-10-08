@@ -78,11 +78,12 @@ TEST(RichardsMechanics, computeMicroPorosity)
     // Saturation
     constexpr double residual_liquid_saturation = 0;
     constexpr double residual_gas_saturation = 0;
-    constexpr double exponent = 0.4;
+    constexpr double pressure_exponent = 0.4;
+    constexpr double saturation_exponent = 1. / (1. - pressure_exponent);
     constexpr double p_b = 300e6;
     MPL::Property const& saturation_micro = MPL::SaturationVanGenuchten{
         "saturation_micro", residual_liquid_saturation, residual_gas_saturation,
-        exponent, p_b};
+        pressure_exponent,  saturation_exponent,        p_b};
 
     // Swelling
     constexpr std::array swelling_pressures{1e7, 1e7, 1e7};
