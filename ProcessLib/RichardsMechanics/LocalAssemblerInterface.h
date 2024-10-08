@@ -76,13 +76,13 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
                 element_.getID());
         }
 
-        if (name == "sigma" && process_data_.initial_stress != nullptr)
+        if (name == "sigma" && process_data_.initial_stress.value != nullptr)
         {
             OGS_FATAL(
                 "Setting initial conditions for stress from integration "
                 "point data and from a parameter '{:s}' is not possible "
                 "simultaneously.",
-                process_data_.initial_stress->name);
+                process_data_.initial_stress.value->name);
         }
 
         if (name.starts_with("material_state_variable_"))

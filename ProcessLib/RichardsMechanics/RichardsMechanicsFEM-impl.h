@@ -219,6 +219,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& solid_phase = medium->phase("Solid");
 
+    auto const& identity2 = MathLib::KelvinVector::Invariants<
+        MathLib::KelvinVector::kelvin_vector_dimensions(
+            DisplacementDim)>::identity2;
+
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -256,6 +260,38 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 ->S_L;
         S_L_prev = medium->property(MPL::PropertyType::saturation)
                        .template value<double>(variables, x_position, t, dt);
+
+        if (this->process_data_.initial_stress.isTotalStress())
+        {
+            auto const alpha_b =
+                medium->property(MPL::PropertyType::biot_coefficient)
+                    .template value<double>(variables, x_position, t, dt);
+
+            variables.liquid_saturation = S_L_prev;
+            double const chi_S_L =
+                medium->property(MPL::PropertyType::bishops_effective_stress)
+                    .template value<double>(variables, x_position, t, dt);
+
+            // Initial stresses are total stress, which were assigned to
+            // sigma_eff in
+            // RichardsMechanicsLocalAssembler::initializeConcrete().
+            auto& sigma_eff =
+                std::get<ProcessLib::ThermoRichardsMechanics::
+                             ConstitutiveStress_StrainTemperature::
+                                 EffectiveStressData<DisplacementDim>>(
+                    this->current_states_[ip]);
+
+            auto& sigma_eff_prev = std::get<
+                PrevState<ProcessLib::ThermoRichardsMechanics::
+                              ConstitutiveStress_StrainTemperature::
+                                  EffectiveStressData<DisplacementDim>>>(
+                this->prev_states_[ip]);
+
+            // Reset sigma_eff to effective stress
+            sigma_eff.sigma_eff.noalias() +=
+                chi_S_L * alpha_b * (-p_cap_ip) * identity2;
+            sigma_eff_prev->sigma_eff = sigma_eff.sigma_eff;
+        }
 
         if (medium->hasProperty(MPL::PropertyType::saturation_micro))
         {
