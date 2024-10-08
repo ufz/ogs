@@ -52,6 +52,8 @@ std::string constructFormattedFileName(std::string const& format_specification,
                                        double const t,
                                        int const iteration);
 
+std::vector<double> readDoublesFromBinaryFile(const std::string& filename);
+
 /**
  * \brief write value as binary into the given output stream
  *

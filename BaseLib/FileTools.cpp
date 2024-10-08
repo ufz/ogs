@@ -278,6 +278,21 @@ bool createOutputDirectory(std::string const& dir)
     return true;
 }
 
+std::vector<double> readDoublesFromBinaryFile(const std::string& filename)
+{
+    auto prj_dir = BaseLib::getProjectDirectory();
+    std::string path_to_file = BaseLib::joinPaths(prj_dir, filename);
+    std::string file_extension = BaseLib::getFileExtension(filename);
+    if (file_extension != ".bin")
+    {
+        OGS_FATAL(
+            "Currently only binary files with extension '.bin' supported. The "
+            "specified file has extension {:s}.",
+            file_extension)
+    }
+    return BaseLib::readBinaryVector<double>(path_to_file);
+}
+
 template <typename T>
 T readBinaryValue(std::istream& in)
 {

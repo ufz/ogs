@@ -24,22 +24,6 @@
 
 namespace MathLib
 {
-
-std::vector<double> readDoublesFromBinaryFile(const std::string& filename)
-{
-    auto prj_dir = BaseLib::getProjectDirectory();
-    std::string path_to_file = BaseLib::joinPaths(prj_dir, filename);
-    std::string file_extension = BaseLib::getFileExtension(filename);
-    if (file_extension != ".bin")
-    {
-        OGS_FATAL(
-            "Currently only binary files with extension '.bin' supported. The "
-            "specified file has extension {:s}.",
-            file_extension)
-    }
-    return BaseLib::readBinaryVector<double>(path_to_file);
-}
-
 PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
     BaseLib::ConfigTree const& config)
 {
@@ -59,9 +43,9 @@ PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
             //! \ogs_file_param{curve__values}
             config.getConfigParameter<std::string>("values");
 
-        x = readDoublesFromBinaryFile(coords_file_name);
+        x = BaseLib::readDoublesFromBinaryFile(coords_file_name);
 
-        y = readDoublesFromBinaryFile(values_file_name);
+        y = BaseLib::readDoublesFromBinaryFile(values_file_name);
     }
     else
     {
