@@ -1,11 +1,10 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 ENV TZ=Europe/Berlin
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends clang-format git gcc g++ golang python3-pip wget xz-utils \
+    && apt-get install -y --no-install-recommends clang-format git gcc g++ golang python3-pip pre-commit wget xz-utils \
     && rm -rf /var/lib/apt/lists/*
-RUN pip install pre-commit==3.4.0
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
