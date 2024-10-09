@@ -35,4 +35,10 @@ template <int GlobalDim>
 MathLib::KelvinVector::KelvinVectorType<GlobalDim> formKelvinVector(
     MaterialPropertyLib::PropertyDataType const& values);
 
+extern template MathLib::KelvinVector::KelvinVectorType<2> formKelvinVector<2>(
+    MaterialPropertyLib::PropertyDataType const& values);
+
+extern template MathLib::KelvinVector::KelvinVectorType<3> formKelvinVector<3>(
+    MaterialPropertyLib::PropertyDataType const& values);
+
 }  // namespace MaterialPropertyLib
