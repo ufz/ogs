@@ -12,17 +12,13 @@
 #include "CreateLiquidFlowProcess.h"
 
 #include <algorithm>
-#include <range/v3/algorithm/any_of.hpp>
-#include <range/v3/algorithm/for_each.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/transform.hpp>
 #include <typeinfo>
 
 #include "LiquidFlowProcess.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Properties/Constant.h"
-#include "MaterialLib/PhysicalConstant.h"
+#include "MaterialLib/MPL/Utils/CheckMPLPhasesForSinglePhaseFlow.h"
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
 #include "ParameterLib/Utils.h"
@@ -38,29 +34,7 @@ void checkMPLProperties(
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map,
     bool const is_equation_type_volume)
 {
-    // Check all of the elements have a medium defined.
-    ranges::for_each(mesh.getElements() | MeshLib::views::ids,
-                     [&](auto const& element_id)
-                     { media_map.checkElementHasMedium(element_id); });
-
-    // Collect phases of all elements...
-    auto all_phases =
-        media_map.media() |
-        ranges::views::transform([&](auto const& medium)
-                                 { return &fluidPhase(*medium); }) |
-        ranges::to_vector;
-
-    assert(!all_phases.empty());
-
-    // ... and check if any of the phases are different by name.
-    if (ranges::any_of(all_phases,
-                       [p0 = all_phases.front()](auto const* const p)
-                       { return p->name != p0->name; }))
-    {
-        OGS_FATAL(
-            "You are mixing liquid and gas phases in your model domain. OGS "
-            "does not yet know how to handle this.");
-    }
+    MaterialPropertyLib::checkMPLPhasesForSinglePhaseFlow(mesh, media_map);
 
     std::array const required_medium_properties = {
         MaterialPropertyLib::reference_temperature,
