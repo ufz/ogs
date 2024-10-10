@@ -205,12 +205,20 @@ std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
            ranges::to<std::vector>;
 }
 
+static GlobalIndexType getGlobalIndex(
+    NumLib::detail::ComponentGlobalIndexDict const& dict,
+    MeshLib::Location const& l,
+    int const comp_id)
+{
+    auto const& m = dict.get<ByLocationAndComponent>();
+    auto const itr = m.find(Line(l, comp_id));
+    return itr != m.end() ? itr->global_index : MeshComponentMap::nop;
+}
+
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
                                                  int const comp_id) const
 {
-    auto const& m = _dict.get<ByLocationAndComponent>();
-    auto const itr = m.find(Line(l, comp_id));
-    return itr != m.end() ? itr->global_index : nop;
+    return NumLib::getGlobalIndex(_dict, l, comp_id);
 }
 
 std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(
