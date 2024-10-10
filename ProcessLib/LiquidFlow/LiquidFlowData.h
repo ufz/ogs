@@ -13,6 +13,7 @@
 #include <Eigen/Core>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "NumLib/Fem/ShapeMatrixCache.h"
 #include "ParameterLib/Parameter.h"
 
@@ -54,6 +55,8 @@ struct LiquidFlowData final
 
     /// caches for each mesh element type the shape matrix
     NumLib::ShapeMatrixCache shape_matrix_cache;
+
+    MaterialPropertyLib::Variable const phase_variable;
 };
 
 }  // namespace LiquidFlow

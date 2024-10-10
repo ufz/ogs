@@ -188,6 +188,13 @@ std::unique_ptr<Process> createLiquidFlowProcess(
             *aperture_config, "parameter", parameters, 1);
     }
 
+    // The uniqueness of phase has already been checked in
+    // `checkMPLProperties`.
+    MaterialPropertyLib::Variable const phase_variable =
+        (*ranges::begin(media_map.media()))->hasPhase("Gas")
+            ? MaterialPropertyLib::Variable::gas_phase_pressure
+            : MaterialPropertyLib::Variable::liquid_phase_pressure;
+
     LiquidFlowData process_data{
         covertEquationBalanceTypeFromString(equation_balance_type_str),
         std::move(media_map),
@@ -197,7 +204,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         std::move(specific_body_force),
         has_gravity,
         *aperture_size_parameter,
-        NumLib::ShapeMatrixCache{integration_order}};
+        NumLib::ShapeMatrixCache{integration_order},
+        phase_variable};
 
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
