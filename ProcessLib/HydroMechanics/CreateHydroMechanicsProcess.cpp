@@ -221,7 +221,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     // The uniqueness of phase has already been checked in
     // `checkMPLPhasesForSinglePhaseFlow`.
-    MaterialPropertyLib::Variable const phase_pressure =
+    MaterialPropertyLib::Variable const phase_variable =
         (*ranges::begin(media_map.media()))->hasPhase("Gas")
             ? MaterialPropertyLib::Variable::gas_phase_pressure
             : MaterialPropertyLib::Variable::liquid_phase_pressure;
@@ -252,7 +252,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         hydraulic_process_id,
         mechanics_related_process_id,
         use_taylor_hood_elements,
-        phase_pressure};
+        phase_variable};
 
     SecondaryVariableCollection secondary_variables;
 

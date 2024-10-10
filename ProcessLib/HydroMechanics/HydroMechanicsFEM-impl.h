@@ -257,7 +257,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const beta_p =
             fluid.property(MPL::PropertyType::density)
-                .template dValue<double>(vars, _process_data.phase_pressure,
+                .template dValue<double>(vars, _process_data.phase_variable,
                                          x_position, t, dt) /
             rho_fr;
 
@@ -616,7 +616,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             .template value<double>(vars, x_position, t, dt);
         auto const beta_p =
             fluid.property(MPL::PropertyType::density)
-                .template dValue<double>(vars, _process_data.phase_pressure,
+                .template dValue<double>(vars, _process_data.phase_variable,
                                          x_position, t, dt) /
             rho_fr;
 

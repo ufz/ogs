@@ -90,7 +90,7 @@ struct HydroMechanicsProcessData
 
     const bool use_taylor_hood_elements;
 
-    MaterialPropertyLib::Variable const phase_pressure;
+    MaterialPropertyLib::Variable const phase_variable;
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
