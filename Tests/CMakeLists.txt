@@ -1,6 +1,15 @@
 set(CMAKE_FOLDER "Testing")
 # ctest dependencies
-foreach(tool vtkdiff xdmfdiff)
+foreach(
+    tool
+    vtkdiff
+    xdmfdiff
+    GMSH2OGS
+    Layers2Grid
+    AddFaultToVoxelGrid
+    ExtractBoundary
+    generateStructuredMesh
+)
     if(TARGET ${tool})
         list(APPEND test_dependencies ${tool})
     endif()
@@ -86,9 +95,9 @@ endif()
 ogs_add_executable(testrunner ${TEST_SOURCES})
 
 target_sources(
-    testrunner PRIVATE ProcessLib/Graph/TestGet.cpp
-                       ProcessLib/Graph/TestApply.cpp
-                       ProcessLib/Graph/TestCheckEvalOrderRT.cpp
+    testrunner
+    PRIVATE ProcessLib/Graph/TestGet.cpp ProcessLib/Graph/TestApply.cpp
+            ProcessLib/Graph/TestCheckEvalOrderRT.cpp
 )
 
 target_link_libraries(
