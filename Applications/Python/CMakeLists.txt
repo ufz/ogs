@@ -50,19 +50,7 @@ if(OGS_USE_PIP)
                 "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=TRUE" -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
         )
-        set_tests_properties(
-            pytest PROPERTIES LABELS "default;python" COST 10
-        )
-
-        add_dependencies(
-            ctest
-            GMSH2OGS
-            Layers2Grid
-            AddFaultToVoxelGrid
-            ExtractBoundary
-            vtkdiff
-            generateStructuredMesh
-        )
+        set_tests_properties(pytest PROPERTIES LABELS "default;python" COST 10)
     endif()
 
 endif()
