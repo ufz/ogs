@@ -55,7 +55,7 @@ build wheels mac:
     CMAKE_OSX_DEPLOYMENT_TARGET: "10.15"
   <<: *wheels_template
 
-build wheels win:
+.build wheels win: # disabled temporarily due to runner hardware failure
   tags: [windows]
   extends:
     - .vs2019-environment
@@ -65,7 +65,7 @@ build wheels win:
 
 publish wheels:
   stage: release
-  needs: ["build wheels linux", "build wheels mac", "build wheels win"]
+  needs: ["build wheels linux", "build wheels mac"] # , "build wheels win", # disabled temporarily due to runner hardware failure
   tags: [envinf, shell]
   rules:
     - if: $CI_COMMIT_TAG
