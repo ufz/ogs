@@ -34,15 +34,16 @@ std::unique_ptr<SolidConstitutiveRelation<DisplacementDim>> createMFrontGeneric(
 }
 
 template <int DisplacementDim>
-std::map<int, std::unique_ptr<SolidConstitutiveRelation<DisplacementDim>>>
+std::map<int, std::shared_ptr<SolidConstitutiveRelation<DisplacementDim>>>
 CreateConstitutiveSetting<DisplacementDim>::createSolidConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config)
 {
     return MaterialLib::Solids::createConstitutiveRelationsGeneric(
-        parameters, local_coordinate_system, config,
+        parameters, local_coordinate_system, material_ids, config,
         createMFrontGeneric<DisplacementDim>);
 }
 

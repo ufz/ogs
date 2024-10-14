@@ -16,12 +16,7 @@
             <name>SD</name>
             <type>SMALL_DEFORMATION</type>
             <integration_order>2</integration_order>
-            <constitutive_relation id="0">
-                <type>LinearElasticIsotropic</type>
-                <youngs_modulus>E</youngs_modulus>
-                <poissons_ratio>nu</poissons_ratio>
-            </constitutive_relation>
-            <constitutive_relation id="1">
+            <constitutive_relation id="0,1">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>

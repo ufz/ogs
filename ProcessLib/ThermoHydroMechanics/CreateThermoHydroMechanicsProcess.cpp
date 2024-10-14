@@ -145,7 +145,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     /// \section parametersthm Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     auto ice_constitutive_relation =
         MaterialLib::Solids::createConstitutiveRelationIce<DisplacementDim>(

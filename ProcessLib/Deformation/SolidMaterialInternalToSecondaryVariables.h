@@ -25,7 +25,7 @@ template <typename SolidMaterial>
 std::map<std::string,
          std::vector<std::pair<int, typename SolidMaterial::InternalVariable>>>
 collectInternalVariables(
-    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials)
+    std::map<int, std::shared_ptr<SolidMaterial>> const& solid_materials)
 {
     assert(!solid_materials.empty());
 
@@ -107,7 +107,7 @@ InternalVariablesCollection(std::vector<Pair>&&, int, bool)
 
 template <typename SolidMaterial>
 void forEachSolidMaterialInternalVariable(
-    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
+    std::map<int, std::shared_ptr<SolidMaterial>> const& solid_materials,
     auto const& function)
 {
     auto internal_variables_by_name = collectInternalVariables(solid_materials);
@@ -202,7 +202,7 @@ private:
 template <typename LocalAssemblerInterface, typename SolidMaterial,
           typename AddSecondaryVariableCallback>
 void solidMaterialInternalToSecondaryVariables(
-    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
+    std::map<int, std::shared_ptr<SolidMaterial>> const& solid_materials,
     AddSecondaryVariableCallback const& add_secondary_variable)
 {
     auto register_secondary_variable =
@@ -261,7 +261,7 @@ private:
 
 template <typename LocalAssemblerInterface, typename SolidMaterial>
 void solidMaterialInternalVariablesToIntegrationPointWriter(
-    std::map<int, std::unique_ptr<SolidMaterial>> const& solid_materials,
+    std::map<int, std::shared_ptr<SolidMaterial>> const& solid_materials,
     std::vector<std::unique_ptr<LocalAssemblerInterface>> const&
         local_assemblers,
     std::vector<std::unique_ptr<MeshLib::IntegrationPointWriter>>&

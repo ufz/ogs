@@ -36,7 +36,7 @@ struct SmallDeformationProcessData
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
-    std::map<int, std::unique_ptr<
+    std::map<int, std::shared_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 

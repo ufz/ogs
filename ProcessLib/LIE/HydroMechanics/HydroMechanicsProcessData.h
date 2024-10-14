@@ -36,7 +36,7 @@ struct HydroMechanicsProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids;
     std::map<int,
-             std::unique_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
+             std::shared_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
         solid_materials;
     ParameterLib::Parameter<double> const& intrinsic_permeability;
     ParameterLib::Parameter<double> const& specific_storage;

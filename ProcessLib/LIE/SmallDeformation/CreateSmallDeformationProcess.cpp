@@ -113,7 +113,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     /// \section parametersliesd Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // Fracture constitutive relation.
     // read type;

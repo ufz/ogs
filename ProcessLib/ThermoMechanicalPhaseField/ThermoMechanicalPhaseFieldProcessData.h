@@ -34,7 +34,7 @@ struct ThermoMechanicalPhaseFieldProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
-    std::map<int, std::unique_ptr<
+    std::map<int, std::shared_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
     ParameterLib::Parameter<double> const& residual_stiffness;

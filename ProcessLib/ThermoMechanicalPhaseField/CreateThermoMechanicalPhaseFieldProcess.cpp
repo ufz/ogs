@@ -116,7 +116,7 @@ std::unique_ptr<Process> createThermoMechanicalPhaseFieldProcess(
     /// \section parameterstmpf Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     auto const phasefield_parameters_config =
         //! \ogs_file_param{prj__processes__process__THERMO_MECHANICAL_PHASE_FIELD__phasefield_parameters}

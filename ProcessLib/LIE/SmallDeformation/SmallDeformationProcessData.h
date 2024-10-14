@@ -35,9 +35,8 @@ struct SmallDeformationProcessData
     MeshLib::PropertyVector<int> const* const material_ids;
 
     /// The constitutive relation for the mechanical part.
-    std::map<
-        int,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+    std::map<int, std::shared_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>

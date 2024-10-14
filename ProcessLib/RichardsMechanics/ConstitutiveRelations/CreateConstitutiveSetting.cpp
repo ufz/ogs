@@ -16,15 +16,16 @@ namespace ProcessLib::RichardsMechanics
 {
 template <int DisplacementDim>
 std::map<int,
-         std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+         std::shared_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
 CreateConstitutiveSetting<DisplacementDim>::createSolidConstitutiveRelations(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
+    MeshLib::PropertyVector<int> const* const material_ids,
     BaseLib::ConfigTree const& config)
 {
     return MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-        parameters, local_coordinate_system, config);
+        parameters, local_coordinate_system, material_ids, config);
 }
 
 template struct CreateConstitutiveSetting<2>;

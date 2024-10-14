@@ -13,16 +13,16 @@
 
 #include <algorithm>
 
-#include "BaseLib/StringTools.h"
+#include "MaterialLib/Utils/MediaCreation.h"
 
-using namespace BaseLib;
+using namespace MaterialLib;
 
-TEST(BaseLib_SplitIntegerList, EmptyList)
+TEST(MaterialLib_SplitIntegerList, EmptyList)
 {
     ASSERT_TRUE(splitMaterialIdString("").empty());
 }
 
-TEST(BaseLib_SplitIntegerList, SingleInt)
+TEST(MaterialLib_SplitIntegerList, SingleInt)
 {
     using namespace testing;
 
@@ -41,7 +41,7 @@ TEST(BaseLib_SplitIntegerList, SingleInt)
                 ContainerEq(std::vector<int>{-20}));
 }
 
-TEST(BaseLib_SplitIntegerList, SingleIntFail)
+TEST(MaterialLib_SplitIntegerList, SingleIntFail)
 {
     // wrong character prefix/suffix
     EXPECT_THROW(splitMaterialIdString("x"), std::runtime_error);
@@ -62,7 +62,7 @@ TEST(BaseLib_SplitIntegerList, SingleIntFail)
         std::runtime_error);
 }
 
-TEST(BaseLib_SplitIntegerList, IntList)
+TEST(MaterialLib_SplitIntegerList, IntList)
 {
     using namespace testing;
 
@@ -78,20 +78,20 @@ TEST(BaseLib_SplitIntegerList, IntList)
                 ContainerEq(std::vector<int>{20, 22, 24}));
 }
 
-TEST(BaseLib_SplitIntegerList, IntListFail)
+TEST(MaterialLib_SplitIntegerList, IntListFail)
 {
     // only delimiter
-    EXPECT_THROW(BaseLib::splitMaterialIdString(","), std::runtime_error);
+    EXPECT_THROW(splitMaterialIdString(","), std::runtime_error);
 
     // empty element
-    EXPECT_THROW(BaseLib::splitMaterialIdString("5,,6"), std::runtime_error);
+    EXPECT_THROW(splitMaterialIdString("5,,6"), std::runtime_error);
 
     // leading comma
-    EXPECT_THROW(BaseLib::splitMaterialIdString(",40"), std::runtime_error);
+    EXPECT_THROW(splitMaterialIdString(",40"), std::runtime_error);
 
     // missing comma
-    EXPECT_THROW(BaseLib::splitMaterialIdString("12   20"), std::runtime_error);
+    EXPECT_THROW(splitMaterialIdString("12   20"), std::runtime_error);
 
     // wrong number in the list
-    EXPECT_THROW(BaseLib::splitMaterialIdString("1,2,x,5"), std::runtime_error);
+    EXPECT_THROW(splitMaterialIdString("1,2,x,5"), std::runtime_error);
 }

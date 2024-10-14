@@ -2,8 +2,8 @@ get_source_files(SOURCES)
 
 ogs_add_library(MaterialLib_SolidModels ${SOURCES})
 target_link_libraries(
-    MaterialLib_SolidModels PUBLIC MathLib Boost::math PRIVATE ParameterLib
-                                                               NumLib
+    MaterialLib_SolidModels PUBLIC MathLib Boost::math
+    PRIVATE ParameterLib MaterialLib_Utils NumLib
 )
 
 if(OGS_USE_MFRONT)

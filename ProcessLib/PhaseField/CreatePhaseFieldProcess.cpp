@@ -106,7 +106,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
     /// \section parameterspf Process Parameters
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     auto const phasefield_parameters_config =
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__phasefield_parameters}

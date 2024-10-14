@@ -204,7 +204,7 @@ struct PhaseFieldProcessData
 
     std::map<
         int,
-        std::unique_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
+        std::shared_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
     ParameterLib::Parameter<double> const& residual_stiffness;
     ParameterLib::Parameter<double> const& crack_resistance;

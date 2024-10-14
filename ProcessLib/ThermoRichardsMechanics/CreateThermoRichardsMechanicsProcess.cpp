@@ -136,7 +136,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
 
     auto solid_constitutive_relations =
         CreateConstitutiveSetting::createSolidConstitutiveRelations(
-            parameters, local_coordinate_system, config);
+            parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;

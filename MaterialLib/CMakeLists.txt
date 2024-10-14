@@ -1,5 +1,6 @@
 add_subdirectory(SolidModels)
 add_subdirectory(FractureModels)
+add_subdirectory(Utils)
 
 # Source files
 get_source_files(SOURCES)
@@ -42,7 +43,7 @@ ogs_add_library(
 
 target_link_libraries(
     MaterialLib PUBLIC BaseLib Eigen3::Eigen MaterialLib_SolidModels
-                       MaterialLib_FractureModels
+                       MaterialLib_FractureModels MaterialLib_Utils
     PRIVATE MathLib MeshLib ParameterLib exprtk Boost::math
 )
 

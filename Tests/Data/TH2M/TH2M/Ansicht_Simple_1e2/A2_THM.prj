@@ -14,12 +14,7 @@
             <name>THM</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>3</integration_order>
-            <constitutive_relation id="0">
-                <type>LinearElasticIsotropic</type>
-                <youngs_modulus>E</youngs_modulus>
-                <poissons_ratio>nu</poissons_ratio>
-            </constitutive_relation>
-            <constitutive_relation id="1">
+            <constitutive_relation id="0,1">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
