@@ -206,14 +206,6 @@ void linearSysNormalize(PETScMatrix const& A, PETScMatrix& new_A,
 void finalizeAssembly(PETScMatrix& A);
 void finalizeAssembly(PETScVector& x);
 
-// Reduce operations for interprocess communications while using Petsc
-static inline int reduceMin(int val)
-{
-    int result;
-    MPI_Allreduce(&val, &result, 1, MPI_INTEGER, MPI_MIN, PETSC_COMM_WORLD);
-    return result;
-}
-
 }  // namespace LinAlg
 }  // namespace MathLib
 
@@ -285,12 +277,6 @@ void linearSysNormalize(EigenMatrix const& A, EigenMatrix& new_A,
                         EigenVector const& b, EigenVector& new_b);
 void finalizeAssembly(EigenMatrix& x);
 void finalizeAssembly(EigenVector& A);
-
-// Reduce operations for interprocess communications while using Petsc
-static inline int reduceMin(int val)
-{
-    return val;
-}
 
 }  // namespace LinAlg
 

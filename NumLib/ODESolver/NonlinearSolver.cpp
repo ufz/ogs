@@ -15,6 +15,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "ConvergenceCriterion.h"
 #include "MathLib/LinAlg/LinAlg.h"
@@ -356,7 +357,8 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        int ok = 1, g_ok = 0;
+        int mpi_rank_assembly_ok = 1;
+        int mpi_all_assembly_ok = 0;
         try
         {
             sys.assemble(x, x_prev, process_id);
@@ -367,11 +369,13 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 e.what());
             error_norms_met = false;
             iteration = _maxiter;
-            ok = 0;
+            mpi_rank_assembly_ok = 0;
         }
-        g_ok = MathLib::LinAlg::reduceMin(ok);
-        if (g_ok == 0)
+        mpi_all_assembly_ok = BaseLib::MPI::reduceMin(mpi_rank_assembly_ok);
+        if (mpi_all_assembly_ok == 0)
+        {
             break;
+        }
         sys.getResidual(*x[process_id], *x_prev[process_id], res);
         sys.getJacobian(J);
         INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
