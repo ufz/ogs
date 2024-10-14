@@ -81,7 +81,7 @@ publish wheels:
 
 publish wheels to pypi (dev):
   stage: release
-  needs: ["build wheels linux", "build wheels mac", "build wheels win"]
+  needs: ["build wheels linux", "build wheels mac"] # , "build wheels win", # disabled temporarily due to runner hardware failure
   tags: [envinf, shell]
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
