@@ -42,13 +42,6 @@ struct HydroMechanicsProcessData
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
-    ParameterLib::Parameter<double> const& intrinsic_permeability;
-    ParameterLib::Parameter<double> const& specific_storage;
-    ParameterLib::Parameter<double> const& fluid_viscosity;
-    ParameterLib::Parameter<double> const& fluid_density;
-    ParameterLib::Parameter<double> const& biot_coefficient;
-    ParameterLib::Parameter<double> const& porosity;
-    ParameterLib::Parameter<double> const& solid_density;
     Eigen::Matrix<double, GlobalDim, 1> const specific_body_force;
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
         fracture_model;

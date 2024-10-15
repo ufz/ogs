@@ -20,7 +20,11 @@
 #include "MaterialLib/FractureModels/Permeability/CreatePermeabilityModel.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/PropertyType.h"
+#include "MaterialLib/MPL/Utils/CheckMPLPhasesForSinglePhaseFlow.h"
+#include "MaterialLib/MPL/VariableType.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
+#include "ParameterLib/SpatialPosition.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 
@@ -139,58 +143,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto solid_constitutive_relations =
         MaterialLib::Solids::createConstitutiveRelations<GlobalDim>(
             parameters, local_coordinate_system, materialIDs(mesh), config);
-
-    // Intrinsic permeability
-    auto& intrinsic_permeability = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__intrinsic_permeability}
-        "intrinsic_permeability", parameters, 1, &mesh);
-
-    DBUG("Use '{:s}' as intrinsic permeability parameter.",
-         intrinsic_permeability.name);
-
-    // Storage coefficient
-    auto& specific_storage = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__specific_storage}
-        "specific_storage", parameters, 1, &mesh);
-
-    DBUG("Use '{:s}' as specific storage parameter.", specific_storage.name);
-
-    // Fluid viscosity
-    auto& fluid_viscosity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_viscosity}
-        "fluid_viscosity", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as fluid viscosity parameter.", fluid_viscosity.name);
-
-    // Fluid density
-    auto& fluid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fluid_density}
-        "fluid_density", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as fluid density parameter.", fluid_density.name);
-
-    // Biot coefficient
-    auto& biot_coefficient = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__biot_coefficient}
-        "biot_coefficient", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as Biot coefficient parameter.", biot_coefficient.name);
-
-    // Porosity
-    auto& porosity = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__porosity}
-        "porosity", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as porosity parameter.", porosity.name);
-
-    // Solid density
-    auto& solid_density = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__solid_density}
-        "solid_density", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as solid density parameter.", solid_density.name);
 
     // Specific body force
     Eigen::Matrix<double, GlobalDim, 1> specific_body_force;
@@ -332,17 +284,51 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
+    std::array const requiredMediumProperties = {
+        MaterialPropertyLib::reference_temperature,
+        MaterialPropertyLib::permeability, MaterialPropertyLib::porosity,
+        MaterialPropertyLib::biot_coefficient};
+    std::array const requiredFluidProperties = {MaterialPropertyLib::viscosity,
+                                                MaterialPropertyLib::density};
+    std::array const requiredSolidProperties = {MaterialPropertyLib::density};
+
+    MaterialPropertyLib::checkMPLPhasesForSinglePhaseFlow(mesh, media_map);
+
+    for (auto const& medium : media_map.media())
+    {
+        checkRequiredProperties(*medium, requiredMediumProperties);
+        checkRequiredProperties(fluidPhase(*medium), requiredFluidProperties);
+        checkRequiredProperties(medium->phase("Solid"),
+                                requiredSolidProperties);
+    }
+
+    // Check whether fracture permeability is given as a scalar value.
+    for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
+    {
+        media_map.checkElementHasMedium(element_id);
+        auto const& medium = *media_map.getMedium(element_id);
+
+        // For fracture element
+        if (mesh.getElement(element_id)->getDimension() != GlobalDim)
+        {
+            ParameterLib::SpatialPosition x_position;
+            MaterialPropertyLib::VariableArray variables;
+            auto const permeability =
+                medium.property(MaterialPropertyLib::PropertyType::permeability)
+                    .value(variables, x_position, 0.0 /*t*/, 0.0 /*dt*/);
+            if (!std::holds_alternative<double>(permeability))
+            {
+                OGS_FATAL(
+                    "The permeability model for the fracture must be "
+                    "isotropic, and it must return a scalar value.");
+            }
+        }
+    }
+
     HydroMechanicsProcessData<GlobalDim> process_data{
         materialIDs(mesh),
         std::move(solid_constitutive_relations),
         std::move(media_map),
-        intrinsic_permeability,
-        specific_storage,
-        fluid_viscosity,
-        fluid_density,
-        biot_coefficient,
-        porosity,
-        solid_density,
         specific_body_force,
         std::move(fracture_model),
         std::move(frac_prop),

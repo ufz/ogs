@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <variant>
+
 #include "HydroMechanicsLocalAssemblerFracture.h"
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
 #include "MathLib/KelvinVector.h"
@@ -24,6 +26,8 @@ namespace LIE
 {
 namespace HydroMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 template <int GlobalDim, typename RotationMatrix>
 Eigen::Matrix<double, GlobalDim, GlobalDim> createRotatedTensor(
     RotationMatrix const& R, double const value)
@@ -206,6 +210,14 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    MPL::VariableArray variables;
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const T_ref =
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(variables, x_position, t, dt);
+    variables.temperature = T_ref;
+
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -228,10 +240,22 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto& state = *ip_data.material_state_variables;
         auto& b_m = ip_data.aperture;
 
-        double const S = frac_prop.specific_storage(t, x_position)[0];
-        double const mu = _process_data.fluid_viscosity(t, x_position)[0];
-        auto const alpha = frac_prop.biot_coefficient(t, x_position)[0];
-        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+        auto const rho_fr =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+        variables.density = rho_fr;
+
+        auto const alpha =
+            medium->property(MPL::PropertyType::biot_coefficient)
+                .template value<double>(variables, x_position, t, dt);
+
+        double const S =
+            medium->property(MPL::PropertyType::storage)
+                .template value<double>(variables, x_position, t, dt);
+
+        auto const mu =
+            liquid_phase.property(MPL::PropertyType::viscosity)
+                .template value<double>(variables, x_position, t, dt);
 
         // displacement jumps in local coordinates
         w.noalias() = R * H_g * g;
@@ -259,15 +283,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             t, x_position, ip_data.aperture0, stress0, w_prev, w,
             effective_stress_prev, effective_stress, C, state);
 
-        auto& k = ip_data.permeability;
-        k = frac_prop.permeability_model->permeability(
-            ip_data.permeability_state.get(), ip_data.aperture0, b_m);
-
-        // derivative of permeability respect to aperture
-        double const dk_db =
-            frac_prop.permeability_model->dpermeability_daperture(
-                ip_data.permeability_state.get(), ip_data.aperture0, b_m);
-
         //
         // displacement equation, displacement jump part
         //
@@ -284,26 +299,43 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         //
         // pressure equation, pressure part.
         //
+
+        variables.fracture_aperture = b_m;
+        // Assume that the fracture permeability is isotropic
+        auto const permeability =
+            medium->property(MPL::PropertyType::permeability)
+                .value(variables, x_position, t, dt);
+
+        auto& k = ip_data.permeability;
+        k = std::get<double>(permeability);
+        double const k_over_mu = k / mu;
         storage_p.noalias() += N_p.transpose() * b_m * S * N_p * ip_w;
         laplace_p.noalias() +=
-            dNdx_p.transpose() * b_m * k / mu * dNdx_p * ip_w;
+            dNdx_p.transpose() * b_m * k_over_mu * dNdx_p * ip_w;
         rhs_p.noalias() +=
-            dNdx_p.transpose() * b_m * k / mu * rho_fr * gravity_vec * ip_w;
+            dNdx_p.transpose() * b_m * k_over_mu * rho_fr * gravity_vec * ip_w;
 
         //
         // pressure equation, displacement jump part.
         //
-        GlobalDimVectorType const grad_head_over_mu =
-            (dNdx_p * p + rho_fr * gravity_vec) / mu;
+        GlobalDimVectorType const grad_head = dNdx_p * p + rho_fr * gravity_vec;
         Eigen::Matrix<double, 1, displacement_size> const mT_R_Hg =
             identity2.transpose() * R * H_g;
         // velocity in global coordinates
-        ip_data.darcy_velocity = -k * grad_head_over_mu;
+        ip_data.darcy_velocity = -k_over_mu * grad_head;
         J_pg.noalias() +=
             N_p.transpose() * S * N_p * (p - p_prev) / dt * mT_R_Hg * ip_w;
+
+        // derivative of permeability with respect to aperture
+        double const dk_db_over_mu =
+            medium->property(MPL::PropertyType::permeability)
+                .template dValue<double>(variables,
+                                         MPL::Variable::fracture_aperture,
+                                         x_position, t, dt) /
+            mu;
         J_pg.noalias() +=
-            dNdx_p.transpose() * k * grad_head_over_mu * mT_R_Hg * ip_w;
-        J_pg.noalias() += dNdx_p.transpose() * b_m * dk_db * grad_head_over_mu *
+            dNdx_p.transpose() * k_over_mu * grad_head * mT_R_Hg * ip_w;
+        J_pg.noalias() += dNdx_p.transpose() * b_m * dk_db_over_mu * grad_head *
                           mT_R_Hg * ip_w;
     }
 
