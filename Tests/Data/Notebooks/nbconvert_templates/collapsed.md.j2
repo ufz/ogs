@@ -1,21 +1,6 @@
 {% extends 'base/display_priority.j2' %}
 
-
-{% block in_prompt %}
-{% endblock in_prompt %}
-
-{% block output_prompt %}
-{%- endblock output_prompt %}
-
-{% block input %}
-{% if ('jupyter' in cell.metadata and 'source_hidden' in cell.metadata.jupyter and cell.metadata.jupyter.source_hidden == True) or (cell.source.splitlines() | length > 2)  -%}
-<details>
-<summary>
-<code>{{ cell.source.splitlines()[0] | e }}</code>&hellip;
-<span class="italic text-gray-700 text-sm">(click to toggle)</span>
-</summary>
-<div>
-{% endif %}
+{% macro render_full_jupyter_input(cell) -%}
 <div class="jupyter-input">
 
 ```
@@ -28,10 +13,30 @@
 ```
 
 </div>
-{% if ('jupyter' in cell.metadata and 'source_hidden' in cell.metadata.jupyter and cell.metadata.jupyter.source_hidden == True) or (cell.source.splitlines() | length > 2) %}
-</div>
+{%- endmacro %}
+
+{% macro render_jupyter_input(cell, collapsed) -%}
+{% if collapsed  -%}
+<details>
+<summary>
+<code>{{ cell.source.splitlines()[0] | e }}</code>&hellip;
+<span class="italic text-gray-700 text-sm">(click to toggle)</span>
+</summary>
+{{ render_full_jupyter_input(cell) }}
 </details>
+{% else %}
+{{ render_full_jupyter_input(cell) }}
 {% endif %}
+{%- endmacro %}
+
+{% block in_prompt %}
+{% endblock in_prompt %}
+
+{% block output_prompt %}
+{%- endblock output_prompt %}
+
+{% block input %}
+{{ render_jupyter_input(cell, ('jupyter' in cell.metadata and 'source_hidden' in cell.metadata.jupyter and cell.metadata.jupyter.source_hidden == True) or (cell.source.splitlines() | length > 2)) }}
 {% endblock input %}
 
 {% block error %}
