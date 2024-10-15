@@ -9,6 +9,9 @@
 
 #include "CreateCubicLawPermeability.h"
 
+#include <limits>
+#include <string>
+
 #include "BaseLib/ConfigTree.h"
 #include "CubicLawPermeability.h"
 #include "ParameterLib/Utils.h"
@@ -27,10 +30,15 @@ std::unique_ptr<Property> createCubicLawPermeability(
     //! \ogs_file_param{properties__property__name}
     auto property_name = config.peekConfigParameter<std::string>("name");
 
-    auto const& b = ParameterLib::findParameter<double>(
+    auto const fracture_aperture_name =
         //! \ogs_file_param{properties__property__CubicLawPermeability__fracture_aperture}
-        config.getConfigParameter<std::string>("fracture_aperture"), parameters,
-        0, nullptr);
+        config.getConfigParameter<std::string>("fracture_aperture", "");
+
+    ParameterLib::Parameter<double>* b =
+        fracture_aperture_name == ""
+            ? nullptr
+            : &ParameterLib::findParameter<double>(
+                  fracture_aperture_name, parameters, 0, nullptr);
 
     return std::make_unique<CubicLawPermeability>(std::move(property_name), b);
 }

@@ -17,14 +17,14 @@ namespace BaseLib
 class ConfigTree;
 }
 
-namespace MaterialPropertyLib
-{
-class Property;
-}
-
 namespace ParameterLib
 {
 struct ParameterBase;
+}
+
+namespace MaterialPropertyLib
+{
+class Property;
 }
 
 namespace MaterialPropertyLib
