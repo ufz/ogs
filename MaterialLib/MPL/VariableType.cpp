@@ -60,6 +60,8 @@ VariableArray::VariablePointerConst VariableArray::address_of(
             return &enthalpy_of_evaporation;
         case Variable::equivalent_plastic_strain:
             return &equivalent_plastic_strain;
+        case Variable::fracture_aperture:
+            return &fracture_aperture;
         case Variable::grain_compressibility:
             return &grain_compressibility;
         case Variable::liquid_phase_pressure:
