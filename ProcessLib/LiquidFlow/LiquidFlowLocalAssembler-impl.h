@@ -134,14 +134,10 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& fluid_phase = fluidPhase(medium);
-    bool is_gas_phase = medium.hasPhase("Gas");
-    auto const fluid_pressure_variable =
-        is_gas_phase ? MaterialPropertyLib::Variable::gas_phase_pressure
-                     : MaterialPropertyLib::Variable::liquid_phase_pressure;
 
     MaterialPropertyLib::VariableArray vars;
-    auto& phase_pressue =
-        is_gas_phase ? vars.gas_phase_pressure : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium.hasPhase("Gas") ? vars.gas_phase_pressure
+                                                  : vars.liquid_phase_pressure;
 
     vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
@@ -160,7 +156,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& ip_data = _ip_data[ip];
         auto const& N = Ns[ip];
 
-        phase_pressue = N.dot(local_p_vec);
+        phase_pressure = N.dot(local_p_vec);
 
         auto const [fluid_density, viscosity] =
             getFluidDensityAndViscosity(t, dt, pos, fluid_phase, vars);
@@ -175,8 +171,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const get_drho_dp = [&]()
         {
             return fluid_phase[MaterialPropertyLib::PropertyType::density]
-                .template dValue<double>(vars, fluid_pressure_variable, pos, t,
-                                         dt);
+                .template dValue<double>(vars, _process_data.phase_variable,
+                                         pos, t, dt);
         };
         auto const storage =
             _process_data.equation_balance_type == EquationBalanceType::volume
@@ -295,8 +291,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const& fluid_phase = fluidPhase(medium);
 
     MaterialPropertyLib::VariableArray vars;
-    auto& phase_pressue = medium.hasPhase("Gas") ? vars.gas_phase_pressure
-                                                 : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium.hasPhase("Gas") ? vars.gas_phase_pressure
+                                                  : vars.liquid_phase_pressure;
 
     vars.temperature =
         medium[MaterialPropertyLib::PropertyType::reference_temperature]
@@ -315,7 +311,7 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& ip_data = _ip_data[ip];
         auto const& N = Ns[ip];
 
-        phase_pressue = N.dot(local_p_vec);
+        phase_pressure = N.dot(local_p_vec);
 
         auto const [fluid_density, viscosity] =
             getFluidDensityAndViscosity(t, dt, pos, fluid_phase, vars);

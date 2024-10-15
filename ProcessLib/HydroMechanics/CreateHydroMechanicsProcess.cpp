@@ -11,6 +11,7 @@
 #include "CreateHydroMechanicsProcess.h"
 
 #include <cassert>
+#include <range/v3/range.hpp>
 #include <string>
 
 #include "HydroMechanicsProcess.h"
@@ -18,6 +19,7 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/CheckMPLPhasesForSinglePhaseFlow.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MeshLib/Utils/Is2DMeshOnRotatedVerticalPlane.h"
@@ -215,36 +217,20 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                                                 MaterialPropertyLib::density};
     std::array const requiredSolidProperties = {MaterialPropertyLib::density};
 
-    // setting default to suppress -Wmaybe-uninitialized warning
-    MaterialPropertyLib::Variable phase_pressure =
-        MaterialPropertyLib::Variable::liquid_phase_pressure;
-    for (auto const& element_id : mesh.getElements() | MeshLib::views::ids)
+    MaterialPropertyLib::checkMPLPhasesForSinglePhaseFlow(mesh, media_map);
+
+    // The uniqueness of phase has already been checked in
+    // `checkMPLPhasesForSinglePhaseFlow`.
+    MaterialPropertyLib::Variable const phase_variable =
+        (*ranges::begin(media_map.media()))->hasPhase("Gas")
+            ? MaterialPropertyLib::Variable::gas_phase_pressure
+            : MaterialPropertyLib::Variable::liquid_phase_pressure;
+    for (auto const& medium : media_map.media())
     {
-        media_map.checkElementHasMedium(element_id);
-        auto const& medium = *media_map.getMedium(element_id);
-        if (element_id == 0)
-        {
-            phase_pressure =
-                medium.hasPhase("Gas")
-                    ? MaterialPropertyLib::Variable::gas_phase_pressure
-                    : MaterialPropertyLib::Variable::liquid_phase_pressure;
-        }
-        else
-        {
-            auto const phase_pressure_tmp =
-                medium.hasPhase("Gas")
-                    ? MaterialPropertyLib::Variable::gas_phase_pressure
-                    : MaterialPropertyLib::Variable::liquid_phase_pressure;
-            if (phase_pressure != phase_pressure_tmp)
-            {
-                OGS_FATAL(
-                    "You are mixing liquid and gas phases in your model domain."
-                    "OGS does not yet know how to handle this.");
-            }
-        }
-        checkRequiredProperties(medium, requiredMediumProperties);
-        checkRequiredProperties(fluidPhase(medium), requiredFluidProperties);
-        checkRequiredProperties(medium.phase("Solid"), requiredSolidProperties);
+        checkRequiredProperties(*medium, requiredMediumProperties);
+        checkRequiredProperties(fluidPhase(*medium), requiredFluidProperties);
+        checkRequiredProperties(medium->phase("Solid"),
+                                requiredSolidProperties);
     }
     DBUG("Media properties verified.");
 
@@ -266,7 +252,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         hydraulic_process_id,
         mechanics_related_process_id,
         use_taylor_hood_elements,
-        phase_pressure};
+        phase_variable};
 
     SecondaryVariableCollection secondary_variables;
 

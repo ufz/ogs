@@ -182,8 +182,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
     auto const& fluid = fluidPhase(*medium);
-    auto const& phase_pressure = _process_data.phase_pressure;
     MPL::VariableArray vars;
+    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
+                                                   : vars.liquid_phase_pressure;
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
@@ -219,9 +220,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const p_int_pt = N_p.dot(p);
 
-        // setting both vars equal to enable MPL access for gas and liquid
-        // properties
-        vars.liquid_phase_pressure = vars.gas_phase_pressure = p_int_pt;
+        phase_pressure = p_int_pt;
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, T_ref);
@@ -256,10 +255,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
 
-        auto const beta_p = fluid.property(MPL::PropertyType::density)
-                                .template dValue<double>(vars, phase_pressure,
-                                                         x_position, t, dt) /
-                            rho_fr;
+        auto const beta_p =
+            fluid.property(MPL::PropertyType::density)
+                .template dValue<double>(vars, _process_data.phase_variable,
+                                         x_position, t, dt) /
+            rho_fr;
 
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
@@ -411,6 +411,8 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
+    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
+                                                   : vars.liquid_phase_pressure;
 
     // TODO (naumov) Temporary value not used by current material models. Need
     // extension of secondary variables interface.
@@ -427,9 +429,7 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
 
         double const p_int_pt = _ip_data[ip].N_p.dot(p);
 
-        // setting both vars equal to enable MPL access for gas and liquid
-        // properties
-        vars.liquid_phase_pressure = vars.gas_phase_pressure = p_int_pt;
+        phase_pressure = p_int_pt;
 
         auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
@@ -535,8 +535,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& fluid = fluidPhase(*medium);
-    auto const& phase_pressure = _process_data.phase_pressure;
     MPL::VariableArray vars;
+    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
+                                                   : vars.liquid_phase_pressure;
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
@@ -563,9 +564,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         double const p_int_pt = N_p.dot(p);
 
-        // setting both vars equal to enable MPL access for gas and liquid
-        // properties
-        vars.liquid_phase_pressure = vars.gas_phase_pressure = p_int_pt;
+        phase_pressure = p_int_pt;
 
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, T_ref);
@@ -615,10 +614,11 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const mu = fluid.property(MPL::PropertyType::viscosity)
                             .template value<double>(vars, x_position, t, dt);
-        auto const beta_p = fluid.property(MPL::PropertyType::density)
-                                .template dValue<double>(vars, phase_pressure,
-                                                         x_position, t, dt) /
-                            rho_fr;
+        auto const beta_p =
+            fluid.property(MPL::PropertyType::density)
+                .template dValue<double>(vars, _process_data.phase_variable,
+                                         x_position, t, dt) /
+            rho_fr;
 
         auto const K_over_mu = K / mu;
 
@@ -701,6 +701,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& solid = medium->phase("Solid");
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
+    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
+                                                   : vars.liquid_phase_pressure;
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
@@ -731,9 +733,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto& eps = _ip_data[ip].eps;
         auto const& sigma_eff = _ip_data[ip].sigma_eff;
 
-        // setting both vars equal to enable MPL access for gas and liquid
-        // properties
-        vars.liquid_phase_pressure = vars.gas_phase_pressure = N_p.dot(p);
+        phase_pressure = N_p.dot(p);
 
         auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
@@ -1159,6 +1159,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium = _process_data.media_map.getMedium(elem_id);
     MPL::VariableArray vars;
+    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
+                                                   : vars.liquid_phase_pressure;
 
     SymmetricTensor k_sum = SymmetricTensor::Zero(KelvinVectorSize);
     auto sigma_eff_sum = MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
@@ -1177,9 +1179,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                .template value<double>(vars, x_position, t, dt);
         double const p_int_pt = _ip_data[ip].N_p.dot(p);
 
-        // setting both vars equal to enable MPL access for gas and liquid
-        // properties
-        vars.liquid_phase_pressure = vars.gas_phase_pressure = p_int_pt;
+        phase_pressure = p_int_pt;
 
         // Set mechanical variables for the intrinsic permeability model
         // For stress dependent permeability.
