@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>2d_mesh.vtu</mesh>
@@ -39,7 +39,7 @@
         <mesh>2D_p_top.vtu</mesh>
         <mesh>2D_p_bottom.vtu</mesh>
         <mesh>2D_injection_position.vtu</mesh>
-        <mesh>2D_outflow_position.vtu</mesh>        
+        <mesh>2D_outflow_position.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -71,13 +71,6 @@
                 <secondary_variable internal_name="fracture_stress" output_name="fracture_stress"/>
                 <secondary_variable internal_name="fracture_velocity" output_name="fracture_velocity"/>
             </secondary_variables>
-            <intrinsic_permeability>k</intrinsic_permeability>
-            <specific_storage>S</specific_storage>
-            <fluid_viscosity>mu</fluid_viscosity>
-            <biot_coefficient>biot_m</biot_coefficient>
-            <porosity>phi</porosity>
-            <solid_density>rho_sr</solid_density>
-            <fluid_density>rho_fr</fluid_density>
             <initial_effective_stress>effective_stress0</initial_effective_stress>
             <fracture_model>
                 <type>LinearElasticIsotropic</type>
@@ -87,13 +80,7 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
-                <material_id>2</material_id>
                 <initial_aperture>aperture0</initial_aperture>
-                <specific_storage>S_f</specific_storage>
-                <biot_coefficient>biot_f</biot_coefficient>
-                <permeability_model>
-                    <type>CubicLaw</type>
-                </permeability_model>
             </fracture_properties>
             <deactivate_matrix_in_flow>true</deactivate_matrix_in_flow>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
@@ -150,6 +137,170 @@
             </timesteps>
         </output>
     </time_loop>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Parameter</type>
+                            <parameter_name>mu</parameter_name>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_fr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_sr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>k</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>phi</parameter_name>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Parameter</type>
+                    <parameter_name>S</parameter_name>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Parameter</type>
+                    <parameter_name>biot_m</parameter_name>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Parameter</type>
+                            <parameter_name>mu</parameter_name>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_fr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_sr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>k</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>phi</parameter_name>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Parameter</type>
+                    <parameter_name>S</parameter_name>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Parameter</type>
+                    <parameter_name>biot_m</parameter_name>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="2">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Parameter</type>
+                            <parameter_name>mu</parameter_name>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_fr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_sr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>CubicLawPermeability</type>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Parameter</type>
+                    <parameter_name>S_f</parameter_name>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Parameter</type>
+                    <parameter_name>biot_f</parameter_name>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <parameters>
         <parameter>
             <name>E1</name>
@@ -205,7 +356,7 @@
         <parameter>
             <name>biot_m</name>
             <type>Constant</type>
-            <value>0.005</value>            
+            <value>0.005</value>
         </parameter>
         <!-- Fracture properties -->
         <parameter>
@@ -220,7 +371,7 @@
         </parameter>
         <parameter>
             <name>S_f</name>
-            <type>Constant</type> 	
+            <type>Constant</type>
             <value>1e-11</value>
         </parameter>
         <parameter>
@@ -253,7 +404,7 @@
             <name>p0</name>
             <type>Constant</type>
             <value>2.0e6</value>
-        </parameter>        
+        </parameter>
         <!-- BC -->
         <parameter>
             <name>p_down_stream</name>
@@ -265,14 +416,12 @@
             <type>Constant</type>
             <value>4.167e-7</value>
         </parameter>
-
         <parameter>
             <name>p_injection_ramp</name>
             <type>CurveScaled</type>
             <curve>timeRamp</curve>
             <parameter>p_injection_rate</parameter>
         </parameter>
-
         <parameter>
             <name>u0</name>
             <type>Constant</type>
