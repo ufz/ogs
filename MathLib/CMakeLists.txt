@@ -34,6 +34,7 @@ target_link_libraries(
         $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
         $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
         Eigen3::Eigen
+        Boost::math
         $<$<AND:$<TARGET_EXISTS:OpenMP::OpenMP_CXX>,$<BOOL:$<STREQUAL:${OGS_EIGEN_PARALLEL_BACKEND},OpenMP>>>:OpenMP::OpenMP_CXX>
     PRIVATE $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>
 )
