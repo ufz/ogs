@@ -47,6 +47,9 @@ struct IntegrationPointDataMatrix final
     typename ShapeMatrixTypePressure::NodalRowVectorType N_p;
     typename ShapeMatrixTypePressure::GlobalDimNodalMatrixType dNdx_p;
 
+    using GlobalDimVectorType =
+        typename ShapeMatrixTypePressure::GlobalDimVectorType;
+
     MaterialLib::Solids::MechanicsBase<GlobalDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         GlobalDim>::MaterialStateVariables>
@@ -55,7 +58,7 @@ struct IntegrationPointDataMatrix final
     typename BMatricesType::KelvinMatrixType C;
     double integration_weight;
 
-    GlobalDimVector darcy_velocity;
+    GlobalDimVectorType darcy_velocity;
 
     void pushBackState()
     {

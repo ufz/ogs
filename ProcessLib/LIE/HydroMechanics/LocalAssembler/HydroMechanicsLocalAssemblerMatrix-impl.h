@@ -474,12 +474,12 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                 liquid_phase.property(MPL::PropertyType::viscosity)
                     .template value<double>(variables, x_position, t, dt);
 
-            auto const k_over_mu =
-                MPL::formEigenTensor<GlobalDim>(
-                    medium->property(MPL::PropertyType::permeability)
-                        .value(variables, x_position, t, dt))
-                    .eval() /
-                mu;
+            auto const k = MPL::formEigenTensor<GlobalDim>(
+                               medium->property(MPL::PropertyType::permeability)
+                                   .value(variables, x_position, t, dt))
+                               .eval();
+
+            GlobalDimMatrixType const k_over_mu = k / mu;
 
             auto const& gravity_vec = _process_data.specific_body_force;
             auto const& dNdx_p = ip_data.dNdx_p;

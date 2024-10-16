@@ -120,9 +120,6 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         ip_data.aperture0 = aperture0_node_values.dot(sm_u.N);
         ip_data.aperture = ip_data.aperture0;
 
-        ip_data.permeability_state =
-            frac_prop.permeability_model->getNewState();
-
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
         for (int i = 0; i < GlobalDim; i++)

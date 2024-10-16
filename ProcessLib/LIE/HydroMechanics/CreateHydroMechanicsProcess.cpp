@@ -204,7 +204,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     // Fracture properties
-    std::unique_ptr<FracturePropertyHM> frac_prop = nullptr;
+    std::unique_ptr<FractureProperty> frac_prop = nullptr;
     auto opt_fracture_properties_config =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties}
         config.getConfigSubtreeOptional("fracture_properties");
@@ -212,21 +212,13 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     {
         auto& fracture_properties_config = *opt_fracture_properties_config;
 
-        frac_prop = std::make_unique<ProcessLib::LIE::FracturePropertyHM>(
+        frac_prop = std::make_unique<ProcessLib::LIE::FractureProperty>(
             0 /*fracture_id*/,
             //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__material_id}
             fracture_properties_config.getConfigParameter<int>("material_id"),
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
                 fracture_properties_config, "initial_aperture", parameters, 1,
-                &mesh),
-            ParameterLib::findParameter<double>(
-                //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__specific_storage}
-                fracture_properties_config, "specific_storage", parameters, 1,
-                &mesh),
-            ParameterLib::findParameter<double>(
-                //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__biot_coefficient}
-                fracture_properties_config, "biot_coefficient", parameters, 1,
                 &mesh));
         if (frac_prop->aperture0.isTimeDependent())
         {
@@ -235,13 +227,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 "time-dependent.",
                 frac_prop->aperture0.name);
         }
-
-        auto permeability_model_config =
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__permeability_model}
-            fracture_properties_config.getConfigSubtree("permeability_model");
-        frac_prop->permeability_model =
-            MaterialLib::Fracture::Permeability::createPermeabilityModel(
-                permeability_model_config);
     }
 
     // initial effective stress in matrix
@@ -336,8 +321,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         initial_fracture_effective_stress,
         deactivate_matrix_in_flow,
         reference_temperature,
-        use_b_bar,
-    };
+        use_b_bar};
 
     SecondaryVariableCollection secondary_variables;
 

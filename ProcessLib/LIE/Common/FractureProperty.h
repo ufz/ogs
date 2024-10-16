@@ -53,24 +53,6 @@ struct FractureProperty
     virtual ~FractureProperty() = default;
 };
 
-struct FracturePropertyHM : public FractureProperty
-{
-    FracturePropertyHM(int const fracture_id_, int const material_id,
-                       ParameterLib::Parameter<double> const& initial_aperture,
-                       ParameterLib::Parameter<double> const& specific_storage_,
-                       ParameterLib::Parameter<double> const& biot_coefficient_)
-        : FractureProperty(fracture_id_, material_id, initial_aperture),
-          specific_storage(specific_storage_),
-          biot_coefficient(biot_coefficient_)
-    {
-    }
-    ParameterLib::Parameter<double> const& specific_storage;
-    ParameterLib::Parameter<double> const& biot_coefficient;
-
-    std::unique_ptr<MaterialLib::Fracture::Permeability::Permeability>
-        permeability_model;
-};
-
 /// configure fracture property based on a fracture element assuming
 /// a fracture is a straight line/flat plane
 inline void setFractureProperty(int const dim, MeshLib::Element const& e,
