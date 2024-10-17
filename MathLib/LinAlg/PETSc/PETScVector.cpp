@@ -47,7 +47,8 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 PETScVector::PETScVector(const PetscInt vec_size,
                          const std::vector<PetscInt>& ghost_ids,
                          const bool is_global_size)
-    : size_ghosts_{static_cast<PetscInt>(ghost_ids.size())}, has_ghost_id_{true}
+    : size_ghosts_{static_cast<PetscInt>(ghost_ids.size())},
+      created_with_ghost_id_{true}
 {
     PetscInt nghosts = static_cast<PetscInt>(ghost_ids.size());
     if (is_global_size)
@@ -90,7 +91,7 @@ PETScVector::PETScVector(PETScVector&& other)
       size_{other.size_},
       size_loc_{other.size_loc_},
       size_ghosts_{other.size_ghosts_},
-      has_ghost_id_{other.has_ghost_id_},
+      created_with_ghost_id_{other.created_with_ghost_id_},
       global_ids2local_ids_ghost_{other.global_ids2local_ids_ghost_}
 {
 }
@@ -178,7 +179,14 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 
 void PETScVector::setLocalAccessibleVector() const
 {
-    copyValues(entry_array_);
+    if (created_with_ghost_id_)
+    {
+        copyValues(entry_array_);
+        return;
+    }
+
+    entry_array_.resize(size_);
+    getGlobalVector(entry_array_);
 }
 
 void PETScVector::copyValues(std::vector<PetscScalar>& u) const
@@ -192,49 +200,27 @@ void PETScVector::copyValues(std::vector<PetscScalar>& u) const
 
 PetscScalar PETScVector::get(const PetscInt idx) const
 {
-    if (!global_ids2local_ids_ghost_.empty())
+    if (created_with_ghost_id_)
     {
         return entry_array_[getLocalIndex(idx)];
     }
 
-    // Ghost entries, and its original index is 0.
-    const PetscInt id_p = (idx == -size_) ? 0 : std::abs(idx);
-    return entry_array_[id_p];
+    return entry_array_[idx];
 }
 
 std::vector<PetscScalar> PETScVector::get(
     std::vector<IndexType> const& indices) const
 {
     std::vector<PetscScalar> local_x(indices.size());
-    // If VecGetValues can get values from different processors,
-    // use VecGetValues(v_, indices.size(), indices.data(),
-    //                    local_x.data());
-
-    if (!global_ids2local_ids_ghost_.empty())
-    {
-        for (std::size_t i = 0; i < indices.size(); i++)
-        {
-            local_x[i] = entry_array_[getLocalIndex(indices[i])];
-        }
-    }
-    else
-    {
-        for (std::size_t i = 0; i < indices.size(); i++)
-        {
-            // Ghost entries, and its original index is 0.
-            const IndexType id_p =
-                (indices[i] == -size_) ? 0 : std::abs(indices[i]);
-            local_x[i] = entry_array_[id_p];
-        }
-    }
-
+    std::transform(indices.begin(), indices.end(), local_x.begin(),
+                   [this](IndexType index) { return get(index); });
     return local_x;
 }
 
 PetscScalar* PETScVector::getLocalVector() const
 {
     PetscScalar* loc_array;
-    if (has_ghost_id_)
+    if (created_with_ghost_id_ && !global_ids2local_ids_ghost_.empty())
     {
         VecGhostUpdateBegin(v_, INSERT_VALUES, SCATTER_FORWARD);
         VecGhostUpdateEnd(v_, INSERT_VALUES, SCATTER_FORWARD);
@@ -253,6 +239,15 @@ PetscInt PETScVector::getLocalIndex(const PetscInt global_index) const
 {
     if (global_index >= 0)  // non-ghost entry.
     {
+#ifndef NDEBUG
+        if (global_index < start_rank_ || global_index >= end_rank_)
+        {
+            OGS_FATAL(
+                "The global index {:d} is out of the range `[`{:d}, {:d}`)` of "
+                "the current rank.",
+                global_index, start_rank_, end_rank_);
+        }
+#endif
         return global_index - start_rank_;
     }
 
@@ -260,12 +255,22 @@ PetscInt PETScVector::getLocalIndex(const PetscInt global_index) const
     // the size of the local vector:
     PetscInt real_global_index = (-global_index == size_) ? 0 : -global_index;
 
+#ifndef NDEBUG
+    if (global_ids2local_ids_ghost_.find(real_global_index) ==
+            global_ids2local_ids_ghost_.end() ||
+        global_ids2local_ids_ghost_.empty())
+    {
+        OGS_FATAL("The global index {:d} is not found as a ghost ID",
+                  global_index);
+    }
+#endif
+
     return global_ids2local_ids_ghost_.at(real_global_index);
 }
 
 void PETScVector::restoreArray(PetscScalar* array) const
 {
-    if (has_ghost_id_)
+    if (created_with_ghost_id_ && !global_ids2local_ids_ghost_.empty())
     {
         VecRestoreArray(v_loc_, &array);
         VecGhostRestoreLocalForm(v_, &v_loc_);
@@ -305,7 +310,7 @@ void PETScVector::shallowCopy(const PETScVector& v)
     size_ = v.size_;
     size_loc_ = v.size_loc_;
     size_ghosts_ = v.size_ghosts_;
-    has_ghost_id_ = v.has_ghost_id_;
+    created_with_ghost_id_ = v.created_with_ghost_id_;
     global_ids2local_ids_ghost_ = v.global_ids2local_ids_ghost_;
 
     config();
