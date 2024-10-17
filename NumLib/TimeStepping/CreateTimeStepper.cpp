@@ -49,7 +49,8 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     if (type == "IterationNumberBasedTimeStepping")
     {
         return NumLib::createIterationNumberBasedTimeStepping(
-            config, fixed_times_for_output);
+            parseIterationNumberBasedTimeStepping(config),
+            fixed_times_for_output);
     }
     OGS_FATAL(
         "Unknown time stepping type: '{:s}'. The available types are: "
