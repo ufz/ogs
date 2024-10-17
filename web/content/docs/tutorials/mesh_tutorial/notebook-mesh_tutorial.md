@@ -3,6 +3,7 @@ date = "2023-010-13T11:00:13+01:00"
 title = "Mesh Tutorial"
 author = "Christoph Lehmann, Feliks Kiszkurno, Frieder Loer"
 weight = 2
+toc = true
 +++
 
 
@@ -12,7 +13,7 @@ In this tutorial the user will learn to use some of the tools provided with Open
 
 ## Requirements
 
-- A running version of OpenGeoSys (it be installed via pip, as a container or as 'CLI with utilities' binary download
+- A running version of OpenGeoSys (it can be installed via `pip`, as a container or as 'CLI with utilities' binary download)
 - It is assumed, that regardless of how OGS is installed, it is added to the environment variables and is accessible from the shell.
 - In case of a problem, please consult the [installation]({{< ref "/docs/userguide/basics/introduction" >}}) and [troubleshooting]({{< ref "/docs/userguide/troubleshooting/get-support" >}}) pages.
 - For viewing a mesh with PyVista, Python is required.
@@ -29,27 +30,9 @@ If parameters can take different values (for example to apply them in different 
 For example directional parameters set `-dx -dy -dz` will be indicated by `-d$direction $value`.  
 This doesn't apply to code snippets, there the parameters will be written explicitly.
 
-## Flow
-
-[In the first](#1-learn-tools), some tools that can be used to create a mesh will be presented with a short description and an example.  
-
-Next, users can verify their understanding with a couple of exercises.  
-
-At the end, answers will be provided for the exercises with explanations.
-
 `!` is used to run shell commands from within the Jupyter notebook.
 
-## 1 Learn tools
-
-### Outline  
-
-In this step you will get familiar with basic tools used for working with meshes, that are provided as part of the OpenGeoSys platform:
-
-- [generateStructuredMesh]({{< ref "structured-mesh-generation" >}})
-- [ExtractBoundary]({{< ref "extract-boundary" >}})
-- [removeMeshElements]({{< ref "remove-mesh-elements" >}})
-
-### Useful links  
+## Useful links  
 
 It is not mandatory to read the following articles before starting with the tutorial, but they can provide some expansion and additional explanation to the content presented here.
 
@@ -57,7 +40,20 @@ It is not mandatory to read the following articles before starting with the tuto
 - [Structured mesh generation]({{< ref "structured-mesh-generation" >}})
 - [Extracting surfaces]({{< ref "extract-surface" >}})
 - [Removing mesh elements]({{< ref "remove-mesh-elements" >}})
-- [PyVista documentation](https://docs.pyvista.org/)
+- [PyVista documentation (external link)](https://docs.pyvista.org/)
+
+## Overview over the tutorial
+
+In this tutorial, some tools that can be used to create a mesh will be presented with a short description and an example.
+These tools are shipped as executables with OGS:
+
+- [generateStructuredMesh]({{< ref "structured-mesh-generation" >}})
+- [ExtractBoundary]({{< ref "extract-boundary" >}})
+- [removeMeshElements]({{< ref "remove-mesh-elements" >}})
+
+Afterwards, you can test your understanding with a couple of exercises.  
+
+## Preparations
 
 We first set an output directory and import some required libraries. This tutorial uses PyVista for visualization of the meshes.
 
@@ -121,7 +117,7 @@ def show_cell_sizes_x(mesh):
     ax.set_yscale("log")
 ```
 
-### Structured mesh generation
+## Structured mesh generation
 
 You can start by checking the version of the generateStructuredMesh tool, it will test whether your OpenGeoSys is correctly installed and available:
 
@@ -245,7 +241,9 @@ show_mesh(mesh)
 
 Compare the values on X and Y axis with the ones in the figure in step [Quadrilateral mesh](#quadrilateral-mesh).
 
-### Quadrilateral graded mesh with automatically computed cell sizes  
+### Quadrilateral graded meshes
+
+#### ...with automatically computed cell sizes  
 
 In this step a quadrilateral mesh with size of 7 in x-direction and 4 in y-direction (10 and 5 cells respectively) will be created.  
 However, this time an additional parameter will be passed.  
@@ -271,7 +269,7 @@ mesh = pv.read(f"{out_dir}/quads_graded.vtu")
 show_mesh(mesh)
 ```
 
-### Quadrilateral graded mesh with automatically computed cell sizes with given initial cell size
+#### ...with automatically computed cell sizes with given initial cell size
 
 The command from previous step can be expanded with parameter `--d$direction0 $value` to define initial cell size, alongside `$direction` (x, y, or z).  
 Let's say that the initial cell size is 1.  
@@ -293,7 +291,7 @@ mesh = pv.read(f"{out_dir}/quads_graded_init_size.vtu")
 show_mesh(mesh)
 ```
 
-### Quadrilateral graded mesh with automatically computed cell sizes with given initial cell size and maximum cell size
+#### ...with automatically computed cell sizes with given initial cell size and maximum cell size
 
 In many cases it may be useful to set a maximal cell size.
 That can be achieved via the `--d$direction-max $value` parameter.
@@ -341,7 +339,7 @@ plotter.add_axes()
 plotter.show()
 ```
 
-### Surface extraction
+## Surface extraction
 
 The following was mainly taken from https://www.opengeosys.org/docs/tools/meshing-submeshes/submeshes/  
 
@@ -349,7 +347,7 @@ For Finite Element simulations, we need to specify subdomains e.g. for boundary 
 One possibility is to precompute the subdomains as meshes by extracting them from our domain.  
 This way the subdomains additionally contain information to identify the corresponding bulk mesh entities like nodes, elements, and faces of elements.
 
-We can extract subdomains using the OGS tool [ExtractSurface]({{< ref "extract-surface" >}}).
+We can extract subdomains using the OGS tool [`ExtractBoundary`]({{< ref "extract-boundary" >}}).
 Type `! ExtractBoundary --help` for a basic documentation.
 
 ```python
@@ -357,7 +355,7 @@ Type `! ExtractBoundary --help` for a basic documentation.
 assert _exit_code == 0
 ```
 
-#### In 2D
+### In 2D
 
 We start with extracting the boundary of a 2D mesh.  
 Let's remind ourselves of the mesh by visualizing it once more.
@@ -384,7 +382,7 @@ show_mesh(boundary_mesh)
 
 As shown above, the boundary of a 2D mesh is just a set of lines.
 
-#### In 3D
+### In 3D
 
 We can use the same command to extract the boundary of a 3D mesh.
 
@@ -401,7 +399,7 @@ boundary_mesh = pv.read(f"{out_dir}/hexes_boundary.vtu")
 show_mesh_3D(boundary_mesh.shrink(0.8))
 ```
 
-### Mesh clipping
+## Mesh clipping
 
 The tool `removeMeshElements` removes those elements from a given input mesh that fulfill a user specified criterion.  
 The resulting mesh will be written to the specified output file.  
@@ -466,9 +464,35 @@ plotter.window_size = [800,400]
 plotter.show()
 ```
 
-### Next step
+## The special case: generating 0D boundary and source term meshes for OGS
 
-If you are comfortable with the use of the tools discussed on this page, please proceed to the Exercises.
+At the moment (Sep 2024) the [`ExtractBoundary`]({{< ref "extract-boundary" >}})
+tool unfortunately does not support extracting the zero dimensional boundary of
+a one dimensional mesh.
+To create such zero dimensional meshes suitable for source terms and boundary
+conditions in OGS the following can be done, among others.
+
+First, create a `gml` file with the following content. Change point coordinates
+to your needs.
+
+```xml
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml-stylesheet type="text/xsl" href="OpenGeoSysGLI.xsl"?>
+<OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
+    <name>geometry</name>
+    <points>
+        <point id="0" x="0.0"  y="0.0" z="0.0" name="source"/>
+    </points>
+</OpenGeoSysGLI>
+```
+
+Then, run [`constructMeshesFromGeometry`]({{< ref "constructmeshesfromgeometry" >}}),
+which will produce a mesh consisting of the single point and set up for use with
+OGS:
+
+```sh .noeval
+constructMeshesFromGeometry -m SIMULATION_DOMAIN.vtu -g THE_GML_FILE_YOU_JUST_CREATED.gml
+```
 
 ## Exercises
 
@@ -513,11 +537,7 @@ show_mesh(mesh)
 ~~~
 <!-- markdownlint-enable code-fence-style -->
 
-## Next Step
-
-Once all exercises are completed, or if any of them is challenging, the solutions and their explanations can be found in section [Solutions](#solutions).
-
-## Solutions
+## Solutions to the exercises
 
 ### Exercise 1
 
@@ -531,7 +551,7 @@ mesh = pv.read(f"{out_dir}/{mesh_name}")
 show_mesh(mesh)
 ```
 
-## Exercise 2
+### Exercise 2
 
 ```python
 # Extract boundary
@@ -546,7 +566,7 @@ show_mesh(mesh)
 
 ## Which data do the created meshes contain?
 
-## Bulk mesh
+### Bulk mesh
 
 ```python
 import pyvista as pv
@@ -558,7 +578,7 @@ mesh
 
 From the above cell's output we see that 'N Arrays == 0'. This means there is no data contained.
 
-## Boundary mesh
+### Boundary mesh
 
 ```python
 mesh = pv.read(f"{out_dir}/hexes_boundary.vtu") # Created by ExtractBoundary tool

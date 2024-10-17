@@ -36,13 +36,17 @@ cite::before {
 }
 
 /* -- Table of contents -- */
-#TableOfContents {
-  @apply text-sm;
+#TableOfContents a {
+  @apply text-gray-700;
 }
-
-#TableOfContents>ul:first-child>li>ul>li>a {
-  @apply font-bold;
-  @apply tracking-wide;
+#TableOfContents a:hover {
+  @apply text-gray-900;
+}
+#TableOfContents ul ul {
+  @apply ml-2;
+  @apply mt-0;
+  @apply mb-1;
+  @apply text-sm;
 }
 
 /* -- OS selector -- */
