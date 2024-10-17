@@ -38,7 +38,8 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     }
     if (type == "FixedTimeStepping")
     {
-        return NumLib::createFixedTimeStepping(config, fixed_times_for_output);
+        return NumLib::createFixedTimeStepping(parseFixedTimeStepping(config),
+                                               fixed_times_for_output);
     }
     if (type == "EvolutionaryPIDcontroller")
     {
