@@ -20,10 +20,18 @@ class ConfigTree;
 namespace NumLib
 {
 class TimeStepAlgorithm;
-}
 
-namespace NumLib
+struct IterationNumberBasedTimeSteppingParameters final
 {
+    double t_initial;
+    double t_end;
+    double minimum_dt;
+    double maximum_dt;
+    double initial_dt;
+    std::vector<int> number_iterations;
+    std::vector<double> multiplier;
+};
+
 /// Create a IterationNumberBasedTimeStepping time stepper from the given
 /// configuration.
 std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
