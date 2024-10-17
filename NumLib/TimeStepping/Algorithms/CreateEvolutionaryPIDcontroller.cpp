@@ -30,6 +30,15 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     auto const t0 = config.getConfigParameter<double>("t_initial");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
+    if (t_end < t0)
+    {
+        OGS_FATAL(
+            "Evolutionary PID controller timestepping: t_end({}) is smaller "
+            "than t_initial({})",
+            t_end,
+            t0);
+    }
+
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller__dt_guess}
     auto const h0 = config.getConfigParameter<double>("dt_guess");
 

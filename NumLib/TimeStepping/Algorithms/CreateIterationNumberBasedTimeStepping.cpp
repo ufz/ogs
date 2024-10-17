@@ -30,6 +30,15 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
     auto const t_initial = config.getConfigParameter<double>("t_initial");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
+    if (t_end < t_initial)
+    {
+        OGS_FATAL(
+            "iteration number based timestepping: t_end({}) is smaller than "
+            "t_initial({})",
+            t_end,
+            t_initial);
+    }
+
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__initial_dt}
     auto const initial_dt = config.getConfigParameter<double>("initial_dt");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__minimum_dt}

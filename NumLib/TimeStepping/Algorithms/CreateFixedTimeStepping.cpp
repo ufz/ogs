@@ -29,6 +29,13 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     auto const t_initial = config.getConfigParameter<double>("t_initial");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
+    if (t_end < t_initial)
+    {
+        OGS_FATAL("fixed timestepping: t_end({}) is smaller than t_initial({})",
+                  t_end,
+                  t_initial);
+    }
+
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps}
     auto const delta_ts_config = config.getConfigSubtree("timesteps");
 
