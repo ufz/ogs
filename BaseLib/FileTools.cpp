@@ -18,6 +18,8 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/endian/conversion.hpp>
+#include <boost/interprocess/file_mapping.hpp>
+#include <boost/interprocess/mapped_region.hpp>
 #include <filesystem>
 #include <fstream>
 #include <typeindex>
@@ -306,51 +308,62 @@ template float readBinaryValue<float>(std::istream&);
 template double readBinaryValue<double>(std::istream&);
 
 template <typename T>
-std::vector<T> readBinaryVector(std::string const& filename)
+std::vector<T> readBinaryVector(std::string const& filename,
+                                std::size_t const start_element,
+                                std::size_t const num_elements)
 {
-    std::ifstream file(filename, std::ios::binary);
-    if (!file)
+    if (!IsFileExisting(filename))
     {
-        OGS_FATAL("File {:s} for curve definition not found", filename);
+        OGS_FATAL("File {:s} not found", filename);
     }
 
     // Determine file size
-    file.seekg(0, std::ios::end);
-    std::streamsize size = file.tellg();
-    file.seekg(0, std::ios::beg);
+    std::uintmax_t file_size = std::filesystem::file_size(filename);
+    std::size_t total_elements = file_size / sizeof(T);
 
-    size_t num_elements = size / sizeof(T);
-
-    // Initialize vector with the right size
-    std::vector<T> result(num_elements);
-
-    // Read data directly into the vector
-    if (!file.read(reinterpret_cast<char*>(result.data()), size))
+    if (start_element >= total_elements)
     {
-        OGS_FATAL("Could not read data from file {:s}.", filename);
+        OGS_FATAL("Start element is beyond file size");
     }
+
+    // Calculate the number of elements to read
+    std::size_t const elements_to_read =
+        std::min(num_elements, total_elements - start_element);
+
+    // Calculate offset and size to map
+    std::size_t const offset = start_element * sizeof(T);
+    std::size_t const size_to_map = elements_to_read * sizeof(T);
+
+    // Create a file mapping
+    boost::interprocess::file_mapping file(filename.c_str(),
+                                           boost::interprocess::read_only);
+
+    // Map the specified region
+    boost::interprocess::mapped_region region(
+        file, boost::interprocess::read_only, offset, size_to_map);
+
+    // Get the address of the mapped region
+    auto* addr = region.get_address();
+
+    // Create vector and copy data
+    std::vector<T> result(elements_to_read);
+    std::memcpy(result.data(), addr, size_to_map);
 
     if constexpr (std::endian::native != std::endian::little)
     {
         boost::endian::endian_reverse_inplace(result);
     }
 
-    std::streamsize bytes_read = file.gcount();
-
-    if (bytes_read != size)
-    {
-        OGS_FATAL(
-            "Incomplete read: Expected {:d} bytes, but read {:d} bytes "
-            "from "
-            "file {:s}.",
-            size, bytes_read, filename);
-    }
     return result;
 }
 
 // explicit template instantiation
-template std::vector<float> readBinaryVector<float>(std::string const&);
-template std::vector<double> readBinaryVector<double>(std::string const&);
+template std::vector<float> readBinaryVector<float>(std::string const&,
+                                                    std::size_t const,
+                                                    std::size_t const);
+template std::vector<double> readBinaryVector<double>(std::string const&,
+                                                      std::size_t const,
+                                                      std::size_t const);
 
 template <typename T>
 void writeValueBinary(std::ostream& out, T const& val)

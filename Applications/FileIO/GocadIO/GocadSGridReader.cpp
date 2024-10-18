@@ -504,8 +504,8 @@ void GocadSGridReader::readElementPropertiesBinary()
             WARN("Empty filename for property {:s}.", property._property_name);
             continue;
         }
-        std::vector<float> float_properties =
-            BaseLib::readBinaryVector<float>(fname);
+        std::vector<float> float_properties = BaseLib::readBinaryVector<float>(
+            fname, 0, _index_calculator._n_cells);
         DBUG(
             "GocadSGridReader::readElementPropertiesBinary(): Read {:d} float "
             "properties from binary file.",

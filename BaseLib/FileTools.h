@@ -16,6 +16,7 @@
 
 #include <cstddef>
 #include <iosfwd>
+#include <limits>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -91,7 +92,9 @@ extern template float readBinaryValue<float>(std::istream&);
 extern template double readBinaryValue<double>(std::istream&);
 
 template <typename T>
-std::vector<T> readBinaryVector(std::string const& filename);
+std::vector<T> readBinaryVector(
+    std::string const& filename, std::size_t const start_element = 0,
+    std::size_t const num_elements = std::numeric_limits<std::size_t>::max());
 
 /**
  * Extracts basename from given pathname with extension.
