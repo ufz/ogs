@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include "Error.h"
+
 #ifdef USE_PETSC
 #include <mpi.h>
 #endif
@@ -29,4 +31,25 @@ static inline int reduceMin(int const val)
 #endif
 }
 
+#ifdef USE_PETSC
+struct Mpi
+{
+    Mpi(MPI_Comm const communicator = MPI_COMM_WORLD)
+        : communicator(communicator)
+    {
+        int mpi_init;
+        MPI_Initialized(&mpi_init);
+        if (mpi_init != 1)
+        {
+            OGS_FATAL("MPI is not initialized.");
+        }
+        MPI_Comm_size(communicator, &size);
+        MPI_Comm_rank(communicator, &rank);
+    }
+
+    MPI_Comm communicator;
+    int size;
+    int rank;
+};
+#endif
 }  // namespace BaseLib::MPI
