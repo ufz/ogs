@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include "Error.h"
 
 #ifdef USE_PETSC
@@ -82,6 +84,21 @@ static std::vector<T> allgather(T const& value, Mpi const& mpi)
 
     MPI_Allgather(&result[mpi.rank], 1, mpiType<T>(), result.data(), 1,
                   mpiType<T>(), mpi.communicator);
+
+    return result;
+}
+
+template <typename T>
+static std::vector<T> allgather(std::vector<T> const& vector, Mpi const& mpi)
+{
+    std::size_t const size = vector.size();
+    // Flat in memory over all ranks;
+    std::vector<T> result(mpi.size * size);
+
+    std::copy_n(vector.begin(), size, &result[mpi.rank * size]);
+
+    MPI_Allgather(&result[mpi.rank * size], size, mpiType<T>(), result.data(),
+                  size, mpiType<T>(), mpi.communicator);
 
     return result;
 }
