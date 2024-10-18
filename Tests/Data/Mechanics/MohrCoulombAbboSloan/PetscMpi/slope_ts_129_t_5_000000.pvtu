@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
+  <PUnstructuredGrid GhostLevel="1">
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="18" format="binary" RangeMin="45" RangeMax="103">
+        AQAAAAAAAAAAgAAAAAAAABIAAAAAAAAAGgAAAAAAAAA=eF4z0zPVM9Y1MtNNT0xMTU0xSkwBACleBQs=
+      </DataArray>
+    </FieldData>
+    <PPointData>
+      <PDataArray type="Float64" Name="ElasticStrain" NumberOfComponents="6"/>
+      <PDataArray type="Float64" Name="EquivalentPlasticStrain"/>
+      <PDataArray type="Float64" Name="displacement" NumberOfComponents="3"/>
+      <PDataArray type="Float64" Name="epsilon" NumberOfComponents="6"/>
+      <PDataArray type="Float64" Name="sigma" NumberOfComponents="6"/>
+    </PPointData>
+    <PCellData>
+      <PDataArray type="UInt8" Name="vtkGhostType"/>
+    </PCellData>
+    <PPoints>
+      <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
+    </PPoints>
+    <Piece Source="slope_ts_129_t_5_000000_0.vtu"/>
+    <Piece Source="slope_ts_129_t_5_000000_1.vtu"/>
+    <Piece Source="slope_ts_129_t_5_000000_2.vtu"/>
+    <Piece Source="slope_ts_129_t_5_000000_3.vtu"/>
+  </PUnstructuredGrid>
+</VTKFile>

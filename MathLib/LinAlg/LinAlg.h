@@ -17,6 +17,8 @@
 
 #ifdef USE_PETSC
 #include <petscsystypes.h>
+
+#include "PETSc/PETScVector.h"
 #endif
 
 namespace MathLib

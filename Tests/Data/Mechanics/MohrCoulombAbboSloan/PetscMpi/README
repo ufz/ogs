@@ -1,0 +1,8 @@
+Instruction to generate this test case:
+
+gmsh -3 -format msh2 hexa_slope.geo
+msh2vtu -r hexa_slope.msh
+partmesh -i hexa_slope_domain.vtu --ogs2metis
+partmesh -n 4 -m -i hexa_slope_domain.vtu -- hexa_slope_physical_group*.vtu
+mpirun -n 4 ./soft/build/release-petsc/bin/ogs slope_hexa.prj
+

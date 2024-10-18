@@ -79,11 +79,18 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     _b->setZero();
     _Jac->setZero();
-
-    _ode.preAssemble(t, dt, x_curr);
-    _ode.assembleWithJacobian(t, dt, x_new_timestep, x_prev, process_id, *_b,
-                              *_Jac);
-
+    try
+    {
+        _ode.preAssemble(t, dt, x_curr);
+        _ode.assembleWithJacobian(t, dt, x_new_timestep, x_prev, process_id,
+                                  *_b, *_Jac);
+    }
+    catch (AssemblyException const&)
+    {
+        MathLib::LinAlg::finalizeAssembly(*_b);
+        MathLib::LinAlg::finalizeAssembly(*_Jac);
+        throw;
+    }
     MathLib::LinAlg::finalizeAssembly(*_b);
     MathLib::LinAlg::finalizeAssembly(*_Jac);
 }
