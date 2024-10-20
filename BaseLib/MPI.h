@@ -111,6 +111,19 @@ static T allreduce(T const& value, MPI_Op const& mpi_op, Mpi const& mpi)
     MPI_Allreduce(&value, &result, 1, mpiType<T>(), mpi_op, mpi.communicator);
     return result;
 }
+
+template <typename T>
+static void allreduceInplace(std::vector<T>& vector,
+                             MPI_Op const& mpi_op,
+                             Mpi const& mpi)
+{
+    MPI_Allreduce(MPI_IN_PLACE,
+                  vector.data(),
+                  vector.size(),
+                  mpiType<T>(),
+                  mpi_op,
+                  mpi.communicator);
+}
 #endif
 
 /// The reduction is implemented transparently for with and without MPI. In the
