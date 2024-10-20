@@ -28,7 +28,7 @@
 
 @Theta 1.0;                     // time integration scheme
 @Epsilon 1e-14;                 // tolerance of local stress integration algorithm
-@MaximumNumberOfIterations 20;  // for local local stress integration algorithm
+@MaximumNumberOfIterations 100;  // for local local stress integration algorithm
 @ModellingHypotheses{".+"};     // supporting all stress and strain states
 @Algorithm NewtonRaphson;       //_NumericalJacobian;_LevenbergMarquardt
 
@@ -95,13 +95,13 @@ v.setEntryName("VolumeRatio");  // Total volume per solid volume = inv(1 - poros
     sig0 = sig;
 
     // compute elastic stiffness (constant during time step)
+    pc_min = 0.5e-8 * pc_char;
     const auto p = -trace(sig) / 3;
-    const auto K = v0 / ka * p;
+    const auto K = v0 / ka * std::max(p,pc_char);
     const auto E = 3.0 * K * (1.0 - 2*nu);
 
     young = E;
     rpc = pc / young;
-    pc_min = 0.5e-8 * pc_char;
     rpc_min = pc_min / young;
 
     // stress derivative
