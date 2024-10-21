@@ -98,6 +98,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createIdealGasLaw(config);
     }
 
+    if (boost::iequals(property_type, "PengRobinson"))
+    {
+        return createPengRobinson(config);
+    }
+
     if (boost::iequals(property_type, "IdealGasLawBinaryMixture"))
     {
         return createIdealGasLawBinaryMixture(config);
