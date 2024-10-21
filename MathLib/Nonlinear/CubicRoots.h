@@ -11,6 +11,10 @@
 
 #include <algorithm>
 #include <limits>
+#include <range/v3/algorithm/min.hpp>
+#include <range/v3/algorithm/sort.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -34,44 +38,34 @@ public:
     std::vector<double> solve()
     {
         // Solve using Boost's cubic_roots
-        auto roots = boost::math::tools::cubic_roots<double>(a_, b_, c_, d_);
+        std::array<double, 3> const roots =
+            boost::math::tools::cubic_roots<double>(a_, b_, c_, d_);
 
-        // Sort array
-        std::sort(roots.begin(), roots.end());
+        std::vector<double> filtered_roots =
+            ranges::views::ref(roots) |
+            ranges::views::filter([](double const root)
+                                  { return !std::isnan(root); }) |
+            ranges::to<std::vector>();
+        ranges::sort(filtered_roots);
 
-        std::vector<double> roots_vector;
-        for (const auto& root : roots)
-        {
-            if (!std::isnan(root))
-            {
-                roots_vector.push_back(root);
-            }
-        }
-        return roots_vector;
+        return filtered_roots;
     }
 
     // Method that returns the smallest positive real root
     double smallestPositiveRealRoot()
     {
-        auto roots = solve();
-        double min_positive_root = std::numeric_limits<double>::infinity();
+        std::vector<double> const roots = solve();
 
-        // Find the smallest positive real root
-        for (const auto& root : roots)
-        {
-            if (root > 0 && root < min_positive_root)
-            {
-                min_positive_root = root;
-            }
-        }
+        auto positive_roots =
+            roots | ranges::views::filter([](double root) { return root > 0; });
 
-        // If no positive root was found, return NaN
-        if (min_positive_root == std::numeric_limits<double>::infinity())
+        // If no positive root exists, return NaN
+        if (ranges::empty(positive_roots))
         {
             return std::numeric_limits<double>::quiet_NaN();
         }
 
-        return min_positive_root;
+        return ranges::min(positive_roots);
     }
 
 private:
