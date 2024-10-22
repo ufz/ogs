@@ -62,7 +62,7 @@ public:
 
     NumLib::Time endTime() const { return _end_time; }
     NumLib::Time currentTime() const { return _current_time; }
-    bool successful_time_step = false;
+    bool successful_time_step = true;
 
 private:
     bool preTsNonlinearSolvePostTs(NumLib::Time const& t, double const dt,
