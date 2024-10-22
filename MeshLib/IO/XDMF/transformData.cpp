@@ -133,39 +133,29 @@ std::optional<XdmfHdfData> transformAttribute(
                           "Float has 23 bits fractional part");
             data_type = MeshPropertyDataType::float32;
         }
-        else if constexpr (std::is_same_v<int, decltype(basic_type)>)
+        else if constexpr (std::is_same_v<int32_t, decltype(basic_type)>)
         {
-            static_assert((std::numeric_limits<int>::digits == 31),
-                          "Signed int has 32-1 bits");
             data_type = MeshPropertyDataType::int32;
         }
-        // ToDo (tm) These tests are platform specific and currently fail on
-        // Windows
-#if !defined(_WIN32)
-        else if constexpr (std::is_same_v<long, decltype(basic_type)>)
+        else if constexpr (std::is_same_v<uint32_t, decltype(basic_type)>)
         {
-            static_assert((std::numeric_limits<long>::digits == 63),
-                          "Signed int has 64-1 bits");
-            data_type = MeshPropertyDataType::int64;
-        }
-        else if constexpr (std::is_same_v<unsigned long, decltype(basic_type)>)
-        {
-            static_assert((std::numeric_limits<unsigned long>::digits == 64),
-                          "Unsigned long has 64 bits");
-            data_type = MeshPropertyDataType::uint64;
-        }
-#endif
-        else if constexpr (std::is_same_v<unsigned int, decltype(basic_type)>)
-        {
-            static_assert((std::numeric_limits<unsigned int>::digits == 32),
-                          "Unsigned int has 32 bits");
             data_type = MeshPropertyDataType::uint32;
         }
-        else if constexpr (std::is_same_v<std::size_t, decltype(basic_type)>)
+        else if constexpr (std::is_same_v<int64_t, decltype(basic_type)>)
         {
-            static_assert((std::numeric_limits<std::size_t>::digits == 64),
-                          "size_t has 64 bits");
+            data_type = MeshPropertyDataType::int64;
+        }
+        else if constexpr (std::is_same_v<uint64_t, decltype(basic_type)>)
+        {
             data_type = MeshPropertyDataType::uint64;
+        }
+        else if constexpr (std::is_same_v<int8_t, decltype(basic_type)>)
+        {
+            data_type = MeshPropertyDataType::int8;
+        }
+        else if constexpr (std::is_same_v<uint8_t, decltype(basic_type)>)
+        {
+            data_type = MeshPropertyDataType::uint8;
         }
         else if constexpr (std::is_same_v<char, decltype(basic_type)>)
         {
