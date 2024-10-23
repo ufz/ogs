@@ -2,13 +2,39 @@
 
 if(OGS_USE_PIP)
     set(LOCAL_VIRTUALENV_DIR ${PROJECT_BINARY_DIR}/.venv CACHE INTERNAL "")
+    set(_venv_bin_dir "bin")
+    if(MSVC)
+        set(_venv_bin_dir "Scripts")
+    endif()
+    set(LOCAL_VIRTUALENV_BIN_DIR ${LOCAL_VIRTUALENV_DIR}/${_venv_bin_dir}
+        CACHE INTERNAL ""
+    )
     set(Python_ROOT_DIR ${LOCAL_VIRTUALENV_DIR})
     set(CMAKE_REQUIRE_FIND_PACKAGE_Python TRUE)
+    find_program(UV_TOOL_PATH uv)
+    if(UV_TOOL_PATH)
+        set(_pip_install_command ${UV_TOOL_PATH} pip install --prefix
+                                 ${LOCAL_VIRTUALENV_DIR} CACHE INTERNAL ""
+        )
+        set(_pip_uninstall_command ${UV_TOOL_PATH} pip uninstall --prefix
+                                   ${LOCAL_VIRTUALENV_DIR} CACHE INTERNAL ""
+        )
+        set(_venv_tool "uv")
+    else()
+        set(_pip_install_command ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
+            CACHE INTERNAL ""
+        )
+        set(_pip_uninstall_command ${LOCAL_VIRTUALENV_BIN_DIR}/pip uninstall
+                                   --yes CACHE INTERNAL ""
+        )
+        set(_venv_tool "pip")
+    endif()
     if(NOT EXISTS ${LOCAL_VIRTUALENV_DIR})
         execute_process(
             COMMAND
                 ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
-                -Dpython_version=${ogs.minimum_version.python} -P
+                -Dpython_version=${ogs.minimum_version.python}
+                -DUV_TOOL_PATH=${UV_TOOL_PATH} -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/PythonCreateVirtualEnv.cmake
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR} COMMAND_ECHO STDOUT
                               ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
@@ -23,16 +49,9 @@ if(OGS_USE_PIP)
         endif()
         unset(_OGS_PYTHON_PACKAGES_SHA1 CACHE)
     endif()
-    set(_venv_bin_dir "bin")
-    if(MSVC)
-        set(_venv_bin_dir "Scripts")
-    endif()
-    set(LOCAL_VIRTUALENV_BIN_DIR ${LOCAL_VIRTUALENV_DIR}/${_venv_bin_dir}
-        CACHE INTERNAL ""
-    )
     # Fixes macOS install issues
     execute_process(
-        COMMAND ${LOCAL_VIRTUALENV_BIN_DIR}/pip install wheel
+        COMMAND ${_pip_install_command} wheel
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     )
     # Create jupytext config
@@ -124,7 +143,7 @@ function(setup_venv)
         )
         message(
             STATUS
-                "Installing Python packages into local virtual environment..."
+                "Installing Python packages into local virtual environment using ${_venv_tool} ..."
         )
         if(APPLE)
             # CC=/Library/Developer/CommandLineTools/usr/bin/cc and this somehow
@@ -132,8 +151,7 @@ function(setup_venv)
             set(_apple_env ${CMAKE_COMMAND} -E env CC=clang CXX=clang)
         endif()
         execute_process(
-            COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install -r
-                    requirements.txt
+            COMMAND ${_apple_env} ${_pip_install_command} -r requirements.txt
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
             RESULT_VARIABLE _return_code
             OUTPUT_VARIABLE _out
@@ -152,11 +170,15 @@ function(setup_venv)
             )
         endif()
         if(DEFINED ENV{CI} AND UNIX AND NOT APPLE)
+            set(_pip_gmsh_flags --force-reinstall --pre)
+            if(UV_TOOL_PATH)
+                set(_pip_gmsh_flags --reinstall --prerelease=allow)
+            endif()
             execute_process(
                 COMMAND
-                    ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
-                    --force-reinstall -r
-                    ${PROJECT_SOURCE_DIR}/Tests/Data/requirements-gmsh-nox.txt
+                    ${_apple_env} ${_pip_install_command} ${_pip_gmsh_flags}
+                    --index-url https://gmsh.info/python-packages-dev-nox
+                    "gmsh>=4.11"
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                 RESULT_VARIABLE _return_code
                 OUTPUT_VARIABLE _out
@@ -177,8 +199,8 @@ function(setup_venv)
         endif()
         # Uninstall ogs wheel
         execute_process(
-            COMMAND ${_apple_env} ${LOCAL_VIRTUALENV_BIN_DIR}/pip uninstall
-                    --yes ogs WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+            COMMAND ${_apple_env} ${_pip_uninstall_command} ogs
+            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         )
     endif()
 endfunction()

@@ -104,6 +104,6 @@ test notebooks via wheel:
     - python3.10 -m venv --upgrade-deps .venv
     - source .venv/bin/activate
     - pip install -r requirements.txt
-    - pip install --force-reinstall -r requirements-gmsh-nox.txt
+    - pip install --force-reinstall --pre  --index-url https://gmsh.info/python-packages-dev-nox "gmsh>=4.11"
     - pip install -r requirements-dev.txt
     - pip install ${CI_PROJECT_DIR}/wheelhouse/ogs-*-cp310-cp310-manylinux_2_28_x86_64.whl

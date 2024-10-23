@@ -34,6 +34,12 @@ function(NotebookTest)
 
     if(NOT DEFINED NotebookTest_RUNTIME)
         set(NotebookTest_RUNTIME 1)
+    elseif(NotebookTest_RUNTIME GREATER 750)
+        # Set a timeout on jobs larger than the default ctest timeout of 1500
+        # (s). The allowed runtime is twice as long as the given RUNTIME
+        # parameter.
+        math(EXPR timeout "${NotebookTest_RUNTIME} * 2")
+        set(timeout TIMEOUT ${timeout})
     endif()
 
     if(DEFINED OGS_CTEST_MAX_RUNTIME)
@@ -131,6 +137,7 @@ function(NotebookTest)
                    ${NotebookTest_DISABLED}
                    LABELS
                    "${labels}"
+                   ${timeout}
                    ENVIRONMENT
                    "CI=1;PYDEVD_DISABLE_FILE_VALIDATION=1"
     )

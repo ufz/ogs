@@ -1,3 +1,0 @@
---index-url https://gmsh.info/python-packages-dev-nox
---pre
-gmsh>=4.11
