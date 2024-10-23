@@ -193,11 +193,8 @@ if(OGS_USE_PETSC)
     set(TEST_FILTER_MPI --gtest_filter=-MPITest*)
     add_custom_target(tests
         mpirun ${MPIRUN_ARGS} -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
+        COMMAND mpirun ${MPIRUN_ARGS} -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
         DEPENDS testrunner tests-cleanup
-    )
-    add_custom_target(tests_mpi
-        mpirun ${MPIRUN_ARGS} -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
-        DEPENDS testrunner
     )
 else()
     add_custom_target(tests
