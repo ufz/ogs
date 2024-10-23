@@ -38,17 +38,19 @@ std::unique_ptr<TimeStepAlgorithm> createTimeStepper(
     }
     if (type == "FixedTimeStepping")
     {
-        return NumLib::createFixedTimeStepping(config, fixed_times_for_output);
+        return NumLib::createFixedTimeStepping(parseFixedTimeStepping(config),
+                                               fixed_times_for_output);
     }
     if (type == "EvolutionaryPIDcontroller")
     {
-        return NumLib::createEvolutionaryPIDcontroller(config,
-                                                       fixed_times_for_output);
+        return NumLib::createEvolutionaryPIDcontroller(
+            parseEvolutionaryPIDcontroller(config), fixed_times_for_output);
     }
     if (type == "IterationNumberBasedTimeStepping")
     {
         return NumLib::createIterationNumberBasedTimeStepping(
-            config, fixed_times_for_output);
+            parseIterationNumberBasedTimeStepping(config),
+            fixed_times_for_output);
     }
     OGS_FATAL(
         "Unknown time stepping type: '{:s}'. The available types are: "

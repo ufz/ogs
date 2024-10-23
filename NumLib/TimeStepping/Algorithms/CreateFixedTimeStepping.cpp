@@ -18,9 +18,8 @@
 
 namespace NumLib
 {
-std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
-    BaseLib::ConfigTree const& config,
-    std::vector<double> const& fixed_times_for_output)
+FixedTimeSteppingParameters parseFixedTimeStepping(
+    BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "FixedTimeStepping");
@@ -49,14 +48,33 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
             //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps__pair__delta_t}
             pair.getConfigParameter<double>("delta_t"));
     }
-    if (!FixedTimeStepping::areRepeatDtPairsValid(repeat_dt_pairs))
+
+    return {t_initial, t_end, repeat_dt_pairs};
+}
+
+std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
+    FixedTimeSteppingParameters const& parameters,
+    std::vector<double> const& fixed_times_for_output)
+{
+    if (parameters.t_end < parameters.t_initial)
+    {
+        OGS_FATAL(
+            "fixed timestepping: end time ({}) is smaller than initial time "
+            "({})",
+            parameters.t_end,
+            parameters.t_initial);
+    }
+
+    if (!FixedTimeStepping::areRepeatDtPairsValid(parameters.repeat_dt_pairs))
     {
         OGS_FATAL(
             "CreateFixedTimeStepping: invalid specification of (repeat, "
             "delta_t) pairs");
     }
 
-    return std::make_unique<FixedTimeStepping>(
-        t_initial, t_end, repeat_dt_pairs, fixed_times_for_output);
+    return std::make_unique<FixedTimeStepping>(parameters.t_initial,
+                                               parameters.t_end,
+                                               parameters.repeat_dt_pairs,
+                                               fixed_times_for_output);
 }
 }  // end of namespace NumLib

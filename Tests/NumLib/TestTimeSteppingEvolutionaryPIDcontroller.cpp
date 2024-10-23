@@ -28,7 +28,8 @@ std::unique_ptr<NumLib::TimeStepAlgorithm> createTestTimeStepper(
     BaseLib::ConfigTree conf(std::move(ptree), "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("time_stepping");
-    return NumLib::createEvolutionaryPIDcontroller(sub_config, {});
+    return NumLib::createEvolutionaryPIDcontroller(
+        NumLib::parseEvolutionaryPIDcontroller(sub_config), {});
 }
 
 TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)

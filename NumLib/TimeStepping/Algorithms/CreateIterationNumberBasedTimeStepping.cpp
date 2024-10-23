@@ -18,10 +18,9 @@
 
 namespace NumLib
 {
-class TimeStepAlgorithm;
-std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
-    BaseLib::ConfigTree const& config,
-    std::vector<double> const& fixed_times_for_output)
+
+IterationNumberBasedTimeSteppingParameters
+parseIterationNumberBasedTimeStepping(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__type}
     config.checkConfigParameter("type", "IterationNumberBasedTimeStepping");
@@ -30,6 +29,15 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
     auto const t_initial = config.getConfigParameter<double>("t_initial");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
+    if (t_end < t_initial)
+    {
+        OGS_FATAL(
+            "iteration number based timestepping: t_end({}) is smaller than "
+            "t_initial({})",
+            t_end,
+            t_initial);
+    }
+
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__initial_dt}
     auto const initial_dt = config.getConfigParameter<double>("initial_dt");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__minimum_dt}
@@ -44,9 +52,35 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
         //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__multiplier}
         config.getConfigParameter<std::vector<double>>("multiplier");
 
-    return std::make_unique<IterationNumberBasedTimeStepping>(
-        t_initial, t_end, minimum_dt, maximum_dt, initial_dt,
-        std::move(number_iterations), std::move(multiplier),
-        fixed_times_for_output);
+    return {t_initial,
+            t_end,
+            minimum_dt,
+            maximum_dt,
+            initial_dt,
+            std::move(number_iterations),
+            std::move(multiplier)};
 }
+
+/// Create a IterationNumberBasedTimeStepping time stepper from the given
+/// configuration.
+std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
+    IterationNumberBasedTimeSteppingParameters&& parameters,
+    std::vector<double> const& fixed_times_for_output)
+{
+    if (parameters.t_end < parameters.t_initial)
+    {
+        OGS_FATAL(
+            "iteration number based timestepping: end time ({}) is smaller "
+            "than initial time ({})",
+            parameters.t_end,
+            parameters.t_initial);
+    }
+
+    return std::make_unique<IterationNumberBasedTimeStepping>(
+        parameters.t_initial, parameters.t_end, parameters.minimum_dt,
+        parameters.maximum_dt, parameters.initial_dt,
+        std::move(parameters.number_iterations),
+        std::move(parameters.multiplier), fixed_times_for_output);
+}
+
 }  // namespace NumLib
