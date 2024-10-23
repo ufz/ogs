@@ -41,8 +41,6 @@ struct ThermoRichardsMechanicsProcessData
 
     bool const apply_mass_lumping = false;
 
-    const bool use_TaylorHood_elements = false;
-
     bool const apply_body_force_for_deformation = false;
 
     InitializePorosityFromMediumProperty const

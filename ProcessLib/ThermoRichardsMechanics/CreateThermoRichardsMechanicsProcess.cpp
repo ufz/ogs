@@ -191,9 +191,6 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
         //! \ogs_file_param{prj__processes__process__linear}
         config.getConfigParameter("linear", false);
 
-    const bool use_TaylorHood_elements = variable_p->getShapeFunctionOrder() !=
-                                         variable_u->getShapeFunctionOrder();
-
     ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>
         process_data{materialIDs(mesh),
                      std::move(media_map),
@@ -201,7 +198,6 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
                      std::move(initial_stress),
                      specific_body_force,
                      mass_lumping,
-                     use_TaylorHood_elements,
                      apply_body_force_for_deformation,
                      InitializePorosityFromMediumProperty{
                          initialize_porosity_from_medium_property}};

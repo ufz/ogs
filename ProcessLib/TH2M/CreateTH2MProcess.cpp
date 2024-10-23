@@ -210,9 +210,6 @@ std::unique_ptr<Process> createTH2MProcess(
 
     auto phase_transition_model = createPhaseTransitionModel(media);
 
-    const bool use_TaylorHood_elements =
-        variable_pCap->getShapeFunctionOrder() !=
-        variable_u->getShapeFunctionOrder();
     bool const initialize_porosity_from_medium_property =
         //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__initialize_porosity_from_medium_property}
         config.getConfigParameter("initialize_porosity_from_medium_property",
@@ -226,7 +223,6 @@ std::unique_ptr<Process> createTH2MProcess(
         std::move(initial_stress),
         specific_body_force,
         mass_lumping,
-        use_TaylorHood_elements,
         InitializePorosityFromMediumProperty{
             initialize_porosity_from_medium_property}};
 

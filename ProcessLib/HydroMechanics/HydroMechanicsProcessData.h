@@ -60,8 +60,6 @@ struct HydroMechanicsProcessData
     /// ID of the processes that contains mechanical process.
     int const mechanics_related_process_id = 0;
 
-    const bool use_taylor_hood_elements = false;
-
     MaterialPropertyLib::Variable const phase_variable{};
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;

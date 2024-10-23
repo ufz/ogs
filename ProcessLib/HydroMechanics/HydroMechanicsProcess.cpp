@@ -118,8 +118,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION,
-            process_data_.use_taylor_hood_elements);
+            NumLib::ComponentOrder::BY_LOCATION);
 
     if (process_data_.isMonolithicSchemeUsed())
     {
@@ -139,8 +138,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         _local_to_global_index_map =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
-                NumLib::ComponentOrder::BY_LOCATION,
-                process_data_.use_taylor_hood_elements);
+                NumLib::ComponentOrder::BY_LOCATION);
         assert(_local_to_global_index_map);
     }
     else
@@ -158,9 +156,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
         _local_to_global_index_map =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
-                NumLib::ComponentOrder::BY_LOCATION,
-                process_data_.use_taylor_hood_elements);
-
+                NumLib::ComponentOrder::BY_LOCATION);
         // For pressure equation.
         // Collect the mesh subsets with base nodes in a vector.
         std::vector<MeshLib::MeshSubset> all_mesh_subsets_base_nodes{
@@ -169,8 +165,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets_base_nodes),
                 // by location order is needed for output
-                NumLib::ComponentOrder::BY_LOCATION,
-                process_data_.use_taylor_hood_elements);
+                NumLib::ComponentOrder::BY_LOCATION);
 
         sparsity_pattern_with_linear_element_ = NumLib::computeSparsityPattern(
             *local_to_global_index_map_with_base_nodes_, _mesh);

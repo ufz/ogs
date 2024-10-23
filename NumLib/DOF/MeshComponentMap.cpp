@@ -85,16 +85,14 @@ using namespace detail;
 
 #ifdef USE_PETSC
 MeshComponentMap::MeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
-    bool const /*use_taylor_hood_elements*/)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
     BaseLib::MPI::Mpi const mpi;
     createParallelMeshComponentMap(components, order, mpi);
 }
 #else
 MeshComponentMap::MeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
-    [[maybe_unused]] bool const use_taylor_hood_elements)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
     createSerialMeshComponentMap(components, order);
     _num_local_dof = _dict.size();

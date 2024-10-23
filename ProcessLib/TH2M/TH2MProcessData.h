@@ -44,8 +44,6 @@ struct TH2MProcessData
 
     bool const apply_mass_lumping = false;
 
-    const bool use_TaylorHood_elements = false;
-
     InitializePorosityFromMediumProperty const
         initialize_porosity_from_medium_property;
 

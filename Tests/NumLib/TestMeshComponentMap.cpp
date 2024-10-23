@@ -28,8 +28,6 @@ public:
         components.emplace_back(nodesSubset);
     }
 
-    ~NumLibMeshComponentMapTest() override { delete cmap; }
-
     static std::size_t const mesh_size = 9;
     std::unique_ptr<MeshLib::Mesh> const mesh{
         MeshToolsLib::MeshGenerator::generateLineMesh(1.0, mesh_size)};
@@ -38,8 +36,7 @@ public:
     static std::size_t const comp0_id = 0;
     static std::size_t const comp1_id = 1;
     std::vector<MeshLib::MeshSubset> components;
-    MeshComponentMap const* cmap{nullptr};
-    static constexpr bool use_taylor_hood_elements = false;
+    std::unique_ptr<MeshComponentMap const> cmap;
 
     //
     // Functions used for checking.
@@ -65,9 +62,8 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByComponent)
     // - For example, x=[(node 0, comp 0) (node 1, comp 0) ... (node n, comp0),
     // (node 0, comp1) ... ]
 
-    cmap =
-        new MeshComponentMap(components, NumLib::ComponentOrder::BY_COMPONENT,
-                             use_taylor_hood_elements);
+    cmap = std::make_unique<MeshComponentMap const>(
+        components, NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
@@ -96,8 +92,8 @@ TEST_F(NumLibMeshComponentMapTest, DISABLED_CheckOrderByLocation)
     // - For example, x=[(node 0, comp 0) (node 0, comp 1) ... (node n, comp0),
     // (node n, comp1) ]
 
-    cmap = new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION,
-                                use_taylor_hood_elements);
+    cmap = std::make_unique<MeshComponentMap const>(
+        components, NumLib::ComponentOrder::BY_LOCATION);
 
     ASSERT_EQ(2 * mesh->getNumberOfNodes(), cmap->dofSizeWithGhosts());
     for (std::size_t i = 0; i < mesh_size; i++)
@@ -121,9 +117,8 @@ TEST_F(NumLibMeshComponentMapTest, OutOfRangeAccess)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_OutOfRangeAccess)
 #endif
 {
-    cmap =
-        new MeshComponentMap(components, NumLib::ComponentOrder::BY_COMPONENT,
-                             use_taylor_hood_elements);
+    cmap = std::make_unique<MeshComponentMap const>(
+        components, NumLib::ComponentOrder::BY_COMPONENT);
 
     ASSERT_EQ(MeshComponentMap::nop,
               cmap->getGlobalIndex(
@@ -164,9 +159,8 @@ TEST_F(NumLibMeshComponentMapTest, SubsetOfNodesByComponent)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByComponent)
 #endif
 {
-    cmap =
-        new MeshComponentMap(components, NumLib::ComponentOrder::BY_COMPONENT,
-                             use_taylor_hood_elements);
+    cmap = std::make_unique<MeshComponentMap const>(
+        components, NumLib::ComponentOrder::BY_COMPONENT);
 
     // Select some nodes from the full mesh.
     std::vector<std::size_t> const ids = {0, 5, 9};
@@ -201,8 +195,8 @@ TEST_F(NumLibMeshComponentMapTest, SubsetOfNodesByLocation)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_SubsetOfNodesByLocation)
 #endif
 {
-    cmap = new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION,
-                                use_taylor_hood_elements);
+    cmap = std::make_unique<MeshComponentMap const>(
+        components, NumLib::ComponentOrder::BY_LOCATION);
 
     // Select some nodes from the full mesh.
     std::vector<std::size_t> const ids = {0, 5, 9};
@@ -237,8 +231,8 @@ TEST_F(NumLibMeshComponentMapTest, MulticomponentVariable)
 TEST_F(NumLibMeshComponentMapTest, DISABLED_MulticomponentVariable)
 #endif
 {
-    cmap = new MeshComponentMap(components, NumLib::ComponentOrder::BY_LOCATION,
-                                use_taylor_hood_elements);
+    cmap = std::make_unique<MeshComponentMap const>(
+        components, NumLib::ComponentOrder::BY_LOCATION);
 
     // Select some nodes from the full mesh.
     std::vector<std::size_t> const ids = {0, 5, 9};

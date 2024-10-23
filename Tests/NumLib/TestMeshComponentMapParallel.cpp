@@ -71,8 +71,8 @@ void checkGlobalIndicesArePositions(bool const reversed_global_ids)
     auto const mesh = createPartitionedLineMesh(mpi.rank, reversed_global_ids);
     std::vector<MeshLib::MeshSubset> const components{
         {*mesh, mesh->getNodes()}};
-    NumLib::MeshComponentMap const map(
-        components, NumLib::ComponentOrder::BY_LOCATION, false);
+    NumLib::MeshComponentMap const map(components,
+                                       NumLib::ComponentOrder::BY_LOCATION);
 
     ASSERT_EQ(2, map.dofSizeWithoutGhosts());
     ASSERT_EQ(mesh->getNumberOfNodes(), map.dofSizeWithGhosts());

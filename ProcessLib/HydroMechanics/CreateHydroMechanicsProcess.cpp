@@ -188,9 +188,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     auto initial_stress = ProcessLib::createInitialStress<DisplacementDim>(
         config, parameters, mesh);
 
-    const bool use_taylor_hood_elements = variable_p->getShapeFunctionOrder() !=
-                                          variable_u->getShapeFunctionOrder();
-
     HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
@@ -201,7 +198,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         coupling_scheme,
         hydraulic_process_id,
         mechanics_related_process_id,
-        use_taylor_hood_elements,
         phase_variable};
 
     SecondaryVariableCollection secondary_variables;
