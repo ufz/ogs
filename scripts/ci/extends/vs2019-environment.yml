@@ -1,6 +1,6 @@
 .load_vs2019_env: &load_vs2019_env
   - |
-    pushd $env:VS160COMNTOOLS
+    pushd $env:VS170COMNTOOLS
     cmd /c "VsDevCmd.bat -arch=amd64 -host_arch=amd64&set" |
     foreach {
       if ($_ -match "=") {

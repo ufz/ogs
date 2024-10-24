@@ -77,6 +77,10 @@ if(OGS_USE_MKL)
     if(APPLE)
         set(_mac_ld_prefix "DY")
     endif()
+    # newer MKLs define ONEAPI_ROOT
+    if(NOT DEFINED ENV{MKLROOT} AND DEFINED ENV{ONEAPI_ROOT})
+        set(ENV{MKLROOT} "$ENV{ONEAPI_ROOT}")
+    endif()
     if(NOT GUIX_BUILD
        AND (NOT DEFINED ENV{MKLROOT}
             OR (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}" MATCHES "intel"
