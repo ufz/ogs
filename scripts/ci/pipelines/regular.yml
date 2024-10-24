@@ -5,7 +5,7 @@ include:
   - local: "/scripts/ci/jobs/pre-commit.yml"
   - local: "/scripts/ci/pipelines/linux.yml"
   - local: "/scripts/ci/pipelines/mac.yml"
-  # - local: "/scripts/ci/pipelines/win.yml" # disabled temporarily due to runner hardware failure
+  - local: "/scripts/ci/pipelines/win.yml"
   - local: "/scripts/ci/jobs/build-docs.yml"
   - local: "/scripts/ci/jobs/jupyter.yml"
   - local: "/scripts/ci/jobs/code-quality.yml"
