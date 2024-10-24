@@ -203,14 +203,12 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                          auto const& dataitem_transform)
     {
         return fmt::format(
-            fmt::runtime("\n\t<Topology Dimensions=\"{dimensions}\" "
-                         "Type=\"{topology_type}\" "
+            fmt::runtime("\n\t<Topology Type=\"{topology_type}\" "
                          "NodesPerElement=\"{nodes_per_element}\">{dataitem}"
                          "\n\t</Topology>"),
             "topology_type"_a =
                 ParentDataType2String(*topology.parent_data_type),
             "dataitem"_a = dataitem_transform(topology),
-            "dimensions"_a = fmt::join(topology.global_block_dims, " "),
             "nodes_per_element"_a = nodes_per_element);
     };
 
@@ -243,13 +241,11 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             case ParentDataType::PYRAMID_13:
                 return fmt::format(
                     fmt::runtime(
-                        "\n\t<Topology Dimensions=\"{dimensions}\" "
+                        "\n\t<Topology "
                         "Type=\"{topology_type}\">{dataitem}\n\t</Topology>"),
                     "topology_type"_a =
                         ParentDataType2String(*topology.parent_data_type),
-                    "dataitem"_a = dataitem_transform(topology),
-                    "dimensions"_a =
-                        fmt::join(topology.global_block_dims, " "));
+                    "dataitem"_a = dataitem_transform(topology));
         }
         OGS_FATAL("Could not transform unknown XDMF topology type");
         return std::string{};
