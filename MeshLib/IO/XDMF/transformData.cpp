@@ -369,8 +369,7 @@ std::pair<std::vector<std::size_t>, ParentDataType> transformToXDMFTopology(
             push_cellnode_ids_to_vector(cell);
         }
     }
-    else if (topology_type == ParentDataType::POLYVERTEX ||
-             topology_type == ParentDataType::POLYLINE)
+    else if (topology_type == ParentDataType::POLYLINE)
     {
         // '+ 1' for number of nodes of the cell
         values.reserve(elements.size() * (elements[0]->getNumberOfNodes() + 1));
