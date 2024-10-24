@@ -57,7 +57,6 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
       parent_data_type(parent_data_type)
 {
     auto partition_info = getPartitionInfo(size_partitioned_dim, n_files);
-    // TODO (tm) XdmfLib does not support 64 bit data types so far
     assert(partition_info.local_length <
            std::numeric_limits<unsigned int>::max());
     auto const ui_global_components =
