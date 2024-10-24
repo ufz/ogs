@@ -17,6 +17,9 @@
 #include <spdlog/fmt/bundled/core.h>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/endian/conversion.hpp>
+#include <boost/interprocess/file_mapping.hpp>
+#include <boost/interprocess/mapped_region.hpp>
 #include <filesystem>
 #include <fstream>
 #include <typeindex>
@@ -277,6 +280,21 @@ bool createOutputDirectory(std::string const& dir)
     return true;
 }
 
+std::vector<double> readDoublesFromBinaryFile(const std::string& filename)
+{
+    auto prj_dir = BaseLib::getProjectDirectory();
+    std::string path_to_file = BaseLib::joinPaths(prj_dir, filename);
+    std::string file_extension = BaseLib::getFileExtension(filename);
+    if (file_extension != ".bin")
+    {
+        OGS_FATAL(
+            "Currently only binary files with extension '.bin' supported. The "
+            "specified file has extension {:s}.",
+            file_extension)
+    }
+    return BaseLib::readBinaryVector<double>(path_to_file);
+}
+
 template <typename T>
 T readBinaryValue(std::istream& in)
 {
@@ -290,47 +308,62 @@ template float readBinaryValue<float>(std::istream&);
 template double readBinaryValue<double>(std::istream&);
 
 template <typename T>
-std::vector<T> readBinaryArray(std::string const& filename, std::size_t const n)
+std::vector<T> readBinaryVector(std::string const& filename,
+                                std::size_t const start_element,
+                                std::size_t const num_elements)
 {
-    std::ifstream in(filename.c_str());
-    if (!in)
+    if (!IsFileExisting(filename))
     {
-        ERR("readBinaryArray(): Error while reading from file '{:s}'.",
-            filename);
-        ERR("Could not open file '{:s}' for input.", filename);
-        in.close();
-        return std::vector<T>();
+        OGS_FATAL("File {:s} not found", filename);
     }
 
-    std::vector<T> result;
-    result.reserve(n);
+    // Determine file size
+    std::uintmax_t file_size = std::filesystem::file_size(filename);
+    std::size_t total_elements = file_size / sizeof(T);
 
-    for (std::size_t p = 0; in && !in.eof() && p < n; ++p)
+    if (start_element >= total_elements)
     {
-        result.push_back(BaseLib::readBinaryValue<T>(in));
+        OGS_FATAL("Start element is beyond file size");
     }
 
-    if (result.size() == n)
+    // Calculate the number of elements to read
+    std::size_t const elements_to_read =
+        std::min(num_elements, total_elements - start_element);
+
+    // Calculate offset and size to map
+    std::size_t const offset = start_element * sizeof(T);
+    std::size_t const size_to_map = elements_to_read * sizeof(T);
+
+    // Create a file mapping
+    boost::interprocess::file_mapping file(filename.c_str(),
+                                           boost::interprocess::read_only);
+
+    // Map the specified region
+    boost::interprocess::mapped_region region(
+        file, boost::interprocess::read_only, offset, size_to_map);
+
+    // Get the address of the mapped region
+    auto* addr = region.get_address();
+
+    // Create vector and copy data
+    std::vector<T> result(elements_to_read);
+    std::memcpy(result.data(), addr, size_to_map);
+
+    if constexpr (std::endian::native != std::endian::little)
     {
-        return result;
+        boost::endian::endian_reverse_inplace(result);
     }
 
-    ERR("readBinaryArray(): Error while reading from file '{:s}'.", filename);
-    ERR("Read different number of values. Expected {:d}, got {:d}.",
-        n,
-        result.size());
-
-    if (!in.eof())
-    {
-        ERR("EOF reached.\n");
-    }
-
-    return std::vector<T>();
+    return result;
 }
 
 // explicit template instantiation
-template std::vector<float> readBinaryArray<float>(std::string const&,
-                                                   std::size_t const);
+template std::vector<float> readBinaryVector<float>(std::string const&,
+                                                    std::size_t const,
+                                                    std::size_t const);
+template std::vector<double> readBinaryVector<double>(std::string const&,
+                                                      std::size_t const,
+                                                      std::size_t const);
 
 template <typename T>
 void writeValueBinary(std::ostream& out, T const& val)

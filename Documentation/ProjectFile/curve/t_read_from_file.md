@@ -1,0 +1,1 @@
+The default is false. If this option is true, the coordinates and values of the curve are read from a binary file. The precision of the values is double and the byte ordering must be little endian. This option is recommended for large curve definitions, which may fail to directly read from the project file.

@@ -14,6 +14,7 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/FileTools.h"  // required for reading output_times from binary file
 #include "MaterialLib/Utils/MediaCreation.h"  // required for splitMaterialIDString
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/createMaterialIDsBasedSubMesh.h"
@@ -146,6 +147,18 @@ OutputConfig createOutputConfig(
         //! \ogs_file_param{prj__time_loop__output__fixed_output_times}
         config.getConfigParameter<std::vector<double>>("fixed_output_times",
                                                        {});
+    if (output_config.fixed_output_times.empty())
+    {
+        //! \ogs_file_param{prj__time_loop__output__fixed_output_times_from_file}
+        std::string filename = config.getConfigParameter<std::string>(
+            "fixed_output_times_from_file", "no_file");
+
+        if (filename != "no_file")
+        {
+            output_config.fixed_output_times =
+                BaseLib::readDoublesFromBinaryFile(filename);
+        }
+    }
     // Remove possible duplicated elements and sort.
     BaseLib::makeVectorUnique(output_config.fixed_output_times);
 
