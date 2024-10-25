@@ -11,7 +11,6 @@ build win:
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_PIP=ON
-      -DOGS_USE_UNITY_BUILDS=OFF
 
 build win msvc:
   extends:
