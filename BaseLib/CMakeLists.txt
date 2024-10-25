@@ -18,7 +18,7 @@ target_link_libraries(
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
            $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
-    PRIVATE xmlpatch
+    PRIVATE xmlpatch Boost::interprocess
 )
 
 target_compile_definitions(

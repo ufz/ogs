@@ -201,6 +201,7 @@ set(BOOST_INCLUDE_LIBRARIES
     dynamic_bitset
     range
     variant
+    interprocess
 )
 if(GUIX_BUILD)
     find_package(Boost REQUIRED)
