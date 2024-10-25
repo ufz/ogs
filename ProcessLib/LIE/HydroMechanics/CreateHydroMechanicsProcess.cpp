@@ -271,7 +271,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     std::array const requiredMediumProperties = {
         MaterialPropertyLib::reference_temperature,
-        MaterialPropertyLib::permeability, MaterialPropertyLib::porosity,
+        MaterialPropertyLib::permeability,
         MaterialPropertyLib::biot_coefficient};
     std::array const requiredFluidProperties = {MaterialPropertyLib::viscosity,
                                                 MaterialPropertyLib::density};
