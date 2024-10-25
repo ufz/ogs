@@ -54,7 +54,6 @@ std::pair<std::vector<int>, std::vector<int>> OGSMesh::getCells() const
     std::vector<int> cell_types;
     for (auto const* element : elements)
     {
-        cells.push_back(static_cast<int>(element->getNumberOfNodes()));
         ranges::copy(element->nodes() | MeshLib::views::ids,
                      std::back_inserter(cells));
         cell_types.push_back(OGSToVtkCellType(element->getCellType()));
