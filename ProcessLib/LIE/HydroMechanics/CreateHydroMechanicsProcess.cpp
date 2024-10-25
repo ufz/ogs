@@ -213,9 +213,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         auto& fracture_properties_config = *opt_fracture_properties_config;
 
         frac_prop = std::make_unique<ProcessLib::LIE::FractureProperty>(
-            0 /*fracture_id*/,
-            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__material_id}
-            fracture_properties_config.getConfigParameter<int>("material_id"),
+            0 /*fracture_id*/, 0 /*material_id*/,
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
                 fracture_properties_config, "initial_aperture", parameters, 1,
@@ -256,12 +254,6 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     ;
     if (deactivate_matrix_in_flow)
         INFO("Deactivate matrix elements in flow calculation.");
-
-    // Reference temperature
-    const auto& reference_temperature =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__reference_temperature}
-        config.getConfigParameter<double>(
-            "reference_temperature", std::numeric_limits<double>::quiet_NaN());
 
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__use_b_bar}
     auto const use_b_bar = config.getConfigParameter<bool>("use_b_bar", false);
@@ -311,17 +303,11 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     HydroMechanicsProcessData<GlobalDim> process_data{
-        materialIDs(mesh),
-        std::move(solid_constitutive_relations),
-        std::move(media_map),
-        specific_body_force,
-        std::move(fracture_model),
-        std::move(frac_prop),
-        initial_effective_stress,
-        initial_fracture_effective_stress,
-        deactivate_matrix_in_flow,
-        reference_temperature,
-        use_b_bar};
+        materialIDs(mesh),         std::move(solid_constitutive_relations),
+        std::move(media_map),      specific_body_force,
+        std::move(fracture_model), std::move(frac_prop),
+        initial_effective_stress,  initial_fracture_effective_stress,
+        deactivate_matrix_in_flow, use_b_bar};
 
     SecondaryVariableCollection secondary_variables;
 

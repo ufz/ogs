@@ -448,7 +448,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 eps_prev);
-        variables_prev.temperature = _process_data.reference_temperature;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);

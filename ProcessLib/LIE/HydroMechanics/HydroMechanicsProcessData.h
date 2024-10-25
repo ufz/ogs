@@ -51,8 +51,6 @@ struct HydroMechanicsProcessData
 
     bool const deactivate_matrix_in_flow;
 
-    double const reference_temperature;
-
     /// An indicator to use the B bar method \cite hughes1980generalization to
     /// tackle the  volumetric locking.
     const bool use_b_bar;
