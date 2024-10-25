@@ -1,14 +1,16 @@
 build win:
   extends:
     - .template-build-win
-    - .vs2019-mkl-environment
+    - .vs2019-environment
+    # oneAPI 2024 results in Stack overflow during compilation of MathLib
+    # - .vs2019-mkl-environment
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
+    # -DOGS_USE_MKL=ON
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_PIP=ON
-      -DOGS_USE_MKL=ON
       -DOGS_USE_UNITY_BUILDS=OFF
 
 build win msvc:
