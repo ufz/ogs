@@ -257,18 +257,17 @@ std::vector<std::string> readFile(std::istream& in)
 
 std::optional<std::array<double, 3>> readXyzCoordinates(std::string const& line)
 {
-    std::array<double, 3> coords;
-    if (std::sscanf(line.c_str(), "%lf %lf %lf", &coords[0], &coords[1],
-                    &coords[2]) == 3)
+    std::array<double, 3> coords = {0, 0, 0};
+    if (auto const n = std::sscanf(line.c_str(), "%lf %lf %lf", &coords[0],
+                                   &coords[1], &coords[2]);
+        n != 3)
     {
-        return coords;
-    }
-    else
-    {
-        ERR("Raster::readXyzCoordinates() - Unexpected file format:\n{:s}",
-            line);
+        ERR("Raster::readXyzCoordinates() - Read {:d} doubles out of 3 "
+            "expected from the following line:\n{:s}",
+            n, line);
         return std::nullopt;
     }
+    return coords;
 }
 
 GeoLib::RasterHeader getXyzHeader(std::vector<std::string> const& lines)
