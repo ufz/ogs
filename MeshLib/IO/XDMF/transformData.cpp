@@ -7,8 +7,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-// \TODO (tm) Extend xdmf lib with 64bit data types
-
 #include "transformData.h"
 
 #include <algorithm>
