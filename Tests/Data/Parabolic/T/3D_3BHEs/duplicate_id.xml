@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="3bhes_id_1U_2U_1U.prj">
+    <replace sel="/*/processes/process/borehole_heat_exchangers/borehole_heat_exchanger[1]/@id">0,1</replace>
+</OpenGeoSysProjectDiff>

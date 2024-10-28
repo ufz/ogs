@@ -33,12 +33,13 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     HeatTransportBHEProcessData&& process_data,
-    SecondaryVariableCollection&& secondary_variables)
+    SecondaryVariableCollection&& secondary_variables,
+    BHEMeshData&& bhe_mesh_data)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
       _process_data(std::move(process_data)),
-      _bheMeshData(getBHEDataInMesh(mesh))
+      _bheMeshData(std::move(bhe_mesh_data))
 {
     if (_bheMeshData.BHE_mat_IDs.size() !=
         _process_data._vec_BHE_property.size())

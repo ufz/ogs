@@ -213,6 +213,60 @@ AddTest(
 )
 
 AddTest(
+    NAME HeatTransportBHE_3D_3BHEs_BHE_id
+    PATH Parabolic/T/3D_3BHEs
+    RUNTIME 14
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 3bhes_id_1U_2U_1U.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    3bhes_ts_10_t_600.000000.vtu 3bhes_id_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-12
+    3bhes_ts_10_t_600.000000.vtu 3bhes_id_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 0 1e-12
+    3bhes_ts_10_t_600.000000.vtu 3bhes_id_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 0 1e-12
+    3bhes_ts_10_t_600.000000.vtu 3bhes_id_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-12
+)
+
+AddTest(
+    NAME HeatTransportBHE_3D_3BHEs_BHE_id_failcase_id_out_of_range
+    PATH Parabolic/T/3D_3BHEs
+    RUNTIME 1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS id_out_of_range.xml
+    REQUIREMENTS NOT OGS_USE_MPI
+    PROPERTIES
+    PASS_REGULAR_EXPRESSION "The maximum given BHE id '100' did not match the number of given BHE definitions '3'. The BHE ids needs to be defined starting from 0, so the maximum BHE id needs to be number of BHE definitions minus 1. After all definitions there are no gaps allowed between the given ids."
+)
+
+AddTest(
+    NAME HeatTransportBHE_3D_3BHEs_BHE_id_failcase_duplicate_id
+    PATH Parabolic/T/3D_3BHEs
+    RUNTIME 1
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS duplicate_id.xml
+    REQUIREMENTS NOT OGS_USE_MPI
+    PROPERTIES
+    PASS_REGULAR_EXPRESSION "BHE with id '1' is already present in the list! Check for duplicate definitions of BHE ids."
+)
+
+AddTest(
+    NAME HeatTransportBHE_3D_3BHEs_BHE_id_1U
+    PATH Parabolic/T/3D_3BHEs
+    RUNTIME 14
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 3bhes_id_1U.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-12
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 0 1e-12
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 0 1e-12
+    3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-12
+)
+
+AddTest(
     NAME HeatTransportBHE_3D_BHE_groundwater_advection
     PATH Parabolic/T/3D_BHE_GW_advection
     RUNTIME 4

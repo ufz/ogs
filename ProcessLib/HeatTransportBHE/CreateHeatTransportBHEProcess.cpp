@@ -10,9 +10,11 @@
 
 #include "CreateHeatTransportBHEProcess.h"
 
-#include <algorithm>
 #include <pybind11/pybind11.h>
 
+#include <algorithm>
+#include <map>
+#include <ranges>
 #include <vector>
 
 #include "BHE/BHETypes.h"
@@ -21,13 +23,82 @@
 #include "BHE/CreateBHEUType.h"
 #include "HeatTransportBHEProcess.h"
 #include "HeatTransportBHEProcessData.h"
+#include "MaterialLib/Utils/MediaCreation.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 
 namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
+std::map<std::string_view,
+         std::function<BHE::BHETypes(
+             BaseLib::ConfigTree const&,
+             std::map<std::string,
+                      std::unique_ptr<
+                          MathLib::PiecewiseLinearInterpolation>> const&)>>
+    bheCreators = {{"1U",
+                    [](auto& config, auto& curves) {
+                        return BHE::BHE_1U(
+                            BHE::createBHEUType<BHE::BHE_1U>(config, curves));
+                    }},
+                   {"2U",
+                    [](auto& config, auto& curves) {
+                        return BHE::BHE_2U(
+                            BHE::createBHEUType<BHE::BHE_2U>(config, curves));
+                    }},
+                   {"CXA",
+                    [](auto& config, auto& curves) {
+                        return BHE::BHE_CXA(BHE::createBHECoaxial<BHE::BHE_CXA>(
+                            config, curves));
+                    }},
+                   {"CXC",
+                    [](auto& config, auto& curves) {
+                        return BHE::BHE_CXC(BHE::createBHECoaxial<BHE::BHE_CXC>(
+                            config, curves));
+                    }},
+                   {"1P", [](auto& config, auto& curves) {
+                        return BHE::BHE_1P(
+                            BHE::createBHE1PType<BHE::BHE_1P>(config, curves));
+                    }}};
+
+void createAndInsertBHE(
+    const std::string& bhe_type, const std::vector<int>& bhe_ids_of_this_bhe,
+    const BaseLib::ConfigTree& bhe_config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves,
+    std::map<int, BHE::BHETypes>& bhes_map)
+{
+    auto bhe_creator_it = bheCreators.find(bhe_type);
+    if (bhe_creator_it == bheCreators.end())
+    {
+        OGS_FATAL("Unknown BHE type: {:s}", bhe_type);
+    }
+    for (auto const& id : bhe_ids_of_this_bhe)
+    {
+        std::pair<std::map<int, BHE::BHETypes>::iterator, bool> result;
+        if (id == bhe_ids_of_this_bhe[0])
+        {
+            result = bhes_map.try_emplace(
+                id, bhe_creator_it->second(bhe_config, curves));
+        }
+        else
+        {
+            result = bhes_map.try_emplace(
+                id, bhes_map.find(bhe_ids_of_this_bhe[0])->second);
+        }
+        if (!result.second)
+        {
+            OGS_FATAL(
+                "BHE with id '{:d}' is already present in the list! Check for "
+                "duplicate definitions of BHE ids.",
+                id);
+        }
+    }
+}
+
 std::unique_ptr<Process> createHeatTransportBHEProcess(
     std::string const& name,
     MeshLib::Mesh& mesh,
@@ -94,7 +165,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     /// \section parametersbhe Process Parameters
     // reading BHE parameters --------------------------------------------------
-    std::vector<BHE::BHETypes> bhes;
+
+    auto bhe_mesh_data = getBHEDataInMesh(mesh);
 
     auto const& bhe_configs =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers}
@@ -137,53 +209,61 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         }
     }
 
+    std::map<int, BHE::BHETypes> bhes_map;
+
+    int bhe_iterator = 0;
+
     for (
         auto const& bhe_config :
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
         bhe_configs.getConfigSubtreeList("borehole_heat_exchanger"))
     {
+        auto bhe_id_string =
+            //! \ogs_file_attr{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__id}
+            bhe_config.getConfigAttribute<std::string>(
+                "id", std::to_string(bhe_iterator));
+
+        std::vector<int> bhe_ids_of_this_bhe;
+
+        if (bhe_id_string == "*")
+        {
+            int size = static_cast<int>(bhe_mesh_data.BHE_mat_IDs.size());
+            bhe_ids_of_this_bhe.resize(size);
+            std::iota(bhe_ids_of_this_bhe.begin(), bhe_ids_of_this_bhe.end(),
+                      0);
+        }
+        else
+        {
+            bhe_ids_of_this_bhe =
+                MaterialLib::splitMaterialIdString(bhe_id_string);
+        }
+
         // read in the parameters
         const std::string bhe_type =
             //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__type}
             bhe_config.getConfigParameter<std::string>("type");
 
-        if (bhe_type == "1U")
-        {
-            bhes.emplace_back(
-                BHE::createBHEUType<BHE::BHE_1U>(bhe_config, curves));
-            continue;
-        }
-
-        if (bhe_type == "CXA")
-        {
-            bhes.emplace_back(
-                BHE::createBHECoaxial<BHE::BHE_CXA>(bhe_config, curves));
-            continue;
-        }
-
-        if (bhe_type == "CXC")
-        {
-            bhes.emplace_back(
-                BHE::createBHECoaxial<BHE::BHE_CXC>(bhe_config, curves));
-            continue;
-        }
-
-        if (bhe_type == "2U")
-        {
-            bhes.emplace_back(
-                BHE::createBHEUType<BHE::BHE_2U>(bhe_config, curves));
-            continue;
-        }
-
-        if (bhe_type == "1P")
-        {
-            bhes.emplace_back(
-                BHE::createBHE1PType<BHE::BHE_1P>(bhe_config, curves));
-            continue;
-        }
-        OGS_FATAL("Unknown BHE type '{:s}'.", bhe_type);
+        createAndInsertBHE(bhe_type, bhe_ids_of_this_bhe, bhe_config, curves,
+                           bhes_map);
+        bhe_iterator++;
     }
-    // end of reading BHE parameters -------------------------------------------
+
+    if (static_cast<int>(bhes_map.size()) - 1 != bhes_map.rbegin()->first)
+    {
+        OGS_FATAL(
+            "The maximum given BHE id '{:d}' did not match the number of given "
+            "BHE definitions '{:d}'. The BHE ids needs to be defined starting "
+            "from 0, so the maximum BHE id needs to be number of BHE "
+            "definitions minus 1. After all definitions there are no gaps "
+            "allowed between the given ids.",
+            bhes_map.rbegin()->first, bhes_map.size());
+    }
+
+    std::vector<BHE::BHETypes> bhes;
+    bhes.reserve(bhes_map.size());
+    std::ranges::copy(bhes_map | std::views::values, std::back_inserter(bhes));
+    //  end of reading BHE parameters
+    //  -------------------------------------------
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
@@ -261,7 +341,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     return std::make_unique<HeatTransportBHEProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables));
+        std::move(process_data), std::move(secondary_variables),
+        std::move(bhe_mesh_data));
 }
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
