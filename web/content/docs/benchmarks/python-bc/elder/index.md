@@ -19,5 +19,5 @@ The aim of this test is:
 
 ## Details
 
-This test is a copy of [this test case]({{< ref "docs/benchmarks/hydro-component/elder" >}}).
+This test is a copy of [this test case]({{< ref "docs/benchmarks/hydro-component/elder_jupyter" >}}).
 Please check the original test case for any details.

@@ -102,7 +102,9 @@
 {% endblock data_latex %}
 
 {% block data_html scoped %}
+{% raw %} {{< rawhtml >}} {% endraw %}
 {{ output.data['text/html'] }}
+{% raw %} {{< /rawhtml >}} {% endraw %}
 {% endblock data_html %}
 
 {% block data_markdown scoped %}
