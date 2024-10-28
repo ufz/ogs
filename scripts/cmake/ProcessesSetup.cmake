@@ -7,7 +7,8 @@ set(_processes_list
     HeatTransportBHE
     HydroMechanics
     LiquidFlow
-    LIE
+    LIE_M
+    LIE_HM
     ThermoRichardsMechanics
     RichardsComponentTransport
     RichardsFlow

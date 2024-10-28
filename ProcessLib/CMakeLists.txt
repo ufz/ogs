@@ -1,8 +1,32 @@
 # Collect the process libraries in interface library
 add_library(Processes INTERFACE)
 
+# Check whether LIE processes are enabled
+function(check_enabled_processes_for_LIE contains_LIE)
+    set(${contains_hm_process} FALSE PARENT_SCOPE)
+    foreach(process ${_enabled_processes})
+        if(process STREQUAL "LIE_M"
+           OR process STREQUAL "LIE_HM"
+        )
+            set(${contains_LIE} TRUE PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+endfunction()
+check_enabled_processes_for_LIE(contains_LIE)
+
+if (contains_LIE)
+    add_subdirectory(LIE/Common)
+endif()
+
 foreach(process ${_enabled_processes})
-    add_subdirectory(${process})
+    if (process STREQUAL "LIE_HM")
+        add_subdirectory(LIE/HydroMechanics)
+    elseif (process STREQUAL "LIE_M")
+        add_subdirectory(LIE/SmallDeformation)
+    else()
+        add_subdirectory(${process})
+    endif()
     target_link_libraries(Processes INTERFACE ${process})
     set_target_properties(${process} PROPERTIES JOB_POOL_COMPILE heavy_tasks)
 endforeach()
@@ -24,7 +48,7 @@ append_source_files(SOURCES Graph)
 function(check_enabled_processes contains_hm_process)
     set(${contains_hm_process} FALSE PARENT_SCOPE)
     foreach(process ${_enabled_processes})
-        if(process STREQUAL "LIE"
+        if(process STREQUAL "LIE_HM"
            OR process STREQUAL "HydroMechanics"
            OR process STREQUAL "ThermoHydroMechanics"
            OR process STREQUAL "RichardsMechanics"
