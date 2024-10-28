@@ -140,7 +140,7 @@ Under the keyword `<component>`, the properties of the transported chemical comp
 
 * [Heterogeneous Saturated Mass Transport]({{< relref "hc_ogs6-vs-ogs5" >}})
 * [Saturated Mass Transport]({{< relref "saturated-mass-transport" >}})
-* [Saturated Variable-Density Flow and Mass Transport (Elder)]({{< relref "docs/benchmarks/hydro-component/elder" >}})
+* [Saturated Variable-Density Flow and Mass Transport (Elder)]({{< relref "docs/benchmarks/hydro-component/elder_jupyter" >}})
 * [Saturated Variable-Density Flow and Mass Transport (Goswami)]({{< relref "goswami" >}})
 * [Theis solution for well pumping]({{< relref "hc_theis" >}})
 * [Variable Dependent Boundary Condition]({{< relref "vdbc" >}})
