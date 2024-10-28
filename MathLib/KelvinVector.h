@@ -106,6 +106,10 @@ struct Invariants final
     /// Kelvin mapping of 2nd order identity tensor.
     static Eigen::Matrix<double, KelvinVectorSize, 1> const identity2;
 
+    /// Kelvin mapping of a 2nd order tensor whose elements are one. In 3D case,
+    /// it is equal to \f$[1., 1., 1., \sqrt(2), \sqrt(2), \sqrt(2)]\f$.
+    static Eigen::Matrix<double, KelvinVectorSize, 1> const ones2;
+
     /// Determinant of a matrix in Kelvin vector representation.
     static double determinant(
         Eigen::Matrix<double, KelvinVectorSize, 1> const& v);
