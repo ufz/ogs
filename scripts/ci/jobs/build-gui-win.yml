@@ -1,7 +1,7 @@
 build gui win:
   extends:
     - .template-build-win
-    - .vs2019-environment
+    - .vs-environment
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       variables:

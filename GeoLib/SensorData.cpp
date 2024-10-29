@@ -14,6 +14,7 @@
 
 #include "SensorData.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <fstream>
 
