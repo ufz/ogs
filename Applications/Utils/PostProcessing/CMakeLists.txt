@@ -1,4 +1,4 @@
-if(OGS_BUILD_PROCESS_LIE)
+if(OGS_BUILD_PROCESS_LIE_M OR OGS_BUILD_PROCESS_LIE_HM)
     ogs_add_executable(postLIE postLIE.cpp)
     target_link_libraries(postLIE GitInfoLib LIECommon MeshToolsLib tclap)
     install(TARGETS postLIE RUNTIME DESTINATION bin)

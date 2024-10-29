@@ -94,9 +94,11 @@
 #ifdef OGS_BUILD_PROCESS_LARGEDEFORMATION
 #include "ProcessLib/LargeDeformation/CreateLargeDeformationProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_LIE
-#include "ProcessLib/LIE/HydroMechanics/CreateHydroMechanicsProcess.h"
+#ifdef OGS_BUILD_PROCESS_LIE_M
 #include "ProcessLib/LIE/SmallDeformation/CreateSmallDeformationProcess.h"
+#endif
+#ifdef OGS_BUILD_PROCESS_LIE_HM
+#include "ProcessLib/LIE/HydroMechanics/CreateHydroMechanicsProcess.h"
 #endif
 #ifdef OGS_BUILD_PROCESS_LIQUIDFLOW
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
@@ -897,7 +899,7 @@ void ProjectData::parseProcesses(
         }
         else
 #endif
-#ifdef OGS_BUILD_PROCESS_LIE
+#ifdef OGS_BUILD_PROCESS_LIE_HM
             if (type == "HYDRO_MECHANICS_WITH_LIE")
         {
             if (  //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__dimension}
@@ -1058,7 +1060,7 @@ void ProjectData::parseProcesses(
         }
         else
 #endif
-#ifdef OGS_BUILD_PROCESS_LIE
+#ifdef OGS_BUILD_PROCESS_LIE_M
             if (type == "SMALL_DEFORMATION_WITH_LIE")
         {
             if (  //! \ogs_file_param{prj__processes__process__SMALL_DEFORMATION_WITH_LIE__dimension}

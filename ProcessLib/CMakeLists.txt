@@ -1,8 +1,22 @@
 # Collect the process libraries in interface library
 add_library(Processes INTERFACE)
 
+# Check whether LIE processes are enabled
 foreach(process ${_enabled_processes})
-    add_subdirectory(${process})
+    if(process STREQUAL "LIE_M" OR process STREQUAL "LIE_HM")
+        add_subdirectory(LIE/Common)
+        break()
+    endif()
+endforeach()
+
+foreach(process ${_enabled_processes})
+    if(process STREQUAL "LIE_HM")
+        add_subdirectory(LIE/HydroMechanics)
+    elseif(process STREQUAL "LIE_M")
+        add_subdirectory(LIE/SmallDeformation)
+    else()
+        add_subdirectory(${process})
+    endif()
     target_link_libraries(Processes INTERFACE ${process})
     set_target_properties(${process} PROPERTIES JOB_POOL_COMPILE heavy_tasks)
 endforeach()
@@ -19,27 +33,18 @@ append_source_files(SOURCES Utils)
 append_source_files(SOURCES Reflection)
 append_source_files(SOURCES Graph)
 # For processes that contains both hydraulical process and mechanical process
-# Define a function to check if enabled_processes contains LIE, HydroMechanics,
-# ThermoHydroMechanics, RichardsMechanics, or ThermoRichardsMechanics
-function(check_enabled_processes contains_hm_process)
-    set(${contains_hm_process} FALSE PARENT_SCOPE)
-    foreach(process ${_enabled_processes})
-        if(process STREQUAL "LIE"
-           OR process STREQUAL "HydroMechanics"
-           OR process STREQUAL "ThermoHydroMechanics"
-           OR process STREQUAL "RichardsMechanics"
-           OR process STREQUAL "TH2M"
-           OR process STREQUAL "ThermoRichardsMechanics"
-        )
-            set(${contains_hm_process} TRUE PARENT_SCOPE)
-            return()
-        endif()
-    endforeach()
-endfunction()
-check_enabled_processes(contains_hm_process)
-if(contains_hm_process)
-    append_source_files(SOURCES Common/HydroMechanics)
-endif()
+foreach(process ${_enabled_processes})
+    if(process STREQUAL "LIE_HM"
+       OR process STREQUAL "HydroMechanics"
+       OR process STREQUAL "ThermoHydroMechanics"
+       OR process STREQUAL "RichardsMechanics"
+       OR process STREQUAL "TH2M"
+       OR process STREQUAL "ThermoRichardsMechanics"
+    )
+        append_source_files(SOURCES Common/HydroMechanics)
+        break()
+    endif()
+endforeach()
 
 ogs_add_library(ProcessLib GENERATE_EXPORT_HEADER ${SOURCES})
 

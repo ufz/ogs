@@ -57,7 +57,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
     EXECUTABLE postLIE
     EXECUTABLE_ARGS -i single_joint.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint.pvd
-    REQUIREMENTS OGS_BUILD_PROCESS_LIE
+    REQUIREMENTS OGS_BUILD_PROCESS_LIE_M OR OGS_BUILD_PROCESS_LIE_HM
     TESTER vtkdiff
     DIFF_DATA
     expected_post_single_joint_ts_1_t_1.000000.vtu post_single_joint_ts_1_t_1.000000.vtu u u 1e-14 1e-14
@@ -69,7 +69,7 @@ AddTest(
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/LIE/PostProcessing
     EXECUTABLE postLIE
     EXECUTABLE_ARGS -i single_joint_3D.pvd -o ${Data_BINARY_DIR}/LIE/PostProcessing/post_single_joint_3D.pvd
-    REQUIREMENTS OGS_BUILD_PROCESS_LIE
+    REQUIREMENTS OGS_BUILD_PROCESS_LIE_M OR OGS_BUILD_PROCESS_LIE_HM
     TESTER vtkdiff
     DIFF_DATA
     post_single_joint_3D_ts_1_t_1.000000.vtu post_single_joint_3D_ts_1_t_1.000000.vtu u u 1e-14 1e-14
