@@ -351,9 +351,9 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.ipynb RUNTIME 1)
+    NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.py RUNTIME 1)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 5)
-    NotebookTest(NOTEBOOKFILE Mechanics/EvaluatingBbarWithSimpleExamples/evaluating_bbbar_with_simple_examples.ipynb RUNTIME 5)
+    NotebookTest(NOTEBOOKFILE Mechanics/EvaluatingBbarWithSimpleExamples/evaluating_bbbar_with_simple_examples.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.md RUNTIME 15)
     if(NOT WIN32)
         NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole_convergence_analysis.ipynb RUNTIME 40)
