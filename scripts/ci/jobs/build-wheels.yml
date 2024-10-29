@@ -30,7 +30,7 @@ include:
 .wheels_template: &wheels_template
   stage: build
   script:
-    - pipx run cibuildwheel
+    - uvx cibuildwheel
   rules:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
       variables:
