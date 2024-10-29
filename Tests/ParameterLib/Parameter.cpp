@@ -183,7 +183,10 @@ TEST_F(ParameterLibParameter, GetNodalValuesOnElement_node)
     // For all elements all nodes have the value of the node id.
     auto expected_value =
         [](MeshLib::Element* const e, std::size_t const local_node_id)
-    { return static_cast<double>(e->getNode(local_node_id)->getID()); };
+    {
+        return static_cast<double>(
+            e->getNode(static_cast<unsigned>(local_node_id))->getID());
+    };
 
     ASSERT_TRUE(testNodalValuesOfElement(meshes[0]->getElements(),
                                          expected_value, *parameter, t));
@@ -246,7 +249,11 @@ TEST_F(ParameterLibParameter, GetNodalValuesOnElement_curveScaledNode)
     // For all elements all nodes have the value of the node id times the time.
     auto expected_value =
         [&t](MeshLib::Element* const e, std::size_t const local_node_id)
-    { return static_cast<double>(e->getNode(local_node_id)->getID()) * t; };
+    {
+        return static_cast<double>(
+                   e->getNode(static_cast<unsigned>(local_node_id))->getID()) *
+               t;
+    };
 
     ASSERT_TRUE(testNodalValuesOfElement(meshes[0]->getElements(),
                                          expected_value, *parameter, t));
