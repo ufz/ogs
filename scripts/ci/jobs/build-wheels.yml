@@ -58,7 +58,7 @@ build wheels mac:
 build wheels win:
   tags: [windows]
   extends:
-    - .vs2019-environment
+    - .vs-environment
   variables:
     SKBUILD_BUILD_OPTIONS: "/m" # TODO not supported yet in scikit-build-core
   <<: *wheels_template

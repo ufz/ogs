@@ -1,9 +1,9 @@
 build win:
   extends:
     - .template-build-win
-    - .vs2019-environment
+    - .vs-environment
     # oneAPI 2024 results in Stack overflow during compilation of MathLib
-    # - .vs2019-mkl-environment
+    # - .vs-mkl-environment
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
@@ -15,7 +15,7 @@ build win:
 build win msvc:
   extends:
     - .template-build-win
-    - .vs2019-environment
+    - .vs-environment
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: $CI_COMMIT_BRANCH =~ /^v[0-9]\.[0-9]\.[0-9]/
