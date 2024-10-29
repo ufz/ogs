@@ -10,7 +10,7 @@ readme = "README.md"
 license = { file = "LICENSE.txt" }
 authors = [{ email = "info@opengeosys.org" }, { name = "OpenGeoSys Community" }]
 requires-python = ">=3.9"
-dependencies = [ "pandas" ]
+dependencies = ["pandas"]
 
 [project.urls]
 homepage = "https://opengeosys.org"
@@ -80,7 +80,7 @@ environment-pass = [
 "cmake.define.OGS_USE_MFRONT" = "OFF"
 # Generator needs to be set here, CMAKE_GENERATOR env var does not work.
 # Ninja generator does not select  the host64 compiler.
-"cmake.args" = "-G;Visual Studio 16 2019;--preset;wheel"
+"cmake.args" = "-G;Visual Studio 17 2022;--preset;wheel"
 
 [tool.ruff]
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
