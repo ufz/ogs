@@ -125,8 +125,8 @@ void PETScVector::gatherLocalVectors(PetscScalar local_array[],
     // collect local array
     PetscInt offset = 0;
     // offset in the receive vector of the data from each rank
-    std::vector<PetscInt> i_disp(mpi.size);
-    for (PetscInt i = 0; i < mpi.size; i++)
+    std::vector<PetscInt> i_disp(mpi.rank);
+    for (PetscInt i = 0; i < mpi.rank; i++)
     {
         i_disp[i] = offset;
         offset += i_cnt[i];
