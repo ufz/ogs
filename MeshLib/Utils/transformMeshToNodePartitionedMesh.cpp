@@ -135,11 +135,8 @@ computeRegularBaseNodeGlobalNodeIDsOfSubDomainPartition(
         BaseLib::MPI::allgather(number_of_regular_nodes, mpi);
 
     // compute the 'offset' in the global_node_ids
-    std::vector<std::size_t> numbers_of_regular_nodes_at_rank;
-    numbers_of_regular_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_number_of_regular_nodes),
-                     end(gathered_number_of_regular_nodes),
-                     back_inserter(numbers_of_regular_nodes_at_rank));
+    std::vector<std::size_t> const numbers_of_regular_nodes_at_rank =
+        BaseLib::sizesToOffsets(gathered_number_of_regular_nodes);
 
     // add the offset to the partitioned-owned subdomain
     std::vector<std::size_t> subdomain_global_node_ids;
@@ -198,10 +195,9 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
     std::vector<int> const numbers_of_ids_at_ranks =
         BaseLib::MPI::allgather(static_cast<int>(size), mpi);
 
-    std::vector<int> offsets;
-    offsets.push_back(0);
-    std::partial_sum(begin(numbers_of_ids_at_ranks),
-                     end(numbers_of_ids_at_ranks), back_inserter(offsets));
+    std::vector<int> const offsets =
+        BaseLib::sizesToOffsets(numbers_of_ids_at_ranks);
+
     std::vector<std::size_t> ghost_node_ids_of_all_ranks(
         global_number_of_subdomain_node_id_to_bulk_node_id);
     MPI_Allgatherv(subdomain_node_id_to_bulk_node_id.data(), /* sendbuf */
@@ -292,13 +288,7 @@ std::vector<std::size_t> computeNumberOfRegularBaseNodesAtRank(
     std::vector<std::size_t> const gathered_number_of_regular_base_nodes =
         BaseLib::MPI::allgather(number_of_regular_base_nodes, mpi);
 
-    std::vector<std::size_t> numbers_of_regular_base_nodes_at_rank;
-    numbers_of_regular_base_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_number_of_regular_base_nodes),
-                     end(gathered_number_of_regular_base_nodes),
-                     back_inserter(numbers_of_regular_base_nodes_at_rank));
-
-    return numbers_of_regular_base_nodes_at_rank;
+    return BaseLib::sizesToOffsets(gathered_number_of_regular_base_nodes);
 }
 
 // similar to the above only with regular higher order nodes
@@ -315,14 +305,8 @@ std::vector<std::size_t> computeNumberOfRegularHigherOrderNodesAtRank(
     std::vector<std::size_t> gathered_number_of_regular_higher_order_nodes =
         BaseLib::MPI::allgather(number_of_regular_higher_order_nodes, mpi);
 
-    std::vector<std::size_t> numbers_of_regular_higher_order_nodes_at_rank;
-    numbers_of_regular_higher_order_nodes_at_rank.push_back(0);
-    std::partial_sum(
-        begin(gathered_number_of_regular_higher_order_nodes),
-        end(gathered_number_of_regular_higher_order_nodes),
-        back_inserter(numbers_of_regular_higher_order_nodes_at_rank));
-
-    return numbers_of_regular_higher_order_nodes_at_rank;
+    return BaseLib::sizesToOffsets(
+        gathered_number_of_regular_higher_order_nodes);
 }
 
 std::vector<std::size_t> computeGlobalNodeIDsOfSubDomainPartition(

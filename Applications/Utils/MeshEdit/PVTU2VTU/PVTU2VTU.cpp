@@ -229,9 +229,8 @@ getMergedNodesVector(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     ranges::transform(meshes, std::back_inserter(number_of_nodes_per_partition),
                       [](auto const& mesh)
                       { return mesh->getNumberOfNodes(); });
-    std::vector<std::size_t> offsets(meshes.size() + 1, 0);
-    std::partial_sum(number_of_nodes_per_partition.begin(),
-                     number_of_nodes_per_partition.end(), offsets.begin() + 1);
+    std::vector<std::size_t> const offsets =
+        BaseLib::sizesToOffsets(number_of_nodes_per_partition);
 
     std::vector<MeshLib::Node*> all_nodes;
     all_nodes.reserve(offsets.back());

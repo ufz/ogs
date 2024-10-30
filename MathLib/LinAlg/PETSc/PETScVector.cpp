@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <cassert>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/MPI.h"
 
@@ -122,15 +123,8 @@ void PETScVector::gatherLocalVectors(PetscScalar local_array[],
     // number of elements to be sent for each rank
     std::vector<PetscInt> const i_cnt = BaseLib::MPI::allgather(size_loc_, mpi);
 
-    // collect local array
-    PetscInt offset = 0;
     // offset in the receive vector of the data from each rank
-    std::vector<PetscInt> i_disp(mpi.rank);
-    for (PetscInt i = 0; i < mpi.rank; i++)
-    {
-        i_disp[i] = offset;
-        offset += i_cnt[i];
-    }
+    std::vector<PetscInt> const i_disp = BaseLib::sizesToOffsets(i_cnt);
 
     MPI_Allgatherv(local_array, size_loc_, MPI_DOUBLE, global_array, &i_cnt[0],
                    &i_disp[0], MPI_DOUBLE, PETSC_COMM_WORLD);

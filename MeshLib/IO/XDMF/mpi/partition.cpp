@@ -17,6 +17,7 @@
 
 #include <numeric>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "MeshLib/IO/XDMF/fileIO.h"
@@ -40,12 +41,9 @@ PartitionInfo getPartitionInfo(std::size_t const size,
         BaseLib::MPI::allgather(size, mpi);
 
     // the first partition's offset is zero, offsets for subsequent
-    // partitions are the accumulated sum of all preceding size (excluding
-    // own size)
-    std::vector<std::size_t> partition_offsets(1, 0);
-    std::partial_sum(partition_sizes.begin(),
-                     partition_sizes.end(),
-                     back_inserter(partition_offsets));
+    // partitions are the accumulated sum of all preceding size.
+    std::vector<std::size_t> const partition_offsets =
+        BaseLib::sizesToOffsets(partition_sizes);
 
     // chunked
     std::size_t longest_partition =
