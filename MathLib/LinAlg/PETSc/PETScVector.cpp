@@ -24,6 +24,7 @@
 #include <cassert>
 
 #include "BaseLib/Error.h"
+#include "BaseLib/MPI.h"
 
 namespace MathLib
 {
@@ -116,21 +117,16 @@ void PETScVector::finalizeAssembly()
 void PETScVector::gatherLocalVectors(PetscScalar local_array[],
                                      PetscScalar global_array[]) const
 {
-    // Collect vectors from processors.
-    int size_rank;
-    MPI_Comm_size(PETSC_COMM_WORLD, &size_rank);
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
 
     // number of elements to be sent for each rank
-    std::vector<PetscInt> i_cnt(size_rank);
-
-    MPI_Allgather(&size_loc_, 1, MPI_INT, &i_cnt[0], 1, MPI_INT,
-                  PETSC_COMM_WORLD);
+    std::vector<PetscInt> const i_cnt = BaseLib::MPI::allgather(size_loc_, mpi);
 
     // collect local array
     PetscInt offset = 0;
     // offset in the receive vector of the data from each rank
-    std::vector<PetscInt> i_disp(size_rank);
-    for (PetscInt i = 0; i < size_rank; i++)
+    std::vector<PetscInt> i_disp(mpi.size);
+    for (PetscInt i = 0; i < mpi.size; i++)
     {
         i_disp[i] = offset;
         offset += i_cnt[i];

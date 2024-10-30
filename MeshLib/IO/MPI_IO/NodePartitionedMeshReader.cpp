@@ -22,6 +22,7 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/MeshEnums.h"
@@ -404,15 +405,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::vector<MeshLib::Element*> const& mesh_elems,
     MeshLib::Properties const& properties) const
 {
-    std::vector<std::size_t> gathered_n_regular_base_nodes(mpi_.size);
-
-    MPI_Allgather(&_mesh_info.number_of_regular_base_nodes,
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  gathered_n_regular_base_nodes.data(),
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  mpi_.communicator);
+    std::vector<std::size_t> const gathered_n_regular_base_nodes =
+        BaseLib::MPI::allgather(_mesh_info.number_of_regular_base_nodes, mpi_);
 
     std::vector<std::size_t> n_regular_base_nodes_at_rank;
     n_regular_base_nodes_at_rank.push_back(0);
@@ -420,18 +414,11 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
                      end(gathered_n_regular_base_nodes),
                      back_inserter(n_regular_base_nodes_at_rank));
 
-    std::vector<std::size_t> gathered_n_regular_high_order_nodes(
-        mpi_.size);
     std::size_t const n_regular_high_order_nodes =
         _mesh_info.number_of_regular_nodes -
         _mesh_info.number_of_regular_base_nodes;
-    MPI_Allgather(&n_regular_high_order_nodes,
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  gathered_n_regular_high_order_nodes.data(),
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  mpi_.communicator);
+    std::vector<std::size_t> const gathered_n_regular_high_order_nodes =
+        BaseLib::MPI::allgather(n_regular_high_order_nodes, mpi_);
 
     std::vector<std::size_t> n_regular_high_order_nodes_at_rank;
     n_regular_high_order_nodes_at_rank.push_back(0);

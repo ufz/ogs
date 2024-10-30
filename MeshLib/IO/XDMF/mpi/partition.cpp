@@ -18,6 +18,7 @@
 #include <numeric>
 
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "MeshLib/IO/XDMF/fileIO.h"
 #include "getCommunicator.h"
 
@@ -33,22 +34,10 @@ bool isFileManager()
 PartitionInfo getPartitionInfo(std::size_t const size,
                                unsigned int const n_files)
 {
-    MPI_Comm const mpi_comm = getCommunicator(n_files).mpi_communicator;
-    int mpi_size;
-    int mpi_rank;
-    MPI_Comm_size(mpi_comm, &mpi_size);
-    MPI_Comm_rank(mpi_comm, &mpi_rank);
+    BaseLib::MPI::Mpi const mpi{getCommunicator(n_files).mpi_communicator};
 
-    std::vector<std::size_t> partition_sizes;
-    partition_sizes.resize(mpi_size);
-
-    MPI_Allgather(&size,
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  partition_sizes.data(),
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  mpi_comm);
+    std::vector<std::size_t> const partition_sizes =
+        BaseLib::MPI::allgather(size, mpi);
 
     // the first partition's offset is zero, offsets for subsequent
     // partitions are the accumulated sum of all preceding size (excluding
@@ -63,7 +52,7 @@ PartitionInfo getPartitionInfo(std::size_t const size,
         *max_element(partition_sizes.begin(), partition_sizes.end());
 
     // local_offset, local_length, longest_local_length, global_length
-    return {partition_offsets[mpi_rank], size, longest_partition,
+    return {partition_offsets[mpi.rank], size, longest_partition,
             partition_offsets.back()};
 }
 }  // namespace MeshLib::IO
