@@ -388,6 +388,9 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::PreconType::DIAGONAL:
             return createIterativeSolver<
                 Solver, Eigen::DiagonalPreconditioner<double>>();
+        case EigenOption::PreconType::LeastSquareDIAGONAL:
+            return createIterativeSolver<
+                Solver, Eigen::LeastSquareDiagonalPreconditioner<double>>();
         case EigenOption::PreconType::ILUT:
             // TODO for this preconditioner further options can be passed.
             // see
@@ -428,6 +431,11 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::CG:
         {
             return createIterativeSolver<EigenCGSolver>(precon_type);
+        }
+        case EigenOption::SolverType::LeastSquareCG:
+        {
+            return createIterativeSolver<Eigen::LeastSquaresConjugateGradient>(
+                precon_type);
         }
         case EigenOption::SolverType::GMRES:
         {
@@ -493,6 +501,7 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
         case EigenOption::SolverType::BiCGSTAB:
         case EigenOption::SolverType::BiCGSTABL:
         case EigenOption::SolverType::CG:
+        case EigenOption::SolverType::LeastSquareCG:
         case EigenOption::SolverType::GMRES:
         case EigenOption::SolverType::IDRS:
         case EigenOption::SolverType::IDRSTABL:

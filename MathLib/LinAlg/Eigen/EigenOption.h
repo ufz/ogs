@@ -21,6 +21,7 @@ struct EigenOption final
     enum class SolverType : short
     {
         CG,
+        LeastSquareCG,
         BiCGSTAB,
         BiCGSTABL,
         IDRS,
@@ -35,6 +36,7 @@ struct EigenOption final
     {
         NONE,
         DIAGONAL,
+        LeastSquareDIAGONAL,
         ILUT
     };
 
