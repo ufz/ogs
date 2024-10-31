@@ -257,16 +257,9 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
     }
 
     // send the computed ids back
-    std::vector<std::size_t> computed_global_ids_for_subdomain_ghost_nodes(
-        global_number_of_subdomain_node_id_to_bulk_node_id);
-    MPI_Allreduce(
-        local_subdomain_node_ids_of_all_ranks.data(), /* sendbuf */
-        computed_global_ids_for_subdomain_ghost_nodes
-            .data(),                                        /* recvbuf (out) */
-        global_number_of_subdomain_node_id_to_bulk_node_id, /* sendcount */
-        MPI_UNSIGNED_LONG,                                  /* sendtype */
-        MPI_MAX,                                            /* operation */
-        mpi.communicator);
+    std::vector<std::size_t> const
+        computed_global_ids_for_subdomain_ghost_nodes = BaseLib::MPI::allreduce(
+            local_subdomain_node_ids_of_all_ranks, MPI_MAX, mpi);
 
     std::vector<std::size_t> global_ids_for_subdomain_ghost_nodes(
         computed_global_ids_for_subdomain_ghost_nodes.begin() +
