@@ -26,13 +26,9 @@
 #include <boost/algorithm/string/erase.hpp>
 
 #include "BaseLib/DisableFPE.h"
-#include "BaseLib/Logging.h"
-
-#ifdef USE_PETSC
-#include <petsc.h>
-#endif
-
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "VtkMeshConverter.h"
@@ -148,23 +144,15 @@ std::string getVtuFileNameForPetscOutputWithoutExtension(
 bool VtuInterface::writeToFile(std::filesystem::path const& file_path)
 {
 #ifdef USE_PETSC
-    int mpi_init;
-    MPI_Initialized(&mpi_init);
-    if (mpi_init == 1)
+    BaseLib::MPI::Mpi mpi;
+    if (mpi.size == 1)
     {
-        int mpi_size;
-        MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
-        if (mpi_size == 1)
-        {
-            return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
-        }
-        auto const vtu_file_name =
-            getVtuFileNameForPetscOutputWithoutExtension(file_path.string());
-        int rank;
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-        return writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu",
-                                                       mpi_size, rank);
+        return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
     }
+    auto const vtu_file_name =
+        getVtuFileNameForPetscOutputWithoutExtension(file_path.string());
+    return writeVTU<vtkXMLPUnstructuredGridWriter>(vtu_file_name + ".pvtu",
+                                                   mpi.size, mpi.rank);
 #endif
     return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
 }

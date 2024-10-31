@@ -20,9 +20,9 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
-#ifdef USE_PETSC
-#include <petsc.h>
+#include "BaseLib/MPI.h"
 
+#ifdef USE_PETSC
 #include "MeshLib/IO/VtkIO/VtuInterface.h"  // For petsc file name conversion.
 #endif
 
@@ -197,16 +197,13 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
                 //! \ogs_file_param{prj__test_definition__vtkdiff__file}
                 vtkdiff_config.getConfigParameter<std::string>("file");
 #ifdef USE_PETSC
-            int mpi_size;
-            MPI_Comm_size(PETSC_COMM_WORLD, &mpi_size);
-            if (mpi_size > 1)
+            BaseLib::MPI::Mpi mpi;
+            if (mpi.size > 1)
             {
-                int rank;
-                MPI_Comm_rank(PETSC_COMM_WORLD, &rank);
                 filename =
                     MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
                         filename) +
-                    "_" + std::to_string(rank) + ".vtu";
+                    "_" + std::to_string(mpi.rank) + ".vtu";
             }
 #endif  // OGS_USE_PETSC
             filenames.push_back(filename);
