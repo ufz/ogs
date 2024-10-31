@@ -99,5 +99,13 @@ static std::vector<T> allgather(T const& value, Mpi const& mpi)
     return result;
 }
 
+template <typename T>
+static T allreduce(T const& value, MPI_Op const& mpi_op, Mpi const& mpi)
+{
+    T result{};
+
+    MPI_Allreduce(&value, &result, 1, mpiType<T>(), mpi_op, mpi.communicator);
+    return result;
+}
 #endif
 }  // namespace BaseLib::MPI
