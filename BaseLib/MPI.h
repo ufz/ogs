@@ -113,6 +113,18 @@ static T allreduce(T const& value, MPI_Op const& mpi_op, Mpi const& mpi)
 }
 
 template <typename T>
+static std::vector<T> allreduce(std::vector<T> const& vector,
+                                MPI_Op const& mpi_op, Mpi const& mpi)
+{
+    std::size_t const size = vector.size();
+    std::vector<T> result(vector.size());
+
+    MPI_Allreduce(vector.data(), result.data(), size, mpiType<T>(), mpi_op,
+                  mpi.communicator);
+    return result;
+}
+
+template <typename T>
 static void allreduceInplace(std::vector<T>& vector,
                              MPI_Op const& mpi_op,
                              Mpi const& mpi)
