@@ -9,10 +9,7 @@
 
 #include "BoundaryElementsAtPoint.h"
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
+#include "BaseLib/MPI.h"
 #include "GeoLib/Point.h"
 #include "MathLib/Point3d.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -32,10 +29,8 @@ BoundaryElementsAtPoint::BoundaryElementsAtPoint(
 
 #ifdef USE_PETSC
     std::size_t const number_of_found_nodes_at_rank = node_ids.size();
-    std::size_t number_of_total_found_nodes = 0;
-
-    MPI_Allreduce(&number_of_found_nodes_at_rank, &number_of_total_found_nodes,
-                  1, MPI_UNSIGNED_LONG, MPI_SUM, MPI_COMM_WORLD);
+    std::size_t const number_of_total_found_nodes = BaseLib::MPI::allreduce(
+        number_of_found_nodes_at_rank, MPI_SUM, BaseLib::MPI::Mpi{});
 
     if (number_of_total_found_nodes == 0)
     {

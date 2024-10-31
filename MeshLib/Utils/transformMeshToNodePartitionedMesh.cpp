@@ -184,9 +184,8 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
     // other ranks and at the same time receive from all other ranks
     // first send the sizes to all other to are able to allocate buffer
     auto const size = subdomain_node_id_to_bulk_node_id.size();
-    std::size_t global_number_of_subdomain_node_id_to_bulk_node_id = 0;
-    MPI_Allreduce(&size, &global_number_of_subdomain_node_id_to_bulk_node_id, 1,
-                  MPI_UNSIGNED_LONG, MPI_SUM, mpi.communicator);
+    std::size_t const global_number_of_subdomain_node_id_to_bulk_node_id =
+        BaseLib::MPI::allreduce(size, MPI_SUM, mpi);
 
     DBUG("[{}] global_number_of_subdomain_node_id_to_bulk_node_id: '{}' ",
          subdomain_mesh->getName(),
@@ -343,13 +342,8 @@ std::vector<std::size_t> computeGlobalNodeIDsOfSubDomainPartition(
 unsigned long getNumberOfGlobalNodes(Mesh const* subdomain_mesh)
 {
     // sum all nodes over all partitions in number_of_global_nodes
-    unsigned long number_of_local_nodes = subdomain_mesh->getNodes().size();
-    unsigned long number_of_global_nodes = 0;
-
-    MPI_Comm mpi_comm = MPI_COMM_WORLD;
-
-    MPI_Allreduce(&number_of_local_nodes, &number_of_global_nodes, 1,
-                  MPI_UNSIGNED_LONG, MPI_SUM, mpi_comm);
+    unsigned long const number_of_global_nodes = BaseLib::MPI::allreduce(
+        subdomain_mesh->getNodes().size(), MPI_SUM, BaseLib::MPI::Mpi{});
     DBUG("[{}] number_of_global_nodes: {}'", subdomain_mesh->getName(),
          number_of_global_nodes);
     return number_of_global_nodes;

@@ -265,10 +265,8 @@ void NodePartitionedMeshReader::readProperties(
     is.seekg(offset);
     std::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
         MeshLib::IO::readPropertyVectorPartitionMetaData(is));
-    bool pvpmd_read_ok = static_cast<bool>(pvpmd);
-    bool all_pvpmd_read_ok;
-    MPI_Allreduce(&pvpmd_read_ok, &all_pvpmd_read_ok, 1, MPI_C_BOOL, MPI_LOR,
-                  mpi_.communicator);
+    bool const all_pvpmd_read_ok =
+        BaseLib::MPI::allreduce(static_cast<bool>(pvpmd), MPI_LOR, mpi_);
     if (!all_pvpmd_read_ok)
     {
         OGS_FATAL(

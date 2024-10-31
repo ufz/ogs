@@ -18,19 +18,6 @@
 namespace BaseLib::MPI
 {
 
-static inline int reduceMin(int const val)
-{
-#ifdef USE_PETSC
-    // Reduce operations for interprocess communications while using Petsc
-    int result;
-    MPI_Allreduce(&val, &result, 1, MPI_INTEGER, MPI_MIN, MPI_COMM_WORLD);
-    return result;
-#else
-    // Reduce operations for interprocess communications without using Petsc
-    return val;
-#endif
-}
-
 #ifdef USE_PETSC
 struct Mpi
 {
@@ -108,4 +95,16 @@ static T allreduce(T const& value, MPI_Op const& mpi_op, Mpi const& mpi)
     return result;
 }
 #endif
+
+/// The reduction is implemented transparently for with and without MPI. In the
+/// latter case the input value is returned.
+static inline int reduceMin(int const val)
+{
+#ifdef USE_PETSC
+    return allreduce(val, MPI_MIN, Mpi{MPI_COMM_WORLD});
+#else
+    return val;
+#endif
+}
+
 }  // namespace BaseLib::MPI

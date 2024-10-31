@@ -12,6 +12,7 @@
 
 #include <cassert>
 
+#include "BaseLib/MPI.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/ComputeSparsityPattern.h"
 #include "PhaseFieldFEM.h"
@@ -307,15 +308,13 @@ void PhaseFieldProcess<DisplacementDim>::postTimestepConcreteProcess(
             _process_data.pressure_work);
 
 #ifdef USE_PETSC
-        double const elastic_energy = _process_data.elastic_energy;
-        MPI_Allreduce(&elastic_energy, &_process_data.elastic_energy, 1,
-                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
-        double const surface_energy = _process_data.surface_energy;
-        MPI_Allreduce(&surface_energy, &_process_data.surface_energy, 1,
-                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
-        double const pressure_work = _process_data.pressure_work;
-        MPI_Allreduce(&pressure_work, &_process_data.pressure_work, 1,
-                      MPI_DOUBLE, MPI_SUM, PETSC_COMM_WORLD);
+        BaseLib::MPI::Mpi mpi{};
+        _process_data.elastic_energy =
+            BaseLib::MPI::allreduce(_process_data.elastic_energy, MPI_SUM, mpi);
+        _process_data.surface_energy =
+            BaseLib::MPI::allreduce(_process_data.surface_energy, MPI_SUM, mpi);
+        _process_data.pressure_work =
+            BaseLib::MPI::allreduce(_process_data.pressure_work, MPI_SUM, mpi);
 #endif
 
         INFO(
@@ -361,9 +360,8 @@ void PhaseFieldProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
         getActiveElementIDs(), dof_tables, x, t, _process_data.crack_volume);
 
 #ifdef USE_PETSC
-    double const crack_volume = _process_data.crack_volume;
-    MPI_Allreduce(&crack_volume, &_process_data.crack_volume, 1, MPI_DOUBLE,
-                  MPI_SUM, PETSC_COMM_WORLD);
+    _process_data.crack_volume = BaseLib::MPI::allreduce(
+        _process_data.crack_volume, MPI_SUM, BaseLib::MPI::Mpi{});
 #endif
 
     INFO("Integral of crack: {:g}", _process_data.crack_volume);
