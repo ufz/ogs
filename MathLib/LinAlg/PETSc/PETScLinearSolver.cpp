@@ -40,6 +40,10 @@ PETScLinearSolver::PETScLinearSolver(std::string const& prefix,
 
     KSPSetInitialGuessNonzero(solver_, PETSC_TRUE);
     KSPSetFromOptions(solver_);  // set run-time options
+
+    KSPType ksp_type;
+    KSPGetType(solver_, &ksp_type);
+    can_solve_rectangular_ = canSolverHandleRectangular(ksp_type);
 }
 
 bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)

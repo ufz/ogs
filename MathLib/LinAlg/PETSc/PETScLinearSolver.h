@@ -18,6 +18,8 @@
 
 #include <petscksp.h>
 
+#include <algorithm>
+#include <array>
 #include <string>
 
 #include "PETScMatrix.h"
@@ -62,9 +64,25 @@ public:
     /// Get elapsed wall clock time.
     double getElapsedTime() const { return elapsed_ctime_; }
 
+    /// Get, if the solver can handle rectangular equation systems
+    bool canSolveRectangular() const { return can_solve_rectangular_; }
+
 private:
+    bool canSolverHandleRectangular(std::string_view ksp_type)
+    {
+        // List of KSP types that can handle rectangular matrices
+        constexpr auto rectangular_solvers = std::to_array<std::string_view>(
+            {KSPGMRES, KSPFGMRES, KSPBCGS, KSPBCGSL, KSPTFQMR, KSPCGS});
+
+        return std::ranges::any_of(rectangular_solvers,
+                                   [&](const auto& solver)
+                                   { return solver == ksp_type; });
+    }
+
     KSP solver_;  ///< Solver type.
     PC pc_;       ///< Preconditioner type.
+
+    bool can_solve_rectangular_ = false;
 
     double elapsed_ctime_ = 0.0;  ///< Clock time
 };

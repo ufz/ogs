@@ -496,23 +496,30 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
                 Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
             solver_ = std::make_unique<
                 details::EigenDirectLinearSolver<SolverType>>();
+            can_solve_rectangular_ = false;
             return;
         }
         case EigenOption::SolverType::BiCGSTAB:
         case EigenOption::SolverType::BiCGSTABL:
         case EigenOption::SolverType::CG:
-        case EigenOption::SolverType::LeastSquareCG:
         case EigenOption::SolverType::GMRES:
         case EigenOption::SolverType::IDRS:
         case EigenOption::SolverType::IDRSTABL:
             solver_ = details::createIterativeSolver(option_.solver_type,
                                                      option_.precon_type);
+            can_solve_rectangular_ = false;
+            return;
+        case EigenOption::SolverType::LeastSquareCG:
+            solver_ = details::createIterativeSolver(option_.solver_type,
+                                                     option_.precon_type);
+            can_solve_rectangular_ = true;
             return;
         case EigenOption::SolverType::PardisoLU:
         {
 #ifdef USE_MKL
             using SolverType = Eigen::PardisoLU<EigenMatrix::RawMatrixType>;
             solver_.reset(new details::EigenDirectLinearSolver<SolverType>);
+            can_solve_rectangular_ = false;
             return;
 #else
             OGS_FATAL(
