@@ -225,7 +225,7 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
         local_subdomain_node_ids[local_bulk_node_ids_for_subdomain[id]] = id;
     }
 
-    std::vector<std::size_t> local_subdomain_node_ids_of_all_ranks(
+    std::vector<std::size_t> subdomain_node_ids_of_all_ranks(
         global_number_of_subdomain_node_id_to_bulk_node_id,
         std::numeric_limits<std::size_t>::max());
     // search in all ranks within the bulk ids for the corresponding id
@@ -244,28 +244,24 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
                 continue;
             }
             auto const local_bulk_node_id = it->second;
-            local_subdomain_node_ids_of_all_ranks[i] =
-                global_regular_base_node_ids
-                    [local_subdomain_node_ids.find(local_bulk_node_id)->second];
+            subdomain_node_ids_of_all_ranks[i] = global_regular_base_node_ids
+                [local_subdomain_node_ids.find(local_bulk_node_id)->second];
             DBUG(
                 "[{}] found global subdomain node id: '{}' for global bulk "
                 "node id {} ",
                 subdomain_mesh->getName(),
-                local_subdomain_node_ids_of_all_ranks[i],
+                subdomain_node_ids_of_all_ranks[i],
                 ghost_node_ids_of_all_ranks[i]);
         }
     }
 
-    // send the computed ids back
-    std::vector<std::size_t> const
-        computed_global_ids_for_subdomain_ghost_nodes = BaseLib::MPI::allreduce(
-            local_subdomain_node_ids_of_all_ranks, MPI_MAX, mpi);
+    // find maximum over all ranks
+    BaseLib::MPI::allreduceInplace(subdomain_node_ids_of_all_ranks, MPI_MAX,
+                                   mpi);
 
     std::vector<std::size_t> global_ids_for_subdomain_ghost_nodes(
-        computed_global_ids_for_subdomain_ghost_nodes.begin() +
-            offsets[mpi.rank],
-        computed_global_ids_for_subdomain_ghost_nodes.begin() +
-            offsets[mpi.rank + 1]);
+        subdomain_node_ids_of_all_ranks.begin() + offsets[mpi.rank],
+        subdomain_node_ids_of_all_ranks.begin() + offsets[mpi.rank + 1]);
     return global_ids_for_subdomain_ghost_nodes;
 }
 
