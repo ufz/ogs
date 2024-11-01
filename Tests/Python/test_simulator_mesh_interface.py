@@ -64,10 +64,10 @@ def checkCells(cells, celltypes, points):
     # structured mesh with equal size cells
     for c in range(len(celltypes)):
         area = computeQuadArea(
-            points[cells[5 * c + 1]],
-            points[cells[5 * c + 2]],
-            points[cells[5 * c + 3]],
-            points[cells[5 * c + 4]],
+            points[cells[4 * c + 0]],
+            points[cells[4 * c + 1]],
+            points[cells[4 * c + 2]],
+            points[cells[4 * c + 3]],
         )
         if abs(area - 1.0 / 9.0) > sys.float_info.epsilon:
             print(
@@ -76,7 +76,7 @@ def checkCells(cells, celltypes, points):
                 + " is: "
                 + str(area)
                 + ", expected value is "
-                + str(1.0 / 1.9)
+                + str(1.0 / 9.0)
             )
 
 
