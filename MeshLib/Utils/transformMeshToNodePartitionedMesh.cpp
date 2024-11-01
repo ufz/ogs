@@ -180,33 +180,18 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
         }
     }
 
-    // send ids of bulk ghost nodes belonging to the subdomain mesh to all
-    // other ranks and at the same time receive from all other ranks
-    // first send the sizes to all other to are able to allocate buffer
-    auto const size = subdomain_node_id_to_bulk_node_id.size();
-    std::size_t const global_number_of_subdomain_node_id_to_bulk_node_id =
-        BaseLib::MPI::allreduce(size, MPI_SUM, mpi);
+    // Send ids of bulk ghost nodes belonging to the subdomain mesh to all
+    // other ranks and at the same time receive from all other ranks.
+    std::vector<std::size_t> ghost_node_ids_of_all_ranks;
+    std::vector<int> const offsets =
+        BaseLib::MPI::allgatherv(std::span{subdomain_node_id_to_bulk_node_id},
+                                 ghost_node_ids_of_all_ranks, mpi);
 
+    std::size_t const global_number_of_subdomain_node_id_to_bulk_node_id =
+        offsets.back();
     DBUG("[{}] global_number_of_subdomain_node_id_to_bulk_node_id: '{}' ",
          subdomain_mesh->getName(),
          global_number_of_subdomain_node_id_to_bulk_node_id);
-
-    std::vector<int> const numbers_of_ids_at_ranks =
-        BaseLib::MPI::allgather(static_cast<int>(size), mpi);
-
-    std::vector<int> const offsets =
-        BaseLib::sizesToOffsets(numbers_of_ids_at_ranks);
-
-    std::vector<std::size_t> ghost_node_ids_of_all_ranks(
-        global_number_of_subdomain_node_id_to_bulk_node_id);
-    MPI_Allgatherv(subdomain_node_id_to_bulk_node_id.data(), /* sendbuf */
-                   size,                                     /* sendcount */
-                   MPI_UNSIGNED_LONG,                        /* sendtype */
-                   ghost_node_ids_of_all_ranks.data(),       /* recvbuf (out) */
-                   numbers_of_ids_at_ranks.data(),           /* recvcounts */
-                   offsets.data(),                           /* displs */
-                   MPI_UNSIGNED_LONG,                        /* recvtype */
-                   mpi.communicator);
 
     // construct a map for fast search of local bulk node ids
     std::map<std::size_t, std::size_t> global_to_local_bulk_node_ids;
