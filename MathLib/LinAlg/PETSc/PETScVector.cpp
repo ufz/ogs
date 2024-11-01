@@ -115,21 +115,6 @@ void PETScVector::finalizeAssembly()
     VecAssemblyEnd(v_);
 }
 
-void PETScVector::gatherLocalVectors(PetscScalar local_array[],
-                                     PetscScalar global_array[]) const
-{
-    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
-
-    // number of elements to be sent for each rank
-    std::vector<PetscInt> const i_cnt = BaseLib::MPI::allgather(size_loc_, mpi);
-
-    // offset in the receive vector of the data from each rank
-    std::vector<PetscInt> const i_disp = BaseLib::sizesToOffsets(i_cnt);
-
-    MPI_Allgatherv(local_array, size_loc_, MPI_DOUBLE, global_array, &i_cnt[0],
-                   &i_disp[0], MPI_DOUBLE, PETSC_COMM_WORLD);
-}
-
 void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 {
 #ifdef TEST_MEM_PETSC
@@ -149,7 +134,8 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
     PetscScalar* xp = nullptr;
     VecGetArray(v_, &xp);
 
-    gatherLocalVectors(xp, u.data());
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
+    BaseLib::MPI::allgatherv(std::span(xp, size_loc_), u, mpi);
 
     // This following line may be needed late on
     //  for a communication load balance:
