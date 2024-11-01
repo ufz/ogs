@@ -11,6 +11,7 @@
 
 #include <algorithm>
 
+#include "Algorithm.h"
 #include "Error.h"
 
 #ifdef USE_PETSC
@@ -135,6 +136,33 @@ static void allreduceInplace(std::vector<T>& vector,
                   mpiType<T>(),
                   mpi_op,
                   mpi.communicator);
+}
+
+/// Allgather for variable data. Returns offsets in the receive buffer.
+/// The receive buffer is resized to accommodate the gathered data.
+template <typename T>
+static std::vector<int> allgatherv(
+    std::span<T> const send_buffer,
+    std::vector<std::remove_const_t<T>>& receive_buffer,
+    Mpi const& mpi)
+{
+    // Determine the number of elements to send
+    int const size = static_cast<int>(send_buffer.size());
+
+    // Gather sizes from all ranks
+    std::vector<int> const sizes = allgather(size, mpi);
+
+    // Compute offsets based on counts
+    std::vector<int> const offsets = BaseLib::sizesToOffsets(sizes);
+
+    // Resize receive buffer to hold all gathered data
+    receive_buffer.resize(offsets.back());
+
+    MPI_Allgatherv(send_buffer.data(), size, mpiType<T>(),
+                   receive_buffer.data(), sizes.data(), offsets.data(),
+                   mpiType<T>(), mpi.communicator);
+
+    return offsets;
 }
 #endif
 
