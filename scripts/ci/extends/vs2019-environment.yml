@@ -18,5 +18,6 @@
   before_script:
     - *load_vs_env
     # Load MKL environment
-    - '& "C:\Program Files (x86)\Intel\oneAPI\setvars.bat"'
-    - $env:PATH += ";C:\Program Files (x86)\Intel\oneAPI\compiler\latest\windows\redist\intel64_win\compiler"
+    - '& "C:\Program Files (x86)\Intel\oneAPI\compiler\2022.1.0\env\vars.bat"'
+    - '& "C:\Program Files (x86)\Intel\oneAPI\mkl\2022.1.0\env\vars.bat"'
+    - $env:PATH += ";C:\Program Files (x86)\Intel\oneAPI\compiler\2022.1.0\windows\redist\intel64_win\compiler"
