@@ -167,7 +167,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 }  // end namespace
 
 #if defined(USE_PETSC)
-TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)
+TEST(MPI_Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -182,7 +182,7 @@ TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)
     checkGlobalMatrixInterfaceMPI(A, x);
 }
 
-TEST(MPITest_Math, CheckInterface_PETScMatrix_Global_Size)
+TEST(MPI_Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -194,7 +194,7 @@ TEST(MPITest_Math, CheckInterface_PETScMatrix_Global_Size)
     checkGlobalMatrixInterfaceMPI(A, x);
 }
 
-TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
+TEST(MPI_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 3;
@@ -209,7 +209,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
     checkGlobalRectangularMatrixInterfaceMPI(A, x);
 }
 
-TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
+TEST(MPI_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 3;
