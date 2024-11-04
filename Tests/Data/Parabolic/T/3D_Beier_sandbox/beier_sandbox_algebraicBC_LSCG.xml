@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="beier_sandbox.prj">
+    <add sel="/*/processes/process">
+        <use_algebraic_bc>true</use_algebraic_bc>
+    </add>
+    <add sel="/*/processes/process">
+        <weighting_factor>100</weighting_factor>
+    </add>
+    <add sel="/*/processes/process">
+        <linear>true</linear>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">beier_sandbox_algebraic_bc_LSCG</replace>
+    <replace sel="/*/linear_solvers/linear_solver/eigen/solver_type/text()">LeastSquareCG</replace>
+    <replace sel="/*/linear_solvers/linear_solver/eigen/precon_type/text()">LeastSquareDIAGONAL</replace>
+</OpenGeoSysProjectDiff>
