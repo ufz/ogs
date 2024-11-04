@@ -5,7 +5,7 @@
         <linear_solver_compute_only_upon_timestep_change>true</linear_solver_compute_only_upon_timestep_change>
     </add>
 
-    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps"/>
+    <remove sel="/*/time_loop/processes/process/time_stepping/n_steps"/>
     <add sel="/*/time_loop/processes/process/time_stepping">
         <timesteps>
             <pair>

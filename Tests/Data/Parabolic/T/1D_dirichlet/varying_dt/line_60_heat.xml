@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProjectDiff base_file="../line_60_heat.prj">
-    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps"/>
+    <remove sel="/*/time_loop/processes/process/time_stepping/n_steps"/>
     <add sel="/*/time_loop/processes/process/time_stepping">
         <timesteps>
             <pair>

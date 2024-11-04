@@ -53,12 +53,7 @@
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
                     <t_end> 39062500 </t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>500</repeat>
-                            <delta_t>78125</delta_t>
-                        </pair>
-                    </timesteps>
+                    <n_steps>500</n_steps>
                 </time_stepping>
             </process>
         </processes>

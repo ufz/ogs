@@ -111,6 +111,20 @@ unit:
 </time_stepping>
 ```
 
+Fixed time stepping can be also used to create linearly spaced steps between `t_initial` and `t_end`.
+The number of steps is defined by `n_steps`.
+
+```xml
+<time_stepping>
+    <type>FixedTimeStepping</type>
+    <t_initial>0</t_initial>
+    <t_end>10</t_end>
+    <n_steps>10</n_steps>
+</time_stepping>
+```
+
+will result in 11 time steps at: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.
+
 As fixed time stepping is one of the simplest available, it is a good starting point.
 
 #### Iteration number based time stepping

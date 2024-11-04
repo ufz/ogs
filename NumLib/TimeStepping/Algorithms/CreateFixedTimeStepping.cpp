@@ -28,6 +28,37 @@ FixedTimeSteppingParameters parseFixedTimeStepping(
     auto const t_initial = config.getConfigParameter<double>("t_initial");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
+
+    //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__n_steps}
+    auto const n_steps = config.getConfigParameterOptional<int>("n_steps");
+    if (n_steps.has_value())
+    {
+        if (t_end <= t_initial)
+        {
+            OGS_FATAL(
+                "Creating linearly spaced time steps vector using "
+                "FixedTimeStepping algorithm failed! "
+                "User provided start value (t_initial) "
+                "{} is not smaller then end value (t_end) {}.",
+                t_initial, t_end);
+        }
+
+        if (*n_steps <= 0)
+        {
+            OGS_FATAL(
+                "Requested number of time steps in time steps vector "
+                "(n_steps) must be greater then 0. "
+                "{} time steps were requested",
+                *n_steps);
+        }
+        // Create the RepeatDtPair
+        std::size_t const t_step = static_cast<std::size_t>(
+            (t_end - t_initial) / static_cast<double>(*n_steps));
+        std::vector const repeat_pairs = {
+            RepeatDtPair{static_cast<std::size_t>(*n_steps), t_step}};
+        return {t_initial, t_end, repeat_pairs};
+    }
+
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__FixedTimeStepping__timesteps}
     auto const delta_ts_config = config.getConfigSubtree("timesteps");
 
