@@ -24,6 +24,10 @@
 #include <unordered_set>
 #include <vector>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "BaseLib/FileTools.h"
 #include "BaseLib/RunTime.h"
 #include "GeoLib/AABB.h"
@@ -386,6 +390,10 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     if (BaseLib::getFileExtension(input_arg.getValue()) != ".pvtu")
     {
         OGS_FATAL("The extension of input file name {:s} is not \"pvtu\"",
@@ -494,6 +502,9 @@ int main(int argc, char* argv[])
     if (!result)
     {
         ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
     INFO("writing mesh took {} s", writing_timer.elapsed());
@@ -505,5 +516,8 @@ int main(int argc, char* argv[])
     // cleaned.
     merged_mesh.shallowClean();
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }

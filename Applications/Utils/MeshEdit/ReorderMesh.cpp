@@ -12,6 +12,10 @@
 #include <memory>
 #include <string>
 
+#ifdef USE_PETSC
+#include <mpi.h>
+#endif
+
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -132,6 +136,10 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
+#ifdef USE_PETSC
+    MPI_Init(&argc, &argv);
+#endif
+
     const std::string filename(mesh_in_arg.getValue());
 
     // read the mesh file
@@ -139,6 +147,9 @@ int main(int argc, char* argv[])
         std::unique_ptr<MeshLib::Mesh>(MeshLib::IO::readMeshFromFile(filename));
     if (!mesh)
     {
+#ifdef USE_PETSC
+        MPI_Finalize();
+#endif
         return EXIT_FAILURE;
     }
 
@@ -236,5 +247,8 @@ int main(int argc, char* argv[])
             "transferred to the reordered mesh.");
     }
 
+#ifdef USE_PETSC
+    MPI_Finalize();
+#endif
     return EXIT_SUCCESS;
 }
