@@ -79,7 +79,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
-    Eigen::Matrix2d loc_m(2, 2);
+    Eigen::Matrix<double, 2, 2, Eigen::RowMajor> loc_m;
     loc_m(0, 0) = 1.;
     loc_m(0, 1) = 2.;
     loc_m(1, 0) = 3.;
@@ -104,6 +104,7 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
     // Multiply by a vector
     // v = 1.;
     set(v, 1.);
+
     const bool deep_copy = false;
     T_VECTOR y(v, deep_copy);
     matMult(m_c, v, y);
@@ -112,14 +113,14 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 
     // set a value
     m_c.set(2 * mrank, 2 * mrank, 5.0);
-    MathLib::finalizeMatrixAssembly(m);
+    MathLib::finalizeMatrixAssembly(m_c);
     // add a value
     m_c.add(2 * mrank + 1, 2 * mrank + 1, 5.0);
     MathLib::finalizeMatrixAssembly(m_c);
 
     matMult(m_c, v, y);
 
-    ASSERT_EQ(sqrt((3 * 7 * 7 + 3 * 12 * 12)), norm2(y));
+    ASSERT_NEAR(sqrt((3 * 7 * 7 + 3 * 12 * 12)), norm2(y), 1e-12);
 }
 
 // Rectanglular matrix
@@ -144,7 +145,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
-    Eigen::Matrix<double, 2, 3> loc_m;
+    Eigen::Matrix<double, 2, 3, Eigen::RowMajor> loc_m;
     loc_m(0, 0) = 1.;
     loc_m(0, 1) = 2.;
     loc_m(0, 2) = 3.;
