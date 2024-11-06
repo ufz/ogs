@@ -4,7 +4,7 @@
         <linear>true</linear>
     </add>
 
-    <remove sel="/*/time_loop/processes/process/time_stepping/timesteps"/>
+    <remove sel="/*/time_loop/processes/process/time_stepping/n_steps"/>
     <add sel="/*/time_loop/processes/process/time_stepping">
         <timesteps>
             <pair>
