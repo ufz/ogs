@@ -12,6 +12,7 @@
 
 #include <spdlog/fmt/bundled/ostream.h>
 
+#include <iomanip>
 #include <optional>
 #include <unordered_set>
 
