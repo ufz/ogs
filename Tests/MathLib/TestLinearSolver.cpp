@@ -37,6 +37,7 @@
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
+#include "Tests/TestTools.h"
 #endif
 
 #include "Tests/TestTools.h"
@@ -220,6 +221,15 @@ void checkLinearSolverInterface(T_MATRIX& A,
 }
 
 #ifdef USE_PETSC
+
+BaseLib::ConfigTree getConfigTree(std::string const& xml)
+{
+    auto ptree = Tests::readXml(xml.c_str());
+    return BaseLib::ConfigTree(std::move(ptree), "",
+                               BaseLib::ConfigTree::onerror,
+                               BaseLib::ConfigTree::onwarning);
+}
+
 template <class T_MATRIX, class T_VECTOR, class T_LINEAR_SOLVER>
 void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
                                 const std::string& prefix_name,
@@ -228,7 +238,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     int mrank;
     MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
     // Add entries
-    Eigen::Matrix2d loc_m;
+    Eigen::Matrix<double, 2, 2, Eigen::RowMajor> loc_m;
     loc_m(0, 0) = 1. + mrank;
     loc_m(0, 1) = 2. + mrank;
     loc_m(1, 0) = 3. + mrank;
@@ -252,6 +262,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
     local_vec[0] = mrank + 1;
     local_vec[1] = 2. * (mrank + 1);
     x.set(row_pos, local_vec);
+    x.finalizeAssembly();
 
     std::vector<double> x0(6);
     x.getGlobalVector(x0);
@@ -348,25 +359,22 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_basic)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    boost::property_tree::ptree petsc_solver;
-    boost::property_tree::ptree parameters;
-    boost::property_tree::ptree prefix;
-    parameters.put("parameters",
-                   "-ptest1_ksp_type bcgs "
-                   "-ptest1_ksp_rtol 1.e-8 "
-                   "-ptest1_ksp_atol 1.e-50 "
-                   "-ptest1_ksp_max_it 1000 "
-                   "-ptest1_pc_type bjacobi");
-    prefix.put("prefix", "ptest1");
-    petsc_solver.put_child("petsc", parameters);
-    petsc_solver.put_child("petsc", prefix);
+    std::string const xml =
+        "<petsc>"
+        "<prefix>"
+        "    test1"
+        "</prefix>"
+        "<parameters>"
+        "    -test1_ksp_type bcgs"
+        "    -test1_pc_type jacobi"
+        "    -test1_ksp_rtol 1.e-10 -test1_ksp_atol 1.e-12"
+        "    -test1_ksp_max_it 4000"
+        "</parameters>"
+        "</petsc>";
 
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "",
-        BaseLib::ConfigTree(std::move(petsc_solver), "",
-                            BaseLib::ConfigTree::onerror,
-                            BaseLib::ConfigTree::onwarning));
+        A, b, "" /*prefix, not specified*/, getConfigTree(xml));
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
@@ -381,24 +389,22 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    boost::property_tree::ptree petsc_solver;
-    boost::property_tree::ptree parameters;
-    boost::property_tree::ptree prefix;
-    parameters.put("parameters",
-                   "-ptest2_ksp_type chebyshev "
-                   "-ptest2_ksp_rtol 1.e-8 "
-                   "-ptest2_ksp_atol 1.e-50 "
-                   "-ptest2_ksp_max_it 1000 "
-                   "-ptest2_pc_type sor");
-    prefix.put("prefix", "ptest2");
-    petsc_solver.put_child("petsc", parameters);
-    petsc_solver.put_child("petsc", prefix);
+    std::string const xml =
+        "<petsc>"
+        "<prefix>"
+        "    test2"
+        "</prefix>"
+        "<parameters>"
+        "    -test2_ksp_type chebyshev"
+        "    -test2_pc_type sor"
+        "    -test2_ksp_rtol 1.e-10 -test2_ksp_atol 1.e-12"
+        "    -test2_ksp_max_it 4000"
+        "</parameters>"
+        "</petsc>";
+
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "",
-        BaseLib::ConfigTree(std::move(petsc_solver), "",
-                            BaseLib::ConfigTree::onerror,
-                            BaseLib::ConfigTree::onwarning));
+        A, b, "" /*prefix, not specified*/, getConfigTree(xml));
 }
 
 TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
@@ -413,27 +419,22 @@ TEST(MPITest_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
 
-    boost::property_tree::ptree petsc_solver;
-    boost::property_tree::ptree parameters;
-    boost::property_tree::ptree prefix;
-    parameters.put("parameters",
-                   "-ptest3_ksp_type gmres "
-                   "-ptest3_ksp_rtol 1.e-8 "
-                   "-ptest3_ksp_gmres_restart 20 "
-                   "-ptest3_ksp_gmres_classicalgramschmidt "
-                   "-ptest3_pc_type gamg "
-                   "-ptest3_pc_gamg_type agg "
-                   "-ptest3_pc_gamg_agg_nsmooths 2");
-    prefix.put("prefix", "ptest3");
-    petsc_solver.put_child("petsc", parameters);
-    petsc_solver.put_child("petsc", prefix);
+    std::string const xml =
+        "<petsc>"
+        "    <parameters>"
+        "        -ksp_type gmres "
+        "        -ksp_rtol 1.e-8 "
+        "        -ksp_gmres_restart 20 "
+        "        -ksp_gmres_classicalgramschmidt "
+        "        -pc_type gamg "
+        "        -pc_gamg_type agg "
+        "        -pc_gamg_agg_nsmooths 2"
+        "    </parameters>"
+        "</petsc>";
 
     checkLinearSolverInterface<MathLib::PETScMatrix, MathLib::PETScVector,
                                MathLib::PETScLinearSolver>(
-        A, b, "",
-        BaseLib::ConfigTree(std::move(petsc_solver), "",
-                            BaseLib::ConfigTree::onerror,
-                            BaseLib::ConfigTree::onwarning));
+        A, b, "" /*prefix, not specified*/, getConfigTree(xml));
 }
 
 #endif
