@@ -19,12 +19,12 @@
 
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "PETScMatrixOption.h"
-#include "PETScVector.h"
 
 typedef Mat PETSc_Mat;
 
 namespace MathLib
 {
+class PETScVector;
 /*!
    \brief Wrapper class for PETSc matrix routines for matrix.
 */
@@ -173,7 +173,8 @@ public:
         \param row_pos  The global indices of the rows of the dense sub-matrix.
         \param col_pos  The global indices of the columns of the dense
                         sub-matrix.
-       \param sub_mat  A dense sub-matrix to be added.
+       \param sub_mat   A dense sub-matrix to be added. Its data of which must
+                        be row oriented stored.
     */
     template <class T_DENSE_MATRIX>
     void add(std::vector<PetscInt> const& row_pos,

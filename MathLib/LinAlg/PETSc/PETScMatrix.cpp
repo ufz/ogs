@@ -16,6 +16,8 @@
 
 #include "PETScMatrix.h"
 
+#include "PETScVector.h"
+
 namespace MathLib
 {
 PETScMatrix::PETScMatrix(const PetscInt nrows, const PETScMatrixOption& mat_opt)
