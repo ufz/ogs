@@ -63,6 +63,7 @@ struct XdmfData final
     std::vector<XdmfDimType> strides;
     std::vector<XdmfDimType> global_block_dims;
     MeshPropertyDataType data_type;
+    std::size_t size_partitioned_dim;
     std::string name;
     std::optional<MeshLib::MeshItemType> attribute_center;
     unsigned int index;

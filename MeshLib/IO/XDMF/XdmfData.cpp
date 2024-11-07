@@ -51,6 +51,7 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
               }
           }()),
       data_type(mesh_property_data_type),
+      size_partitioned_dim(size_partitioned_dim),
       name(name),
       attribute_center(attribute_center),
       index(index),
