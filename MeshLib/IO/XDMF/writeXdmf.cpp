@@ -208,7 +208,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                          "NumberOfElements=\"{number_of_elements}\">{dataitem}"
                          "\n\t</Topology>"),
             "topology_type"_a =
-                ParentDataType2String(*topology.parent_data_type),
+                ParentDataType2String(*topology.parent_data_type).first,
             "dataitem"_a = dataitem_transform(topology),
             "nodes_per_element"_a = nodes_per_element,
             "number_of_elements"_a = topology.size_partitioned_dim);
@@ -246,7 +246,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                         "\n\t<Topology "
                         "Type=\"{topology_type}\">{dataitem}\n\t</Topology>"),
                     "topology_type"_a =
-                        ParentDataType2String(*topology.parent_data_type),
+                        ParentDataType2String(*topology.parent_data_type).first,
                     "dataitem"_a = dataitem_transform(topology));
         }
         OGS_FATAL("Could not transform unknown XDMF topology type");
