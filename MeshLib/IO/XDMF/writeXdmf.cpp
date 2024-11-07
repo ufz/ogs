@@ -204,12 +204,14 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     {
         return fmt::format(
             fmt::runtime("\n\t<Topology Type=\"{topology_type}\" "
-                         "NodesPerElement=\"{nodes_per_element}\">{dataitem}"
+                         "NodesPerElement=\"{nodes_per_element}\" "
+                         "NumberOfElements=\"{number_of_elements}\">{dataitem}"
                          "\n\t</Topology>"),
             "topology_type"_a =
                 ParentDataType2String(*topology.parent_data_type),
             "dataitem"_a = dataitem_transform(topology),
-            "nodes_per_element"_a = nodes_per_element);
+            "nodes_per_element"_a = nodes_per_element,
+            "number_of_elements"_a = topology.size_partitioned_dim);
     };
 
     // Define content of <Topology> in XDMF, same as attribute_transform
