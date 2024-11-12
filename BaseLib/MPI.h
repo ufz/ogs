@@ -21,7 +21,7 @@ static inline int reduceMin(int const val)
 #ifdef USE_PETSC
     // Reduce operations for interprocess communications while using Petsc
     int result;
-    MPI_Allreduce(&val, &result, 1, MPI_INTEGER, MPI_MIN, PETSC_COMM_WORLD);
+    MPI_Allreduce(&val, &result, 1, MPI_INTEGER, MPI_MIN, MPI_COMM_WORLD);
     return result;
 #else
     // Reduce operations for interprocess communications without using Petsc
