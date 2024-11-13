@@ -11,7 +11,6 @@
 #pragma once
 
 #include <Eigen/Core>
-#include <valarray>
 #include <vector>
 
 #include "IntegrationPointDataMatrix.h"
