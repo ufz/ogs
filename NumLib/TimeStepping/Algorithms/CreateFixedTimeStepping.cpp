@@ -52,8 +52,8 @@ FixedTimeSteppingParameters parseFixedTimeStepping(
                 *n_steps);
         }
         // Create the RepeatDtPair
-        std::size_t const t_step = static_cast<std::size_t>(
-            (t_end - t_initial) / static_cast<double>(*n_steps));
+        double const t_step =
+            (t_end - t_initial) / static_cast<double>(*n_steps);
         std::vector const repeat_pairs = {
             RepeatDtPair{static_cast<std::size_t>(*n_steps), t_step}};
         return {t_initial, t_end, repeat_pairs};

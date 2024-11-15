@@ -301,11 +301,9 @@ void MeshComponentMap::createSerialMeshComponentMap(
     for (auto const& c : components)
     {
         std::size_t const mesh_id = c.getMeshID();
-        auto const& mesh_subset_nodes = c.getNodes();
         // mesh items are ordered first by node, cell, ....
-        for (std::size_t j = 0; j < mesh_subset_nodes.size(); j++)
+        for (auto const node_id : c.getNodes() | MeshLib::views::ids)
         {
-            auto const node_id = mesh_subset_nodes[j]->getID();
             _dict.insert(
                 Line(Location(mesh_id, MeshLib::MeshItemType::Node, node_id),
                      comp_id, global_index++));

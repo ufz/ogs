@@ -357,6 +357,7 @@ bool isBaseNode(Node const& node,
 
     auto const n_base_nodes = e->getNumberOfBaseNodes();
     auto const local_index = getNodeIDinElement(*e, &node);
+    assert(local_index <= e->getNumberOfNodes());
     return local_index < n_base_nodes;
 }
 

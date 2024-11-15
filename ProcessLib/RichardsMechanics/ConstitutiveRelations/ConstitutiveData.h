@@ -30,7 +30,7 @@
 
 namespace ProcessLib::RichardsMechanics
 {
-/// Data whose state must be tracked by the TRM process.
+/// Data whose state must be tracked by the process.
 template <int DisplacementDim>
 using StatefulData = std::tuple<
     StrainData<DisplacementDim>,

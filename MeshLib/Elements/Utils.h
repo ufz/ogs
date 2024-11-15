@@ -36,6 +36,7 @@ inline std::vector<Node*> getBaseNodes(std::vector<Element*> const& elements)
 
     BaseLib::makeVectorUnique(base_nodes, MeshLib::idsComparator<Node*>);
 
+    base_nodes.shrink_to_fit();
     return base_nodes;
 }
 
