@@ -12,11 +12,11 @@
 
 #include <gtest/gtest.h>
 
+#include <Eigen/Core>
 #include <algorithm>
 #include <limits>
 #include <numeric>
 #include <type_traits>
-#include <valarray>
 
 #include "MeshLib/Elements/Elements.h"
 #include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
@@ -156,13 +156,13 @@ TEST(NumLib, FemShapeQuad4)
     static const double eps = std::numeric_limits<double>::epsilon();
     static const unsigned NNodes = 4;
     static const unsigned dim = 2;
-    std::valarray<double> r(dim);
-    std::valarray<double> N(NNodes);
-    std::valarray<double> dN(NNodes * dim);
+    Eigen::VectorXd r(dim);
+    Eigen::VectorXd N(NNodes);
+    Eigen::VectorXd dN(NNodes * dim);
 
     // check N, dN at specific location
     {
-        r = .5;  // r = (0,5, 0.5)
+        r << 0.5, 0.5;
         ShapeQuad4::computeShapeFunction(r, N);
         ShapeQuad4::computeGradShapeFunction(r, dN);
         double exp_N[] = {0.5625, 0.1875, 0.0625, 0.1875};
@@ -172,13 +172,13 @@ TEST(NumLib, FemShapeQuad4)
         ASSERT_ARRAY_NEAR(exp_dN, dN, dN.size(), eps);
     }
 
-    std::valarray<double> exp_N(NNodes);
+    Eigen::VectorXd exp_N(NNodes);
     // check N_i(r_j)= {i==j: 1, i!=j: 0}
     for (unsigned i = 0; i < NNodes; i++)
     {
         r[0] = (i == 0 || i == 3) ? 1 : -1;
         r[1] = i < 2 ? 1 : -1;
-        exp_N = .0;
+        exp_N.setZero(NNodes);
         exp_N[i] = 1.0;
         ShapeQuad4::computeShapeFunction(r, N);
         ASSERT_ARRAY_NEAR(exp_N, N, NNodes, eps);
