@@ -55,7 +55,10 @@ frontmatter
 Futurile
 Galerkin
 Genuchten
+generalmod
 Geoenergy
+Geotechnica
+Gerasimov
 Giraldo
 gml
 GML
@@ -67,11 +70,13 @@ Guix
 Guo
 Haibing
 Heidemann
+Helfer
 Hoek
 Hoek-Brown
 Homebrew
 Horner
 hyperelastic
+Hypoplasticity
 IC[s]
 IPhreeqc
 ipynb
@@ -158,6 +163,7 @@ SGrid
 Shao
 Shil
 shortcode
+Simo
 Snakemake
 Srivastava
 ST[s?]
@@ -172,12 +178,14 @@ Taucha
 Technische
 TESPy
 Theis
+Thermohydromechanical
 Thomas
 Thuringia
 Thuringian
 Thury
 TODO[s?]
 Tresca
+Tymofiy
 Ucar
 Unlicense
 Unstrut

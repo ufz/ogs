@@ -27,7 +27,6 @@ install(
     EXECUTABLES
         $<$<TARGET_EXISTS:ogs>:$<TARGET_FILE:ogs>>
         $<$<TARGET_EXISTS:DataExplorer>:$<TARGET_FILE:DataExplorer>>
-        $<$<TARGET_EXISTS:testrunner>:$<TARGET_FILE:testrunner>>
         $<$<TARGET_EXISTS:RemoveGhostData>:$<TARGET_FILE:RemoveGhostData>>
     DIRECTORIES
         ${MKL_ROOT_DIR}/redist/intel64

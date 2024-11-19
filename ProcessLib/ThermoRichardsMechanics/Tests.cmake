@@ -498,6 +498,17 @@ if(OGS_USE_MFRONT)
             mfront_A2_ts_76_t_2764800.000000.vtu A2_effective_stess0_test_ts_76_t_2764800.000000.vtu sigma_total sigma_total 6e-8 1e-8
         )
     endif()
+
+    add_subdirectory("${CMAKE_SOURCE_DIR}/Tests/Data/ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/MFrontBehaviour/" "${CMAKE_BINARY_DIR}/Tests/Data/ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/MFrontBehaviour/")
+
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_confined_compression/confined_compression.prj RUNTIME 60)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_resaturation/resaturation.prj RUNTIME 10)
+
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_resaturation/bentonite_column.prj RUNTIME 800)
+
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_restart/bentonite_column_restart.xml RUNTIME 10)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_restart/bentonite_column_restart_fail.xml PROPERTIES PASS_REGULAR_EXPRESSION "Absolute and relative error [(]maximum norm[)] are larger than the corresponding thresholds 8[.]000000000000000e-03 and 2[.]000000000000000e-02[.]
+" RUNTIME 10)
 endif()
 
 if (NOT OGS_USE_MPI)

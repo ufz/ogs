@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="bentonite_column.prj">
+    <replace sel="/*/meshes/mesh[1]/text()">bentonite_column_ts_0_t_41242.9_sec.vtu</replace>
+    <replace msel="//mesh[text()='column']/text()">bentonite_column_ts_0_t_41242.9_sec</replace>
+
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">41242.9</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/t_end/text()">44842.9</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">3600</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">bentonite_column</replace>
+
+    <remove sel="//constitutive_relation/initial_values" />
+    <remove sel="//process/initial_stress" />
+
+    <add sel="/*/processes/process">
+        <!-- That's what we want to test. -->
+        <initialize_porosity_from_medium_property>false</initialize_porosity_from_medium_property>
+    </add>
+
+    <remove sel="//property[name='saturation']" />
+
+    <remove sel="/*/parameters/parameter[name='temperature_IC']" />
+    <remove sel="/*/parameters/parameter[name='pressure_IC']" />
+    <remove sel="/*/parameters/parameter[name='displacement_IC']" />
+    <add sel="/*/parameters">
+        <parameter>
+            <name>temperature_IC</name>
+            <type>MeshNode</type>
+            <mesh>bentonite_column_ts_0_t_41242.9_sec</mesh>
+            <field_name>temperature</field_name>
+        </parameter>
+        <parameter>
+            <name>pressure_IC</name>
+            <type>MeshNode</type>
+            <mesh>bentonite_column_ts_0_t_41242.9_sec</mesh>
+            <field_name>pressure</field_name>
+        </parameter>
+        <parameter>
+            <name>displacement_IC</name>
+            <type>MeshNode</type>
+            <mesh>bentonite_column_ts_0_t_41242.9_sec</mesh>
+            <field_name>displacement</field_name>
+        </parameter>
+    </add>
+
+    <replace sel="/*/test_definition/vtkdiff[field='eM']/absolute_tolerance/text()">
+        2.5e-9
+    </replace>
+    <replace sel="/*/test_definition/vtkdiff[field='material_state_variable_eM_ip']/absolute_tolerance/text()">
+        3.1e-9
+    </replace>
+    <!-- Some tolerances are looser than in the non-restart case, especially that for re.
+         That's not optimal, but better than not testing restart at all. -->
+    <replace sel="/*/test_definition/vtkdiff[field='material_state_variable_re_ip']/absolute_tolerance/text()">
+        8.0e-5
+    </replace>
+    <replace sel="/*/test_definition/vtkdiff[field='NodalForces']/absolute_tolerance/text()">
+        7.3e-13
+    </replace>
+    <replace sel="/*/test_definition/vtkdiff[field='porosity']/absolute_tolerance/text()">
+        3.4e-15
+    </replace>
+    <replace sel="/*/test_definition/vtkdiff[field='re']/absolute_tolerance/text()">
+        6.6e-5
+    </replace>
+    <replace sel="/*/test_definition/vtkdiff[field='saturation']/absolute_tolerance/text()">
+        1.8e-7
+    </replace>
+    <replace sel="/*/test_definition/vtkdiff[field='saturation_avg']/absolute_tolerance/text()">
+        1.6e-7
+    </replace>
+    <replace sel="/*/test_definition/vtkdiff[field='saturation_ip']/absolute_tolerance/text()">
+        2.3e-7
+    </replace>
+
+    <remove sel="/*/test_definition/vtkdiff[field='material_state_variable_RungeKutta_InternalStateVariables[0]_ip']" />
+    <remove sel="/*/test_definition/vtkdiff[field='material_state_variable_RungeKutta_InternalStateVariables[1]_ip']" />
+    <remove sel="/*/test_definition/vtkdiff[field='material_state_variable_RungeKutta_InternalStateVariables[3]_ip']" />
+</OpenGeoSysProjectDiff>

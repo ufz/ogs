@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="20"                   NumberOfCells="1"                   >
+      <PointData>
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.7320508076"         offset="0"                   />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="652"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="876"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="900"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _4AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA4D8AAAAAAAAAAAAAAAAAAOA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAOA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA4D8AAAAAAADgPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADgPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADgPwAAAAAAAPA/AAAAAAAAAAAAAAAAAADgPwAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAA4D8AAAAAAADwPwAAAAAAAOA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAOA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA4D8=oAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAwAAAAAAAAACAAAAAAAAAAQAAAAAAAAABQAAAAAAAAAHAAAAAAAAAAYAAAAAAAAADAAAAAAAAAARAAAAAAAAAA4AAAAAAAAACQAAAAAAAAANAAAAAAAAABIAAAAAAAAADwAAAAAAAAAKAAAAAAAAAAgAAAAAAAAAEAAAAAAAAAATAAAAAAAAAAsAAAAAAAAACAAAAAAAAAAUAAAAAAAAAA==AQAAAAAAAAAZ
+  </AppendedData>
+</VTKFile>
