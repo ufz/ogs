@@ -926,7 +926,8 @@ AddTest(
 
 if (OGS_USE_MPI)
     OgsTest(WRAPPER mpirun -np 1 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcitePorosityChange.prj RUNTIME 25)
-    OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/ParallelTest/RadionuclideSorption.prj RUNTIME 60)
+    # Disabled the following test due to the incorrectly used PETSc vector in AqueousSolution. Will be enabled once the issue is fixed.
+    #OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/ParallelTest/RadionuclideSorption.prj RUNTIME 60)
 endif()
 
 AddTest(

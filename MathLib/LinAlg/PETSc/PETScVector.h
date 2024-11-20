@@ -28,6 +28,13 @@ namespace MathLib
    \class PETScVector
 
    \brief Wrapper class for PETSc vector
+
+   It can be used to create a global vector for either parallel or serial
+   computing.
+
+   <b>Caution</b>: Using it to create a local vector is not allowed, as the
+            created vector will be partitioned and distributed across all ranks
+            in an MPI environment.
 */
 class PETScVector
 {
@@ -246,15 +253,15 @@ private:
     PetscInt size_ghosts_ = 0;
 
     /// Flag to indicate whether the vector is created with ghost entry indices
-    bool has_ghost_id_ = false;
+    bool created_with_ghost_id_ = false;
 
     /*!
-       \brief Array containing the entries of the vector.
-       If the vector is created without given ghost IDs, the array
-       contains all entries of the global vector, v_. Otherwise it
-       only contains the entries of the global vector owned by the
-       current rank.
-    */
+        \brief Array containing the entries of the vector.
+        If the vector is created without given ghost IDs, the array
+        contains all entries of the global vector, v_. Otherwise it
+        only contains the entries of the global vector owned by the
+        current rank.
+     */
     mutable std::vector<PetscScalar> entry_array_;
 
     /// Map global indices of ghost entries to local indices
