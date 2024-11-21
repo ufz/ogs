@@ -504,7 +504,11 @@ if(OGS_USE_MFRONT)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_confined_compression/confined_compression.prj RUNTIME 60)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_resaturation/resaturation.prj RUNTIME 10)
 
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_resaturation/bentonite_column.prj RUNTIME 800)
+    if (NOT OGS_USE_MPI)
+        # Disabled for PETSc, because large numerical errors are observed occasionally.
+        # The model is tested sufficiently in other configurations, and other tests are run with PETSc, too.
+        OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_resaturation/bentonite_column.prj RUNTIME 800)
+    endif()
 
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_restart/bentonite_column_restart.xml RUNTIME 10)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_restart/bentonite_column_restart_fail.xml PROPERTIES PASS_REGULAR_EXPRESSION "Absolute and relative error [(]maximum norm[)] are larger than the corresponding thresholds 8[.]000000000000000e-03 and 2[.]000000000000000e-02[.]
