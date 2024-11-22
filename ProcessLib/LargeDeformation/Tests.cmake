@@ -16,5 +16,6 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE LargeDeformation/RubberIndentation/RubberIndentation.prj RUNTIME 4)
     OgsTest(PROJECTFILE LargeDeformation/Indentation3D/Indentation3D.prj RUNTIME 30)
     OgsTest(PROJECTFILE LargeDeformation/ThickCylindricalShell/ThickCylindricalShell.prj RUNTIME 15)
-endif()
 
+    NotebookTest(NOTEBOOKFILE LargeDeformation/CooksMembrane/CooksMembraneFbar.py RUNTIME 15)
+endif()
