@@ -11,10 +11,7 @@
 
 #include <unordered_map>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -255,9 +252,7 @@ int main(int argc, char** argv)
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh_in(
         MeshLib::IO::readMeshFromFile(arg_in_file.getValue()));
@@ -273,8 +268,5 @@ int main(int argc, char** argv)
 
     MeshLib::IO::writeMeshToFile(point_cloud, arg_out_file.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

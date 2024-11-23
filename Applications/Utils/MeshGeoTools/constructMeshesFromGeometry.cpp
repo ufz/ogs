@@ -10,6 +10,7 @@
 
 #include <tclap/CmdLine.h>
 
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -19,9 +20,6 @@
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
 std::unique_ptr<GeoLib::GEOObjects> readGeometry(std::string const& filename)
 {
     auto geo_objects = std::make_unique<GeoLib::GEOObjects>();
@@ -80,9 +78,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
     std::unique_ptr<MeshLib::Mesh> mesh{
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue())};
 
@@ -101,9 +97,6 @@ int main(int argc, char* argv[])
         if (!m_ptr)
         {
             ERR("Could not create a mesh for each given geometry.");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
         if (m_ptr->getNodes().empty())
@@ -117,8 +110,5 @@ int main(int argc, char* argv[])
         MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
     }
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

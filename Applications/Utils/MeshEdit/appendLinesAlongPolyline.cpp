@@ -11,12 +11,9 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/PolylineVec.h"
 #include "InfoLib/GitInfo.h"
@@ -58,9 +55,7 @@ int main(int argc, char* argv[])
     // parse arguments
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // read GEO objects
     GeoLib::GEOObjects geo_objs;
@@ -71,9 +66,6 @@ int main(int argc, char* argv[])
     if (geo_names.empty())
     {
         ERR("No geometries found.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     const GeoLib::PolylineVec* ply_vec(
@@ -81,9 +73,6 @@ int main(int argc, char* argv[])
     if (!ply_vec)
     {
         ERR("Could not find polylines in geometry '{:s}'.", geo_names.front());
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -93,9 +82,6 @@ int main(int argc, char* argv[])
     if (!mesh)
     {
         ERR("Mesh file '{:s}' not found", mesh_in.getValue());
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
@@ -109,8 +95,5 @@ int main(int argc, char* argv[])
 
     MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

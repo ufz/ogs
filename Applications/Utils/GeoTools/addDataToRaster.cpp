@@ -11,16 +11,13 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <numbers>
 #include <numeric>
 
+#include "BaseLib/MPI.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Point.h"
@@ -153,9 +150,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::array input_points = {
         GeoLib::Point{{ll_x_arg.getValue(), ll_y_arg.getValue(), 0}},
@@ -210,8 +205,5 @@ int main(int argc, char* argv[])
 
     FileIO::AsciiRasterInterface::writeRasterAsASC(*raster,
                                                    out_raster_arg.getValue());
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

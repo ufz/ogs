@@ -15,11 +15,8 @@
 #include <memory>
 #include <string>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
@@ -54,9 +51,7 @@ double getClosestPointElevation(MeshLib::Node const& p,
 
 int main(int argc, char* argv[])
 {
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
     TCLAP::CmdLine cmd(
         "Changes the elevation of 2D mesh nodes based on either raster data or "
         "another 2D mesh. In addition, a low pass filter can be applied to "
@@ -107,9 +102,6 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Error reading mesh file.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -118,18 +110,12 @@ int main(int argc, char* argv[])
     {
         ERR("Nothing to do. Please choose mapping based on a raster or mesh "
             "file, or to a static value.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
     if (map_raster_arg.isSet() && map_mesh_arg.isSet())
     {
         ERR("Please select mapping based on *either* a mesh or a raster file.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -148,9 +134,6 @@ int main(int argc, char* argv[])
         if (!file_stream.good())
         {
             ERR("Opening raster file {} failed.", raster_path);
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
         file_stream.close();
@@ -168,9 +151,6 @@ int main(int argc, char* argv[])
         if (ground_truth == nullptr)
         {
             ERR("Error reading mesh file.");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
 
@@ -243,15 +223,9 @@ int main(int argc, char* argv[])
 
     if (MeshLib::IO::writeMeshToFile(*mesh, output_arg.getValue()) != 0)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
     INFO("Result successfully written.");
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

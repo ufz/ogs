@@ -16,10 +16,7 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -122,9 +119,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::pair<int, int> mat_limits(0, std::numeric_limits<int>::max());
     std::pair<double, double> elevation_limits(
@@ -134,9 +129,6 @@ int main(int argc, char* argv[])
     {
         ERR("If minimum MaterialID is set, maximum ID must be set, too (and "
             "vice versa).");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     if (min_id_arg.isSet() && max_id_arg.isSet())
@@ -151,18 +143,12 @@ int main(int argc, char* argv[])
     if (min_id_arg.isSet() && (mat_limits.first < 0 || mat_limits.second < 0))
     {
         ERR("Specified MaterialIDs must have non-negative values.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     if (min_elevation_arg.isSet() != max_elevation_arg.isSet())
     {
         ERR("If minimum elevation is set, maximum elevation must be set, too "
             "(and vice versa).");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     if (min_elevation_arg.isSet() && max_elevation_arg.isSet())
@@ -184,9 +170,6 @@ int main(int argc, char* argv[])
     if (!xml_io.readFile(geo_name))
     {
         ERR("Failed to read geometry file `{:s}'.", geo_name);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     std::vector<GeoLib::Point*> const& points =
@@ -197,17 +180,11 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Failed to read input mesh file `{:s}'.", mesh_name);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     if (mesh->getDimension() != 3)
     {
         ERR("Method can only be applied to 3D meshes.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -216,9 +193,6 @@ int main(int argc, char* argv[])
     if (mat_ids == nullptr)
     {
         ERR("Mesh is required to have MaterialIDs");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -256,8 +230,5 @@ int main(int argc, char* argv[])
                                true /* compute_element_neighbors */, props);
     MeshLib::IO::VtuInterface vtu(&result);
     vtu.writeToFile(output_name);
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

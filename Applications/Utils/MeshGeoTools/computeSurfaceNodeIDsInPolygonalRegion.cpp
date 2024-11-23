@@ -12,10 +12,6 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <algorithm>
 #include <fstream>
 #include <memory>
@@ -25,6 +21,7 @@
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
 #include "InfoLib/GitInfo.h"
@@ -101,9 +98,7 @@ int main(int argc, char* argv[])
     cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));
@@ -194,8 +189,5 @@ int main(int argc, char* argv[])
     std::for_each(all_sfc_nodes.begin(), all_sfc_nodes.end(),
                   std::default_delete<MeshLib::Node>());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

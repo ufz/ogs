@@ -9,11 +9,8 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "Applications/FileIO/GocadIO/GocadAsciiReader.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
@@ -65,17 +62,12 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     if (export_lines_arg.isSet() && export_surfaces_arg.isSet())
     {
         ERR("Both the 'lines-only'-flag and 'surfaces-only'-flag are set. Only "
             "one is allowed at a time.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 2;
     }
 
@@ -94,9 +86,6 @@ int main(int argc, char* argv[])
     if (!FileIO::Gocad::GocadAsciiReader::readFile(file_name, meshes, t))
     {
         ERR("Error reading file.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 1;
     }
     INFO("{:d} meshes found.", meshes.size());
@@ -115,8 +104,5 @@ int main(int argc, char* argv[])
         MeshLib::IO::VtuInterface vtu(mesh.get(), data_mode, compressed);
         vtu.writeToFile(dir + delim + mesh->getName() + ".vtu");
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return 0;
 }

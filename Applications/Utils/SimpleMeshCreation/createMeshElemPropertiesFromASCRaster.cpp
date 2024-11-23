@@ -12,16 +12,13 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <numeric>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/quicksort.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
@@ -94,9 +91,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // read mesh
     std::unique_ptr<MeshLib::Mesh> dest_mesh(
@@ -138,8 +133,5 @@ int main(int argc, char* argv[])
         MeshLib::IO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue());
     }
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

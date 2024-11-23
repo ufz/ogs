@@ -10,6 +10,7 @@
 #include <tclap/CmdLine.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
@@ -18,9 +19,6 @@
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "MeshToolsLib/MeshGenerators/VoxelGridFromMesh.h"
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -64,18 +62,13 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     if ((y_arg.isSet() && !z_arg.isSet()) ||
         ((!y_arg.isSet() && z_arg.isSet())))
     {
         ERR("For equilateral cubes, only x needs to be set. For unequal "
             "cuboids, all three edge lengths (x/y/z) need to be specified.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return -1;
     }
     using namespace MeshToolsLib::MeshGenerator;
@@ -88,9 +81,6 @@ int main(int argc, char* argv[])
     {
         ERR("A cellsize ({},{},{}) is not allowed to be <= 0", x_size, y_size,
             z_size);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return -1;
     }
 
@@ -113,9 +103,6 @@ int main(int argc, char* argv[])
     {
         ERR("The range ({},{},{}) is not allowed to be < 0", ranges[0],
             ranges[1], ranges[2]);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return -1;
     }
     std::array<std::size_t, 3> const dims =
@@ -134,9 +121,6 @@ int main(int argc, char* argv[])
 
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -144,14 +128,8 @@ int main(int argc, char* argv[])
 
     if (MeshLib::IO::writeMeshToFile(*grid, output_arg.getValue()) != 0)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

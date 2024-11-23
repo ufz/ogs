@@ -11,11 +11,8 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/StringTools.h"
 #include "GeoLib/AABB.h"
 #include "InfoLib/GitInfo.h"
@@ -64,9 +61,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
     std::string fname(mesh_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh> mesh(MeshLib::IO::readMeshFromFile(fname));
@@ -74,9 +69,6 @@ int main(int argc, char* argv[])
     if (!mesh)
     {
         ERR("Could not read mesh from file '{:s}'.", fname);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -107,8 +99,5 @@ int main(int argc, char* argv[])
 
     MeshLib::IO::writeMeshToFile(*mesh, out_fname);
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

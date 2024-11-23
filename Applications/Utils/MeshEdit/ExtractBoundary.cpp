@@ -11,16 +11,13 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/StringTools.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
@@ -63,18 +60,13 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(
         mesh_in.getValue(), true /* compute_element_neighbors */));
 
     if (!mesh)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -102,8 +94,5 @@ int main(int argc, char* argv[])
         use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
     MeshLib::IO::writeVtu(*surface_mesh, out_fname, data_mode);
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

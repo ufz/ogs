@@ -24,11 +24,8 @@
 #include <unordered_set>
 #include <vector>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/OctTree.h"
@@ -390,9 +387,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     if (BaseLib::getFileExtension(input_arg.getValue()) != ".pvtu")
     {
@@ -502,9 +497,6 @@ int main(int argc, char* argv[])
     if (!result)
     {
         ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     INFO("writing mesh took {} s", writing_timer.elapsed());
@@ -516,8 +508,5 @@ int main(int argc, char* argv[])
     // cleaned.
     merged_mesh.shallowClean();
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

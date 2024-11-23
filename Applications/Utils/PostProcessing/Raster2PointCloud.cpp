@@ -13,9 +13,6 @@
 
 // ThirdParty
 #include <tclap/CmdLine.h>
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLPolyDataWriter.h>
@@ -23,6 +20,7 @@
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkImageDataToPointCloudFilter.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "InfoLib/GitInfo.h"
 
@@ -80,9 +78,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();
@@ -161,8 +157,5 @@ int main(int argc, char* argv[])
         }
     }
     std::cout << "done." << std::endl;
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

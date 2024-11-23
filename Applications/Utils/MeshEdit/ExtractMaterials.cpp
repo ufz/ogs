@@ -12,11 +12,8 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -73,9 +70,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::string const input_name = input_arg.getValue();
     std::string const output_name = output_arg.getValue();
@@ -87,9 +82,6 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Error reading input mesh. Aborting...");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -97,9 +89,6 @@ int main(int argc, char* argv[])
     if (mat_ids == nullptr)
     {
         ERR("No material IDs found in mesh. Aborting...");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -107,9 +96,6 @@ int main(int argc, char* argv[])
     if (id_range.first == id_range.second)
     {
         ERR("Mesh only contains one material, no extraction required.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     int min_id, max_id;
@@ -119,9 +105,6 @@ int main(int argc, char* argv[])
         if (min_id < *id_range.first || min_id > *id_range.second)
         {
             ERR("Specified material ID does not exist.");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
         max_id = min_id;
@@ -160,8 +143,5 @@ int main(int argc, char* argv[])
     {
         ostream.close();
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

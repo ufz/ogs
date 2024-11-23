@@ -12,11 +12,8 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -70,9 +67,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     GeoLib::GEOObjects geo_objects;
     for (auto const& geometry_name : geo_input_arg.getValue())
@@ -82,9 +77,6 @@ int main(int argc, char* argv[])
         {
             if (!xml.readFile(geometry_name))
             {
-#ifdef USE_PETSC
-                MPI_Finalize();
-#endif
                 return EXIT_FAILURE;
             }
         }
@@ -92,9 +84,6 @@ int main(int argc, char* argv[])
         {
             ERR("Failed to read file '{:s}'.", geometry_name);
             ERR("{:s}", err.what());
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
         INFO("Successfully read file '{:s}'.", geometry_name);
@@ -155,13 +144,7 @@ int main(int argc, char* argv[])
                 "for better analysis of the problem.");
         }
         ERR("An error has occurred - programme will be terminated.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

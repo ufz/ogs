@@ -9,11 +9,8 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "Applications/FileIO/SHPInterface.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
@@ -43,22 +40,14 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::string const file_name(input_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> const mesh(
         MeshLib::IO::readMeshFromFile(file_name));
     if (FileIO::SHPInterface::write2dMeshToSHP(output_arg.getValue(), *mesh))
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_SUCCESS;
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_FAILURE;
 }

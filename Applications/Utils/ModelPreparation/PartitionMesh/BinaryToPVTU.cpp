@@ -10,7 +10,6 @@
 
 */
 
-#include <mpi.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 #include <vtkMPIController.h>
@@ -18,6 +17,7 @@
 
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -72,9 +72,7 @@ int main(int argc, char* argv[])
             OGS_FATAL("spdlog logger error occurred.");
         });
 
-    // init MPI
-    MPI_Init(&argc, &argv);
-
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
     // start the timer
     BaseLib::RunTime run_timer;
     run_timer.start();
@@ -111,8 +109,5 @@ int main(int argc, char* argv[])
 
     INFO("Total runtime: {:g} s.", run_timer.elapsed());
     INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
-
-    MPI_Finalize();
-
     return EXIT_SUCCESS;
 }
