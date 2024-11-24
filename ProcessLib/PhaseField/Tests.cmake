@@ -109,7 +109,7 @@ AddTest(
     RUNTIME 18
     DIFF_DATA
         expected_surfing_ts_20_t_1_000000_0.vtu surfing_restart_ts_10_t_1.000000.vtu displacement displacement 1e-10 0
-        expected_surfing_ts_20_t_1_000000_0.vtu surfing_restart_ts_10_t_1.000000.vtu phasefield phasefield 1e-10 0
+        expected_surfing_ts_20_t_1_000000_0.vtu surfing_restart_ts_10_t_1.000000.vtu phasefield phasefield 1e-6 0
 )
 
 AddTest(

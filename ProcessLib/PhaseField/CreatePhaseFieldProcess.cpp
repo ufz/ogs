@@ -187,100 +187,33 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__irreversible_threshold}
         config.getConfigParameter<double>("irreversible_threshold", 0.05);
 
-    auto const phasefield_model = [&]
-    {
-        auto const phasefield_model_string =
-            //! \ogs_file_param{prj__processes__process__PHASE_FIELD__phasefield_model}
-            config.getConfigParameter<std::string>("phasefield_model");
-
-        if (phasefield_model_string == "AT1")
-        {
-            return PhaseFieldModel::AT1;
-        }
-        if (phasefield_model_string == "AT2")
-        {
-            return PhaseFieldModel::AT2;
-        }
-        if (phasefield_model_string == "COHESIVE")
-        {
-            return PhaseFieldModel::COHESIVE;
-        }
-        OGS_FATAL(
-            "phasefield_model must be 'AT1', 'AT2' or 'COHESIVE' but '{:s}' "
-            "was given",
-            phasefield_model_string.c_str());
-    }();
+    auto const phasefield_model_string =
+        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__phasefield_model}
+        config.getConfigParameter<std::string>("phasefield_model");
+    auto const phasefield_model =
+        MaterialLib::Solids::Phasefield::convertStringToPhaseFieldModel<
+            DisplacementDim>(phasefield_model_string);
 
     // Initial stress conditions
     auto initial_stress = ProcessLib::createInitialStress<DisplacementDim>(
         config, parameters, mesh);
 
-    auto const softening_curve = [&]
-    {
-        auto const softening_curve_string =
-            //! \ogs_file_param{prj__processes__process__PHASE_FIELD__softening_curve}
-            config.getConfigParameterOptional<std::string>("softening_curve");
-        if (softening_curve_string)
-        {
-            if (*softening_curve_string == "Linear")
-            {
-                return SofteningCurve::Linear;
-            }
-            if (*softening_curve_string == "Exponential")
-            {
-                return SofteningCurve::Exponential;
-            }
-            OGS_FATAL(
-                "softening_curve must be 'Linear' or 'Exponential' but '{:s}' "
-                "was given",
-                softening_curve_string->c_str());
-        }
-        return SofteningCurve::Linear;  // default
-    }();
+    auto const softening_curve_string =
+        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__softening_curve}
+        config.getConfigParameterOptional<std::string>("softening_curve");
+    auto const softening_curve =
+        MaterialLib::Solids::Phasefield::convertStringToSofteningCurve<
+            DisplacementDim>(softening_curve_string);
 
-    auto const energy_split_model = [&]
-    {
-        auto const energy_split_model_string =
-            //! \ogs_file_param{prj__processes__process__PHASE_FIELD__energy_split_model}
-            config.getConfigParameter<std::string>("energy_split_model");
+    auto const energy_split_model_string =
+        //! \ogs_file_param{prj__processes__process__PHASE_FIELD__energy_split_model}
+        config.getConfigParameter<std::string>("energy_split_model");
+    auto const energy_split_model =
+        MaterialLib::Solids::Phasefield::convertStringToEnergySplitModel<
+            DisplacementDim>(energy_split_model_string);
 
-        if (energy_split_model_string == "Isotropic")
-        {
-            return EnergySplitModel::Isotropic;
-        }
-        if (energy_split_model_string == "VolumetricDeviatoric")
-        {
-            return EnergySplitModel::VolDev;
-        }
-        if (energy_split_model_string == "EffectiveStress")
-        {
-            return EnergySplitModel::EffectiveStress;
-        }
-        if (energy_split_model_string == "OrthoVolDev")
-        {
-            return EnergySplitModel::OrthoVolDev;
-        }
-        if (energy_split_model_string == "OrthoMasonry")
-        {
-            return EnergySplitModel::OrthoMasonry;
-        }
-        OGS_FATAL(
-            "energy_split_model must be 'Isotropic' or 'VolumetricDeviatoric' "
-            "but '{:s}' was given",
-            energy_split_model_string);
-    }();
-
-    std::unique_ptr<DegradationDerivative> degradation_derivative;
-    if (phasefield_model == PhaseFieldModel::COHESIVE)
-    {
-        degradation_derivative =
-            std::make_unique<COHESIVE_DegradationDerivative>(
-                characteristic_length, softening_curve);
-    }
-    else
-    {
-        degradation_derivative = std::make_unique<AT_DegradationDerivative>();
-    }
+    auto degradation_derivative = creatDegradationDerivative<DisplacementDim>(
+        phasefield_model, characteristic_length, softening_curve);
 
     PhaseFieldProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
