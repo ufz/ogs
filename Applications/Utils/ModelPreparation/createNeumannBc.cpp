@@ -10,12 +10,9 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <fstream>
 
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -130,9 +127,7 @@ int main(int argc, char* argv[])
     cmd.add(result_file);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // read surface mesh
     std::unique_ptr<MeshLib::Mesh> surface_mesh(
@@ -155,9 +150,6 @@ int main(int argc, char* argv[])
     }();
     if (!node_id_pv)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -192,8 +184,5 @@ int main(int argc, char* argv[])
         result_out << p.first << " " << p.second << "\n";
     }
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

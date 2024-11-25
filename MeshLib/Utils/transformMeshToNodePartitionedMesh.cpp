@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -42,15 +43,6 @@ bool isRegularNode(
 
 namespace MeshLib
 {
-std::pair<int, int> getMPIRankAndSize(MPI_Comm const& mpi_comm)
-{
-    int mpi_comm_size;
-    MPI_Comm_size(mpi_comm, &mpi_comm_size);
-    int mpi_comm_rank;
-    MPI_Comm_rank(mpi_comm, &mpi_comm_rank);
-    return {mpi_comm_rank, mpi_comm_size};
-}
-
 std::pair<std::vector<Node*>, std::vector<Element*>> copyNodesAndElements(
     std::vector<Element*> const& input_elements)
 {
@@ -136,27 +128,20 @@ computeRegularBaseNodeGlobalNodeIDsOfSubDomainPartition(
     std::size_t const number_of_regular_nodes =
         computeNumberOfRegularNodes(bulk_mesh, subdomain_mesh);
 
-    // in the following information exchange with other ranks is required
-    MPI_Comm mpi_comm = MPI_COMM_WORLD;
-    auto const [mpi_comm_rank, mpi_comm_size] = getMPIRankAndSize(mpi_comm);
+    BaseLib::MPI::Mpi mpi;
 
     // send own number of regular nodes to all others
-    std::vector<std::size_t> gathered_number_of_regular_nodes(mpi_comm_size);
-    MPI_Allgather(&number_of_regular_nodes, 1, MPI_UNSIGNED_LONG,
-                  gathered_number_of_regular_nodes.data(), 1, MPI_UNSIGNED_LONG,
-                  mpi_comm);
+    std::vector<std::size_t> const gathered_number_of_regular_nodes =
+        BaseLib::MPI::allgather(number_of_regular_nodes, mpi);
+
     // compute the 'offset' in the global_node_ids
-    std::vector<std::size_t> numbers_of_regular_nodes_at_rank;
-    numbers_of_regular_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_number_of_regular_nodes),
-                     end(gathered_number_of_regular_nodes),
-                     back_inserter(numbers_of_regular_nodes_at_rank));
+    std::vector<std::size_t> const numbers_of_regular_nodes_at_rank =
+        BaseLib::sizesToOffsets(gathered_number_of_regular_nodes);
 
     // add the offset to the partitioned-owned subdomain
     std::vector<std::size_t> subdomain_global_node_ids;
     subdomain_global_node_ids.reserve(subdomain_nodes.size());
-    auto const partition_offset =
-        numbers_of_regular_nodes_at_rank[mpi_comm_rank];
+    auto const partition_offset = numbers_of_regular_nodes_at_rank[mpi.rank];
     DBUG("[{}] partition offset: {}", subdomain_mesh->getName(),
          partition_offset);
     // set the global id for the regular base nodes
@@ -175,9 +160,7 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
     Mesh const* subdomain_mesh,
     std::vector<std::size_t> const& global_regular_base_node_ids)
 {
-    // in the following information exchange with other ranks is required
-    MPI_Comm const mpi_comm = MPI_COMM_WORLD;
-    auto const [mpi_comm_rank, mpi_comm_size] = getMPIRankAndSize(mpi_comm);
+    BaseLib::MPI::Mpi mpi;
 
     // count regular nodes that is the offset in the mapping
     auto const local_bulk_node_ids_for_subdomain =
@@ -197,35 +180,18 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
         }
     }
 
-    // send ids of bulk ghost nodes belonging to the subdomain mesh to all
-    // other ranks and at the same time receive from all other ranks
-    // first send the sizes to all other to are able to allocate buffer
-    auto const size = subdomain_node_id_to_bulk_node_id.size();
-    std::size_t global_number_of_subdomain_node_id_to_bulk_node_id = 0;
-    MPI_Allreduce(&size, &global_number_of_subdomain_node_id_to_bulk_node_id, 1,
-                  MPI_UNSIGNED_LONG, MPI_SUM, mpi_comm);
+    // Send ids of bulk ghost nodes belonging to the subdomain mesh to all
+    // other ranks and at the same time receive from all other ranks.
+    std::vector<std::size_t> ghost_node_ids_of_all_ranks;
+    std::vector<int> const offsets =
+        BaseLib::MPI::allgatherv(std::span{subdomain_node_id_to_bulk_node_id},
+                                 ghost_node_ids_of_all_ranks, mpi);
 
+    std::size_t const global_number_of_subdomain_node_id_to_bulk_node_id =
+        offsets.back();
     DBUG("[{}] global_number_of_subdomain_node_id_to_bulk_node_id: '{}' ",
          subdomain_mesh->getName(),
          global_number_of_subdomain_node_id_to_bulk_node_id);
-
-    std::vector<int> numbers_of_ids_at_ranks(mpi_comm_size);
-    MPI_Allgather(&size, 1, MPI_INT, numbers_of_ids_at_ranks.data(), 1, MPI_INT,
-                  mpi_comm);
-    std::vector<int> offsets;
-    offsets.push_back(0);
-    std::partial_sum(begin(numbers_of_ids_at_ranks),
-                     end(numbers_of_ids_at_ranks), back_inserter(offsets));
-    std::vector<std::size_t> ghost_node_ids_of_all_ranks(
-        global_number_of_subdomain_node_id_to_bulk_node_id);
-    MPI_Allgatherv(subdomain_node_id_to_bulk_node_id.data(), /* sendbuf */
-                   size,                                     /* sendcount */
-                   MPI_UNSIGNED_LONG,                        /* sendtype */
-                   ghost_node_ids_of_all_ranks.data(),       /* recvbuf (out) */
-                   numbers_of_ids_at_ranks.data(),           /* recvcounts */
-                   offsets.data(),                           /* displs */
-                   MPI_UNSIGNED_LONG,                        /* recvtype */
-                   mpi_comm);
 
     // construct a map for fast search of local bulk node ids
     std::map<std::size_t, std::size_t> global_to_local_bulk_node_ids;
@@ -244,13 +210,13 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
         local_subdomain_node_ids[local_bulk_node_ids_for_subdomain[id]] = id;
     }
 
-    std::vector<std::size_t> local_subdomain_node_ids_of_all_ranks(
+    std::vector<std::size_t> subdomain_node_ids_of_all_ranks(
         global_number_of_subdomain_node_id_to_bulk_node_id,
         std::numeric_limits<std::size_t>::max());
     // search in all ranks within the bulk ids for the corresponding id
-    for (int rank = 0; rank < mpi_comm_size; ++rank)
+    for (int rank = 0; rank < mpi.size; ++rank)
     {
-        if (rank == mpi_comm_rank)
+        if (rank == mpi.rank)
         {
             continue;
         }
@@ -263,35 +229,24 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
                 continue;
             }
             auto const local_bulk_node_id = it->second;
-            local_subdomain_node_ids_of_all_ranks[i] =
-                global_regular_base_node_ids
-                    [local_subdomain_node_ids.find(local_bulk_node_id)->second];
+            subdomain_node_ids_of_all_ranks[i] = global_regular_base_node_ids
+                [local_subdomain_node_ids.find(local_bulk_node_id)->second];
             DBUG(
                 "[{}] found global subdomain node id: '{}' for global bulk "
                 "node id {} ",
                 subdomain_mesh->getName(),
-                local_subdomain_node_ids_of_all_ranks[i],
+                subdomain_node_ids_of_all_ranks[i],
                 ghost_node_ids_of_all_ranks[i]);
         }
     }
 
-    // send the computed ids back
-    std::vector<std::size_t> computed_global_ids_for_subdomain_ghost_nodes(
-        global_number_of_subdomain_node_id_to_bulk_node_id);
-    MPI_Allreduce(
-        local_subdomain_node_ids_of_all_ranks.data(), /* sendbuf */
-        computed_global_ids_for_subdomain_ghost_nodes
-            .data(),                                        /* recvbuf (out) */
-        global_number_of_subdomain_node_id_to_bulk_node_id, /* sendcount */
-        MPI_UNSIGNED_LONG,                                  /* sendtype */
-        MPI_MAX,                                            /* operation */
-        mpi_comm);
+    // find maximum over all ranks
+    BaseLib::MPI::allreduceInplace(subdomain_node_ids_of_all_ranks, MPI_MAX,
+                                   mpi);
 
     std::vector<std::size_t> global_ids_for_subdomain_ghost_nodes(
-        computed_global_ids_for_subdomain_ghost_nodes.begin() +
-            offsets[mpi_comm_rank],
-        computed_global_ids_for_subdomain_ghost_nodes.begin() +
-            offsets[mpi_comm_rank + 1]);
+        subdomain_node_ids_of_all_ranks.begin() + offsets[mpi.rank],
+        subdomain_node_ids_of_all_ranks.begin() + offsets[mpi.rank + 1]);
     return global_ids_for_subdomain_ghost_nodes;
 }
 
@@ -301,51 +256,30 @@ std::vector<std::size_t> computeNumberOfRegularBaseNodesAtRank(
     auto const number_of_regular_base_nodes =
         subdomain_mesh->computeNumberOfBaseNodes();
 
-    MPI_Comm const mpi_comm = MPI_COMM_WORLD;
-    auto const [mpi_comm_rank, mpi_comm_size] = getMPIRankAndSize(mpi_comm);
+    BaseLib::MPI::Mpi mpi;
 
-    std::vector<std::size_t> gathered_number_of_regular_base_nodes(
-        mpi_comm_size);
-    MPI_Allgather(&number_of_regular_base_nodes, 1, MPI_UNSIGNED_LONG,
-                  gathered_number_of_regular_base_nodes.data(), 1,
-                  MPI_UNSIGNED_LONG, mpi_comm);
+    std::vector<std::size_t> const gathered_number_of_regular_base_nodes =
+        BaseLib::MPI::allgather(number_of_regular_base_nodes, mpi);
 
-    std::vector<std::size_t> numbers_of_regular_base_nodes_at_rank;
-    numbers_of_regular_base_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_number_of_regular_base_nodes),
-                     end(gathered_number_of_regular_base_nodes),
-                     back_inserter(numbers_of_regular_base_nodes_at_rank));
-
-    return numbers_of_regular_base_nodes_at_rank;
+    return BaseLib::sizesToOffsets(gathered_number_of_regular_base_nodes);
 }
 
 // similar to the above only with regular higher order nodes
 std::vector<std::size_t> computeNumberOfRegularHigherOrderNodesAtRank(
     Mesh const* subdomain_mesh)
 {
-    // in the following information exchange with other ranks is required
-    MPI_Comm const mpi_comm = MPI_COMM_WORLD;
-    auto [mpi_comm_rank, mpi_comm_size] = getMPIRankAndSize(mpi_comm);
+    BaseLib::MPI::Mpi mpi;
 
     auto const number_of_regular_base_nodes =
         subdomain_mesh->computeNumberOfBaseNodes();
 
-    std::vector<std::size_t> gathered_number_of_regular_higher_order_nodes(
-        mpi_comm_size);
     auto const number_of_regular_higher_order_nodes =
         subdomain_mesh->getNumberOfNodes() - number_of_regular_base_nodes;
-    MPI_Allgather(&number_of_regular_higher_order_nodes, 1, MPI_UNSIGNED_LONG,
-                  gathered_number_of_regular_higher_order_nodes.data(), 1,
-                  MPI_UNSIGNED_LONG, mpi_comm);
+    std::vector<std::size_t> gathered_number_of_regular_higher_order_nodes =
+        BaseLib::MPI::allgather(number_of_regular_higher_order_nodes, mpi);
 
-    std::vector<std::size_t> numbers_of_regular_higher_order_nodes_at_rank;
-    numbers_of_regular_higher_order_nodes_at_rank.push_back(0);
-    std::partial_sum(
-        begin(gathered_number_of_regular_higher_order_nodes),
-        end(gathered_number_of_regular_higher_order_nodes),
-        back_inserter(numbers_of_regular_higher_order_nodes_at_rank));
-
-    return numbers_of_regular_higher_order_nodes_at_rank;
+    return BaseLib::sizesToOffsets(
+        gathered_number_of_regular_higher_order_nodes);
 }
 
 std::vector<std::size_t> computeGlobalNodeIDsOfSubDomainPartition(
@@ -382,13 +316,8 @@ std::vector<std::size_t> computeGlobalNodeIDsOfSubDomainPartition(
 unsigned long getNumberOfGlobalNodes(Mesh const* subdomain_mesh)
 {
     // sum all nodes over all partitions in number_of_global_nodes
-    unsigned long number_of_local_nodes = subdomain_mesh->getNodes().size();
-    unsigned long number_of_global_nodes = 0;
-
-    MPI_Comm mpi_comm = MPI_COMM_WORLD;
-
-    MPI_Allreduce(&number_of_local_nodes, &number_of_global_nodes, 1,
-                  MPI_UNSIGNED_LONG, MPI_SUM, mpi_comm);
+    unsigned long const number_of_global_nodes = BaseLib::MPI::allreduce(
+        subdomain_mesh->getNodes().size(), MPI_SUM, BaseLib::MPI::Mpi{});
     DBUG("[{}] number_of_global_nodes: {}'", subdomain_mesh->getName(),
          number_of_global_nodes);
     return number_of_global_nodes;

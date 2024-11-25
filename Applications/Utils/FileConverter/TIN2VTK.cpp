@@ -9,17 +9,13 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 // STL
 #include <memory>
 #include <string>
 #include <vector>
 
-// BaseLib
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 
 // GeoLib
@@ -53,9 +49,7 @@ int main(int argc, char* argv[])
     cmd.add(outArg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     INFO("reading the TIN file...");
     const std::string tinFileName(inArg.getValue());
@@ -66,9 +60,6 @@ int main(int argc, char* argv[])
         GeoLib::IO::TINInterface::readTIN(tinFileName, point_vec));
     if (!sfc)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     INFO("TIN read:  {:d} points, {:d} triangles", point_vec.size(),
@@ -85,8 +76,5 @@ int main(int argc, char* argv[])
     MeshLib::IO::VtuInterface writer(mesh.get());
     writer.writeToFile(outArg.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

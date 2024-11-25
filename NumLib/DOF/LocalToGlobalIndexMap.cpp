@@ -16,19 +16,6 @@
 
 namespace NumLib
 {
-namespace
-{
-// Make the cumulative sum of an array, which starts with zero
-template <typename T>
-std::vector<T> to_cumulative(std::vector<T> const& vec)
-{
-    std::vector<T> result(vec.size() + 1, 0);
-    std::partial_sum(vec.begin(), vec.end(), result.begin() + 1);
-
-    return result;
-}
-
-}  // namespace
 
 int LocalToGlobalIndexMap::getGlobalComponent(int const variable_id,
                                               int const component_id) const
@@ -129,7 +116,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(_mesh_subsets, order),
-      _variable_component_offsets(to_cumulative(vec_var_n_components))
+      _variable_component_offsets(BaseLib::sizesToOffsets(vec_var_n_components))
 {
     // For each element of that MeshSubset save a line of global indices.
     for (int variable_id = 0;
@@ -160,7 +147,7 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
       _mesh_component_map(_mesh_subsets, order),
-      _variable_component_offsets(to_cumulative(vec_var_n_components))
+      _variable_component_offsets(BaseLib::sizesToOffsets(vec_var_n_components))
 {
     assert(vec_var_n_components.size() == vec_var_elements.size());
 

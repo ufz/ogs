@@ -9,10 +9,6 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <array>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -20,6 +16,7 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/MemWatch.h"
 #include "BaseLib/RunTime.h"
 #include "BaseLib/StringTools.h"
@@ -141,9 +138,7 @@ int main(int argc, char* argv[])
     cmd.add(outdir_arg);
 
     cmd.parse(argc, argv);
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
     BaseLib::setConsoleLogLevel(log_level_arg.getValue());
 
     auto const pvd_file_dir = BaseLib::extractPath(pvd_file_arg.getValue());
@@ -237,8 +232,5 @@ int main(int argc, char* argv[])
 
         mesh_xdmf_hdf_writer->writeStep(time);
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

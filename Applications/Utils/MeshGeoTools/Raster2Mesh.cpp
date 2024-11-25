@@ -13,10 +13,7 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
+#include "BaseLib/MPI.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
@@ -72,9 +69,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();
@@ -107,16 +102,10 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Conversion failed.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
     MeshLib::IO::VtuInterface vtu(mesh.get());
     vtu.writeToFile(output_name);
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

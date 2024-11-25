@@ -16,16 +16,13 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <QCoreApplication>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/readStringListFromFile.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/AnalyticalGeometry.h"
 #include "GeoLib/GEOObjects.h"
@@ -418,9 +415,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::string const input_name = input_arg.getValue();
     std::string const output_name = output_arg.getValue();
@@ -439,9 +434,6 @@ int main(int argc, char* argv[])
     if (layer_names.size() < 2)
     {
         ERR("At least two layers are required to extract a slice.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -453,9 +445,6 @@ int main(int argc, char* argv[])
     {
         ERR("Less than two geometries could be created from layers. Aborting "
             "extraction...");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -475,9 +464,6 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Error generating mesh... (GMSH was unable to output mesh)");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     rotateMesh(*mesh, rot_mat, z_shift);
@@ -485,9 +471,6 @@ int main(int argc, char* argv[])
     if (new_mesh == nullptr)
     {
         ERR("Error generating mesh... (GMSH created line mesh)");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -506,8 +489,5 @@ int main(int argc, char* argv[])
     }
     MeshLib::IO::VtuInterface vtu(revised_mesh.get());
     vtu.writeToFile(output_name + ".vtu");
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

@@ -12,10 +12,6 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <fstream>
 #include <map>
 #include <string>
@@ -24,6 +20,7 @@
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "Applications/FileIO/writeGeometryToFile.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "InfoLib/GitInfo.h"
@@ -183,9 +180,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // *** read mesh
     INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
@@ -216,9 +211,6 @@ int main(int argc, char* argv[])
     {
         ERR("Could not get vector of polylines out of geometry '{:s}'.",
             geo_name);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -251,9 +243,6 @@ int main(int argc, char* argv[])
     if (geo_names.empty())
     {
         ERR("Did not find mesh nodes along polylines.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -313,8 +302,5 @@ int main(int argc, char* argv[])
         BaseLib::dropFileExtension(output_base_fname.getValue()));
     writeBCsAndGeometry(geometry_sets, surface_name, base_fname,
                         bc_type.getValue(), gml_arg.getValue());
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

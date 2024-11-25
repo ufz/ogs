@@ -22,6 +22,7 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/MeshEnums.h"
@@ -45,12 +46,8 @@ namespace MeshLib
 {
 namespace IO
 {
-NodePartitionedMeshReader::NodePartitionedMeshReader(MPI_Comm comm)
-    : _mpi_comm(comm)
+NodePartitionedMeshReader::NodePartitionedMeshReader(MPI_Comm comm) : mpi_(comm)
 {
-    MPI_Comm_size(_mpi_comm, &_mpi_comm_size);
-    MPI_Comm_rank(_mpi_comm, &_mpi_rank);
-
     registerNodeDataMpiType();
 }
 
@@ -79,13 +76,13 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     // Always try binary file first
     std::string const fname_new = file_name_base + "_partitioned_msh_cfg" +
-                                  std::to_string(_mpi_comm_size) + ".bin";
+                                  std::to_string(mpi_.size) + ".bin";
 
     if (!BaseLib::IsFileExisting(fname_new))  // binary file does not exist.
     {
         std::string const fname_ascii = file_name_base +
                                         "_partitioned_msh_cfg" +
-                                        std::to_string(_mpi_comm_size) + ".msh";
+                                        std::to_string(mpi_.size) + ".msh";
         if (BaseLib::IsFileExisting(fname_ascii))
         {
             ERR("Reading of ASCII mesh file {:s} is not supported since OGS "
@@ -102,7 +99,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::read(
 
     INFO("[time] Reading the mesh took {:f} s.", timer.elapsed());
 
-    MPI_Barrier(_mpi_comm);
+    MPI_Barrier(mpi_.communicator);
 
     return mesh;
 }
@@ -124,8 +121,9 @@ bool NodePartitionedMeshReader::readDataFromFile(std::string const& filename,
     MPI_File file;
 
     char* filename_char = const_cast<char*>(filename.data());
-    int const file_status = MPI_File_open(
-        _mpi_comm, filename_char, MPI_MODE_RDONLY, MPI_INFO_NULL, &file);
+    int const file_status =
+        MPI_File_open(mpi_.communicator, filename_char, MPI_MODE_RDONLY,
+                      MPI_INFO_NULL, &file);
 
     if (file_status != 0)
     {
@@ -151,13 +149,13 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
     //----------------------------------------------------------------------------------
     // Read headers
     const std::string fname_header = file_name_base + "_partitioned_msh_";
-    const std::string fname_num_p_ext = std::to_string(_mpi_comm_size) + ".bin";
+    const std::string fname_num_p_ext = std::to_string(mpi_.size) + ".bin";
 
     // Read the config meta data from *cfg* file into struct PartitionedMeshInfo
     // _mesh_info
     if (!readDataFromFile(
             fname_header + "cfg" + fname_num_p_ext,
-            static_cast<MPI_Offset>(static_cast<unsigned>(_mpi_rank) *
+            static_cast<MPI_Offset>(static_cast<unsigned>(mpi_.rank) *
                                     sizeof(_mesh_info)),
             MPI_LONG, _mesh_info))
         return nullptr;
@@ -228,7 +226,7 @@ void NodePartitionedMeshReader::readProperties(
 
     const std::string fname_cfg = file_name_base + "_partitioned_" + item_type +
                                   "_properties_cfg" +
-                                  std::to_string(_mpi_comm_size) + ".bin";
+                                  std::to_string(mpi_.size) + ".bin";
     std::ifstream is(fname_cfg.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
@@ -262,21 +260,19 @@ void NodePartitionedMeshReader::readProperties(
     auto pos = is.tellg();
     auto offset =
         static_cast<long>(pos) +
-        static_cast<long>(_mpi_rank *
+        static_cast<long>(mpi_.rank *
                           sizeof(MeshLib::IO::PropertyVectorPartitionMetaData));
     is.seekg(offset);
     std::optional<MeshLib::IO::PropertyVectorPartitionMetaData> pvpmd(
         MeshLib::IO::readPropertyVectorPartitionMetaData(is));
-    bool pvpmd_read_ok = static_cast<bool>(pvpmd);
-    bool all_pvpmd_read_ok;
-    MPI_Allreduce(&pvpmd_read_ok, &all_pvpmd_read_ok, 1, MPI_C_BOOL, MPI_LOR,
-                  _mpi_comm);
+    bool const all_pvpmd_read_ok =
+        BaseLib::MPI::allreduce(static_cast<bool>(pvpmd), MPI_LOR, mpi_);
     if (!all_pvpmd_read_ok)
     {
         OGS_FATAL(
             "Error in NodePartitionedMeshReader::readProperties: "
             "Could not read the partition meta data for the mpi process {:d}",
-            _mpi_rank);
+            mpi_.rank);
     }
     DBUG("offset in the PropertyVector: {:d}", pvpmd->offset);
     DBUG("{:d} tuples in partition.", pvpmd->number_of_tuples);
@@ -284,7 +280,7 @@ void NodePartitionedMeshReader::readProperties(
 
     const std::string fname_val = file_name_base + "_partitioned_" + item_type +
                                   "_properties_val" +
-                                  std::to_string(_mpi_comm_size) + ".bin";
+                                  std::to_string(mpi_.size) + ".bin";
     is.open(fname_val.c_str(), std::ios::binary | std::ios::in);
     if (!is)
     {
@@ -407,40 +403,20 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::vector<MeshLib::Element*> const& mesh_elems,
     MeshLib::Properties const& properties) const
 {
-    std::vector<std::size_t> gathered_n_regular_base_nodes(_mpi_comm_size);
+    std::vector<std::size_t> const gathered_n_regular_base_nodes =
+        BaseLib::MPI::allgather(_mesh_info.number_of_regular_base_nodes, mpi_);
 
-    MPI_Allgather(&_mesh_info.number_of_regular_base_nodes,
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  gathered_n_regular_base_nodes.data(),
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  _mpi_comm);
+    std::vector<std::size_t> n_regular_base_nodes_at_rank =
+        BaseLib::sizesToOffsets(gathered_n_regular_base_nodes);
 
-    std::vector<std::size_t> n_regular_base_nodes_at_rank;
-    n_regular_base_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_n_regular_base_nodes),
-                     end(gathered_n_regular_base_nodes),
-                     back_inserter(n_regular_base_nodes_at_rank));
-
-    std::vector<std::size_t> gathered_n_regular_high_order_nodes(
-        _mpi_comm_size);
     std::size_t const n_regular_high_order_nodes =
         _mesh_info.number_of_regular_nodes -
         _mesh_info.number_of_regular_base_nodes;
-    MPI_Allgather(&n_regular_high_order_nodes,
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  gathered_n_regular_high_order_nodes.data(),
-                  1,
-                  MPI_UNSIGNED_LONG,
-                  _mpi_comm);
+    std::vector<std::size_t> const gathered_n_regular_high_order_nodes =
+        BaseLib::MPI::allgather(n_regular_high_order_nodes, mpi_);
 
-    std::vector<std::size_t> n_regular_high_order_nodes_at_rank;
-    n_regular_high_order_nodes_at_rank.push_back(0);
-    std::partial_sum(begin(gathered_n_regular_high_order_nodes),
-                     end(gathered_n_regular_high_order_nodes),
-                     back_inserter(n_regular_high_order_nodes_at_rank));
+    std::vector<std::size_t> n_regular_high_order_nodes_at_rank =
+        BaseLib::sizesToOffsets(gathered_n_regular_high_order_nodes);
 
     return new MeshLib::NodePartitionedMesh(
         mesh_name, mesh_nodes, glb_node_ids, mesh_elems, properties,

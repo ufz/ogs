@@ -268,14 +268,6 @@ private:
     mutable std::map<PetscInt, PetscInt> global_ids2local_ids_ghost_;
 
     /*!
-          \brief  Collect local vectors
-          \param  local_array Local array
-          \param  global_array Global array
-    */
-    void gatherLocalVectors(PetscScalar local_array[],
-                            PetscScalar global_array[]) const;
-
-    /*!
        Get local vector, i.e. entries in the same rank
     */
     PetscScalar* getLocalVector() const;

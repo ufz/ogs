@@ -9,10 +9,6 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <map>
@@ -20,6 +16,7 @@
 #include <vector>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -151,9 +148,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     auto const in_file_ext = BaseLib::getFileExtension(arg_in_file.getValue());
     if (in_file_ext == ".pvd")
@@ -170,8 +165,5 @@ int main(int argc, char* argv[])
         OGS_FATAL("The given file type ({:s}) is not supported.", in_file_ext);
     }
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

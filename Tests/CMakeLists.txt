@@ -190,10 +190,10 @@ if(OGS_USE_PETSC)
     if("${HOSTNAME}" MATCHES "frontend.*")
         list(APPEND MPIRUN_ARGS --mca btl_openib_allow_ib 1)
     endif()
-    set(TEST_FILTER_MPI --gtest_filter=-MPITest*)
+    set(TEST_FILTER_MPI --gtest_filter=-MPI*)
     add_custom_target(tests
         mpirun ${MPIRUN_ARGS} -np 1 $<TARGET_FILE:testrunner> ${TESTRUNNER_ADDITIONAL_ARGUMENTS} ${TEST_FILTER_MPI}
-        COMMAND mpirun ${MPIRUN_ARGS} -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPITest*
+        COMMAND mpirun ${MPIRUN_ARGS} -np 3 $<TARGET_FILE:testrunner> --gtest_filter=MPI*
         DEPENDS testrunner tests-cleanup
     )
 else()

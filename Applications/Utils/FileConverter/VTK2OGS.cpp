@@ -14,12 +14,9 @@
 // STL
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <string>
 
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -47,9 +44,7 @@ int main(int argc, char* argv[])
     cmd.add(mesh_out);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     MeshLib::Mesh* mesh(
         MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
@@ -60,8 +55,5 @@ int main(int argc, char* argv[])
     meshIO.setMesh(mesh);
     BaseLib::IO::writeStringToFile(meshIO.writeToString(), mesh_out.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include "BaseLib/MPI.h"
 #include "MeshLib/IO/MPI_IO/PropertyVectorMetaData.h"
 #include "MeshLib/IO/NodeData.h"
 #include "MeshLib/NodePartitionedMesh.h"
@@ -53,14 +54,8 @@ public:
     MeshLib::NodePartitionedMesh* read(const std::string& file_name_base);
 
 private:
-    /// Pointer to MPI communicator.
-    MPI_Comm _mpi_comm;
-
-    /// Number of processes in the communicator: _mpi_comm.
-    int _mpi_comm_size;
-
-    /// Rank of compute core.
-    int _mpi_rank;
+    /// Pointer to MPI communicator, the rank and the size.
+    BaseLib::MPI::Mpi mpi_;
 
     /// MPI data type for struct NodeData.
     MPI_Datatype _mpi_node_type;
@@ -205,7 +200,7 @@ private:
             OGS_FATAL(
                 "Error in NodePartitionedMeshReader::readProperties: "
                 "Could not read part {:d} of the PropertyVector.",
-                _mpi_rank);
+                mpi_.rank);
     }
 
     /// Read data for property OGS_VERSION or IntegrationPointMetaData, and
@@ -220,12 +215,12 @@ private:
             pvmd.property_name, t, pvmd.number_of_components);
 
         std::size_t const property_vector_size =
-            pvmd.number_of_tuples / _mpi_comm_size;
+            pvmd.number_of_tuples / mpi_.size;
         pv->resize(property_vector_size);
 
         // Locate the start position of the data in the file for the current
         // rank.
-        is.seekg(global_offset + property_vector_size * sizeof(T) * _mpi_rank);
+        is.seekg(global_offset + property_vector_size * sizeof(T) * mpi_.rank);
 
         // read the values
         if (!is.read(reinterpret_cast<char*>(pv->data()),
@@ -234,7 +229,7 @@ private:
             OGS_FATAL(
                 "Error in NodePartitionedMeshReader::readProperties: "
                 "Could not read part {:d} of the PropertyVector.",
-                _mpi_rank);
+                mpi_.rank);
         }
     }
 

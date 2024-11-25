@@ -15,11 +15,8 @@
 #include <vtkXMLPUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
@@ -51,9 +48,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     vtkSmartPointer<vtkXMLPUnstructuredGridReader> reader =
         vtkSmartPointer<vtkXMLPUnstructuredGridReader>::New();
@@ -73,8 +68,5 @@ int main(int argc, char* argv[])
     writer->SetFileName(output_arg.getValue().c_str());
     writer->Write();
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

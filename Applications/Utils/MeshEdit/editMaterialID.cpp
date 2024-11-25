@@ -9,12 +9,9 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <memory>
 
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -68,24 +65,16 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     if (!replaceArg.isSet() && !condenseArg.isSet() && !specifyArg.isSet())
     {
         INFO("Please select editing mode: -r or -c or -s");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 0;
     }
     if (replaceArg.isSet() && condenseArg.isSet())
     {
         INFO("Please select only one editing mode: -r or -c or -s");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 0;
     }
     if (replaceArg.isSet())
@@ -95,9 +84,6 @@ int main(int argc, char* argv[])
             INFO(
                 "current and new material IDs must be provided for "
                 "replacement");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return 0;
         }
     }
@@ -108,9 +94,6 @@ int main(int argc, char* argv[])
             INFO(
                 "element type and new material IDs must be provided to specify "
                 "elements");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return 0;
         }
     }
@@ -170,8 +153,5 @@ int main(int argc, char* argv[])
     }
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

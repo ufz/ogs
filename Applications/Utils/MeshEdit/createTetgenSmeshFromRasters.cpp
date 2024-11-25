@@ -18,13 +18,10 @@
 #include <string>
 #include <vector>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "Applications/FileIO/TetGenInterface.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/IO/readStringListFromFile.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -85,9 +82,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     if (min_thickness_arg.isSet())
     {
@@ -95,9 +90,6 @@ int main(int argc, char* argv[])
         if (min_thickness < 0)
         {
             ERR("Minimum layer thickness must be non-negative value.");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
     }
@@ -108,17 +100,11 @@ int main(int argc, char* argv[])
     if (!sfc_mesh)
     {
         ERR("Error reading mesh '{:s}'.", mesh_arg.getValue());
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     if (sfc_mesh->getDimension() != 2)
     {
         ERR("Input mesh must be a 2D mesh.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     INFO("done.");
@@ -128,9 +114,6 @@ int main(int argc, char* argv[])
     if (raster_paths.size() < 2)
     {
         ERR("At least two raster files needed to create 3D mesh.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     std::reverse(raster_paths.begin(), raster_paths.end());
@@ -148,18 +131,12 @@ int main(int argc, char* argv[])
         if (!lv.createLayers(*sfc_mesh, *rasters, min_thickness))
         {
             ERR("Creating the layers was erroneous.");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
     }
     else
     {
         ERR("The raster files are not accessible.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     std::unique_ptr<MeshLib::Mesh> tg_mesh =
@@ -174,14 +151,8 @@ int main(int argc, char* argv[])
     else
     {
         ERR("The tetgen-smesh could not be created.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

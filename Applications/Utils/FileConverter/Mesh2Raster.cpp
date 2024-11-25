@@ -9,15 +9,12 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <filesystem>
 #include <fstream>
 #include <memory>
 #include <string>
 
+#include "BaseLib/MPI.h"
 #include "GeoLib/AABB.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -52,9 +49,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     INFO("Rasterising mesh...");
     std::unique_ptr<MeshLib::Mesh> const mesh(
@@ -62,18 +57,12 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Error reading mesh file.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 1;
     }
     if (mesh->getDimension() != 2)
     {
         ERR("The programme requires a mesh containing two-dimensional elements "
             "(i.e. triangles or quadrilaterals.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 2;
     }
 
@@ -178,8 +167,5 @@ int main(int argc, char* argv[])
     }
     out.close();
     INFO("Result written to {:s}", output_name);
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return 0;
 }

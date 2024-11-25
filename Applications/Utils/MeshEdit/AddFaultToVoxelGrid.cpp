@@ -15,10 +15,7 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -64,9 +61,7 @@ int main(int argc, char* argv[])
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::string const input_name = input_arg.getValue();
     std::string const fault_name = fault_arg.getValue();
@@ -81,17 +76,11 @@ int main(int argc, char* argv[])
     if (mesh == nullptr)
     {
         ERR("Input mesh not found...");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     auto const& mat_ids = MeshLib::materialIDs(*mesh);
     if (!mat_ids)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         ERR("Input mesh has no material IDs");
         return EXIT_FAILURE;
     }
@@ -105,15 +94,9 @@ int main(int argc, char* argv[])
     {
         MeshLib::IO::VtuInterface vtu(mesh.get());
         vtu.writeToFile(output_name);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         INFO("The fault was successfully added.");
         return EXIT_SUCCESS;
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     ERR("No fault could be added.");
     return EXIT_FAILURE;
 }

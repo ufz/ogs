@@ -11,12 +11,9 @@
 // ThirdParty
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <numeric>
 
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "GeoLib/Point.h"
@@ -241,9 +238,7 @@ int main(int argc, char* argv[])
     cmd.add(geo_output_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     auto const p0 = GeoLib::Point{x0.getValue(), y0.getValue(), z0.getValue()};
     auto const p1 = GeoLib::Point{x1.getValue(), y1.getValue(), z1.getValue()};
@@ -286,9 +281,6 @@ int main(int argc, char* argv[])
                 std::move(polyline_name.getValue()), geometry_name.getValue(),
                 geometry) == EXIT_FAILURE)
         {
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
     }
@@ -298,8 +290,5 @@ int main(int argc, char* argv[])
     BaseLib::IO::writeStringToFile(xml.writeToString(),
                                    geo_output_arg.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

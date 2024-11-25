@@ -11,12 +11,9 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <memory>
 
+#include "BaseLib/MPI.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Point.h"
@@ -71,9 +68,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     GeoLib::RasterHeader header{
         n_cols.getValue(),
@@ -88,8 +83,5 @@ int main(int argc, char* argv[])
     FileIO::AsciiRasterInterface::writeRasterAsASC(raster,
                                                    output_arg.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

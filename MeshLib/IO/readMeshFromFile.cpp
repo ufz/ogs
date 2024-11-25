@@ -21,6 +21,7 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/StringTools.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -68,33 +69,27 @@ MeshLib::Mesh* readMeshFromFile(const std::string& file_name,
                                 bool const compute_element_neighbors)
 {
 #ifdef USE_PETSC
-    int mpi_init;
-    MPI_Initialized(&mpi_init);
-    if (mpi_init == 1)
+    BaseLib::MPI::Mpi mpi;
+    if (mpi.size > 1)
     {
-        int world_size;
-        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-        if (world_size > 1)
-        {
-            MeshLib::IO::NodePartitionedMeshReader read_pmesh(MPI_COMM_WORLD);
-            const std::string file_name_base =
-                BaseLib::dropFileExtension(file_name);
-            return read_pmesh.read(file_name_base);
-        }
-        if (world_size == 1)
-        {
-            std::unique_ptr<Mesh> mesh{
-                readMeshFromFileSerial(file_name, compute_element_neighbors)};
-
-            if (!mesh)
-            {
-                return nullptr;
-            }
-
-            return new MeshLib::NodePartitionedMesh(*mesh);
-        }
-        return nullptr;
+        MeshLib::IO::NodePartitionedMeshReader read_pmesh(mpi.communicator);
+        const std::string file_name_base =
+            BaseLib::dropFileExtension(file_name);
+        return read_pmesh.read(file_name_base);
     }
+    if (mpi.size == 1)
+    {
+        std::unique_ptr<Mesh> mesh{
+            readMeshFromFileSerial(file_name, compute_element_neighbors)};
+
+        if (!mesh)
+        {
+            return nullptr;
+        }
+
+        return new MeshLib::NodePartitionedMesh(*mesh);
+    }
+    return nullptr;
 #endif
     return readMeshFromFileSerial(file_name, compute_element_neighbors);
 }

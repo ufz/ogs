@@ -9,16 +9,13 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <array>
 #include <memory>
 #include <sstream>
 #include <string>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/StringTools.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
@@ -52,9 +49,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     const std::string filename(mesh_arg.getValue());
 
@@ -64,9 +59,6 @@ int main(int argc, char* argv[])
             filename, true /* compute_element_neighbors */));
     if (!mesh)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -155,8 +147,5 @@ int main(int argc, char* argv[])
         out << std::endl;
         INFO("{:s}", out.str());
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

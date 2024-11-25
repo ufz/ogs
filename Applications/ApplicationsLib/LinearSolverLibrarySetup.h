@@ -19,6 +19,7 @@
 /// The default implementation is empty providing polymorphic behaviour when
 /// using this class.
 
+#include "BaseLib/MPI.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
 #if defined(USE_PETSC)
@@ -28,9 +29,8 @@ namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
 {
-    LinearSolverLibrarySetup(int argc, char* argv[])
+    LinearSolverLibrarySetup(int argc, char* argv[]) : mpi_setup(argc, argv)
     {
-        MPI_Init(&argc, &argv);
         char help[] = "ogs6 with PETSc \n";
         PetscInitialize(&argc, &argv, nullptr, help);
         MPI_Comm_set_errhandler(PETSC_COMM_WORLD, MPI_ERRORS_RETURN);
@@ -40,8 +40,9 @@ struct LinearSolverLibrarySetup final
     {
         NumLib::cleanupGlobalMatrixProviders();
         PetscFinalize();
-        MPI_Finalize();
     }
+
+    BaseLib::MPI::Setup mpi_setup;
 };
 }    // ApplicationsLib
 #elif defined(USE_LIS)

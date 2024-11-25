@@ -17,6 +17,7 @@
 
 #include <Eigen/Core>
 
+#include "BaseLib/MPI.h"
 #include "MathLib/LinAlg/LinAlg.h"
 
 #if defined(USE_PETSC)
@@ -58,24 +59,17 @@ void checkGlobalMatrixInterface(T_MATRIX& m)
 template <class T_MATRIX, class T_VECTOR>
 void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 {
-    int msize;
-    MPI_Comm_size(PETSC_COMM_WORLD, &msize);
-    int mrank;
-    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
 
-    ASSERT_EQ(3u, msize);
+    ASSERT_EQ(3u, mpi.size);
     ASSERT_EQ(m.getRangeEnd() - m.getRangeBegin(), m.getNumberOfLocalRows());
 
-    int gathered_rows;
-    int local_rows = m.getNumberOfLocalRows();
-    MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM,
-                  PETSC_COMM_WORLD);
+    int const gathered_rows =
+        BaseLib::MPI::allreduce(m.getNumberOfLocalRows(), MPI_SUM, mpi);
     ASSERT_EQ(m.getNumberOfRows(), gathered_rows);
 
-    int gathered_cols;
-    int local_cols = m.getNumberOfLocalColumns();
-    MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM,
-                  PETSC_COMM_WORLD);
+    int const gathered_cols =
+        BaseLib::MPI::allreduce(m.getNumberOfLocalColumns(), MPI_SUM, mpi);
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
@@ -87,8 +81,8 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 
     std::vector<GlobalIndexType> row_pos(2);
     std::vector<GlobalIndexType> col_pos(2);
-    row_pos[0] = 2 * mrank;
-    row_pos[1] = 2 * mrank + 1;
+    row_pos[0] = 2 * mpi.rank;
+    row_pos[1] = 2 * mpi.rank + 1;
     col_pos[0] = row_pos[0];
     col_pos[1] = row_pos[1];
 
@@ -112,10 +106,10 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
     ASSERT_EQ(sqrt(3 * (3 * 3 + 7 * 7)), norm2(y));
 
     // set a value
-    m_c.set(2 * mrank, 2 * mrank, 5.0);
+    m_c.set(2 * mpi.rank, 2 * mpi.rank, 5.0);
     MathLib::finalizeMatrixAssembly(m_c);
     // add a value
-    m_c.add(2 * mrank + 1, 2 * mrank + 1, 5.0);
+    m_c.add(2 * mpi.rank + 1, 2 * mpi.rank + 1, 5.0);
     MathLib::finalizeMatrixAssembly(m_c);
 
     matMult(m_c, v, y);
@@ -127,21 +121,16 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 template <class T_MATRIX, class T_VECTOR>
 void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 {
-    int mrank;
-    MPI_Comm_rank(PETSC_COMM_WORLD, &mrank);
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
 
     ASSERT_EQ(m.getRangeEnd() - m.getRangeBegin(), m.getNumberOfLocalRows());
 
-    int gathered_rows;
-    int local_rows = m.getNumberOfLocalRows();
-    MPI_Allreduce(&local_rows, &gathered_rows, 1, MPI_INT, MPI_SUM,
-                  PETSC_COMM_WORLD);
+    int const gathered_rows =
+        BaseLib::MPI::allreduce(m.getNumberOfLocalRows(), MPI_SUM, mpi);
     ASSERT_EQ(m.getNumberOfRows(), gathered_rows);
 
-    int gathered_cols;
-    int local_cols = m.getNumberOfLocalColumns();
-    MPI_Allreduce(&local_cols, &gathered_cols, 1, MPI_INT, MPI_SUM,
-                  PETSC_COMM_WORLD);
+    int const gathered_cols =
+        BaseLib::MPI::allreduce(m.getNumberOfLocalColumns(), MPI_SUM, mpi);
     ASSERT_EQ(m.getNumberOfColumns(), gathered_cols);
 
     // Add entries
@@ -155,11 +144,11 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 
     std::vector<GlobalIndexType> row_pos(2);
     std::vector<GlobalIndexType> col_pos(3);
-    row_pos[0] = 2 * mrank;
-    row_pos[1] = 2 * mrank + 1;
-    col_pos[0] = 3 * mrank;
-    col_pos[1] = 3 * mrank + 1;
-    col_pos[2] = 3 * mrank + 2;
+    row_pos[0] = 2 * mpi.rank;
+    row_pos[1] = 2 * mpi.rank + 1;
+    col_pos[0] = 3 * mpi.rank;
+    col_pos[1] = 3 * mpi.rank + 1;
+    col_pos[2] = 3 * mpi.rank + 2;
 
     m.add(row_pos, col_pos, loc_m);
 
@@ -178,7 +167,7 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 }  // end namespace
 
 #if defined(USE_PETSC)
-TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)
+TEST(MPI_Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -193,7 +182,7 @@ TEST(MPITest_Math, CheckInterface_PETScMatrix_Local_Size)
     checkGlobalMatrixInterfaceMPI(A, x);
 }
 
-TEST(MPITest_Math, CheckInterface_PETScMatrix_Global_Size)
+TEST(MPI_Math, CheckInterface_PETScMatrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 2;
@@ -205,7 +194,7 @@ TEST(MPITest_Math, CheckInterface_PETScMatrix_Global_Size)
     checkGlobalMatrixInterfaceMPI(A, x);
 }
 
-TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
+TEST(MPI_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 3;
@@ -220,7 +209,7 @@ TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Local_Size)
     checkGlobalRectangularMatrixInterfaceMPI(A, x);
 }
 
-TEST(MPITest_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
+TEST(MPI_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 {
     MathLib::PETScMatrixOption opt;
     opt.d_nz = 3;

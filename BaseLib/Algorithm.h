@@ -16,6 +16,10 @@
 #include <optional>
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/range/concepts.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/concat.hpp>
+#include <range/v3/view/partial_sum.hpp>
+#include <range/v3/view/single.hpp>
 #include <string>
 #include <typeindex>
 #include <typeinfo>
@@ -270,6 +274,18 @@ void cleanupVectorElements(std::vector<T1*>& dependent_items, Args&&... args)
 {
     cleanupVectorElements(dependent_items);
     cleanupVectorElements(std::forward<Args>(args)...);
+}
+
+/// Converts range of sizes to a vector of offsets. First offset is 0 and the
+/// resulting vector size is the size of the input range plus one.
+template <ranges::range R>
+    requires std::is_integral_v<ranges::range_value_t<R>>
+std::vector<ranges::range_value_t<R>> sizesToOffsets(R const& sizes)
+{
+    return ranges::views::concat(
+               ranges::views::single(ranges::range_value_t<R>{0}),
+               ranges::views::partial_sum(sizes)) |
+           ranges::to<std::vector<ranges::range_value_t<R>>>();
 }
 
 /// Checks if any of the elements in the given list is true.

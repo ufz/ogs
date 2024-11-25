@@ -260,7 +260,7 @@ void checkPETScVectorExplictGhostID()
 
 //--------------------------------------------
 #if defined(USE_PETSC)
-TEST(MPITest_Math, PETScVectorPatitionedAutomatically)
+TEST(MPI_Math, PETScVectorPatitionedAutomatically)
 {
     int msize;
     MPI_Comm_size(PETSC_COMM_WORLD, &msize);
@@ -272,7 +272,7 @@ TEST(MPITest_Math, PETScVectorPatitionedAutomatically)
     checkPETScVectorNoExplictGhostID<MathLib::PETScVector>(x, msize);
 }
 
-TEST(MPITest_Math, PETScVectorFixedPartition)
+TEST(MPI_Math, PETScVectorFixedPartition)
 {
     int msize;
     MPI_Comm_size(PETSC_COMM_WORLD, &msize);
@@ -291,7 +291,7 @@ TEST(MPITest_Math, PETScVectorFixedPartition)
     checkPETScVectorNoExplictGhostID<MathLib::PETScVector>(x_fixed_p, msize);
 }
 
-TEST(MPITest_Math, CheckPETScVectorExplictGhostID)
+TEST(MPI_Math, CheckPETScVectorExplictGhostID)
 {
     checkPETScVectorExplictGhostID<MathLib::PETScVector>();
 }

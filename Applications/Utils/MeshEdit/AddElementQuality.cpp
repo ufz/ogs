@@ -9,13 +9,10 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <array>
 #include <string>
 
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -53,9 +50,7 @@ int main(int argc, char* argv[])
     cmd.add(mesh_in_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // read the mesh file
     BaseLib::RunTime run_time;
@@ -64,9 +59,6 @@ int main(int argc, char* argv[])
         mesh_in_arg.getValue(), true /* compute_element_neighbors */));
     if (!mesh)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     INFO("Time for reading: {:g} s", run_time.elapsed());
@@ -82,8 +74,5 @@ int main(int argc, char* argv[])
     INFO("Writing mesh '{:s}' ... ", mesh_out_arg.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out_arg.getValue());
     INFO("done.");
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

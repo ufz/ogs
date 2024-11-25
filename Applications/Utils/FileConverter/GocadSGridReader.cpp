@@ -12,16 +12,13 @@
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <fstream>
 #include <sstream>
 #include <string>
 
 #include "Applications/FileIO/GocadIO/GenerateFaceSetMeshes.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -61,9 +58,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // read the Gocad SGrid
     INFO("Start reading Gocad SGrid.");
@@ -82,8 +77,5 @@ int main(int argc, char* argv[])
 
     INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue());
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

@@ -11,13 +11,10 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <memory>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -78,15 +75,10 @@ int main(int argc, char* argv[])
     {
         ERR("It is not possible to set both options '--copy-material-ids' and "
             "'--set-material-id'.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());
     auto subsfc_mesh = std::unique_ptr<MeshLib::Mesh>(
@@ -94,9 +86,6 @@ int main(int argc, char* argv[])
     if (!subsfc_mesh)
     {
         ERR("Error reading mesh '{:s}'.", mesh_arg.getValue());
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
     INFO("done.");
@@ -114,9 +103,6 @@ int main(int argc, char* argv[])
     if (!result)
     {
         ERR("Failure while adding layer.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -124,8 +110,5 @@ int main(int argc, char* argv[])
     MeshLib::IO::writeMeshToFile(*result, mesh_out_arg.getValue());
     INFO("done.");
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

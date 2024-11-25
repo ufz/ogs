@@ -23,7 +23,9 @@
 #include <algorithm>
 #include <cassert>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/MPI.h"
 
 namespace MathLib
 {
@@ -113,33 +115,6 @@ void PETScVector::finalizeAssembly()
     VecAssemblyEnd(v_);
 }
 
-void PETScVector::gatherLocalVectors(PetscScalar local_array[],
-                                     PetscScalar global_array[]) const
-{
-    // Collect vectors from processors.
-    int size_rank;
-    MPI_Comm_size(PETSC_COMM_WORLD, &size_rank);
-
-    // number of elements to be sent for each rank
-    std::vector<PetscInt> i_cnt(size_rank);
-
-    MPI_Allgather(&size_loc_, 1, MPI_INT, &i_cnt[0], 1, MPI_INT,
-                  PETSC_COMM_WORLD);
-
-    // collect local array
-    PetscInt offset = 0;
-    // offset in the receive vector of the data from each rank
-    std::vector<PetscInt> i_disp(size_rank);
-    for (PetscInt i = 0; i < size_rank; i++)
-    {
-        i_disp[i] = offset;
-        offset += i_cnt[i];
-    }
-
-    MPI_Allgatherv(local_array, size_loc_, MPI_DOUBLE, global_array, &i_cnt[0],
-                   &i_disp[0], MPI_DOUBLE, PETSC_COMM_WORLD);
-}
-
 void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
 {
 #ifdef TEST_MEM_PETSC
@@ -159,7 +134,8 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
     PetscScalar* xp = nullptr;
     VecGetArray(v_, &xp);
 
-    gatherLocalVectors(xp, u.data());
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
+    BaseLib::MPI::allgatherv(std::span(xp, size_loc_), u, mpi);
 
     // This following line may be needed late on
     //  for a communication load balance:

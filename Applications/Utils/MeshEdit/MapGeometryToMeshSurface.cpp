@@ -11,14 +11,11 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <algorithm>
 #include <cstdlib>
 #include <vector>
 
+#include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -60,9 +57,7 @@ int main(int argc, char* argv[])
     cmd.add(output_geometry_fname);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // *** read geometry
     GeoLib::GEOObjects geometries;
@@ -75,9 +70,6 @@ int main(int argc, char* argv[])
         }
         else
         {
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
     }
@@ -105,8 +97,5 @@ int main(int argc, char* argv[])
         BaseLib::IO::writeStringToFile(xml_io.writeToString(),
                                        output_geometry_fname.getValue());
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

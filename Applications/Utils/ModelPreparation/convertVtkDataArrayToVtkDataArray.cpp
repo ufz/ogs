@@ -11,15 +11,12 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <numeric>
 
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -105,18 +102,13 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue()));
 
     if (!mesh)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return -1;
     }
 
@@ -163,16 +155,10 @@ int main(int argc, char* argv[])
     if (!success)
     {
         ERR("{:s}", err_msg);
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return -1;
     }
 
     MeshLib::IO::writeMeshToFile(*mesh, out_mesh_arg.getValue());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

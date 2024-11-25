@@ -9,14 +9,11 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <memory>
 #include <string>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
@@ -50,9 +47,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::unique_ptr<GeoLib::Raster> dem1(
         FileIO::AsciiRasterInterface::readRaster(input1_arg.getValue()));
@@ -61,9 +56,6 @@ int main(int argc, char* argv[])
 
     if (dem1 == nullptr || dem2 == nullptr)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 1;
     }
 
@@ -99,9 +91,6 @@ int main(int argc, char* argv[])
 
     if (errors_found)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 2;
     }
 
@@ -120,9 +109,6 @@ int main(int argc, char* argv[])
         if (it2 == dem2->end())
         {
             ERR("Error: File 2 is shorter than File 1.");
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return 3;
         }
         if (*it1 == h1.no_data || *it2 == h2.no_data)
@@ -147,9 +133,6 @@ int main(int argc, char* argv[])
     if (it2 != dem2->end())
     {
         ERR("Error: File 1 is shorter than File 2.");
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return 3;
     }
 
@@ -164,8 +147,5 @@ int main(int argc, char* argv[])
             r, basename + std::to_string(i) + ext);
         INFO("Layer {:d} written.", i + 1);
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

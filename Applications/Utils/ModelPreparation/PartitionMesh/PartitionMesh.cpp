@@ -15,12 +15,9 @@
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -102,9 +99,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     BaseLib::setConsoleLogLevel(log_level_arg.getValue());
     spdlog::set_pattern("%^%l:%$ %v");
@@ -144,9 +139,6 @@ int main(int argc, char* argv[])
         INFO("Total runtime: {:g} s.", run_timer.elapsed());
         INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
 
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_SUCCESS;
     }
 
@@ -192,9 +184,6 @@ int main(int argc, char* argv[])
         {
             INFO("Failed in system calling.");
             INFO("Return value of system call {:d} ", status);
-#ifdef USE_PETSC
-            MPI_Finalize();
-#endif
             return EXIT_FAILURE;
         }
     }
@@ -244,8 +233,5 @@ int main(int argc, char* argv[])
     INFO("Total runtime: {:g} s.", run_timer.elapsed());
     INFO("Total CPU time: {:g} s.", CPU_timer.elapsed());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

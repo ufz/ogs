@@ -12,6 +12,7 @@
 #include <memory>
 #include <string>
 
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -131,6 +132,8 @@ int main(int argc, char* argv[])
     cmd.add(mesh_out_arg);
 
     cmd.parse(argc, argv);
+
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     const std::string filename(mesh_in_arg.getValue());
 

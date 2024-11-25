@@ -12,6 +12,7 @@ target_link_libraries(
     BaseLib
     PUBLIC Boost::algorithm
            Boost::property_tree
+           range-v3
            spdlog
            tclap
            $<$<BOOL:${MSVC}>:WinMM> # needed for timeGetTime

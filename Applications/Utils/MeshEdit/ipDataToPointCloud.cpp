@@ -11,6 +11,7 @@
 
 #include <unordered_map>
 
+#include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -250,6 +251,8 @@ int main(int argc, char** argv)
     cmd.add(arg_in_file);
 
     cmd.parse(argc, argv);
+
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     std::unique_ptr<MeshLib::Mesh const> mesh_in(
         MeshLib::IO::readMeshFromFile(arg_in_file.getValue()));

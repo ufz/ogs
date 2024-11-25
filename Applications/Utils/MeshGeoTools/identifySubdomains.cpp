@@ -10,10 +10,7 @@
 
 #include <tclap/CmdLine.h>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshGeoToolsLib/IdentifySubdomainMesh.h"
@@ -98,9 +95,7 @@ int main(int argc, char* argv[])
     cmd.add(subdomain_meshes_filenames_arg);
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     //
     // The bulk mesh.
@@ -165,9 +160,6 @@ int main(int argc, char* argv[])
     }
     INFO("writing time: {:g} s", writing_time.elapsed());
 
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     INFO("Entire run time: {:g} s", run_time.elapsed());
     return EXIT_SUCCESS;
 }

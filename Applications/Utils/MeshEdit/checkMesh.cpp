@@ -7,18 +7,14 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <tclap/CmdLine.h>
-
-#ifdef USE_PETSC
-#include <mpi.h>
-#endif
-
 #include <spdlog/fmt/bundled/ranges.h>
+#include <tclap/CmdLine.h>
 
 #include <array>
 #include <string>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/MemWatch.h"
 #include "BaseLib/RunTime.h"
 #include "BaseLib/StringTools.h"
@@ -52,9 +48,7 @@ int main(int argc, char* argv[])
 
     cmd.parse(argc, argv);
 
-#ifdef USE_PETSC
-    MPI_Init(&argc, &argv);
-#endif
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
 
     // read the mesh file
     BaseLib::MemWatch mem_watch;
@@ -65,9 +59,6 @@ int main(int argc, char* argv[])
         mesh_arg.getValue(), true /* compute_element_neighbors */));
     if (!mesh)
     {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif
         return EXIT_FAILURE;
     }
 
@@ -106,8 +97,5 @@ int main(int argc, char* argv[])
         // Remark: MeshValidation can modify the original mesh
         MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh);
     }
-#ifdef USE_PETSC
-    MPI_Finalize();
-#endif
     return EXIT_SUCCESS;
 }

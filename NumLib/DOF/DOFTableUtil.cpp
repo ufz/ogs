@@ -14,6 +14,7 @@
 #include <cassert>
 #include <functional>
 
+#include "BaseLib/MPI.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 namespace NumLib
 {
@@ -44,15 +45,12 @@ double norm(GlobalVector const& x, unsigned const global_component,
 double norm1(GlobalVector const& x, unsigned const global_component,
              LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
 {
-    double res =
+    double const res =
         norm(x, global_component, dof_table, mesh,
              [](double res, double value) { return res + std::abs(value); });
 
 #ifdef USE_PETSC
-    double global_result = 0.0;
-    MPI_Allreduce(&res, &global_result, 1, MPI_DOUBLE, MPI_SUM,
-                  PETSC_COMM_WORLD);
-    res = global_result;
+    return BaseLib::MPI::allreduce(res, MPI_SUM, BaseLib::MPI::Mpi{});
 #endif
     return res;
 }
@@ -60,15 +58,13 @@ double norm1(GlobalVector const& x, unsigned const global_component,
 double norm2(GlobalVector const& x, unsigned const global_component,
              LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh)
 {
-    double res =
+    double const res =
         norm(x, global_component, dof_table, mesh,
              [](double res, double value) { return res + value * value; });
 
 #ifdef USE_PETSC
-    double global_result = 0.0;
-    MPI_Allreduce(&res, &global_result, 1, MPI_DOUBLE, MPI_SUM,
-                  PETSC_COMM_WORLD);
-    res = global_result;
+    return std::sqrt(
+        BaseLib::MPI::allreduce(res, MPI_SUM, BaseLib::MPI::Mpi{}));
 #endif
     return std::sqrt(res);
 }
@@ -77,15 +73,12 @@ double normInfinity(GlobalVector const& x, unsigned const global_component,
                     LocalToGlobalIndexMap const& dof_table,
                     MeshLib::Mesh const& mesh)
 {
-    double res = norm(x, global_component, dof_table, mesh,
-                      [](double res, double value)
-                      { return std::max(res, std::abs(value)); });
+    double const res =
+        norm(x, global_component, dof_table, mesh, [](double res, double value)
+             { return std::max(res, std::abs(value)); });
 
 #ifdef USE_PETSC
-    double global_result = 0.0;
-    MPI_Allreduce(&res, &global_result, 1, MPI_DOUBLE, MPI_MAX,
-                  PETSC_COMM_WORLD);
-    res = global_result;
+    return BaseLib::MPI::allreduce(res, MPI_MAX, BaseLib::MPI::Mpi{});
 #endif
     return res;
 }

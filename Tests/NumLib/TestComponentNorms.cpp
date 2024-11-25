@@ -124,7 +124,7 @@ void do_test(unsigned const num_components,
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormSingleComponent)
 #else
-TEST(MPITest_NumLib, ComponentNormSingleComponent)
+TEST(MPI_NumLib, ComponentNormSingleComponent)
 #endif
 {
     unsigned const num_components = 1;
@@ -145,7 +145,7 @@ TEST(MPITest_NumLib, ComponentNormSingleComponent)
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormMultiComponent1)
 #else
-TEST(MPITest_NumLib, ComponentNormMultiComponent1)
+TEST(MPI_NumLib, ComponentNormMultiComponent1)
 #endif
 {
     unsigned const num_components = 3;
@@ -162,7 +162,7 @@ TEST(MPITest_NumLib, ComponentNormMultiComponent1)
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormMultiComponent2)
 #else
-TEST(MPITest_NumLib, ComponentNormMultiComponent2)
+TEST(MPI_NumLib, ComponentNormMultiComponent2)
 #endif
 {
     unsigned const num_components = 3;
@@ -179,7 +179,7 @@ TEST(MPITest_NumLib, ComponentNormMultiComponent2)
 #ifndef USE_PETSC
 TEST(NumLib, ComponentNormMultiComponentInfinity)
 #else
-TEST(MPITest_NumLib, ComponentNormMultiComponentInfinity)
+TEST(MPI_NumLib, ComponentNormMultiComponentInfinity)
 #endif
 {
     unsigned const num_components = 3;
