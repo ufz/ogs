@@ -9,6 +9,7 @@
  */
 
 #pragma once
+#include <array>
 
 #include "MeshLib/Elements/Pyramid.h"
 
@@ -38,6 +39,11 @@ public:
      */
     template <class T_X, class T_N>
     static void computeGradShapeFunction(const T_X& x, T_N& dN);
+
+    static std::array<double, 3> getReferenceElementCenter()
+    {
+        return {{0.0, 0.0, 0.5}};
+    }
 
     using MeshElement = MeshLib::Pyramid13;
     static const unsigned DIM = MeshElement::dimension;

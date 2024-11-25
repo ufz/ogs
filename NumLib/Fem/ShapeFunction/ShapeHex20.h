@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <array>
+
 #include "MeshLib/Elements/Hex.h"
 
 namespace NumLib
@@ -38,6 +40,11 @@ public:
      */
     template <class T_X, class T_N>
     static void computeGradShapeFunction(const T_X& rst, T_N& dN);
+
+    static std::array<double, 3> getReferenceElementCenter()
+    {
+        return {{0.0, 0.0, 0.0}};
+    }
 
     using MeshElement = MeshLib::Hex20;
     static const unsigned DIM = MeshElement::dimension;
