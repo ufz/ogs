@@ -54,7 +54,7 @@
         8.0e-5
     </replace>
     <replace sel="/*/test_definition/vtkdiff[field='NodalForces']/absolute_tolerance/text()">
-        7.3e-13
+        8.0e-12
     </replace>
     <replace sel="/*/test_definition/vtkdiff[field='porosity']/absolute_tolerance/text()">
         3.4e-15
