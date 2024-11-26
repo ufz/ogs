@@ -3,7 +3,7 @@ if(NOT (OGS_COVERAGE AND PROJECT_IS_TOP_LEVEL))
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -Og --coverage")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -Og -DEIGEN_NO_DEBUG --coverage")
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fprofile-abs-path")
     endif()
