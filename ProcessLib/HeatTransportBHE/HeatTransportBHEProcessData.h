@@ -41,12 +41,14 @@ struct HeatTransportBHEProcessData final
             nullptr,
         const bool use_tespy = false,
         const bool use_server_communication = false,
+        const bool mass_lumping = false,
         AlgebraicBCSetting algebraicBCSetting = {false, 100.0, false})
         : media_map(media_map_),
           _vec_BHE_property(std::move(vec_BHEs_)),
           py_bc_object(py_bc_object_),
           _use_tespy(use_tespy),
           _use_server_communication(use_server_communication),
+          _mass_lumping(mass_lumping),
           _algebraic_BC_Setting(algebraicBCSetting)
     {
     }
@@ -63,6 +65,10 @@ struct HeatTransportBHEProcessData final
     const bool _use_tespy;
 
     const bool _use_server_communication;
+
+    const bool _mass_lumping;
+
+    std::vector<bool> mass_lumping_soil_elements;
 
     AlgebraicBCSetting const _algebraic_BC_Setting;
 };
