@@ -174,7 +174,7 @@ class SingleOGSModel:
         u_compoment_max = self.check_vertical_displacement_at_point(
             point_having_u_compoment_max, expected_u_compoment_max, component_id
         )
-        f_bar_info = "Without the F-bar" if self.use_fbar else "With the F-bar"
+        f_bar_info = "With the F-bar" if self.use_fbar else "Without the F-bar"
         print(
             f"{f_bar_info}, the obtain maximum displacement component"
             f" of {benchmark_name} is {u_compoment_max} m."
@@ -233,6 +233,60 @@ try:
         camera_position,
         "3D indentation",
         component_id=2,
+    )
+except Exception:
+    pass
+
+# %% [markdown]
+# ## Thick cylindrical shell under pressure
+
+# %%
+try:
+    project_file = Path("ThickCylindricalShell", "ThickCylindricalShell.prj")
+    output_prefix = "ThickCylindricalShell"
+    ogs_model = SingleOGSModel(
+        project_file,
+        output_prefix,
+        mesh_path=output_prefix,
+        out_dir=out_dir,
+        use_fbar=False,
+    )
+    ogs_model.reset_time_step_size(0.3, 4)
+
+    camera_position = (0.5, -0.5, 0.4)
+    point_have_u_compoment_max = [0.0, 0.01, 0.0075]
+    expected_u_compoment_max = -0.010194869353071633
+    ogs_model.run_benchmark(
+        point_have_u_compoment_max,
+        expected_u_compoment_max,
+        camera_position,
+        "Thick cylindrical shell",
+        component_id=1,
+    )
+except Exception:
+    pass
+
+# %%
+try:
+    project_file = Path("ThickCylindricalShell", "ThickCylindricalShell.prj")
+    output_prefix = "ThickCylindricalShell"
+    ogs_model = SingleOGSModel(
+        project_file,
+        output_prefix,
+        mesh_path=output_prefix,
+        out_dir=out_dir,
+        use_fbar=True,
+    )
+
+    camera_position = (0.5, -0.5, 0.4)
+    point_have_u_compoment_max = [0.0, 0.01, 0.0075]
+    expected_u_compoment_max = -0.014236570288857237
+    ogs_model.run_benchmark(
+        point_have_u_compoment_max,
+        expected_u_compoment_max,
+        camera_position,
+        "Thick cylindrical shell",
+        component_id=1,
     )
 except Exception:
     pass
