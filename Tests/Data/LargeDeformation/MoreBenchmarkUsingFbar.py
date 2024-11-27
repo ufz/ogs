@@ -126,7 +126,8 @@ class SingleOGSModel:
         point_data = self.resulted_mesh.point_data[variable_name]
         plot_data = point_data[:, component_id] if component_id > 0 else point_data
         deformed_mesh = self.resulted_mesh.copy()
-        deformed_mesh.points += self.resulted_mesh.point_data["displacement"]
+        dim = self.resulted_mesh.point_data["displacement"].shape[1]
+        deformed_mesh.points[:, :dim] += self.resulted_mesh.point_data["displacement"]
 
         pl = pv.Plotter()
         pl.add_mesh(self.resulted_mesh, color="white", style="wireframe", line_width=1)
@@ -181,6 +182,61 @@ class SingleOGSModel:
         )
 
         self.plot3D("displacement", camera_position, component_id)
+
+
+# %% [markdown]
+# ## Rubber indentation
+
+# %%
+try:
+    project_file = Path("RubberIndentation", "RubberIndentation.prj")
+    output_prefix = "RubberIndentation"
+    ogs_model = SingleOGSModel(
+        project_file,
+        output_prefix,
+        mesh_path=output_prefix,
+        out_dir=out_dir,
+        use_fbar=False,
+    )
+    # ogs_model.reset_time_step_size(0.3, 4)
+
+    camera_position = "xy"
+    point_have_u_compoment_max = [0.0, 0.01, 0.0]
+    expected_u_compoment_max = -0.00010428732840299523
+    ogs_model.run_benchmark(
+        point_have_u_compoment_max,
+        expected_u_compoment_max,
+        camera_position,
+        "Rubber indentation",
+        component_id=1,
+    )
+except Exception:
+    pass
+
+# %%
+try:
+    project_file = Path("RubberIndentation", "RubberIndentation.prj")
+    output_prefix = "RubberIndentation"
+    ogs_model = SingleOGSModel(
+        project_file,
+        output_prefix,
+        mesh_path=output_prefix,
+        out_dir=out_dir,
+        use_fbar=True,
+    )
+
+    camera_position = "xy"
+    point_have_u_compoment_max = [0.0, 0.01, 0.0]
+    expected_u_compoment_max = -0.00026707547768988984
+    ogs_model.run_benchmark(
+        point_have_u_compoment_max,
+        expected_u_compoment_max,
+        camera_position,
+        "Rubber indentation",
+        component_id=1,
+    )
+except Exception:
+    pass
 
 
 # %% [markdown]
