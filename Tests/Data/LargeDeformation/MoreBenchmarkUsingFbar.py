@@ -30,7 +30,21 @@
 #
 # # More large deformation benchmarks using the F-bar method
 #
-# These benchmarks are taken from [1] but employ a Neo-Hookean hyperelastic model.
+# These benchmarks are taken from [1] but employ a basic Neo-Hookean hyperelastic model given by
+#  The Neo-Hookean model defines an energy function as the sum of volumetric component $U_{\text{dil}}(\F)$ and deviatoric component $U_{\text{dev}}(\F)$ as
+# $$
+# \begin{align}
+# W(\F) = U_{\text{dil}}(\F) + U_{\text{dev}}(\F),
+# \end{align}
+# $$
+# where
+# $$
+# \begin{align}
+# & U_{\text{dil}}(\F) = \dfrac{1}{2} K (\det(\F)-1)^2\\
+# & U_{\text{dev}}(\F) = \dfrac{1}{2} G \left(\text{tr} (\det(\F)^{-\frac{2}{3}}\F\F^{\text{T}})-3\right)
+# \end{align}
+# $$
+# with $K$ the bulk modulus, and $G$ the shear modulus.
 #
 # ## Reference
 #
@@ -185,7 +199,17 @@ class SingleOGSModel:
 
 
 # %% [markdown]
-# ## Rubber indentation
+# ## 1. A block under compression
+#
+# This is a plane strain problem. The domain size is 0.01 m $\times$ 0.01 m. The geometry and boundary conditions are shown in the following figure:
+#
+# <img src="./figures/ld_rubber_indentation.png" alt="Simple test" width="200" height="200" />
+#
+# The values of Young's modulus ($E$) and Poisson's ratio ($\nu$) are calculated from the specified bulk modulus of 400,889.806 MPa and the shear modulus of 80.194 MPa. The calculated Poisson's ratio is close to 0.5, indicating that the material is nearly incompressible.
+#
+# ### 1.1. Simualtion without the F-bar method
+#
+#   A contour plot of vertical displacement in the deformation mesh is shown in the following figure after the simulation finishes.
 
 # %%
 try:
@@ -212,6 +236,11 @@ try:
     )
 except Exception:
     pass
+
+# %% [markdown]
+# ### 1.2. Simualtion with the F-bar method
+#
+#  A contour plot of vertical displacement in the deformed mesh is shown in the following figure after the simulation is completed. It can be observed that the deformation obtained using the F-bar method is larger than that obtained without using the F-bar method.
 
 # %%
 try:
