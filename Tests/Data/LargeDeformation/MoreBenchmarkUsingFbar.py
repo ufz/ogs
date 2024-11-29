@@ -66,11 +66,8 @@ from ogs6py.ogs import OGS
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 
-out_dir = Path("output")
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
-
-ogs_path = "/home/wenqing/Code/build/ogs6_release/bin"
 
 
 # %%
@@ -120,17 +117,10 @@ class SingleOGSModel:
     def run(self):
         self.model.write_input()
 
-        if ogs_path != "":
-            self.model.run_model(
-                logfile=Path(self.out_dir, "out.txt"),
-                path=ogs_path,
-                args=f"-o {self.out_dir} -m {self.meth_path}",
-            )
-        else:
-            self.model.run_model(
-                logfile=Path(self.out_dir, "out.txt"),
-                args=f"-o {self.out_dir} -m {self.meth_path}",
-            )
+        self.model.run_model(
+            logfile=Path(self.out_dir, "out.txt"),
+            args=f"-o {self.out_dir} -m {self.meth_path}",
+        )
         self.resulted_mesh = pv.read(get_last_vtu_file_name(self.pvd_file_name))
 
     def get_pvd_name(self):
@@ -269,7 +259,14 @@ except Exception:
 
 
 # %% [markdown]
-# ## 3D indentation example
+# ## 2. 3D indentation example
+#
+# <img align="left" src="./figures/ld_block_compression.png" alt="Simple test" width="200" height="200" />
+# This example analyzes the deformation of a block ($0.01\times 0.01 \times 0.01\,\text{m}^3$) under indentation. As shown in the figure, a uniformly distributed pressure of 40 MPa is applied to one-quarter of the top surface. On the symmetry surfaces, the displacement in the normal direction is fixed, while on the bottom surface, the vertical displacement is fixed. The material parameters are the same as those used in the previous example.
+#
+# ### 2.1. Simualtion without the F-bar method
+#
+#   A contour plot of vertical displacement in the deformation mesh is shown in the following figure after the simulation finishes.
 
 # %%
 try:
@@ -297,6 +294,11 @@ except Exception:
     pass
 
 
+# %% [markdown]
+# ### 2.2. Simualtion with the F-bar method
+#
+#  A contour plot of vertical displacement in the deformed mesh is shown in the following figure after the simulation is completed. It can be observed that the deformation obtained using the F-bar method is larger than that obtained without using the F-bar method.
+
 # %%
 try:
     project_file = Path("Indentation3D", "Indentation3D.prj")
@@ -323,7 +325,15 @@ except Exception:
     pass
 
 # %% [markdown]
-# ## Thick cylindrical shell under pressure
+# ## 3. Thick cylindrical shell under pressure
+#
+# <img align="left" src="./figures/ld_cylindrical_shell.png" alt="Simple test" width="100" height="100" />
+#
+# This example analyzes the deformation of a cylindrical shell (R=$0.01\,\text{m}$, thickness=$0.002\,\text{m}$, H=$0.015\,\text{m}$) under radial pressure. Due to symmetry, only half of the shell is considered. The normal displacement on the symmetry surfaces is fixed. The other boundary conditions are shown in the figure, where the uniformly distributed pressure is 6 MPa/m. The bulk modulus is 240 GPa, and the shear modulus is 6 GPa, corresponding to a Poisson's ratio of 0.4.
+#
+# ### 3.1. Simualtion without the F-bar method
+#
+#   A contour plot of vertical displacement in the deformation mesh is shown in the following figure after the simulation finishes.
 
 # %%
 try:
@@ -350,6 +360,11 @@ try:
     )
 except Exception:
     pass
+
+# %% [markdown]
+# ### 3.2. Simualtion with the F-bar method
+#
+#  A contour plot of vertical displacement in the deformed mesh is shown in the following figure after the simulation is completed. It can be observed that the deformation obtained using the F-bar method is larger than that obtained without using the F-bar method.
 
 # %%
 try:
