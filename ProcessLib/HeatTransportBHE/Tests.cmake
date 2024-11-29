@@ -34,10 +34,24 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 20
+    RUNTIME 3
     DIFF_DATA
     sandwich_ts_10_t_600.000000.vtu sandwich_algebraic_bc_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-6
     sandwich_ts_10_t_600.000000.vtu sandwich_algebraic_bc_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-9
+)
+
+AddTest(
+    NAME HeatTransportBHE_1U_3D_bhe_sandwich_algebraicBC_LSCG
+    PATH Parabolic/T/3D_BHE_Sandwich
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS sandwich_algebraicBC_LSCG.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 3
+    DIFF_DATA
+    sandwich_ts_10_t_600.000000.vtu sandwich_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-6
+    sandwich_ts_10_t_600.000000.vtu sandwich_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-9
 )
 
 AddTest(
@@ -57,7 +71,7 @@ AddTest(
 AddTest(
     NAME HeatTransportBHE_1U_3D_bhe_sandwich_fixed_power_algebraicBC
     PATH Parabolic/T/3D_BHE_Sandwich
-    RUNTIME 100
+    RUNTIME 3
     EXECUTABLE ogs
     EXECUTABLE_ARGS sandwich_fixed_power_algebraicBC.xml
     WRAPPER time
@@ -66,6 +80,20 @@ AddTest(
     DIFF_DATA
     sandwich_fixed_power_ts_10_t_600.000000.vtu sandwich_fixed_power_algebraic_bc_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-3
     sandwich_fixed_power_ts_10_t_600.000000.vtu sandwich_fixed_power_algebraic_bc_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-6
+)
+
+AddTest(
+    NAME HeatTransportBHE_1U_3D_bhe_sandwich_fixed_power_algebraicBC_LSCG
+    PATH Parabolic/T/3D_BHE_Sandwich
+    RUNTIME 3
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS sandwich_fixed_power_algebraicBC_LSCG.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    sandwich_fixed_power_ts_10_t_600.000000.vtu sandwich_fixed_power_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-3
+    sandwich_fixed_power_ts_10_t_600.000000.vtu sandwich_fixed_power_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-6
 )
 
 AddTest(
@@ -97,6 +125,20 @@ AddTest(
 )
 
 AddTest(
+    NAME HeatTransportBHE_1U_3D_MassLumping
+    PATH Parabolic/T/3D_Beier_sandbox
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS beier_sandbox_MassLumping.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 20
+    DIFF_DATA
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_mass_lumping_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-6
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_mass_lumping_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-4
+)
+
+AddTest(
     NAME HeatTransportBHE_1U_3D_beier_sandbox_binary_curve
     PATH Parabolic/T/3D_Beier_sandbox
     EXECUTABLE ogs
@@ -118,24 +160,24 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 20
+    RUNTIME 3
     DIFF_DATA
     beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_algebraic_bc_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-7
     beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_algebraic_bc_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-10
 )
 
 AddTest(
-    NAME HeatTransportBHE_1U_3D_MassLumping
+    NAME HeatTransportBHE_1U_3D_beier_sandbox_algebraicBC_LSCG
     PATH Parabolic/T/3D_Beier_sandbox
     EXECUTABLE ogs
-    EXECUTABLE_ARGS beier_sandbox_MassLumping.xml
+    EXECUTABLE_ARGS beier_sandbox_algebraicBC_LSCG.xml
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 20
+    RUNTIME 3
     DIFF_DATA
-    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_mass_lumping_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-6
-    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_mass_lumping_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-4
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-7
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-10
 )
 
 AddTest(
@@ -155,7 +197,7 @@ AddTest(
 AddTest(
     NAME HeatTransportBHE_1U_beier_sandbox_fixed_power_constant_flow_algebraicBC
     PATH Parabolic/T/3D_Beier_sandbox
-    RUNTIME 220
+    RUNTIME 3
     EXECUTABLE ogs
     EXECUTABLE_ARGS fixed_power_constant_flow_algebraicBC.xml
     WRAPPER time
@@ -164,6 +206,20 @@ AddTest(
     DIFF_DATA
     fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_algebraic_bc_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-4
     fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_algebraic_bc_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-9
+)
+
+AddTest(
+    NAME HeatTransportBHE_1U_beier_sandbox_fixed_power_constant_flow_algebraicBC_LSCG
+    PATH Parabolic/T/3D_Beier_sandbox
+    RUNTIME 3
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS fixed_power_constant_flow_algebraicBC_LSCG.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-4
+    fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-9
 )
 
 AddTest(

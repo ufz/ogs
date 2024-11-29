@@ -51,6 +51,9 @@ public:
 
     bool solve(EigenMatrix& A, EigenVector& b, EigenVector& x);
 
+    /// Get, if the solver can handle rectangular equation systems
+    bool canSolveRectangular() const { return false; }
+
 private:
     bool solve(LisMatrix& A, LisVector& b, LisVector& x);
     std::string lis_options_;

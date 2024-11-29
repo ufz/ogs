@@ -170,8 +170,18 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         sys.getRhs(*x_prev[process_id], rhs);
 
         // Normalize the linear equation system, if required
-        if (sys.requiresNormalization())
+        if (sys.requiresNormalization() &&
+            !_linear_solver.canSolveRectangular())
+        {
             sys.getAandRhsNormalized(A, rhs);
+            WARN(
+                "The equation system is rectangular, but the current linear "
+                "solver only supports square systems. "
+                "The system will be normalized, which lead to a squared "
+                "condition number and potential numerical issues. "
+                "It is recommended to use a solver that supports rectangular "
+                "equation systems for better numerical stability.");
+        }
 
         INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
 

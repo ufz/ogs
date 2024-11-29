@@ -71,9 +71,13 @@ public:
                MathLib::LinearSolverBehaviour const linear_solver_behaviour =
                    MathLib::LinearSolverBehaviour::RECOMPUTE);
 
+    /// Get, if the solver can handle rectangular equation systems
+    bool canSolveRectangular() const { return can_solve_rectangular_; }
+
 protected:
     EigenOption option_;
     std::unique_ptr<EigenLinearSolverBase> solver_;
+    bool can_solve_rectangular_ = false;
     void setRestart();
     void setL();
     void setS();

@@ -388,6 +388,9 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::PreconType::DIAGONAL:
             return createIterativeSolver<
                 Solver, Eigen::DiagonalPreconditioner<double>>();
+        case EigenOption::PreconType::LeastSquareDIAGONAL:
+            return createIterativeSolver<
+                Solver, Eigen::LeastSquareDiagonalPreconditioner<double>>();
         case EigenOption::PreconType::ILUT:
             // TODO for this preconditioner further options can be passed.
             // see
@@ -428,6 +431,11 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         case EigenOption::SolverType::CG:
         {
             return createIterativeSolver<EigenCGSolver>(precon_type);
+        }
+        case EigenOption::SolverType::LeastSquareCG:
+        {
+            return createIterativeSolver<Eigen::LeastSquaresConjugateGradient>(
+                precon_type);
         }
         case EigenOption::SolverType::GMRES:
         {
@@ -488,6 +496,7 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
                 Eigen::SparseLU<Matrix, Eigen::COLAMDOrdering<int>>;
             solver_ = std::make_unique<
                 details::EigenDirectLinearSolver<SolverType>>();
+            can_solve_rectangular_ = false;
             return;
         }
         case EigenOption::SolverType::BiCGSTAB:
@@ -498,12 +507,19 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
         case EigenOption::SolverType::IDRSTABL:
             solver_ = details::createIterativeSolver(option_.solver_type,
                                                      option_.precon_type);
+            can_solve_rectangular_ = false;
+            return;
+        case EigenOption::SolverType::LeastSquareCG:
+            solver_ = details::createIterativeSolver(option_.solver_type,
+                                                     option_.precon_type);
+            can_solve_rectangular_ = true;
             return;
         case EigenOption::SolverType::PardisoLU:
         {
 #ifdef USE_MKL
             using SolverType = Eigen::PardisoLU<EigenMatrix::RawMatrixType>;
             solver_.reset(new details::EigenDirectLinearSolver<SolverType>);
+            can_solve_rectangular_ = false;
             return;
 #else
             OGS_FATAL(

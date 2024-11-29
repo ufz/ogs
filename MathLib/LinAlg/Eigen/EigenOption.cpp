@@ -38,6 +38,10 @@ EigenOption::SolverType EigenOption::getSolverType(
     {
         return SolverType::CG;
     }
+    if (solver_name == "LeastSquareCG")
+    {
+        return SolverType::LeastSquareCG;
+    }
     if (solver_name == "BiCGSTAB")
     {
         return SolverType::BiCGSTAB;
@@ -81,6 +85,10 @@ EigenOption::PreconType EigenOption::getPreconType(
     {
         return PreconType::DIAGONAL;
     }
+    if (precon_name == "LeastSquareDIAGONAL")
+    {
+        return PreconType::LeastSquareDIAGONAL;
+    }
     if (precon_name == "ILUT")
     {
         return PreconType::ILUT;
@@ -95,6 +103,8 @@ std::string EigenOption::getSolverName(SolverType const solver_type)
     {
         case SolverType::CG:
             return "CG";
+        case SolverType::LeastSquareCG:
+            return "LeastSquareCG";
         case SolverType::BiCGSTAB:
             return "BiCGSTAB";
         case SolverType::BiCGSTABL:
@@ -121,6 +131,8 @@ std::string EigenOption::getPreconName(PreconType const precon_type)
             return "NONE";
         case PreconType::DIAGONAL:
             return "DIAGONAL";
+        case PreconType::LeastSquareDIAGONAL:
+            return "LeastSquareDIAGONAL";
         case PreconType::ILUT:
             return "ILUT";
     }
