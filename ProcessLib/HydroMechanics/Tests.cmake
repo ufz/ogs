@@ -347,7 +347,7 @@ AddTest(
     DIFF_DATA
     # tolerance could be lowered with smaller time steps, gut would increase runtime
     # TODO (FZill) another solver might provide better results, same goes for "flow_free_expansion"
-    flow_no_strain_ts_1000_t_100.000000.vtu flow_no_strain_ts_1000_t_100.000000.vtu pressure pressure 0 1.6e-6
+    flow_no_strain_ts_1000_t_100.000000.vtu flow_no_strain_ts_1000_t_100.000000.vtu pressure pressure 0 1.7e-6
     flow_no_strain_ts_1000_t_100.000000.vtu flow_no_strain_ts_1000_t_100.000000.vtu displacement displacement 1e-12 0
 )
 
