@@ -36,6 +36,7 @@ enum class Variable : int
     enthalpy,
     enthalpy_of_evaporation,
     equivalent_plastic_strain,
+    fracture_aperture,
     grain_compressibility,
     liquid_phase_pressure,
     liquid_saturation,
@@ -66,6 +67,7 @@ static const std::array<std::string,
                              "enthalpy",
                              "enthalpy_of_evaporation",
                              "equivalent_plastic_strain",
+                             "fracture_aperture",
                              "grain_compressibility",
                              "liquid_phase_pressure",
                              "liquid_saturation",
@@ -174,6 +176,7 @@ public:
     double enthalpy = nan_;
     double enthalpy_of_evaporation = nan_;
     double equivalent_plastic_strain = nan_;
+    double fracture_aperture = nan_;
     double grain_compressibility = nan_;
     double liquid_phase_pressure = nan_;
     double liquid_saturation = nan_;

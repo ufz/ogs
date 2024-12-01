@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <optional>
 #include <string>
@@ -19,6 +20,12 @@ namespace BaseLib
 {
 class ConfigTree;
 }
+
+namespace MaterialPropertyLib
+{
+class Medium;
+}
+
 namespace MeshLib
 {
 class Mesh;
@@ -51,8 +58,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     std::optional<ParameterLib::CoordinateSystem> const&
         local_coordinate_system,
     unsigned const integration_order,
-    BaseLib::ConfigTree const& config);
-
+    BaseLib::ConfigTree const& config,
+    std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace HydroMechanics
 }  // namespace LIE
 }  // namespace ProcessLib

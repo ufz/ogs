@@ -15,6 +15,7 @@
 #include <utility>
 
 #include "MaterialLib/FractureModels/FractureModelBase.h"
+#include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MeshLib/ElementStatus.h"
 #include "MeshLib/PropertyVector.h"
@@ -38,23 +39,17 @@ struct HydroMechanicsProcessData
     std::map<int,
              std::shared_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
         solid_materials;
-    ParameterLib::Parameter<double> const& intrinsic_permeability;
-    ParameterLib::Parameter<double> const& specific_storage;
-    ParameterLib::Parameter<double> const& fluid_viscosity;
-    ParameterLib::Parameter<double> const& fluid_density;
-    ParameterLib::Parameter<double> const& biot_coefficient;
-    ParameterLib::Parameter<double> const& porosity;
-    ParameterLib::Parameter<double> const& solid_density;
+
+    MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
+
     Eigen::Matrix<double, GlobalDim, 1> const specific_body_force;
     std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
         fracture_model;
-    std::unique_ptr<FracturePropertyHM> fracture_property;
+    std::unique_ptr<FractureProperty> fracture_property;
     ParameterLib::Parameter<double> const& initial_effective_stress;
     ParameterLib::Parameter<double> const& initial_fracture_effective_stress;
 
     bool const deactivate_matrix_in_flow;
-
-    double const reference_temperature;
 
     /// An indicator to use the B bar method \cite hughes1980generalization to
     /// tackle the  volumetric locking.

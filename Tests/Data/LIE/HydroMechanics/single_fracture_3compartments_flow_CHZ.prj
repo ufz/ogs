@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <mesh>single_fracture_2x2.vtu</mesh>
     <geometry>single_fracture_2x2.gml</geometry>
@@ -17,13 +17,6 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-            <intrinsic_permeability>k</intrinsic_permeability>
-            <specific_storage>S</specific_storage>
-            <fluid_viscosity>mu</fluid_viscosity>
-            <biot_coefficient>biot_m</biot_coefficient>
-            <porosity>phi</porosity>
-            <solid_density>rho_sr</solid_density>
-            <fluid_density>rho_fr</fluid_density>
             <specific_body_force>0 0</specific_body_force>
             <initial_effective_stress>effective_stress0</initial_effective_stress>
             <!--fracture_model>
@@ -43,24 +36,18 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
-                <material_id>0</material_id>
                 <initial_aperture>aperture0</initial_aperture>
-                <specific_storage>S_f</specific_storage>
-                <biot_coefficient>biot_f</biot_coefficient>
-                <permeability_model>
-                    <type>CubicLaw</type>
-                </permeability_model>
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
             <deactivate_matrix_in_flow>true</deactivate_matrix_in_flow>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma" />
-                <secondary_variable internal_name="epsilon" output_name="epsilon" />
-                <secondary_variable internal_name="velocity" output_name="velocity" />
-                <secondary_variable internal_name="fracture_velocity" output_name="fracture_velocity" />
-                <secondary_variable internal_name="fracture_permeability" output_name="fracture_permeability" />
-                <secondary_variable internal_name="fracture_stress" output_name="fracture_stress" />
-                <secondary_variable internal_name="fracture_aperture" output_name="fracture_aperture" />
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="velocity" output_name="velocity"/>
+                <secondary_variable internal_name="fracture_velocity" output_name="fracture_velocity"/>
+                <secondary_variable internal_name="fracture_permeability" output_name="fracture_permeability"/>
+                <secondary_variable internal_name="fracture_stress" output_name="fracture_stress"/>
+                <secondary_variable internal_name="fracture_aperture" output_name="fracture_aperture"/>
             </secondary_variables>
         </process>
     </processes>
@@ -129,6 +116,114 @@
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Parameter</type>
+                            <parameter_name>mu</parameter_name>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_fr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_sr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>k</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>phi</parameter_name>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Parameter</type>
+                    <parameter_name>S</parameter_name>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Parameter</type>
+                    <parameter_name>biot_m</parameter_name>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Parameter</type>
+                            <parameter_name>mu</parameter_name>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_fr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>rho_sr</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>CubicLawPermeability</type>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Parameter</type>
+                    <parameter_name>S_f</parameter_name>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Parameter</type>
+                    <parameter_name>biot_f</parameter_name>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <parameters>
         <!-- Fluid phase properties -->
         <parameter>

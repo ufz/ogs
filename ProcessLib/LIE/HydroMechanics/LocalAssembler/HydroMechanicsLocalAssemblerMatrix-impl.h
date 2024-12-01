@@ -10,7 +10,12 @@
 
 #pragma once
 
+#include <limits>
+
 #include "HydroMechanicsLocalAssemblerMatrix.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Property.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
@@ -26,6 +31,8 @@ namespace LIE
 {
 namespace HydroMechanics
 {
+namespace MPL = MaterialPropertyLib;
+
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int GlobalDim>
 HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
@@ -125,8 +132,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
-    auto p_prev = const_cast<Eigen::VectorXd&>(local_x_prev)
-                      .segment(pressure_index, pressure_size);
+    auto const p_prev = local_x_prev.segment(pressure_index, pressure_size);
 
     if (_process_data.deactivate_matrix_in_flow)
     {
@@ -190,6 +196,19 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     ParameterLib::SpatialPosition x_position;
     x_position.setElementID(_element.getID());
 
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase = medium->phase("Solid");
+
+    auto const T_ref =
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(variables, x_position, t, dt);
+    variables.temperature = T_ref;
+    variables_prev.temperature = T_ref;
+
+    bool const has_storage_property =
+        medium->hasProperty(MPL::PropertyType::storage);
+
     auto const B_dil_bar = getDilatationalBBarMatrix();
 
     unsigned const n_integration_points = _ip_data.size();
@@ -205,14 +224,18 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto const& dNdx_p = ip_data.dNdx_p;
         auto const& H_u = ip_data.H_u;
 
+        variables.liquid_phase_pressure = N_p.dot(p);
+
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
                 _element, N_u);
-        auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
-            GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
-            typename BMatricesType::BMatrixType>(
-            dNdx_u, N_u, B_dil_bar, x_coord, this->_is_axially_symmetric);
+        auto const B =
+            LinearBMatrix::computeBMatrixPossiblyWithBbar<
+                GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
+                typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, B_dil_bar, x_coord, this->_is_axially_symmetric)
+                .eval();
 
         auto const& eps_prev = ip_data.eps_prev;
         auto const& sigma_eff_prev = ip_data.sigma_eff_prev;
@@ -221,10 +244,19 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto& eps = ip_data.eps;
         auto& state = ip_data.material_state_variables;
 
-        auto const alpha = _process_data.biot_coefficient(t, x_position)[0];
-        auto const rho_sr = _process_data.solid_density(t, x_position)[0];
-        auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
-        auto const porosity = _process_data.porosity(t, x_position)[0];
+        auto const rho_sr =
+            solid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+        auto const rho_fr =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template value<double>(variables, x_position, t, dt);
+
+        auto const alpha =
+            medium->property(MPL::PropertyType::biot_coefficient)
+                .template value<double>(variables, x_position, t, dt);
+        auto const porosity =
+            medium->property(MPL::PropertyType::porosity)
+                .template value<double>(variables, x_position, t, dt);
 
         double const rho = rho_sr * (1 - porosity) + porosity * rho_fr;
         auto const& identity2 =
@@ -241,7 +273,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 eps_prev);
-        variables_prev.temperature = _process_data.reference_temperature;
+        variables_prev.temperature = T_ref;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);
@@ -268,10 +300,32 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         {
             Kup.noalias() += B.transpose() * alpha * identity2 * N_p * ip_w;
 
-            double const k_over_mu =
-                _process_data.intrinsic_permeability(t, x_position)[0] /
-                _process_data.fluid_viscosity(t, x_position)[0];
-            double const S = _process_data.specific_storage(t, x_position)[0];
+            variables.density = rho_fr;
+            auto const mu =
+                liquid_phase.property(MPL::PropertyType::viscosity)
+                    .template value<double>(variables, x_position, t, dt);
+
+            auto const k_over_mu =
+                (MPL::formEigenTensor<GlobalDim>(
+                     medium->property(MPL::PropertyType::permeability)
+                         .value(variables, x_position, t, dt)) /
+                 mu)
+                    .eval();
+
+            double const S =
+                has_storage_property
+                    ? medium->property(MPL::PropertyType::storage)
+                          .template value<double>(variables, x_position, t, dt)
+                    : porosity *
+                              (liquid_phase.property(MPL::PropertyType::density)
+                                   .template dValue<double>(
+                                       variables,
+                                       MPL::Variable::liquid_phase_pressure,
+                                       x_position, t, dt) /
+                               rho_fr) +
+                          (porosity - alpha) * (1.0 - alpha) /
+                              _ip_data[ip].solid_material.getBulkModulus(
+                                  t, x_position, &C);
 
             auto q = ip_data.darcy_velocity.head(GlobalDim);
             q.noalias() = -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
@@ -342,6 +396,15 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     velocity_avg.setZero();
 
     unsigned const n_integration_points = _ip_data.size();
+
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const T_ref =
+        medium->property(MPL::PropertyType::reference_temperature)
+            .template value<double>(variables, x_position, t, dt);
+    variables.temperature = T_ref;
+    variables_prev.temperature = T_ref;
+
     auto const B_dil_bar = getDilatationalBBarMatrix();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -358,16 +421,21 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         auto& state = ip_data.material_state_variables;
 
         auto const& N_u = ip_data.N_u;
+        auto const& N_p = ip_data.N_p;
         auto const& dNdx_u = ip_data.dNdx_u;
+
+        variables.liquid_phase_pressure = N_p.dot(p);
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
                 _element, N_u);
-        auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
-            GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
-            typename BMatricesType::BMatrixType>(
-            dNdx_u, N_u, B_dil_bar, x_coord, this->_is_axially_symmetric);
+        auto const B =
+            LinearBMatrix::computeBMatrixPossiblyWithBbar<
+                GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
+                typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, B_dil_bar, x_coord, this->_is_axially_symmetric)
+                .eval();
 
         eps.noalias() = B * u;
 
@@ -380,7 +448,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         variables_prev.mechanical_strain
             .emplace<MathLib::KelvinVector::KelvinVectorType<GlobalDim>>(
                 eps_prev);
-        variables_prev.temperature = _process_data.reference_temperature;
 
         auto&& solution = _ip_data[ip].solid_material.integrateStress(
             variables_prev, variables, t, x_position, dt, *state);
@@ -398,16 +465,27 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
         if (!_process_data.deactivate_matrix_in_flow)  // Only for hydraulically
                                                        // active matrix
         {
-            double const k_over_mu =
-                _process_data.intrinsic_permeability(t, x_position)[0] /
-                _process_data.fluid_viscosity(t, x_position)[0];
-            auto const rho_fr = _process_data.fluid_density(t, x_position)[0];
+            auto const rho_fr =
+                liquid_phase.property(MPL::PropertyType::density)
+                    .template value<double>(variables, x_position, t, dt);
+            variables.density = rho_fr;
+            auto const mu =
+                liquid_phase.property(MPL::PropertyType::viscosity)
+                    .template value<double>(variables, x_position, t, dt);
+
+            auto const k = MPL::formEigenTensor<GlobalDim>(
+                               medium->property(MPL::PropertyType::permeability)
+                                   .value(variables, x_position, t, dt))
+                               .eval();
+
+            GlobalDimMatrixType const k_over_mu = k / mu;
+
             auto const& gravity_vec = _process_data.specific_body_force;
             auto const& dNdx_p = ip_data.dNdx_p;
 
             ip_data.darcy_velocity.head(GlobalDim).noalias() =
                 -k_over_mu * (dNdx_p * p + rho_fr * gravity_vec);
-            velocity_avg += ip_data.darcy_velocity.head(GlobalDim);
+            velocity_avg.noalias() += ip_data.darcy_velocity.head(GlobalDim);
         }
     }
 

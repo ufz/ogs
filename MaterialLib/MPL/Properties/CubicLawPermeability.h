@@ -9,8 +9,12 @@
 
 #pragma once
 
+#include <limits>
+#include <string>
+
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/VariableType.h"
+#include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
@@ -37,12 +41,8 @@ namespace MaterialPropertyLib
  */
 struct CubicLawPermeability final : public Property
 {
-    explicit CubicLawPermeability(std::string name,
-                                  ParameterLib::Parameter<double> const& b)
-        : _b(b)
-    {
-        name_ = std::move(name);
-    }
+    CubicLawPermeability(std::string name,
+                         ParameterLib::Parameter<double> const* b);
 
     void checkScale() const override
     {
@@ -50,7 +50,7 @@ struct CubicLawPermeability final : public Property
         {
             OGS_FATAL(
                 "The property 'CubicLawPermeability' is implemented on the "
-                "'media' scaleonly.");
+                "'media' scale only.");
         }
     }
 
@@ -65,7 +65,7 @@ struct CubicLawPermeability final : public Property
                             double const t, double const dt) const override;
 
 private:
-    /// fracture aperture
-    ParameterLib::Parameter<double> const& _b;
+    /// Predefined fracture aperture.
+    ParameterLib::Parameter<double> const* _b = nullptr;
 };
 }  // namespace MaterialPropertyLib
