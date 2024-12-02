@@ -660,6 +660,16 @@ if(TEST GocadTSurfaceReader-GocadTSurface_Mesh_Test-vtkdiff-mesh)
 endif()
 
 AddTest(
+    NAME GocadSGridReader
+    PATH FileIO/Gocad/GocadSGridReader/SGrid2OGS_Test
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/FileIO/Gocad/GocadSGridReader/SGrid2OGS_Test
+    EXECUTABLE GocadSGridReader
+    EXECUTABLE_ARGS -s SGrid_Test.sg -o ${Data_BINARY_DIR}/FileIO/Gocad/GocadSGridReader/SGrid2OGS_Test/SGrid_Test.vtu
+    TESTER vtkdiff-mesh
+    DIFF_DATA SGrid_Test.vtu SGrid_Test.vtu 1e-16
+)
+
+AddTest(
     NAME createIntermediateRasters_test
     PATH MeshGeoToolsLib/Hamburg
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshGeoToolsLib/Hamburg
