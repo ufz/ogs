@@ -11,7 +11,7 @@ identifier = "tools"
 weight = 4
 post = "Helpful tools for pre- and postprocessing as well as complete model setup workflows."
 [menu.docs.params]
-category = "Advanced"
+category = "User"
 +++
 
 Here is an overview of the currently available command line tools, that might help you to construct your OpenGeoSys model. GUI-based tools are available too:
