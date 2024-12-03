@@ -1,6 +1,6 @@
 +++
 author = "Tymofiy Gerasimov, Dmitri Naumov"
-date = "2023-29-8"
+date = "2023-08-29"
 title = "Checking the volumetric expansion due to water-to-ice phase change"
 project = ["ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj"]
 image = "Ice_strain_setup.png"

@@ -1,5 +1,5 @@
 +++
-date = "2021-03-11T11:37"
+date = "2021-03-11T11:37:00"
 title = "Introduction to Development Workflows"
 author = "Lars Bilke"
 weight = 1011

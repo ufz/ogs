@@ -1,6 +1,6 @@
 +++
 author = "Tymofiy Gerasimov, Dmitri Naumov"
-date = "2023-16-6"
+date = "2023-06-16"
 title = "Fully saturated column deformation and freezing"
 project = ["ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj"]
 image = "Column_setup.png"
