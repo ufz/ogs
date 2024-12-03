@@ -62,9 +62,12 @@
         <li><a href="{{ .Permalink }}">{{ .Title }}</a>, {{.Params.release_date}}</li>
         {{ end }}
         {{ end }}
-        {{ $urlPre := "https://api.github.com" }}
-        {{ $releases := getJSON $urlPre "/repos/ufz/ogs/releases" }}
-        {{ range $index, $element := $releases }}
+        {{ $data := dict }}
+        {{ $url := "https://api.github.com/repos/ufz/ogs/releases" }}
+        {{ with resources.GetRemote $url }}
+        {{ $data = . | transform.Unmarshal }}
+        {{ end }}
+        {{ range $index, $element := $data }}
         {{ if not (eq $index 0) }}
         {{ if and (not .draft) (not .prerelease) }}
         <li>
