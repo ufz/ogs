@@ -30,7 +30,9 @@ using Bitset = boost::dynamic_bitset<>;
 
 GocadSGridReader::GocadSGridReader(std::string const& fname)
     : _fname(fname),
-      _path(BaseLib::extractPath(fname)),
+      _path(BaseLib::extractPath(fname).empty()
+                ? ""
+                : BaseLib::extractPath(fname) + '/'),
       _n_face_sets(0),
       _double_precision_binary(false),
       _bin_pnts_in_double_precision(false)
