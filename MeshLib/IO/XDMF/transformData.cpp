@@ -167,6 +167,40 @@ std::optional<XdmfHdfData> transformAttribute(
                           "Unsigned char has 8 bits");
             data_type = MeshPropertyDataType::uchar;
         }
+        else if constexpr (std::is_same_v<unsigned long, decltype(basic_type)>)
+        {
+            if (sizeof(unsigned long) == 8 &&
+                std::numeric_limits<unsigned long>::digits == 64)
+            {
+                data_type = MeshPropertyDataType::uint64;
+            }
+            else if (sizeof(unsigned long) == 4 &&
+                     std::numeric_limits<unsigned long>::digits == 32)
+            {
+                data_type = MeshPropertyDataType::uint32;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if constexpr (std::is_same_v<std::size_t, decltype(basic_type)>)
+        {
+            if (sizeof(std::size_t) == 8 &&
+                std::numeric_limits<std::size_t>::digits == 64)
+            {
+                data_type = MeshPropertyDataType::uint64;
+            }
+            else if (sizeof(std::size_t) == 4 &&
+                     std::numeric_limits<std::size_t>::digits == 32)
+            {
+                data_type = MeshPropertyDataType::uint32;
+            }
+            else
+            {
+                return false;
+            }
+        }
         else
         {
             return false;
