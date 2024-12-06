@@ -270,6 +270,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
                      project_directory);
     }
 
+    if (!geoObjects.getPoints().empty() || !geoObjects.getPolylines().empty() ||
+        !geoObjects.getSurfaces().empty())
     {  // generate meshes from geometries
         std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
             MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
