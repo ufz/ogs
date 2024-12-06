@@ -19,7 +19,7 @@ repos:
       - id: fix-byte-order-marker
         exclude: "^Documentation/.vale/.*"
       - id: mixed-line-ending
-        exclude: ".*\\.vtu"
+        exclude: ".*\\.vtu|.*@@"
   - repo: https://github.com/psf/black
     rev: 23.1.0
     hooks:
