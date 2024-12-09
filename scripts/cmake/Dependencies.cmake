@@ -360,8 +360,9 @@ if(GUIX_BUILD OR CONDA_BUILD)
 else()
     CPMAddPackage(
         NAME exprtk
-        GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/exprtk.git
-        GIT_TAG 2a5c62b93c9661470e69be572f22d821308b6f61
+        GITHUB_REPOSITORY ArashPartow/exprtk
+        VERSION 0.0.3
+        GIT_TAG 0.0.3
         DOWNLOAD_ONLY YES
     )
     if(exprtk_ADDED)
