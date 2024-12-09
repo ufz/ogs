@@ -1,5 +1,5 @@
 +++
-date = "2021-02-11T10:46"
+date = "2021-02-11T10:46:00"
 title = "CMake dependency management"
 author = "Lars Bilke"
 weight = 1041

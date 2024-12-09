@@ -1,5 +1,5 @@
 +++
-date = "2020-05-15T10:46"
+date = "2020-05-15"
 title = "Windows Subsystem for Linux"
 author = "Lars Bilke"
 weight = 1063

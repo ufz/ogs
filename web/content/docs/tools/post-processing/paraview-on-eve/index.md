@@ -1,5 +1,5 @@
 +++
-date = "2018-11-14T14:00:13+01`:00"
+date = "2018-11-14T14:00:13+01:00"
 title = "ParaView on Eve frontends / envinf1"
 author = "Lars Bilke"
 aliases = ['paraview-on-envinf1']

@@ -160,8 +160,11 @@
   {{ if eq $type "GitHub" }}
   {{ .Content }}
   {{ else }}
-  {{ $urlPre := "https://gitlab.opengeosys.org/api/v4" }}
-  {{ $release := getJSON $urlPre "/projects/120/releases/" .Params.tag }}
-  {{ $release.description | markdownify }}
+    {{ $data := dict }}
+    {{ $url := print "https://gitlab.opengeosys.org/api/v4/projects/120/releases/" .Params.tag }}
+    {{ with resources.GetRemote $url }}
+      {{ $data = . | transform.Unmarshal }}
+    {{ end }}
+    {{ $data.description | markdownify }}
   {{ end }}
 </div>

@@ -133,7 +133,7 @@ name = "Data Explorer Manual"
 url = "https://gitlab.opengeosys.org/ogs/documentation/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build"
 post = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
 [menu.docs.params]
-category = "Advanced"
+category = "User"
 
 [[menu.docs]]
 name = "Source code documentation"
@@ -153,8 +153,9 @@ category = "Developer"
 name = "Python tools"
 url = "https://ogstools.opengeosys.org/stable/"
 post = "<em>ogstools</em> is a collection of Python tools aimed at evolving into a modeling toolchain around OpenGeoSys."
+weight = 4
 [menu.docs.params]
-category = "Advanced"
+category = "User"
 
 [security.funcs]
 getenv = ['^HUGO_', '^CI_']

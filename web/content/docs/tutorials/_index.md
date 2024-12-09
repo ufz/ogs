@@ -14,5 +14,5 @@ weight = 2
 url = "./tutorials"
 post = "Learning-by-doing way of gaining experience with OGS and tools commonly used with it."
 [menu.docs.params]
-category = "Beginner"
+category = "User"
 +++

@@ -1,5 +1,5 @@
 +++
-date = "2021-07-19T11:34"
+date = "2021-07-19T11:34:00"
 title = "MFront"
 author = "Lars Bilke"
 weight = 1043

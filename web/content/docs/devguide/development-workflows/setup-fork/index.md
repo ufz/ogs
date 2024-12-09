@@ -1,5 +1,5 @@
 +++
-date = "2021-03-11T11:48"
+date = "2021-03-11T11:48:00"
 title = "Set Up your fork"
 author = "Lars Bilke"
 weight = 1013
