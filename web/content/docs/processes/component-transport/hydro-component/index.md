@@ -74,7 +74,7 @@ The following table shows an overview of all input parameters available in the C
 | Fluid density              | $\rho$      |[kg/m$^{3}$] |[Link](https://doxygen.opengeosys.org/d1/d47/ogs_file_param__material__fluid__density.html) |
 | Intrinsic permeability     |$\textbf{k}$|[m$^{2}$]   | [Link](https://doxygen.opengeosys.org/d5/d06/ogs_file_param__material__porous_medium__permeability.html),[Example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj)  |
 | Dynamic viscosity          | $\mu$  |[Pa$\cdot$s]|[Link](https://doxygen.opengeosys.org/da/d5d/ogs_file_param__material__fluid__viscosity.html)|
-| Gravity vector (specific body force) | $\textbf{g}$|[m/s$^{2}$]  |                        | [Link](https://doxygen.opengeosys.org/db/d19/ogs_file_param__prj__processes__process__componenttransport__specific_body_force)
+| Gravity vector (specific body force) | $\textbf{g}$|[m/s$^{2}$] | [Link](https://doxygen.opengeosys.org/db/d19/ogs_file_param__prj__processes__process__componenttransport__specific_body_force) |
 | Retardation factor         | $R$         |[-]         | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
 | First-order decay constant | $\lambda$   |[1/s]       | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
 
@@ -87,7 +87,7 @@ In the `ComponentTransport` process, the configuration is as follows.
 * `<name>`: name of the chemical component.
 * `<type>`: must be `ComponentTransport`.
 * `<integration_order>`: This is the order of the integration method for element-wise integration. In common cases set to `2`.
-* `<process_variables>`: The primary variables of the `ComponentTransport` process are either `<concentration>` or  `<pressure>`. For the variable concentration, the name of the chemical component is given. Like in the following example, there are 3 chemical components, i.e. Si, Al and Cl. The `<pressure>` process' variable is also named 'pressure', see `<process_variables>` section outside of process' definition.
+* `<process_variables>`: The primary variables of the `ComponentTransport` process are either `<concentration>` or `<pressure>`. For the variable concentration, the name of the chemical component is given. Like in the following example, there are 3 chemical components, i.e. Si, Al and Cl. The `<pressure>` process' variable is also named 'pressure', see `<process_variables>` section outside of process' definition.
 
 ```xml
 <processes>
