@@ -153,6 +153,7 @@ category = "Developer"
 name = "Python tools"
 url = "https://ogstools.opengeosys.org/stable/"
 post = "<em>ogstools</em> is a collection of Python tools aimed at evolving into a modeling toolchain around OpenGeoSys."
+weight = 4
 [menu.docs.params]
 category = "User"
 
