@@ -11,86 +11,86 @@
 #include "MeshPropertyDataType.h"
 
 // See https://www.xdmf.org/index.php/XDMF_Model_and_Format#Topology (Arbitrary)
-std::string ParentDataType2String(ParentDataType p)
+std::pair<std::string, std::size_t> ParentDataType2String(ParentDataType p)
 {
     // not used in OGS ParentDataType::POLYGON, ParentDataType::POLYHEDRON,
     // ParentDataType::HEXAHEDRON_24
     if (p == ParentDataType::MIXED)
     {
-        return "Mixed";
+        return {"Mixed", 1};
     }
 
     if (p == ParentDataType::POLYVERTEX)
     {
-        return "Polyvertex";
+        return {"Polyvertex", 1};
     }
     if (p == ParentDataType::POLYLINE)
     {
-        return "Polyline";
+        return {"Polyline", 2};
     }
     if (p == ParentDataType::TRIANGLE)
     {
-        return "Triangle";
+        return {"Triangle", 3};
     }
     if (p == ParentDataType::QUADRILATERAL)
     {
-        return "Quadrilateral";
+        return {"Quadrilateral", 4};
     }
     if (p == ParentDataType::TETRAHEDRON)
     {
-        return "Tetrahedron";
+        return {"Tetrahedron", 4};
     }
     if (p == ParentDataType::PYRAMID)
     {
-        return "Pyramid";
+        return {"Pyramid", 5};
     }
     if (p == ParentDataType::WEDGE)
     {
-        return "Wedge";
+        return {"Wedge", 6};
     }
     if (p == ParentDataType::HEXAHEDRON)
     {
-        return "Hexahedron";
+        return {"Hexahedron", 8};
     }
     if (p == ParentDataType::EDGE_3)
     {
-        return "Edge_3";
+        return {"Edge_3", 3};
     }
     if (p == ParentDataType::QUADRILATERAL_9)
     {
-        return "Quadrilateral_9";
+        return {"Quadrilateral_9", 9};
     }
     if (p == ParentDataType::TRIANGLE_6)
     {
-        return "Triangle_6";
+        return {"Triangle_6", 6};
     }
     if (p == ParentDataType::QUADRILATERAL_8)
     {
-        return "Quadrilateral_8";
+        return {"Quadrilateral_8", 8};
     }
     if (p == ParentDataType::TETRAHEDRON_10)
     {
-        return "Tetrahedron_10";
+        return {"Tetrahedron_10", 10};
     }
     if (p == ParentDataType::PYRAMID_13)
     {
-        return "Pyramid_13";
+        return {"Pyramid_13", 13};
     }
     if (p == ParentDataType::WEDGE_15)
     {
-        return "Wedge_15";
+        return {"Wedge_15", 15};
     }
     if (p == ParentDataType::WEDGE_18)
     {
-        return "Wedge_18";
+        return {"Wedge_18", 18};
     }
     if (p == ParentDataType::HEXAHEDRON_20)
     {
-        return "Hexahedron_20";
+        return {"Hexahedron_20", 20};
     }
     if (p == ParentDataType::HEXAHEDRON_27)
     {
-        return "Hexahedron_27";
+        return {"Hexahedron_27", 27};
     }
-    return "Mixed";
+    return {"Mixed", 1};
 }

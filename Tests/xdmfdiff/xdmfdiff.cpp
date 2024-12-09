@@ -157,7 +157,20 @@ std::unique_ptr<Grid> readMesh(std::string const& filename,
         shared_dynamic_cast<XdmfDomain>(xreader->read(filename));
     auto const gridcollection = domain->getGridCollection("Collection");
     auto const ungrid = gridcollection->getUnstructuredGrid(timestep);
+    if (!ungrid)
+    {
+        std::cerr << "Could not get unstructured grid for timestep " << timestep
+                  << " from file " << filename << std::endl;
+        return nullptr;
+    }
     auto const geometry = ungrid->getGeometry();
+    if (!geometry)
+    {
+        std::cerr
+            << "Could not get geometry from unstructured grid for timestep "
+            << timestep << " from file " << filename << std::endl;
+        return nullptr;
+    }
     geometry->read();
     int const size_points = geometry->getSize();
     std::vector<double> points(size_points);
@@ -170,6 +183,11 @@ std::unique_ptr<Grid> readMesh(std::string const& filename,
     topology->getValues(0, topology_values.data(), size_topology);
 
     auto const attribute = ungrid->getAttribute(attribute_name);
+    if (!attribute)
+    {
+        std::cerr << "Could not access attribute data for '" << attribute_name
+                  << "'" << std::endl;
+    }
     attribute->read();
     int const attribute_size = attribute->getSize();
     std::vector<double> attribute_values(attribute_size);
@@ -257,6 +275,16 @@ int main(int argc, char* argv[])
         readMeshes(args.xdmf_input_a, args.xdmf_input_b, args.timestep_a,
                    args.timestep_b, args.data_array_a, args.data_array_b);
 
+    if (!mesh_a)
+    {
+        std::cerr << "Could not read data " << args.xdmf_input_a << std::endl;
+        return EXIT_FAILURE;
+    }
+    if (!mesh_b)
+    {
+        std::cerr << "Could not read data " << args.xdmf_input_b << std::endl;
+        return EXIT_FAILURE;
+    }
     if (args.xdmf_input_a == args.xdmf_input_b)
     {
         std::cout << "Will not compare meshes from same input file.\n";

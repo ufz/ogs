@@ -1,80 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
-    <Domain>
-        <Information Name="OGS_VERSION" Value="6.4.2-501-g83c662ec96.dirty"/>
-        <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
-            <Grid Name="Grid" GridType="Uniform">
-                <Time Value="0"/>
-                <Geometry Origin="" Type="XYZ">
-                    <DataItem DataType="Float" Dimensions="61 3" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/geometry|0 0 0:1 1 1:1 61 3:4 61 3</DataItem>
-                </Geometry>
-                <Topology Dimensions="240" Type="Mixed">
-                    <DataItem DataType="Int" Dimensions="240" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/topology|0 0:1 1:1 240:4 240</DataItem>
-                </Topology>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|0 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-                    <DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|0 0:1 1:1 60:4 60</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|0 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|0 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-            </Grid>
-            <Grid Name="Grid" GridType="Uniform">
-                <Time Value="5078125"/>
-                <xi:include xpointer="element(/1/1/2/1/2)"/>
-                <xi:include xpointer="element(/1/1/2/1/3)"/>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|1 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-                    <DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|1 0:1 1:1 60:4 60</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|1 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|1 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-            </Grid>
-            <Grid Name="Grid" GridType="Uniform">
-                <Time Value="31640625"/>
-                <xi:include xpointer="element(/1/1/2/1/2)"/>
-                <xi:include xpointer="element(/1/1/2/1/3)"/>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|2 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-                    <DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|2 0:1 1:1 60:4 60</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|2 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|2 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-            </Grid>
-            <Grid Name="Grid" GridType="Uniform">
-                <Time Value="39062500"/>
-                <xi:include xpointer="element(/1/1/2/1/2)"/>
-                <xi:include xpointer="element(/1/1/2/1/3)"/>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|3 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-                    <DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|3 0:1 1:1 60:4 60</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|3 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-                <Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
-                    <DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|3 0:1 1:1 61:4 61</DataItem>
-                </Attribute>
-            </Grid>
-        </Grid>
-    </Domain>
+<Domain>
+<Information Name="OGS_VERSION" Value="6.5.3-237-g721feae5"/>
+<Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0"/>
+
+	<Geometry Origin="" Type="XYZ">
+		<DataItem DataType="Float" Dimensions="61 3" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/geometry|0 0 0:1 1 1:1 61 3:4 61 3</DataItem>
+	</Geometry>
+
+	<Topology Type="Polyline" NodesPerElement="2" NumberOfElements="60">
+		<DataItem DataType="UInt" Dimensions="60 2" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/topology|0 0 0:1 1 1:1 60 2:4 60 2</DataItem>
+	</Topology>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|0 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+		<DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|0 0:1 1:1 60:4 60</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|0 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|0 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="5078125"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|1 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+		<DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|1 0:1 1:1 60:4 60</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|1 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|1 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="31640625"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|2 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+		<DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|2 0:1 1:1 60:4 60</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|2 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|2 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="39062500"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="HeatFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/HeatFlowRate|3 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
+		<DataItem DataType="Int" Dimensions="60" Format="HDF" Precision="4">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/MaterialIDs|3 0:1 1:1 60:4 60</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="heat_flux" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/heat_flux|3 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="temperature" Type="None">
+		<DataItem DataType="Float" Dimensions="61" Format="HDF" Precision="8">line_60_heat.h5:/meshes/line_60_heat_ts_0_t_0.000000/temperature|3 0:1 1:1 61:4 61</DataItem>
+	</Attribute>
+</Grid>
+</Grid>
+</Domain>
 </Xdmf>

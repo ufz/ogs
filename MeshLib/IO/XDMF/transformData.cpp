@@ -7,8 +7,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-// \TODO (tm) Extend xdmf lib with 64bit data types
-
 #include "transformData.h"
 
 #include <algorithm>
@@ -97,7 +95,7 @@ std::optional<XdmfHdfData> transformAttribute(
     std::size_t num_of_tuples = 0;
     void const* data_ptr = 0;
 
-    // lambda f : Collects properties from the propertyVectorBase. It captures
+    // lambda f : Collects properties from the PropertyVectorBase. It captures
     // (and overwrites) data that can only be collected via the typed property.
     // It has boolean return type to allow kind of pipe using || operator.
     auto f = [&data_type, &num_of_tuples, &data_ptr,
@@ -133,38 +131,29 @@ std::optional<XdmfHdfData> transformAttribute(
                           "Float has 23 bits fractional part");
             data_type = MeshPropertyDataType::float32;
         }
-        else if constexpr (std::is_same_v<int, decltype(basic_type)>)
+        else if constexpr (std::is_same_v<int32_t, decltype(basic_type)>)
         {
-            static_assert((std::numeric_limits<int>::digits == 31),
-                          "Signed int has 32-1 bits");
             data_type = MeshPropertyDataType::int32;
         }
-        // ToDo (tm) These tests are platform specific and currently fail on
-        // Windows else if constexpr (std::is_same_v<long,
-        // decltype(basic_type)>)
-        //{
-        //    static_assert((std::numeric_limits<long>::digits == 63),
-        //                  "Signed int has 64-1 bits");
-        //    data_type = MeshPropertyDataType::int64;
-        //}
-        // else if constexpr (std::is_same_v<unsigned long,
-        // decltype(basic_type)>)
-        //{
-        //    static_assert((std::numeric_limits<unsigned long>::digits == 64),
-        //                  "Unsigned long has 64 bits");
-        //    data_type = MeshPropertyDataType::uint64;
-        //}
-        else if constexpr (std::is_same_v<unsigned int, decltype(basic_type)>)
+        else if constexpr (std::is_same_v<uint32_t, decltype(basic_type)>)
         {
-            static_assert((std::numeric_limits<unsigned int>::digits == 32),
-                          "Unsigned int has 32 bits");
             data_type = MeshPropertyDataType::uint32;
         }
-        else if constexpr (std::is_same_v<std::size_t, decltype(basic_type)>)
+        else if constexpr (std::is_same_v<int64_t, decltype(basic_type)>)
         {
-            static_assert((std::numeric_limits<std::size_t>::digits == 64),
-                          "size_t has 64 bits");
+            data_type = MeshPropertyDataType::int64;
+        }
+        else if constexpr (std::is_same_v<uint64_t, decltype(basic_type)>)
+        {
             data_type = MeshPropertyDataType::uint64;
+        }
+        else if constexpr (std::is_same_v<int8_t, decltype(basic_type)>)
+        {
+            data_type = MeshPropertyDataType::int8;
+        }
+        else if constexpr (std::is_same_v<uint8_t, decltype(basic_type)>)
+        {
+            data_type = MeshPropertyDataType::uint8;
         }
         else if constexpr (std::is_same_v<char, decltype(basic_type)>)
         {
@@ -175,6 +164,40 @@ std::optional<XdmfHdfData> transformAttribute(
             static_assert((std::numeric_limits<unsigned char>::digits == 8),
                           "Unsigned char has 8 bits");
             data_type = MeshPropertyDataType::uchar;
+        }
+        else if constexpr (std::is_same_v<unsigned long, decltype(basic_type)>)
+        {
+            if (sizeof(unsigned long) == 8 &&
+                std::numeric_limits<unsigned long>::digits == 64)
+            {
+                data_type = MeshPropertyDataType::uint64;
+            }
+            else if (sizeof(unsigned long) == 4 &&
+                     std::numeric_limits<unsigned long>::digits == 32)
+            {
+                data_type = MeshPropertyDataType::uint32;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if constexpr (std::is_same_v<std::size_t, decltype(basic_type)>)
+        {
+            if (sizeof(std::size_t) == 8 &&
+                std::numeric_limits<std::size_t>::digits == 64)
+            {
+                data_type = MeshPropertyDataType::uint64;
+            }
+            else if (sizeof(std::size_t) == 4 &&
+                     std::numeric_limits<std::size_t>::digits == 32)
+            {
+                data_type = MeshPropertyDataType::uint32;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         {
@@ -316,18 +339,18 @@ ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
     return cellTypeOGS2XDMF(ogs_cell_type).id;
 }
 
-std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
+std::pair<std::vector<std::size_t>, ParentDataType> transformToXDMFTopology(
     MeshLib::Mesh const& mesh, std::size_t const offset)
 {
     std::vector<MeshLib::Element*> const& elements = mesh.getElements();
-    std::vector<int> values;
+    std::vector<std::size_t> values;
 
     auto const push_cellnode_ids_to_vector =
         [&values, &offset](auto const& cell)
     {
         values |= ranges::actions::push_back(
             cell->nodes() | MeshLib::views::ids |
-            ranges::views::transform([&offset](auto const node_id) -> int
+            ranges::views::transform([&offset](auto const node_id)
                                      { return node_id + offset; }));
     };
 
@@ -344,14 +367,12 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
             push_cellnode_ids_to_vector(cell);
         }
     }
-    else if (topology_type == ParentDataType::POLYVERTEX ||
-             topology_type == ParentDataType::POLYLINE)
+    else if (topology_type == ParentDataType::POLYLINE)
     {
         // '+ 1' for number of nodes of the cell
-        values.reserve(elements.size() * (elements[0]->getNumberOfNodes() + 1));
+        values.reserve(elements.size() * elements[0]->getNumberOfNodes());
         for (auto const& cell : elements)
         {
-            values.push_back(cell->getNumberOfNodes());
             push_cellnode_ids_to_vector(cell);
         }
     }
@@ -367,18 +388,23 @@ std::pair<std::vector<int>, ParentDataType> transformToXDMFTopology(
     return {values, topology_type};
 }
 
-XdmfHdfData transformTopology(std::vector<int> const& values,
+XdmfHdfData transformTopology(std::vector<std::size_t> const& values,
                               ParentDataType const parent_data_type,
                               unsigned int const n_files,
                               unsigned int const chunk_size_bytes)
 {
     std::string const name = "topology";
-    HdfData const hdf = {
-        values.data(), values.size(),   1, name, MeshPropertyDataType::int32,
-        n_files,       chunk_size_bytes};
-    XdmfData const xdmf{values.size(),
-                        1,
-                        MeshPropertyDataType::int32,
+    auto const tuple_size = ParentDataType2String(parent_data_type).second;
+    HdfData const hdf = {values.data(),
+                         values.size() / tuple_size,
+                         tuple_size,
+                         name,
+                         MeshPropertyDataType::uint64,
+                         n_files,
+                         chunk_size_bytes};
+    XdmfData const xdmf{values.size() / tuple_size,
+                        tuple_size,
+                        MeshPropertyDataType::uint64,
                         name,
                         std::nullopt,
                         3,

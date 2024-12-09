@@ -38,7 +38,7 @@ enum class ParentDataType
 {
     MIXED = 0,
     POLYVERTEX = 1,
-    POLYLINE = 2,
+    POLYLINE = 2,  // OGS polylines are supposed to contain exactly 2 nodes
     // POLYGON = 3, // not used in OGS
     TRIANGLE = 4,
     QUADRILATERAL = 5,
@@ -60,4 +60,4 @@ enum class ParentDataType
     HEXAHEDRON_27 = 50
 };
 
-std::string ParentDataType2String(ParentDataType p);
+std::pair<std::string, std::size_t> ParentDataType2String(ParentDataType p);
