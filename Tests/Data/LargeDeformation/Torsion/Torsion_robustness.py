@@ -143,7 +143,7 @@ for i in range(1, last_ts + 1):
     ax.plot(
         timestep["iteration_number"],
         timestep["dx"],
-        label="timestep %i" % i,
+        label=f"timestep {i}",
         color="darkblue",
         alpha=i / (last_ts + 1),
     )

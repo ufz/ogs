@@ -968,7 +968,7 @@ for i in [0, 10, 20, 30, 40]:
     ax.plot(
         np.array(raxis).T[0] / 1000,
         pvd_hb.read_set_data(i, "EquivalentPlasticStrain", pointsetarray=raxis),
-        label="HB, $t = %i$ s" % i,
+        label=f"HB, $t = {i}$ s",
         ls="-",
     )
 
