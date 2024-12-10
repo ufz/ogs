@@ -921,5 +921,5 @@ AddTest(
 )
 
 if(NOT WIN32 AND NOT OGS_USE_MPI)
-    NotebookTest(NOTEBOOKFILE HydroMechanics/SeabedResponse/Stationary_waves.ipynb RUNTIME 65)
+    NotebookTest(NOTEBOOKFILE HydroMechanics/SeabedResponse/Stationary_waves.py RUNTIME 65)
 endif()

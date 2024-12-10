@@ -6,7 +6,7 @@ if(TARGET ThermoHydroMechanics
 )
     NotebookTest(
         NOTEBOOKFILE
-        ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource.ipynb
+        ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource.py
         RUNTIME 1800
         PROPERTIES PROCESSORS 4
     )
