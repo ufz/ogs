@@ -78,11 +78,11 @@ These notebooks are part of the regular CI testing. Please try to keep the noteb
 
 ### Create a new notebook
 
-Create a new notebook file in `Tests/Data` (if it should appear in the benchmark gallery) or in `web/content/docs` (e.g. for tutorials). Create it as a regular Markdown-file with Python code blocks. The notebook execution and conversion is done via [Jupytext](https://jupytext.readthedocs.io/en/latest). See examples:
+Create a new notebook file in `Tests/Data` (if it should appear in the benchmark gallery) or in `web/content/docs` (e.g. for tutorials). Create it as a regular Python-file with Python code blocks and Markdown blocks for text. The notebook execution and conversion is done via [Jupytext](https://jupytext.readthedocs.io/en/latest). See examples:
 
+- [SimpleMechanics.py](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.py) (notebooks written as regular `.py` files are preferred but Markdown-based or `.ipynb` files notebooks are also possible)
 - [Linear_Disc_with_hole.md](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.md) (Jupytext-based benchmark notebook in Markdown)
 - [notebook-bhe_meshing.md](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md) (Jupytext-based tutorial notebook in Markdown)
-- [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb) (regular `.ipynb`-notebook are also possible but Markdown-based notebooks are preferred)
 
 ### Add web meta information
 
@@ -103,7 +103,7 @@ web_subsection = "small-deformations" # required for notebooks in Tests/Data onl
 - Frontmatter needs to be in [TOML](https://toml.io)-format.
 - For notebooks describing benchmarks `web_subsection` needs to be set to a sub-folder in [web/content/docs/benchmarks](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/benchmarks) (if not set the notebook page will not be linked from navigation bar / benchmark gallery on the web page).
 - If you edit a Markdown-based notebook with Jupyter and the Jupytext extension please don't add the two newlines but make sure that the frontmatter has its own cell (not mixed with markdown content).
-- For (deprecated) `.ipynb`-based notebooks the frontmatter needs to be given in the first cell. See existing notebooks (e.g. [SimpleMechanics.ipynb](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Mechanics/Linear/SimpleMechanics.ipynb)) for reference.
+- For (deprecated) `.ipynb`-based notebooks the frontmatter needs to be given in the first cell. See existing notebooks for reference.
 
 ### Notebook setup
 
@@ -171,7 +171,7 @@ Add the notebook to CTest ([example](https://gitlab.opengeosys.org/ogs/ogs/-/blo
 
 ```cmake
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.ipynb RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.py RUNTIME 10)
 
     # Notebooks in web/content need to be prefixed with 'notebook-'!
     NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md

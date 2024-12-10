@@ -54,9 +54,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import numpy as np
+import ogstools as ot
 import pyvista as pv
 import vtuIO
-from ogs6py.ogs import OGS
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -138,8 +138,8 @@ class SingleSimulationModel:
         is_homogeneous_mode=False,
         poisson_ratio=0.2,
     ):
-        self.model = OGS(
-            INPUT_FILE="simple_b_bar_test.prj", PROJECT_FILE=f"{out_dir}/modified.prj"
+        self.model = ot.Project(
+            input_file="simple_b_bar_test.prj", output_file=f"{out_dir}/modified.prj"
         )
         self.model.replace_text(use_bbar, xpath="./processes/process/use_b_bar")
         self.model.replace_text(output_prefix, xpath="./time_loop/output/prefix")
