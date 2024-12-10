@@ -21,8 +21,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import ogstools as ogs
+from ogstools.logparser import parse_file, fill_ogs_context
 import os
 import pyvista as pv
+import pandas as pd
 
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
@@ -135,7 +137,9 @@ The large deformations were applied in only 5 load steps to challenge the
 algorithm.
 
 ```python jupyter={"source_hidden": true}
-df = model.parse_out(f"{out_dir}/out.txt", filter="convergence_newton_iteration")
+log_file_raw = parse_file(f"{out_dir}/out.txt")
+log_file_df = pd.DataFrame(log_file_raw)
+df = fill_ogs_context(log_file_df)
 ```
 
 ```python jupyter={"source_hidden": true}
