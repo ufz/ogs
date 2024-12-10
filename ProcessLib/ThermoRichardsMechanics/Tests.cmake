@@ -488,6 +488,7 @@ if(OGS_USE_MFRONT)
             RUNTIME 1
             EXECUTABLE ogs
             EXECUTABLE_ARGS A2_effective_stress0.xml
+            REQUIREMENTS NOT OGS_COVERAGE
             WRAPPER time
             TESTER vtkdiff
             DIFF_DATA
