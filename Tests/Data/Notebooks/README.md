@@ -1,4 +1,4 @@
-# OGS Juypter notebook tips
+# OGS Jupyter notebook tips
 
 Images used in Markdown cells need to be in a subdirectory `images` or `figures`! E.g.:
 
