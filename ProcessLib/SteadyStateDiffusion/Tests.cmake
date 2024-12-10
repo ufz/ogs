@@ -1048,7 +1048,7 @@ AddTest(
 )
 
 if(OGS_USE_MPI)
-    NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.ipynb RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.py RUNTIME 10)
 else()
     NotebookTest(
         NOTEBOOKFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/ssd-cube.ipynb

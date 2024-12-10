@@ -1,5 +1,5 @@
 [codespell]
 skip = *.bib,*.css,*.pdf,*.yaml,*.yml,*/.vale,./.git,./GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd,./Tests/Data,./web/content/imprint.md,./web/node_modules,./web/public/imprint/index.html,./web/resources,CITATION.cff,
-ignore-words-list = ba,bu,ket,nd,pris,strat,sur,theis,
+ignore-words-list = ba,bu,ket,nd,pris,strat,sur,theis,ot,Jupyter,testrunner
 exclude-file = .codespellexclude
 uri-ignore-words-list = *

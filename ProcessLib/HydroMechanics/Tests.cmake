@@ -706,7 +706,7 @@ AddTest(
     reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu sigma sigma 1e-1 0
 )
 if(NOT OGS_USE_MPI)
-    NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.md
+    NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.py
                  RUNTIME 800)
 endif()
 
@@ -921,5 +921,5 @@ AddTest(
 )
 
 if(NOT WIN32 AND NOT OGS_USE_MPI)
-    NotebookTest(NOTEBOOKFILE HydroMechanics/SeabedResponse/Stationary_waves.ipynb RUNTIME 65)
+    NotebookTest(NOTEBOOKFILE HydroMechanics/SeabedResponse/Stationary_waves.py RUNTIME 65)
 endif()

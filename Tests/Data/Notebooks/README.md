@@ -1,4 +1,4 @@
-# OGS Juypter notebook tips
+# OGS Jupyter notebook tips
 
 Images used in Markdown cells need to be in a subdirectory `images` or `figures`! E.g.:
 
@@ -21,7 +21,7 @@ nbdime config-git --enable --global
 ```bash
 # in virtualenv:
 pip install -r requirements.txt
-PATH=~/code/ogs/build/release/bin:$PATH python testrunner.py --out _out SimpleMechanics.ipynb
+PATH=~/code/ogs/build/release/bin:$PATH python testrunner.py --out _out SimpleMechanics.py
 ```
 
 In Notebook do checks with `assert False` or raise an exception, e.g. `raise SystemExit()`, on failure.

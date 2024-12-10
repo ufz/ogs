@@ -1,4 +1,4 @@
-from ogs6py import ogs
+import ogstools as ot
 
 
 def addSolidPropertiesForHT(omit=""):
@@ -127,8 +127,8 @@ for solid_property in solid_properties:
                 and medium_property == ""
             ):
                 continue
-            model = ogs.OGS(
-                PROJECT_FILE="HT_"
+            model = ot.Project(
+                output_file="HT_"
                 + solid_property
                 + "_"
                 + aqueousfluid_property

@@ -63,3 +63,4 @@ cmake
 ctest
 illite
 dissoluted
+testrunner
