@@ -39,7 +39,7 @@ std::string parseName(std::string const& str)
 bool CoordinateSystem::parse(std::istream& in)
 {
     std::string line;  // string used for reading a line
-    boost::char_separator<char> sep("-;| \"");
+    boost::char_separator<char> sep("-;| \"\r");
 
     std::getline(in, line);  // NAME name
     boost::tokenizer<boost::char_separator<char>> tok(line, sep);
