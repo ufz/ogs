@@ -4,7 +4,7 @@ title = "Theis' problem"
 weight = 171
 project = ["Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.prj"]
 author = "Wenqing Wang"
-image = "theis_comparison.png"
+image = "theis.png"
 +++
 
 {{< data-link >}}
