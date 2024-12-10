@@ -59,7 +59,7 @@ It thus suffices to illustrate the behaviour of strain values.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-import ogstools as ogs
+import ogstools as ot
 import os
 import pyvista as pv
 
@@ -88,8 +88,8 @@ if not out_dir.exists():
 ```
 
 ```python jupyter={"source_hidden": true}
-model_s = ogs.Project(input_file="square_1e0.prj", output_file=f"{out_dir}/square_1e0_small.prj")
-model = ogs.Project(input_file="square_1e0.prj", output_file="square_1e0.prj")
+model_s = ot.Project(input_file="square_1e0.prj", output_file=f"{out_dir}/square_1e0_small.prj")
+model = ot.Project(input_file="square_1e0.prj", output_file="square_1e0.prj")
 ```
 
 ```python jupyter={"source_hidden": true}

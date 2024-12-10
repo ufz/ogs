@@ -67,13 +67,13 @@ out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
-import ogstools as ogs
+import ogstools as ot
 ```
 
 ```python
 # Initiate an OGS-object
 # Pass it the project file and set an output file 
-model = ogs.Project(input_file="MandelCryerStaggered.prj", output_file=f"{out_dir}/MandelCryerStaggered_modified.prj")
+model = ot.Project(input_file="MandelCryerStaggered.prj", output_file=f"{out_dir}/MandelCryerStaggered_modified.prj")
 
 # Increase end time
 t_end = 1.5

@@ -142,7 +142,7 @@ The first cell after the frontmatter needs to be a `markdown`-cell!
 
   # OR with ogstools:
   # ... setup model ...
-  import ogstools as ogs
+  import ogstools as ot
   model = ogs.Project(input_file="input.prj", output_file="output.prj")
   model.run_model(logfile=os.path.join(out_dir, "log.txt"), args=f"-o {out_dir}")
 

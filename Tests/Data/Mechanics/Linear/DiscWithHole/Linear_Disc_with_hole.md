@@ -239,7 +239,7 @@ Simultaneous to the analytical solution the results of the numerical model are p
 For a better presentation of these differences and as a basis for the following error analysis, plots for absolute and relative error along the regarded axes are have been made.
 
 ```python
-import ogstools as ogs
+import ogstools as ot
 import os
 from pathlib import Path
 
@@ -249,7 +249,7 @@ if not out_dir.exists():
 ```
 
 ```python
-model = ogs.Project(
+model = ot.Project(
     input_file="../disc_with_hole.prj", output_file="../disc_with_hole.prj"
 )
 ```
