@@ -597,7 +597,7 @@ AddTest(
     EXECUTABLE_ARGS one_anchor_cube.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT OGS_USE_MPI AND NOT OGS_COVERAGE
     RUNTIME 5
     DIFF_DATA
     expected_one_anchor_cube_ts_10_t_1.000000.vtu one_anchor_cube_ts_10_t_1.000000.vtu pressure pressure 1.0e-10 1.e-10
