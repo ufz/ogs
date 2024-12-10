@@ -44,7 +44,7 @@ if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 print(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt")
-run(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt", check=True)
+run(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt", shell=True, check=True)
 
 print(datetime.now())
 

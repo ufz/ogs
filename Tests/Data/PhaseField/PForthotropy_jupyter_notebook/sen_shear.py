@@ -133,10 +133,12 @@ def ogs_ortho(
         # partition mesh
         run(
             f"NodeReordering -i shear.vtu -o {out_dir}/shear.vtu >> {logfile}",
+            shell=True,
             check=True,
         )
         run(
             f"constructMeshesFromGeometry -m {out_dir}/shear.vtu -g shear.gml >> {logfile}",
+            shell=True,
             check=True,
         )
         shutil.move("shear_top.vtu", f"{out_dir}/shear_top.vtu")
@@ -149,14 +151,20 @@ def ogs_ortho(
         shutil.move("shear_p_2.vtu", f"{out_dir}/shear_p_2.vtu")
         shutil.move("shear_p_3.vtu", f"{out_dir}/shear_p_3.vtu")
 
-        run(f"partmesh -s -o {out_dir} -i {out_dir}/shear.vtu >> {logfile}", check=True)
+        run(
+            f"partmesh -s -o {out_dir} -i {out_dir}/shear.vtu >> {logfile}",
+            shell=True,
+            check=True,
+        )
         run(
             f"partmesh -m -n {ncores} -o {out_dir} -i {out_dir}/shear.vtu -- {out_dir}/shear_top.vtu {out_dir}/shear_bottom.vtu {out_dir}/shear_left.vtu {out_dir}/shear_right.vtu >> {logfile}",
+            shell=True,
             check=True,
         )
     else:
         run(
             f"NodeReordering -i shear.vtu -o {out_dir}/shear.vtu >> {logfile}",
+            shell=True,
             check=True,
         )
 
@@ -199,11 +207,16 @@ def ogs_ortho(
         print(f"  > OGS started execution with MPI - {ncores} cores...")
         run(
             f"mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            shell=True,
             check=True,
         )
     else:
         print("  > OGS started execution - ")
-        run(f"ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}", check=True)
+        run(
+            f"ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            shell=True,
+            check=True,
+        )
     tf = time.time()
     print("  > OGS terminated execution. Elapsed time: ", round(tf - t0, 2), " s.")
 

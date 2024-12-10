@@ -139,22 +139,36 @@ def ogs_TPB(
 
     if MPI:
         # partition mesh
-        run(f"NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}", check=True)
+        run(
+            f"NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}",
+            shell=True,
+            check=True,
+        )
         run(
             f"constructMeshesFromGeometry -m {out_dir}/TPB.vtu -g TPB.gml >> {logfile}",
+            shell=True,
             check=True,
         )
         shutil.move("TPB_left.vtu", f"{out_dir}/TPB_left.vtu")
         shutil.move("TPB_right.vtu", f"{out_dir}/TPB_right.vtu")
         shutil.move("TPB_top.vtu", f"{out_dir}/TPB_top.vtu")
         shutil.copy("TPB.gml", f"{out_dir}/TPB.gml")
-        run(f"partmesh -s -o {out_dir} -i {out_dir}/TPB.vtu >> {logfile}", check=True)
+        run(
+            f"partmesh -s -o {out_dir} -i {out_dir}/TPB.vtu >> {logfile}",
+            shell=True,
+            check=True,
+        )
         run(
             f"partmesh -m -n {ncores} -o {out_dir} -i {out_dir}/TPB.vtu -- {out_dir}/TPB_right.vtu {out_dir}/TPB_left.vtu {out_dir}/TPB_top.vtu >> {logfile}",
+            shell=True,
             check=True,
         )
     else:
-        run(f"NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}", check=True)
+        run(
+            f"NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}",
+            shell=True,
+            check=True,
+        )
 
     # change properties in prj file
     model = ot.Project(
@@ -194,11 +208,16 @@ def ogs_TPB(
         print(f"  > OGS started execution with MPI - {ncores} cores...")
         run(
             f"mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            shell=True,
             check=True,
         )
     else:
         print("  > OGS started execution ...")
-        run(f"ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}", check=True)
+        run(
+            f"ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            shell=True,
+            check=True,
+        )
     tf = time.time()
     print("  > OGS terminated execution. Elapsed time: ", round(tf - t0, 2), " s.")
 

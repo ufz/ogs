@@ -267,6 +267,7 @@ def sneddon_numerical(h):
     print(">>> OGS started execution ... <<<")
     run(
         f"ogs {out_dir}/{prj_name} -o {out_dir} -m {out_dir} > {out_dir}/ogs-out.txt",
+        shell=True,
         check=True,
     )
     tf = time.time()

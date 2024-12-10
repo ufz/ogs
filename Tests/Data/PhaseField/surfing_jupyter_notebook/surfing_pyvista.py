@@ -186,10 +186,12 @@ if not out_dir.exists():
 # https://www.opengeosys.org/docs/tools/meshing/structured-mesh-generation/
 run(
     f"generateStructuredMesh -o {out_dir}/surfing_quad_1x2.vtu -e quad --lx 2 --nx {round(2/h)+1} --ly 1 --ny {round(1/h)+1}",
+    shell=True,
     check=True,
 )
 run(
     f"NodeReordering -i {out_dir}/surfing_quad_1x2.vtu -o {out_dir}/surfing_quad_1x2_NR.vtu",
+    shell=True,
     check=True,
 )
 
@@ -269,6 +271,7 @@ t0 = time.time()
 print(">>> OGS started execution ... <<<")
 run(
     f"ogs {out_dir}/{prj_name} -o {out_dir} -m {out_dir} > {out_dir}/ogs-out.txt",
+    shell=True,
     check=True,
 )
 

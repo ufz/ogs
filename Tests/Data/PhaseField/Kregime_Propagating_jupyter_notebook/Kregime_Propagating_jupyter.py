@@ -310,7 +310,11 @@ def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
     # run simulation with ogs
     t0 = time.time()
     print(">>> OGS started execution ... <<<")
-    run(f"ogs {out_dir}/{prj_name} -o {out_dir} > {out_dir}/log.txt", check=True)
+    run(
+        f"ogs {out_dir}/{prj_name} -o {out_dir} > {out_dir}/log.txt",
+        shell=True,
+        check=True,
+    )
     tf = time.time()
     print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
 
