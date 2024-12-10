@@ -635,5 +635,5 @@ AddTest(
 
 if(NOT OGS_USE_PETSC)
     # Both tests above are executed in this notebook (without diff check). Maybe remove regular tests later?
-    NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.md RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.py RUNTIME 10)
 endif()
