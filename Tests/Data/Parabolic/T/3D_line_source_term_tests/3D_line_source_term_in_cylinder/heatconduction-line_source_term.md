@@ -202,7 +202,6 @@ The differences of analytical and computed solution are small outside of the cen
 length_replaced = length.copy()
 length_replaced[int((number_of_subdivisions-1)/2)] = 1
 
-
 # Replace diverging analytical solution in respective interval below a threshold of 0.01
 threshold = 0.01
 below_threshold = np.where(np.abs(length) < threshold)
@@ -303,7 +302,6 @@ z_axis = [(i, 0.5, 0) for i in length]
 
 timestep = 1
 temp_ax = pvdfile_ax.read_set_data(timestep, "temperature", pointsetarray=z_axis)
-
 
 plt.plot(length, temp_ax)
 plt.title("Temperature")
