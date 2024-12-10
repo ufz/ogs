@@ -11,35 +11,58 @@ image = "theis_comparison.png"
 
 ## Problem description
 
-Theis' problem examines the transient lowering of the water table induced by a pumping well. Theis' fundamental insight was to recognize that Darcy's law is analogous to the law of heat flow by conduction, i.e., hydraulic pressure being analogous to temperature, pressure-gradient to thermal gradient.
+Theis' problem examines the transient lowering of the water table induced by a
+ pumping well. Theis' fundamental insight was recognizing that Darcy's law
+  is analogous to the law of heat conduction, with hydraulic pressure analogous
+   to temperature and the pressure gradient analogous to the thermal gradient.
 
-The assumptions required by the Theis solution are:
+The assumptions required for the Theis solution are as follows:
 
-- the aquifer is homogeneous, isotropic, confined, infinite in radial extent,
-- the aquifer has uniform thickness, horizontal piezometric surface
-- the well is fully penetrating the entire aquifer thickness,
-- the well storage effects can be neglected,
-- the well has a constant pumping rate,
-- no other wells or long term changes in regional water levels.
+- The aquifer is homogeneous, isotropic, confined, and semi-infinite in radial extent.
+- The aquifer has uniform thickness.
+- The well fully penetrates the entire aquifer thickness.
+- The effects of well storage can be neglected.
+- The well has a constant pumping rate.
+- No other wells exist.
+
+The problem can be expressed as an axisymmetric one, which is described
+ mathematically in a radial coordinate system as follows:
+
+$$
+S \dfrac{\partial h}{\partial t} = T\dfrac{1}{r}\dfrac{\partial}{\partial r}
+   \left( r \dfrac{\partial h}{\partial r}\right),
+$$
+$$
+\begin{align*}
+&h(\infty, t) = h_0, \forall\, t\geqslant0,\\
+& 2\pi T \lim_{r\rightarrow0}\left(r \dfrac{\partial h}{\partial r}\right)=Q_w,
+\end{align*}
+$$
+where $T$ is the aquifer transmissivity or hydraulic conductivity [$L^{2}T^{-1}$],
+ $S$ is the aquifer storage $[-]$,
+ $h_0$ is the constant initial hydraulic head $[L]$,
+ $Q_w$ is the constant discharge rate [$L^{3}T^{-1}$],
+   $t$ is time $[T]$, $r$ $[L]$ is the distance from the well.
 
 ## Analytical solution
 
-The analytical solution of the drawdown as a function of time and distance is expressed by
+The analytical solution of the above equation, or the head drawdown, is obtained
+ as
 $$
 \begin{eqnarray}
-h_0 - h(t,x,y) = \frac{Q}{4\pi T}W(u)
+h_0 - h(t,r) = \frac{Q}{4\pi T}W(u)
 \label{theis}
 \end{eqnarray}
 $$
 
 $$
 \begin{eqnarray}
-u = \frac{(x^{2}+y^{2})S}{4Tt}
+u = \frac{r^{2}S}{4Tt}
 \label{theis_u}
 \end{eqnarray}
 $$
-
-where $h_0$ is the constant initial hydraulic head $[L]$, $Q$ is the constant discharge rate [$L^{3}T^{-1}$], $T$ is the aquifer transmissivity [$L^{2}T^{-1}$], $t$ is time $[T]$, $x,y$ is the coordinate at any point $[L]$ and $S$ is the aquifer storage $[-]$. $W(u)$ is the well function defined by an infinite series for a confined aquifer as
+where $W(u)$ is the well function defined by an infinite series for a confined
+ aquifer as
 
 <!-- vale off -->
 $$
@@ -50,187 +73,85 @@ W(u) = -\gamma -lnu + \sum^{\infty}_{k=1}{\frac{(-1)^{k+1}u^k}{k\cdot k!}}
 $$
 <!-- vale on -->
 
-where $\gamma\approx$ 0.5772 is the Euler-Mascheroni constant. For practical purposes, the simplest approximation of $W(u)$ was proposed as $W(u)=-0.5772-lnu$  for $u <$ 0.05. Other more exact approximations of the well function were summarized by R. Srivastava and A. Guzman-Guzman
+where $\gamma\approx$ 0.5772 is the Euler-Mascheroni constant. For practical
+ purposes, the simplest approximation of $W(u)$ was proposed as
+  $W(u)=-0.5772-lnu$  for $u <$ 0.05. Other more exact approximations of the
+  well function were summarized by R. `Srivastava` and A. `Guzman-Guzman` [[1]](#1).
+
+## Numerical settings
+
+The parameters are taken from the paper by `Pinder` and `Frind` [[2]](#2) and
+ the book by O. `Koldtiz` et.al [[3]](#3). As in [[3]](#3), the length unit
+  is converted from feet to meters.
+The well radius $r_0$ is 0.3048 m, the infinite domain is approximated with a
+boundary located at a large distance of 304.8 m from the well center.
+
+ The parameters are given in the following table:
+
+| Parameter              | Symbol        |      Value      |    Unit |
+| :--------------------- | :------------ | :-------------: | ------: |
+| Initial condition      | $h(r,0)$      |       0.0       |       m |
+| Pumping rate           | $Q$           |     1223.3      | m$^3$/d |
+| Boundary condition     | $h(304.8, t)$ |        0        |       m |
+| Hydraulic conductivity | $T$           | 9.2903$10^{-4}$ |     m/s |
+| Storage coefficient    | $S$           |    $10^{-3}$    |       - |
+
+Where the pumping rate is uniformly applied to the well surface as a Neumann
+ boundary condition with the value calculated as $Q/(2\pi r_0)/86400$
+with a unit of m/s.
 
 ## Results and evaluation
 
-The following figure compares the analytical solution, the result by OGS-5, and
- the result by OGS-6 (labeled as `pressure`) within the range that satisfies
- $u <$ 0.05.
-{{< figure src="theis_comparison.png" >}}
-The figure shows that there is a good match between the analytical solution and
- the numerical solution obtained by using OGS-5 or OGS-6.
+Firstly, we examine the head variation at a point $r=9.7536$ m, representing the
+ observation position. The figure below compares the head variation
+  obtained  by using the analytical solution, the result from OGS-5, and
+ the result from OGS-6, respectively, within the time interval [10, 10$^5$] s.
 
-<p>Some of the data of the above curves are given in the following table.</p>
-<table>
-<caption>Comparison of solutions (where <em>Distance</em> means the distance
- from the position where the source term is applied).</caption>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Distance</td>
-<td style="text-align: left;">Analytic</td>
-<td style="text-align: left;">OGS-5</td>
-<td style="text-align: left;">OGS-6</td>
-<td style="text-align: left;">Error</td>
-<td style="text-align: left;">Error</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;"></td>
-<td style="text-align: left;">Solution (<span class="math inline"><em>h</em><sub><em>a</em></sub></span>)</td>
-<td style="text-align: left;">(<span class="math inline"><em>h</em><sub>5</sub></span>)</td>
-<td style="text-align: left;">(<span class="math inline"><em>h</em><sub>6</sub></span>)</td>
-<td style="text-align: left;">(<span class="math inline">$|\frac{h_5-h_a}{h_a}|$</span>)</td>
-<td style="text-align: left;">(<span class="math inline">$|\frac{h_6-h_a}{h_a}|$</span>)</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">0</td>
-<td style="text-align: left;">12.8141</td>
-<td style="text-align: left;">12.474</td>
-<td style="text-align: left;">12.474</td>
-<td style="text-align: left;">0.0265</td>
-<td style="text-align: left;">0.0272</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">1.21799</td>
-<td style="text-align: left;">8.9441</td>
-<td style="text-align: left;">8.79341</td>
-<td style="text-align: left;">8.79341</td>
-<td style="text-align: left;">0.0168</td>
-<td style="text-align: left;">0.0171</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">2.43597</td>
-<td style="text-align: left;">7.48878</td>
-<td style="text-align: left;">7.34717</td>
-<td style="text-align: left;">7.34717</td>
-<td style="text-align: left;">0.0189</td>
-<td style="text-align: left;">0.0192</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">3.65396</td>
-<td style="text-align: left;">6.59978</td>
-<td style="text-align: left;">6.46176</td>
-<td style="text-align: left;">6.46176</td>
-<td style="text-align: left;">0.0209</td>
-<td style="text-align: left;">0.0213</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">4.87195</td>
-<td style="text-align: left;">5.94548</td>
-<td style="text-align: left;">5.81072</td>
-<td style="text-align: left;">5.81072</td>
-<td style="text-align: left;">0.0226</td>
-<td style="text-align: left;">0.0231</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">6.08994</td>
-<td style="text-align: left;">5.43381</td>
-<td style="text-align: left;">5.30267</td>
-<td style="text-align: left;">5.30267</td>
-<td style="text-align: left;">0.0241</td>
-<td style="text-align: left;">0.0247</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">7.30792</td>
-<td style="text-align: left;">5.00981</td>
-<td style="text-align: left;">4.88283</td>
-<td style="text-align: left;">4.88283</td>
-<td style="text-align: left;">0.0253</td>
-<td style="text-align: left;">0.0260</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">8.52591</td>
-<td style="text-align: left;">4.65012</td>
-<td style="text-align: left;">4.52793</td>
-<td style="text-align: left;">4.52793</td>
-<td style="text-align: left;">0.0262</td>
-<td style="text-align: left;">0.0269</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">8.83041</td>
-<td style="text-align: left;">4.56714</td>
-<td style="text-align: left;">4.44623</td>
-<td style="text-align: left;">4.44623</td>
-<td style="text-align: left;">0.0264</td>
-<td style="text-align: left;">0.0271</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">9.4394</td>
-<td style="text-align: left;">4.4116</td>
-<td style="text-align: left;">4.29344</td>
-<td style="text-align: left;">4.29344</td>
-<td style="text-align: left;">0.0267</td>
-<td style="text-align: left;">0.0275</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">10.6574</td>
-<td style="text-align: left;">4.12707</td>
-<td style="text-align: left;">4.01501</td>
-<td style="text-align: left;">4.01501</td>
-<td style="text-align: left;">0.0271</td>
-<td style="text-align: left;">0.0279</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">15.2248</td>
-<td style="text-align: left;">3.28072</td>
-<td style="text-align: left;">3.19698</td>
-<td style="text-align: left;">3.19698</td>
-<td style="text-align: left;">0.0255</td>
-<td style="text-align: left;">0.0261</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">20.0968</td>
-<td style="text-align: left;">2.61899</td>
-<td style="text-align: left;">2.57517</td>
-<td style="text-align: left;">2.57517</td>
-<td style="text-align: left;">0.0167</td>
-<td style="text-align: left;">0.0170</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">22.8373</td>
-<td style="text-align: left;">2.31338</td>
-<td style="text-align: left;">2.29626</td>
-<td style="text-align: left;">2.29626</td>
-<td style="text-align: left;">0.0074</td>
-<td style="text-align: left;">0.0074</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">24.0553</td>
-<td style="text-align: left;">2.18892</td>
-<td style="text-align: left;">2.1846</td>
-<td style="text-align: left;">2.1846</td>
-<td style="text-align: left;">0.0019</td>
-<td style="text-align: left;">0.0019</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">25.2732</td>
-<td style="text-align: left;">2.07055</td>
-<td style="text-align: left;">2.07958</td>
-<td style="text-align: left;">2.07958</td>
-<td style="text-align: left;">0.0043</td>
-<td style="text-align: left;">0.0043</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">25.5777</td>
-<td style="text-align: left;">2.04164</td>
-<td style="text-align: left;">2.05407</td>
-<td style="text-align: left;">2.05407</td>
-<td style="text-align: left;">0.0060</td>
-<td style="text-align: left;">0.0060</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">29.8407</td>
-<td style="text-align: left;">1.67134</td>
-<td style="text-align: left;">1.73518</td>
-<td style="text-align: left;">1.73518</td>
-<td style="text-align: left;">0.0381</td>
-<td style="text-align: left;">0.0367</td>
-</tr>
-</tbody>
-</table>
-<p>The analytical solutions are for an ideal problem with point wise pumping
- term. While for the FEM analysis, the point wise source value is distributed to
- the surface of a small hole around the source point in order to avoid the
- singularity. One can see from the table that the precisions of the FEM
- solutions are still acceptable with such transform of the point pumping
- term.</p>
+<img  src="p_t_at_r9.7536_Theis.png" alt="Head variation"  height="320"/>
+
+The figure demonstrates a good match between the analytical solution and
+ the numerical solutions obtained using OGS-5 and OGS-6 within the time interval
+ [10, 10$^4$] s, consistent with the results provided in [[2]](#2) and [[3]](#3).
+  A similar good match is observed in the following figure, which
+ compares the head profiles at t=1728 s:
+
+<img  src="p_profile_at_1728_Theis.png" alt="Head profile at t=1728 s" width="960" height="320"/>
+At the point with the largest head value, the absolute error of the numerical
+ solution is approximately 0.34.
+
+ Beyond 10$^4$, an evident discrepancy arises between the
+  analytical solution and the numerical solutions.
+This discrepancy increases over time due to the inability of the numerical method
+ for a bounded domain (like the FEM) to represent an infinite domain accurately.
+
+ The figures below show the comparison of the head profiles  at t=10$^5$ s,
+   highlighting this significant discrepancy.
+
+<img  src="p_profile_at_100000.0_Theis.png" alt="Head profile at t=1e5 s" width="960" height="320"/>
+
+## Conclusions
+
+<p>The analytical solutions are obtained for an ideal problem with an infinite domain.
+ However, in the FEM analysis, the infinite domain must be approximated within a
+ finite range. Therefore, the numerical method provides accurate
+  solutions only for  positions relatively close to the well and within
+   a specific time interval. Despite this limitation, real-world application
+    are typically constrained by similar conditions, making the numerical
+     approach valid and practical for most idealized cases from the in situ
+    experiments.
+</p>
+
+### Reference
+
+<a id="1">[1]</a>
+`Srivastava`, R. and `Guzman‐Guzman`, A., 1998. Practical approximations of the well
+ function. *Groundwater*, 36(5), pp.844-848.
+
+<a id="2">[2]</a>
+`Pinder`, G.F. and `Frind`, E.O., 1972. Application of Galerkin's procedure to
+  aquifer analysis. *Water Resources Research*, 8(1), pp.108-120.
+
+<a id="3">[3]</a>
+`Kolditz`, O., `Shao`, H., `Wang`, W. and `Bauer`, S., 2016. Thermo-hydro-mechanical
+ chemical processes in fractured porous media: modelling and benchmarking
+  (Vol. 25). Berlin: Springer.
