@@ -26,16 +26,21 @@
 
 # %%
 import os
+from datetime import datetime
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
+import ogstools as ot
+import vtuIO
+
+# %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 
 # %%
-import ogstools as ot
-
 prj_name = "SimpleMechanics"
 model = ot.Project(output_file=(out_dir / f"{prj_name}.prj"))
 model.geometry.add_geometry(filename="./square_1x1.gml")
@@ -153,14 +158,10 @@ try:
 except Exception as inst:
     print(f"{type(inst)}: {inst.args[0]}")
 
-from datetime import datetime
-
 print(datetime.now())
 
 
 # %%
-import vtuIO
-
 pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", interpolation_backend="scipy", dim=2)
 time = pvdfile.timesteps
 points = {"pt0": (0.3, 0.5, 0.0), "pt1": (0.24, 0.21, 0.0)}
@@ -171,7 +172,6 @@ displacement_nearest = pvdfile.read_time_series(
     "displacement", points, interpolation_method="nearest"
 )
 
-import matplotlib.pyplot as plt
 
 plt.plot(
     time, displacement_linear["pt0"][:, 0], "b-", label="$u_x$ pt0 linear interpolated"
@@ -213,11 +213,6 @@ plt.legend()
 plt.xlabel("t")
 plt.ylabel("u")
 
-
-# %%
-import matplotlib.pyplot as plt
-import numpy as np
-
 # %%
 mesh_series = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd")
 points = np.asarray([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
@@ -225,8 +220,6 @@ disp = ot.variables.displacement
 labels = [
     f"{i}: {label}" for i, label in enumerate(ot.plot.utils.justified_labels(points))
 ]
-fig = mesh_series.plot_probe(
-    points=points, variable=disp, time_unit="a", labels=labels
-)
+fig = mesh_series.plot_probe(points=points, variable=disp, time_unit="a", labels=labels)
 
 # %%

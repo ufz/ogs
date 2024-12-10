@@ -138,7 +138,7 @@ The first cell after the frontmatter needs to be a `markdown`-cell!
 
   # ...
   # Run ogs; get input data from current directory; write to `out_dir`
-  ! ogs my_project.prj -o {out_dir} > {out_dir}/log.txt
+  !bash ogs my_project.prj -o {out_dir} > {out_dir}/log.txt
 
   # OR with ogstools:
   # ... setup model ...

@@ -109,13 +109,17 @@ import math
 import os
 import re
 import time
+from pathlib import Path
+from subprocess import run
 
 import gmsh
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 from ogstools.msh2vtu import msh2vtu
 
+# %%
 pi = math.pi
 plt.rcParams["text.usetex"] = True
 
@@ -137,8 +141,6 @@ phasefield_model = "AT1"  # AT1/AT2
 # file's name
 prj_name = "Kregime_Propagating.prj"
 meshname = "mesh_full_pf"
-
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -271,8 +273,6 @@ def pre_processing(h, a0):
 #
 
 # %%
-import pyvista as pv
-
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
 
@@ -287,7 +287,11 @@ def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
     input_file = f"{out_dir}/" + meshname + ".msh"
     msh2vtu(filename=input_file, output_path=out_dir, reindex=True, keep_ids=True)
     # %cd {out_dir}
-    ! identifySubdomains -f -m mesh_full_pf_domain.vtu -- mesh_full_pf_physical_group_*.vtu
+    run(
+        "identifySubdomains -f -m mesh_full_pf_domain.vtu -- mesh_full_pf_physical_group_*.vtu",
+        shell=True,
+        check=True,
+    )
     # %cd -
 
     # As a preprocessing step, define the initial phase-field (crack).
@@ -306,7 +310,7 @@ def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
     # run simulation with ogs
     t0 = time.time()
     print(">>> OGS started execution ... <<<")
-    ! ogs {out_dir}/{prj_name} -o {out_dir} > {out_dir}/log.txt
+    run(f"ogs {out_dir}/{prj_name} -o {out_dir} > {out_dir}/log.txt", check=True)
     tf = time.time()
     print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
 

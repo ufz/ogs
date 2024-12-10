@@ -30,15 +30,17 @@
 # modules
 import os
 import time
+from pathlib import Path
+from subprocess import run
 
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import numpy as np
 import pyvista as pv
 import vtk
+import vtuIO
 from scipy.special import exp1
 from vtk.util.numpy_support import vtk_to_numpy
-
 
 # %%
 # settings
@@ -49,8 +51,6 @@ prj_file = f"{prj_name}.prj"
 pvd_name = "liquid_pcs"
 vtu_name = "axisym_theis.vtu"
 title = "H process: Theis solution (Pumping well)"
-
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -63,7 +63,7 @@ if not out_dir.exists():
 # %% [markdown]
 # **Problem description**
 #
-# Theis’ problem examines the transient lowering of the water table induced by a pumping well.
+# Theis` problem examines the transient lowering of the water table induced by a pumping well.
 # The assumptions required by the Theis solution are:
 #
 # The aquifer
@@ -221,7 +221,7 @@ plt.tricontour(triang, pressure, 16)
 t0 = time.time()
 print("run ogs")
 print(f"ogs {prj_file} > log.txt")
-! ogs {prj_file} -o {out_dir} > {out_dir}/log.txt
+run(f"ogs {prj_file} -o {out_dir} > {out_dir}/log.txt", shell=True, check=True)
 tf = time.time()
 print("computation time: ", round(tf - t0, 2), " s.")
 
@@ -230,10 +230,6 @@ print("computation time: ", round(tf - t0, 2), " s.")
 # **Spatial Profiles**
 
 # %%
-import matplotlib.pyplot as plt
-import numpy as np
-import vtuIO
-
 # Read simulation results
 pvdfile = vtuIO.PVDIO(f"{out_dir}/{pvd_name}.pvd", dim=2)
 xaxis = [(i, 0, 0) for i in np.linspace(start=1.0, stop=40, num=40)]
@@ -297,13 +293,6 @@ ax[1].text(5, 0.7, caption, ha="left")
 
 ##plt.savefig("theis-ana+num.png")
 plt.show()
-
-
-# %%
-import time
-
-print(time.ctime())
-
 
 # %% [markdown]
 # **OGS links**

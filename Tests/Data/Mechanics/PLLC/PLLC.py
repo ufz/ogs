@@ -38,15 +38,12 @@ import numpy as np
 import ogstools as ot
 import vtuIO
 
-
 # %%
 prj_name = "uniax_compression"
 data_dir = os.environ.get(
     "OGS_DATA_DIR", str(str(Path.cwd())).split("/Data/")[0] + "/Data/"
 )
 input_file = f"{data_dir}/Mechanics/PLLC/{prj_name}.prj"
-
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():

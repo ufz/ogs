@@ -12,13 +12,14 @@
 #     name: python3
 # ---
 
-# %% [markdown]
+# %% [raw]
 # +++
 # title = "Linear elasticity: disc with hole convergence study"
 # date = "2022-09-15"
 # author = "Linda Günther, Sophia Einspänner, Robert Habel, Christoph Lehmann and Thomas Nagel"
 # web_subsection = "small-deformations"
 # +++
+#
 
 # %% [markdown]
 # |<div style="width:330px"><img src="https://www.ufz.de/static/custom/weblayout/DefaultInternetLayout/img/logos/ufz_transparent_de_blue.png" width="300"/></div>|<div style="width:330px"><img src="https://discourse.opengeosys.org/uploads/default/original/1X/a288c27cc8f73e6830ad98b8729637a260ce3490.png" width="300"/></div>|<div style="width:330px"><img src="https://github.com/nagelt/Teaching_Scripts/raw/9d9e29ecca4b04eaf7397938eacbf116d37ddc93/Images/TUBAF_Logo_blau.png" width="300"/></div>|
@@ -54,8 +55,18 @@
 
 # %% jupyter={"source_hidden": true}
 import logging
+import os
+import shutil
+from pathlib import Path
+from subprocess import run
+
 import matplotlib.pyplot as plt
+import mesh_quarter_of_rectangle_with_hole
 import numpy as np
+import ogstools as ot
+import pyvista as pv
+from ogstools.msh2vtu import msh2vtu
+from vtkmodules.vtkFiltersParallel import vtkIntegrateAttributes
 
 logging.getLogger("matplotlib.font_manager").disabled = True
 logging.getLogger("matplotlib.ticker").disabled = True
@@ -78,9 +89,6 @@ logging.getLogger("matplotlib.ticker").disabled = True
 
 
 # %% jupyter={"source_hidden": true}
-import os
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -229,10 +237,6 @@ def resample_mesh_to_240_resolution(idx):
 # Parameter $R$ describes the area for a further refinement in the vicinity of the hole. This additional refinement is needed for better capturing the stress and strain gradients near the hole. Because the fine resolution of the mesh is only needed in the area around the hole, the size of $R$ is half the size of the plate.
 
 # %% jupyter={"source_hidden": true}
-import mesh_quarter_of_rectangle_with_hole
-
-
-# %% jupyter={"source_hidden": true}
 for idx in STUDY_indices:
     """
     a and b seem to be the sizes of the rectangular plate,
@@ -259,16 +263,24 @@ for idx in STUDY_indices:
 # ## Transform to VTU meshes suitable for OGS
 
 # %% jupyter={"source_hidden": true}
-from ogstools.msh2vtu import msh2vtu
 
 for idx in STUDY_indices:
     input_file = f"{out_dir}/disc_with_hole_idx_is_{idx}.msh"
     msh2vtu_out_dir = Path(f"{out_dir}/disc_with_hole_idx_is_{idx}")
     if not msh2vtu_out_dir.exists():
         msh2vtu_out_dir.mkdir(parents=True)
-    msh2vtu(filename=input_file, output_path=f"{out_dir}/disc_with_hole_idx_is_{idx}", keep_ids=True, reindex=True)
+    msh2vtu(
+        filename=input_file,
+        output_path=f"{out_dir}/disc_with_hole_idx_is_{idx}",
+        keep_ids=True,
+        reindex=True,
+    )
     # %cd {out_dir}/disc_with_hole_idx_is_{idx}
-    ! identifySubdomains -f -m disc_with_hole_idx_is_{idx}_domain.vtu -- disc_with_hole_idx_is_{idx}_physical_group_*.vtu
+    run(
+        f"identifySubdomains -f -m disc_with_hole_idx_is_{idx}_domain.vtu -- disc_with_hole_idx_is_{idx}_physical_group_*.vtu",
+        shell=True,
+        check=True,
+    )
     # %cd -
 
 
@@ -279,8 +291,6 @@ for idx in STUDY_indices:
 # To get a better sense of cell sizes and the additional refinement around the hole, the meshes of refinement indices 8 and 80 are shown below.
 
 # %% jupyter={"source_hidden": true}
-import pyvista as pv
-
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
 
@@ -314,11 +324,6 @@ p.show()
 # ## Run OGS
 
 # %% jupyter={"source_hidden": true}
-import shutil
-
-import ogstools as ot
-
-# %% jupyter={"source_hidden": true}
 # ATTENTION: We exclude the last study index, because its simulation takes
 #            too long to be included in the OGS CI pipelines.
 for idx in STUDY_indices[:-1]:
@@ -346,7 +351,7 @@ for idx in STUDY_indices[:-1]:
 # We show plots of the radial, tangential and shear stress distribution along the x-axis.
 # Additionally, the absolute error of each refinement level to the analytical solution is plotted for better interpretation of variations.
 #
-# The plots show that–for the considered axis–the stress distribution around the hole converges to Kirsch´s solution with decreasing size of the mesh cells.
+# The plots show that–for the considered axis–the stress distribution around the hole converges to Kirsch`s solution with decreasing size of the mesh cells.
 # This decrease of the extrapolation errors can also be seen in the plots for the absolute error.
 # Especially in the region close to the hole the error values for finer meshes shrink more and more.
 #
@@ -739,6 +744,7 @@ def plot_stress_distribution_along_xaxis():
         fig.tight_layout()
 
 
+# %%
 plot_stress_distribution_along_xaxis()
 
 
@@ -778,9 +784,6 @@ plot_stress_distribution_along_xaxis()
 # The main conclusion that can be drawn is that the solution for the displacements converge significantly faster than those for the stresses.
 # As a practical consequence, it might be possible to get a sufficiently accurate displacement solution already on a relatively coarse mesh,
 # whereas for an accurate stress solution a much finer mesh might be necessary.
-
-# %% jupyter={"source_hidden": true}
-from vtkmodules.vtkFiltersParallel import vtkIntegrateAttributes
 
 
 # %% jupyter={"source_hidden": true}

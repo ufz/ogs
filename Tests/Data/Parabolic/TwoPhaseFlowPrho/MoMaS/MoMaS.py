@@ -24,12 +24,12 @@
 # %% [markdown]
 # ## Introduction
 #
-# The background of this benchmark is the production of hydrogen gas due to the corrosion of the metallic container in the nuclear waste repository. Numerical model is built to illustrate such gas appearance phenomenon. The model domain is a two dimensional horizontal column representing the bentonite backfill in the repository tunnel, with hydrogen gas injected on the left boundary. This benchmark was proposed in the GNR MoMaS project by French National Radioactive Waste Management Agency. Several research groups has made contributions to test the benchmark and provided their reference solutions Neumann et al. (2013); Bourgeat et al. (2009); Marchand and Knabner (2014); Ben Gharbia and Jaffré (2014). Here we adopted the results proposed in Marchand’s paper Marchand and Knabner (2014) for comparison.
+# The background of this benchmark is the production of hydrogen gas due to the corrosion of the metallic container in the nuclear waste repository. Numerical model is built to illustrate such gas appearance phenomenon. The model domain is a two dimensional horizontal column representing the bentonite backfill in the repository tunnel, with hydrogen gas injected on the left boundary. This benchmark was proposed in the GNR MoMaS project by French National Radioactive Waste Management Agency. Several research groups has made contributions to test the benchmark and provided their reference solutions Neumann et al. (2013); Bourgeat et al. (2009); Marchand and Knabner (2014); Ben Gharbia and Jaffré (2014). Here we adopted the results proposed in Marchand’s paper Marchand and Knabner (2014) for comparison.  # noqa: RUF003
 
 # %% [markdown]
 # ## Physical Scenario
 #
-# Here a 2D rectangular domain $Ω$ = [0, 200] × [−10, 10] m (see Figure 1) was considered with an impervious boundary at $Γ_\mathrm{imp}$ = [0, 200] × [−10, 10] m, an inflow boundary at $Γ_\mathrm{in}$ = 0 × [−10, 10] m and an outflow boundary at $Γ_\mathrm{out}$ = 200 × [−10, 10] m. The domain was initially saturated with water, hydrogen gas was injected on the left-hand-side boundary within a certain time span ([0, 5 × 10<sup>4</sup> centuries]). After that the hydrogen injection stopped and no flux came into the system. The right-hand-side boundary is kept open throughout the simulation. The initial condition and boundary conditions were summarized as
+# Here a 2D rectangular domain $Ω$ = [0, 200] × [−10, 10] m (see Figure 1) was considered with an impervious boundary at $Γ_\mathrm{imp}$ = [0, 200] × [−10, 10] m, an inflow boundary at $Γ_\mathrm{in}$ = 0 × [−10, 10] m and an outflow boundary at $Γ_\mathrm{out}$ = 200 × [−10, 10] m. The domain was initially saturated with water, hydrogen gas was injected on the left-hand-side boundary within a certain time span ([0, 5 × 10<sup>4</sup> centuries]). After that the hydrogen injection stopped and no flux came into the system. The right-hand-side boundary is kept open throughout the simulation. The initial condition and boundary conditions were summarized as  # noqa: RUF003
 #
 # -    $X$($t$ = 0) = 10$^5$     and     $p_\mathrm{L}$($t$ = 0) = $p_\mathrm{L}^\mathrm{out}$ = 10$^6$ Pa   on $Ω$
 # -    $q^\mathrm{w}$$\cdot$$v$ = $q^\mathrm{h}$$\cdot$$v$ = 0   on $\Gamma_\mathrm{imp}$
@@ -76,8 +76,8 @@
 # %% [markdown]
 # # Results and analysis
 #
-# The results of this benchmark are depicted in Figure 2. The evolution of gas phase saturation and the gas/liquid phase pressure over the entire time span are shown. In additional, we compare results from our model against those given in Marchand’s
-# paper (Marchand and Knabner, 2014). In Figure 2, solid lines are our simulation results while the symbols are the results fromMarchand et al. It can be seen that a good agreement has been achieved.
+# The results of this benchmark are depicted in Figure 2. The evolution of gas phase saturation and the gas/liquid phase pressure over the entire time span are shown. In additional, we compare results from our model against those given in Marchand`s
+# paper (Marchand and Knabner, 2014). In Figure 2, solid lines are our simulation results while the symbols are the results from Marchand et al. It can be seen that a good agreement has been achieved.
 #
 # ![](figures/Res_H2_inj_bench.png "Evolution of pressure and saturation over time.")
 

@@ -204,11 +204,21 @@
 # $$
 
 # %%
+import concurrent.futures
+import os
+import platform
+from pathlib import Path
+from subprocess import run
+from timeit import default_timer as timer
+
 import matplotlib.pyplot as plt
 import numpy as np
+import ogstools as ot
+import vtuIO
 from scipy import special as sp
 
 
+# %%
 class ANASOL:
     def __init__(self):
         # material parameters
@@ -366,13 +376,7 @@ ana_model = ANASOL()
 # In addition to the different formulation, we also compare the performance of the THM formulation with a linear and a quadratic mesh as well.
 
 # %%
-import os
-
-import ogstools as ot
-
 data_dir = os.environ.get("OGS_DATA_DIR", "../../..")
-
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -428,9 +432,6 @@ ogs_model_th2m.write_input()
 ogs_model_trm.write_input()
 
 # %%
-import concurrent.futures
-from timeit import default_timer as timer
-
 # Run models in parallel via concurrent.futures
 ogs_models = []
 ogs_models.append(
@@ -468,13 +469,10 @@ def run_ogs(model):
     print(f"Starting {prj} ...\n")
     start_sim = timer()
     # Starting via ogs6py does not work ("cannot pickle lxml"), at least on mac.
-    ! ogs {prj} {model["args"]} > {model["logfile"]}
-    assert _exit_code == 0  # noqa: F821
+    run(f"ogs {prj} {model['args']} > {model['logfile']}", shell=True, check=True)
     runtime = timer() - start_sim
     return [f"Finished {prj} in {runtime} s", runtime]
 
-
-import platform
 
 if platform.system() == "Darwin":
     import multiprocessing as mp
@@ -496,8 +494,6 @@ print(f"Elapsed time for all simulations: {timer() - start} s")
 # The analytical expressions together with the numerical model can now be evaluated at different points as a function of time (time series) or for a given time as a function of their spatial coordinates (along radial axis).
 
 # %%
-import vtuIO
-
 # Point of interest
 pts = {"pt0": (0.5, 0.5, 0.0)}
 

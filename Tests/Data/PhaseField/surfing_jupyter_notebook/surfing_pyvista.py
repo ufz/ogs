@@ -145,6 +145,18 @@
 # | _Initial crack length_         | $0.5$              | mm           | $a_0$      |
 
 # %%
+import os
+import time
+from pathlib import Path
+from subprocess import run
+
+import matplotlib.pyplot as plt
+import numpy as np
+import ogstools as ot
+import pyvista as pv
+from scipy.spatial import Delaunay
+
+# %%
 x_tip_Initial = 0.5
 y_tip_Initial = 0.5
 Height = 1.0
@@ -160,12 +172,8 @@ phasefield_model = "AT1"  # AT1 and AT2
 # ## Paths and project file name
 
 # %%
-import os
-
 # file's name
 prj_name = "surfing.prj"
-
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -176,20 +184,22 @@ if not out_dir.exists():
 
 # %%
 # https://www.opengeosys.org/docs/tools/meshing/structured-mesh-generation/
-! generateStructuredMesh -o {out_dir}/surfing_quad_1x2.vtu -e quad --lx 2 --nx {round(2/h)+1} --ly 1 --ny {round(1/h)+1}
-! NodeReordering -i {out_dir}/surfing_quad_1x2.vtu -o {out_dir}/surfing_quad_1x2_NR.vtu
+run(
+    f"generateStructuredMesh -o {out_dir}/surfing_quad_1x2.vtu -e quad --lx 2 --nx {round(2/h)+1} --ly 1 --ny {round(1/h)+1}",
+    check=True,
+)
+run(
+    f"NodeReordering -i {out_dir}/surfing_quad_1x2.vtu -o {out_dir}/surfing_quad_1x2_NR.vtu",
+    check=True,
+)
 
 # %% [markdown]
 # # Pre-processing
 # At fracture, we set the initial phase field to zero.
 
 # %%
-import pyvista as pv
-
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
-
-import numpy as np
 
 mesh = pv.read(f"{out_dir}/surfing_quad_1x2_NR.vtu")
 phase_field = np.ones((len(mesh.points), 1))
@@ -239,8 +249,6 @@ p.show()
 # # Run the simulation
 
 # %%
-import ogstools as ot
-
 # Change the length scale and phasefield model in project file
 model = ot.Project(
     input_file=prj_name,
@@ -257,12 +265,12 @@ model.replace_text(gml_file, xpath="./geometry")
 model.replace_text(Path("./Surfing_python.py").resolve(), xpath="./python_script")
 model.write_input()
 
-import time
-
 t0 = time.time()
 print(">>> OGS started execution ... <<<")
-! ogs {out_dir}/{prj_name} -o {out_dir} -m {out_dir} > {out_dir}/ogs-out.txt
-assert _exit_code == 0  # noqa: F821
+run(
+    f"ogs {out_dir}/{prj_name} -o {out_dir} -m {out_dir} > {out_dir}/ogs-out.txt",
+    check=True,
+)
 
 tf = time.time()
 print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
@@ -302,8 +310,6 @@ elif phasefield_model == "AT2":
 # # Post-processing
 
 # %%
-from scipy.spatial import Delaunay
-
 reader = pv.get_reader(f"{out_dir}/surfing.pvd")
 G_theta_time = np.zeros((len(reader.time_values), 2))
 
@@ -455,8 +461,6 @@ mesh.save(f"{out_dir}/surfing_Post_Processing.vtu")
 # ## Plots
 
 # %%
-import matplotlib.pyplot as plt
-
 plt.xlabel("$t$", fontsize=14)
 plt.ylabel(
     r"$\frac{|{G}_\mathrm{\theta}-({G}_\mathrm{c}^{\mathrm{eff}})_\mathrm{num}|}{({G}_\mathrm{c}^{\mathrm{eff}})_\mathrm{num}}\times 100\%$",

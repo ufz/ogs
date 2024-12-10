@@ -74,14 +74,18 @@
 import os
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
+import ogstools as ot
+import pandas as pd
+import vtuIO
+
+# %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 # %%
-import numpy as np
-import ogstools as ot
-
 model = ot.Project(input_file="bourgeat.prj", output_file=f"{out_dir}/modified.prj")
 # This Jupyter notebook version of this test runs not as far as its cTest-counterpart,
 # it'll stop after approx. 800 ka
@@ -116,8 +120,6 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 cls = ["#e6191d", "#337fb8", "#4eae4c", "#984ea3", "#984ea3", "#feff32"]
 
 # %%
-import vtuIO
-
 # Read PVD-output
 pvdfile = vtuIO.PVDIO(f"{out_dir}/result_bourgeat.pvd", dim=2)
 point = {"A": (0.0, 0.0, 0.0)}
@@ -132,8 +134,6 @@ num_results = [1.0 - saturation["A"], gas_pressure["A"], liquid_pressure["A"]]
 time_years = time / 365.2425 / 86400
 
 # %%
-import pandas as pd
-
 # Read the reference data from CSV files
 refs = [
     pd.read_csv("references/bourgeat_sG.csv"),
@@ -148,8 +148,6 @@ indices = {"Gas saturation": 0, "Gas pressure": 1, "Liquid pressure": 2}
 labels = ["$s_{G}$", "$p_{GR}$", "$p_{LR}$"]
 
 # %%
-import matplotlib.pyplot as plt
-
 plt.rcParams["figure.figsize"] = (12, 4)
 
 # Loop over gas_saturation, gas_pressure, and liquid_pressure

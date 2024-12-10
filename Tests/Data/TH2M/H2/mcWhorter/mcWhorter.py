@@ -69,8 +69,15 @@
 # The exact solution is not yet calculated in this notebook, instead the [online tool](https://mmg.fjfi.cvut.cz/~fucik/index.php?page=exact) by Radek Fučík is used. This tool calculates the solution and outputs the results with arbitrary accuracy as CSV files, which are plotted below.
 
 # %%
-import numpy as np
+import os
+from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
+import ogstools as ot
+import vtuIO
+
+# %%
 # Import analytical solution from a CSV file
 exact = np.loadtxt("data/ref_solution_saturation.csv", delimiter=",")
 # Zeroth column is location, first column is saturation
@@ -79,31 +86,22 @@ exact = np.loadtxt("data/ref_solution_saturation.csv", delimiter=",")
 # ## Numerical Solution
 
 # %%
-import os
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 # %%
-import ogstools as ot
-
 # run OGS
 model = ot.Project(input_file="mcWhorter_h2.prj", output_file="mcWhorter_h2.prj")
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
 
 # %%
-import vtuIO
-
 # read OGS results from PVD file
 pvdfile = vtuIO.PVDIO(
     f"{out_dir}/result_McWhorter_H2.pvd", dim=2, interpolation_backend="vtk"
 )
 
 # %%
-import numpy as np
-
 # The sampling routine requires a line of points in space
 x_axis = [(i, 0, 0) for i in exact[:, 0]]
 
@@ -119,8 +117,6 @@ err_abs = exact[:, 1] - sL_num
 err_rel = err_abs / exact[:, 1]
 
 # %%
-import matplotlib.pyplot as plt
-
 plt.rcParams["figure.figsize"] = (14, 4)
 fig1, (ax1, ax2) = plt.subplots(1, 2)
 

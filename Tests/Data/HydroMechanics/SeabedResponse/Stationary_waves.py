@@ -128,15 +128,19 @@
 # $$
 
 # %%
+import os
+from pathlib import Path
+
+import gmsh
 import matplotlib.pyplot as plt
 import numpy as np
+import ogstools as ot
+import pyvista as pv
 
+# %%
 plt.rc("font", size=8)
 plt.rc("axes", titlesize=10)
 plt.rc("axes", labelsize=10)
-
-import gmsh
-import pyvista as pv
 
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
@@ -374,9 +378,6 @@ fig.tight_layout()
 # For the further use in OpenGeoSys, the gmsh-mesh is converted to the vtu-format using the msh2vtu script.
 
 # %%
-import os
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -478,7 +479,6 @@ input_file = f"{out_dir}/square_200x100.msh"
 
 # %%
 # !msh2vtu --keep_ids -r -o {out_dir} {input_file}
-assert _exit_code == 0  # noqa: F821
 # %cd {out_dir}
 # !identifySubdomains -f -m square_200x100_domain.vtu -- square_200x100_physical_group_*.vtu
 # %cd -
@@ -547,9 +547,6 @@ plotter.show()
 
 # %% [markdown]
 # #### Running the numerical model
-
-# %%
-import ogstools as ot
 
 
 # %%

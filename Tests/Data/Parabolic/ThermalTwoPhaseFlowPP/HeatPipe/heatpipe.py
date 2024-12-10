@@ -34,10 +34,15 @@
 # As shown in the below figure, the heat pipe was represented by a 2D horizontal column (2.4 m in length and 0.2 m in width) of porous media, which was partially saturated with a liquid phase ($S_w$ = 0.41) at the beginning. A heater is installed on the right-hand-side of the horizontal column generating a constant heat flux of 100 $\mathrm{W/m^2}$ and raises the temperature gradually above the boiling point. At the left-hand boundary, we impose the constant gas phase pressure ($P_g$ = 101934 Pa), constant liquid saturation ($S_w$ = 0.97) and constant temperature ($T$ = 343 K) as Dirichlet boundary conditions.
 
 # %%
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import vtuIO
 from IPython.display import Image, display
+from mpl_toolkits.axes_grid1.inset_locator import InsetPosition, mark_inset
 
+# %%
 display(Image(filename="./model_domain.jpg", width=1000))
-
 
 # %% [markdown]
 # ## Model parameters and numerical settings
@@ -83,12 +88,6 @@ display(Image(filename="./model_domain.jpg", width=1000))
 # In the CTEST-small, the comparison is made for the time of 10000 seconds. The profiles of saturation and temperature are plotted below.
 
 # %%
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import vtuIO
-from mpl_toolkits.axes_grid1.inset_locator import InsetPosition, mark_inset
-
 plt.rcParams["legend.fontsize"] = 20
 plt.rcParams["font.size"] = 20
 

@@ -46,6 +46,8 @@
 # %%
 import os
 import time
+from pathlib import Path
+from subprocess import run
 from types import MethodType
 from xml.dom import minidom
 
@@ -56,8 +58,6 @@ import pyvista as pv
 
 # %%
 data_dir = os.environ.get("OGS_DATA_DIR", "../../..")
-
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -126,13 +126,13 @@ def ogs_beam(
     # file's name
     prj_name = "beam.prj"
     print(f"> Running beam model {phasefield_model} - {energy_split_model} ... <")
-    logfile = f"{out_dir}/log_{phasefield_model}_{energy_split_model}.txt"  # noqa: F841
+    logfile = f"{out_dir}/log_{phasefield_model}_{energy_split_model}.txt"
     # beam dimensions
     beam_height = 0.05
-    beam_depth = beam_height  # noqa: F841
-    beam_length = 1.0  # noqa: F841
+    beam_depth = beam_height
+    beam_length = 1.0
     # mesh properties
-    h = mesh_size  # noqa: F841, distance between nodes
+    h = mesh_size
     ls = length_scale
     # generate prefix from properties
     if energy_split_model == "VolumetricDeviatoric":
@@ -151,12 +151,27 @@ def ogs_beam(
     else:
         prefix = prefix + "_compressive"
     # generate mesh
-    ! generateStructuredMesh -o {out_dir}/bar_.vtu -e hex --lx {beam_length} --nx {round(beam_length/h)} --ly {beam_height} --ny {round(beam_height/h)} --lz {beam_depth} --nz {round(beam_depth/h)} > {logfile}
-    ! NodeReordering -i {out_dir}/bar_.vtu -o {out_dir}/bar.vtu >> {logfile}
-    ! ExtractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_left.vtu -x 1 -y 0 -z 0 >> {logfile}
-    ! ExtractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_right.vtu -x -1 -y 0 -z 0 >> {logfile}
-    ! partmesh -s -o {out_dir} -i {out_dir}/bar.vtu >> {logfile}
-    ! partmesh -m -n 3 -o {out_dir} -i {out_dir}/bar.vtu -- {out_dir}/bar_right.vtu {out_dir}/bar_left.vtu >> {logfile}
+    run(
+        f"generateStructuredMesh -o {out_dir}/bar_.vtu -e hex --lx {beam_length} --nx {round(beam_length/h)} --ly {beam_height} --ny {round(beam_height/h)} --lz {beam_depth} --nz {round(beam_depth/h)} > {logfile}",
+        check=True,
+    )
+    run(
+        f"NodeReordering -i {out_dir}/bar_.vtu -o {out_dir}/bar.vtu >> {logfile}",
+        check=True,
+    )
+    run(
+        f"ExtractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_left.vtu -x 1 -y 0 -z 0 >> {logfile}",
+        check=True,
+    )
+    run(
+        f"extractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_right.vtu -x -1 -y 0 -z 0 >> {logfile}",
+        check=True,
+    )
+    run(f"partmesh -s -o {out_dir} -i {out_dir}/bar.vtu >> {logfile}", check=True)
+    run(
+        f"partmesh -m -n 3 -o {out_dir} -i {out_dir}/bar.vtu -- {out_dir}/bar_right.vtu {out_dir}/bar_left.vtu >> {logfile}",
+        check=True,
+    )
     # change properties in prj file
     model = ot.Project(
         input_file=prj_name, output_file=f"{out_dir}/{prj_name}", MKL=True
@@ -190,7 +205,9 @@ def ogs_beam(
     # run ogs
     t0 = time.time()
     print("  > OGS started execution ...")
-    ! mpirun -n 3 ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}
+    run(
+        f"mpirun -n 3 ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}", check=True
+    )
     tf = time.time()
     print("  > OGS terminated execution. Elapsed time: ", round(tf - t0, 2), " s.")
 

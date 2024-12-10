@@ -42,6 +42,8 @@
 import os
 import shutil
 import time
+from pathlib import Path
+from subprocess import run
 from types import MethodType
 from xml.dom import minidom
 
@@ -51,8 +53,6 @@ import ogstools as ot
 import pyvista as pv
 
 # %%
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -97,6 +97,7 @@ def set_timestepping(model, repeat_list, delta_t_list):
 # %% [markdown]
 # ## Run ogs with specified parameters
 
+
 # %%
 def ogs_ortho(
     phasefield_model,
@@ -119,7 +120,7 @@ def ogs_ortho(
         f"> Running single edge notched shear test {phasefield_model} - {energy_split_model} ... <"
     )
     # fmt: off
-    logfile = f"{out_dir}/log_{phasefield_model}_{energy_split_model}_out.txt"  # noqa: F841
+    logfile = f"{out_dir}/log_{phasefield_model}_{energy_split_model}_out.txt"
     # fmt: on
     model = ot.Project(
         input_file=prj_name, output_file=f"{out_dir}/{prj_name}", MKL=True
@@ -130,8 +131,14 @@ def ogs_ortho(
 
     if MPI:
         # partition mesh
-        ! NodeReordering -i shear.vtu -o {out_dir}/shear.vtu >> {logfile}
-        ! constructMeshesFromGeometry -m {out_dir}/shear.vtu -g shear.gml >> {logfile}
+        run(
+            f"NodeReordering -i shear.vtu -o {out_dir}/shear.vtu >> {logfile}",
+            check=True,
+        )
+        run(
+            f"constructMeshesFromGeometry -m {out_dir}/shear.vtu -g shear.gml >> {logfile}",
+            check=True,
+        )
         shutil.move("shear_top.vtu", f"{out_dir}/shear_top.vtu")
         shutil.move("shear_bottom.vtu", f"{out_dir}/shear_bottom.vtu")
         shutil.move("shear_left.vtu", f"{out_dir}/shear_left.vtu")
@@ -142,10 +149,16 @@ def ogs_ortho(
         shutil.move("shear_p_2.vtu", f"{out_dir}/shear_p_2.vtu")
         shutil.move("shear_p_3.vtu", f"{out_dir}/shear_p_3.vtu")
 
-        ! partmesh -s -o {out_dir} -i {out_dir}/shear.vtu >> {logfile}
-        ! partmesh -m -n {ncores} -o {out_dir} -i {out_dir}/shear.vtu -- {out_dir}/shear_top.vtu {out_dir}/shear_bottom.vtu {out_dir}/shear_left.vtu {out_dir}/shear_right.vtu >> {logfile}
+        run(f"partmesh -s -o {out_dir} -i {out_dir}/shear.vtu >> {logfile}", check=True)
+        run(
+            f"partmesh -m -n {ncores} -o {out_dir} -i {out_dir}/shear.vtu -- {out_dir}/shear_top.vtu {out_dir}/shear_bottom.vtu {out_dir}/shear_left.vtu {out_dir}/shear_right.vtu >> {logfile}",
+            check=True,
+        )
     else:
-        ! NodeReordering -i shear.vtu -o {out_dir}/shear.vtu >> {logfile}
+        run(
+            f"NodeReordering -i shear.vtu -o {out_dir}/shear.vtu >> {logfile}",
+            check=True,
+        )
 
     # change some properties in prj file
     model = ot.Project(
@@ -184,12 +197,13 @@ def ogs_ortho(
     t0 = time.time()
     if MPI:
         print(f"  > OGS started execution with MPI - {ncores} cores...")
-        ! mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}
-        assert _exit_code == 0  # noqa: F821
+        run(
+            f"mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            check=True,
+        )
     else:
         print("  > OGS started execution - ")
-        ! ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}
-        assert _exit_code == 0  # noqa: F821
+        run(f"ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}", check=True)
     tf = time.time()
     print("  > OGS terminated execution. Elapsed time: ", round(tf - t0, 2), " s.")
 
@@ -323,6 +337,7 @@ p.show()
 # %% [markdown]
 # ## Post-processing
 # Figures compares the load-deflection curve for both models. As soon as the crack starts to propagate, the load drops.
+
 
 # %%
 # define function to obtain displacement applied on the top end of the square plate

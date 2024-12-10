@@ -141,16 +141,15 @@
 # %%
 import os
 import time
+from pathlib import Path
+from subprocess import run
 
 import matplotlib.pyplot as plt
 import numpy as np
 import vtuIO
 from matplotlib.pyplot import cm
 
-
 # %%
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -160,7 +159,7 @@ prj_name = "Cs.prj"
 t0 = time.time()
 print(">>> OGS started execution ... <<<")
 
-! ogs {prj_name} -o {out_dir} > {out_dir}/outCs.txt
+run(f"ogs {prj_name} -o {out_dir} > {out_dir}/outCs.txt", shell=True, check=True)
 
 tf = time.time()
 print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
@@ -236,7 +235,7 @@ prj_name = "U.prj"
 t0 = time.time()
 print(">>> OGS started execution ... <<<")
 
-! ogs {prj_name} -o {out_dir} > {out_dir}/outU.txt
+run(f"ogs {prj_name} -o {out_dir} > {out_dir}/outU.txt", shell=True, check=True)
 
 tf = time.time()
 print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")

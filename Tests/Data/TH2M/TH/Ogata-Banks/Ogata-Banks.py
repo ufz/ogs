@@ -58,13 +58,18 @@
 #
 # This results in an energy contribution across the Neumann boundaries that is dependent on the flowing medium and which may have to be compensated for by the boundary conditions.
 
-# %% [markdown]
-# ## Material properties
+# %%
+import os
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import ogstools as ot
+import vtuIO
+from scipy.special import erfc
 
 # %% [markdown]
-#
-#
-#
+# ## Material properties
 
 # %%
 # Porosity
@@ -114,11 +119,8 @@ v_x = 1.5e-6
 # %% [markdown]
 # ## Analytical solution
 
+
 # %%
-import numpy as np
-from scipy.special import erfc
-
-
 def OgataBanks(t, x):
     if not isinstance(t, int) and isinstance(t, np.float64):
         # In order to avoid a division by zero, the time field is increased
@@ -138,16 +140,11 @@ def OgataBanks(t, x):
 # ## Numerical solution
 
 # %%
-import os
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 # %%
-import ogstools as ot
-
 # Modifies the project file of the original cTest so that the simulation runs for a longer time.
 model = ot.Project(input_file="ogata-banks.prj", output_file=f"{out_dir}/modified.prj")
 model.replace_text(max_time, xpath="./time_loop/processes/process/time_stepping/t_end")
@@ -169,8 +166,6 @@ cls1 = ["#4a001e", "#731331", "#9f2945", "#cc415a", "#e06e85"]
 cls2 = ["#0b194c", "#163670", "#265191", "#2f74b3", "#5d94cb"]
 
 # %%
-import vtuIO
-
 pvdfile = vtuIO.PVDIO(f"{out_dir}/result_ogata-banks.pvd", dim=2)
 
 # Get all written timesteps
@@ -203,8 +198,6 @@ for t in range(len(time_steps)):
     )
 
 # %%
-import matplotlib.pyplot as plt
-
 plt.rcParams["figure.figsize"] = (14, 6)
 fig1, (ax1, ax2) = plt.subplots(1, 2)
 

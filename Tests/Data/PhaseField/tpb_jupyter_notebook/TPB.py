@@ -28,10 +28,10 @@
 # The notched beam under three-point bending is simulated to show how the phase field models can capture crack propagation and the structural strength. The geometry and boundary conditions of the model are depicted below. The bottom left point is fixed on both $x$ and $y$ directions and bottom right point is fixed on the $y$ direction. A displacement boundary condition $u^{\ast}$ is applied on the midpoint of the upper edge. The crack will initiate at the notch tip and propagate upward to the upper edge.
 #
 # * Three phase field models are implemented in OGS, i.e., $\texttt{COHESIVE}$, $\texttt{AT}_1$ and $\texttt{AT}_2$.
-# * The energy-split models include *EffectiveStress*, *Isotropic* and the *VolumetricDeviatoric*. 
+# * The energy-split models include *EffectiveStress*, *Isotropic* and the *VolumetricDeviatoric*.
 # * The softening rules implemented for the $\texttt{COHESIVE}$ model are *Linear* and *Exponential*.
 #
-# The force-displacement curves ($F^{\ast}$-$u^{\ast}$) for various sets of the above models will be recorded and compared with the experimental data. 
+# The force-displacement curves ($F^{\ast}$-$u^{\ast}$) for various sets of the above models will be recorded and compared with the experimental data.
 #
 # ![Model](./figures/TPB_model.png "Model")
 #
@@ -44,6 +44,7 @@ import os
 import shutil
 import time
 from pathlib import Path
+from subprocess import run
 from types import MethodType
 from xml.dom import minidom
 
@@ -100,6 +101,7 @@ def set_timestepping(model, repeat_list, delta_t_list):
 # %% [markdown]
 # ## Define functions generating mesh, modifying project file and running ogs with given parameters
 
+
 # %%
 def ogs_TPB(
     phasefield_model,
@@ -124,7 +126,7 @@ def ogs_TPB(
     print(
         f"> Running three point bending test {phasefield_model} - {energy_split_model} - {softening_curve} ... <"
     )
-    logfile = f"{out_dir}/log_{phasefield_model}_{energy_split_model}.txt"  # noqa: F841
+    logfile = f"{out_dir}/log_{phasefield_model}_{energy_split_model}.txt"
     model = ot.Project(
         input_file=prj_name, output_file=f"{out_dir}/{prj_name}", MKL=True
     )
@@ -137,21 +139,27 @@ def ogs_TPB(
 
     if MPI:
         # partition mesh
-        ! NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}
-        ! constructMeshesFromGeometry -m {out_dir}/TPB.vtu -g TPB.gml >> {logfile}
+        run(f"NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}", check=True)
+        run(
+            f"constructMeshesFromGeometry -m {out_dir}/TPB.vtu -g TPB.gml >> {logfile}",
+            check=True,
+        )
         shutil.move("TPB_left.vtu", f"{out_dir}/TPB_left.vtu")
         shutil.move("TPB_right.vtu", f"{out_dir}/TPB_right.vtu")
         shutil.move("TPB_top.vtu", f"{out_dir}/TPB_top.vtu")
         shutil.copy("TPB.gml", f"{out_dir}/TPB.gml")
-        ! partmesh -s -o {out_dir} -i {out_dir}/TPB.vtu >> {logfile}
-        ! partmesh -m -n {ncores} -o {out_dir} -i {out_dir}/TPB.vtu -- {out_dir}/TPB_right.vtu {out_dir}/TPB_left.vtu {out_dir}/TPB_top.vtu >> {logfile}
+        run(f"partmesh -s -o {out_dir} -i {out_dir}/TPB.vtu >> {logfile}", check=True)
+        run(
+            f"partmesh -m -n {ncores} -o {out_dir} -i {out_dir}/TPB.vtu -- {out_dir}/TPB_right.vtu {out_dir}/TPB_left.vtu {out_dir}/TPB_top.vtu >> {logfile}",
+            check=True,
+        )
     else:
-        ! NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}
-    
+        run(f"NodeReordering -i TPB.vtu -o {out_dir}/TPB.vtu >> {logfile}", check=True)
+
     # change properties in prj file
     model = ot.Project(
         input_file=prj_name, output_file=f"{out_dir}/{prj_name}", MKL=True
-        )
+    )
     model.replace_parameter_value(name="ls", value=length_scale)
     model.replace_text(phasefield_model, xpath="./processes/process/phasefield_model")
     model.replace_text(
@@ -184,10 +192,13 @@ def ogs_TPB(
     t0 = time.time()
     if MPI:
         print(f"  > OGS started execution with MPI - {ncores} cores...")
-        ! mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}
+        run(
+            f"mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            check=True,
+        )
     else:
         print("  > OGS started execution ...")
-        ! ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}
+        run(f"ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}", check=True)
     tf = time.time()
     print("  > OGS terminated execution. Elapsed time: ", round(tf - t0, 2), " s.")
 
@@ -263,6 +274,7 @@ for b in ["AT1", "AT2"]:
 # %% [markdown]
 # ## Post-processing
 # The force-displacement curves ($F^{\ast}$-$u^{\ast}$) applied to the beam are compared.
+
 
 # %%
 # define function to obtain displacement applied at the loading point from vtu file
@@ -357,6 +369,6 @@ plt.fill_between(
 )
 
 # %% [markdown]
-# Running all the selected cases with fine time steps (100 steps) yields the following figure in which the green patch bounds the experimental data. The cohesive models match the experimental results better than $\texttt{AT}_1$ and $\texttt{AT}_2$. 
+# Running all the selected cases with fine time steps (100 steps) yields the following figure in which the green patch bounds the experimental data. The cohesive models match the experimental results better than $\texttt{AT}_1$ and $\texttt{AT}_2$.
 #
 # ![Results](./figures/F_vs_u.png "Results")

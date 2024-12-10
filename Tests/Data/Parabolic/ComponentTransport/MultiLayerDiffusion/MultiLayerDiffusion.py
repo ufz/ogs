@@ -71,14 +71,15 @@
 
 # %%
 import os
+from pathlib import Path
+from subprocess import run
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import vtuIO
-from IPython.display import Image
+from IPython.display import Image, display
 from matplotlib.pyplot import cm
-
 
 # %%
 # plot semi-analytical solution
@@ -146,14 +147,12 @@ plot_analytical_solutions()
 prj_name = "1D_MultiLayerDiffusion"
 prj_file = f"{prj_name}.prj"
 
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 print(f"ogs {prj_file} > out.txt")
-! ogs {prj_file} -o {out_dir} > {out_dir}/out.txt
+run(f"ogs {prj_file} -o {out_dir} > {out_dir}/out.txt", shell=True, check=True)
 
 # Read simulation results
 pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", dim=1)
@@ -225,8 +224,6 @@ plot_simulation_results()
 # Here is a sketch that shows how we calculate the molar flux at the node.
 
 # %%
-from IPython.display import display
-
 display(Image(filename="./sketch_molar_flux_calculation.jpg", width=400))
 
 

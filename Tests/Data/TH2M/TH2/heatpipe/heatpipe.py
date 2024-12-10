@@ -72,9 +72,15 @@
 
 # %%
 import math
+import os
+from pathlib import Path
 
+import matplotlib.pyplot as plt
 import numpy as np
+import ogstools as ot
+import pyvista as pv
 
+# %%
 q = -100.0  # heat injection [W/m²]
 
 K = 1e-12  # permeability [m²]
@@ -141,7 +147,7 @@ def relative_permeability_liquid(sL_eff):
 
 
 # %% [markdown]
-# Determining the composition of the gas phase, we assume that the sum of all constituents’ partial pressures accounts for the entire gas phase pressure (Dalton’s law). The partial pressure of water vapour is derived from the true vapour pressure that accounts for the impact of capillary effects as well: due to wettability and capillarity, the interfaces prevailing in porous media are not flat, but rather curving. Above curved interfaces, the vapour pressure may change depending on the direction of curvature. The Kelvin-Laplace equation accounts for this and expresses the true vapour pressure as a function of capillary pressure and the saturation vapour pressure of pure water.
+# Determining the composition of the gas phase, we assume that the sum of all constituents` partial pressures accounts for the entire gas phase pressure (Dalton`s law). The partial pressure of water vapour is derived from the true vapour pressure that accounts for the impact of capillary effects as well: due to wettability and capillarity, the interfaces prevailing in porous media are not flat, but rather curving. Above curved interfaces, the vapour pressure may change depending on the direction of curvature. The Kelvin-Laplace equation accounts for this and expresses the true vapour pressure as a function of capillary pressure and the saturation vapour pressure of pure water.
 #
 # The saturation vapour pressure is determined by the approximate Clausius-Clapeyron equation.
 
@@ -488,11 +494,6 @@ M, sL_eff_list = full_Euler(dsL_eff, y0, sL_eff_low, sL_eff_high)
 # The numerical problem considers the same consitutive relationships and identical boundary and initial conditions. We use the TH2M model of OGS to solve the coupled partial differential equations describing the system behavior. Detailed description of the numerical model can be found in (Grunwald et al., 2022).
 
 # %%
-import os
-from pathlib import Path
-
-import ogstools as ot
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -508,8 +509,6 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
 
 # %%
 # Import OGS simulation results
-import pyvista as pv
-
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
 
@@ -540,8 +539,6 @@ T_num_interp = np.interp(M[0, :], x_num, T_num)
 # As one can see from the figures below, the numerical results are in really good agreement with the analytical solution. To better understand and visualize the deviation, we also perform a quick error analysis by simply calculating the difference (absolute and relative error) between the analytical and the numerical solution.
 
 # %%
-import matplotlib.pyplot as plt
-
 plt.rcParams["lines.linewidth"] = 2.0
 plt.rcParams["lines.color"] = "black"
 plt.rcParams["legend.frameon"] = True

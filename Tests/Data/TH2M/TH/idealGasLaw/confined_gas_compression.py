@@ -65,8 +65,13 @@
 # $$
 
 # %%
+import os
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
+import ogstools as ot
+import vtuIO
 
 # %%
 # time runs from 0 to 10 in 11 steps
@@ -151,13 +156,6 @@ T = p_GR * M / R / rho_GR
 # ## Numerical solution
 
 # %%
-import ogstools as ot
-import vtuIO
-
-# %%
-import os
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)

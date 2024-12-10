@@ -33,7 +33,7 @@
 # \label{eq:sneddon_2D_static}
 # \end{eqnarray}
 #
-# where $u$ is the displacement $E'$ is the plane strain Young's modulus ($E' = E/(1-\nu^2)$) with $\nu$ is Poisson’s ratio, $p$ is the fluid pressure inside the fracture. To account for the infinite boundaries in the closed-form solution, we considered a large finite domain $ [-10a_o,10a_o] \times [-10a_o,10a_o]$. The effective element size, $h$, is $1\times10^{-2}$.
+# where $u$ is the displacement $E'$ is the plane strain Young's modulus ($E' = E/(1-\nu^2)$) with $\nu$ is Poisson`s ratio, $p$ is the fluid pressure inside the fracture. To account for the infinite boundaries in the closed-form solution, we considered a large finite domain $ [-10a_o,10a_o] \times [-10a_o,10a_o]$. The effective element size, $h$, is $1\times10^{-2}$.
 #
 
 # %% [markdown]
@@ -65,12 +65,17 @@
 import math
 import os
 import time
+from pathlib import Path
+from subprocess import run
 
 import gmsh
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 from ogstools.msh2vtu import msh2vtu
+
+# %%
 
 pi = math.pi
 plt.rcParams["text.usetex"] = True
@@ -102,8 +107,6 @@ h_list = [0.01]  # list of mesh sizes (h)
 # file's name
 prj_name = "Kregime_Static.prj"
 meshname = "mesh_full_pf"
-
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -230,8 +233,6 @@ def pre_processing(h, a0):
 #
 
 # %%
-import pyvista as pv
-
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
 
@@ -243,7 +244,7 @@ def sneddon_numerical(h):
     filename = f"results_h_{h:0.4f}"
     mesh_generation(0.1, h)
     # Convert GMSH (.msh) meshes to VTU meshes appropriate for OGS simulation.
-    input_file = f"{out_dir}/" + meshname + ".msh"  # noqa: F841
+    input_file = f"{out_dir}/" + meshname + ".msh"
     msh2vtu(filename=input_file, output_path=out_dir, keep_ids=True)
     # As a preprocessing step, define the initial phase-field (crack).
     pre_processing(h, a0)
@@ -264,9 +265,10 @@ def sneddon_numerical(h):
     # run simulation with ogs
     t0 = time.time()
     print(">>> OGS started execution ... <<<")
-
-    # !ogs {out_dir}/{prj_name} -o {out_dir} -m {out_dir} > {out_dir}/ogs-out.txt
-    assert _exit_code == 0  # noqa: F821
+    run(
+        f"ogs {out_dir}/{prj_name} -o {out_dir} -m {out_dir} > {out_dir}/ogs-out.txt",
+        check=True,
+    )
     tf = time.time()
     print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
 

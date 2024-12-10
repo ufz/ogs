@@ -34,6 +34,8 @@
 import os
 import sys
 import time
+from pathlib import Path
+from subprocess import run
 
 import DecayChainAnalytical as ana
 import h5py
@@ -44,7 +46,6 @@ import pyvista as pv
 import vtuIO
 from IPython.display import Image, display
 from matplotlib.pyplot import cm
-
 
 # %%
 display(Image(filename="chains.png", width=600))
@@ -247,8 +248,6 @@ prj_name = "1d_decay_chain"
 prj_file_GIA = Path(f"./GlobalImplicitApproach/{prj_name}_GIA.prj")
 prj_file_OS = Path(f"./{prj_name}_OS.prj")
 
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -256,7 +255,7 @@ if not out_dir.exists():
 
 # %%
 start_time = time.time()
-! ogs -o {out_dir} {prj_file_GIA} > {out_dir}/out.txt
+run(f"ogs -o {out_dir} {prj_file_GIA} > {out_dir}/out.txt", shell=True, check=True)
 end_time = time.time()
 runtime_GIA = round(end_time - start_time, 2)
 print("Execution time for the GIA model is ", runtime_GIA, "s")
@@ -985,7 +984,11 @@ prj_file_GIA_8 = Path(f"./GlobalImplicitApproach/MPI/8Processors/{prj_name}_GIA.
 
 print(f"mpirun --bind-to none -np 4 ogs {prj_file_GIA_4} -o {out_dir} > out.txt")
 start_time = time.time()
-! mpirun --bind-to none -np 4 ogs {prj_file_GIA_4} -o {out_dir} > {out_dir}/out.txt
+run(
+    f"mpirun --bind-to none -np 4 ogs {prj_file_GIA_4} -o {out_dir} > {out_dir}/out.txt",
+    shell=True,
+    check=True,
+)
 end_time = time.time()
 runtime_GIA_4 = round(end_time - start_time, 2)
 print(
@@ -996,7 +999,11 @@ print(
 
 print(f"mpirun --bind-to none -np 8 ogs {prj_file_GIA_8} -o {out_dir} > out.txt")
 start_time = time.time()
-! mpirun --bind-to none -np 8 ogs {prj_file_GIA_8} -o {out_dir} > {out_dir}/out.txt
+run(
+    f"mpirun --bind-to none -np 8 ogs {prj_file_GIA_8} -o {out_dir} > {out_dir}/out.txt",
+    shell=True,
+    check=True,
+)
 end_time = time.time()
 runtime_GIA_8 = round(end_time - start_time, 2)
 print(

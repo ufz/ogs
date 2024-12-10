@@ -40,10 +40,18 @@
 # where $c$ is the concentration of a solute in mol$\cdot$m$^{-3}$, $c_i$ and $c_b$ are initial and boundary concentrations; $D$ is the diffusion coefficient of the solute in water, x and t are location and time of solution.
 
 # %%
+import os
+from pathlib import Path
+
+import matplotlib.pyplot as plt
 import numpy as np
+import ogstools as ot
+import vtuIO
+from matplotlib.lines import Line2D
 from scipy.special import erfc
 
 
+# %%
 # Analytical solution of the diffusion equation
 def Diffusion(x, t):
     if (
@@ -92,16 +100,11 @@ c_i = concentration(1.0 - (beta_c * H * pGR_i))
 # ## Numerical Solution
 
 # %%
-import os
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 # %%
-import ogstools as ot
-
 model = ot.Project(input_file="diffusion.prj", output_file=f"{out_dir}/modified.prj")
 model.replace_text(1e7, xpath="./time_loop/processes/process/time_stepping/t_end")
 model.replace_text(
@@ -120,7 +123,6 @@ cls1 = ["#4a001e", "#731331", "#9f2945", "#cc415a", "#e06e85", "#ed9ab0"]
 cls2 = ["#0b194c", "#163670", "#265191", "#2f74b3", "#5d94cb", "#92b2de"]
 
 # %%
-import vtuIO
 
 pvdfile = vtuIO.PVDIO(f"{out_dir}/result_diffusion.pvd", dim=2)
 
@@ -159,8 +161,6 @@ for t in range(len(time_steps)):
     )
 
 # %%
-import matplotlib.pyplot as plt
-
 plt.rcParams["figure.figsize"] = (14, 4)
 
 # Plot of concentration vs. time at different locations
@@ -205,8 +205,6 @@ for key, _c in c_over_t_at_x.items():
 
 
 # Hack to force a custom legend:
-from matplotlib.lines import Line2D
-
 custom_lines = []
 
 for i in range(6):

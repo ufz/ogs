@@ -335,18 +335,20 @@ for nedge, output_prefix in zip(nedges, output_prefices):
 
 # %%
 import os
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import matplotlib.tri as tri
+import numpy as np
 import ogstools as ot
-
-out_dir = Path(os.environ.get("ot_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+import pyvista as pv
+import vtuIO
 
 # %%
-import xml.etree.ElementTree as ET
-
-import pyvista as pv
+out_dir = Path(os.environ.get("OT_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
 
 
 # %%
@@ -439,9 +441,6 @@ for mesh_name, output_prefix in zip(mesh_names, output_prefices):
 print(uys_at_top_bbar)
 
 # %%
-import matplotlib.pyplot as plt
-import numpy as np
-
 ne = [4, 10, 15, 20, 25, 30]
 
 
@@ -486,9 +485,6 @@ plot_data(ne, uys_at_top_bbar, uys_at_top_non_bbar, "b_bar_linear.png")
 # ### Contour plot
 
 # %%
-import matplotlib.tri as tri
-import vtuIO
-
 nedges = ["4", "10", "15", "20", "25", "30"]
 
 

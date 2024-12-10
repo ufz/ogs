@@ -89,13 +89,14 @@
 
 # %%
 import os
+from pathlib import Path
+from subprocess import run
 
 import matplotlib.pyplot as plt
 import numpy as np
 import vtuIO
 from matplotlib.pyplot import cm
 from scipy import special
-
 
 # %%
 ###Model parameters###
@@ -197,14 +198,12 @@ plot_analytical_solutions()
 prj_name = "1D_DiffusionSorptionDecay"
 prj_file = f"{prj_name}.prj"
 
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 print(f"ogs {prj_file} > out.txt")
-! ogs {prj_file} -o {out_dir} > {out_dir}/out.txt
+run(f"ogs {prj_file} -o {out_dir} > {out_dir}/out.txt", shell=True, check=True)
 
 # Read simulation results
 pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", dim=1)
@@ -442,14 +441,12 @@ plot_analytical_solutions()
 prj_name = "1D_AdvectionDiffusionSorptionDecay"
 prj_file = f"../AdvectionDiffusionSorptionDecay/{prj_name}.prj"
 
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 print(f"ogs {prj_file} > {prj_name}.txt")
-! ogs {prj_file} -o {out_dir} > {prj_name}.txt
+run(f"ogs {prj_file} -o {out_dir} > {prj_name}.txt", shell=True, check=True)
 
 # Read simulation results
 pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", dim=1)

@@ -30,22 +30,22 @@
 # %%
 # 1-modules
 import os
+import time
+from pathlib import Path
+from subprocess import run
 
+import matplotlib.pyplot as plt
+import matplotlib.tri as tri
 import pyvista as pv
+import vtuIO
 from IPython.display import Image
 
 pv.set_jupyter_backend("static")
-import matplotlib.pyplot as plt
-
-# import vtk
-import matplotlib.tri as tri
-import vtuIO
 
 # %%
 # 2-settings (file handling, title, figures)
 fig_dir = "./figures/"
 
-from pathlib import Path
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
@@ -107,11 +107,9 @@ plotter.show()
 
 # %%
 # run ogs
-import time
-
 t0 = time.time()
 print(f"ogs -o {out_dir} {prj_file_test} > {out_dir}/log.txt")
-! ogs -o {out_dir} {prj_file_test} > {out_dir}/log.txt
+run(f"ogs -o {out_dir} {prj_file_test} > {out_dir}/log.txt", shell=True, check=True)
 tf = time.time()
 print("computation time: ", round(tf - t0, 2), " s.")
 

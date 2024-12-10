@@ -78,7 +78,7 @@ prj_name = "calcite_simple.prj"
 t0 = time.time()
 print(">>> OGS started execution ... <<<")
 
-! ogs {prj_name} -o {out_dir} > {out_dir}/out_simple.txt
+!ogs {prj_name} -o {out_dir} > {out_dir}/out_simple.txt
 
 tf = time.time()
 print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
@@ -97,7 +97,7 @@ prj_name = "calcite_pwp.prj"
 t0 = time.time()
 print(">>> OGS started execution ... <<<")
 
-! ogs {prj_name} -o {out_dir} > {out_dir}/out_pwp.txt
+!ogs {prj_name} -o {out_dir} > {out_dir}/out_pwp.txt
 
 tf = time.time()
 print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")

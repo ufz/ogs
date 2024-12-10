@@ -57,6 +57,11 @@
 
 # %%
 # HIDDEN
+import os
+from pathlib import Path
+
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import matplotlib.tri as tri
 import numpy as np
@@ -64,12 +69,8 @@ import ogstools as ot
 import seaborn as sns
 import vtuIO
 
-
 # %%
 # Setup model
-import os
-from pathlib import Path
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -171,9 +172,6 @@ vmag = np.sqrt(fieldx**2.0 + fieldy**2.0)
 
 
 # %%
-import matplotlib.cm as cm
-import matplotlib.colors as mcolors
-
 fig, ax = plt.subplots(ncols=2, figsize=(20, 8))
 
 nz = mcolors.Normalize()
