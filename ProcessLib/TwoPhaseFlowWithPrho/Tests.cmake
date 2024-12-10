@@ -45,5 +45,5 @@ AddTest(
 )
 
 if(NOT WIN32 AND NOT OGS_USE_MPI)
-    NotebookTest(NOTEBOOKFILE Parabolic/TwoPhaseFlowPrho/MoMaS/MoMaS.ipynb RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE Parabolic/TwoPhaseFlowPrho/MoMaS/MoMaS.py RUNTIME 10)
 endif()
