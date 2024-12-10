@@ -142,9 +142,12 @@ if not out_dir.exists():
 
 ```python
 # Import OGS class
-from ogs6py.ogs import OGS
+import ogstools as ogs
 
-model = OGS(PROJECT_FILE="286k_prisms/line_source_term_in_cylinder.prj")
+model = ogs.Project(
+    input_file="286k_prisms/line_source_term_in_cylinder.prj",
+    output_file="286k_prisms/line_source_term_in_cylinder.prj"
+    )
 model.run_model(logfile=f"{out_dir}/286k_out.txt", args=f"-o {out_dir} -m 286k_prisms")
 ```
 
@@ -246,8 +249,9 @@ The cylindrical domain is defined as axisymmetric.
 #### Numerical simulation
 
 ```python
-model = OGS(
-    PROJECT_FILE="../3D_line_source_term_in_cylinder_axisymmetric/line_source_term_in_cylinder.prj"
+model = ogs.Project(
+    input_file="../3D_line_source_term_in_cylinder_axisymmetric/line_source_term_in_cylinder.prj",
+    output_file="../3D_line_source_term_in_cylinder_axisymmetric/line_source_term_in_cylinder.prj"
 )
 model.run_model(
     logfile=f"{out_dir}/axisym_out.txt",

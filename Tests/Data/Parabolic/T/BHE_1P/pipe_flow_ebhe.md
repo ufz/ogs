@@ -262,11 +262,11 @@ if not out_dir.exists():
 ```
 
 ```python
-from ogs6py.ogs import OGS
+import ogstools as ogs
 
 # Create an OGS-object
 # Pass the project file and set an output file path
-model=OGS(INPUT_FILE="BHE_1P.prj", PROJECT_FILE=f"{out_dir}/BHE_1P.prj")
+model=ogs.Project(input_file="BHE_1P.prj", output_file=f"{out_dir}/BHE_1P.prj")
 
 # set end time (in seconds) and the time increments
 model.replace_text(5 * 24 * 60 * 60, xpath="./time_loop/processes/process/time_stepping/t_end")

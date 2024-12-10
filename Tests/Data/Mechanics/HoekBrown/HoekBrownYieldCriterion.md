@@ -127,7 +127,7 @@ import pandas as pd
 import vtuIO
 from IPython.display import Markdown, display
 from matplotlib.ticker import MultipleLocator
-from ogs6py.ogs import OGS
+import ogstools as ogs
 from scipy.optimize import fsolve
 from tfel.material import projectOnPiPlane
 ```
@@ -854,8 +854,8 @@ if not out_dir.exists():
 ```
 
 ```python
-model_hb = OGS(
-    INPUT_FILE="load_test_hb_nonassociated.prj", PROJECT_FILE="load_test_hb_nonassociated.prj"
+model_hb = ogs.Project(
+    input_file="load_test_hb_nonassociated.prj", output_file="load_test_hb_nonassociated.prj"
     )
 ```
 

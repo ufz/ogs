@@ -8,7 +8,7 @@ image = "./figures/MandelCryer_mesh.png"
 web_subsection = "hydro-mechanics"
 +++
 
-<!-- #region -->
+
 ## Mandel-Cryer Effect
 
 This is a classical example to demonstrate the effect of hydromechanical coupling in a poroelastic medium.
@@ -56,8 +56,6 @@ All parameters are concluded in the following tables.
 | Time step                  | $10^{-2}$| s                       |
 | Coupling scheme parameter  | $0.7774$ | -                       |
 
-<!-- #endregion -->
-
 ## Numerical Simulation
 
 ```python
@@ -68,15 +66,14 @@ from pathlib import Path
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
+
+import ogstools as ogs
 ```
 
 ```python
-# Import OGS class
-from ogs6py.ogs import OGS
-
 # Initiate an OGS-object
 # Pass it the project file and set an output file 
-model = OGS(INPUT_FILE="MandelCryerStaggered.prj", PROJECT_FILE=f"{out_dir}/MandelCryerStaggered_modified.prj")
+model = ogs.Project(input_file="MandelCryerStaggered.prj", output_file=f"{out_dir}/MandelCryerStaggered_modified.prj")
 
 # Increase end time
 t_end = 1.5

@@ -20,7 +20,7 @@ The material model is a Saint-Venant-Kirchhoff material law for initial testing.
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
-from ogs6py import ogs
+import ogstools as ogs
 import os
 import pyvista as pv
 
@@ -87,7 +87,10 @@ if not out_dir.exists():
 ```
 
 ```python jupyter={"source_hidden": true}
-model = ogs.OGS(PROJECT_FILE="bar1to6_torsion.prj")
+model = ogs.Project(
+    input_file="bar1to6_torsion.prj",
+    output_file="bar1to6_torsion.prj"
+    )
 ```
 
 ```python jupyter={"source_hidden": true}
