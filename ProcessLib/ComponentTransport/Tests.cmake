@@ -950,13 +950,17 @@ AddTest(
 
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.py RUNTIME 10)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/DecayChain.py RUNTIME 160)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/RadionuclidesMigration.py RUNTIME 55)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/CO2Injection/CO2Injection.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/MultiLayerDiffusion/MultiLayerDiffusion.py RUNTIME 25)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.py RUNTIME 16)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/elder_jupyter/elder_jupyter.py RUNTIME 25)
     NotebookTest(NOTEBOOKFILE Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/heatpipe.py RUNTIME 10)
+
+endif()
+
+if(OGS_USE_PETS)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/DecayChain.py RUNTIME 160)
 endif()
 
 OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_c.prj RUNTIME 1)
