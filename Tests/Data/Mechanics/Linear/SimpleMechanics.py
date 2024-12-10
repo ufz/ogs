@@ -226,7 +226,7 @@ labels = [
     f"{i}: {label}" for i, label in enumerate(ot.plot.utils.justified_labels(points))
 ]
 fig = mesh_series.plot_probe(
-    points=points[:4], variable=disp, time_unit="a", labels=labels[:4]
+    points=points, variable=disp, time_unit="a", labels=labels
 )
 
 # %%
