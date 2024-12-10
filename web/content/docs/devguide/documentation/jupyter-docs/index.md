@@ -140,8 +140,10 @@ The first cell after the frontmatter needs to be a `markdown`-cell!
   # Run ogs; get input data from current directory; write to `out_dir`
   ! ogs my_project.prj -o {out_dir} > {out_dir}/log.txt
 
-  # OR with ogs6py:
+  # OR with ogstools:
   # ... setup model ...
+  import ogstools as ogs
+  model = ogs.Project(input_file="input.prj", output_file="output.prj")
   model.run_model(logfile=os.path.join(out_dir, "log.txt"), args=f"-o {out_dir}")
 
   # Verify results; on failure assert with:

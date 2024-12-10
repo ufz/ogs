@@ -205,7 +205,7 @@ function(setup_venv)
     endif()
 endfunction()
 
-# Sets up ctest which are dependent on the virtual env, e.g. using ogs6py
+# Sets up ctest which are dependent on the virtual env, e.g. using ogstools
 function(setup_venv_dependent_ctests)
     if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND OGS_BUILD_PROCESS_HT)
         execute_process(
