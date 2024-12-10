@@ -86,6 +86,7 @@ endif()
 if(GUIX_BUILD)
     find_package(pybind11 REQUIRED)
 else()
+    set(PYBIND11_FINDPYTHON ON)
     CPMFindPackage(
         NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
         VERSION ${ogs.minimum_version.pybind11} SYSTEM TRUE
