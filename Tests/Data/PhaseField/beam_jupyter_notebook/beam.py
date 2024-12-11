@@ -154,23 +154,32 @@ def ogs_beam(
     run(
         f"generateStructuredMesh -o {out_dir}/bar_.vtu -e hex --lx {beam_length} --nx {round(beam_length/h)} --ly {beam_height} --ny {round(beam_height/h)} --lz {beam_depth} --nz {round(beam_depth/h)} > {logfile}",
         check=True,
+        shell=True,
     )
     run(
         f"NodeReordering -i {out_dir}/bar_.vtu -o {out_dir}/bar.vtu >> {logfile}",
         check=True,
+        shell=True,
     )
     run(
         f"ExtractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_left.vtu -x 1 -y 0 -z 0 >> {logfile}",
         check=True,
+        shell=True,
     )
     run(
         f"extractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_right.vtu -x -1 -y 0 -z 0 >> {logfile}",
         check=True,
+        shell=True,
     )
-    run(f"partmesh -s -o {out_dir} -i {out_dir}/bar.vtu >> {logfile}", check=True)
+    run(
+        f"partmesh -s -o {out_dir} -i {out_dir}/bar.vtu >> {logfile}",
+        check=True,
+        shell=True,
+    )
     run(
         f"partmesh -m -n 3 -o {out_dir} -i {out_dir}/bar.vtu -- {out_dir}/bar_right.vtu {out_dir}/bar_left.vtu >> {logfile}",
         check=True,
+        shell=True,
     )
     # change properties in prj file
     model = ot.Project(
@@ -206,7 +215,9 @@ def ogs_beam(
     t0 = time.time()
     print("  > OGS started execution ...")
     run(
-        f"mpirun -n 3 ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}", check=True
+        f"mpirun -n 3 ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+        check=True,
+        shell=True,
     )
     tf = time.time()
     print("  > OGS terminated execution. Elapsed time: ", round(tf - t0, 2), " s.")

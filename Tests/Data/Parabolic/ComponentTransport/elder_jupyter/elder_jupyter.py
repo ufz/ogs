@@ -60,7 +60,7 @@
 # %%
 import matplotlib.pyplot as plt
 import ogstools as ogs
-from IPython.display import HTML, Image
+from IPython.display import HTML
 
 # %%
 ogs.plot.setup.dpi = 30  # resolution
@@ -142,15 +142,6 @@ anim = mesh_series.animate(
 )
 HTML(anim.to_jshtml())
 
-# %% [markdown]
-# ### Compare simulation results OGS-5 vs. OGS-6
-#
-# Here, we compare numerical results of OGS-6 to those of OGS-5.
-# Settings of both simulators were chosen to be as identical as possible.
-# Simulation times were and for $3300 s$ OGS-6 and $7800 s$ OGS-5, respectively.
-
-# %%
-Image(url="../elder/elder.gif")
 
 # %% [markdown]
 # ## Literature
