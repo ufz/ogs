@@ -40,11 +40,11 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 
 #### For redistribution
 
-- `OGS_CPU_ARCHITECTURE`: set to `generic` for good balance between optimization and portability; set to `core2` for maximum portability, more info on [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/machine-dependent-options/x86-options.html#cmdoption-x86-mtune)
+- `OGS_CPU_ARCHITECTURE`: set to `generic` for good balance between optimization and portability; set to `core2` for maximum portability, more info on [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html)
 
 #### For optimization
 
-- `OGS_CPU_ARCHITECTURE`: tot to `native` for best optimization for your current CPU, possible values are [listed here](https://stackoverflow.com/a/25095818/80480), more info on [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/gcc-command-options/machine-dependent-options/x86-options.html#cmdoption-x86-mtune)
+- `OGS_CPU_ARCHITECTURE`: tot to `native` for best optimization for your current CPU, possible values are [listed here](https://stackoverflow.com/a/25095818/80480), more info on [GCC docs](https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html)
 
 </div>
 
