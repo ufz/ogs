@@ -167,7 +167,7 @@ def ogs_beam(
         shell=True,
     )
     run(
-        f"extractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_right.vtu -x -1 -y 0 -z 0 >> {logfile}",
+        f"ExtractSurface -i {out_dir}/bar.vtu -o {out_dir}/bar_right.vtu -x -1 -y 0 -z 0 >> {logfile}",
         check=True,
         shell=True,
     )
