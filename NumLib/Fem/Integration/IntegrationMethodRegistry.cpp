@@ -51,7 +51,7 @@ static void putIntegrationMethodsFor(
     std::unordered_map<std::type_index,
                        std::vector<NumLib::GenericIntegrationMethod>>&
         integration_methods_by_mesh_element_type,
-    unsigned max_order)
+    unsigned const max_order)
 {
     std::vector<NumLib::GenericIntegrationMethod> integration_methods;
     integration_methods.reserve(max_order + 1);
