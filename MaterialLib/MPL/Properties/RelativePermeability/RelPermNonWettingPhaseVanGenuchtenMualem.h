@@ -56,6 +56,7 @@ public:
      * @param m        Exponent, \f$ m \in [0,1]\f$
      * @param krel_min Minimum relative permeability,
      *                  \f$ k_{rel}^n_{\mbox{min}}\f$
+     * @param a        Multiplier
      */
     RelPermNonWettingPhaseVanGenuchtenMualem(std::string name,
                                              const double S_L_r,
