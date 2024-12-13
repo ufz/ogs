@@ -22,6 +22,7 @@ Brato
 Bruns
 Carranza-Torres
 CLion
+CSS
 Dalen
 Damkilde
 Degener
@@ -54,8 +55,8 @@ Frieder
 frontmatter
 Futurile
 Galerkin
-Genuchten
 generalmod
+Genuchten
 Geoenergy
 Geotechnica
 Gerasimov
@@ -82,6 +83,7 @@ IPhreeqc
 ipynb
 ipyvtklink
 Jacobian
+JavaScript
 Johannsen
 Jong
 Jupyter
@@ -102,9 +104,9 @@ Makefile
 Massmann
 Matplotlib
 Mehran
+Merifield
 meshio
 METIS
-Merifield
 MFront
 Mikelic
 Minkley
@@ -120,6 +122,8 @@ NetBeans
 NetCDF
 Neumann
 nonassociated
+npm
+npx
 Nusselt
 ogs
 OGS

@@ -24,6 +24,7 @@ Benchmark documentation can also be given in form of Jupyter Notebooks, see [Jup
 
 - Download [Hugo](https://github.com/gohugoio/hugo/releases/latest) and put it in your `PATH`. **Attention:** Use the *extended* version: e.g. `hugo_extended_{{< dataFile "versions.minimum_version.hugo" >}}_Windows-64bit.zip`
 - Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
+- Install [npm](https://www.npmjs.com) for CSS / JavaScript compilation with [npx](https://www.npmjs.com/package/npx)
 
 ## Getting started
 
