@@ -214,6 +214,8 @@ git config --global http.proxy http://yourproxy.example.com
 
 Install CMake via Kitware's APT Repository by [following their instructions](https://apt.kitware.com/).
 
+If something goes wrong there, check, if Kitware related keyrings in /usr/share/keyrings are readable to everyone.
+
 For other Linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
 </div>
 

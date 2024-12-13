@@ -15,7 +15,9 @@ If something goes wrong when running CMake please try again with an **empty** or
 
 Please read the CMake output carefully. Often it will tell you what went wrong.
 
-Also consider using the command line for CMake configuration as lots of CMake options (which modify requirements on third-party libraries) have to be set via the command line **before** CMake ran for the first time. E.g. when building with PETSc the following fails:
+Also consider using the command line for CMake configuration as lots of CMake options (which modify requirements on third-party libraries) have to be set via the command line **before** CMake ran for the first time.
+
+For example when building with PETSc the following fails:
 
 - Creating build directory
 - Starting CMake GUI
@@ -39,3 +41,21 @@ The following options are affected by this behavior and **should not be changed*
 - `OGS_USE_PETSC`
 - `CMAKE_BUILD_TYPE`
 - `BUILD_SHARED_LIBS`
+
+If the errors are related to TFEL, HDF5, PETSc or VTK, you may delete `~/.cache/CPM/_ext` and try again.
+
+If there are incompatibilities to a system-installed library, e.g. HDF5, you can also use the additional cmake options, e.g. `-DOGS_BUILD_HDF5=ON`, to force a local library (in this case HDF5) build. These options are available:
+
+- `OGS_BUILD_HDF5`
+- `OGS_BUILD_TFEL`
+- `OGS_BUILD_PETSC`
+- `OGS_BUILD_VTK`
+
+External dependencies are cached in `~/.cache/CPM/`.
+If something goes wrong during the first build, then ogs will pick up the failed
+build during subsequent cmake-runs without showing any error messages from the
+dependency.
+In that case you need to delete the corresponding folder in the CPM cache,
+usually something like `~/.cache/CPM/_ext/TFEL/[some long hash]`.
+Then the next cmake-run will retrigger a build of the dependency. This applies
+to TFEL, HDF5, PETSc and VTK.

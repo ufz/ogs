@@ -24,6 +24,36 @@ Python packages are usually installed via `pip` inside an isolated environment (
 
 When configuring OGS with `OGS_USE_PIP=ON` Python creates a new virtual environment in the `.venv`-directory inside your build directory. It will also install required Python packages into this environment. You can see the current environment definition in the file `requirements.txt` inside your build-directory.
 
+Make sure, that you did
+
+```bash
+sudo apt-get install python3 python3-pip
+sudo apt-get install python3-venv
+```
+
+then you can use the `-DOGS_USE_PIP=ON` option:
+
+```bash
+cmake ../ogs -DOGS_USE_PIP=ON -DCMAKE_BUILD_TYPE="Release" -G Ninja
+```
+
+When configuring OGS with `OGS_USE_PIP=ON`, Python creates a new virtual
+environment in the .venv-directory inside your build directory.
+It will also install required Python packages into this environment.
+For example, ogstools or Jupyter will this way be available ready-made in a
+consistent configuration.
+You can see the current environment definition with all the included packages in
+the file requirements.txt inside your build-directory.
+
+When you want to use the python packages in this virtual environment, you need
+to activate it by
+
+```bash
+source <your-build-dir>/.envrc
+```
+
+where `.envrc` is a little script including `source .venv/bin/activate` as well as some path settings.
+
 To manually add Python packages run the following inside your build-directory:
 
 ```bash

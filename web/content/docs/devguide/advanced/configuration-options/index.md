@@ -13,6 +13,11 @@ weight = 1060
 
 Some of these options are enabled by default ("*Defaults* to *ON*") otherwise they must be explicitly set to *ON*.
 
+You can pass any CMake variable or option with `-DVARIABLE_NAME=VALUE` (note the
+`-D` in front) to the CMake command.
+You can also overwrite the generator with the `-G` parameter or the
+build-directory with the `-B` parameter.
+
 ### General
 
 CMake switches to enable / disable parts of OGS.
@@ -24,6 +29,13 @@ CMake switches to enable / disable parts of OGS.
 - `OGS_BUILD_PROCESS_X` - For enabling/disabling compilation of process `X`.
   Run the CMake-GUI / `ccmake` to see a list of processes.
 - `OGS_BUILD_PROCESSES` - A `;`-separated list specifying processes to build, e.g. `-DOGS_BUILD_PROCESSES="HT;LIE"`. Can be set to *ON* which means all processes are built or can be set to *OFF* to disable all processes. **Attention:** Setting this variable overrides individual `OGS_BUILD_PROCESS_X`-variables! This option is mainly used for CI and automation. Also the value of this variable is not cached.
+
+### Python virtual environment
+
+- `OGS_USE_PIP` - Creates a python virtual environment in the .venv-directory
+  inside the build directory, that includes useful packages like ogstools,
+  Jupyter and more. Defaults to *OFF*. See also
+  https://www.opengeosys.org/docs/devguide/packages/python-env/.
 
 ### Debugging
 

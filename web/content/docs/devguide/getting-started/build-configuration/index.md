@@ -55,7 +55,7 @@ cmake --preset release
 
 This will create a build-directory outside the source tree (`../build/release`) with the default CMake options and the Release configuration.
 
-Additionally you can pass any CMake variable or option with `-DVARIABLE_NAME=VALUE` (note the `-D` in front!) to the CMake command. You can also overwrite the generator with the `-G` parameter or the build-directory with the `-B` parameter (to see all available options just run `cmake --help`)
+Additionally you can pass any CMake variable or option with `-DVARIABLE_NAME=VALUE` (note the `-D` in front!) to the CMake command. You can also overwrite the generator with the `-G` parameter or the build-directory with the `-B` parameter (to see all available options just run `cmake --help`).
 
 Also all the compiled files will be generated in this directory. This keeps the actual source code clean from intermediate files which are generated from the source code. Nothing inside the build directory will ever be version controlled because its contents can be regenerated anytime from the source code.
 
@@ -67,7 +67,7 @@ When you want to start over with a new configuration simply delete the build-dir
 
 ### User-defined presets
 
-You can create a `CMakeUserPresets.json` file in the root source directory with your own presets (this file is ignored by git):
+You can also create a `CMakeUserPresets.json` file in the root source directory with your own presets (this file is ignored by git):
 
 ```json
 {
@@ -139,6 +139,30 @@ Set the `CC` and `CXX` environment variables, e.g.:
 
 ```bash
 CC=mpicc CXX=mpic++ cmake ../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_USE_PETSC=ON
+```
+
+</div>
+
+<div class='note'>
+
+### Using a python virtual environment
+
+Additionally to
+
+```bash
+sudo apt-get install python3 python3-pip
+```
+
+(from https://www.opengeosys.org/docs/devguide/getting-started/prerequisites/), do
+
+```bash
+sudo apt-get install python3-venv
+```
+
+and then you can use the `-DOGS_USE_PIP=ON` option:
+
+```bash
+cmake ../ogs -DOGS_USE_PIP=ON -DCMAKE_BUILD_TYPE="Release" -G Ninja
 ```
 
 </div>
