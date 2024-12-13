@@ -1,3 +1,10 @@
++++
+date = "2023-03-09 09:22:24"
+title = "Thermal conductivity: effective porosity mixing"
+author = "Feliks Kiszkurno"
+weight = 6
++++
+
 In some process, the effective thermal conductivity can be calculated automatically depending on the conductivities of solid and liquid phases and porosity.
 
 Following example can be considered: the Layer0 is a porous clay fully saturated by water. In such a case, in order to run simulation for correct value of thermal conductivity for such a medium, there has to be separate values for thermal conductivity of water (in liquid phase) and clay (in solid phase) defined. Those two values together with porosity can be used to obtain parameter representative for the whole medium. It can be done with following equation for volumetric mixing:
