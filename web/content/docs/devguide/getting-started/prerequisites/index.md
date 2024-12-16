@@ -212,9 +212,14 @@ git config --global http.proxy http://yourproxy.example.com
 
 <div class='linux'>
 
-Install CMake via Kitware's APT Repository by [following their instructions](https://apt.kitware.com/).
+Install CMake using system package manager, *e.g.* on Ubuntu
+
+```bash
+sudo apt install cmake
+```
 
 For other Linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
+
 </div>
 
 <div class='mac'>
