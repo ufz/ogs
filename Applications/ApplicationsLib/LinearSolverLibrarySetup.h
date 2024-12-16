@@ -68,7 +68,22 @@ namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
 {
-    LinearSolverLibrarySetup(int /*argc*/, char* /*argv*/[]) {}
+    LinearSolverLibrarySetup(int /*argc*/, char* /*argv*/[])
+    {
+#ifdef _OPENMP
+        const char* omp_num_threads_env = std::getenv("OMP_NUM_THREADS");
+        if (omp_num_threads_env)
+        {
+            INFO("OMP_NUM_THREADS is set to: {:s}", omp_num_threads_env);
+        }
+        else
+        {
+            WARN("OMP_NUM_THREADS is not set, falling back to: {:d}",
+                 omp_get_max_threads());
+        }
+#endif
+        INFO("Eigen use {:d} threads", Eigen::nbThreads());
+    }
     ~LinearSolverLibrarySetup()
     {
         NumLib::cleanupGlobalMatrixProviders();
