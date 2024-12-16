@@ -39,7 +39,7 @@ import numpy as np
 import pandas as pd
 import vtuIO
 from IPython.display import Image, display
-from mpl_toolkits.axes_grid1.inset_locator import InsetPosition, mark_inset
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes, mark_inset
 
 # %%
 display(Image(filename="./model_domain.jpg", width=1000))
@@ -197,14 +197,15 @@ ax[2].set_title("Relative error")
 ax[0].legend()
 fig.tight_layout()
 
-ax2 = plt.axes([0, 0, 0, 0])
-ip = InsetPosition(ax[0], [0.45, 0.4, 0.5, 0.4])
-ax2.set_axes_locator(ip)
-patch, pp1, pp2 = mark_inset(ax[0], ax2, loc1=3, loc2=4, fc="none", ec="0.5")
-# pp1.loc1 = 3
-pp1.loc2 = 2
-# pp2.loc1 = 4
-pp2.loc2 = 1
+ax2 = inset_axes(
+    ax[0],
+    width="100%",
+    height="100%",
+    loc="center",
+    bbox_to_anchor=[0.45, 0.4, 0.5, 0.4],
+    bbox_transform=ax[0].transAxes,
+)
+
 ax2.plot(
     x,
     resp[0],
@@ -220,6 +221,9 @@ ax2.set_xlim(1.57, 1.63)
 ax2.set_ylim(0, 0.1)
 ax2.set_yticks(np.arange(0, 0.15, 0.05))
 
+patch, pp1, pp2 = mark_inset(ax[0], ax2, loc1=3, loc2=4, fc="none", ec="0.5")
+pp1.loc2 = 2
+pp2.loc2 = 1
 
 # %%
 fig, ax = plt.subplots(ncols=3, figsize=(18, 6))
