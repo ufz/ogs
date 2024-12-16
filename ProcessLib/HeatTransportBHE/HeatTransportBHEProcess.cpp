@@ -446,10 +446,7 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
 
     // apply weighting factor based on the max value from column wise inner
     // product and scale it with user defined value
-    const double w_val =
-        _process_data._algebraic_BC_Setting._weighting_factor *
-        (Eigen::RowVectorXd::Ones(K_normal.rows()) * K_normal.cwiseAbs())
-            .maxCoeff();
+    const double w_val = _process_data._algebraic_BC_Setting._weighting_factor;
 
     M_normal.conservativeResize(
         M_normal.rows() + n_BHE_bottom_pairs + n_BHE_top_pairs,
