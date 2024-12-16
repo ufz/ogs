@@ -254,9 +254,7 @@ if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 # %%
-model = ot.Project(
-    input_file="../disc_with_hole.prj", output_file="../disc_with_hole.prj"
-)
+model = ot.Project(input_file="disc_with_hole.prj", output_file="disc_with_hole.prj")
 
 # %%
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
