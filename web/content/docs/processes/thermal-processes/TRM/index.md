@@ -213,7 +213,7 @@ The diagonal lumping of the mass matrix of the Richards equation can be using by
 
 TRM can automatically obtain thermal conductivity for the medium based on thermal conductivities of phases and porosity.
 
-{{% include "../../shared-content/effective-thermal-conductivity-porosity-mixing.md" %}}
+See [Thermal conductivity: effective porosity mixing]({{% ref "effective-porosity-mixing" %}}) for more information.
 
 #### Examples
 

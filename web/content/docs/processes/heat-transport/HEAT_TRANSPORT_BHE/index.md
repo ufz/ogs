@@ -3,14 +3,6 @@ date = "2019-11-21T12:00:13+01:00"
 title = "HEAT_TRANSPORT_BHE"
 author = "Wanlong Cai, Haibing Shao"
 weight = 1
-
-[menu.docs]
-name = "Process-dependent configuration"
-identifier = "processes"
-weight = 5
-post = "Get more insight into process-specific configurations."
-[menu.docs.params]
-category = "User"
 +++
 
 ## Description
