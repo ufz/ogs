@@ -42,6 +42,11 @@ name = "Discourse"
 weight = 10
 url = "https://discourse.opengeosys.org"
 
+[[menu.main]]
+name = "Source Code"
+weight = 11
+url = "https://gitlab.opengeosys.org/ogs/ogs"
+
 # Devguide sidebar menu top-level categories
 [[menu.devguide]]
 name = "Getting Started"
