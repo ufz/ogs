@@ -36,7 +36,7 @@ DirichletBoundaryCondition::DirichletBoundaryCondition(
     checkParametersOfDirichletBoundaryCondition(_bc_mesh, dof_table_bulk,
                                                 _variable_id, _component_id);
 
-    std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh.getNodes();
+    std::vector<MeshLib::Node*> const& bc_nodes = _bc_mesh.getNodes();
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 
     // Create local DOF table from the BC mesh subset for the given variable
