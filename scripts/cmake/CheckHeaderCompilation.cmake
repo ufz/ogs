@@ -83,6 +83,9 @@ function(_check_header_compilation target)
     endif()
 
     get_target_property(_target_defs ${target} COMPILE_DEFINITIONS)
+    if(OGS_USE_PETSC)
+        list(APPEND _target_defs USE_PETSC)
+    endif()
     foreach(def ${_target_defs})
         # strip generator expressions
         if(${def} MATCHES "\\$<.*")
