@@ -101,6 +101,7 @@ check docs links:
       --exclude eigen.tuxfamily.org
       --exclude wiki.sei.cmu.edu
       --exclude-path build/docs/d0/de3/citelist.html
+      --exclude-path build/docs/doxygen_crawl.html
       build/docs
     - lychee --cache --max-cache-age 14d
       --max-concurrency 2
