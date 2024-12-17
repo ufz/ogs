@@ -261,3 +261,7 @@ AddTest(
     point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu epsilon epsilon 1e-15 1e-15
     point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu velocity velocity 1e-15 1e-15
 )
+
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCellWithBBar/great_cell_LIE.py RUNTIME 40)
+endif()
