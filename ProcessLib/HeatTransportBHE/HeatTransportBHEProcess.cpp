@@ -14,6 +14,7 @@
 
 #include "BoundaryConditions/BHEBottomDirichletBoundaryCondition.h"
 #include "BoundaryConditions/BHEInflowDirichletBoundaryCondition.h"
+#include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryCondition.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
@@ -219,11 +220,35 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
-        &b);
+
+    if (_process_data._algebraic_BC_Setting._is_linear)
+    {
+        auto const& spec = this->getMatrixSpecifications(process_id);
+
+        // use matrix cache for soil elements
+        _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, &M, &K, &b,
+                                dof_table, _global_assembler, _local_assemblers,
+                                _soil_element_ids);
+
+        // reset the sparsity pattern for better performance in the BHE assembly
+        MathLib::setMatrixSparsity(M, *spec.sparsity_pattern);
+        MathLib::setMatrixSparsity(K, *spec.sparsity_pattern);
+
+        // Call global assembler for each local BHE assembly item.
+        GlobalExecutor::executeSelectedMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assemble,
+            _local_assemblers, _bhes_element_ids, dof_table, t, dt, x, x_prev,
+            process_id, &M, &K, &b);
+    }
+    else
+    {
+        // Call global assembler for each local assembly item.
+        GlobalExecutor::executeSelectedMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assemble,
+            _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x,
+            x_prev, process_id, &M, &K, &b);
+    }
+
     // Algebraic BC procedure.
     if (_process_data._algebraic_BC_Setting._use_algebraic_bc)
     {
