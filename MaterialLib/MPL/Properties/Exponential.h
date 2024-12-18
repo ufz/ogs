@@ -26,8 +26,8 @@ struct ExponentData
 /// An exponential property.
 ///
 /// This property calculates the exponential relationship \f$ \alpha(\beta) =
-/// \alpha_{\mathrm{offset}} + \alpha_{\mathrm{ref}} \cdot \exp (m (\beta -
-/// \beta_{\mathrm{ref}})\f$, where:
+/// \alpha_{\mathrm{offset}} + \alpha_{\mathrm{ref}} \cdot \exp \left(m (\beta -
+/// \beta_{\mathrm{ref}})\right)\f$, where:
 ///  - \f$\alpha_{\mathrm{ref}}\f$ is a reference value, for instance reference
 ///    viscosity,
 ///  - \f$\alpha_{\mathrm{offset}}\f$ is additive offset in units of the
