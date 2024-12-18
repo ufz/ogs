@@ -40,7 +40,9 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
       _process_data(std::move(process_data)),
-      _bheMeshData(std::move(bhe_mesh_data))
+      _bheMeshData(std::move(bhe_mesh_data)),
+      _asm_mat_cache{_process_data._algebraic_BC_Setting._is_linear,
+                     true /*use_monolithic_scheme*/}
 {
     if (_bheMeshData.BHE_mat_IDs.size() !=
         _process_data._vec_BHE_property.size())

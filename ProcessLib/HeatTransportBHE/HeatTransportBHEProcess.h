@@ -11,6 +11,7 @@
 #pragma once
 
 #include "HeatTransportBHEProcessData.h"
+#include "ProcessLib/Assembly/AssembledMatrixCache.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/HeatTransportBHEProcessAssemblerInterface.h"
 #include "ProcessLib/Process.h"
@@ -123,6 +124,8 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_soil_nodes;
 
     const BHEMeshData _bheMeshData;
+
+    AssembledMatrixCache _asm_mat_cache;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
