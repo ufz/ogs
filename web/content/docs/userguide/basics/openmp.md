@@ -23,6 +23,11 @@ Note:
 * Some linear solvers and some preconditioners from the Eigen library run with a
   single thread only, see
   [here](https://eigen.tuxfamily.org/dox/TopicMultiThreading.html).
+* For Eigen's CG solver, multi-threading can be exploited using both triangular
+  matrices (see
+  [here](https://eigen.tuxfamily.org/dox/classEigen_1_1ConjugateGradient.html).
+  This can be set in OGS using `<triangular_matrix>LowerUpper</triangular_matrix>`
+  as linear solver option.
 * When using distributed memory parallelization (MPI) it might not make sense to
   use OpenMP at the same time: the different threads might compete for the same
   CPU resources.
