@@ -403,10 +403,18 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
 }
 
 template <typename Mat, typename Precon>
-using EigenCGSolver = Eigen::ConjugateGradient<Mat, Eigen::Lower, Precon>;
+using EigenCGSolverL = Eigen::ConjugateGradient<Mat, Eigen::Lower, Precon>;
+
+template <typename Mat, typename Precon>
+using EigenCGSolverU = Eigen::ConjugateGradient<Mat, Eigen::Upper, Precon>;
+
+template <typename Mat, typename Precon>
+using EigenCGSolverLU =
+    Eigen::ConjugateGradient<Mat, Eigen::Lower | Eigen::Upper, Precon>;
 
 std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
-    EigenOption::SolverType solver_type, EigenOption::PreconType precon_type)
+    EigenOption::SolverType solver_type, EigenOption::PreconType precon_type,
+    EigenOption::TriangularMatrixType triangular_matrix_type)
 {
     switch (solver_type)
     {
@@ -430,7 +438,15 @@ std::unique_ptr<EigenLinearSolverBase> createIterativeSolver(
         }
         case EigenOption::SolverType::CG:
         {
-            return createIterativeSolver<EigenCGSolver>(precon_type);
+            switch (triangular_matrix_type)
+            {
+                case EigenOption::TriangularMatrixType::Upper:
+                    return createIterativeSolver<EigenCGSolverU>(precon_type);
+                case EigenOption::TriangularMatrixType::LowerUpper:
+                    return createIterativeSolver<EigenCGSolverLU>(precon_type);
+                default:
+                    return createIterativeSolver<EigenCGSolverL>(precon_type);
+            }
         }
         case EigenOption::SolverType::LeastSquareCG:
         {
@@ -505,13 +521,17 @@ EigenLinearSolver::EigenLinearSolver(std::string const& /*solver_name*/,
         case EigenOption::SolverType::GMRES:
         case EigenOption::SolverType::IDRS:
         case EigenOption::SolverType::IDRSTABL:
-            solver_ = details::createIterativeSolver(option_.solver_type,
-                                                     option_.precon_type);
+            solver_ =
+                details::createIterativeSolver(option_.solver_type,
+                                               option_.precon_type,
+                                               option_.triangular_matrix_type);
             can_solve_rectangular_ = false;
             return;
         case EigenOption::SolverType::LeastSquareCG:
-            solver_ = details::createIterativeSolver(option_.solver_type,
-                                                     option_.precon_type);
+            solver_ =
+                details::createIterativeSolver(option_.solver_type,
+                                               option_.precon_type,
+                                               option_.triangular_matrix_type);
             can_solve_rectangular_ = true;
             return;
         case EigenOption::SolverType::PardisoLU:
