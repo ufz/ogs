@@ -161,6 +161,33 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
     // Create BHE boundary conditions for each of the BHEs
     createBHEBoundaryConditionTopBottom(_bheMeshData.BHE_nodes);
 
+    // Store BHE and soil elements to split the assembly and use the matrix
+    // cache in the linear case only for soil elements
+    if (_process_data._algebraic_BC_Setting._is_linear)
+    {
+        _bhes_element_ids = _bheMeshData.BHE_elements | ranges::views::join |
+                            MeshLib::views::ids | ranges::to<std::vector>;
+
+        // sort bhe elements if needed
+        if (!std::is_sorted(_bhes_element_ids.begin(), _bhes_element_ids.end()))
+        {
+            std::sort(_bhes_element_ids.begin(), _bhes_element_ids.end());
+        }
+
+        _soil_element_ids = mesh.getElements() | MeshLib::views::ids |
+                            ranges::to<std::vector>();
+
+        // sort soil elements if needed
+        if (!std::is_sorted(_soil_element_ids.begin(), _soil_element_ids.end()))
+        {
+            std::sort(_soil_element_ids.begin(), _soil_element_ids.end());
+        }
+
+        _soil_element_ids = ranges::views::set_difference(_soil_element_ids,
+                                                          _bhes_element_ids) |
+                            ranges::to<std::vector>();
+    }
+
     if (_process_data._mass_lumping)
     {
         std::vector<std::size_t> const bhes_node_ids =

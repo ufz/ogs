@@ -126,6 +126,10 @@ private:
     const BHEMeshData _bheMeshData;
 
     AssembledMatrixCache _asm_mat_cache;
+
+    std::vector<std::size_t> _bhes_element_ids;
+
+    std::vector<std::size_t> _soil_element_ids;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
