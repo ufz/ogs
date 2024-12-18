@@ -323,7 +323,7 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                        MPL::Variable::liquid_phase_pressure,
                                        x_position, t, dt) /
                                rho_fr) +
-                          (porosity - alpha) * (1.0 - alpha) /
+                          (alpha - porosity) * (1.0 - alpha) /
                               _ip_data[ip].solid_material.getBulkModulus(
                                   t, x_position, &C);
 
