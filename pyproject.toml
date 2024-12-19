@@ -53,7 +53,7 @@ python_files = ["test_*.py"]
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = ["cp3{9,10,11,12}-*"]
+build = ["cp3{9,10,11,12,13}-*"]
 skip = ["*musllinux*"]
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
