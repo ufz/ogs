@@ -63,8 +63,11 @@ struct ProcessData
 };
 
 /// Builds the time-discretized ODE system matching the process' nonlinear
-/// solver and stores it in ProcessData::tdisc_ode_sys.
-void setTimeDiscretizedODESystem(ProcessData& process_data);
+/// solver and stores it in ProcessData::tdisc_ode_sys. If \c storage_owner is
+/// given, the new system assembles into the global matrices and vector of
+/// \c storage_owner's system instead of allocating its own ones.
+void setTimeDiscretizedODESystem(ProcessData& process_data,
+                                 ProcessData const* const storage_owner);
 
 void setEquationSystem(ProcessData const& process_data);
 

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/algorithm/contains.hpp>
+#include <range/v3/algorithm/find_if.hpp>
 
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
@@ -417,6 +418,39 @@ TimeLoop::generateOutputTimeStepConstraints(
     return time_step_constraints;
 }
 
+/// Finds an equation, among those that already have a time-discretized ODE
+/// system, whose global matrices and vectors \c process_data can assemble
+/// into, and returns nullptr if there is none.
+///
+/// In the staggered scheme the equations are assembled and solved one after
+/// the other, and each one overwrites the matrices and vectors in assemble()
+/// and has consumed them before the next one assembles. Equations of the same
+/// process with the same matrix specifications and the same type of nonlinear
+/// solver therefore need only one set of them.
+static ProcessData const* findAssemblyStorageOwner(
+    ProcessData const& process_data,
+    std::vector<std::unique_ptr<ProcessData>> const& per_process_data)
+{
+    auto const specifications =
+        process_data.process.getMatrixSpecifications(process_data.process_id);
+
+    auto const can_share_storage =
+        [&](std::unique_ptr<ProcessData> const& other)
+    {
+        if (other->tdisc_ode_sys == nullptr ||
+            &other->process != &process_data.process ||
+            other->nonlinear_solver_tag != process_data.nonlinear_solver_tag)
+        {
+            return false;
+        }
+        return other->process.getMatrixSpecifications(other->process_id) ==
+               specifications;
+    };
+
+    auto const it = ranges::find_if(per_process_data, can_share_storage);
+    return it == per_process_data.end() ? nullptr : it->get();
+}
+
 /// initialize output, convergence criterion, etc.
 void TimeLoop::initialize()
 {
@@ -428,7 +462,9 @@ void TimeLoop::initialize()
             output.addProcess(pcs);
         }
 
-        setTimeDiscretizedODESystem(*process_data);
+        setTimeDiscretizedODESystem(
+            *process_data,
+            findAssemblyStorageOwner(*process_data, _per_process_data));
 
         if (auto* conv_crit =
                 dynamic_cast<NumLib::ConvergenceCriterionPerComponent*>(
