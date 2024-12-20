@@ -122,7 +122,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         add_compile_options(-xHOST)
     endif()
 
-    # Linker: prefer lld > gold > regular
+    # Linker: prefer mold > lld > gold > regular
     foreach(linker mold lld gold)
         execute_process(
             COMMAND ${CMAKE_CXX_COMPILER} -fuse-ld=${linker} -Wl,--version
@@ -132,7 +132,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
             add_link_options(-fuse-ld=lld)
             message(STATUS "Using lld linker. (${_linker_version})")
             break()
-        elseif("${_linker_version}" MATCHES "GNU gold")
+        elseif("${_linker_version}" MATCHES "GNU gold" AND NOT OGS_BUILD_WHEEL)
             add_link_options(-fuse-ld=gold)
             message(STATUS "Using GNU gold linker. (${_linker_version})")
             break()
