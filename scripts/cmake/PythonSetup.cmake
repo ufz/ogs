@@ -33,7 +33,8 @@ if(OGS_USE_PIP)
         execute_process(
             COMMAND
                 ${CMAKE_COMMAND} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR}
-                -Dpython_version=${ogs.minimum_version.python}
+                # TODO: set upper limit to <3.14 after 6.5.4. release
+                -Dpython_version=${ogs.minimum_version.python}...<3.13
                 -DUV_TOOL_PATH=${UV_TOOL_PATH} -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/PythonCreateVirtualEnv.cmake
             WORKING_DIRECTORY ${PROJECT_BINARY_DIR} COMMAND_ECHO STDOUT
