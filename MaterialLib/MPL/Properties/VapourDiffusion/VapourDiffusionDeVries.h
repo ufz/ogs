@@ -24,9 +24,9 @@ class Phase;
  *
  *  The vapour diffusion can be described by
  *  \f[
- *     D_v=5.9\cdot 10^{-6} \left(\frac{T, \text{in K}}{p, \text{in
- * Pa}}\right)^{2.3} D_{vr}, \f] where \f$D_{vr}\f$ is the the relative
- * diffusion coefficient, and \f$T\f$ is the temperature.
+ *     D_v=5.9\cdot 10^{-6} \frac{\left(T\, \text{in K}\right)^{2.3}}{p,
+ * \text{in Pa}} D_{vr}, \f] where \f$D_{vr}\f$ is the the relative diffusion
+ * coefficient, and \f$T\f$ is the temperature.
  *
  */
 class VapourDiffusionDeVries final : public Property

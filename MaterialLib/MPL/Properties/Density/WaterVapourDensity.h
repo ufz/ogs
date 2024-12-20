@@ -26,7 +26,7 @@ class Phase;
  *   \f]
  *  where \f$h\f$ is the relative humidity according to
  *   \f[
- *     h=\exp({\frac{p}{\rho_w R T}}),
+ *     h=\exp \left({\frac{p}{\rho_w R T}}\right),
  *   \f]
  *
  *  with \f$R\f$ the specific gas constant for water vapour, and
