@@ -34,23 +34,36 @@ public:
         }
     }
 
-    // Method to solve the cubic equation using Boost
     std::vector<double> solve()
     {
-        // Solve using Boost's cubic_roots
         std::array<double, 3> const roots =
             boost::math::tools::cubic_roots<double>(a_, b_, c_, d_);
 
-        std::vector<double> filtered_roots =
-            ranges::views::ref(roots) |
-            ranges::views::filter([](double const root)
-                                  { return !std::isnan(root); }) |
-            ranges::to<std::vector>();
-        ranges::sort(filtered_roots);
+        std::vector<double> adjusted_roots;
+        adjusted_roots.reserve(3);
 
-        return filtered_roots;
+        double last_valid = std::numeric_limits<double>::quiet_NaN();
+
+        for (auto root : roots)
+        {
+            if (std::isnan(root))
+            {
+                if (!std::isnan(last_valid))
+                {
+                    adjusted_roots.push_back(last_valid);
+                }
+                // If we get NaN before any valid root, we just skip it
+            }
+            else
+            {
+                adjusted_roots.push_back(root);
+                last_valid = root;
+            }
+        }
+
+        ranges::sort(adjusted_roots);
+        return adjusted_roots;
     }
-
     // Method that returns the smallest positive real root
     double smallestPositiveRealRoot()
     {

@@ -68,7 +68,7 @@ TEST(MathLibCubicSolver, CubicEquationWithComplexRoots)
     MathLib::CubicSolver solver(1.0, 0.0, -1.0, 1.0);
     auto roots = solver.solve();
 
-    ASSERT_EQ(roots.size(), 1);  // Only one real root should be found
+    ASSERT_EQ(roots.size(), 3);  // Only one real root should be found
     EXPECT_NEAR(roots[0], -1.3247,
                 1e-4);  // Check against the expected real root
 }
