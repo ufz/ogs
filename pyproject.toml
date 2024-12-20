@@ -19,7 +19,7 @@ repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
-test = ["pytest", "numpy<2"]
+test = ["pytest", "numpy"]
 
 [tool.scikit-build]
 build-dir = "_skbuild/{wheel_tag}"
@@ -53,7 +53,7 @@ python_files = ["test_*.py"]
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = ["cp3{9,10,11,12}-*"]
+build = ["cp3{9,10,11,12,13}-*"]
 skip = ["*musllinux*"]
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
