@@ -434,20 +434,14 @@ string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
 set(_vtk_source GIT_REPOSITORY https://github.com/kitware/vtk.git GIT_TAG
                 v${ogs.minimum_version.vtk}
 )
-if(APPLE AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 17)
-    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/11123 (in 9.4.0)
-    # https://gitlab.kitware.com/vtk/vtk/-/issues/19586 (will be in 9.5.0)
-    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/11882 (will be in 9.5.0)
-    set(_vtk_source GIT_REPOSITORY https://github.com/kitware/vtk.git
-        GIT_TAG c95d7374c53c3cdaed6269a2e3dad19077d4999b)
-    set(ogs.minimum_version.vtk "9.5.0")
-endif()
 set(_vtk_source_file
     ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/vtk-v${ogs.minimum_version.vtk}.tar.gz
 )
-if(EXISTS ${_vtk_source_file})
+if(GUIX_BUILD)
+    find_package(VTK COMPONENTS ${VTK_COMPONENTS})
+elseif(EXISTS ${_vtk_source_file})
     set(_vtk_source URL ${_vtk_source_file})
-elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR GUIX_BUILD OR CONDA_BUILD))
+elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR CONDA_BUILD))
     # Typically VTK also pulls in libgomp dependency when found on system
     unset(VTK_COMPONENTS)
     foreach(opt ${VTK_OPTIONS})
