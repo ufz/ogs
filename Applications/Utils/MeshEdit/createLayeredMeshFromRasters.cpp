@@ -4,7 +4,7 @@
  * \brief Creates a layered mesh from a 2D mesh and a bunch of raster files.
  *
  * \copyright
- * Copyright (c) 2012-2024, OpenGeoSys Community (http://www.opengeosys.org)
+ * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
-            "Copyright (c) 2012-2024, OpenGeoSys Community "
+            "Copyright (c) 2012-2025, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
