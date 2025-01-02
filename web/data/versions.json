@@ -14,7 +14,7 @@
     "hugo": "0.122.0",
     "boost": "1.82.0",
     "eigen": "3.4.0",
-    "eigen-unsupported": "9000b3767770f6dd0f4cfb12f4e19c71921885a4",
+    "eigen-unsupported": "24e0c2a125d2b37b35719124d1f758777c150ca8",
     "vtk": "9.3.0",
     "petsc": "3.18.6",
     "qt": "5.14.2",
