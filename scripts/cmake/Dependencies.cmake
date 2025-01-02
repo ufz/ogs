@@ -387,7 +387,7 @@ if(NOT (GUIX_BUILD OR CONDA_BUILD))
     if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS))
         CPMAddPackage(
             NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-            GIT_TAG 7cc474101bcee45804124df8010a2275022e2f3b
+            GIT_TAG 628c4694783f865d7f0ab3ba9bdd5530ce4567e9
         )
         if(vtkdiff_ADDED)
             install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
