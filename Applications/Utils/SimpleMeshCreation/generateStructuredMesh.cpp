@@ -17,7 +17,6 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/Subdivision.h"
-#include "BaseLib/TCLAPCustomOutput.h"
 #include "InfoLib/GitInfo.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
@@ -67,9 +66,6 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2025, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-
-    auto tclapOutput = std::make_unique<BaseLib::TCLAPCustomOutput>();
-    cmd.setOutput(tclapOutput.get());
 
     std::vector<std::string> allowed_ele_types;
     allowed_ele_types.emplace_back("line");
