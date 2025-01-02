@@ -36,7 +36,7 @@ appendNamedPolyline(std::unique_ptr<GeoLib::Polyline> polyline,
 
 void generateSinglePointGeometry(GeoLib::Point const& point,
                                  std::string&& point_name,
-                                 std::string& geometry_name,
+                                 std::string&& geometry_name,
                                  GeoLib::GEOObjects& geometry)
 {
     std::vector<GeoLib::Point*> points;
@@ -51,7 +51,7 @@ void generatePolylineGeometry(GeoLib::Point const& point0,
                               GeoLib::Point const& point1,
                               int const number_of_subdivisions,
                               std::string&& polyline_name,
-                              std::string& geometry_name,
+                              std::string&& geometry_name,
                               GeoLib::GEOObjects& geometry)
 {
     auto intermediate_points = GeoLib::generateEquidistantPoints(
@@ -106,7 +106,7 @@ int generateQuadGeometry(GeoLib::Point const& point0,
                          int const number_of_subdivisions_second_y,
                          int const number_of_subdivisions_first_z,
                          int const number_of_subdivisions_second_z,
-                         std::string&& quad_name, std::string& geometry_name,
+                         std::string&& quad_name, std::string&& geometry_name,
                          GeoLib::GEOObjects& geometry)
 {
     std::array<GeoLib::Point, 4> edge_points;
@@ -247,8 +247,9 @@ int main(int argc, char* argv[])
     auto constexpr eps = std::numeric_limits<double>::epsilon();
     if (p1[0] - p0[0] < eps && p1[1] - p0[1] < eps && p1[2] - p0[2] < eps)
     {
-        generateSinglePointGeometry(p0, std::move(polyline_name.getValue()),
-                                    geometry_name.getValue(), geometry);
+        generateSinglePointGeometry(p0, std::string(polyline_name.getValue()),
+                                    std::string(geometry_name.getValue()),
+                                    geometry);
     }
     else if ((p1[0] - p0[0] >= eps && p1[1] - p0[1] < eps &&
               p1[2] - p0[2] < eps) ||
@@ -257,9 +258,9 @@ int main(int argc, char* argv[])
              (p1[0] - p0[0] < eps && p1[1] - p0[1] < eps &&
               p1[2] - p0[2] >= eps))
     {
-        generatePolylineGeometry(p0, p1, nx.getValue(),
-                                 std::move(polyline_name.getValue()),
-                                 geometry_name.getValue(), geometry);
+        generatePolylineGeometry(
+            p0, p1, nx.getValue(), std::string(polyline_name.getValue()),
+            std::string(geometry_name.getValue()), geometry);
     }
     else
     {
@@ -278,7 +279,8 @@ int main(int argc, char* argv[])
                 p0, p1, nx.getValue(), eval(nx.getValue(), nx1.getValue()),
                 ny.getValue(), eval(ny.getValue(), ny1.getValue()),
                 nz.getValue(), eval(nz.getValue(), nz1.getValue()),
-                std::move(polyline_name.getValue()), geometry_name.getValue(),
+                std::string(polyline_name.getValue()),
+                std::string(geometry_name.getValue()),
                 geometry) == EXIT_FAILURE)
         {
             return EXIT_FAILURE;
