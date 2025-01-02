@@ -64,7 +64,7 @@ auto parseCommandLine(int argc, char* argv[]) -> Args
     cmd.add(xdmf_input_b_arg);
 
     TCLAP::ValueArg<std::string> data_array_a_arg(
-        "a", "first_data_array", "First data array name for comparison", true,
+        "a", "first_data_array", "First data array name for comparison", false,
         "", "NAME");
 
     TCLAP::ValueArg<std::string> data_array_b_arg(
