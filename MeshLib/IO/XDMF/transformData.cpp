@@ -396,7 +396,6 @@ std::pair<std::vector<std::size_t>, ParentDataType> transformToXDMFTopology(
             {
                 values.push_back(2);
             }
-            // LINE3 maps to ParentDataType::EDGE_3 -> no special care required
             push_cellnode_ids_to_vector(cell);
         }
     }
