@@ -51,9 +51,9 @@ if(GUIX_BUILD OR CONDA_BUILD)
 else()
     CPMFindPackage(
         NAME tclap
-        GITHUB_REPOSITORY ufz/tclap
-        VERSION 1.2.4
-        GIT_TAG 098dd0fe07a31618f3c2a9f8727bb01c8c5d61e2
+        GIT_REPOSITORY https://git.code.sf.net/p/tclap/code
+        GIT_TAG 81b3d2a0c47895c22e9bb8c577f5ab521f76e5d2
+        VERSION 1.4.0
         DOWNLOAD_ONLY YES
     )
     if(tclap_ADDED)
@@ -387,7 +387,7 @@ if(NOT (GUIX_BUILD OR CONDA_BUILD))
     if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS))
         CPMAddPackage(
             NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-            GIT_TAG 7cc474101bcee45804124df8010a2275022e2f3b
+            GIT_TAG 628c4694783f865d7f0ab3ba9bdd5530ce4567e9
         )
         if(vtkdiff_ADDED)
             install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
