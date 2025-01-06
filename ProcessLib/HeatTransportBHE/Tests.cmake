@@ -13,6 +13,20 @@ AddTest(
 )
 
 AddTest(
+    NAME HeatTransportBHE_1U_3D_bhe_sandwich_linear
+    PATH Parabolic/T/3D_BHE_Sandwich
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS sandwich_linear.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 10
+    DIFF_DATA
+    sandwich_ts_10_t_600.000000.vtu sandwich_linear_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
+    sandwich_ts_10_t_600.000000.vtu sandwich_linear_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
+)
+
+AddTest(
     NAME HeatTransportBHE_1U_3D_bhe_sandwich_Newton
     PATH Parabolic/T/3D_BHE_Sandwich
     EXECUTABLE ogs
@@ -108,6 +122,20 @@ AddTest(
     DIFF_DATA
     beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
     beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
+)
+
+AddTest(
+    NAME HeatTransportBHE_1U_3D_beier_sandbox_linear
+    PATH Parabolic/T/3D_Beier_sandbox
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS beier_sandbox_linear.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 20
+    DIFF_DATA
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_linear_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
+    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_linear_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
 )
 
 AddTest(
