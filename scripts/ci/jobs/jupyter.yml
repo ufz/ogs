@@ -29,8 +29,9 @@ test notebooks via wheel:
       echo 0 >"$status_file"  # success if no Notebooks are found
       # status file and sh -c to workaround xvfb-run problems:
       # /usr/bin/xvfb-run: line 186: kill: (<PID>) - No such process"
-      find . -type f -iname '*.ipynb' \
-          | grep -vP '\.ipynb_checkpoints|\.ci-skip\.ipynb$|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
+      find . -type f -iname '*.py' \
+          | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
+          | xargs grep -l "jupytext_version" \
           | xargs xvfb-run -a \
               sh -c 'statf="$1"; shift; "$@" || echo "$?" >"$statf"' \
               -- "$status_file" \
