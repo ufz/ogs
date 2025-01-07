@@ -32,6 +32,7 @@ test notebooks via wheel:
       find . -type f -iname '*.py' \
           | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
           | xargs grep -l "jupytext_version" \
+          | xargs grep -L "ci skip" \
           | xargs xvfb-run -a \
               sh -c 'statf="$1"; shift; "$@" || echo "$?" >"$statf"' \
               -- "$status_file" \
