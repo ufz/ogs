@@ -864,7 +864,7 @@ endif()
 
 if(NOT OGS_USE_PETSC AND NOT WIN32)
     NotebookTest(
-        NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.ipynb
+        NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.py
         RUNTIME 200
         SKIP_WEB
     )

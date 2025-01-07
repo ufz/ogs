@@ -40,7 +40,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/NotebookTest.cmake)
 # Check notebook testrunner
 NotebookTest(
     NOTEBOOKFILE
-    Notebooks/FailingNotebook.ci-skip.ipynb
+    Notebooks/FailingNotebook.ci-skip.py
     RUNTIME
     2
     PROPERTIES

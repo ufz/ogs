@@ -10,6 +10,7 @@
 #     display_name: Python 3 (ipykernel)
 #     language: python
 #     name: python3
+#   note: 'TODO: remove after 6.5.4 release: ci skip'
 # ---
 
 # %% [raw]
