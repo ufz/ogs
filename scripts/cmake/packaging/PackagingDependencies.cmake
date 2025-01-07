@@ -13,8 +13,8 @@ install(CODE "set(CMAKE_BUILD_RPATH \"${CMAKE_BUILD_RPATH}\")")
 install(CODE "set(INSTALL_DIR \"${INSTALL_DIR}\")")
 install(CODE "set(CMAKE_INSTALL_LIBDIR \"${CMAKE_INSTALL_LIBDIR}\")")
 install(CODE "set(_rpath \"${_rpath}\")")
-file(TO_CMAKE_PATH "$ENV{MKLROOT}" MKL_ROOT_DIR)
-install(CODE "set(MKL_ROOT_DIR \"${MKL_ROOT_DIR}\")")
+install(CODE "set(MKL_ROOT_DIR \"${MKL_ROOT}\")")
+install(CODE "set(OGS_USE_MKL \"${OGS_USE_MKL}\")")
 install(
     CODE "set(OGS_INSTALL_DEPENDENCIES_PRE_EXCLUDES \"${OGS_INSTALL_DEPENDENCIES_PRE_EXCLUDES}\")"
 )
@@ -63,6 +63,14 @@ install(
       FOLLOW_SYMLINK_CHAIN
     )
   endforeach()
+  if(OGS_USE_MKL)
+    file(INSTALL
+          DESTINATION "${CMAKE_INSTALL_PREFIX}/${INSTALL_DIR}"
+          TYPE SHARED_LIBRARY
+          FILES ${MKL_ROOT_DIR}/redist/intel64/mkl_avx512.2.dll
+          FOLLOW_SYMLINK_CHAIN
+    )
+  endif()
   list(LENGTH _u_deps _u_length)
   if("${_u_length}" GREATER 0)
     message(WARNING "Unresolved dependencies detected!\n${_u_deps}")
