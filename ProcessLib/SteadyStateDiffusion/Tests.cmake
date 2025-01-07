@@ -143,6 +143,24 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
     )
 endforeach()
 
+# CG TriangularMatrix test
+foreach(matrix lower upper lowerupper)
+    set(RUNTIME 3)
+    AddTest(
+        NAME SteadyStateDiffusion_cube_1x1x1_1e0_${matrix}
+        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
+        RUNTIME ${RUNTIME}
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e0_${matrix}.xml --write-prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
+        DIFF_DATA
+        cube_1x1x1_hex_1e0.vtu 1e0_cube_1x1x1_hex_1e0_${matrix}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
+    )
+endforeach()
+
+
+
 # Test FixedTimeStepping and fixed output times
 AddTest(
     NAME SteadyStateDiffusion_square_1x1_quad_1e1_FixedTimeStepping_FixedOutputTimes
