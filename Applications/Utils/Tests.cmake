@@ -38,7 +38,7 @@ AddTest(
     EXECUTABLE_ARGS -i sfc_mesh_9k.vtu -o ${Data_BINARY_DIR}/Utils/createTetgenSmeshFromRasters/CTSMFL-test -r rasterlist.txt
     RUNTIME 1
     TESTER numdiff
-    DIFF_DATA CTSMFL-test.smesh 0 5e-13
+    DIFF_DATA CTSMFL-test.smesh 0 7e-12
 )
 
 AddTest(

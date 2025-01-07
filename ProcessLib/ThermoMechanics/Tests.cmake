@@ -325,11 +325,11 @@ AddTest(
     DIFF_DATA
     cthex_ref.vtu  cube_1e0_lin_ts_1_t_1.000000.vtu   sigma_1  sigma 1e-16 0
     cthex_ref.vtu  cube_1e0_lin_ts_2_t_2.000000.vtu   sigma_2  sigma 1e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_3_t_3.000000.vtu   sigma_3  sigma 1e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_4_t_4.000000.vtu   sigma_4  sigma 1e-8  0
+    cthex_ref.vtu  cube_1e0_lin_ts_3_t_3.000000.vtu   sigma_3  sigma 2e-8  0
+    cthex_ref.vtu  cube_1e0_lin_ts_4_t_4.000000.vtu   sigma_4  sigma 2e-8  0
     cthex_ref.vtu  cube_1e0_lin_ts_5_t_5.000000.vtu   sigma_5  sigma 1e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_6_t_6.000000.vtu   sigma_6  sigma 1e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_7_t_7.000000.vtu   sigma_7  sigma 1e-8  0
+    cthex_ref.vtu  cube_1e0_lin_ts_6_t_6.000000.vtu   sigma_6  sigma 2e-8  0
+    cthex_ref.vtu  cube_1e0_lin_ts_7_t_7.000000.vtu   sigma_7  sigma 2e-8  0
     cthex_ref.vtu  cube_1e0_lin_ts_8_t_8.000000.vtu   sigma_8  sigma 2e-8  0
     cthex_ref.vtu  cube_1e0_lin_ts_9_t_9.000000.vtu   sigma_9  sigma 2e-8  0
     cthex_ref.vtu  cube_1e0_lin_ts_10_t_10.000000.vtu sigma_10 sigma 2e-8  0

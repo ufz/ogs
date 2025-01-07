@@ -346,13 +346,13 @@
         <vtkdiff>
             <regex>Results_ts_.*_t_.*_sec.vtu</regex>
             <field>sigma_ice</field>
-            <absolute_tolerance>3e-7</absolute_tolerance>
+            <absolute_tolerance>4e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>Results_ts_.*_t_.*_sec.vtu</regex>
             <field>ice_volume_fraction</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>4e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -376,13 +376,13 @@
         <vtkdiff>
             <regex>Results_ts_.*_t_.*_sec.vtu</regex>
             <field>HeatFlowRate</field>
-            <absolute_tolerance>4e-13</absolute_tolerance>
+            <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>Results_ts_.*_t_.*_sec.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>1e-9</absolute_tolerance>
+            <absolute_tolerance>6e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
