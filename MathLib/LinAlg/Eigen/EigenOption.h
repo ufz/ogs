@@ -40,10 +40,20 @@ struct EigenOption final
         ILUT
     };
 
+    /// triangular matrix type
+    enum class TriangularMatrixType : short
+    {
+        Lower,
+        Upper,
+        LowerUpper
+    };
+
     /// Linear solver type
     SolverType solver_type;
     /// Preconditioner type
     PreconType precon_type;
+    /// Triangular Matrix Type
+    TriangularMatrixType triangular_matrix_type;
     /// Maximum iteration count
     int max_iterations;
     /// Error tolerance
@@ -82,11 +92,24 @@ struct EigenOption final
     ///      NONE is returned.
     static PreconType getPreconType(const std::string& precon_name);
 
+    /// return a triangular matrix type from the name
+    ///
+    /// @param triangular_matrix_name
+    /// @return a triangular_matrix type
+    ///      If there is no triangular matrix type matched with the given name,
+    ///      NONE is returned.
+    static TriangularMatrixType getTriangularMatrixType(
+        const std::string& triangular_matrix_name);
+
     /// return a linear solver name from the solver type
     static std::string getSolverName(SolverType const solver_type);
 
     /// return a preconditioner name from the preconditioner type
     static std::string getPreconName(PreconType const precon_type);
+
+    /// return a triangular matrix name from the preconditioner type
+    static std::string getTriangularMatrixName(
+        TriangularMatrixType const triangular_matrix_type);
 };
 
 }  // namespace MathLib

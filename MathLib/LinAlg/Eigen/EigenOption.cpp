@@ -20,6 +20,7 @@ EigenOption::EigenOption()
     precon_type = PreconType::NONE;
     max_iterations = static_cast<int>(1e6);
     error_tolerance = 1.e-16;
+    triangular_matrix_type = TriangularMatrixType::Lower;
 #ifdef USE_EIGEN_UNSUPPORTED
     scaling = false;
     restart = 30;
@@ -97,6 +98,25 @@ EigenOption::PreconType EigenOption::getPreconType(
     OGS_FATAL("Unknown Eigen preconditioner type `{:s}'", precon_name);
 }
 
+EigenOption::TriangularMatrixType EigenOption::getTriangularMatrixType(
+    const std::string& triangular_matrix_name)
+{
+    if (triangular_matrix_name == "Lower")
+    {
+        return TriangularMatrixType::Lower;
+    }
+    if (triangular_matrix_name == "Upper")
+    {
+        return TriangularMatrixType::Upper;
+    }
+    if (triangular_matrix_name == "LowerUpper")
+    {
+        return TriangularMatrixType::LowerUpper;
+    }
+
+    OGS_FATAL("Unknown triangular matrix type `{:s}'", triangular_matrix_name);
+}
+
 std::string EigenOption::getSolverName(SolverType const solver_type)
 {
     switch (solver_type)
@@ -135,6 +155,21 @@ std::string EigenOption::getPreconName(PreconType const precon_type)
             return "LeastSquareDIAGONAL";
         case PreconType::ILUT:
             return "ILUT";
+    }
+    return "Invalid";
+}
+
+std::string EigenOption::getTriangularMatrixName(
+    TriangularMatrixType const triangular_matrix_type)
+{
+    switch (triangular_matrix_type)
+    {
+        case TriangularMatrixType::Lower:
+            return "Lower";
+        case TriangularMatrixType::Upper:
+            return "Upper";
+        case TriangularMatrixType::LowerUpper:
+            return "LowerUpper";
     }
     return "Invalid";
 }

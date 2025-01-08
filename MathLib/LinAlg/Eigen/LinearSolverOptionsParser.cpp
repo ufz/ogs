@@ -62,6 +62,14 @@ LinearSolverOptionsParser<EigenLinearSolver>::parseNameAndOptions(
     {
         options.max_iterations = *max_iteration_step;
     }
+    if (auto triangular_matrix_type =
+            //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__triangular_matrix}
+        config->getConfigParameterOptional<std::string>("triangular_matrix"))
+    {
+        options.triangular_matrix_type =
+            MathLib::EigenOption::getTriangularMatrixType(
+                *triangular_matrix_type);
+    }
     if (auto scaling =
             //! \ogs_file_param{prj__linear_solvers__linear_solver__eigen__scaling}
         config->getConfigParameterOptional<bool>("scaling"))
