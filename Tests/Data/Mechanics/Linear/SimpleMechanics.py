@@ -159,56 +159,27 @@ except Exception as inst:
 print(datetime.now())
 
 # %%
-pvdfile = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd")
-time = pvdfile.timesteps
+ms = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd")
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 points_labels = ["pt0", "pt1"]
 
 # %%
 fig, ax = plt.subplots(nrows=1, ncols=1)
 
-pvdfile.plot_probe(
-    points_coords,
-    ot.variables.displacement["x"],
-    labels=[f"$u_x$ {label} linear_interp" for label in points_labels],
-    time_unit="a",
-    interp_method="linear",
-    ax=fig.axes[0],
-    colors=["b", "r"],
-    linestyles=["-", "-"],
-)
+colors = {"x": ["b", "r"], "y": ["g", "m"]}
+linestyles = {"linear": ["-", "-"], "nearest": ["--", "--"]}
 
-pvdfile.plot_probe(
-    points_coords,
-    ot.variables.displacement["y"],
-    labels=[f"$u_y$ {label} linear_interp" for label in points_labels],
-    time_unit="a",
-    interp_method="linear",
-    ax=fig.axes[0],
-    colors=["g", "m"],
-    linestyles=["-", "-"],
-)
+for component in ["x", "y"]:
+    for interp_method in ["linear", "nearest"]:
+        labels = [f"$u_{component}$ {label} {interp_method}" for label in points_labels]
 
-pvdfile.plot_probe(
-    points_coords,
-    ot.variables.displacement["x"],
-    labels=[f"$u_x$ {label} nearest" for label in points_labels],
-    time_unit="a",
-    interp_method="nearest",
-    ax=fig.axes[0],
-    colors=["b", "r"],
-    linestyles=["--", "--"],
-)
-
-pvdfile.plot_probe(
-    points_coords,
-    ot.variables.displacement["y"],
-    labels=[f"$u_y$ {label} nearest" for label in points_labels],
-    time_unit="a",
-    interp_method="nearest",
-    ax=fig.axes[0],
-    colors=["g", "m"],
-    linestyles=["--", "--"],
-)
-
-fig.suptitle(f"{ot.variables.displacement.get_label()} - linear interpolation")
+        ms.plot_probe(
+            points_coords,
+            ot.variables.displacement[component],
+            labels=labels,
+            time_unit="a",
+            interp_method=interp_method,
+            ax=fig.axes[0],
+            colors=colors[component],
+            linestyles=linestyles[interp_method],
+        )

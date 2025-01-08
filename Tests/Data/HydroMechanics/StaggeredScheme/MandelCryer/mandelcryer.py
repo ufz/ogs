@@ -63,7 +63,6 @@
 import os
 from pathlib import Path
 
-import numpy as np
 import ogstools as ot
 
 # %%
@@ -93,22 +92,19 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
 # %%
 # Load the result
-results = ot.MeshSeries(f"{out_dir}/results_MandelCryerStaggered.pvd")
-pressure_var = ot.variables.pressure
+ms = ot.MeshSeries(f"{out_dir}/results_MandelCryerStaggered.pvd")
+
+# %% [markdown]
+# Available point data in the results:
 
 # %%
-# Get point field names
-fields = results[0].point_data.keys()
-print(fields)
+print(ms[0].point_data.keys())
 
 # %%
 # Plot soil temperature at observation points
-observation_points = {"center": (0, 0, 0)}
+center_point = [0, 0, 0]
 
-fig = results.plot_probe(
-    np.array(observation_points["center"]), pressure_var, labels=["Center"]
-)
-
+fig = ms.plot_probe(center_point, ot.variables.pressure, labels=["Center"])
 
 # %% [markdown]
 # As predicted, the pressure in the center exceeds the applied load and then levels out.
