@@ -32,13 +32,11 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
-import vtuIO
 
 # %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
-
 
 # %%
 prj_name = "SimpleMechanics"
@@ -160,66 +158,57 @@ except Exception as inst:
 
 print(datetime.now())
 
-
 # %%
-pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", interpolation_backend="scipy", dim=2)
+pvdfile = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd")
 time = pvdfile.timesteps
-points = {"pt0": (0.3, 0.5, 0.0), "pt1": (0.24, 0.21, 0.0)}
-displacement_linear = pvdfile.read_time_series(
-    "displacement", points, interpolation_method="linear"
-)
-displacement_nearest = pvdfile.read_time_series(
-    "displacement", points, interpolation_method="nearest"
-)
-
-
-plt.plot(
-    time, displacement_linear["pt0"][:, 0], "b-", label="$u_x$ pt0 linear interpolated"
-)
-plt.plot(
-    time,
-    displacement_nearest["pt0"][:, 0],
-    "b--",
-    label="$u_x$ pt0 closest point value",
-)
-plt.plot(
-    time, displacement_linear["pt0"][:, 1], "g-", label="$u_y$ pt0 linear interpolated"
-)
-plt.plot(
-    time,
-    displacement_nearest["pt0"][:, 1],
-    "g--",
-    label="$u_y$ pt0 closest point value",
-)
-plt.plot(
-    time, displacement_linear["pt1"][:, 0], "r-", label="$u_x$ pt1 linear interpolated"
-)
-plt.plot(
-    time,
-    displacement_nearest["pt1"][:, 0],
-    "r--",
-    label="$u_x$ pt1 closest point value",
-)
-plt.plot(
-    time, displacement_linear["pt1"][:, 1], "m-", label="$u_y$ pt1 linear interpolated"
-)
-plt.plot(
-    time,
-    displacement_nearest["pt1"][:, 1],
-    "m--",
-    label="$u_y$ pt1 closest point value",
-)
-plt.legend()
-plt.xlabel("t")
-plt.ylabel("u")
+points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
+points_labels = ["pt0", "pt1"]
 
 # %%
-mesh_series = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd")
-points = np.asarray([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
-disp = ot.variables.displacement
-labels = [
-    f"{i}: {label}" for i, label in enumerate(ot.plot.utils.justified_labels(points))
-]
-fig = mesh_series.plot_probe(points=points, variable=disp, time_unit="a", labels=labels)
+fig, ax = plt.subplots(nrows=1, ncols=1)
 
-# %%
+pvdfile.plot_probe(
+    points_coords,
+    ot.variables.displacement["x"],
+    labels=[f"$u_x$ {label} linear_interp" for label in points_labels],
+    time_unit="a",
+    interp_method="linear",
+    ax=fig.axes[0],
+    colors=["b", "r"],
+    linestyles=["-", "-"],
+)
+
+pvdfile.plot_probe(
+    points_coords,
+    ot.variables.displacement["y"],
+    labels=[f"$u_y$ {label} linear_interp" for label in points_labels],
+    time_unit="a",
+    interp_method="linear",
+    ax=fig.axes[0],
+    colors=["g", "m"],
+    linestyles=["-", "-"],
+)
+
+pvdfile.plot_probe(
+    points_coords,
+    ot.variables.displacement["x"],
+    labels=[f"$u_x$ {label} nearest" for label in points_labels],
+    time_unit="a",
+    interp_method="nearest",
+    ax=fig.axes[0],
+    colors=["b", "r"],
+    linestyles=["--", "--"],
+)
+
+pvdfile.plot_probe(
+    points_coords,
+    ot.variables.displacement["y"],
+    labels=[f"$u_y$ {label} nearest" for label in points_labels],
+    time_unit="a",
+    interp_method="nearest",
+    ax=fig.axes[0],
+    colors=["g", "m"],
+    linestyles=["--", "--"],
+)
+
+fig.suptitle(f"{ot.variables.displacement.get_label()} - linear interpolation")
