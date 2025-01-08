@@ -26,12 +26,12 @@
 
 # %%
 import os
-from datetime import datetime
 from pathlib import Path
 from subprocess import run
 
 import matplotlib.pyplot as plt
-import vtuIO
+import numpy as np
+import ogstools as ot
 
 # %%
 prj_name = "square_1e1_neumann"
@@ -46,18 +46,20 @@ if not out_dir.exists():
 print(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt")
 run(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt", shell=True, check=True)
 
-print(datetime.now())
-
-
 # %%
-pvdfile = vtuIO.PVDIO(f"{prj_name}.pvd", dim=2)
-time = pvdfile.timesteps
-points = {"pt0": (0.3, 0.5, 0.0), "pt1": (0.24, 0.21, 0.0)}
-pressure_linear = pvdfile.read_time_series("pressure", points)
+mesh_series = ot.MeshSeries(f"{prj_name}.pvd")
+points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
+points_labels = ["pt0", "pt1"]
 
-# %%
-plt.plot(time, pressure_linear["pt0"], "b-", label="pt0 linear interpolated")
-plt.plot(time, pressure_linear["pt1"], "r-", label="pt1 linear interpolated")
-plt.legend()
-plt.xlabel("t")
-plt.ylabel("p")
+fig, ax = plt.subplots(nrows=1, ncols=1)
+
+mesh_series.plot_probe(
+    points_coords,
+    ot.variables.pressure,
+    labels=["{label} linear interpolated" for label in points_labels],
+    time_unit="a",
+    interp_method="linear",
+    ax=fig.axes[0],
+    colors=["b", "r"],
+    linestyles=["-", "-"],
+)
