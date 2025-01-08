@@ -60,14 +60,14 @@
 # ## Numerical Simulation
 
 # %%
-# Create output path if it doesn't exist yet
 import os
 from pathlib import Path
 
-import matplotlib.pyplot as plt
+import numpy as np
 import ogstools as ot
-import vtuIO
 
+# %%
+# Create output path if it doesn't exist yet
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
@@ -93,30 +93,22 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
 # %%
 # Load the result
-pvdfile = vtuIO.PVDIO(f"{out_dir}/results_MandelCryerStaggered.pvd", dim=3)
-
-# Get point field names
-fields = pvdfile.get_point_field_names()
-print(fields)
-
-# Get all written timesteps
-time = pvdfile.timesteps
+results = ot.MeshSeries(f"{out_dir}/results_MandelCryerStaggered.pvd")
+pressure_var = ot.variables.pressure
 
 # %%
-# Define observation points
-observation_points = {"center": (0, 0, 0)}
-pressure = pvdfile.read_time_series("pressure", observation_points)
+# Get point field names
+fields = results[0].point_data.keys()
+print(fields)
 
-# Plot soil temperature
-fig, ax1 = plt.subplots(figsize=(10, 8))
-ax1.plot(time, pressure["center"], color="tab:orange")
-ax1.set_ylabel("Pressure (Pa)", fontsize=20)
-ax1.set_xlabel("Time (s)", fontsize=20)
-ax1.set_xlim(0, t_end)
-ax1.set_ylim(0, 1500)
-ax1.grid()
-fig.supxlabel("Pressure at center of sphere")
-plt.show()
+# %%
+# Plot soil temperature at observation points
+observation_points = {"center": (0, 0, 0)}
+
+fig = results.plot_probe(
+    np.array(observation_points["center"]), pressure_var, labels=["Center"]
+)
+
 
 # %% [markdown]
 # As predicted, the pressure in the center exceeds the applied load and then levels out.
