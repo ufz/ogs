@@ -59,7 +59,7 @@ function(NotebookTest)
         list(APPEND labels default)
     endif()
     # Notebooks are allowed to run longer than usual benchmarks
-    math(EXPR _notebook_large_runtime "10 * ${ogs.ctest.large_runtime}")
+    math(EXPR _notebook_large_runtime "15 * ${ogs.ctest.large_runtime}")
     if(${NotebookTest_RUNTIME} LESS_EQUAL ${_notebook_large_runtime})
         list(APPEND labels small)
     else()
