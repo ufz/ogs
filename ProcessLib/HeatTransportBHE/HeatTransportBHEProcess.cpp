@@ -42,8 +42,7 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
               std::move(secondary_variables)),
       _process_data(std::move(process_data)),
       _bheMeshData(std::move(bhe_mesh_data)),
-      _asm_mat_cache{_process_data._algebraic_BC_Setting._is_linear,
-                     true /*use_monolithic_scheme*/}
+      _asm_mat_cache{_process_data._is_linear, true /*use_monolithic_scheme*/}
 {
     if (_bheMeshData.BHE_mat_IDs.size() !=
         _process_data._vec_BHE_property.size())
@@ -164,7 +163,7 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
 
     // Store BHE and soil elements to split the assembly and use the matrix
     // cache in the linear case only for soil elements
-    if (_process_data._algebraic_BC_Setting._is_linear)
+    if (_process_data._is_linear)
     {
         _bhes_element_ids = _bheMeshData.BHE_elements | ranges::views::join |
                             MeshLib::views::ids | ranges::to<std::vector>;
@@ -221,7 +220,7 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
 
-    if (_process_data._algebraic_BC_Setting._is_linear)
+    if (_process_data._is_linear)
     {
         auto const& spec = this->getMatrixSpecifications(process_id);
 

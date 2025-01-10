@@ -28,8 +28,6 @@ struct AlgebraicBCSetting
     const bool _use_algebraic_bc;
 
     const double _weighting_factor;
-
-    const bool _is_linear;
 };
 
 struct HeatTransportBHEProcessData final
@@ -42,14 +40,16 @@ struct HeatTransportBHEProcessData final
         const bool use_tespy = false,
         const bool use_server_communication = false,
         const bool mass_lumping = false,
-        AlgebraicBCSetting algebraicBCSetting = {false, 100.0, false})
+        AlgebraicBCSetting algebraicBCSetting = {false, 100.0},
+        const bool is_linear = false)
         : media_map(media_map_),
           _vec_BHE_property(std::move(vec_BHEs_)),
           py_bc_object(py_bc_object_),
           _use_tespy(use_tespy),
           _use_server_communication(use_server_communication),
           _mass_lumping(mass_lumping),
-          _algebraic_BC_Setting(algebraicBCSetting)
+          _algebraic_BC_Setting(algebraicBCSetting),
+          _is_linear(is_linear)
     {
     }
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
@@ -71,5 +71,7 @@ struct HeatTransportBHEProcessData final
     std::vector<bool> mass_lumping_soil_elements;
 
     AlgebraicBCSetting const _algebraic_BC_Setting;
+
+    const bool _is_linear;
 };
 }  // namespace ProcessLib::HeatTransportBHE

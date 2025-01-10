@@ -195,10 +195,15 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     {
         if (!using_algebraic_bc)
         {
-            OGS_FATAL(
+            WARN(
                 "You specified that the process simulated by OGS is linear. "
-                "For the Heat-Transport-BHE process this can only be done "
-                "together with setting the use_algebraic_bc option to true.")
+                "With that optimization the process will be assembled only "
+                "once and the non-linear solver will only do iterations per "
+                "time step to fulfill the BHE boundary conditions. No other "
+                "non-linearities will be resolved and OGS will not detect if "
+                "there are any non-linearities. It is your responsibility to "
+                "ensure that the assembled equation systems are linear, "
+                "indeed! There is no safety net!");
         }
         else
         {
@@ -336,7 +341,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     HeatTransportBHEProcessData process_data(
         std::move(media_map), std::move(bhes), py_object, using_tespy,
         using_server_communication, mass_lumping,
-        {using_algebraic_bc, weighting_factor, is_linear});
+        {using_algebraic_bc, weighting_factor}, is_linear);
 
     SecondaryVariableCollection secondary_variables;
 
