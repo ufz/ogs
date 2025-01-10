@@ -222,7 +222,14 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
 
     if (_process_data._is_linear)
     {
-        auto const& spec = this->getMatrixSpecifications(process_id);
+        if (!getActiveElementIDs().empty())
+        {
+            OGS_FATAL(
+                "Domain Deactivation is currently not implemnted with "
+                "linear optimization.");
+        }
+
+        auto const& spec = getMatrixSpecifications(process_id);
 
         // use matrix cache for soil elements
         _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, &M, &K, &b,
