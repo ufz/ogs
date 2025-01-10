@@ -11,120 +11,126 @@
 # attribute is tested in which prj file, and the other telling which tags and
 # attributes are untested.
 
-# prevent broken pipe error
+from collections import defaultdict
+from typing import TextIO
+import xml.etree.ElementTree as ET
+import sys
+import os
+import json
 from signal import SIG_DFL, SIGPIPE, signal
 
 signal(SIGPIPE, SIG_DFL)
 
-import json
-import os
-import sys
-import xml.etree.ElementTree as ET
-
-from print23 import print_
 
 if len(sys.argv) != 3:
     sys.stderr.write("Usage:\n")
     sys.stderr.write(f"{sys.argv[0]} DATADIR DOCAUXDIR\n")
     sys.exit(1)
 
-datadir = sys.argv[1]
-docauxdir = sys.argv[2]
-
-datadir = os.path.abspath(datadir)
-docauxdir = os.path.abspath(docauxdir)
+datadir = os.path.abspath(sys.argv[1])
+docauxdir = os.path.abspath(sys.argv[2])
 outdir = os.path.join(docauxdir, "dox", "CTestProjectFiles")
-
-# Expansions or shortcuts for the documentation can be added here in the
-# following format:
-# "prj__processes__process": "process",
-# See the expansion table in the append-xml-tags.py too.
-tag_path_expansion_table = {
-    "material__porous_medium__porous_medium": "material__porous_medium",
-}
-
-indent = "&nbsp;" * 2
+INDENT = "&nbsp;" * 2
 
 
-def format_if_documented(is_doc, fmt, fullpagename, tag_attr, *args):
+def format_if_documented(
+    is_doc: bool, fmt: str, page_name: str, tag_attr: str, nowarn: bool, *args
+) -> str:
+    "Apply doxygen formatting to tag or attribute."
     if is_doc:
-        tag_attr_formatted = rf'\ref {fullpagename} "{tag_attr}"'
+        tag_attr_formatted = rf'\ref {page_name} "{tag_attr}"'
+    elif nowarn:
+        tag_attr_formatted = tag_attr
     else:
         tag_attr_formatted = (
             r'<span style="color: red;" title="undocumented: {}">{}</span>'.format(
-                fullpagename, tag_attr
+                page_name, tag_attr
             )
         )
 
     return fmt.format(tag_attr_formatted, tag_attr, *args)
 
 
-def format_if_documented_nowarn(is_doc, fmt, fullpagename, tag_attr, *args):
-    if is_doc:
-        tag_attr_formatted = rf'\ref {fullpagename} "{tag_attr}"'
-    else:
-        tag_attr_formatted = tag_attr
+def replace_prefix(tag: str, typetag: str) -> str:
+    "Replaces prefix to match the different docs structure for some tags."
 
-    return fmt.format(tag_attr_formatted, tag_attr, *args)
+    type_prefix = "" if typetag is None else typetag + "__"
+    if (prefix := "prj__processes__process__constitutive_relation__") in tag:
+        tag = tag.replace(
+            prefix, "material.solid.constitutive_relation__" + type_prefix
+        )
+
+    for prefix_end in ["phases__phase__", "phases__", ""]:
+        if (prefix := "prj__media__medium__" + prefix_end) in tag:
+            if "property" not in tag:  # excludes parent tags
+                return tag
+            tag = tag.replace(prefix, "")
+
+    return tag
 
 
-def get_tagpath(pagename, typetag, typetag_levels_up):
-    tagpath = pagename.replace("__", ".")
-    is_doc = (tagpath, True) in documented_tags_attrs
+def get_tagpath(
+    page_name: str, typetag: str, typetag_levels_up: int
+) -> tuple[str, str, bool]:
+    tag_path = replace_prefix(page_name, typetag).replace("__", ".")
+    is_doc = (tag_path, True) in documented_tags_attrs
     if not is_doc and typetag:
-        tagpath_parts = tagpath.split(".")
-        tagpath_parts.insert(-typetag_levels_up, typetag)
-        tagpath_new = ".".join(tagpath_parts)
+        tag_path_parts = tag_path.split(".")
+        tag_path_parts.insert(-typetag_levels_up, typetag)
+        tagpath_new = ".".join(tag_path_parts)
         is_doc = (tagpath_new, True) in documented_tags_attrs
         if is_doc:
-            tagpath = tagpath_new
-            pagename = tagpath.replace(".", "__")
+            tag_path = tagpath_new
+            page_name = tag_path.replace(".", "__")
+    else:
+        page_name = tag_path.replace(".", "__")
 
-    return tagpath, pagename, is_doc
+    return tag_path, page_name, is_doc
 
 
-def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepath):
-    global map_tag_to_prj_files
+def print_tags(
+    node: ET.Element,
+    level: int,
+    page_name: str,
+    filehandle: TextIO,
+    typetag: str,
+    typetag_levels_up: int,
+    rel_filepath: str,
+) -> None:
     tag = node.tag
-    rootpagename = pagename
+    rootpagename = page_name
 
     if level > 0:
-        pagename += "__" + tag if pagename else tag
+        page_name += "__" + tag if page_name else tag
 
-    if pagename in tag_path_expansion_table:
-        tagpath_unexpanded = pagename.replace("__", ".")
-        dict_of_set_add(map_tag_to_prj_files, tagpath_unexpanded, relfilepath)
-        pagename = tag_path_expansion_table[pagename]
+    tag_path, page_name, is_doc = get_tagpath(page_name, typetag, typetag_levels_up)
 
-    tagpath, pagename, is_doc = get_tagpath(pagename, typetag, typetag_levels_up)
     if is_doc:
-        dict_of_set_add(map_tag_to_prj_files, tagpath, relfilepath)
+        map_tag_to_prj_files[tag_path].add(rel_filepath)
 
     fullpagename = "ogs_file_param"
-    if pagename:
-        fullpagename += "__" + pagename
+    if page_name:
+        fullpagename += "__" + page_name
 
     attrs = ""
     for attr, value in sorted(node.attrib.items()):
-        attrpath = tagpath + "." + attr
+        attrpath = tag_path + "." + attr
         attrpagename = "ogs_file_attr__" + attrpath.replace(".", "__")
         a_is_doc = (attrpath, False) in documented_tags_attrs
-        attrs += format_if_documented(a_is_doc, ' {0}="{2}"', attrpagename, attr, value)
+        attrs += format_if_documented(
+            a_is_doc, ' {0}="{2}"', attrpagename, attr, True, value
+        )
         if a_is_doc:
-            dict_of_set_add(map_attr_to_prj_files, attrpath, relfilepath)
+            map_attr_to_prj_files[attrpath].add(rel_filepath)
 
-    if len(node) > 0:
-        # node having child tag
-
-        # print opening tag
-        fh.write(
-            format_if_documented(
-                is_doc, indent * level + "\\<{0}{2}\\><br>\n", fullpagename, tag, attrs
-            )
+    if len(node) > 0:  # node having child tag
+        fmt = INDENT * level + "\\<{0}{2}\\><br>\n"
+        filehandle.write(
+            format_if_documented(is_doc, fmt, fullpagename, tag, True, attrs)
         )
 
         if node.text and node.text.strip():
-            fh.write(indent * (level + 1) + node.text.strip() + "<br>\n")
+            filehandle.write(INDENT * (level + 1) + node.text.strip() + "<br>\n")
 
         for child in node:
             if child.tag == "type" and child.text and child.text.strip():
@@ -140,28 +146,25 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
             print_tags(
                 child,
                 level + 1,
-                pagename,
-                fh,
+                page_name,
+                filehandle,
                 typetag_children,
                 typetag_children_levels_up,
-                relfilepath,
+                rel_filepath,
             )
 
         # print closing tag
-        fh.write((indent * level) + r"\</" + tag + "\\><br>\n")
+        filehandle.write((INDENT * level) + r"\</" + tag + "\\><br>\n")
     else:
         # node having no children
         if node.text and node.text.strip():
             if tag != "type":
-                fh.write(
+                fmt = INDENT * level + "\\<{0}{2}\\>{3}\\</{1}\\><br>\n"
+                filehandle.write(
                     format_if_documented(
-                        is_doc,
-                        indent * level + "\\<{0}{2}\\>{3}\\</{1}\\><br>\n",
-                        fullpagename,
-                        tag,
-                        attrs,
+                        is_doc, fmt, fullpagename, tag, True, attrs,
                         node.text.strip(),
-                    )
+                    )  # fmt: skip
                 )
             else:
                 typepagename = rootpagename + "__" + node.text.strip()
@@ -169,34 +172,26 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
                     typepagename, None, 0
                 )
                 if type_is_doc:
-                    dict_of_set_add(map_tag_to_prj_files, typetagpath, relfilepath)
+                    map_tag_to_prj_files[typetagpath].add(rel_filepath)
                 typepagename = "ogs_file_param__" + typepagename
 
                 # If the content of a type tag is undocumented no red
                 # "undocumented..." HTML code will be generated.
-                type_text_formatted = format_if_documented_nowarn(
-                    type_is_doc, "{0}", typepagename, node.text.strip()
+                type_text_formatted = format_if_documented(
+                    type_is_doc, "{0}", typepagename, node.text.strip(), False
                 )
 
-                fh.write(
+                fmt = INDENT * level + "\\<{0}{2}\\>{3}\\</{1}\\><br>\n"
+                filehandle.write(
                     format_if_documented(
-                        is_doc,
-                        indent * level + "\\<{0}{2}\\>{3}\\</{1}\\><br>\n",
-                        fullpagename,
-                        tag,
-                        attrs,
+                        is_doc, fmt, fullpagename, tag, True, attrs,
                         type_text_formatted,
-                    )
+                    )  # fmt: skip
                 )
         else:
-            fh.write(
-                format_if_documented(
-                    is_doc,
-                    indent * level + "\\<{0}{2} /\\><br>\n",
-                    fullpagename,
-                    tag,
-                    attrs,
-                )
+            fmt = INDENT * level + "\\<{0}{2} /\\><br>\n"
+            filehandle.write(
+                format_if_documented(is_doc, fmt, fullpagename, tag, True, attrs)
             )
 
 
@@ -204,7 +199,9 @@ def print_tags(node, level, pagename, fh, typetag, typetag_levels_up, relfilepat
 documented_tags_attrs = set()
 
 # read parameter cache (generated by normalize-param-cache.py)
-with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
+with open(
+    os.path.join(docauxdir, "documented-parameters-cache.txt"), encoding="UTF-8"
+) as fh:
     for line in fh:
         line = line.strip().split("@@@")
         if line[0] == "OK":
@@ -219,30 +216,22 @@ with open(os.path.join(docauxdir, "documented-parameters-cache.txt")) as fh:
             method = line[6]
             is_tag = method.find("Attribute") == -1
             documented_tags_attrs.add((tagpath, is_tag))
-            # print_(tagpath, is_tag)
 
 
-def has_prj_file_in_subdirs(reldirpath):
-    return any(dn.startswith(reldirpath) for dn in dirs_with_prj_files)
+def has_prj_file_in_subdirs(rel_dirpath: str) -> bool:
+    return any(dn.startswith(rel_dirpath) for dn in dirs_with_prj_files)
 
 
 dirs_with_prj_files = set()
 
 # maps tags/attributes to the set of prj files they appear in
-map_tag_to_prj_files = {}
-map_attr_to_prj_files = {}
-
-
-def dict_of_set_add(dos, key, value):
-    if key not in dos:
-        dos[key] = set()
-    dos[key].add(value)
+map_tag_to_prj_files = defaultdict(set)
+map_attr_to_prj_files = defaultdict(set)
 
 
 for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
     reldirpath = os.path.relpath(dirpath, datadir)
     outdirpath = os.path.join(outdir, reldirpath)
-    print_(">", reldirpath)
 
     subpages = []
 
@@ -260,7 +249,8 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
             if not os.path.exists(outdirpath):
                 os.makedirs(outdirpath)
 
-            with open(outdoxfile, "w") as fh:
+            # write linked prj file, cf. https://doxygen.opengeosys.org/d6/de3/ogs_ctest_prj__elliptic__circle_radius_1__circle_1e6_axi__prj
+            with open(outdoxfile, "w", encoding="UTF-8") as fh:
                 fh.write(
                     rf"""/*! \page {pagename} {fn}
 
@@ -303,7 +293,8 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
         if pagetitle == ".":
             pagetitle = "OGS CTests&mdash;Project Files"
 
-        with open(os.path.join(outdirpath, "index.dox"), "w") as fh:
+        # Write CTest directory listing, cf. https://doxygen.opengeosys.org/de/d2a/ogs_ctest_prj__elliptic__circle_radius_1
+        with open(os.path.join(outdirpath, "index.dox"), "w", encoding="UTF-8") as fh:
             fh.write(
                 rf"""/*! \page {pagename} {pagetitle}
 
@@ -320,22 +311,31 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
             )
 
 for k, v in map_tag_to_prj_files.items():
-    map_tag_to_prj_files[k] = list(v)
+    map_tag_to_prj_files[k] = sorted(v)
     documented_tags_attrs.discard((k, True))
 
 for k, v in map_attr_to_prj_files.items():
-    map_attr_to_prj_files[k] = list(v)
+    map_attr_to_prj_files[k] = sorted(v)
     documented_tags_attrs.discard((k, False))
 
-with open(os.path.join(docauxdir, "tested-parameters-cache.json"), "w") as fh:
+with open(
+    os.path.join(docauxdir, "tested-parameters-cache.json"),
+    "w",
+    encoding="UTF-8",
+) as fh:
     json.dump(
         {"tags": map_tag_to_prj_files, "attributes": map_attr_to_prj_files},
         fh,
         indent=2,
     )
 
-untested_tags = [tag for tag, is_tag in documented_tags_attrs if is_tag]
-untested_attrs = [attr for attr, is_tag in documented_tags_attrs if not is_tag]
+untested_tags = sorted([tag for tag, is_tag in documented_tags_attrs if is_tag])
+untested_attrs = sorted([attr for attr, is_tag in documented_tags_attrs if not is_tag])
 
-with open(os.path.join(docauxdir, "untested-parameters-cache.json"), "w") as fh:
+# This goes to the QA page (https://doxygen.opengeosys.org/d1/d49/project_file_doc_qa.html) :-)
+with open(
+    os.path.join(docauxdir, "untested-parameters-cache.json"),
+    "w",
+    encoding="UTF-8",
+) as fh:
     json.dump({"tags": untested_tags, "attributes": untested_attrs}, fh, indent=2)

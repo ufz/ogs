@@ -32,7 +32,7 @@ mkdir -p "$doxdir"
 
 # Gather information about documented parameters.
 "$toolsdir/get-project-params.sh" "$srcdir" \
-    | "$toolsdir/normalize-param-cache.py" >"$param_cache"
+    | "$toolsdir/normalize-param-cache.py" >"$param_cache" 2>/dev/null
 
 # Document ctest project files
 # and find out which tags and attributes are tested in which prj file and what
