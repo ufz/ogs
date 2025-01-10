@@ -63,7 +63,7 @@ install(
       FOLLOW_SYMLINK_CHAIN
     )
   endforeach()
-  if(OGS_USE_MKL)
+  if(OGS_USE_MKL AND WIN32)
     file(INSTALL
           DESTINATION "${CMAKE_INSTALL_PREFIX}/${INSTALL_DIR}"
           TYPE SHARED_LIBRARY
