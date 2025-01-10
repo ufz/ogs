@@ -75,7 +75,7 @@ For more details, see [Process variables]({{< ref "process_variables" >}}).
 
 THM can automatically obtain thermal conductivity for the medium based on thermal conductivities of phases and porosity.
 
-{{% include "../../shared-content/effective-thermal-conductivity-porosity-mixing.md" %}}
+See [Thermal conductivity: effective porosity mixing]({{% ref "effective-porosity-mixing" %}}) for more information.
 
 #### Examples
 
