@@ -39,10 +39,7 @@ public:
     template <class T_X, class T_N>
     static void computeGradShapeFunction(const T_X& r, T_N& dN);
 
-    static std::array<double, 2> getReferenceElementCenter()
-    {
-        return {{0.0, 0.0}};
-    }
+    static constexpr std::array reference_element_centre = {0.0, 0.0};
 
     using MeshElement = MeshLib::Quad9;
     static const unsigned DIM = MeshElement::dimension;

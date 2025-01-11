@@ -26,7 +26,7 @@ public:
     template <class T_X, class T_N>
     static void computeShapeFunction(const T_X& r, T_N& N);
 
-    static std::array<double, 1> getReferenceElementCenter() { return {{0.0}}; }
+    static constexpr std::array reference_element_centre = {0.0};
 
     using MeshElement = MeshLib::Point;
     static const unsigned DIM = MeshElement::dimension;

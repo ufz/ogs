@@ -74,16 +74,15 @@ template <typename ShapeFunction, typename ShapeMatricesType, int GlobalDim,
 typename ShapeMatricesType::ShapeMatrices initShapeMatricesAtElementCenter(
     MeshLib::Element const& e, bool const is_axially_symmetric)
 {
-    std::array<double, ShapeFunction::DIM> const center =
-        ShapeFunction::getReferenceElementCenter();
+    static constexpr std::array<double, ShapeFunction::DIM> centre =
+        ShapeFunction::reference_element_centre;
 
-    MathLib::WeightedPoint center_pt(center, 1.0);
-    std::vector<MathLib::WeightedPoint> points{std::move(center_pt)};
+    std::vector<MathLib::WeightedPoint> integration_points{{centre, 1.0}};
 
     auto const shape_matrices =
         computeShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim,
                              SelectedShapeMatrixType>(e, is_axially_symmetric,
-                                                      points);
+                                                      integration_points);
     return shape_matrices[0];
 }
 
