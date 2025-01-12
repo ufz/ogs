@@ -77,7 +77,8 @@ typename ShapeMatricesType::ShapeMatrices initShapeMatricesAtElementCenter(
     static constexpr std::array<double, ShapeFunction::DIM> centre =
         ShapeFunction::reference_element_centre;
 
-    std::vector<MathLib::WeightedPoint> integration_points{{centre, 1.0}};
+    static constexpr std::array integration_points = {
+        MathLib::WeightedPoint{centre, 1.0}};
 
     auto const shape_matrices =
         computeShapeMatrices<ShapeFunction, ShapeMatricesType, GlobalDim,

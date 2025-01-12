@@ -24,7 +24,8 @@ public:
     //! Constructs a 0...3D weighted point depending on the passed coordinates
     //! array.
     template <std::size_t dim>
-    WeightedPoint(std::array<double, dim> const& coords, double const weight)
+    constexpr WeightedPoint(std::array<double, dim> const& coords,
+                            double const weight)
         : weight_{weight}, dim_{dim}
     {
         static_assert(dim <= 3);
@@ -44,13 +45,14 @@ public:
     }
 
     //! Constructs a 0D weighted point.
-    explicit WeightedPoint(double const weight) : weight_{weight}, dim_{0}
+    explicit constexpr WeightedPoint(double const weight)
+        : weight_{weight}, dim_{0}
     {
         // fill with NaN for safety reasons
         coords_.fill(std::numeric_limits<double>::quiet_NaN());
     }
 
-    bool operator==(WeightedPoint const& other) const
+    constexpr bool operator==(WeightedPoint const& other) const
     {
         if (weight_ != other.weight_)
         {
@@ -70,20 +72,20 @@ public:
         return true;
     }
 
-    bool operator!=(WeightedPoint const& other) const
+    constexpr bool operator!=(WeightedPoint const& other) const
     {
         return !(*this == other);
     }
 
-    const double* data() const { return coords_.data(); }
+    constexpr const double* data() const { return coords_.data(); }
 
-    double getWeight() const { return weight_; }
+    constexpr double getWeight() const { return weight_; }
 
     //! The point dimension, i.e., the number of its coordinates.
-    std::size_t getDimension() const { return dim_; }
+    constexpr std::size_t getDimension() const { return dim_; }
 
     //! Access a specific coordinate.
-    double operator[](std::size_t coord_idx) const
+    constexpr double operator[](std::size_t coord_idx) const
     {
         return coords_[coord_idx];
     }
