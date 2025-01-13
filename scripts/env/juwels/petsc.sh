@@ -1,6 +1,6 @@
 # previous version Stages/2023 can be used as long as it is supported by JUWELS
 # the module versions can be found in git history
-module load Stages/2024
+module load Stages/2025
 module load GCC
 module load ParaStationMPI
 module load CMake

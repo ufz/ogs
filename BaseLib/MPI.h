@@ -101,10 +101,8 @@ static std::vector<T> allgather(T const& value, Mpi const& mpi)
 {
     std::vector<T> result(mpi.size);
 
-    result[mpi.rank] = value;
-
-    MPI_Allgather(&result[mpi.rank], 1, mpiType<T>(), result.data(), 1,
-                  mpiType<T>(), mpi.communicator);
+    MPI_Allgather(&value, 1, mpiType<T>(), result.data(), 1, mpiType<T>(),
+                  mpi.communicator);
 
     return result;
 }
@@ -116,10 +114,8 @@ static std::vector<T> allgather(std::vector<T> const& vector, Mpi const& mpi)
     // Flat in memory over all ranks;
     std::vector<T> result(mpi.size * size);
 
-    std::copy_n(vector.begin(), size, &result[mpi.rank * size]);
-
-    MPI_Allgather(&result[mpi.rank * size], size, mpiType<T>(), result.data(),
-                  size, mpiType<T>(), mpi.communicator);
+    MPI_Allgather(vector.data(), size, mpiType<T>(), result.data(), size,
+                  mpiType<T>(), mpi.communicator);
 
     return result;
 }
