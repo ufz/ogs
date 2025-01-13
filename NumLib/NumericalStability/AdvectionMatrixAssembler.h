@@ -39,7 +39,12 @@ void assembleAdvectionMatrix(IPData const& ip_data_vector,
         auto const& dNdx = ip_data.dNdx;
         auto const& N = Ns[ip];
         laplacian_matrix.noalias() +=
-            N.transpose() * ip_flux_vector[ip].transpose() * dNdx * w;
+            (N.transpose() * ip_flux_vector[ip].transpose() * dNdx * w)
+#if defined(__GNUC__) && (__GNUC__ == 14) && (__GNUC_MINOR__ == 2) && \
+    (__GNUC_PATCHLEVEL__ == 1)
+                .eval()
+#endif
+            ;
     }
 }
 
