@@ -2,7 +2,7 @@
 date = "2018-11-14T15:00:13+01:00"
 title = "Running OGS in a container"
 author = "Lars Bilke"
-weight = 3
+weight = 31
 +++
 
 <div class='note'>

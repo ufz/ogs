@@ -2,7 +2,7 @@
 date = "2021-09-09T15:00:13+01:00"
 title = "Jupyter Notebooks"
 author = "Lars Bilke"
-weight = 6
+weight = 61
 +++
 
 <!-- TODO: Consider to move this section out of **BASICS** and to devote an extra first-order section to the Python-bindings of OGS and how to operate OGS via Python and Jupyter Notebooks.-->

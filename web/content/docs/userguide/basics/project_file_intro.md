@@ -2,7 +2,7 @@
 date = "2018-02-27T11:00:13+01:00"
 title = "Project file structure"
 author = "Feliks Kiszkurno"
-weight = 3
+weight = 31
 +++
 
 The main input taken by OpenGeoSys is a path to a project file. This file has a ".prj" extension and describes all aspects of
