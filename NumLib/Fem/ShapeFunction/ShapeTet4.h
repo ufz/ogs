@@ -9,6 +9,7 @@
  */
 
 #pragma once
+#include <array>
 
 #include "MeshLib/Elements/Tet.h"
 
@@ -38,6 +39,8 @@ public:
      */
     template <class T_X, class T_N>
     static void computeGradShapeFunction(const T_X& r, T_N& dN);
+
+    static constexpr std::array reference_element_centre = {0.5, 0.5, 0.5};
 
     using MeshElement = MeshLib::Tet;
     static const unsigned DIM = MeshElement::dimension;
