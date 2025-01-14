@@ -100,6 +100,7 @@ check docs links:
       --exclude search_opensearch.php
       --exclude eigen.tuxfamily.org
       --exclude wiki.sei.cmu.edu
+      --exclude www.opengeosys.org/project/license
       --exclude-path build/docs/d0/de3/citelist.html
       --exclude-path build/docs/doxygen_crawl.html
       build/docs

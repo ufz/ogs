@@ -153,7 +153,7 @@ Additionally to
 sudo apt-get install python3 python3-pip
 ```
 
-(from https://www.opengeosys.org/docs/devguide/getting-started/prerequisites/), do
+(from [Set Up Prerequisites]({{< ref "prerequisites.md" >}})), do
 
 ```bash
 sudo apt-get install python3-venv
