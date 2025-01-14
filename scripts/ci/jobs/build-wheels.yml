@@ -61,6 +61,7 @@ build wheels win:
     - .vs-environment
   variables:
     SKBUILD_BUILD_OPTIONS: "/m" # TODO not supported yet in scikit-build-core
+  timeout: 10h
   <<: *wheels_template
 
 publish wheels:
