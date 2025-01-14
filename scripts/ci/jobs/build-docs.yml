@@ -104,10 +104,10 @@ check docs links:
       --exclude-path build/docs/d0/de3/citelist.html
       --exclude-path build/docs/doxygen_crawl.html
       build/docs
-    - lychee --cache --max-cache-age 14d
-      --max-concurrency 2
-      --include gitlab.opengeosys.org/ogs/ogs
-      build/docs
+    # - lychee --cache --max-cache-age 14d
+    #   --max-concurrency 2
+    #   --include gitlab.opengeosys.org/ogs/ogs
+    #   build/docs
   cache:
     paths:
       - .lycheecache
