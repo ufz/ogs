@@ -27,11 +27,22 @@
 # %% [markdown]
 # ## Problem description
 #
-# The problem describes a heat source embedded in a fully fluid-saturated porous medium.
-# The spherical symmetry is modeled using a 10 m x 10 m disc with a point heat source ($Q=150\;\mathrm{W}$) placed at one corner ($r=0$) and a curved boundary at $r=10\;\mathrm{m}$. Applying rotational axial symmetry at one of the linear boundaries, the model region transforms into a half-space configuration of the spherical symmetrical problemcorresponding to the analytical solution.
-# The initial temperature and the excess pore pressure are 273.15 K and 0 Pa, respectively.
-# The axis-normal displacements along the symmetry (inner) boundaries were set to zero, whereas the excess pore pressure, as well as the temperature, are set to their initial values along the outer (curved) boundary.
-# The heat coming from the point source is propagated through the medium, causing the fluid and the solid to expand at different rates. The resulting pore pressure (gradient) is triggering a thermally driven consolidation process caused by the fluid flowing away from the heat source until equilibrium is reached.
+# The problem describes a heat source embedded in a fully fluid-saturated porous
+# medium. The spherical symmetry is modeled using a 10 m x 10 m disc with a
+# point heat source ($Q=150\;\mathrm{W}$) placed at one corner ($r=0$) and a
+# curved boundary at $r=10\;\mathrm{m}$. Applying rotational axial symmetry at
+# one of the linear boundaries, the model region transforms into a half-space
+# configuration of the spherical symmetrical problemcorresponding to the
+# analytical solution.
+# The initial temperature and the excess pore pressure are 273.15 K and 0 Pa,
+# respectively. The axis-normal displacements along the symmetry (inner)
+# boundaries were set to zero, whereas the excess pore pressure, as well as the
+# temperature are set to their initial values along the outer (curved) boundary.
+# The heat coming from the point source is propagated through the medium,
+# causing the fluid and the solid to expand at different rates. The resulting
+# pore pressure (gradient) is triggering a thermally driven consolidation
+# process caused by the fluid flowing away from the heat source until
+# equilibrium is reached.
 #
 # ![PointHeatSourceSchematic.png](figures/PointHeatSourceSchematic.png)
 
@@ -50,7 +61,8 @@
 #
 # * The porous medium is isotropic and homogeneous.
 #
-# These assumptions lead to the following set of governing equation describing the system behavior:
+# These assumptions lead to the following set of governing equation describing
+# the system behavior:
 #
 # **Energy balance**
 #
@@ -100,7 +112,9 @@
 # \end{equation}
 # $$
 #
-# A detailed description about the problem formulation and equation derivation can be found in the original work of Booker and Savvidou (1985) or Chaudhry et al. (2019).
+# A detailed description about the problem formulation and equation derivation
+# can be found in the original work of Booker and Savvidou (1985) or Chaudhry
+# et al. (2019).
 #
 # ## Input parameters
 #
@@ -113,9 +127,15 @@
 # # The analytical solution
 #
 #
-# The analytical solution of the coupled THM consolidation problem is derived in the original work of Booker and Savvidou (1985). In Chaudhry et al. (2019), a corrected solution is given for the effective stress term.
+# The analytical solution of the coupled THM consolidation problem is derived
+# in the original work of Booker and Savvidou (1985). In Chaudhry et al. (2019),
+# a corrected solution is given for the effective stress term.
 #
-# For clarification, the equations below are based on the solid mechanics sign convention (tensile stress is positive). Furthermore, temporal partial derivative is indicated by the dot convention, while spatial partial derivatives are expressed by the comma convention, i.e. $(\cdot)_{,i}=\partial (\cdot)/\partial x_i$.
+# For clarification, the equations below are based on the solid mechanics sign
+# convention (tensile stress is positive). Furthermore, temporal partial
+# derivative is indicated by the dot convention, while spatial partial
+# derivatives are expressed by the comma convention, i.e.
+# $(\cdot)_{,i}=\partial (\cdot)/\partial x_i$.
 #
 # The analytical solution for the three primary variables are expressed as:
 #
@@ -214,8 +234,8 @@ from timeit import default_timer as timer
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
-import vtuIO
-from scipy import special as sp
+import pyvista as pv
+from scipy.special import erfc
 
 
 # %%
@@ -233,27 +253,26 @@ class ANASOL:
         self.rho_s = 2290.0  # density of solid matrix
         self.c_s = 917.654  # specific heat capacity of solid matrix
         self.K_s = 1.838  # themal conductivity of solid matrix
-        self.a_s = (
-            3 * 1.5e-5
-        )  # volumetric expansivity of matrix - value conversion from linear to volumetric expansivity
-        self.a_w = 4.0e-4  # coefficient of volume expansion of pore water (beta_w)
+        # volumetric expansivity of matrix - conversion from linear volumetric
+        self.a_s = 3 * 1.5e-5
+        # coefficient of volume expansion of pore water (beta_w)
+        self.a_w = 4.0e-4
 
         # initial and boundary condition
-        self.Q = (
-            2 * 150
-        )  # [Q]=W strength of the heat source - value corrected to account for domain size
+        # strength of heat source - value corrected to account for domain size
+        self.Q = 2 * 150  # [Q] = W
         self.T0 = 273.15  # initial temperature
 
         self.Init()
 
     # derived parameters
     def f(self, ka, R, t):
-        return sp.erfc(R / (2 * np.sqrt(ka * t)))
+        return erfc(R / (2 * np.sqrt(ka * t)))
 
     def g(self, ka, R, t):
         return (
             ka * t / R**2
-            + (1 / 2 - ka * t / R**2) * sp.erfc(R / (2 * np.sqrt(ka * t)))
+            + (1 / 2 - ka * t / R**2) * erfc(R / (2 * np.sqrt(ka * t)))
             - np.sqrt(ka * t / (np.pi * R**2)) * np.exp(-(R**2) / (4 * ka * t))
         )
 
@@ -367,111 +386,78 @@ ana_model = ANASOL()
 #
 # ## The numerical solutions
 #
-# For the numerical solution we compare the Thermal-Hydro-Mechanical (THM - linear and quadratic mesh), Thermal-2-Phase-Hydro-Mechanical (TH2M) and Thermal-Richard-Mechanical (TRM - quadratic mesh) formulation of OGS.
+# For the numerical solution we compare the Thermal-Hydro-Mechanical (THM -
+# linear and quadratic mesh), Thermal-2-Phase-Hydro-Mechanical (TH2M) and
+# Thermal-Richard-Mechanical (TRM - quadratic mesh) formulation of OGS.
 #
-# The TH2M and TRM formulation methods have essential differences when applied to an unsaturated media where a gas phase is also present along side the aqueous phase. The difference originates from the way how the two mobile phases are treated specifically in the equation system: in the TH2M formulation, both the gas phase and the liquid phase is explicitely present and each phase is comprised of the two distinct component of aqueous component and non-aqueous component. In this case, the gas phase has a variable pressure solved explicitely in the governing equations. On the other hand, the TRM model assumes that the gas phase mobility is high and fast enough that gas drainage can occur significantly faster than the other processes in the system and hence, gas pressure doesn't build up. This leads to the simplification, that no gas pressure is calculated in the TRM model explicitely.
+# The TH2M and TRM formulation methods have essential differences when applied
+# to an unsaturated media where a gas phase is also present along side the
+# aqueous phase. The difference originates from the way how the two mobile phases are treated specifically in the equation system: in the TH2M formulation, both the gas phase and the liquid phase is explicitely present and each phase is comprised of the two distinct component of aqueous component and non-aqueous component. In this case, the gas phase has a variable pressure solved explicitely in the governing equations. On the other hand, the TRM model assumes that the gas phase mobility is high and fast enough that gas drainage can occur significantly faster than the other processes in the system and hence, gas pressure doesn't build up. This leads to the simplification, that no gas pressure is calculated in the TRM model explicitely.
 #
-# The THM model is a simplified form of the general TH2M model, where there is no gas phase, only the aqueous phase is present in the equation system.
+# The THM model is a simplified form of the general TH2M model, where there is
+# no gas phase, only the aqueous phase is present in the equation system.
 #
-# In addition to the different formulation, we also compare the performance of the THM formulation with a linear and a quadratic mesh as well.
+# In addition to the different formulation, we also compare the performance of
+# the THM formulation with a linear and a quadratic mesh as well.
+
+# %% [markdown]
+# Preparing the different models:
 
 # %%
 data_dir = os.environ.get("OGS_DATA_DIR", "../../..")
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
-# THM formulation (current working dir)
-prj_file_lin = "pointheatsource_linear-mesh.prj"
-prj_file_quad = "pointheatsource_quadratic-mesh.prj"
-ogs_model_lin = ot.Project(
-    input_file=prj_file_lin, output_file=f"{out_dir}/{prj_file_lin}"
-)
-ogs_model_quad = ot.Project(
-    input_file=prj_file_quad, output_file=f"{out_dir}/{prj_file_quad}"
-)
+dir_th2m = f"{data_dir}/TH2M/THM/sphere/"
+dir_trm = f"{data_dir}/ThermoRichardsMechanics/PointHeatSource/"
+dirs = {"thm_lin": "./", "thm_quad": "./", "th2m": dir_th2m, "trm": dir_trm}
 
-# TH2M formulation
-prj_file_th2m = "point_heatsource.prj"
-path_th2m = f"{data_dir}/TH2M/THM/sphere"
-prj_filepath_th2m = f"{path_th2m}/{prj_file_th2m}"
-ogs_model_th2m = ot.Project(
-    input_file=prj_filepath_th2m, output_file=f"{out_dir}/pointheatsource_th2m.prj"
-)
-
-# TRM formulation
-prj_file_trm = "point_heat_source_2D.prj"
-path_trm = f"{data_dir}/ThermoRichardsMechanics/PointHeatSource"
-prj_filepath_trm = f"{path_trm}/{prj_file_trm}"
-ogs_model_trm = ot.Project(
-    input_file=prj_filepath_trm, output_file=f"{out_dir}/pointheatsource_trm.prj"
+prj_files = {
+    "thm_lin": "pointheatsource_linear-mesh.prj",
+    "thm_quad": "pointheatsource_quadratic-mesh.prj",
+    "th2m": f"{dir_th2m}point_heatsource.prj",
+    "trm": f"{dir_trm}point_heat_source_2D.prj",
+}
+models = {
+    process_key: ot.Project(
+        input_file=prj,
+        output_file=f"{out_dir}/point_heatsource_{process_key}.prj",
+    )
+    for process_key, prj in prj_files.items()
+}
+models["th2m"].replace_text(
+    "150", xpath="./parameters/parameter[name='temperature_source_term']/value"
 )
 
 # %%
 # Simulation time
 t_end = 2e6  # <= was originally 5e6
-ogs_model_lin.set(t_end=t_end)
-ogs_model_quad.set(t_end=t_end)
-ogs_model_th2m.set(t_end=t_end)
-ogs_model_trm.set(t_end=t_end)
-
-# %%
-ogs_model_lin.set(output_prefix="pointheatsource_lin")
-ogs_model_quad.set(output_prefix="pointheatsource_quad")
-ogs_model_th2m.set(output_prefix="pointheatsource_th2m")
-ogs_model_th2m.replace_text(
-    "150", xpath="./parameters/parameter[name='temperature_source_term']/value"
-)
-ogs_model_trm.set(output_prefix="pointheatsource_trm")
-
-# %%
-ogs_model_lin.write_input()
-ogs_model_quad.write_input()
-ogs_model_th2m.write_input()
-ogs_model_trm.write_input()
+for process_key, model in models.items():
+    model.set(t_end=t_end)
+    model.set(output_prefix=f"point_heatsource_{process_key}")
+    model.write_input()
 
 # %%
 # Run models in parallel via concurrent.futures
-ogs_models = []
-ogs_models.append(
+ogs_models = [
     {
-        "model": ogs_model_lin.prjfile,
-        "logfile": f"{out_dir}/lin-out.txt",
-        "args": f"-o {out_dir} -m . -s .",
+        "prj": model.prjfile,
+        "logfile": f"{out_dir}/{process_key}-out.txt",
+        "args": f"-o {out_dir} -m {dirs[process_key]} -s {dirs[process_key]}",
     }
-)
-ogs_models.append(
-    {
-        "model": ogs_model_quad.prjfile,
-        "logfile": f"{out_dir}/quad-out.txt",
-        "args": f"-o {out_dir} -m . -s .",
-    }
-)
-ogs_models.append(
-    {
-        "model": ogs_model_th2m.prjfile,
-        "logfile": f"{out_dir}/th2m-out.txt",
-        "args": f"-o {out_dir} -m {path_th2m} -s {path_th2m}",
-    }
-)
-ogs_models.append(
-    {
-        "model": ogs_model_trm.prjfile,
-        "logfile": f"{out_dir}/trm-out.txt",
-        "args": f"-o {out_dir} -m {path_trm} -s {path_trm}",
-    }
-)
+    for process_key, model in models.items()
+]
 
 
 def run_ogs(model):
-    prj = model["model"]
-    print(f"Starting {prj} ...\n")
+    print(f"Starting {model['prj']} ...\n")
     start_sim = timer()
     # Starting via ogs6py does not work ("cannot pickle lxml"), at least on mac.
-    run(f"ogs {prj} {model['args']} > {model['logfile']}", shell=True, check=True)
+    command = f"ogs {model['prj']} {model['args']} > {model['logfile']}"
+    run(command, shell=True, check=True)
     runtime = timer() - start_sim
-    return [f"Finished {prj} in {runtime} s", runtime]
+    return [f"Finished {model['prj']} in {runtime} s", runtime]
 
 
 if platform.system() == "Darwin":
@@ -482,331 +468,153 @@ if platform.system() == "Darwin":
 runtimes = []
 start = timer()
 with concurrent.futures.ProcessPoolExecutor() as executor:
-    results = executor.map(run_ogs, ogs_models)
-    for result in results:
-        print(result[0])
-        runtimes.append(result[1])
+    outputs = executor.map(run_ogs, ogs_models)
+    for output in outputs:
+        print(output[0])
+        runtimes.append(output[1])
 print(f"Elapsed time for all simulations: {timer() - start} s")
 
 # %% [markdown]
 # ## Evaluation and Results
 #
-# The analytical expressions together with the numerical model can now be evaluated at different points as a function of time (time series) or for a given time as a function of their spatial coordinates (along radial axis).
+# The analytical expressions together with the numerical model can now be
+# evaluated at different points as a function of time (time series) or for a
+# given time as a function of their spatial coordinates (along radial axis).
 
 # %%
-# Point of interest
-pts = {"pt0": (0.5, 0.5, 0.0)}
+results = {
+    process_key: ot.MeshSeries(f"{out_dir}/point_heatsource_{process_key}.pvd")
+    for process_key in models
+}
 
-# Time axis for analytical solution
-t = np.linspace(1, 50000 * 200, num=201, endpoint=True)
-
-projects = [
-    "pointheatsource_lin",
-    "pointheatsource_quad",
-    "pointheatsource_th2m",
-    "pointheatsource_trm",
-]
-
-pvds = []
-for prj in projects:
-    pvds.append(vtuIO.PVDIO(f"{out_dir}/{prj}.pvd", dim=2))
 
 # %% [markdown]
 # ### Time series plots for temperature, pressure and displacement
 #
-# Comparison between the analytical solution and the numerical solution shows very good agreement, as displayed below in the figures.
+# Comparison between the analytical solution and the numerical solution shows
+# very good agreement, as displayed below in the figures.
 
 # %%
 plt.rcParams["lines.linewidth"] = 2.0
-plt.rcParams["lines.color"] = "black"
-plt.rcParams["legend.frameon"] = True
 plt.rcParams["font.family"] = "serif"
 plt.rcParams["legend.fontsize"] = 14
 plt.rcParams["font.size"] = 14
-plt.rcParams["axes.axisbelow"] = True
-plt.rcParams["figure.figsize"] = (16, 6)
 
-output = {
-    "T": (
-        "temperature",
-        "temperature_interpolated",
-        "temperature_interpolated",
-        "temperature_interpolated",
-    ),
-    "p": (
-        "pressure",
-        "pressure_interpolated",
-        "gas_pressure_interpolated",
-        "pressure_interpolated",
-    ),
-    "u": ("displacement", "displacement", "displacement", "displacement"),
-    "color": ("r+", "rx", "b+", "g+"),
-    "label": ("ogs6 thm lin", "ogs6 thm quad", "ogs6 th2m", "ogs6 trm"),
+t_i, p_i = ("temperature_interpolated", "pressure_interpolated")
+data_names = {
+    "thm_lin": {"T": "temperature", "p": "pressure", "u": "displacement"},
+    "thm_quad": {"T": t_i, "p": p_i, "u": "displacement"},
+    "th2m": {"T": t_i, "p": f"gas_{p_i}", "u": "displacement"},
+    "trm": {"T": t_i, "p": p_i, "u": "displacement"},
 }
+variables: dict[str, ot.variables.Variable] = {
+    "T": ot.variables.temperature,
+    "p": ot.variables.pressure,
+    "u": ot.variables.displacement["x"].replace(output_unit="mm"),
+}
+style = {"thm_lin": "r+", "thm_quad": "rx", "th2m": "b+", "trm": "g+"}
+pt = [0.5, 0.5, 0.0]
+t = np.linspace(1, 50000 * 200, num=201, endpoint=True)
 
-fig1, (ax1, ax2) = plt.subplots(1, 2)
 
-ax1.plot(
-    t,
-    ana_model.temperature(pts["pt0"][0], pts["pt0"][1], pts["pt0"][2], t),
-    "k",
-    label="analytical",
-)
-for i, pvd in enumerate(pvds):
-    ax1.plot(
-        pvd.timesteps,
-        pvd.read_time_series(output["T"][i], pts=pts)["pt0"],
-        output["color"][i],
-        label=output["label"][i],
-    )
-ax1.set_xscale("log")
-ax1.set_xlabel("t / s")
-ax1.set_ylabel("T / K")
-ax1.set_xlim(1.0e4, 2.0e7)
-ax1.set_ylim(270.0, 292.0)
-ax1.legend(loc="lower right")
-ax1.set_title("Temperature")
+def plot_over_time(
+    var_key: str, ana_sol: np.ndarray, err_bounds: list[float]
+) -> plt.Figure:
+    fig, axs = plt.subplots(ncols=2, figsize=(16, 6))
+    var = variables[var_key]
+    # only do unit conversion here
+    ana_sol = var.replace(func=lambda _: _).transform(ana_sol)
+    axs[0].plot(t, ana_sol, "k", label="analytical")
 
-ax2.set_xscale("log")
-ax2.set_xlabel("t / s")
-ax2.set_ylabel("error / K")
-ax2.set_xlim(1.0e4, 2.0e7)
-ax2.set_title("Temperature error / numerical - analytical")
+    for key, ms in results.items():
+        values = var.transform(ms.probe(pt, data_names[key][var_key])).ravel()
+        error = values - np.interp(ms.timevalues(), t, ana_sol)
+        assert np.all((error > err_bounds[0]) & (error < err_bounds[1]))
 
-for i, pvd in enumerate(pvds):
-    interp_ana_model = np.interp(
-        pvd.timesteps,
-        t,
-        ana_model.temperature(pts["pt0"][0], pts["pt0"][1], pts["pt0"][2], t),
-    )
-    error = pvd.read_time_series(output["T"][i], pts=pts)["pt0"] - interp_ana_model
-    ax2.plot(pvd.timesteps, error, output["color"][i], label=output["label"][i])
-    assert np.all(error < 0.2)
-    assert np.all(error > -0.06)
+        axs[0].plot(ms.timevalues(), values, style[key], label=f"ogs6_{key}")
+        axs[1].plot(ms.timevalues(), error, style[key], label=f"ogs6_{key}")
 
-ax2.legend(loc="upper right")
+    axs[0].set_ylabel(var.get_label())
+    axs[1].set_ylabel(f"error (numerical - analytical) / {var.difference.output_unit}")
+    for ax in axs:
+        ax.set_xlim(4.0e4, 3.0e6)
+        ax.set_xscale("log")
+        ax.set_xlabel("t / s")
+        ax.legend()
+    return fig
 
-fig1.tight_layout()
 
 # %%
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-
-ax1.plot(
-    t,
-    ana_model.porepressure(pts["pt0"][0], pts["pt0"][1], pts["pt0"][2], t) / 1.0e6,
-    "k",
-    label="analytical",
-)
-for i, pvd in enumerate(pvds):
-    ax1.plot(
-        pvd.timesteps,
-        pvd.read_time_series(output["p"][i], pts=pts)["pt0"] / 1.0e6,
-        output["color"][i],
-        label=output["label"][i],
-    )
-ax1.set_xscale("log")
-ax1.set_xlabel("t / s")
-ax1.set_ylabel("p / MPa")
-ax1.set_xlim(1.0e4, 2.0e7)
-ax1.legend(loc="lower right")
-ax1.set_title("Pressure")
-
-ax2.set_xscale("log")
-ax2.set_xlabel("t / s")
-ax2.set_ylabel("error / MPa")
-ax2.set_xlim(1.0e4, 2.0e7)
-ax2.set_title("Pressure error / numerical - analytical")
-
-for i, pvd in enumerate(pvds):
-    interp_ana_model = np.interp(
-        pvd.timesteps,
-        t,
-        ana_model.porepressure(pts["pt0"][0], pts["pt0"][1], pts["pt0"][2], t),
-    )
-    error = pvd.read_time_series(output["p"][i], pts=pts)["pt0"] - interp_ana_model
-    ax2.plot(pvd.timesteps, error / 1.0e6, output["color"][i], label=output["label"][i])
-    assert np.all(error < 0.1 * 1e6)
-    assert np.all(error > -0.06 * 1e6)
-
-ax2.legend(loc="upper right")
-
-fig1.tight_layout()
+T_fig = plot_over_time("T", ana_model.temperature(*pt, t), [-0.06, 0.2])
+T_fig.tight_layout()
 
 # %%
-fig1, (ax1, ax2) = plt.subplots(1, 2)
+p_fig = plot_over_time("p", ana_model.porepressure(*pt, t), [-0.06, 0.1])
+p_fig.tight_layout()
 
-ax1.plot(
-    t,
-    ana_model.u_i(pts["pt0"][0], pts["pt0"][1], pts["pt0"][2], t, "x") * 1000,
-    "k",
-    label="analytical",
-)
-for i, pvd in enumerate(pvds):
-    ax1.plot(
-        pvd.timesteps,
-        pvd.read_time_series(output["u"][i], pts=pts)["pt0"][:, 0] * 1000,
-        output["color"][i],
-        label=output["label"][i],
-    )
-ax1.set_xscale("log")
-ax1.set_xlabel("t / s")
-ax1.set_ylabel("$u_x$ / $10^{-3}$ m")
-ax1.set_xlim(1.0e4, 2.0e7)
-ax1.legend(loc="lower right")
-ax1.set_title("Displacement")
-
-ax2.set_xscale("log")
-ax2.set_xlabel("t / s")
-ax2.set_ylabel("error / $10^{-3}$ m")
-ax2.set_xlim(1.0e4, 2.0e7)
-ax2.set_title("Displacement error / numerical - analytical")
-
-for i, pvd in enumerate(pvds):
-    interp_ana_model = np.interp(
-        pvd.timesteps,
-        t,
-        ana_model.u_i(pts["pt0"][0], pts["pt0"][1], pts["pt0"][2], t, "x"),
-    )
-    error = (
-        pvd.read_time_series(output["u"][i], pts=pts)["pt0"][:, 0] - interp_ana_model
-    )
-    ax2.plot(pvd.timesteps, error * 1000, output["color"][i], label=output["label"][i])
-    assert np.all(error < 0.0005)
-    assert np.all(error > -0.0035)
-
-ax2.legend(loc="lower right")
-
-fig1.tight_layout()
+# %%
+u_fig = plot_over_time("u", ana_model.u_i(*pt, t, "x"), [-0.0035, 0.0005])
+u_fig.tight_layout()
 
 # %% [markdown]
 # ### Plots for temperature, pressure and displacement along the radial axis
 #
-# The comparison between the analytical and the numerical results along the radial axis generally shows good agreement. The differences observed can be primarily explained by mesh discretization and finite size effects. This is particularly the case for the th2m simulation results, where the differences are slightly more emphasized which is the results of larger time steps.
+# The comparison between the analytical and the numerical results along the
+# radial axis generally shows good agreement. The differences observed can be
+# primarily explained by mesh discretization and finite size effects. This is
+# particularly the case for the th2m simulation results, where the differences
+# are slightly more emphasized which is the results of larger time steps.
+
 
 # %%
 # Time stamp for the results along the radial axis
+# Radial coordinates for plotting
+x = np.linspace(start=0.0001, stop=2.0, num=50)
 t_i = 1.0e5
 
-# Radial coordinates for plotting
-x = np.linspace(start=0.0001, stop=10.0, num=100)
-r = [(i, 0, 0) for i in x]
+
+def plot_over_line(
+    var_key: str, ana_sol: np.ndarray, err_bounds: list[float]
+) -> plt.Figure:
+    fig, axs = plt.subplots(ncols=2, figsize=(16, 6))
+    var = variables[var_key]
+    # only do unit conversion here
+    ana_sol = var.replace(func=lambda _: _).transform(ana_sol)
+    axs[0].plot(x, ana_sol, "k", label="analytical")
+
+    for key, ms in results.items():
+        mesh = ms.mesh(ms.closest_timestep(t_i))
+        obs_pts = pv.PolyData([(x_i, 0, 0) for x_i in x[1:]]).sample(mesh)
+        values = var.transform(obs_pts[data_names[key][var_key]]).ravel()
+        pts_x = obs_pts.points[:, 0]
+        error = values - np.interp(pts_x, x, ana_sol)
+        # do not check first entry, which corresponds to the origin
+        assert np.all((error[2:] > err_bounds[0]) & (error[2:] < err_bounds[1]))
+
+        axs[0].plot(pts_x, values, style[key], label=f"ogs6_{key}")
+        axs[1].plot(pts_x, error, style[key], label=f"ogs6_{key}")
+
+    axs[0].set_ylim([-0.2, min(130, max(ana_sol) * 1.25)])
+    axs[0].set_ylabel(var.get_label())
+    axs[1].set_ylabel(f"error (numerical - analytical) / {var.difference.output_unit}")
+    for ax in axs:
+        ax.set_xlim([0.0, 2.0])
+        ax.set_xlabel("r / m")
+        ax.legend()
+    return fig
+
 
 # %%
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-
-ax1.plot(x, ana_model.temperature(x, 0, 0, t_i), "k", label="analytical")
-for i, pvd in enumerate(pvds):
-    ax1.plot(
-        x,
-        pvd.read_set_data(t_i, output["T"][i], pointsetarray=r, data_type="point"),
-        output["color"][i],
-        label=output["label"][i],
-    )
-
-ax1.set_xlim(0, 2.0)
-ax1.set_ylim(250.0, 400.0)
-ax1.set_xlabel("r / m")
-ax1.set_ylabel("T / K")
-ax1.legend()
-ax1.set_title("Temperature")
-
-ax2.set_xlim(0, 2.0)
-ax2.set_ylim(-3, 1)
-ax2.set_xlabel("r / m")
-ax2.set_ylabel("error / K")
-ax2.set_title("Temperature error / numerical - analytical")
-
-for i, pvd in enumerate(pvds):
-    error = pvd.read_set_data(
-        t_i, output["T"][i], pointsetarray=r, data_type="point"
-    ) - ana_model.temperature(x, 0, 0, t_i)
-    ax2.plot(x, error, output["color"][i], label=output["label"][i])
-    assert np.all(
-        error[1:] < 0.5
-    )  # do not check first entry, which corresponds to the origin
-    assert np.all(
-        error[1:] > -2.5
-    )  # do not check first entry, which corresponds to the origin
-
-ax2.legend()
-
-fig1.tight_layout()
+T_fig = plot_over_line("T", ana_model.temperature(x, 0, 0, t_i), [-2.5, 0.5])
+T_fig.tight_layout()
 
 # %%
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-
-ax1.plot(x, ana_model.porepressure(x, 0, 0, t_i) / 1e6, "k", label="analytical")
-for i, pvd in enumerate(pvds):
-    ax1.plot(
-        x,
-        pvd.read_set_data(t_i, output["p"][i], pointsetarray=r, data_type="point")
-        / 1.0e6,
-        output["color"][i],
-        label=output["label"][i],
-    )
-
-ax1.set_xlim(0, 2.0)
-ax1.set_ylim(0, 35.0)
-ax1.set_xlabel("r / m")
-ax1.set_ylabel("p / MPa")
-ax1.legend()
-ax1.set_title("Pressure")
-
-ax2.set_xlim(0, 2.0)
-ax2.set_xlabel("r / m")
-ax2.set_ylabel("error / MPa")
-ax2.set_title("Pressure error / numerical - analytical")
-
-for i, pvd in enumerate(pvds):
-    error = (
-        pvd.read_set_data(t_i, output["p"][i], pointsetarray=r, data_type="point")
-        - ana_model.porepressure(x, 0, 0, t_i)
-    ) / 1.0e6
-    ax2.plot(x, error, output["color"][i], label=output["label"][i])
-    assert np.all(error < 2.5)
-    assert np.all(error > -1.0)
-
-ax2.legend()
-
-fig1.tight_layout()
+p_fig = plot_over_line("p", ana_model.porepressure(x, 0, 0, t_i), [-1.0, 2.5])
+p_fig.tight_layout()
 
 # %%
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-
-ax1.plot(x, ana_model.u_i(x, 0, 0, t_i, "x") * 1000, "k", label="analytical")
-for i, pvd in enumerate(pvds):
-    ax1.plot(
-        x,
-        pvd.read_set_data(t_i, output["u"][i], pointsetarray=r, data_type="point")[:, 0]
-        * 1000,
-        output["color"][i],
-        label=output["label"][i],
-    )
-
-ax1.set_xlim(0, 2.0)
-ax1.set_xlabel("r / m")
-ax1.set_ylabel("$u_r$ / $10^{-3}$ m")
-ax1.legend()
-ax1.set_title("Displacement")
-
-ax2.set_xlim(0, 2.0)
-ax2.set_ylim(-0.025, 0.025)
-ax2.set_xlabel("r / m")
-ax2.set_ylabel("error / $10^{-3}$ m")
-ax2.set_title("Displacement error / numerical - analytical")
-
-for i, pvd in enumerate(pvds):
-    error = (
-        pvd.read_set_data(t_i, output["u"][i], pointsetarray=r, data_type="point")[:, 0]
-        - ana_model.u_i(x, 0, 0, t_i, "x")
-    ) * 1000
-    ax2.plot(x, error, output["color"][i], label=output["label"][i])
-    assert np.all(error[1:] < 0.01)
-    assert np.all(error[1:] > -0.015)
-
-ax2.legend()
-
-fig1.tight_layout()
+u_fig = plot_over_line("u", ana_model.u_i(x, 0, 0, t_i, "x"), [-0.015, 0.01])
+u_fig.tight_layout()
 
 # %% [markdown]
 # ## Execution times
@@ -814,18 +622,21 @@ fig1.tight_layout()
 # To compare the performance of the different numerical solutions implemented in OGS6, we compare the execution time of the simulations. The linear thm and trm solutions perform best, while the quadratic thm and th2m solutions take significantly longer time to run. It is also important to mention here, that the time step size selected for the th2m solution are twice as big as the other 3 implementation, yet simulation time still takes longer than any of the other solution.
 
 # %%
-fig = plt.figure()
-ax = fig.add_axes([0, 0, 1, 1])
-mesh = ["thm linear", "thm quadratic", "th2m", "trm"]
-ax.bar(mesh, runtimes)
-plt.ylabel("exec. time / s")
-plt.show()
+fig, ax = plt.subplots(figsize=(16, 6))
+ax.bar(["thm linear", "thm quadratic", "th2m", "trm"], runtimes)
+ax.set_ylabel("exec. time / s")
+fig.tight_layout()
 
 # %% [markdown]
 # ## References
 #
-# [1] Booker, J. R.; Savvidou, C. (1985), Consolidation around a point heat source. International Journal for Numerical and Analytical Methods in Geomechanics, 1985, 9. Jg., Nr. 2, S. 173-184.
+# [1] Booker, J. R.; Savvidou, C. (1985), Consolidation around a point heat
+# source. International Journal for Numerical and Analytical Methods in
+# Geomechanics, 1985, 9. Jg., Nr. 2, S. 173-184.
 #
-# [2] Chaudhry, A. A.; Buchwald, J.; Kolditz, O. and Nagel, T. (2019), Consolidation around a point heatsource (correction & verification). International Journal for Numerical and Analytical Methods in Geomechanics, 2019, <https://doi.org/10.1002/nag.2998>.
+# [2] Chaudhry, A. A.; Buchwald, J.; Kolditz, O. and Nagel, T. (2019),
+# Consolidation around a point heatsource (correction & verification).
+# International Journal for Numerical and Analytical Methods in Geomechanics,
+# 2019, <https://doi.org/10.1002/nag.2998>.
 
 # %%
