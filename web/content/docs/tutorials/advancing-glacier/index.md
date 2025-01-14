@@ -52,7 +52,7 @@ source .venv/bin/activate
 pip install ogstools
 ```
 
-More detailed information about the usages and development of ogstools can be found in [ogstools Documentation](https://ogs.ogs.xyz/tools/ogstools/index.html).
+More detailed information about the usages and development of ogstools can be found in [ogstools Documentation](https://ogstools.opengeosys.org/stable/index.html).
 After installation the tool can be applied as described in the first video-tutorial.
 To apply msh2vtu on the mesh_basin.msh the command should look like:
 

@@ -19,7 +19,7 @@ To use a mesh created by SALOME, it must be converted to the Gmsh file format fi
 
 To extract a surface mesh (in order to define appropriate boundary conditions) one can use the tool [ExtractSurface]({{< ref "extract-surface" >}}) for different kinds of 3D meshes. Different tools like [ParaView](https://www.paraview.org/) are suited as well. Care must be taken to make sure that all element types are of dimension `d-1`, where `d` is the dimension of the bulk mesh, and that no degenerated elements are left in the mesh and all nodes are connected appropriately. Furthermore, ensure that the element orders match. In the current version ExtractSurface stores meshes of first order (linear elements), even when the input mesh was of second order (quadratic elements).
 
-Alternatively, the tool [msh2vtu](https://ogs.ogs.xyz/tools/ogstools/user-guide/msh2vtu.html) can be used to convert Gmsh meshes to VTU and to extract boundary meshes directly from physical groups defined in Gmsh.
+Alternatively, the tool [msh2vtu](https://ogstools.opengeosys.org/stable/user-guide/msh2vtu.html) can be used to convert Gmsh meshes to VTU and to extract boundary meshes directly from physical groups defined in Gmsh.
 
 Heterogeneous fields, e.g., for the use as initial conditions, can be easily generated using the [VTUinterface](https://github.com/joergbuchwald/VTUinterface) Python package.
 
