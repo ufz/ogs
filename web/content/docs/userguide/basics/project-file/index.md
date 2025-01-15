@@ -2,7 +2,7 @@
 date = "2018-11-14T11:00:13+01:00"
 title = "Modularizing project files"
 author = "Lars Bilke"
-weight = 4
+weight = 41
 +++
 
 <!-- TODO: This section already contains a more advanced topic. Consider moving it to a more advanced section outside of **Basics** -->

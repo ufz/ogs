@@ -2,19 +2,7 @@
 date = "2018-02-27T11:00:13+01:00"
 title = "Introduction"
 author = "Lars Bilke"
-weight = 1
-
-aliases = [ "/docs/userguide/",
-            "/docs/quickstart/",
-            "/docs/quickstart/basics/quickstart" ] # Redirect for Hydrology III tutorial
-
-[menu.docs]
-name = "User Guide"
-identifier = "userguide"
-weight = 1
-post = "Download, install and run an OGS benchmark in 5 minutes! No development setup required."
-[menu.docs.params]
-category = "User"
+weight = 12
 +++
 
 ## Installation

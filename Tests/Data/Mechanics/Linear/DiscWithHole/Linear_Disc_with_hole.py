@@ -26,6 +26,7 @@
 #
 # The overall stress distributions in the plate around the hole can be represented by Kirsch's Solution, which is expressed here in cylindrical coordinates. The following equations are valid for an infinitely extended plate. Since the hole is very small compared to the dimension of the plate, we can consider this condition as fulfilled. The parameter $\sigma$ is the applied tension and $a$ is the radius of the inner hole. $r$ and $\theta$ are the cylindrical coordinates of a point in the plate. $r$ is measured from the origin (i.e., center of the hole), and $\theta$ is measured clockwise from the positive $y$-axis, i.e. the $x$-axis is at $\theta = -90°$.
 #
+# $$
 # \begin{align}
 #     \sigma_{rr} \left( r , \theta \right) &=
 #     \frac{\sigma}{2}
@@ -39,6 +40,7 @@
 #     - \frac{\sigma}{2}
 #     \left[ \left( 1 - 3 \frac{a^4}{r^4} + 2 \frac{a^2}{r^2} \right) \sin \left( 2 \theta \right) \right]
 # \end{align}
+# $$
 #
 # For visualization of the stress distribution within the plate the stresses $\sigma_{rr}$, $\sigma_{\theta\theta}$ and $\sigma_{r\theta}$ are plotted along the $x$- and $y$-axes as well as along the diagonal ($\theta = -45°$).
 # As can be seen below, the hole causes characteristic stress distributions.
@@ -252,9 +254,7 @@ if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
 # %%
-model = ot.Project(
-    input_file="../disc_with_hole.prj", output_file="../disc_with_hole.prj"
-)
+model = ot.Project(input_file="disc_with_hole.prj", output_file="disc_with_hole.prj")
 
 # %%
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")

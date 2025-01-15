@@ -2,7 +2,7 @@
 date = "2024-09-09T13:52:17+02:00"
 title = "OpenMP parallelization"
 author = "Christoph Lehmann"
-weight = 9
+weight = 91
 
 
 [menu]

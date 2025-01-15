@@ -2,7 +2,7 @@
 date = "2018-02-27T11:00:13+01:00"
 title = "Working with project files"
 author = "Feliks Kiszkurno"
-weight = 5
+weight = 51
 +++
 <div class="note">
 
