@@ -115,18 +115,18 @@ endif()
 
 if(OGS_USE_MKL)
     if(GUIX_BUILD)
-        find_package(PkgConfig REQUIRED)
         if(DEFINED ENV{GUIX_ENVIRONMENT})
             set(MKLROOT $ENV{GUIX_ENVIRONMENT})
         endif()
-        set(PKG_CONFIG_ARGN "--define-variable=MKLROOT=${MKLROOT}")
-        set(ENV{PKG_CONFIG_PATH} ${MKLROOT}/bin/pkgconfig)
         # TODO: Using -seq instead of -iomp; library iomp5 is missing See
         # https://gitlab.opengeosys.org/ogs/inf/guix-ogs/-/issues/1
-        pkg_search_module(
-            MKL REQUIRED IMPORTED_TARGET mkl-dynamic-${MKL_INTERFACE}-seq
-        )
-        add_library(MKL::MKL ALIAS PkgConfig::MKL)
+        add_library(MKL INTERFACE)
+        foreach(lib mkl_intel_${MKL_INTERFACE} mkl_sequential mkl_core)
+            find_library(lib_path ${lib} REQUIRED PATHS ${MKLROOT}/lib NO_DEFAULT_PATH)
+            target_link_libraries(MKL INTERFACE ${lib_path})
+        endforeach()
+        target_include_directories(MKL INTERFACE ${MKLROOT}/include)
+        add_library(MKL::MKL ALIAS MKL)
     else()
         find_package(MKL CONFIG REQUIRED PATHS $ENV{MKLROOT} ${MKLROOT})
         find_file(MKL_SETVARS setvars.sh PATHS ${MKL_ROOT}/../..
