@@ -58,6 +58,9 @@
 # | Coupling scheme parameter  | $0.7774$ | -                       |
 #
 # ## Numerical Simulation
+#
+#    Due to the problem's symmetry, the benchmark is analyzed under axisymmetric conditions.
+#
 
 # %%
 import os
@@ -79,9 +82,6 @@ model = ot.Project(
     output_file=f"{out_dir}/MandelCryerStaggered_modified.prj",
 )
 
-# Increase end time
-t_end = 1.5
-model.replace_text(t_end, xpath="./time_loop/processes/process/time_stepping/t_end")
 model.write_input()
 
 # Run OGS
