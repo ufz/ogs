@@ -17,8 +17,8 @@ template <typename BMatricesType, typename ShapeMatricesType,
 struct IntegrationPointData final
 {
     double integration_weight;
-    typename ShapeMatricesType::NodalRowVectorType N;
-    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
+    typename ShapeMatricesType::NodalRowVectorType N_u;
+    typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx_u;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

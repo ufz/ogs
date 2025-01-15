@@ -116,13 +116,24 @@ std::unique_ptr<Process> createLargeDeformationProcess(
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         &mesh);
 
+    std::string const f_bar_info =
+        //! \ogs_file_param{prj__processes__process__LARGE_DEFORMATION__f_bar}
+        config.getConfigParameter<std::string>("f_bar", "");
+
+    if (mesh.isAxiallySymmetric() && f_bar_info != "")
+    {
+        OGS_FATAL(
+            "The F-bar method is not available for axisymmetric problems.");
+    }
+
     LargeDeformationProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
         std::move(solid_constitutive_relations),
         initial_stress,
         specific_body_force,
-        reference_temperature};
+        reference_temperature,
+        NonLinearFbar::convertStringToDetFBarType(f_bar_info)};
 
     SecondaryVariableCollection secondary_variables;
 

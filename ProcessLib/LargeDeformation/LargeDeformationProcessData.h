@@ -17,6 +17,7 @@
 #include "ConstitutiveRelations/SolidMechanics.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "ParameterLib/Parameter.h"
+#include "ProcessLib/Deformation/NonLinearFbar.h"
 
 namespace MaterialLib
 {
@@ -52,6 +53,10 @@ struct LargeDeformationProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
     ParameterLib::Parameter<double> const* const reference_temperature;
+
+    /// Method type to compute \f$\det(\mathbf F)\f$ for the F bar method to
+    /// tackle the  volumetric locking.
+    NonLinearFbar::BarDetFType const bar_det_f_type;
 
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
         nullptr, nullptr, nullptr};
