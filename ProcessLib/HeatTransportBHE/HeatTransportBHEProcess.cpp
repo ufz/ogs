@@ -14,6 +14,7 @@
 
 #include "BoundaryConditions/BHEBottomDirichletBoundaryCondition.h"
 #include "BoundaryConditions/BHEInflowDirichletBoundaryCondition.h"
+#include "MathLib/LinAlg/SetMatrixSparsity.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryCondition.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
@@ -40,7 +41,8 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
       _process_data(std::move(process_data)),
-      _bheMeshData(std::move(bhe_mesh_data))
+      _bheMeshData(std::move(bhe_mesh_data)),
+      _asm_mat_cache{_process_data._is_linear, true /*use_monolithic_scheme*/}
 {
     if (_bheMeshData.BHE_mat_IDs.size() !=
         _process_data._vec_BHE_property.size())
@@ -159,6 +161,33 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
     // Create BHE boundary conditions for each of the BHEs
     createBHEBoundaryConditionTopBottom(_bheMeshData.BHE_nodes);
 
+    // Store BHE and soil elements to split the assembly and use the matrix
+    // cache in the linear case only for soil elements
+    if (_process_data._is_linear)
+    {
+        _bhes_element_ids = _bheMeshData.BHE_elements | ranges::views::join |
+                            MeshLib::views::ids | ranges::to<std::vector>;
+
+        // sort bhe elements if needed
+        if (!std::is_sorted(_bhes_element_ids.begin(), _bhes_element_ids.end()))
+        {
+            std::sort(_bhes_element_ids.begin(), _bhes_element_ids.end());
+        }
+
+        _soil_element_ids = mesh.getElements() | MeshLib::views::ids |
+                            ranges::to<std::vector>();
+
+        // sort soil elements if needed
+        if (!std::is_sorted(_soil_element_ids.begin(), _soil_element_ids.end()))
+        {
+            std::sort(_soil_element_ids.begin(), _soil_element_ids.end());
+        }
+
+        _soil_element_ids = ranges::views::set_difference(_soil_element_ids,
+                                                          _bhes_element_ids) |
+                            ranges::to<std::vector>();
+    }
+
     if (_process_data._mass_lumping)
     {
         std::vector<std::size_t> const bhes_node_ids =
@@ -190,11 +219,42 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
-        &b);
+
+    if (_process_data._is_linear)
+    {
+        if (!getActiveElementIDs().empty())
+        {
+            OGS_FATAL(
+                "Domain Deactivation is currently not implemnted with "
+                "linear optimization.");
+        }
+
+        auto const& spec = getMatrixSpecifications(process_id);
+
+        // use matrix cache for soil elements
+        _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, &M, &K, &b,
+                                dof_table, _global_assembler, _local_assemblers,
+                                _soil_element_ids);
+
+        // reset the sparsity pattern for better performance in the BHE assembly
+        MathLib::setMatrixSparsity(M, *spec.sparsity_pattern);
+        MathLib::setMatrixSparsity(K, *spec.sparsity_pattern);
+
+        // Call global assembler for each local BHE assembly item.
+        GlobalExecutor::executeSelectedMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assemble,
+            _local_assemblers, _bhes_element_ids, dof_table, t, dt, x, x_prev,
+            process_id, &M, &K, &b);
+    }
+    else
+    {
+        // Call global assembler for each local assembly item.
+        GlobalExecutor::executeSelectedMemberDereferenced(
+            _global_assembler, &VectorMatrixAssembler::assemble,
+            _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x,
+            x_prev, process_id, &M, &K, &b);
+    }
+
     // Algebraic BC procedure.
     if (_process_data._algebraic_BC_Setting._use_algebraic_bc)
     {

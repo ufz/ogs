@@ -11,6 +11,7 @@
 #pragma once
 
 #include "HeatTransportBHEProcessData.h"
+#include "ProcessLib/Assembly/AssembledMatrixCache.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/HeatTransportBHEProcessAssemblerInterface.h"
 #include "ProcessLib/Process.h"
@@ -42,7 +43,10 @@ public:
     //! @{
     bool isLinear() const override
     {
-        return _process_data._algebraic_BC_Setting._is_linear;
+        // Linear Solver is called only once - valid only with
+        // _use_algebraic_bc and _is_linear
+        return _process_data._algebraic_BC_Setting._use_algebraic_bc &&
+               _process_data._is_linear;
     }
 
     bool requiresNormalization() const override
@@ -123,6 +127,12 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_soil_nodes;
 
     const BHEMeshData _bheMeshData;
+
+    AssembledMatrixCache _asm_mat_cache;
+
+    std::vector<std::size_t> _bhes_element_ids;
+
+    std::vector<std::size_t> _soil_element_ids;
 };
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
