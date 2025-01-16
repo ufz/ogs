@@ -37,7 +37,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
 import pandas as pd
-import vtuIO
 
 # %% [markdown]
 # ## Ramey's analytical solution
@@ -331,20 +330,39 @@ model.run_model(logfile=Path(out_dir) / "log.txt", args=f"-o {out_dir} -m .")
 out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
 
 # Load the result
-pvdfile = vtuIO.PVDIO(f"{out_dir}/BHE_1P.pvd", dim=3)
-
-# Get point field names
-fields = pvdfile.get_point_field_names()
-print(fields)
+ms = ot.MeshSeries(f"{out_dir}/BHE_1P.pvd")
 
 # Get all written timesteps
-time = pvdfile.timesteps
+time = ms.timevalues()
 
 # Define observation points
-observation_points = {"outlet": (0.0, 10.0, -30.0)}
+outlet = (0.0, 10.0, -30.0)
+
+# %% [markdown]
+# The results of the simulated temperatures of the BHE are stored in a vector with each component representing a specific temperature inside.
+# For the here used 1P type it is 2 components for *temperature_BHE1* (Temperature inside the pipe of the refrigerant, Temperature of the surrounding grout).
+# In the *MeshSeries* call these values are stored inside numpy arrays like this:
+# '''
+# [
+#   [
+#   timestep 1[T_pipe T_grout]
+#   ]
+#   [
+#   timestep 2[T_pipe T_grout]
+#   ]
+#   [
+#   timestep 3[T_pipe T_grout]
+#   ]
+#   ...
+# ]
+# '''
+# To get the temperoral development of the temperature inside the pipe these numpy arrays needs to be sliced by this indexes [:,0,0].
+# %%
 
 # Read the time series of point field 'temperature_BHE1'
-temperature_BHE1 = pvdfile.read_time_series("temperature_BHE1", observation_points)
+temperature_BHE1_tube = (ms.probe(outlet, "temperature_BHE1", interp_method="nearest"))[
+    :, 0, 0
+]
 
 # %%
 # Compute analytical solution again but at timesteps of numerical solution for error calculation
@@ -379,7 +397,7 @@ ax1.plot(
     markerfacecolor="none",
     label="Ramey's analytical solution",
 )
-ax1.plot(time, temperature_BHE1["outlet"][:, 0], "r", label="OGS")
+ax1.plot(time, temperature_BHE1_tube, "r", label="OGS")
 ax1.set_ylabel("Outlet temperature (°C)", fontsize=20)
 ax1.set_xlabel("Time (d)", fontsize=20)
 ax1.set_xticks(x_pos, x_ticks)
@@ -389,9 +407,7 @@ ax1.tick_params(axis="both", labelsize=16)
 
 color = "blue"
 ax2 = ax1.twinx()
-ax2.plot(
-    time, temperature_BHE1["outlet"][:, 0] - T_0, color=color, label="Absolute error"
-)
+ax2.plot(time, temperature_BHE1_tube - T_0, color=color, label="Absolute error")
 ax2.set_ylabel("Absolute error (°C)", color=color, fontsize=20)
 ax2.tick_params(axis="y", labelcolor=color)
 ax2.spines["right"].set_color("blue")
@@ -417,13 +433,12 @@ x_axis = [(0, 10, i) for i in length]
 
 # At timestep i
 i = -1
-temp = pvdfile.read_set_data(time[i], "temperature_BHE1", pointsetarray=x_axis)
-
+temp = (ms.probe(x_axis, "temperature_BHE1", interp_method="linear"))[i, :, 0]
 # Plot
 fig, ax1 = plt.subplots(figsize=(10, 8))
 ax1.set_xlabel("Distance (m)", fontsize=20)
 ax1.set_ylabel("Temperature (°C)", fontsize=20)
-ax1.plot(np.linspace(0, 30, 101), temp[:, 0], "r", linewidth=2, label="OGS")
+ax1.plot(np.linspace(0, 30, 101), temp, "r", linewidth=2, label="OGS")
 ax1.plot(
     Z,
     data.iloc[:, -1],
@@ -443,7 +458,7 @@ ax2 = ax1.twinx()
 ax2.set_ylabel("Absolute error (°C)", color=color, fontsize=20)
 ax2.plot(
     np.linspace(0, 30, 101),
-    temp[:, 0] - data.iloc[:, -1],
+    temp - data.iloc[:, -1],
     linewidth=2,
     color=color,
     label="Absolute error",
@@ -458,7 +473,7 @@ plt.figlegend(fontsize=18, loc=(0.4, 0.1), frameon=False)
 plt.show()
 
 max_error = 0.08
-if np.max(np.abs(temp[:, 0] - data.iloc[:, -1])) > max_error:
+if np.max(np.abs(temp - data.iloc[:, -1])) > max_error:
     msg = f"The maximum temperature error is over {max_error} °C, which is higher than expected"
     raise RuntimeError(msg)
 
