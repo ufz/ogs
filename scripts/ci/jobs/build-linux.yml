@@ -67,3 +67,4 @@ build linux ubuntu perf:
     CMAKE_PRESET: release-all
     CTEST_PARALLEL_LEVEL: 1 # Run ctests serially
     CTEST_TIMEOUT: 480
+    OGS_PERFORMANCE_TESTS_ALLOWED_TO_FAIL: false

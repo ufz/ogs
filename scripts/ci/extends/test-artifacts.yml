@@ -18,3 +18,7 @@
       junit:
         - build/*/Tests/testrunner.xml
         - build/*/Tests/ctest.xml
+  variables:
+    # by default skip performance tests, they can be enabled on isolated test
+    # machines
+    OGS_PERFORMANCE_TESTS_ALLOWED_TO_FAIL: true
