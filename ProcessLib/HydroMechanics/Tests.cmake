@@ -699,11 +699,11 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 35
     DIFF_DATA
-    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu displacement displacement 1e-4 0
-    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu pressure pressure 1e-1 0
-    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu velocity velocity 1e-1 0
-    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu epsilon epsilon 1e-4 0
-    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu sigma sigma 1e-1 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu displacement displacement 1e-14 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu pressure pressure 1e-11 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu velocity velocity 1e-14 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu epsilon epsilon 1e-14 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu sigma sigma 1e-9 0
 )
 if(NOT OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.py
