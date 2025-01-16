@@ -89,5 +89,6 @@ Then check diff and run:
 
 git commit -m "{new_version}"
 git tag -s -m "OpenGeoSys {new_version}" {new_version}
-git push origin --tags"""
+git push origin --tags
+git push origin master"""
 )

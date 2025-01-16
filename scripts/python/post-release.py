@@ -69,7 +69,7 @@ identifiers:
       description: Zenodo DOI for {version}
 ```
 
-Commit and push to master and create Zenodo release post:
+Commit and push to master and create Discourse release post:
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.{zenodo_record}.svg)](https://doi.org/10.5281/zenodo.{zenodo_record})
 
