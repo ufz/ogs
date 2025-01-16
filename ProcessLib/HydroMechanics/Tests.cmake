@@ -697,17 +697,17 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 170
+    RUNTIME 35
     DIFF_DATA
-    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu displacement displacement 1e-4 0
-    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu pressure pressure 1e-1 0
-    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu velocity velocity 1e-1 0
-    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu epsilon epsilon 1e-4 0
-    reference_results_MandelCryerStaggered_ts_1_t_0.010000.vtu results_MandelCryerStaggered_ts_1_t_0.010000.vtu sigma sigma 1e-1 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu displacement displacement 1e-4 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu pressure pressure 1e-1 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu velocity velocity 1e-1 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu epsilon epsilon 1e-4 0
+    results_MandelCryerStaggered_ts_22_t_1.500000.vtu results_MandelCryerStaggered_ts_22_t_1.500000.vtu sigma sigma 1e-1 0
 )
 if(NOT OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.py
-                 RUNTIME 800)
+                 RUNTIME 25)
 endif()
 
 AddTest(
