@@ -64,11 +64,18 @@ authors:
       family-names: Nagel
       orcid: "https://orcid.org/0000-0001-8459-4616"
       affiliation: TU Bergakademie Freiberg
+    - given-names: Feliks K.
+      family-names: Kiszkurno
+      orcid: "https://orcid.org/0000-0003-3304-4838"
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Yonghui
       family-names: Huang
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Boyan
       family-names: Meng
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Haibing
+      family-names: Shao
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jasper
       family-names: Bathmann
@@ -77,17 +84,13 @@ authors:
       family-names: Chen
       affiliation: >-
           Bundesanstalt für Geowissenschaften und Rohstoffe -- BGR
-    - given-names: Haibing
-      family-names: Shao
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Julian
       family-names: Heinze
       oricd: "https://orcid.org/0009-0004-3449-8852"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Feliks K.
-      family-names: Kiszkurno
-      orcid: "https://orcid.org/0000-0003-3304-4838"
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jäschke
+      family-names: Max
+      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
     - given-names: Jan
       family-names: Thiedau
       affiliation: >-
@@ -117,16 +120,16 @@ authors:
     - given-names: Tymofiy
       family-names: Gerasimov
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Sonja
+      family-names: Kaiser
+      orcid: "https://orcid.org/0000-0001-8724-5024"
+      affiliation: TU Bergakademie Freiberg
     - given-names: Johannes
       family-names: Boog
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Marc
       family-names: Walther
       affiliation: TU Dresden
-    - given-names: Sonja
-      family-names: Kaiser
-      orcid: "https://orcid.org/0000-0001-8724-5024"
-      affiliation: TU Bergakademie Freiberg
     - given-names: Tianyuan
       family-names: Zheng
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -151,6 +154,11 @@ authors:
     - given-names: Kata
       family-names: Kurgyis
       affiliation: TU Bergakademie Freiberg
+    - given-names: Kristof
+      family-names: Kessler
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
     - given-names: Linda
       family-names: Günther
       affiliation: TU Bergakademie Freiberg
@@ -197,6 +205,16 @@ authors:
     - given-names: Francesco
       family-names: Witte
       affiliation: Hochschule Flensburg
+    - given-names: Ludovic
+      familiy-names: Aubry
+      affiliation: French Alternative Energies and Atomic Energy Commission (CEA)
+    - given-names: Maximilian
+      familiy-names: Dörnbrack
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Mehran
+      family-names: Ghasabeh
+      orcid: "https://orcid.org/0000-0003-3970-3224"
+      affiliation: TU Bergakademie Freiberg
     - given-names: Olaf
       family-names: Kolditz
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -215,18 +233,12 @@ authors:
       affiliation: >-
           Bundesanstalt für Geowissenschaften und Rohstoffe --
           BGR
-    - given-names: Kristof
-      family-names: Kessler
-      affiliation: >-
-          Bundesanstalt für Geowissenschaften und Rohstoffe --
-          BGR
+    - given-names: Lion
+      family-names: Ahrendt
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Matthes
       family-names: Kantzenbach
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Mehran
-      family-names: Ghasabeh
-      orcid: "https://orcid.org/0000-0003-3970-3224"
-      affiliation: TU Bergakademie Freiberg
     - given-names: Michael
       family-names: Pitz
       affiliation: >-
@@ -241,9 +253,6 @@ authors:
           BGR
     - given-names: Luca
       family-names: Urpi
-    - given-names: Jäschke
-      family-names: Max
-      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
 identifiers:
     - type: doi
       value: 10.5281/zenodo.13685289
