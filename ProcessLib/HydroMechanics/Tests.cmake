@@ -707,7 +707,7 @@ AddTest(
 )
 if(NOT OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.py
-                 RUNTIME 800)
+                 RUNTIME 25)
 endif()
 
 AddTest(
