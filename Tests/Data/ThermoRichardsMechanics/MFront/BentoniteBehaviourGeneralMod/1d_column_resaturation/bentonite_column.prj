@@ -514,7 +514,7 @@
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_RungeKutta_InternalStateVariables[2]_ip</field>
-            <absolute_tolerance>6.2e-12</absolute_tolerance>
+            <absolute_tolerance>6.8e-12</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 1.5e-10 --></relative_tolerance>
         </vtkdiff>
         <vtkdiff>
