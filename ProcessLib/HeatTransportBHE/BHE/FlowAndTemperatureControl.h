@@ -11,6 +11,7 @@
 #pragma once
 
 #include <variant>
+
 #include "BuildingPowerCurves.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
@@ -69,7 +70,8 @@ struct FixedPowerFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double const flow_rate = flow_curve.getValue(time);
+        double flow_rate = flow_curve.getValue(time);
+        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
         return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
     }
     MathLib::PiecewiseLinearInterpolation const& flow_curve;
@@ -84,8 +86,8 @@ struct PowerCurveConstantFlow
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double const power = power_curve.getValue(time);
-        if (power == 0)
+        double power = power_curve.getValue(time);
+        if (std::abs(power) < 1e-12)
         {
             return {0.0, T_out};
         }
@@ -103,9 +105,11 @@ struct PowerCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double const power = power_curve.getValue(time);
-        double const flow_rate = flow_curve.getValue(time);
-        if (power == 0)
+        double power = power_curve.getValue(time);
+        double flow_rate = flow_curve.getValue(time);
+        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+
+        if (std::abs(power) < 1e-12)
         {
             return {0.0, T_out};
         }
@@ -123,11 +127,11 @@ struct BuildingPowerCurveConstantFlow
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double const power = building_power_curves.power_curve.getValue(time);
+        double power = building_power_curves.power_curve.getValue(time);
         double const cop =
             building_power_curves.cop_heating_curve.getValue(T_out);
 
-        if (power == 0)
+        if (std::abs(power) < 1e-12)
         {
             return {0.0, T_out};
         }
