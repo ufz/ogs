@@ -12,6 +12,8 @@
 
 #include "FixedTimeStepping.h"
 
+#include <spdlog/fmt/bundled/ranges.h>
+
 #include <algorithm>
 #include <cassert>
 #include <limits>

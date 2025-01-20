@@ -7,6 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <spdlog/fmt/bundled/ranges.h>
 #include <tclap/CmdLine.h>
 
 #include <memory>

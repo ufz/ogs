@@ -9,6 +9,8 @@
 
 #include "GeoLib/IO/NetCDFRasterReader.h"
 
+#include <spdlog/fmt/bundled/ranges.h>
+
 #include <filesystem>
 #include <numeric>
 #ifdef OGS_USE_NETCDF

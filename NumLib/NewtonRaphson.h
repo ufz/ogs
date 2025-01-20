@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/bundled/ranges.h>
+
 #include <Eigen/Core>
 #include <optional>
 

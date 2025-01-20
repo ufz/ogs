@@ -9,6 +9,8 @@
 
 #include "writeXdmf.h"
 
+#include <spdlog/fmt/bundled/ranges.h>
+
 #include <algorithm>
 #include <array>
 #include <fstream>
