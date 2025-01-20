@@ -89,7 +89,7 @@ struct PowerCurveConstantFlow
         double power = power_curve.getValue(time);
         if (std::abs(power) < 1e-12)
         {
-            return {0.0, T_out};
+            return {flow_rate, T_out};
         }
         return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
     }
@@ -111,7 +111,7 @@ struct PowerCurveFlowCurve
 
         if (std::abs(power) < 1e-12)
         {
-            return {0.0, T_out};
+            return {flow_rate, T_out};
         }
         return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
     }
@@ -133,7 +133,7 @@ struct BuildingPowerCurveConstantFlow
 
         if (std::abs(power) < 1e-12)
         {
-            return {0.0, T_out};
+            return {flow_rate, T_out};
         }
         return {flow_rate,
                 power * (cop - 1) / cop / flow_rate / heat_capacity / density +
