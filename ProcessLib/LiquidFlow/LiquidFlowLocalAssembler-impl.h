@@ -15,6 +15,7 @@
 #include "LiquidFlowLocalAssembler.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/Utils/GetFluidDensityAndViscosity.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "NumLib/Fem/Interpolation.h"
 
@@ -159,7 +160,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         phase_pressure = N.dot(local_p_vec);
 
         auto const [fluid_density, viscosity] =
-            getFluidDensityAndViscosity(t, dt, pos, fluid_phase, vars);
+            MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, pos,
+                                                             fluid_phase, vars);
 
         auto const porosity =
             medium[MaterialPropertyLib::PropertyType::porosity]
@@ -314,7 +316,8 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         phase_pressure = N.dot(local_p_vec);
 
         auto const [fluid_density, viscosity] =
-            getFluidDensityAndViscosity(t, dt, pos, fluid_phase, vars);
+            MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, pos,
+                                                             fluid_phase, vars);
 
         GlobalDimMatrixType const permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
