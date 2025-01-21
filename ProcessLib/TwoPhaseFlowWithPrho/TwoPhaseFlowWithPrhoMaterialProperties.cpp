@@ -132,7 +132,7 @@ bool TwoPhaseFlowWithPrhoMaterialProperties::computeConstitutiveRelation(
         // TODO Make the following choice of maximum iterations and convergence
         // criteria available from the input file configuration. See Ehlers
         // material model implementation for the example.
-        const int maximum_iterations(20);
+        const int maximum_iterations(100);
         const double residuum_tolerance(1.e-14);
         const double increment_tolerance(0);
 

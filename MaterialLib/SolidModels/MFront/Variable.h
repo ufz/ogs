@@ -12,6 +12,7 @@
 
 #include <MGIS/Behaviour/Variable.hxx>
 
+#include "BaseLib/cpp23.h"
 #include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MaterialLib/MPL/VariableType.h"
 #include "MathLib/KelvinVector.h"
@@ -38,6 +39,7 @@ struct Variable
     static constexpr std::size_t rows()
     {
         using T = mgis::behaviour::Variable::Type;
+
         switch (Derived::type)
         {
             case T::SCALAR:
@@ -49,6 +51,19 @@ struct Variable
                     DisplacementDim);
             case T::TENSOR:
                 return MaterialPropertyLib::tensorSize(DisplacementDim);
+            case T::VECTOR_1D:
+            case T::VECTOR_2D:
+            case T::VECTOR_3D:
+            case T::STENSOR_1D:
+            case T::STENSOR_2D:
+            case T::STENSOR_3D:
+            case T::TENSOR_1D:
+            case T::TENSOR_2D:
+            case T::TENSOR_3D:
+            case T::HIGHER_ORDER_TENSOR:
+            case T::ARRAY:
+                OGS_FATAL("Unsupported MGIS variable type {}.",
+                          BaseLib::to_underlying(Derived::type));
         }
     }
 
@@ -67,6 +82,19 @@ struct Variable
                 return 1;
             case T::TENSOR:
                 return 1;
+            case T::VECTOR_1D:
+            case T::VECTOR_2D:
+            case T::VECTOR_3D:
+            case T::STENSOR_1D:
+            case T::STENSOR_2D:
+            case T::STENSOR_3D:
+            case T::TENSOR_1D:
+            case T::TENSOR_2D:
+            case T::TENSOR_3D:
+            case T::HIGHER_ORDER_TENSOR:
+            case T::ARRAY:
+                OGS_FATAL("Unsupported MGIS variable type {}.",
+                          BaseLib::to_underlying(Derived::type));
         }
     }
 };

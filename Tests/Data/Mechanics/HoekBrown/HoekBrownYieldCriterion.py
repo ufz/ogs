@@ -125,6 +125,9 @@ import mtest
 import numpy as np
 import ogstools as ot
 import pandas as pd
+
+# required for tfel::math::vector conversions
+import tfel.math  # noqa: F401
 import vtuIO
 from IPython.display import Markdown, display
 from matplotlib.ticker import MultipleLocator

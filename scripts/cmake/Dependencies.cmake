@@ -182,7 +182,7 @@ if(OGS_USE_MFRONT)
         CPMAddPackage(
             NAME MGIS
             GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
-            GIT_TAG rliv-2.0
+            GIT_TAG rliv-2.2
             OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
                     "enable-website OFF"
             EXCLUDE_FROM_ALL YES SYSTEM TRUE ${_mgis_patch_args}
