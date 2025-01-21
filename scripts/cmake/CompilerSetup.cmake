@@ -68,6 +68,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fext-numeric-literals>)
         if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.1.1
            OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.2.1
+           OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.3.0
         )
             # See https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/4597
             add_compile_options(
