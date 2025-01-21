@@ -10,6 +10,8 @@
 
 #include "CreateOutputConfig.h"
 
+#include <spdlog/fmt/bundled/ranges.h>
+
 #include <map>
 
 #include "BaseLib/Algorithm.h"

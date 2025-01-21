@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <spdlog/fmt/bundled/ranges.h>
+
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/adjacent_remove_if.hpp>
 
