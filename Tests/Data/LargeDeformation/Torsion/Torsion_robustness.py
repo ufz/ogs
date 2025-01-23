@@ -25,25 +25,12 @@ import numpy as np
 import ogstools as ot
 import pandas as pd
 import pyvista as pv
-from ogstools.logparser import fill_ogs_context, parse_file
+from ogstools import logparser
 
 # %% jupyter={"source_hidden": true}
 pv.set_plot_theme("document")
 pv.set_jupyter_backend("static")
-
-# Some plot settings
-plt.rcParams["lines.linewidth"] = 2.0
-plt.rcParams["lines.color"] = "black"
-plt.rcParams["legend.frameon"] = True
 plt.rcParams["font.family"] = "serif"
-plt.rcParams["legend.fontsize"] = 14
-plt.rcParams["font.size"] = 14
-plt.rcParams["axes.spines.right"] = False
-plt.rcParams["axes.spines.top"] = False
-plt.rcParams["axes.spines.left"] = True
-plt.rcParams["axes.spines.bottom"] = True
-plt.rcParams["axes.axisbelow"] = True
-plt.rcParams["figure.figsize"] = (8, 6)
 
 # %% [markdown]
 # ## Boundary conditions
@@ -73,7 +60,7 @@ def u(x, y):
 x = np.linspace(-0.5, 0.5, 10)
 y = x.copy()
 X, Y = np.meshgrid(x, y)
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(dpi=120)
 ax.plot(X, Y, marker="s", color="red", ls="", alpha=0.5)
 ax.quiver(X, Y, u(X, Y)[0], u(X, Y)[1], pivot="mid")
 ax.set_aspect("equal")
@@ -107,19 +94,13 @@ plotter = pv.Plotter(shape=(1, 2), window_size=[1000, 500])
 
 warped = mesh.warp_by_vector("displacement")
 plotter.subplot(0, 0)
-plotter.add_mesh(mesh, show_edges=True, show_scalar_bar=False, color=None, scalars=None)
-plotter.show_bounds(
-    ticks="outside", xtitle="x / m", ytitle="y / m", ztitle="z / m", font_size=10
-)
+plotter.add_mesh(mesh, show_edges=True, show_scalar_bar=False)
+plotter.show_bounds(ticks="outside", font_size=10)
 plotter.add_axes()
-plotter.view_isometric()
 plotter.add_text("undeformed", font_size=10)
 
 plotter.subplot(0, 1)
-plotter.add_mesh(
-    warped, show_edges=True, show_scalar_bar=None, color=None, scalars="displacement"
-)
-plotter.view_isometric()
+plotter.add_mesh(warped, show_edges=True, scalars="displacement")
 plotter.add_text("deformed", font_size=10)
 plotter.show()
 
@@ -131,28 +112,31 @@ plotter.show()
 # algorithm.
 
 # %% jupyter={"source_hidden": true}
-log_file_raw = parse_file(f"{out_dir}/out.txt")
+log_file_raw = logparser.parse_file(f"{out_dir}/out.txt")
 log_file_df = pd.DataFrame(log_file_raw)
-ogs_log_context = fill_ogs_context(log_file_df)
+log_df = logparser.fill_ogs_context(log_file_df)
+for ts in range(1, 6):
+    dxs = log_df[log_df["time_step"] == ts]["dx"].dropna().to_numpy()
+    slopes = np.log10(dxs)[1:] / np.log10(dxs)[:-1]
+    # not checking slope of last ts (below quadratic due to precision limit)
+    assert np.all(slopes[:-1] > 1.9)
+
 
 # %% jupyter={"source_hidden": true}
-last_ts = ogs_log_context["time_step"].to_numpy()[-1]
-fig, ax = plt.subplots()
-for i in range(1, last_ts + 1):
-    timestep = ogs_log_context[ogs_log_context["time_step"] == i]
-    ax.plot(
-        timestep["iteration_number"],
-        timestep["dx"],
-        label=f"timestep {i}",
-        color="darkblue",
-        alpha=i / (last_ts + 1),
-    )
+fig, ax = plt.subplots(dpi=120)
+ts1_df = log_df[log_df["time_step"] == 1]
+its, dxs = ts1_df[["iteration_number", "dx"]].dropna().to_numpy(float).T
+ax.plot(its, dxs, "-o", label="timestep 1", lw=3)
 
-ax.axhline(1e-13, ls="--", label="convergence criterion")
-ax.plot([7, 8, 7, 7], [1e-6, 1e-12, 1e-12, 1e-6], color="black")
-ax.text(7.3, 2e-12, "1")
-ax.text(6.7, 1e-9, "2")
+offset = 3 - np.log2(-np.log10(dxs[2]))  # to touch the data at dx(it=3)
+quad_slope = 10 ** -(2 ** (its - offset))
+ax.plot(its, quad_slope, "--C1", lw=3, label="quadratic convergence")
+
+ax.axhline(1e-13, ls="-.", color="k", label="convergence criterion")
+ax.set_xscale("function", functions=(lambda x: 2**x, lambda x: np.log10(x - 2)))
 ax.set_yscale("log")
+ax.set_xlim([1, 5])
+ax.set_xticks(its)
 ax.set_xlabel("iteration number")
 ax.set_ylabel("$|| \\Delta \\vec{u}$ || / m")
 ax.legend()
@@ -160,4 +144,6 @@ fig.tight_layout()
 
 # %% [markdown]
 # We observe quadratic convergence in the proximity of the solution supporting the
-# implementation of the geometric stiffness matrix.
+# implementation of the geometric stiffness matrix. The last iteration converges
+# slightly less then quadratic since we reach the numerical precision limit at
+# this point.
