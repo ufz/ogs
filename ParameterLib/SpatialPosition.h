@@ -72,14 +72,12 @@ public:
     {
         _node_id = std::nullopt;
         _element_id = std::nullopt;
-        _integration_point = std::nullopt;
         _coordinates = std::nullopt;
     }
 
 private:
     std::optional<std::size_t> _node_id;
     std::optional<std::size_t> _element_id;
-    std::optional<unsigned> _integration_point;
     std::optional<MathLib::Point3d> _coordinates;
 };
 
