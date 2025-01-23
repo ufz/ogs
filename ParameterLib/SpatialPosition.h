@@ -22,7 +22,7 @@ namespace ParameterLib
 //!
 //! The setters of this class make sure that only compatible information can be
 //! stored at the same time; e.g., it is not possible to specify an element ID
-//! and a node ID at the same time (the setAll() method being an exception to
+//! and a node ID at the same time (the constructor being an exception to
 //! that rule).
 class SpatialPosition
 {
@@ -33,7 +33,22 @@ public:
                     std::optional<std::size_t> const& element_id,
                     std::optional<MathLib::Point3d> const& coordinates)
     {
-        setAll(node_id, element_id, coordinates);
+        if (node_id)
+        {
+            _node_id = *node_id;
+            flags.set(node_bit);
+        }
+
+        if (element_id)
+        {
+            _element_id = *element_id;
+            flags.set(element_bit);
+        }
+        if (coordinates)
+        {
+            _coordinates = *coordinates;
+            flags.set(coordinates_bit);
+        }
     }
 
     std::optional<std::size_t> getNodeID() const
@@ -69,29 +84,6 @@ public:
     {
         _coordinates = coordinates;
         flags.set(coordinates_bit);
-    }
-
-    void setAll(std::optional<std::size_t> const& node_id,
-                std::optional<std::size_t> const& element_id,
-                std::optional<MathLib::Point3d> const& coordinates)
-    {
-        flags.reset();
-        if (node_id)
-        {
-            _node_id = *node_id;
-            flags.set(node_bit);
-        }
-
-        if (element_id)
-        {
-            _element_id = *element_id;
-            flags.set(element_bit);
-        }
-        if (coordinates)
-        {
-            _coordinates = *coordinates;
-            flags.set(coordinates_bit);
-        }
     }
 
 private:
