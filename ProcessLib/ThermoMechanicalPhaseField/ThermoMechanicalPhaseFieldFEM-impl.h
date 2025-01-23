@@ -75,7 +75,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
@@ -163,7 +162,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
@@ -248,7 +246,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;

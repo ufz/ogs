@@ -171,8 +171,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
-            pos.setIntegrationPoint(ip);
-
             auto const& ip_data = _ip_data[ip];
 
             auto const& N_p = ip_data.N_p;

@@ -195,7 +195,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N_u = _ip_data[ip].N_u;
@@ -425,8 +424,6 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         double const p_int_pt = _ip_data[ip].N_p.dot(p);
 
         phase_pressure = p_int_pt;
@@ -556,7 +553,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N_p = _ip_data[ip].N_p;
@@ -712,7 +708,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N_u = _ip_data[ip].N_u;
@@ -834,7 +829,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& N_u = _ip_data[ip].N_u;
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
@@ -929,7 +923,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         for (int ip = 0; ip < n_integration_points; ip++)
         {
-            x_position.setIntegrationPoint(ip);
             auto const& N_u = _ip_data[ip].N_u;
             auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
@@ -1170,8 +1163,6 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto const& eps = _ip_data[ip].eps;
         sigma_eff_sum += _ip_data[ip].sigma_eff;
 

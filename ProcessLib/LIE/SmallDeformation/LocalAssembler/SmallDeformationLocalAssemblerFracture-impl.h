@@ -75,8 +75,6 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
     x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         _ip_data.emplace_back(*_process_data.fracture_model);
         auto const& sm = _shape_matrices[ip];
         auto& ip_data = _ip_data[ip];
@@ -176,8 +174,6 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto& ip_data = _ip_data[ip];
         auto const& integration_weight = ip_data.integration_weight;
         auto const& H = ip_data.h_matrices;
@@ -274,8 +270,6 @@ void SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto& ip_data = _ip_data[ip];
         auto const& H = ip_data.h_matrices;
         auto& mat = ip_data.fracture_material;

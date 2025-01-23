@@ -86,8 +86,6 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         _ip_data.emplace_back(*_process_data.fracture_model);
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];
@@ -218,8 +216,6 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto& ip_data = _ip_data[ip];
         auto const& ip_w = ip_data.integration_weight;
         auto const& N_p = ip_data.N_p;
@@ -376,8 +372,6 @@ void HydroMechanicsLocalAssemblerFracture<
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto& ip_data = _ip_data[ip];
         auto const& H_g = ip_data.H_u;
         auto& mat = ip_data.fracture_material;

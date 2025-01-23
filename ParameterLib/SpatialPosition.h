@@ -41,10 +41,6 @@ public:
 
     std::optional<std::size_t> getNodeID() const { return _node_id; }
     std::optional<std::size_t> getElementID() const { return _element_id; }
-    std::optional<unsigned> getIntegrationPoint() const
-    {
-        return _integration_point;
-    }
     std::optional<MathLib::Point3d> const& getCoordinates() const
     {
         return _coordinates;
@@ -60,12 +56,6 @@ public:
     {
         clear();
         _element_id = element_id;
-    }
-
-    void setIntegrationPoint(unsigned integration_point)
-    {
-        assert(_element_id);
-        _integration_point = integration_point;
     }
 
     void setCoordinates(MathLib::Point3d const& coordinates)

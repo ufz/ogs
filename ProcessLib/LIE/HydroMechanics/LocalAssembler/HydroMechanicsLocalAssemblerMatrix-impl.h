@@ -75,8 +75,6 @@ HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         _ip_data.emplace_back(solid_material);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
@@ -214,8 +212,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
     unsigned const n_integration_points = _ip_data.size();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto& ip_data = _ip_data[ip];
         auto const& ip_w = ip_data.integration_weight;
         auto const& N_u = ip_data.N_u;
@@ -409,8 +405,6 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto& ip_data = _ip_data[ip];
 
         auto const& eps_prev = ip_data.eps_prev;

@@ -110,8 +110,6 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
 
     for (std::size_t ip(0); ip < n_integration_points; ++ip)
     {
-        pos.setIntegrationPoint(ip);
-
         auto const& ip_data = _ip_data[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
@@ -267,8 +265,6 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
         auto const& ip_data = _ip_data[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
-
-        pos.setIntegrationPoint(ip);
 
         auto const dt = std::numeric_limits<double>::quiet_NaN();
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(

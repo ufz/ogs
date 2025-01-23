@@ -133,7 +133,6 @@ struct SmallDeformationLocalAssemblerInterface
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            x_position.setIntegrationPoint(ip);
             auto const& sigma = current_states_[ip].stress_data.sigma;
             sigma_sum += sigma;
         }
