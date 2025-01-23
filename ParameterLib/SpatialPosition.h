@@ -65,12 +65,10 @@ public:
 
     void setAll(std::optional<std::size_t> const& node_id,
                 std::optional<std::size_t> const& element_id,
-                std::optional<unsigned> const& integration_point,
                 std::optional<MathLib::Point3d> const& coordinates)
     {
         _node_id = node_id;
         _element_id = element_id;
-        _integration_point = integration_point;
         _coordinates = coordinates;
     }
 

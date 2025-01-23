@@ -154,7 +154,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
         for (unsigned i = 0; i < number_nodes; ++i)
         {
             auto const id = boundary_element->getNode(i)->getID();
-            pos.setAll(id, boundary_element->getID(), {}, {});
+            pos.setAll(id, boundary_element->getID(), {});
 
             MeshLib::Location l(_bc_mesh.getID(), MeshLib::MeshItemType::Node,
                                 id);
