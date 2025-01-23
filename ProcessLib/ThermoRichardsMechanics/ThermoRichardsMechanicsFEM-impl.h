@@ -114,7 +114,7 @@ void ThermoRichardsMechanicsLocalAssembler<
         auto const& N = ip_data_[ip].N_p;
 
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, this->element_.getID(), ip,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
@@ -231,7 +231,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
          ++ip)
     {
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, this->element_.getID(), ip,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
@@ -572,7 +572,7 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& dNdx = ip_data.dNdx_p;
 
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, this->element_.getID(), ip,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(

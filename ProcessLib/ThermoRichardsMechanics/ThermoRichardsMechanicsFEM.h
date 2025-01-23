@@ -281,7 +281,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, this->element_.getID(), ip,
+                std::nullopt, this->element_.getID(),
                 MathLib::Point3d(NumLib::interpolateCoordinates<
                                  ShapeFunctionDisplacement,
                                  ShapeMatricesTypeDisplacement>(

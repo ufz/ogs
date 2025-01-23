@@ -122,7 +122,7 @@ private:
             auto& ip_data = _ip_data[ip];
 
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, this->element_.getID(), ip,
+                std::nullopt, this->element_.getID(),
                 MathLib::Point3d(NumLib::interpolateCoordinates<
                                  ShapeFunctionDisplacement,
                                  ShapeMatricesTypeDisplacement>(this->element_,

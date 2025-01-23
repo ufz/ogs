@@ -92,7 +92,7 @@ public:
             auto const& w = _ip_data[ip].integration_weight;
 
             ParameterLib::SpatialPosition const pos{
-                std::nullopt, _element.getID(), ip,
+                std::nullopt, _element.getID(),
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<ShapeFunction,
                                                    ShapeMatricesType>(_element,

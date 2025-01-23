@@ -122,7 +122,7 @@ public:
             auto& ip_data = _ip_data[ip];
 
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, _element.getID(), ip,
+                std::nullopt, _element.getID(),
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<
                         ShapeFunctionDisplacement,
@@ -183,7 +183,7 @@ public:
             auto const& dNdx_u = ip_data.dNdx_u;
 
             ParameterLib::SpatialPosition const x_position{
-                std::nullopt, _element.getID(), ip,
+                std::nullopt, _element.getID(),
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<
                         ShapeFunctionDisplacement,
