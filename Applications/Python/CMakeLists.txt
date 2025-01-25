@@ -40,7 +40,7 @@ if(OGS_USE_PIP)
             NAME pytest
             COMMAND
                 ${CMAKE_COMMAND} -DEXECUTABLE=pytest
-                "-DEXECUTABLE_ARGS=-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
+                "-DEXECUTABLE_ARGS=-ra;-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
                                                                             # because
                 # passed as list see https://stackoverflow.com/a/33248574/80480
                 -DBINARY_PATH=${_binary_path}
