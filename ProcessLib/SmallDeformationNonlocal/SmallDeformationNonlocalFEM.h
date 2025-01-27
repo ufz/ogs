@@ -29,7 +29,6 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
-#include "ProcessLib/Deformation/Divergence.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
@@ -575,8 +574,9 @@ public:
             auto const& w = _ip_data[ip].integration_weight;
 
             double const div_u =
-                Deformation::divergence<DisplacementDim,
-                                        ShapeFunction::NPOINTS>(u, dNdx);
+                (dNdx.template topRows<DisplacementDim>() *
+                 u.reshaped(ShapeFunction::NPOINTS, DisplacementDim))
+                    .trace();
             crack_volume += div_u * d * w;
         }
     }
