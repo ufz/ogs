@@ -18,7 +18,7 @@ set(TEST_LOG_DIR "${LOG_ROOT}")
 if (TEST_COMMAND_IS_EXPECTED_TO_SUCCEED)
     if (EXIT_CODE STREQUAL "0")
         # expected: success, actual: success
-        if (DEFINED ENV{CI})
+        if (DEFINED ENV{CI} AND NOT OGS_CI_ALWAYS_SAVE_LOG_FILE_TO_ARTIFACTS)
             set(SAVE_LOG false)
         endif()
     else()
