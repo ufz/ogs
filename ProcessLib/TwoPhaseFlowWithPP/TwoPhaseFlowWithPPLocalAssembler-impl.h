@@ -129,6 +129,7 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         Sw = medium.property(MPL::PropertyType::saturation)
                  .template value<double>(variables, pos, t, dt);
 
+        variables.liquid_saturation = Sw;
         auto const dSw_dpc =
             medium.property(MPL::PropertyType::saturation)
                 .template dValue<double>(
