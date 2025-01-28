@@ -1,7 +1,12 @@
+# ruff: noqa: E402
+
+import pytest
+
+ogstools = pytest.importorskip("ogstools")
+
 from pathlib import Path
 
 import pandas as pd
-import pytest
 from ogs import cli
 from ogstools.logparser.common_ogs_analyses import (
     analysis_time_step,
