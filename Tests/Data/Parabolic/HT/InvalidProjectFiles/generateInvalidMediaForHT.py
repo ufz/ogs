@@ -1,4 +1,4 @@
-import ogstools as ot
+import ogstools.ogs6py as ogs6py
 
 
 def addSolidPropertiesForHT(omit=""):
@@ -127,7 +127,7 @@ for solid_property in solid_properties:
                 and medium_property == ""
             ):
                 continue
-            model = ot.Project(
+            model = ogs6py.Project(
                 output_file="HT_"
                 + solid_property
                 + "_"
