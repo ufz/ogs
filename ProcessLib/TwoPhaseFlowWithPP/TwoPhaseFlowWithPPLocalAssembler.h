@@ -33,19 +33,16 @@ struct IntegrationPointData final
 {
     explicit IntegrationPointData(NodalRowVectorType N_,
                                   GlobalDimNodalMatrixType dNdx_,
-                                  double const& integration_weight_,
-                                  NodalMatrixType const massOperator_)
+                                  double const& integration_weight_)
         : N(std::move(N_)),
           dNdx(std::move(dNdx_)),
-          integration_weight(integration_weight_),
-          massOperator(massOperator_)
+          integration_weight(integration_weight_)
 
     {
     }
     NodalRowVectorType const N;
     GlobalDimNodalMatrixType const dNdx;
     const double integration_weight;
-    NodalMatrixType const massOperator;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };
@@ -117,8 +114,6 @@ public:
             _ip_data.emplace_back(
                 sm.N, sm.dNdx,
                 sm.integralMeasure * sm.detJ *
-                    _integration_method.getWeightedPoint(ip).getWeight(),
-                sm.N.transpose() * sm.N * sm.integralMeasure * sm.detJ *
                     _integration_method.getWeightedPoint(ip).getWeight());
         }
     }

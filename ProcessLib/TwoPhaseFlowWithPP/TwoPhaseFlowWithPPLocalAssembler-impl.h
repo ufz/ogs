@@ -101,8 +101,10 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& w = _ip_data[ip].integration_weight;
+        auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
-        auto const& M = _ip_data[ip].massOperator;
+
+        NodalMatrixType M = N.transpose() * N * w;
 
         double pc_int_pt = 0.;
         double pn_int_pt = 0.;
