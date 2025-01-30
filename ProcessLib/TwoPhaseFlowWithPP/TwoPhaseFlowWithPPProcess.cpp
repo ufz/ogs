@@ -35,6 +35,16 @@ TwoPhaseFlowWithPPProcess::TwoPhaseFlowWithPPProcess(
     DBUG("Create TwoPhaseFlowProcess with PP model.");
 }
 
+void TwoPhaseFlowWithPPProcess::setInitialConditionsConcreteProcess(
+    std::vector<GlobalVector*>& x, double const t, int const process_id)
+{
+    DBUG("SetInitialConditions ThermoRichardsMechanicsProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &TwoPhaseFlowWithPPLocalAssemblerInterface::setInitialConditions,
+        _local_assemblers, getDOFTables(x.size()), x, t, process_id);
+}
+
 void TwoPhaseFlowWithPPProcess::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
