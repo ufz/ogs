@@ -67,7 +67,7 @@ ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         ip_data.dNdx = sm.dNdx;
 
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, _element.getID(),
             MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
                                                             ShapeMatricesType>(
                 _element, sm.N))};
@@ -127,7 +127,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& N = _ip_data[ip].N;
 
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, _element.getID(),
             MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
                                                             ShapeMatricesType>(
                 _element, N))};
@@ -235,7 +235,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& dNdx = _ip_data[ip].dNdx;
 
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, _element.getID(),
             MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
                                                             ShapeMatricesType>(
                 _element, N))};
@@ -735,7 +735,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         auto const& dNdx = _ip_data[ip].dNdx;
 
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, _element.getID(),
             MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
                                                             ShapeMatricesType>(
                 _element, N))};
@@ -1224,7 +1224,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& N = _ip_data[ip].N;
 
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, _element.getID(),
             MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
                                                             ShapeMatricesType>(
                 _element, N))};

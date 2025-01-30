@@ -202,7 +202,7 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const& N = _ip_data[ip].N;
         auto const& N_u = _ip_data[ip].N_u;
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, _element.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
@@ -623,7 +623,7 @@ void ThermoHydroMechanicsLocalAssembler<
     {
         auto const& N_u = _ip_data[ip].N_u;
         ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(), ip,
+            std::nullopt, _element.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(

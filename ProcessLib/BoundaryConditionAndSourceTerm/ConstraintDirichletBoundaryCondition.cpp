@@ -128,8 +128,6 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
     const double t, const GlobalVector& /*x*/,
     NumLib::IndexValueVector<GlobalIndexType>& bc_values) const
 {
-    ParameterLib::SpatialPosition pos;
-
     bc_values.ids.clear();
     bc_values.values.clear();
 
@@ -153,8 +151,10 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
         unsigned const number_nodes = boundary_element->getNumberOfNodes();
         for (unsigned i = 0; i < number_nodes; ++i)
         {
-            auto const id = boundary_element->getNode(i)->getID();
-            pos.setAll(id, boundary_element->getID(), {}, {});
+            auto const& node = *boundary_element->getNode(i);
+            auto const id = node.getID();
+            ParameterLib::SpatialPosition const pos{
+                id, boundary_element->getID(), node};
 
             MeshLib::Location l(_bc_mesh.getID(), MeshLib::MeshItemType::Node,
                                 id);

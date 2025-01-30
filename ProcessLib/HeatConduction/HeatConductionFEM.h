@@ -109,7 +109,7 @@ public:
         {
             auto const& sm = _shape_matrices[ip];
             ParameterLib::SpatialPosition const pos{
-                std::nullopt, _element.getID(), ip,
+                std::nullopt, _element.getID(),
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<ShapeFunction,
                                                    ShapeMatricesType>(_element,
@@ -188,7 +188,6 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             double const w =
                 _integration_method.getWeightedPoint(ip).getWeight() * sm.detJ *
@@ -269,7 +268,6 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             // get the local temperature and put it in the variable array for
             // access in MPL

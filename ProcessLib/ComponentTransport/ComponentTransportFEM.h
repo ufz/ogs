@@ -281,8 +281,6 @@ public:
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
 
-            pos.setIntegrationPoint(ip);
-
             _ip_data[ip].porosity =
                 medium[MaterialPropertyLib::PropertyType::porosity]
                     .template initialValue<double>(
@@ -606,8 +604,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
-            pos.setIntegrationPoint(ip);
-
             auto& ip_data = _ip_data[ip];
             auto const& dNdx = ip_data.dNdx;
             auto const& N = Ns[ip];
@@ -867,8 +863,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
-            pos.setIntegrationPoint(ip);
-
             auto& ip_data = _ip_data[ip];
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -995,8 +989,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
-
             auto const& ip_data = this->_ip_data[ip];
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -1142,8 +1134,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
-            pos.setIntegrationPoint(ip);
-
             auto& ip_data = _ip_data[ip];
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -1342,8 +1332,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
-            pos.setIntegrationPoint(ip);
-
             auto& ip_data = _ip_data[ip];
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -1468,8 +1456,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
-            pos.setIntegrationPoint(ip);
-
             auto& ip_data = _ip_data[ip];
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
@@ -1597,8 +1583,6 @@ public:
 
         for (unsigned ip(0); ip < n_integration_points; ++ip)
         {
-            pos.setIntegrationPoint(ip);
-
             auto& ip_data = _ip_data[ip];
             auto const w = ip_data.integration_weight;
             auto const& N = Ns[ip];
@@ -1722,8 +1706,6 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& N = Ns[ip];
             auto const& porosity = ip_data.porosity;
-
-            pos.setIntegrationPoint(ip);
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
@@ -1952,8 +1934,6 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& N = Ns[ip];
             auto const& phi = ip_data.porosity;
-
-            pos.setIntegrationPoint(ip);
 
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);

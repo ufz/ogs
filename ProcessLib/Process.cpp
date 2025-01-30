@@ -155,7 +155,6 @@ void Process::setInitialConditions(
          variable_id++)
     {
         MathLib::LinAlg::setLocalAccessibleVector(x);
-        ParameterLib::SpatialPosition pos;
 
         auto const& pv = per_process_variables[variable_id];
         DBUG("Set the initial condition of variable {:s} of process {:d}.",
@@ -175,8 +174,8 @@ void Process::setInitialConditions(
                 MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
                                           node->getID());
 
-                pos.setNodeID(node->getID());
-                pos.setCoordinates(*node);
+                ParameterLib::SpatialPosition const pos{
+                    node->getID(), {}, *node};
                 auto const& ic_value = ic(t, pos);
 
                 auto global_index =

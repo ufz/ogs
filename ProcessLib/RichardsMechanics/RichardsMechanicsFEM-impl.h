@@ -153,7 +153,6 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     x_position.setElementID(this->element_.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto& ip_data = _ip_data[ip];
         auto const& sm_u = shape_matrices_u[ip];
         _ip_data[ip].integration_weight =
@@ -227,8 +226,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto const& N_p = _ip_data[ip].N_p;
 
         double p_cap_ip;
@@ -405,7 +402,6 @@ void RichardsMechanicsLocalAssembler<
         this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N_u = _ip_data[ip].N_u;
@@ -886,14 +882,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             x_position.getElementID()
                 ? static_cast<std::ptrdiff_t>(*x_position.getElementID())
                 : static_cast<std::ptrdiff_t>(-1);
-        auto const ip =
-            x_position.getIntegrationPoint()
-                ? static_cast<std::ptrdiff_t>(*x_position.getIntegrationPoint())
-                : static_cast<std::ptrdiff_t>(-1);
         OGS_FATAL(
-            "RichardsMechanics: Biot-coefficient {} is smaller than "
-            "porosity {} in element/integration point {}/{}.",
-            alpha, phi, eid, ip);
+            "RichardsMechanics: Biot-coefficient {} is smaller than porosity "
+            "{} in element {}.",
+            alpha, phi, eid);
     }
 
     auto const mu = liquid_phase.property(MPL::PropertyType::viscosity)
@@ -1160,7 +1152,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         [[maybe_unused]] auto models = createConstitutiveModels(
             this->process_data_, this->solid_material_);
 
-        x_position.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
 
         auto const& N_u = _ip_data[ip].N_u;
@@ -1570,7 +1561,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
         auto const& N_p = _ip_data[ip].N_p;
         auto const& N_u = _ip_data[ip].N_u;
         auto const& dNdx_u = _ip_data[ip].dNdx_u;

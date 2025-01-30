@@ -55,8 +55,6 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction>::
     // ip data initialization
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         // create the class IntegrationPointDataBHE in place
         auto const& sm = _shape_matrices[ip];
         double const w = _integration_method.getWeightedPoint(ip).getWeight() *
@@ -96,7 +94,6 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
         auto& ip_data = _ip_data[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;

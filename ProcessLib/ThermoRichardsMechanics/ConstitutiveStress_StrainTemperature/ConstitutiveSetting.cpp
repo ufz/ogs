@@ -114,9 +114,8 @@ void ConstitutiveSetting<DisplacementDim>::eval(
         {
             OGS_FATAL(
                 "ThermoRichardsMechanics: Biot-coefficient {} is smaller than "
-                "porosity {} in element/integration point {}/{}.",
-                biot_data(), poro_data.phi, *x_position.getElementID(),
-                *x_position.getIntegrationPoint());
+                "porosity {} in element {}.",
+                biot_data(), poro_data.phi, *x_position.getElementID());
         }
     }
 }

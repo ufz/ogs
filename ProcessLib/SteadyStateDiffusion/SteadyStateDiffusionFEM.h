@@ -110,7 +110,6 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
 
@@ -224,7 +223,6 @@ public:
         double pressure = 0.0;
         for (unsigned i = 0; i < n_integration_points; ++i)
         {
-            pos.setIntegrationPoint(i);
             NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N,
                                              pressure);
             vars.liquid_phase_pressure = pressure;

@@ -85,8 +85,6 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
 
     for (unsigned ip(0); ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
-
         auto const& ip_data = this->_ip_data[ip];
         auto const& dNdx = ip_data.dNdx;
         auto const& N = Ns[ip];
@@ -218,8 +216,6 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
 
     for (unsigned ip(0); ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
-
         auto const& ip_data = this->_ip_data[ip];
         auto const& dNdx = ip_data.dNdx;
         auto const& N = Ns[ip];

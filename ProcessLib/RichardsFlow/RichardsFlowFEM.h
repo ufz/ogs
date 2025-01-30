@@ -169,7 +169,6 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            pos.setIntegrationPoint(ip);
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
 

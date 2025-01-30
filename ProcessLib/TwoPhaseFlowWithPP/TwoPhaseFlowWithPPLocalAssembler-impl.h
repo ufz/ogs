@@ -100,7 +100,6 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        pos.setIntegrationPoint(ip);
         auto const& w = _ip_data[ip].integration_weight;
         auto const& dNdx = _ip_data[ip].dNdx;
         auto const& M = _ip_data[ip].massOperator;

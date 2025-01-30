@@ -189,7 +189,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         local_M.noalias() += scaling_factor * storage * N.transpose() * N *
                              ip_data.integration_weight;
 
-        pos.setIntegrationPoint(ip);
         GlobalDimMatrixType const permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium[MaterialPropertyLib::PropertyType::permeability].value(

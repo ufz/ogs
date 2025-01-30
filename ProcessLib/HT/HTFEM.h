@@ -277,8 +277,6 @@ protected:
             auto const& dNdx = ip_data.dNdx;
             auto const& N = Ns[ip];
 
-            pos.setIntegrationPoint(ip);
-
             double T_int_pt = 0.0;
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);

@@ -205,8 +205,6 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        x_position.setIntegrationPoint(ip);
-
         auto& ip_data = _ip_data[ip];
         auto const& w = _ip_data[ip].integration_weight;
 

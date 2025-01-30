@@ -96,7 +96,6 @@ public:
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ);
 
-            pos.setIntegrationPoint(ip);
             MaterialPropertyLib::VariableArray vars;
 
             NodalVectorType ref_p =

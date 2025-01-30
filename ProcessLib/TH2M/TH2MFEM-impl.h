@@ -140,7 +140,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& gradNu = ip_data.dNdx_u;
         auto const& gradNp = ip_data.dNdx_p;
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, this->element_.getID(), ip,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
@@ -538,7 +538,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& NT = Np;
 
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, this->element_.getID(), ip,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
@@ -846,7 +846,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                            ShapeMatricesTypeDisplacement>(
                 this->element_, Nu);
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, this->element_.getID(), ip,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
@@ -1050,7 +1050,7 @@ void TH2MLocalAssembler<
         auto const& NT = Np;
         auto const& Nu = ip.N_u;
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, this->element_.getID(), int_point,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
@@ -1357,7 +1357,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& NT = Np;
         auto const& Nu = ip.N_u;
         ParameterLib::SpatialPosition const pos{
-            std::nullopt, this->element_.getID(), int_point,
+            std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
