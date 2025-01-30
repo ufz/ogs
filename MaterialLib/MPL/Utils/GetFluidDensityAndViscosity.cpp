@@ -6,19 +6,21 @@
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
  *
- * Created on September 30, 2024, 11:54 AM
+ * Created on January 21, 2025, 4:10 PM
  */
 
-#include "LiquidFlowLocalAssembler.h"
+#include "GetFluidDensityAndViscosity.h"
 
-namespace ProcessLib
+#include "MaterialLib/MPL/Phase.h"
+#include "MaterialLib/MPL/VariableType.h"
+#include "ParameterLib/SpatialPosition.h"
+
+namespace MaterialPropertyLib
 {
-namespace LiquidFlow
-{
-std::tuple<double, double> getFluidDensityAndViscosity(
-    double const t, double const dt, ParameterLib::SpatialPosition const& pos,
-    MaterialPropertyLib::Phase const& fluid_phase,
-    MaterialPropertyLib::VariableArray& vars)
+
+double getFluidDensity(double const t, double const dt,
+                       ParameterLib::SpatialPosition const& pos,
+                       Phase const& fluid_phase, VariableArray& vars)
 {
     // Compute density:
     // Quick workaround: If fluid density is described as ideal gas, then
@@ -33,9 +35,17 @@ std::tuple<double, double> getFluidDensityAndViscosity(
                 .template value<double>(vars, pos, t, dt);
     }
 
-    auto const fluid_density =
-        fluid_phase[MaterialPropertyLib::PropertyType::density]
-            .template value<double>(vars, pos, t, dt);
+    return fluid_phase[MaterialPropertyLib::PropertyType::density]
+        .template value<double>(vars, pos, t, dt);
+}
+
+std::tuple<double, double> getFluidDensityAndViscosity(
+    double const t, double const dt, ParameterLib::SpatialPosition const& pos,
+    MaterialPropertyLib::Phase const& fluid_phase,
+    MaterialPropertyLib::VariableArray& vars)
+{
+    auto const fluid_density = getFluidDensity(t, dt, pos, fluid_phase, vars);
+
     assert(fluid_density > 0.);
     vars.density = fluid_density;
 
@@ -45,5 +55,5 @@ std::tuple<double, double> getFluidDensityAndViscosity(
 
     return {fluid_density, viscosity};
 }
-}  // namespace LiquidFlow
-}  // namespace ProcessLib
+
+}  // namespace MaterialPropertyLib

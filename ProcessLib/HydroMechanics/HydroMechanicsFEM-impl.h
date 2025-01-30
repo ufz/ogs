@@ -18,6 +18,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MaterialLib/MPL/Utils/GetFluidDensityAndViscosity.h"
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
@@ -236,24 +237,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
-        // Quick workaround: If fluid density is described as ideal gas, then
-        // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // variable_array and the fluid must have the property
-        // MPL::PropertyType::molar_mass. For other density models (e.g.
-        // Constant), it is not mandatory to specify the molar mass.
-        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
-        {
-            vars.molar_mass =
-                fluid.property(MPL::PropertyType::molar_mass)
-                    .template value<double>(vars, x_position, t, dt);
-        }
-        auto const rho_fr =
-            fluid.property(MPL::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
-        vars.density = rho_fr;
-
-        auto const mu = fluid.property(MPL::PropertyType::viscosity)
-                            .template value<double>(vars, x_position, t, dt);
+        auto const [rho_fr, mu] =
+            MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, x_position,
+                                                             fluid, vars);
 
         auto const beta_p =
             fluid.property(MPL::PropertyType::density)
@@ -453,25 +439,9 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
             medium->property(MPL::PropertyType::permeability)
                 .value(vars, x_position, t, dt));
 
-        // Quick workaround: If fluid density is described as ideal gas, then
-        // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // variable_array and the fluid must have the property
-        // MPL::PropertyType::molar_mass. For other density models (e.g.
-        // Constant), it is not mandatory to specify the molar mass.
-        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
-        {
-            vars.molar_mass =
-                fluid.property(MPL::PropertyType::molar_mass)
-                    .template value<double>(vars, x_position, t, dt);
-        }
-
-        auto const rho_fr =
-            fluid.property(MPL::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
-        vars.density = rho_fr;
-
-        auto const mu = fluid.property(MPL::PropertyType::viscosity)
-                            .template value<double>(vars, x_position, t, dt);
+        auto const [rho_fr, mu] =
+            MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, x_position,
+                                                             fluid, vars);
 
         auto const K_over_mu = K / mu;
 
@@ -596,24 +566,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
-        // Quick workaround: If fluid density is described as ideal gas, then
-        // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // variable_array and the fluid must have the property
-        // MPL::PropertyType::molar_mass. For other density models (e.g.
-        // Constant), it is not mandatory to specify the molar mass.
-        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
-        {
-            vars.molar_mass =
-                fluid.property(MPL::PropertyType::molar_mass)
-                    .template value<double>(vars, x_position, t, dt);
-        }
-        auto const rho_fr =
-            fluid.property(MPL::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
-        vars.density = rho_fr;
+        auto const [rho_fr, mu] =
+            MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, x_position,
+                                                             fluid, vars);
 
-        auto const mu = fluid.property(MPL::PropertyType::viscosity)
-                            .template value<double>(vars, x_position, t, dt);
         auto const beta_p =
             fluid.property(MPL::PropertyType::density)
                 .template dValue<double>(vars, _process_data.phase_variable,
@@ -744,20 +700,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::porosity)
                 .template value<double>(vars, x_position, t, dt);
 
-        // Quick workaround: If fluid density is described as ideal gas, then
-        // the molar mass must be passed to the MPL::IdealGasLaw via the
-        // variable_array and the fluid must have the property
-        // MPL::PropertyType::molar_mass. For other density models (e.g.
-        // Constant), it is not mandatory to specify the molar mass.
-        if (fluid.hasProperty(MPL::PropertyType::molar_mass))
-        {
-            vars.molar_mass =
-                fluid.property(MPL::PropertyType::molar_mass)
-                    .template value<double>(vars, x_position, t, dt);
-        }
-        auto const rho_fr =
-            fluid.property(MPL::PropertyType::density)
-                .template value<double>(vars, x_position, t, dt);
+        auto const rho_fr = MaterialPropertyLib::getFluidDensity(
+            t, dt, x_position, fluid, vars);
 
         auto const& b = _process_data.specific_body_force;
         auto const& identity2 = MathLib::KelvinVector::Invariants<
