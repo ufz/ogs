@@ -4,7 +4,7 @@
         <use_algebraic_bc>true</use_algebraic_bc>
     </add>
     <add sel="/*/processes/process">
-        <weighting_factor>100</weighting_factor>
+        <weighting_factor>1000</weighting_factor>
     </add>
     <add sel="/*/processes/process">
         <linear>true</linear>

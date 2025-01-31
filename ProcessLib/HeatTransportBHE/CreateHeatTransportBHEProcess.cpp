@@ -186,7 +186,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
     auto const weighting_factor =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__weighting_factor}
-        config.getConfigParameter<float>("weighting_factor", 100.0);
+        config.getConfigParameter<float>("weighting_factor", 1000.0);
 
     auto const is_linear =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__linear}
