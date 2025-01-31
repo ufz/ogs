@@ -229,7 +229,7 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 1e3 </t_end>
+                    <t_end> 1 </t_end>
                     <timesteps>
                         <pair>
                             <repeat>4</repeat>
@@ -299,7 +299,7 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial> 0.0 </t_initial>
-                    <t_end> 1.e3 </t_end>
+                    <t_end> 1 </t_end>
                     <timesteps>
                         <pair>
                             <repeat>4</repeat>
