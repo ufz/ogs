@@ -64,36 +64,6 @@
 # \rho_\text{GR}=\rho_{\text{GR},0}\exp\left(-e\right).
 # $$
 
-# %%
-import os
-from pathlib import Path
-
-import matplotlib.pyplot as plt
-import numpy as np
-import ogstools as ot
-import vtuIO
-
-# %%
-# time runs from 0 to 10 in 11 steps
-t = np.linspace(0, 10, 11)
-
-# volume strain is a function of time
-e = -t / 100
-
-# initial state
-p_0 = 1e6
-T_0 = 270
-R = 8.3144621
-M = 0.01
-c_p = 1000
-
-c_v = c_p - R / M
-rho_0 = p_0 * M / R / T_0
-kappa = c_p / c_v
-
-# density
-rho_GR = rho_0 * np.exp(-e)
-
 # %% [markdown]
 # ### Gas pressure evolution
 #
@@ -136,10 +106,6 @@ rho_GR = rho_0 * np.exp(-e)
 # p_\text{GR}=p_{\text{GR},0}\exp\left(-\kappa e\right)
 # $$
 
-# %%
-# gas pressure
-p_GR = p_0 * np.exp(-kappa * e)
-
 # %% [markdown]
 # ### Temperature evolution
 #
@@ -149,16 +115,49 @@ p_GR = p_0 * np.exp(-kappa * e)
 # $$
 
 # %%
-# temperature
-T = p_GR * M / R / rho_GR
+import os
+from pathlib import Path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import ogstools as ot
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+if not out_dir.exists():
+    out_dir.mkdir(parents=True)
+
+# %% initial state and analytical solutions
+p_0 = 1e6
+T_0 = 270
+R = 8.3144621
+M = 0.01
+c_p = 1000
+
+c_v = c_p - R / M
+rho_0 = p_0 * M / R / T_0
+kappa = c_p / c_v
+
+
+def volume_strain(t):
+    return -t / 100
+
+
+def gas_density(t):
+    return rho_0 * np.exp(-volume_strain(t))
+
+
+def gas_pressure(t):
+    return p_0 * np.exp(-kappa * volume_strain(t))
+
+
+def temperature(t):
+    return gas_pressure(t) * M / R / gas_density(t)
+
 
 # %% [markdown]
 # ## Numerical solution
 
 # %%
-out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
 
 # %%
 # run OGS
@@ -169,129 +168,52 @@ cube_compression.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
 
 # %%
 # read PVD file
-pvdfile = vtuIO.PVDIO(f"{out_dir}/result_compression_gas.pvd", dim=2)
-# get all timesteps
-time = pvdfile.timesteps
+ms = ot.MeshSeries(f"{out_dir}/result_compression_gas.pvd")
+time = ms.timevalues()
+
+
+def plot_results_errors(var: ot.variables.Scalar, ref_vals: np.ndarray):
+    "Plot numerical results, analytical solution and errors."
+    num_vals = ms.probe([0.0, 1.0, 0.0], var.data_name)[:, 0]
+    abs_err = ref_vals - num_vals
+    rel_err = abs_err / ref_vals
+    assert np.all(np.abs(rel_err) <= 0.002)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
+    ax3 = ax2.twinx()
+    ax1.set_xlabel(r"$t$ / s")
+    ax2.set_xlabel(r"$t$ / s")
+    ax1.set_ylabel(var.get_label())
+    ax2.set_ylabel("absolute error / " + var.data_unit)
+    ax3.set_ylabel("relative error")
+
+    ax1.plot(time, var.transform(num_vals), "kx", label="numerical")
+    ax1.plot(time, var.transform(ref_vals), "b", label="analytical")
+    lns_abs = ax2.plot(time, abs_err, "b", label=r"absolute")
+    lns_rel = ax3.plot(time, rel_err, "g", label=r"relative")
+    ax1.legend()
+    lns = lns_abs + lns_rel
+    ax2.legend(lns, [label.get_label() for label in lns])
+
+    fig.tight_layout()
+
+
+# %% [markdown]
+# ## Gas density evolution
 
 # %%
-# read pressure, temperature and density from pvd result file
-# at point
-point = {"pt0": (0.0, 1.0, 0.0)}
+rho_g = ot.variables.Scalar("gas_density", r"kg/$m^3$", r"kg/$m^3$")
+plot_results_errors(rho_g, gas_density(ms.timevalues()))
 
-pressure = pvdfile.read_time_series("gas_pressure_interpolated", point)
-p_GR_num = pressure["pt0"]
-
-temperature = pvdfile.read_time_series("temperature_interpolated", point)
-T_num = temperature["pt0"]
-
-density = pvdfile.read_time_series("gas_density", point)
-rho_GR_num = density["pt0"]
+# %% [markdown]
+# ## Gas pressure evolution
 
 # %%
-plt.rcParams["figure.figsize"] = (10, 4)
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-fig1.suptitle(r"Density evolution, relative and absolute errors")
+p_g = ot.variables.Scalar("gas_pressure_interpolated", "Pa", "MPa")
+plot_results_errors(p_g, gas_pressure(ms.timevalues()))
 
-ax1.plot(time, rho_GR_num, "kx", label=r"$\rho_\mathrm{GR}$ numerical")
-ax1.plot(t, rho_GR, "b", label=r"$\rho_\mathrm{GR}$ analytical")
-ax1.set_xlabel(r"$t$ / s")
-ax1.set_ylabel(r"$\rho_\mathrm{GR}$ / kgs$^{-1}$")
-ax1.legend()
-ax1.grid(True)
-# ax1.set_xlim(0,1)
-# ax1.set_ylim(0,1)
-
-err_rho_abs = rho_GR - rho_GR_num
-err_rho_rel = err_rho_abs / rho_GR
-
-ax2.plot(t, err_rho_abs, "b", label=r"absolute")
-ax2.plot(t, err_rho_rel, "g", label=r"relative")
-
-ax2.set_xlabel(r"$t$ / s")
-ax2.set_ylabel(r"$\epsilon_\mathrm{rel}$ / - and $\epsilon_\mathrm{abs}$ / kgs$^{-1}$")
-ax2.legend()
-ax2.grid(True)
-# ax2.set_xlim(0,1)
-# ax2.set_ylim(-0.001,0.02)
-
-fig1.tight_layout()
-plt.show()
+# %% [markdown]
+# ## Temperature evolution
 
 # %%
-plt.rcParams["figure.figsize"] = (10, 4)
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-fig1.suptitle(r"Gas pressure evolution, relative and absolute errors")
-
-
-ax1.plot(time, p_GR_num, "kx", label=r"$p_\mathrm{GR}$ numerical")
-ax1.plot(t, p_GR, "b", label=r"$p_\mathrm{GR}$ analytical")
-ax1.set_xlabel(r"$t$ / s")
-ax1.set_ylabel(r"$p_\mathrm{GR}$ / Pa")
-ax1.legend()
-ax1.grid(True)
-# ax1.set_xlim(0,1)
-# ax1.set_ylim(0,1)
-
-err_p_abs = p_GR - p_GR_num
-err_p_rel = err_p_abs / p_GR
-
-lns1 = ax2.plot(t, err_p_abs, "b", label=r"absolute")
-ax3 = ax2.twinx()
-lns2 = ax3.plot(t, err_p_rel, "g", label=r"relative")
-
-# added these three lines
-lns = lns1 + lns2
-labs = [label.get_label() for label in lns]
-ax2.legend(lns, labs, loc=0)
-ax2.grid(True)
-
-ax2.set_xlabel(r"$t$ / s")
-ax2.set_ylabel(r"$\epsilon_\mathrm{abs}$ / Pa")
-ax3.set_ylabel(r"$\epsilon_\mathrm{rel}$ / -")
-
-# ax2.set_xlim(0,1)
-ax2.set_ylim(-3500, 200)
-ax3.set_ylim(-0.0035, 0.0002)
-
-fig1.tight_layout()
-plt.show()
-
-# %%
-plt.rcParams["figure.figsize"] = (10, 4)
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-fig1.suptitle(r"Temperature evolution, relative and absolute errors")
-
-
-ax1.plot(time, T_num, "kx", label=r"$T$ numerical")
-ax1.plot(t, T, "b", label=r"$T$ analytical")
-ax1.set_xlabel(r"$t$ / s")
-ax1.set_ylabel(r"$T$ / K")
-ax1.legend()
-ax1.grid(True)
-# ax1.set_xlim(0,1)
-# ax1.set_ylim(0,1)
-
-err_T_abs = T - T_num
-err_T_rel = err_T_abs / T
-
-
-lns1 = ax2.plot(t, err_T_abs, "b", label=r"absolute")
-ax3 = ax2.twinx()
-lns2 = ax3.plot(t, err_T_rel, "g", label=r"relative")
-
-# added these three lines
-lns = lns1 + lns2
-labs = [label.get_label() for label in lns]
-ax2.legend(lns, labs, loc=0)
-ax2.grid(True)
-
-ax2.set_xlabel(r"$t$ / s")
-ax2.set_ylabel(r"$\epsilon_\mathrm{abs}$ / K")
-ax3.set_ylabel(r"$\epsilon_\mathrm{rel}$ / -")
-
-# ax2.set_xlim(0,1)
-ax2.set_ylim(-0.8, 0.05)
-ax3.set_ylim(-0.002, 0.000125)
-
-fig1.tight_layout()
-plt.show()
+plot_results_errors(ot.variables.temperature, temperature(ms.timevalues()))

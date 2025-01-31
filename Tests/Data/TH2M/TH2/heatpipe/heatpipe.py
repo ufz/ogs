@@ -138,7 +138,8 @@ def saturation_effective(p_c):
 
 def relative_permeability_gas(sL_eff):
     return max(
-        k_rG_min, ((1.0 - sL_eff) ** 2) * (1 - (sL_eff ** ((2.0 + exp_BC) / exp_BC)))
+        k_rG_min,
+        ((1.0 - sL_eff) ** 2) * (1 - (sL_eff ** ((2.0 + exp_BC) / exp_BC))),
     )
 
 
@@ -509,152 +510,70 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
 
 # %%
 # Import OGS simulation results
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
-
-pvd_file = f"{out_dir}/results_heatpipe_rough.pvd"
-reader = pv.get_reader(pvd_file)
-reader.set_active_time_value(1.0e7)  # set reader to simulation end-time
-mesh = reader.read()[0]
+ms = ot.MeshSeries(f"{out_dir}/results_heatpipe_rough.pvd")
+mesh = ms.mesh(-1)
 
 # Define line along mesh and extract data along line for plotting
-pt1 = (0, 0.0025, 0)
-pt2 = (1, 0.0025, 0)
-xaxis = pv.Line(pt1, pt2, resolution=2)
-line_mesh = mesh.slice_along_line(xaxis)
-
-x_num = line_mesh.points[:, 0]  # x coordinates of each point
-S_num = line_mesh.point_data["saturation"]
-xA_G_num = line_mesh.point_data["xnCG"]
-p_G_num = line_mesh.point_data["gas_pressure"]
-T_num = line_mesh.point_data["temperature"]
-
-# Resampling dataset via linear interpolation for error calculation
-S_num_interp = np.interp(M[0, :], x_num, S_num)
-xA_G_num_interp = np.interp(M[0, :], x_num, xA_G_num)
-p_G_num_interp = np.interp(M[0, :], x_num, p_G_num)
-T_num_interp = np.interp(M[0, :], x_num, T_num)
+pts = np.asarray([[x, 0.0025, 0] for x in M[0, :]])
+line_mesh = pv.PointSet(pts).sample(mesh)
 
 # %% [markdown]
 # As one can see from the figures below, the numerical results are in really good agreement with the analytical solution. To better understand and visualize the deviation, we also perform a quick error analysis by simply calculating the difference (absolute and relative error) between the analytical and the numerical solution.
 
 # %%
-plt.rcParams["lines.linewidth"] = 2.0
-plt.rcParams["lines.color"] = "black"
-plt.rcParams["legend.frameon"] = True
 plt.rcParams["font.family"] = "serif"
-plt.rcParams["legend.fontsize"] = 14
-plt.rcParams["font.size"] = 14
-plt.rcParams["axes.axisbelow"] = True
-plt.rcParams["figure.figsize"] = (16, 6)
 
-fig1, (ax1, ax2, ax3) = plt.subplots(1, 3)
-ax1.plot(M[0, :], sL_eff_list, "kx", label=r"$S_{L,eff}$  analytical")
-ax1.plot(M[0, :], M[2, :], "kx", label=r"$x_G^a$  analytical")
-ax1.plot(x_num, S_num, "b", label=r"$S_{L,eff}$  numerical")
-ax1.plot(x_num, xA_G_num, "g", label=r"$x_G^a$  numerical")
-ax1.set_xlabel(r"$z$ / m")
-ax1.set_ylabel(r"$S_{L,eff}$ and $x_G^a$ / -")
-ax1.legend()
-ax1.grid(True)
-ax1.set_xlim(0, 1)
-ax1.set_ylim(0, 1)
 
-ax2.plot(M[0, :], S_num_interp - sL_eff_list, "b", label=r"$\Delta S_{L,eff}$")
-ax2.plot(M[0, :], xA_G_num_interp - M[2, :], "g", label=r"$\Delta x_G^a$")
-ax2.set_xlabel(r"$z$ / m")
-ax2.set_ylabel(r"Absolute error / -")
-ax2.legend()
-ax2.grid(True)
-ax2.set_xlim(0, 1)
-ax2.set_ylim(-0.001, 0.02)
+def plot_results_errors(
+    y_ref: np.ndarray, var: ot.variables.Scalar, c: str, max_err: float
+):
+    y_num = line_mesh[var.data_name]
+    nans = np.full(y_ref.shape, np.nan)
+    rel_err = np.divide(y_num - y_ref, y_ref, where=y_ref >= 0.01, out=nans)
+    assert np.all((np.abs(rel_err) < max_err) | np.isnan(rel_err))
 
-relError_S_w = np.zeros(len(M[0, :]))
-relError_xA_G = np.zeros(len(M[0, :]))
-for i in range(len(M[0, :])):
-    if (sL_eff_list[i]) >= 0.001:
-        relError_S_w[i] = (S_num_interp[i] - sL_eff_list[i]) / sL_eff_list[i]
-    else:
-        relError_S_w[i] = np.nan
-    if (M[2, i]) >= 0.01:
-        relError_xA_G[i] = (xA_G_num_interp[i] - M[2, i]) / M[2, i]
-    else:
-        relError_xA_G[i] = np.nan
-ax3.plot(M[0, :], relError_S_w, "b", label=r"$\Delta S_{L,eff}/S_{L,eff-analytical}$")
-ax3.plot(M[0, :], relError_xA_G, "g", label=r"$\Delta x_G^a/x_{G-analytical}^a$")
-ax3.set_xlabel(r"$z$ / m")
-ax3.set_ylabel(r"Relative error / -")
-ax3.set_xlim(0, 1)
-ax3.legend()
-ax3.grid(True)
-fig1.tight_layout()
-plt.show()
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(16, 6))
+    ax1.set_ylabel(var.get_label())
+    ax2.set_ylabel(rf"Absolute error / {var.data_unit}")
+    ax3.set_ylabel(r"Relative error / -")
 
-fig2, (ax1, ax2, ax3) = plt.subplots(1, 3)
-ax1.plot(M[0, :], M[3, :], "kx", label=r"$T$ analytical")
-ax1.plot(x_num, T_num, "r", label=r"$T$  numerical")
-ax1.set_xlabel(r"$z$ / m")
-ax1.set_ylabel(r"$T$ / K")
-ax1.legend()
-ax1.grid(True)
-ax1.set_xlim(0, 1)
-ax1.set_ylim(365, 375)
+    ax1.plot(M[0, :], var.transform(y_ref), "kx", label="analytical")
+    ax1.plot(M[0, :], var.transform(y_num), c, label="numerical", lw=2)
+    ax2.plot(M[0, :], y_num - y_ref, c, lw=2)
+    ax3.plot(M[0, :], rel_err, c, lw=2)
 
-ax2.plot(M[0, :], -T_num_interp + M[3, :], "r", label=r"$\Delta T$")
-ax2.set_xlabel(r"$z$ / m")
-ax2.set_ylabel(r"Absolute error / K")
-ax2.legend()
-ax2.grid(True)
-ax2.set_xlim(0, 1)
-ax2.set_ylim(0, 0.12)
+    ax1.legend()
+    for ax in (ax1, ax2, ax3):
+        ax.set_xlabel(r"$z$ / m")
+        ax.set_xlim(0, 1)
+        ax.grid(True)
+    fig.tight_layout()
 
-ax3.plot(
-    M[0, :],
-    (-T_num_interp + M[3, :]) / M[3, :],
-    "r",
-    label=r"$\Delta T/T_{analytical}$",
-)
-ax3.set_xlabel(r"$z$ / m")
-ax3.set_ylabel(r"Relative error / -")
-ax3.set_xlim(0, 1)
-ax3.set_ylim(0, 0.0003)
-ax3.legend()
-ax3.grid(True)
-fig2.tight_layout()
-plt.show()
 
-fig3, (ax1, ax2, ax3) = plt.subplots(1, 3)
-ax1.plot(M[0, :], M[1, :] / 1000, "kx", label=r"$p_G$ analytical")
-ax1.plot(x_num, p_G_num / 1000, "c", label=r"$p_G$  numerical")
-ax1.set_xlabel(r"$z$ / m")
-ax1.set_ylabel(r"$p_G$ / kPa")
-ax1.legend()
-ax1.grid(True)
-ax1.set_xlim(0, 1)
-ax1.set_ylim(100, 106)
+# %% [markdown]
+# ### Saturation
+# %%
+saturation = ot.variables.Scalar("saturation", symbol="S_{L,eff}")
+plot_results_errors(sL_eff_list, saturation, "blue", 0.32)
 
-ax2.plot(M[0, :], -p_G_num_interp + M[1, :], "c", label=r"$\Delta p_G$")
-ax2.set_xlabel(r"$z$ / m")
-ax2.set_ylabel(r"Absolute error / Pa")
-ax2.legend()
-ax2.grid(True)
-ax2.set_xlim(0, 1)
-ax2.set_ylim(0, 30)
+# %% [markdown]
+# ### Mole fraction
+# %%
+mole_frac = ot.variables.Scalar("xnCG", symbol="x_G^a")
+plot_results_errors(M[2, :], mole_frac, "green", 0.25)
 
-ax3.plot(
-    M[0, :],
-    (-p_G_num_interp + M[1, :]) / M[1, :],
-    "c",
-    label=r"$\Delta p_G/p_{G-analytical}$",
-)
-ax3.set_xlabel(r"$z$ / m")
-ax3.set_ylabel(r"Relative error / -")
-ax3.set_xlim(0, 1)
-ax3.set_ylim(0, 0.0004)
-ax3.legend()
-ax3.grid(True)
-fig3.tight_layout()
-plt.show()
+# %% [markdown]
+# ### Temperature
+
+# %%
+plot_results_errors(M[3, :], ot.variables.temperature, "red", 0.0004)
+
+# %% [markdown]
+# ### Gas pressure
+
+# %%
+gas_pressure = ot.variables.pressure.replace(data_name="gas_pressure")
+plot_results_errors(M[1, :], gas_pressure, "cyan", 0.0004)
 
 # %% [markdown]
 # ## References

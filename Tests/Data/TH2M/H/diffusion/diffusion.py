@@ -46,33 +46,21 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
-import vtuIO
-from matplotlib.lines import Line2D
+import pyvista as pv
 from scipy.special import erfc
 
 
 # %%
-# Analytical solution of the diffusion equation
 def Diffusion(x, t):
-    if (
-        not isinstance(t, int)
-        and not isinstance(t, np.float64)
-        and not isinstance(t, float)
-    ):
-        # In order to avoid a division by zero, the time field is increased
-        # by a small time unit at the start time (t=0). This should have no
-        # effect on the result.
-        tiny = np.finfo(np.float64).tiny
-        t[t < tiny] = tiny
-
+    "Analytical solution of the diffusion equation"
     d = np.sqrt(4 * D * t)
-    return (c_b - c_i) * erfc(x / d) + c_i
-
-
-# Utility-function transforming mass fraction into conctration
+    return (c_b - c_i) * erfc(
+        np.divide(x, d, where=(d != 0), out=np.ones_like(x * d) * 1e6)
+    ) + c_i
 
 
 def concentration(xm_WL):
+    "Utility-function transforming mass fraction into conctration"
     xm_CL = 1.0 - xm_WL
     return xm_CL / beta_c
 
@@ -81,20 +69,13 @@ def concentration(xm_WL):
 # ### Material properties and problem specification
 
 # %%
-# Henry-coefficient and compressibility of solution
-H = 7.65e-6
-beta_c = 2.0e-6
-
-# Diffusion coefficient
-D = 1.0e-9
-
-# Boundary and initial gas pressures
-pGR_b = 9e5
-pGR_i = 1e5
-
-# Boundary and initial concentration
-c_b = concentration(1.0 - (beta_c * H * pGR_b))
-c_i = concentration(1.0 - (beta_c * H * pGR_i))
+H = 7.65e-6  # Henry-coefficien
+beta_c = 2.0e-6  # Compressibility of solution
+D = 1.0e-9  # Diffusion coefficient
+pGR_b = 9e5  # Boundary gas pressure
+pGR_i = 1e5  # Initial gas pressure
+c_b = concentration(1.0 - (beta_c * H * pGR_b))  # Boundary concentration
+c_i = concentration(1.0 - (beta_c * H * pGR_i))  # Initial concentration
 
 # %% [markdown]
 # ## Numerical Solution
@@ -106,165 +87,78 @@ if not out_dir.exists():
 
 # %%
 model = ot.Project(input_file="diffusion.prj", output_file=f"{out_dir}/modified.prj")
-model.replace_text(1e7, xpath="./time_loop/processes/process/time_stepping/t_end")
-model.replace_text(
-    5e4, xpath="./time_loop/processes/process/time_stepping/timesteps/pair/delta_t"
-)
-# Write every timestep
+timestepping = "./time_loop/processes/process/time_stepping"
+model.replace_text(1e7, xpath=f"{timestepping}/t_end")
+model.replace_text(5e4, xpath=f"{timestepping}/timesteps/pair/delta_t")
 model.replace_text(1, xpath="./time_loop/output/timesteps/pair/each_steps")
+model.replace_text("XDMF", xpath="./time_loop/output/type")
 model.write_input()
-
-# Run OGS
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
-# %%
-# Colors
-cls1 = ["#4a001e", "#731331", "#9f2945", "#cc415a", "#e06e85", "#ed9ab0"]
-cls2 = ["#0b194c", "#163670", "#265191", "#2f74b3", "#5d94cb", "#92b2de"]
+# %% Read the results and plot the data
+ms = ot.MeshSeries(f"{out_dir}/result_diffusion_domain.xdmf")
 
-# %%
+def plot_results_errors(x: np.ndarray, y: np.ndarray, y_ref: np.ndarray,
+         labels: list, x_label: str, colors: list):  # fmt: skip
+    "Plot numerical results against analytical solution"
+    rel_errors = (np.asarray(y_ref) - np.asarray(y)) / np.asarray(y_ref)
+    assert np.all(np.abs(rel_errors) <= 0.3)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 4))
 
-pvdfile = vtuIO.PVDIO(f"{out_dir}/result_diffusion.pvd", dim=2)
+    ax1.set_xlabel(x_label, fontsize=12)
+    ax2.set_xlabel(x_label, fontsize=12)
+    ax1.set_ylabel("$c$ / mol m$^{-3}$", fontsize=12)
+    ax2.set_ylabel(r"$\epsilon_\mathrm{abs}$ / mol m$^{-3}$", fontsize=12)
+    for i, rel_error in enumerate(rel_errors):
+        ax1.plot(x, y[i], "--", lw=2, label=labels[i], c=colors[i])
+        ax1.plot(x, y_ref[i], "-", lw=1, c=colors[i])
+        ax2.plot(x, rel_error, "-", lw=2, label=labels[i], c=colors[i])
+    ax1.plot([], [], "--k", label="OGS-TH2M")
+    ax1.plot([], [], "-k", label="analytical")
+    ax1.legend(loc="right")
+    ax2.legend(loc="right")
+    fig.tight_layout()
 
-# Get all written timesteps
-time = pvdfile.timesteps
-
-# Select individual timesteps for c vs. x plots for plotting
-time_steps = [1e6, 2e6, 4e6, 6e6, 8e6, 1e7]
-
-# 'Continuous' space axis for c vs. x plots for plotting
-length = np.linspace(0, 1.0, 101)
-
-# Draws a line through the domain for sampling results
-x_axis = [(i, 0, 0) for i in length]
-
-# Discrete locations for c vs. t plots
-location = [0.01, 0.05, 0.1, 0.2, 0.5, 1.0]
-
-# %%
-# The sample locations have to be converted into a 'dict' for vtuIO
-observation_points = {"x=" + str(x): (x, 0.0, 0.0) for x in location}
-# Samples concentration field at the observation points for all timesteps
-
-c_over_t_at_x = pvdfile.read_time_series("xmWL", observation_points)
-for key in c_over_t_at_x:
-    x = c_over_t_at_x[key]
-    c_over_t_at_x[key] = concentration(x)
-
-# Samples concentration field along the domain at certain timesteps
-c_over_x_at_t = []
-for t in range(len(time_steps)):
-    c_over_x_at_t.append(
-        concentration(
-            pvdfile.read_set_data(time_steps[t], "xmWL", pointsetarray=x_axis)
-        )
-    )
-
-# %%
-plt.rcParams["figure.figsize"] = (14, 4)
-
-# Plot of concentration vs. time at different locations
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-
-ax1.set_xlabel("$t$ / s", fontsize=12)
-ax1.set_ylabel("$c$ / mol m$^{-3}$", fontsize=12)
-
-ax2.set_xlabel("$t$ / s", fontsize=12)
-ax2.set_ylabel(r"$\epsilon_\mathrm{abs}$ / mol m$^{-3}$", fontsize=12)
-
-label_x = []
-for key, _c in c_over_t_at_x.items():
-    x = observation_points[key][0]
-    label_x.append(key + r" m")
-    # numerical solution
-    ax1.plot(
-        time,
-        c_over_t_at_x[key],
-        color=cls1[location.index(x)],
-        linewidth=3,
-        linestyle="--",
-    )
-    # analytical solution
-    ax1.plot(
-        time,
-        Diffusion(x, time),
-        color=cls1[location.index(x)],
-        linewidth=2,
-        linestyle="-",
-    )
-    # absolute error
-    err_abs = Diffusion(x, time) - c_over_t_at_x[key]
-    ax2.plot(
-        time,
-        err_abs,
-        color=cls1[location.index(x)],
-        linewidth=1,
-        linestyle="-",
-        label=key + r" m",
-    )
-
-
-# Hack to force a custom legend:
-custom_lines = []
-
-for i in range(6):
-    custom_lines.append(Line2D([0], [0], color=cls1[i], lw=4))
-
-custom_lines.append(Line2D([0], [0], color="black", lw=3, linestyle="--"))
-custom_lines.append(Line2D([0], [0], color="black", lw=2, linestyle="-"))
-label_x.append("OGS-TH2M")
-label_x.append("analytical")
-
-ax1.legend(custom_lines, label_x, loc="right")
-ax2.legend()
-fig1.savefig(f"{out_dir}/diffusion_c_vs_t.pdf")
-
-
-# Plot of concentration vs. location at different times
-fig1, (ax1, ax2) = plt.subplots(1, 2)
-
-ax1.set_xlabel("$x$ / m", fontsize=12)
-ax1.set_ylabel("$c$ / mol m$^{-3}$", fontsize=12)
-ax1.set_xlim(0, 0.4)
-
-ax2.set_xlabel("$x$ / m", fontsize=12)
-ax2.set_ylabel(r"$\epsilon$ / mol $m^{-3}$", fontsize=12)
-ax2.set_xlim(0, 0.4)
-
-
-# Plot concentration over domain at five moments
-label_t = []
-for t in range(len(time_steps)):
-    s = r"$t=$" + str(time_steps[t] / 1e6) + r"$\,$Ms"
-    label_t.append(s)
-    # numerical solution
-    ax1.plot(length, c_over_x_at_t[t], color=cls2[t], linewidth=3, linestyle="--")
-    # analytical solution
-    ax1.plot(
-        length,
-        Diffusion(length, time_steps[t]),
-        color=cls2[t],
-        linewidth=2,
-        linestyle="-",
-    )
-    # absolute error
-    err_abs = Diffusion(length, time_steps[t]) - c_over_x_at_t[t]
-    ax2.plot(length, err_abs, color=cls2[t], linewidth=1, linestyle="-", label=s)
-
-custom_lines = []
-
-for i in range(6):
-    custom_lines.append(Line2D([0], [0], color=cls2[i], lw=4))
-
-custom_lines.append(Line2D([0], [0], color="black", lw=3, linestyle="--"))
-custom_lines.append(Line2D([0], [0], color="black", lw=2, linestyle="-"))
-label_t.append("OGS-TH2M")
-label_t.append("analytical")
-
-ax1.legend(custom_lines, label_t, loc="right")
-ax2.legend()
-
-fig1.savefig(f"{out_dir}/diffusion_c_vs_x.pdf")
 
 # %% [markdown]
-# The numerical approximation approaches the exact solution quite well. Deviations can be reduced if the resolution of the temporal discretisation is increased.
+# ### Concentration vs. time at different locations
+# %%
+obs_pts = np.asarray([(x, 0, 0) for x in [0.01, 0.05, 0.1, 0.2, 0.5, 1.0]])
+num_values = concentration(ms.probe(obs_pts, "xmWL").T)
+ref_values = [Diffusion(x, ms.timevalues("s")) for x in obs_pts[:, 0]]
+leg_labels = [f"x={pt[0]} m" for pt in obs_pts]
+time = ms.timevalues("days")
+reds = ["#4a001e", "#731331", "#9f2945", "#cc415a", "#e06e85", "#ed9ab0"]
+plot_results_errors(time, num_values, ref_values, leg_labels, "$t$ / d", reds)
+
+# %% [markdown]
+# ### Concentration vs. location at different times
+
+# %%
+timevalues = np.asarray([1e6, 2e6, 4e6, 6e6, 8e6, 1e7])
+timesteps = [ms.closest_timestep(tv) for tv in timevalues]
+xs = np.linspace(0, 0.4, 40)
+line = pv.PointSet([(x, 0, 0) for x in xs])
+num_values = [concentration(line.sample(ms[ts])["xmWL"]) for ts in timesteps]
+ref_values = [Diffusion(xs, tv) for tv in timevalues]
+leg_labels = [f"{tv:.0e} s" for tv in timevalues]
+blues = ["#0b194c", "#163670", "#265191", "#2f74b3", "#5d94cb", "#92b2de"]
+plot_results_errors(xs, num_values, ref_values, leg_labels, "$x$ / m", blues)
+
+# %% [markdown]
+# The numerical approximation approaches the exact solution quite well.
+# Deviations can be reduced if the resolution of the temporal discretisation is
+# increased.
+
+
+# %% [markdown]
+# ### Concentration over time and space
+
+# %%
+pts = np.linspace([0.0, 0.0, 0.0], [0.3, 0.0, 0.0], 500)
+var = ot.variables.Scalar("xmWL", func=concentration)
+fig = ms.plot_time_slice(
+    var, pts, time_unit="days", interpolate=False, figsize=[10, 4], fontsize=12
+)
+fig.axes[1].set_ylabel("$c$ / mol m$^{-3}$")
+fig.tight_layout()

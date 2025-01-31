@@ -34,17 +34,17 @@
 # To verify the phase transition, the diffusive mass transport and the two-phase behaviour, this numerical experiment was recalculated with the TH2M process class. The material parameters and boundary conditions used essentially correspond to those of the experiment and are summarised as follows:
 #
 #
-# | Parameter                      | Symbol | Value | Unit |
-# |--------------------------------|:------:|------|---------|
-# | binary diffusion coefficient | $D$              | 3.0e-9   | Pa  |
-# | viscosity liquid            | $\mu_\text{LR}$  | 1.0e-3   | Pa s  |
-# | viscosity gas               | $\mu_\text{GR}$  | 9.0e-6   | Pa s  |
-# | Henry-coefficient            | $H$              | 7.65e-6  | mol Pa$^{-1}$m$^{-3}$  |
-# | molar mass hydrogen          | $M_\mathrm{H_2}$ | 2.0e-3   | kg mol$^{-1}$  |
-# | molar mass water             | $M_\mathrm{H_2O}$| 1.0e-2   | kg mol$^{-1}$  |
-# | density liquid               | $\rho_\text{LR}$ | eq. (1)  | kg m$^{-3}$  |
-# | intrinsic permeability       | $\mathbf{k}$     | 5.0e-20  | m$^2$  |
-# | porosity                     | $\phi$           | 0.15     | 1  |
+# | Parameter                      | Symbol           | Value    | Unit                   |
+# |--------------------------------|:----------------:|----------|------------------------|
+# | binary diffusion coefficient   | $D$              | 3.0e-9   | Pa                     |
+# | viscosity liquid               | $\mu_\text{LR}$  | 1.0e-3   | Pa s                   |
+# | viscosity gas                  | $\mu_\text{GR}$  | 9.0e-6   | Pa s                   |
+# | Henry-coefficient              | $H$              | 7.65e-6  | mol Pa$^{-1}$m$^{-3}$  |
+# | molar mass hydrogen            | $M_\mathrm{H_2}$ | 2.0e-3   | kg mol$^{-1}$          |
+# | molar mass water               | $M_\mathrm{H_2O}$| 1.0e-2   | kg mol$^{-1}$          |
+# | density liquid                 | $\rho_\text{LR}$ | eq. (1)  | kg m$^{-3}$            |
+# | intrinsic permeability         | $\mathbf{k}$     | 5.0e-20  | m$^2$                  |
+# | porosity                       | $\phi$           | 0.15     | 1                      |
 #
 # The van Genuchten model was used as the saturation relation with $m=$0.329 and $p_b$=2.0e6 Pa, $s_\mathrm{L}^\mathrm{res}=$0.4 and $s_\mathrm{G}^\mathrm{res}=$0.0. The relative permeabilities $k^\mathrm{rel}_\mathrm{L}$ and $k^\mathrm{rel}_\mathrm{G}$ were determined using the van Genuchten and van Genuchten-Mualem models, respectively.
 #
@@ -78,7 +78,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
 import pandas as pd
-import vtuIO
 
 # %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
@@ -89,7 +88,8 @@ if not out_dir.exists():
 model = ot.Project(input_file="bourgeat.prj", output_file=f"{out_dir}/modified.prj")
 # This Jupyter notebook version of this test runs not as far as its cTest-counterpart,
 # it'll stop after approx. 800 ka
-model.replace_text(2.5e13, xpath="./time_loop/processes/process/time_stepping/t_end")
+timestepping = "./time_loop/processes/process/time_stepping"
+model.replace_text(2.5e13, xpath=f"{timestepping}/t_end")
 
 
 # The cTest version shows only a few output-timesteps while this version is supposed to
@@ -97,9 +97,7 @@ model.replace_text(2.5e13, xpath="./time_loop/processes/process/time_stepping/t_
 # timestep will be written and the maximum timestep-size of the adaptive time stepping
 # method will be reduced drastically
 time_end = 1e11
-model.replace_text(
-    time_end, xpath="./time_loop/processes/process/time_stepping/maximum_dt"
-)
+model.replace_text(time_end, xpath=f"{timestepping}/maximum_dt")
 
 # The following for loop generates a text with output times,which is then replaced by
 # the project file API (ogstools.Project) in the project file.
@@ -110,99 +108,83 @@ for t in np.arange(0.6, 1.1, 0.1):
 
 model.replace_text(1, xpath="./time_loop/output/timesteps/pair/each_steps")
 model.replace_text(timesteps, xpath="./time_loop/output/fixed_output_times")
+model.replace_text("XDMF", xpath="./time_loop/output/type")
 model.write_input()
 
 # Run OGS
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
 # %%
-# Colors
-cls = ["#e6191d", "#337fb8", "#4eae4c", "#984ea3", "#984ea3", "#feff32"]
+# Read the results and compare them with the reference data
+ms = ot.MeshSeries(f"{out_dir}/result_bourgeat_domain.xdmf")
 
-# %%
-# Read PVD-output
-pvdfile = vtuIO.PVDIO(f"{out_dir}/result_bourgeat.pvd", dim=2)
-point = {"A": (0.0, 0.0, 0.0)}
-time = pvdfile.timesteps
+saturation = ot.variables.Scalar("saturation", "", "%", symbol="s_{G}")
+gas_pressure = ot.variables.Scalar("gas_pressure", "Pa", "MPa", symbol="p_{GR}")
+liquid_pressure = ot.variables.Scalar(
+    "liquid_pressure_interpolated", "Pa", "MPa", "liquid pressure", "p_{LR}"
+)
 
-saturation = pvdfile.read_time_series("saturation", point)
-gas_pressure = pvdfile.read_time_series("gas_pressure", point)
-liquid_pressure = pvdfile.read_time_series("liquid_pressure_interpolated", point)
 
-num_results = [1.0 - saturation["A"], gas_pressure["A"], liquid_pressure["A"]]
+def plot_results(var: ot.variables.Scalar, ref: str, max_err: float) -> None:
+    "Plot evolution at [0, 0, 0], a contourplot at t=10^5 and a timeslice."
+    # computes gas saturation from liquid saturation in numerical results
+    var_OGS = var.replace(func=lambda x: 1.0 - x) if var == saturation else var
 
-time_years = time / 365.2425 / 86400
+    # === Test for valid results ========================================
+    df_refs = pd.read_csv(f"references/bourgeat_{ref}.csv")
+    num_vals = var_OGS.transform(ms.probe([0, 0, 0], var.data_name)[:, 0])
+    mean_ref_vals = var.transform(df_refs.drop(columns="time").aggregate("mean", 1))
+    num_vals_interp = np.interp(df_refs["time"], ms.timevalues("a"), num_vals)
+    mean_rel_err = mean_ref_vals - num_vals_interp
+    assert np.all(np.abs(mean_rel_err) < max_err)
 
-# %%
-# Read the reference data from CSV files
-refs = [
-    pd.read_csv("references/bourgeat_sG.csv"),
-    pd.read_csv("references/bourgeat_pGR.csv"),
-    pd.read_csv("references/bourgeat_pLR.csv"),
-]
-
-header = list(refs[0].keys())
-
-# %%
-indices = {"Gas saturation": 0, "Gas pressure": 1, "Liquid pressure": 2}
-labels = ["$s_{G}$", "$p_{GR}$", "$p_{LR}$"]
-
-# %%
-plt.rcParams["figure.figsize"] = (12, 4)
-
-# Loop over gas_saturation, gas_pressure, and liquid_pressure
-for i in indices:
-    index = indices[i]
-    ref_time = refs[index]["time"]
-
-    fig1, (ax1, ax2) = plt.subplots(1, 2, sharey=True)
-    fig1.suptitle(i + r" vs. time at $x=0$m")
-
-    ax1.set_xscale("log")
-    ax1.set_xlabel("time / a", fontsize=12)
-    ax1.set_ylabel(labels[index], fontsize=12)
-
-    for r in range(1, len(refs[index].columns)):
-        ax1.plot(
-            ref_time,
-            refs[index][refs[index].keys()[r]],
-            linewidth=1,
-            linestyle="-",
-            label=refs[index].keys()[r],
-        )
-
-    ax1.plot(
-        time_years,
-        num_results[index],
-        color="black",
-        linewidth=2,
-        linestyle="--",
-        label="OGS-TH$^2$M",
-    )
-
-    ax2.set_xlabel("time / a", fontsize=12)
-
-    for r in range(1, len(refs[index].columns)):
-        ax2.plot(
-            ref_time,
-            refs[index][refs[index].keys()[r]],
-            linewidth=1,
-            linestyle="-",
-            label=refs[index].keys()[r],
-        )
-    ax2.plot(
-        time_years,
-        num_results[index],
-        color="black",
-        linewidth=2,
-        linestyle="--",
-        label="OGS-TH$^2$M",
-    )
-
+    # === Line plot =====================================================
+    fig1, (ax1, ax2) = plt.subplots(1, 2, sharey=True, figsize=(12, 4))
+    for ax in [ax1, ax2]:
+        for institute in sorted(df_refs.drop(columns="time")):
+            ref_vals = var.transform(df_refs[institute])
+            ax.plot(df_refs["time"], ref_vals, "-", label=institute)
+        ax.plot(ms.timevalues("a"), num_vals, "--k", label="OGS-TH$^2$M")
+        ax.set_xlabel("time / a")
     ax1.legend()
+    fig1.suptitle(var.output_name + r" vs. time at $x=0$m")
+    ax1.set_xscale("log")
+    ax1.set_xlim(left=10)
+    ax1.set_ylabel(var.get_label())
+
+    # === Contourplot ==================================================
+    mesh = ms.mesh(ms.closest_timestep(1e5 * 86400 * 365.25))
+    fig2 = ot.plot.contourf(mesh, var_OGS, fontsize=20)
+    fig2.suptitle(rf"{var.output_name} at t=$10^5$ a", fontsize=20)
+
+    # === Timeslice=====================================================
+    pts = np.linspace([0, 0, 0], [200, 0, 0], num=500)
+    fig3 = ms.plot_time_slice(
+        var_OGS, pts, time_unit="ka", figsize=[20, 7], interpolate=False, fontsize=20
+    )
+    fig3.suptitle(f"{var.output_name} over time and x", fontsize=20)
+    fig3.tight_layout()
 
 
-fig1.savefig("results_sG_pGR_pLR.pdf")
+# %% [markdown]
+# # Saturation
+
+# %%
+plot_results(var=saturation, ref="sG", max_err=0.15)
+
+# %% [markdown]
+# # Gas pressure
+
+# %%
+plot_results(var=gas_pressure, ref="pGR", max_err=0.35)
+
+
+# %% [markdown]
+# # Liquid pressure
+
+# %%
+plot_results(var=liquid_pressure, ref="pLR", max_err=0.1)
+
 
 # %% [markdown]
 # After about 10,000 years, the dissolution capacity of the liquid phase is exhausted and a separate gas phase is formed. From this point on, an increase in water pressure can be observed. This is shown in the liquid pressure plot
