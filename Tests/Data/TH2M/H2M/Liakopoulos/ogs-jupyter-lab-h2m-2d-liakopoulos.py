@@ -24,50 +24,25 @@
 # +++
 #
 
-# %% [markdown]
-# ## Notebook setup
-
 # %%
-# 1-modules
 import os
-import time
 from pathlib import Path
-from subprocess import run
 
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
-import pyvista as pv
-import vtuIO
-from IPython.display import Image
-
-pv.set_jupyter_backend("static")
-
-# %%
-# 2-settings (file handling, title, figures)
-fig_dir = "./figures/"
-
+import numpy as np
+import ogstools as ot
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
-prj_file_test = "liakopoulos_TH2M.prj"
-pvd_file_test = f"{out_dir}/result_liakopoulos.pvd"
-vtu_mesh_file = "domain.vtu"
-
-# %%
-Image(filename=fig_dir + "ogs-jupyter-lab.png", width=150, height=100)
-
-# %%
-Image(filename=fig_dir + "h2m-tet.png", width=150, height=100)
+# %% [markdown]
+# # H2M process: Liakopoulos benchmark
 
 # %% [markdown]
-# ## H2M process: Liakopoulos benchmark
-
-# %% [markdown]
-# **Problem description**
+# ## Problem description
 #
-# ![](figures/liakopoulos.png)
+# ![](figures/liakopoulos.png =x400)
 #
 # The Liakopoulos experiment was dealing with a sand column which was filled with water first and then drained under gravity.
 # A sketch of the related model set-up including initial and boundary conditions is shown in the above figure.
@@ -87,159 +62,57 @@ Image(filename=fig_dir + "h2m-tet.png", width=150, height=100)
 # | Density of solid phase | $\rho_\textrm{SR}$ = 2.0$\times$ 10$^3$ | kg m$^{-3}$ |
 
 # %% [markdown]
-# **Numerical solution**
+# ## Numerical solution
 
 # %%
-mesh = pv.read(vtu_mesh_file)
-print("inspecting vtu_mesh_file")
-print(mesh)
+prj_file = "liakopoulos_TH2M.prj"
+model = ot.Project(input_file=prj_file, output_file=prj_file)
+model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
 
-# %%
-plotter = pv.Plotter()
-plotter.add_mesh(mesh, show_edges=True)
-plotter.view_xy()
-plotter.add_axes()
-plotter.show_bounds(mesh, xlabel="x", ylabel="y")
-plotter.show()
+# %% Read and plot the results (the mesh is 1D and extends from y=0 to y=1)
+ms = ot.MeshSeries(f"{out_dir}/result_liakopoulos.pvd")
+
+# plausibility checks
+max_vals = {"gas_pressure": 1.02e5, "capillary_pressure": 1e4,
+            "saturation": 1.0001, "displacement": 0.005}  # fmt:skip
+
+
+def plot_sample(var: ot.variables.Scalar) -> None:
+    fig, ax = plt.subplots(figsize=[6, 3], dpi=150)
+    ax.set_xlabel(r"$y$ / m")
+    ax.set_ylabel(var.get_label())
+    for mesh, t in zip(ms, ms.timevalues()):
+        line_mesh = mesh.sample_over_line([0, 0, 0], [0, 1, 0])
+        vals = line_mesh.sample(mesh)[var.data_name]
+        assert np.all(np.abs(vals) <= max_vals[var.data_name]), max(abs(vals))
+        ax.plot(line_mesh.points[:, 1], var.transform(vals), label=f"{t=}", lw=2.5)
+    ax.legend()
+    ax.grid()
+    fig.tight_layout()
+
 
 # %% [markdown]
-# **Running OGS**
+# ### Gas Pressure
 
 # %%
-# run ogs
-t0 = time.time()
-print(f"ogs -o {out_dir} {prj_file_test} > {out_dir}/log.txt")
-run(f"ogs -o {out_dir} {prj_file_test} > {out_dir}/log.txt", shell=True, check=True)
-tf = time.time()
-print("computation time: ", round(tf - t0, 2), " s.")
+plot_sample(ot.variables.Scalar("gas_pressure", "Pa", "MPa"))
 
 # %% [markdown]
-# **Spatial Profiles**
-
+# ### Capillary Pressure
 # %%
-# alternative way
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
-pt1 = (0, 0, 0)
-pt2 = (0, 1, 0)
-yaxis = pv.Line(pt1, pt2, resolution=2)
-# print(yaxis)
-line_mesh = mesh.slice_along_line(yaxis)
-y_num = line_mesh.points[:, 1]
-reader = pv.get_reader(pvd_file_test)
-
-# %%
-reader.set_active_time_value(0.0)
-mesh = reader.read()[0]
-line_mesh = mesh.slice_along_line(yaxis)
-p_gas0 = line_mesh.point_data["gas_pressure"]
-s_wat0 = line_mesh.point_data["saturation"]
-p_cap0 = line_mesh.point_data["capillary_pressure"]
-u_y0 = line_mesh.point_data["displacement"].T[1]
-
-reader.set_active_time_value(120.0)
-mesh = reader.read()[0]
-line_mesh = mesh.slice_along_line(yaxis)
-p_gas120 = line_mesh.point_data["gas_pressure"]
-s_wat120 = line_mesh.point_data["saturation"]
-p_cap120 = line_mesh.point_data["capillary_pressure"]
-u_y120 = line_mesh.point_data["displacement"].T[1]
-
-reader.set_active_time_value(300.0)
-mesh = reader.read()[0]
-line_mesh = mesh.slice_along_line(yaxis)
-p_gas300 = line_mesh.point_data["gas_pressure"]
-s_wat300 = line_mesh.point_data["saturation"]
-p_cap300 = line_mesh.point_data["capillary_pressure"]
-u_y300 = line_mesh.point_data["displacement"].T[1]
-
-reader.set_active_time_value(4800.0)
-mesh = reader.read()[0]
-line_mesh = mesh.slice_along_line(yaxis)
-p_gas4800 = line_mesh.point_data["gas_pressure"]
-s_wat4800 = line_mesh.point_data["saturation"]
-p_cap4800 = line_mesh.point_data["capillary_pressure"]
-u_y4800 = line_mesh.point_data["displacement"].T[1]
-
-reader.set_active_time_value(7200.0)
-mesh = reader.read()[0]
-line_mesh = mesh.slice_along_line(yaxis)
-p_gas7200 = line_mesh.point_data["gas_pressure"]
-s_wat7200 = line_mesh.point_data["saturation"]
-p_cap7200 = line_mesh.point_data["capillary_pressure"]
-u_y7200 = line_mesh.point_data["displacement"].T[1]
-
-# %%
-plt.rcParams["figure.figsize"] = (10, 6)
-plt.rcParams["lines.color"] = "red"
-plt.rcParams["legend.fontsize"] = 7
-fig1, (ax1, ax2) = plt.subplots(2, 2)
-ax1[0].set_ylabel(r"$p_g$ / Pa")
-ax1[1].set_ylabel(r"$p_c$ / Pa")
-ax1[1].yaxis.set_label_position("right")
-ax1[1].yaxis.tick_right()
-ax2[0].set_ylabel(r"$s_l$ / -")
-ax2[1].set_ylabel(r"$u_y$ / m")
-ax2[1].yaxis.set_label_position("right")
-ax2[1].yaxis.tick_right()
-ax2[0].set_xlabel(r"$y$ / m")
-ax2[1].set_xlabel(r"$y$ / m")
-# gas pressure
-ax1[0].plot(y_num, p_gas0, label=r"$p_g$ t=0")
-ax1[0].plot(y_num, p_gas120, label=r"$p_g$ t=120")
-ax1[0].plot(y_num, p_gas300, label=r"$p_g$ t=300")
-ax1[0].plot(y_num, p_gas4800, label=r"$p_g$ t=4800")
-ax1[0].plot(y_num, p_gas7200, label=r"$p_g$ t=7200")
-ax1[0].legend()
-ax1[0].grid()
-# capillary pressure
-ax1[1].plot(y_num, p_cap0, label=r"$p_c$ t=0")
-ax1[1].plot(y_num, p_cap120, label=r"$p_c$ t=120")
-ax1[1].plot(y_num, p_cap300, label=r"$p_c$ t=300")
-ax1[1].plot(y_num, p_cap4800, label=r"$p_c$ t=4800")
-ax1[1].plot(y_num, p_cap7200, label=r"$p_c$ t=7200")
-ax1[1].legend()
-ax1[1].grid()
-# liquid saturation
-ax2[0].plot(y_num, s_wat0, label=r"$s_l$ t=0")
-ax2[0].plot(y_num, s_wat120, label=r"$s_l$ t=120")
-ax2[0].plot(y_num, s_wat300, label=r"$s_l$ t=300")
-ax2[0].plot(y_num, s_wat4800, label=r"$s_l$ t=4800")
-ax2[0].plot(y_num, s_wat7200, label=r"$s_l$ t=7200")
-ax2[0].legend()
-ax2[0].grid()
-# vertical displacement
-ax2[1].plot(y_num, u_y0, label=r"$u_y$ t=0")
-ax2[1].plot(y_num, u_y120, label=r"$u_y$ t=120")
-ax2[1].plot(y_num, u_y300, label=r"$u_y$ t=300")
-ax2[1].plot(y_num, u_y4800, label=r"$u_y$ t=4800")
-ax2[1].plot(y_num, u_y7200, label=r"$u_y$ t=7200")
-ax2[1].legend()
-ax2[1].grid()
+plot_sample(ot.variables.Scalar("capillary_pressure", "Pa", "kPa"))
 
 # %% [markdown]
-# **Contour plots**
+# ### Saturation
 
 # %%
-theme = "Vertical cross-section"
-print(theme)
-file_vtu = f"{out_dir}/result_liakopoulos_t_7200.vtu"
-m_plot = vtuIO.VTUIO(file_vtu, dim=2)
-triang = tri.Triangulation(m_plot.points[:, 0], m_plot.points[:, 1])
-p_plot = m_plot.get_point_field("gas_pressure")
-s_plot = m_plot.get_point_field("saturation")
-u_plot = m_plot.get_point_field("displacement").T[1]
-fig, ax = plt.subplots(ncols=3, figsize=(5, 10))
-plt.subplots_adjust(wspace=2)
-# fig.tight_layout()
-# plt.subplot_tool()
-contour_left = ax[0].tricontourf(triang, p_plot)
-contour_mid = ax[1].tricontourf(triang, s_plot)
-contour_right = ax[2].tricontourf(triang, u_plot)
-fig.colorbar(contour_left, ax=ax[0], label="$p$ / [MPa]")
-fig.colorbar(contour_mid, ax=ax[1], label="$S$ / [-]")
-fig.colorbar(contour_right, ax=ax[2], label="$u$ / [m]")
-plt.show()
+plot_sample(ot.variables.Scalar("saturation", "", "%"))
+
+# %% [markdown]
+# ### Vertical Displacement
+
+# %%
+plot_sample(ot.variables.displacement["y"])
 
 # %% [markdown]
 # **OGS links**
