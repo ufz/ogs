@@ -167,7 +167,13 @@ endif()
 
 if(OGS_USE_MFRONT)
     if(GUIX_BUILD OR CONDA_BUILD)
+        if(CONDA_BUILD)
+            set(MGIS_DIR $ENV{CONDA_PREFIX})
+        endif()
         find_package(MFrontGenericInterface REQUIRED)
+        if(CONDA_BUILD)
+            add_library(MFrontGenericInterface ALIAS mgis::MFrontGenericInterface)
+        endif()
     else()
         set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
         # Patch only works when CPM_SOURCE_CACHE is set. Following conditional

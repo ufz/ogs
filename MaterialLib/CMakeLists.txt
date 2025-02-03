@@ -33,13 +33,8 @@ append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
 append_source_files(
     SOURCES PorousMedium/UnsaturatedProperty/RelativePermeability
 )
-if(CONDA_BUILD)
-    set(_static_on_conda STATIC)
-endif()
 
-ogs_add_library(
-    MaterialLib GENERATE_EXPORT_HEADER ${_static_on_conda} ${SOURCES}
-)
+ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 target_link_libraries(
     MaterialLib PUBLIC BaseLib Eigen3::Eigen MaterialLib_SolidModels

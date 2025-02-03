@@ -45,6 +45,12 @@ if(OGS_USE_MFRONT)
         set(_tfel_source URL ${_tfel_source_file})
     elseif(NOT OGS_BUILD_TFEL)
         find_program(MFRONT mfront)
+        if(CONDA_BUILD)
+            set(TFELHOME $ENV{CONDA_PREFIX})
+            set(CMAKE_REQUIRE_FIND_PACKAGE_TFEL TRUE)
+        endif()
+        find_package(TFEL)
+
         if(MFRONT AND APPLE)
             # TODO: check for version
             # ~~~
@@ -56,7 +62,7 @@ if(OGS_USE_MFRONT)
             set(TFELHOME ${_mfront_bin_dir}/..)
         endif()
     endif()
-    if(NOT MFRONT)
+    if(NOT MFRONT OR NOT TFEL)
         set(_py_version_major_minor
             "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
         )
