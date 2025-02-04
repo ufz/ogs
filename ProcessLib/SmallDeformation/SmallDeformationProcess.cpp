@@ -42,6 +42,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
+      AssemblyMixin<SmallDeformationProcess<DisplacementDim>>{
+          *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
     nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
@@ -140,13 +142,8 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble SmallDeformationProcess.");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        local_to_global_index_map_.get()};
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        global_assembler_, &VectorMatrixAssembler::assemble, local_assemblers_,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
-        &b);
+    AssemblyMixin<SmallDeformationProcess<DisplacementDim>>::assemble(
+        t, dt, x, x_prev, process_id, M, K, b);
 
     global_output_(t, process_id, M, K, b);
 }
@@ -165,10 +162,8 @@ void SmallDeformationProcess<DisplacementDim>::
     // Call global assembler for each local assembly item.
     try
     {
-        GlobalExecutor::executeSelectedMemberDereferenced(
-            global_assembler_, &VectorMatrixAssembler::assembleWithJacobian,
-            local_assemblers_, getActiveElementIDs(), dof_table, t, dt, x,
-            x_prev, process_id, &b, &Jac);
+        AssemblyMixin<SmallDeformationProcess<DisplacementDim>>::
+            assembleWithJacobian(t, dt, x, x_prev, process_id, b, Jac);
     }
     catch (NumLib::AssemblyException const&)
     {
@@ -181,6 +176,22 @@ void SmallDeformationProcess<DisplacementDim>::
                                       *nodal_forces_, std::negate<double>());
 
     global_output_(t, process_id, b, Jac);
+}
+
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& x, double const t, double const dt,
+    const int process_id)
+{
+    DBUG("PreTimestep SmallDeformationProcess.");
+
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface::preTimestep, local_assemblers_,
+        getActiveElementIDs(), *_local_to_global_index_map, *x[process_id], t,
+        dt);
+
+    AssemblyMixin<
+        SmallDeformationProcess<DisplacementDim>>::updateActiveElements();
 }
 
 template <int DisplacementDim>
@@ -205,6 +216,20 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
         *x[process_id]);
 
     material_forces->copyValues(*material_forces_);
+}
+
+template <int DisplacementDim>
+std::vector<std::vector<std::string>>
+SmallDeformationProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    INFO("SmallDeformation process initializeSubmeshOutput().");
+    std::vector<std::vector<std::string>> residuum_names{{"NodalForces"}};
+
+    AssemblyMixin<SmallDeformationProcess<DisplacementDim>>::
+        initializeAssemblyOnSubmeshes(meshes, residuum_names);
+
+    return residuum_names;
 }
 
 template <int DisplacementDim>
