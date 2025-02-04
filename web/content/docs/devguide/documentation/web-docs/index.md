@@ -145,6 +145,6 @@ This yaml-file is then used by the shortcode.
 ### Used components
 
 - [Hugo](https://gohugo.io) - Web site generator
-- [Tailwind](https://tailwindcss.com/docs/what-is-tailwind) - CSS framework
+- [Tailwind](https://tailwindcss.com) - CSS framework
 - [FontAwesome](https://fontawesome.com) - Icons, see [icon search](https://fontawesome.com/icons?d=gallery)
 - [Slick Carousel](http://kenwheeler.github.io/slick/) & [FancyBox](https://fancyapps.com/fancybox/3/) for image galleries
