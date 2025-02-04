@@ -1,6 +1,7 @@
 build gui win:
   extends:
     - .template-build-win
+    - .test-artifacts
     - .vs-environment
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
