@@ -351,6 +351,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     _convergence_criterion->preFirstIteration();
 
     int iteration = 1;
+#if !defined(USE_PETSC) && !defined(USE_LIS)
+    int next_iteration_inv_jacobian_recompute = 1;
+#endif
     for (; iteration <= _maxiter; ++iteration, _convergence_criterion->reset())
     {
         BaseLib::RunTime timer_dirichlet;
@@ -408,7 +411,23 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_linear_solver;
         time_linear_solver.start();
+#if !defined(USE_PETSC) && !defined(USE_LIS)
+        auto linear_solver_behaviour = MathLib::LinearSolverBehaviour::REUSE;
+        if ((iteration == next_iteration_inv_jacobian_recompute))
+        {
+            linear_solver_behaviour =
+                MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE;
+            next_iteration_inv_jacobian_recompute =
+                next_iteration_inv_jacobian_recompute + _recompute_jacobian;
+        }
+        if (!_linear_solver.compute(J, linear_solver_behaviour))
+        {
+            ERR("Newton: The linear solver failed in the compute() step.");
+        }
+        bool iteration_succeeded = _linear_solver.solve(res, minus_delta_x);
+#else
         bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
+#endif
         INFO("[time] Linear solver took {:g} s.", time_linear_solver.elapsed());
 
         if (!iteration_succeeded)
@@ -529,6 +548,10 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     }
     if (type == "Newton")
     {
+        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__recompute_jacobian}
+        auto const recompute_jacobian =
+            config.getConfigParameter<int>("recompute_jacobian", 1);
+
         //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping}
         auto const damping = config.getConfigParameter<double>("damping", 1.0);
         if (damping <= 0)
@@ -541,7 +564,8 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(
-            std::make_unique<ConcreteNLS>(linear_solver, max_iter, damping),
+            std::make_unique<ConcreteNLS>(linear_solver, max_iter,
+                                          recompute_jacobian, damping),
             tag);
     }
 #ifdef USE_PETSC
