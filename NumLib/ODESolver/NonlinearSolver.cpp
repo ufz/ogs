@@ -370,8 +370,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        int mpi_rank_assembly_ok = 1;
-        int mpi_all_assembly_ok = 0;
+        bool mpi_rank_assembly_ok = true;
         try
         {
             sys.assemble(x, x_prev, process_id);
@@ -382,10 +381,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 e.what());
             error_norms_met = false;
             iteration = _maxiter;
-            mpi_rank_assembly_ok = 0;
+            mpi_rank_assembly_ok = false;
         }
-        mpi_all_assembly_ok = BaseLib::MPI::reduceMin(mpi_rank_assembly_ok);
-        if (mpi_all_assembly_ok == 0)
+        if (BaseLib::MPI::anyOf(!mpi_rank_assembly_ok))
         {
             break;
         }

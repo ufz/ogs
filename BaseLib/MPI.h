@@ -184,10 +184,15 @@ static std::vector<int> allgatherv(
 
 /// The reduction is implemented transparently for with and without MPI. In the
 /// latter case the input value is returned.
-static inline int reduceMin(int const val)
+static inline bool anyOf(bool const val
+#ifdef USE_PETSC
+                         ,
+                         Mpi const& mpi = Mpi{MPI_COMM_WORLD}
+#endif
+)
 {
 #ifdef USE_PETSC
-    return allreduce(val, MPI_MIN, Mpi{MPI_COMM_WORLD});
+    return allreduce(val, MPI_LOR, mpi);
 #else
     return val;
 #endif

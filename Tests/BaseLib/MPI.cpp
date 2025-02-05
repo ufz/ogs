@@ -110,4 +110,15 @@ TEST_F(MPI_BaseLib, AllreduceVectorInplace)
         EXPECT_EQ(expected_min, values);
     }
 }
+
+TEST_F(MPI_BaseLib, AnyOf)
+{
+    EXPECT_FALSE(anyOf(false, mpi));  // false for all ranks.
+    EXPECT_TRUE(anyOf(true, mpi));    // true for all ranks.
+
+    // Single rank true and all other false.
+    EXPECT_TRUE(anyOf(mpi.rank == 0 ? true : false, mpi));
+    // All ranks true and one false.
+    EXPECT_TRUE(anyOf(mpi.rank == mpi.size - 1 ? false : true, mpi));
+}
 #endif
