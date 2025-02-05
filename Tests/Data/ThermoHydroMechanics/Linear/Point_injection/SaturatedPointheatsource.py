@@ -528,11 +528,11 @@ def plot_over_time(
 
     for key, ms in results.items():
         values = var.transform(ms.probe(pt, data_names[key][var_key])).ravel()
-        error = values - np.interp(ms.timevalues(), t, ana_sol)
+        error = values - np.interp(ms.timevalues, t, ana_sol)
         assert np.all((error > err_bounds[0]) & (error < err_bounds[1]))
 
-        axs[0].plot(ms.timevalues(), values, style[key], label=f"ogs6_{key}")
-        axs[1].plot(ms.timevalues(), error, style[key], label=f"ogs6_{key}")
+        axs[0].plot(ms.timevalues, values, style[key], label=f"ogs6_{key}")
+        axs[1].plot(ms.timevalues, error, style[key], label=f"ogs6_{key}")
 
     axs[0].set_ylabel(var.get_label())
     axs[1].set_ylabel(f"error (numerical - analytical) / {var.difference.output_unit}")

@@ -169,7 +169,7 @@ cube_compression.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
 # %%
 # read PVD file
 ms = ot.MeshSeries(f"{out_dir}/result_compression_gas.pvd")
-time = ms.timevalues()
+time = ms.timevalues
 
 
 def plot_results_errors(var: ot.variables.Scalar, ref_vals: np.ndarray):
@@ -203,17 +203,17 @@ def plot_results_errors(var: ot.variables.Scalar, ref_vals: np.ndarray):
 
 # %%
 rho_g = ot.variables.Scalar("gas_density", r"kg/$m^3$", r"kg/$m^3$")
-plot_results_errors(rho_g, gas_density(ms.timevalues()))
+plot_results_errors(rho_g, gas_density(ms.timevalues))
 
 # %% [markdown]
 # ## Gas pressure evolution
 
 # %%
 p_g = ot.variables.Scalar("gas_pressure_interpolated", "Pa", "MPa")
-plot_results_errors(p_g, gas_pressure(ms.timevalues()))
+plot_results_errors(p_g, gas_pressure(ms.timevalues))
 
 # %% [markdown]
 # ## Temperature evolution
 
 # %%
-plot_results_errors(ot.variables.temperature, temperature(ms.timevalues()))
+plot_results_errors(ot.variables.temperature, temperature(ms.timevalues))

@@ -125,10 +125,10 @@ def plot_results_errors(x: np.ndarray, y: np.ndarray, y_ref: np.ndarray,
 # %%
 obs_pts = np.asarray([(x, 0, 0) for x in [0.01, 0.05, 0.1, 0.2, 0.5, 1.0]])
 num_values = concentration(ms.probe(obs_pts, "xmWL").T)
-ref_values = [Diffusion(x, ms.timevalues("s")) for x in obs_pts[:, 0]]
+ref_values = [Diffusion(x, ms.timevalues) for x in obs_pts[:, 0]]
 leg_labels = [f"x={pt[0]} m" for pt in obs_pts]
-time = ms.timevalues("days")
 reds = ["#4a001e", "#731331", "#9f2945", "#cc415a", "#e06e85", "#ed9ab0"]
+time = ms.timevalues / 3600 / 24
 plot_results_errors(time, num_values, ref_values, leg_labels, "$t$ / d", reds)
 
 # %% [markdown]
@@ -157,8 +157,9 @@ plot_results_errors(xs, num_values, ref_values, leg_labels, "$x$ / m", blues)
 # %%
 pts = np.linspace([0.0, 0.0, 0.0], [0.3, 0.0, 0.0], 500)
 var = ot.variables.Scalar("xmWL", func=concentration)
-fig = ms.plot_time_slice(
-    var, pts, time_unit="days", interpolate=False, figsize=[10, 4], fontsize=12
+ot.plot.setup.time_unit = "days"
+fig = ms.scale(time=("s", "days")).plot_time_slice(
+    var, pts, interpolate=False, figsize=[10, 4], fontsize=12
 )
 fig.axes[1].set_ylabel("$c$ / mol m$^{-3}$")
 fig.tight_layout()

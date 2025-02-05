@@ -49,7 +49,7 @@
 # %%
 # import ogstools as ogs
 # path_to_prj = '../elder/elder.prj'
-# model = ogs.Project(input_file = path_to_prj, output_file=path_to_prj)
+# model = ot.Project(input_file = path_to_prj, output_file=path_to_prj)
 # model.run_model(write_logs=True)
 
 # %% [markdown]
@@ -59,17 +59,12 @@
 
 # %%
 import matplotlib.pyplot as plt
-import ogstools as ogs
+import ogstools as ot
 from IPython.display import HTML
 
 # %%
-ogs.plot.setup.dpi = 30  # resolution
-ogs.plot.setup.fontsize = 30
-
-si = ogs.variables.Scalar(data_name="Si", output_name="Concentration", output_unit="%")
-pressure = ogs.variables.Scalar(
-    data_name="pressure", output_name="Pressure", output_unit=""
-)
+ot.plot.setup.dpi = 30  # resolution
+ot.plot.setup.fontsize = 30
 
 # %% [markdown]
 # ### Read data
@@ -77,7 +72,7 @@ pressure = ogs.variables.Scalar(
 # First, we are going to load the dataset produces by the simulation:
 
 # %%
-mesh_series = ogs.meshlib.MeshSeries("../elder/elder_reference.pvd")
+mesh_series = ot.meshlib.MeshSeries("../elder/elder_reference.pvd")
 
 # %% [markdown]
 # Next, the data at the 1st time step is read:
@@ -97,22 +92,22 @@ mesh_tend = mesh_series.mesh(-1).slice(normal="y")
 # The concentration and pressure at the beginning of the simulation are shown in the figures below.
 
 # %%
-fig_t0_si = ogs.plot.contourf(mesh_t0, si, vmin=0)
+fig_t0_si = ot.plot.contourf(mesh_t0, ot.variables.saturation, vmin=0)
 plt.show()
 
 # %%
-fig_t0_p = ogs.plot.contourf(mesh_t0, pressure)
+fig_t0_p = ot.plot.contourf(mesh_t0, ot.variables.pressure)
 plt.show()
 
 # %% [markdown]
 # The concentration and pressure at the end of the simulation are shown in the figures below.
 
 # %%
-fig_tend_si = ogs.plot.contourf(mesh_tend, si, vmin=0)
+fig_tend_si = ot.plot.contourf(mesh_tend, ot.variables.saturation, vmin=0)
 plt.show()
 
 # %%
-fig_tend_p = ogs.plot.contourf(mesh_tend, pressure)
+fig_tend_p = ot.plot.contourf(mesh_tend, ot.variables.pressure)
 plt.show()
 
 
@@ -123,7 +118,7 @@ plt.show()
 
 
 # %%
-def mesh_func(mesh: ogs.Mesh) -> ogs.Mesh:
+def mesh_func(mesh: ot.Mesh) -> ot.Mesh:
     "Slice 2D mesh out of 3D mesh"
     return mesh.slice("y", [0, 0, 0])
 
@@ -134,11 +129,8 @@ def plot_func(ax: plt.Axes, timevalue: float) -> None:
 
 
 # %%
-anim = mesh_series.animate(
-    si,
-    mesh_series.timevalues(),
-    mesh_func=mesh_func,
-    plot_func=plot_func,
+anim = mesh_series.transform(mesh_func).animate(
+    ot.variables.saturation, mesh_series.timevalues, plot_func=plot_func, vmin=0
 )
 HTML(anim.to_jshtml())
 

@@ -117,7 +117,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
 import pyvista as pv
-from ogstools.msh2vtu import msh2vtu
 
 # %%
 pi = math.pi
@@ -285,7 +284,9 @@ def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
     mesh_generation(0.1, h)
     # Convert GMSH (.msh) meshes to VTU meshes appropriate for OGS simulation.
     input_file = f"{out_dir}/" + meshname + ".msh"
-    msh2vtu(filename=input_file, output_path=out_dir, reindex=True, keep_ids=True)
+    meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
+    for name, mesh in meshes.items():
+        pv.save_meshio(f"{out_dir}/mesh_full_pf_{name}.vtu", mesh)
     # %cd {out_dir}
     run(
         "identifySubdomains -f -m mesh_full_pf_domain.vtu -- mesh_full_pf_physical_group_*.vtu",

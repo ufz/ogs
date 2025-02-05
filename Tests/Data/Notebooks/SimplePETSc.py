@@ -47,7 +47,7 @@ print(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt")
 run(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt", shell=True, check=True)
 
 # %%
-mesh_series = ot.MeshSeries(f"{prj_name}.pvd")
+mesh_series = ot.MeshSeries(f"{prj_name}.pvd").scale(time=("s", "a"))
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 points_labels = ["pt0", "pt1"]
 
@@ -57,7 +57,6 @@ mesh_series.plot_probe(
     points_coords,
     ot.variables.pressure,
     labels=["{label} linear interpolated" for label in points_labels],
-    time_unit="a",
     interp_method="linear",
     ax=fig.axes[0],
     colors=["b", "r"],

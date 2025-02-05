@@ -117,6 +117,7 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 # %%
 # Read the results and compare them with the reference data
 ms = ot.MeshSeries(f"{out_dir}/result_bourgeat_domain.xdmf")
+ms = ms.scale(time=("s", "a"))
 
 saturation = ot.variables.Scalar("saturation", "", "%", symbol="s_{G}")
 gas_pressure = ot.variables.Scalar("gas_pressure", "Pa", "MPa", symbol="p_{GR}")
@@ -134,7 +135,7 @@ def plot_results(var: ot.variables.Scalar, ref: str, max_err: float) -> None:
     df_refs = pd.read_csv(f"references/bourgeat_{ref}.csv")
     num_vals = var_OGS.transform(ms.probe([0, 0, 0], var.data_name)[:, 0])
     mean_ref_vals = var.transform(df_refs.drop(columns="time").aggregate("mean", 1))
-    num_vals_interp = np.interp(df_refs["time"], ms.timevalues("a"), num_vals)
+    num_vals_interp = np.interp(df_refs["time"], ms.timevalues, num_vals)
     mean_rel_err = mean_ref_vals - num_vals_interp
     assert np.all(np.abs(mean_rel_err) < max_err)
 
@@ -144,7 +145,7 @@ def plot_results(var: ot.variables.Scalar, ref: str, max_err: float) -> None:
         for institute in sorted(df_refs.drop(columns="time")):
             ref_vals = var.transform(df_refs[institute])
             ax.plot(df_refs["time"], ref_vals, "-", label=institute)
-        ax.plot(ms.timevalues("a"), num_vals, "--k", label="OGS-TH$^2$M")
+        ax.plot(ms.timevalues, num_vals, "--k", label="OGS-TH$^2$M")
         ax.set_xlabel("time / a")
     ax1.legend()
     fig1.suptitle(var.output_name + r" vs. time at $x=0$m")
@@ -159,8 +160,11 @@ def plot_results(var: ot.variables.Scalar, ref: str, max_err: float) -> None:
 
     # === Timeslice=====================================================
     pts = np.linspace([0, 0, 0], [200, 0, 0], num=500)
-    fig3 = ms.plot_time_slice(
-        var_OGS, pts, time_unit="ka", figsize=[20, 7], interpolate=False, fontsize=20
+    ot.plot.setup.time_unit = "ka"
+    fig3 = (
+        ms.copy()
+        .scale(time=("a", "ka"))
+        .plot_time_slice(var_OGS, pts, figsize=[20, 7], interpolate=False, fontsize=20)
     )
     fig3.suptitle(f"{var.output_name} over time and x", fontsize=20)
     fig3.tight_layout()

@@ -1,5 +1,5 @@
 --extra-index-url https://gitlab.kitware.com/api/v4/projects/13/packages/pypi/simple
-ogstools==0.4.0
+ogstools==0.5.0
 gmsh>=4.11
 h5py>=3.8
 git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c#egg=heatsource-py

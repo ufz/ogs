@@ -159,7 +159,7 @@ except Exception as inst:
 print(datetime.now())
 
 # %%
-ms = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd")
+ms = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd").scale(time=("s", "a"))
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 points_labels = ["pt0", "pt1"]
 
@@ -177,7 +177,6 @@ for component in ["x", "y"]:
             points_coords,
             ot.variables.displacement[component],
             labels=labels,
-            time_unit="a",
             interp_method=interp_method,
             ax=fig.axes[0],
             colors=colors[component],

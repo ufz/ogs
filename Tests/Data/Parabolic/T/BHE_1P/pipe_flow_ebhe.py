@@ -333,7 +333,7 @@ out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
 ms = ot.MeshSeries(f"{out_dir}/BHE_1P.pvd")
 
 # Get all written timesteps
-time = ms.timevalues()
+time = ms.timevalues
 
 # Define observation points
 outlet = (0.0, 10.0, -30.0)

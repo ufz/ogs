@@ -55,7 +55,7 @@
         "gmsh==4.10.5",
         "git+https://github.com/joergbuchwald/VTUinterface@05793c7be84fbcb7d9f8f740c3dc667089a61505#egg=VTUinterface",
         "git+https://github.com/joergbuchwald/heatsource_thm@main#egg=heatsource-py",
-        "ogstools==0.4.0",
+        "ogstools==0.5.0",
         "ipykernel==6.9.1",
         "jinja2==3.0.3",
         "nbconvert==6.4.0",
