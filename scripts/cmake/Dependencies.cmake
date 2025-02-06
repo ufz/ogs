@@ -65,7 +65,6 @@ else()
 endif()
 
 if(GUIX_BUILD)
-    find_library(tet tet REQUIRED)
     find_program(TETGEN_EXECUTABLE tetgen REQUIRED)
     install(PROGRAMS ${TETGEN_EXECUTABLE} DESTINATION bin)
 else()

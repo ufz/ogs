@@ -23,9 +23,7 @@
 #include "MathLib/GeometricBasics.h"
 #include "PointVec.h"
 #include "Polyline.h"
-
-extern double orient2d(double*, double*, double*);
-extern double orient2dfast(double*, double*, double*);
+#include "predicates.h"
 
 namespace ExactPredicates
 {
