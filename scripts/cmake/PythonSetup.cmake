@@ -214,7 +214,11 @@ function(setup_venv_dependent_ctests)
                 ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/generateInvalidMediaForHT.py
             WORKING_DIRECTORY
                 ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles
+            RESULT_VARIABLE GEN_INVALID_RES
         )
+        if(NOT GEN_INVALID_RES EQUAL 0)
+            message(SEND_ERROR "generateInvalidMediaForHT.py failed with status ${GEN_INVALID_RES}.")
+        endif()
         file(GLOB HT_INVALID_PRJ_FILES
              ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj
         )

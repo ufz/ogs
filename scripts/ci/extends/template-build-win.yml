@@ -2,10 +2,7 @@
   stage: build
   tags:
     - windows
-  extends:
-    - .test-artifacts
   needs: [meta]
-  variables:
   script:
     - $build_directory_full = "..\build\" + $env:CMAKE_PRESET
     - $artifacts_dir = "build\" + $env:CMAKE_PRESET + "-" + $env:CI_JOB_NAME_SLUG + "-" + $env:CI_JOB_ID

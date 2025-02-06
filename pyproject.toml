@@ -50,6 +50,10 @@ local_scheme = "no-local-version"
 [tool.pytest.ini_options]
 testpaths = ["Tests"]
 python_files = ["test_*.py"]
+addopts = "--strict-markers"
+markers = [
+    "performance_test: These tests need an isolated environment such that time measurements are reasonable.",
+]
 
 [tool.cibuildwheel]
 archs = "auto64"

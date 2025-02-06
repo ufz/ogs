@@ -58,13 +58,13 @@ repos:
         entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
         language: system
         exclude: "Tests/Data/.*|web/static/images/xsd"
-        stages: [commit, manual]
+        stages: [pre-commit, manual]
       - id: file-extensions
         name: Check file extensions
         entry: scripts/hooks/pre-commit-file-extensions.sh
         language: system
         files: '.*\.cpp'
-        stages: [commit, manual]
+        stages: [pre-commit, manual]
       - id: git-clang-format
         name: git-clang-format
         entry: bash -c 'if command -v git-clang-format &> /dev/null; then git clang-format; else exit 0; fi'
@@ -81,7 +81,7 @@ repos:
       - id: vale
         args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.5.0"
+    rev: "v0.9.4"
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
@@ -91,7 +91,7 @@ repos:
   # Run this hook (and all other manual hooks if any) with:
   # pre-commit run --hook-stage manual
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.5.0"
+    rev: "v0.9.4"
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]

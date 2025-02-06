@@ -1,6 +1,7 @@
 build win:
   extends:
     - .template-build-win
+    - .test-artifacts
     # oneAPI MKL results in Stack overflow during compilation of MathLib on Visual Studio 2022
     # therefore using 2019
     - .vs-environment
@@ -16,6 +17,7 @@ build win:
 build win msvc:
   extends:
     - .template-build-win
+    - .test-artifacts
     - .vs-environment
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

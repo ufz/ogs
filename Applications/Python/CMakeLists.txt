@@ -40,14 +40,16 @@ if(OGS_USE_PIP)
             NAME pytest
             COMMAND
                 ${CMAKE_COMMAND} -DEXECUTABLE=pytest
-                "-DEXECUTABLE_ARGS=-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
+                "-DEXECUTABLE_ARGS=-ra;-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
                                                                             # because
                 # passed as list see https://stackoverflow.com/a/33248574/80480
                 -DBINARY_PATH=${_binary_path}
                 -DWORKING_DIRECTORY=${PROJECT_SOURCE_DIR}
                 "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
                 "-DLOG_FILE_BASENAME=pytest.txt"
-                "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=TRUE" -P
+                "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=TRUE"
+                "-DOGS_CI_ALWAYS_SAVE_LOG_FILE_TO_ARTIFACTS=TRUE"
+                -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
         )
         set_tests_properties(pytest PROPERTIES LABELS "default;python" COST 10)
