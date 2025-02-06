@@ -78,7 +78,7 @@ tests.
 Performance tests relying on time measurements should be marked with the [`pytest` mark](https://docs.pytest.org/en/stable/how-to/mark.html) `performance_test` (it's a custom mark in the OGS test suite):
 
 ```py
-@pytest.mark.performance_test()
+@pytest.mark.performance_test
 def test_assembly_optimization():
     assert 1 == 0  # some meaningful test
 ```
@@ -91,7 +91,7 @@ Therefore, in the OGS CI pipelines performance test failures will make the test
 suite fail only on isolated CI agents, where no other jobs run at the same time.
 
 That means: only mark tests relying on time measurements with
-`@pytest.mark.performance_test()`!
+`@pytest.mark.performance_test`!
 
 ### Performance test behaviour/selection
 

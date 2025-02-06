@@ -28,7 +28,7 @@ def parse_ogs_log(logfile):
     return dfd.join(dfc)
 
 
-@pytest.mark.performance_test()
+@pytest.mark.performance_test
 def test_assembly_optimization(tmp_path, capfd, monkeypatch):
     srcdir = Path(__file__).parent.parent.parent
     testsrcdir = srcdir / "Tests/Data/Parabolic/T/3D_Beier_sandbox"
