@@ -246,9 +246,6 @@ public:
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(this->element_.getID());
-
         typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>
             constitutive_setting;
         auto const& medium =
@@ -261,6 +258,13 @@ public:
             auto const& w = _ip_data[ip].integration_weight;
             auto const& N = _ip_data[ip].N_u;
             auto const& dNdx = _ip_data[ip].dNdx_u;
+
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, this->element_.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        this->element_, N))};
 
             auto const x_coord =
                 NumLib::interpolateXCoordinate<ShapeFunction,
@@ -294,9 +298,6 @@ public:
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(this->element_.getID());
-
         typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>
             constitutive_setting;
 
@@ -314,6 +315,14 @@ public:
                 NumLib::interpolateXCoordinate<ShapeFunction,
                                                ShapeMatricesType>(
                     this->element_, N);
+
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, this->element_.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        this->element_, N))};
+
             auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(
