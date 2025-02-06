@@ -11,6 +11,8 @@ test notebooks via wheel:
     - pip install -r requirements-dev.txt
     - pip install -r requirements-ogs.txt
   script:
+    # https://github.com/matplotlib/matplotlib/issues/25306:
+    - rm -rf "$(python -c 'import matplotlib as mpl; print(mpl.get_cachedir())')"
     # Glacier tutorial
     - |
       cd ../../web/content/docs/tutorials/advancing-glacier
