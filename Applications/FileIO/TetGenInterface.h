@@ -17,19 +17,20 @@
 #include <vector>
 
 // GeoLib
-#include "GeoLib/Point.h"
 #include "GeoLib/GEOObjects.h"
+#include "GeoLib/Point.h"
 
 // forward declaration of class Node and Element
 namespace MeshLib
 {
-    class Node;
-    class Element;
-    class Mesh;
-}
+class Node;
+class Element;
+class Mesh;
+}  // namespace MeshLib
 
 namespace FileIO
 {
+// clang-format off
 /**
  * class TetGenInterface is used to read file formats used by <a href="https://wias-berlin.de/software/tetgen/">TetGen</a>.
  * Currently supported formats are:
@@ -37,6 +38,7 @@ namespace FileIO
  *   node - mesh node / geometric point definition
  *   ele  - mesh element definition
  */
+// clang-format on
 class TetGenInterface final
 {
 public:
@@ -48,24 +50,27 @@ public:
      * @param geo_objects  where the geometry is written to
      * @return on success  the method returns true, otherwise it returns false
      */
-    bool readTetGenGeometry (std::string const& geo_fname,
-                             GeoLib::GEOObjects &geo_objects);
+    bool readTetGenGeometry(std::string const& geo_fname,
+                            GeoLib::GEOObjects& geo_objects);
 
     /**
      * Method reads the TetGen mesh from node file and element file.
      * @param nodes_fname  file name of the nodes file
      * @param ele_fname    file name of the elements file
-     * @return on success  the method returns a (pointer to a) CFEMesh, else the method returns nullptr
+     * @return on success  the method returns a (pointer to a) CFEMesh, else the
+     * method returns nullptr
      */
-    MeshLib::Mesh* readTetGenMesh (std::string const& nodes_fname,
-                                   std::string const& ele_fname);
+    MeshLib::Mesh* readTetGenMesh(std::string const& nodes_fname,
+                                  std::string const& ele_fname);
 
     /**
      * Writes the geometry of a given name to TetGen smesh-file.
      * @param file_name         file name of the new smesh file.
      * @param geo_objects       the container for the geometry.
-     * @param geo_name          the name for the geometry containing the subsurface boundary representation used for meshing.
-     * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
+     * @param geo_name          the name for the geometry containing the
+     * subsurface boundary representation used for meshing.
+     * @param attribute_points  attribute points containing material IDs (if the
+     * vector is empty no attributes are written).
      * @return returns true on success and false otherwise.
      */
     static bool writeTetGenSmesh(
@@ -77,30 +82,34 @@ public:
     /**
      * Writes the geometry of a given name to TetGen smesh-file.
      * @param file_name         file name of the new smesh file.
-     * @param mesh              mesh containing the subsurface boundary representation used for meshing.
-     * @param attribute_points  attribute points containing material IDs (if the vector is empty no attributes are written).
+     * @param mesh              mesh containing the subsurface boundary
+     * representation used for meshing.
+     * @param attribute_points  attribute points containing material IDs (if the
+     * vector is empty no attributes are written).
      * @return returns true on success and false otherwise.
      */
-    bool writeTetGenSmesh(const std::string &file_name,
-                          const MeshLib::Mesh &mesh,
-                          std::vector<MeshLib::Node> &attribute_points) const;
+    bool writeTetGenSmesh(const std::string& file_name,
+                          const MeshLib::Mesh& mesh,
+                          std::vector<MeshLib::Node>& attribute_points) const;
 
 private:
     /// Returns the declared number of facets in the poly file.
-    std::size_t getNFacets(std::ifstream &input);
+    std::size_t getNFacets(std::ifstream& input);
 
     /**
      * Method parses the lines reading the facets from TetGen smesh file
      * @param input       the input stream (input)
      * @param surfaces    the vector of surfaces to be filled (output)
      * @param points      the point vector needed for creating surfaces (input)
-     * @param pnt_id_map  the id map to compensate for possibly changed point ids after adding the point vector to GEOObjects
-     * @return true, if the facets have been read correctly, false if the method detects an error
+     * @param pnt_id_map  the id map to compensate for possibly changed point
+     * ids after adding the point vector to GEOObjects
+     * @return true, if the facets have been read correctly, false if the method
+     * detects an error
      */
-    bool parseSmeshFacets(std::ifstream &input,
-                          std::vector<GeoLib::Surface*> &surfaces,
-                          const std::vector<GeoLib::Point*> &points,
-                          const std::vector<std::size_t> &pnt_id_map);
+    bool parseSmeshFacets(std::ifstream& input,
+                          std::vector<GeoLib::Surface*>& surfaces,
+                          const std::vector<GeoLib::Point*>& points,
+                          const std::vector<std::size_t>& pnt_id_map);
 
     /**
      * Method reads the nodes from stream and stores them in a node vector.
@@ -120,7 +129,8 @@ private:
      * @param dim               the spatial dimension of the node (output)
      * @param n_attributes      the number of attributes for each node (output)
      * @param boundary_markers  have the nodes boundary information (output)
-     * @return true, if the file header is read, false if the method detects an error
+     * @return true, if the file header is read, false if the method detects an
+     * error
      */
     static bool parseNodesFileHeader(std::string const& line,
                                      std::size_t& n_nodes,
@@ -135,8 +145,8 @@ private:
      * @param dim      the spatial dimension of the node (input)
      * @return true, if the nodes are read, false if the method detects an error
      */
-    bool parseNodes(std::ifstream &ins,
-                    std::vector<MeshLib::Node*> &nodes,
+    bool parseNodes(std::ifstream& ins,
+                    std::vector<MeshLib::Node*>& nodes,
                     std::size_t n_nodes,
                     std::size_t dim);
 
@@ -168,20 +178,24 @@ private:
                                         std::size_t& n_nodes_per_tet,
                                         bool& region_attribute);
     /**
-     * Method parses the tetrahedras and put them in the element vector of the mesh class.
+     * Method parses the tetrahedras and put them in the element vector of the
+     * mesh class.
      * @param ins the input stream
      * @param elements          the elements vector to be filled
      * @param materials         the vector containing material ids to be filled
-     * @param nodes             the node information needed for creating elements
+     * @param nodes             the node information needed for creating
+     * elements
      * @param n_tets            the number of tetrahedras that should be read
      * @param n_nodes_per_tet   the number of nodes per tetrahedron
-     * @param region_attribute  if region attribute is true, region information is read
-     * @return true, if the tetrahedras are read, false if the method detects an error
+     * @param region_attribute  if region attribute is true, region information
+     * is read
+     * @return true, if the tetrahedras are read, false if the method detects an
+     * error
      */
     bool parseElements(std::ifstream& ins,
-                       std::vector<MeshLib::Element*> &elements,
-                       std::vector<int> &materials,
-                       const std::vector<MeshLib::Node*> &nodes,
+                       std::vector<MeshLib::Element*>& elements,
+                       std::vector<int>& materials,
+                       const std::vector<MeshLib::Node*>& nodes,
                        std::size_t n_tets,
                        std::size_t n_nodes_per_tet,
                        bool region_attribute) const;
@@ -192,8 +206,7 @@ private:
      * @param mesh              mesh containing the subsurface boundary
      * representation used for meshing.
      */
-    void write2dElements(std::ofstream &out,
-                         const MeshLib::Mesh &mesh) const;
+    void write2dElements(std::ofstream& out, const MeshLib::Mesh& mesh) const;
 
     /**
      * Writes the elements from a 3D mesh to a TetGen smesh-file.
@@ -202,11 +215,12 @@ private:
      * @param attribute_points  attribute points containing material IDs
      * (emptied when called and then filled with correct values).
      */
-    void write3dElements(std::ofstream &out,
-                         const MeshLib::Mesh &mesh,
-                         std::vector<MeshLib::Node> &attribute_points) const;
+    void write3dElements(std::ofstream& out,
+                         const MeshLib::Mesh& mesh,
+                         std::vector<MeshLib::Node>& attribute_points) const;
 
-    /// Writes facet information from a 2D element to the stream and increments the total element count accordingly
+    /// Writes facet information from a 2D element to the stream and increments
+    /// the total element count accordingly
     static void writeElementToFacets(std::ofstream& out,
                                      const MeshLib::Element& element,
                                      unsigned& element_count,
