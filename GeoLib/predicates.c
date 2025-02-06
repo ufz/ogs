@@ -1343,7 +1343,8 @@ REAL *h;
 /*                                                                           */
 /*****************************************************************************/
 
-int compress(elen, e, h)                         /* e and h may be the same. */
+/*
+int compress(elen, e, h)                         // e and h may be the same.
 int elen;
 REAL *e;
 REAL *h;
@@ -1379,6 +1380,7 @@ REAL *h;
   h[top] = Q;
   return top + 1;
 }
+*/
 
 /*****************************************************************************/
 /*                                                                           */
