@@ -91,6 +91,8 @@
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
             echo "Skipping ctests because of unit_tests-label."
           else
+            # https://github.com/matplotlib/matplotlib/issues/25306:
+            rm -rf "$(python -c 'import matplotlib as mpl; print(mpl.get_cachedir())')"
             echo "ctest arguments: ${ctest_arguments}"
             maybe_run_with_xvfb ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
