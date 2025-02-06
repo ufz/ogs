@@ -72,8 +72,14 @@ path/to/raster-file/layer_4.asc
 path/to/raster-file/layer_5.asc
 ```
 
-**Note:** If it is wanted to create a 3D mesh from the resulting `mesh_layered.smesh` file, it is recommended to use TetGen.
-It could be called like:
+**Note:** If it is wanted to create a 3D mesh from the resulting `mesh_layered.smesh` file, it is recommended to use [TetGen](https://wias-berlin.de/software/tetgen/). The `tetgen`-binary can be installed with your package manager or with [Conda]:
+
+```bash
+conda config --add channels conda-forge
+conda install tetgen
+```
+
+Then it could be called with e.g.:
 
 ```bash
 tetgen -pkA mesh_layered.smesh

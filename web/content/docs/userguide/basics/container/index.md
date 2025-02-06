@@ -91,7 +91,7 @@ You can interactively explore the container with `singularity shell` (you can se
 singularity shell ogs-6.x.x-serial.sif
 # List files in the container
 Singularity ogs-6.x.x-serial.sif:...> ls /scif/apps/ogs/bin
-... ogs tetgen vtkdiff
+... ogs vtkdiff
 # Exit the container and get back to your hosts shell
 Singularity ogs-6.x.x-serial.sif:...> exit
 ```

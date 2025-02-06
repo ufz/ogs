@@ -31,7 +31,7 @@ namespace MeshLib
 namespace FileIO
 {
 /**
- * class TetGenInterface is used to read file formats used by <a href="http://tetgen.berlios.de/">TetGen</a>.
+ * class TetGenInterface is used to read file formats used by <a href="https://wias-berlin.de/software/tetgen/">TetGen</a>.
  * Currently supported formats are:
  *   poly - Geometric point and surface definition
  *   node - mesh node / geometric point definition
