@@ -10,7 +10,8 @@ if(OGS_BUILD_GUI)
 endif()
 
 # Create the library
-ogs_add_library(GeoLib ${SOURCES} predicates.c)
+ogs_add_library(GeoLib ${SOURCES})
+ogs_add_library(GeoLibPredicates predicates.c)
 set_source_files_properties(
     predicates.c
     PROPERTIES
@@ -24,7 +25,7 @@ target_link_libraries(
     PUBLIC BaseLib Eigen3::Eigen MathLib $<$<BOOL:${OGS_BUILD_GUI}>:rapidxml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
-    PRIVATE range-v3
+    PRIVATE range-v3 GeoLibPredicates
 )
 
 if(OGS_USE_NETCDF)
