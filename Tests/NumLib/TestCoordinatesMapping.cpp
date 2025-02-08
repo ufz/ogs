@@ -11,6 +11,7 @@
 
 #include <Eigen/Core>
 #include <algorithm>
+#include <iomanip>
 #include <limits>
 #include <vector>
 

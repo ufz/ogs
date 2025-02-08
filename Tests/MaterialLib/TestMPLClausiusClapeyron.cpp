@@ -10,6 +10,8 @@
  */
 #include <gtest/gtest.h>
 
+#include <iomanip>
+
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Properties/ClausiusClapeyron.h"
 #include "MaterialLib/PhysicalConstant.h"

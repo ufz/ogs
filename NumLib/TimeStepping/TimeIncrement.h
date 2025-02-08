@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <cmath>
 #include <compare>
+#include <iomanip>
 #include <limits>
 
 #include "MathLib/KahanSum.h"
