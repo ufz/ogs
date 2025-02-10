@@ -10,6 +10,7 @@
 
 #include <Eigen/QR>
 #include <array>
+#include <iomanip>
 
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Elements/MapBulkElementPoint.h"

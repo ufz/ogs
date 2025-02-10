@@ -10,6 +10,7 @@
  */
 #include <gtest/gtest.h>
 
+#include <iomanip>
 #include <sstream>
 
 #include "MaterialLib/MPL/Medium.h"

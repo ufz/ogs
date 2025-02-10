@@ -10,6 +10,7 @@
 #include <tclap/CmdLine.h>
 
 #include <array>
+#include <iomanip>
 #include <memory>
 #include <sstream>
 #include <string>

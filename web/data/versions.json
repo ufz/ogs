@@ -24,7 +24,7 @@
     "tfel-rliv": "4.2",
     "tfel-repo": "thelfer",
     "lis": "1.7.37",
-    "gtest": "1.13.0",
+    "gtest": "1.16.0",
     "pybind11": "2.13.2",
     "range-v3": "0.12.0",
     "json": "3.10.5",
@@ -36,7 +36,7 @@
     "cmake": "3.22.3",
     "hdf5": "1.14.3",
     "zlib": "1.2.11",
-    "gtest": "1.13.0"
+    "gtest": "1.16.0"
   },
   "ctest": {
     "large_runtime": 60
