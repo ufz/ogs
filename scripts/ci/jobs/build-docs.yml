@@ -63,16 +63,11 @@ deploy docs:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_TAG
+  variables:
+    GIT_STRATEGY: none # no checkout
   before_script:
-    - apt-get update
-    - apt-get install -y sshpass rsync
-    - mkdir ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
     - npm install -g netlify-cli --unsafe-perm=true
   script:
-    - sshpass -p $DOXYSEARCH_PW rsync -az build/searchdata.xml webdev@doxysearch.opengeosys.org:/var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG/
-    - sshpass -p $DOXYSEARCH_PW ssh webdev@doxysearch.opengeosys.org doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG/searchdata.xml
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
         cp scripts/doc/_redirects build/docs
@@ -80,6 +75,28 @@ deploy docs:
       else
         netlify link --name ogs-doxygen-${CI_COMMIT_TAG//./-}
         netlify deploy --prod --dir=build/docs
+      fi
+  artifacts:
+    paths:
+      - build/searchdata.xml
+
+deploy doxysearch:
+  stage: package
+  needs: [ "deploy docs" ]
+  tags: [ doxysearch ]
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_TAG
+  variables:
+    GIT_STRATEGY: none # no checkout
+  script:
+    - |
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        cp build/searchdata.xml /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
+        doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
+      else
+        cp build/searchdata.xml /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG/
+        doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG/searchdata.xml
       fi
 
 check docs links:
