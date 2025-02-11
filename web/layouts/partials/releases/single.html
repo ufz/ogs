@@ -6,7 +6,7 @@
 {{/* comparison only works for two version parts, strip out 6. */}}
 {{ if gt (slicestr .Params.tag 2) "3.1" }}
 {{ $gh_release = print "https://gitlab.opengeosys.org/ogs/ogs/-/releases/" .Params.tag }}
-{{ $gh_download = print "https://ogsstorage.blob.core.windows.net/binaries/ogs6/" .Params.tag }}
+{{ $gh_download = print "https://minio.ufz.de/ogs/public/binaries/ogs6/" .Params.tag }}
 {{ $benchmarks_url = print "https://gitlab.opengeosys.org/ogs/ogs/-/archive/" .Params.tag "/ogs-" .Params.tag
 ".zip?path=Tests/Data" }}
 {{ $type = "GitLab"}}
