@@ -926,7 +926,7 @@
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
-            <recompute_jacobian>0</recompute_jacobian>
+            <recompute_jacobian>4</recompute_jacobian>
             <max_iter>100</max_iter>
             <linear_solver>linear_solver</linear_solver>
         </nonlinear_solver>
