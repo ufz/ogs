@@ -9,13 +9,13 @@ image = "[TODO]"
 
 +++
 
-[<i class="far fa-file-pdf"></i> Download this book as PDF](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DONWLOAD-LINK.pdf)
+[<i class="far fa-file-pdf"></i> Download this book as PDF](https://minio.ufz.de/ogs/public/web/Books/TODO-DONWLOAD-LINK.pdf)
 
 TODO DESCRIPTION
 
 <div class='note clear-both'>
 ### <i class="far fa-download"></i> Downloads
-- [<i class="far fa-file-archive"></i> TODO LINK DESCRIPTION](https://ogsstorage.blob.core.windows.net/web/Books/TODO-DOWNLOAD-LINK)  
+- [<i class="far fa-file-archive"></i> TODO LINK DESCRIPTION](https://minio.ufz.de/ogs/public/web/Books/TODO-DOWNLOAD-LINK)  
 </div>
 
 <div class='note'>
