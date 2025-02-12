@@ -413,7 +413,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         time_linear_solver.start();
 #if !defined(USE_PETSC) && !defined(USE_LIS)
         auto linear_solver_behaviour = MathLib::LinearSolverBehaviour::REUSE;
-        if ((iteration == next_iteration_inv_jacobian_recompute))
+        if (iteration == next_iteration_inv_jacobian_recompute)
         {
             linear_solver_behaviour =
                 MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE;
