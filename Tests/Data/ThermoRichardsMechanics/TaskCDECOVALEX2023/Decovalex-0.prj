@@ -490,7 +490,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>1e-10 1e-10 1e-6 1e-6</reltols>
+                    <reltols>1e-12 1e-12 1e-8 1e-8</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -926,6 +926,7 @@
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
+            <recompute_jacobian>4</recompute_jacobian>
             <max_iter>100</max_iter>
             <linear_solver>linear_solver</linear_solver>
         </nonlinear_solver>

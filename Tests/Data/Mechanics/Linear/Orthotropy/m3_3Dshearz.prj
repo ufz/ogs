@@ -206,6 +206,7 @@
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
+            <recompute_jacobian>0</recompute_jacobian>
             <max_iter>10</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>

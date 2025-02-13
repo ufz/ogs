@@ -236,7 +236,7 @@ AddTest(
     Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu sigma sigma 1e-9 1e-8
     Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu displacement displacement 1e-10 1e-12
     Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu saturation saturation 1e-10 1e-12
-    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu temperature temperature 1e-10 1e-12
+    Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu temperature temperature 5e-10 1e-12
     Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu velocity velocity 1e-10 1e-12
     Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu liquid_density liquid_density 1e-10 1e-11
 )

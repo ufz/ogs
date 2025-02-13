@@ -85,13 +85,18 @@ public:
      * \param linear_solver the linear solver used by this nonlinear solver.
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
+     * \param recompute_jacobian recompute jacobian for the follow-up steps
      * \param damping A positive damping factor.
      * \see _damping
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
                              int const maxiter,
+                             int const recompute_jacobian = 1,
                              double const damping = 1.0)
-        : _linear_solver(linear_solver), _maxiter(maxiter), _damping(damping)
+        : _linear_solver(linear_solver),
+          _maxiter(maxiter),
+          _recompute_jacobian(recompute_jacobian),
+          _damping(damping)
     {
     }
 
@@ -129,6 +134,8 @@ private:
     // TODO doc
     ConvergenceCriterion* _convergence_criterion = nullptr;
     int const _maxiter;  //!< maximum number of iterations
+
+    int const _recompute_jacobian = 1;
 
     //! A positive damping factor. The default value 1.0 gives a non-damped
     //! Newton method. Common values are in the range 0.5 to 0.7 for somewhat
