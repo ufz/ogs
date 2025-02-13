@@ -64,7 +64,6 @@ binaries_list = [
     "scaleProperty",
     "swapNodeCoordinateAxes",
     "TecPlotTools",
-    "tetgen",
     "TIN2VTK",
     "VTK2OGS",
     "VTK2TIN",

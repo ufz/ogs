@@ -13,7 +13,7 @@ def _run(program, args):
 
 
 def test_binaries():
-    ignore_list = ["moveMeshNodes", "mpmetis", "tetgen"]  # have no --version cli flag
+    ignore_list = ["moveMeshNodes", "mpmetis"]  # have no --version cli flag
     for f in ogs_cli_wheel.binaries_list:
         if f not in ignore_list:
             _run(f, ["--version"])

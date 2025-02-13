@@ -65,25 +65,6 @@ else()
 endif()
 
 if(GUIX_BUILD)
-    find_library(tet tet REQUIRED)
-    find_program(TETGEN_EXECUTABLE tetgen REQUIRED)
-    install(PROGRAMS ${TETGEN_EXECUTABLE} DESTINATION bin)
-else()
-    if(CONDA_BUILD)
-        set(_tegen_options OPTIONS "TETGEN_SKIP_INSTALL ON")
-    endif()
-    CPMAddPackage(
-        NAME tetgen GITHUB_REPOSITORY ufz/tetgen
-        GIT_TAG 3f75905af7407ab0de1cd1dc92a1b77d6bdacbb7 SYSTEM TRUE
-                                                         ${_tegen_options}
-    )
-    if(tetgen_ADDED AND NOT CONDA_BUILD)
-        install(PROGRAMS $<TARGET_FILE:tetgen> DESTINATION bin)
-    endif()
-    list(APPEND DISABLE_WARNINGS_TARGETS tet tetgen)
-endif()
-
-if(GUIX_BUILD)
     find_package(pybind11 REQUIRED)
 else()
     set(PYBIND11_FINDPYTHON ON)
