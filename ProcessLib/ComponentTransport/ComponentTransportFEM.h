@@ -616,6 +616,13 @@ public:
             NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
             NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
 
+            // set position with N as the shape matrix at the current
+            // integration point
+            pos.setCoordinates(MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunction,
+                                               ShapeMatricesType>(_element,
+                                                                  N)));
+
             vars.concentration = C_int_pt;
             vars.liquid_phase_pressure = p_int_pt;
 
@@ -770,6 +777,13 @@ public:
             auto const& w = ip_data.integration_weight;
             auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
+
+            // set position with N as the shape matrix at the current
+            // integration point
+            pos.setCoordinates(MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunction,
+                                               ShapeMatricesType>(_element,
+                                                                  N)));
 
             auto const retardation_factor =
                 component[MaterialPropertyLib::PropertyType::retardation_factor]
