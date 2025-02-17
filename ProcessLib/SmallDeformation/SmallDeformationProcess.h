@@ -71,14 +71,14 @@ private:
                                           int const process_id) override;
 
 private:
-    SmallDeformationProcessData<DisplacementDim> _process_data;
+    SmallDeformationProcessData<DisplacementDim> process_data_;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
 
-    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
-    MeshLib::PropertyVector<double>* _material_forces = nullptr;
+    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
+    MeshLib::PropertyVector<double>* material_forces_ = nullptr;
 
-    Assembly::GlobalMatrixOutput _global_output;
+    Assembly::GlobalMatrixOutput global_output_;
 };
 
 extern template class SmallDeformationProcess<2>;
