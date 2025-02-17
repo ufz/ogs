@@ -10,8 +10,10 @@
 
 #pragma once
 
+#include "BaseLib/MPI.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
+#include "NumLib/Exceptions.h"
 #include "ProcessLib/Assembly/ParallelVectorMatrixAssembler.h"
 #include "ProcessLib/ProcessVariable.h"
 #include "VectorMatrixAssembler.h"
@@ -169,6 +171,7 @@ public:
 
         auto const& loc_asms = derived().local_assemblers_;
 
+        std::exception_ptr exception = nullptr;
         if (!submesh_assembly_data_.empty())
         {
             auto& b_submesh = NumLib::GlobalVectorProvider::provider.getVector(
@@ -178,9 +181,16 @@ public:
             {
                 b_submesh.setZero();
 
-                pvma_.assembleWithJacobian(loc_asms, sad.active_element_ids,
-                                           dof_tables, t, dt, x, x_prev,
-                                           process_id, b_submesh, Jac);
+                try
+                {
+                    pvma_.assembleWithJacobian(loc_asms, sad.active_element_ids,
+                                               dof_tables, t, dt, x, x_prev,
+                                               process_id, b_submesh, Jac);
+                }
+                catch (NumLib::AssemblyException const&)
+                {
+                    exception = std::current_exception();
+                }
 
                 MathLib::LinAlg::axpy(b, 1.0, b_submesh);
 
@@ -192,9 +202,29 @@ public:
         }
         else
         {
-            pvma_.assembleWithJacobian(
-                loc_asms, derived().getActiveElementIDs(), dof_tables, t, dt, x,
-                x_prev, process_id, b, Jac);
+            try
+            {
+                pvma_.assembleWithJacobian(
+                    loc_asms, derived().getActiveElementIDs(), dof_tables, t,
+                    dt, x, x_prev, process_id, b, Jac);
+            }
+            catch (NumLib::AssemblyException const&)
+            {
+                exception = std::current_exception();
+            }
+        }
+
+        MathLib::LinAlg::finalizeAssembly(b);
+        MathLib::LinAlg::finalizeAssembly(Jac);
+
+        if (BaseLib::MPI::anyOf(exception != nullptr))
+        {
+            if (exception)  // Only the rank with the exception rethrows...
+            {
+                std::rethrow_exception(exception);
+            }
+            // ... but all ranks quit.
+            return;
         }
 
         AssemblyMixinBase::copyResiduumVectorsToBulkMesh(
