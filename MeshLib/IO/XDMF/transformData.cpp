@@ -364,6 +364,11 @@ std::pair<std::vector<std::size_t>, ParentDataType> transformToXDMFTopology(
             auto const ogs_cell_type = cell->getCellType();
             auto const xdmf_cell_id = cellTypeOGS2XDMF(ogs_cell_type).id;
             values.push_back(to_underlying(xdmf_cell_id));
+            if (ogs_cell_type == MeshLib::CellType::LINE2)
+            {
+                values.push_back(2);
+            }
+            // LINE3 maps to ParentDataType::EDGE_3 -> no special care required
             push_cellnode_ids_to_vector(cell);
         }
     }
