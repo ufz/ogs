@@ -11,8 +11,12 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
+
 #include "BaseLib/Logging.h"
 #include "MaterialLib/MPL/Properties/Constant.h"
+#include "MaterialLib/MPL/Properties/Linear.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MathLib/Point3d.h"
 #include "ParameterLib/SpatialPosition.h"
@@ -310,6 +314,39 @@ void bindConstant(py::module_& m)
                  value: Constant value.
              )pbdoc");
 }
+
+void bindLinear(py::module_& m)
+{
+    py::class_<Linear, Property>(m, "Linear", R"pbdoc(
+        Linearly interpolated property dependent on independent variables.
+    )pbdoc")
+        .def(py::init(
+                 [](std::string name, PropertyDataType reference_value,
+                    std::vector<std::tuple<Variable, VariableType,
+                                           VariableType>> const& ivs)
+                 {
+                     auto makeIV = [](std::tuple<Variable, VariableType,
+                                                 VariableType> const& iv)
+                     { return std::make_from_tuple<IndependentVariable>(iv); };
+
+                     auto independent_variables =
+                         ivs | ranges::views::transform(makeIV) |
+                         ranges::to<std::vector>();
+                     return std::make_unique<Linear>(name, reference_value,
+                                                     independent_variables);
+                 }),
+             py::arg("name"),
+             py::arg("reference_value"),
+             py::arg("independent_variables"),
+             R"pbdoc(
+             Construct a Linear property.
+
+             Parameters:
+                 name: Name of the property.
+                 reference_value: Base property value.
+                 independent_variables: List of tuples (variable, reference condition, slope), each defining a linear dependency on a variable.
+             )pbdoc");
+}
 }  // namespace
 
 PYBIND11_MODULE(mpl, m)
@@ -322,4 +359,5 @@ PYBIND11_MODULE(mpl, m)
     bindVariableEnum(m);
     bindProperty(m);
     bindConstant(m);
+    bindLinear(m);
 }
