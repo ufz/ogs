@@ -12,6 +12,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
@@ -122,6 +123,7 @@ double ConvergenceCriterionPerComponentResidual::getDampingFactor(
         OGS_FATAL("D.o.f. table or mesh have not been set.");
     }
 
+    MathLib::LinAlg::setLocalAccessibleVector(minus_delta_x);
     double damping_final = 1;
     for (unsigned global_component = 0;
          global_component < _damping_alpha.size();
