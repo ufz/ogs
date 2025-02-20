@@ -69,3 +69,36 @@ def test_constant_and_property_interface():
     assert p.dValue(va, va, mpl.Variable.temperature, x, 0, 0) == 0
 
 
+def test_linear_property():
+    va = mpl.VariableArray()
+    x = mpl.SpatialPosition(coords=[0, 1, 2])
+
+    p = mpl.Linear("linear", 1000, [(mpl.Variable.temperature, 273.15, -4e-4)])
+    va.temperature = 373.15
+    assert p.value(va, x, 0, 0) == 960
+    assert p.dValue(va, mpl.Variable.temperature, x, 0, 0) == 1000 * (-4e-4)
+    assert p.dValue(va, mpl.Variable.liquid_phase_pressure, x, 0, 0) == 0
+
+
+def test_bilinear_property():
+    va = mpl.VariableArray()
+    x = mpl.SpatialPosition(coords=[0, 1, 2])
+
+    p = mpl.Linear(
+        "bilinear",
+        1000,
+        [
+            (mpl.Variable.temperature, 273.15, -4e-4),
+            (mpl.Variable.liquid_phase_pressure, 1e5, 4.65e-10),
+        ],
+    )
+    va.temperature = 373.15
+    va.liquid_phase_pressure = 1e6
+    assert p.value(va, x, 0, 0) == pytest.approx(960.4185, rel=1e-12)
+    assert p.dValue(va, mpl.Variable.temperature, x, 0, 0) == 1000 * (-4e-4)
+    assert p.dValue(va, mpl.Variable.liquid_phase_pressure, x, 0, 0) == 1000 * 4.65e-10
+
+    va.temperature = 273.15
+    assert p.value(va, x, 0, 0) == pytest.approx(1000.4185, rel=1e-12)
+    assert p.dValue(va, mpl.Variable.temperature, x, 0, 0) == 1000 * (-4e-4)
+    assert p.dValue(va, mpl.Variable.liquid_phase_pressure, x, 0, 0) == 1000 * 4.65e-10
