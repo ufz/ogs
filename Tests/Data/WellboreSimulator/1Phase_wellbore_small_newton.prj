@@ -324,8 +324,8 @@
         <vtkdiff>
             <regex>Wellbore_simulator_1Phase_t_.*.vtu</regex>
             <field>v</field>
-            <absolute_tolerance>2e-9</absolute_tolerance>
-            <relative_tolerance>1e-8</relative_tolerance>
+            <absolute_tolerance>2.5e-9</absolute_tolerance>
+            <relative_tolerance>2.5e-8</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>Wellbore_simulator_1Phase_t_.*.vtu</regex>

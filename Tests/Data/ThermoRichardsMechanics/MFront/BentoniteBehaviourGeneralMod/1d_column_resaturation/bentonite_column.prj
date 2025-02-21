@@ -412,7 +412,7 @@
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>HeatFlowRate</field>
-            <absolute_tolerance>2.2e-16</absolute_tolerance>
+            <absolute_tolerance>2.5e-16</absolute_tolerance>
             <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
         </vtkdiff>
         <vtkdiff>

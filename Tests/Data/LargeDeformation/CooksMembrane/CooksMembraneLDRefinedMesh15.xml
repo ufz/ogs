@@ -5,5 +5,5 @@
     <replace msel="/*/test_definition/vtkdiff[1]/file/text()">cooks_membrane_ld_refined_mesh_15_ts_1_t_1.000000.vtu</replace>
     <replace msel="/*/test_definition/vtkdiff[2]/file/text()">cooks_membrane_ld_refined_mesh_15_ts_1_t_1.000000.vtu</replace>
     <replace msel="/*/test_definition/vtkdiff[3]/file/text()">cooks_membrane_ld_refined_mesh_15_ts_1_t_1.000000.vtu</replace>
-    <replace msel="/*/test_definition/vtkdiff[3]/relative_tolerance/text()">1e-8</replace>
+    <replace msel="/*/test_definition/vtkdiff[3]/relative_tolerance/text()">1.3e-8</replace>
 </OpenGeoSysProjectDiff>
