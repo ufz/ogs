@@ -56,6 +56,14 @@ struct DeactivatedSubdomainMesh
     std::vector<std::vector<std::size_t>> outer_nodes_elements;
 };
 
+namespace detail
+{
+struct Ball
+{
+    Eigen::Vector3d center;
+    double radius;
+};
+}  // namespace detail
 /// Time-dependent subdomain deactivation.
 ///
 /// Subdomain deactivation is space and time-dependent.
@@ -97,6 +105,10 @@ struct DeactivatedSubdomain
     /// Line segment along which excavation progresses. Represented by start and
     /// end points.
     std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>> line_segment;
+
+    /// The shape of the deactivated domain is a ball, which is a disk for 2D
+    //  problems.
+    std::optional<detail::Ball> ball;
 
     DeactivatedSubdomainMesh deactivated_subdomain_mesh;
 

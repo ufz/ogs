@@ -39,23 +39,41 @@ bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,
         return false;
     }
 
-    if (!line_segment)
+    if (line_segment)
     {
-        return true;
+        auto const& element_center = getCenterOfGravity(element);
+        // Line from a to b.
+        auto const& a = line_segment->first;
+        auto const& b = line_segment->second;
+        // Tangent vector t = (b - a)/|b - a|.
+        Eigen::Vector3d const t = (b - a).normalized();
+
+        // Position r on the line at given time.
+        auto const curve_position = time_interval.getValue(time);
+        Eigen::Vector3d const r = a + t * curve_position;
+
+        // Return true if p is "behind" the plane through r.
+        return (element_center.asEigenVector3d() - r).dot(t) <= 0;
     }
 
-    auto const& element_center = getCenterOfGravity(element);
-    // Line from a to b.
-    auto const& a = line_segment->first;
-    auto const& b = line_segment->second;
-    // Tangent vector t = (b - a)/|b - a|.
-    Eigen::Vector3d const t = (b - a).normalized();
+    if (ball)
+    {
+        auto const& element_center = getCenterOfGravity(element);
 
-    // Position r on the line at given time.
-    auto const curve_position = time_interval.getValue(time);
-    Eigen::Vector3d const r = a + t * curve_position;
+        auto const& center = ball->center;
+        // The radius at given time.
+        auto const r_t = time_interval.getValue(time);
+        if (r_t > ball->radius)
+        {
+            return false;
+        }
 
-    // Return true if p is "behind" the plane through r.
-    return (element_center.asEigenVector3d() - r).dot(t) <= 0;
+        double const r_element_center =
+            (element_center.asEigenVector3d() - center).norm();
+
+        return r_element_center < r_t;
+    }
+
+    return true;
 }
 }  // namespace ProcessLib
