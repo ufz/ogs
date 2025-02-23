@@ -38,7 +38,7 @@ pytest --capture=tee-sys ./Tests/Python/test_simulator_mesh_interface.py
 
 Python wheel builds are driven by [scikit-build-core](https://scikit-build-core.readthedocs.io) which basically is a `setuptools`-wrapper for CMake-based projects.
 
-The entry point is `pyproject.toml` in the root directory. It uses the `wheel` CMake preset. The preset can be overridden and even other CMake options can be passed via the environment variable `CMAKE_ARGS` (see also the [scikit-build-core documentation](https://scikit-build-core.readthedocs.io/en/latest/configuration.html#configuring-cmake-arguments-and-defines)).
+The entry point is `pyproject.toml` in the root directory. It uses the `wheel` CMake preset. The preset can be overridden and even other CMake options can be passed via the environment variable `CMAKE_ARGS` (see also the [scikit-build-core documentation](https://scikit-build-core.readthedocs.io/en/latest/configuration/index.html#configuring-cmake-arguments-and-defines)).
 
 You can locally develop and test with the following setup:
 
