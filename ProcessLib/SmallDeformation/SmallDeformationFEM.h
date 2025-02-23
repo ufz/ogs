@@ -100,8 +100,8 @@ public:
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
 
-        _ip_data.resize(n_integration_points);
-        _secondary_data.N.resize(n_integration_points);
+        ip_data_.resize(n_integration_points);
+        secondary_data_.N.resize(n_integration_points);
 
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -110,16 +110,16 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto& ip_data = _ip_data[ip];
+            auto& ip_data = ip_data_[ip];
             auto const& sm = shape_matrices[ip];
-            _ip_data[ip].integration_weight =
+            ip_data_[ip].integration_weight =
                 this->integration_method_.getWeightedPoint(ip).getWeight() *
                 sm.integralMeasure * sm.detJ;
 
             ip_data.N_u = sm.N;
             ip_data.dNdx_u = sm.dNdx;
 
-            _secondary_data.N[ip] = shape_matrices[ip].N;
+            secondary_data_.N[ip] = shape_matrices[ip].N;
         }
     }
 
@@ -129,7 +129,7 @@ public:
             this->integration_method_.getNumberOfPoints();
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& ip_data = _ip_data[ip];
+            auto const& ip_data = ip_data_[ip];
 
             ParameterLib::SpatialPosition const x_position{
                 std::nullopt, this->element_.getID(),
@@ -222,7 +222,7 @@ public:
         return LinearBMatrix::computeDilatationalBbar<
             DisplacementDim, ShapeFunction::NPOINTS, ShapeFunction,
             BBarMatrixType, ShapeMatricesType, IpData>(
-            _ip_data, this->element_, this->integration_method_,
+            ip_data_, this->element_, this->integration_method_,
             this->is_axially_symmetric_);
     }
 
@@ -255,9 +255,9 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& w = _ip_data[ip].integration_weight;
-            auto const& N = _ip_data[ip].N_u;
-            auto const& dNdx = _ip_data[ip].dNdx_u;
+            auto const& w = ip_data_[ip].integration_weight;
+            auto const& N = ip_data_[ip].N_u;
+            auto const& dNdx = ip_data_[ip].dNdx_u;
 
             ParameterLib::SpatialPosition const x_position{
                 std::nullopt, this->element_.getID(),
@@ -308,8 +308,8 @@ public:
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& N = _ip_data[ip].N_u;
-            auto const& dNdx = _ip_data[ip].dNdx_u;
+            auto const& N = ip_data_[ip].N_u;
+            auto const& dNdx = ip_data_[ip].dNdx_u;
 
             auto const x_coord =
                 NumLib::interpolateXCoordinate<ShapeFunction,
@@ -352,7 +352,7 @@ public:
             typename BMatricesType::NodalForceVectorType,
             NodalDisplacementVectorType, GradientVectorType,
             GradientMatrixType>(local_x, nodal_values,
-                                this->integration_method_, _ip_data,
+                                this->integration_method_, ip_data_,
                                 this->current_states_, this->output_data_,
                                 this->element_, this->is_axially_symmetric_);
     }
@@ -360,7 +360,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N = _secondary_data.N[integration_point];
+        auto const& N = secondary_data_.N[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
@@ -374,9 +374,9 @@ private:
     }
 
 private:
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
-    SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
+    SecondaryData<typename ShapeMatrices::ShapeType> secondary_data_;
 };
 
 }  // namespace SmallDeformation

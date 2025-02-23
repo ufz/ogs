@@ -39,12 +39,12 @@ template <int DisplacementDim, typename ShapeFunction,
           typename OutputData, typename IntegrationMethod>
 std::vector<double> const& getMaterialForces(
     std::vector<double> const& local_x, std::vector<double>& nodal_values,
-    IntegrationMethod const& _integration_method, IPData const& _ip_data,
+    IntegrationMethod const& integration_method, IPData const& ip_data,
     StressData const& stress_data, OutputData const& output_data,
     MeshLib::Element const& element, bool const is_axially_symmetric)
 {
     unsigned const n_integration_points =
-        _integration_method.getNumberOfPoints();
+        integration_method.getNumberOfPoints();
 
     nodal_values.clear();
     auto local_b = MathLib::createZeroedVector<NodalDisplacementVectorType>(
@@ -53,15 +53,15 @@ std::vector<double> const& getMaterialForces(
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& sigma = stress_data[ip].stress_data.sigma;
-        auto const& N = _ip_data[ip].N_u;
-        auto const& dNdx = _ip_data[ip].dNdx_u;
+        auto const& N = ip_data[ip].N_u;
+        auto const& dNdx = ip_data[ip].dNdx_u;
 
         auto const& psi =
             output_data[ip].free_energy_density_data.free_energy_density;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                element, _ip_data[ip].N_u);
+                element, ip_data[ip].N_u);
 
         // For the 2D case the 33-component is needed (and the four entries
         // of the non-symmetric matrix); In 3d there are nine entries.
@@ -148,7 +148,7 @@ std::vector<double> const& getMaterialForces(
                 "other than 2 and 3.");
         }
 
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data[ip].integration_weight;
         local_b += G.transpose() * eshelby_stress * w;
     }
 

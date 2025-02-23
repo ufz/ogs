@@ -11,6 +11,7 @@
 #pragma once
 
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 #include "SmallDeformationProcessData.h"
 
@@ -19,8 +20,12 @@ namespace ProcessLib
 namespace SmallDeformation
 {
 template <int DisplacementDim>
-class SmallDeformationProcess final : public Process
+class SmallDeformationProcess final
+    : public Process,
+      private AssemblyMixin<SmallDeformationProcess<DisplacementDim>>
 {
+    friend class AssemblyMixin<SmallDeformationProcess<DisplacementDim>>;
+
 public:
     SmallDeformationProcess(
         std::string name,
@@ -60,10 +65,18 @@ private:
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalVector& b, GlobalMatrix& Jac) override;
 
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
+                                    double const t, double const dt,
+                                    const int process_id) override;
+
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      std::vector<GlobalVector*> const& x_prev,
                                      double const t, double const dt,
                                      int const process_id) override;
+
+    std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
                                           std::vector<GlobalVector*> const& x,
@@ -71,14 +84,12 @@ private:
                                           int const process_id) override;
 
 private:
-    SmallDeformationProcessData<DisplacementDim> _process_data;
+    SmallDeformationProcessData<DisplacementDim> process_data_;
 
-    std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
 
-    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
-    MeshLib::PropertyVector<double>* _material_forces = nullptr;
-
-    Assembly::GlobalMatrixOutput _global_output;
+    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
+    MeshLib::PropertyVector<double>* material_forces_ = nullptr;
 };
 
 extern template class SmallDeformationProcess<2>;
