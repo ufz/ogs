@@ -43,6 +43,31 @@ namespace TwoPhaseFlowWithPP
 namespace MPL = MaterialPropertyLib;
 
 template <typename ShapeFunction, int GlobalDim>
+void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
+    setInitialConditionsConcrete(Eigen::VectorXd const local_x,
+                                 double const t,
+                                 int const /*process_id*/)
+{
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    auto const pc =
+        local_x.segment(cap_pressure_matrix_index, cap_pressure_size);
+    constexpr double dt = std::numeric_limits<double>::quiet_NaN();
+    ParameterLib::SpatialPosition pos;
+    pos.setElementID(_element.getID());
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& N = _ip_data[ip].N;
+        MPL::VariableArray variables;
+        variables.capillary_pressure = N.dot(pc);
+        _saturation[ip] = medium.property(MPL::PropertyType::saturation)
+                              .template value<double>(variables, pos, t, dt);
+    }
+}
+
+template <typename ShapeFunction, int GlobalDim>
 void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     double const t, double const dt, std::vector<double> const& local_x,
     std::vector<double> const& /*local_x_prev*/,
@@ -101,8 +126,10 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& w = _ip_data[ip].integration_weight;
+        auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
-        auto const& M = _ip_data[ip].massOperator;
+
+        NodalMatrixType M = N.transpose() * N * w;
 
         double pc_int_pt = 0.;
         double pn_int_pt = 0.;
@@ -129,6 +156,7 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         Sw = medium.property(MPL::PropertyType::saturation)
                  .template value<double>(variables, pos, t, dt);
 
+        variables.liquid_saturation = Sw;
         auto const dSw_dpc =
             medium.property(MPL::PropertyType::saturation)
                 .template dValue<double>(
