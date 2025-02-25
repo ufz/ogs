@@ -68,8 +68,10 @@ set_property(
     CACHE OGS_EIGEN_PARALLEL_BACKEND PROPERTY STRINGS
                                               ${_eigen_parallel_backend}
 )
+# cmake-lint: disable=C0103
 if(OGS_EIGEN_PARALLEL_BACKEND STREQUAL "OpenMP")
     # this pulls in libgomp dependency, when MKL is enabled libiomp5 is used.
+    set(OpenMP_RUNTIME_MSVC llvm)
     find_package(OpenMP COMPONENTS C CXX)
 endif()
 
