@@ -920,6 +920,22 @@ AddTest(
     drainage_staggered_ts_10_t_10_000000_1.vtu drainage_staggered_ts_10_t_10_000000_1.vtu epsilon epsilon 1e-10 1e-9
 )
 
+AddTest(
+    NAME HydroMechanics_DiskDomainExcavationInTimeInterval
+    PATH HydroMechanics/DiskDomainExcavationInTimeInterval
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS excavation.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 10
+    DIFF_DATA
+    sma_HM_2D_excavation_ts_8.64e+06.vtu sma_HM_2D_excavation_ts_8.64e+06.vtu pressure pressure 1.0e-8 1e-12
+    sma_HM_2D_excavation_ts_8.64e+06.vtu sma_HM_2D_excavation_ts_8.64e+06.vtu displacement displacement 1.0e-10 0.0
+    sma_HM_2D_excavation_ts_8.64e+06.vtu sma_HM_2D_excavation_ts_8.64e+06.vtu sigma sigma 1.0e-9 2e-11
+    sma_HM_2D_excavation_ts_8.64e+06.vtu sma_HM_2D_excavation_ts_8.64e+06.vtu epsilon epsilon 1.0e-10 0.0
+)
+
 if(NOT WIN32 AND NOT OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE HydroMechanics/SeabedResponse/Stationary_waves.py RUNTIME 65)
 endif()
