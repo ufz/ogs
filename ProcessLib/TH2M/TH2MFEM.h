@@ -209,6 +209,13 @@ private:
         ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
             models);
 
+    virtual std::optional<VectorSegment> getVectorDeformationSegment()
+        const override
+    {
+        return std::optional<VectorSegment>{
+            {displacement_index, displacement_size}};
+    }
+
 private:
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
