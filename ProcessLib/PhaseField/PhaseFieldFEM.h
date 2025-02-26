@@ -75,83 +75,20 @@ struct IntegrationPointData final
     }
 
     template <typename DisplacementVectorType>
-    void updateConstitutiveRelation(double const t,
-                                    ParameterLib::SpatialPosition const& x,
-                                    double const /*dt*/,
-                                    DisplacementVectorType const& /*u*/,
-                                    double const degradation,
-                                    EnergySplitModel const energy_split_model)
+    void updateConstitutiveRelation(
+        double const t,
+        ParameterLib::SpatialPosition const& x,
+        double const /*dt*/,
+        DisplacementVectorType const& /*u*/,
+        double const degradation,
+        MaterialLib::Solids::Phasefield::EnergySplitModel const
+            energy_split_model)
     {
-        auto linear_elastic_mp =
-            static_cast<MaterialLib::Solids::LinearElasticIsotropic<
-                DisplacementDim> const&>(solid_material)
-                .getMaterialProperties();
-
-        auto const bulk_modulus = linear_elastic_mp.bulk_modulus(t, x);
-        auto const mu = linear_elastic_mp.mu(t, x);
-
-        switch (energy_split_model)
-        {
-            case EnergySplitModel::Isotropic:
-            {
-                std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy, C_tensile, C_compressive) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateIsotropicDegradedStress<DisplacementDim>(
-                            degradation, bulk_modulus, mu, eps);
-                break;
-            }
-            case EnergySplitModel::VolDev:
-            {
-                std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy, C_tensile, C_compressive) =
-                    MaterialLib::Solids::Phasefield::
-                        calculateVolDevDegradedStress<DisplacementDim>(
-                            degradation, bulk_modulus, mu, eps);
-                break;
-            }
-            case EnergySplitModel::EffectiveStress:
-            {
-                std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
-                         elastic_energy, C_tensile,
-                         C_compressive) = MaterialLib::Solids::Phasefield::
-                    calculateIsotropicDegradedStressWithRankineEnergy<
-                        DisplacementDim>(degradation, bulk_modulus, mu, eps);
-                break;
-            }
-            case EnergySplitModel::OrthoVolDev:
-            {
-                double temperature = 0.;
-                MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
-                    C_ortho = static_cast<
-                                  MaterialLib::Solids::LinearElasticOrthotropic<
-                                      DisplacementDim> const&>(solid_material)
-                                  .getElasticTensor(t, x, temperature);
-
-                std::tie(eps_tensile, sigma, sigma_tensile, sigma_compressive,
-                         D, strain_energy_tensile, elastic_energy, C_tensile,
-                         C_compressive) = MaterialLib::Solids::Phasefield::
-                    calculateOrthoVolDevDegradedStress<DisplacementDim>(
-                        degradation, eps, C_ortho);
-                break;
-            }
-            case EnergySplitModel::OrthoMasonry:
-            {
-                double temperature = 0.;
-                MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
-                    C_ortho = static_cast<
-                                  MaterialLib::Solids::LinearElasticOrthotropic<
-                                      DisplacementDim> const&>(solid_material)
-                                  .getElasticTensor(t, x, temperature);
-
-                std::tie(eps_tensile, sigma, sigma_tensile, D,
-                         strain_energy_tensile, elastic_energy, C_tensile,
-                         C_compressive) = MaterialLib::Solids::Phasefield::
-                    calculateOrthoMasonryDegradedStress<DisplacementDim>(
-                        degradation, eps, C_ortho);
-                break;
-            }
-        }
+        MaterialLib::Solids::Phasefield::calculateStress<
+            decltype(sigma), decltype(D), DisplacementDim>(
+            sigma, sigma_tensile, sigma_compressive, eps_tensile, D, C_tensile,
+            C_compressive, strain_energy_tensile, elastic_energy, degradation,
+            eps, energy_split_model, t, x, solid_material);
 
         history_variable =
             std::max(history_variable_prev, strain_energy_tensile);

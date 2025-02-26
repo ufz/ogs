@@ -39,6 +39,7 @@ endif()
 
 if(OGS_USE_PETSC)
     set(_processes_list ${_processes_list} PhaseField)
+    set(_processes_list ${_processes_list} HMPhaseField)
 endif()
 
 foreach(process ${_processes_list})

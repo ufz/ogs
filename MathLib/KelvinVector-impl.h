@@ -103,7 +103,19 @@ Eigen::Matrix<double, KelvinVectorSize, 1> initIdentity2()
     ivec.template topLeftCorner<3, 1>().setConstant(1.);
     return ivec;
 }
-}  // namespace detail
+
+template <int KelvinVectorSize>
+Eigen::Matrix<double, KelvinVectorSize, 1> initOnes2()
+{
+    Eigen::Matrix<double, KelvinVectorSize, 1> ivec =
+        Eigen::Matrix<double, KelvinVectorSize, 1>::Ones();
+
+    ivec.template bottomLeftCorner<ivec.size() - 3, 1>().setConstant(
+        std::sqrt(2.));
+
+    return ivec;
+}
+}  // namespace KelvinVector_detail
 
 template <int KelvinVectorSize>
 const Eigen::Matrix<double, KelvinVectorSize, KelvinVectorSize>
@@ -119,6 +131,11 @@ template <int KelvinVectorSize>
 const Eigen::Matrix<double, KelvinVectorSize, 1>
     Invariants<KelvinVectorSize>::identity2 =
         KelvinVector_detail::initIdentity2<KelvinVectorSize>();
+
+template <int KelvinVectorSize>
+const Eigen::Matrix<double, KelvinVectorSize, 1>
+    Invariants<KelvinVectorSize>::ones2 =
+        KelvinVector_detail::initOnes2<KelvinVectorSize>();
 
 }  // namespace KelvinVector
 }  // namespace MathLib

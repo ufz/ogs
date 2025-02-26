@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="bar.prj">
+    <replace msel="/*/mesh/text()">disc_with_hole.vtu</replace>
+    <replace msel="/*/geometry/text()">disc_with_hole.gml</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">disc_with_hole</replace>
+    <replace sel="/*/time_loop/processes/process[1]/time_stepping/timesteps/pair/delta_t/text()">0.25</replace>
+    <replace sel="/*/time_loop/processes/process[2]/time_stepping/timesteps/pair/delta_t/text()">0.25</replace>
+    <replace sel="/*/time_loop/processes/process[3]/time_stepping/timesteps/pair/delta_t/text()">0.25</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">disc_with_hole</replace>
+    <replace sel="/*/parameters/parameter[name='E']/type/text()">Constant</replace>
+    <remove sel="/*/parameters/parameter[name='E']/field_name"/>
+    <add sel="/*/parameters/parameter[name='E']">
+        <value>1.0</value>
+    </add>
+    <replace sel="/*/parameters/parameter[name='nu']/value/text()">0.3</replace>
+    <replace sel="/*/parameters/parameter[name='Neumann_load']/value/text()">0.01</replace>
+    <replace sel="/*/process_variables/process_variable[name='phasefield']/boundary_conditions/boundary_condition/mesh/text()">disc_with_hole</replace>
+    <replace sel="/*/process_variables/process_variable[name='pressure']/boundary_conditions/boundary_condition/mesh/text()">disc_with_hole</replace>
+    <remove sel="/*/process_variables/process_variable[name='displacement']/boundary_conditions"/>
+    <add sel="/*/process_variables/process_variable[name='displacement']">
+        <boundary_conditions>
+            <boundary_condition>
+                <geometrical_set>disc_with_hole</geometrical_set>
+                <geometry>LEFT</geometry>
+                <type>Dirichlet</type>
+                <component>0</component>
+                <parameter>Dirichlet_0</parameter>
+            </boundary_condition>
+            <boundary_condition>
+                <geometrical_set>disc_with_hole</geometrical_set>
+                <geometry>BOTTOM</geometry>
+                <type>Dirichlet</type>
+                <component>1</component>
+                <parameter>Dirichlet_0</parameter>
+            </boundary_condition>
+            <boundary_condition>
+                <geometrical_set>disc_with_hole</geometrical_set>
+                <geometry>TOP</geometry>
+                <type>Neumann</type>
+                <component>1</component>
+                <parameter>Neumann_load</parameter>
+            </boundary_condition>
+        </boundary_conditions>
+    </add>
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver[name='basic_newton_u']/max_iter/text()">5</replace>
+    <replace sel="/*/test_definition/vtkdiff/absolute_tolerance/text()">1e-16</replace>
+    <replace sel="/*/test_definition/vtkdiff/relative_tolerance/text()">1e-16</replace>
+</OpenGeoSysProjectDiff>

@@ -166,9 +166,9 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         double const degradation =
             _process_data.degradation_derivative->degradation(d_ip, k, ls);
         double const degradation_df1 =
-            _process_data.degradation_derivative->degradation_df1(d_ip, ls);
+            _process_data.degradation_derivative->degradationDf1(d_ip, k, ls);
         double const degradation_df2 =
-            _process_data.degradation_derivative->degradation_df2(d_ip, ls);
+            _process_data.degradation_derivative->degradationDf2(d_ip, k, ls);
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
                 _element, N);
@@ -210,45 +210,11 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
              local_pressure * dNdx.transpose() * N_u * u) *
             w;
 
-        switch (_process_data.phasefield_model)
-        {
-            case PhaseFieldModel::AT1:
-            {
-                auto const local_Jac_AT1 =
-                    (gc * 0.75 * dNdx.transpose() * dNdx * ls * w).eval();
-                local_Jac.noalias() += local_Jac_AT1;
-
-                local_rhs.noalias() -=
-                    gc * (-0.375 * N.transpose() / ls) * w + local_Jac_AT1 * d;
-                break;
-            }
-            case PhaseFieldModel::AT2:
-            {
-                auto const local_Jac_AT2 =
-                    (gc *
-                     (N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) *
-                     w)
-                        .eval();
-                local_Jac.noalias() += local_Jac_AT2;
-
-                local_rhs.noalias() -=
-                    local_Jac_AT2 * d - gc * (N.transpose() / ls) * w;
-                break;
-            }
-            case PhaseFieldModel::COHESIVE:
-            {
-                auto const local_Jac_COHESIVE =
-                    (2.0 / std::numbers::pi * gc *
-                     (-N.transpose() * N / ls + dNdx.transpose() * dNdx * ls) *
-                     w)
-                        .eval();
-
-                local_Jac.noalias() += local_Jac_COHESIVE;
-
-                local_rhs.noalias() -= local_Jac_COHESIVE * d;
-                break;
-            }
-        }
+        calculateCrackLocalJacobianAndResidual<
+            decltype(dNdx), decltype(N), decltype(w), decltype(d),
+            decltype(local_Jac), decltype(local_rhs)>(
+            dNdx, N, w, d, local_Jac, local_rhs, gc, ls,
+            _process_data.phasefield_model);
     }
 }
 
@@ -360,7 +326,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
         double const d_ip = N.dot(d);
         switch (_process_data.phasefield_model)
         {
-            case PhaseFieldModel::AT1:
+            case MaterialLib::Solids::Phasefield::PhaseFieldModel::AT1:
             {
                 element_surface_energy +=
                     gc * 0.375 *
@@ -368,7 +334,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
 
                 break;
             }
-            case PhaseFieldModel::AT2:
+            case MaterialLib::Solids::Phasefield::PhaseFieldModel::AT2:
             {
                 element_surface_energy += 0.5 * gc *
                                           ((1 - d_ip) * (1 - d_ip) / ls +
@@ -376,7 +342,7 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
                                           w;
                 break;
             }
-            case PhaseFieldModel::COHESIVE:
+            case MaterialLib::Solids::Phasefield::PhaseFieldModel::COHESIVE:
             {
                 element_surface_energy +=
                     gc / std::numbers::pi *

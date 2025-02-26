@@ -1,0 +1,1 @@
+Specify the normal direction of the preexisting single crack or parallel cracks. The direction is based on global coordinates. Normally, the default value, zero, should be taken because the fracture direction will be estimated using mechanical deformation.

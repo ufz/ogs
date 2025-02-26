@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="bar.prj">
+    <replace msel="/*/mesh/text()">bar_3D.vtu</replace>
+    <replace msel="/*/geometry/text()">bar_3D.gml</replace>
+    <replace msel="/*/processes/process/specific_body_force/text()">0 0 0</replace>
+    <replace msel="/*/processes/process/specific_fracture_direction/text()">0 0 0</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">bar_COHESIVE_linear</replace>
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[3]/abstol/text()">1.e-11</replace>
+    <replace sel="/*/time_loop/processes/process[3]/convergence_criterion/abstol/text()">1.e-11</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">bar_3D_out</replace>
+    <replace sel="/*/parameters/parameter[name='displacement0']/values/text()">0 0 0</replace>
+    <replace sel="/*/process_variables/process_variable[name='phasefield']/boundary_conditions/boundary_condition/mesh/text()">bar_3D</replace>
+    <replace sel="/*/process_variables/process_variable[name='pressure']/boundary_conditions/boundary_condition/mesh/text()">bar_3D</replace>
+    <replace sel="/*/process_variables/process_variable[name='displacement']/components/text()">3</replace>
+    <add sel="//process_variable[name='displacement']/boundary_conditions">
+        <boundary_condition>
+            <geometrical_set>bar_geom</geometrical_set>
+            <geometry>left_vertical</geometry>
+            <type>Dirichlet</type>
+            <component>2</component>
+            <parameter>Dirichlet_0</parameter>
+        </boundary_condition>
+        <boundary_condition>
+            <geometrical_set>bar_geom</geometrical_set>
+            <geometry>right_vertical</geometry>
+            <type>Dirichlet</type>
+            <component>2</component>
+            <parameter>Dirichlet_0</parameter>
+        </boundary_condition>
+    </add>
+</OpenGeoSysProjectDiff>
