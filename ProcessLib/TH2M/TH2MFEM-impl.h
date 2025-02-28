@@ -1016,6 +1016,9 @@ void TH2MLocalAssembler<
         local_K.template block<displacement_size, capillary_pressure_size>(
             displacement_index, capillary_pressure_index);
 
+    auto KUU = local_K.template block<displacement_size, displacement_size>(
+        displacement_index, displacement_index);
+
     // pointer-vectors to the right hand side terms - C-component equation
     auto fC = local_f.template segment<C_size>(C_index);
     // pointer-vectors to the right hand side terms - W-component equation
@@ -1042,6 +1045,8 @@ void TH2MLocalAssembler<
     {
         auto& ip = _ip_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
+        auto& ip_cd = ip_constitutive_data[int_point];
+
         auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto const& prev_state = this->prev_states_[int_point];
@@ -1185,6 +1190,9 @@ void TH2MLocalAssembler<
         KUpG.noalias() -= BTI2N * (ip_cv.biot_data() * w);
 
         KUpC.noalias() += BTI2N * (ip_cv.fu_2_KupC.m * w);
+
+        KUU.noalias() +=
+            Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
 
         fU.noalias() -=
             (Bu.transpose() * current_state.eff_stress_data.sigma -
