@@ -14,8 +14,9 @@
 
 namespace MaterialPropertyLib
 {
-SigmoidFunction::SigmoidFunction(double const k, double const T_c)
-    : k_(k), T_c_(T_c)
+SigmoidFunction::SigmoidFunction(double const k, double const T_c,
+                                 double const S_r)
+    : k_(k), T_c_(T_c), S_r(S_r)
 {
 }
 
@@ -31,26 +32,23 @@ double SigmoidFunction::value(double const& T) const
         return 0.;
     }
 
-    return 1. / (1. + std::exp(x));
+    return (1. - S_r) / (1. + std::exp(x));
 }
 
 double SigmoidFunction::dValue(double const& T) const
 {
     double const f = value(T);
-
-    // Skip any further computations because of f^2 below.
     if (f * f == 0)
     {
         return 0;
     }
-
-    return -k_ * std::exp(k_ * (T - T_c_)) * (f * f);
+    double const x = k_ * (T - T_c_);
+    return -k_ * std::exp(x) * (f * f) / (1. - S_r);
 }
 
 double SigmoidFunction::d2Value(double const& T) const
 {
     double const fT = dValue(T);
-
     if (fT == 0)
     {
         return 0;
@@ -59,4 +57,5 @@ double SigmoidFunction::d2Value(double const& T) const
     double const f = value(T);
     return fT * (k_ + 2 * fT / f);
 }
+
 }  // namespace MaterialPropertyLib
