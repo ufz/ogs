@@ -26,11 +26,13 @@ namespace MaterialPropertyLib
  * over a temperature interval following a sigmoid line:
  *
  * \f[
- *      \frac{\phi}{1 + \exp(k(T - T_\mathrm{c}))}
+ *      \frac{1 - S_r}{1 + \exp(k (T - T_\mathrm{c}))}
  * \f]
  *
- * Parameter \f$k\f$ controlling the steepness of the phase change
- * and \f$T_\mathrm{c}\f$ as the characteristic temperature where
+ * Parameter \f$S_r\f$ is residual saturation,
+ * representing the amount of liquid water remaining after the water-ice phase
+ *transition is complete. The parameter \f$k\f$ controlling the steepness of the
+ *phase change and \f$T_\mathrm{c}\f$ as the characteristic temperature where
  * the phase change is centered around (melting temperature)
  * are forwarded to a sigmoid function.
  *
@@ -40,7 +42,8 @@ class TemperatureDependentFraction final : public Property
 public:
     TemperatureDependentFraction(std::string name,
                                  double const k,
-                                 double const T_c);
+                                 double const T_c,
+                                 double const S_r);
 
     void checkScale() const override;
 
