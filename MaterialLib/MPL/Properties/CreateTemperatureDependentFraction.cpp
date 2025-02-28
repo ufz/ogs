@@ -32,7 +32,19 @@ createTemperatureDependentFraction(BaseLib::ConfigTree const& config)
         //! \ogs_file_param{properties__property__TemperatureDependentFraction__characteristic_temperature}
         config.getConfigParameter<double>("characteristic_temperature");
 
+    auto const S_r =
+        //! \ogs_file_param{properties__property__TemperatureDependentFraction__residual_saturation}
+        config.getConfigParameter<double>("residual_saturation", 0.0);
+
+    if (S_r < 0.0 || S_r > 1.0)
+    {
+        OGS_FATAL(
+            "In the temperature dependent fraction property setting, "
+            "the residual_saturation value {} is out of [0, 1]-range.",
+            S_r);
+    }
+
     return std::make_unique<MaterialPropertyLib::TemperatureDependentFraction>(
-        std::move(property_name), k, T_c);
+        std::move(property_name), k, T_c, S_r);
 }
 }  // namespace MaterialPropertyLib
