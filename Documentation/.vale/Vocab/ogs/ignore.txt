@@ -41,6 +41,7 @@ postprocessing
 precompute
 preconditioner
 preconditioners
+pytest
 redistributables
 shapefile
 spdlog
