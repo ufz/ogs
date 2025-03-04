@@ -11,13 +11,20 @@ weight = 1068
 
 There are two ways to build OGS with Python bindings:
 
-- A regular build with `OGS_USE_PIP=ON` (**preferred method**)
+- A regular build with `OGS_USE_PIP=ON` (**preferred method**)  
+  This creates a virtual environment inside your build-directory and installs test dependencies into it.
 - A wheel build
 
 ## Regular build
 
 - Configure your build with `-DOGS_USE_PIP=ON`
 - Build
+
+<div class="note">
+
+**Advanced usage:** You can also install the test dependencies by some other means (manually) and then configure without `-DOGS_USE_PIP=ON`.
+
+</div>
 
 To run the Python-based tests:
 

@@ -23,17 +23,17 @@ if(OGS_BUILD_WHEEL)
     add_subdirectory(ogs.callbacks)
 endif()
 
+set_target_properties(
+    simulator mesh PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_py_build_location}
+)
+file(
+    COPY ogs/.
+    DESTINATION ${_py_build_location}
+    PATTERN "__pycache__" EXCLUDE
+    PATTERN "CMakeLists.txt" EXCLUDE
+)
+
 if(OGS_USE_PIP)
-    set_target_properties(
-        simulator mesh PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                  ${_py_build_location}
-    )
-    file(
-        COPY ogs/.
-        DESTINATION ${_py_build_location}
-        PATTERN "__pycache__" EXCLUDE
-        PATTERN "CMakeLists.txt" EXCLUDE
-    )
     # Fails with libGitInfoLib.so: undefined symbol: __asan_report_load8
     if(NOT ENABLE_ASAN)
         add_test(
@@ -54,5 +54,4 @@ if(OGS_USE_PIP)
         )
         set_tests_properties(pytest PROPERTIES LABELS "default;python" COST 10)
     endif()
-
 endif()
