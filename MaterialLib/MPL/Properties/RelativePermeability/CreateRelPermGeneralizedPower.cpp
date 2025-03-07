@@ -36,8 +36,8 @@ std::unique_ptr<RelPermGeneralizedPower> createRelPermGeneralizedPower(
         //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPower__min_relative_permeability}
         config.getConfigParameter<double>("min_relative_permeability");
     double const a =
-        //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPower__multiplier}
-        config.getConfigParameter<double>("multiplier", 1);
+        //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPower__enhancement_factor}
+        config.getConfigParameter<double>("enhancement_factor", 1);
     double const lambda =
         //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPower__exponent}
         config.getConfigParameter<double>("exponent", 1);

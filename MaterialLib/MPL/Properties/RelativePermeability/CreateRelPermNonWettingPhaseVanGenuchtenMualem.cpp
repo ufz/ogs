@@ -44,8 +44,8 @@ std::unique_ptr<Property> createRelPermNonWettingPhaseVanGenuchtenMualem(
         //! \ogs_file_param{properties__property__RelativePermeabilityNonWettingPhaseVanGenuchtenMualem__min_relative_permeability}
         config.getConfigParameter<double>("min_relative_permeability");
     double const a =
-        //! \ogs_file_param{properties__property__RelativePermeabilityNonWettingPhaseVanGenuchtenMualem__multiplier}
-        config.getConfigParameter<double>("multiplier", 1.0);
+        //! \ogs_file_param{properties__property__RelativePermeabilityNonWettingPhaseVanGenuchtenMualem__enhancement_factor}
+        config.getConfigParameter<double>("enhancement_factor", 1.0);
 
     if (min_relative_permeability <= 0.0 || min_relative_permeability > 1.0)
     {
