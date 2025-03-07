@@ -122,7 +122,6 @@ select = [
 extend-ignore = [
   "PLR",   # Design related pylint codes
   "E501",  # Line too long
-  "PT004", # Use underscore for non-returning fixture (use usefixture instead)
   # RUF005 should be disabled when using numpy, see
   # https://github.com/charliermarsh/ruff/issues/2142:
   "RUF005",
