@@ -133,17 +133,16 @@ double ConvergenceCriterionPerComponentResidual::getDampingFactor(
         assert(ms.getMeshID() == _mesh->getID());
         DBUG("Non-negative damping for component: {:d} alpha: {:g}",
              global_component, _damping_alpha[global_component]);
-        for (MeshLib::Node const* node : ms.getNodes())
+        for (auto const node_id : ms.getNodes() | MeshLib::views::ids)
         {
-            MeshLib::Location const l{
-                _mesh->getID(), MeshLib::MeshItemType::Node, node->getID()};
+            MeshLib::Location const l{_mesh->getID(),
+                                      MeshLib::MeshItemType::Node, node_id};
             auto index = _dof_table->getGlobalIndex(l, global_component);
-            auto const damping_tmp =
+            damping_final = std::min(
+                damping_final,
                 damping_orig / std::max(1.0, (minus_delta_x.get(index) *
                                               _damping_alpha[global_component] /
-                                              x.get(index)));
-            damping_final =
-                (damping_tmp < damping_final) ? damping_tmp : damping_final;
+                                              x.get(index))));
         }
     }
     DBUG("Final damping value due to non-negative damping: {:g}",
