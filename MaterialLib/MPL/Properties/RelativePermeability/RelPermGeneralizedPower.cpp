@@ -87,9 +87,15 @@ PropertyDataType RelPermGeneralizedPower::dValue(
         return 0.;
     }
 
+    auto const k_rel = a_ * std::pow(S_e, lambda_);
+    if (k_rel < min_relative_permeability_)
+    {
+        return 0.;
+    }
+
     auto const dS_e_dS_L = 1. / (S_L_max - S_L_res);
 
-    auto const dk_rel_dS_e = lambda_ * a_ * std::pow(S_e, lambda_ - 1);
+    auto const dk_rel_dS_e = lambda_ * k_rel / S_e;
     return dk_rel_dS_e * dS_e_dS_L;
 }
 

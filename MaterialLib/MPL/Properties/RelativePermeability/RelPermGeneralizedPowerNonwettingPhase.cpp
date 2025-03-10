@@ -90,9 +90,16 @@ PropertyDataType RelPermGeneralizedPowerNonwettingPhase::dValue(
         return 0.;
     }
 
+    auto const S_e_g = (1. - S_e);
+    auto const k_rel = a_ * std::pow(S_e_g, lambda_);
+    if (k_rel < min_relative_permeability_)
+    {
+        return 0.;
+    }
+
     auto const dS_e_dS_L = 1. / (S_L_max - S_L_res);
 
-    auto const dk_rel_GR_dS_e = -lambda_ * a_ * std::pow(1. - S_e, lambda_ - 1);
+    auto const dk_rel_GR_dS_e = -lambda_ * k_rel / S_e_g;
     return dk_rel_GR_dS_e * dS_e_dS_L;
 }
 
