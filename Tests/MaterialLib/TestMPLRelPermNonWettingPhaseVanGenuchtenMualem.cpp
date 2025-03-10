@@ -142,7 +142,7 @@ TEST(MaterialPropertyLib, RelPermNonWettingPhaseVanGenuchtenMualem)
     // Test the calculation of the liquid saturation for the minimum relative
     // permeability.
     MPL::RelPermNonWettingPhaseVanGenuchtenMualem k_non_wetting(
-        "dummy", 0.1, 0.4, 0.3288590604, 1.e-9, 1.0);
+        "dummy", 0.1, 0.4, 0.3288590604, 1.e-9, 150.0);
     ASSERT_NEAR(0.59999999552634464,
                 k_non_wetting.computeSaturationForMinimumRelativePermeability(),
                 1.0e-16);
