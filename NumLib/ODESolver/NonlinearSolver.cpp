@@ -443,7 +443,13 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             x_new[process_id] =
                 &NumLib::GlobalVectorProvider::provider.getVector(
                     *x[process_id], _x_new_id);
-            LinAlg::axpy(*x_new[process_id], -_damping, minus_delta_x);
+            double damping = _damping;
+            if (_convergence_criterion->hasNonNegativeDamping())
+            {
+                damping = _convergence_criterion->getDampingFactor(
+                    minus_delta_x, *x[process_id], _damping);
+            }
+            LinAlg::axpy(*x_new[process_id], -damping, minus_delta_x);
 
             if (postIterationCallback)
             {

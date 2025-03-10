@@ -30,14 +30,23 @@ public:
     ConvergenceCriterionPerComponentDeltaX(
         std::vector<double>&& absolute_tolerances,
         std::vector<double>&& relative_tolerances,
+        std::vector<double>&& damping_alpha,
+        bool daming_alpha_switch,
         const MathLib::VecNormType norm_type);
 
     bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return false; }
+    bool hasNonNegativeDamping() const override
+    {
+        return _damping_alpha_switch;
+    }
 
     void checkDeltaX(const GlobalVector& minus_delta_x,
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& /*residual*/) override {}
+    double getDampingFactor(const GlobalVector& minus_delta_x,
+                            GlobalVector const& x,
+                            double damping_orig) override;
 
     void reset() override { this->_satisfied = true; }
 
@@ -47,6 +56,8 @@ public:
 private:
     const std::vector<double> _abstols;
     const std::vector<double> _reltols;
+    const std::vector<double> _damping_alpha;
+    bool _damping_alpha_switch;
     LocalToGlobalIndexMap const* _dof_table = nullptr;
     MeshLib::Mesh const* _mesh = nullptr;
 };
