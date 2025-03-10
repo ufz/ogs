@@ -22,7 +22,7 @@ TEST(MaterialPropertyLib, RelativePermeabilityGeneralizedPowerNonwettingPhase)
     double const residual_gas_saturation = 0.05;
     double const multiplier = 1.5;
     double const exponent = 2.79;
-    double const min_relative_permeability = 1e-12;
+    double const min_relative_permeability = 0.1;
 
     MPL::Property const& permeability =
         MPL::RelPermGeneralizedPowerNonwettingPhase{"relative_permeability",

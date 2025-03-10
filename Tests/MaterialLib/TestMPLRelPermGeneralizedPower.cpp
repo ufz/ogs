@@ -22,7 +22,7 @@ TEST(MaterialPropertyLib, RelativePermeabilityGeneralizedPower)
     double const residual_gas_saturation = 0.05;
     double const multiplier = 0.79;
     double const exponent = 3.79;
-    double const min_relative_permeability_liquid = 1e-12;
+    double const min_relative_permeability_liquid = 0.1;
 
     MPL::Property const& permeability =
         MPL::RelPermGeneralizedPower{"relative_permeability",
