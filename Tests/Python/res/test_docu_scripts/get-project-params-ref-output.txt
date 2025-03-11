@@ -1,62 +1,60 @@
-CreateTwoPhaseComponentialFlowProcess.cpp:48:            //! \ogs_file_param{prj__processes__process__type}
-CreateTwoPhaseComponentialFlowProcess.cpp:49:            config.checkConfigParameter("type", "TWOPHASE_COMPONENTIAL_FLOW");
-CreateTwoPhaseComponentialFlowProcess.cpp-50-
-CreateTwoPhaseComponentialFlowProcess.cpp-51-            DBUG("Create TwoPhaseComponentialFlow Process Model.");
-CreateTwoPhaseComponentialFlowProcess.cpp:52:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables}
-CreateTwoPhaseComponentialFlowProcess.cpp:53:            auto const pv_config = config.getConfigSubtree("process_variables");
-CreateTwoPhaseComponentialFlowProcess.cpp-54-
-CreateTwoPhaseComponentialFlowProcess.cpp-55-            auto per_process_variables = findProcessVariables(
+CreateTwoPhaseComponentialFlowProcess.cpp:11:            //! \ogs_file_param{prj__processes__process__type}
+CreateTwoPhaseComponentialFlowProcess.cpp:12:            config.checkConfigParameter("type", "TWOPHASE_COMPONENTIAL_FLOW");
+CreateTwoPhaseComponentialFlowProcess.cpp-13-
+CreateTwoPhaseComponentialFlowProcess.cpp-14-            DBUG("Create TwoPhaseComponentialFlow Process Model.");
+CreateTwoPhaseComponentialFlowProcess.cpp:15:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables}
+CreateTwoPhaseComponentialFlowProcess.cpp:16:            auto const pv_config = config.getConfigSubtree("process_variables");
+CreateTwoPhaseComponentialFlowProcess.cpp-17-
+CreateTwoPhaseComponentialFlowProcess.cpp-18-            auto per_process_variables = findProcessVariables(
 
-CreateTwoPhaseComponentialFlowProcess.cpp:57:                {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__gas_pressure}
-CreateTwoPhaseComponentialFlowProcess.cpp-58-                    "gas_pressure",
-CreateTwoPhaseComponentialFlowProcess.cpp:59:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_h2}
-CreateTwoPhaseComponentialFlowProcess.cpp-60-                    "molar_fraction_gas_h2",
-CreateTwoPhaseComponentialFlowProcess.cpp:61:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_ch4}
-CreateTwoPhaseComponentialFlowProcess.cpp-62-                    "molar_fraction_gas_ch4",
-CreateTwoPhaseComponentialFlowProcess.cpp:63:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_co2}
-CreateTwoPhaseComponentialFlowProcess.cpp-64-                    "molar_fraction_gas_co2",
-CreateTwoPhaseComponentialFlowProcess.cpp:65:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__capillary_pressure}
-CreateTwoPhaseComponentialFlowProcess.cpp-66-                    "capillary_pressure" });
-CreateTwoPhaseComponentialFlowProcess.cpp-67-
+CreateTwoPhaseComponentialFlowProcess.cpp:20:                {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__gas_pressure}
+CreateTwoPhaseComponentialFlowProcess.cpp-21-                    "gas_pressure",
+CreateTwoPhaseComponentialFlowProcess.cpp:22:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_h2}
+CreateTwoPhaseComponentialFlowProcess.cpp-23-                    "molar_fraction_gas_h2",
+CreateTwoPhaseComponentialFlowProcess.cpp:24:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_ch4}
+CreateTwoPhaseComponentialFlowProcess.cpp-25-                    "molar_fraction_gas_ch4",
+CreateTwoPhaseComponentialFlowProcess.cpp:26:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_co2}
+CreateTwoPhaseComponentialFlowProcess.cpp-27-                    "molar_fraction_gas_co2",
+CreateTwoPhaseComponentialFlowProcess.cpp:28:                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__capillary_pressure}
+CreateTwoPhaseComponentialFlowProcess.cpp-29-                    "capillary_pressure" });
+CreateTwoPhaseComponentialFlowProcess.cpp-30-
 
-CreateTwoPhaseComponentialFlowProcess.cpp:77:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__specific_body_force}
-CreateTwoPhaseComponentialFlowProcess.cpp:78:                config.getConfigParameter<std::vector<double>>("specific_body_force");
-CreateTwoPhaseComponentialFlowProcess.cpp-79-            assert(b.size() > 0 && b.size() < 4);
-CreateTwoPhaseComponentialFlowProcess.cpp-80-            Eigen::VectorXd specific_body_force(b.size());
+CreateTwoPhaseComponentialFlowProcess.cpp:33:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__specific_body_force}
+CreateTwoPhaseComponentialFlowProcess.cpp:34:                config.getConfigParameter<std::vector<double>>("specific_body_force");
+CreateTwoPhaseComponentialFlowProcess.cpp-35-            assert(b.size() > 0 && b.size() < 4);
+CreateTwoPhaseComponentialFlowProcess.cpp-36-            Eigen::VectorXd specific_body_force(b.size());
 
-CreateTwoPhaseComponentialFlowProcess.cpp:87:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__mass_lumping}
-CreateTwoPhaseComponentialFlowProcess.cpp:88:            config.getConfigParameter<bool>("mass_lumping");
-CreateTwoPhaseComponentialFlowProcess.cpp-89-
-CreateTwoPhaseComponentialFlowProcess.cpp-90-            // switch for cement reactions
+CreateTwoPhaseComponentialFlowProcess.cpp:42:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__mass_lumping}
+CreateTwoPhaseComponentialFlowProcess.cpp:43:            config.getConfigParameter<bool>("mass_lumping");
+CreateTwoPhaseComponentialFlowProcess.cpp-44-                    
+CreateTwoPhaseComponentialFlowProcess.cpp-45-            auto const cement_chem =
+CreateTwoPhaseComponentialFlowProcess.cpp:46:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__cement_chem}
+CreateTwoPhaseComponentialFlowProcess.cpp:47:                config.getConfigParameter<bool>("cement_chem");
+CreateTwoPhaseComponentialFlowProcess.cpp-48-            auto const calc_flux_and_element_output =
+CreateTwoPhaseComponentialFlowProcess.cpp:49:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__calc_flux_and_element_output}
+CreateTwoPhaseComponentialFlowProcess.cpp:50:                config.getConfigParameter<bool>("calc_flux_and_element_output");   
+CreateTwoPhaseComponentialFlowProcess.cpp-51-            auto const h2o_in_gas =
+CreateTwoPhaseComponentialFlowProcess.cpp-52-            // Note: trailing whitespace in the next line. That shouldn't break OGS's documentation scripts.
+CreateTwoPhaseComponentialFlowProcess.cpp:53:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__h2o_in_gas} 
+CreateTwoPhaseComponentialFlowProcess.cpp:54:                config.getConfigParameter<bool>("h2o_in_gas");
+CreateTwoPhaseComponentialFlowProcess.cpp-55-
+CreateTwoPhaseComponentialFlowProcess.cpp-56-            double const T_ref =
+CreateTwoPhaseComponentialFlowProcess.cpp:57:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__reference_temperature}
+CreateTwoPhaseComponentialFlowProcess.cpp:58:                config.getConfigParameter<double>(
+CreateTwoPhaseComponentialFlowProcess.cpp-59-                    "reference_temperature");
+CreateTwoPhaseComponentialFlowProcess.cpp-60-
 
-CreateTwoPhaseComponentialFlowProcess.cpp:93:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__cement_chem}
-CreateTwoPhaseComponentialFlowProcess.cpp:94:                config.getConfigParameter<bool>("cement_chem");
-CreateTwoPhaseComponentialFlowProcess.cpp-95-            auto const calc_flux_and_element_output =
-CreateTwoPhaseComponentialFlowProcess.cpp:96:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__calc_flux_and_element_output}
-CreateTwoPhaseComponentialFlowProcess.cpp:97:                config.getConfigParameter<bool>("calc_flux_and_element_output");   
-CreateTwoPhaseComponentialFlowProcess.cpp-98-            auto const h2o_in_gas =
-CreateTwoPhaseComponentialFlowProcess.cpp-99-            // Note: trailing whitespace in the next line. That shouldn't break OGS's documentation scripts.
-CreateTwoPhaseComponentialFlowProcess.cpp:100:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__h2o_in_gas} 
-CreateTwoPhaseComponentialFlowProcess.cpp:101:                config.getConfigParameter<bool>("h2o_in_gas");
-CreateTwoPhaseComponentialFlowProcess.cpp-102-
-CreateTwoPhaseComponentialFlowProcess.cpp-103-            // diffusion coeff
+CreateTwoPhaseComponentialFlowProcess.cpp:63:            //!  \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_h2}
+CreateTwoPhaseComponentialFlowProcess.cpp:64:                config.getConfigParameter<double>("henry_coeff_h2");
+CreateTwoPhaseComponentialFlowProcess.cpp-65-
+CreateTwoPhaseComponentialFlowProcess.cpp-66-            double const Hen_co2 =
 
-CreateTwoPhaseComponentialFlowProcess.cpp:115:            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__reference_temperature}
-CreateTwoPhaseComponentialFlowProcess.cpp:116:                config.getConfigParameter<double>(
-CreateTwoPhaseComponentialFlowProcess.cpp-117-                    "reference_temperature");
-CreateTwoPhaseComponentialFlowProcess.cpp-118-
+CreateTwoPhaseComponentialFlowProcess.cpp:68:            //!\ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_co2}
+CreateTwoPhaseComponentialFlowProcess.cpp:69:                config.getConfigParameter<double>("henry_coeff_co2");
+CreateTwoPhaseComponentialFlowProcess.cpp-70-
+CreateTwoPhaseComponentialFlowProcess.cpp-71-            double const Hen_ch4 =
 
-CreateTwoPhaseComponentialFlowProcess.cpp:121:            //!  \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_h2}
-CreateTwoPhaseComponentialFlowProcess.cpp:122:                config.getConfigParameter<double>("henry_coeff_h2");
-CreateTwoPhaseComponentialFlowProcess.cpp-123-
-CreateTwoPhaseComponentialFlowProcess.cpp-124-            double const Hen_co2 =
-
-CreateTwoPhaseComponentialFlowProcess.cpp:126:            //!\ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_co2}
-CreateTwoPhaseComponentialFlowProcess.cpp:127:                config.getConfigParameter<double>("henry_coeff_co2");
-CreateTwoPhaseComponentialFlowProcess.cpp-128-
-CreateTwoPhaseComponentialFlowProcess.cpp-129-            double const Hen_ch4 =
-
-CreateTwoPhaseComponentialFlowProcess.cpp:131:            //!  \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_ch4}
-CreateTwoPhaseComponentialFlowProcess.cpp:132:                config.getConfigParameter<double>("henry_coeff_ch4");
-CreateTwoPhaseComponentialFlowProcess.cpp-133-
-CreateTwoPhaseComponentialFlowProcess.cpp-134-            // approximate Clausius-Clapeyron equation for low T
+CreateTwoPhaseComponentialFlowProcess.cpp:73:            //!  \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_ch4}
+CreateTwoPhaseComponentialFlowProcess.cpp:74:                config.getConfigParameter<double>("henry_coeff_ch4");
+CreateTwoPhaseComponentialFlowProcess.cpp-75-        }
+CreateTwoPhaseComponentialFlowProcess.cpp-76-
