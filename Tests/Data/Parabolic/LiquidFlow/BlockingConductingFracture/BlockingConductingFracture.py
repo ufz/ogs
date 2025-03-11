@@ -213,11 +213,11 @@ lines = {"@ x=0.5": line_05}
 sns.set_palette("Paired", n_colors=10)
 fig, ax = plt.subplots(ncols=2, figsize=(20, 8))
 x = np.linspace(0, 1, 500)
-for i in lines:
-    velocity_x = pvd_frac.read_set_data(1, "v", pointsetarray=lines[i]).T[0]
-    velocity_y = pvd_frac.read_set_data(1, "v", pointsetarray=lines[i]).T[1]
+for _i, line in lines.items():
+    velocity_x = pvd_frac.read_set_data(1, "v", pointsetarray=line).T[0]
+    velocity_y = pvd_frac.read_set_data(1, "v", pointsetarray=line).T[1]
     pressure = (
-        pvd_frac.read_set_data(1, "pressure", pointsetarray=lines[i]) / 1000.0
+        pvd_frac.read_set_data(1, "pressure", pointsetarray=line) / 1000.0
     )  # Converting pressure to kPa.
     velocity_magnitude = np.sqrt(velocity_x**2.0 + velocity_y**2.0)
 

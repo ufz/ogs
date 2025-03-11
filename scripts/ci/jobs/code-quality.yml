@@ -21,8 +21,8 @@ ruff:
   needs: []
   tags: [envinf, shell]
   script:
-    - pipx run ruff check --exit-zero .
     - pipx run ruff check --exit-zero --output-format gitlab . > ruff-report.json
+    - pipx run ruff check .
   artifacts:
     reports:
       codequality: ruff-report.json
