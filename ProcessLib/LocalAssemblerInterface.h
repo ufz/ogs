@@ -11,6 +11,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <optional>
 
 #include "MathLib/Point3d.h"
 #include "NumLib/NumericsConfig.h"
@@ -22,6 +23,11 @@ class LocalToGlobalIndexMap;
 
 namespace ProcessLib
 {
+struct VectorSegment
+{
+    int start_index;
+    int size;
+};
 /*! Common interface for local assemblers
  * NumLib::ODESystemTag::FirstOrderImplicitQuasilinear ODE systems.
  *
@@ -113,6 +119,11 @@ public:
         std::vector<std::vector<double>> const& /*local_xs*/) const
     {
         return Eigen::Vector3d{};
+    }
+
+    virtual std::optional<VectorSegment> getVectorDeformationSegment() const
+    {
+        return std::nullopt;
     }
 
 private:
