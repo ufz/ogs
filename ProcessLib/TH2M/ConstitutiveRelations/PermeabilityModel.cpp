@@ -22,6 +22,7 @@ void PermeabilityModel<DisplacementDim>::eval(
     CapillaryPressureData const& p_cap, TemperatureData const& T_data,
     TransportPorosityData const& transport_poro_data,
     TotalStressData<DisplacementDim> const& total_stress_data,
+    MechanicalStrainData<DisplacementDim> const& mechanical_strain_data,
     StrainData<DisplacementDim> const& eps_data,
     EquivalentPlasticStrainData const& equivalent_plastic_strain,
     PermeabilityData<DisplacementDim>& out) const
@@ -64,6 +65,9 @@ void PermeabilityModel<DisplacementDim>::eval(
     variables.total_stress =
         MathLib::KelvinVector::kelvinVectorToSymmetricTensor(
             total_stress_data.sigma_total);
+
+    variables.mechanical_strain.emplace<KelvinVector<DisplacementDim>>(
+        mechanical_strain_data.eps_m);
 
     variables.equivalent_plastic_strain = equivalent_plastic_strain();
 
