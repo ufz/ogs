@@ -10,6 +10,10 @@
 
 #include <gtest/gtest.h>
 
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
+
 #include "MathLib/FormattingUtils.h"
 
 TEST(MathLib, FormattingUtilsEigenDenseTypes)
@@ -97,5 +101,57 @@ TEST(MathLib, FormattingUtilsEigenDenseExpressions)
         auto const actual = fmt::format("{}", m.block<2, 3>(1, 1));
         std::string const expected = " 6 10 14\n 7 11 15";
         EXPECT_EQ(expected, actual);
+    }
+}
+
+// Make sure ranges and Eigen matrices and vectors can be handled in the same
+// compilation unit.
+TEST(MathLib, FormattingUtilsEigenAndRange)
+{
+    // matrix
+    {
+        Eigen::Matrix2d A;
+        A << 5, 6, 7, 8;
+
+        auto const actual = fmt::format("{}", A);
+        std::string const expected = "5 6\n7 8";
+        EXPECT_EQ(expected, actual);
+    }
+
+    // vector
+    {
+        Eigen::Vector2d x;
+        x << 2, 3;
+
+        auto const actual = fmt::format("{}", x);
+        std::string const expected = "2\n3";
+        EXPECT_EQ(expected, actual);
+    }
+
+    // various ranges
+    {
+        std::vector<int> const vi{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        using namespace ranges;
+        auto rng = vi | views::filter([](int i) { return i % 2 == 0; }) |
+                   views::transform([](int i) { return std::to_string(i); });
+        auto vs = rng | to<std::vector>();
+
+        {
+            auto const actual = fmt::format("{}", vi);
+            std::string const expected = "[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]";
+            EXPECT_EQ(expected, actual);
+        }
+
+        {
+            auto const actual = fmt::format("{}", rng);
+            std::string const expected = R"(["2", "4", "6", "8", "10"])";
+            EXPECT_EQ(expected, actual);
+        }
+
+        {
+            auto const actual = fmt::format("{}", vs);
+            std::string const expected = R"(["2", "4", "6", "8", "10"])";
+            EXPECT_EQ(expected, actual);
+        }
     }
 }
