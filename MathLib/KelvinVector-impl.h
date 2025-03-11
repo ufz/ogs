@@ -110,7 +110,7 @@ Eigen::Matrix<double, KelvinVectorSize, 1> initOnes2()
     Eigen::Matrix<double, KelvinVectorSize, 1> ivec =
         Eigen::Matrix<double, KelvinVectorSize, 1>::Ones();
 
-    ivec.template bottomLeftCorner<ivec.size() - 3, 1>().setConstant(
+    ivec.template bottomLeftCorner<KelvinVectorSize - 3, 1>().setConstant(
         std::sqrt(2.));
 
     return ivec;
