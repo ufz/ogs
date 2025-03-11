@@ -147,7 +147,17 @@ if(OGS_USE_PETSC)
     # apple clang 15 requires newer petsc, see
     # https://www.mail-archive.com/petsc-users@mcs.anl.gov/msg46980.html
     if(APPLE AND ${CMAKE_CXX_COMPILER_VERSION} GREATER_EQUAL 15)
-        set(ogs.minimum_version.petsc 3.20.5)
+        if(3.20.5 VERSION_GREATER ${ogs.minimum_version.petsc})
+            set(ogs.minimum_version.petsc 3.20.5)
+        endif()
+    endif()
+
+    # On Python 3.13 this fix is needed:
+    # https://gitlab.com/petsc/petsc/-/merge_requests/7790
+    if(Python_VERSION GREATER_EQUAL 3.13)
+        if(3.22.4 VERSION_GREATER ${ogs.minimum_version.petsc})
+            set(ogs.minimum_version.petsc 3.22.4)
+        endif()
     endif()
 
     set(_petsc_source GIT_REPOSITORY https://gitlab.com/petsc/petsc.git GIT_TAG
