@@ -32,10 +32,17 @@ public:
 
     bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return false; }
+    bool hasNonNegativeDamping() const override { return false; }
 
     void checkDeltaX(const GlobalVector& minus_delta_x,
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& /*residual*/) override {}
+    double getDampingFactor(GlobalVector const& /*minus_delta_x*/,
+                            GlobalVector const& /*x*/,
+                            double damping_scalar) override
+    {
+        return damping_scalar;
+    }
 
     void reset() override { this->_satisfied = true; }
 

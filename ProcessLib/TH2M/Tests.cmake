@@ -7,29 +7,29 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_newton.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_gas.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_gas_newton.xml RUNTIME 1)
-    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_gas.prj RUNTIME 50)
-    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_liquid.prj RUNTIME 50)
-    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_gas.prj RUNTIME 55)
-    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_liquid.prj RUNTIME 55)
+    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_gas.prj RUNTIME 25)
+    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_liquid.prj RUNTIME 25)
+    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_gas.prj RUNTIME 25)
+    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_liquid.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/TH/idealGasLaw/compression_gas.prj RUNTIME 1)
-    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 15)
+    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
     NotebookTest(NOTEBOOKFILE TH2M/H2M/Liakopoulos/ogs-jupyter-lab-h2m-2d-liakopoulos.py RUNTIME 15)
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_newton.xml RUNTIME 5)
     endif()
     OgsTest(PROJECTFILE TH2M/H2M/OrthotropicSwelling/square.prj RUNTIME 1)
-    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2.prj RUNTIME 55)
+    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2_newton.xml RUNTIME 20)
     OgsTest(PROJECTFILE TH2M/TH2/unicube/unicube.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_rough.prj RUNTIME 220)
-    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_strict.prj RUNTIME 80)
-    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/continuous_injection.prj RUNTIME 60)
-    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/bourgeat.prj RUNTIME 60)
+    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_rough.prj RUNTIME 85)
+    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_strict.prj RUNTIME 20)
+    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/continuous_injection.prj RUNTIME 30)
+    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/bourgeat.prj RUNTIME 18)
     NotebookTest(NOTEBOOKFILE TH2M/H2/dissolution_diffusion/phase_appearance.py RUNTIME 60)
     NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter/mcWhorter.py RUNTIME 55)
     OgsTest(PROJECTFILE TH2M/H/diffusion/diffusion.prj RUNTIME 10)
     NotebookTest(NOTEBOOKFILE TH2M/H/diffusion/diffusion.py RUNTIME 30)
-    OgsTest(PROJECTFILE TH2M/TH/Ogata-Banks/ogata-banks.prj RUNTIME 60)
+    OgsTest(PROJECTFILE TH2M/TH/Ogata-Banks/ogata-banks.prj RUNTIME 2)
     NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.py RUNTIME 120)
     NotebookTest(NOTEBOOKFILE TH2M/TH/idealGasLaw/confined_gas_compression.py RUNTIME 10)
     # submesh residuum output
@@ -180,7 +180,7 @@ AddTest(
 AddTest(
     NAME TH2M_THM_point_heatsource
     PATH TH2M/THM/sphere
-    RUNTIME 40
+    RUNTIME 12
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heatsource.prj
     WRAPPER time
@@ -309,7 +309,7 @@ AddTest(
 AddTest(
     NAME TH2M_H2M_StrainDependentPermeability
     PATH TH2M/H2M/StrainDependentPermeability
-    RUNTIME 50
+    RUNTIME 1.0
     EXECUTABLE ogs
     EXECUTABLE_ARGS Strain_Dependent_Permeability_Test.prj
     WRAPPER time
@@ -337,7 +337,7 @@ AddTest(
 AddTest(
     NAME Parallel_TH2M_THM_point_heatsource
     PATH TH2M/THM/sphere
-    RUNTIME 625
+    RUNTIME 58
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heatsource.prj
     WRAPPER mpirun
@@ -392,7 +392,7 @@ AddTest(
 AddTest(
     NAME Parallel_TH2M_TH2_heat_pipe
     PATH TH2M/TH2/heatpipe/PETSc
-    RUNTIME 370
+    RUNTIME 15
     EXECUTABLE ogs
     EXECUTABLE_ARGS heat_pipe_strict.prj
     WRAPPER mpirun

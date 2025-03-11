@@ -9,9 +9,6 @@ target_link_libraries(
     PRIVATE BaseLib MeshToolsLib
             $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
 )
-if(WIN32)
-    target_compile_options(MeshGeoToolsLib PUBLIC /openmp::llvm)
-endif()
 
 target_precompile_headers(MeshGeoToolsLib PRIVATE [["BaseLib/Error.h"]]
     [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] [["MeshLib/Mesh.h"]]

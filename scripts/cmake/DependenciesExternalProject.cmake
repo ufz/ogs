@@ -62,7 +62,7 @@ if(OGS_USE_MFRONT)
             set(TFELHOME ${_mfront_bin_dir}/..)
         endif()
     endif()
-    if(NOT MFRONT OR NOT TFEL)
+    if(NOT MFRONT OR NOT TFEL_FOUND)
         set(_py_version_major_minor
             "${Python_VERSION_MAJOR}.${Python_VERSION_MINOR}"
         )

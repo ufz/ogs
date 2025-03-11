@@ -11,13 +11,20 @@ weight = 1068
 
 There are two ways to build OGS with Python bindings:
 
-- A regular build with `OGS_USE_PIP=ON`
+- A regular build with `OGS_USE_PIP=ON` (**preferred method**)  
+  This creates a virtual environment inside your build-directory and installs test dependencies into it.
 - A wheel build
 
 ## Regular build
 
 - Configure your build with `-DOGS_USE_PIP=ON`
 - Build
+
+<div class="note">
+
+**Advanced usage:** You can also install the test dependencies by some other means (manually) and then configure without `-DOGS_USE_PIP=ON`.
+
+</div>
 
 To run the Python-based tests:
 
@@ -31,10 +38,12 @@ If you make modifications on the C++ side you need to run `make` or `ninja` in t
 To get the output of a specific test:
 
 ```bash
-pytest --capture=tee-sys ./Tests/Python/test_simulator_mesh_interface.py
+pytest --capture=tee-sys ../../ogs/Tests/Python/test_wrapped_cli_tools.py
 ```
 
-## Wheel build
+<div class="note">
+
+### Wheel build (not recommend for regular use-cases)
 
 Python wheel builds are driven by [scikit-build-core](https://scikit-build-core.readthedocs.io) which basically is a `setuptools`-wrapper for CMake-based projects.
 
@@ -60,36 +69,35 @@ The `pip install`-step starts a new CMake-based ogs build in `_skbuild`-subdirec
 
 The contents of `_skbuild/[platform-specific]/cmake-install` will make up the wheel.
 
-### Testing
+Please note that `ogs.simulator` is available in wheel builds only!
+
+</div>
+
+## Testing with pytest
 
 ```bash
 # Run python tests
-pytest
+pytest ../../ogs  # path to your ogs source code
 ============================================== test session starts ===============================================
 platform darwin -- Python 3.10.6, pytest-7.1.3, pluggy-1.0.0
 rootdir: ~/code/ogs/ogs, configfile: pyproject.toml, testpaths: Tests
 collected 2 items
 
-Tests/Python/test_cli.py .                                                                                 [ 50%]
-Tests/Python/test_simlator.py .                                                                            [100%]
+../../ogs/Tests/Python/test_cli.py .                                                                       [ 50%]
 
-=============================================== 2 passed in 0.55s ================================================
+...
 
 # Start the python interpreter
 python3
+>>> import ogs.mesh as mesh
+>>> # The following works in a wheel build only:
 >>> import ogs.simulator as sim
 >>> sim.initialize(["", "--help"])
 ```
 
-If you make modifications on the C++ side you need to run `pip install .[test]` again. Modifications on the Python tests are immediately available to `pytest`.
+If you make modifications on the C++ side you need to run `make` (regular build) or `pip install .[test]` (wheel build) again. Modifications on the Python tests are immediately available to `pytest`.
 
-To get the output of a specific test:
-
-```bash
-pytest --capture=tee-sys ./Tests/Python/test_simulator_mesh_interface.py
-```
-
-### Module structure
+## Module structure
 
 Python modules added in CMake via `pybind11_add_module()` should only contain the binding code and other (helper code) which is used by that module only! If you need helper code which is used by several modules (e.g. `OGSMesh`-class used in `mesh`- and `simulator`-module) it needs to be defined in a regular library and linked to the modules.
 

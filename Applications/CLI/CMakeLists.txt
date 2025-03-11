@@ -24,6 +24,8 @@ endif()
 # should be presented. The note is kept for the case that the automatic
 # detection does not work due to whatever reason.
 
+# TODO: Make this work in python interpreters,
+# see https://github.com/pybind/pybind11/discussions/5079
 ogs_add_library(ogs_embedded_python ogs_embedded_python.cpp)
 
 # Performance warning from
