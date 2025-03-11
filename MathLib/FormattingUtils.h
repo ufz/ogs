@@ -11,6 +11,7 @@
 #pragma once
 
 #include <spdlog/fmt/bundled/ostream.h>
+#include <spdlog/fmt/bundled/ranges.h>
 
 #include <Eigen/Core>
 #include <concepts>
@@ -24,6 +25,13 @@ struct EigenIOFormat
     static MATHLIB_EXPORT const Eigen::IOFormat full_precision;
 };
 }  // namespace MathLib
+
+// disable fmt's range formatting for Eigen types
+template <typename T>
+    requires std::derived_from<T, Eigen::DenseBase<T>>
+struct fmt::is_range<T, char> : std::false_type
+{
+};
 
 template <typename T>
     requires std::derived_from<T, Eigen::DenseBase<T>>
