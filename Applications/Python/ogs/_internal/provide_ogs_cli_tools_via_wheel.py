@@ -118,10 +118,15 @@ if "PEP517_BUILD_BACKEND" not in os.environ:
 
     def _program(name, args):
         exe = OGS_BIN_DIR / name
+        env = None  # by default use unmodified environment
         if OGS_USE_PATH:
             exe = name
+            env = os.environ.copy()
+            # prevent infinite recursion if OGS in PATH happens to be this very
+            # script
+            env["OGS_USE_PATH"] = "0"
             print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
-        return subprocess.run([exe] + args).returncode  # noqa: PLW1510
+        return subprocess.run([exe] + args, env=env).returncode  # noqa: PLW1510
 
     FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
     for f in binaries_list:
