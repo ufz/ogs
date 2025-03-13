@@ -4,6 +4,12 @@ cmake_host_system_information(RESULT _cores QUERY NUMBER_OF_PHYSICAL_CORES)
 message(
     STATUS "Number of (logical) cores: ${_cores}, Free memory: ${_memfree} MB"
 )
+# respect CMAKE_BUILD_PARALLEL_LEVEL as upper bound
+if(DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+    if(${_cores} GREATER $ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+        set(_cores $ENV{CMAKE_BUILD_PARALLEL_LEVEL})
+    endif()
+endif()
 
 # Sets number of jobs between 1 and number of logical cores depending on the
 # available memory.
