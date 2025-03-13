@@ -46,7 +46,7 @@ struct Parameter;
 
 namespace ProcessLib
 {
-class SourceTerm;
+class SourceTermBase;
 class BoundaryCondition;
 class Process;
 struct DeactivatedSubdomain;
@@ -103,13 +103,14 @@ public:
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media);
 
-    std::vector<std::unique_ptr<SourceTerm>> createSourceTerms(
+    std::vector<std::unique_ptr<SourceTermBase>> createSourceTerms(
         const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
         unsigned const integration_order,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters,
         std::vector<std::reference_wrapper<ProcessVariable>> const&
-            all_process_variables_for_this_process);
+            all_process_variables_for_this_process,
+        const MeshLib::Mesh& bulk_mesh);
 
     ParameterLib::Parameter<double> const& getInitialCondition() const
     {

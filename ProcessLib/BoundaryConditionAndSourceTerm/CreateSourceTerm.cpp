@@ -14,6 +14,7 @@
 #include <numeric>
 
 #include "CreateAnchorTerm.h"
+#include "CreateEmbeddedAnchor.h"
 #include "CreateNodalSourceTerm.h"
 #include "CreateVolumetricSourceTerm.h"
 #include "Python/CreatePythonSourceTerm.h"
@@ -22,14 +23,15 @@
 
 namespace ProcessLib
 {
-std::unique_ptr<SourceTerm> createSourceTerm(
+std::unique_ptr<SourceTermBase> createSourceTerm(
     const SourceTermConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table_bulk,
     const MeshLib::Mesh& source_term_mesh, const int variable_id,
     const unsigned integration_order, const unsigned shapefunction_order,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     [[maybe_unused]] std::vector<std::reference_wrapper<ProcessVariable>> const&
-        all_process_variables_for_this_process)
+        all_process_variables_for_this_process,
+    const MeshLib::Mesh& bulk_mesh)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
@@ -50,7 +52,8 @@ std::unique_ptr<SourceTerm> createSourceTerm(
 
     if (!source_term_mesh.getProperties()
              .template existsPropertyVector<std::size_t>(
-                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)))
+                 MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)) &&
+        (type != "EmbeddedAnchor"))
     {
         OGS_FATAL(
             "The required bulk node ids map does not exist in the source term "
@@ -111,6 +114,37 @@ std::unique_ptr<SourceTerm> createSourceTerm(
                     config.config, config.mesh,
                     std::move(dof_table_source_term), source_term_mesh.getID(),
                     variable_id, parameters);
+            default:
+                OGS_FATAL(
+                    "Anchor can not be instantiated "
+                    "for mesh dimensions other than two or three. "
+                    "{}-dimensional mesh was given.",
+                    bulk_mesh_dimension);
+        }
+    }
+    if (type == "EmbeddedAnchor")
+    {
+        const int number_of_components =
+            dof_table_bulk.getNumberOfVariableComponents(variable_id);
+
+        const int bulk_mesh_dimension = bulk_mesh.getDimension();
+        if (bulk_mesh_dimension != number_of_components)
+        {
+            OGS_FATAL(
+                "For the EmbeddedAnchor source term type,"
+                "the bulk mesh dimension needs to be the same "
+                "as the number of process variable components.");
+        }
+        switch (bulk_mesh_dimension)
+        {
+            case 2:
+                return ProcessLib::createEmbeddedAnchor<2>(
+                    config.config, config.mesh, bulk_mesh, dof_table_bulk,
+                    source_term_mesh.getID(), variable_id, parameters);
+            case 3:
+                return ProcessLib::createEmbeddedAnchor<3>(
+                    config.config, config.mesh, bulk_mesh, dof_table_bulk,
+                    source_term_mesh.getID(), variable_id, parameters);
             default:
                 OGS_FATAL(
                     "Anchor can not be instantiated "

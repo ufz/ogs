@@ -32,10 +32,11 @@ public:
         std::vector<std::reference_wrapper<ProcessVariable>> const&
             process_variables,
         NumLib::LocalToGlobalIndexMap const& dof_table,
-        unsigned const integration_order);
+        unsigned const integration_order,
+        const MeshLib::Mesh& bulk_mesh);
 
 private:
-    std::vector<std::unique_ptr<SourceTerm>> _source_terms;
+    std::vector<std::unique_ptr<SourceTermBase>> _source_terms;
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         _parameters;
 };

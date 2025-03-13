@@ -99,7 +99,7 @@ void Process::initializeProcessBoundaryConditionsAndSourceTerms(
 
     auto& per_process_sts = _source_term_collections[process_id];
     per_process_sts.addSourceTermsForProcessVariables(
-        per_process_variables, dof_table, _integration_order);
+        per_process_variables, dof_table, _integration_order, _mesh);
 }
 
 void Process::initializeBoundaryConditions(
@@ -338,8 +338,7 @@ void Process::constructMonolithicProcessDofTable()
     // Create a vector of the number of variable components
     std::vector<int> vec_var_n_components;
     transform(cbegin(_process_variables[0]), cend(_process_variables[0]),
-              back_inserter(vec_var_n_components),
-              [](ProcessVariable const& pv)
+              back_inserter(vec_var_n_components), [](ProcessVariable const& pv)
               { return pv.getNumberOfGlobalComponents(); });
 
     _local_to_global_index_map =
