@@ -1,7 +1,7 @@
 exclude = [
   "gitlab\\.opengeosys\\.org",
   "discourse\\.opengeosys\\.org",
-  "minio\\.ufz\\.de/ogs/public/binaries/ogs6",
+  "vip\\.s3\\.ufz\\.de/ogs/public/binaries/ogs6",
   "discourse\\.opengeosys.org/t/",
   "localhost:1313",
   "smartkd-concept\\.de",
