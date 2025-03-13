@@ -240,8 +240,8 @@ endif()
 if(WIN32)
     set(_envrc_file_ending ".ps1")
     set(_envrc_content
-        "$Env:PYTHONPATH += \";${PROJECT_BINARY_DIR}/site-packages\""
-        "$Env:PATH += \";${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}\""
+        "$Env:PYTHONPATH = \"${PROJECT_BINARY_DIR}/site-packages;\" + $Env:PYTHONPATH"
+        "$Env:PATH = \"${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR};\" + $Env:PATH"
         "$Env:PATH += \";C:/Program Files (x86)/Intel/oneAPI/compiler/latest/windows/redist/intel64_win/compiler\""
         "$Env:OGS_USE_PATH = \"1\""
     )
@@ -249,7 +249,7 @@ if(WIN32)
 else()
     set(_envrc_content
         "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source ${PROJECT_BINARY_DIR}/.venv/bin/activate"
-        "export PATH=$PATH:${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+        "export PATH=${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}:$PATH"
         "export OGS_USE_PATH=1"
         "export PYTHONPATH=${PROJECT_BINARY_DIR}/site-packages:$PYTHONPATH"
     )
