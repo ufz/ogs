@@ -19,9 +19,9 @@ def write_out(*args):
 
 
 # capture #2 is the parameter path
-comment = re.compile(r"//! \\ogs_file_(param|attr)\{([A-Za-z_0-9]+)\}( \\todo .*)?$")
+comment = re.compile(r"//! *\\ogs_file_(param|attr)\{([A-Za-z_0-9]+)\}( \\todo .*)? *$")
 comment_special = re.compile(
-    r"//! \\ogs_file(_param|_attr)?_special(\{[A-Za-z_0-9]+\})?( \\todo .*)?$"
+    r"//! *\\ogs_file(_param|_attr)?_special(\{[A-Za-z_0-9]+\})?( \\todo .*)? *$"
 )
 
 # capture #1 is get/check/ignore/peek

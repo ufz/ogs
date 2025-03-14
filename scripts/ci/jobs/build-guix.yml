@@ -65,10 +65,10 @@ deploy container:
     - guix time-machine -C scripts/guix/channels.scm -- build ${GUIX_PACKAGE} --with-source=${GUIX_PACKAGE}=$PWD ${GUIX_ARGS}
     - if [ $? -ne 0 ]; then !!; fi
     # Pack phase
-    - mcli alias set minio https://minio.ufz.de $MINIO_PUBLIC_ACCESS_KEY $MINIO_PUBLIC_SECRET_KEY
+    - mcli alias set s3-ufz https://vip.s3.ufz.de $S3_UFZ_PUBLIC_ACCESS_KEY $S3_UFZ_PUBLIC_SECRET_KEY
     - image=$( guix time-machine -C scripts/guix/channels.scm -- pack -RR --format=squashfs bash coreutils vtkdiff ${GUIX_PACKAGE} --with-source=${GUIX_PACKAGE}=$PWD ${GUIX_ARGS} | tee | tail -1 )
     - echo "Image (${GUIX_PACKAGE}) $image"
-    - mcli cp $image minio/ogs/public/container/ogs/master/${GUIX_PACKAGE}.squashfs
+    - mcli cp $image s3-ufz/ogs/public/container/ogs/master/${GUIX_PACKAGE}.squashfs
     # Copy petsc image to eve as well
     - |
       if [[ "$GUIX_PACKAGE" == ogs-petsc ]]; then

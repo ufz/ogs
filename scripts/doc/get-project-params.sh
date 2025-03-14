@@ -10,7 +10,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-srcdir="$1"
+srcdir="${1%/}"
 
 #color="--color=always"
 color=""
@@ -25,9 +25,9 @@ cat <<"EOF" \
     -f - -r -n $color \
     -A 2 \
 | cut -c $((${#srcdir} + 2))-
-//! \\ogs_file_\(param\|attr\){[A-Za-z_0-9]\+}\( \\todo .*\)\?$
-//! \\ogs_file_special$
-//! \\ogs_file_\(param\|attr\)_special{[A-Za-z_0-9]\+}\( \\todo .*\)\?$
+//! *\\ogs_file_\(param\|attr\){[A-Za-z_0-9]\+}\( \\todo .*\)\? *$
+//! *\\ogs_file_special$
+//! *\\ogs_file_\(param\|attr\)_special{[A-Za-z_0-9]\+}\( \\todo .*\)\? *$
 checkConfigParameter[^)]*)\?
 getConfigAttribute[^)]*)\?
 getConfigParameter[^)]*)\?

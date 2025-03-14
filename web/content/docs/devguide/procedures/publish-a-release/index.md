@@ -22,7 +22,7 @@ weight = 1080
 - Update `CITATION.cff`, create a commit, tag and push (see script output)
 - A new release is automatically created on GitLab
   - Fill in the release notes from the Wiki
-- Copy release binaries and container images from CI job to Azure OGS storage to a subdirectory containing the tag name at <https://minio.ufz.de/ogs/public/binaries/ogs6>
+- Copy release binaries and container images from CI job to OGS S3 storage to a subdirectory containing the tag name at <https://vip.s3.ufz.de/ogs/public/binaries/ogs6>
 - Create a release on GitHub mirror (`ufz/ogs`)
 - Check if a [Zenodo release](https://zenodo.org/account/settings/github/repository/ufz/ogs#) is automatically issued
 - Update Zenodo entry with correct authors (obtained via `git shortlog -sne [new_version]...[previous_version]`)

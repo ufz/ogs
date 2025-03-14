@@ -8,7 +8,7 @@ categories = ["Tutorials"]
 image = "/books/Computational-Hydrology-III-Cover.jpg"
 +++
 
-[<i class="far fa-file-pdf"></i> Download this book as PDF](https://minio.ufz.de/ogs/public/web/Books/Computational-Hydrology-III/Computational-Hydrology-III.pdf)
+[<i class="far fa-file-pdf"></i> Download this book as PDF](https://vip.s3.ufz.de/ogs/public/web/Books/Computational-Hydrology-III/Computational-Hydrology-III.pdf)
 
 This tutorial presents the application of the open-source software OpenGeoSys(OGS) with a geochemical solver PHREEQC for ​
 ​hydrological simulation concerning reactive transport modeling. It contains general information regarding reactive transport modeling and a step-by-step model set-up with OGS and PHREEQC, and related components such as GINA, Data Explorer, and ParaView. A code verification with Engesgaard benchmark and two application examples (Nitrate reduction and Treatment wetland) are presented in detail.
@@ -19,7 +19,7 @@ The tutorial book is intended primarily for graduate students and applied scient
 
 ### <i class="far fa-download"></i> Downloads
 
-- [<i class="far fa-file-archive"></i> Benchmark Input Files](https://minio.ufz.de/ogs/public/web/Books/Computational-Hydrology-III/Computational-Hydrology-III-Files.zip)
+- [<i class="far fa-file-archive"></i> Benchmark Input Files](https://vip.s3.ufz.de/ogs/public/web/Books/Computational-Hydrology-III/Computational-Hydrology-III-Files.zip)
 
 </div>
 

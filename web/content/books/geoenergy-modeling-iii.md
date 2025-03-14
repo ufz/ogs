@@ -9,7 +9,7 @@ image = "/books/geoenergy-modeling-iii.png"
 
 +++
 
-[<i class="far fa-file-pdf"></i> Download this book as PDF](https://minio.ufz.de/ogs/public/web/Books/Geoenergy-Model-III/GeoenergyModelingIII-EGS.pdf)
+[<i class="far fa-file-pdf"></i> Download this book as PDF](https://vip.s3.ufz.de/ogs/public/web/Books/Geoenergy-Model-III/GeoenergyModelingIII-EGS.pdf)
 
 This tutorial presents the introduction of the open-source software OpenGeoSys for enhanced geothermal reservoir modeling. There are various commercial software tools available to solve complex scientific questions in geothermics. This book will introduce the user to an open source numerical software code for geothermal modeling which can even be adapted and extended based on the needs of the researcher.
 
@@ -19,8 +19,8 @@ The book explains basic mathematical equations and numerical methods to modeling
 
 ### <i class="far fa-download"></i> Downloads
 
-- [<i class="far fa-file-archive"></i> Input Files Linux](https://minio.ufz.de/ogs/public/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_unix.zip)  
-- [<i class="far fa-file-archive"></i> Input Files Windows](https://minio.ufz.de/ogs/public/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_windows.zip)  
+- [<i class="far fa-file-archive"></i> Input Files Linux](https://vip.s3.ufz.de/ogs/public/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_unix.zip)  
+- [<i class="far fa-file-archive"></i> Input Files Windows](https://vip.s3.ufz.de/ogs/public/web/Books/Geoenergy-Model-III/GeoEnergyModelingIII_input-files_windows.zip)  
 
 </div>
 

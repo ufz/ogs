@@ -40,10 +40,10 @@ Simply download an image from the [releases]({{< ref "/releases" >}}) page.
 Simply download an image from the latest master-branch build:
 
 <!-- vale off -->
-* [ogs-serial.squashfs](https://minio.ufz.de/ogs/public/container/ogs/master/ogs-serial.squashfs)
-* [ogs-mkl.squashfs](https://minio.ufz.de/ogs/public/container/ogs/master/ogs-mkl.squashfs)  (with and MKL Pardiso-support )
-* [ogs-petsc.squashfs](https://minio.ufz.de/ogs/public/container/ogs/master/ogs-petsc.squashfs) (with PETSC-support)
-* [ogs-petsc-mkl.squashfs](https://minio.ufz.de/ogs/public/container/ogs/master/ogs-petsc-mkl.squashfs) (with PETSC- and MKL Pardiso-support )
+* [ogs-serial.squashfs](https://vip.s3.ufz.de/ogs/public/container/ogs/master/ogs-serial.squashfs)
+* [ogs-mkl.squashfs](https://vip.s3.ufz.de/ogs/public/container/ogs/master/ogs-mkl.squashfs)  (with and MKL Pardiso-support )
+* [ogs-petsc.squashfs](https://vip.s3.ufz.de/ogs/public/container/ogs/master/ogs-petsc.squashfs) (with PETSC-support)
+* [ogs-petsc-mkl.squashfs](https://vip.s3.ufz.de/ogs/public/container/ogs/master/ogs-petsc-mkl.squashfs) (with PETSC- and MKL Pardiso-support )
 <!-- vale on -->
 
 Please note that these images have `.squashfs` as the file ending. Usage is the same as with `.sif`-files.

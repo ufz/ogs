@@ -1,0 +1,78 @@
+namespace ProcessLib
+{
+    namespace TwoPhaseComponentialFlow
+    {
+        std::unique_ptr<Process> createTwoPhaseComponentialFlowProcess(
+            std::string name,
+            std::map<int,
+            std::shared_ptr<MaterialPropertyLib::Medium>>
+            const& media)        
+        {
+            //! \ogs_file_param{prj__processes__process__type}
+            config.checkConfigParameter("type", "TWOPHASE_COMPONENTIAL_FLOW");
+
+            DBUG("Create TwoPhaseComponentialFlow Process Model.");
+            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables}
+            auto const pv_config = config.getConfigSubtree("process_variables");
+
+            auto per_process_variables = findProcessVariables(
+                variables, pv_config,
+                {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__gas_pressure}
+                    "gas_pressure",
+                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_h2}
+                    "molar_fraction_gas_h2",
+                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_ch4}
+                    "molar_fraction_gas_ch4",
+                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__molar_fraction_gas_co2}
+                    "molar_fraction_gas_co2",
+                    //! \ogs_file_param_special{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__process_variables__capillary_pressure}
+                    "capillary_pressure" });
+
+            // Specific body force
+            std::vector<double> const b =
+            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__specific_body_force}
+                config.getConfigParameter<std::vector<double>>("specific_body_force");
+            assert(b.size() > 0 && b.size() < 4);
+            Eigen::VectorXd specific_body_force(b.size());
+            bool const has_gravity = MathLib::toVector(b).norm() > 0;
+            if (has_gravity)
+                std::copy_n(b.data(), b.size(), specific_body_force.data());
+
+            auto const mass_lumping = 
+            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__mass_lumping}
+            config.getConfigParameter<bool>("mass_lumping");
+                    
+            auto const cement_chem =
+            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__cement_chem}
+                config.getConfigParameter<bool>("cement_chem");
+            auto const calc_flux_and_element_output =
+            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__calc_flux_and_element_output}
+                config.getConfigParameter<bool>("calc_flux_and_element_output");   
+            auto const h2o_in_gas =
+            // Note: trailing whitespace in the next line. That shouldn't break OGS's documentation scripts.
+            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__h2o_in_gas} 
+                config.getConfigParameter<bool>("h2o_in_gas");
+
+            double const T_ref =
+            //! \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__reference_temperature}
+                config.getConfigParameter<double>(
+                    "reference_temperature");
+
+            double const Hen_h2 =
+            // Note: double whitespace before \ogs_file_param in the next line. That shouldn't break OGS's documentation scripts.
+            //!  \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_h2}
+                config.getConfigParameter<double>("henry_coeff_h2");
+
+            double const Hen_co2 =
+            // Note: no whitespace before \ogs_file_param in the next line. That shouldn't break OGS's documentation scripts.
+            //!\ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_co2}
+                config.getConfigParameter<double>("henry_coeff_co2");
+
+            double const Hen_ch4 =
+            // Note: double whitespace before \ogs_file_param in the next line. That shouldn't break OGS's documentation scripts.
+            //!  \ogs_file_param{prj__processes__process__TWOPHASE_COMPONENTIAL_FLOW__henry_coeff_ch4}
+                config.getConfigParameter<double>("henry_coeff_ch4");
+        }
+
+    }  // end of namespace
+}  // end of namespace

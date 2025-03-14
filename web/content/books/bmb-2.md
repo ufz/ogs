@@ -19,7 +19,7 @@ Also have a look at [Volume 1](https://link.springer.com/book/10.1007/978-3-642-
 
 ### <i class="far fa-download"></i> Downloads
 
-- [<i class="far fa-file-archive"></i> Benchmarks Chapter 2](https://minio.ufz.de/ogs/public/web/Books/Benchmark-Book-2/Chapter-02.zip)  
+- [<i class="far fa-file-archive"></i> Benchmarks Chapter 2](https://vip.s3.ufz.de/ogs/public/web/Books/Benchmark-Book-2/Chapter-02.zip)  
 
 </div>
 
