@@ -4,7 +4,9 @@ repos:
     hooks:
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
-        exclude: "^Tests/Data/.*|^web/static|^Documentation/.vale/.*|.*\\.patch"
+        # Tests/Python/res/test_docu_scripts/ contain improper white spaces on
+        # purpose: such whitespace errors should be tested, there.
+        exclude: "^Tests/Data/.*|^Tests/Python/res/test_docu_scripts/|^web/static|^Documentation/.vale/.*|.*\\.patch"
       - id: check-added-large-files
         args: [--maxkb 1024]
       - id: check-merge-conflict

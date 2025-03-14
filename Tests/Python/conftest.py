@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pytest
 
@@ -21,3 +22,8 @@ def pytest_runtest_setup(item):
                 strict=False,
             )
         )
+
+
+@pytest.fixture(scope="session")
+def ogs_src_dir():
+    return Path(__file__).parent.parent.parent
