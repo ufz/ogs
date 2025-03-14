@@ -8,7 +8,7 @@ image = "/books/models-of-thermochemical-heat-storage.png"
 
 +++
 
-[<i class="far fa-file-pdf"></i> Download this book as PDF](https://minio.ufz.de/ogs/public/web/Books/Heat-Storage-I/Models-of-Thermochemical-Heat-Storage.pdf)
+[<i class="far fa-file-pdf"></i> Download this book as PDF](https://vip.s3.ufz.de/ogs/public/web/Books/Heat-Storage-I/Models-of-Thermochemical-Heat-Storage.pdf)
 
 Thermal energy storage is of high strategic relevance for the establishment of a sustainable energy system. The development of next-generation storage systems like thermochemical solutions is accompanied by major scientiﬁc and engineering challenges. Due to the complexity of the considered storage systems and the exceptional eﬀorts for the development of storage materials as well as for the implementation of large-scale experiments, modelling and numerical simulation are of outstanding importance for the prediction of the operational behaviour and the optimization of thermochemical heat storage systems. The deployment of the necessary simulation tools is thus one of the key research topics in the area of thermal energy storage systems.
 
