@@ -14,9 +14,10 @@
 
 namespace MaterialPropertyLib
 {
+using StringOrVariable = std::variant<std::string, Variable>;
 struct IndependentVariable
 {
-    Variable type;
+    StringOrVariable type;
     VariableType reference_condition;  // scalar or vector
     VariableType slope;                // scalar or matrix
 };
