@@ -1,4 +1,7 @@
 # ruff: noqa: E402
+import pytest
+
+ogstools = pytest.importorskip("ogstools")
 
 import shutil
 from pathlib import Path
@@ -6,7 +9,6 @@ from tempfile import TemporaryDirectory
 
 import numpy as np
 import ogstools as ot
-import pytest
 from ogs import cli
 
 refrigerant_density = 992.92  # kg m^-3
