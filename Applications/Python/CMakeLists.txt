@@ -39,11 +39,14 @@ file(
 if(OGS_USE_PIP)
     # Fails with libGitInfoLib.so: undefined symbol: __asan_report_load8
     if(NOT ENABLE_ASAN)
+        if (OGS_USE_MPI)
+            set(OGS_PYTEST_ARGS "-m;not ogs_needs_serial_build")
+        endif()
         add_test(
             NAME pytest
             COMMAND
                 ${CMAKE_COMMAND} -DEXECUTABLE=pytest
-                "-DEXECUTABLE_ARGS=-ra;-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
+                "-DEXECUTABLE_ARGS=-ra;${OGS_PYTEST_ARGS};-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
                                                                             # because
                 # passed as list see https://stackoverflow.com/a/33248574/80480
                 -DBINARY_PATH=${_binary_path}

@@ -355,6 +355,7 @@ def temp_test_dir():
         yield test_dir
 
 
+@pytest.mark.ogs_needs_serial_build
 @pytest.mark.parametrize(
     "case_gen",
     [

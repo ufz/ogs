@@ -52,6 +52,7 @@ python_files = ["test_*.py"]
 addopts = "--strict-markers"
 markers = [
     "performance_test: These tests need an isolated environment such that time measurements are reasonable.",
+    "ogs_needs_serial_build: These test do not run with an OGS PETSc build.",
 ]
 
 [tool.cibuildwheel]
