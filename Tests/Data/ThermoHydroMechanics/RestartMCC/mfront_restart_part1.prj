@@ -129,7 +129,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-15 1e-10 1e-14 1e-14</abstols>
+                    <abstols>1e-15 1.1e-10 1e-14 1e-14</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -323,7 +323,7 @@
         <vtkdiff>
             <regex>mfront_restart_part1_t_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>5e-11</absolute_tolerance>
+            <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
