@@ -3,9 +3,9 @@ ogstools==0.6.0
 gmsh>=4.11
 h5py>=3.8
 git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c#egg=heatsource-py
-jupyterlab==3.4.8
+jupyterlab>=3.4.8
 matplotlib>=3.6
-numpy<2
+numpy
 pandas>=1.5
 ipywidgets
 pyvista[all]>=0.40.1
