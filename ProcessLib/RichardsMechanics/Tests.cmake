@@ -25,6 +25,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_restart.xml RUNTIME 17)
     OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_QN.prj RUNTIME 50)
     OgsTest(PROJECTFILE RichardsMechanics/A2.prj RUNTIME 20)
+    OgsTest(PROJECTFILE RichardsMechanics/restart_w_backfill.prj RUNTIME 20)
 endif()
 
 if (NOT OGS_USE_MPI AND OGS_USE_MFRONT)
