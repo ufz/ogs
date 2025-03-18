@@ -64,6 +64,8 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     local_assembler.assemble(t, dt, local_x_data, local_x_prev_data,
                              local_M_data, local_K_data, local_b_data);
 
+    auto const vds = local_assembler.getVectorDeformationSegment();
+
     // Residual  res := M xdot + K x - b
     // Computing Jac := dres/dx
     //                = M dxdot/dx + dM/dx xdot + K dx/dx + dK/dx x - db/dx
@@ -74,6 +76,13 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     // afterwards.
     for (Eigen::MatrixXd::Index i = 0; i < num_r_c; ++i)
     {
+        if ((vds != std::nullopt) && i >= vds->start_index &&
+            (i < (vds->start_index + vds->size)))
+        {
+            // Avoid to compute the analytic block
+            continue;
+        }
+
         // assume that local_x_data is ordered by component.
         auto const component = i / num_dofs_per_component;
         auto const eps = _absolute_epsilons[component];
@@ -156,6 +165,16 @@ void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
     if (!local_K_data.empty())
     {
         auto K = MathLib::toMatrix(local_K_data, num_r_c, num_r_c);
+
+        // Note: The deformation segment of \c b is already computed as
+        // int{B^T sigma}dA, which is identical to K_uu * u. Therefore the
+        // corresponding K block is set to zero.
+        if (vds != std::nullopt)
+        {
+            K.block(vds->start_index, vds->start_index, vds->size, vds->size)
+                .setZero();
+        }
+
         b -= K * x;
         local_K_data.clear();
     }
