@@ -208,6 +208,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const p_L = local_x.template segment<pressure_size>(pressure_index);
 
+    auto u =
+        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
+            displacement_size> const>(local_x.data() + displacement_index,
+                                      displacement_size);
+
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
         this->process_data_.media_map.getMedium(this->element_.getID());
@@ -309,9 +314,23 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
+
+        auto const& N_u = _ip_data[ip].N_u;
+        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                this->element_, N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
         auto& eps =
             std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
                 .eps;
+        eps.noalias() = B * u;
+
         auto const& sigma_sw =
             std::get<ProcessLib::ThermoRichardsMechanics::
                          ConstitutiveStress_StrainTemperature::
