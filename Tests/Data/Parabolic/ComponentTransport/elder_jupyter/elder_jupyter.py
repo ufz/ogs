@@ -118,20 +118,18 @@ plt.show()
 
 
 # %%
-def mesh_func(mesh: ot.Mesh) -> ot.Mesh:
-    "Slice 2D mesh out of 3D mesh"
-    return mesh.slice("y", [0, 0, 0])
+ms_2D = mesh_series.transform(lambda mesh: mesh.slice("y", [0, 0, 0]))
+fig = ot.plot.contourf(ms_2D[0], ot.variables.saturation, vmin=0, vmax=100, dpi=50)
+fig.axes[0].set_title(f"{0} yrs", fontsize=32)
 
 
-def plot_func(ax: plt.Axes, timevalue: float) -> None:
-    "Add the time to the title."
-    ax.set_title(f"{timevalue/(365.25*86400):.1f} yrs", loc="center")
+def plot_contourf(timevalue: float, mesh: ot.Mesh) -> None:
+    fig.axes[0].clear()
+    ot.plot.contourf(mesh, ot.variables.saturation, ax=fig.axes[0], dpi=50)
+    fig.axes[0].set_title(f"{timevalue:.1f} yrs", fontsize=32)
 
 
-# %%
-anim = mesh_series.transform(mesh_func).animate(
-    ot.variables.saturation, mesh_series.timevalues, plot_func=plot_func, vmin=0
-)
+anim = ot.plot.animate(fig, plot_contourf, ms_2D.timevalues, ms_2D)
 HTML(anim.to_jshtml())
 
 
