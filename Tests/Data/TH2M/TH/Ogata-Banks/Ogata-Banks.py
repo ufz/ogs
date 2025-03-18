@@ -178,9 +178,8 @@ plot_results_errors(pts[:, 0], num_values, ref_values, leg_labels, "$x$ / m")
 # %% [markdown]
 # ## Temperature over time and space
 # %%
-pts = np.linspace([0, 0, 0], [50, 0, 0], num=500)
 ot.plot.setup.time_unit = "days"
-fig = ms.plot_time_slice(var, pts, interpolate=False, figsize=(20, 4), fontsize=20)
+fig = ms.plot_time_slice("time", "x", var, figsize=(20, 4), fontsize=20)
 
 # %% [markdown]
 # For this discretisation, the numerical solution approximates well to the analytical one. Finer resolutions in the time discretisation reduce the deviations considerably. In this benchmark it is easy to see that too coarse resolutions (especially in the time discretisation) yield very plausible results, which can, however, deviate considerably from the exact solution. An analysis of the von Neumann stability criterion is worthwhile here. This criterium demands

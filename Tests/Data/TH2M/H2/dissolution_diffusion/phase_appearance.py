@@ -133,7 +133,7 @@ def plot_results(var: ot.variables.Scalar, ref: str, max_err: float) -> None:
 
     # === Test for valid results ========================================
     df_refs = pd.read_csv(f"references/bourgeat_{ref}.csv")
-    num_vals = var_OGS.transform(ms.probe([0, 0, 0], var.data_name)[:, 0])
+    num_vals = var_OGS.transform(ms.probe([0, 0, 0], var.data_name)[0])
     mean_ref_vals = var.transform(df_refs.drop(columns="time").aggregate("mean", 1))
     num_vals_interp = np.interp(df_refs["time"], ms.timevalues, num_vals)
     mean_rel_err = mean_ref_vals - num_vals_interp

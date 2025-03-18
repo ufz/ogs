@@ -361,7 +361,7 @@ outlet = (0.0, 10.0, -30.0)
 
 # Read the time series of point field 'temperature_BHE1'
 temperature_BHE1_tube = (ms.probe(outlet, "temperature_BHE1", interp_method="nearest"))[
-    :, 0, 0
+    0, 0
 ]
 
 # %%

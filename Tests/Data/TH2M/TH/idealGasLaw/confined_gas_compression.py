@@ -174,7 +174,7 @@ time = ms.timevalues
 
 def plot_results_errors(var: ot.variables.Scalar, ref_vals: np.ndarray):
     "Plot numerical results, analytical solution and errors."
-    num_vals = ms.probe([0.0, 1.0, 0.0], var.data_name)[:, 0]
+    num_vals = ms.probe([0.0, 1.0, 0.0], var.data_name)[0]
     abs_err = ref_vals - num_vals
     rel_err = abs_err / ref_vals
     assert np.all(np.abs(rel_err) <= 0.002)

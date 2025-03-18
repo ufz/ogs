@@ -159,7 +159,7 @@ pts = np.linspace([0.0, 0.0, 0.0], [0.3, 0.0, 0.0], 500)
 var = ot.variables.Scalar("xmWL", func=concentration)
 ot.plot.setup.time_unit = "days"
 fig = ms.scale(time=("s", "days")).plot_time_slice(
-    var, pts, interpolate=False, figsize=[10, 4], fontsize=12
+    "time", "x", var, figsize=[10, 4], fontsize=12
 )
 fig.axes[1].set_ylabel("$c$ / mol m$^{-3}$")
 fig.tight_layout()
