@@ -211,6 +211,28 @@ static std::pair<Eigen::Vector3d, Eigen::Vector3d> parseLineSegment(
             Eigen::Vector3d{end[0], end[1], end[2]}};
 }
 
+/// Returns a ball represented by its center and its radius.
+static detail::Ball parseBall(BaseLib::ConfigTree const& config)
+{
+    DBUG("Constructing a ball");
+    auto const center =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__ball__center}
+        config.getConfigParameter<std::vector<double>>("center");
+    if (center.size() != 3)
+    {
+        OGS_FATAL(
+            "For construction of the center of a ball must be a 3D point. Got "
+            "a vector of size {}.",
+            center.size());
+    }
+
+    auto const radius =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__ball__radius}
+        config.getConfigParameter<double>("radius");
+
+    return {Eigen::Vector3d{center[0], center[1], center[2]}, radius};
+}
+
 DeactivatedSubdomain createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -232,27 +254,44 @@ DeactivatedSubdomain createDeactivatedSubdomain(
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__line_segment}
         config.getConfigSubtreeOptional("line_segment");
 
-    if (time_interval_config && line_segment_config)
+    auto const ball_config =
+        //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__ball}
+        config.getConfigSubtreeOptional("ball");
+
+    if (line_segment_config && ball_config)
+    {
+        OGS_FATAL(
+            "line_segment and ball can not be defined "
+            "simultaneously.");
+    }
+
+    if (time_interval_config && (line_segment_config || ball_config))
     {
         OGS_FATAL(
             "When using time interval for subdomain deactivation a line "
-            "segment must not be specified.");
+            "segment or a ball must not be specified.");
     }
 
-    if (curve_name && !line_segment_config)
+    if (curve_name && !(line_segment_config || ball_config))
     {
         OGS_FATAL(
-            "When using curve for subdomain deactivation a line segment must "
-            "be specified.");
+            "When using curve for subdomain deactivation a line segment or a "
+            "ball must be specified.");
     }
 
     // If time interval was specified then an empty optional line segment is
     // used *internally* because the whole selected material ids subdomain will
     // be deactivated.
     std::optional<std::pair<Eigen::Vector3d, Eigen::Vector3d>> line_segment;
-    if (curve_name)
+    if (line_segment_config)
     {
         line_segment = parseLineSegment(*line_segment_config);
+    }
+
+    std::optional<detail::Ball> ball;
+    if (ball_config)
+    {
+        ball = parseBall(*ball_config);
     }
 
     ParameterLib::Parameter<double>* boundary_value_parameter = nullptr;
@@ -288,7 +327,7 @@ DeactivatedSubdomain createDeactivatedSubdomain(
     auto deactivated_subdomain_mesh = createDeactivatedSubdomainMesh(
         mesh, deactivated_subdomain_material_ids);
 
-    return {std::move(time_interval), line_segment,
+    return {std::move(time_interval), line_segment, ball,
             std::move(deactivated_subdomain_mesh), boundary_value_parameter};
 }
 
