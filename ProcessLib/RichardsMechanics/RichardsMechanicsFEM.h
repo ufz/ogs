@@ -23,6 +23,7 @@
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/DOF/LocalDOF.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
@@ -236,6 +237,13 @@ private:
             solid_material,
         ProcessLib::ThermoRichardsMechanics::MaterialStateData<DisplacementDim>&
             material_state_data);
+
+    static constexpr auto localDOF(auto const& x)
+    {
+        return NumLib::localDOF<
+            ShapeFunctionPressure,
+            NumLib::Vectorial<ShapeFunctionDisplacement, DisplacementDim>>(x);
+    }
 
     std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
 
