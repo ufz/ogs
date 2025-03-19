@@ -206,7 +206,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 {
     assert(local_x.size() == pressure_size + displacement_size);
 
-    auto const p_L = local_x.template segment<pressure_size>(pressure_index);
+    auto const [p_L, u] = localDOF(local_x);
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
@@ -309,9 +309,23 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
+
+        auto const& N_u = _ip_data[ip].N_u;
+        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                this->element_, N_u);
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, this->is_axially_symmetric_);
         auto& eps =
             std::get<StrainData<DisplacementDim>>(this->current_states_[ip])
                 .eps;
+        eps.noalias() = B * u;
+
         auto const& sigma_sw =
             std::get<ProcessLib::ThermoRichardsMechanics::
                          ConstitutiveStress_StrainTemperature::
@@ -345,25 +359,8 @@ void RichardsMechanicsLocalAssembler<
 {
     assert(local_x.size() == pressure_size + displacement_size);
 
-    auto p_L =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
-
-    auto u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_index,
-                                      displacement_size);
-
-    auto p_L_prev =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x_prev.data() + pressure_index,
-                                  pressure_size);
-
-    auto u_prev =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x_prev.data() + displacement_index,
-                                      displacement_size);
+    auto const [p_L, u] = localDOF(local_x);
+    auto const [p_L_prev, u_prev] = localDOF(local_x_prev);
 
     auto K = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -1069,24 +1066,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 {
     assert(local_x.size() == pressure_size + displacement_size);
 
-    auto p_L =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x.data() + pressure_index,
-                                  pressure_size);
-
-    auto u =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x.data() + displacement_index,
-                                      displacement_size);
-
-    auto p_L_prev =
-        Eigen::Map<typename ShapeMatricesTypePressure::template VectorType<
-            pressure_size> const>(local_x_prev.data() + pressure_index,
-                                  pressure_size);
-    auto u_prev =
-        Eigen::Map<typename ShapeMatricesTypeDisplacement::template VectorType<
-            displacement_size> const>(local_x_prev.data() + displacement_index,
-                                      displacement_size);
+    auto const [p_L, u] = localDOF(local_x);
+    auto const [p_L_prev, u_prev] = localDOF(local_x_prev);
 
     auto local_Jac = MathLib::createZeroedMatrix<
         typename ShapeMatricesTypeDisplacement::template MatrixType<
@@ -1528,13 +1509,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                      Eigen::VectorXd const& local_x,
                                      Eigen::VectorXd const& local_x_prev)
 {
-    auto p_L = local_x.template segment<pressure_size>(pressure_index);
-    auto u = local_x.template segment<displacement_size>(displacement_index);
-
-    auto p_L_prev =
-        local_x_prev.template segment<pressure_size>(pressure_index);
-    auto u_prev =
-        local_x_prev.template segment<displacement_size>(displacement_index);
+    auto const [p_L, u] = localDOF(local_x);
+    auto const [p_L_prev, u_prev] = localDOF(local_x_prev);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
