@@ -73,7 +73,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
 import pyvista as pv
-from ogstools.msh2vtu import msh2vtu
 
 # %%
 
@@ -211,7 +210,7 @@ def mesh_generation(lc, lc_fine):
 
 # %%
 def pre_processing(h, a0):
-    mesh = pv.read(f"{out_dir}/mesh_full_pf_domain.vtu")
+    mesh = pv.read(f"{out_dir}/domain.vtu")
     phase_field = np.ones((len(mesh.points), 1))
     pv.set_plot_theme("document")
 
@@ -245,7 +244,9 @@ def sneddon_numerical(h):
     mesh_generation(0.1, h)
     # Convert GMSH (.msh) meshes to VTU meshes appropriate for OGS simulation.
     input_file = f"{out_dir}/" + meshname + ".msh"
-    msh2vtu(filename=input_file, output_path=out_dir, keep_ids=True)
+    meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
+    for name, mesh in meshes.items():
+        pv.save_meshio(f"{out_dir}/{name}.vtu", mesh)
     # As a preprocessing step, define the initial phase-field (crack).
     pre_processing(h, a0)
     # change properties in prj file #For more information visit: https://ogstools.opengeosys.org/stable/reference/ogstools.ogs6py.html
@@ -271,7 +272,11 @@ def sneddon_numerical(h):
         check=True,
     )
     tf = time.time()
-    print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
+    print(
+        ">>> OGS terminated execution  <<< Elapsed time: ",
+        round(tf - t0, 2),
+        " s.",
+    )
 
 
 # %%

@@ -65,7 +65,6 @@ import mesh_quarter_of_rectangle_with_hole
 import numpy as np
 import ogstools as ot
 import pyvista as pv
-from ogstools.msh2vtu import msh2vtu
 from vtkmodules.vtkFiltersParallel import vtkIntegrateAttributes
 
 logging.getLogger("matplotlib.font_manager").disabled = True
@@ -269,12 +268,11 @@ for idx in STUDY_indices:
     msh2vtu_out_dir = Path(f"{out_dir}/disc_with_hole_idx_is_{idx}")
     if not msh2vtu_out_dir.exists():
         msh2vtu_out_dir.mkdir(parents=True)
-    msh2vtu(
-        filename=input_file,
-        output_path=f"{out_dir}/disc_with_hole_idx_is_{idx}",
-        keep_ids=True,
-        reindex=True,
-    )
+    meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
+    for name, mesh in meshes.items():
+        output_path = f"{out_dir}/disc_with_hole_idx_is_{idx}"
+        filename = f"disc_with_hole_idx_is_{idx}_{name}.vtu"
+        pv.save_meshio(msh2vtu_out_dir / filename, mesh)
     # %cd {out_dir}/disc_with_hole_idx_is_{idx}
     run(
         f"identifySubdomains -f -m disc_with_hole_idx_is_{idx}_domain.vtu -- disc_with_hole_idx_is_{idx}_physical_group_*.vtu",
@@ -841,7 +839,11 @@ def compute_root_mean_square_sigma(_idx, sigmas_test, sigmas_reference):
     l2_rt = np.linalg.norm(sig_rt_240 - sig_rt)
 
     points = sig_rr.shape[0]
-    return l2_rr / np.sqrt(points), l2_tt / np.sqrt(points), l2_rt / np.sqrt(points)
+    return (
+        l2_rr / np.sqrt(points),
+        l2_tt / np.sqrt(points),
+        l2_rt / np.sqrt(points),
+    )
 
 
 # %% jupyter={"source_hidden": true}
@@ -955,11 +957,16 @@ def compute_error_norms():
             l2_rr[idx], l2_tt[idx], l2_rt[idx] = compute_ell_2_norm_sigma(
                 idx, sigmas_test, sigmas_reference
             )
-            rms_rr[idx], rms_tt[idx], rms_rt[idx] = compute_root_mean_square_sigma(
-                idx, sigmas_test, sigmas_reference
-            )
+            (
+                rms_rr[idx],
+                rms_tt[idx],
+                rms_rt[idx],
+            ) = compute_root_mean_square_sigma(idx, sigmas_test, sigmas_reference)
             L2_rr[idx], L2_tt[idx], L2_rt[idx] = compute_Ell_2_norm_sigma(
-                idx, mesh_resampled_to_240_resolution, sigmas_test, sigmas_reference
+                idx,
+                mesh_resampled_to_240_resolution,
+                sigmas_test,
+                sigmas_reference,
             )
 
             l2_x[idx], l2_y[idx] = compute_ell_2_norm_displacement(
@@ -1012,7 +1019,10 @@ ax[0].plot(
     label="$\\ell_{2, \\theta\\theta}$",
 )
 ax[0].plot(
-    size.values(), l2_rt.values(), color="firebrick", label="$\\ell_{2, r\\theta}$"
+    size.values(),
+    l2_rt.values(),
+    color="firebrick",
+    label="$\\ell_{2, r\\theta}$",
 )
 ax[0].plot(
     size.values(),
@@ -1029,7 +1039,11 @@ ax[0].set_title(r"$\ell_2$ norms")
 ax[0].set_ylabel(r"$\ell_2$ / kPa or cm")
 
 ax[1].plot(
-    size.values(), rms_rr.values(), color="firebrick", linestyle=":", label="$RMS_{rr}$"
+    size.values(),
+    rms_rr.values(),
+    color="firebrick",
+    linestyle=":",
+    label="$RMS_{rr}$",
 )
 ax[1].plot(
     size.values(),
@@ -1040,7 +1054,11 @@ ax[1].plot(
 )
 ax[1].plot(size.values(), rms_rt.values(), color="firebrick", label="$RMS_{r\\theta}$")
 ax[1].plot(
-    size.values(), rms_x.values(), color="royalblue", linestyle="--", label="$RMS_{x}$"
+    size.values(),
+    rms_x.values(),
+    color="royalblue",
+    linestyle="--",
+    label="$RMS_{x}$",
 )
 ax[1].plot(size.values(), rms_y.values(), color="royalblue", label="$RMS_{y}$")
 
@@ -1050,7 +1068,11 @@ ax[1].set_title("Root-mean-square")
 ax[1].set_ylabel("RMS / kPa or cm")
 
 ax[2].plot(
-    size.values(), L2_rr.values(), color="firebrick", linestyle=":", label="$L_{2, rr}$"
+    size.values(),
+    L2_rr.values(),
+    color="firebrick",
+    linestyle=":",
+    label="$L_{2, rr}$",
 )
 ax[2].plot(
     size.values(),
@@ -1061,7 +1083,11 @@ ax[2].plot(
 )
 ax[2].plot(size.values(), L2_rt.values(), color="firebrick", label="$L_{2, r\\theta}$")
 ax[2].plot(
-    size.values(), L2_x.values(), color="royalblue", linestyle="--", label="$L_{2, x}$"
+    size.values(),
+    L2_x.values(),
+    color="royalblue",
+    linestyle="--",
+    label="$L_{2, x}$",
 )
 ax[2].plot(size.values(), L2_y.values(), color="royalblue", label="$L_{2, y}$")
 

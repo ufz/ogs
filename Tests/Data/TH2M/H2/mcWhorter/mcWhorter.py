@@ -125,7 +125,7 @@ ax1.set_ylabel(r"$s_\mathrm{L}$", fontsize=12)
 ax2.set_xlabel("$x$ / m", fontsize=12)
 ax2.set_ylabel(r"$\epsilon_\mathrm{abs}$", fontsize=12)
 ax3.set_ylabel(r"$\epsilon_\mathrm{rel}$", fontsize=12)
-time = ms.timevalues("s")[-1]
+time = ms.timevalues[-1]
 fig.suptitle(f"Liquid saturation and errors at t={time} seconds")
 
 # %% [markdown]

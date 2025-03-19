@@ -475,13 +475,9 @@ generate_mesh_axb(200, 100, 25, 45, 1.07)
 
 # %%
 input_file = f"{out_dir}/square_200x100.msh"
-
-
-# %%
-# !msh2vtu --keep_ids -r -o {out_dir} {input_file}
-# %cd {out_dir}
-# !identifySubdomains -f -m square_200x100_domain.vtu -- square_200x100_physical_group_*.vtu
-# %cd -
+meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
+for name, mesh in meshes.items():
+    pv.save_meshio(f"{out_dir}/square_200x100_{name}.vtu", mesh)
 
 
 # %% [markdown]

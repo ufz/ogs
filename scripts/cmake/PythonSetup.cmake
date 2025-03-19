@@ -16,16 +16,10 @@ if(OGS_USE_PIP)
         set(_pip_install_command ${UV_TOOL_PATH} pip install --prefix
                                  ${LOCAL_VIRTUALENV_DIR} CACHE INTERNAL ""
         )
-        set(_pip_uninstall_command ${UV_TOOL_PATH} pip uninstall --prefix
-                                   ${LOCAL_VIRTUALENV_DIR} CACHE INTERNAL ""
-        )
         set(_venv_tool "uv")
     else()
         set(_pip_install_command ${LOCAL_VIRTUALENV_BIN_DIR}/pip install
             CACHE INTERNAL ""
-        )
-        set(_pip_uninstall_command ${LOCAL_VIRTUALENV_BIN_DIR}/pip uninstall
-                                   --yes CACHE INTERNAL ""
         )
         set(_venv_tool "pip")
     endif()
@@ -197,11 +191,6 @@ function(setup_venv)
                     "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
             )
         endif()
-        # Uninstall ogs wheel
-        execute_process(
-            COMMAND ${_apple_env} ${_pip_uninstall_command} ogs
-            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-        )
     endif()
 endfunction()
 

@@ -155,32 +155,31 @@ def plot_results_errors(
 # %%
 obs_pts = np.asarray([[x, 0, 0] for x in [1, 5, 10, 20, 50]])
 num_values = ms.probe(obs_pts, "temperature").T
-ref_values = [ogata_banks_analytical(ms.timevalues("s"), x) for x in obs_pts[:, 0]]
+ref_values = [ogata_banks_analytical(ms.timevalues, x) for x in obs_pts[:, 0]]
 leg_labels = [f"x={pt[0]} m" for pt in obs_pts]
-time = ms.timevalues("days")
+ms = ms.scale(time=("s", "days"))
+time = ms.timevalues
 plot_results_errors(time, num_values, ref_values, leg_labels, "$t$ / d")
 
 # %% [markdown]
 # ## Temperature over x at different timesteps
 
 # %%
-timevalues = np.asarray([10, 100, 200, 300, 500]) * 86400
+timevalues = np.asarray([10, 100, 200, 300, 500])
 timesteps = [ms.closest_timestep(tv) for tv in timevalues]
 all_pts = ms.mesh(0).points
 pts = all_pts[(all_pts[:, 0] <= 50) & (all_pts[:, 1] == 0)]
 line = pv.PointSet(pts)
 num_values = [line.sample(ms.mesh(ts))["temperature"] for ts in timesteps]
-ref_values = [ogata_banks_analytical(tv, pts[:, 0]) for tv in timevalues]
-leg_labels = [f"{tv / 86400} d" for tv in timevalues]
+ref_values = [ogata_banks_analytical(tv * 86400, pts[:, 0]) for tv in timevalues]
+leg_labels = [f"{tv} d" for tv in timevalues]
 plot_results_errors(pts[:, 0], num_values, ref_values, leg_labels, "$x$ / m")
 
 # %% [markdown]
 # ## Temperature over time and space
 # %%
-pts = np.linspace([0, 0, 0], [50, 0, 0], num=500)
-fig = ms.plot_time_slice(
-    var, pts, time_unit="days", interpolate=False, figsize=(20, 4), fontsize=20
-)
+ot.plot.setup.time_unit = "days"
+fig = ms.plot_time_slice("time", "x", var, figsize=(20, 4), fontsize=20)
 
 # %% [markdown]
 # For this discretisation, the numerical solution approximates well to the analytical one. Finer resolutions in the time discretisation reduce the deviations considerably. In this benchmark it is easy to see that too coarse resolutions (especially in the time discretisation) yield very plausible results, which can, however, deviate considerably from the exact solution. An analysis of the von Neumann stability criterion is worthwhile here. This criterium demands

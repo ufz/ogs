@@ -49,7 +49,7 @@
 # %%
 # import ogstools as ogs
 # path_to_prj = '../elder/elder.prj'
-# model = ogs.Project(input_file = path_to_prj, output_file=path_to_prj)
+# model = ot.Project(input_file = path_to_prj, output_file=path_to_prj)
 # model.run_model(write_logs=True)
 
 # %% [markdown]
@@ -59,17 +59,12 @@
 
 # %%
 import matplotlib.pyplot as plt
-import ogstools as ogs
+import ogstools as ot
 from IPython.display import HTML
 
 # %%
-ogs.plot.setup.dpi = 30  # resolution
-ogs.plot.setup.fontsize = 30
-
-si = ogs.variables.Scalar(data_name="Si", output_name="Concentration", output_unit="%")
-pressure = ogs.variables.Scalar(
-    data_name="pressure", output_name="Pressure", output_unit=""
-)
+ot.plot.setup.dpi = 30  # resolution
+ot.plot.setup.fontsize = 30
 
 # %% [markdown]
 # ### Read data
@@ -77,7 +72,7 @@ pressure = ogs.variables.Scalar(
 # First, we are going to load the dataset produces by the simulation:
 
 # %%
-mesh_series = ogs.meshlib.MeshSeries("../elder/elder_reference.pvd")
+mesh_series = ot.meshlib.MeshSeries("../elder/elder_reference.pvd")
 
 # %% [markdown]
 # Next, the data at the 1st time step is read:
@@ -97,22 +92,22 @@ mesh_tend = mesh_series.mesh(-1).slice(normal="y")
 # The concentration and pressure at the beginning of the simulation are shown in the figures below.
 
 # %%
-fig_t0_si = ogs.plot.contourf(mesh_t0, si, vmin=0)
+fig_t0_si = ot.plot.contourf(mesh_t0, ot.variables.saturation, vmin=0)
 plt.show()
 
 # %%
-fig_t0_p = ogs.plot.contourf(mesh_t0, pressure)
+fig_t0_p = ot.plot.contourf(mesh_t0, ot.variables.pressure)
 plt.show()
 
 # %% [markdown]
 # The concentration and pressure at the end of the simulation are shown in the figures below.
 
 # %%
-fig_tend_si = ogs.plot.contourf(mesh_tend, si, vmin=0)
+fig_tend_si = ot.plot.contourf(mesh_tend, ot.variables.saturation, vmin=0)
 plt.show()
 
 # %%
-fig_tend_p = ogs.plot.contourf(mesh_tend, pressure)
+fig_tend_p = ot.plot.contourf(mesh_tend, ot.variables.pressure)
 plt.show()
 
 
@@ -123,23 +118,18 @@ plt.show()
 
 
 # %%
-def mesh_func(mesh: ogs.Mesh) -> ogs.Mesh:
-    "Slice 2D mesh out of 3D mesh"
-    return mesh.slice("y", [0, 0, 0])
+ms_2D = mesh_series.transform(lambda mesh: mesh.slice("y", [0, 0, 0]))
+fig = ot.plot.contourf(ms_2D[0], ot.variables.saturation, vmin=0, vmax=100, dpi=50)
+fig.axes[0].set_title(f"{0} yrs", fontsize=32)
 
 
-def plot_func(ax: plt.Axes, timevalue: float) -> None:
-    "Add the time to the title."
-    ax.set_title(f"{timevalue/(365.25*86400):.1f} yrs", loc="center")
+def plot_contourf(timevalue: float, mesh: ot.Mesh) -> None:
+    fig.axes[0].clear()
+    ot.plot.contourf(mesh, ot.variables.saturation, ax=fig.axes[0], dpi=50)
+    fig.axes[0].set_title(f"{timevalue:.1f} yrs", fontsize=32)
 
 
-# %%
-anim = mesh_series.animate(
-    si,
-    mesh_series.timevalues(),
-    mesh_func=mesh_func,
-    plot_func=plot_func,
-)
+anim = ot.plot.animate(fig, plot_contourf, ms_2D.timevalues, ms_2D)
 HTML(anim.to_jshtml())
 
 
