@@ -12,6 +12,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_liquid.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_gas.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_liquid.prj RUNTIME 25)
+    OgsTest(PROJECTFILE TH2M/THM/sphere/point_heatsource_fd_jac.xml RUNTIME 7)
     OgsTest(PROJECTFILE TH2M/TH/idealGasLaw/compression_gas.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
     NotebookTest(NOTEBOOKFILE TH2M/H2M/Liakopoulos/ogs-jupyter-lab-h2m-2d-liakopoulos.py RUNTIME 15)
@@ -217,6 +218,7 @@ AddTest(
 
     result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu saturation saturation 1e-8 1e-8
 )
+
 AddTest(
     NAME TH2M_THM_point_heatsource_newton
     PATH TH2M/THM/sphere
