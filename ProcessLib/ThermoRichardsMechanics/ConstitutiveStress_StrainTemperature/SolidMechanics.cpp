@@ -51,6 +51,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     variables.temperature = T_data.T;
 
     MPL::VariableArray variables_prev;
+
     variables_prev.stress.emplace<KelvinVector<DisplacementDim>>(
         sigma_eff_prev_data->sigma_eff);
     variables_prev.mechanical_strain.emplace<KelvinVector<DisplacementDim>>(
@@ -72,6 +73,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
             DisplacementDim)>::identity2;
+
     total_stress_data.sigma_total.noalias() =
         sigma_eff_data.sigma_eff +
         biot_data() * bishops_data.chi_S_L * p_cap_data.p_cap * identity2;

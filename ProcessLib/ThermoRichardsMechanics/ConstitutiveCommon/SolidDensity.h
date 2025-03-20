@@ -12,6 +12,8 @@
 
 #include "Base.h"
 #include "Porosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -33,7 +35,9 @@ struct SolidDensityModel
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
               PorosityData const& poro_data,
               TemperatureData<DisplacementDim> const& T_data,
-              SolidDensityData& out) const;
+              EffectiveStressData<DisplacementDim>& sigma_eff_data,
+              CapillaryPressureData<DisplacementDim> const& p_cap_data,
+              BishopsData const& bishops_data, SolidDensityData& out) const;
 };
 
 extern template struct SolidDensityModel<2>;
