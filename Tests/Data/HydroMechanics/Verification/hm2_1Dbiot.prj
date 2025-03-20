@@ -244,4 +244,30 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>hm2_1Dbiot_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1.0e-10</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>hm2_1Dbiot_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1.0e-10</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>hm2_1Dbiot_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>1.0e-9</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>hm2_1Dbiot_ts_.*_t_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1.0e-10</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

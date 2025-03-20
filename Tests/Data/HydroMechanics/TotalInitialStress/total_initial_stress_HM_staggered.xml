@@ -115,4 +115,7 @@
     <replace msel="/*/time_loop/output/prefix/text()">
         total_initial_stress_HM_staggered
     </replace>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">
+        total_initial_stress_HM_staggered_ts_.*_t_.*.vtu
+    </replace>
 </OpenGeoSysProjectDiff>

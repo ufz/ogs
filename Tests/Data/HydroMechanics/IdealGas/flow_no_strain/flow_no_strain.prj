@@ -232,4 +232,20 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <!-- tolerance could be lowered with smaller time steps, gut would increase runtime -->
+        <!-- TODO (FZill) another solver might provide better results -->
+        <vtkdiff>
+            <regex>flow_no_strain_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1.7e-6</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>flow_no_strain_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
