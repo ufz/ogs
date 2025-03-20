@@ -17,8 +17,9 @@ namespace MaterialPropertyLib
 {
 TemperatureDependentFraction::TemperatureDependentFraction(std::string name,
                                                            double const k,
-                                                           double const T_c)
-    : phase_change_shape_(k, T_c)
+                                                           double const T_c,
+                                                           double const S_r)
+    : phase_change_shape_(k, T_c, S_r)
 {
     name_ = std::move(name);
 }
