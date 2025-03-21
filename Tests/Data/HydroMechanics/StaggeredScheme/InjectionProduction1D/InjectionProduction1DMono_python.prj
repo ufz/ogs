@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 This benchmark simulates a soil column with fluid injection at the bottom and
 a production well at the top. It is taken from from the literature.
@@ -216,7 +216,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
                     <component>1</component>
                     <bc_object>bc_u_D</bc_object>
                 </boundary_condition>
-                <boundary_condition>                
+                <boundary_condition>
                     <type>Python</type>
                     <mesh>mesh_top</mesh>
                     <component>1</component>

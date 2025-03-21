@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>unit_square_domain.vtu</mesh>
@@ -20,7 +20,7 @@
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>
-            <specific_body_force>0 -9.81</specific_body_force>  
+            <specific_body_force>0 -9.81</specific_body_force>
             <constitutive_relation id="0">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>

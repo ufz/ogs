@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 In this Benchmark, OGS simulation results are compared to an analytical 
 solution of a problem assuming the fluid is an ideal gas and using 
@@ -223,8 +223,6 @@ More details are provided in the attached pdf-file.
                     <component>0</component>
                     <bc_object>bc_p_D</bc_object>
                 </boundary_condition>
-                            
-
                 <!--boundary_condition>
                     <geometrical_set>square_1x1_geometry</geometrical_set>
                     <geometry>left</geometry>

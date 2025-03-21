@@ -12,7 +12,7 @@
                 <youngs_modulus>YoungModulus</youngs_modulus>
                 <poissons_ratio>PoissonRatio</poissons_ratio>
             </constitutive_relation>
-            <initial_stress type = "total">sigma0</initial_stress>
+            <initial_stress type="total">sigma0</initial_stress>
             <process_variables>
                 <pressure>pressure</pressure>
                 <displacement>displacement</displacement>
@@ -53,17 +53,17 @@
                 </phase>
             </phases>
             <properties>
-              <property>
+                <property>
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>0.2</value>
-              </property>
-              <property>
+                </property>
+                <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
                     <value>0.8</value>
-              </property>
-              <property>
+                </property>
+                <property>
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>1.0e-9</value>
@@ -84,7 +84,7 @@
         </parameter>
         <parameter>
             <name>PoissonRatio</name>
-             <type>Constant</type>
+            <type>Constant</type>
             <value>0.40</value>
         </parameter>
         <parameter>
@@ -226,7 +226,7 @@
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
-    </time_loop>    
+    </time_loop>
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_newton</name>

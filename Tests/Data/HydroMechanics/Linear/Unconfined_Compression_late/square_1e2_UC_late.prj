@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <mesh axially_symmetric="true">square_1x1_quad8_1e2.vtu</mesh>
     <geometry>square_1x1.gml</geometry>

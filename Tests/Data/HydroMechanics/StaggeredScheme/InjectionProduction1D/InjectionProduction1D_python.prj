@@ -129,7 +129,6 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
-    
         <processes>
             <!--For the equations of hydraulics-->
             <process ref="InjectionProduction1D">
@@ -153,7 +152,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
                         </pair>
                     </timesteps>
                 </time_stepping>
-            </process>        
+            </process>
             <!--For the equations of deformation-->
             <process ref="InjectionProduction1D">
                 <nonlinear_solver>basic_newton_u</nonlinear_solver>
@@ -260,7 +259,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
                     <component>1</component>
                     <bc_object>bc_u_D</bc_object>
                 </boundary_condition>
-                <boundary_condition>                
+                <boundary_condition>
                     <type>Python</type>
                     <mesh>mesh_top</mesh>
                     <component>1</component>
@@ -284,7 +283,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
         </nonlinear_solver>
     </nonlinear_solvers>
     <linear_solvers>
-            <linear_solver>
+        <linear_solver>
             <name>linear_solver_p</name>
             <eigen>
                 <solver_type>SparseLU</solver_type>

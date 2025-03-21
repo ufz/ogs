@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh_domain.vtu</mesh>
@@ -110,7 +110,6 @@
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
-    
         <processes>
             <!--For the equations of hydraulics-->
             <process ref="InjectionProduction1D">
@@ -134,7 +133,7 @@
                         </pair>
                     </timesteps>
                 </time_stepping>
-            </process>        
+            </process>
             <!--For the equations of deformation-->
             <process ref="InjectionProduction1D">
                 <nonlinear_solver>basic_newton_u</nonlinear_solver>
@@ -283,7 +282,7 @@
         </nonlinear_solver>
     </nonlinear_solvers>
     <linear_solvers>
-            <linear_solver>
+        <linear_solver>
             <name>linear_solver_p</name>
             <eigen>
                 <solver_type>SparseLU</solver_type>

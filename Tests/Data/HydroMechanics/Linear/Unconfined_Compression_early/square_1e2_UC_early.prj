@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 We solve a hydro-mechanical linear biphasic model (small deformation, linear
 elastic, Darcy flow, incompressible constituents) in square domain where on

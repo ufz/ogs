@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh_domain.vtu</mesh>
@@ -113,7 +113,6 @@
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
-
         <processes>
             <!--For the equations of hydraulics-->
             <process ref="InjectionProduction1D">

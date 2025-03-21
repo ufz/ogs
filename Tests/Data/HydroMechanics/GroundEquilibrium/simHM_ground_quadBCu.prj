@@ -48,7 +48,7 @@
         <medium>
             <phases>
                 <phase>
-		                <!-- Gas means fluid with pressure-dependent density -->
+                    <!-- Gas means fluid with pressure-dependent density -->
                     <type>Gas</type>
                     <properties>
                         <property>
@@ -279,7 +279,7 @@
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
-    </time_loop>    
+    </time_loop>
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_newton</name>
