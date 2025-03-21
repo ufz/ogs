@@ -1518,3 +1518,50 @@ AddTest( # with options --copy-material_ids and --set-material-id 10 should fail
 if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Utils/partmesh/partmesh_roundtrip.md RUNTIME 10 SKIP_WEB)
 endif()
+
+AddTest(
+    NAME CreateAnchors_inside_elements
+    PATH HydroMechanics/EmbeddedAnchorSourceTerm
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE CreateAnchors
+    EXECUTABLE_ARGS -i square_1x1_quad4_1e2.vtu -f data.json
+                    -o ${Data_BINARY_DIR}/<PATH>/points.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    points.vtu points.vtu natural_coordinates natural_coordinates 1e-12 0
+    points.vtu points.vtu bulk_element_ids bulk_element_ids 0 0
+    points.vtu points.vtu point_cloud_node_ids point_cloud_node_ids 0 0
+)
+AddTest(
+    NAME CreateAnchors_inside_elements_3D
+    PATH HydroMechanics/EmbeddedAnchorSourceTerm
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE CreateAnchors
+    EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3.vtu -f data_3D.json
+                    -o ${Data_BINARY_DIR}/<PATH>/points_3D.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    points_3D.vtu points_3D.vtu natural_coordinates natural_coordinates 1e-12 0
+    points_3D.vtu points_3D.vtu bulk_element_ids bulk_element_ids 0 0
+    points_3D.vtu points_3D.vtu point_cloud_node_ids point_cloud_node_ids 0 0
+)
+AddTest(
+    NAME CreateAnchors_inside_elements_vtkdiff-mesh
+    PATH HydroMechanics/EmbeddedAnchorSourceTerm
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE CreateAnchors
+    EXECUTABLE_ARGS -i square_1x1_quad4_1e2.vtu -f data.json
+                    -o ${Data_BINARY_DIR}/<PATH>/points.vtu
+    TESTER vtkdiff-mesh
+    DIFF_DATA points.vtu points.vtu 1.e-12
+)
+AddTest(
+    NAME CreateAnchors_inside_elements_3D_vtkdiff-mesh
+    PATH HydroMechanics/EmbeddedAnchorSourceTerm
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE CreateAnchors
+    EXECUTABLE_ARGS -i cube_1x1x1_hex_1e3.vtu -f data_3D.json
+                    -o ${Data_BINARY_DIR}/<PATH>/points_3D.vtu
+    TESTER vtkdiff-mesh
+    DIFF_DATA points_3D.vtu points_3D.vtu 1.e-12
+)
