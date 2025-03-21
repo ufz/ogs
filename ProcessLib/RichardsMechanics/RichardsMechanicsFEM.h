@@ -134,9 +134,8 @@ public:
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress.value)
             {
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 EffectiveStressData<DisplacementDim>>(SD)
+                std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                    DisplacementDim>>(SD)
                     .sigma_eff =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>(

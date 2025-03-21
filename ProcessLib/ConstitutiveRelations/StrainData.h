@@ -26,4 +26,19 @@ struct StrainData
         return ProcessLib::Reflection::reflectWithName("epsilon", &Self::eps);
     }
 };
+
+template <int DisplacementDim>
+struct MechanicalStrainData
+{
+    // TODO it seems fragile that some data have to be initialized that way.
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> eps_m =
+        MathLib::KelvinVector::KVzero<DisplacementDim>();
+
+    static auto reflect()
+    {
+        using Self = MechanicalStrainData<DisplacementDim>;
+
+        return ProcessLib::Reflection::reflectWithName("eps_m", &Self::eps_m);
+    }
+};
 }  // namespace ProcessLib::ConstitutiveRelations

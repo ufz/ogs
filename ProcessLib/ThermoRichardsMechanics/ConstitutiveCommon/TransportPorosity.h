@@ -38,8 +38,10 @@ struct TransportPorosityModel
               PrevState<BishopsData> const& bishops_data_prev,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               PorosityData const& poro_data,
-              StrainData<DisplacementDim> const& eps_data,
-              PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+              ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+                  DisplacementDim> const& eps_m_data,
+              PrevState<ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+                  DisplacementDim>> const& eps_m_prev_data,
               PrevState<TransportPorosityData> const& transport_poro_data_prev,
               TransportPorosityData& transport_poro_data) const;
 };

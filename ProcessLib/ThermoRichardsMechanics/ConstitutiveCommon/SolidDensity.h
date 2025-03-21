@@ -12,6 +12,7 @@
 
 #include "Base.h"
 #include "Porosity.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 
@@ -35,7 +36,8 @@ struct SolidDensityModel
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
               PorosityData const& poro_data,
               TemperatureData<DisplacementDim> const& T_data,
-              EffectiveStressData<DisplacementDim>& sigma_eff_data,
+              ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                  DisplacementDim> const& sigma_eff_data,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               BishopsData const& bishops_data, SolidDensityData& out) const;
 };

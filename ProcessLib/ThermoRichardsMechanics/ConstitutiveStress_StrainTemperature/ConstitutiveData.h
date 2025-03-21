@@ -10,7 +10,8 @@
 
 #pragma once
 
-#include "MechanicalStrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqP.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EqT.h"
@@ -34,12 +35,11 @@ namespace ConstitutiveStress_StrainTemperature
 {
 /// Data whose state must be tracked by the TRM process.
 template <int DisplacementDim>
-using StatefulData =
-    std::tuple<SaturationData, PorosityData, TransportPorosityData,
-               StrainData<DisplacementDim>,
-               SwellingDataStateful<DisplacementDim>,
-               MechanicalStrainData<DisplacementDim>,
-               EffectiveStressData<DisplacementDim>>;
+using StatefulData = std::tuple<
+    SaturationData, PorosityData, TransportPorosityData,
+    StrainData<DisplacementDim>, SwellingDataStateful<DisplacementDim>,
+    ProcessLib::ConstitutiveRelations::MechanicalStrainData<DisplacementDim>,
+    ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>>;
 
 template <int DisplacementDim>
 using StatefulDataPrev = PrevStateOf<StatefulData<DisplacementDim>>;

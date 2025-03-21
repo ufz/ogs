@@ -18,7 +18,8 @@ void SolidDensityModel<DisplacementDim>::eval(
     MediaData const& media_data,
     PorosityData const& poro_data,
     TemperatureData<DisplacementDim> const& T_data,
-    EffectiveStressData<DisplacementDim>& sigma_eff_data,
+    ProcessLib::ConstitutiveRelations::EffectiveStressData<
+        DisplacementDim> const& sigma_eff_data,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
     BishopsData const& bishops_data,
     SolidDensityData& out) const

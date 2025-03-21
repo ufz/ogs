@@ -21,8 +21,11 @@ void TransportPorosityModel<DisplacementDim>::eval(
     BishopsData const& bishops_data,
     PrevState<BishopsData> const& bishops_data_prev,
     CapillaryPressureData<DisplacementDim> const& p_cap_data,
-    PorosityData const& poro_data, StrainData<DisplacementDim> const& eps_data,
-    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+    PorosityData const& poro_data,
+    ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+        DisplacementDim> const& eps_m_data,
+    PrevState<ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+        DisplacementDim>> const& eps_m_prev_data,
     PrevState<TransportPorosityData> const& transport_poro_data_prev,
     TransportPorosityData& transport_poro_data) const
 {
@@ -50,8 +53,9 @@ void TransportPorosityModel<DisplacementDim>::eval(
     // MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
     variables.grain_compressibility = solid_compressibility_data.beta_SR;
     // Set volumetric strain rate for the general case without swelling.
-    variables.volumetric_strain = Invariants::trace(eps_data.eps);
-    variables_prev.volumetric_strain = Invariants::trace(eps_prev_data->eps);
+    variables.volumetric_strain = Invariants::trace(eps_m_data.eps_m);
+    variables_prev.volumetric_strain =
+        Invariants::trace(eps_m_prev_data->eps_m);
     variables.effective_pore_pressure =
         -bishops_data.chi_S_L * p_cap_data.p_cap;
     variables.porosity = poro_data.phi;

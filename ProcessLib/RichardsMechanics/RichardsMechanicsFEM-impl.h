@@ -273,16 +273,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             // sigma_eff in
             // RichardsMechanicsLocalAssembler::initializeConcrete().
             auto& sigma_eff =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 EffectiveStressData<DisplacementDim>>(
-                    this->current_states_[ip]);
+                std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                    DisplacementDim>>(this->current_states_[ip]);
 
-            auto& sigma_eff_prev = std::get<
-                PrevState<ProcessLib::ThermoRichardsMechanics::
-                              ConstitutiveStress_StrainTemperature::
-                                  EffectiveStressData<DisplacementDim>>>(
-                this->prev_states_[ip]);
+            auto& sigma_eff_prev =
+                std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                       EffectiveStressData<DisplacementDim>>>(
+                    this->prev_states_[ip]);
 
             // Reset sigma_eff to effective stress
             sigma_eff.sigma_eff.noalias() +=
@@ -333,9 +330,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 this->current_states_[ip])
                 .sigma_sw;
         auto& eps_m_prev =
-            std::get<PrevState<ProcessLib::ThermoRichardsMechanics::
-                                   ConstitutiveStress_StrainTemperature::
-                                       MechanicalStrainData<DisplacementDim>>>(
+            std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                   MechanicalStrainData<DisplacementDim>>>(
                 this->prev_states_[ip])
                 ->eps_m;
 
@@ -601,10 +597,8 @@ void RichardsMechanicsLocalAssembler<
                 this->current_states_[ip])
                 .sigma_sw;
         auto const& sigma_eff =
-            std::get<ProcessLib::ThermoRichardsMechanics::
-                         ConstitutiveStress_StrainTemperature::
-                             EffectiveStressData<DisplacementDim>>(
-                this->current_states_[ip])
+            std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                DisplacementDim>>(this->current_states_[ip])
                 .sigma_eff;
 
         // Set mechanical variables for the intrinsic permeability model
@@ -634,12 +628,10 @@ void RichardsMechanicsLocalAssembler<
         // displacement equation, displacement part
         //
         {
-            auto& eps_m =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 MechanicalStrainData<DisplacementDim>>(
-                    this->current_states_[ip])
-                    .eps_m;
+            auto& eps_m = std::get<ProcessLib::ConstitutiveRelations::
+                                       MechanicalStrainData<DisplacementDim>>(
+                              this->current_states_[ip])
+                              .eps_m;
             eps_m.noalias() =
                 solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
                     ? eps.eps + C_el.inverse() * sigma_sw
@@ -653,23 +645,19 @@ void RichardsMechanicsLocalAssembler<
             auto& SD = this->current_states_[ip];
             auto const& SD_prev = this->prev_states_[ip];
             auto& sigma_eff =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 EffectiveStressData<DisplacementDim>>(SD);
-            auto const& sigma_eff_prev = std::get<
-                PrevState<ProcessLib::ThermoRichardsMechanics::
-                              ConstitutiveStress_StrainTemperature::
-                                  EffectiveStressData<DisplacementDim>>>(
-                SD_prev);
+                std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                    DisplacementDim>>(SD);
+            auto const& sigma_eff_prev =
+                std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                       EffectiveStressData<DisplacementDim>>>(
+                    SD_prev);
             auto const& eps_m =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 MechanicalStrainData<DisplacementDim>>(SD);
-            auto& eps_m_prev = std::get<
-                PrevState<ProcessLib::ThermoRichardsMechanics::
-                              ConstitutiveStress_StrainTemperature::
-                                  MechanicalStrainData<DisplacementDim>>>(
-                SD_prev);
+                std::get<ProcessLib::ConstitutiveRelations::
+                             MechanicalStrainData<DisplacementDim>>(SD);
+            auto& eps_m_prev =
+                std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                       MechanicalStrainData<DisplacementDim>>>(
+                    SD_prev);
 
             _ip_data[ip].updateConstitutiveRelation(
                 variables, t, x_position, dt, temperature, sigma_eff,
@@ -953,9 +941,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         // TODO mechanical constitutive relation will be evaluated afterwards
         auto const sigma_total =
-            (std::get<ProcessLib::ThermoRichardsMechanics::
-                          ConstitutiveStress_StrainTemperature::
-                              EffectiveStressData<DisplacementDim>>(SD)
+            (std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                 DisplacementDim>>(SD)
                  .sigma_eff +
              alpha * p_FR * identity2)
                 .eval();
@@ -997,9 +984,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 .sigma_sw;
 
         auto& eps_m =
-            std::get<ProcessLib::ThermoRichardsMechanics::
-                         ConstitutiveStress_StrainTemperature::
-                             MechanicalStrainData<DisplacementDim>>(SD)
+            std::get<ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+                DisplacementDim>>(SD)
                 .eps_m;
         eps_m.noalias() =
             solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
@@ -1012,22 +998,18 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     {
         auto& sigma_eff =
-            std::get<ProcessLib::ThermoRichardsMechanics::
-                         ConstitutiveStress_StrainTemperature::
-                             EffectiveStressData<DisplacementDim>>(SD);
+            std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                DisplacementDim>>(SD);
         auto const& sigma_eff_prev =
-            std::get<PrevState<ProcessLib::ThermoRichardsMechanics::
-                                   ConstitutiveStress_StrainTemperature::
-                                       EffectiveStressData<DisplacementDim>>>(
+            std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                   EffectiveStressData<DisplacementDim>>>(
                 SD_prev);
         auto const& eps_m =
-            std::get<ProcessLib::ThermoRichardsMechanics::
-                         ConstitutiveStress_StrainTemperature::
-                             MechanicalStrainData<DisplacementDim>>(SD);
+            std::get<ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+                DisplacementDim>>(SD);
         auto& eps_m_prev =
-            std::get<PrevState<ProcessLib::ThermoRichardsMechanics::
-                                   ConstitutiveStress_StrainTemperature::
-                                       MechanicalStrainData<DisplacementDim>>>(
+            std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                   MechanicalStrainData<DisplacementDim>>>(
                 SD_prev);
 
         auto C = ip_data.updateConstitutiveRelation(
@@ -1040,12 +1022,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     // p_SR
     variables.solid_grain_pressure =
-        p_FR -
-        std::get<ProcessLib::ThermoRichardsMechanics::
-                     ConstitutiveStress_StrainTemperature::EffectiveStressData<
-                         DisplacementDim>>(SD)
-                .sigma_eff.dot(identity2) /
-            (3 * (1 - phi));
+        p_FR - std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                   DisplacementDim>>(SD)
+                       .sigma_eff.dot(identity2) /
+                   (3 * (1 - phi));
     auto const rho_SR =
         solid_phase.property(MPL::PropertyType::density)
             .template value<double>(variables, x_position, t, dt);
@@ -1191,10 +1171,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         {
             auto const& sigma_eff =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 EffectiveStressData<DisplacementDim>>(
-                    this->current_states_[ip])
+                std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                    DisplacementDim>>(this->current_states_[ip])
                     .sigma_eff;
             double const rho = *std::get<Density>(CD);
             local_rhs.template segment<displacement_size>(displacement_index)
@@ -1704,10 +1682,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         }
 
         auto const& sigma_eff =
-            std::get<ProcessLib::ThermoRichardsMechanics::
-                         ConstitutiveStress_StrainTemperature::
-                             EffectiveStressData<DisplacementDim>>(
-                this->current_states_[ip])
+            std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                DisplacementDim>>(this->current_states_[ip])
                 .sigma_eff;
 
         // Set mechanical variables for the intrinsic permeability model
@@ -1752,9 +1728,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                  SwellingDataStateful<DisplacementDim>>(SD)
                     .sigma_sw;
             auto& eps_m =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 MechanicalStrainData<DisplacementDim>>(SD)
+                std::get<ProcessLib::ConstitutiveRelations::
+                             MechanicalStrainData<DisplacementDim>>(SD)
                     .eps_m;
             eps_m.noalias() =
                 solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate)
@@ -1769,23 +1744,19 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             auto& SD = this->current_states_[ip];
             auto const& SD_prev = this->prev_states_[ip];
             auto& sigma_eff =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 EffectiveStressData<DisplacementDim>>(SD);
-            auto const& sigma_eff_prev = std::get<
-                PrevState<ProcessLib::ThermoRichardsMechanics::
-                              ConstitutiveStress_StrainTemperature::
-                                  EffectiveStressData<DisplacementDim>>>(
-                SD_prev);
+                std::get<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                    DisplacementDim>>(SD);
+            auto const& sigma_eff_prev =
+                std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                       EffectiveStressData<DisplacementDim>>>(
+                    SD_prev);
             auto const& eps_m =
-                std::get<ProcessLib::ThermoRichardsMechanics::
-                             ConstitutiveStress_StrainTemperature::
-                                 MechanicalStrainData<DisplacementDim>>(SD);
-            auto const& eps_m_prev = std::get<
-                PrevState<ProcessLib::ThermoRichardsMechanics::
-                              ConstitutiveStress_StrainTemperature::
-                                  MechanicalStrainData<DisplacementDim>>>(
-                SD_prev);
+                std::get<ProcessLib::ConstitutiveRelations::
+                             MechanicalStrainData<DisplacementDim>>(SD);
+            auto const& eps_m_prev =
+                std::get<PrevState<ProcessLib::ConstitutiveRelations::
+                                       MechanicalStrainData<DisplacementDim>>>(
+                    SD_prev);
 
             _ip_data[ip].updateConstitutiveRelation(
                 variables, t, x_position, dt, temperature, sigma_eff,

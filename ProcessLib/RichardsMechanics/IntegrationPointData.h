@@ -15,7 +15,8 @@
 #include "ConstitutiveRelations/Base.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MathLib/KelvinVector.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
 
 namespace ProcessLib
 {
@@ -80,20 +81,15 @@ struct IntegrationPointData final
         ParameterLib::SpatialPosition const& x_position,
         double const dt,
         double const temperature,
-        ProcessLib::ThermoRichardsMechanics::
-            ConstitutiveStress_StrainTemperature::EffectiveStressData<
-                DisplacementDim>& sigma_eff,
-        PrevState<ProcessLib::ThermoRichardsMechanics::
-                      ConstitutiveStress_StrainTemperature::EffectiveStressData<
-                          DisplacementDim>> const& sigma_eff_prev,
-        ProcessLib::ThermoRichardsMechanics::
-            ConstitutiveStress_StrainTemperature::MechanicalStrainData<
-                DisplacementDim> const&
+        ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>&
+            sigma_eff,
+        PrevState<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+            DisplacementDim>> const& sigma_eff_prev,
+        ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+            DisplacementDim> const&
         /*eps_m*/,
-        PrevState<
-            ProcessLib::ThermoRichardsMechanics::
-                ConstitutiveStress_StrainTemperature::MechanicalStrainData<
-                    DisplacementDim>> const& eps_m_prev,
+        PrevState<ProcessLib::ConstitutiveRelations::MechanicalStrainData<
+            DisplacementDim>> const& eps_m_prev,
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             solid_material,
         std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
