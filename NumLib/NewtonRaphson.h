@@ -10,8 +10,6 @@
 
 #pragma once
 
-#include <spdlog/fmt/bundled/ranges.h>
-
 #include <Eigen/Core>
 #include <optional>
 
@@ -144,4 +142,21 @@ private:
     const double
         _increment_tolerance_squared;  ///< Error tolerance for the increment.
 };
+
+template <typename LinearSolver, typename JacobianMatrixUpdate,
+          typename ResidualUpdate, typename SolutionUpdate>
+NewtonRaphson<LinearSolver, JacobianMatrixUpdate, ResidualUpdate,
+              SolutionUpdate>
+makeNewtonRaphson(LinearSolver& linear_solver,
+                  JacobianMatrixUpdate&& jacobian_update,
+                  ResidualUpdate&& residual_update,
+                  SolutionUpdate&& solution_update,
+                  NewtonRaphsonSolverParameters const& solver_parameters)
+{
+    return NewtonRaphson<LinearSolver, JacobianMatrixUpdate, ResidualUpdate,
+                         SolutionUpdate>(
+        linear_solver, std::forward<JacobianMatrixUpdate>(jacobian_update),
+        std::forward<ResidualUpdate>(residual_update),
+        std::forward<SolutionUpdate>(solution_update), solver_parameters);
+}
 }  // namespace NumLib
