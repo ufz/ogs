@@ -42,9 +42,9 @@ struct OutputFormat
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::set<std::string> const& output_variables) const = 0;
     virtual std::string constructFilename(std::string const& mesh_name,
-                                          int const timestep,
-                                          double const t,
-                                          int const iteration) const = 0;
+                                          int const timestep, double const t,
+                                          int const iteration,
+                                          bool const converged) const = 0;
 };
 
 inline std::ostream& operator<<(std::ostream& os, OutputFormat const& of)
@@ -86,7 +86,8 @@ struct OutputVTKFormat final : public OutputFormat
 
     std::string constructFilename(std::string const& mesh_name,
                                   int const timestep, double const t,
-                                  int const iteration) const override;
+                                  int const iteration,
+                                  bool const converged) const override;
 
     std::string constructPVDName(std::string const& mesh_name) const;
 };
@@ -114,7 +115,8 @@ struct OutputXDMFHDF5Format final : public OutputFormat
 
     std::string constructFilename(std::string const& mesh_name,
                                   int const timestep, double const t,
-                                  int const iteration) const override;
+                                  int const iteration,
+                                  bool const converged) const override;
 
     mutable std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
     //! Specifies the number of hdf5 output files.

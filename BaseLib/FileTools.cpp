@@ -100,6 +100,16 @@ bool substituteKeyword(std::string& result,
         return false;
     }
 
+    if constexpr (std::is_same_v<std::remove_cvref_t<T>, bool>)
+    {
+        if (keyword == "converged")
+        {
+            std::string r = data ? "" : "_not_converged";
+            result.replace(begin, end - begin + 1, r);
+            return true;
+        }
+    }
+
     std::unordered_map<std::type_index, char> type_specification;
     type_specification[std::type_index(typeid(int))] = 'd';
     type_specification[std::type_index(typeid(double))] = 'f';  // default
@@ -127,7 +137,8 @@ std::string constructFormattedFileName(std::string const& format_specification,
                                        std::string const& mesh_name,
                                        int const timestep,
                                        double const t,
-                                       int const iteration)
+                                       int const iteration,
+                                       bool const converged)
 {
     char const open_char = '{';
     char const close_char = '}';
@@ -144,7 +155,9 @@ std::string constructFormattedFileName(std::string const& format_specification,
             getParenthesizedString(result, open_char, close_char, begin);
         if (!substituteKeyword(result, str, begin, end, "timestep", timestep) &&
             !substituteKeyword(result, str, begin, end, "time", t) &&
-            !substituteKeyword(result, str, begin, end, "iteration", iteration))
+            !substituteKeyword(result, str, begin, end, "iteration",
+                               iteration) &&
+            !substituteKeyword(result, str, begin, end, "converged", converged))
         {
             substituteKeyword(result, str, begin, end, "meshname", mesh_name);
         }

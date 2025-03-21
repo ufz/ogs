@@ -395,7 +395,7 @@ void Output::doOutputNonlinearIteration(
     }
 
     std::string const output_file_name = _output_format->constructFilename(
-        process.getMesh().getName(), timestep, t(), iteration);
+        process.getMesh().getName(), timestep, t(), iteration, converged);
 
     std::string const output_file_path =
         BaseLib::joinPaths(_output_format->directory, output_file_name);

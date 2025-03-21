@@ -76,7 +76,7 @@ std::string OutputVTKFormat::constructPVDName(
 {
     return BaseLib::joinPaths(
         directory,
-        BaseLib::constructFormattedFileName(prefix, mesh_name, 0, 0, 0) +
+        BaseLib::constructFormattedFileName(prefix, mesh_name, 0, 0, 0, true) +
             ".pvd");
 }
 
@@ -92,21 +92,22 @@ OutputFormat::OutputFormat(std::string const& directory, std::string prefix,
 std::string OutputVTKFormat::constructFilename(std::string const& mesh_name,
                                                int const timestep,
                                                double const t,
-                                               int const iteration) const
+                                               int const iteration,
+                                               bool const converged) const
 {
     return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,
-                                               iteration) +
+                                               iteration, converged) +
            BaseLib::constructFormattedFileName(suffix, mesh_name, timestep, t,
-                                               iteration) +
+                                               iteration, converged) +
            ".vtu";
 }
 
 std::string OutputXDMFHDF5Format::constructFilename(
     std::string const& mesh_name, int const timestep, double const t,
-    int const iteration) const
+    int const iteration, bool const converged) const
 {
     return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,
-                                               iteration) +
+                                               iteration, converged) +
            ".xdmf";
 }
 
