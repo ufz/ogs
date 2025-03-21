@@ -176,6 +176,7 @@ void Output::doNotProjectFromBulkMeshToSubmeshes(
 
 void Output::outputMeshes(
     const int timestep, const double t, const int iteration,
+    bool const converged,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
     const
 {
@@ -208,7 +209,7 @@ void Output::outputMeshes(
             }
         }
     }
-    _output_format->outputMeshes(timestep, t, iteration, meshes,
+    _output_format->outputMeshes(timestep, t, iteration, converged, meshes,
                                  _output_data_specification.output_variables);
 }
 
@@ -291,6 +292,7 @@ void Output::doOutputAlways(Process const& process,
                             int const timestep,
                             const NumLib::Time& t,
                             int const iteration,
+                            bool const converged,
                             std::vector<GlobalVector*> const& xs) const
 {
     BaseLib::RunTime time_output;
@@ -327,7 +329,7 @@ void Output::doOutputAlways(Process const& process,
         }
     }
 
-    outputMeshes(timestep, t(), iteration, std::move(output_meshes));
+    outputMeshes(timestep, t(), iteration, converged, std::move(output_meshes));
 
     INFO("[time] Output of timestep {:d} took {:g} s.", timestep,
          time_output.elapsed());
@@ -338,11 +340,13 @@ void Output::doOutput(Process const& process,
                       int const timestep,
                       const NumLib::Time& t,
                       int const iteration,
+                      bool const converged,
                       std::vector<GlobalVector*> const& xs) const
 {
     if (isOutputStep(timestep, t))
     {
-        doOutputAlways(process, process_id, timestep, t, iteration, xs);
+        doOutputAlways(process, process_id, timestep, t, iteration, converged,
+                       xs);
     }
 #ifdef OGS_USE_INSITU
     // Note: last time step may be output twice: here and in
@@ -357,11 +361,13 @@ void Output::doOutputLastTimestep(Process const& process,
                                   int const timestep,
                                   const NumLib::Time& t,
                                   int const iteration,
+                                  bool const converged,
                                   std::vector<GlobalVector*> const& xs) const
 {
     if (!isOutputStep(timestep, t))
     {
-        doOutputAlways(process, process_id, timestep, t, iteration, xs);
+        doOutputAlways(process, process_id, timestep, t, iteration, converged,
+                       xs);
     }
 #ifdef OGS_USE_INSITU
     InSituLib::CoProcess(process.getMesh(), t, timestep, true,
@@ -371,7 +377,7 @@ void Output::doOutputLastTimestep(Process const& process,
 
 void Output::doOutputNonlinearIteration(
     Process const& process, const int process_id, int const timestep,
-    const NumLib::Time& t, int const iteration,
+    const NumLib::Time& t, int const iteration, bool const converged,
     std::vector<GlobalVector*> const& xs) const
 {
     if (!_output_nonlinear_iteration_results)
@@ -423,8 +429,10 @@ bool Output::isOutputStep(int const timestep, NumLib::Time const& t) const
 std::vector<std::string> Output::getFileNamesForOutput() const
 {
     auto construct_filename = ranges::views::transform(
-        [&](auto const& output_name)
-        { return _output_format->constructFilename(output_name, 0, 0, 0); });
+        [&](auto const& output_name) {
+            return _output_format->constructFilename(output_name, 0, 0, 0,
+                                                     true);
+        });
 
     return _mesh_names_for_output | construct_filename |
            ranges::to<std::vector>;

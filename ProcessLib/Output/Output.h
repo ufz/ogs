@@ -61,7 +61,7 @@ public:
     //! the given \c timestep.
     void doOutput(Process const& process, const int process_id,
                   int const timestep, const NumLib::Time& t,
-                  int const iteration,
+                  int const iteration, bool const converged,
                   std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process if it has not been written yet.
@@ -69,7 +69,7 @@ public:
     //! order to make sure that its results are written.
     void doOutputLastTimestep(Process const& process, const int process_id,
                               int const timestep, const NumLib::Time& t,
-                              int const iteration,
+                              int const iteration, bool const converged,
                               std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process.
@@ -77,7 +77,7 @@ public:
     //! It is intended to write output in error handling routines.
     void doOutputAlways(Process const& process, const int process_id,
                         int const timestep, const NumLib::Time& t,
-                        int const iteration,
+                        int const iteration, bool const converged,
                         std::vector<GlobalVector*> const& xs) const;
 
     //! Writes output for the given \c process.
@@ -85,6 +85,7 @@ public:
     void doOutputNonlinearIteration(Process const& process,
                                     const int process_id, int const timestep,
                                     const NumLib::Time& t, const int iteration,
+                                    bool const converged,
                                     std::vector<GlobalVector*> const& xs) const;
 
     //! Tells if output will be written at the specified timestep/time.
@@ -107,6 +108,7 @@ private:
 
     void outputMeshes(
         int const timestep, const double t, int const iteration,
+        bool const converged,
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
         const;
 
