@@ -11,8 +11,11 @@
 #include "ComputeSparsityPattern.h"
 
 #include <numeric>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "LocalToGlobalIndexMap.h"
+#include "MeshLib/Location.h"
 #include "MeshLib/NodeAdjacencyTable.h"
 
 #ifdef USE_PETSC
@@ -40,14 +43,11 @@ GlobalSparsityPattern computeSparsityPatternNonPETSc(
 
     // A mapping   mesh node id -> global indices
     // It acts as a cache for dof table queries.
-    std::vector<std::vector<GlobalIndexType>> global_idcs;
-
-    global_idcs.reserve(mesh.getNumberOfNodes());
-    for (std::size_t n = 0; n < mesh.getNumberOfNodes(); ++n)
-    {
-        MeshLib::Location l(mesh.getID(), MeshLib::MeshItemType::Node, n);
-        global_idcs.push_back(dof_table.getGlobalIndices(l));
-    }
+    auto const global_idcs =
+        MeshLib::views::meshLocations(mesh, MeshLib::MeshItemType::Node) |
+        ranges::views::transform([&](auto&& l)
+                                 { return dof_table.getGlobalIndices(l); }) |
+        ranges::to<std::vector>();
 
     GlobalSparsityPattern sparsity_pattern(dof_table.dofSizeWithGhosts());
 

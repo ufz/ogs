@@ -16,12 +16,14 @@
 
 #include <cstdlib>
 #include <memory>
+#include <range/v3/view/iota.hpp>
 #include <range/v3/view/transform.hpp>
 #include <string>
 #include <vector>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Error.h"
+#include "Location.h"
 #include "MathLib/Point3d.h"
 #include "MeshEnums.h"
 #include "Properties.h"
@@ -232,5 +234,13 @@ inline constexpr ranges::views::view_closure names =
 inline constexpr ranges::views::view_closure coords =
     ranges::views::transform([](MathLib::Point3d const* n)
                              { return std::span(n->data(), n->data() + 3); });
+
+inline auto meshLocations(Mesh const& mesh, MeshItemType const item_type)
+{
+    return ranges::views::iota(std::size_t{0}, mesh.getNumberOfNodes()) |
+           ranges::views::transform(
+               [mesh_id = mesh.getID(), item_type](std::size_t const n)
+               { return Location{mesh_id, item_type, n}; });
+}
 }  // namespace views
 }  // namespace MeshLib

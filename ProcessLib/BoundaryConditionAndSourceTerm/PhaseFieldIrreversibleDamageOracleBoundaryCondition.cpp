@@ -48,12 +48,9 @@ void PhaseFieldIrreversibleDamageOracleBoundaryCondition::preTimestep(
     _bc_values.ids.clear();
     _bc_values.values.clear();
 
-    auto const mesh_id = _mesh.getID();
-    auto const& nodes = _mesh.getNodes();
-    for (auto const* n : nodes)
+    for (auto const& l :
+         MeshLib::views::meshLocations(_mesh, MeshLib::MeshItemType::Node))
     {
-        std::size_t node_id = n->getID();
-        MeshLib::Location l(mesh_id, MeshLib::MeshItemType::Node, node_id);
         const auto g_idx =
             _dof_table.getGlobalIndex(l, _variable_id, _component_id);
 
