@@ -99,8 +99,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     auto const gas_pressure =
         local_x.template segment<gas_pressure_size>(gas_pressure_index);
+    auto const gas_pressure_prev =
+        local_x_prev.template segment<gas_pressure_size>(gas_pressure_index);
     auto const capillary_pressure =
         local_x.template segment<capillary_pressure_size>(
+            capillary_pressure_index);
+    auto const capillary_pressure_prev =
+        local_x_prev.template segment<capillary_pressure_size>(
             capillary_pressure_index);
 
     auto const temperature =
@@ -152,11 +157,17 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
+        double const pG = Np.dot(gas_pressure);
+        double const pG_prev = Np.dot(gas_pressure_prev);
+        double const pCap = Np.dot(capillary_pressure);
+        double const pCap_prev = Np.dot(capillary_pressure_prev);
         ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
-        ConstitutiveRelations::GasPressureData const pGR_data{
-            Np.dot(gas_pressure)};
+        ConstitutiveRelations::GasPressureData const pGR_data{pG, pG_prev};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap,
+                                                                     pCap_prev};
+        /*    Np.dot(gas_pressure)};
         ConstitutiveRelations::CapillaryPressureData const pCap_data{
-            Np.dot(capillary_pressure)};
+            Np.dot(capillary_pressure)};*/
         ConstitutiveRelations::ReferenceTemperatureData const T0{
             this->process_data_.reference_temperature(t, pos)[0]};
         ConstitutiveRelations::GasPressureGradientData<DisplacementDim> const
@@ -178,13 +189,19 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        ip_out.eps_data.eps.noalias() = Bu * displacement;
+        current_state.eps_data.eps.noalias() = Bu * displacement;
         models.S_L_model.eval({pos, t, dt}, media_data, pCap_data,
                               current_state.S_L_data);
 
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
-                                  current_state.S_L_data, ip_cv.chi_S_L);
+                                  current_state.S_L_data,
+                                  current_state.chi_S_L);
+#ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+        prev_state.eps_data->eps.noalias() = Bu * displacement_prev;
 
+        models.chi_S_L_prev_model.eval({pos, t, dt}, media_data,
+                                       prev_state.S_L_data, prev_state.chi_S_L);
+#endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
         // solid phase compressibility
         models.beta_p_SR_model.eval({pos, t, dt}, ip_cv.biot_data,
                                     ip_cv.C_el_data, ip_cv.beta_p_SR);
@@ -200,7 +217,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                       ip_cv.s_therm_exp_data);
 
         models.mechanical_strain_model.eval(
-            T_data, ip_cv.s_therm_exp_data, ip_out.eps_data,
+            T_data, ip_cv.s_therm_exp_data, current_state.eps_data,
             Bu * displacement_prev, prev_state.mechanical_strain_data,
             ip_cv.swelling_data, current_state.mechanical_strain_data);
 
@@ -211,12 +228,13 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cd.s_mech_data, ip_cv.equivalent_plastic_strain_data);
 
         models.total_stress_model.eval(current_state.eff_stress_data,
-                                       ip_cv.biot_data, ip_cv.chi_S_L, pGR_data,
-                                       pCap_data, ip_cv.total_stress_data);
+                                       ip_cv.biot_data, current_state.chi_S_L,
+                                       pGR_data, pCap_data,
+                                       ip_cv.total_stress_data);
 
         models.permeability_model.eval(
             {pos, t, dt}, media_data, current_state.S_L_data, pCap_data, T_data,
-            ip_cv.total_stress_data, ip_out.eps_data,
+            ip_cv.total_stress_data, current_state.eps_data,
             ip_cv.equivalent_plastic_strain_data, ip_out.permeability_data);
 
         models.pure_liquid_density_model.eval({pos, t, dt}, media_data,
@@ -234,16 +252,19 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_out.mass_mole_fractions_data,
                                     ip_cv.viscosity_data);
 
-        models.porosity_model.eval({pos, t, dt}, media_data,
+        models.porosity_model.eval(
+            {pos, t, dt}, media_data,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                   ip_cv.biot_data, ip_out.eps_data,
-                                   ip_cv.s_therm_exp_data,
+            current_state.S_L_data, prev_state.S_L_data, pCap_data, pGR_data,
+            current_state.chi_S_L, prev_state.chi_S_L, ip_cv.biot_data,
+            ip_cv.beta_p_SR, current_state.eps_data, prev_state.eps_data,
+            prev_state.porosity_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                   ip_out.porosity_data);
+            current_state.porosity_data);
 
         models.solid_density_model.eval({pos, t, dt}, media_data, T_data,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                        ip_cv.biot_data, ip_out.eps_data,
+                                        ip_cv.biot_data, current_state.eps_data,
                                         ip_cv.s_therm_exp_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
                                         ip_out.solid_density_data);
@@ -252,7 +273,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                               ip_cv.solid_heat_capacity_data);
 
         models.thermal_conductivity_model.eval(
-            {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
+            {pos, t, dt}, media_data, T_data, current_state.porosity_data,
             current_state.S_L_data, ip_cv.thermal_conductivity_data);
 
         models.advection_model.eval(current_state.constituent_density_data,
@@ -263,7 +284,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.gravity_model.eval(
             ip_out.fluid_density_data,
-            ip_out.porosity_data,
+            current_state.porosity_data,
             current_state.S_L_data,
             ip_out.solid_density_data,
             ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
@@ -274,7 +295,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                              grad_p_GR,
                                              ip_out.mass_mole_fractions_data,
                                              ip_cv.phase_transition_data,
-                                             ip_out.porosity_data,
+                                             current_state.porosity_data,
                                              current_state.S_L_data,
                                              grad_T,
                                              ip_out.diffusion_velocity_data);
@@ -284,7 +305,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.internal_energy_model.eval(ip_out.fluid_density_data,
                                           ip_cv.phase_transition_data,
-                                          ip_out.porosity_data,
+                                          current_state.porosity_data,
                                           current_state.S_L_data,
                                           ip_out.solid_density_data,
                                           ip_out.solid_enthalpy_data,
@@ -293,7 +314,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.effective_volumetric_enthalpy_model.eval(
             ip_out.fluid_density_data,
             ip_out.fluid_enthalpy_data,
-            ip_out.porosity_data,
+            current_state.porosity_data,
             current_state.S_L_data,
             ip_out.solid_density_data,
             ip_out.solid_enthalpy_data,
@@ -307,7 +328,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             models.fC_2a_model.eval(ip_cv.biot_data,
                                     pCap_data,
                                     current_state.constituent_density_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     current_state.S_L_data,
                                     ip_cv.beta_p_SR,
                                     ip_cv.fC_2a);
@@ -321,26 +342,26 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.fC_4_LCpG_model.eval(ip_cv.advection_data,
                                     ip_out.fluid_density_data,
                                     ip_cv.phase_transition_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     current_state.S_L_data,
                                     ip_cv.fC_4_LCpG);
 
         models.fC_4_LCpC_model.eval(ip_cv.advection_data,
                                     ip_out.fluid_density_data,
                                     ip_cv.phase_transition_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     current_state.S_L_data,
                                     ip_cv.fC_4_LCpC);
 
         models.fC_4_LCT_model.eval(ip_out.fluid_density_data,
                                    ip_cv.phase_transition_data,
-                                   ip_out.porosity_data,
+                                   current_state.porosity_data,
                                    current_state.S_L_data,
                                    ip_cv.fC_4_LCT);
 
         models.fC_4_MCpG_model.eval(ip_cv.biot_data,
                                     current_state.constituent_density_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     current_state.S_L_data,
                                     ip_cv.beta_p_SR,
                                     ip_cv.fC_4_MCpG);
@@ -348,7 +369,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.fC_4_MCpC_model.eval(ip_cv.biot_data,
                                     pCap_data,
                                     current_state.constituent_density_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     prev_state.S_L_data,
                                     current_state.S_L_data,
                                     ip_cv.beta_p_SR,
@@ -356,7 +377,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.fC_4_MCT_model.eval(ip_cv.biot_data,
                                    current_state.constituent_density_data,
-                                   ip_out.porosity_data,
+                                   current_state.porosity_data,
                                    current_state.S_L_data,
                                    ip_cv.s_therm_exp_data,
                                    ip_cv.fC_4_MCT);
@@ -374,7 +395,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             models.fW_2_model.eval(ip_cv.biot_data,
                                    pCap_data,
                                    current_state.constituent_density_data,
-                                   ip_out.porosity_data,
+                                   current_state.porosity_data,
                                    current_state.rho_W_LR,
                                    current_state.S_L_data,
                                    ip_cv.beta_p_SR,
@@ -391,26 +412,26 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.fW_4_LWpG_model.eval(ip_cv.advection_data,
                                     ip_out.fluid_density_data,
                                     ip_cv.phase_transition_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     current_state.S_L_data,
                                     ip_cv.fW_4_LWpG);
 
         models.fW_4_LWpC_model.eval(ip_cv.advection_data,
                                     ip_out.fluid_density_data,
                                     ip_cv.phase_transition_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     current_state.S_L_data,
                                     ip_cv.fW_4_LWpC);
 
         models.fW_4_LWT_model.eval(ip_out.fluid_density_data,
                                    ip_cv.phase_transition_data,
-                                   ip_out.porosity_data,
+                                   current_state.porosity_data,
                                    current_state.S_L_data,
                                    ip_cv.fW_4_LWT);
 
         models.fW_4_MWpG_model.eval(ip_cv.biot_data,
                                     current_state.constituent_density_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     current_state.rho_W_LR,
                                     current_state.S_L_data,
                                     ip_cv.beta_p_SR,
@@ -419,7 +440,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.fW_4_MWpC_model.eval(ip_cv.biot_data,
                                     pCap_data,
                                     current_state.constituent_density_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     prev_state.S_L_data,
                                     current_state.rho_W_LR,
                                     current_state.S_L_data,
@@ -428,7 +449,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.fW_4_MWT_model.eval(ip_cv.biot_data,
                                    current_state.constituent_density_data,
-                                   ip_out.porosity_data,
+                                   current_state.porosity_data,
                                    current_state.rho_W_LR,
                                    current_state.S_L_data,
                                    ip_cv.s_therm_exp_data,
@@ -474,7 +495,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 this->process_data_.specific_body_force},
             ip_cv.fT_3);
 
-        models.fu_2_KupC_model.eval(ip_cv.biot_data, ip_cv.chi_S_L,
+        models.fu_2_KupC_model.eval(ip_cv.biot_data, current_state.chi_S_L,
                                     ip_cv.fu_2_KupC);
     }
 
@@ -561,28 +582,29 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_dd.advection_d_data);
 
         models.porosity_model.dEval(
-            {pos, t, dt}, media_data, ip_out.porosity_data, ip_dd.dS_L_dp_cap,
+            {pos, t, dt}, media_data, current_state.porosity_data,
+            ip_dd.dS_L_dp_cap,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_cv.biot_data, ip_cv.s_therm_exp_data, ip_out.eps_data,
+            ip_cv.biot_data, ip_cv.s_therm_exp_data, current_state.eps_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             ip_dd.porosity_d_data);
 
         models.thermal_conductivity_model.dEval(
-            {pos, t, dt}, media_data, T_data, ip_out.porosity_data,
+            {pos, t, dt}, media_data, T_data, current_state.porosity_data,
             ip_dd.porosity_d_data, current_state.S_L_data,
             ip_dd.thermal_conductivity_d_data);
 
-        models.solid_density_model.dEval({pos, t, dt}, media_data, T_data,
+        models.solid_density_model.dEval(
+            {pos, t, dt}, media_data, T_data,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                         ip_cv.biot_data, ip_out.eps_data,
-                                         ip_cv.s_therm_exp_data,
+            ip_cv.biot_data, current_state.eps_data, ip_cv.s_therm_exp_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-                                         ip_dd.solid_density_d_data);
+            ip_dd.solid_density_d_data);
 
         models.internal_energy_model.dEval(
             ip_out.fluid_density_data,
             ip_cv.phase_transition_data,
-            ip_out.porosity_data,
+            current_state.porosity_data,
             ip_dd.porosity_d_data,
             current_state.S_L_data,
             ip_out.solid_density_data,
@@ -595,7 +617,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.fluid_density_data,
             ip_out.fluid_enthalpy_data,
             ip_cv.phase_transition_data,
-            ip_out.porosity_data,
+            current_state.porosity_data,
             ip_dd.porosity_d_data,
             current_state.S_L_data,
             ip_out.solid_density_data,
@@ -609,7 +631,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      pCap_data,
                                      current_state.constituent_density_data,
                                      ip_cv.phase_transition_data,
-                                     ip_out.porosity_data,
+                                     current_state.porosity_data,
                                      ip_dd.porosity_d_data,
                                      current_state.S_L_data,
                                      ip_dd.dS_L_dp_cap,
@@ -640,7 +662,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.fC_4_MCpG_model.dEval(ip_cv.biot_data,
                                      current_state.constituent_density_data,
                                      ip_cv.phase_transition_data,
-                                     ip_out.porosity_data,
+                                     current_state.porosity_data,
                                      ip_dd.porosity_d_data,
                                      current_state.S_L_data,
                                      ip_cv.beta_p_SR,
@@ -649,7 +671,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.fC_4_MCT_model.dEval(ip_cv.biot_data,
                                     current_state.constituent_density_data,
                                     ip_cv.phase_transition_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     ip_dd.porosity_d_data,
                                     current_state.S_L_data,
                                     ip_cv.s_therm_exp_data,
@@ -666,7 +688,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     pCap_data,
                                     current_state.constituent_density_data,
                                     ip_cv.phase_transition_data,
-                                    ip_out.porosity_data,
+                                    current_state.porosity_data,
                                     ip_dd.porosity_d_data,
                                     current_state.rho_W_LR,
                                     current_state.S_L_data,
@@ -697,7 +719,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_out.fluid_density_data,
                                      ip_out.permeability_data,
                                      ip_cv.phase_transition_data,
-                                     ip_out.porosity_data,
+                                     current_state.porosity_data,
                                      current_state.rho_W_LR,
                                      current_state.S_L_data,
                                      ip_dd.dS_L_dp_cap,
@@ -722,7 +744,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_dd.dfu_1_KuT);
 
         models.fu_2_KupC_model.dEval(ip_cv.biot_data,
-                                     ip_cv.chi_S_L,
+                                     current_state.chi_S_L,
                                      pCap_data,
                                      ip_dd.dS_L_dp_cap,
                                      ip_dd.dfu_2_KupC);
@@ -837,6 +859,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto& ip_out = this->output_data_[ip];
         auto& prev_state = this->prev_states_[ip];
+        auto& current_state = this->current_states_[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
         auto const& Nu = ip_data.N_u;
@@ -866,7 +889,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = ip_out.eps_data.eps;
+        auto& eps = current_state.eps_data.eps;
         eps.noalias() = Bu * displacement;
 
         // Set volumetric strain rate for the general case without swelling.
@@ -1127,7 +1150,8 @@ void TH2MLocalAssembler<
             fC.noalias() -= NpT * (ip_cv.fC_2a.a * s_L_dot * w);
         }
         // fC_III
-        fC.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fC_3a.a * w);
+        fC.noalias() -=
+            NpT * (current_state.porosity_data.phi * ip_cv.fC_3a.a * w);
 
         // ---------------------------------------------------------------------
         // W-component equation
@@ -1162,7 +1186,8 @@ void TH2MLocalAssembler<
             fW.noalias() -= NpT * (ip_cv.fW_2.a * s_L_dot * w);
         }
 
-        fW.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fW_3a.a * w);
+        fW.noalias() -=
+            NpT * (current_state.porosity_data.phi * ip_cv.fW_3a.a * w);
 
         // ---------------------------------------------------------------------
         //  - temperature equation
@@ -1520,22 +1545,22 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         {
             // fC_3 = \int phi * a
             fC.noalias() -=
-                NpT * (ip_out.porosity_data.phi * ip_cv.fC_3a.a * w);
+                NpT * (current_state.porosity_data.phi * ip_cv.fC_3a.a * w);
 
             local_Jac.template block<C_size, C_size>(C_index, C_index)
-                .noalias() +=
-                NTN * (ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_GR * w);
+                .noalias() += NTN * (current_state.porosity_data.phi *
+                                     ip_dd.dfC_3a.dp_GR * w);
 
             local_Jac.template block<C_size, W_size>(C_index, W_index)
-                .noalias() +=
-                NTN * (ip_out.porosity_data.phi * ip_dd.dfC_3a.dp_cap * w);
+                .noalias() += NTN * (current_state.porosity_data.phi *
+                                     ip_dd.dfC_3a.dp_cap * w);
 
             local_Jac
                 .template block<C_size, temperature_size>(C_index,
                                                           temperature_index)
                 .noalias() +=
                 NTN * ((ip_dd.porosity_d_data.dphi_dT * ip_cv.fC_3a.a +
-                        ip_out.porosity_data.phi * ip_dd.dfC_3a.dT) *
+                        current_state.porosity_data.phi * ip_dd.dfC_3a.dT) *
                        w);
         }
         // ---------------------------------------------------------------------
@@ -1614,20 +1639,21 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         }
 
         // fW_3 = \int phi * a
-        fW.noalias() -= NpT * (ip_out.porosity_data.phi * ip_cv.fW_3a.a * w);
+        fW.noalias() -=
+            NpT * (current_state.porosity_data.phi * ip_cv.fW_3a.a * w);
 
         local_Jac.template block<W_size, C_size>(W_index, C_index).noalias() +=
-            NTN * (ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_GR * w);
+            NTN * (current_state.porosity_data.phi * ip_dd.dfW_3a.dp_GR * w);
 
         local_Jac.template block<W_size, W_size>(W_index, W_index).noalias() +=
-            NTN * (ip_out.porosity_data.phi * ip_dd.dfW_3a.dp_cap * w);
+            NTN * (current_state.porosity_data.phi * ip_dd.dfW_3a.dp_cap * w);
 
         local_Jac
             .template block<W_size, temperature_size>(W_index,
                                                       temperature_index)
             .noalias() +=
             NTN * ((ip_dd.porosity_d_data.dphi_dT * ip_cv.fW_3a.a +
-                    ip_out.porosity_data.phi * ip_dd.dfW_3a.dT) *
+                    current_state.porosity_data.phi * ip_dd.dfW_3a.dT) *
                    w);
 
         // ---------------------------------------------------------------------

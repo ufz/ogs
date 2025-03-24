@@ -28,6 +28,7 @@
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
+#include "ProcessLib/TH2M/ConstitutiveRelations/Porosity.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
 
@@ -116,6 +117,9 @@ private:
     {
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
+        auto const time_independent = std::numeric_limits<double>::quiet_NaN();
+        auto const& medium =
+            *this->process_data_.media_map.getMedium(this->element_.getID());
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -127,17 +131,43 @@ private:
                                  ShapeFunctionDisplacement,
                                  ShapeMatricesTypeDisplacement>(this->element_,
                                                                 ip_data.N_u))};
+            auto& current_state = this->current_states_[ip];
 
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress.value)
             {
-                this->current_states_[ip].eff_stress_data.sigma.noalias() =
+                current_state.eff_stress_data.sigma.noalias() =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>(
                         (*this->process_data_.initial_stress.value)(
                             std::numeric_limits<
                                 double>::quiet_NaN() /* time independent */,
                             x_position));
+            }
+
+            if (*this->process_data_.initialize_porosity_from_medium_property)
+            {
+                // Initial porosity. Could be read from integration point data
+                // or mesh.
+                current_state.porosity_data.phi =
+                    // std::get<iConstitutiveRelations::PorosityData>(current_state).phi
+                    // =
+                    medium.property(MaterialPropertyLib::porosity)
+                        .template initialValue<double>(x_position,
+                                                       time_independent);
+
+                /*if (medium.hasProperty(MPL::PropertyType::transport_porosity))
+                {
+                    std::get<TransportPorosityData>(current_state).phi =
+                        medium.property(MPL::transport_porosity)
+                            .template initialValue<double>(x_position,
+                                                           time_independent);
+                }
+                else
+                {
+                    std::get<TransportPorosityData>(current_state).phi =
+                        std::get<PorosityData>(current_state).phi;
+                }*/
             }
 
             double const t = 0;  // TODO (naumov) pass t from top

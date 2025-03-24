@@ -40,7 +40,7 @@ void FU2KUpCModel::dEval(BiotData const& biot_data,
                          FU2KUpCDerivativeData& dfu_2_KupC) const
 {
     dfu_2_KupC.dp_cap =
-        biot_data() * chi_S_L.dchi_dS_L * dS_L_dp_cap() * p_cap();
+        biot_data() * chi_S_L.dchi_dS_L * dS_L_dp_cap() * p_cap.pCap;
 }
 
 }  // namespace ConstitutiveRelations

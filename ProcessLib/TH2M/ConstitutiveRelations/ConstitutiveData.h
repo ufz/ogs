@@ -56,19 +56,25 @@ struct StatefulData
 {
     SaturationData S_L_data;
     SwellingDataStateful<DisplacementDim> swelling_data;
+    BishopsData chi_S_L;
     ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>
         eff_stress_data;
+    ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
     PureLiquidDensityData rho_W_LR;
     ConstituentDensityData constituent_density_data;
     InternalEnergyData internal_energy_data;
+    PorosityData porosity_data;
 
     static auto reflect()
     {
         using Self = StatefulData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(
-            &Self::S_L_data, &Self::swelling_data, &Self::eff_stress_data);
+        return Reflection::reflectWithoutName(&Self::S_L_data,
+                                              &Self::swelling_data,
+                                              &Self::eff_stress_data,
+                                              &Self::eps_data,
+                                              &Self::porosity_data);
     }
 };
 
@@ -77,23 +83,30 @@ struct StatefulDataPrev
 {
     PrevState<SaturationData> S_L_data;
     PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
+    PrevState<BishopsData> chi_S_L;
     PrevState<ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>>
         eff_stress_data;
+    PrevState<ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim>>
+        eps_data;
     PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
     PrevState<PureLiquidDensityData> rho_W_LR;
     PrevState<ConstituentDensityData> constituent_density_data;
     PrevState<InternalEnergyData> internal_energy_data;
+    PrevState<PorosityData> porosity_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
     {
         S_L_data = state.S_L_data;
         swelling_data = state.swelling_data;
+        chi_S_L = state.chi_S_L;
         eff_stress_data = state.eff_stress_data;
+        eps_data = state.eps_data;
         mechanical_strain_data = state.mechanical_strain_data;
         rho_W_LR = state.rho_W_LR;
         constituent_density_data = state.constituent_density_data;
         internal_energy_data = state.internal_energy_data;
+        porosity_data = state.porosity_data;
 
         return *this;
     }
@@ -103,7 +116,7 @@ struct StatefulDataPrev
 template <int DisplacementDim>
 struct OutputData
 {
-    ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
+    // ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
     FluidEnthalpyData fluid_enthalpy_data;
     SolidEnthalpyData solid_enthalpy_data;
@@ -119,17 +132,17 @@ struct OutputData
     {
         using Self = OutputData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(&Self::eps_data,
-                                              &Self::permeability_data,
-                                              &Self::fluid_enthalpy_data,
-                                              &Self::solid_enthalpy_data,
-                                              &Self::mass_mole_fractions_data,
-                                              &Self::fluid_density_data,
-                                              &Self::vapour_pressure_data,
-                                              &Self::porosity_data,
-                                              &Self::solid_density_data,
-                                              &Self::diffusion_velocity_data,
-                                              &Self::darcy_velocity_data);
+        return Reflection::reflectWithoutName(  //&Self::eps_data,
+            &Self::permeability_data,
+            &Self::fluid_enthalpy_data,
+            &Self::solid_enthalpy_data,
+            &Self::mass_mole_fractions_data,
+            &Self::fluid_density_data,
+            &Self::vapour_pressure_data,
+            //                                              &Self::porosity_data,
+            &Self::solid_density_data,
+            &Self::diffusion_velocity_data,
+            &Self::darcy_velocity_data);
     }
 };
 
@@ -149,7 +162,6 @@ struct ConstitutiveTempData
     ElasticTangentStiffnessData<DisplacementDim> C_el_data;
     BiotData biot_data;
     SolidCompressibilityData beta_p_SR;
-    BishopsData chi_S_L;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
     TotalStressData<DisplacementDim> total_stress_data;
     EquivalentPlasticStrainData equivalent_plastic_strain_data;

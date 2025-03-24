@@ -31,7 +31,7 @@ void TotalStressModel<DisplacementDim>::eval(
     using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
     out.sigma_total = (eff_stress_data.sigma -
-                       biot_data() * (p_GR() - chi_S_L.chi_S_L * p_cap()) *
+                       biot_data() * (p_GR.pG - chi_S_L.chi_S_L * p_cap.pCap) *
                            Invariants::identity2)
                           .eval();
 }

@@ -36,7 +36,7 @@ void PermeabilityModel<DisplacementDim>::eval(
     MPL::VariableArray variables;
     variables.liquid_saturation = S_L_data.S_L;
     variables.temperature = T_data.T;
-    variables.capillary_pressure = p_cap();
+    variables.capillary_pressure = p_cap.pCap;
 
     out.k_rel_G =
         medium

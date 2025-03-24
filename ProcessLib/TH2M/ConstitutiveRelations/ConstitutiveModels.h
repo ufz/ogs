@@ -73,6 +73,7 @@ struct ConstitutiveModels
     PhaseTransitionModel const& phase_transition_model;
     ViscosityModel viscosity_model;
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
+    BishopsPrevModel chi_S_L_prev_model;
     PorosityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>
         porosity_model;
     SolidDensityModelNonConstantSolidPhaseVolumeFraction<DisplacementDim>
