@@ -8,7 +8,6 @@ build linux frontend:
   needs: [meta]
   allow_failure: true
   variables:
-    BUILD_PACKAGE: "false"
     CCACHE_DIR: "/data/ogs/.ccache"
     CMAKE_PRESET: release
     CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
@@ -25,7 +24,6 @@ build linux frontend petsc:
   needs: [meta]
   allow_failure: true
   variables:
-    BUILD_PACKAGE: "false"
     CCACHE_DIR: "/data/ogs/.ccache"
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: "-DOGS_CPU_ARCHITECTURE=generic"
