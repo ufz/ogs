@@ -14,9 +14,10 @@
 
 namespace MaterialPropertyLib
 {
+using StringOrVariable = std::variant<std::string, Variable>;
 struct ExponentData
 {
-    Variable type;
+    StringOrVariable type;
     VariableType
         reference_condition;  ///< a reference condition value of independent
                               ///< variable, for instance reference temperature.
