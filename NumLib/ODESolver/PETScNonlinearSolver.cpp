@@ -149,7 +149,7 @@ NonlinearSolverStatus PETScNonlinearSolver::solve(
     std::vector<GlobalVector*>& x,
     std::vector<GlobalVector*> const& x_prev,
     std::function<void(
-        int,
+        int, bool,
         std::vector<GlobalVector*> const&)> const& /*postIterationCallback*/,
     int const process_id)
 {

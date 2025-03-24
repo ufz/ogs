@@ -49,9 +49,9 @@ getParenthesizedString(std::string const& in,
 
 std::string constructFormattedFileName(std::string const& format_specification,
                                        std::string const& mesh_name,
-                                       int const timestep,
-                                       double const t,
-                                       int const iteration);
+                                       int const timestep, double const t,
+                                       int const iteration,
+                                       bool const converged);
 
 std::vector<double> readDoublesFromBinaryFile(const std::string& filename);
 

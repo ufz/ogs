@@ -56,10 +56,11 @@ void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
 
 void outputMeshVtk(OutputVTKFormat const& output_file,
                    MeshLib::IO::PVDFile& pvd_file, MeshLib::Mesh const& mesh,
-                   double const t, int const timestep, int const iteration)
+                   double const t, int const timestep, int const iteration,
+                   bool const converged)
 {
-    auto const name =
-        output_file.constructFilename(mesh.getName(), timestep, t, iteration);
+    auto const name = output_file.constructFilename(mesh.getName(), timestep, t,
+                                                    iteration, converged);
     pvd_file.addVTUFile(name, t);
 
     auto const path = BaseLib::joinPaths(output_file.directory, name);
@@ -76,7 +77,7 @@ std::string OutputVTKFormat::constructPVDName(
 {
     return BaseLib::joinPaths(
         directory,
-        BaseLib::constructFormattedFileName(prefix, mesh_name, 0, 0, 0) +
+        BaseLib::constructFormattedFileName(prefix, mesh_name, 0, 0, 0, true) +
             ".pvd");
 }
 
@@ -92,34 +93,36 @@ OutputFormat::OutputFormat(std::string const& directory, std::string prefix,
 std::string OutputVTKFormat::constructFilename(std::string const& mesh_name,
                                                int const timestep,
                                                double const t,
-                                               int const iteration) const
+                                               int const iteration,
+                                               bool const converged) const
 {
     return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,
-                                               iteration) +
+                                               iteration, converged) +
            BaseLib::constructFormattedFileName(suffix, mesh_name, timestep, t,
-                                               iteration) +
+                                               iteration, converged) +
            ".vtu";
 }
 
 std::string OutputXDMFHDF5Format::constructFilename(
     std::string const& mesh_name, int const timestep, double const t,
-    int const iteration) const
+    int const iteration, bool const converged) const
 {
     return BaseLib::constructFormattedFileName(prefix, mesh_name, timestep, t,
-                                               iteration) +
+                                               iteration, converged) +
            ".xdmf";
 }
 
 void OutputXDMFHDF5Format::outputMeshXdmf(
     std::set<std::string> const& output_variables,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-    int const timestep, double const t, int const iteration) const
+    int const timestep, double const t, int const iteration,
+    bool const converged) const
 {
     // \TODO The XdmfOutput will create on construction the XdmfHdfWriter
     if (!mesh_xdmf_hdf_writer)
     {
         auto name = constructFilename(meshes[0].get().getName(), timestep, t,
-                                      iteration);
+                                      iteration, converged);
         std::filesystem::path path(BaseLib::joinPaths(directory, name));
         mesh_xdmf_hdf_writer = std::make_unique<MeshLib::IO::XdmfHdfWriter>(
             meshes, path, timestep, t, output_variables, compression, n_files,
@@ -133,13 +136,14 @@ void OutputXDMFHDF5Format::outputMeshXdmf(
 
 void OutputVTKFormat::outputMeshes(
     const int timestep, const double t, const int iteration,
+    bool const converged,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
     [[maybe_unused]] std::set<std::string> const& output_variables) const
 {
     for (auto const& mesh : meshes)
     {
         auto& pvd_file = findOrCreatePVDFile(mesh.get().getName());
-        outputMeshVtk(*this, pvd_file, mesh, t, timestep, iteration);
+        outputMeshVtk(*this, pvd_file, mesh, t, timestep, iteration, converged);
     }
 }
 }  // namespace ProcessLib

@@ -1,6 +1,6 @@
 Template for the prefix which will be prepended to the output files. Allowed
 template expressions are: `{:meshname}`, `{:timestep}`, `{:time}`,
-`{:iteration}`.
+`{:iteration}`, `{:converged}`.
 
 Default value is `{:meshname}`.
 
@@ -11,3 +11,6 @@ Furthermore, it is possible to specify the format of the expressions above. For
 instance {:0>3timestep} results in a 3-digit output, if necessary with preceding
 zeros. Also the time output can be formatted using the typical floating
 point precision (for instance 0.4) and type (e, E, f, F, g, G) modifiers.
+
+If the non-linear solver norms are not met the `{:converged}` expression is replaced with
+`_not_converged` and removed otherwise.

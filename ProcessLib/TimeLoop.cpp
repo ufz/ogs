@@ -241,7 +241,8 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     time_disc.nextTimestep(t, delta_t);
 
     auto const post_iteration_callback =
-        [&](int iteration, std::vector<GlobalVector*> const& x)
+        [&](int const iteration, bool const converged,
+            std::vector<GlobalVector*> const& x)
     {
         // Note: We don't call the postNonLinearSolver(), preOutput(),
         // computeSecondaryVariable() and postTimestep() hooks here. This might
@@ -249,7 +250,8 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
         for (auto const& output : outputs)
         {
             output.doOutputNonlinearIteration(process, process_id, timestep,
-                                              NumLib::Time(t), iteration, x);
+                                              NumLib::Time(t), iteration,
+                                              converged, x);
         }
     };
 
@@ -667,6 +669,7 @@ NumLib::NonlinearSolverStatus TimeLoop::solveUncoupledEquationSystems(
                     output.doOutputAlways(
                         process_data->process, process_id, timestep_id, t,
                         process_data->nonlinear_solver_status.number_iterations,
+                        process_data->nonlinear_solver_status.error_norms_met,
                         _process_solutions);
                 }
                 OGS_FATAL(timestepper_cannot_reduce_dt.data());
@@ -726,6 +729,7 @@ void TimeLoop::outputSolutions(unsigned timestep, const double t,
             (output_object.*output_class_member)(
                 pcs, process_id, timestep, NumLib::Time(t),
                 process_data->nonlinear_solver_status.number_iterations,
+                process_data->nonlinear_solver_status.error_norms_met,
                 _process_solutions);
         }
     }

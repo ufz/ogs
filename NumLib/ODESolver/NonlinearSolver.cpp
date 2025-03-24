@@ -126,7 +126,7 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     std::vector<GlobalVector*>& x,
     std::vector<GlobalVector*> const& x_prev,
-    std::function<void(int, std::vector<GlobalVector*> const&)> const&
+    std::function<void(int, bool, std::vector<GlobalVector*> const&)> const&
         postIterationCallback,
     int const process_id)
 {
@@ -212,7 +212,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         {
             if (postIterationCallback)
             {
-                postIterationCallback(iteration, x_new);
+                postIterationCallback(iteration, error_norms_met, x_new);
             }
 
             switch (sys.postIteration(x_new_process))
@@ -330,7 +330,7 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
     std::vector<GlobalVector*>& x,
     std::vector<GlobalVector*> const& x_prev,
-    std::function<void(int, std::vector<GlobalVector*> const&)> const&
+    std::function<void(int, bool, std::vector<GlobalVector*> const&)> const&
         postIterationCallback,
     int const process_id)
 {
@@ -453,7 +453,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
             if (postIterationCallback)
             {
-                postIterationCallback(iteration, x_new);
+                postIterationCallback(iteration, error_norms_met, x_new);
             }
 
             switch (sys.postIteration(*x_new[process_id]))
