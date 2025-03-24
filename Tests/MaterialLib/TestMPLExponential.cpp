@@ -126,3 +126,98 @@ TEST(MaterialPropertyLib, Exponential)
             std::exp(factor * (T - reference_condition)),
         1.e-16);
 }
+
+TEST(MaterialPropertyLib, ExponentialTime)
+{
+    double const y_offset = -1e-3;
+    double const y_ref = 1e-3;
+    double const reference_condition = 0.0;
+    double const factor = 1 / 75.0;
+    MPL::ExponentData const exp_data{"t", reference_condition, factor};
+    MPL::Property const& p =
+        MPL::Exponential{"exponential", y_offset, y_ref, exp_data};
+
+    MPL::VariableArray variable_array;
+    ParameterLib::SpatialPosition const pos;
+    double const time = 20;
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+    ASSERT_NEAR(
+        p.template value<double>(variable_array, pos, time, dt),
+        y_offset + y_ref * (std::exp(factor * (time - reference_condition))),
+        1.e-10);
+    ASSERT_EQ(p.template dValue<double>(variable_array,
+                                        MPL::Variable::liquid_phase_pressure,
+                                        pos, time, dt),
+              0.0);
+    ASSERT_EQ(p.template d2Value<double>(
+                  variable_array, MPL::Variable::liquid_phase_pressure,
+                  MPL::Variable::liquid_phase_pressure, pos, time, dt),
+              0.0);
+}
+
+TEST(MaterialPropertyLib, ExponentialPos)
+{
+    double const y_offset = -1e-3;
+    double const y_ref = 1e-3;
+    double const reference_condition = 0.0;
+    double const factor = 1 / 75.0;
+    MPL::ExponentData const exp_data_x{"x", reference_condition, factor};
+    MPL::ExponentData const exp_data_y{"y", reference_condition, factor};
+    MPL::ExponentData const exp_data_z{"z", reference_condition, factor};
+
+    MPL::Property const& p_x =
+        MPL::Exponential{"exponential", y_offset, y_ref, exp_data_x};
+    MPL::Property const& p_y =
+        MPL::Exponential{"exponential", y_offset, y_ref, exp_data_y};
+    MPL::Property const& p_z =
+        MPL::Exponential{"exponential", y_offset, y_ref, exp_data_z};
+
+    MPL::VariableArray variable_array;
+    std::array<double, 3> coords = {0, 20, 0};
+    ParameterLib::SpatialPosition const pos =
+        ParameterLib::SpatialPosition{{0}, {0}, MathLib::Point3d{coords}};
+    double const time = 20;
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
+    ASSERT_NEAR(
+        p_x.template value<double>(variable_array, pos, time, dt),
+        y_offset +
+            y_ref * (std::exp(factor * (coords[0] - reference_condition))),
+        1.e-10);
+    ASSERT_EQ(p_x.template dValue<double>(variable_array,
+                                          MPL::Variable::liquid_phase_pressure,
+                                          pos, time, dt),
+              0.0);
+    ASSERT_EQ(p_x.template d2Value<double>(
+                  variable_array, MPL::Variable::liquid_phase_pressure,
+                  MPL::Variable::liquid_phase_pressure, pos, time, dt),
+              0.0);
+
+    ASSERT_NEAR(
+        p_y.template value<double>(variable_array, pos, time, dt),
+        y_offset +
+            y_ref * (std::exp(factor * (coords[1] - reference_condition))),
+        1.e-10);
+    ASSERT_EQ(p_y.template dValue<double>(variable_array,
+                                          MPL::Variable::liquid_phase_pressure,
+                                          pos, time, dt),
+              0.0);
+    ASSERT_EQ(p_y.template d2Value<double>(
+                  variable_array, MPL::Variable::liquid_phase_pressure,
+                  MPL::Variable::liquid_phase_pressure, pos, time, dt),
+              0.0);
+
+    ASSERT_NEAR(
+        p_z.template value<double>(variable_array, pos, time, dt),
+        y_offset +
+            y_ref * (std::exp(factor * (coords[2] - reference_condition))),
+        1.e-10);
+    ASSERT_EQ(p_z.template dValue<double>(variable_array,
+                                          MPL::Variable::liquid_phase_pressure,
+                                          pos, time, dt),
+              0.0);
+    ASSERT_EQ(p_z.template d2Value<double>(
+                  variable_array, MPL::Variable::liquid_phase_pressure,
+                  MPL::Variable::liquid_phase_pressure, pos, time, dt),
+              0.0);
+}
