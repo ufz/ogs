@@ -6,6 +6,12 @@ build win:
     # therefore using 2019
     - .vs-environment
     - .vs-mkl-environment
+  rules:
+    # Build package on master and release
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_TAG
+      variables:
+        BUILD_PACKAGE: "true"
+    - when: always
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
