@@ -563,7 +563,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.porosity_model.dEval(
             {pos, t, dt}, media_data, ip_out.porosity_data, ip_dd.dS_L_dp_cap,
 #ifdef NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
-            ip_cv.biot_data, ip_out.eps_data, ip_cv.s_therm_exp_data,
+            ip_cv.biot_data, ip_cv.s_therm_exp_data, ip_out.eps_data,
 #endif  // NON_CONSTANT_SOLID_PHASE_VOLUME_FRACTION
             ip_dd.porosity_d_data);
 
