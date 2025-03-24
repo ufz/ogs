@@ -24,7 +24,6 @@
 
 #include "BaseLib/Error.h"
 #include "BaseLib/cpp23.h"
-#include "MeshLib/Location.h"
 
 // naming convention for local function objects by postfix:
 // _transform: functions that take data (mostly XDMF meta data) and return
@@ -35,7 +34,7 @@ using namespace fmt::literals;
 using namespace BaseLib;
 namespace MeshLib::IO
 {
-// similar definition in Location.h - XDMF uses capital letters
+// similar definition in MeshEnums.h - XDMF uses capital letters
 // There is no correspondece for "IntegrationPoint" in XDMF Format
 // specification - add it as "Other"
 constexpr char const* mesh_item_type_strings[] = {"Node", "Edge", "Face",

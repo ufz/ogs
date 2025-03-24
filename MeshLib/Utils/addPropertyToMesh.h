@@ -14,7 +14,6 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
-#include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
 

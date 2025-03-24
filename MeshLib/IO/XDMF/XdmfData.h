@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-#include "MeshLib/Location.h"
+#include "MeshLib/MeshEnums.h"
 #include "MeshPropertyDataType.h"
 
 class XdmfArrayType;

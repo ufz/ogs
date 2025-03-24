@@ -13,24 +13,12 @@
 #include <cstddef>
 #include <iosfwd>
 
+#include "MeshEnums.h"
+
 #pragma once
 
 namespace MeshLib
 {
-
-enum class MeshItemType { Node, Edge, Face, Cell, IntegrationPoint };
-
-/// Char array names for all of MeshItemType values.
-static constexpr char const* mesh_item_type_strings[] = {
-    "node", "edge", "face", "cell", "integration_point"};
-
-/// Returns a char array for a specific MeshItemType.
-static constexpr char const* toString(const MeshItemType t)
-{
-    return mesh_item_type_strings[static_cast<int>(t)];
-}
-
-std::ostream& operator<<(std::ostream& os, MeshItemType const& t);
 
 /// Spatial location description.
 ///

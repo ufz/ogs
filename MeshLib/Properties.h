@@ -13,11 +13,8 @@
 #pragma once
 
 #include <cstdlib>
-#include <string>
 #include <map>
-
-
-#include "Location.h"
+#include <string>
 
 #include "PropertyVector.h"
 

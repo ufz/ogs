@@ -16,7 +16,6 @@
 #include "MeshGeoToolsLib/BoundaryElementsSearcher.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "MeshLib/MeshSubset.h"

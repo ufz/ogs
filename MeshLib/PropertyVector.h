@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "BaseLib/Algorithm.h"
-#include "Location.h"
+#include "MeshEnums.h"
 
 namespace MeshLib
 {

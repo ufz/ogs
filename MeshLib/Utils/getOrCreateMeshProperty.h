@@ -10,7 +10,6 @@
 #pragma once
 #include <string>
 
-#include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"

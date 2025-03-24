@@ -19,7 +19,6 @@
 
 #include "BaseLib/Logging.h"
 #include "GeoLib/Raster.h"
-#include "MeshLib/Location.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"

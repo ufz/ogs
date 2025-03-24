@@ -11,7 +11,6 @@
 #pragma once
 
 #include "GeoLib/Raster.h"
-#include "MeshLib/Location.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Properties.h"
 

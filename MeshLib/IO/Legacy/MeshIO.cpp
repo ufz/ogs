@@ -23,7 +23,6 @@
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "MeshLib/Elements/Elements.h"
-#include "MeshLib/Location.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/PropertyVector.h"
 
