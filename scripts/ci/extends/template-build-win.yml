@@ -21,7 +21,8 @@
         Invoke-Expression $build_directory_full\.venv\Scripts\Activate.ps1
       }
     - Invoke-Expression $build_directory_full\.envrc.ps1
-    - cmake --build --preset=$env:CMAKE_PRESET --target package | Tee-Object -FilePath $log_file
+    - if($env:BUILD_PACKAGE -eq "true") { $build_package_arg = "--target package" }
+    - cmake --build --preset=$env:CMAKE_PRESET $env:build_package_arg | Tee-Object -FilePath $log_file
     - if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
     - $ctest_group = "Experimental"
     - if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }

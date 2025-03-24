@@ -26,7 +26,6 @@ build linux (no unity):
   needs: [meta]
   timeout: 3h
   variables:
-    BUILD_PACKAGE: "false"
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
     CHECK_WARNINGS: "true"
@@ -50,7 +49,6 @@ build linux debug with sanitizers:
   tags: [envinf, shell]
   needs: [meta]
   variables:
-    BUILD_PACKAGE: "false"
     CMAKE_PRESET: sanitizer
     CMAKE_ARGS: >-
       -DOGS_CTEST_MAX_RUNTIME=60

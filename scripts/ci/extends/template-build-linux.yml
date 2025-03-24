@@ -38,9 +38,7 @@
 
       if [[ -z "$TARGETS" ]]; then
 
-        if [ "$BUILD_PACKAGE" = false ]; then
-          build_package=""
-        else
+        if [ "$BUILD_PACKAGE" = true ]; then
           build_package="--target package"
         fi
 
