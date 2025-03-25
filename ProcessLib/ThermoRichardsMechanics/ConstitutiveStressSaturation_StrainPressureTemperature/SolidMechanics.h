@@ -29,7 +29,7 @@ struct SolidMechanicsModel
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
         : solid_material_(solid_material),
           tangent_operator_blocks_view_{
-              solid_material.template createTangentOperatorBlocksView()}
+              solid_material.createTangentOperatorBlocksView()}
     {
     }
 
