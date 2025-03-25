@@ -12,9 +12,6 @@
 #include <Eigen/Core>
 #include <Eigen/Sparse>
 
-#include "MathLib/LinAlg/MatrixSpecifications.h"
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "NumericalStabilization.h"
 
 namespace NumLib
 {
@@ -31,14 +28,14 @@ std::unique_ptr<MatrixVectorType> newZeroedInstance(
     return result;
 }
 
-void calculateFluxCorrectedTransport(
+#ifndef USE_PETSC
+void calculateFluxCorrectedTransportSerial(
     [[maybe_unused]] const double t, const double dt,
     std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     const MathLib::MatrixSpecifications& matrix_specification, GlobalMatrix& M,
     GlobalMatrix& K, GlobalVector& b)
 {
-#ifndef USE_PETSC
     auto D = newZeroedInstance<GlobalMatrix>(matrix_specification);
     auto F = newZeroedInstance<GlobalMatrix>(matrix_specification);
 
@@ -202,8 +199,21 @@ void calculateFluxCorrectedTransport(
     {
         M.setValue(k, k, M_L(k));
     }
+}
+#endif  // end of ifndef USE_PETSC
+
+void calculateFluxCorrectedTransport(
+    const double t, const double dt, std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, int const process_id,
+    const MathLib::MatrixSpecifications& matrix_specification, GlobalMatrix& M,
+    GlobalMatrix& K, GlobalVector& b)
+{
+#ifndef USE_PETSC
+    calculateFluxCorrectedTransportSerial(t, dt, x, x_prev, process_id,
+                                          matrix_specification, M, K, b);
 #endif  // end of ifndef USE_PETSC
 }
+
 }  // namespace detail
 
 void computeFluxCorrectedTransport(
