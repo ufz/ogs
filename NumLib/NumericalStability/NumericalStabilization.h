@@ -176,14 +176,7 @@ private:
 class FluxCorrectedTransport final
 {
 public:
-    explicit FluxCorrectedTransport()
-    {
-#ifdef USE_PETSC
-        OGS_FATAL(
-            "FluxCorrectedTransport scheme is not implemented to work with MPI "
-            "parallelization.");
-#endif
-    }
+    explicit FluxCorrectedTransport() {}
 
     void calculateFluxCorrectedTransport(
         const double t, const double dt, std::vector<GlobalVector*> const& x,
