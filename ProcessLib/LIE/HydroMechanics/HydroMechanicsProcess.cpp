@@ -421,15 +421,13 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
     {
         auto const& mesh_subset =
             dof_table.getMeshSubset(g_variable_id, component_id);
-        auto const mesh_id = mesh_subset.getMeshID();
-        for (auto const* node : mesh_subset.getNodes())
+        for (auto const& l : MeshLib::views::meshLocations(
+                 mesh_subset, MeshLib::MeshItemType::Node))
         {
-            MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
-                                      node->getID());
-
             auto const global_index =
                 dof_table.getGlobalIndex(l, g_variable_id, component_id);
-            mesh_prop_g[node->getID() * num_comp + component_id] =
+            auto const node_id = l.item_id;
+            mesh_prop_g[node_id * num_comp + component_id] =
                 (*x[process_id])[global_index];
         }
     }

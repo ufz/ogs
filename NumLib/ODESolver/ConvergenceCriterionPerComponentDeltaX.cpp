@@ -15,6 +15,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
 #include "MathLib/LinAlg/LinAlg.h"
+#include "MeshLib/MeshSubset.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
@@ -48,19 +49,18 @@ ConvergenceCriterionPerComponentDeltaX::ConvergenceCriterionPerComponentDeltaX(
 void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
     const GlobalVector& minus_delta_x, GlobalVector const& x)
 {
-    if ((!_dof_table) || (!_mesh))
+    if (!_dof_table)
     {
-        OGS_FATAL("D.o.f. table or mesh have not been set.");
+        OGS_FATAL("D.o.f. table has not been set.");
     }
 
     for (unsigned global_component = 0; global_component < _abstols.size();
          ++global_component)
     {
         // TODO short cut if tol <= 0.0
-        auto error_dx = norm(minus_delta_x, global_component, _norm_type,
-                             *_dof_table, *_mesh);
-        auto norm_x =
-            norm(x, global_component, _norm_type, *_dof_table, *_mesh);
+        auto error_dx =
+            norm(minus_delta_x, global_component, _norm_type, *_dof_table);
+        auto norm_x = norm(x, global_component, _norm_type, *_dof_table);
 
         INFO(
             "Convergence criterion, component {:d}: |dx|={:.4e}, |x|={:.4e}, "
@@ -81,9 +81,9 @@ double ConvergenceCriterionPerComponentDeltaX::getDampingFactor(
     const GlobalVector& minus_delta_x, GlobalVector const& x,
     double damping_orig)
 {
-    if ((!_dof_table) || (!_mesh))
+    if (!_dof_table)
     {
-        OGS_FATAL("D.o.f. table or mesh have not been set.");
+        OGS_FATAL("D.o.f. table has not been set.");
     }
 
     MathLib::LinAlg::setLocalAccessibleVector(minus_delta_x);
@@ -96,10 +96,9 @@ double ConvergenceCriterionPerComponentDeltaX::getDampingFactor(
         assert(ms.getMeshID() == _mesh->getID());
         DBUG("Non-negative damping for component: {:d} alpha: {:g}",
              global_component, _damping_alpha[global_component]);
-        for (auto const node_id : ms.getNodes() | MeshLib::views::ids)
+        for (auto const& l :
+             MeshLib::views::meshLocations(ms, MeshLib::MeshItemType::Node))
         {
-            MeshLib::Location const l{_mesh->getID(),
-                                      MeshLib::MeshItemType::Node, node_id};
             auto index = _dof_table->getGlobalIndex(l, global_component);
             damping_final = std::min(
                 damping_final,
