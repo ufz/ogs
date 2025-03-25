@@ -3,6 +3,7 @@ if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
         OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     endif()
+    OgsTest(PROJECTFILE TH2M/M/M_2d_neumann/M_2d_neumann_fd_jac.xml RUNTIME 0.2)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_newton.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_gas.prj RUNTIME 1)
@@ -11,14 +12,17 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_liquid.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_gas.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_liquid.prj RUNTIME 25)
+    OgsTest(PROJECTFILE TH2M/THM/sphere/point_heatsource_fd_jac.xml RUNTIME 7)
     OgsTest(PROJECTFILE TH2M/TH/idealGasLaw/compression_gas.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
+    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_fd_jac.xml RUNTIME 4)
     NotebookTest(NOTEBOOKFILE TH2M/H2M/Liakopoulos/ogs-jupyter-lab-h2m-2d-liakopoulos.py RUNTIME 15)
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_newton.xml RUNTIME 5)
     endif()
     OgsTest(PROJECTFILE TH2M/H2M/OrthotropicSwelling/square.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2.prj RUNTIME 25)
+    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2_fd_jac.xml RUNTIME 15)
     OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2_newton.xml RUNTIME 20)
     OgsTest(PROJECTFILE TH2M/TH2/unicube/unicube.prj RUNTIME 25)
     OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_rough.prj RUNTIME 85)
@@ -152,6 +156,7 @@ AddTest(
 
     result_TH2M_M_ts_2_t_2.000000.vtu result_TH2M_M_ts_2_t_2.000000.vtu saturation saturation 1e-8 1e-8
 )
+
 AddTest(
     NAME TH2M_M_2d_neumann_newton
     PATH TH2M/M/M_2d_neumann
@@ -216,6 +221,7 @@ AddTest(
 
     result_point_heatsource_ts_5_t_100000.000000.vtu result_point_heatsource_ts_5_t_100000.000000.vtu saturation saturation 1e-8 1e-8
 )
+
 AddTest(
     NAME TH2M_THM_point_heatsource_newton
     PATH TH2M/THM/sphere

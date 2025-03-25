@@ -21,17 +21,9 @@
                 <type>CentralDifferences</type>
                 <component_magnitudes>
                    1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
                 </component_magnitudes>
                 <relative_epsilons>
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-06 1e-06 1e-06 1e-06
-                   1e-08 1e-08 1e-08 1e-08
-                   1e-08 1e-08 1e-08 1e-08
+                   1e-06 1e-06 1e-08 1e-08
                 </relative_epsilons>
             </jacobian_assembler>
             <reference_temperature>T_0</reference_temperature>
