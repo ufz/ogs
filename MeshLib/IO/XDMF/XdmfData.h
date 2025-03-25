@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <boost/shared_ptr.hpp>
 #include <optional>
 #include <string>
 #include <vector>
