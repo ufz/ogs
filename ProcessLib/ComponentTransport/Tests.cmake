@@ -861,6 +861,10 @@ endif()
 if(NOT OGS_USE_PETSC)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/FCT_test/1d_step_func.prj RUNTIME 5)
 endif()
+if(OGS_USE_PETSC)
+    OgsTest(WRAPPER mpirun -np 1 PROJECTFILE Parabolic/ComponentTransport/FCT_test/1d_step_func.prj RUNTIME 16)
+    OgsTest(WRAPPER mpirun -np 1 PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC.prj RUNTIME 1400)
+endif()
 
 if(NOT OGS_USE_PETSC AND NOT WIN32)
     NotebookTest(
