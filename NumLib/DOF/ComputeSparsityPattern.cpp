@@ -55,13 +55,15 @@ GlobalSparsityPattern computeSparsityPatternNonPETSc(
     for (std::size_t n = 0; n < mesh.getNumberOfNodes(); ++n)
     {
         auto const& an = node_adjacency_table.getAdjacentNodes(n);
+        auto const n_self_dof = global_idcs[n].size();
         auto const n_connected_dof =
             std::accumulate(cbegin(an), cend(an), 0,
                             [&](auto const result, auto const i)
                             { return result + global_idcs[i].size(); });
+        auto const n_dof = n_self_dof + n_connected_dof;
         for (auto global_index : global_idcs[n])
         {
-            sparsity_pattern[global_index] = n_connected_dof;
+            sparsity_pattern[global_index] = n_dof;
         }
     }
 

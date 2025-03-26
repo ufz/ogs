@@ -34,10 +34,10 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentLinearMesh)
     GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
     ASSERT_EQ(4u, sp.size());
-    EXPECT_EQ(2u, sp[0]);
-    EXPECT_EQ(3u, sp[1]);
-    EXPECT_EQ(3u, sp[2]);
-    EXPECT_EQ(2u, sp[3]);
+    EXPECT_EQ(3u, sp[0]);
+    EXPECT_EQ(4u, sp[1]);
+    EXPECT_EQ(4u, sp[2]);
+    EXPECT_EQ(3u, sp[3]);
 }
 
 #ifndef USE_PETSC
@@ -59,13 +59,13 @@ TEST(NumLib_SparsityPattern, DISABLED_SingleComponentQuadraticMesh)
     GlobalSparsityPattern sp = NumLib::computeSparsityPattern(dof_map, *mesh);
 
     ASSERT_EQ(7u, sp.size());
-    EXPECT_EQ(3u, sp[0]);
-    EXPECT_EQ(5u, sp[1]);
-    EXPECT_EQ(5u, sp[2]);
-    EXPECT_EQ(3u, sp[3]);
-    EXPECT_EQ(3u, sp[4]);
-    EXPECT_EQ(3u, sp[5]);
-    EXPECT_EQ(3u, sp[6]);
+    EXPECT_EQ(4u, sp[0]);
+    EXPECT_EQ(6u, sp[1]);
+    EXPECT_EQ(6u, sp[2]);
+    EXPECT_EQ(4u, sp[3]);
+    EXPECT_EQ(4u, sp[4]);
+    EXPECT_EQ(4u, sp[5]);
+    EXPECT_EQ(4u, sp[6]);
 }
 
 #ifndef USE_PETSC
@@ -87,10 +87,10 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearMesh)
     ASSERT_EQ(8u, sp.size());
     for (int i = 0; i < 2; i++)
     {
-        EXPECT_EQ(4u, sp[i * mesh->getNumberOfNodes() + 0]);
-        EXPECT_EQ(6u, sp[i * mesh->getNumberOfNodes() + 1]);
-        EXPECT_EQ(6u, sp[i * mesh->getNumberOfNodes() + 2]);
-        EXPECT_EQ(4u, sp[i * mesh->getNumberOfNodes() + 3]);
+        EXPECT_EQ(6u, sp[i * mesh->getNumberOfNodes() + 0]);
+        EXPECT_EQ(8u, sp[i * mesh->getNumberOfNodes() + 1]);
+        EXPECT_EQ(8u, sp[i * mesh->getNumberOfNodes() + 2]);
+        EXPECT_EQ(6u, sp[i * mesh->getNumberOfNodes() + 3]);
     }
 }
 
@@ -119,16 +119,16 @@ TEST(NumLib_SparsityPattern, DISABLED_MultipleComponentsLinearQuadraticMesh)
 
     ASSERT_EQ(11u, sp.size());
     // 1st component
-    EXPECT_EQ(5u, sp[0]);
-    EXPECT_EQ(8u, sp[1]);
-    EXPECT_EQ(8u, sp[2]);
-    EXPECT_EQ(5u, sp[3]);
+    EXPECT_EQ(7u, sp[0]);
+    EXPECT_EQ(10u, sp[1]);
+    EXPECT_EQ(10u, sp[2]);
+    EXPECT_EQ(7u, sp[3]);
     // 2nd component
-    EXPECT_EQ(5u, sp[4]);
-    EXPECT_EQ(8u, sp[5]);
-    EXPECT_EQ(8u, sp[6]);
-    EXPECT_EQ(5u, sp[7]);
-    EXPECT_EQ(5u, sp[8]);
-    EXPECT_EQ(5u, sp[9]);
-    EXPECT_EQ(5u, sp[10]);
+    EXPECT_EQ(7u, sp[4]);
+    EXPECT_EQ(10u, sp[5]);
+    EXPECT_EQ(10u, sp[6]);
+    EXPECT_EQ(7u, sp[7]);
+    EXPECT_EQ(6u, sp[8]);
+    EXPECT_EQ(6u, sp[9]);
+    EXPECT_EQ(6u, sp[10]);
 }
