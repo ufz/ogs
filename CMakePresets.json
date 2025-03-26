@@ -258,17 +258,11 @@
     },
     {
       "name": "release-gui",
-      "configurePreset": "release-gui",
-      "targets": [
-        "DataExplorer"
-      ]
+      "configurePreset": "release-gui"
     },
     {
       "name": "debug-gui",
-      "configurePreset": "debug-gui",
-      "targets": [
-        "DataExplorer"
-      ]
+      "configurePreset": "debug-gui"
     },
     {
       "name": "release-petsc",
