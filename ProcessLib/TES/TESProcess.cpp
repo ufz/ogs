@@ -323,20 +323,20 @@ GlobalVector const& TESProcess::computeVapourPartialPressure(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType const nnodes = _mesh.getNumberOfNodes();
-
-    for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
+    for (auto const& location :
+         MeshLib::views::meshLocations(_mesh, MeshLib::MeshItemType::Node))
     {
-        auto const p =
-            NumLib::getNodalValue(*x[process_id], _mesh, *dof_table[process_id],
-                                  node_id, COMPONENT_ID_PRESSURE);
-        auto const x_mV =
-            NumLib::getNodalValue(*x[process_id], _mesh, *dof_table[process_id],
-                                  node_id, COMPONENT_ID_MASS_FRACTION);
+        auto const p = NumLib::getNodalValue(*x[process_id], location,
+                                             *dof_table[process_id],
+                                             COMPONENT_ID_PRESSURE);
+        auto const x_mV = NumLib::getNodalValue(*x[process_id], location,
+                                                *dof_table[process_id],
+                                                COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
 
+        auto const node_id = location.item_id;
         result_cache->set(node_id, p * x_nV);
     }
 
@@ -358,18 +358,16 @@ GlobalVector const& TESProcess::computeRelativeHumidity(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType const nnodes = _mesh.getNumberOfNodes();
-
     auto const& x = *xs[0];  // monolithic process
-    for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
+    for (auto const& location :
+         MeshLib::views::meshLocations(_mesh, MeshLib::MeshItemType::Node))
     {
-        auto const p = NumLib::getNodalValue(x, _mesh, *dof_table[process_id],
-                                             node_id, COMPONENT_ID_PRESSURE);
-        auto const T = NumLib::getNodalValue(x, _mesh, *dof_table[process_id],
-                                             node_id, COMPONENT_ID_TEMPERATURE);
-        auto const x_mV =
-            NumLib::getNodalValue(x, _mesh, *dof_table[process_id], node_id,
-                                  COMPONENT_ID_MASS_FRACTION);
+        auto const p = NumLib::getNodalValue(
+            x, location, *dof_table[process_id], COMPONENT_ID_PRESSURE);
+        auto const T = NumLib::getNodalValue(
+            x, location, *dof_table[process_id], COMPONENT_ID_TEMPERATURE);
+        auto const x_mV = NumLib::getNodalValue(
+            x, location, *dof_table[process_id], COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
@@ -377,6 +375,7 @@ GlobalVector const& TESProcess::computeRelativeHumidity(
         auto const p_S =
             Adsorption::AdsorptionReaction::getEquilibriumVapourPressure(T);
 
+        auto const node_id = location.item_id;
         result_cache->set(node_id, p * x_nV / p_S);
     }
 
@@ -398,18 +397,16 @@ GlobalVector const& TESProcess::computeEquilibriumLoading(
          dof_table_single.dofSizeWithoutGhosts(),
          &dof_table_single.getGhostIndices(), nullptr});
 
-    GlobalIndexType const nnodes = _mesh.getNumberOfNodes();
-
     auto const& x = *xs[0];  // monolithic process
-    for (GlobalIndexType node_id = 0; node_id < nnodes; ++node_id)
+    for (auto const& location :
+         MeshLib::views::meshLocations(_mesh, MeshLib::MeshItemType::Node))
     {
-        auto const p = NumLib::getNodalValue(x, _mesh, *dof_table[process_id],
-                                             node_id, COMPONENT_ID_PRESSURE);
-        auto const T = NumLib::getNodalValue(x, _mesh, *dof_table[process_id],
-                                             node_id, COMPONENT_ID_TEMPERATURE);
-        auto const x_mV =
-            NumLib::getNodalValue(x, _mesh, *dof_table[process_id], node_id,
-                                  COMPONENT_ID_MASS_FRACTION);
+        auto const p = NumLib::getNodalValue(
+            x, location, *dof_table[process_id], COMPONENT_ID_PRESSURE);
+        auto const T = NumLib::getNodalValue(
+            x, location, *dof_table[process_id], COMPONENT_ID_TEMPERATURE);
+        auto const x_mV = NumLib::getNodalValue(
+            x, location, *dof_table[process_id], COMPONENT_ID_MASS_FRACTION);
 
         auto const x_nV = Adsorption::AdsorptionReaction::getMolarFraction(
             x_mV, _assembly_params.M_react, _assembly_params.M_inert);
@@ -420,6 +417,7 @@ GlobalVector const& TESProcess::computeEquilibriumLoading(
                          : _assembly_params.react_sys->getEquilibriumLoading(
                                p_V, T, _assembly_params.M_react);
 
+        auto const node_id = location.item_id;
         result_cache->set(node_id, C_eq);
     }
 

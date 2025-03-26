@@ -13,7 +13,6 @@
 #include <map>
 
 #include "BaseLib/Error.h"
-#include "MeshLib/Location.h"
 #include "partition.h"
 
 namespace MeshLib::IO

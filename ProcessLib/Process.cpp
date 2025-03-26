@@ -537,12 +537,9 @@ Process::getIndicesOfResiduumWithoutInitialCompensation() const
             {
                 auto const& mesh_subset = dof_table_of_process.getMeshSubset(
                     variable_id, component_id);
-                auto const mesh_id = mesh_subset.getMeshID();
-                for (auto const* node : mesh_subset.getNodes())
+                for (auto const& l : MeshLib::views::meshLocations(
+                         mesh_subset, MeshLib::MeshItemType::Node))
                 {
-                    MeshLib::Location const l(
-                        mesh_id, MeshLib::MeshItemType::Node, node->getID());
-
                     auto global_index =
                         std::abs(dof_table_of_process.getGlobalIndex(
                             l, variable_id, component_id));

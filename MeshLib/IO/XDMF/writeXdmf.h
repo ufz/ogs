@@ -14,10 +14,11 @@
 
 #pragma once
 
+#include <functional>
+#include <string>
 #include <vector>
 
 #include "MeshLib/IO/XDMF/XdmfData.h"
-#include "MeshLib/Location.h"
 #include "MeshPropertyDataType.h"
 
 using XdmfDimType = unsigned int;

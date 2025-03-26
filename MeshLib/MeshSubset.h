@@ -96,4 +96,17 @@ private:
     std::vector<Node*> const& _nodes;
     bool const _use_taylor_hood_elements;
 };
+
+namespace views
+{
+inline auto meshLocations(MeshSubset const& mesh_subset,
+                          MeshItemType const item_type)
+{
+    return mesh_subset.getNodes() | ids |
+           ranges::views::transform(
+               [mesh_id = mesh_subset.getMeshID(),
+                item_type](std::size_t const node_id)
+               { return Location{mesh_id, item_type, node_id}; });
+}
+}  // namespace views
 }  // namespace MeshLib

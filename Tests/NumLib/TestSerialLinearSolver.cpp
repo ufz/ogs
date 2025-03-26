@@ -35,7 +35,6 @@
 #include "MathLib/MathTools.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Quad.h"
-#include "MeshLib/Location.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/Node.h"

@@ -18,18 +18,17 @@
 
 namespace NumLib
 {
-//! Returns the value for the given \c node_id and \c global_component_id from
+//! Returns the value for the given \c location and \c global_component_id from
 //! the vector \c x in case the node is not a ghost node. Else 0.0 is returned.
-double getNonGhostNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
+double getNonGhostNodalValue(GlobalVector const& x,
+                             MeshLib::Location const& location,
                              NumLib::LocalToGlobalIndexMap const& dof_table,
-                             std::size_t const node_id,
                              std::size_t const global_component_id);
 
-//! Returns the value for the given \c node_id and \c global_component_id from
+//! Returns the value for the given \c location and \c global_component_id from
 //! the vector \c x.
-double getNodalValue(GlobalVector const& x, MeshLib::Mesh const& mesh,
+double getNodalValue(GlobalVector const& x, MeshLib::Location const& location,
                      NumLib::LocalToGlobalIndexMap const& dof_table,
-                     std::size_t const node_id,
                      std::size_t const global_component_id);
 
 //! Returns nodal indices for the item identified by \c mesh_item_id from the
@@ -50,7 +49,7 @@ LocalToGlobalIndexMap::RowColumnIndices getRowColumnIndices(
 //! coupled process with several primary variables.
 double norm(GlobalVector const& x, unsigned const global_component,
             MathLib::VecNormType norm_type,
-            LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh);
+            LocalToGlobalIndexMap const& dof_table);
 
 /// Copies part of a global vector for the given variable into output_vector
 /// while applying a function to each value.
@@ -77,12 +76,10 @@ void transformVariableFromGlobalVector(
     {
         auto const& mesh_subset =
             local_to_global_index_map.getMeshSubset(variable_id, component);
-        auto const mesh_id = mesh_subset.getMeshID();
-        for (auto const& node : mesh_subset.getNodes())
+        for (auto const& l : MeshLib::views::meshLocations(
+                 mesh_subset, MeshLib::MeshItemType::Node))
         {
-            auto const node_id = node->getID();
-            MeshLib::Location const l(mesh_id, MeshLib::MeshItemType::Node,
-                                      node_id);
+            auto const node_id = l.item_id;
             auto const input_index = local_to_global_index_map.getGlobalIndex(
                 l, variable_id, component);
             double const value = input_vector[input_index];

@@ -111,9 +111,9 @@ void do_test(unsigned const num_components,
         double compwise_total_norm = 0.0;
         for (unsigned comp = 0; comp < num_components; ++comp)
         {
-            compwise_total_norm = accumulate_cb(
-                compwise_total_norm,
-                NumLib::norm(*x, comp, norm_type, dtd.dof_table, *dtd.mesh));
+            compwise_total_norm =
+                accumulate_cb(compwise_total_norm,
+                              NumLib::norm(*x, comp, norm_type, dtd.dof_table));
         }
         compwise_total_norm = accumulate_finish_cb(compwise_total_norm);
 
