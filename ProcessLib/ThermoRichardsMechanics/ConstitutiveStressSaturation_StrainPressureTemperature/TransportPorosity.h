@@ -14,20 +14,12 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosityData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-
-struct TransportPorosityData
+namespace ConstitutiveStressSaturation_StrainPressureTemperature
 {
-    double phi;
-
-    static auto reflect()
-    {
-        return ProcessLib::Reflection::reflectWithName(
-            "transport_porosity", &TransportPorosityData::phi);
-    }
-};
 
 template <int DisplacementDim>
 struct TransportPorosityModel
@@ -38,14 +30,13 @@ struct TransportPorosityModel
               PrevState<BishopsData> const& bishops_data_prev,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               PorosityData const& poro_data,
-              ProcessLib::ConstitutiveRelations::MechanicalStrainData<
-                  DisplacementDim> const& eps_m_data,
-              PrevState<ProcessLib::ConstitutiveRelations::MechanicalStrainData<
-                  DisplacementDim>> const& eps_m_prev_data,
+              StrainData<DisplacementDim> const& eps_data,
+              PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
               PrevState<TransportPorosityData> const& transport_poro_data_prev,
               TransportPorosityData& transport_poro_data) const;
 };
 
 extern template struct TransportPorosityModel<2>;
 extern template struct TransportPorosityModel<3>;
+}  // namespace ConstitutiveStressSaturation_StrainPressureTemperature
 }  // namespace ProcessLib::ThermoRichardsMechanics

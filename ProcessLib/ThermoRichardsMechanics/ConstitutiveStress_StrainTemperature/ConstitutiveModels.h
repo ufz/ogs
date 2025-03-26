@@ -24,6 +24,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidCompressibilityModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/TransportPorosity.h"
 #include "Swelling.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
