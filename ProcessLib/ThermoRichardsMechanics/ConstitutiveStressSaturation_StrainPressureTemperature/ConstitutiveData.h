@@ -52,6 +52,7 @@ using OutputData = std::tuple<DarcyLawData<DisplacementDim>, LiquidDensityData,
 template <int DisplacementDim>
 using ConstitutiveData =
     std::tuple<SolidMechanicsDataStateless<DisplacementDim>,
+               EffectiveStressData<DisplacementDim>,
                GravityData<DisplacementDim>,
                TRMHeatStorageAndFluxData<DisplacementDim>,
                TRMVaporDiffusionData<DisplacementDim>, TRMStorageData,
