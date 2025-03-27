@@ -18,6 +18,5 @@
   before_script:
     - *load_vs_env
     # Load MKL environment
-    - '& "C:\Program Files (x86)\Intel\oneAPI\compiler\2022.1.0\env\vars.bat"'
-    - '& "C:\Program Files (x86)\Intel\oneAPI\mkl\2022.1.0\env\vars.bat"'
-    - $env:PATH += ";C:\Program Files (x86)\Intel\oneAPI\compiler\2022.1.0\windows\redist\intel64_win\compiler"
+    - Invoke-BatchFile "C:\Program Files (x86)\Intel\oneAPI\compiler\latest\env\vars.bat"
+    - Invoke-BatchFile "C:\Program Files (x86)\Intel\oneAPI\mkl\latest\env\vars.bat"
