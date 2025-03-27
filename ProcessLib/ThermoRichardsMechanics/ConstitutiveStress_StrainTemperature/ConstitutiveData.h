@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"

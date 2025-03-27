@@ -15,8 +15,8 @@
 #include "ConstitutiveRelations/Base.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MathLib/KelvinVector.h"
-#include "ProcessLib/ConstitutiveRelations/StrainData.h"
-#include "ProcessLib/ConstitutiveRelations/StressData.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
+#include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
 
 namespace ProcessLib
 {

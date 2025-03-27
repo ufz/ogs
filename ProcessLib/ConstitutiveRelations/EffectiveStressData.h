@@ -15,15 +15,18 @@
 namespace ProcessLib::ConstitutiveRelations
 {
 template <int DisplacementDim>
-struct StrainData
+struct EffectiveStressData
 {
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> eps;
+    // TODO it seems fragile that some data have to be initialized that way.
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> sigma_eff =
+        MathLib::KelvinVector::KVzero<DisplacementDim>();
 
     static auto reflect()
     {
-        using Self = StrainData<DisplacementDim>;
+        using Self = EffectiveStressData<DisplacementDim>;
 
-        return ProcessLib::Reflection::reflectWithName("epsilon", &Self::eps);
+        return ProcessLib::Reflection::reflectWithName("sigma",
+                                                       &Self::sigma_eff);
     }
 };
 

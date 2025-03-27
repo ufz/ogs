@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "ProcessLib/ConstitutiveRelations/StressData.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"

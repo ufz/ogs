@@ -10,9 +10,9 @@
 
 #pragma once
 
-// #include "MechanicalStrainData.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
+#include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
-#include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
