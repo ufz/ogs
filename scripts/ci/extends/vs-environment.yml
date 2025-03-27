@@ -1,3 +1,4 @@
+# VS170COMNTOOLS is MSVC 2022
 .load_vs_env: &load_vs_env
   - |
     pushd $env:VS170COMNTOOLS
