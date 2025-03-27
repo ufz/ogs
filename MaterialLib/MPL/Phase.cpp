@@ -47,7 +47,7 @@ Component const& Phase::component(std::string const& name) const
         [&name](
             std::unique_ptr<MaterialPropertyLib::Component> const& component)
         { return component->name == name; },
-        [&]() { OGS_FATAL("Could not find component named '{:s}.'", name); });
+        [&]() { OGS_FATAL("Could not find component named '{:s}'.", name); });
 }
 
 Property const& Phase::property(PropertyType const& p) const
