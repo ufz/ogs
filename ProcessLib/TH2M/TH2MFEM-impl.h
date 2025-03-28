@@ -259,6 +259,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_cv.beta_p_SR, current_state.eps_data, prev_state.eps_data,
             prev_state.porosity_data,
             current_state.porosity_data);
+        
+        models.transport_porosity_model.eval(
+                {pos, t, dt}, media_data,
+                current_state.S_L_data, prev_state.S_L_data, pCap_data, pGR_data,
+                current_state.chi_S_L, prev_state.chi_S_L, ip_cv.biot_data,
+                ip_cv.beta_p_SR, current_state.mechanical_strain_data, prev_state.mechanical_strain_data,
+                prev_state.transport_porosity_data,
+                current_state.transport_porosity_data);
 
         models.solid_density_model.eval({pos, t, dt}, media_data, T_data,
                                 ip_out.solid_density_data);

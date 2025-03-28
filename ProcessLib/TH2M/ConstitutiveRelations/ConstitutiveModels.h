@@ -32,6 +32,7 @@
 #include "Swelling.h"
 #include "TEquation.h"
 #include "ThermalConductivity.h"
+#include "TransportPorosity.h"
 #include "TotalStress.h"
 #include "UEquation.h"
 #include "Viscosity.h"
@@ -74,6 +75,7 @@ struct ConstitutiveModels
     ViscosityModel viscosity_model;
     BishopsPrevModel chi_S_L_prev_model;
     PorosityModel<DisplacementDim> porosity_model;
+    TransportPorosityModel<DisplacementDim> transport_porosity_model;
     SolidDensityModel solid_density_model;
     SolidHeatCapacityModel solid_heat_capacity_model;
     ThermalConductivityModel<DisplacementDim> thermal_conductivity_model;

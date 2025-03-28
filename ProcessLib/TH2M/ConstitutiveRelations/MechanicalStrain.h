@@ -11,6 +11,7 @@
 
 #include "Base.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
 #include "SolidThermalExpansion.h"
 #include "Swelling.h"
 
@@ -18,12 +19,12 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-template <int DisplacementDim>
+/*template <int DisplacementDim>
 struct MechanicalStrainData
 {
     // TODO it seems fragile that some data have to be initialized that way.
     KelvinVector<DisplacementDim> eps_m = KV::KVzero<DisplacementDim>();
-};
+}*/
 
 template <int DisplacementDim>
 struct MechanicalStrainModel

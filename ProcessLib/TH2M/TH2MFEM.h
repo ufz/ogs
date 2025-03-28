@@ -29,6 +29,7 @@
 #include "ProcessLib/Deformation/LinearBMatrix.h"
 #include "ProcessLib/LocalAssemblerTraits.h"
 #include "ProcessLib/TH2M/ConstitutiveRelations/Porosity.h"
+#include "ProcessLib/TH2M/ConstitutiveRelations/TransportPorosity.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ProcessLib/Utils/TransposeInPlace.h"
 
@@ -156,18 +157,18 @@ private:
                         .template initialValue<double>(x_position,
                                                        time_independent);
 
-                /*if (medium.hasProperty(MPL::PropertyType::transport_porosity))
+                if (medium.hasProperty(MaterialPropertyLib::PropertyType::transport_porosity))
                 {
-                    std::get<TransportPorosityData>(current_state).phi =
-                        medium.property(MPL::transport_porosity)
+                    current_state.transport_porosity_data.phi =
+                        medium.property(MaterialPropertyLib::transport_porosity)
                             .template initialValue<double>(x_position,
                                                            time_independent);
                 }
                 else
                 {
-                    std::get<TransportPorosityData>(current_state).phi =
-                        std::get<PorosityData>(current_state).phi;
-                }*/
+                    current_state.transport_porosity_data.phi =
+                        current_state.porosity_data.phi;
+                }
             }
 
             double const t = 0;  // TODO (naumov) pass t from top

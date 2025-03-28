@@ -40,6 +40,7 @@
 #include "Swelling.h"
 #include "TEquation.h"
 #include "ThermalConductivity.h"
+#include "TransportPorosity.h"
 #include "TotalStress.h"
 #include "UEquation.h"
 #include "VapourPartialPressure.h"
@@ -65,6 +66,7 @@ struct StatefulData
     ConstituentDensityData constituent_density_data;
     InternalEnergyData internal_energy_data;
     PorosityData porosity_data;
+    TransportPorosityData transport_porosity_data;
 
     static auto reflect()
     {
@@ -74,7 +76,8 @@ struct StatefulData
                                               &Self::swelling_data,
                                               &Self::eff_stress_data,
                                               &Self::eps_data,
-                                              &Self::porosity_data);
+                                              &Self::porosity_data,
+                                              &Self::transport_porosity_data);
     }
 };
 
@@ -93,6 +96,7 @@ struct StatefulDataPrev
     PrevState<ConstituentDensityData> constituent_density_data;
     PrevState<InternalEnergyData> internal_energy_data;
     PrevState<PorosityData> porosity_data;
+    PrevState<TransportPorosityData> transport_porosity_data;
 
     StatefulDataPrev<DisplacementDim>& operator=(
         StatefulData<DisplacementDim> const& state)
@@ -107,6 +111,7 @@ struct StatefulDataPrev
         constituent_density_data = state.constituent_density_data;
         internal_energy_data = state.internal_energy_data;
         porosity_data = state.porosity_data;
+        transport_porosity_data = state.transport_porosity_data;
 
         return *this;
     }
