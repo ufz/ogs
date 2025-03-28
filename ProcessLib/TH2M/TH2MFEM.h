@@ -137,7 +137,7 @@ private:
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress.value)
             {
-                current_state.eff_stress_data.sigma.noalias() =
+                current_state.eff_stress_data.sigma_eff.noalias() =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>(
                         (*this->process_data_.initial_stress.value)(

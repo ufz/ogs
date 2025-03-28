@@ -21,9 +21,9 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     PrevState<MechanicalStrainData<DisplacementDim>> const&
         mechanical_strain_prev_data,
     PrevState<
-        ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>> const&
+        ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>> const&
         eff_stress_prev_data,
-    ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>&
+    ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>&
         eff_stress_data,
     MaterialStateData<DisplacementDim>& mat_state,
     SolidMechanicsDataStateless<DisplacementDim>& out,
@@ -38,7 +38,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
 
     MPL::VariableArray variables_prev;
     variables_prev.stress.emplace<KelvinVector<DisplacementDim>>(
-        eff_stress_prev_data->sigma);
+        eff_stress_prev_data->sigma_eff);
     variables_prev.mechanical_strain.emplace<KelvinVector<DisplacementDim>>(
         mechanical_strain_prev_data->eps_m);
     variables_prev.temperature = T_data.T_prev;
@@ -52,7 +52,7 @@ void SolidMechanicsModel<DisplacementDim>::eval(
         OGS_FATAL("Computation of local constitutive relation failed.");
     }
 
-    std::tie(eff_stress_data.sigma, mat_state.material_state_variables,
+    std::tie(eff_stress_data.sigma_eff, mat_state.material_state_variables,
              out.stiffness_tensor) = std::move(*solution);
 
     *equivalent_plastic_strain =

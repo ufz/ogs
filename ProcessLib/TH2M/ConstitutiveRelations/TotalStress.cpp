@@ -18,7 +18,7 @@ namespace ConstitutiveRelations
 
 template <int DisplacementDim>
 void TotalStressModel<DisplacementDim>::eval(
-    ProcessLib::ConstitutiveRelations::StressData<DisplacementDim> const&
+    ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim> const&
         eff_stress_data,
     BiotData const& biot_data,
     BishopsData const& chi_S_L,
@@ -30,7 +30,7 @@ void TotalStressModel<DisplacementDim>::eval(
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
     using Invariants = MathLib::KelvinVector::Invariants<kelvin_vector_size>;
 
-    out.sigma_total = (eff_stress_data.sigma -
+    out.sigma_total = (eff_stress_data.sigma_eff -
                        biot_data() * (p_GR.pG - chi_S_L.chi_S_L * p_cap.pCap) *
                            Invariants::identity2)
                           .eval();

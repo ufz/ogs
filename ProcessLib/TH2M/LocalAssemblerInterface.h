@@ -57,7 +57,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
             // Set initial stress field to zero. Might be overwritten by
             // integration point data or initial stress.
-            current_states_[ip].eff_stress_data.sigma =
+            current_states_[ip].eff_stress_data.sigma_eff =
                 ConstitutiveRelations::KelvinVector<DisplacementDim>::Zero();
         }
     }

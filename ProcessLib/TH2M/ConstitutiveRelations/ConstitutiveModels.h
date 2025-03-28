@@ -76,7 +76,7 @@ struct ConstitutiveModels
     BishopsPrevModel chi_S_L_prev_model;
     PorosityModel<DisplacementDim> porosity_model;
     TransportPorosityModel<DisplacementDim> transport_porosity_model;
-    SolidDensityModel solid_density_model;
+    SolidDensityModel<DisplacementDim> solid_density_model;
     SolidHeatCapacityModel solid_heat_capacity_model;
     ThermalConductivityModel<DisplacementDim> thermal_conductivity_model;
     AdvectionModel<DisplacementDim> advection_model;

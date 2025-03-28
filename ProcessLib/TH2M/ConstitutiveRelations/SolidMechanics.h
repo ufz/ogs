@@ -14,7 +14,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialState.h"
 #include "MechanicalStrain.h"
-#include "ProcessLib/ConstitutiveRelations/StressData.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 
 namespace ProcessLib::TH2M
 {
@@ -46,9 +46,9 @@ struct SolidMechanicsModel
         MechanicalStrainData<DisplacementDim> const& mechanical_strain_data,
         PrevState<MechanicalStrainData<DisplacementDim>> const&
             mechanical_strain_prev_data,
-        PrevState<ProcessLib::ConstitutiveRelations::StressData<
+        PrevState<ProcessLib::ConstitutiveRelations::EffectiveStressData<
             DisplacementDim>> const& eff_stress_prev_data,
-        ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>&
+        ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>&
             eff_stress_data,
         MaterialStateData<DisplacementDim>& mat_state,
         SolidMechanicsDataStateless<DisplacementDim>& out,

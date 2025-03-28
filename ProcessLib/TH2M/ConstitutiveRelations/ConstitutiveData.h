@@ -29,6 +29,7 @@
 #include "Porosity.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 #include "PureLiquidDensity.h"
 #include "Saturation.h"
@@ -58,7 +59,7 @@ struct StatefulData
     SaturationData S_L_data;
     SwellingDataStateful<DisplacementDim> swelling_data;
     BishopsData chi_S_L;
-    ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>
+    ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>
         eff_stress_data;
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
@@ -87,7 +88,7 @@ struct StatefulDataPrev
     PrevState<SaturationData> S_L_data;
     PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
     PrevState<BishopsData> chi_S_L;
-    PrevState<ProcessLib::ConstitutiveRelations::StressData<DisplacementDim>>
+    PrevState<ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>>
         eff_stress_data;
     PrevState<ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim>>
         eps_data;

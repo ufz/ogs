@@ -269,7 +269,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 current_state.transport_porosity_data);
 
         models.solid_density_model.eval({pos, t, dt}, media_data, T_data,
-                                ip_out.solid_density_data);
+                                        current_state.eff_stress_data,
+                                        pCap_data, pGR_data, current_state.chi_S_L,
+                                        current_state.porosity_data,
+                                        ip_out.solid_density_data);
 
         models.solid_heat_capacity_model.eval({pos, t, dt}, media_data, T_data,
                                               ip_cv.solid_heat_capacity_data);
@@ -527,6 +530,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
     assert(local_x.size() == matrix_size);
 
+    auto const gas_pressure =
+        local_x.template segment<gas_pressure_size>(gas_pressure_index);
+    auto const gas_pressure_prev =
+        local_x_prev.template segment<gas_pressure_size>(gas_pressure_index);
     auto const temperature =
         local_x.template segment<temperature_size>(temperature_index);
     auto const temperature_prev =
@@ -535,6 +542,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const capillary_pressure =
         local_x.template segment<capillary_pressure_size>(
             capillary_pressure_index);
+    auto const capillary_pressure_prev =
+        local_x_prev.template segment<capillary_pressure_size>(
+                capillary_pressure_index);
 
     auto const& medium =
         *this->process_data_.media_map.getMedium(this->element_.getID());
@@ -569,9 +579,14 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
+        double const pG = Np.dot(gas_pressure);
+        double const pG_prev = Np.dot(gas_pressure_prev);
+        double const pCap = Np.dot(capillary_pressure);
+        double const pCap_prev = Np.dot(capillary_pressure_prev);
         ConstitutiveRelations::TemperatureData const T_data{T, T_prev};
-        ConstitutiveRelations::CapillaryPressureData const pCap_data{
-            Np.dot(capillary_pressure)};
+        ConstitutiveRelations::GasPressureData const pGR_data{pG, pG_prev};
+        ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap,
+                                                                     pCap_prev};
 
         models.S_L_model.dEval({pos, t, dt}, media_data, pCap_data,
                                ip_dd.dS_L_dp_cap);
@@ -595,6 +610,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.solid_density_model.dEval(
             {pos, t, dt}, media_data, T_data,
+            current_state.eff_stress_data,
+            pCap_data, pGR_data, current_state.chi_S_L,
+            current_state.porosity_data,
             ip_dd.solid_density_d_data);
 
         models.internal_energy_model.dEval(
@@ -925,7 +943,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 medium.property(MPL::PropertyType::bishops_effective_stress)
                     .template value<double>(vars, pos, t, 0.0 /*dt*/);
 
-            this->current_states_[ip].eff_stress_data.sigma.noalias() +=
+            this->current_states_[ip].eff_stress_data.sigma_eff.noalias() +=
                 alpha_b * Np.dot(p_GR - bishop * capillary_pressure) *
                 Invariants::identity2;
             this->prev_states_[ip].eff_stress_data =
@@ -1216,7 +1234,7 @@ void TH2MLocalAssembler<
             Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
 
         fU.noalias() -=
-            (Bu.transpose() * current_state.eff_stress_data.sigma -
+            (Bu.transpose() * current_state.eff_stress_data.sigma_eff -
              N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
             w;
 
@@ -1803,7 +1821,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         // fU_1
         fU.noalias() -=
-            (Bu.transpose() * current_state.eff_stress_data.sigma -
+            (Bu.transpose() * current_state.eff_stress_data.sigma_eff -
              N_u_op(Nu).transpose() * ip_cv.volumetric_body_force()) *
             w;
 
