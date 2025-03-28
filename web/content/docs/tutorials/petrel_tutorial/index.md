@@ -22,12 +22,12 @@ The model is located in the Northern Upper Rhine Graben, which extends from 4470
 The 3D modeling was conducted in Petrel with the structural framework workflow.
 All geological and fault surfaces should be exported from PETREL as Gocad TSurfaces .ts files.
 These .ts files must be converted into .vtu files before the meshing work can begin.
-This can be done using the “GocadTSurfaceReader” in OpenGeoSys, which reads the voxel set (VSET), the polylines (PLINE) and the triangulated surfaces (TSURF) from the .ts file and translates them into the $\textrm{*.vtu}$ file format.
-These converted vtu files can then be used for the meshing procedure with PyVista and OGSTools “ogstools.meshlib” later. <br>
+This can be done using the `GocadTSurfaceReader` in OpenGeoSys, which reads the voxel set (VSET), the polylines (PLINE) and the triangulated surfaces (TSURF) from the .ts file and translates them into the `*.vtu` file format.
+These converted vtu files can then be used for the meshing procedure with PyVista and OGSTools `ogstools.meshlib` later. <br>
 
 ![Petrel Structural Framework Workflow & GocadTSurfaceReader](figures/01_Petrel-workflow.png)
 
-Now we convert TSurfaces ($\textrm{*.ts}$) files to VTU ($\textrm{*.vtu}$) files with GocadTSurfaceReader.
+Now we convert TSurfaces (`*.ts`) files to VTU (`*.vtu`) files with GocadTSurfaceReader.
 
 ```python
 path_ts = "./ts/"
@@ -49,7 +49,7 @@ assert len(fault_list) == 3, f"Expected 3 faults but got {len(fault_list)}"
 
 ## Meshing Preparation in PyVista
 
-Before starting the meshing work with OGSTools “ogstools.meshlib”, some preparatory steps must be carried out.
+Before starting the meshing work with OGSTools `ogstools.meshlib`, some preparatory steps must be carried out.
 
 ### Define Model Extent
 
@@ -63,7 +63,7 @@ model_extent = [447000, 475000, 5495000, 5501000, -5000, 1000] # [x1, x2, y1, y2
 model_res = 200 # meter
 ```
 
-Then read $\textrm{*.vtu}$ surface files and visualize all surfaces in PyVista.
+Then read `*.vtu` surface files and visualize all surfaces in PyVista.
 
 ```python
 strat_vtu = [pv.read(i) for i in [path_vtu + i + ".vtu" for i in strat_list]]
@@ -169,11 +169,12 @@ pl.show(jupyter_backend="static")
 
 After the boundaries have been extracted, the boundary nodes must be sorted to form a closed counterclockwise loop to make the topology more simple.
 This can be done with this function:
-> sort_boundary(boundary_nodes, model_extent, show=True)
->
-> - boundary_nodes: the nodes to be sorted, type: numpy array, [[boundary_south] [boundary_east] [boundary_north] [boundary_west]] <br>
-> - model_extent: model extent, type: list, [x_start, x_end, y_start, y_end, z_bottom, z_top] <br>
-> - show: showing the nodes in PyVista for checking, type: True or False <br>
+
+`sort_boundary(boundary_nodes, model_extent, show=True)` with
+
+- `boundary_nodes`: the nodes to be sorted, type: numpy array, [[boundary_south] [boundary_east] [boundary_north] [boundary_west]] <br>
+- `model_extent`: model extent, type: list, [x_start, x_end, y_start, y_end, z_bottom, z_top] <br>
+- `show`: showing the nodes in PyVista for checking, type: True or False <br>
 
 Now let's sort the boundary to get a closed loop.
 
@@ -297,11 +298,12 @@ pl.show(jupyter_backend="static")
 For layering and creating closed zones between the individual stratigraphic layers, a clipped fault surface must be created between two consecutive stratigraphic layers.
 These clipped fault surfaces are then used to connect the discontinuities of the stratigraphic layer.
 This can be done by using this function:
-> clip_fault(nodes_fault, boundary_strat_1, boundary_strat_2)
->
-> - nodes_fault: all nodes of the fault, type: numpy array <br>
-> - boundary_strat_1: upper boundary of the stratigraphic layer discontinuity, type: numpy array <br>
-> - boundary_strat_2: lower boundary of the stratigraphic layer discontinuity, type: numpy array <br>
+
+`clip_fault(nodes_fault, boundary_strat_1, boundary_strat_2)` with
+
+- `nodes_fault`: all nodes of the fault, type: numpy array <br>
+- `boundary_strat_1`: upper boundary of the stratigraphic layer discontinuity, type: numpy array <br>
+- `boundary_strat_2`: lower boundary of the stratigraphic layer discontinuity, type: numpy array <br>
 
 Here we need to clip the fault to the surface boundaries, the operation is only for faults that intersect the model extent and top surface.
 
@@ -391,7 +393,7 @@ pl.show(jupyter_backend="static")
 ## Meshing with OGSTools
 
 Here, the Python library OGSTools is applied to prepare and assess THMC simulations in OpenGeoSys.
-In particular, we use the “ogstools.meshlib” to create meshes from PyVista surfaces and generate structured 3D hexahedral mesh in the $\textrm{*.vtu}$ file format.
+In particular, we use the `ogstools.meshlib` to create meshes from PyVista surfaces and generate structured 3D hexahedral mesh in the `*.vtu` file format.
 
 The codes used below are inspired by the codes from Tobias Meisel (Helmholtz Centre for Environmental Research GmbH - UFZ).
 Here we define surface layers and zones for meshing with OGSTools.
@@ -470,7 +472,7 @@ vm_clipped.save("./exported/3D_hex_mesh.vtu")
 
 In order for the fault zones to be assigned their own thermal-hydraulic parameters, each fault zone must be incorporated into the 3D mesh and assigned its own material ID.
 The input files for the faults should be 2D meshes.
-This step can be carried out in OGS using the “AddFaultToVoxelGrid” tool.
+This step can be carried out in OGS using the `AddFaultToVoxelGrid` tool.
 
 ```python
 # Incorporate faults to the 3D hex-mesh
