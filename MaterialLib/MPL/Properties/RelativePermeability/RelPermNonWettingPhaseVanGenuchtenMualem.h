@@ -56,12 +56,14 @@ public:
      * @param m        Exponent, \f$ m \in [0,1]\f$
      * @param krel_min Minimum relative permeability,
      *                  \f$ k_{rel}^n_{\mbox{min}}\f$
+     * @param a        Multiplier
      */
     RelPermNonWettingPhaseVanGenuchtenMualem(std::string name,
                                              const double S_L_r,
                                              const double S_n_r,
                                              const double m,
-                                             const double krel_min);
+                                             const double krel_min,
+                                             const double a);
 
     void checkScale() const override
     {
@@ -98,5 +100,6 @@ private:
     const double krel_min_;  ///< Minimum relative permeability.
     const double
         S_L_for_krel_min_;  ///< Liquid saturation that gives \c krel_min_.
+    const double a_;
 };
 }  // namespace MaterialPropertyLib

@@ -38,8 +38,8 @@ createRelPermGeneralizedPowerNonwettingPhase(BaseLib::ConfigTree const& config)
         //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPowerNonwettingPhase__min_relative_permeability}
         config.getConfigParameter<double>("min_relative_permeability");
     double const a =
-        //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPowerNonwettingPhase__multiplier}
-        config.getConfigParameter<double>("multiplier", 1000);
+        //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPowerNonwettingPhase__enhancement_factor}
+        config.getConfigParameter<double>("enhancement_factor", 1000);
     double const lambda =
         //! \ogs_file_param{properties__property__RelativePermeabilityGeneralizedPowerNonwettingPhase__exponent}
         config.getConfigParameter<double>("exponent", 0.8);
