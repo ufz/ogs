@@ -85,7 +85,10 @@ if((OGS_BUILD_WHEEL AND NOT APPLE_ARM) OR GUIX_BUILD OR CONDA_BUILD)
         OgsMFrontBehaviour PROPERTIES IMPORTED_LOCATION ${_copied_mfront_lib}
                                       IMPORTED_NO_SONAME TRUE
     )
-    install(FILES ${_copied_mfront_lib} TYPE LIB)
+    install(FILES ${_copied_mfront_lib} TYPE LIB PERMISSIONS
+        OWNER_READ GROUP_READ WORLD_READ
+        OWNER_WRITE GROUP_WRITE
+        OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
 else()
     # Build behaviours lib as part of ogs' build process
     mfront_behaviours_check_library(OgsMFrontBehaviour ${_mfront_behaviours})
