@@ -25,6 +25,7 @@ void TransportPorosityModel<DisplacementDim>::eval(
     MechanicalStrainData<DisplacementDim> const& eps_m_data,
     PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
     PrevState<TransportPorosityData> const& transport_porosity_prev_data,
+    PorosityData const& poro_data,
     TransportPorosityData& transport_porosity_data) const
 {
     static int const KelvinVectorSize =
@@ -52,6 +53,7 @@ void TransportPorosityModel<DisplacementDim>::eval(
     variables_prev.volumetric_strain = Invariants::trace(eps_m_prev_data->eps_m);
 
     variables_prev.transport_porosity = transport_porosity_prev_data->phi;
+    variables.porosity = poro_data.phi;
     transport_porosity_data.phi =
         media_data.medium.property(MaterialPropertyLib::PropertyType::transport_porosity)
             .template value<double>(variables, variables_prev, x_t.x, x_t.t,

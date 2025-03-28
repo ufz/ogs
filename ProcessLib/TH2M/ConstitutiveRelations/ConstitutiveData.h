@@ -130,6 +130,7 @@ struct OutputData
     FluidDensityData fluid_density_data;
     VapourPartialPressureData vapour_pressure_data;
     PorosityData porosity_data;
+    TransportPorosityData transport_porosity_data;
     SolidDensityData solid_density_data;
     DiffusionVelocityData<DisplacementDim> diffusion_velocity_data;
     DarcyVelocityData<DisplacementDim> darcy_velocity_data;
@@ -145,7 +146,8 @@ struct OutputData
             &Self::mass_mole_fractions_data,
             &Self::fluid_density_data,
             &Self::vapour_pressure_data,
-            //                                              &Self::porosity_data,
+           // &Self::porosity_data,
+           // &Self::transport_porosity_data,
             &Self::solid_density_data,
             &Self::diffusion_velocity_data,
             &Self::darcy_velocity_data);

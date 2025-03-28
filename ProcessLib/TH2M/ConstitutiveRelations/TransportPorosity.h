@@ -47,16 +47,18 @@ struct TransportPorosityData
 template <int DisplacementDim>
 struct TransportPorosityModel
 {
-    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+    void eval(
+        SpaceTimeData const& x_t, MediaData const& media_data,
         SaturationData const& S_L_data,
         PrevState<SaturationData> const& S_L_prev_data,
         CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
-        BishopsData const& chi_S_L,
-        PrevState<BishopsData> const& chi_S_L_prev, BiotData const& biot,
+        BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
+        BiotData const& biot,
         SolidCompressibilityData const& solid_compressibility,
         MechanicalStrainData<DisplacementDim> const& eps_m_data,
         PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
         PrevState<TransportPorosityData> const& transport_porosity_prev_data,
+        PorosityData const& poro_data,
         TransportPorosityData& transport_porosity_data) const;
 
     void dEval(
