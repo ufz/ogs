@@ -91,6 +91,7 @@ include(CppCheck)
 include(ClangTidy)
 
 # ---- More Options ----
+set(CMAKE_LINK_LIBRARIES_ONLY_TARGETS ON)
 
 # Profiling
 if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)

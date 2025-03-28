@@ -41,7 +41,7 @@ endif()
 # Qt5 library ##
 if(OGS_BUILD_GUI)
     set(QT_MODULES Gui Widgets Xml XmlPatterns)
-    if(UNIX AND NOT APPLE)
+    if(LINUX)
         list(APPEND QT_MODULES X11Extras)
     endif()
     find_package(Qt5 ${ogs.minimum_version.qt} REQUIRED ${QT_MODULES})

@@ -43,7 +43,7 @@ target_link_libraries(
     VTK::IOExport
 )
 
-if(UNIX AND NOT APPLE)
+if(LINUX)
     target_link_libraries(DataExplorer Qt5::X11Extras)
 endif()
 
