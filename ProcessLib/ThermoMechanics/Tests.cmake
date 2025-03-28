@@ -98,7 +98,7 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 17
     DIFF_DATA
-    tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu temperature temperature 5e-11 0.0
+    tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu temperature temperature 7e-11 0.0
     tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
 )
 

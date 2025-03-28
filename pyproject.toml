@@ -125,6 +125,7 @@ extend-ignore = [
   # RUF005 should be disabled when using numpy, see
   # https://github.com/charliermarsh/ruff/issues/2142:
   "RUF005",
+  "PGH004", # blanket-noqa, used for file level exclusions
 ]
 typing-modules = ["mypackage._compat.typing"]
 unfixable = [

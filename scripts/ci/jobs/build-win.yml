@@ -2,6 +2,18 @@ build win:
   extends:
     - .template-build-win
     - .test-artifacts
+    - .vs-environment
+  variables:
+    CHECK_WARNINGS: "true"
+    CMAKE_PRESET: release
+    CMAKE_ARGS: >-
+      -DOGS_CI_TESTRUNNER_REPEAT=1
+      -DOGS_USE_PIP=ON
+
+build win mkl:
+  extends:
+    - .template-build-win
+    - .test-artifacts
     # oneAPI MKL results in Stack overflow during compilation of MathLib on Visual Studio 2022
     # therefore using 2019
     - .vs-environment
@@ -17,7 +29,6 @@ build win:
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
-      -DOGS_USE_PIP=ON
       -DOGS_USE_MKL=ON
 
 build win msvc:
