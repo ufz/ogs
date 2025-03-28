@@ -51,29 +51,5 @@ struct SolidDensityModel
                SolidDensityDerivativeData& solid_density_d_data) const;
 };
 
-template <int DisplacementDim>
-struct SolidDensityModelNonConstantSolidPhaseVolumeFraction
-{
-    void eval(
-        SpaceTimeData const& x_t,
-        MediaData const& media_data,
-        TemperatureData const& T_data,
-        BiotData const& biot,
-        StrainData<DisplacementDim> const& strain_data,
-        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
-        SolidDensityData& solid_density_data) const;
-
-    void dEval(
-        SpaceTimeData const& x_t,
-        MediaData const& media_data,
-        TemperatureData const& T_data,
-        BiotData const& biot,
-        StrainData<DisplacementDim> const& strain_data,
-        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
-        SolidDensityDerivativeData& solid_density_d_data) const;
-};
-
-extern template struct SolidDensityModelNonConstantSolidPhaseVolumeFraction<2>;
-extern template struct SolidDensityModelNonConstantSolidPhaseVolumeFraction<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
