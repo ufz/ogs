@@ -1,8 +1,31 @@
+import inspect
 import math
 
 import numpy as np
 import ogs.mpl as mpl
 import pytest
+
+
+def get_public_classes(module):
+    return [
+        cls
+        for name, cls in inspect.getmembers(module, inspect.isclass)
+        if cls.__module__ == module.__name__
+        and not name.startswith("_")
+        and name not in {"VariableArray", "Variable"}
+    ]
+
+
+@pytest.mark.parametrize("cls", get_public_classes(mpl))
+def test_class_and_members_have_docstrings(cls):
+    assert cls.__doc__, f"Missing docstring for class: {cls.__name__}"
+    assert cls.__init__.__doc__, f"Missing __init__ docstring in class: {cls.__name__}"
+
+    for name, member in inspect.getmembers(cls):
+        if name.startswith("_"):
+            continue
+        doc = getattr(member, "__doc__", None)
+        assert doc, f"Missing docstring for member '{name}' in class '{cls.__name__}'"
 
 
 def test_variable_array():
