@@ -421,11 +421,16 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             next_iteration_inv_jacobian_recompute =
                 next_iteration_inv_jacobian_recompute + _recompute_jacobian;
         }
+
+        bool iteration_succeeded = false;
         if (!_linear_solver.compute(J, linear_solver_behaviour))
         {
             ERR("Newton: The linear solver failed in the compute() step.");
         }
-        bool iteration_succeeded = _linear_solver.solve(res, minus_delta_x);
+        else
+        {
+            iteration_succeeded = _linear_solver.solve(res, minus_delta_x);
+        }
 #else
         bool iteration_succeeded = _linear_solver.solve(J, res, minus_delta_x);
 #endif
