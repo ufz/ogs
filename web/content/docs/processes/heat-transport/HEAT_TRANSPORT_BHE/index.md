@@ -131,6 +131,19 @@ Four type of flow and temperature control patterns are provided in OGS.
   It means both the BHE thermal load and flow rate values are following the corresponding curves.
 * `BuildingPowerCurveConstantFlow`:\
   It means the BHE thermal load is following a building heat load depending on a COP curve while the flow rate is kept as a constant.
+* `AdvancedBuildingPowerCurvesFlowCurve`:\
+  It means the BHE thermal load is following a building heat load, which is determined by both the value defined in the `<power_curve>`, as well as the value in the `<cop_curve>`.
+  This configuration is designed to consider the effect of source temperature on the heat pump efficiency.
+  To define the space heating load from the building, the heating power value is defined in the group <heating>.
+  For thermal load for the drinking hot water, the key word  `<hot_water>` is used.
+  This configuration is designed to reflect different cop curves caused by the different demand of sink temperatures at the heat pump.
+  Cooling can also be taken into account within the key word `<cooling>`.
+  With the key word `<active>`, passive cooling (false) or active cooling (true) can be specified.
+  Default is passive cooling.
+  The cooling load is defined in the `<power_curve>`.
+  For active cooling, a `<cop_curve>` is needed.
+  Under the setting of `AdvancedBuildingPowerCurvesFlowCurve`, every combination is possible.
+  The flow rate values are following the corresponding curve `<flow_rate_curve>`.
 
 The unit of `<power>` is in $\mathrm{W}$ and `<flow_rate>` is in $\mathrm{m^{3}/s}$. For heating applications, thermal energy is extracted from the subsurface, then a negative power value should be given. It is vice versa for cooling applications.
 
