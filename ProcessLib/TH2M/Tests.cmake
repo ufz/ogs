@@ -315,7 +315,7 @@ AddTest(
 AddTest(
     NAME TH2M_H2M_StrainDependentPermeability
     PATH TH2M/H2M/StrainDependentPermeability
-    RUNTIME 1.0
+    RUNTIME 12
     EXECUTABLE ogs
     EXECUTABLE_ARGS Strain_Dependent_Permeability_Test.prj
     WRAPPER time

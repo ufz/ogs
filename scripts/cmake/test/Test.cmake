@@ -48,6 +48,9 @@ NotebookTest(
     TRUE
 )
 
+set(OGS_CTEST_LABEL_EXCLUDE "" CACHE STRING "")
+string(REPLACE " " ";" _test_label_exclude_argument "${OGS_CTEST_LABEL_EXCLUDE}")
+
 set(_ctest_parameter -T Test --force-new-ctest-process)
 if(CMAKE_CONFIGURATION_TYPES)
     list(APPEND _ctest_parameter --build-config "$<CONFIGURATION>")
@@ -58,7 +61,7 @@ add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
 add_custom_target(
     ctest
     COMMAND ${CMAKE_CTEST_COMMAND} ${_ctest_parameter} --output-log
-            Tests/ctest.log -L default -LE large
+            Tests/ctest.log -L default ${_test_label_exclude_argument}
     DEPENDS ${test_dependencies} ctest-cleanup
     USES_TERMINAL
 )
