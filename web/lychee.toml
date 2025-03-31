@@ -7,6 +7,7 @@ exclude = [
   "smartkd-concept\\.de",
   "all\\.css",
   "eigen\\.tuxfamily.org",
-  "www\\.ufz\\.de/vislab"
+  "www\\.ufz\\.de/vislab",
+  "mont_terri_experimente.html"
 ]
 exclude_path = ["public/releases/"]
