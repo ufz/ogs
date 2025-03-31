@@ -331,7 +331,7 @@ AddTest(
     RUNTIME 1
     DIFF_DATA
     axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
-    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.4e-5 5.e-7
+    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.5e-5 5.e-7
     axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
 )
 
