@@ -18,8 +18,8 @@ namespace ConstitutiveRelations
 
 template <int DisplacementDim>
 void TotalStressModel<DisplacementDim>::eval(
-    ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim> const&
-        eff_stress_data,
+    ProcessLib::ConstitutiveRelations::EffectiveStressData<
+        DisplacementDim> const& eff_stress_data,
     BiotData const& biot_data,
     BishopsData const& chi_S_L,
     GasPressureData const& p_GR,

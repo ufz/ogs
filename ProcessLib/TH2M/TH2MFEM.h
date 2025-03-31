@@ -151,13 +151,12 @@ private:
                 // Initial porosity. Could be read from integration point data
                 // or mesh.
                 current_state.porosity_data.phi =
-                    // std::get<iConstitutiveRelations::PorosityData>(current_state).phi
-                    // =
                     medium.property(MaterialPropertyLib::porosity)
                         .template initialValue<double>(x_position,
                                                        time_independent);
 
-                if (medium.hasProperty(MaterialPropertyLib::PropertyType::transport_porosity))
+                if (medium.hasProperty(
+                        MaterialPropertyLib::PropertyType::transport_porosity))
                 {
                     current_state.transport_porosity_data.phi =
                         medium.property(MaterialPropertyLib::transport_porosity)

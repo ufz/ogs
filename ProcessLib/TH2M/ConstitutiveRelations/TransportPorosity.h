@@ -12,9 +12,9 @@
 #include "Base.h"
 #include "Biot.h"
 #include "Bishops.h"
+#include "Porosity.h"
 #include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
-#include "Porosity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidThermalExpansion.h"
@@ -41,7 +41,8 @@ struct TransportPorosityData
         using Self = TransportPorosityData;
         namespace R = ProcessLib::Reflection;
 
-        return std::tuple{R::makeReflectionData("transport_porosity", &Self::phi)};
+        return std::tuple{
+            R::makeReflectionData("transport_porosity", &Self::phi)};
     }
 };
 
@@ -54,7 +55,6 @@ struct TransportPorosityModel
         PrevState<SaturationData> const& S_L_prev_data,
         CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
         BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
-        BiotData const& biot,
         SolidCompressibilityData const& solid_compressibility,
         MechanicalStrainData<DisplacementDim> const& eps_m_data,
         PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
@@ -64,12 +64,17 @@ struct TransportPorosityModel
 
     void dEval(
         SpaceTimeData const& x_t, MediaData const& media_data,
-        TransportPorosityData const& transport_porosity_data,
-        SaturationDataDeriv const& dS_L_dp_cap,
+        SaturationData const& S_L_data,
+        PrevState<SaturationData> const& S_L_prev_data,
+        CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
+        BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
+        SolidCompressibilityData const& solid_compressibility,
+        MechanicalStrainData<DisplacementDim> const& eps_m_data,
+        PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
+        PrevState<TransportPorosityData> const& transport_porosity_prev_data,
+        PorosityData const& poro_data,
         TransportPorosityDerivativeData& transport_porosity_d_data) const;
 };
-
-
 
 extern template struct TransportPorosityModel<2>;
 extern template struct TransportPorosityModel<3>;

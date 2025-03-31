@@ -20,9 +20,8 @@ void SolidMechanicsModel<DisplacementDim>::eval(
     MechanicalStrainData<DisplacementDim> const& mechanical_strain_data,
     PrevState<MechanicalStrainData<DisplacementDim>> const&
         mechanical_strain_prev_data,
-    PrevState<
-        ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>> const&
-        eff_stress_prev_data,
+    PrevState<ProcessLib::ConstitutiveRelations::EffectiveStressData<
+        DisplacementDim>> const& eff_stress_prev_data,
     ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>&
         eff_stress_data,
     MaterialStateData<DisplacementDim>& mat_state,

@@ -45,26 +45,26 @@ template <int DisplacementDim>
 struct SolidDensityModel
 {
     void eval(SpaceTimeData const& x_t,
-        MediaData const& media_data,
-        TemperatureData const& T_data,
-        ProcessLib::ConstitutiveRelations::EffectiveStressData<
-               DisplacementDim> const& sigma_eff_data,
-        CapillaryPressureData const& p_cap,
-        GasPressureData const& p_GR,
-        BishopsData const& chi_S_L,
-        PorosityData const& poro_data,
-        SolidDensityData& solid_density_data) const;
+              MediaData const& media_data,
+              TemperatureData const& T_data,
+              ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                  DisplacementDim> const& sigma_eff_data,
+              CapillaryPressureData const& p_cap,
+              GasPressureData const& p_GR,
+              BishopsData const& chi_S_L,
+              PorosityData const& poro_data,
+              SolidDensityData& solid_density_data) const;
 
     void dEval(SpaceTimeData const& x_t,
-        MediaData const& media_data,
-        TemperatureData const& T_data,
-        ProcessLib::ConstitutiveRelations::EffectiveStressData<
-                                        DisplacementDim> const& sigma_eff_data,
-        CapillaryPressureData const& p_cap,
-        GasPressureData const& p_GR,
-        BishopsData const& chi_S_L,
-        PorosityData const& poro_data,
-        SolidDensityDerivativeData& solid_density_d_data) const;
+               MediaData const& media_data,
+               TemperatureData const& T_data,
+               ProcessLib::ConstitutiveRelations::EffectiveStressData<
+                   DisplacementDim> const& sigma_eff_data,
+               CapillaryPressureData const& p_cap,
+               GasPressureData const& p_GR,
+               BishopsData const& chi_S_L,
+               PorosityData const& poro_data,
+               SolidDensityDerivativeData& solid_density_d_data) const;
 };
 
 extern template struct SolidDensityModel<2>;

@@ -48,25 +48,29 @@ template <int DisplacementDim>
 struct PorosityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-        SaturationData const& S_L_data,
-        PrevState<SaturationData> const& S_L_prev_data,
-        CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
-        BishopsData const& chi_S_L,
-        PrevState<BishopsData> const& chi_S_L_prev, BiotData const& biot,
-        SolidCompressibilityData const& solid_compressibility,
-        StrainData<DisplacementDim> const& eps_data,
-        PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
-        PrevState<PorosityData> const& porosity_prev_data,
-        PorosityData& porosity_data) const;
+              SaturationData const& S_L_data,
+              PrevState<SaturationData> const& S_L_prev_data,
+              CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
+              BishopsData const& chi_S_L,
+              PrevState<BishopsData> const& chi_S_L_prev,
+              SolidCompressibilityData const& solid_compressibility,
+              StrainData<DisplacementDim> const& eps_data,
+              PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+              PrevState<PorosityData> const& porosity_prev_data,
+              PorosityData& porosity_data) const;
 
-    void dEval(
-        SpaceTimeData const& x_t, MediaData const& media_data,
-        PorosityData const& porosity_data,
-        SaturationDataDeriv const& dS_L_dp_cap,
-        PorosityDerivativeData& porosity_d_data) const;
+    void dEval(SpaceTimeData const& x_t, MediaData const& media_data,
+               SaturationData const& S_L_data,
+               PrevState<SaturationData> const& S_L_prev_data,
+               CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
+               BishopsData const& chi_S_L,
+               PrevState<BishopsData> const& chi_S_L_prev,
+               SolidCompressibilityData const& solid_compressibility,
+               StrainData<DisplacementDim> const& eps_data,
+               PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+               PrevState<PorosityData> const& porosity_prev_data,
+               PorosityDerivativeData& porosity_d_data) const;
 };
-
-
 
 extern template struct PorosityModel<2>;
 extern template struct PorosityModel<3>;

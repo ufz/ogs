@@ -253,11 +253,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                     ip_cv.viscosity_data);
 
         models.porosity_model.eval(
-            {pos, t, dt}, media_data,
-            current_state.S_L_data, prev_state.S_L_data, pCap_data, pGR_data,
-            current_state.chi_S_L, prev_state.chi_S_L, ip_cv.biot_data,
-            ip_cv.beta_p_SR, current_state.eps_data, prev_state.eps_data,
-            prev_state.porosity_data,
+            {pos, t, dt}, media_data, current_state.S_L_data,
+            prev_state.S_L_data, pCap_data, pGR_data, current_state.chi_S_L,
+            prev_state.chi_S_L, ip_cv.beta_p_SR, current_state.eps_data,
+            prev_state.eps_data, prev_state.porosity_data,
             current_state.porosity_data);
 
         if (medium.hasProperty(MPL::PropertyType::transport_porosity))
@@ -265,7 +264,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             models.transport_porosity_model.eval(
                 {pos, t, dt}, media_data, current_state.S_L_data,
                 prev_state.S_L_data, pCap_data, pGR_data, current_state.chi_S_L,
-                prev_state.chi_S_L, ip_cv.biot_data, ip_cv.beta_p_SR,
+                prev_state.chi_S_L, ip_cv.beta_p_SR,
                 current_state.mechanical_strain_data,
                 prev_state.mechanical_strain_data,
                 prev_state.transport_porosity_data, current_state.porosity_data,
@@ -277,11 +276,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 current_state.porosity_data.phi;
         }
 
-        models.solid_density_model.eval({pos, t, dt}, media_data, T_data,
-                                        current_state.eff_stress_data,
-                                        pCap_data, pGR_data, current_state.chi_S_L,
-                                        current_state.porosity_data,
-                                        ip_out.solid_density_data);
+        models.solid_density_model.eval(
+            {pos, t, dt}, media_data, T_data, current_state.eff_stress_data,
+            pCap_data, pGR_data, current_state.chi_S_L,
+            current_state.porosity_data, ip_out.solid_density_data);
 
         models.solid_heat_capacity_model.eval({pos, t, dt}, media_data, T_data,
                                               ip_cv.solid_heat_capacity_data);
@@ -553,7 +551,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             capillary_pressure_index);
     auto const capillary_pressure_prev =
         local_x_prev.template segment<capillary_pressure_size>(
-                capillary_pressure_index);
+            capillary_pressure_index);
 
     auto const& medium =
         *this->process_data_.media_map.getMedium(this->element_.getID());
@@ -608,8 +606,10 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                      ip_dd.advection_d_data);
 
         models.porosity_model.dEval(
-            {pos, t, dt}, media_data, current_state.porosity_data,
-            ip_dd.dS_L_dp_cap,
+            {pos, t, dt}, media_data, current_state.S_L_data,
+            prev_state.S_L_data, pCap_data, pGR_data, current_state.chi_S_L,
+            prev_state.chi_S_L, ip_cv.beta_p_SR, current_state.eps_data,
+            prev_state.eps_data, prev_state.porosity_data,
             ip_dd.porosity_d_data);
 
         models.thermal_conductivity_model.dEval(
@@ -618,11 +618,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_dd.thermal_conductivity_d_data);
 
         models.solid_density_model.dEval(
-            {pos, t, dt}, media_data, T_data,
-            current_state.eff_stress_data,
+            {pos, t, dt}, media_data, T_data, current_state.eff_stress_data,
             pCap_data, pGR_data, current_state.chi_S_L,
-            current_state.porosity_data,
-            ip_dd.solid_density_d_data);
+            current_state.porosity_data, ip_dd.solid_density_d_data);
 
         models.internal_energy_model.dEval(
             ip_out.fluid_density_data,
@@ -880,7 +878,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         MPL::VariableArray vars;
 
         auto& ip_data = _ip_data[ip];
-        auto& ip_out = this->output_data_[ip];
+        // auto& ip_out = this->output_data_[ip];
         auto& prev_state = this->prev_states_[ip];
         auto& current_state = this->current_states_[ip];
         auto const& Np = ip_data.N_p;
@@ -1093,7 +1091,7 @@ void TH2MLocalAssembler<
         auto& ip_cv = ip_constitutive_variables[int_point];
         auto& ip_cd = ip_constitutive_data[int_point];
 
-        auto& ip_out = this->output_data_[int_point];
+        // auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto const& prev_state = this->prev_states_[int_point];
 
@@ -1405,7 +1403,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_cd = ip_constitutive_data[int_point];
         auto& ip_dd = ip_d_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
-        auto& ip_out = this->output_data_[int_point];
+        // auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto& prev_state = this->prev_states_[int_point];
 
