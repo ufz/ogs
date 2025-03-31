@@ -92,6 +92,11 @@ int main(int argc, char* argv[])
         false, 0.0, "floating point value");
     cmd.add(szz);
 
+    TCLAP::ValueArg<int> mat_id("", "material_id",
+                                "Material ID of the mesh to be merged", false,
+                                0.0, "integer cell value");
+    cmd.add(mat_id);
+
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
@@ -107,6 +112,7 @@ int main(int argc, char* argv[])
     initial_value_dict.insert({"sxx", sxx.getValue()});
     initial_value_dict.insert({"syy", syy.getValue()});
     initial_value_dict.insert({"szz", szz.getValue()});
+    initial_value_dict.insert({"mat_id", mat_id.getValue()});
 
     auto read_mesh = [](std::string const& mesh_file_name)
     {

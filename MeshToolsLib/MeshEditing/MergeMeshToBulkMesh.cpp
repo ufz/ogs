@@ -123,6 +123,24 @@ bool createMergedPropertyVector(
         return true;
     }
 
+    if (item_type == MeshLib::MeshItemType::Cell)
+    {
+        auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
+            merged_mesh, pv_name, item_type, pv_num_components);
+        new_pv->resize(merged_mesh.getNumberOfElements() * pv_num_components);
+
+        std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
+
+        if (pv_name == "MaterialIDs")
+        {
+            std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(),
+                      initial_value_dict["mat_id"]);
+            return true;
+        }
+        std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(), 0.0);
+        return true;
+    }
+
     return true;
 }
 
