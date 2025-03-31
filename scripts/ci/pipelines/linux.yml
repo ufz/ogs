@@ -9,6 +9,7 @@ include:
   - local: "/scripts/ci/jobs/build-linux-frontend.yml"
   - local: "/scripts/ci/jobs/build-gui-linux.yml"
   - local: "/scripts/ci/jobs/build-guix.yml"
+  - local: "/scripts/ci/jobs/code-coverage.yml"
   - local: "/scripts/ci/jobs/jupyter.yml"
   - local: "/scripts/ci/jobs/code-quality.yml"
   - local: "/scripts/ci/jobs/build-docs.yml"
