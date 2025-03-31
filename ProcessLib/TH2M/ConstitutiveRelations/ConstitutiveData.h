@@ -23,13 +23,13 @@
 #include "Gravity.h"
 #include "InternalEnergy.h"
 #include "MassMoleFractions.h"
-#include "MechanicalStrain.h"
+#include "MechanicalStrainModel.h"
 #include "PermeabilityData.h"
 #include "PhaseTransitionData.h"
 #include "Porosity.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ConstitutiveRelations/StressData.h"
-#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 #include "PureLiquidDensity.h"
 #include "Saturation.h"
@@ -41,8 +41,8 @@
 #include "Swelling.h"
 #include "TEquation.h"
 #include "ThermalConductivity.h"
-#include "TransportPorosity.h"
 #include "TotalStress.h"
+#include "TransportPorosity.h"
 #include "UEquation.h"
 #include "VapourPartialPressure.h"
 #include "Viscosity.h"
@@ -88,7 +88,8 @@ struct StatefulDataPrev
     PrevState<SaturationData> S_L_data;
     PrevState<SwellingDataStateful<DisplacementDim>> swelling_data;
     PrevState<BishopsData> chi_S_L;
-    PrevState<ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>>
+    PrevState<
+        ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>>
         eff_stress_data;
     PrevState<ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim>>
         eps_data;
@@ -122,15 +123,12 @@ struct StatefulDataPrev
 template <int DisplacementDim>
 struct OutputData
 {
-    // ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     PermeabilityData<DisplacementDim> permeability_data;
     FluidEnthalpyData fluid_enthalpy_data;
     SolidEnthalpyData solid_enthalpy_data;
     MassMoleFractionsData mass_mole_fractions_data;
     FluidDensityData fluid_density_data;
     VapourPartialPressureData vapour_pressure_data;
-    PorosityData porosity_data;
-    TransportPorosityData transport_porosity_data;
     SolidDensityData solid_density_data;
     DiffusionVelocityData<DisplacementDim> diffusion_velocity_data;
     DarcyVelocityData<DisplacementDim> darcy_velocity_data;
@@ -139,18 +137,15 @@ struct OutputData
     {
         using Self = OutputData<DisplacementDim>;
 
-        return Reflection::reflectWithoutName(  //&Self::eps_data,
-            &Self::permeability_data,
-            &Self::fluid_enthalpy_data,
-            &Self::solid_enthalpy_data,
-            &Self::mass_mole_fractions_data,
-            &Self::fluid_density_data,
-            &Self::vapour_pressure_data,
-           // &Self::porosity_data,
-           // &Self::transport_porosity_data,
-            &Self::solid_density_data,
-            &Self::diffusion_velocity_data,
-            &Self::darcy_velocity_data);
+        return Reflection::reflectWithoutName(&Self::permeability_data,
+                                              &Self::fluid_enthalpy_data,
+                                              &Self::solid_enthalpy_data,
+                                              &Self::mass_mole_fractions_data,
+                                              &Self::fluid_density_data,
+                                              &Self::vapour_pressure_data,
+                                              &Self::solid_density_data,
+                                              &Self::diffusion_velocity_data,
+                                              &Self::darcy_velocity_data);
     }
 };
 

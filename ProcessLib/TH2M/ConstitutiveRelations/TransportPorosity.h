@@ -14,6 +14,7 @@
 #include "Bishops.h"
 #include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
+#include "Porosity.h"
 #include "Saturation.h"
 #include "SolidCompressibility.h"
 #include "SolidThermalExpansion.h"

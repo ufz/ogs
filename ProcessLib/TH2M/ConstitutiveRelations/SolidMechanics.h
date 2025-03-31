@@ -13,7 +13,7 @@
 #include "EquivalentPlasticStrainData.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "MaterialState.h"
-#include "MechanicalStrain.h"
+#include "MechanicalStrainModel.h"
 #include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 
 namespace ProcessLib::TH2M
