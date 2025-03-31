@@ -1572,3 +1572,22 @@ AddTest(
     TESTER vtkdiff-mesh
     DIFF_DATA points_3D.vtu points_3D.vtu 1.e-12
 )
+
+AddTest(
+    NAME Utils_mergeMeshToBulkMesh
+    PATH Utils/MergeMeshToBulkMesh
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/MergeMeshToBulkMesh
+    EXECUTABLE mergeMeshToBulkMesh
+    EXECUTABLE_ARGS -b sma_h2m_excavation_plastic_ts_6.3072e+08.vtu -i SMA_2D_cavern.vtu --sigma_xx -1e+5 --sigma_yy -1e+5 --sigma_zz -1e+5  --temperature 293.15 --gas_pressure 1e+5 --capillary_pressure 32.39668760783069e6  --material_id 0 -o ${Data_BINARY_DIR}/Utils/MergeMeshToBulkMesh/merged_mesh.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    merged_mesh.vtu merged_mesh.vtu gas_pressure gas_pressure 1e-15 1e-15
+    merged_mesh.vtu merged_mesh.vtu capillary_pressure capillary_pressure 1e-15 1e-15
+    merged_mesh.vtu merged_mesh.vtu saturation saturation 1e-15 1e-15
+    merged_mesh.vtu merged_mesh.vtu temperature temperature 1e-15 1e-15
+    merged_mesh.vtu merged_mesh.vtu epsilon epsilon 1e-15 1e-15
+    merged_mesh.vtu merged_mesh.vtu sigma sigma 1e-15 1e-15
+    merged_mesh.vtu merged_mesh.vtu sigma_ip sigma_ip 1e-15 1e-15
+    merged_mesh.vtu merged_mesh.vtu MaterialIDs MaterialIDs 1e-15 1e-15
+)
+
