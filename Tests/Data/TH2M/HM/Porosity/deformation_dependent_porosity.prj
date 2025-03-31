@@ -43,6 +43,7 @@
                 <secondary_variable internal_name="mole_fraction_gas" output_name="xnCG"/>
                 <secondary_variable internal_name="porosity" output_name="porosity"/>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="swelling_stress" output_name="swelling_stress"/>
                 <secondary_variable internal_name="vapour_pressure" output_name="vapour_pressure"/>
@@ -267,6 +268,7 @@
                 <variable>liquid_density</variable>
                 <variable>porosity</variable>
                 <variable>saturation</variable>
+                <variable>epsilon</variable>
                 <variable>sigma</variable>
                 <variable>swelling_stress</variable>
                 <variable>temperature</variable>
@@ -505,7 +507,7 @@
     <test_definition>
         <vtkdiff>
             <regex>deformation_dependent_porosity_ts_.*.vtu</regex>
-            <field>pressure</field>
+            <field>capillary_pressure</field>
             <absolute_tolerance>5e-11</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
@@ -535,7 +537,13 @@
         </vtkdiff>
         <vtkdiff>
             <regex>deformation_dependent_porosity_ts_.*.vtu</regex>
-            <field>velocity</field>
+            <field>velocity_liquid</field>
+            <absolute_tolerance>5e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>deformation_dependent_porosity_ts_.*.vtu</regex>
+            <field>velocity_gas</field>
             <absolute_tolerance>5e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
@@ -543,12 +551,6 @@
             <regex>deformation_dependent_porosity_ts_.*.vtu</regex>
             <field>porosity</field>
             <absolute_tolerance>5e-14</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>deformation_dependent_porosity_ts_.*.vtu</regex>
-            <field>porosity_avg</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
     </test_definition>

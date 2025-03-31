@@ -44,6 +44,7 @@
                 <secondary_variable internal_name="porosity" output_name="porosity"/>
                 <secondary_variable internal_name="transport_porosity" output_name="transport_porosity"/>
                 <secondary_variable internal_name="saturation" output_name="saturation"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="swelling_stress" output_name="swelling_stress"/>
                 <secondary_variable internal_name="vapour_pressure" output_name="vapour_pressure"/>
@@ -279,14 +280,16 @@
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
-            <variables/>
-                <!--variable>capillary_pressure</variable>
+            <variables>
+                <variable>capillary_pressure</variable>
                 <variable>displacement</variable>
                 <variable>gas_density</variable>
                 <variable>gas_pressure</variable>
                 <variable>liquid_density</variable>
                 <variable>porosity</variable>
+                <variable>transport_porosity</variable>
                 <variable>saturation</variable>
+                <variable>epsilon</variable>
                 <variable>sigma</variable>
                 <variable>swelling_stress</variable>
                 <variable>temperature</variable>
@@ -297,7 +300,7 @@
                 <variable>xmWL</variable>
                 <variable>xnCG</variable>
                 <variable>liquid_pressure_interpolated</variable>
-            </variables-->
+            </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
@@ -525,7 +528,7 @@
     <test_definition>
         <vtkdiff>
             <regex>deformation_dependent_porosity_swelling_ts_.*.vtu</regex>
-            <field>pressure</field>
+            <field>capillary_pressure</field>
             <absolute_tolerance>5e-11</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
@@ -555,7 +558,13 @@
         </vtkdiff>
         <vtkdiff>
             <regex>deformation_dependent_porosity_swelling_ts_.*.vtu</regex>
-            <field>velocity</field>
+            <field>velocity_liquid</field>
+            <absolute_tolerance>5e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>deformation_dependent_porosity_swelling_ts_.*.vtu</regex>
+            <field>velocity_gas</field>
             <absolute_tolerance>5e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
@@ -567,14 +576,8 @@
         </vtkdiff>
         <vtkdiff>
             <regex>deformation_dependent_porosity_swelling_ts_.*.vtu</regex>
-            <field>porosity_avg</field>
-            <absolute_tolerance>1e-14</absolute_tolerance>
-            <relative_tolerance>1e-15</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>deformation_dependent_porosity_swelling_ts_.*.vtu</regex>
-            <field>dry_density_solid</field>
-            <absolute_tolerance>1e-13</absolute_tolerance>
+            <field>transport_porosity</field>
+            <absolute_tolerance>5e-14</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
     </test_definition>
