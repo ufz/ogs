@@ -32,7 +32,9 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
+#include "MeshToolsLib/IntegrationPointDataTools.h"
 
 namespace MeshToolsLib
 {
@@ -60,6 +62,33 @@ bool createMergedPropertyVector(
 
     auto const pv_num_components = pv_bulk_mesh->getNumberOfGlobalComponents();
 
+    auto const set_sigma0 =
+        [&pv_name, &pv_bulk_mesh, &initial_value_dict,
+         &pv_num_components](MeshLib::PropertyVector<T>& new_pv)
+    {
+        if (pv_num_components > 1)
+        {
+            if (pv_name.find("sigma") != std::string::npos)
+            {
+                std::vector<double> sigma0(pv_num_components, 0.0);
+                sigma0[0] = initial_value_dict["sxx"];
+                sigma0[1] = initial_value_dict["syy"];
+                sigma0[2] = initial_value_dict["szz"];
+
+                std::transform(new_pv.begin() + pv_bulk_mesh->size(),
+                               new_pv.end(),
+                               new_pv.begin() + pv_bulk_mesh->size(),
+                               [&, i = 0](double) mutable
+                               { return sigma0[i++ % sigma0.size()]; });
+                return true;
+            }
+            std::fill(new_pv.begin() + pv_bulk_mesh->size(), new_pv.end(), 0);
+            return true;
+        }
+
+        return false;
+    };
+
     if (pv_name == "OGS_VERSION" || pv_name == "IntegrationPointMetaData")
     {
         auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
@@ -77,26 +106,9 @@ bool createMergedPropertyVector(
         new_pv->resize(merged_mesh.getNumberOfNodes() * pv_num_components);
 
         std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
-        if (pv_num_components > 1)
-        {
-            if (pv_name.find("sigma") != std::string::npos)
-            {
-                std::vector<double> sigma0(pv_num_components, 0.0);
-                sigma0[0] = initial_value_dict["sxx"];
-                sigma0[1] = initial_value_dict["syy"];
-                sigma0[2] = initial_value_dict["szz"];
 
-                // Number of the vector elements of the mesh to be merged.
-                auto const num_elements =
-                    (new_pv->size() - pv_bulk_mesh->size()) / pv_num_components;
-                for (std::size_t i = 0; i < num_elements; ++i)
-                {
-                    new_pv->insert(new_pv->begin() + pv_bulk_mesh->size(),
-                                   sigma0.begin(), sigma0.end());
-                }
-                return true;
-            }
-            std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(), 0);
+        if (set_sigma0(*new_pv))
+        {
             return true;
         }
 
@@ -139,6 +151,33 @@ bool createMergedPropertyVector(
         }
         std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(), 0.0);
         return true;
+    }
+
+    if (item_type == MeshLib::MeshItemType::IntegrationPoint)
+    {
+        auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
+            merged_mesh, pv_name, item_type, pv_num_components);
+
+        // Count the integration points
+        std::size_t counter = 0;
+        auto const ip_meta_data =
+            MeshLib::getIntegrationPointMetaData(properties_bulk_mesh, pv_name);
+
+        for (auto const element : merged_mesh.getElements())
+        {
+            int const number_of_integration_points =
+                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
+                                                                  *element);
+            counter += number_of_integration_points;
+        }
+        new_pv->resize(counter * pv_num_components);
+
+        std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
+
+        if (set_sigma0(*new_pv))
+        {
+            return true;
+        }
     }
 
     return true;
@@ -207,6 +246,7 @@ NodesPartitionResult partitionNodesByCoordinateMatch(
 
     return {paired_nodes, std::nullopt};
 }
+
 // Custom hash for Eigen::Vector3d
 struct Vector3dHash
 {
