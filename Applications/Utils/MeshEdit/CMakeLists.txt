@@ -28,6 +28,7 @@ set(TOOLS
     Vtu2Grid
 )
 
+add_subdirectory(MergeMeshToBulkMesh)
 add_subdirectory(PVTU2VTU)
 
 ogs_add_executable(RemoveGhostData RemoveGhostData.cpp)
