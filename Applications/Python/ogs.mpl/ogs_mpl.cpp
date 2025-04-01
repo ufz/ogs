@@ -95,24 +95,41 @@ void bindSpatialPosition(py::module_& m)
                  coords (array-like of 3 floats, optional): Coordinates
              )pbdoc")
 
-        .def_property_readonly(
+        .def_property(
             "node_id",
-            [](const SpatialPosition& pos) { return pos.getNodeID(); },
+            [](SpatialPosition const& pos) { return pos.getNodeID(); },
+            [](SpatialPosition& pos, std::size_t const id)
+            { pos.setNodeID(id); },
             R"pbdoc(
-            Optional node ID of the spatial position.
+            Node ID of the spatial position.
+
+            This property can be read and set from Python. Setting to None is not supported.
             )pbdoc")
 
-        .def_property_readonly(
+        .def_property(
             "element_id",
-            [](const SpatialPosition& pos) { return pos.getElementID(); },
+            [](SpatialPosition const& pos) { return pos.getElementID(); },
+            [](SpatialPosition& pos, std::size_t const id)
+            { pos.setElementID(id); },
             R"pbdoc(
-            Optional element ID of the spatial position.
+            Element ID of the spatial position.
+
+            This property can be read and set from Python. Setting to None is not supported.
             )pbdoc")
 
-        .def_property_readonly("coordinates",
-                               spatialPositionCoordsToPython,
-                               R"pbdoc(
-            Optional coordinates as a 3-element array.
+        .def_property(
+            "coordinates",
+            spatialPositionCoordsToPython,
+            [](SpatialPosition& pos, py::object const& coordinates)
+            {
+                pos.setCoordinates(
+                    pythonToSpatialPositionCoords(coordinates).value());
+            },
+            R"pbdoc(
+            Coordinates of the spatial position as a 3-element array.
+
+            This property can be read and set from Python. Use a 3-element list, tuple,
+            or NumPy array. Setting to None is not supported.
             )pbdoc")
 
         .def(

@@ -80,6 +80,27 @@ def test_spatial_position():
         == "<SpatialPosition(None, None, [0. 1. 2.])>"
     )
 
+    # Resetting of spatial position values
+    with pytest.raises(TypeError):
+        mpl.SpatialPosition().node_id = None
+    pos = mpl.SpatialPosition()
+    pos.node_id = 2
+    assert pos.node_id == 2
+
+    with pytest.raises(TypeError):
+        mpl.SpatialPosition().element_id = None
+    pos = mpl.SpatialPosition()
+    pos.element_id = 5
+    assert pos.element_id == 5
+
+    with pytest.raises(RuntimeError, match=r"[bB]ad[ _]optional[ _]access"):
+        mpl.SpatialPosition().coordinates = None
+    with pytest.raises(RuntimeError, match=r"Unable to cast.*"):
+        mpl.SpatialPosition().coordinates = []
+    pos = mpl.SpatialPosition()
+    pos.coordinates = [1.0, 2.0, 3.0]
+    np.testing.assert_allclose(pos.coordinates, [1.0, 2.0, 3.0])
+
 
 def test_constant_and_property_interface():
     va = mpl.VariableArray()
