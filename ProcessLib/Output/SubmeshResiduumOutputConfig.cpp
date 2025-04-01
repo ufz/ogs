@@ -121,21 +121,26 @@ std::vector<bool> computeNonOverlappingBulkMeshCoverBySubmeshes(
     for (auto const& submesh_ref : submesh_refs)
     {
         auto const& submesh = submesh_ref.get();
-        auto const& bulk_element_ids =
-            *submesh.getProperties().getPropertyVector<std::size_t>(
-                "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
+        auto const& bulk_element_ids = bulkElementIDs(submesh);
+        if (bulk_element_ids == nullptr)
+        {
+            OGS_FATAL(
+                "The 'bulk_element_ids' property does not exist on the submesh "
+                "{:s}.",
+                submesh.getName());
+        }
 
-        if (bulk_element_ids.size() != submesh.getNumberOfElements())
+        if (bulk_element_ids->size() != submesh.getNumberOfElements())
         {
             OGS_FATAL(
                 "There is something terribly wrong with the mesh '{}'. The "
                 "size of 'bulk_element_ids' does not equal the number of "
                 "elements in the mesh: {} != {}",
-                submesh.getName(), bulk_element_ids.size(),
+                submesh.getName(), bulk_element_ids->size(),
                 submesh.getNumberOfElements());
         }
 
-        for (auto const bulk_element_id : bulk_element_ids)
+        for (auto const bulk_element_id : *bulk_element_ids)
         {
             // meshes are provided as user input, so we better check the bounds
             // of the contained data

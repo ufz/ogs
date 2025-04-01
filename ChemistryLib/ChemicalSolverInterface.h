@@ -40,8 +40,14 @@ public:
 
     std::vector<std::size_t> const& getElementIDs()
     {
-        return *_mesh.getProperties().template getPropertyVector<std::size_t>(
-            "bulk_element_ids", MeshLib::MeshItemType::Cell, 1);
+        if (auto const* const bulk_element_ids = bulkElementIDs(_mesh))
+        {
+            return *bulk_element_ids;
+        }
+        OGS_FATAL(
+            "The 'bulk_element_ids' property does not exist on the mesh "
+            "{:s}.",
+            _mesh.getName());
     }
 
     virtual void initialize() {}
