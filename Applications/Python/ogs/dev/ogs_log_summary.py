@@ -78,7 +78,7 @@ def parse_ogs_log(log_fh):
                 mode = "vtkdiff"
                 vtkdiff_rec = {"check_succeeded": True}
             elif m := re_prj_file.search(line):
-                prj_file = m.group(1)
+                prj_file = m.group(1).replace("\\", "/")
                 logger.debug(
                     "The prj file that produced the log file '%s' is '%s'.",
                     log_fn,
@@ -92,9 +92,9 @@ def parse_ogs_log(log_fh):
                 del vtkdiff_rec
             elif m := re_line_compare.search(line):
                 vtkdiff_rec["array_1"] = m.group("array_1")
-                vtkdiff_rec["file_1"] = m.group("file_1")
+                vtkdiff_rec["file_1"] = m.group("file_1").replace("\\", "/")
                 vtkdiff_rec["array_2"] = m.group("array_2")
-                vtkdiff_rec["file_2"] = m.group("file_2")
+                vtkdiff_rec["file_2"] = m.group("file_2").replace("\\", "/")
             elif m := re_line_max_norm.search(line):
                 abs_or_rel = m.group(1)
                 error_norm = [float(comp) for comp in m.group(2).split(",")]
@@ -151,7 +151,8 @@ def remove_duplicate_columns(df):
         df2["array"] = df["array_1"]
 
     f1_base = df2["file_1"].map(os.path.basename)
-    if (f1_base == df2["file_2"]).all():
+    f2_base = df2["file_2"].map(os.path.basename)
+    if (f1_base == f2_base).all():
         df2 = df2.drop(columns=["file_2"])
         df2 = df2.rename(columns={"file_1": "file"})
     return df2
@@ -170,6 +171,16 @@ def write_xml_snippet(df_max, xml_out_file):
     with xml_out_file.open("w") as fh:
         fh.write("<!-- summary of aggregated error norms:\n")
         print_table_summary(df_max, fh)
+
+        if "file_1" in df_max.columns:
+            assert "file_2" in df_max.columns
+            fh.write("\n")
+            fh.write(
+                "    NOTE: File names of reference solution and actual solution differ!\n"
+            )
+            fh.write("          The simple regexes below might not work.\n")
+            df_max = df_max.rename(columns={"file_1": "file"})
+
         fh.write("-->\n\n")
 
         fh.write("    <test_definition>")
@@ -244,7 +255,10 @@ def combine_all_vtkdiff_dataframes_for_each_prj_file(map_prj_file_to_logs_dfs_vt
 
 
 def print_table_summary(df_max, fh):
-    df_for_output = df_max.drop(columns=["file", "comp"])
+    # we want neither file names nor components in the output
+    df_for_output = df_max.drop(
+        columns=["file", "file_1", "file_2", "comp"], errors="ignore"
+    )
 
     with pd.option_context(
         "display.precision",
