@@ -37,14 +37,22 @@ def test_variable_array():
     assert va.deformation_gradient is None
     va.deformation_gradient = [0, 1, 2, 3, 4]
     assert np.allclose(va.deformation_gradient, [0, 1, 2, 3, 4])
+    va.deformation_gradient = np.array([1, 2, 3, 4, 5])
+    assert np.allclose(va.deformation_gradient, [1, 2, 3, 4, 5])
     va.deformation_gradient = [0, 1, 2, 3, 4, 5, 6, 7, 8]
     assert np.allclose(va.deformation_gradient, [0, 1, 2, 3, 4, 5, 6, 7, 8])
+    va.deformation_gradient = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
+    assert np.allclose(va.deformation_gradient, [1, 2, 3, 4, 5, 6, 7, 8, 9])
 
     assert va.mechanical_strain is None
     va.mechanical_strain = [0, 1, 2, 3]
     assert np.allclose(va.mechanical_strain, [0, 1, 2, 3])
+    va.mechanical_strain = np.array([1, 2, 3, 4])
+    assert np.allclose(va.mechanical_strain, [1, 2, 3, 4])
     va.mechanical_strain = [0, 1, 2, 3, 4, 5]
     assert np.allclose(va.mechanical_strain, [0, 1, 2, 3, 4, 5])
+    va.mechanical_strain = np.array([1, 2, 3, 4, 5, 6])
+    assert np.allclose(va.mechanical_strain, [1, 2, 3, 4, 5, 6])
 
     with pytest.raises(
         TypeError,
