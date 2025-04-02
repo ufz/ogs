@@ -1519,11 +1519,16 @@ if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Utils/partmesh/partmesh_roundtrip.md RUNTIME 10 SKIP_WEB)
 endif()
 
+if("${VKT_VERSION}" VERSION_LESS "9.4.3")
+    set(_vtk_requirements REQUIREMENTS NOT OGS_USE_PETSC AND NOT OGS_COVERAGE)
+endif()
+
 AddTest(
     NAME CreateAnchors_inside_elements
     PATH HydroMechanics/EmbeddedAnchorSourceTerm
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
     EXECUTABLE CreateAnchors
+    ${_vtk_requirements}
     EXECUTABLE_ARGS -i square_1x1_quad4_1e2.vtu -f data.json
                     -o ${Data_BINARY_DIR}/<PATH>/points.vtu
     TESTER vtkdiff
@@ -1550,6 +1555,7 @@ AddTest(
     PATH HydroMechanics/EmbeddedAnchorSourceTerm
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
     EXECUTABLE CreateAnchors
+    ${_vtk_requirements}
     EXECUTABLE_ARGS -i square_1x1_quad4_1e2.vtu -f data.json
                     -o ${Data_BINARY_DIR}/<PATH>/points.vtu
     TESTER vtkdiff-mesh

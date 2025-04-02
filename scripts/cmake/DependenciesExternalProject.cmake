@@ -496,6 +496,7 @@ if(NOT VTK_FOUND)
         STATUS
             "ExternalProject_Add(): added package VTK@${ogs.minimum_version.vtk}"
     )
+    set(VTK_VERSION "${ogs.minimum_version.vtk}" CACHE INTERNAL "")
     set(_EXT_LIBS ${_EXT_LIBS} VTK CACHE INTERNAL "")
 endif()
 
