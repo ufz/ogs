@@ -71,6 +71,7 @@ else()
     CPMFindPackage(
         NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
         VERSION ${ogs.minimum_version.pybind11} SYSTEM TRUE
+        OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10"
     )
 endif()
 
@@ -84,6 +85,7 @@ if(_build_chemistry_lib)
     else()
         CPMAddPackage(
             NAME iphreeqc GITHUB_REPOSITORY ufz/iphreeqc GIT_TAG 3.5.0-1
+            OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10"
         )
         if(iphreeqc_ADDED)
             target_include_directories(
@@ -171,7 +173,7 @@ if(OGS_USE_MFRONT)
             GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
             GIT_TAG rliv-2.2
             OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
-                    "enable-website OFF"
+                    "enable-website OFF" "CMAKE_POLICY_VERSION_MINIMUM 3.10"
             EXCLUDE_FROM_ALL YES SYSTEM TRUE ${_mgis_patch_args}
         )
         list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
@@ -201,7 +203,9 @@ else()
         NAME Boost
         VERSION ${ogs.minimum_version.boost}
         URL https://github.com/boostorg/boost/releases/download/boost-${ogs.minimum_version.boost}/boost-${ogs.minimum_version.boost}.tar.xz
-        OPTIONS "BOOST_ENABLE_CMAKE ON" ${_boost_options}
+        OPTIONS "BOOST_ENABLE_CMAKE ON"
+                "CMAKE_POLICY_VERSION_MINIMUM 3.10"
+                ${_boost_options}
     )
 endif()
 if(NOT Boost_ADDED)
@@ -367,6 +371,7 @@ else()
         VERSION ${ogs.minimum_version.range-v3}
         GIT_TAG ${ogs.minimum_version.range-v3}
         EXCLUDE_FROM_ALL YES SYSTEM TRUE
+        OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10"
     )
 endif()
 
@@ -405,6 +410,7 @@ if(OGS_BUILD_TESTING AND NOT GUIX_BUILD)
         GIT_TAG 374ee63abf605ab4c6639989bebc5096881f4f57
         OPTIONS "XDMF_LIBNAME OgsXdmf" "CMAKE_MACOSX_RPATH ON"
                 "HDF5_C_INCLUDE_DIR ${HDF5_INCLUDE_DIRS}"
+                "CMAKE_POLICY_VERSION_MINIMUM 3.10"
         EXCLUDE_FROM_ALL YES SYSTEM TRUE
     )
     if(xdmf_ADDED)
@@ -465,6 +471,7 @@ if(OGS_BUILD_UTILS)
             GIT_TAG 8bd6bad750b2b0d90800c632cf18e8ee93ad72d7
             VERSION 5.1.1
             OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW" ${_metis_options}
+                    "CMAKE_POLICY_VERSION_MINIMUM 3.10"
             EXCLUDE_FROM_ALL YES SYSTEM TRUE
         )
         CPMFindPackage(
@@ -474,7 +481,8 @@ if(OGS_BUILD_UTILS)
             EXCLUDE_FROM_ALL YES UPDATE_DISCONNECTED ON
             PATCH_COMMAND git apply
                           ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
-            OPTIONS ${_metis_options} SYSTEM TRUE
+            OPTIONS ${_metis_options} "CMAKE_POLICY_VERSION_MINIMUM 3.10"
+            SYSTEM TRUE
         )
         if(GKlib_ADDED AND metis_ADDED)
             target_include_directories(
