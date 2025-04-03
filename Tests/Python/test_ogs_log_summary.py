@@ -20,6 +20,10 @@ res_path = Path(__file__).parent / "res/test_ogs_log_summary"
             "petsc-ci-job-ogs-ThermoRichardsMechanics_MFront_BentoniteBehaviourGeneralMod230824_02-ramp_bentonite_ramped_Neumann_BC.txt",
             "ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod230824/02-ramp/bentonite_ramped_Neumann_BC.prj",
         ),
+        (
+            "windows-ogs-HydroMechanics_StaggeredScheme_ConsolidationBenchmark_consolidation_benchmark-omp.txt",
+            "HydroMechanics/StaggeredScheme/ConsolidationBenchmark/consolidation_benchmark.prj",
+        ),
     ],
 )
 def test_aggregation(log_file, prj_file_expected):
@@ -56,6 +60,10 @@ def test_aggregation(log_file, prj_file_expected):
         (
             "petsc-ci-job-ogs-ThermoRichardsMechanics_MFront_BentoniteBehaviourGeneralMod230824_02-ramp_bentonite_ramped_Neumann_BC.txt",
             "ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod230824/02-ramp/bentonite_ramped_Neumann_BC.prj",
+        ),
+        (
+            "windows-ogs-HydroMechanics_StaggeredScheme_ConsolidationBenchmark_consolidation_benchmark-omp.txt",
+            "HydroMechanics/StaggeredScheme/ConsolidationBenchmark/consolidation_benchmark.prj",
         ),
     ],
 )
