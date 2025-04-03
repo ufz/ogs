@@ -1,0 +1,6 @@
+array	check_succeeded	file	abs_maximum_norm	rel_maximum_norm	comp
+displacement	True	//?/D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/ogs/Tests/Data/HydroMechanics/StaggeredScheme/ConsolidationBenchmark/ConsolidationBenchmark_ts_20_t_10.000000.vtu	3.903127820947816e-17	0.001011337665179147	1
+epsilon	False	//?/D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/ogs/Tests/Data/HydroMechanics/StaggeredScheme/ConsolidationBenchmark/ConsolidationBenchmark_ts_20_t_10.000000.vtu	1.0096090630185019e-15	10	3
+pressure	True	//?/D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/ogs/Tests/Data/HydroMechanics/StaggeredScheme/ConsolidationBenchmark/ConsolidationBenchmark_ts_20_t_10.000000.vtu	4.7748471843078732e-12	4.7749771967800976e-15	0
+sigma	True	//?/D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/ogs/Tests/Data/HydroMechanics/StaggeredScheme/ConsolidationBenchmark/ConsolidationBenchmark_ts_20_t_10.000000.vtu	3.3423930290155113e-11	8.8300299874910458e-05	3
+velocity	True	//?/D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/ogs/Tests/Data/HydroMechanics/StaggeredScheme/ConsolidationBenchmark/ConsolidationBenchmark_ts_20_t_10.000000.vtu	3.1170812458958249e-18	5.9903781256950138e-07	1
