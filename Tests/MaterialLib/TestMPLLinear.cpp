@@ -127,3 +127,40 @@ TEST(MaterialPropertyLib, LinearWithPos)
                   time, dt)),
               0.0);
 }
+
+TEST(MaterialPropertyLib, BiLinearTemperaturePosition)
+{
+    double const y_ref = 1.0;
+    double const m = 1.0;
+    double const x_ref = 0.0;
+    double const T_ref = 273.15;
+    double const T = 293.15;
+
+    MaterialPropertyLib::IndependentVariable const iv_x{"x", x_ref, m};
+    MaterialPropertyLib::IndependentVariable const iv_T{
+        MaterialPropertyLib::Variable::temperature, T_ref, m};
+
+    MaterialPropertyLib::Linear p{"bi-linear x T", y_ref, {iv_x, iv_T}};
+
+    MaterialPropertyLib::VariableArray variable_array;
+    variable_array.temperature = T;
+
+    std::array<double, 3> const coords = {50, 20, -10};
+    ParameterLib::SpatialPosition const pos =
+        ParameterLib::SpatialPosition{{0}, {0}, MathLib::Point3d{coords}};
+    double const time = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+
+    ASSERT_NEAR(std::get<double>(p.value(variable_array, pos, time, dt)),
+                y_ref * (1. + m * (coords[0] - x_ref) + m * (T - T_ref)),
+                1.e-10);
+    ASSERT_EQ(std::get<double>(p.dValue(
+                  variable_array, MaterialPropertyLib::Variable::temperature,
+                  pos, time, dt)),
+              y_ref * m);
+    ASSERT_EQ(std::get<double>(
+                  p.dValue(variable_array,
+                           MaterialPropertyLib::Variable::liquid_phase_pressure,
+                           pos, time, dt)),
+              0.0);
+}
