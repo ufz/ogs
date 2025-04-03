@@ -1,0 +1,2391 @@
+info: This is OpenGeoSys-6 version 6.5.4-268-gd295a9024.
+info: OGS started on 2025-03-31 18:27:24+0200.
+info: OMP_NUM_THREADS is set to: 1
+info: Eigen use 1 threads
+info: Reading project file D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\consolidation_benchmark.prj.
+
+D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff  version: 0.1
+
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "displacement" -b "displacement" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu" --abs 1e-15 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "epsilon" -b "epsilon" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu" --abs 2e-15 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "sigma" -b "sigma" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu" --abs 4e-8 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "pressure" -b "pressure" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu" --abs 2e-8 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "velocity" -b "velocity" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu" --abs 1e-15 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "displacement" -b "displacement" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu" --abs 1e-15 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "epsilon" -b "epsilon" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu" --abs 1e-15 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "sigma" -b "sigma" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu" --abs 4e-8 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "pressure" -b "pressure" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu" --abs 2e-8 --rel 1e-15'
+info: Will run 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "velocity" -b "velocity" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu" --abs 1e-15 --rel 1e-15'
+info: Cleanup possible output files before running ogs.
+info: readRasters ...
+info: readRasters done
+info: ConstantParameter: E
+info: ConstantParameter: nu
+info: ConstantParameter: zero_vector_2d
+info: ConstantParameter: pressure_ic
+info: ConstantParameter: dirichlet0
+info: ConstantParameter: load
+info: No source terms for process variable 'pressure' found.
+info: No source terms for process variable 'displacement' found.
+info: HydroMechanicsProcess initializeSubmeshOutput().
+warning: Did not find interval for fixed output time 10
+warning: Did not find interval for fixed output time 10
+info: The equations of the coupled processes will be solved by the staggered scheme.
+info: Initialize processes.
+info: [time] Output of timestep 0 took 0.0121424 s.
+info: Solve processes.
+info: === Time stepping at step #1 and time 0.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0043852 s.
+info: [time] Applying Dirichlet BCs took 3.53e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 0/10000
+info: 	 residual: 0.000000e+00
+
+info: [time] Linear solver took 2.75e-05 s.
+info: Convergence criterion: |dx|=0.0000e+00, |x|=0.0000e+00, |dx|/|x|=nan
+info: [time] Iteration #1 took 0.004465 s.
+info: [time] Solving process #0 (named as not given) took 0.0048002 s in time step #1 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0093622 s.
+info: [time] Applying Dirichlet BCs took 0.0027327 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 402/10000
+info: 	 residual: 8.670922e-17
+
+info: [time] Linear solver took 0.0165698 s.
+info: Convergence criterion, component 0: |dx|=2.1291e-16, |x|=2.1291e-16, |dx|/|x|=1.0000e+00
+info: Convergence criterion, component 1: |dx|=7.0790e-01, |x|=7.0790e-01, |dx|/|x|=1.0000e+00
+info: [time] Iteration #1 took 0.0289722 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0025925 s.
+info: [time] Applying Dirichlet BCs took 0.0007304 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 374/10000
+info: 	 residual: 9.976721e-17
+
+info: [time] Linear solver took 0.0097575 s.
+info: Convergence criterion, component 0: |dx|=2.1186e-16, |x|=1.8730e-17, |dx|/|x|=1.1312e+01
+info: Convergence criterion, component 1: |dx|=6.7169e-14, |x|=7.0790e-01, |dx|/|x|=9.4885e-14
+info: [time] Iteration #2 took 0.0133487 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0024064 s.
+info: [time] Applying Dirichlet BCs took 0.0005935 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 8.870355e-17
+
+info: [time] Linear solver took 0.0093734 s.
+info: Convergence criterion, component 0: |dx|=1.5798e-17, |x|=1.8869e-17, |dx|/|x|=8.3728e-01
+info: Convergence criterion, component 1: |dx|=6.9546e-16, |x|=7.0790e-01, |dx|/|x|=9.8242e-16
+info: [time] Iteration #3 took 0.0126331 s.
+info: [time] Solving process #1 (named as not given) took 0.0562128 s in time step #1 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010082 s.
+info: [time] Applying Dirichlet BCs took 2.85e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 0/10000
+info: 	 residual: 0.000000e+00
+
+info: [time] Linear solver took 1.7e-05 s.
+info: Convergence criterion: |dx|=0.0000e+00, |x|=0.0000e+00, |dx|/|x|=nan
+info: [time] Iteration #1 took 0.0010664 s.
+info: [time] Solving process #0 (named as not given) took 0.00133 s in time step #1 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=0.0000e+00, |x|=0.0000e+00, |dx|/|x|=nan
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0034168 s.
+info: [time] Applying Dirichlet BCs took 0.0005946 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 8.388311e-17
+
+info: [time] Linear solver took 0.0092465 s.
+info: Convergence criterion, component 0: |dx|=1.7416e-17, |x|=1.8766e-17, |dx|/|x|=9.2808e-01
+info: Convergence criterion, component 1: |dx|=2.2325e-16, |x|=7.0790e-01, |dx|/|x|=3.1537e-16
+info: [time] Iteration #1 took 0.0135096 s.
+info: [time] Solving process #1 (named as not given) took 0.0147707 s in time step #1 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=2.2492e-16, |x|=7.0790e-01, |dx|/|x|=3.1773e-16
+info: [time] Time step #1 took 0.0799938 s.
+info: === Time stepping at step #2 and time 1 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0011699 s.
+info: [time] Applying Dirichlet BCs took 2.69e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 8.620886e-17
+
+info: [time] Linear solver took 0.0001348 s.
+info: Convergence criterion: |dx|=7.2063e+03, |x|=7.2063e+03, |dx|/|x|=1.0000e+00
+info: [time] Iteration #1 took 0.0013456 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0009778 s.
+info: [time] Applying Dirichlet BCs took 1.69e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 8.464728e-17
+
+info: [time] Linear solver took 0.0001298 s.
+info: Convergence criterion: |dx|=2.9958e-12, |x|=7.2063e+03, |dx|/|x|=4.1572e-16
+info: [time] Iteration #2 took 0.0011342 s.
+info: [time] Solving process #0 (named as not given) took 0.0027373 s in time step #2 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025563 s.
+info: [time] Applying Dirichlet BCs took 0.0005684 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 448/10000
+info: 	 residual: 9.669404e-17
+
+info: [time] Linear solver took 0.0112677 s.
+info: Convergence criterion, component 0: |dx|=1.1729e-06, |x|=1.1729e-06, |dx|/|x|=1.0000e+00
+info: Convergence criterion, component 1: |dx|=3.5192e-01, |x|=3.5601e-01, |dx|/|x|=9.8850e-01
+info: [time] Iteration #1 took 0.014642 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0023493 s.
+info: [time] Applying Dirichlet BCs took 0.0005891 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 430/10000
+info: 	 residual: 8.648274e-17
+
+info: [time] Linear solver took 0.0106522 s.
+info: Convergence criterion, component 0: |dx|=1.0291e-16, |x|=1.1729e-06, |dx|/|x|=8.7741e-11
+info: Convergence criterion, component 1: |dx|=3.8269e-14, |x|=3.5601e-01, |dx|/|x|=1.0750e-13
+info: [time] Iteration #2 took 0.0138481 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022692 s.
+info: [time] Applying Dirichlet BCs took 0.0008672 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 370/10000
+info: 	 residual: 9.578592e-17
+
+info: [time] Linear solver took 0.0103114 s.
+info: Convergence criterion, component 0: |dx|=9.8287e-18, |x|=1.1729e-06, |dx|/|x|=8.3800e-12
+info: Convergence criterion, component 1: |dx|=4.2767e-17, |x|=3.5601e-01, |dx|/|x|=1.2013e-16
+info: [time] Iteration #3 took 0.0137097 s.
+info: [time] Solving process #1 (named as not given) took 0.0434709 s in time step #2 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010031 s.
+info: [time] Applying Dirichlet BCs took 2.54e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.815051e-17
+
+info: [time] Linear solver took 0.0001359 s.
+info: Convergence criterion: |dx|=6.1583e-13, |x|=7.2063e+03, |dx|/|x|=8.5457e-17
+info: [time] Iteration #1 took 0.001178 s.
+info: [time] Solving process #0 (named as not given) took 0.0014284 s in time step #2 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=6.9951e-13, |x|=7.2063e+03, |dx|/|x|=9.7070e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025739 s.
+info: [time] Applying Dirichlet BCs took 0.0005504 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 370/10000
+info: 	 residual: 8.995451e-17
+
+info: [time] Linear solver took 0.009147 s.
+info: Convergence criterion, component 0: |dx|=8.9499e-18, |x|=1.1729e-06, |dx|/|x|=7.6307e-12
+info: Convergence criterion, component 1: |dx|=2.1862e-16, |x|=3.5601e-01, |dx|/|x|=6.1408e-16
+info: [time] Iteration #1 took 0.0125218 s.
+info: [time] Solving process #1 (named as not given) took 0.0137548 s in time step #2 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=2.1899e-16, |x|=3.5601e-01, |dx|/|x|=6.1513e-16
+warning: The coupling iterations reaches its maximum number in time step #2 at t = 1 s
+info: [time] Time step #2 took 0.0634273 s.
+info: [time] Output of timestep 2 took 0.012074 s.
+info: === Time stepping at step #3 and time 1.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010409 s.
+info: [time] Applying Dirichlet BCs took 2.93e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 8.766621e-17
+
+info: [time] Linear solver took 0.0001352 s.
+info: Convergence criterion: |dx|=3.2931e+03, |x|=1.0428e+04, |dx|/|x|=3.1578e-01
+info: [time] Iteration #1 took 0.0012204 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0009553 s.
+info: [time] Applying Dirichlet BCs took 1.73e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 5.100262e-17
+
+info: [time] Linear solver took 0.0001306 s.
+info: Convergence criterion: |dx|=1.6885e-12, |x|=1.0428e+04, |dx|/|x|=1.6191e-16
+info: [time] Iteration #2 took 0.0011141 s.
+info: [time] Solving process #0 (named as not given) took 0.0026052 s in time step #3 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0027492 s.
+info: [time] Applying Dirichlet BCs took 0.0009515 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 450/10000
+info: 	 residual: 9.854904e-17
+
+info: [time] Linear solver took 0.016808 s.
+info: Convergence criterion, component 0: |dx|=7.2273e-07, |x|=8.8119e-07, |dx|/|x|=8.2018e-01
+info: Convergence criterion, component 1: |dx|=1.7336e-01, |x|=1.8282e-01, |dx|/|x|=9.4825e-01
+info: [time] Iteration #1 took 0.0208712 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0023082 s.
+info: [time] Applying Dirichlet BCs took 0.0006065 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 430/10000
+info: 	 residual: 9.320639e-17
+
+info: [time] Linear solver took 0.0106901 s.
+info: Convergence criterion, component 0: |dx|=4.7070e-17, |x|=8.8119e-07, |dx|/|x|=5.3416e-11
+info: Convergence criterion, component 1: |dx|=1.5221e-14, |x|=1.8282e-01, |dx|/|x|=8.3255e-14
+info: [time] Iteration #2 took 0.013861 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022606 s.
+info: [time] Applying Dirichlet BCs took 0.0007418 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 371/10000
+info: 	 residual: 9.272735e-17
+
+info: [time] Linear solver took 0.0095347 s.
+info: Convergence criterion, component 0: |dx|=5.0515e-18, |x|=8.8119e-07, |dx|/|x|=5.7326e-12
+info: Convergence criterion, component 1: |dx|=1.9198e-16, |x|=1.8282e-01, |dx|/|x|=1.0501e-15
+info: [time] Iteration #3 took 0.0128001 s.
+info: [time] Solving process #1 (named as not given) took 0.0487891 s in time step #3 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0011175 s.
+info: [time] Applying Dirichlet BCs took 2.38e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 4.912938e-17
+
+info: [time] Linear solver took 0.0001339 s.
+info: Convergence criterion: |dx|=8.5233e-13, |x|=1.0428e+04, |dx|/|x|=8.1731e-17
+info: [time] Iteration #1 took 0.0012892 s.
+info: [time] Solving process #0 (named as not given) took 0.0015373 s in time step #3 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=9.5372e-13, |x|=1.0428e+04, |dx|/|x|=9.1453e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024103 s.
+info: [time] Applying Dirichlet BCs took 0.0007523 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 9.002184e-17
+
+info: [time] Linear solver took 0.0121497 s.
+info: Convergence criterion, component 0: |dx|=4.9470e-18, |x|=8.8119e-07, |dx|/|x|=5.6140e-12
+info: Convergence criterion, component 1: |dx|=6.1347e-17, |x|=1.8282e-01, |dx|/|x|=3.3555e-16
+info: [time] Iteration #1 took 0.0155714 s.
+info: [time] Solving process #1 (named as not given) took 0.0168323 s in time step #3 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=6.2040e-17, |x|=1.8282e-01, |dx|/|x|=3.3934e-16
+warning: The coupling iterations reaches its maximum number in time step #3 at t = 1.5 s
+info: [time] Time step #3 took 0.0719896 s.
+info: === Time stepping at step #4 and time 2 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0016344 s.
+info: [time] Applying Dirichlet BCs took 3.14e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.281178e-17
+
+info: [time] Linear solver took 0.00019 s.
+info: Convergence criterion: |dx|=1.5210e+03, |x|=1.1772e+04, |dx|/|x|=1.2921e-01
+info: [time] Iteration #1 took 0.0018708 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0010522 s.
+info: [time] Applying Dirichlet BCs took 2.53e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 4.729044e-17
+
+info: [time] Linear solver took 0.0001378 s.
+info: Convergence criterion: |dx|=9.3826e-13, |x|=1.1772e+04, |dx|/|x|=7.9705e-17
+info: [time] Iteration #2 took 0.0012363 s.
+info: [time] Solving process #0 (named as not given) took 0.0033812 s in time step #4 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0026097 s.
+info: [time] Applying Dirichlet BCs took 0.0006908 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 445/10000
+info: 	 residual: 9.341013e-17
+
+info: [time] Linear solver took 0.0111927 s.
+info: Convergence criterion, component 0: |dx|=4.4210e-07, |x|=6.0327e-07, |dx|/|x|=7.3284e-01
+info: Convergence criterion, component 1: |dx|=8.3989e-02, |x|=9.9470e-02, |dx|/|x|=8.4436e-01
+info: [time] Iteration #1 took 0.0147562 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0021889 s.
+info: [time] Applying Dirichlet BCs took 0.0006155 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 409/10000
+info: 	 residual: 9.536559e-17
+
+info: [time] Linear solver took 0.010231 s.
+info: Convergence criterion, component 0: |dx|=2.7372e-17, |x|=6.0327e-07, |dx|/|x|=4.5373e-11
+info: Convergence criterion, component 1: |dx|=7.8896e-15, |x|=9.9470e-02, |dx|/|x|=7.9317e-14
+info: [time] Iteration #2 took 0.0132915 s.
+info: [time] Solving process #1 (named as not given) took 0.029321 s in time step #4 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010212 s.
+info: [time] Applying Dirichlet BCs took 2.97e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 7.015135e-17
+
+info: [time] Linear solver took 0.0001341 s.
+info: Convergence criterion: |dx|=9.1358e-13, |x|=1.1772e+04, |dx|/|x|=7.7608e-17
+info: [time] Iteration #1 took 0.0011997 s.
+info: [time] Solving process #0 (named as not given) took 0.0014677 s in time step #4 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=9.3781e-13, |x|=1.1772e+04, |dx|/|x|=7.9667e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025044 s.
+info: [time] Applying Dirichlet BCs took 0.0005848 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 9.288518e-17
+
+info: [time] Linear solver took 0.0093231 s.
+info: Convergence criterion, component 0: |dx|=3.2388e-18, |x|=6.0327e-07, |dx|/|x|=5.3688e-12
+info: Convergence criterion, component 1: |dx|=1.5103e-16, |x|=9.9470e-02, |dx|/|x|=1.5184e-15
+info: [time] Iteration #1 took 0.0126684 s.
+info: [time] Solving process #1 (named as not given) took 0.0139601 s in time step #4 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.5117e-16, |x|=9.9470e-02, |dx|/|x|=1.5197e-15
+warning: The coupling iterations reaches its maximum number in time step #4 at t = 2 s
+info: [time] Time step #4 took 0.0501796 s.
+info: [time] Output of timestep 4 took 0.0116789 s.
+info: === Time stepping at step #5 and time 2.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010119 s.
+info: [time] Applying Dirichlet BCs took 2.89e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 9.626186e-17
+
+info: [time] Linear solver took 0.0001367 s.
+info: Convergence criterion: |dx|=7.9518e+02, |x|=1.2241e+04, |dx|/|x|=6.4960e-02
+info: [time] Iteration #1 took 0.0011909 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0012412 s.
+info: [time] Applying Dirichlet BCs took 1.71e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.835718e-17
+
+info: [time] Linear solver took 0.0001313 s.
+info: Convergence criterion: |dx|=1.1973e-12, |x|=1.2241e+04, |dx|/|x|=9.7808e-17
+info: [time] Iteration #2 took 0.0013999 s.
+info: [time] Solving process #0 (named as not given) took 0.0028607 s in time step #5 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025232 s.
+info: [time] Applying Dirichlet BCs took 0.0006412 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 448/10000
+info: 	 residual: 9.473901e-17
+
+info: [time] Linear solver took 0.0111128 s.
+info: Convergence criterion, component 0: |dx|=2.9953e-07, |x|=4.9551e-07, |dx|/|x|=6.0448e-01
+info: Convergence criterion, component 1: |dx|=3.9408e-02, |x|=6.1582e-02, |dx|/|x|=6.3992e-01
+info: [time] Iteration #1 took 0.0145392 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022744 s.
+info: [time] Applying Dirichlet BCs took 0.0006385 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 369/10000
+info: 	 residual: 9.719978e-17
+
+info: [time] Linear solver took 0.0091968 s.
+info: Convergence criterion, component 0: |dx|=1.0061e-17, |x|=4.9551e-07, |dx|/|x|=2.0305e-11
+info: Convergence criterion, component 1: |dx|=4.5192e-15, |x|=6.1582e-02, |dx|/|x|=7.3385e-14
+info: [time] Iteration #2 took 0.0123601 s.
+info: [time] Solving process #1 (named as not given) took 0.0281635 s in time step #5 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0009941 s.
+info: [time] Applying Dirichlet BCs took 2.95e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 7.162749e-17
+
+info: [time] Linear solver took 0.0001333 s.
+info: Convergence criterion: |dx|=1.0516e-12, |x|=1.2241e+04, |dx|/|x|=8.5909e-17
+info: [time] Iteration #1 took 0.0011765 s.
+info: [time] Solving process #0 (named as not given) took 0.0014477 s in time step #5 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=1.1441e-12, |x|=1.2241e+04, |dx|/|x|=9.3460e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024652 s.
+info: [time] Applying Dirichlet BCs took 0.0006481 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 431/10000
+info: 	 residual: 8.582180e-17
+
+info: [time] Linear solver took 0.0106827 s.
+info: Convergence criterion, component 0: |dx|=2.6712e-18, |x|=4.9551e-07, |dx|/|x|=5.3907e-12
+info: Convergence criterion, component 1: |dx|=1.2136e-16, |x|=6.1582e-02, |dx|/|x|=1.9707e-15
+info: [time] Iteration #1 took 0.0140517 s.
+info: [time] Solving process #1 (named as not given) took 0.0153464 s in time step #5 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.2143e-16, |x|=6.1582e-02, |dx|/|x|=1.9718e-15
+warning: The coupling iterations reaches its maximum number in time step #5 at t = 2.5 s
+info: [time] Time step #5 took 0.0497931 s.
+info: === Time stepping at step #6 and time 3 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.001055 s.
+info: [time] Applying Dirichlet BCs took 2.93e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 6.333374e-17
+
+info: [time] Linear solver took 0.0001321 s.
+info: Convergence criterion: |dx|=5.4817e+02, |x|=1.2314e+04, |dx|/|x|=4.4517e-02
+info: [time] Iteration #1 took 0.0012287 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0011255 s.
+info: [time] Applying Dirichlet BCs took 1.67e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 4.622969e-17
+
+info: [time] Linear solver took 0.00013 s.
+info: Convergence criterion: |dx|=1.1131e-12, |x|=1.2314e+04, |dx|/|x|=9.0395e-17
+info: [time] Iteration #2 took 0.0012827 s.
+info: [time] Solving process #0 (named as not given) took 0.0027624 s in time step #6 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025191 s.
+info: [time] Applying Dirichlet BCs took 0.0007556 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 461/10000
+info: 	 residual: 8.134830e-17
+
+info: [time] Linear solver took 0.0115036 s.
+info: Convergence criterion, component 0: |dx|=1.6115e-07, |x|=4.8766e-07, |dx|/|x|=3.3045e-01
+info: Convergence criterion, component 1: |dx|=1.7351e-02, |x|=4.6689e-02, |dx|/|x|=3.7162e-01
+info: [time] Iteration #1 took 0.0150635 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022567 s.
+info: [time] Applying Dirichlet BCs took 0.0005723 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 371/10000
+info: 	 residual: 9.593610e-17
+
+info: [time] Linear solver took 0.0093068 s.
+info: Convergence criterion, component 0: |dx|=5.4792e-18, |x|=4.8766e-07, |dx|/|x|=1.1236e-11
+info: Convergence criterion, component 1: |dx|=1.4033e-15, |x|=4.6689e-02, |dx|/|x|=3.0057e-14
+info: [time] Iteration #2 took 0.0123881 s.
+info: [time] Solving process #1 (named as not given) took 0.0286996 s in time step #6 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010687 s.
+info: [time] Applying Dirichlet BCs took 2.82e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 5.211191e-17
+
+info: [time] Linear solver took 0.000141 s.
+info: Convergence criterion: |dx|=9.5415e-13, |x|=1.2314e+04, |dx|/|x|=7.7486e-17
+info: [time] Iteration #1 took 0.0012572 s.
+info: [time] Solving process #0 (named as not given) took 0.0015372 s in time step #6 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=9.6296e-13, |x|=1.2314e+04, |dx|/|x|=7.8202e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024543 s.
+info: [time] Applying Dirichlet BCs took 0.0008225 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 402/10000
+info: 	 residual: 9.281228e-17
+
+info: [time] Linear solver took 0.0099738 s.
+info: Convergence criterion, component 0: |dx|=2.9782e-18, |x|=4.8766e-07, |dx|/|x|=6.1071e-12
+info: Convergence criterion, component 1: |dx|=1.1921e-16, |x|=4.6689e-02, |dx|/|x|=2.5533e-15
+info: [time] Iteration #1 took 0.0134985 s.
+info: [time] Solving process #1 (named as not given) took 0.0147578 s in time step #6 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.1921e-16, |x|=4.6689e-02, |dx|/|x|=2.5534e-15
+warning: The coupling iterations reaches its maximum number in time step #6 at t = 3 s
+info: [time] Time step #6 took 0.0496928 s.
+info: [time] Output of timestep 6 took 0.0118496 s.
+info: === Time stepping at step #7 and time 3.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010168 s.
+info: [time] Applying Dirichlet BCs took 2.53e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 7.625670e-17
+
+info: [time] Linear solver took 0.0001329 s.
+info: Convergence criterion: |dx|=4.6221e+02, |x|=1.2213e+04, |dx|/|x|=3.7845e-02
+info: [time] Iteration #1 took 0.0011884 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0009359 s.
+info: [time] Applying Dirichlet BCs took 1.68e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 4.859040e-17
+
+info: [time] Linear solver took 0.0001548 s.
+info: Convergence criterion: |dx|=1.0672e-12, |x|=1.2213e+04, |dx|/|x|=8.7382e-17
+info: [time] Iteration #2 took 0.0011172 s.
+info: [time] Solving process #0 (named as not given) took 0.0026358 s in time step #7 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0023536 s.
+info: [time] Applying Dirichlet BCs took 0.000684 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 449/10000
+info: 	 residual: 9.352372e-17
+
+info: [time] Linear solver took 0.0112513 s.
+info: Convergence criterion, component 0: |dx|=8.6507e-08, |x|=4.7007e-07, |dx|/|x|=1.8403e-01
+info: Convergence criterion, component 1: |dx|=6.7844e-03, |x|=4.2817e-02, |dx|/|x|=1.5845e-01
+info: [time] Iteration #1 took 0.0145416 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0021286 s.
+info: [time] Applying Dirichlet BCs took 0.000577 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 431/10000
+info: 	 residual: 8.095418e-17
+
+info: [time] Linear solver took 0.010777 s.
+info: Convergence criterion, component 0: |dx|=3.1530e-18, |x|=4.7007e-07, |dx|/|x|=6.7074e-12
+info: Convergence criterion, component 1: |dx|=9.6309e-16, |x|=4.2817e-02, |dx|/|x|=2.2493e-14
+info: [time] Iteration #2 took 0.0137334 s.
+info: [time] Solving process #1 (named as not given) took 0.0295406 s in time step #7 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0012516 s.
+info: [time] Applying Dirichlet BCs took 2.61e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 5.509861e-17
+
+info: [time] Linear solver took 0.0001341 s.
+info: Convergence criterion: |dx|=9.9584e-13, |x|=1.2213e+04, |dx|/|x|=8.1537e-17
+info: [time] Iteration #1 took 0.0014236 s.
+info: [time] Solving process #0 (named as not given) took 0.0016719 s in time step #7 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=1.0838e-12, |x|=1.2213e+04, |dx|/|x|=8.8741e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024508 s.
+info: [time] Applying Dirichlet BCs took 0.0006459 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 411/10000
+info: 	 residual: 8.933868e-17
+
+info: [time] Linear solver took 0.0109044 s.
+info: Convergence criterion, component 0: |dx|=2.3928e-18, |x|=4.7007e-07, |dx|/|x|=5.0904e-12
+info: Convergence criterion, component 1: |dx|=5.0479e-16, |x|=4.2817e-02, |dx|/|x|=1.1790e-14
+info: [time] Iteration #1 took 0.0142585 s.
+info: [time] Solving process #1 (named as not given) took 0.0155149 s in time step #7 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=5.0491e-16, |x|=4.2817e-02, |dx|/|x|=1.1792e-14
+warning: The coupling iterations reaches its maximum number in time step #7 at t = 3.5 s
+info: [time] Time step #7 took 0.0513535 s.
+info: === Time stepping at step #8 and time 4 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.001016 s.
+info: [time] Applying Dirichlet BCs took 2.9e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.810167e-17
+
+info: [time] Linear solver took 0.0001324 s.
+info: Convergence criterion: |dx|=4.1157e+02, |x|=1.2044e+04, |dx|/|x|=3.4173e-02
+info: [time] Iteration #1 took 0.0011892 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0011036 s.
+info: [time] Applying Dirichlet BCs took 2.25e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 7.609765e-17
+
+info: [time] Linear solver took 0.0001375 s.
+info: Convergence criterion: |dx|=1.2326e-12, |x|=1.2044e+04, |dx|/|x|=1.0234e-16
+info: [time] Iteration #2 took 0.0012822 s.
+info: [time] Solving process #0 (named as not given) took 0.0027305 s in time step #8 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024267 s.
+info: [time] Applying Dirichlet BCs took 0.0006328 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 450/10000
+info: 	 residual: 7.997063e-17
+
+info: [time] Linear solver took 0.0113641 s.
+info: Convergence criterion, component 0: |dx|=7.1961e-08, |x|=4.2765e-07, |dx|/|x|=1.6827e-01
+info: Convergence criterion, component 1: |dx|=2.9332e-03, |x|=4.3782e-02, |dx|/|x|=6.6996e-02
+info: [time] Iteration #1 took 0.0147393 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0025032 s.
+info: [time] Applying Dirichlet BCs took 0.0007637 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 432/10000
+info: 	 residual: 8.837915e-17
+
+info: [time] Linear solver took 0.0109377 s.
+info: Convergence criterion, component 0: |dx|=2.5082e-18, |x|=4.2765e-07, |dx|/|x|=5.8651e-12
+info: Convergence criterion, component 1: |dx|=3.3164e-16, |x|=4.3782e-02, |dx|/|x|=7.5747e-15
+info: [time] Iteration #2 took 0.0144569 s.
+info: [time] Solving process #1 (named as not given) took 0.0305214 s in time step #8 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010308 s.
+info: [time] Applying Dirichlet BCs took 2.76e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 9.390593e-17
+
+info: [time] Linear solver took 0.0001316 s.
+info: Convergence criterion: |dx|=1.2108e-12, |x|=1.2044e+04, |dx|/|x|=1.0053e-16
+info: [time] Iteration #1 took 0.0012086 s.
+info: [time] Solving process #0 (named as not given) took 0.0014781 s in time step #8 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=1.2850e-12, |x|=1.2044e+04, |dx|/|x|=1.0670e-16
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0023189 s.
+info: [time] Applying Dirichlet BCs took 0.00064 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 431/10000
+info: 	 residual: 9.489593e-17
+
+info: [time] Linear solver took 0.0144399 s.
+info: Convergence criterion, component 0: |dx|=2.4402e-18, |x|=4.2765e-07, |dx|/|x|=5.7060e-12
+info: Convergence criterion, component 1: |dx|=1.3517e-16, |x|=4.3782e-02, |dx|/|x|=3.0872e-15
+info: [time] Iteration #1 took 0.0176942 s.
+info: [time] Solving process #1 (named as not given) took 0.019995 s in time step #8 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.3522e-16, |x|=4.3782e-02, |dx|/|x|=3.0884e-15
+warning: The coupling iterations reaches its maximum number in time step #8 at t = 4 s
+info: [time] Time step #8 took 0.0583009 s.
+info: [time] Output of timestep 8 took 0.0152579 s.
+info: === Time stepping at step #9 and time 4.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.001055 s.
+info: [time] Applying Dirichlet BCs took 2.51e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 63/10000
+info: 	 residual: 8.911316e-17
+
+info: [time] Linear solver took 0.0001345 s.
+info: Convergence criterion: |dx|=3.6828e+02, |x|=1.1853e+04, |dx|/|x|=3.1071e-02
+info: [time] Iteration #1 took 0.0012282 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0009591 s.
+info: [time] Applying Dirichlet BCs took 1.6e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.599393e-17
+
+info: [time] Linear solver took 0.0001288 s.
+info: Convergence criterion: |dx|=1.1064e-12, |x|=1.1853e+04, |dx|/|x|=9.3345e-17
+info: [time] Iteration #2 took 0.0011141 s.
+info: [time] Solving process #0 (named as not given) took 0.002687 s in time step #9 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0027386 s.
+info: [time] Applying Dirichlet BCs took 0.0009356 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 450/10000
+info: 	 residual: 7.451113e-17
+
+info: [time] Linear solver took 0.0155622 s.
+info: Convergence criterion, component 0: |dx|=7.3564e-08, |x|=3.7895e-07, |dx|/|x|=1.9413e-01
+info: Convergence criterion, component 1: |dx|=3.2734e-03, |x|=4.6781e-02, |dx|/|x|=6.9973e-02
+info: [time] Iteration #1 took 0.0196018 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0025287 s.
+info: [time] Applying Dirichlet BCs took 0.0006525 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 376/10000
+info: 	 residual: 9.789217e-17
+
+info: [time] Linear solver took 0.0093713 s.
+info: Convergence criterion, component 0: |dx|=3.5163e-18, |x|=3.7895e-07, |dx|/|x|=9.2793e-12
+info: Convergence criterion, component 1: |dx|=2.0438e-16, |x|=4.6781e-02, |dx|/|x|=4.3688e-15
+info: [time] Iteration #2 took 0.0128142 s.
+info: [time] Solving process #1 (named as not given) took 0.033702 s in time step #9 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.001039 s.
+info: [time] Applying Dirichlet BCs took 3e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 5.090524e-17
+
+info: [time] Linear solver took 0.0001352 s.
+info: Convergence criterion: |dx|=1.0772e-12, |x|=1.1853e+04, |dx|/|x|=9.0877e-17
+info: [time] Iteration #1 took 0.0012254 s.
+info: [time] Solving process #0 (named as not given) took 0.0014864 s in time step #9 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=1.1560e-12, |x|=1.1853e+04, |dx|/|x|=9.7528e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025134 s.
+info: [time] Applying Dirichlet BCs took 0.0006936 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 430/10000
+info: 	 residual: 8.575241e-17
+
+info: [time] Linear solver took 0.0107355 s.
+info: Convergence criterion, component 0: |dx|=3.0355e-18, |x|=3.7895e-07, |dx|/|x|=8.0102e-12
+info: Convergence criterion, component 1: |dx|=3.4251e-16, |x|=4.6781e-02, |dx|/|x|=7.3216e-15
+info: [time] Iteration #1 took 0.0142191 s.
+info: [time] Solving process #1 (named as not given) took 0.0159529 s in time step #9 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=3.4244e-16, |x|=4.6781e-02, |dx|/|x|=7.3200e-15
+warning: The coupling iterations reaches its maximum number in time step #9 at t = 4.5 s
+info: [time] Time step #9 took 0.0564856 s.
+info: === Time stepping at step #10 and time 5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0016187 s.
+info: [time] Applying Dirichlet BCs took 3.82e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 8.675683e-17
+
+info: [time] Linear solver took 0.0001939 s.
+info: Convergence criterion: |dx|=3.2927e+02, |x|=1.1662e+04, |dx|/|x|=2.8234e-02
+info: [time] Iteration #1 took 0.0018699 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0009853 s.
+info: [time] Applying Dirichlet BCs took 2.53e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.861961e-17
+
+info: [time] Linear solver took 0.0001358 s.
+info: Convergence criterion: |dx|=1.0502e-12, |x|=1.1662e+04, |dx|/|x|=9.0055e-17
+info: [time] Iteration #2 took 0.0011632 s.
+info: [time] Solving process #0 (named as not given) took 0.0032963 s in time step #10 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0023696 s.
+info: [time] Applying Dirichlet BCs took 0.0006395 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 451/10000
+info: 	 residual: 9.681269e-17
+
+info: [time] Linear solver took 0.011168 s.
+info: Convergence criterion, component 0: |dx|=6.6128e-08, |x|=3.3962e-07, |dx|/|x|=1.9471e-01
+info: Convergence criterion, component 1: |dx|=3.9807e-03, |x|=5.0616e-02, |dx|/|x|=7.8645e-02
+info: [time] Iteration #1 took 0.0144303 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022851 s.
+info: [time] Applying Dirichlet BCs took 0.0006166 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 410/10000
+info: 	 residual: 9.333195e-17
+
+info: [time] Linear solver took 0.0136482 s.
+info: Convergence criterion, component 0: |dx|=3.1566e-18, |x|=3.3962e-07, |dx|/|x|=9.2946e-12
+info: Convergence criterion, component 1: |dx|=5.1241e-16, |x|=5.0616e-02, |dx|/|x|=1.0123e-14
+info: [time] Iteration #2 took 0.0169127 s.
+info: [time] Solving process #1 (named as not given) took 0.0336421 s in time step #10 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0011398 s.
+info: [time] Applying Dirichlet BCs took 3.01e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.075903e-17
+
+info: [time] Linear solver took 0.0001332 s.
+info: Convergence criterion: |dx|=1.1239e-12, |x|=1.1662e+04, |dx|/|x|=9.6369e-17
+info: [time] Iteration #1 took 0.0013227 s.
+info: [time] Solving process #0 (named as not given) took 0.0015973 s in time step #10 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=1.2430e-12, |x|=1.1662e+04, |dx|/|x|=1.0659e-16
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0023872 s.
+info: [time] Applying Dirichlet BCs took 0.000661 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 431/10000
+info: 	 residual: 9.442917e-17
+
+info: [time] Linear solver took 0.0106907 s.
+info: Convergence criterion, component 0: |dx|=2.8258e-18, |x|=3.3962e-07, |dx|/|x|=8.3205e-12
+info: Convergence criterion, component 1: |dx|=4.6049e-16, |x|=5.0616e-02, |dx|/|x|=9.0978e-15
+info: [time] Iteration #1 took 0.0139968 s.
+info: [time] Solving process #1 (named as not given) took 0.0152691 s in time step #10 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=4.6051e-16, |x|=5.0616e-02, |dx|/|x|=9.0982e-15
+warning: The coupling iterations reaches its maximum number in time step #10 at t = 5 s
+info: [time] Time step #10 took 0.0557545 s.
+info: [time] Output of timestep 10 took 0.0112372 s.
+info: === Time stepping at step #11 and time 5.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010274 s.
+info: [time] Applying Dirichlet BCs took 2.51e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 9.373205e-17
+
+info: [time] Linear solver took 0.0001353 s.
+info: Convergence criterion: |dx|=2.9494e+02, |x|=1.1479e+04, |dx|/|x|=2.5694e-02
+info: [time] Iteration #1 took 0.0012016 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0009758 s.
+info: [time] Applying Dirichlet BCs took 1.58e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 8.131313e-17
+
+info: [time] Linear solver took 0.000128 s.
+info: Convergence criterion: |dx|=8.9284e-13, |x|=1.1479e+04, |dx|/|x|=7.7778e-17
+info: [time] Iteration #2 took 0.0011299 s.
+info: [time] Solving process #0 (named as not given) took 0.0026034 s in time step #11 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0026037 s.
+info: [time] Applying Dirichlet BCs took 0.0009513 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 460/10000
+info: 	 residual: 9.729961e-17
+
+info: [time] Linear solver took 0.0116248 s.
+info: Convergence criterion, component 0: |dx|=5.2855e-08, |x|=3.1337e-07, |dx|/|x|=1.6867e-01
+info: Convergence criterion, component 1: |dx|=4.3145e-03, |x|=5.4760e-02, |dx|/|x|=7.8791e-02
+info: [time] Iteration #1 took 0.0154654 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022709 s.
+info: [time] Applying Dirichlet BCs took 0.0006364 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 405/10000
+info: 	 residual: 8.572469e-17
+
+info: [time] Linear solver took 0.0101702 s.
+info: Convergence criterion, component 0: |dx|=3.4924e-18, |x|=3.1337e-07, |dx|/|x|=1.1145e-11
+info: Convergence criterion, component 1: |dx|=1.7952e-16, |x|=5.4760e-02, |dx|/|x|=3.2783e-15
+info: [time] Iteration #2 took 0.0133433 s.
+info: [time] Solving process #1 (named as not given) took 0.0300728 s in time step #11 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0011326 s.
+info: [time] Applying Dirichlet BCs took 2.72e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.947382e-17
+
+info: [time] Linear solver took 0.0001351 s.
+info: Convergence criterion: |dx|=7.0745e-13, |x|=1.1479e+04, |dx|/|x|=6.1629e-17
+info: [time] Iteration #1 took 0.0013085 s.
+info: [time] Solving process #0 (named as not given) took 0.0015603 s in time step #11 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=7.9902e-13, |x|=1.1479e+04, |dx|/|x|=6.9606e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024172 s.
+info: [time] Applying Dirichlet BCs took 0.000707 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 376/10000
+info: 	 residual: 8.170927e-17
+
+info: [time] Linear solver took 0.0093039 s.
+info: Convergence criterion, component 0: |dx|=3.2076e-18, |x|=3.1337e-07, |dx|/|x|=1.0236e-11
+info: Convergence criterion, component 1: |dx|=2.4048e-17, |x|=5.4760e-02, |dx|/|x|=4.3915e-16
+info: [time] Iteration #1 took 0.0126753 s.
+info: [time] Solving process #1 (named as not given) took 0.0139276 s in time step #11 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=2.4444e-17, |x|=5.4760e-02, |dx|/|x|=4.4640e-16
+warning: The coupling iterations reaches its maximum number in time step #11 at t = 5.5 s
+info: [time] Time step #11 took 0.0501301 s.
+info: === Time stepping at step #12 and time 6 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010494 s.
+info: [time] Applying Dirichlet BCs took 2.99e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 3.821041e-17
+
+info: [time] Linear solver took 0.0001325 s.
+info: Convergence criterion: |dx|=2.6543e+02, |x|=1.1308e+04, |dx|/|x|=2.3473e-02
+info: [time] Iteration #1 took 0.0012311 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0010037 s.
+info: [time] Applying Dirichlet BCs took 2.52e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 5.714184e-17
+
+info: [time] Linear solver took 0.0001345 s.
+info: Convergence criterion: |dx|=1.0072e-12, |x|=1.1308e+04, |dx|/|x|=8.9069e-17
+info: [time] Iteration #2 took 0.0011812 s.
+info: [time] Solving process #0 (named as not given) took 0.0026733 s in time step #12 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024925 s.
+info: [time] Applying Dirichlet BCs took 0.0006451 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 446/10000
+info: 	 residual: 9.861271e-17
+
+info: [time] Linear solver took 0.0111191 s.
+info: Convergence criterion, component 0: |dx|=3.9477e-08, |x|=2.9619e-07, |dx|/|x|=1.3328e-01
+info: Convergence criterion, component 1: |dx|=4.4071e-03, |x|=5.8973e-02, |dx|/|x|=7.4730e-02
+info: [time] Iteration #1 took 0.0145882 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022579 s.
+info: [time] Applying Dirichlet BCs took 0.0008627 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 371/10000
+info: 	 residual: 9.280788e-17
+
+info: [time] Linear solver took 0.0123022 s.
+info: Convergence criterion, component 0: |dx|=3.5539e-18, |x|=2.9619e-07, |dx|/|x|=1.1999e-11
+info: Convergence criterion, component 1: |dx|=1.7685e-16, |x|=5.8973e-02, |dx|/|x|=2.9988e-15
+info: [time] Iteration #2 took 0.0156945 s.
+info: [time] Solving process #1 (named as not given) took 0.0315438 s in time step #12 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0016741 s.
+info: [time] Applying Dirichlet BCs took 2.75e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 5.331398e-17
+
+info: [time] Linear solver took 0.0001361 s.
+info: Convergence criterion: |dx|=8.0468e-13, |x|=1.1308e+04, |dx|/|x|=7.1162e-17
+info: [time] Iteration #1 took 0.0018495 s.
+info: [time] Solving process #0 (named as not given) took 0.0021048 s in time step #12 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=8.6291e-13, |x|=1.1308e+04, |dx|/|x|=7.6311e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024661 s.
+info: [time] Applying Dirichlet BCs took 0.0006447 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 374/10000
+info: 	 residual: 8.885815e-17
+
+info: [time] Linear solver took 0.0092888 s.
+info: Convergence criterion, component 0: |dx|=2.7136e-18, |x|=2.9619e-07, |dx|/|x|=9.1618e-12
+info: Convergence criterion, component 1: |dx|=1.0533e-16, |x|=5.8973e-02, |dx|/|x|=1.7860e-15
+info: [time] Iteration #1 took 0.0126926 s.
+info: [time] Solving process #1 (named as not given) took 0.0140148 s in time step #12 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.0544e-16, |x|=5.8973e-02, |dx|/|x|=1.7880e-15
+warning: The coupling iterations reaches its maximum number in time step #12 at t = 6 s
+info: [time] Time step #12 took 0.0523709 s.
+info: [time] Output of timestep 12 took 0.0117656 s.
+info: === Time stepping at step #13 and time 6.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010633 s.
+info: [time] Applying Dirichlet BCs took 3.1e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 4.333268e-17
+
+info: [time] Linear solver took 0.0001347 s.
+info: Convergence criterion: |dx|=2.4035e+02, |x|=1.1148e+04, |dx|/|x|=2.1560e-02
+info: [time] Iteration #1 took 0.0012485 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.000953 s.
+info: [time] Applying Dirichlet BCs took 1.89e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.294134e-17
+
+info: [time] Linear solver took 0.0001285 s.
+info: Convergence criterion: |dx|=9.6699e-13, |x|=1.1148e+04, |dx|/|x|=8.6743e-17
+info: [time] Iteration #2 took 0.0011113 s.
+info: [time] Solving process #0 (named as not given) took 0.0026317 s in time step #13 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0023826 s.
+info: [time] Applying Dirichlet BCs took 0.0006539 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 460/10000
+info: 	 residual: 8.998264e-17
+
+info: [time] Linear solver took 0.0113711 s.
+info: Convergence criterion, component 0: |dx|=2.8902e-08, |x|=2.8301e-07, |dx|/|x|=1.0212e-01
+info: Convergence criterion, component 1: |dx|=4.3785e-03, |x|=6.3149e-02, |dx|/|x|=6.9335e-02
+info: [time] Iteration #1 took 0.0146678 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022308 s.
+info: [time] Applying Dirichlet BCs took 0.0007814 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 432/10000
+info: 	 residual: 7.604030e-17
+
+info: [time] Linear solver took 0.0107983 s.
+info: Convergence criterion, component 0: |dx|=2.8281e-18, |x|=2.8301e-07, |dx|/|x|=9.9929e-12
+info: Convergence criterion, component 1: |dx|=6.8792e-16, |x|=6.3149e-02, |dx|/|x|=1.0894e-14
+info: [time] Iteration #2 took 0.0140685 s.
+info: [time] Solving process #1 (named as not given) took 0.0299868 s in time step #13 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0011406 s.
+info: [time] Applying Dirichlet BCs took 2.82e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.327109e-17
+
+info: [time] Linear solver took 0.0001333 s.
+info: Convergence criterion: |dx|=7.9727e-13, |x|=1.1148e+04, |dx|/|x|=7.1518e-17
+info: [time] Iteration #1 took 0.001318 s.
+info: [time] Solving process #0 (named as not given) took 0.0015885 s in time step #13 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=9.0398e-13, |x|=1.1148e+04, |dx|/|x|=8.1090e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.002533 s.
+info: [time] Applying Dirichlet BCs took 0.0006629 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 373/10000
+info: 	 residual: 9.478979e-17
+
+info: [time] Linear solver took 0.0093894 s.
+info: Convergence criterion, component 0: |dx|=3.0986e-18, |x|=2.8301e-07, |dx|/|x|=1.0948e-11
+info: Convergence criterion, component 1: |dx|=4.6881e-16, |x|=6.3149e-02, |dx|/|x|=7.4238e-15
+info: [time] Iteration #1 took 0.0128461 s.
+info: [time] Solving process #1 (named as not given) took 0.0141027 s in time step #13 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=4.6887e-16, |x|=6.3149e-02, |dx|/|x|=7.4248e-15
+warning: The coupling iterations reaches its maximum number in time step #13 at t = 6.5 s
+info: [time] Time step #13 took 0.0503119 s.
+info: === Time stepping at step #14 and time 7 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010353 s.
+info: [time] Applying Dirichlet BCs took 2.97e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 4.653987e-17
+
+info: [time] Linear solver took 0.0001389 s.
+info: Convergence criterion: |dx|=2.1911e+02, |x|=1.0999e+04, |dx|/|x|=1.9922e-02
+info: [time] Iteration #1 took 0.0012227 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0011282 s.
+info: [time] Applying Dirichlet BCs took 1.87e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.685967e-17
+
+info: [time] Linear solver took 0.0001277 s.
+info: Convergence criterion: |dx|=9.1539e-13, |x|=1.0999e+04, |dx|/|x|=8.3228e-17
+info: [time] Iteration #2 took 0.0012852 s.
+info: [time] Solving process #0 (named as not given) took 0.0027723 s in time step #14 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025125 s.
+info: [time] Applying Dirichlet BCs took 0.0007592 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 448/10000
+info: 	 residual: 8.023018e-17
+
+info: [time] Linear solver took 0.0111176 s.
+info: Convergence criterion, component 0: |dx|=2.1915e-08, |x|=2.7084e-07, |dx|/|x|=8.0914e-02
+info: Convergence criterion, component 1: |dx|=4.2957e-03, |x|=6.7242e-02, |dx|/|x|=6.3884e-02
+info: [time] Iteration #1 took 0.0146471 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0021652 s.
+info: [time] Applying Dirichlet BCs took 0.000563 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 9.873892e-17
+
+info: [time] Linear solver took 0.0091996 s.
+info: Convergence criterion, component 0: |dx|=4.0369e-18, |x|=2.7084e-07, |dx|/|x|=1.4905e-11
+info: Convergence criterion, component 1: |dx|=8.3870e-17, |x|=6.7242e-02, |dx|/|x|=1.2473e-15
+info: [time] Iteration #2 took 0.0121808 s.
+info: [time] Solving process #1 (named as not given) took 0.0280701 s in time step #14 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010184 s.
+info: [time] Applying Dirichlet BCs took 2.55e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 8.080439e-17
+
+info: [time] Linear solver took 0.0001328 s.
+info: Convergence criterion: |dx|=8.1125e-13, |x|=1.0999e+04, |dx|/|x|=7.3759e-17
+info: [time] Iteration #1 took 0.0011886 s.
+info: [time] Solving process #0 (named as not given) took 0.0014513 s in time step #14 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=9.0296e-13, |x|=1.0999e+04, |dx|/|x|=8.2097e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025277 s.
+info: [time] Applying Dirichlet BCs took 0.0008809 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 429/10000
+info: 	 residual: 9.896072e-17
+
+info: [time] Linear solver took 0.0109871 s.
+info: Convergence criterion, component 0: |dx|=3.1306e-18, |x|=2.7084e-07, |dx|/|x|=1.1559e-11
+info: Convergence criterion, component 1: |dx|=2.2705e-16, |x|=6.7242e-02, |dx|/|x|=3.3766e-15
+info: [time] Iteration #1 took 0.0146455 s.
+info: [time] Solving process #1 (named as not given) took 0.015891 s in time step #14 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=2.2708e-16, |x|=6.7242e-02, |dx|/|x|=3.3770e-15
+warning: The coupling iterations reaches its maximum number in time step #14 at t = 7 s
+info: [time] Time step #14 took 0.0501373 s.
+info: [time] Output of timestep 14 took 0.0111219 s.
+info: === Time stepping at step #15 and time 7.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.001136 s.
+info: [time] Applying Dirichlet BCs took 2.53e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 5.068026e-17
+
+info: [time] Linear solver took 0.0001618 s.
+info: Convergence criterion: |dx|=2.0108e+02, |x|=1.0859e+04, |dx|/|x|=1.8517e-02
+info: [time] Iteration #1 took 0.0013386 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0010157 s.
+info: [time] Applying Dirichlet BCs took 3.38e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.740305e-17
+
+info: [time] Linear solver took 0.0001465 s.
+info: Convergence criterion: |dx|=1.0744e-12, |x|=1.0859e+04, |dx|/|x|=9.8942e-17
+info: [time] Iteration #2 took 0.0012171 s.
+info: [time] Solving process #0 (named as not given) took 0.0028332 s in time step #15 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025654 s.
+info: [time] Applying Dirichlet BCs took 0.0006008 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 460/10000
+info: 	 residual: 8.474520e-17
+
+info: [time] Linear solver took 0.0113821 s.
+info: Convergence criterion, component 0: |dx|=1.7936e-08, |x|=2.5871e-07, |dx|/|x|=6.9330e-02
+info: Convergence criterion, component 1: |dx|=4.1925e-03, |x|=7.1234e-02, |dx|/|x|=5.8855e-02
+info: [time] Iteration #1 took 0.0148122 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022889 s.
+info: [time] Applying Dirichlet BCs took 0.0007368 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 430/10000
+info: 	 residual: 7.730479e-17
+
+info: [time] Linear solver took 0.0117067 s.
+info: Convergence criterion, component 0: |dx|=2.9843e-18, |x|=2.5871e-07, |dx|/|x|=1.1535e-11
+info: Convergence criterion, component 1: |dx|=5.2867e-16, |x|=7.1234e-02, |dx|/|x|=7.4215e-15
+info: [time] Iteration #2 took 0.0149985 s.
+info: [time] Solving process #1 (named as not given) took 0.0310896 s in time step #15 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010202 s.
+info: [time] Applying Dirichlet BCs took 2.72e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 8.822562e-17
+
+info: [time] Linear solver took 0.0001341 s.
+info: Convergence criterion: |dx|=7.8598e-13, |x|=1.0859e+04, |dx|/|x|=7.2379e-17
+info: [time] Iteration #1 took 0.001194 s.
+info: [time] Solving process #0 (named as not given) took 0.0014699 s in time step #15 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=8.4185e-13, |x|=1.0859e+04, |dx|/|x|=7.7523e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024443 s.
+info: [time] Applying Dirichlet BCs took 0.0006579 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 370/10000
+info: 	 residual: 8.946814e-17
+
+info: [time] Linear solver took 0.0091786 s.
+info: Convergence criterion, component 0: |dx|=3.2662e-18, |x|=2.5871e-07, |dx|/|x|=1.2625e-11
+info: Convergence criterion, component 1: |dx|=1.2825e-16, |x|=7.1234e-02, |dx|/|x|=1.8004e-15
+info: [time] Iteration #1 took 0.0125375 s.
+info: [time] Solving process #1 (named as not given) took 0.0137861 s in time step #15 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.2845e-16, |x|=7.1234e-02, |dx|/|x|=1.8033e-15
+warning: The coupling iterations reaches its maximum number in time step #15 at t = 7.5 s
+info: [time] Time step #15 took 0.0512328 s.
+info: === Time stepping at step #16 and time 8 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0013468 s.
+info: [time] Applying Dirichlet BCs took 2.88e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 5.441840e-17
+
+info: [time] Linear solver took 0.0001349 s.
+info: Convergence criterion: |dx|=1.8569e+02, |x|=1.0729e+04, |dx|/|x|=1.7308e-02
+info: [time] Iteration #1 took 0.0015222 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.001415 s.
+info: [time] Applying Dirichlet BCs took 1.55e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.356891e-17
+
+info: [time] Linear solver took 0.0001281 s.
+info: Convergence criterion: |dx|=9.3952e-13, |x|=1.0729e+04, |dx|/|x|=8.7571e-17
+info: [time] Iteration #2 took 0.001568 s.
+info: [time] Solving process #0 (named as not given) took 0.0033484 s in time step #16 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024205 s.
+info: [time] Applying Dirichlet BCs took 0.0006238 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 442/10000
+info: 	 residual: 9.852042e-17
+
+info: [time] Linear solver took 0.0109385 s.
+info: Convergence criterion, component 0: |dx|=1.5711e-08, |x|=2.4671e-07, |dx|/|x|=6.3679e-02
+info: Convergence criterion, component 1: |dx|=4.0850e-03, |x|=7.5125e-02, |dx|/|x|=5.4376e-02
+info: [time] Iteration #1 took 0.0142402 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0021697 s.
+info: [time] Applying Dirichlet BCs took 0.0005601 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 373/10000
+info: 	 residual: 9.679563e-17
+
+info: [time] Linear solver took 0.0092479 s.
+info: Convergence criterion, component 0: |dx|=3.0410e-18, |x|=2.4671e-07, |dx|/|x|=1.2326e-11
+info: Convergence criterion, component 1: |dx|=7.7631e-17, |x|=7.5125e-02, |dx|/|x|=1.0334e-15
+info: [time] Iteration #2 took 0.0122351 s.
+info: [time] Solving process #1 (named as not given) took 0.027804 s in time step #16 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0018398 s.
+info: [time] Applying Dirichlet BCs took 3.09e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 4.896691e-17
+
+info: [time] Linear solver took 0.0001693 s.
+info: Convergence criterion: |dx|=8.0965e-13, |x|=1.0729e+04, |dx|/|x|=7.5466e-17
+info: [time] Iteration #1 took 0.0020636 s.
+info: [time] Solving process #0 (named as not given) took 0.0023743 s in time step #16 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=8.7671e-13, |x|=1.0729e+04, |dx|/|x|=8.1717e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.00232 s.
+info: [time] Applying Dirichlet BCs took 0.0006427 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 371/10000
+info: 	 residual: 9.148762e-17
+
+info: [time] Linear solver took 0.0093932 s.
+info: Convergence criterion, component 0: |dx|=2.5511e-18, |x|=2.4671e-07, |dx|/|x|=1.0340e-11
+info: Convergence criterion, component 1: |dx|=1.1271e-16, |x|=7.5125e-02, |dx|/|x|=1.5003e-15
+info: [time] Iteration #1 took 0.0126114 s.
+info: [time] Solving process #1 (named as not given) took 0.0138658 s in time step #16 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.1301e-16, |x|=7.5125e-02, |dx|/|x|=1.5043e-15
+warning: The coupling iterations reaches its maximum number in time step #16 at t = 8 s
+info: [time] Time step #16 took 0.0493653 s.
+info: [time] Output of timestep 16 took 0.0118828 s.
+info: === Time stepping at step #17 and time 8.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010778 s.
+info: [time] Applying Dirichlet BCs took 3.28e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 5.692860e-17
+
+info: [time] Linear solver took 0.0001357 s.
+info: Convergence criterion: |dx|=1.7245e+02, |x|=1.0606e+04, |dx|/|x|=1.6260e-02
+info: [time] Iteration #1 took 0.0012599 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0009593 s.
+info: [time] Applying Dirichlet BCs took 2.36e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 9.131428e-17
+
+info: [time] Linear solver took 0.0001574 s.
+info: Convergence criterion: |dx|=1.2739e-12, |x|=1.0606e+04, |dx|/|x|=1.2011e-16
+info: [time] Iteration #2 took 0.0011562 s.
+info: [time] Solving process #0 (named as not given) took 0.002674 s in time step #17 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0026604 s.
+info: [time] Applying Dirichlet BCs took 0.0007113 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 447/10000
+info: 	 residual: 9.806893e-17
+
+info: [time] Linear solver took 0.0110996 s.
+info: Convergence criterion, component 0: |dx|=1.4210e-08, |x|=2.3520e-07, |dx|/|x|=6.0415e-02
+info: Convergence criterion, component 1: |dx|=3.9805e-03, |x|=7.8917e-02, |dx|/|x|=5.0439e-02
+info: [time] Iteration #1 took 0.0147347 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022213 s.
+info: [time] Applying Dirichlet BCs took 0.0006454 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 371/10000
+info: 	 residual: 8.678584e-17
+
+info: [time] Linear solver took 0.0092256 s.
+info: Convergence criterion, component 0: |dx|=3.1258e-18, |x|=2.3520e-07, |dx|/|x|=1.3290e-11
+info: Convergence criterion, component 1: |dx|=3.2727e-16, |x|=7.8917e-02, |dx|/|x|=4.1470e-15
+info: [time] Iteration #2 took 0.0123501 s.
+info: [time] Solving process #1 (named as not given) took 0.0283687 s in time step #17 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.00103 s.
+info: [time] Applying Dirichlet BCs took 3.04e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 8.064083e-17
+
+info: [time] Linear solver took 0.0001337 s.
+info: Convergence criterion: |dx|=8.1853e-13, |x|=1.0606e+04, |dx|/|x|=7.7179e-17
+info: [time] Iteration #1 took 0.0012135 s.
+info: [time] Solving process #0 (named as not given) took 0.0014788 s in time step #17 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=8.9966e-13, |x|=1.0606e+04, |dx|/|x|=8.4828e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024552 s.
+info: [time] Applying Dirichlet BCs took 0.0006446 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 407/10000
+info: 	 residual: 9.689305e-17
+
+info: [time] Linear solver took 0.0102741 s.
+info: Convergence criterion, component 0: |dx|=3.0193e-18, |x|=2.3520e-07, |dx|/|x|=1.2837e-11
+info: Convergence criterion, component 1: |dx|=3.7252e-16, |x|=7.8917e-02, |dx|/|x|=4.7204e-15
+info: [time] Iteration #1 took 0.0136221 s.
+info: [time] Solving process #1 (named as not given) took 0.0148841 s in time step #17 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=3.7242e-16, |x|=7.8917e-02, |dx|/|x|=4.7191e-15
+warning: The coupling iterations reaches its maximum number in time step #17 at t = 8.5 s
+info: [time] Time step #17 took 0.0493911 s.
+info: === Time stepping at step #18 and time 9 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0015584 s.
+info: [time] Applying Dirichlet BCs took 2.75e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 5.856052e-17
+
+info: [time] Linear solver took 0.0001573 s.
+info: Convergence criterion: |dx|=1.6097e+02, |x|=1.0489e+04, |dx|/|x|=1.5346e-02
+info: [time] Iteration #1 took 0.0017637 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0014149 s.
+info: [time] Applying Dirichlet BCs took 1.75e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 64/10000
+info: 	 residual: 9.499141e-17
+
+info: [time] Linear solver took 0.0001262 s.
+info: Convergence criterion: |dx|=9.1748e-13, |x|=1.0489e+04, |dx|/|x|=8.7468e-17
+info: [time] Iteration #2 took 0.0015695 s.
+info: [time] Solving process #0 (named as not given) took 0.0035903 s in time step #18 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0023866 s.
+info: [time] Applying Dirichlet BCs took 0.000551 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 457/10000
+info: 	 residual: 9.012093e-17
+
+info: [time] Linear solver took 0.0112937 s.
+info: Convergence criterion, component 0: |dx|=1.2968e-08, |x|=2.2441e-07, |dx|/|x|=5.7787e-02
+info: Convergence criterion, component 1: |dx|=3.8818e-03, |x|=8.2617e-02, |dx|/|x|=4.6986e-02
+info: [time] Iteration #1 took 0.0144858 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0023742 s.
+info: [time] Applying Dirichlet BCs took 0.0007004 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 430/10000
+info: 	 residual: 8.154754e-17
+
+info: [time] Linear solver took 0.0106292 s.
+info: Convergence criterion, component 0: |dx|=3.7401e-18, |x|=2.2441e-07, |dx|/|x|=1.6666e-11
+info: Convergence criterion, component 1: |dx|=3.4991e-16, |x|=8.2617e-02, |dx|/|x|=4.2353e-15
+info: [time] Iteration #2 took 0.0139564 s.
+info: [time] Solving process #1 (named as not given) took 0.0297527 s in time step #18 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0010356 s.
+info: [time] Applying Dirichlet BCs took 2.9e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 7.998621e-17
+
+info: [time] Linear solver took 0.0001331 s.
+info: Convergence criterion: |dx|=7.6382e-13, |x|=1.0489e+04, |dx|/|x|=7.2819e-17
+info: [time] Iteration #1 took 0.0012171 s.
+info: [time] Solving process #0 (named as not given) took 0.0014897 s in time step #18 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=8.2744e-13, |x|=1.0489e+04, |dx|/|x|=7.8884e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.002412 s.
+info: [time] Applying Dirichlet BCs took 0.0005828 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 8.719392e-17
+
+info: [time] Linear solver took 0.0092099 s.
+info: Convergence criterion, component 0: |dx|=2.6859e-18, |x|=2.2441e-07, |dx|/|x|=1.1969e-11
+info: Convergence criterion, component 1: |dx|=1.7036e-16, |x|=8.2617e-02, |dx|/|x|=2.0620e-15
+info: [time] Iteration #1 took 0.0124627 s.
+info: [time] Solving process #1 (named as not given) took 0.0137201 s in time step #18 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=1.7021e-16, |x|=8.2617e-02, |dx|/|x|=2.0602e-15
+warning: The coupling iterations reaches its maximum number in time step #18 at t = 9 s
+info: [time] Time step #18 took 0.0505071 s.
+info: [time] Output of timestep 18 took 0.0111256 s.
+info: === Time stepping at step #19 and time 9.5 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0011673 s.
+info: [time] Applying Dirichlet BCs took 2.57e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 5.973681e-17
+
+info: [time] Linear solver took 0.0001459 s.
+info: Convergence criterion: |dx|=1.5093e+02, |x|=1.0379e+04, |dx|/|x|=1.4542e-02
+info: [time] Iteration #1 took 0.0013523 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0014977 s.
+info: [time] Applying Dirichlet BCs took 1.61e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 5.019355e-17
+
+info: [time] Linear solver took 0.0001295 s.
+info: Convergence criterion: |dx|=1.0167e-12, |x|=1.0379e+04, |dx|/|x|=9.7953e-17
+info: [time] Iteration #2 took 0.001653 s.
+info: [time] Solving process #0 (named as not given) took 0.003263 s in time step #19 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0024073 s.
+info: [time] Applying Dirichlet BCs took 0.0005523 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 446/10000
+info: 	 residual: 8.856367e-17
+
+info: [time] Linear solver took 0.0110923 s.
+info: Convergence criterion, component 0: |dx|=1.1864e-08, |x|=2.1446e-07, |dx|/|x|=5.5323e-02
+info: Convergence criterion, component 1: |dx|=3.7898e-03, |x|=8.6231e-02, |dx|/|x|=4.3950e-02
+info: [time] Iteration #1 took 0.0143138 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0022067 s.
+info: [time] Applying Dirichlet BCs took 0.0006082 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 9.481022e-17
+
+info: [time] Linear solver took 0.0094143 s.
+info: Convergence criterion, component 0: |dx|=3.3567e-18, |x|=2.1446e-07, |dx|/|x|=1.5652e-11
+info: Convergence criterion, component 1: |dx|=1.1541e-16, |x|=8.6231e-02, |dx|/|x|=1.3384e-15
+info: [time] Iteration #2 took 0.012481 s.
+info: [time] Solving process #1 (named as not given) took 0.0280617 s in time step #19 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0015971 s.
+info: [time] Applying Dirichlet BCs took 2.7e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.073963e-17
+
+info: [time] Linear solver took 0.0001531 s.
+info: Convergence criterion: |dx|=8.7366e-13, |x|=1.0379e+04, |dx|/|x|=8.4176e-17
+info: [time] Iteration #1 took 0.0017885 s.
+info: [time] Solving process #0 (named as not given) took 0.0020407 s in time step #19 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=9.3284e-13, |x|=1.0379e+04, |dx|/|x|=8.9877e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0027111 s.
+info: [time] Applying Dirichlet BCs took 0.0006345 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 370/10000
+info: 	 residual: 7.616003e-17
+
+info: [time] Linear solver took 0.0091698 s.
+info: Convergence criterion, component 0: |dx|=3.1145e-18, |x|=2.1446e-07, |dx|/|x|=1.4523e-11
+info: Convergence criterion, component 1: |dx|=6.1070e-16, |x|=8.6231e-02, |dx|/|x|=7.0821e-15
+info: [time] Iteration #1 took 0.0127595 s.
+info: [time] Solving process #1 (named as not given) took 0.014014 s in time step #19 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=6.1084e-16, |x|=8.6231e-02, |dx|/|x|=7.0838e-15
+warning: The coupling iterations reaches its maximum number in time step #19 at t = 9.5 s
+info: [time] Time step #19 took 0.0493686 s.
+info: === Time stepping at step #20 and time 10 with step size 0.5
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0018125 s.
+info: [time] Applying Dirichlet BCs took 4.93e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 6.071797e-17
+
+info: [time] Linear solver took 0.000264 s.
+info: Convergence criterion: |dx|=1.4208e+02, |x|=1.0274e+04, |dx|/|x|=1.3829e-02
+info: [time] Iteration #1 took 0.0021556 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0011509 s.
+info: [time] Applying Dirichlet BCs took 2.69e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 66/10000
+info: 	 residual: 5.276857e-17
+
+info: [time] Linear solver took 0.0001361 s.
+info: Convergence criterion: |dx|=8.4335e-13, |x|=1.0274e+04, |dx|/|x|=8.2085e-17
+info: [time] Iteration #2 took 0.0013344 s.
+info: [time] Solving process #0 (named as not given) took 0.0037529 s in time step #20 coupling iteration #0.
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025739 s.
+info: [time] Applying Dirichlet BCs took 0.0006453 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 449/10000
+info: 	 residual: 9.814125e-17
+
+info: [time] Linear solver took 0.0114579 s.
+info: Convergence criterion, component 0: |dx|=1.0884e-08, |x|=2.0531e-07, |dx|/|x|=5.3012e-02
+info: Convergence criterion, component 1: |dx|=3.7044e-03, |x|=8.9764e-02, |dx|/|x|=4.1268e-02
+info: [time] Iteration #1 took 0.0149677 s.
+info: Number of threads: 4
+info: [time] Assembly took 0.0025882 s.
+info: [time] Applying Dirichlet BCs took 0.0006247 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 372/10000
+info: 	 residual: 9.633202e-17
+
+info: [time] Linear solver took 0.0092069 s.
+info: Convergence criterion, component 0: |dx|=3.3654e-18, |x|=2.0531e-07, |dx|/|x|=1.6392e-11
+info: Convergence criterion, component 1: |dx|=6.7619e-17, |x|=8.9764e-02, |dx|/|x|=7.5330e-16
+info: [time] Iteration #2 took 0.0126741 s.
+info: [time] Solving process #1 (named as not given) took 0.0289145 s in time step #20 coupling iteration #0.
+info: Solve process #0 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0011665 s.
+info: [time] Applying Dirichlet BCs took 2.77e-05 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 65/10000
+info: 	 residual: 7.424103e-17
+
+info: [time] Linear solver took 0.0001366 s.
+info: Convergence criterion: |dx|=7.0730e-13, |x|=1.0274e+04, |dx|/|x|=6.8843e-17
+info: [time] Iteration #1 took 0.0013488 s.
+info: [time] Solving process #0 (named as not given) took 0.0016273 s in time step #20 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 0 -------
+info: Convergence criterion: |dx|=7.9121e-13, |x|=1.0274e+04, |dx|/|x|=7.7010e-17
+info: Solve process #1 (named as not given)
+info: Number of threads: 4
+info: [time] Assembly took 0.0025627 s.
+info: [time] Applying Dirichlet BCs took 0.0006142 s.
+info: ------------------------------------------------------------------
+info: *** Eigen solver compute()
+info: -> compute with Eigen iterative linear solver CG (precon DIAGONAL)
+info: ------------------------------------------------------------------
+info: *** Eigen solver solve()
+info: -> solve with Eigen iterative linear solver CG (precon DIAGONAL)
+info: 	 iteration: 410/10000
+info: 	 residual: 9.437357e-17
+
+info: [time] Linear solver took 0.010351 s.
+info: Convergence criterion, component 0: |dx|=3.4248e-18, |x|=2.0531e-07, |dx|/|x|=1.6681e-11
+info: Convergence criterion, component 1: |dx|=2.2075e-16, |x|=8.9764e-02, |dx|/|x|=2.4592e-15
+info: [time] Iteration #1 took 0.013841 s.
+info: [time] Solving process #1 (named as not given) took 0.0157151 s in time step #20 coupling iteration #1.
+info: ------- Checking convergence criterion for coupled solution of process not given with ID 1 -------
+info: Convergence criterion: |dx|=2.2070e-16, |x|=8.9764e-02, |dx|/|x|=2.4587e-15
+warning: The coupling iterations reaches its maximum number in time step #20 at t = 10 s
+info: [time] Time step #20 took 0.0525655 s.
+info: [time] Output of timestep 20 took 0.0115852 s.
+info: The whole computation of the time stepping took 20 steps, in which
+	 the accepted steps are 20, and the rejected steps are 0.
+
+info: [time] Execution took 1.28044 s.
+info: OGS terminated on 2025-03-31 18:27:26+0200.
+info:
+info: ##########################################
+info: # Running tests                          #
+info: ##########################################
+info:
+info: ---------- vtkdiff begin ----------
+Comparing data array `displacement' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu' to data array `displacement' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [2.743301321607565e-16, 2.206230824692136e-14]
+abs l2-norm^2    = [2.430737161124630e-34, 5.730047377427265e-31]
+abs l2-norm      = [1.559082153423812e-17, 7.569707641268099e-16]
+abs maximum norm = [3.045092331853525e-18, 3.035766082959412e-17]
+
+rel l1 norm      = [1.035726997481896e-03, 6.147510671340275e-10]
+rel l2-norm^2    = [1.022843390278328e-06, 2.185116615384245e-21]
+rel l2-norm      = [1.011357202119176e-03, 4.674523093732927e-11]
+rel maximum norm = [1.011337665179147e-03, 7.982324269743213e-12]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `epsilon' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu' to data array `epsilon' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [2.233562148301058e-14, 4.801698149064625e-14, 0.000000000000000e+00, 2.370311029008569e-14]
+abs l2-norm^2    = [1.227202079021455e-30, 5.648809050743122e-30, 0.000000000000000e+00, 1.457367214165155e-30]
+abs l2-norm      = [1.107791532293624e-15, 2.376722333539011e-15, 0.000000000000000e+00, 1.207214651238608e-15]
+abs maximum norm = [1.950128189628312e-16, 8.743006318923108e-16, 0.000000000000000e+00, 3.130129126703788e-16]
+
+rel l1 norm      = [6.400108885233189e+00, 3.150457139146049e-10, 0.000000000000000e+00, 1.282344775857866e-04]
+rel l2-norm^2    = [4.096000000093874e+01, 1.237033271558749e-21, 0.000000000000000e+00, 8.167298472953954e-09]
+rel l2-norm      = [6.400000000073339e+00, 3.517148378386601e-11, 0.000000000000000e+00, 9.037310702279718e-05]
+rel maximum norm = [6.400000000000000e+00, 7.883863226225760e-12, 0.000000000000000e+00, 8.830029987105315e-05]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `sigma' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu' to data array `sigma' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [8.527953343495653e-10, 1.575619190674615e-09, 4.298733591312498e-10, 5.925772497771782e-10]
+abs l2-norm^2    = [1.577165268586515e-21, 6.204100180771651e-21, 4.325139240227700e-22, 9.108530538032580e-22]
+abs l2-norm      = [3.971354011652091e-11, 7.876611061091979e-11, 2.079696910664557e-11, 3.018034217505259e-11]
+abs maximum norm = [6.502354210624617e-12, 2.910383045673370e-11, 7.077005648170598e-12, 7.825319819215748e-12]
+
+rel l1 norm      = [1.543843061357816e-09, 2.845873611468291e-10, 4.071519198487045e-10, 1.282344808687196e-04]
+rel l2-norm^2    = [2.667845565006467e-20, 1.039906024647460e-21, 1.894036750307440e-21, 8.167298475467299e-09]
+rel l2-norm      = [1.633354084393971e-10, 3.224757393428937e-11, 4.352053251406099e-11, 9.037310703670256e-05]
+rel maximum norm = [3.711823929920659e-11, 7.964235575913549e-12, 1.213289371356805e-11, 8.830029987491046e-05]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `pressure' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu' to data array `pressure' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [1.333049226559524e-10]
+abs l2-norm^2    = [1.361506522135724e-22]
+abs l2-norm      = [1.166836116228720e-11]
+abs maximum norm = [2.614797267597169e-12]
+
+rel l1 norm      = [2.088648840385236e-13]
+rel l2-norm^2    = [2.544390484617457e-28]
+rel l2-norm      = [1.595114567865725e-14]
+rel maximum norm = [3.266092054104174e-15]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `velocity' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_12_t_6.000000.vtu' to data array `velocity' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_12_t_6.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [3.689067510795014e-16, 7.278564229590155e-16]
+abs l2-norm^2    = [2.937154420968665e-34, 8.811187165250293e-34]
+abs l2-norm      = [1.713812831370061e-17, 2.968364392262226e-17]
+abs maximum norm = [2.242837365210981e-18, 3.117081245895825e-18]
+
+rel l1 norm      = [1.705057556193281e-06, 1.880661231651603e-07]
+rel l2-norm^2    = [5.615988261571265e-13, 2.805935096815193e-15]
+rel l2-norm      = [7.493989766186811e-07, 5.297107792763135e-08]
+rel maximum norm = [5.990378125695014e-07, 3.418899170508483e-08]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `displacement' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu' to data array `displacement' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [2.631190349784874e-16, 2.857277606578964e-14]
+abs l2-norm^2    = [2.311841483419892e-34, 9.476828178565656e-31]
+abs l2-norm      = [1.520474098240378e-17, 9.734900193923745e-16]
+abs maximum norm = [3.105306363803463e-18, 3.903127820947816e-17]
+
+rel l1 norm      = [8.192403704431159e-07, 3.992714411371692e-09]
+rel l2-norm^2    = [5.713953934738210e-14, 3.910164427470594e-19]
+rel l2-norm      = [2.390387820990186e-07, 6.253130757844901e-10]
+rel maximum norm = [2.141384467631305e-07, 1.979138326369185e-10]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `epsilon' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu' to data array `epsilon' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [2.243006374474564e-14, 6.763955130519614e-14, 0.000000000000000e+00, 3.245709818341968e-14]
+abs l2-norm^2    = [1.195745793446230e-30, 1.127275107492100e-29, 0.000000000000000e+00, 2.909542080571548e-30]
+abs l2-norm      = [1.093501620230272e-15, 3.357491783299105e-15, 0.000000000000000e+00, 1.705737987081119e-15]
+abs maximum norm = [1.895414096400420e-16, 1.009609063018502e-15, 0.000000000000000e+00, 4.157057991864223e-16]
+
+rel l1 norm      = [1.000000236819715e+01, 2.668209200889099e-09, 0.000000000000000e+00, 8.382866883533790e-06]
+rel l2-norm^2    = [1.000000000000006e+02, 3.088771509439968e-19, 0.000000000000000e+00, 2.850593259778566e-11]
+rel l2-norm      = [1.000000000000003e+01, 5.557671733235032e-10, 0.000000000000000e+00, 5.339094735794231e-06]
+rel maximum norm = [1.000000000000000e+01, 2.010977575194753e-10, 0.000000000000000e+00, 5.282611503978541e-06]
+Absolute and relative error (maximum norm) are larger than the corresponding thresholds 1.000000000000000e-15 and 1.000000000000000e-15.
+warning: Return value 1 was returned by 'D:/gitlab/runner/builds/t1_qzuQcM/0/ogs/build/release/bin/vtkdiff.exe -a "epsilon" -b "epsilon" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu" "\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu" --abs 1e-15 --rel 1e-15'.
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `sigma' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu' to data array `sigma' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [9.538420418092608e-10, 2.226073551186980e-09, 5.836619720520075e-10, 8.114274537842499e-10]
+abs l2-norm^2    = [1.878183930193563e-21, 1.235297328244098e-20, 8.084249399097146e-22, 1.818466944037903e-21]
+abs l2-norm      = [4.333801945398016e-11, 1.111439304795407e-10, 2.843281449152923e-11, 4.264348653707742e-11]
+abs maximum norm = [7.958078640513122e-12, 3.342393029015511e-11, 8.327560863108374e-12, 1.039262702588403e-11]
+
+rel l1 norm      = [4.870310234380053e-09, 2.624070873513507e-09, 2.529559768225382e-09, 8.382871576939261e-06]
+rel l2-norm^2    = [1.104318259367847e-18, 2.918264493032406e-19, 2.947205054534883e-19, 2.850593175777099e-11]
+rel l2-norm      = [1.050865481100149e-09, 5.402096345894255e-10, 5.428816680027871e-10, 5.339094657127835e-06]
+rel maximum norm = [4.886333240577625e-10, 1.897879839987284e-10, 2.163818776545829e-10, 5.282611377467828e-06]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `pressure' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu' to data array `pressure' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [1.877218380741397e-10]
+abs l2-norm^2    = [3.561728065436256e-22]
+abs l2-norm      = [1.887254107277622e-11]
+abs maximum norm = [4.774847184307873e-12]
+
+rel l1 norm      = [3.230175584523078e-13]
+rel l2-norm^2    = [6.942943538931732e-28]
+rel l2-norm      = [2.634946591286384e-14]
+rel maximum norm = [4.774977196780098e-15]
+info: ---------- vtkdiff end ----------
+
+info: ---------- vtkdiff begin ----------
+Comparing data array `velocity' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\ogs\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark\ConsolidationBenchmark_ts_20_t_10.000000.vtu' to data array `velocity' from file `\\?\D:\gitlab\runner\builds\t1_qzuQcM\0\ogs\build\release\Tests\Data\HydroMechanics\StaggeredScheme\ConsolidationBenchmark-omp\ConsolidationBenchmark_ts_20_t_10.000000.vtu'.
+Computed difference between data arrays:
+abs l1 norm      = [3.107413877089410e-16, 7.383113632931785e-16]
+abs l2-norm^2    = [1.988517065450617e-34, 8.755291781421172e-34]
+abs l2-norm      = [1.410147887794262e-17, 2.958934230668396e-17]
+abs maximum norm = [2.095030115915105e-18, 3.089976191583688e-18]
+
+rel l1 norm      = [3.601735033671157e-08, 8.254144216327355e-10]
+rel l2-norm^2    = [1.424081567938401e-16, 4.192727318435512e-20]
+rel l2-norm      = [1.193348887768536e-08, 2.047615031795653e-10]
+rel maximum norm = [8.516786242895294e-09, 1.475611476810433e-10]
+info: ---------- vtkdiff end ----------
+
+error: One of the tests failed.

@@ -1,0 +1,48 @@
+<!-- summary of aggregated error norms:
+              check_succeeded  abs_maximum_norm  rel_maximum_norm
+array
+displacement             True           4.0e-17           1.1e-03
+epsilon                 False           1.1e-15           1.0e+01
+pressure                 True           4.8e-12           4.8e-15
+sigma                    True           3.4e-11           8.9e-05
+velocity                 True           3.2e-18           6.0e-07
+-->
+
+    <test_definition>
+        <vtkdiff>
+            <regex>ConsolidationBenchmark_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ConsolidationBenchmark_ts_20_t_10.000000.vtu</file> -->
+            <field>displacement</field>
+            <absolute_tolerance>4e-17</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 0.0011 --></relative_tolerance>
+        </vtkdiff>
+        <!-- Check failed -->
+        <vtkdiff>
+            <regex>ConsolidationBenchmark_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ConsolidationBenchmark_ts_20_t_10.000000.vtu</file> -->
+            <field>epsilon</field>
+            <absolute_tolerance>1.1e-15</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 10.0 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ConsolidationBenchmark_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ConsolidationBenchmark_ts_20_t_10.000000.vtu</file> -->
+            <field>pressure</field>
+            <absolute_tolerance>4.8e-12</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 4.8e-15 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ConsolidationBenchmark_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ConsolidationBenchmark_ts_20_t_10.000000.vtu</file> -->
+            <field>sigma</field>
+            <absolute_tolerance>3.4e-11</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 8.9e-05 --></relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>ConsolidationBenchmark_ts_.*_t_.*[.]vtu</regex>
+            <!-- <file>ConsolidationBenchmark_ts_20_t_10.000000.vtu</file> -->
+            <field>velocity</field>
+            <absolute_tolerance>3.2e-18</absolute_tolerance>
+            <relative_tolerance>0.0 <!-- 6e-07 --></relative_tolerance>
+        </vtkdiff>
+    </test_definition>
