@@ -46,15 +46,27 @@ TEST_F(MPLFunction, ScalarScalar)
     ASSERT_EQ(
         1., f.dValue<double>(vars, MPL::Variable::temperature, pos, nan, nan));
 
-    MPL::Property const& f_t = MPL::Function{"test_function", {"t"}, {}};
+    MPL::Property const& f_t =
+        MPL::Function{"function_t", {"t"}, {{"temperature", {"0"}}}};
     ASSERT_EQ(10., f_t.value<double>(vars, pos, t, nan));
-    MPL::Property const& f_temperature_t =
-        MPL::Function{"test_function", {"temperature * t"}, {}};
-    ASSERT_EQ(20., f_temperature_t.value<double>(vars, pos, t, nan));
+    ASSERT_EQ(
+        0., f_t.dValue<double>(vars, MPL::Variable::temperature, pos, t, nan));
 
-    MPL::Property const& f_pos = MPL::Function{"test_function", {"x+y+z"}, {}};
+    MPL::Property const& f_temperature_t =
+        MPL::Function{"function_temperature*t",
+                      {"temperature * t"},
+                      {{"temperature", {"t"}}}};
+    ASSERT_EQ(20., f_temperature_t.value<double>(vars, pos, t, nan));
+    ASSERT_EQ(t,
+              f_temperature_t.dValue<double>(
+                  vars, MPL::Variable::temperature, pos, t, nan));
+
+    MPL::Property const& f_pos =
+        MPL::Function{"function_x+y+z", {"x+y+z"}, {{"temperature", {"0"}}}};
     ASSERT_EQ(coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, t, nan));
+    ASSERT_EQ(
+        0, f_pos.dValue<double>(vars, MPL::Variable::temperature, pos, t, nan));
 }
 
 TEST_F(MPLFunction, ScalarVector)
