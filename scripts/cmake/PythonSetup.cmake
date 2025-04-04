@@ -171,7 +171,7 @@ function(setup_venv)
             execute_process(
                 COMMAND
                     ${_apple_env} ${_pip_install_command} ${_pip_gmsh_flags}
-                    --index-url https://gmsh.info/python-packages-dev-nox
+                    --no-index --find-links https://vip.s3.ufz.de/ogs/public/ci/python/gmsh/index.html
                     "gmsh>=4.11"
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
                 RESULT_VARIABLE _return_code
