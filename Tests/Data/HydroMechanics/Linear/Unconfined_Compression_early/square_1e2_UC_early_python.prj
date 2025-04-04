@@ -241,10 +241,16 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>expected_square_1e2_UC_early_ts_10_t_1.000000.vtu</file>
+            <regex>square_1e2_UC_early_python_ts.*_t_.*.vtu</regex>
             <field>displacement</field>
-            <absolute_tolerance>1e-6</absolute_tolerance>
-            <relative_tolerance>1e-6</relative_tolerance>
+            <absolute_tolerance>1e-11</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>square_1e2_UC_early_python_ts.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

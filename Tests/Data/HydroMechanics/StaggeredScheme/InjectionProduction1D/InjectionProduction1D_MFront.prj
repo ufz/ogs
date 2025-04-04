@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh_domain.vtu</mesh>
@@ -113,7 +113,6 @@
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>
-
         <processes>
             <!--For the equations of hydraulics-->
             <process ref="InjectionProduction1D">
@@ -164,7 +163,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>InjectionProduction1D</prefix>
+            <prefix>InjectionProduction1D_MFront</prefix>
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
@@ -301,4 +300,36 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>InjectionProduction1D_MFront_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-13</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_MFront_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_MFront_ts_.*_t_.*.vtu</regex>
+            <field>velocity</field>
+            <absolute_tolerance>1e-18</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_MFront_ts_.*_t_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-13</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_MFront_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

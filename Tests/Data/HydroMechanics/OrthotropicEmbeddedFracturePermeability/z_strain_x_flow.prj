@@ -118,4 +118,30 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>z_strain_x_flow_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>z_strain_x_flow_ts_.*_t_.*.vtu</regex>
+            <field>permeability</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>z_strain_x_flow_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>z_strain_x_flow_ts_.*_t_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

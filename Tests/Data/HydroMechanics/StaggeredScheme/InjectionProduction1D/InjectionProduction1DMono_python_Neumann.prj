@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 This benchmark simulates a soil column with fluid injection at the bottom and
 a production well at the top. It is taken from from the literature.
@@ -280,4 +280,36 @@ error: No d.o.f. found for (node=4, var=0, comp=0).  That might be due to the us
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_python_Neumann_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_python_Neumann_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_python_Neumann_ts_.*_t_.*.vtu</regex>
+            <field>velocity</field>
+            <absolute_tolerance>1e-19</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_python_Neumann_ts_.*_t_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_python_Neumann_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

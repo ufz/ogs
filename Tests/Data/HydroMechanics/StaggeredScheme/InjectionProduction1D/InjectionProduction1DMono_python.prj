@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <!--
 This benchmark simulates a soil column with fluid injection at the bottom and
 a production well at the top. It is taken from from the literature.
@@ -216,7 +216,7 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
                     <component>1</component>
                     <bc_object>bc_u_D</bc_object>
                 </boundary_condition>
-                <boundary_condition>                
+                <boundary_condition>
                     <type>Python</type>
                     <mesh>mesh_top</mesh>
                     <component>1</component>
@@ -242,4 +242,36 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_Python_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_Python_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_Python_ts_.*_t_.*.vtu</regex>
+            <field>velocity</field>
+            <absolute_tolerance>1e-19</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_Python_ts_.*_t_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>InjectionProduction1D_Mono_Python_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

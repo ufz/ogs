@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>quad_with_half_hole_q.vtu</mesh>
@@ -257,4 +257,30 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>quad_with_half_hole_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1.0e-10</absolute_tolerance>
+            <relative_tolerance>1.e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>quad_with_half_hole_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1.0e-10</absolute_tolerance>
+            <relative_tolerance>1.e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>quad_with_half_hole_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>2.0e-6</absolute_tolerance>
+            <relative_tolerance>1.e-9</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>quad_with_half_hole_ts_.*_t_.*.vtu</regex>
+            <field>permeability</field>
+            <absolute_tolerance>1.0e-6</absolute_tolerance>
+            <relative_tolerance>1.e-9</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

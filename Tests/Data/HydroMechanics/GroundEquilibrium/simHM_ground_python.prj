@@ -49,7 +49,7 @@
         <medium>
             <phases>
                 <phase>
-		                <!-- Gas means fluid with pressure-dependent density -->
+                    <!-- Gas means fluid with pressure-dependent density -->
                     <type>Gas</type>
                     <properties>
                         <property>
@@ -270,7 +270,7 @@
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
-    </time_loop>    
+    </time_loop>
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_newton</name>
@@ -288,4 +288,30 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>simHM_ground_python_ts_.*_t_.*.vtu</regex>
+            <field>pressure_interpolated</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>simHM_ground_python_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>simHM_ground_python_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>simHM_ground_python_ts_.*_t_.*.vtu</regex>
+            <field>DarcyVelocity</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

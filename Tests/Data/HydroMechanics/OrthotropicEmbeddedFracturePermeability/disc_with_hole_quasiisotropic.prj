@@ -55,4 +55,30 @@
         </parameter>
         <include file="disc_with_hole_parameters.include"/>
     </parameters>
+    <test_definition>
+        <vtkdiff>
+            <regex>disc_with_hole_quasiisotropic_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>disc_with_hole_quasiisotropic_ts_.*_t_.*.vtu</regex>
+            <field>permeability</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-11</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>disc_with_hole_quasiisotropic_ts_.*_t_.*.vtu</regex>
+            <field>velocity</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>disc_with_hole_quasiisotropic_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
