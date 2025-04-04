@@ -25,6 +25,7 @@
 #include <vtkCharArray.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
+#include <vtkIdTypeArray.h>
 #include <vtkImageData.h>
 #include <vtkIntArray.h>
 #include <vtkLongArray.h>
@@ -83,7 +84,8 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
 
     // set mesh elements
     const std::size_t nElems = grid->GetNumberOfCells();
-    std::vector<MeshLib::Element*> elements(nElems);
+    std::vector<MeshLib::Element*> elements;
+    elements.reserve(nElems);
     auto node_ids = vtkSmartPointer<vtkIdList>::New();
     for (std::size_t i = 0; i < nElems; i++)
     {
@@ -227,7 +229,7 @@ MeshLib::Mesh* VtkMeshConverter::convertUnstructuredGrid(
                 return nullptr;
         }
 
-        elements[i] = elem;
+        elements.push_back(elem);
     }
 
     MeshLib::Mesh* mesh = new MeshLib::Mesh(mesh_name, nodes, elements,
@@ -489,6 +491,26 @@ void VtkMeshConverter::convertArray(vtkDataArray& array,
                 array, properties, type);
             return;
         }
+    }
+
+    if (vtkIdTypeArray::SafeDownCast(&array))
+    {
+        // Bulk node ids and bulk element ids are std::size_t in OGS but
+        // sometimes vtkIdType is used in the input (e.g. as result of a vtk
+        // filter).
+        using namespace std::literals;
+        if (array.GetName() == "bulk_element_ids"sv ||
+            array.GetName() == "bulk_node_ids"sv)
+        {
+            VtkMeshConverter::convertTypedArray<std::size_t>(array, properties,
+                                                             type);
+        }
+        else
+        {
+            VtkMeshConverter::convertTypedArray<vtkIdType>(array, properties,
+                                                           type);
+        }
+        return;
     }
 
     WARN(

@@ -115,7 +115,8 @@
           },
           "cmake": [
             "VTK_MODULE_ENABLE_VTK_FiltersGeneral=YES",
-            "VTK_MODULE_ENABLE_VTK_FiltersSources=YES"
+            "VTK_MODULE_ENABLE_VTK_FiltersSources=YES",
+            "VTK_MODULE_ENABLE_VTK_FiltersExtraction=YES"
           ]
         }
       ]

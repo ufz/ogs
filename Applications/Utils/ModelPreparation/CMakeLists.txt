@@ -1,4 +1,5 @@
 add_subdirectory(PartitionMesh)
+add_subdirectory(CreateAnchors)
 
 set(TOOLS ComputeNodeAreasFromSurfaceMesh convertVtkDataArrayToVtkDataArray
           createNeumannBc scaleProperty
