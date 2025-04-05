@@ -40,7 +40,7 @@ Please note that the following setup on Windows is the **native Windows developm
 
 </div>
 
-As we use lots of features of the C++17-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** with compiler version **{{< dataFile "versions.minimum_version.msvc.compiler" >}}** and up. Therefore you will need at least **Windows 7** (64-bit required). It is perfectly fine to use the free Community Edition of Visual Studio.
+As we use lots of features of the C++20-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** with compiler version **{{< dataFile "versions.minimum_version.msvc.compiler" >}}** and up. Therefore you will need at least **Windows 7** (64-bit required). It is perfectly fine to use the free Community Edition of Visual Studio.
 
 - Download and install [Visual Studio Community](https://www.visualstudio.com)
   - Select the *workload* `Desktop Development with C++`
