@@ -1,12 +1,12 @@
 {
   "minimum_version": {
-    "gcc": "11.3.0",
-    "clang": "13.0",
-    "apple_clang": "13.1.6",
+    "gcc": "13.3.0",
+    "clang": "16.0",
+    "apple_clang": "15.0.0",
     "msvc": {
-      "year": "2019",
-      "number": "16",
-      "toolset": "142",
+      "year": "2022",
+      "number": "17",
+      "toolset": "143",
       "compiler": "19.24"
     },
     "git": "2.14",
