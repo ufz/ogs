@@ -11,6 +11,7 @@
 #pragma once
 
 #include "BoundaryCondition.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ParameterLib/MeshNodeParameter.h"
 
 namespace ProcessLib

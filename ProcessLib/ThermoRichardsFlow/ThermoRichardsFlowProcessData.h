@@ -14,14 +14,7 @@
 #include <memory>
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
-
-namespace ProcessLib
-{
-namespace ThermoRichardsFlow
-{
-struct SimplifiedElasticityModel;
-}
-}  // namespace ProcessLib
+#include "SimplifiedElasticityModel.h"
 
 namespace ProcessLib
 {

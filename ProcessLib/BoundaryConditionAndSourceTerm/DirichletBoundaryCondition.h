@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "BoundaryCondition.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace BaseLib
 {

@@ -17,6 +17,7 @@
 
 #include "BaseLib/TimeInterval.h"
 #include "BoundaryCondition.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace BaseLib
 {

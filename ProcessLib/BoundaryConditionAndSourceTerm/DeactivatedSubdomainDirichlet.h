@@ -13,6 +13,7 @@
 
 #include "BoundaryCondition.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace BaseLib
 {
