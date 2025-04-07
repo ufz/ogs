@@ -5,22 +5,21 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
- *
  */
 
 #pragma once
 
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Base.h"
+#include "MathLib/KelvinVector.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
 
-namespace ProcessLib::ThermoRichardsMechanics
-{
-namespace ConstitutiveStress_StrainTemperature
+namespace ProcessLib::ConstitutiveRelations
 {
 template <int DisplacementDim>
 struct MechanicalStrainData
 {
     // TODO it seems fragile that some data have to be initialized that way.
-    KelvinVector<DisplacementDim> eps_m = KV::KVzero<DisplacementDim>();
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> eps_m =
+        MathLib::KelvinVector::KVzero<DisplacementDim>();
 
     static auto reflect()
     {
@@ -29,5 +28,5 @@ struct MechanicalStrainData
         return ProcessLib::Reflection::reflectWithName("eps_m", &Self::eps_m);
     }
 };
-}  // namespace ConstitutiveStress_StrainTemperature
-}  // namespace ProcessLib::ThermoRichardsMechanics
+
+}  // namespace ProcessLib::ConstitutiveRelations

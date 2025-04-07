@@ -38,8 +38,8 @@ PropertyDataType TransportPorosityFromMassBalance::value(
             ->property(PropertyType::biot_coefficient)
             .template value<double>(variable_array, pos, t, dt);
 
-    double const e = variable_array.volumetric_strain;
-    double const e_prev = variable_array_prev.volumetric_strain;
+    double const e = variable_array.volumetric_mechanical_strain;
+    double const e_prev = variable_array_prev.volumetric_mechanical_strain;
     double const delta_e = e - e_prev;
 
     double const p_eff = variable_array.effective_pore_pressure;

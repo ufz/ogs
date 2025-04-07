@@ -25,7 +25,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidMechanics.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
@@ -52,6 +52,7 @@ using OutputData = std::tuple<DarcyLawData<DisplacementDim>, LiquidDensityData,
 template <int DisplacementDim>
 using ConstitutiveData =
     std::tuple<SolidMechanicsDataStateless<DisplacementDim>,
+               EffectiveStressData<DisplacementDim>,
                GravityData<DisplacementDim>,
                TRMHeatStorageAndFluxData<DisplacementDim>,
                TRMVaporDiffusionData<DisplacementDim>, TRMStorageData,

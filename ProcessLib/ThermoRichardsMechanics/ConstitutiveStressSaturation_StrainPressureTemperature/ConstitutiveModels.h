@@ -21,8 +21,10 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMHeatStorageAndFlux.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMStorage.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TRMVaporDiffusion.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/EffectiveStressModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidCompressibilityModel.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/SolidMechanics.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStressSaturation_StrainPressureTemperature/TransportPorosity.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -37,6 +39,7 @@ using ConstitutiveModels = std::tuple<
                               SolidConstitutiveRelation<DisplacementDim>>,
     BishopsModel,
     BishopsPrevModel,
+    EffectiveStressModel<DisplacementDim>,
     PorosityModel<DisplacementDim>,
 
     LiquidDensityModel<DisplacementDim>,

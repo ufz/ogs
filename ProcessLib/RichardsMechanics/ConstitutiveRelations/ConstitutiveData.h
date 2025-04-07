@@ -16,6 +16,9 @@
 #include "MicroPressure.h"
 #include "MicroSaturation.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
+#include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/DarcyLaw.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosity.h"
@@ -23,7 +26,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 #include "SaturationSecantDerivative.h"
 #include "StiffnessTensor.h"
@@ -34,12 +37,10 @@ namespace ProcessLib::RichardsMechanics
 template <int DisplacementDim>
 using StatefulData = std::tuple<
     StrainData<DisplacementDim>,
-    ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
-        EffectiveStressData<DisplacementDim>,
+    ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>,
     ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
         SwellingDataStateful<DisplacementDim>,
-    ProcessLib::ThermoRichardsMechanics::ConstitutiveStress_StrainTemperature::
-        MechanicalStrainData<DisplacementDim>,
+    ProcessLib::ConstitutiveRelations::MechanicalStrainData<DisplacementDim>,
     ProcessLib::ThermoRichardsMechanics::SaturationData,
     ProcessLib::ThermoRichardsMechanics::PorosityData,
     ProcessLib::ThermoRichardsMechanics::TransportPorosityData, MicroPressure,

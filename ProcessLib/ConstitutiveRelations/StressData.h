@@ -26,4 +26,5 @@ struct StressData
         return ProcessLib::Reflection::reflectWithName("sigma", &Self::sigma);
     }
 };
+
 }  // namespace ProcessLib::ConstitutiveRelations
