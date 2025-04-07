@@ -552,8 +552,8 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     }
     if (type == "Newton")
     {
-        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__recompute_jacobian}
         auto const recompute_jacobian =
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__recompute_jacobian}
             config.getConfigParameter<int>("recompute_jacobian", 1);
 
         //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping}
