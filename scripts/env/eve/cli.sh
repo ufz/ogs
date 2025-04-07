@@ -3,7 +3,7 @@ export CTEST_PARALLEL_LEVEL="${CTEST_PARALLEL_LEVEL:-4}"
 
 module use /global/apps/modulefiles
 
-module load foss/2022b
+module load foss/2024a
 module load cmake/3.22.4-1
 module load Ninja/1.11.1
 
