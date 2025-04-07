@@ -94,6 +94,8 @@ VariableArray::VariablePointerConst VariableArray::address_of(
             return &transport_porosity;
         case Variable::vapour_pressure:
             return &vapour_pressure;
+        case Variable::volumetric_mechanical_strain:
+            return &volumetric_mechanical_strain;
         case Variable::volumetric_strain:
             return &volumetric_strain;
         default:

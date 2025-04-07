@@ -74,13 +74,13 @@ void updateSwellingStressAndVolumetricStrain(
                                    dt)));
             sigma_sw.sigma_sw += sigma_sw_dot * dt;
 
-            // !!! Misusing volumetric strain for mechanical volumetric
-            // strain just to update the transport porosity !!!
-            variables.volumetric_strain +=
+            variables.volumetric_mechanical_strain =
+                variables.volumetric_strain +
                 identity2.transpose() * C_el.inverse() * sigma_sw.sigma_sw;
-            variables_prev.volumetric_strain += identity2.transpose() *
-                                                C_el.inverse() *
-                                                sigma_sw_prev->sigma_sw;
+            variables_prev.volumetric_mechanical_strain =
+                variables_prev.volumetric_strain + identity2.transpose() *
+                                                       C_el.inverse() *
+                                                       sigma_sw_prev->sigma_sw;
         }
     }
 
@@ -549,11 +549,11 @@ void RichardsMechanicsLocalAssembler<
                                        dt)));
                 sigma_sw += sigma_sw_dot * dt;
 
-                // !!! Misusing volumetric strain for mechanical volumetric
-                // strain just to update the transport porosity !!!
-                variables.volumetric_strain +=
+                variables.volumetric_mechanical_strain =
+                    variables.volumetric_strain +
                     identity2.transpose() * C_el.inverse() * sigma_sw;
-                variables_prev.volumetric_strain +=
+                variables_prev.volumetric_mechanical_strain =
+                    variables_prev.volumetric_strain +
                     identity2.transpose() * C_el.inverse() * sigma_sw_prev;
             }
 

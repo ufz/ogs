@@ -52,8 +52,10 @@ void TransportPorosityModel<DisplacementDim>::eval(
     // MaterialLib/MPL/Properties/TransportPorosityFromMassBalance.cpp
     variables.grain_compressibility = solid_compressibility_data.beta_SR;
     // Set volumetric strain rate for the general case without swelling.
-    variables.volumetric_strain = Invariants::trace(eps_data.eps);
-    variables_prev.volumetric_strain = Invariants::trace(eps_prev_data->eps);
+    // Note: Should be the volumetric mechanical strain!
+    variables.volumetric_mechanical_strain = Invariants::trace(eps_data.eps);
+    variables_prev.volumetric_mechanical_strain =
+        Invariants::trace(eps_prev_data->eps);
     variables.effective_pore_pressure =
         -bishops_data.chi_S_L * p_cap_data.p_cap;
     variables.porosity = poro_data.phi;

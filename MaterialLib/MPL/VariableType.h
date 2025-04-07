@@ -53,6 +53,7 @@ enum class Variable : int
     total_stress,
     transport_porosity,
     vapour_pressure,
+    volumetric_mechanical_strain,
     volumetric_strain,
     number_of_variables
 };
@@ -84,6 +85,7 @@ static const std::array<std::string,
                              "total_stress",
                              "transport_porosity",
                              "vapour_pressure",
+                             "volumetric_mechanical_strain",
                              "volumetric_strain"}};
 
 /// Data type for primary variables, designed to contain both scalar and vector
@@ -193,6 +195,7 @@ public:
     KelvinVector total_stress;
     double transport_porosity = nan_;
     double vapour_pressure = nan_;
+    double volumetric_mechanical_strain = nan_;
     double volumetric_strain = nan_;
 
     bool is2D() const;
