@@ -27,6 +27,10 @@ if(MSVC)
         set(_cmake_generator CMAKE_GENERATOR Ninja)
         message(STATUS "Ninja generator will be used for external projects.")
     endif()
+    # MKL env setup may override compiler
+    list(APPEND _defaultCMakeArgs "-DCMAKE_CXX_COMPILER=cl.exe"
+                                  "-DCMAKE_C_COMPILER=cl.exe"
+    )
 endif()
 
 if(OGS_USE_MFRONT)
