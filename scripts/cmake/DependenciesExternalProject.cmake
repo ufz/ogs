@@ -78,6 +78,7 @@ if(OGS_USE_MFRONT)
             set(_tfel_cmake_args
                 "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
                 "-Denable-python-bindings=ON"
+                "-Denable-numpy-support=OFF"
             )
         else()
             # Cleanup variables from previous find_package()-call
