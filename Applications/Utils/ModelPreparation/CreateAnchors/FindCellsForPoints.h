@@ -13,7 +13,11 @@
 #include <vtkCellTreeLocator.h>
 #include <vtkCharArray.h>
 #include <vtkExtractCells.h>
+#if VTK_VERSION_STRIPPED < 940
 #include <vtkIdFilter.h>
+#else
+#include <vtkGenerateIds.h>
+#endif
 #include <vtkIdList.h>
 #include <vtkNew.h>
 #include <vtkUnstructuredGrid.h>
@@ -41,6 +45,7 @@ class FindCellsForPoints
 public:
     void initialize(vtkUnstructuredGrid* const bulk_mesh)
     {
+#if VTK_VERSION_STRIPPED < 940
         vtkNew<vtkIdFilter> id_filter;
         id_filter->SetInputData(bulk_mesh);
         id_filter->SetCellIdsArrayName("bulk_element_ids");
@@ -48,7 +53,16 @@ public:
         id_filter->SetCellIds(true);
         id_filter->Update();
         bulk_mesh_ = id_filter->GetOutput();
-
+#else
+        vtkNew<vtkGenerateIds> generate_ids;
+        generate_ids->SetInputData(bulk_mesh);
+        generate_ids->SetCellIdsArrayName("bulk_element_ids");
+        generate_ids->PointIdsOff();
+        generate_ids->CellIdsOn();
+        generate_ids->Update();
+        bulk_mesh_ =
+            static_cast<vtkUnstructuredGrid*>(generate_ids->GetOutput());
+#endif
         locator_ = vtkSmartPointer<vtkCellTreeLocator>::New();
         locator_->SetDataSet(bulk_mesh_);
         locator_->BuildLocator();
