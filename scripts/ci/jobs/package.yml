@@ -86,7 +86,7 @@ aggregate ctest logs:
     expire_in: 12 hrs
 
 
-offline configure:
+.offline configure:
   stage: package
   tags: [envinf, shell]
   needs: [meta]
