@@ -840,12 +840,9 @@ void ProjectData::parseProcesses(
             {
                 OGS_FATAL(
                     "The 'dimension' tag has been removed in the merge-request "
-                    "!4766."
-                    "The dimension is now taken from the main mesh and the tag "
-                    "must be"
-                    "removed. There is a python script in the merge-request "
-                    "description"
-                    "for automatic conversion.");
+                    "!4766. The dimension is now taken from the main mesh and "
+                    "the tag must be removed. There is a python script in the "
+                    "merge-request description for automatic conversion.");
             }
             switch (_mesh_vec[0]->getDimension())
             {
