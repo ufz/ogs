@@ -4,25 +4,14 @@ title = "Defining boundary conditions with Python"
 author = "Feliks Kiszkurno"
 weight = 3
 +++
-<div class="note">
-
-### Work in progress
-
-This page is a work in progress.
-
-It was published in this state to make existing content available to users and highlight missing parts to contributors.
-
-**Contributors:** please see Documentation Contribution Guide to contribute to the documentation.
-
-**Users:** the content of this page has been verified and is correct. Please return later for more content!
-
-</div>
 
 ## Goal
 
 Defining a boundary condition with a Python script allows for a more flexible approach of assigning boundary conditions.
 For example it can be used to account for measurements in space and time like accounting for a transient boundary condition via
 time series data.
+This page covers use of Python-based Dirichlet and Neumann boundary conditions.
+For details regarding those boundary conditions, please see the [Boundary conditions page](/docs/userguide/blocks/boundary_conditions/) in the documentation.
 
 ## Prerequisites
 
@@ -33,7 +22,7 @@ This feature requires a basic understanding of classes in Python. Information ab
 
 <!-- TODO: add a description of how to call a Python bc from the boundary condition tag -->
 
-In order to define a boundary condition with Python, the path to the `*.py` file, containing the boundary condition script, has
+In order to define a boundary condition (BC) with Python, the path to the `*.py` file, containing the boundary condition script, has
 to be provided.
 It can be done with the tag `<python_script> </python_script>`.
 It is commonly placed in the beginning of the project file between the sections "Meshes" and "Processes".
@@ -41,6 +30,23 @@ The path to the file can be defined in relative or absolute terms. For example:
 
 ```xml
 <python_script>Other_files/Boundary_conditions/BC_North.py</python_script>
+```
+
+In the `<process_variable> </process_variable>`block a Python BC can be defined in following way:
+
+```xml
+<process_variables>
+    <process_variable>
+        ...
+        <boundary_condition>
+            <mesh>Mesh_to_apply_BC_on</mesh>
+            <type>Python</type>
+            <component>0</component>
+            <bc_object>BC_class</bc_object>
+        </boundary_condition>
+        ...
+    </process_variable>
+</process_variables>
 ```
 
 ## Prepare the definition of a boundary condition in a Python script
@@ -69,7 +75,7 @@ The two types of boundary conditions that can be defined in a Python script are 
 
 ### Dirichlet boundary condition
 
-OpenGeoSys will obtain values for a Dirichlet boundary condition by calling the method "getDirichletBCValue".
+OpenGeoSys will obtain values for a Dirichlet boundary condition by calling the method `getDirichletBCValue`.
 
 #### Input
 
@@ -85,7 +91,7 @@ variable name used in examples) is given:
 
 The Dirichlet boundary condition method has to return two values:
 
-- Boolean (True)
+- Boolean (True or False) - indicates if the BC should be applied or not
 - Value at the point for which it was called
 
 The order in which those variables are provided is important.
@@ -111,9 +117,38 @@ The order in which those variables are provided is important.
 The expected output of the Neumann boundary condition method is similar to the one for Dirichlet boundary conditions but it is
 extended by values of the Jacobian at a specific point at the boundary:
 
-- Boolean (True)
+- Boolean (True or False) - indicates if the BC should be applied or not
 - Value at point for which it was called
-- Jacobian
+- Jacobian - number of entries has to match number of [process variables](/docs/userguide/blocks/process_variables)
+
+### Switching between Dirichlet and Neumann BC
+
+Boolean returned by methods `getDirichletBCValue` and `getFlux` can be used to switch between Dirichlet and Neumann BC, for example at specific time steps.
+Following code snippet implements a set of BCs that switch from Neumann to Dirichlet at `t=100s`.
+
+```python
+class BoundaryCondition(OpenGeoSys):
+    def getFlux(self, t, coords, primary_vars):
+        # For Neumann BC
+        if t < 100:
+            BC_active = True
+            BC_value = 1
+        else:
+            BC_active = False
+            BC_value = None
+        BC_jacobian = [0.0]
+        return BC_active, BC_value, BC_jacobian
+
+    def getDirichletBCValue(self, t, coords, node_id, primary_vars):
+        # For Dirichlet BC
+        if t < 100:
+            BC_active = False
+            BC_value = None
+        else:
+            BC_active = True
+            BC_value = 1
+        return BC_active, BC_value
+```
 
 ## Last step: Initialize the boundary condition object
 
