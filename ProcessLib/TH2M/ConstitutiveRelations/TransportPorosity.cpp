@@ -50,8 +50,9 @@ void TransportPorosityModel<DisplacementDim>::eval(
         (1 - chi_S_L_prev->chi_S_L) * p_GR.pG_prev +
         chi_S_L_prev->chi_S_L * (p_GR.pG_prev - p_cap.pCap_prev);
 
-    variables.volumetric_strain = Invariants::trace(eps_m_data.eps_m);
-    variables_prev.volumetric_strain =
+    variables.volumetric_mechanical_strain =
+        Invariants::trace(eps_m_data.eps_m);
+    variables_prev.volumetric_mechanical_strain =
         Invariants::trace(eps_m_prev_data->eps_m);
 
     variables_prev.transport_porosity = transport_porosity_prev_data->phi;
@@ -99,8 +100,9 @@ void TransportPorosityModel<DisplacementDim>::dEval(
         (1 - chi_S_L_prev->chi_S_L) * p_GR.pG_prev +
         chi_S_L_prev->chi_S_L * (p_GR.pG_prev - p_cap.pCap_prev);
 
-    variables.volumetric_strain = Invariants::trace(eps_m_data.eps_m);
-    variables_prev.volumetric_strain =
+    variables.volumetric_mechanical_strain =
+        Invariants::trace(eps_m_data.eps_m);
+    variables_prev.volumetric_mechanical_strain =
         Invariants::trace(eps_m_prev_data->eps_m);
 
     variables_prev.transport_porosity = transport_porosity_prev_data->phi;
