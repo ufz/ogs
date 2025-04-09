@@ -1519,8 +1519,9 @@ if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Utils/partmesh/partmesh_roundtrip.md RUNTIME 10 SKIP_WEB)
 endif()
 
-if("${VKT_VERSION}" VERSION_LESS "9.4.3")
-    set(_vtk_requirements REQUIREMENTS NOT OGS_USE_PETSC AND NOT OGS_COVERAGE)
+set(_vtk_requirements REQUIREMENTS TRUE)
+if(LINUX AND ("${VKT_VERSION}" VERSION_LESS "9.4.3" AND NOT "VTK" IN_LIST _EXT_LIBS))
+    set(_vtk_requirements REQUIREMENTS FALSE)
 endif()
 
 AddTest(
