@@ -29,8 +29,8 @@ of files, one for each global matrix/vector for each non-linear iteration.
 
 Local matrix output is available for all processes in OGS, as of now
 (2024-09-10) global matrix output is available only for the `LARGE_DEFORMATION`,
-`SMALL_DEFORMATION`, `ThermalTwoPhaseFlowWithPP`, `ThermoRichardsMechanics` and
-`TH2M` processes, and only for serial (non-PETSc) runs.
+`SMALL_DEFORMATION`, `ThermalTwoPhaseFlowWithPP`, `ThermoRichardsMechanics`,
+`TH2M` and `ThermoHydroMechanics` processes, and only for serial (non-PETSc) runs.
 
 ## Generating more output
 
