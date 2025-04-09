@@ -141,7 +141,7 @@ class BoundaryCondition(OpenGeoSys):
         super(OpenGeoSys, BoundaryCondition)
         # Do here all steps, that should be done only once, e.g.: read and preprocess the data from csv file
 
-    def getFlux(self, coords, t, primary_vars):
+    def getFlux(self, t, coords, primary_vars):
         # For Neumann BC
 
         return True, BC_value, BC_jacobian
