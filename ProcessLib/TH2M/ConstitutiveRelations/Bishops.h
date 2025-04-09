@@ -20,6 +20,15 @@ struct BishopsData
 {
     double chi_S_L = nan;
     double dchi_dS_L = nan;
+
+    static auto reflect()
+    {
+        using Self = BishopsData;
+        namespace R = ProcessLib::Reflection;
+
+        return std::tuple{
+            R::makeReflectionData("bishops_effective_stress", &Self::chi_S_L)};
+    }
 };
 
 struct BishopsModel

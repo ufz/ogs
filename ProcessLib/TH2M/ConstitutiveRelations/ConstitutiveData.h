@@ -75,6 +75,7 @@ struct StatefulData
 
         return Reflection::reflectWithoutName(&Self::S_L_data,
                                               &Self::swelling_data,
+                                              &Self::chi_S_L,
                                               &Self::eff_stress_data,
                                               &Self::eps_data,
                                               &Self::porosity_data,
