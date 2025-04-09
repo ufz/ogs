@@ -189,7 +189,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        current_state.eps_data.eps.noalias() = Bu * displacement;
+        ip_out.eps_data.eps.noalias() = Bu * displacement;
         models.S_L_model.eval({pos, t, dt}, media_data, pCap_data,
                               current_state.S_L_data);
 
@@ -197,7 +197,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                   current_state.S_L_data,
                                   current_state.chi_S_L);
 
-        prev_state.eps_data->eps.noalias() = Bu * displacement_prev;
+        // prev_state.eps_data->eps.noalias() = Bu * displacement_prev;
 
         models.chi_S_L_prev_model.eval({pos, t, dt}, media_data,
                                        prev_state.S_L_data, prev_state.chi_S_L);
@@ -217,7 +217,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                       ip_cv.s_therm_exp_data);
 
         models.mechanical_strain_model.eval(
-            T_data, ip_cv.s_therm_exp_data, current_state.eps_data,
+            T_data, ip_cv.s_therm_exp_data, ip_out.eps_data,
             Bu * displacement_prev, prev_state.mechanical_strain_data,
             ip_cv.swelling_data, current_state.mechanical_strain_data);
 
@@ -234,7 +234,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
         models.permeability_model.eval(
             {pos, t, dt}, media_data, current_state.S_L_data, pCap_data, T_data,
-            ip_cv.total_stress_data, current_state.eps_data,
+            ip_cv.total_stress_data, ip_out.eps_data,
             ip_cv.equivalent_plastic_strain_data, ip_out.permeability_data);
 
         models.pure_liquid_density_model.eval({pos, t, dt}, media_data,
@@ -255,8 +255,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.porosity_model.eval(
             {pos, t, dt}, media_data, current_state.S_L_data,
             prev_state.S_L_data, pCap_data, pGR_data, current_state.chi_S_L,
-            prev_state.chi_S_L, ip_cv.beta_p_SR, current_state.eps_data,
-            prev_state.eps_data, prev_state.porosity_data,
+            prev_state.chi_S_L, ip_cv.beta_p_SR, ip_out.eps_data,
+            Bu * displacement_prev, prev_state.porosity_data,
+            //            prev_state.eps_data, prev_state.porosity_data,
             current_state.porosity_data);
 
         if (medium.hasProperty(MPL::PropertyType::transport_porosity))
@@ -545,6 +546,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         local_x.template segment<temperature_size>(temperature_index);
     auto const temperature_prev =
         local_x_prev.template segment<temperature_size>(temperature_index);
+    auto const displacement_prev =
+        local_x_prev.template segment<displacement_size>(displacement_index);
 
     auto const capillary_pressure =
         local_x.template segment<capillary_pressure_size>(
@@ -576,6 +579,11 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& Nu = ip_data.N_u;
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
+        auto const& gradNu = ip_data.dNdx_u;
+        auto const x_coord =
+            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                this->element_, Nu);
 
         ParameterLib::SpatialPosition const pos{
             std::nullopt, this->element_.getID(),
@@ -595,6 +603,12 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap,
                                                                      pCap_prev};
 
+        auto const Bu =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                gradNu, Nu, x_coord, this->is_axially_symmetric_);
+
         models.S_L_model.dEval({pos, t, dt}, media_data, pCap_data,
                                ip_dd.dS_L_dp_cap);
 
@@ -608,8 +622,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.porosity_model.dEval(
             {pos, t, dt}, media_data, current_state.S_L_data,
             prev_state.S_L_data, pCap_data, pGR_data, current_state.chi_S_L,
-            prev_state.chi_S_L, ip_cv.beta_p_SR, current_state.eps_data,
-            prev_state.eps_data, prev_state.porosity_data,
+            prev_state.chi_S_L, ip_cv.beta_p_SR, ip_out.eps_data,
+            Bu * displacement_prev, prev_state.porosity_data,
             ip_dd.porosity_d_data);
 
         models.thermal_conductivity_model.dEval(
@@ -878,9 +892,9 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         MPL::VariableArray vars;
 
         auto& ip_data = _ip_data[ip];
-        // auto& ip_out = this->output_data_[ip];
+        auto& ip_out = this->output_data_[ip];
         auto& prev_state = this->prev_states_[ip];
-        auto& current_state = this->current_states_[ip];
+        // auto& current_state = this->current_states_[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
         auto const& Nu = ip_data.N_u;
@@ -910,7 +924,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                           typename BMatricesType::BMatrixType>(
                 gradNu, Nu, x_coord, this->is_axially_symmetric_);
 
-        auto& eps = current_state.eps_data.eps;
+        auto& eps = ip_out.eps_data.eps;
         eps.noalias() = Bu * displacement;
 
         // Set volumetric strain rate for the general case without swelling.

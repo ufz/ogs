@@ -61,7 +61,6 @@ struct StatefulData
     BishopsData chi_S_L;
     ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>
         eff_stress_data;
-    ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
     MechanicalStrainData<DisplacementDim> mechanical_strain_data;
     PureLiquidDensityData rho_W_LR;
     ConstituentDensityData constituent_density_data;
@@ -77,7 +76,6 @@ struct StatefulData
                                               &Self::swelling_data,
                                               &Self::chi_S_L,
                                               &Self::eff_stress_data,
-                                              &Self::eps_data,
                                               &Self::porosity_data,
                                               &Self::transport_porosity_data);
     }
@@ -92,8 +90,6 @@ struct StatefulDataPrev
     PrevState<
         ProcessLib::ConstitutiveRelations::EffectiveStressData<DisplacementDim>>
         eff_stress_data;
-    PrevState<ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim>>
-        eps_data;
     PrevState<MechanicalStrainData<DisplacementDim>> mechanical_strain_data;
     PrevState<PureLiquidDensityData> rho_W_LR;
     PrevState<ConstituentDensityData> constituent_density_data;
@@ -108,7 +104,6 @@ struct StatefulDataPrev
         swelling_data = state.swelling_data;
         chi_S_L = state.chi_S_L;
         eff_stress_data = state.eff_stress_data;
-        eps_data = state.eps_data;
         mechanical_strain_data = state.mechanical_strain_data;
         rho_W_LR = state.rho_W_LR;
         constituent_density_data = state.constituent_density_data;
@@ -133,6 +128,7 @@ struct OutputData
     SolidDensityData solid_density_data;
     DiffusionVelocityData<DisplacementDim> diffusion_velocity_data;
     DarcyVelocityData<DisplacementDim> darcy_velocity_data;
+    ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
 
     static auto reflect()
     {
@@ -146,7 +142,8 @@ struct OutputData
                                               &Self::vapour_pressure_data,
                                               &Self::solid_density_data,
                                               &Self::diffusion_velocity_data,
-                                              &Self::darcy_velocity_data);
+                                              &Self::darcy_velocity_data,
+                                              &Self::eps_data);
     }
 };
 

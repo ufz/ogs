@@ -23,7 +23,7 @@ void PorosityModel<DisplacementDim>::eval(
     BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
     SolidCompressibilityData const& solid_compressibility,
     StrainData<DisplacementDim> const& eps_data,
-    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&& eps_prev,
     PrevState<PorosityData> const& porosity_prev_data,
     PorosityData& porosity_data) const
 {
@@ -50,7 +50,7 @@ void PorosityModel<DisplacementDim>::eval(
         chi_S_L_prev->chi_S_L * (p_GR.pG_prev - p_cap.pCap_prev);
 
     variables.volumetric_strain = Invariants::trace(eps_data.eps);
-    variables_prev.volumetric_strain = Invariants::trace(eps_prev_data->eps);
+    variables_prev.volumetric_strain = Invariants::trace(eps_prev);
 
     variables_prev.porosity = porosity_prev_data->phi;
     porosity_data.phi =
@@ -68,7 +68,7 @@ void PorosityModel<DisplacementDim>::dEval(
     BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
     SolidCompressibilityData const& solid_compressibility,
     StrainData<DisplacementDim> const& eps_data,
-    PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&& eps_prev,
     PrevState<PorosityData> const& porosity_prev_data,
     PorosityDerivativeData& porosity_d_data) const
 {
@@ -95,7 +95,7 @@ void PorosityModel<DisplacementDim>::dEval(
         chi_S_L_prev->chi_S_L * (p_GR.pG_prev - p_cap.pCap_prev);
 
     variables.volumetric_strain = Invariants::trace(eps_data.eps);
-    variables_prev.volumetric_strain = Invariants::trace(eps_prev_data->eps);
+    variables_prev.volumetric_strain = Invariants::trace(eps_prev);
 
     variables_prev.porosity = porosity_prev_data->phi;
 

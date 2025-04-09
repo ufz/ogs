@@ -55,7 +55,8 @@ struct PorosityModel
               PrevState<BishopsData> const& chi_S_L_prev,
               SolidCompressibilityData const& solid_compressibility,
               StrainData<DisplacementDim> const& eps_data,
-              PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+              MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&&
+                  eps_prev,
               PrevState<PorosityData> const& porosity_prev_data,
               PorosityData& porosity_data) const;
 
@@ -67,7 +68,8 @@ struct PorosityModel
                PrevState<BishopsData> const& chi_S_L_prev,
                SolidCompressibilityData const& solid_compressibility,
                StrainData<DisplacementDim> const& eps_data,
-               PrevState<StrainData<DisplacementDim>> const& eps_prev_data,
+               MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&&
+                   eps_prev,
                PrevState<PorosityData> const& porosity_prev_data,
                PorosityDerivativeData& porosity_d_data) const;
 };
