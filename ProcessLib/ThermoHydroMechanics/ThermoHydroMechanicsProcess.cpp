@@ -41,7 +41,10 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
+      AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>{
+          *_jacobian_assembler},
       _process_data(std::move(process_data))
+
 {
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
@@ -56,21 +59,21 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
+            integration_order, local_assemblers_,
             &LocalAssemblerInterface<DisplacementDim>::getSigma));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_m_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
+            integration_order, local_assemblers_,
             &LocalAssemblerInterface<DisplacementDim>::getEpsilonM));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
-            integration_order, _local_assemblers,
+            integration_order, local_assemblers_,
             &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
 }
 
@@ -188,7 +191,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 {
     ProcessLib::createLocalAssemblersHM<DisplacementDim,
                                         ThermoHydroMechanicsLocalAssembler>(
-        mesh.getElements(), dof_table, _local_assemblers,
+        mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
@@ -199,7 +202,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
-                             _local_assemblers,
+                             local_assemblers_,
                              std::move(get_ip_values_function)));
     };
 
@@ -277,16 +280,16 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
 
     ProcessLib::Deformation::
         solidMaterialInternalVariablesToIntegrationPointWriter(
-            _process_data.solid_materials, _local_assemblers,
+            _process_data.solid_materials, local_assemblers_,
             _integration_point_writer, integration_order);
 
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
-                               _local_assemblers);
+                               local_assemblers_);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::initialize,
-        _local_assemblers, *_local_to_global_index_map);
+        local_assemblers_, *_local_to_global_index_map);
 }
 
 template <int DisplacementDim>
@@ -330,7 +333,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::setInitialConditions,
-        _local_assemblers, getDOFTables(x.size()), x, t, process_id);
+        local_assemblers_, getDOFTables(x.size()), x, t, process_id);
 }
 
 template <int DisplacementDim>
@@ -341,13 +344,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 {
     DBUG("Assemble the equations for ThermoHydroMechanics");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
-
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
-        &b);
+    AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>::assemble(
+        t, dt, x, x_prev, process_id, M, K, b);
 }
 
 template <int DisplacementDim>
@@ -389,10 +387,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     auto const dof_tables = getDOFTables(x.size());
 
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id, &b, &Jac);
+    AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>::
+        assembleWithJacobian(t, dt, x, x_prev, process_id, b, Jac);
 
     auto copyRhs = [&](int const variable_id, auto& output_vector)
     {
@@ -434,8 +430,11 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     {
         GlobalExecutor::executeMemberOnDereferenced(
             &LocalAssemblerInterface<DisplacementDim>::preTimestep,
-            _local_assemblers, *_local_to_global_index_map, *x[process_id], t,
+            local_assemblers_, *_local_to_global_index_map, *x[process_id], t,
             dt);
+
+        AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>::
+            updateActiveElements();
     }
 }
 
@@ -454,8 +453,32 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
-        _local_assemblers, getActiveElementIDs(), getDOFTables(x.size()), x,
+        local_assemblers_, getActiveElementIDs(), getDOFTables(x.size()), x,
         x_prev, t, dt, process_id);
+}
+
+template <int DisplacementDim>
+std::vector<std::vector<std::string>>
+ThermoHydroMechanicsProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    INFO("ThermoHydroMechanicsProcess process initializeSubmeshOutput().");
+    std::vector<std::vector<std::string>> per_process_residuum_names;
+    if (_process_variables.size() == 1)  // monolithic
+    {
+        per_process_residuum_names = {
+            {"HeatFlowRate", "MassFlowRate", "NodalForces"}};
+    }
+    else  // staggered
+    {
+        per_process_residuum_names = {
+            {"HeatFlowRate"}, {"MassFlowRate"}, {"NodalForces"}};
+    }
+
+    AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>::
+        initializeAssemblyOnSubmeshes(meshes, per_process_residuum_names);
+
+    return per_process_residuum_names;
 }
 
 template <int DisplacementDim>
@@ -474,7 +497,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
-        _local_assemblers, getActiveElementIDs(), getDOFTables(x.size()), t, dt,
+        local_assemblers_, getActiveElementIDs(), getDOFTables(x.size()), t, dt,
         x, x_prev, process_id);
 }
 

@@ -11,6 +11,7 @@
 #pragma once
 
 #include "LocalAssemblerInterface.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 #include "ThermoHydroMechanicsProcessData.h"
 
@@ -24,8 +25,12 @@ namespace ThermoHydroMechanics
 /// The mixture momentum balance, the mixture mass balance and the mixture
 /// energy balance are solved under fully saturated conditions.
 template <int DisplacementDim>
-class ThermoHydroMechanicsProcess final : public Process
+class ThermoHydroMechanicsProcess final
+    : public Process,
+      private AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>
 {
+    friend class AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>;
+
 public:
     ThermoHydroMechanicsProcess(
         std::string name,
@@ -98,6 +103,10 @@ private:
                                      const double t, const double dt,
                                      int const process_id) override;
 
+    std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
+
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;
 
@@ -107,7 +116,7 @@ private:
     ThermoHydroMechanicsProcessData<DisplacementDim> _process_data;
 
     std::vector<std::unique_ptr<LocalAssemblerInterface<DisplacementDim>>>
-        _local_assemblers;
+        local_assemblers_;
 
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         _local_to_global_index_map_single_component;
