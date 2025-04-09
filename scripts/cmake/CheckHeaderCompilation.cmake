@@ -41,6 +41,7 @@ function(_check_header_compilation target)
         ${LINK_LIBS}
         spdlog::spdlog
         Boost::headers
+        Boost::core
         Eigen3::Eigen
         nlohmann_json::nlohmann_json
         range-v3

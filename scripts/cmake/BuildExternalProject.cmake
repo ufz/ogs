@@ -29,10 +29,15 @@ macro(BuildExternalProject_set_build_dir target argn_string)
             IS_PREFIX PROJECT_BINARY_DIR "${CPM_SOURCE_CACHE}" _is_inside_build
         )
         if(NOT _is_inside_build)
+            if(DEFINED MSVC_TOOLSET_VERSION)
+                set(_compiler_args "${MSVC_TOOLSET_VERSION}")
+            else()
+                set(_compiler_args "${CMAKE_CXX_COMPILER_ID}${CMAKE_CXX_COMPILER_VERSION}")
+            endif()
             string(
                 SHA256
                     _hash
-                    "${CMAKE_GENERATOR};${argn_string}${MSVC_TOOLSET_VERSION}"
+                    "${CMAKE_GENERATOR};${argn_string}${_compiler_args}"
             )
             set(build_dir "${CPM_SOURCE_CACHE}/_ext/${target}/${_hash}")
         endif()

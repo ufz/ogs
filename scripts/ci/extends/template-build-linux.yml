@@ -108,6 +108,20 @@
 
       fi
     - |
-      if [[ "$CHECK_WARNINGS" = true ]] ; then
-        if [[ $(cat $log_file | grep warning -i | grep -v 'was built for newer macOS version' | grep -v 'WARNING: no license files found' | grep -v 'WARNING: multiple license files found' | grep -v 'means the weak symbol cannot be overridden at runtime' | grep -v 'lto-wrapper: warning:' | grep -v 'ld: warning:') ]]; then printf 'There were compiler warnings:\n\n'; cat $log_file | grep warning -i | grep -v 'was built for newer macOS version' | grep -v 'WARNING: no license files found' | grep -v 'WARNING: multiple license files found' | grep -v 'means the weak symbol cannot be overridden at runtime' | grep -v 'lto-wrapper: warning:' | grep -v 'ld: warning:'; exit 1; fi
+      if [[ $CHECK_WARNINGS == true ]]; then
+        warnings=$(grep -i warning "$log_file" | grep -v -e 'was built for newer macOS version' \
+                                                         -e 'WARNING: no license files found' \
+                                                         -e 'WARNING: multiple license files found' \
+                                                         -e 'means the weak symbol cannot be overridden at runtime' \
+                                                         -e 'lto-wrapper: warning:' \
+                                                         -e 'ld: warning:' \
+                                                         -e "warning: 'has_denorm' is deprecated" \
+                                                         -e 'dlmalloc_ext_2_8_6\.c:[0-9:]+: warning: iteration [0-9]+ invokes undefined behavior' \
+                                                         -e '1 warning generated' \
+                                                         || true)
+        if [[ -n $warnings ]]; then
+          printf 'There were compiler warnings:\n\n'
+          printf '%s\n' "$warnings"
+          exit 1
+        fi
       fi

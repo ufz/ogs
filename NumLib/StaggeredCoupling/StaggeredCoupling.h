@@ -19,11 +19,11 @@
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/LinAlg.h"
+#include "NumLib/ODESolver/ConvergenceCriterion.h"
 #include "NumLib/ODESolver/NonlinearSolverStatus.h"
 
 namespace NumLib
 {
-class ConvergenceCriterion;
 
 /// Information of a coupling node
 struct CouplingNode

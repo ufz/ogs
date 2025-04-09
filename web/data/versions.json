@@ -1,18 +1,18 @@
 {
   "minimum_version": {
-    "gcc": "11.3.0",
-    "clang": "13.0",
-    "apple_clang": "13.1.6",
+    "gcc": "13.3.0",
+    "clang": "16.0",
+    "apple_clang": "15.0.0",
     "msvc": {
-      "year": "2019",
-      "number": "16",
-      "toolset": "142",
+      "year": "2022",
+      "number": "17",
+      "toolset": "143",
       "compiler": "19.24"
     },
     "git": "2.14",
     "cmake": "3.22",
     "hugo": "0.122.0",
-    "boost": "1.82.0",
+    "boost": "1.84.0",
     "eigen": "3.4.0",
     "eigen-unsupported": "24e0c2a125d2b37b35719124d1f758777c150ca8",
     "vtk": "9.3.0",

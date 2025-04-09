@@ -78,6 +78,7 @@ if(OGS_USE_MFRONT)
             set(_tfel_cmake_args
                 "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
                 "-Denable-python-bindings=ON"
+                "-Denable-numpy-support=OFF"
             )
         else()
             # Cleanup variables from previous find_package()-call
@@ -431,11 +432,6 @@ endif()
 
 # Building from source requires newer hdf version
 string(REPLACE "." "_" HDF5_TAG ${ogs.tested_version.hdf5})
-
-# cmake-lint: disable=C0103
-if(COMPILER_IS_GCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13.2)
-    set(ogs.minimum_version.vtk "9.3.0")
-endif()
 
 set(_vtk_source GIT_REPOSITORY https://github.com/kitware/vtk.git GIT_TAG
                 v${ogs.minimum_version.vtk}
