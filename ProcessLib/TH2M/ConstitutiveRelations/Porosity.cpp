@@ -103,12 +103,13 @@ void PorosityModel<DisplacementDim>::dEval(
         media_data.medium[MaterialPropertyLib::PropertyType::porosity];
 
     porosity_d_data.dphi_dT = mpl_porosity.template dValue<double>(
-        variables, MaterialPropertyLib::Variable::temperature, x_t.x, x_t.t,
-        x_t.dt);
+        variables, variables_prev, MaterialPropertyLib::Variable::temperature,
+        x_t.x, x_t.t, x_t.dt);
 
     porosity_d_data.dphi_L_dp_cap = mpl_porosity.template dValue<double>(
-        variables, MaterialPropertyLib::Variable::capillary_pressure, x_t.x,
-        x_t.t, x_t.dt);
+        variables, variables_prev,
+        MaterialPropertyLib::Variable::capillary_pressure, x_t.x, x_t.t,
+        x_t.dt);
 }
 
 template struct PorosityModel<2>;
