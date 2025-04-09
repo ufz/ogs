@@ -20,6 +20,7 @@ void PermeabilityModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     SaturationData const& S_L_data, CapillaryPressureData const& p_cap,
     TemperatureData const& T_data,
+    TransportPorosityData const& transport_poro_data,
     TotalStressData<DisplacementDim> const& total_stress_data,
     StrainData<DisplacementDim> const& eps_data,
     EquivalentPlasticStrainData const& equivalent_plastic_strain,
@@ -37,6 +38,7 @@ void PermeabilityModel<DisplacementDim>::eval(
     variables.liquid_saturation = S_L_data.S_L;
     variables.temperature = T_data.T;
     variables.capillary_pressure = p_cap.pCap;
+    variables.transport_porosity = transport_poro_data.phi;
 
     out.k_rel_G =
         medium
