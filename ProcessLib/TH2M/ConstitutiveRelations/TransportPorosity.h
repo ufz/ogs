@@ -26,10 +26,7 @@ namespace ConstitutiveRelations
 struct TransportPorosityDerivativeData
 {
     double dphi_dT = nan;
-    // dphi_G_dp_GR = -ds_L_dp_GR * phi = 0;
-    // dphi_L_dp_GR = ds_L_dp_GR * phi = 0;
     double dphi_L_dp_cap = nan;
-    // dphi_G_dp_cap = -dphi_L_dp_cap
 };
 
 struct TransportPorosityData

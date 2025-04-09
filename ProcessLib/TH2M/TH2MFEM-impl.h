@@ -165,9 +165,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ConstitutiveRelations::GasPressureData const pGR_data{pG, pG_prev};
         ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap,
                                                                      pCap_prev};
-        /*    Np.dot(gas_pressure)};
-        ConstitutiveRelations::CapillaryPressureData const pCap_data{
-            Np.dot(capillary_pressure)};*/
         ConstitutiveRelations::ReferenceTemperatureData const T0{
             this->process_data_.reference_temperature(t, pos)[0]};
         ConstitutiveRelations::GasPressureGradientData<DisplacementDim> const
@@ -196,8 +193,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.chi_S_L_model.eval({pos, t, dt}, media_data,
                                   current_state.S_L_data,
                                   current_state.chi_S_L);
-
-        // prev_state.eps_data->eps.noalias() = Bu * displacement_prev;
 
         models.chi_S_L_prev_model.eval({pos, t, dt}, media_data,
                                        prev_state.S_L_data, prev_state.chi_S_L);
@@ -257,7 +252,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             prev_state.S_L_data, pCap_data, pGR_data, current_state.chi_S_L,
             prev_state.chi_S_L, ip_cv.beta_p_SR, ip_out.eps_data,
             Bu * displacement_prev, prev_state.porosity_data,
-            //            prev_state.eps_data, prev_state.porosity_data,
             current_state.porosity_data);
 
         if (medium.hasProperty(MPL::PropertyType::transport_porosity))
@@ -894,7 +888,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_data = _ip_data[ip];
         auto& ip_out = this->output_data_[ip];
         auto& prev_state = this->prev_states_[ip];
-        // auto& current_state = this->current_states_[ip];
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
         auto const& Nu = ip_data.N_u;
@@ -1105,7 +1098,6 @@ void TH2MLocalAssembler<
         auto& ip_cv = ip_constitutive_variables[int_point];
         auto& ip_cd = ip_constitutive_data[int_point];
 
-        // auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto const& prev_state = this->prev_states_[int_point];
 
@@ -1417,7 +1409,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto& ip_cd = ip_constitutive_data[int_point];
         auto& ip_dd = ip_d_data[int_point];
         auto& ip_cv = ip_constitutive_variables[int_point];
-        // auto& ip_out = this->output_data_[int_point];
         auto& current_state = this->current_states_[int_point];
         auto& prev_state = this->prev_states_[int_point];
 
