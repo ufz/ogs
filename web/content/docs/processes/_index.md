@@ -1,5 +1,5 @@
 +++
-title = "Process-dependent configuration"
+title = "Process information"
 os_selector = false
 
 [cascade]

@@ -6,10 +6,10 @@ weight = 1
 
 
 [menu.docs]
-name = "Process-dependent configuration"
+name = "Process information"
 identifier = "processes"
 weight = 5
-post = "Get more insight into process-specific configurations."
+post = "Get more insight into process implementation."
 [menu.docs.params]
 category = "User"
 +++
