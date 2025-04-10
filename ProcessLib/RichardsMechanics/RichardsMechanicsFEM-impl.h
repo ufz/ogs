@@ -82,6 +82,13 @@ void updateSwellingStressAndVolumetricStrain(
                                                        C_el.inverse() *
                                                        sigma_sw_prev->sigma_sw;
         }
+        else
+        {
+            variables.volumetric_mechanical_strain =
+                variables.volumetric_strain;
+            variables_prev.volumetric_mechanical_strain =
+                variables_prev.volumetric_strain;
+        }
     }
 
     // TODO (naumov) saturation_micro must be always defined together with
@@ -555,6 +562,13 @@ void RichardsMechanicsLocalAssembler<
                 variables_prev.volumetric_mechanical_strain =
                     variables_prev.volumetric_strain +
                     identity2.transpose() * C_el.inverse() * sigma_sw_prev;
+            }
+            else
+            {
+                variables.volumetric_mechanical_strain =
+                    variables.volumetric_strain;
+                variables_prev.volumetric_mechanical_strain =
+                    variables_prev.volumetric_strain;
             }
 
             if (medium->hasProperty(MPL::PropertyType::transport_porosity))
