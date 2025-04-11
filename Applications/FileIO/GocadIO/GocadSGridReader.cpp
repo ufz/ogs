@@ -217,10 +217,7 @@ void GocadSGridReader::addGocadPropertiesToMesh(MeshLib::Mesh& mesh) const
             ERR("Could not create mesh property '{:s}'.", name);
             continue;
         }
-
-        pv->resize(prop->_property_data.size());
-        std::copy(prop->_property_data.cbegin(), prop->_property_data.cend(),
-                  pv->begin());
+        pv->assign(prop->_property_data);
     }
 }
 

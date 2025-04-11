@@ -31,9 +31,9 @@ TEST(MeshLib, ElementStatus)
 
     auto* const material_id_properties =
         mesh->getProperties().createNewPropertyVector<int>(
-            "MaterialIDs", MeshLib::MeshItemType::Cell);
+            "MaterialIDs", MeshLib::MeshItemType::Cell,
+            mesh->getNumberOfElements(), 1);
     ASSERT_NE(nullptr, material_id_properties);
-    material_id_properties->resize(mesh->getNumberOfElements());
 
     const std::vector<MeshLib::Element*> elements(mesh->getElements());
 

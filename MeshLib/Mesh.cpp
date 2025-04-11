@@ -17,6 +17,7 @@
 #include <memory>
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/numeric.hpp>
+#include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/enumerate.hpp>
 #include <range/v3/view/indirect.hpp>

@@ -45,7 +45,6 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
         ERR("Values of the PropertyVector are not assigned to cells.");
         return;
     }
-
     auto const* material_ids =
         mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 
@@ -84,9 +83,7 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
     auto compute_value = [&](MeshLib::Element const* const e) -> PT
     { return is_valid_element(*e) ? new_property_value : (*pv)[e->getID()]; };
 
-    auto values = mesh.getElements() | ranges::views::transform(compute_value);
-
-    pv->assign(values.begin(), values.end());
+    pv->assign(mesh.getElements() | ranges::views::transform(compute_value));
 }
 
 }  // namespace MeshGeoToolsLib

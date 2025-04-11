@@ -29,8 +29,7 @@ static void addOgsVersion(MeshLib::Mesh& mesh)
         mesh, GitInfoLib::GitInfo::OGS_VERSION,
         MeshLib::MeshItemType::IntegrationPoint, 1);
 
-    ogs_version_field.assign(GitInfoLib::GitInfo::ogs_version.begin(),
-                             GitInfoLib::GitInfo::ogs_version.end());
+    ogs_version_field.assign(GitInfoLib::GitInfo::ogs_version);
 }
 
 static void addSecondaryVariableNodes(

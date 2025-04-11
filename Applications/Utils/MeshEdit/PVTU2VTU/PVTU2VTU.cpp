@@ -79,7 +79,7 @@ bool createPropertyVector(
     {
         auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
             merged_mesh, pv_name, item_type, pv_num_components);
-        new_pv->assign(pv->begin(), pv->end());
+        new_pv->assign(*pv);
 
         return true;
     }

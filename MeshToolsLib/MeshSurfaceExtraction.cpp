@@ -16,6 +16,9 @@
 
 #include <memory>
 #include <numbers>
+#include <range/v3/view/join.hpp>
+#include <range/v3/view/transform.hpp>
+#include <span>
 
 #include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Line.h"
@@ -41,14 +44,14 @@ void processPropertyVector(MeshLib::PropertyVector<T> const& property,
     auto sfc_prop = MeshLib::getOrCreateMeshProperty<T>(
         sfc_mesh, property.getPropertyName(), property.getMeshItemType(),
         number_of_components);
-    sfc_prop->clear();
-    sfc_prop->reserve(id_map.size());
 
-    for (auto bulk_id : id_map)
+    auto get_components = [&](std::size_t const bulk_id)
     {
-        std::copy_n(&property.getComponent(bulk_id, 0 /*component_id*/),
-                    number_of_components, back_inserter(*sfc_prop));
-    }
+        return std::span(&property.getComponent(bulk_id, 0 /*component_id*/),
+                         number_of_components);
+    };
+    sfc_prop->assign(id_map | ranges::views::transform(get_components) |
+                     ranges::views::join);
 }
 
 bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,

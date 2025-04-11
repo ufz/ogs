@@ -50,6 +50,12 @@ public:
                                                MeshItemType mesh_item_type,
                                                std::size_t n_components = 1);
 
+    template <typename T>
+    PropertyVector<T>* createNewPropertyVector(std::string_view name,
+                                               MeshItemType mesh_item_type,
+                                               std::size_t n_property_values,
+                                               std::size_t n_components);
+
     /// Method creates a PropertyVector if a PropertyVector with the same name
     /// and the same type T was not already created before. In case there exists
     /// already such a PropertyVector a nullptr is returned.

@@ -9,6 +9,8 @@
 
 #include "VoxelGridFromLayeredMeshes.h"
 
+#include <range/v3/algorithm/fill.hpp>
+
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/MeshElementGrid.h"
 #include "MeshToolsLib/MeshEditing/ProjectPointOnMesh.h"
@@ -56,12 +58,12 @@ std::unique_ptr<MeshLib::Mesh> generateInitialMesh(
             mesh_range[0], mesh_range[1], mesh_range[2], n_cells[0], n_cells[1],
             n_cells[2], extent.first));
     auto mat_id = mesh->getProperties().createNewPropertyVector<int>(
-        mat_name, MeshLib::MeshItemType::Cell);
+        mat_name, MeshLib::MeshItemType::Cell, mesh->getNumberOfElements(), 1);
     if (!mat_id)
     {
         return nullptr;
     }
-    mat_id->insert(mat_id->end(), mesh->getNumberOfElements(), -1);
+    ranges::fill(*mat_id, -1);
     return mesh;
 }
 

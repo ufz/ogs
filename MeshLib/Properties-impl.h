@@ -32,6 +32,25 @@ PropertyVector<T>* Properties::createNewPropertyVector(
 
 template <typename T>
 PropertyVector<T>* Properties::createNewPropertyVector(
+    std::string_view name, MeshItemType mesh_item_type,
+    std::size_t n_property_values, std::size_t n_components)
+{
+    auto it(_properties.find(std::string(name)));
+    if (it != _properties.end())
+    {
+        ERR("A property of the name '{:s}' is already assigned to the mesh.",
+            name);
+        return nullptr;
+    }
+    auto entry_info(_properties.insert(std::make_pair(
+        std::string(name),
+        new PropertyVector<T>(n_property_values, std::string(name),
+                              mesh_item_type, n_components))));
+    return static_cast<PropertyVector<T>*>((entry_info.first)->second);
+}
+
+template <typename T>
+PropertyVector<T>* Properties::createNewPropertyVector(
     std::string const& name,
     std::size_t n_prop_groups,
     std::vector<std::size_t> const& item2group_mapping,

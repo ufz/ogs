@@ -111,10 +111,7 @@ TEST_F(MeshLibProperties, AddDoubleProperties)
     std::string_view prop_name("TestProperty");
     auto* const double_properties =
         mesh->getProperties().createNewPropertyVector<double>(
-            prop_name, MeshLib::MeshItemType::Cell);
-    ASSERT_EQ(0u, double_properties->size());
-
-    double_properties->resize(size);
+            prop_name, MeshLib::MeshItemType::Cell, size, 1);
     ASSERT_EQ(size, double_properties->size());
 
     std::iota(double_properties->begin(), double_properties->end(), 1);
@@ -338,9 +335,9 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
     const std::size_t n_items_2(mesh_size * mesh_size * mesh_size);
     auto* const array_properties =
         mesh->getProperties().createNewPropertyVector<std::array<float, 9>>(
-            prop_name_2, MeshLib::MeshItemType::Cell);
+            prop_name_2, MeshLib::MeshItemType::Cell, n_items_2, 1);
 
-    array_properties->resize(n_items_2);
+    ASSERT_EQ(array_properties->size(), n_items_2);
 
     // initialize the property values
     for (std::size_t i(0); i < n_items_2; i++)

@@ -186,7 +186,7 @@ void updateOrCheckExistingSubdomainProperty(
     }
 
     INFO("Overwriting '{:s}' property.", property_name);
-    original_property.assign(values.begin(), values.end());
+    original_property.assign(values);
 }
 }  // namespace
 

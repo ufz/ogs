@@ -76,7 +76,7 @@ std::unique_ptr<MeshLib::Mesh> LayeredMeshGenerator::getMesh(
         auto* const materials = properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshLib::MeshItemType::Cell);
         assert(materials != nullptr);
-        materials->assign(_materials.begin(), _materials.end());
+        materials->assign(_materials);
     }
     else
     {

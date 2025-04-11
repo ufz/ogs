@@ -411,8 +411,7 @@ MeshLib::Mesh* readGMSHMesh(std::string const& fname,
     }
     else
     {
-        material_ids->insert(material_ids->end(), materials.cbegin(),
-                             materials.cend());
+        material_ids->assign(materials);
     }
 
     MeshToolsLib::ElementValueModification::condense(*mesh);

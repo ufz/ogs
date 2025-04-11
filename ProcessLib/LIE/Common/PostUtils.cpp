@@ -390,7 +390,7 @@ void PostProcessTool::calculateTotalDisplacement(unsigned const n_fractures,
         *_output_mesh->getProperties().createNewPropertyVector<double>(
             "u", MeshLib::MeshItemType::Node, n_u_comp);
     total_u.resize(u.size());
-    std::copy(cbegin(u), cend(u), begin(total_u));
+    ranges::copy(u, total_u.begin());
 
     for (unsigned enrich_id = 0; enrich_id < n_fractures + n_junctions;
          enrich_id++)

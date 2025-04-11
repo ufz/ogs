@@ -46,8 +46,8 @@ public:
         std::string const point_prop_name("PointDoubleProperty");
         auto* const point_double_properties =
             mesh->getProperties().createNewPropertyVector<double>(
-                point_prop_name, MeshLib::MeshItemType::Node);
-        point_double_properties->resize(mesh->getNumberOfNodes());
+                point_prop_name, MeshLib::MeshItemType::Node,
+                mesh->getNumberOfNodes(), 1);
         std::iota(point_double_properties->begin(),
                   point_double_properties->end(),
                   1);
@@ -55,8 +55,8 @@ public:
         std::string const cell_prop_name("CellDoubleProperty");
         auto* const cell_double_properties =
             mesh->getProperties().createNewPropertyVector<double>(
-                cell_prop_name, MeshLib::MeshItemType::Cell);
-        cell_double_properties->resize(mesh->getNumberOfElements());
+                cell_prop_name, MeshLib::MeshItemType::Cell,
+                mesh->getNumberOfElements(), 1);
         std::iota(
             cell_double_properties->begin(), cell_double_properties->end(), 1);
 
@@ -72,16 +72,18 @@ public:
         std::string const point_int_prop_name("PointIntProperty");
         auto* const point_int_properties =
             mesh->getProperties().createNewPropertyVector<int>(
-                point_int_prop_name, MeshLib::MeshItemType::Node);
-        point_int_properties->resize(mesh->getNumberOfNodes());
+                point_int_prop_name,
+                MeshLib::MeshItemType::Node,
+                mesh->getNumberOfNodes(),
+                1);
         std::iota(
             point_int_properties->begin(), point_int_properties->end(), 1);
 
         std::string const cell_int_prop_name("CellIntProperty");
         auto* const cell_int_properties =
             mesh->getProperties().createNewPropertyVector<int>(
-                cell_int_prop_name, MeshLib::MeshItemType::Cell);
-        cell_int_properties->resize(mesh->getNumberOfElements());
+                cell_int_prop_name, MeshLib::MeshItemType::Cell,
+                mesh->getNumberOfElements(), 1);
         std::iota(cell_int_properties->begin(), cell_int_properties->end(), 1);
 
         std::string const field_int_prop_name("FieldIntProperty");
@@ -89,14 +91,14 @@ public:
             mesh->getProperties().createNewPropertyVector<int>(
                 field_int_prop_name, MeshLib::MeshItemType::IntegrationPoint);
         field_int_properties->resize(mesh->getNumberOfElements() * 2);
-        std::iota(
-            field_int_properties->begin(), field_int_properties->end(), 1);
+        std::iota(field_int_properties->begin(), field_int_properties->end(),
+                  1);
 
         std::string const point_unsigned_prop_name("PointUnsignedProperty");
         auto point_unsigned_properties =
             mesh->getProperties().createNewPropertyVector<unsigned>(
-                point_unsigned_prop_name, MeshLib::MeshItemType::Node);
-        point_unsigned_properties->resize(mesh->getNumberOfNodes());
+                point_unsigned_prop_name, MeshLib::MeshItemType::Node,
+                mesh->getNumberOfNodes(), 1);
         std::iota(point_unsigned_properties->begin(),
                   point_unsigned_properties->end(),
                   1);
@@ -104,8 +106,8 @@ public:
         std::string const cell_unsigned_prop_name("CellUnsignedProperty");
         auto cell_unsigned_properties =
             mesh->getProperties().createNewPropertyVector<unsigned>(
-                cell_unsigned_prop_name, MeshLib::MeshItemType::Cell);
-        cell_unsigned_properties->resize(mesh->getNumberOfElements());
+                cell_unsigned_prop_name, MeshLib::MeshItemType::Cell,
+                mesh->getNumberOfElements(), 1);
         std::iota(cell_unsigned_properties->begin(),
                   cell_unsigned_properties->end(),
                   1);
@@ -123,8 +125,8 @@ public:
         std::string const material_ids_name("MaterialIDs");
         auto material_id_properties =
             mesh->getProperties().createNewPropertyVector<int>(
-                material_ids_name, MeshLib::MeshItemType::Cell);
-        material_id_properties->resize(mesh->getNumberOfElements());
+                material_ids_name, MeshLib::MeshItemType::Cell,
+                mesh->getNumberOfElements(), 1);
         std::iota(
             material_id_properties->begin(), material_id_properties->end(), 1);
     }

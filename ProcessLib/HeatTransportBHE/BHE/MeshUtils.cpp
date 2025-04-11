@@ -32,7 +32,7 @@ std::vector<MeshLib::Element*> extractOneDimensionalElements(
 }
 
 std::vector<int> getUniqueMaterialIds(
-    std::vector<int> const& material_ids,
+    MeshLib::PropertyVector<int> const& material_ids,
     std::vector<MeshLib::Element*> const& elements)
 {
     std::set<int> unique_material_ids;

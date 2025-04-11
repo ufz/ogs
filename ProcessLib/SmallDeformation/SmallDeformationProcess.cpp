@@ -211,7 +211,7 @@ void SmallDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
         material_forces, local_assemblers_, *_local_to_global_index_map,
         *x[process_id]);
 
-    material_forces->copyValues(*material_forces_);
+    material_forces->copyValues(std::span{*material_forces_});
 }
 
 template <int DisplacementDim>

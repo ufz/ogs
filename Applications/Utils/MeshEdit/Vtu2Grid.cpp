@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     auto* const cell_ids = grid->getProperties().createNewPropertyVector<int>(
         VoxelGridFromMesh::cell_id_name, MeshLib::MeshItemType::Cell, 1);
     assert(cell_ids);
-    cell_ids->assign(tmp_ids.begin(), tmp_ids.end());
+    cell_ids->assign(tmp_ids);
 
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
     {

@@ -181,8 +181,8 @@ void AssemblyMixinBase::updateActiveElementsImpl(Process const& process)
         // in the bulk_element_ids of the submeshes
         for (auto& sad : submesh_assembly_data_)
         {
-            // note: this copies the ID vector!
-            sad.active_element_ids = sad.bulk_element_ids;
+            sad.active_element_ids.assign(sad.bulk_element_ids.begin(),
+                                          sad.bulk_element_ids.end());
         }
     }
     else
@@ -239,7 +239,8 @@ void AssemblyMixinBase::copyResiduumVectorsToSubmesh(
     {
         transformVariableFromGlobalVector(
             rhs, variable_id, local_to_global_index_map,
-            residuum_vectors[variable_id].get(), sad.bulk_node_ids,
+            residuum_vectors[variable_id].get(),
+            std::span<std::size_t const>{sad.bulk_node_ids},
             std::negate<double>());
     }
 }

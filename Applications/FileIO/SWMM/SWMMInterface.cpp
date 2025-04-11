@@ -828,9 +828,8 @@ bool SwmmInterface::readSwmmInputToLineMesh()
     {
         auto* const depth = props.createNewPropertyVector<double>(
             "Max Depth", MeshLib::MeshItemType::Node, 1);
-        depth->reserve(max_depth.size());
-        std::copy(max_depth.cbegin(), max_depth.cend(),
-                  std::back_inserter(*depth));
+        depth->assign(max_depth);
+        assert(depth.size() == max_depth.size());
     }
     else
         ERR("Size of max depth array does not fit number of elements. Skipping "

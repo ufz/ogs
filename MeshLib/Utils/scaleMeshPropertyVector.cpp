@@ -11,6 +11,8 @@
 
 #include "scaleMeshPropertyVector.h"
 
+#include <range/v3/algorithm/transform.hpp>
+
 #include "MeshLib/Mesh.h"
 
 namespace MeshLib
@@ -25,7 +27,7 @@ void scaleMeshPropertyVector(MeshLib::Mesh& mesh,
         return;
     }
     auto& pv = *mesh.getProperties().getPropertyVector<double>(property_name);
-    std::transform(pv.begin(), pv.end(), pv.begin(),
-                   [factor](auto const& v) { return v * factor; });
+    ranges::transform(pv, pv.begin(),
+                      [factor](auto const& v) { return v * factor; });
 }
 }  // namespace MeshLib

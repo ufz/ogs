@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <span>
 #include <vector>
 
 #ifndef NDEBUG
@@ -101,6 +102,11 @@ public:
     /// \param u a vector for the values of local entries. It will be resized to
     /// hold the current vector data.
     void copyValues(std::vector<double>& u) const;
+
+    /// Copy local entries to a span.
+    /// \param u a span for the values of local entries of correct size. If the
+    /// sizes mismatch, exception will be thrown.
+    void copyValues(std::span<double> u) const;
 
 #ifndef NDEBUG
     /// write this vector to a file for debugging

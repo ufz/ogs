@@ -168,8 +168,8 @@ int main(int argc, char* argv[])
 
     auto* const pv =
         surface_mesh->getProperties().createNewPropertyVector<double>(
-            property_out_arg.getValue(), MeshLib::MeshItemType::Node, 1);
-    pv->resize(surface_mesh->getNodes().size());
+            property_out_arg.getValue(), MeshLib::MeshItemType::Node,
+            surface_mesh->getNodes().size(), 1);
     for (std::size_t k(0); k < surface_mesh->getNodes().size(); ++k)
     {
         (*pv)[k] = direct_values[k].second;

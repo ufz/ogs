@@ -57,12 +57,13 @@ void addPropertyToMesh(Mesh& mesh, std::string_view name,
     }
 
     auto* const property = mesh.getProperties().createNewPropertyVector<T>(
-        name, item_type, number_of_components);
+        name, item_type, values.size() / number_of_components,
+        number_of_components);
     if (!property)
     {
         OGS_FATAL("Error while creating PropertyVector '{:s}'.", name);
     }
-    property->reserve(values.size());
-    std::copy(values.cbegin(), values.cend(), std::back_inserter(*property));
+    assert(property->size() == values.size());
+    property->assign(values);
 }
 }  // namespace MeshLib

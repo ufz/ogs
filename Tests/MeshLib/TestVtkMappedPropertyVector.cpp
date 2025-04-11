@@ -38,8 +38,8 @@ TEST(MeshLibMappedPropertyVector, Double)
     std::string const prop_name("TestProperty");
     auto* const double_properties =
         mesh->getProperties().createNewPropertyVector<double>(
-            prop_name, MeshLib::MeshItemType::Cell);
-    double_properties->resize(number_of_tuples);
+            prop_name, MeshLib::MeshItemType::Cell, number_of_tuples, 1);
+    ASSERT_EQ(double_properties->size(), number_of_tuples);
     std::iota(double_properties->begin(), double_properties->end(), 1);
 
     vtkNew<vtkDoubleArray> dataArray;
@@ -72,8 +72,8 @@ TEST(MeshLibMappedPropertyVector, Int)
 
     std::string const prop_name("TestProperty");
     auto* const properties = mesh->getProperties().createNewPropertyVector<int>(
-        prop_name, MeshLib::MeshItemType::Cell);
-    properties->resize(number_of_tuples);
+        prop_name, MeshLib::MeshItemType::Cell, number_of_tuples, 1);
+    ASSERT_EQ(properties->size(), number_of_tuples);
     std::iota(properties->begin(), properties->end(), -5);
 
     vtkNew<vtkIntArray> dataArray;
@@ -108,8 +108,8 @@ TEST(MeshLibMappedPropertyVector, Unsigned)
     std::string const prop_name("TestProperty");
     auto* const properties =
         mesh->getProperties().createNewPropertyVector<unsigned>(
-            prop_name, MeshLib::MeshItemType::Cell);
-    properties->resize(number_of_tuples);
+            prop_name, MeshLib::MeshItemType::Cell, number_of_tuples, 1);
+    ASSERT_EQ(properties->size(), number_of_tuples);
     std::iota(properties->begin(), properties->end(), 0);
 
     vtkNew<vtkUnsignedIntArray> dataArray;
