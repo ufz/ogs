@@ -75,14 +75,16 @@ bool createMergedPropertyVector(
                 sigma0[1] = initial_value_dict["syy"];
                 sigma0[2] = initial_value_dict["szz"];
 
-                std::transform(new_pv.begin() + pv_bulk_mesh->size(),
-                               new_pv.end(),
-                               new_pv.begin() + pv_bulk_mesh->size(),
-                               [&, i = 0](double) mutable
-                               { return sigma0[i++ % sigma0.size()]; });
+                std::transform(
+                    new_pv.begin() + pv_bulk_mesh->size(),
+                    new_pv.end(),
+                    new_pv.begin() + pv_bulk_mesh->size(),
+                    [&, i = 0](T) mutable
+                    { return static_cast<T>(sigma0[i++ % sigma0.size()]); });
                 return true;
             }
-            std::fill(new_pv.begin() + pv_bulk_mesh->size(), new_pv.end(), 0);
+            std::fill(new_pv.begin() + pv_bulk_mesh->size(), new_pv.end(),
+                      static_cast<T>(0.0));
             return true;
         }
 
@@ -124,12 +126,12 @@ bool createMergedPropertyVector(
             {"temperature", "T"},
             {"T", "T"}};
 
-        double value = 0.0;
+        T value = static_cast<T>(0.0);
         auto it = pv_to_dict_key.find(pv_name);
         if (it != pv_to_dict_key.end() &&
             initial_value_dict.contains(it->second))
         {
-            value = initial_value_dict[it->second];
+            value = static_cast<T>(initial_value_dict[it->second]);
         }
         std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(), value);
         return true;
@@ -146,10 +148,11 @@ bool createMergedPropertyVector(
         if (pv_name == "MaterialIDs")
         {
             std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(),
-                      initial_value_dict["mat_id"]);
+                      static_cast<T>(initial_value_dict["mat_id"]));
             return true;
         }
-        std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(), 0.0);
+        std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(),
+                  static_cast<T>(0.0));
         return true;
     }
 
