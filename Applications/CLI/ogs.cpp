@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
     {
         auto const end_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(end_time);
-        INFO("OGS terminated on {:s}.", time_str);
+        INFO("Simulation completed on {:s}.", time_str);
     }
 
     if (ogs_status == EXIT_FAILURE)

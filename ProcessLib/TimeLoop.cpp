@@ -519,8 +519,10 @@ bool TimeLoop::executeTimeStep()
 
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
-    INFO("=== Time stepping at step #{:d} and time {} with step size {}",
-         timesteps, _current_time, _dt);
+    INFO(
+        "Time stepping at step #{:d} and time {} with step size {} "
+        "started.",
+        timesteps, _current_time, _dt);
 
     updateDeactivatedSubdomains(_per_process_data, _current_time());
 
