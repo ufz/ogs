@@ -49,7 +49,7 @@ It is recommended to set up a virtual environment beforehand:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install ogstools
+pip install ogstools[ogs]
 ```
 
 More detailed information about the usages and development of ogstools can be found in [ogstools Documentation](https://ogstools.opengeosys.org/stable/index.html).

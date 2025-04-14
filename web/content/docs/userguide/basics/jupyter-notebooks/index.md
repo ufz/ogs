@@ -67,7 +67,7 @@ You may have to modify the IP address if this is running on a remote machine.
 Click on *Terminal* and install OGSTools (which also installs ogs itself):
 
 ```bash
-pip install ogstools
+pip install ogstools[ogs]
 ```
 
 You install other Python packages too. Please note that this is a temporary installation. If you stop the container the manually installed packages will be deleted.
