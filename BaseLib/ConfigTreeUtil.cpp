@@ -41,7 +41,7 @@ ConfigTree makeConfigTree(const std::string& filepath, const bool be_ruthless,
                   e.filename(), e.line(), e.message());
     }
 
-    DBUG("Project configuration from file '{:s}' read.", filepath);
+    INFO("Project configuration from file '{:s}' read.", filepath);
 
     if (auto opt_child = ptree.get_child_optional(toplevel_tag))
     {
