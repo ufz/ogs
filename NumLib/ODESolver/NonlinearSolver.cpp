@@ -154,6 +154,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         BaseLib::RunTime time_iteration;
         time_iteration.start();
 
+        INFO("Iteration #{:d} started.", iteration);
         timer_dirichlet.start();
         auto& x_new_process = *x_new[process_id];
         LinAlg::setLocalAccessibleVector(x_new_process);

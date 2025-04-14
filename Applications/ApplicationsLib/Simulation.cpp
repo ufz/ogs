@@ -21,6 +21,7 @@
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/PrjProcessing.h"
+#include "BaseLib/RunTime.h"
 #include "MeshLib/Mesh.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/TimeLoop.h"
@@ -109,7 +110,13 @@ void Simulation::initializeDataStructures(
     BaseLib::ConfigTree::assertNoSwallowedErrors();
 
     auto& time_loop = project_data->getTimeLoop();
+    auto time_value = time_loop.currentTime()();
+    INFO("Time stepping at step #0 and time {} started.", time_value);
+
+    BaseLib::RunTime init_timer;
+    init_timer.start();
     time_loop.initialize();
+    INFO("Time step #0 took {:g} s.", init_timer.elapsed());
 }
 
 double Simulation::currentTime() const
