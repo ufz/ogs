@@ -17,6 +17,8 @@
 
 #include <algorithm>
 #include <chrono>
+#include <csignal>
+#include <iostream>
 #include <sstream>
 
 #include "CommandLineArgumentParser.h"
@@ -53,10 +55,26 @@ void enableFloatingPointExceptions()
 }
 #endif  // _WIN32
 
+void signalHandler(int signum)
+{
+    auto const end_time = std::chrono::system_clock::now();
+    auto const time_str = BaseLib::formatDate(end_time);
+    std::cout << "error: Simulation aborted on " << time_str << ". Signal "
+              << strsignal(signum) << " (" << signum << ") received.\n";
+    exit(signum);
+}
+
 int main(int argc, char* argv[])
 {
     CommandLineArguments cli_arg = parseCommandLineArguments(argc, argv);
+
+    signal(SIGINT, signalHandler);   // CTRL+C
+    signal(SIGQUIT, signalHandler);  // CTRL+<Backslash>
+    signal(SIGTERM, signalHandler);  // pkill -SIGTERM <process_id> , It is NOT
+                                     // possible to catch SIGKILL
+
     BaseLib::initOGSLogger(cli_arg.log_level);
+
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
     if (cli_arg.enable_fpe_is_set)
     {

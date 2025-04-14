@@ -151,6 +151,15 @@ MeshLib::Mesh& Simulation::getMesh(std::string const& name)
     return project_data->getMesh(name);
 }
 
+static std::atomic<int> gSignalThatStoppedMe{-1};
+
+extern "C" void signalHandler(int signum)
+{
+    // the standard says you can set atomic variables
+    // you could also use a different memory barrier
+    gSignalThatStoppedMe.store(signum);
+}
+
 bool Simulation::executeSimulation()
 {
     INFO("Solve processes.");
