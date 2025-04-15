@@ -235,6 +235,23 @@ public:
             { return getIntPtSigma(0, {}, {}, values); });
     }
 
+    std::vector<double> getSigmaIce() const override
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtSigmaIce(0, {}, {}, values); });
+    }
+
+    std::vector<double> getIceVolumeFraction() const override
+    {
+        std::vector<double> result;
+        getIntPtIceVolume(0, {}, {}, result);
+        return result;
+    }
+
     std::vector<double> const& getIntPtFluidDensity(
         const double t,
         std::vector<GlobalVector*> const& x,
