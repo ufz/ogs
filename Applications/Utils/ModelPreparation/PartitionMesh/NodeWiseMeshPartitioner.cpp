@@ -364,6 +364,13 @@ bool copyPropertyVector(
     auto partitioned_pv = partitioned_properties.createNewPropertyVector<T>(
         pv->getPropertyName(), pv->getMeshItemType(),
         pv->getNumberOfGlobalComponents());
+    if (partitioned_pv == nullptr)
+    {
+        OGS_FATAL(
+            "Could not create partitioned property vector {:s} for {} data "
+            "array.",
+            pv->getPropertyName(), MeshLib::toString(pv->getMeshItemType()));
+    }
     partitioned_pv->resize(partitioned_pv_size);
 
     auto copy_property_vector_values =
