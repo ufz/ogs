@@ -29,7 +29,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
-#include "MeshToolsLib//IntegrationPointDataTools.h"
+#include "MeshToolsLib/IntegrationPointDataTools.h"
 
 namespace ApplicationUtils
 {
