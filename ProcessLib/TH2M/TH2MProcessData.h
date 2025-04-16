@@ -24,6 +24,10 @@ namespace ProcessLib
 {
 namespace TH2M
 {
+/// A type helping to avoid confusion of different boolean values.
+using InitializePorosityFromMediumProperty =
+    BaseLib::StrongType<bool, struct InitializePorosityFromMediumPropertyTag>;
+
 template <int DisplacementDim>
 struct TH2MProcessData
 {
@@ -51,6 +55,9 @@ struct TH2MProcessData
     bool const apply_mass_lumping;
 
     const bool use_TaylorHood_elements;
+
+    InitializePorosityFromMediumProperty const
+        initialize_porosity_from_medium_property;
 
     MeshLib::PropertyVector<double>* gas_pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* capillary_pressure_interpolated = nullptr;

@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "MechanicalStrain.h"
+#include "MechanicalStrainModel.h"
 
 namespace ProcessLib::TH2M
 {

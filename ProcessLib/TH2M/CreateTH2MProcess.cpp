@@ -223,6 +223,10 @@ std::unique_ptr<Process> createTH2MProcess(
                 variable_u->getShapeFunctionOrder()
             ? true
             : false;
+    bool const initialize_porosity_from_medium_property =
+        //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__initialize_porosity_from_medium_property}
+        config.getConfigParameter("initialize_porosity_from_medium_property",
+                                  true);
 
     TH2MProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
@@ -233,7 +237,9 @@ std::unique_ptr<Process> createTH2MProcess(
         std::move(initial_stress),
         specific_body_force,
         mass_lumping,
-        use_TaylorHood_elements};
+        use_TaylorHood_elements,
+        InitializePorosityFromMediumProperty{
+            initialize_porosity_from_medium_property}};
 
     SecondaryVariableCollection secondary_variables;
 

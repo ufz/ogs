@@ -41,7 +41,7 @@ void FC2aModel::eval(BiotData const biot_data,
     fC_2a.a =
         porosity_data.phi * (constituent_density_data.rho_C_LR -
                              constituent_density_data.rho_C_GR) -
-        rho_C_FR * pCap() * (biot_data() - porosity_data.phi) * beta_p_SR();
+        rho_C_FR * pCap.pCap * (biot_data() - porosity_data.phi) * beta_p_SR();
 }
 
 void FC2aModel::dEval(BiotData const& biot_data,
@@ -65,7 +65,7 @@ void FC2aModel::dEval(BiotData const& biot_data,
         S_L * phase_transition_data.drho_C_LR_dp_GR;
 
     dfC_2a.dp_GR = -porosity_data.phi * phase_transition_data.drho_C_GR_dp_GR -
-                   drho_C_FR_dp_GR * pCap() *
+                   drho_C_FR_dp_GR * pCap.pCap *
                        (biot_data() - porosity_data.phi) * beta_p_SR();
 
     double const dS_G_dp_cap = -dS_L_dp_cap();
@@ -84,7 +84,7 @@ void FC2aModel::dEval(BiotData const& biot_data,
     dfC_2a.dp_cap =
         porosity_data.phi *
             (-phase_transition_data.drho_C_LR_dp_LR - drho_C_GR_dp_cap) -
-        drho_C_FR_dp_cap * pCap() * (biot_data() - porosity_data.phi) *
+        drho_C_FR_dp_cap * pCap.pCap * (biot_data() - porosity_data.phi) *
             beta_p_SR() +
         rho_C_FR * (biot_data() - porosity_data.phi) * beta_p_SR();
 
@@ -94,9 +94,9 @@ void FC2aModel::dEval(BiotData const& biot_data,
                                            constituent_density_data.rho_C_GR) +
                 porosity_data.phi * (phase_transition_data.drho_C_LR_dT -
                                      phase_transition_data.drho_C_GR_dT) -
-                drho_C_FR_dT * pCap() * (biot_data() - porosity_data.phi) *
+                drho_C_FR_dT * pCap.pCap * (biot_data() - porosity_data.phi) *
                     beta_p_SR() +
-                rho_C_FR * pCap() * porosity_d_data.dphi_dT * beta_p_SR();
+                rho_C_FR * pCap.pCap * porosity_d_data.dphi_dT * beta_p_SR();
 }
 
 void FC3aModel::eval(
@@ -381,11 +381,11 @@ void FC4MCpCModel::eval(BiotData const& biot_data,
     fC_4_MCpC.m =
         -rho_C_FR * (biot_data() - porosity_data.phi) * beta_p_SR() * S_L;
 
-    fC_4_MCpC.ml =
-        (porosity_data.phi * (constituent_density_data.rho_C_LR -
-                              constituent_density_data.rho_C_GR) -
-         rho_C_FR * pCap() * (biot_data() - porosity_data.phi) * beta_p_SR()) *
-        (S_L - S_L_data_prev->S_L);
+    fC_4_MCpC.ml = (porosity_data.phi * (constituent_density_data.rho_C_LR -
+                                         constituent_density_data.rho_C_GR) -
+                    rho_C_FR * pCap.pCap * (biot_data() - porosity_data.phi) *
+                        beta_p_SR()) *
+                   (S_L - S_L_data_prev->S_L);
 }
 
 template <int DisplacementDim>

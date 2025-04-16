@@ -15,6 +15,7 @@
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "Saturation.h"
 #include "TotalStress.h"
+#include "TransportPorosity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -26,6 +27,7 @@ struct PermeabilityModel
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
               SaturationData const& S_L_data,
               CapillaryPressureData const& p_cap, TemperatureData const& T_data,
+              TransportPorosityData const& transport_poro_data,
               TotalStressData<DisplacementDim> const& total_stress_data,
               StrainData<DisplacementDim> const& eps_data,
               EquivalentPlasticStrainData const& equivalent_plastic_strain,

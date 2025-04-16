@@ -42,7 +42,7 @@ void FW2Model::eval(BiotData const biot_data,
 
     fW_2.a =
         porosity_data.phi * (rho_W_LR() - constituent_density_data.rho_W_GR) -
-        rho_W_FR * pCap() * (biot_data() - porosity_data.phi) * beta_p_SR();
+        rho_W_FR * pCap.pCap * (biot_data() - porosity_data.phi) * beta_p_SR();
 }
 
 void FW2Model::dEval(BiotData const& biot_data,
@@ -67,8 +67,8 @@ void FW2Model::dEval(BiotData const& biot_data,
         S_L * phase_transition_data.drho_C_LR_dp_GR;
 
     dfW_2.dp_GR = -porosity_data.phi * phase_transition_data.drho_C_GR_dp_GR -
-                  drho_C_FR_dp_GR * pCap() * (biot_data() - porosity_data.phi) *
-                      beta_p_SR();
+                  drho_C_FR_dp_GR * pCap.pCap *
+                      (biot_data() - porosity_data.phi) * beta_p_SR();
 
     double const dfW_2a_dp_cap =
         porosity_data.phi * (-phase_transition_data.drho_W_LR_dp_LR -
@@ -83,7 +83,7 @@ void FW2Model::dEval(BiotData const& biot_data,
         S_L * phase_transition_data.drho_W_LR_dp_LR;
 
     double const dfW_2b_dp_cap =
-        drho_W_FR_dp_cap * pCap() * (biot_data() - porosity_data.phi) *
+        drho_W_FR_dp_cap * pCap.pCap * (biot_data() - porosity_data.phi) *
             beta_p_SR() +
         rho_W_FR * (biot_data() - porosity_data.phi) * beta_p_SR();
 
@@ -98,9 +98,9 @@ void FW2Model::dEval(BiotData const& biot_data,
         porosity_data.phi * (phase_transition_data.drho_W_LR_dT -
                              phase_transition_data.drho_W_GR_dT);
     double const dfW_2b_dT =
-        drho_W_FR_dT * pCap() * (biot_data() - porosity_data.phi) *
+        drho_W_FR_dT * pCap.pCap * (biot_data() - porosity_data.phi) *
             beta_p_SR() -
-        rho_W_FR * pCap() * porosity_d_data.dphi_dT * beta_p_SR();
+        rho_W_FR * pCap.pCap * porosity_d_data.dphi_dT * beta_p_SR();
 
     dfW_2.dT = dfW_2a_dT - dfW_2b_dT;
 }
@@ -405,7 +405,8 @@ void FW4MWpCModel::eval(BiotData const& biot_data,
 
     fW_4_MWpC.ml =
         (porosity_data.phi * (rho_W_LR() - constituent_density_data.rho_W_GR) -
-         rho_W_FR * pCap() * (biot_data() - porosity_data.phi) * beta_p_SR()) *
+         rho_W_FR * pCap.pCap * (biot_data() - porosity_data.phi) *
+             beta_p_SR()) *
         (S_L - S_L_data_prev->S_L);
 }
 

@@ -12,7 +12,7 @@
 #include "Base.h"
 #include "Biot.h"
 #include "Bishops.h"
-#include "ProcessLib/ConstitutiveRelations/StressData.h"
+#include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::TH2M
@@ -37,7 +37,7 @@ struct TotalStressData
 template <int DisplacementDim>
 struct TotalStressModel
 {
-    void eval(ProcessLib::ConstitutiveRelations::StressData<
+    void eval(ProcessLib::ConstitutiveRelations::EffectiveStressData<
                   DisplacementDim> const& eff_stress_data,
               BiotData const& biot_data,
               BishopsData const& chi_S_L,

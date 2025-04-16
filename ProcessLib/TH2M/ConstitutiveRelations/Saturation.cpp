@@ -20,7 +20,7 @@ void SaturationModel::eval(SpaceTimeData const& x_t,
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables.capillary_pressure = p_cap();
+    variables.capillary_pressure = p_cap.pCap;
 
     auto const& medium = media_data.medium;
 
@@ -35,7 +35,7 @@ void SaturationModel::dEval(SpaceTimeData const& x_t,
 {
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
-    variables.capillary_pressure = p_cap();
+    variables.capillary_pressure = p_cap.pCap;
 
     auto const& medium = media_data.medium;
 

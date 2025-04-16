@@ -149,8 +149,8 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     MaterialPropertyLib::VariableArray variables;
 
     // primary variables
-    auto const pGR = p_GR();
-    auto const pCap = p_cap();
+    auto const pGR = p_GR.pG;
+    auto const pCap = p_cap.pCap;
     auto const T = T_data.T;
     variables.gas_phase_pressure = pGR;
     variables.capillary_pressure = pCap;

@@ -11,9 +11,11 @@
 
 #include "Base.h"
 #include "Biot.h"
+#include "Bishops.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 #include "Saturation.h"
+#include "SolidCompressibility.h"
 #include "SolidThermalExpansion.h"
 
 namespace ProcessLib::TH2M
@@ -42,43 +44,38 @@ struct PorosityData
     }
 };
 
+template <int DisplacementDim>
 struct PorosityModel
 {
-    void eval(SpaceTimeData const& x_t,
-              MediaData const& media_data,
+    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+              SaturationData const& S_L_data,
+              PrevState<SaturationData> const& S_L_prev_data,
+              CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
+              BishopsData const& chi_S_L,
+              PrevState<BishopsData> const& chi_S_L_prev,
+              SolidCompressibilityData const& solid_compressibility,
+              StrainData<DisplacementDim> const& eps_data,
+              MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&&
+                  eps_prev,
+              PrevState<PorosityData> const& porosity_prev_data,
               PorosityData& porosity_data) const;
 
-    void dEval(SpaceTimeData const& x_t,
-               MediaData const& media_data,
-               PorosityData const& porosity_data,
-               SaturationDataDeriv const& dS_L_dp_cap,
+    void dEval(SpaceTimeData const& x_t, MediaData const& media_data,
+               SaturationData const& S_L_data,
+               PrevState<SaturationData> const& S_L_prev_data,
+               CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
+               BishopsData const& chi_S_L,
+               PrevState<BishopsData> const& chi_S_L_prev,
+               SolidCompressibilityData const& solid_compressibility,
+               StrainData<DisplacementDim> const& eps_data,
+               MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&&
+                   eps_prev,
+               PrevState<PorosityData> const& porosity_prev_data,
                PorosityDerivativeData& porosity_d_data) const;
 };
 
-template <int DisplacementDim>
-struct PorosityModelNonConstantSolidPhaseVolumeFraction
-{
-    void eval(
-        SpaceTimeData const& x_t,
-        MediaData const& media_data,
-        BiotData const& biot,
-        StrainData<DisplacementDim> const& strain_data,
-        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
-        PorosityData& porosity_data) const;
-
-    void dEval(
-        SpaceTimeData const& x_t,
-        MediaData const& media_data,
-        PorosityData const& porosity_data,
-        SaturationDataDeriv const& dS_L_dp_cap,
-        BiotData const& biot,
-        SolidThermalExpansionData<DisplacementDim> const& s_therm_exp_data,
-        StrainData<DisplacementDim> const& strain_data,
-        PorosityDerivativeData& porosity_d_data) const;
-};
-
-extern template struct PorosityModelNonConstantSolidPhaseVolumeFraction<2>;
-extern template struct PorosityModelNonConstantSolidPhaseVolumeFraction<3>;
+extern template struct PorosityModel<2>;
+extern template struct PorosityModel<3>;
 
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

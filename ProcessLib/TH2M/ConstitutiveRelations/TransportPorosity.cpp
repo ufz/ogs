@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include "Porosity.h"
+#include "TransportPorosity.h"
 
 namespace ProcessLib::TH2M
 {
@@ -15,17 +15,18 @@ namespace ConstitutiveRelations
 {
 
 template <int DisplacementDim>
-void PorosityModel<DisplacementDim>::eval(
+void TransportPorosityModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     SaturationData const& S_L_data,
     PrevState<SaturationData> const& S_L_prev_data,
     CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
     BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
     SolidCompressibilityData const& solid_compressibility,
-    StrainData<DisplacementDim> const& eps_data,
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&& eps_prev,
-    PrevState<PorosityData> const& porosity_prev_data,
-    PorosityData& porosity_data) const
+    MechanicalStrainData<DisplacementDim> const& eps_m_data,
+    PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
+    PrevState<TransportPorosityData> const& transport_porosity_prev_data,
+    PorosityData const& poro_data,
+    TransportPorosityData& transport_porosity_data) const
 {
     static int const KelvinVectorSize =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -49,28 +50,33 @@ void PorosityModel<DisplacementDim>::eval(
         (1 - chi_S_L_prev->chi_S_L) * p_GR.pG_prev +
         chi_S_L_prev->chi_S_L * (p_GR.pG_prev - p_cap.pCap_prev);
 
-    variables.volumetric_strain = Invariants::trace(eps_data.eps);
-    variables_prev.volumetric_strain = Invariants::trace(eps_prev);
+    variables.volumetric_mechanical_strain =
+        Invariants::trace(eps_m_data.eps_m);
+    variables_prev.volumetric_mechanical_strain =
+        Invariants::trace(eps_m_prev_data->eps_m);
 
-    variables_prev.porosity = porosity_prev_data->phi;
-    porosity_data.phi =
-        media_data.medium.property(MaterialPropertyLib::PropertyType::porosity)
+    variables_prev.transport_porosity = transport_porosity_prev_data->phi;
+    variables.porosity = poro_data.phi;
+    transport_porosity_data.phi =
+        media_data.medium
+            .property(MaterialPropertyLib::PropertyType::transport_porosity)
             .template value<double>(variables, variables_prev, x_t.x, x_t.t,
                                     x_t.dt);
 }
 
 template <int DisplacementDim>
-void PorosityModel<DisplacementDim>::dEval(
+void TransportPorosityModel<DisplacementDim>::dEval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     SaturationData const& S_L_data,
     PrevState<SaturationData> const& S_L_prev_data,
     CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
     BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
     SolidCompressibilityData const& solid_compressibility,
-    StrainData<DisplacementDim> const& eps_data,
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const&& eps_prev,
-    PrevState<PorosityData> const& porosity_prev_data,
-    PorosityDerivativeData& porosity_d_data) const
+    MechanicalStrainData<DisplacementDim> const& eps_m_data,
+    PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
+    PrevState<TransportPorosityData> const& transport_porosity_prev_data,
+    PorosityData const& poro_data,
+    TransportPorosityDerivativeData& transport_porosity_d_data) const
 {
     static int const KelvinVectorSize =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
@@ -94,25 +100,31 @@ void PorosityModel<DisplacementDim>::dEval(
         (1 - chi_S_L_prev->chi_S_L) * p_GR.pG_prev +
         chi_S_L_prev->chi_S_L * (p_GR.pG_prev - p_cap.pCap_prev);
 
-    variables.volumetric_strain = Invariants::trace(eps_data.eps);
-    variables_prev.volumetric_strain = Invariants::trace(eps_prev);
+    variables.volumetric_mechanical_strain =
+        Invariants::trace(eps_m_data.eps_m);
+    variables_prev.volumetric_mechanical_strain =
+        Invariants::trace(eps_m_prev_data->eps_m);
 
-    variables_prev.porosity = porosity_prev_data->phi;
+    variables_prev.transport_porosity = transport_porosity_prev_data->phi;
+    variables.porosity = poro_data.phi;
 
-    auto const& mpl_porosity =
-        media_data.medium[MaterialPropertyLib::PropertyType::porosity];
+    auto const& mpl_transport_porosity =
+        media_data
+            .medium[MaterialPropertyLib::PropertyType::transport_porosity];
 
-    porosity_d_data.dphi_dT = mpl_porosity.template dValue<double>(
-        variables, variables_prev, MaterialPropertyLib::Variable::temperature,
-        x_t.x, x_t.t, x_t.dt);
+    transport_porosity_d_data.dphi_dT =
+        mpl_transport_porosity.template dValue<double>(
+            variables, variables_prev,
+            MaterialPropertyLib::Variable::temperature, x_t.x, x_t.t, x_t.dt);
 
-    porosity_d_data.dphi_L_dp_cap = mpl_porosity.template dValue<double>(
-        variables, variables_prev,
-        MaterialPropertyLib::Variable::capillary_pressure, x_t.x, x_t.t,
-        x_t.dt);
+    transport_porosity_d_data.dphi_L_dp_cap =
+        mpl_transport_porosity.template dValue<double>(
+            variables, variables_prev,
+            MaterialPropertyLib::Variable::capillary_pressure, x_t.x, x_t.t,
+            x_t.dt);
 }
 
-template struct PorosityModel<2>;
-template struct PorosityModel<3>;
+template struct TransportPorosityModel<2>;
+template struct TransportPorosityModel<3>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
