@@ -36,21 +36,18 @@ namespace ApplicationUtils
 std::size_t Partition::numberOfMeshItems(
     MeshLib::MeshItemType const item_type) const
 {
-    if (item_type == MeshLib::MeshItemType::Node)
+    switch (item_type)
     {
-        return nodes.size();
+        case MeshLib::MeshItemType::Node:
+            return nodes.size();
+        case MeshLib::MeshItemType::Cell:
+            return regular_elements.size() + ghost_elements.size();
+        case MeshLib::MeshItemType::IntegrationPoint:
+            return number_of_integration_points;
+        default:
+            OGS_FATAL("Unsupported MeshItemType {:s}.",
+                      MeshLib::toString(item_type));
     }
-
-    if (item_type == MeshLib::MeshItemType::Cell)
-    {
-        return regular_elements.size() + ghost_elements.size();
-    }
-
-    if (item_type == MeshLib::MeshItemType::IntegrationPoint)
-    {
-        return number_of_integration_points;
-    }
-    OGS_FATAL("Mesh items other than nodes and cells are not supported.");
 }
 
 std::ostream& Partition::writeNodes(
