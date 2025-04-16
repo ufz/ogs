@@ -30,12 +30,7 @@ namespace MeshLib
 class NodeAdjacencyTable final
 {
 public:
-    explicit NodeAdjacencyTable(Mesh const& mesh)
-    {
-        _data.resize(mesh.getNodes().size());
-
-        createTable(mesh);
-    }
+    explicit NodeAdjacencyTable(Mesh const& mesh) { createTable(mesh); }
 
     std::size_t size() const { return _data.size(); }
 
@@ -52,17 +47,12 @@ public:
 
     void createTable(Mesh const& mesh)
     {
-        auto const& nodes = mesh.getNodes();
-        if (_data.size() != nodes.size())
-        {
-            _data.resize(nodes.size());
-        }
+        _data.resize(mesh.getNumberOfNodes());
 
         auto const& connections =
             MeshLib::calculateNodesConnectedByElements(mesh);
-        for (auto const* node : nodes)
+        for (auto const node_id : mesh.getNodes() | MeshLib::views::ids)
         {
-            auto const node_id = node->getID();
             auto const& connected_nodes = connections[node_id];
             std::vector<std::size_t>& row = _data[node_id];
             row.reserve(connected_nodes.size());

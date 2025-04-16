@@ -270,6 +270,8 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
                      project_directory);
     }
 
+    if (!geoObjects.getPoints().empty() || !geoObjects.getPolylines().empty() ||
+        !geoObjects.getSurfaces().empty())
     {  // generate meshes from geometries
         std::unique_ptr<MeshGeoToolsLib::SearchLength> search_length_algorithm =
             MeshGeoToolsLib::createSearchLengthAlgorithm(config, *meshes[0]);
@@ -838,12 +840,9 @@ void ProjectData::parseProcesses(
             {
                 OGS_FATAL(
                     "The 'dimension' tag has been removed in the merge-request "
-                    "!4766."
-                    "The dimension is now taken from the main mesh and the tag "
-                    "must be"
-                    "removed. There is a python script in the merge-request "
-                    "description"
-                    "for automatic conversion.");
+                    "!4766. The dimension is now taken from the main mesh and "
+                    "the tag must be removed. There is a python script in the "
+                    "merge-request description for automatic conversion.");
             }
             switch (_mesh_vec[0]->getDimension())
             {

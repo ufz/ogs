@@ -63,7 +63,7 @@ void checkParametersOfDirichletBoundaryCondition(
     DBUG(
         "Found {:d} nodes for Dirichlet BCs for the variable {:d} and "
         "component {:d}",
-        bc_mesh.getNodes().size(), variable_id, component_id);
+        bc_mesh.getNumberOfNodes(), variable_id, component_id);
 }
 
 void getEssentialBCValuesLocal(
