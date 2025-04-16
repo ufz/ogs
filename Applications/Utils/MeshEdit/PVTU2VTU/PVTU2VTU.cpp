@@ -296,7 +296,10 @@ MeshLib::Node* getExistingNodeFromOctTree(
     auto const eps =
         std::numeric_limits<double>::epsilon() * extent.squaredNorm();
     Eigen::Vector3d const min = node.asEigenVector3d().array() - eps;
-    Eigen::Vector3d const max = node.asEigenVector3d().array() + eps;
+    auto constexpr dir = std::numeric_limits<double>::max();
+    Eigen::Vector3d const max = {std::nextafter(node[0] + eps, dir),
+                                 std::nextafter(node[1] + eps, dir),
+                                 std::nextafter(node[2] + eps, dir)};
     oct_tree.getPointsInRange(min, max, query_nodes);
 
     if (query_nodes.empty())
