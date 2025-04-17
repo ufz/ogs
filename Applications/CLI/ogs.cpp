@@ -64,6 +64,59 @@ void signalHandler(int signum)
     exit(signum);
 }
 
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+#include "BaseLib/MPI.h"
+#include "spdlog/sinks/null_sink.h"
+
+void initializeLogger(bool all_ranks_log)
+{
+#if defined(USE_PETSC)
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    if (all_ranks_log)
+    {
+        if (world_size > 1)
+            spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
+        // else untouched
+    }
+    else  // only rank 0 logs
+    {
+        // set_pattern is untouched
+        spdlog::drop_all();
+        if (mpi_rank > 0)
+        {
+            BaseLib::console = spdlog::create<spdlog::sinks::null_sink_st>(
+                "ogs");  // do not log
+        }
+        else  // rank 0
+        {
+            auto console = BaseLib::console =
+                spdlog::stdout_color_st("ogs");  // st for performance
+        }
+    }
+
+    {
+        auto const start_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(start_time);
+        INFO("OGS started on {:s} with {:d} MPI processes.", time_str,
+             world_size);
+    }
+
+#else  // defined(USE_PETSC)
+
+    {
+        auto const start_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(start_time);
+        INFO("OGS started on {:s} with 1 process.", time_str);
+    }
+
+#endif
+}
+
 int main(int argc, char* argv[])
 {
     CommandLineArguments cli_arg = parseCommandLineArguments(argc, argv);
@@ -73,7 +126,12 @@ int main(int argc, char* argv[])
     signal(SIGTERM, signalHandler);  // pkill -SIGTERM <process_id> , It is NOT
                                      // possible to catch SIGKILL
 
+    // Initialize MPI
+    // also in python hook
+    // check tools
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
     BaseLib::initOGSLogger(cli_arg.log_level);
+    initializeLogger(cli_arg.log_parallel);
 
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
     if (cli_arg.enable_fpe_is_set)

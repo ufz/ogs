@@ -15,6 +15,7 @@
 #include <tclap/CmdLine.h>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
 

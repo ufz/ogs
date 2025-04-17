@@ -36,12 +36,6 @@ Simulation::Simulation(int argc, char* argv[])
 #if defined(USE_PETSC)
     controller->Initialize(&argc, &argv, 1);
     vtkMPIController::SetGlobalController(controller);
-
-    {  // Can be called only after MPI_INIT.
-        int mpi_rank;
-        MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
-        spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
-    }
 #endif
 }
 
