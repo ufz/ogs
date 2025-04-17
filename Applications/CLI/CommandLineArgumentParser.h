@@ -24,6 +24,7 @@ struct CommandLineArguments final
     std::string mesh_dir;
     std::string script_dir;
     std::string log_level;
+    bool log_parallel;
     bool write_prj;
     bool nonfatal;
     bool reference_path_is_set;
