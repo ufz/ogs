@@ -140,16 +140,11 @@ int main(int argc, char* argv[])
     }
 #endif  // _WIN32
 
-    INFO("This is OpenGeoSys-6 version {:s}.",
-         GitInfoLib::GitInfo::ogs_version);
-
+    INFO(
+        "This is OpenGeoSys-6 version {:s}. Log version: {:d}, Log level: "
+        "{:s}.",
+        GitInfoLib::GitInfo::ogs_version, 2, cli_arg.log_level);
     BaseLib::createOutputDirectory(cli_arg.outdir);
-
-    {
-        auto const start_time = std::chrono::system_clock::now();
-        auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on {:s}.", time_str);
-    }
 
     std::optional<ApplicationsLib::TestDefinition> test_definition{
         std::nullopt};
