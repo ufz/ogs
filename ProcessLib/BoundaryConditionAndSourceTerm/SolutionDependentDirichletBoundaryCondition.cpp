@@ -55,7 +55,7 @@ SolutionDependentDirichletBoundaryCondition::
     _solution_dependent_bc = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(bc_mesh), property_name,
         MeshLib::MeshItemType::Node, 1);
-    _solution_dependent_bc->resize(bc_mesh.getNumberOfNodes());
+    assert(_solution_dependent_bc->size() == bc_mesh.getNumberOfNodes());
 
     ParameterLib::SpatialPosition pos;
 
