@@ -32,10 +32,8 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
         MeshLib::copyElementVector(mesh.getElements(), vec_new_nodes);
 
     auto const material_ids = materialIDs(mesh);
-    int const max_matID =
-        material_ids
-            ? *(std::max_element(begin(*material_ids), end(*material_ids)))
-            : 0;
+    assert(material_ids != nullptr);
+    int const max_matID = material_ids ? ranges::max(*material_ids) : 0;
 
     auto const edgeLengths = minMaxEdgeLength(mesh.getElements());
     double const min_edge = edgeLengths.first;

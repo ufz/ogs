@@ -20,6 +20,9 @@
 #include <numeric>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/transform.hpp>
+#include <range/v3/numeric/accumulate.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -76,9 +79,7 @@ bool createPropertyVector(
     {
         auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
             merged_mesh, pv_name, item_type, pv_num_components);
-        new_pv->resize(pv->size());
-
-        std::copy(pv->begin(), pv->end(), new_pv->begin());
+        new_pv->assign(pv->begin(), pv->end());
 
         return true;
     }
@@ -140,17 +141,19 @@ bool createPropertyVector(
             merged_mesh, pv_name, item_type, pv_num_components);
 
         // Count the integration points
-        std::size_t counter = 0;
         auto const ip_meta_data =
             MeshLib::getIntegrationPointMetaData(properties, pv_name);
 
-        for (auto const element : merged_mesh.getElements())
+        auto number_of_integration_points = [&](auto const* element)
         {
-            int const number_of_integration_points =
-                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
-                                                                  *element);
-            counter += number_of_integration_points;
-        }
+            return MeshToolsLib::getNumberOfElementIntegrationPoints(
+                ip_meta_data, *element);
+        };
+
+        std::size_t const counter = ranges::accumulate(
+            merged_mesh.getElements() |
+                ranges::views::transform(number_of_integration_points),
+            std::size_t{0});
         new_pv->resize(counter * pv_num_components);
 
         auto const global_ip_offsets =
@@ -252,18 +255,23 @@ getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
     {
         MeshLib::Properties const& properties = mesh->getProperties();
 
-        std::vector<unsigned char> const& ghost_id_vector =
-            *(properties.getPropertyVector<unsigned char>("vtkGhostType"));
+        auto const* const ghost_id_vector =
+            properties.getPropertyVector<unsigned char>("vtkGhostType");
+        assert(ghost_id_vector);
 
         auto const& mesh_elements = mesh->getElements();
 
         auto const last_element_id_of_previous_partition =
             regular_elements.size();
 
-        std::copy_if(mesh_elements.begin(), mesh_elements.end(),
-                     std::back_inserter(regular_elements),
-                     [&ghost_id_vector](auto const element)
-                     { return ghost_id_vector[element->getID()] == 0; });
+        auto is_regular_element = [&](MeshLib::Element const* element)
+        { return (*ghost_id_vector)[element->getID()] == 0; };
+
+        auto regular_mesh_elements =
+            mesh_elements | ranges::views::filter(is_regular_element);
+        regular_elements.insert(regular_elements.end(),
+                                regular_mesh_elements.begin(),
+                                regular_mesh_elements.end());
 
         for (auto element_id = last_element_id_of_previous_partition;
              element_id < regular_elements.size();

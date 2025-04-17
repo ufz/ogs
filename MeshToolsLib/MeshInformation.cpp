@@ -14,6 +14,11 @@
 
 #include "MeshInformation.h"
 
+#include <range/v3/action/sort.hpp>
+#include <range/v3/action/unique.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/unique.hpp>
+
 #include "MeshLib/Elements/Element.h"
 #include "MeshQuality/MeshValidation.h"
 
@@ -167,19 +172,10 @@ std::vector<int> MeshInformation::getMaterialIDs(const MeshLib::Mesh& mesh)
         INFO("No MaterialIDs were found.");
         return {};
     }
-    std::vector<int> unique_matids = {};
 
-    for (auto matid : *matids)
-    {
-        if (std::find(unique_matids.begin(), unique_matids.end(), matid) ==
-            unique_matids.end())
-        {
-            unique_matids.push_back(matid);
-        }
-    }
-    std::sort(unique_matids.begin(), unique_matids.end());
-
-    return unique_matids;
+    return *matids | ranges::views::unique | ranges::to<std::vector> |
+           ranges::actions::sort | ranges::actions::unique |
+           ranges::to<std::vector>;
 }
 
 }  // namespace MeshToolsLib

@@ -114,10 +114,10 @@ int main(int argc, char* argv[])
 
     std::vector<int> const tmp_ids =
         VoxelGridFromMesh::assignCellIds(mesh, min, dims, cellsize);
-    std::vector<int>& cell_ids =
-        *grid->getProperties().createNewPropertyVector<int>(
-            VoxelGridFromMesh::cell_id_name, MeshLib::MeshItemType::Cell, 1);
-    std::copy(tmp_ids.cbegin(), tmp_ids.cend(), std::back_inserter(cell_ids));
+    auto* const cell_ids = grid->getProperties().createNewPropertyVector<int>(
+        VoxelGridFromMesh::cell_id_name, MeshLib::MeshItemType::Cell, 1);
+    assert(cell_ids);
+    cell_ids->assign(tmp_ids.begin(), tmp_ids.end());
 
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
     {

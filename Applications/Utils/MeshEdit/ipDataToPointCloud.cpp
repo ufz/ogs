@@ -214,7 +214,7 @@ void copyDoubleValuedFieldDataToPointCloud(MeshLib::Properties const& props_in,
         auto* prop_out = props_out.createNewPropertyVector<double>(
             prop_name, MeshLib::MeshItemType::Node, num_comp);
 
-        static_cast<std::vector<double>&>(*prop_out) = *prop_in_double;
+        prop_out->assign(prop_in_double->begin(), prop_in_double->end());
     }
 }
 

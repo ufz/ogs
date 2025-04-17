@@ -21,7 +21,7 @@
 #include "MeshLib/Node.h"
 
 std::vector<std::size_t> generateBulkIDsReverseMapping(
-    std::vector<std::size_t> const& bulk_ids)
+    std::span<std::size_t const> bulk_ids)
 {
     std::vector<std::size_t> parallel_to_sequential_node_ids(bulk_ids.size());
 
@@ -36,7 +36,8 @@ std::vector<std::size_t> generateBulkIDsReverseMapping(
 
 template <typename T>
 bool reorderProperty(MeshLib::PropertyVector<T> const& original_pv,
-                     std::vector<std::size_t> const& bulk_ids,
+                     std::span<std::size_t const>
+                         bulk_ids,
                      MeshLib::PropertyVector<T>& reordered_pv)
 {
     if (original_pv.getNumberOfGlobalComponents() !=
@@ -65,7 +66,8 @@ bool reorderProperty(MeshLib::PropertyVector<T> const& original_pv,
 
 template <typename T>
 bool reorderProperty(MeshLib::Properties const& original_properties,
-                     std::vector<std::size_t> const& bulk_ids,
+                     std::span<std::size_t const>
+                         bulk_ids,
                      std::string const& property_name,
                      MeshLib::Properties& reordered_properties)
 {
@@ -81,7 +83,8 @@ bool reorderProperty(MeshLib::Properties const& original_properties,
 }
 
 void reorderProperties(MeshLib::Properties const& original_properties,
-                       std::vector<std::size_t> const& bulk_ids,
+                       std::span<std::size_t const>
+                           bulk_ids,
                        std::vector<std::string> const& property_names,
                        MeshLib::Properties& reordered_properties)
 {
@@ -218,8 +221,8 @@ int main(int argc, char* argv[])
     auto const node_property_names =
         mesh->getProperties().getPropertyVectorNames(
             MeshLib::MeshItemType::Node);
-    reorderProperties(original_properties, *bulk_node_ids, node_property_names,
-                      properties);
+    reorderProperties(original_properties, std::span{*bulk_node_ids},
+                      node_property_names, properties);
 
     // element based properties
     auto const element_property_names =

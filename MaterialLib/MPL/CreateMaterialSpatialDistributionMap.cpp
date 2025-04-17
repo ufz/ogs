@@ -21,10 +21,7 @@ MaterialSpatialDistributionMap createMaterialSpatialDistributionMap(
 {
     auto const material_ids = materialIDs(mesh);
 
-    int const max_material_id =
-        !material_ids
-            ? 0
-            : *std::max_element(begin(*material_ids), end(*material_ids));
+    int const max_material_id = !material_ids ? 0 : ranges::max(*material_ids);
 
     if (!material_ids && media.size() > 1)
     {
