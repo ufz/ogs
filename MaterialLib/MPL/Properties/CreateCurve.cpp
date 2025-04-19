@@ -10,6 +10,8 @@
 
 #include "CreateCurve.h"
 
+#include <unordered_set>
+
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "Curve.h"
@@ -44,9 +46,19 @@ std::unique_ptr<Curve> createCurve(
         //! \ogs_file_param{properties__property__Curve__independent_variable}
         config.getConfigParameter<std::string>("independent_variable");
     DBUG("Using independent_variable '{:s}'", independent_variable_string);
-    auto const independent_variable =
-        MaterialPropertyLib::convertStringToVariable(
+
+    static const std::unordered_set<std::string> filter_not_variables = {
+        "t", "x", "y", "z"};
+    MaterialPropertyLib::StringOrVariable independent_variable;
+    if (filter_not_variables.contains(independent_variable_string))
+    {
+        independent_variable = independent_variable_string;
+    }
+    else
+    {
+        independent_variable = MaterialPropertyLib::convertStringToVariable(
             independent_variable_string);
+    }
 
     return std::make_unique<Curve>(
         std::move(property_name), independent_variable, curve);

@@ -15,6 +15,7 @@
 
 namespace MaterialPropertyLib
 {
+using StringOrVariable = std::variant<std::string, Variable>;
 /// Definition of a curve property, i.e., a piecewise linear property given by
 /// pairs of supporting point and value. The pairs are specified by a curve.
 /// The current implementation accepts only the double datatype defined in
@@ -24,7 +25,7 @@ class Curve final : public Property
 public:
     /// This constructor allows to specify the independent variable of the
     /// curve and the curve itself, i.e., a piecewise linear function.
-    Curve(std::string name, Variable const independent_variable,
+    Curve(std::string name, StringOrVariable const independent_variable,
           MathLib::PiecewiseLinearInterpolation const& curve);
 
     /// This method computes the value of a property depending linearly on
@@ -43,7 +44,7 @@ public:
 
 private:
     /// The variable type that the curve property depends on.
-    Variable const independent_variable_;
+    StringOrVariable const independent_variable_;
     /// The curve used by the property.
     MathLib::PiecewiseLinearInterpolation const& curve_;
 };

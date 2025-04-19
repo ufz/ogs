@@ -13,7 +13,9 @@
 #include <numeric>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
+#include <ranges>
 #include <typeinfo>
+#include <unordered_set>
 
 #include "BaseLib/Algorithm.h"
 #include "MathLib/KelvinVector.h"
@@ -76,6 +78,8 @@ public:
     /// Stores values for evaluation of vectorial quantities. Needed for
     /// constant pointers for exprtk.
     mutable VariableArray variable_array;
+
+    bool spatial_position_is_required = false;
 };
 
 template <int D>
@@ -83,37 +87,62 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
     std::vector<std::string> const& variables)
 {
     exprtk::symbol_table<double> symbol_table;
+    symbol_table.add_constants();
+
+    symbol_table.create_variable("t");
 
     for (auto const& v : variables)
     {
-        auto add_scalar = [&v, &symbol_table](double& value)
-        { symbol_table.add_variable(v, value); };
+        if (v == "t")
+        {
+            symbol_table.create_variable("t");
+        }
+        else if (v == "x")
+        {
+            symbol_table.create_variable("x");
+            spatial_position_is_required = true;
+        }
+        else if (v == "y")
+        {
+            symbol_table.create_variable("y");
+            spatial_position_is_required = true;
+        }
+        else if (v == "z")
+        {
+            symbol_table.create_variable("z");
+            spatial_position_is_required = true;
+        }
+        else
+        {
+            auto add_scalar = [&v, &symbol_table](double& value)
+            { symbol_table.add_variable(v, value); };
 
-        auto add_vector =
-            [&v, &symbol_table](double* ptr, std::size_t const size)
-        { symbol_table.add_vector(v, ptr, size); };
+            auto add_vector =
+                [&v, &symbol_table](double* ptr, std::size_t const size)
+            { symbol_table.add_vector(v, ptr, size); };
 
-        auto add_any_variable = BaseLib::Overloaded{
-            [&add_scalar](VariableArray::Scalar* address)
-            { add_scalar(*address); },
-            [&add_vector](VariableArray::KelvinVector* address)
-            {
-                auto constexpr size =
-                    MathLib::KelvinVector::kelvin_vector_dimensions(D);
-                auto& result =
-                    address->template emplace<Eigen::Matrix<double, size, 1>>();
-                add_vector(result.data(), size);
-            },
-            [&add_vector](VariableArray::DeformationGradient* address)
-            {
-                auto constexpr size = MathLib::VectorizedTensor::size(D);
-                auto& result =
-                    address->template emplace<Eigen::Matrix<double, size, 1>>();
-                add_vector(result.data(), size);
-            }};
+            auto add_any_variable = BaseLib::Overloaded{
+                [&add_scalar](VariableArray::Scalar* address)
+                { add_scalar(*address); },
+                [&add_vector](VariableArray::KelvinVector* address)
+                {
+                    auto constexpr size =
+                        MathLib::KelvinVector::kelvin_vector_dimensions(D);
+                    auto& result = address->template emplace<
+                        Eigen::Matrix<double, size, 1>>();
+                    add_vector(result.data(), size);
+                },
+                [&add_vector](VariableArray::DeformationGradient* address)
+                {
+                    auto constexpr size = MathLib::VectorizedTensor::size(D);
+                    auto& result = address->template emplace<
+                        Eigen::Matrix<double, size, 1>>();
+                    add_vector(result.data(), size);
+                }};
 
-        Variable const variable = convertStringToVariable(v);
-        variable_array.visitVariable(add_any_variable, variable);
+            Variable const variable = convertStringToVariable(v);
+            variable_array.visitVariable(add_any_variable, variable);
+        }
     }
     return symbol_table;
 }
@@ -242,9 +271,10 @@ static void updateVariableArrayValues(std::vector<Variable> const& variables,
 static PropertyDataType evaluateExpressions(
     std::vector<Variable> const& variables,
     VariableArray const& new_variable_array,
+    ParameterLib::SpatialPosition const& pos, double const t,
     std::vector<exprtk::expression<double>> const& expressions,
-    VariableArray& variable_array,
-    std::mutex& mutex)
+    VariableArray& variable_array, std::mutex& mutex,
+    bool const spatial_position_is_required)
 {
     std::vector<double> result(expressions.size());
 
@@ -253,8 +283,30 @@ static PropertyDataType evaluateExpressions(
         updateVariableArrayValues(variables, new_variable_array,
                                   variable_array);
 
-        std::transform(begin(expressions), end(expressions), begin(result),
-                       [](auto const& e) { return e.value(); });
+        std::transform(
+            begin(expressions), end(expressions), begin(result),
+            [t, &pos, spatial_position_is_required](auto const& e)
+            {
+                auto& symbol_table = e.get_symbol_table();
+                symbol_table.get_variable("t")->ref() = t;
+
+                if (spatial_position_is_required)
+                {
+                    if (!pos.getCoordinates())
+                    {
+                        OGS_FATAL(
+                            "FunctionParameter: The spatial position "
+                            "has to be set by "
+                            "coordinates.");
+                    }
+                    auto const coords = pos.getCoordinates().value();
+                    symbol_table.get_variable("x")->ref() = coords[0];
+                    symbol_table.get_variable("y")->ref() = coords[1];
+                    symbol_table.get_variable("z")->ref() = coords[2];
+                }
+
+                return e.value();
+            });
     }
 
     switch (result.size())
@@ -330,10 +382,16 @@ Function::Function(
 
     auto const variables =
         collectVariables(value_string_expressions, dvalue_string_expressions);
+
+    // filter the strings unrelated to time or spatial position
+    static const std::unordered_set<std::string> filter_not_variables = {
+        "t", "x", "y", "z"};
     variables_ =
         variables |
-        ranges::views::transform([](std::string const& s)
-                                 { return convertStringToVariable(s); }) |
+        std::views::filter([](const std::string& s)
+                           { return !filter_not_variables.contains(s); }) |
+        std::views::transform([](std::string const& s)
+                              { return convertStringToVariable(s); }) |
         ranges::to<std::vector>;
 
     impl2_ = std::make_unique<Implementation<2>>(
@@ -361,23 +419,24 @@ Function::getImplementationForDimensionOfVariableArray(
 }
 
 PropertyDataType Function::value(VariableArray const& variable_array,
-                                 ParameterLib::SpatialPosition const& /*pos*/,
-                                 double const /*t*/, double const /*dt*/) const
+                                 ParameterLib::SpatialPosition const& pos,
+                                 double const t, double const /*dt*/) const
 {
     return std::visit(
         [&](auto&& impl_ptr)
         {
-            return evaluateExpressions(variables_, variable_array,
+            return evaluateExpressions(variables_, variable_array, pos, t,
                                        impl_ptr->value_expressions,
-                                       impl_ptr->variable_array, mutex_);
+                                       impl_ptr->variable_array, mutex_,
+                                       impl_ptr->spatial_position_is_required);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
 }
 
 PropertyDataType Function::dValue(VariableArray const& variable_array,
                                   Variable const variable,
-                                  ParameterLib::SpatialPosition const& /*pos*/,
-                                  double const /*t*/, double const /*dt*/) const
+                                  ParameterLib::SpatialPosition const& pos,
+                                  double const t, double const /*dt*/) const
 {
     return std::visit(
         [&](auto&& impl_ptr)
@@ -396,8 +455,10 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                     variable_enum_to_string[static_cast<int>(variable)], name_);
             }
 
-            return evaluateExpressions(variables_, variable_array, it->second,
-                                       impl_ptr->variable_array, mutex_);
+            return evaluateExpressions(variables_, variable_array, pos, t,
+                                       it->second, impl_ptr->variable_array,
+                                       mutex_,
+                                       impl_ptr->spatial_position_is_required);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
 }

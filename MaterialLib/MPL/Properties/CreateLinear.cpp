@@ -10,6 +10,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <unordered_set>
+
 #include "BaseLib/ConfigTree.h"
 #include "Linear.h"
 
@@ -46,9 +48,17 @@ std::unique_ptr<Linear> createLinear(BaseLib::ConfigTree const& config)
             //! \ogs_file_param{properties__property__Linear__independent_variable__slope}
             independent_variable_config.getConfigParameter<double>("slope");
 
-        MaterialPropertyLib::Variable ivt =
-            MaterialPropertyLib::convertStringToVariable(variable_name);
-
+        static const std::unordered_set<std::string> filter_not_variables = {
+            "t", "x", "y", "z"};
+        MaterialPropertyLib::StringOrVariable ivt;
+        if (!filter_not_variables.contains(variable_name))
+        {
+            ivt = MaterialPropertyLib::convertStringToVariable(variable_name);
+        }
+        else
+        {
+            ivt = variable_name;
+        }
         MaterialPropertyLib::IndependentVariable iv{ivt, reference_condition,
                                                     slope};
 

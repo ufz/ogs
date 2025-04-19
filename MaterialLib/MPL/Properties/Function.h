@@ -18,7 +18,8 @@ namespace MaterialPropertyLib
 {
 /// A function property defined by mathematical expression. For the evaluation
 /// of the expressions the exprtk library is used. In the expressions all
-/// variables defined in MaterialPropertyLib::Variable enum can be used.
+/// variables defined in MaterialPropertyLib::Variable enum, t for time and
+/// x,y,z for the spatial position can be used.
 ///
 /// \warning The evaluation calls are not to be used in parallel (openMP),
 /// because the values' updates are using the same space.

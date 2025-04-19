@@ -10,6 +10,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <unordered_set>
+
 #include "BaseLib/ConfigTree.h"
 #include "Exponential.h"
 
@@ -48,8 +50,18 @@ std::unique_ptr<Exponential> createExponential(
         //! \ogs_file_param{properties__property__Exponential__offset}
         config.getConfigParameter<double>("offset");
 
-    MaterialPropertyLib::Variable exp_data_type =
-        MaterialPropertyLib::convertStringToVariable(variable_name);
+    static const std::unordered_set<std::string> filter_not_variables = {
+        "t", "x", "y", "z"};
+    MaterialPropertyLib::StringOrVariable exp_data_type;
+    if (filter_not_variables.contains(variable_name))
+    {
+        exp_data_type = variable_name;
+    }
+    else
+    {
+        exp_data_type =
+            MaterialPropertyLib::convertStringToVariable(variable_name);
+    }
 
     MaterialPropertyLib::ExponentData const exp_data{
         exp_data_type, reference_condition, factor};
