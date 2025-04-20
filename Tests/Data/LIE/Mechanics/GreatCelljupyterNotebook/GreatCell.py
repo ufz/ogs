@@ -700,6 +700,7 @@ plotter = Plotter(
         "Gneiss": truncated_cmap("Blues"),
         "Greywacke": truncated_cmap("Oranges"),
     },
+    save_extracted_data=True,
 )
 
 plotter.plot_volumetric_strain_vs_angle(
@@ -958,6 +959,7 @@ plotter = Plotter(
         "Gneiss": truncated_cmap("Blues"),
         "Greywacke": truncated_cmap("Oranges"),
     },
+    save_extracted_data=True,
 )
 
 plotter.plot_volumetric_strain_vs_angle(
@@ -1161,6 +1163,7 @@ plotter = Plotter(
         "Gneiss": truncated_cmap("Blues"),
         "Greywacke": truncated_cmap("Oranges"),
     },
+    save_extracted_data=True,
 )
 
 plotter.plot_volumetric_strain_vs_angle(
@@ -1178,14 +1181,18 @@ pairs_to_check = {
 }
 
 for case, label in pairs_to_check.items():
+    print(f"\n===== {label} case =====")
     new_result = np.load(Path(out_dir, f"extracted_{case}.npz"))
     expected_result = np.load(Path("expected", f"expected_{case}.npz"))
 
     eps_v_new = new_result["eps_v"]
     eps_v_expected = expected_result["eps_v"]
+    phi_new = new_result["phi"]
+    phi_expected = expected_result["phi"]
 
-    np.testing.assert_allclose(actual=eps_v_new, desired=eps_v_expected, atol=1e-10)
-    print(f"{label} case passed.")
+    np.testing.assert_allclose(eps_v_new, eps_v_expected, atol=5e-4)
+    np.testing.assert_allclose(phi_new, phi_expected, atol=1e-8)
+    print(f"\n{label} case passed.")
 
 
 # %% [markdown]

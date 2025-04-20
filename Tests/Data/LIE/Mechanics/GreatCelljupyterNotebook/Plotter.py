@@ -9,9 +9,15 @@ from matplotlib import cm as colormaps
 
 class Plotter:
     def __init__(
-        self, output_dir, colorbar_opts=None, markers=None, material_cmaps=None
+        self,
+        output_dir,
+        colorbar_opts=None,
+        markers=None,
+        material_cmaps=None,
+        save_extracted_data=False,
     ):
         self.output_dir = output_dir
+        self.save_extracted_data = save_extracted_data
         self.colorbar_opts = colorbar_opts or {
             "u": {"vmin": 0, "vmax": 0.25, "cmap": "Greens"},
             "stress": {"vmin": -20, "vmax": 10, "cmap": "coolwarm"},
@@ -159,6 +165,13 @@ class Plotter:
                     phi, eps_v = self.sorted_angles_eps_trace(vtu_file)
                 except Exception:
                     continue
+
+                if getattr(self, "save_extracted_data", False):
+                    save_path = (
+                        Path(self.output_dir or ".")
+                        / f"extracted_{Path(vtu_file).stem}.npz"
+                    )
+                    np.savez(save_path, phi=phi, eps_v=eps_v)
 
                 filename = Path(vtu_file).name.replace(".pvd", "")
                 parts = filename.split("_")
