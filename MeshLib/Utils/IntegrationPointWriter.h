@@ -14,6 +14,8 @@
 #include <string>
 #include <vector>
 
+#include "IntegrationPointMetaData.h"
+
 #pragma once
 
 namespace MeshLib
@@ -115,15 +117,6 @@ void addIntegrationPointDataToMesh(
     MeshLib::Mesh& mesh,
     std::vector<std::unique_ptr<IntegrationPointWriter>> const&
         integration_point_writer);
-
-/// Description of the stored integration point data providing additional
-/// information for reconstruction and post-processing.
-struct IntegrationPointMetaData
-{
-    std::string const name;
-    int const n_components;
-    int const integration_order;
-};
 
 /// Returns integration point meta data for the given field name.
 ///

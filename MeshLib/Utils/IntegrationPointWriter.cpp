@@ -10,13 +10,10 @@
 
 #include "IntegrationPointWriter.h"
 
-#include <nlohmann/json.hpp>
 #include <range/v3/view/join.hpp>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
-
-using nlohmann::json;
 
 /// Adds the integration point data and creates meta data for it.
 ///
@@ -47,42 +44,15 @@ static void addIntegrationPointMetaData(
     MeshLib::Mesh& mesh,
     std::vector<MeshLib::IntegrationPointMetaData> const& meta_data)
 {
-    json json_meta_data;
-    json_meta_data["integration_point_arrays"] = json::array();
-
-    for (auto const& md : meta_data)
-    {
-        json_meta_data["integration_point_arrays"].push_back(
-            {{"name", md.name},
-             {"number_of_components", md.n_components},
-             {"integration_order", md.integration_order}});
-    }
-
     // Store the field data.
-    std::string const json_string = json_meta_data.dump();
+    std::string const json_string =
+        MeshLib::IntegrationPointMetaData::toJsonString(meta_data);
     auto& dictionary = *MeshLib::getOrCreateMeshProperty<char>(
         mesh, "IntegrationPointMetaData",
         MeshLib::MeshItemType::IntegrationPoint, 1);
     dictionary.clear();
     std::copy(json_string.begin(), json_string.end(),
               std::back_inserter(dictionary));
-}
-
-/// For the given json object and the name extract integration point meta data,
-/// or fail if no meta data was found for the given name.
-static MeshLib::IntegrationPointMetaData extractIntegrationPointMetaData(
-    json const& meta_data, std::string const& name)
-{
-    auto const& ip_meta_data = meta_data["integration_point_arrays"];
-    if (auto const it =
-            find_if(cbegin(ip_meta_data), cend(ip_meta_data),
-                    [&name](auto const& md) { return md["name"] == name; });
-        it != cend(ip_meta_data))
-    {
-        return {name, (*it)["number_of_components"],
-                (*it)["integration_order"]};
-    }
-    OGS_FATAL("No integration point meta data with name '{:s}' found.", name);
 }
 
 namespace MeshLib
@@ -127,11 +97,9 @@ IntegrationPointMetaData getIntegrationPointMetaData(
 
     // Find the current integration point data entry and extract the
     // meta data.
-    auto const ip_meta_data = extractIntegrationPointMetaData(
-        json::parse(mesh_property_ip_meta_data.begin(),
-                    mesh_property_ip_meta_data.end()),
+    return IntegrationPointMetaData::fromJsonString(
+        std::string_view{mesh_property_ip_meta_data.data(),
+                         mesh_property_ip_meta_data.size()},
         name);
-
-    return ip_meta_data;
 }
 }  // namespace MeshLib
