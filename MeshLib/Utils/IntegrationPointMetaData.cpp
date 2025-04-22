@@ -10,6 +10,8 @@
 #include "IntegrationPointMetaData.h"
 
 #include <nlohmann/json.hpp>
+#include <range/v3/iterator/operations.hpp>
+#include <range/v3/view/filter.hpp>
 
 #include "BaseLib/Error.h"
 
@@ -38,18 +40,27 @@ IntegrationPointMetaData IntegrationPointMetaData::fromJsonString(
     std::string_view const json_string, std::string const& name)
 {
     json const meta_data = json::parse(json_string);
-
-    // Find the current integration point data entry and extract the
-    // meta data.
     auto const& ip_meta_data = meta_data["integration_point_arrays"];
-    if (auto const it =
-            find_if(cbegin(ip_meta_data), cend(ip_meta_data),
-                    [&name](auto const& md) { return md["name"] == name; });
-        it != cend(ip_meta_data))
+
+    auto ip_meta_data_for_name =
+        ip_meta_data | ranges::views::filter([&name](auto const& md)
+                                             { return md["name"] == name; });
+
+    auto const count = ranges::distance(ip_meta_data_for_name);
+    if (count == 0)
     {
-        return {name, (*it)["number_of_components"],
-                (*it)["integration_order"]};
+        OGS_FATAL("No integration point meta data with name '{:s}' found.",
+                  name);
     }
-    OGS_FATAL("No integration point meta data with name '{:s}' found.", name);
+    if (count != 1)
+    {
+        OGS_FATAL(
+            "Expected exactly one integration point meta data with name "
+            "'{:s}', found {}.",
+            name, count);
+    }
+
+    auto const& md = *ranges::begin(matches);
+    return {name, md["number_of_components"], md["integration_order"]};
 }
 }  // namespace MeshLib
