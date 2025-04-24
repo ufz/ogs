@@ -26,7 +26,6 @@
 
 #include "BaseLib/Logging.h"
 #include "GeoLib/AABB.h"
-#include "GeoLib/OctTree.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -34,6 +33,7 @@
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "MeshToolsLib/IntegrationPointDataTools.h"
+#include "PartitionNodesByCoordinateMatch.h"
 
 namespace MeshToolsLib
 {
@@ -193,63 +193,6 @@ std::vector<MeshLib::Node*> findNodesInBoundedDomain(
                [&](MeshLib::Node* n)
                { return aabb.containsPoint(n->asEigenVector3d(), 1e-16); }) |
            ranges::to<std::vector<MeshLib::Node*>>();
-}
-
-struct NodesPartitionResult
-{
-    std::vector<MeshLib::Node*> paired_nodes;
-    std::optional<std::vector<std::size_t>> id_mapping;
-    std::optional<std::vector<MeshLib::Node*>> non_paired_nodes;
-};
-
-// Assumes at least one element in \c node_vector can be paired with an element
-// in \c tool_node_vector based on identical coordinates.
-// Partitions \c node_vector into two vectors: one containing nodes that can be
-// paired with elements in \c tool_node_vector, and another may containing the
-// remaining nodes or empty depending on the argument \c
-// return_non_paired_nodes.
-NodesPartitionResult partitionNodesByCoordinateMatch(
-    std::vector<MeshLib::Node*> const& node_vector,
-    std::vector<MeshLib::Node*> const& tool_node_vector,
-    GeoLib::AABB const& aabb,
-    bool const return_non_paired_nodes = true)
-{
-    auto oct_tree = std::unique_ptr<GeoLib::OctTree<MeshLib::Node, 16>>(
-        GeoLib::OctTree<MeshLib::Node, 16>::createOctTree(
-            aabb.getMinPoint(), aabb.getMaxPoint(), 1e-16));
-
-    // Push all tool nodes into oct_tree:
-    for (auto const node : tool_node_vector)
-    {
-        MeshLib::Node* node_ptr = nullptr;
-        oct_tree->addPoint(node, node_ptr);
-    }
-
-    // Find the paired nodes in the node_vector
-    std::vector<MeshLib::Node*> paired_nodes;
-    std::vector<MeshLib::Node*> other_nodes;
-    std::vector<std::size_t> ip_maping;
-    for (auto node : node_vector)
-    {
-        MeshLib::Node* node_ptr = nullptr;
-        if (oct_tree->addPoint(node, node_ptr))
-        {
-            if (return_non_paired_nodes)
-            {
-                other_nodes.push_back(node);
-            }
-            continue;
-        }
-        paired_nodes.push_back(node);
-        ip_maping.push_back(node_ptr->getID());
-    }
-
-    if (return_non_paired_nodes)
-    {
-        return {paired_nodes, ip_maping, other_nodes};
-    }
-
-    return {paired_nodes, std::nullopt, std::nullopt};
 }
 
 std::unique_ptr<MeshLib::Mesh> mergeMeshToBulkMesh(
