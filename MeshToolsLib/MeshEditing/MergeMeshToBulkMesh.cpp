@@ -13,7 +13,6 @@
 
 #include <Eigen/Dense>
 #include <algorithm>
-#include <boost/functional/hash.hpp>
 #include <boost/range/combine.hpp>
 #include <cmath>
 #include <memory>
@@ -199,6 +198,7 @@ std::vector<MeshLib::Node*> findNodesInBoundedDomain(
 struct NodesPartitionResult
 {
     std::vector<MeshLib::Node*> paired_nodes;
+    std::optional<std::vector<std::size_t>> id_mapping;
     std::optional<std::vector<MeshLib::Node*>> non_paired_nodes;
 };
 
@@ -228,6 +228,7 @@ NodesPartitionResult partitionNodesByCoordinateMatch(
     // Find the paired nodes in the node_vector
     std::vector<MeshLib::Node*> paired_nodes;
     std::vector<MeshLib::Node*> other_nodes;
+    std::vector<std::size_t> ip_maping;
     for (auto node : node_vector)
     {
         MeshLib::Node* node_ptr = nullptr;
@@ -240,63 +241,15 @@ NodesPartitionResult partitionNodesByCoordinateMatch(
             continue;
         }
         paired_nodes.push_back(node);
+        ip_maping.push_back(node_ptr->getID());
     }
 
     if (return_non_paired_nodes)
     {
-        return {paired_nodes, other_nodes};
+        return {paired_nodes, ip_maping, other_nodes};
     }
 
-    return {paired_nodes, std::nullopt};
-}
-
-// Custom hash for Eigen::Vector3d
-struct Vector3dHash
-{
-    size_t operator()(const Eigen::Vector3d& v) const
-    {
-        return boost::hash_range(v.data(), v.data() + 3);
-    }
-};
-
-struct VectorEqual
-{
-    bool operator()(const Eigen::Vector3d& a, const Eigen::Vector3d& b) const
-    {
-        return a.isApprox(b, 1e-16);
-    }
-};
-
-std::vector<std::size_t> findNodeIdMapping(
-    const std::vector<MeshLib::Node*>& nodes_a,
-    const std::vector<MeshLib::Node*>& nodes_b)
-{
-    // Preallocate hash map for performance (avoids rehashing)
-    std::unordered_map<Eigen::Vector3d, std::size_t, Vector3dHash, VectorEqual>
-        coord_to_map(nodes_b.size());
-
-    for (MeshLib::Node* const node : nodes_b)
-    {
-        coord_to_map[node->asEigenVector3d()] = node->getID();
-    }
-
-    std::vector<std::size_t> id_mapping;
-    id_mapping.reserve(nodes_a.size());
-
-    for (MeshLib::Node* const node : nodes_a)
-    {
-        auto it = coord_to_map.find(node->asEigenVector3d());
-        if (it != coord_to_map.end())
-        {
-            id_mapping.push_back(it->second);  // Found match
-        }
-        else
-        {
-            OGS_FATAL("No matching node found for ID {:d} ", node->getID());
-        }
-    }
-
-    return id_mapping;
+    return {paired_nodes, std::nullopt, std::nullopt};
 }
 
 std::unique_ptr<MeshLib::Mesh> mergeMeshToBulkMesh(
@@ -322,9 +275,8 @@ std::unique_ptr<MeshLib::Mesh> mergeMeshToBulkMesh(
     auto const interface_nodes_of_other_mesh = pn_other_mesh.paired_nodes;
     auto const internal_nodes_of_other_mesh = *(pn_other_mesh.non_paired_nodes);
 
-    // Common node id mapping: from the merge mesh to the bulk mesh
-    auto cn_id_mapping_m2b = findNodeIdMapping(interface_nodes_of_other_mesh,
-                                               interface_nodes_of_bulk_mesh);
+    // Interface node id mapping: from the other mesh to the bulk mesh
+    auto cn_id_mapping_m2b = *(pn_other_mesh.id_mapping);
 
     std::unordered_map<std::size_t, std::size_t> other_mesh_node_id_dict;
 
