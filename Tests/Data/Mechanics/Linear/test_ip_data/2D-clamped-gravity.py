@@ -257,7 +257,7 @@ ax.plot(u_ys_num, ys, label="num")
 ax.plot(u_ys_ana, ys, label="ana")
 
 ax2.plot(u_ys_num - u_ys_ana, ys)
-assert np.allclose(u_ys_num, u_ys_ana, atol=2.1e-13, rtol=0)
+np.testing.assert_allclose(actual=u_ys_num, desired=u_ys_ana, atol=2.1e-13, rtol=0)
 
 ax.set_ylabel("$y$ / m")
 ax2.set_xlabel(r"$\Delta u_y$ / m")
@@ -271,12 +271,17 @@ fig.set_size_inches(12, 4)
 ys = mesh.points[:, 1]
 
 # u_y must match the analytical solutions
-assert np.allclose(
-    mesh.point_data["displacement"][:, 1], u_y_ana(ys), atol=1e-15, rtol=0
+np.testing.assert_allclose(
+    actual=mesh.point_data["displacement"][:, 1],
+    desired=u_y_ana(ys),
+    atol=1e-15,
+    rtol=0,
 )
 
 # u_x must be zero
-assert np.allclose(mesh.point_data["displacement"][:, 0], 0, atol=1e-15, rtol=0)
+np.testing.assert_allclose(
+    actual=mesh.point_data["displacement"][:, 0], desired=0, atol=1e-15, rtol=0
+)
 
 # %% [markdown]
 # # Stress at Integration Points
@@ -349,11 +354,19 @@ ys = mesh_pc.points[:, 1]
 
 # normal stress must match the analytical solutions
 # the tolerances are rather high due to the jumps in sigma over element edges
-assert allclose(mesh_pc.cell_data["sigma_ip"][:, 1], sigma_yy_ana(ys), 6e-14)
-assert allclose(mesh_pc.cell_data["sigma_ip"][:, 0], sigma_xx_ana(ys), 3e-14)
-assert allclose(mesh_pc.cell_data["sigma_ip"][:, 0], sigma_zz_ana(ys), 3e-14)
+np.testing.assert_allclose(
+    actual=mesh_pc.cell_data["sigma_ip"][:, 1], desired=sigma_yy_ana(ys), atol=6e-14
+)
+np.testing.assert_allclose(
+    actual=mesh_pc.cell_data["sigma_ip"][:, 0], desired=sigma_xx_ana(ys), atol=3e-14
+)
+np.testing.assert_allclose(
+    actual=mesh_pc.cell_data["sigma_ip"][:, 0], desired=sigma_zz_ana(ys), atol=3e-14
+)
 
 # shear stress must be zero
-assert allclose(mesh_pc.cell_data["sigma_ip"][:, 3], 0, 2.3e-14)
+np.testing.assert_allclose(
+    actual=mesh_pc.cell_data["sigma_ip"][:, 3], desired=0, atol=2.3e-14
+)
 
 # %%
