@@ -12,6 +12,9 @@
 
 #include <algorithm>
 #include <cstdlib>
+#include <range/v3/algorithm/all_of.hpp>
+#include <range/v3/algorithm/any_of.hpp>
+#include <range/v3/view/transform.hpp>
 #include <vector>
 
 #include "GeoLib/GEOObjects.h"
@@ -43,11 +46,6 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
         return;
     }
 
-    auto const outside = markNodesOutSideOfPolygon(mesh.getNodes(), polygon);
-
-    auto is_node_outside = [&outside](auto const* node_ptr)
-    { return outside[node_ptr->getID()]; };
-
     auto const* material_ids =
         mesh.getProperties().getPropertyVector<int>("MaterialIDs");
 
@@ -65,29 +63,30 @@ void resetMeshElementProperty(MeshLib::Mesh& mesh,
                (*material_ids)[element_id] == restrict_to_material_id;
     };
 
-    using func =
-        std::function<bool(MeshLib::Node* const*, MeshLib::Node* const*,
-                           decltype(is_node_outside))>;
-    auto is_element_outside =
-        any_of ? (func)(std::all_of<MeshLib::Node* const*,
-                                    decltype(is_node_outside)>)
-               : (func)(std::any_of<MeshLib::Node* const*,
-                                    decltype(is_node_outside)>);
+    auto const outside = markNodesOutSideOfPolygon(mesh.getNodes(), polygon);
 
-    for (std::size_t j(0); j < mesh.getElements().size(); ++j)
+    auto is_node_outside = [&outside](std::size_t const node_id)
+    { return outside[node_id]; };
+
+    auto is_element_outside = [&](MeshLib::Element const& e)
     {
-        MeshLib::Element const* const elem(mesh.getElements()[j]);
-        if (is_element_outside(elem->getNodes(),
-                               elem->getNodes() + elem->getNumberOfNodes(),
-                               is_node_outside))
-        {
-            continue;
-        }
-        if (has_element_required_material_id(elem->getID()))
-        {
-            (*pv)[j] = new_property_value;
-        }
-    }
+        auto ids = e.nodes() | MeshLib::views::ids;
+        return any_of ? ranges::all_of(ids, is_node_outside)
+                      : ranges::any_of(ids, is_node_outside);
+    };
+
+    auto is_valid_element = [&](MeshLib::Element const& e)
+    {
+        return !is_element_outside(e) &&
+               has_element_required_material_id(e.getID());
+    };
+
+    auto compute_value = [&](MeshLib::Element const* const e) -> PT
+    { return is_valid_element(*e) ? new_property_value : (*pv)[e->getID()]; };
+
+    auto values = mesh.getElements() | ranges::views::transform(compute_value);
+
+    pv->assign(values.begin(), values.end());
 }
 
 }  // namespace MeshGeoToolsLib

@@ -9,8 +9,10 @@
 
 #include <spdlog/fmt/bundled/ranges.h>
 
+#include <range/v3/action/sort.hpp>
+#include <range/v3/action/unique.hpp>
 #include <range/v3/range/conversion.hpp>
-#include <range/v3/view/adjacent_remove_if.hpp>
+#include <range/v3/view/unique.hpp>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
@@ -83,11 +85,10 @@ std::vector<int> parseMaterialIdString(
                 "required to parse '*' definition.");
         }
 
-        std::vector<int> material_ids_of_this_medium =
-            *material_ids |
-            ranges::views::adjacent_remove_if(std::equal_to<>()) |
-            ranges::to_vector;
-        BaseLib::makeVectorUnique(material_ids_of_this_medium);
+        std::vector<int> const material_ids_of_this_medium =
+            *material_ids | ranges::views::unique | ranges::to_vector |
+            ranges::actions::sort | ranges::actions::unique |
+            ranges::to<std::vector>;
         DBUG("Catch all medium definition for material ids {}.",
              fmt::join(material_ids_of_this_medium, ", "));
         return material_ids_of_this_medium;

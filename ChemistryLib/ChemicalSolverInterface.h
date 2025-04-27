@@ -36,18 +36,21 @@ public:
                             GlobalLinearSolver& linear_solver_)
         : _mesh(mesh), linear_solver(linear_solver_)
     {
+        auto const* const bulk_element_ids = bulkElementIDs(_mesh);
+        if (bulk_element_ids == nullptr)
+        {
+            OGS_FATAL(
+                "The 'bulk_element_ids' property does not exist on the mesh "
+                "{:s}.",
+                _mesh.getName());
+        }
+        active_element_ids_.assign(bulk_element_ids->begin(),
+                                   bulk_element_ids->end());
     }
 
-    std::vector<std::size_t> const& getElementIDs()
+    std::vector<std::size_t> const& activeElementIDs() const
     {
-        if (auto const* const bulk_element_ids = bulkElementIDs(_mesh))
-        {
-            return *bulk_element_ids;
-        }
-        OGS_FATAL(
-            "The 'bulk_element_ids' property does not exist on the mesh "
-            "{:s}.",
-            _mesh.getName());
+        return active_element_ids_;
     }
 
     virtual void initialize() {}
@@ -128,5 +131,8 @@ public:
     /// specify the linear solver used to solve the linearized reaction
     /// equation.
     GlobalLinearSolver& linear_solver;
+
+private:
+    std::vector<std::size_t> active_element_ids_;
 };
 }  // namespace ChemistryLib

@@ -172,7 +172,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystemID,
-            _local_assemblers, _chemical_solver_interface->getElementIDs());
+            _local_assemblers, _chemical_solver_interface->activeElementIDs());
 
         _chemical_solver_interface->initialize();
     }
@@ -233,7 +233,7 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::initializeChemicalSystem,
-        _local_assemblers, _chemical_solver_interface->getElementIDs(),
+        _local_assemblers, _chemical_solver_interface->activeElementIDs(),
         dof_tables, x, t);
 }
 
@@ -354,7 +354,7 @@ void ComponentTransportProcess::solveReactionEquation(
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
-            _local_assemblers, _chemical_solver_interface->getElementIDs(),
+            _local_assemblers, _chemical_solver_interface->activeElementIDs(),
             dof_tables, x, t, dt);
 
         BaseLib::RunTime time_phreeqc;
@@ -369,8 +369,8 @@ void ComponentTransportProcess::solveReactionEquation(
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::
                 postSpeciationCalculation,
-            _local_assemblers, _chemical_solver_interface->getElementIDs(), t,
-            dt);
+            _local_assemblers, _chemical_solver_interface->activeElementIDs(),
+            t, dt);
 
         return;
     }
@@ -465,7 +465,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::
             computeReactionRelatedSecondaryVariable,
-        _local_assemblers, _chemical_solver_interface->getElementIDs());
+        _local_assemblers, _chemical_solver_interface->activeElementIDs());
 }
 
 void ComponentTransportProcess::postTimestepConcreteProcess(

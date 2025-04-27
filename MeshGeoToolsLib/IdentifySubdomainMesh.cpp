@@ -7,6 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <range/v3/algorithm/equal.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <unordered_map>
 #include <vector>
@@ -161,8 +162,7 @@ void updateOrCheckExistingSubdomainProperty(
     //
     auto& original_property =
         *properties.getPropertyVector<std::size_t>(property_name);
-    if (std::equal(begin(original_property), end(original_property),
-                   begin(values), end(values)))
+    if (ranges::equal(original_property, values))
     {
         INFO(
             "There is already a '{:s}' property present in the subdomain mesh "
@@ -186,8 +186,7 @@ void updateOrCheckExistingSubdomainProperty(
     }
 
     INFO("Overwriting '{:s}' property.", property_name);
-    original_property.resize(values.size());
-    std::copy(begin(values), end(values), begin(original_property));
+    original_property.assign(values.begin(), values.end());
 }
 }  // namespace
 

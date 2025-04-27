@@ -243,9 +243,7 @@ int writeDataToMesh(std::string const& file_name,
             ERR("Error creating array '{:s}'.", vec_names[i]);
             return -5;
         }
-        prop->reserve(scalars[i].size());
-        std::copy(scalars[i].cbegin(), scalars[i].cend(),
-                  std::back_inserter(*prop));
+        prop->assign(scalars[i].begin(), scalars[i].end());
     }
 
     std::size_t const delim_pos(file_name.find_last_of("."));

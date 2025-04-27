@@ -18,37 +18,6 @@
 
 namespace MeshToolsLib
 {
-namespace details
-{
-std::vector<MeshLib::Element*> excludeElementCopy(
-    std::vector<MeshLib::Element*> const& vec_src_eles,
-    std::vector<std::size_t> const& vec_removed)
-{
-    std::vector<MeshLib::Element*> vec_dest_eles(vec_src_eles.size() -
-                                                 vec_removed.size());
-
-    unsigned cnt(0);
-    for (std::size_t i = 0; i < vec_removed[0]; ++i)
-    {
-        vec_dest_eles[cnt++] = vec_src_eles[i];
-    }
-    for (std::size_t i = 1; i < vec_removed.size(); ++i)
-    {
-        for (std::size_t j = vec_removed[i - 1] + 1; j < vec_removed[i]; ++j)
-        {
-            vec_dest_eles[cnt++] = vec_src_eles[j];
-        }
-    }
-    for (std::size_t i = vec_removed.back() + 1; i < vec_src_eles.size(); ++i)
-    {
-        vec_dest_eles[cnt++] = vec_src_eles[i];
-    }
-
-    return vec_dest_eles;
-}
-
-}  // namespace details
-
 MeshLib::Mesh* removeElements(
     const MeshLib::Mesh& mesh,
     const std::vector<std::size_t>& removed_element_ids,
@@ -62,7 +31,7 @@ MeshLib::Mesh* removeElements(
 
     INFO("Removing total {:d} elements...", removed_element_ids.size());
     std::vector<MeshLib::Element*> tmp_elems =
-        details::excludeElementCopy(mesh.getElements(), removed_element_ids);
+        BaseLib::excludeObjectCopy(mesh.getElements(), removed_element_ids);
     INFO("{:d} elements remain in mesh.", tmp_elems.size());
 
     // copy node and element objects

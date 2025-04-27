@@ -7,10 +7,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <fstream>
-
-// ThirdParty
 #include <tclap/CmdLine.h>
+
+#include <fstream>
+#include <range/v3/algorithm/minmax.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/iota.hpp>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/MPI.h"
@@ -22,22 +25,14 @@
 
 MeshLib::Mesh* extractMatGroup(MeshLib::Mesh const& mesh, int const mat_id)
 {
-    std::vector<std::size_t> elem_list;
-    std::vector<int> const mat_ids =
+    auto const mat_ids =
         *mesh.getProperties().getPropertyVector<int>("MaterialIDs");
-    std::size_t const n_elems = mat_ids.size();
-    for (std::size_t i = 0; i < n_elems; ++i)
-    {
-        if (mat_ids[i] != mat_id)
-        {
-            elem_list.push_back(i);
-        }
-    }
 
-    if (elem_list.empty())
-    {
-        return nullptr;
-    }
+    auto const elem_list =
+        ranges::views::iota(std::size_t{0}, mat_ids.size()) |
+        ranges::views::filter([&](std::size_t i)
+                              { return mat_ids[i] != mat_id; }) |
+        ranges::to<std::vector>;
 
     return MeshToolsLib::removeElements(mesh, elem_list, "matgroup");
 }
@@ -92,8 +87,8 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    auto id_range = std::minmax_element(mat_ids->cbegin(), mat_ids->cend());
-    if (id_range.first == id_range.second)
+    auto const [min, max] = ranges::minmax(*mat_ids);
+    if (min == max)
     {
         ERR("Mesh only contains one material, no extraction required.");
         return EXIT_FAILURE;
@@ -102,7 +97,7 @@ int main(int argc, char* argv[])
     if (arg_mat_id.isSet())
     {
         min_id = static_cast<int>(arg_mat_id.getValue());
-        if (min_id < *id_range.first || min_id > *id_range.second)
+        if (min_id < min || min_id > max)
         {
             ERR("Specified material ID does not exist.");
             return EXIT_FAILURE;
@@ -111,8 +106,8 @@ int main(int argc, char* argv[])
     }
     else
     {
-        min_id = *id_range.first;
-        max_id = *id_range.second;
+        min_id = min;
+        max_id = max;
     }
 
     std::ofstream ostream;

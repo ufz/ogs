@@ -382,8 +382,7 @@ MeshLib::Mesh* MeshIO::loadMeshFromFile(const std::string& file_name)
         }
         else
         {
-            material_ids->insert(material_ids->end(), materials.cbegin(),
-                                 materials.cend());
+            material_ids->assign(materials.begin(), materials.end());
         }
         INFO("\t... finished.");
         INFO("Nr. Nodes: {:d}.", nodes.size());

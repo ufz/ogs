@@ -72,10 +72,6 @@ int main(int argc, char* argv[])
                                           "new property value (data type int)",
                                           false, 0, "number");
     cmd.add(int_property_arg);
-    TCLAP::ValueArg<bool> bool_property_arg(
-        "b", "bool-property-value", "new property value (data type bool)",
-        false, false, "boolean value");
-    cmd.add(bool_property_arg);
     TCLAP::ValueArg<std::string> property_name_arg(
         "n", "property-name", "name of property in the mesh", false,
         "MaterialIDs", "string");
@@ -155,13 +151,6 @@ int main(int argc, char* argv[])
     {
         MeshGeoToolsLib::resetMeshElementProperty(
             *mesh, polygon, property_name, int_property_arg.getValue(),
-            restrict_arg.getValue(), any_of_arg.getValue());
-    }
-
-    if (bool_property_arg.isSet())
-    {
-        MeshGeoToolsLib::resetMeshElementProperty(
-            *mesh, polygon, property_name, bool_property_arg.getValue(),
             restrict_arg.getValue(), any_of_arg.getValue());
     }
 

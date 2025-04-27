@@ -18,6 +18,7 @@
 #include <limits>
 #include <map>
 #include <optional>
+#include <range/v3/algorithm/minmax.hpp>
 #include <string>
 
 #include "GeoLib/AABB.h"
@@ -46,9 +47,8 @@ public:
             return std::nullopt;
         }
 
-        auto const [min, max] =
-            std::minmax_element(begin(property), end(property));
-        return {{*min, *max}};
+        auto [min, max] = ranges::minmax(property);
+        return {{min, max}};
     }
 
     /// Returns the bounding box of the mesh.

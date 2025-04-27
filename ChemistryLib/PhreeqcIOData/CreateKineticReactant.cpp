@@ -69,7 +69,7 @@ std::vector<KineticReactant> createKineticReactants(
 
         auto mesh_prop_molality = MeshLib::getOrCreateMeshProperty<double>(
             mesh, name + "_avg", MeshLib::MeshItemType::Cell, 1);
-        mesh_prop_molality->resize(mesh.getNumberOfElements());
+        assert(mesh_prop_molality->size() == mesh.getNumberOfElements());
 
         kinetic_reactants.emplace_back(std::move(name),
                                        std::move(chemical_formula),

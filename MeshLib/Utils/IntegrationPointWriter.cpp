@@ -11,6 +11,7 @@
 #include "IntegrationPointWriter.h"
 
 #include <nlohmann/json.hpp>
+#include <range/v3/view/join.hpp>
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
@@ -33,11 +34,8 @@ static MeshLib::IntegrationPointMetaData addIntegrationPointData(
         writer.numberOfComponents());
     field_data.clear();
 
-    for (const auto& element_ip_values : ip_values)
-    {
-        std::copy(element_ip_values.begin(), element_ip_values.end(),
-                  std::back_inserter(field_data));
-    }
+    ranges::copy(ip_values | ranges::views::join,
+                 std::back_inserter(field_data));
 
     return {writer.name(), writer.numberOfComponents(),
             writer.integrationOrder()};
