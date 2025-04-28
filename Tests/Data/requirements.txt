@@ -8,7 +8,6 @@ matplotlib>=3.6
 numpy
 pandas>=1.5
 ipywidgets
-pyvista[all]>=0.40.1,<0.45
+pyvista[all]>=0.45
 seaborn>=0.12
 VTUinterface>=0.704
-vtk-osmesa>=9.2.6;platform_system=='Linux'
