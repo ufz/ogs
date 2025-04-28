@@ -27,22 +27,11 @@ test notebooks via wheel:
     #  - better timeout
     #  - run in parallel
     - |
-      status_file="`mktemp --tmpdir`"
-      echo 0 >"$status_file"  # success if no Notebooks are found
-      # status file and sh -c to workaround xvfb-run problems:
-      # /usr/bin/xvfb-run: line 186: kill: (<PID>) - No such process"
       find . -type f -iname '*.py' \
           | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
           | xargs grep -l "jupytext_version" \
           | xargs grep -L "ci skip" \
-          | xargs xvfb-run -a \
-              sh -c 'statf="$1"; shift; "$@" || echo "$?" >"$statf"' \
-              -- "$status_file" \
-              python Notebooks/testrunner.py --out _out \
-          || true
-      status="`cat "$status_file"`"
-      rm "$status_file"
-      [ 0 = "$status" ]
+          | xargs python Notebooks/testrunner.py --out _out
   artifacts:
     when: always
     paths:
