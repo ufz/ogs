@@ -4,10 +4,7 @@
 get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
 set(CMAKE_REQUIRED_FLAGS "-c -fPIC")
 
-set(_logfile CMakeFiles/CMakeError.log)
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.26)
-    set(_logfile CMakeFiles/CMakeConfigureLog.yaml)
-endif()
+set(_logfile CMakeFiles/CMakeConfigureLog.yaml)
 
 # Checks header for standalone compilation
 function(_check_header_compilation target)
@@ -189,33 +186,26 @@ function(check_header_compilation)
     endif()
 
     if(_HEADER_COMPILE_ERROR)
-        if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.26)
-            find_program(YQ_TOOLPATH yq)
-            if(NOT YQ_TOOLPATH OR NOT EXISTS ${PROJECT_BINARY_DIR}/${_logfile})
-                message(
-                    FATAL_ERROR
-                        "... header compilation check failed, see ${_logfile} for details!"
-                )
-            endif()
-            execute_process(
-                COMMAND
-                    ${YQ_TOOLPATH}
-                    ".events[] | select(.kind == \"try_compile-v1\" and .buildResult.exitCode == 1 and .checks[] == \"*_COMPILES\")"
-                    ${PROJECT_BINARY_DIR}/${_logfile}
-                COMMAND grep stdout
-                COMMAND sed "s/\\\\n/\\n/g"
-                OUTPUT_VARIABLE _checkheader_out
-            )
-            message(STATUS "There were header compilation errors:\n")
-            list(APPEND CMAKE_MESSAGE_INDENT "  >  ")
-            message(STATUS "${_checkheader_out}")
-            list(POP_BACK CMAKE_MESSAGE_INDENT)
-            message(FATAL_ERROR "Header compilation failed, aborting.")
-        else()
+        find_program(YQ_TOOLPATH yq)
+        if(NOT YQ_TOOLPATH OR NOT EXISTS ${PROJECT_BINARY_DIR}/${_logfile})
             message(
                 FATAL_ERROR
                     "... header compilation check failed, see ${_logfile} for details!"
             )
         endif()
+        execute_process(
+            COMMAND
+                ${YQ_TOOLPATH}
+                ".events[] | select(.kind == \"try_compile-v1\" and .buildResult.exitCode == 1 and .checks[] == \"*_COMPILES\")"
+                ${PROJECT_BINARY_DIR}/${_logfile}
+            COMMAND grep stdout
+            COMMAND sed "s/\\\\n/\\n/g"
+            OUTPUT_VARIABLE _checkheader_out
+        )
+        message(STATUS "There were header compilation errors:\n")
+        list(APPEND CMAKE_MESSAGE_INDENT "  >  ")
+        message(STATUS "${_checkheader_out}")
+        list(POP_BACK CMAKE_MESSAGE_INDENT)
+        message(FATAL_ERROR "Header compilation failed, aborting.")
     endif()
 endfunction()

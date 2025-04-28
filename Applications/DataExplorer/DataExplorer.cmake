@@ -43,7 +43,7 @@ target_link_libraries(
     VTK::IOExport
 )
 
-if(UNIX AND NOT APPLE)
+if(LINUX)
     target_link_libraries(DataExplorer Qt5::X11Extras)
 endif()
 
@@ -56,7 +56,6 @@ if(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG
         "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /NODEFAULTLIB:MSVCRT /IGNORE:4099"
     )
-    target_link_libraries(DataExplorer winmm)
 endif()
 
 set_property(TARGET DataExplorer PROPERTY FOLDER "DataExplorer")

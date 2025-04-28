@@ -8,6 +8,10 @@ endif()
 # Create the library
 ogs_add_library(BaseLib GENERATE_EXPORT_HEADER ${SOURCES})
 
+if(MSVC)
+    find_library(WinMM_LIBRARY WinMM REQUIRED)
+endif()
+
 target_link_libraries(
     BaseLib
     PUBLIC Boost::algorithm
@@ -15,7 +19,7 @@ target_link_libraries(
            range-v3
            spdlog
            tclap
-           $<$<BOOL:${MSVC}>:WinMM> # needed for timeGetTime
+           $<$<BOOL:${MSVC}>:${WinMM_LIBRARY}> # needed for timeGetTime
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
            $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>

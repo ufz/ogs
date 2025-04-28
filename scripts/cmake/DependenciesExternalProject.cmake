@@ -2,10 +2,6 @@
 #
 # cmake-lint: disable=C0103
 
-if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.24)
-    cmake_policy(SET CMP0135 NEW)
-endif()
-
 # Build dependencies via ExternalProject_Add() at configure time in
 # ${PROJECT_BINARY_DIR}/_ext or in $CPM_SOURCE_CACHE/_ext
 include(BuildExternalProject)
@@ -486,7 +482,8 @@ if(NOT VTK_FOUND)
                  "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch"
             )
             message(STATUS "Applying VTK Mac patch")
-        elseif(UNIX)
+        endif()
+        if(LINUX)
             # No pacthes on Linux
             unset(_vtk_patch)
         endif()

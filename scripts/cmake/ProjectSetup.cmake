@@ -14,9 +14,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY
 set(Data_SOURCE_DIR ${PROJECT_SOURCE_DIR}/Tests/Data CACHE INTERNAL "")
 set(Data_BINARY_DIR ${PROJECT_BINARY_DIR}/Tests/Data CACHE INTERNAL "")
 
-# Enable Visual Studio project folder grouping
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
-
 # RPATH setup
 if(APPLE)
     set(BASEPOINT @loader_path)

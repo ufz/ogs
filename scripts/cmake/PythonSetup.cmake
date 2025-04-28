@@ -163,7 +163,7 @@ function(setup_venv)
                     "To disable pip set OGS_USE_PIP=OFF.\n\n${_out}\n${_err}"
             )
         endif()
-        if(DEFINED ENV{CI} AND UNIX AND NOT APPLE)
+        if(DEFINED ENV{CI} AND LINUX)
             set(_pip_gmsh_flags --force-reinstall --pre)
             if(UV_TOOL_PATH)
                 set(_pip_gmsh_flags --reinstall --prerelease=allow)
