@@ -2,7 +2,7 @@
         (name 'guix-ogs)
         (url "https://gitlab.opengeosys.org/ogs/inf/guix-ogs.git")
         (branch "master")
-        (commit "9cef081f4848adf588c21802f827087875d620ae"))
+        (commit "1b0876bf67488ecec8b1280265b0b025e55e6d7a"))
       (channel
         (name 'guix-science-nonfree)
         (url "https://codeberg.org/guix-science/guix-science-nonfree.git")
@@ -14,7 +14,7 @@
       (channel
         (name 'guix-science)
         (url "https://codeberg.org/guix-science/guix-science.git")
-        (commit "85e684db279109050e2b20e6ae62b2b5d3bf5eec")
+        (commit "b9f41a281365e0681dd78ac4c756c78a5997fa30")
         (introduction
          (make-channel-introduction "b1fe5aaff3ab48e798a4cce02f0212bc91f423dc"
           (openpgp-fingerprint
@@ -23,7 +23,7 @@
         (name 'guix)
         (url "https://git.savannah.gnu.org/git/guix.git")
         (branch "master")
-        (commit "efa5acfe2b3c06f8964ac98ee5f4f9317d1fdff0")
+        (commit "2b4680c6c17bd6470f78a1f39d2f7af8b05e279f")
         (introduction
          (make-channel-introduction "cdf1d7dded027019f0ebbd5d6f0147b13dfdd28d"
           (openpgp-fingerprint
