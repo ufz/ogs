@@ -18,15 +18,16 @@
 
 using namespace MeshLib;
 
-TEST(MeshLibIntegrationPointMetaDataTest, ThrowsIfNoMatchingName)
+TEST(MeshLibIntegrationPointMetaDataSingleFieldTest, ThrowsIfNoMatchingName)
 {
-    std::vector<IntegrationPointMetaData> data = {{"stress", 6, 2}};
+    std::vector<IntegrationPointMetaDataSingleField> data = {{"stress", 6, 2}};
 
-    std::string const json_str = IntegrationPointMetaData::toJsonString(data);
+    std::string const json_str =
+        IntegrationPointMetaDataSingleField::toJsonString(data);
 
     try
     {
-        IntegrationPointMetaData::fromJsonString(json_str, "strain");
+        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "strain");
         FAIL() << "Expected std::runtime_error";
     }
     catch (const std::runtime_error& e)
@@ -38,16 +39,18 @@ TEST(MeshLibIntegrationPointMetaDataTest, ThrowsIfNoMatchingName)
     }
 }
 
-TEST(MeshLibIntegrationPointMetaDataTest, ThrowsIfMultipleMatchingNames)
+TEST(MeshLibIntegrationPointMetaDataSingleFieldTest,
+     ThrowsIfMultipleMatchingNames)
 {
-    std::vector<IntegrationPointMetaData> data = {{"stress", 6, 2},
-                                                  {"stress", 3, 1}};
+    std::vector<IntegrationPointMetaDataSingleField> data = {{"stress", 6, 2},
+                                                             {"stress", 3, 1}};
 
-    std::string const json_str = IntegrationPointMetaData::toJsonString(data);
+    std::string const json_str =
+        IntegrationPointMetaDataSingleField::toJsonString(data);
 
     try
     {
-        IntegrationPointMetaData::fromJsonString(json_str, "stress");
+        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "stress");
         FAIL() << "Expected std::runtime_error";
     }
     catch (const std::runtime_error& e)
@@ -59,27 +62,28 @@ TEST(MeshLibIntegrationPointMetaDataTest, ThrowsIfMultipleMatchingNames)
     }
 }
 
-TEST(MeshLibIntegrationPointMetaDataTest, FindsAllUniqueQuantities)
+TEST(MeshLibIntegrationPointMetaDataSingleFieldTest, FindsAllUniqueQuantities)
 {
-    std::vector<IntegrationPointMetaData> data = {
+    std::vector<IntegrationPointMetaDataSingleField> data = {
         {"stress", 6, 2}, {"strain", 6, 2}, {"damage", 1, 1}};
 
-    std::string const json_str = IntegrationPointMetaData::toJsonString(data);
+    std::string const json_str =
+        IntegrationPointMetaDataSingleField::toJsonString(data);
 
     auto const stress =
-        IntegrationPointMetaData::fromJsonString(json_str, "stress");
+        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "stress");
     EXPECT_EQ(stress.field_name, "stress");
     EXPECT_EQ(stress.n_components, 6);
     EXPECT_EQ(stress.integration_order, 2);
 
     auto const strain =
-        IntegrationPointMetaData::fromJsonString(json_str, "strain");
+        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "strain");
     EXPECT_EQ(strain.field_name, "strain");
     EXPECT_EQ(strain.n_components, 6);
     EXPECT_EQ(strain.integration_order, 2);
 
     auto const damage =
-        IntegrationPointMetaData::fromJsonString(json_str, "damage");
+        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "damage");
     EXPECT_EQ(damage.field_name, "damage");
     EXPECT_EQ(damage.n_components, 1);
     EXPECT_EQ(damage.integration_order, 1);

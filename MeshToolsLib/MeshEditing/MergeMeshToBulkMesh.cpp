@@ -132,8 +132,8 @@ bool createIntegrationPointProperties(
 
     // Count the integration points
     std::size_t counter = 0;
-    auto const ip_meta_data =
-        MeshLib::getIntegrationPointMetaData(properties_bulk_mesh, pv_name);
+    auto const ip_meta_data = MeshLib::getIntegrationPointMetaDataSingleField(
+        properties_bulk_mesh, pv_name);
 
     for (auto const element : merged_mesh.getElements())
     {

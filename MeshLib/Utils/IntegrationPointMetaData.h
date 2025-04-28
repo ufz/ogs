@@ -17,17 +17,17 @@ namespace MeshLib
 {
 /// Description of the stored integration point data providing additional
 /// information for reconstruction and post-processing.
-struct IntegrationPointMetaData
+struct IntegrationPointMetaDataSingleField
 {
     /// Converts integration point meta data to a JSON string.
     static std::string toJsonString(
-        std::vector<IntegrationPointMetaData> const& meta_data);
+        std::vector<IntegrationPointMetaDataSingleField> const& meta_data);
 
     /// Constructs integration point meta data from a JSON encoded string and
     /// looks for the field name to be extracted from the parsed integration
     /// point meta data. Fails if no meta data was found for the given field
     /// name.
-    static IntegrationPointMetaData fromJsonString(
+    static IntegrationPointMetaDataSingleField fromJsonString(
         std::string_view const json_string, std::string const& field_name);
 
     std::string field_name;

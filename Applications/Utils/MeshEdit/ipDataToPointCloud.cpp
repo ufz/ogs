@@ -141,9 +141,9 @@ unsigned determineIntegrationOrder(MeshLib::Mesh const& mesh)
             continue;
         }
 
-        auto const order =
-            MeshLib::getIntegrationPointMetaData(properties, std::string(name))
-                .integration_order;
+        auto const order = MeshLib::getIntegrationPointMetaDataSingleField(
+                               properties, std::string(name))
+                               .integration_order;
 
         if (!integration_order)
         {

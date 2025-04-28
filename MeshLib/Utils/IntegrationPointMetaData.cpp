@@ -19,8 +19,8 @@ using nlohmann::json;
 
 namespace MeshLib
 {
-std::string IntegrationPointMetaData::toJsonString(
-    std::vector<MeshLib::IntegrationPointMetaData> const& meta_data)
+std::string IntegrationPointMetaDataSingleField::toJsonString(
+    std::vector<MeshLib::IntegrationPointMetaDataSingleField> const& meta_data)
 {
     json json_meta_data;
     json_meta_data["integration_point_arrays"] = json::array();
@@ -36,7 +36,8 @@ std::string IntegrationPointMetaData::toJsonString(
     return json_meta_data.dump();
 }
 
-IntegrationPointMetaData IntegrationPointMetaData::fromJsonString(
+IntegrationPointMetaDataSingleField
+IntegrationPointMetaDataSingleField::fromJsonString(
     std::string_view const json_string, std::string const& field_name)
 {
     json const meta_data = json::parse(json_string);

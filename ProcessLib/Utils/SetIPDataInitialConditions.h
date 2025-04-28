@@ -58,7 +58,7 @@ void setIPDataInitialConditions(
         }
 
         auto const ip_meta_data =
-            getIntegrationPointMetaData(mesh_properties, name);
+            getIntegrationPointMetaDataSingleField(mesh_properties, name);
 
         // Check the number of components.
         if (ip_meta_data.n_components !=

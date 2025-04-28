@@ -142,7 +142,8 @@ bool createPropertyVector(
 
         // Count the integration points
         auto const ip_meta_data =
-            MeshLib::getIntegrationPointMetaData(properties, pv_name);
+            MeshLib::getIntegrationPointMetaDataSingleField(properties,
+                                                            pv_name);
 
         auto number_of_integration_points = [&](auto const* element)
         {
