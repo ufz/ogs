@@ -17,7 +17,7 @@ target_link_libraries(
     PUBLIC Boost::algorithm
            Boost::property_tree
            range-v3
-           spdlog
+           spdlog::spdlog
            tclap
            $<$<BOOL:${MSVC}>:${WinMM_LIBRARY}> # needed for timeGetTime
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
