@@ -28,7 +28,7 @@ std::string IntegrationPointMetaData::toJsonString(
     for (auto const& md : meta_data)
     {
         json_meta_data["integration_point_arrays"].push_back(
-            {{"name", md.name},
+            {{"name", md.field_name},
              {"number_of_components", md.n_components},
              {"integration_order", md.integration_order}});
     }
@@ -37,30 +37,31 @@ std::string IntegrationPointMetaData::toJsonString(
 }
 
 IntegrationPointMetaData IntegrationPointMetaData::fromJsonString(
-    std::string_view const json_string, std::string const& name)
+    std::string_view const json_string, std::string const& field_name)
 {
     json const meta_data = json::parse(json_string);
     auto const& ip_meta_data = meta_data["integration_point_arrays"];
 
     auto ip_meta_data_for_name =
-        ip_meta_data | ranges::views::filter([&name](auto const& md)
-                                             { return md["name"] == name; });
+        ip_meta_data |
+        ranges::views::filter([&field_name](auto const& md)
+                              { return md["name"] == field_name; });
 
     auto const count = ranges::distance(ip_meta_data_for_name);
     if (count == 0)
     {
         OGS_FATAL("No integration point meta data with name '{:s}' found.",
-                  name);
+                  field_name);
     }
     if (count != 1)
     {
         OGS_FATAL(
             "Expected exactly one integration point meta data with name "
             "'{:s}', found {}.",
-            name, count);
+            field_name, count);
     }
 
-    auto const& md = *ranges::begin(matches);
-    return {name, md["number_of_components"], md["integration_order"]};
+    auto const& md = *ranges::begin(ip_meta_data_for_name);
+    return {field_name, md["number_of_components"], md["integration_order"]};
 }
 }  // namespace MeshLib

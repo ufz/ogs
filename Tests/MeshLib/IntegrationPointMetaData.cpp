@@ -68,19 +68,19 @@ TEST(MeshLibIntegrationPointMetaDataTest, FindsAllUniqueQuantities)
 
     auto const stress =
         IntegrationPointMetaData::fromJsonString(json_str, "stress");
-    EXPECT_EQ(stress.name, "stress");
+    EXPECT_EQ(stress.field_name, "stress");
     EXPECT_EQ(stress.n_components, 6);
     EXPECT_EQ(stress.integration_order, 2);
 
     auto const strain =
         IntegrationPointMetaData::fromJsonString(json_str, "strain");
-    EXPECT_EQ(strain.name, "strain");
+    EXPECT_EQ(strain.field_name, "strain");
     EXPECT_EQ(strain.n_components, 6);
     EXPECT_EQ(strain.integration_order, 2);
 
     auto const damage =
         IntegrationPointMetaData::fromJsonString(json_str, "damage");
-    EXPECT_EQ(damage.name, "damage");
+    EXPECT_EQ(damage.field_name, "damage");
     EXPECT_EQ(damage.n_components, 1);
     EXPECT_EQ(damage.integration_order, 1);
 }

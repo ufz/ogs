@@ -24,12 +24,13 @@ struct IntegrationPointMetaData
         std::vector<IntegrationPointMetaData> const& meta_data);
 
     /// Constructs integration point meta data from a JSON encoded string and
-    /// looks for the name to be extracted from the parsed integration point
-    /// meta data. Fails if no meta data was found for the given name.
+    /// looks for the field name to be extracted from the parsed integration
+    /// point meta data. Fails if no meta data was found for the given field
+    /// name.
     static IntegrationPointMetaData fromJsonString(
-        std::string_view const json_string, std::string const& name);
+        std::string_view const json_string, std::string const& field_name);
 
-    std::string name;
+    std::string field_name;
     int n_components;
     int integration_order;
 };
