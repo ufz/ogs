@@ -41,12 +41,10 @@ static MeshLib::IntegrationPointMetaDataSingleField addIntegrationPointData(
 /// Adds integration point meta data as char mesh property encoded in JSON
 /// format, which is then stored as VTK's field data.
 static void addIntegrationPointMetaDataSingleField(
-    MeshLib::Mesh& mesh,
-    std::vector<MeshLib::IntegrationPointMetaDataSingleField> const& meta_data)
+    MeshLib::Mesh& mesh, MeshLib::IntegrationPointMetaData const& ip_meta_data)
 {
     // Store the field data.
-    std::string const json_string =
-        MeshLib::IntegrationPointMetaDataSingleField::toJsonString(meta_data);
+    std::string const json_string = ip_meta_data.toJsonString();
     auto& dictionary = *MeshLib::getOrCreateMeshProperty<char>(
         mesh, "IntegrationPointMetaData",
         MeshLib::MeshItemType::IntegrationPoint, 1);
@@ -62,28 +60,24 @@ void addIntegrationPointDataToMesh(
     std::vector<std::unique_ptr<IntegrationPointWriter>> const&
         integration_point_writer)
 {
-    std::vector<IntegrationPointMetaDataSingleField> meta_data;
-    meta_data.reserve(size(integration_point_writer));
-    transform(cbegin(integration_point_writer), cend(integration_point_writer),
-              back_inserter(meta_data),
-              [&](auto const& ip_writer)
-              { return addIntegrationPointData(mesh, *ip_writer); });
+    auto meta_data = IntegrationPointMetaData{
+        integration_point_writer |
+        ranges::views::transform(
+            [&](auto const& ip_writer)
+            { return addIntegrationPointData(mesh, *ip_writer); })};
+
     if (!meta_data.empty())
     {
         addIntegrationPointMetaDataSingleField(mesh, meta_data);
     }
 }
 
-IntegrationPointMetaDataSingleField getIntegrationPointMetaDataSingleField(
-    MeshLib::Properties const& properties, std::string const& name)
+std::optional<IntegrationPointMetaData> getIntegrationPointMetaData(
+    MeshLib::Properties const& properties)
 {
     if (!properties.existsPropertyVector<char>("IntegrationPointMetaData"))
     {
-        OGS_FATAL(
-            "Integration point data '{:s}' is present in the vtk field data "
-            "but the required 'IntegrationPointMetaData' array is not "
-            "available.",
-            name);
+        return std::nullopt;
     }
     auto const& mesh_property_ip_meta_data =
         *properties.template getPropertyVector<char>(
@@ -97,9 +91,7 @@ IntegrationPointMetaDataSingleField getIntegrationPointMetaDataSingleField(
 
     // Find the current integration point data entry and extract the
     // meta data.
-    return IntegrationPointMetaDataSingleField::fromJsonString(
-        std::string_view{mesh_property_ip_meta_data.data(),
-                         mesh_property_ip_meta_data.size()},
-        name);
+    return IntegrationPointMetaData{std::string_view{
+        mesh_property_ip_meta_data.data(), mesh_property_ip_meta_data.size()}};
 }
 }  // namespace MeshLib

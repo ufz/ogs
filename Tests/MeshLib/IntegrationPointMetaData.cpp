@@ -21,13 +21,11 @@ using namespace MeshLib;
 TEST(MeshLibIntegrationPointMetaDataSingleFieldTest, ThrowsIfNoMatchingName)
 {
     std::vector<IntegrationPointMetaDataSingleField> data = {{"stress", 6, 2}};
-
-    std::string const json_str =
-        IntegrationPointMetaDataSingleField::toJsonString(data);
+    IntegrationPointMetaData const ip_meta_data{data};
 
     try
     {
-        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "strain");
+        ip_meta_data["strain"];
         FAIL() << "Expected std::runtime_error";
     }
     catch (const std::runtime_error& e)
@@ -45,20 +43,17 @@ TEST(MeshLibIntegrationPointMetaDataSingleFieldTest,
     std::vector<IntegrationPointMetaDataSingleField> data = {{"stress", 6, 2},
                                                              {"stress", 3, 1}};
 
-    std::string const json_str =
-        IntegrationPointMetaDataSingleField::toJsonString(data);
-
     try
     {
-        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "stress");
+        IntegrationPointMetaData const ip_meta_data{data};
         FAIL() << "Expected std::runtime_error";
     }
     catch (const std::runtime_error& e)
     {
         EXPECT_THAT(
             e.what(),
-            testing::HasSubstr("Expected exactly one integration point meta "
-                               "data with name 'stress', found 2."));
+            testing::HasSubstr(
+                "Duplicate integration point meta data names found: stress."));
     }
 }
 
@@ -67,24 +62,22 @@ TEST(MeshLibIntegrationPointMetaDataSingleFieldTest, FindsAllUniqueQuantities)
     std::vector<IntegrationPointMetaDataSingleField> data = {
         {"stress", 6, 2}, {"strain", 6, 2}, {"damage", 1, 1}};
 
-    std::string const json_str =
-        IntegrationPointMetaDataSingleField::toJsonString(data);
+    IntegrationPointMetaData const ip_meta_data{data};
 
-    auto const stress =
-        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "stress");
+    auto const stress = ip_meta_data["stress"];
     EXPECT_EQ(stress.field_name, "stress");
     EXPECT_EQ(stress.n_components, 6);
     EXPECT_EQ(stress.integration_order, 2);
 
-    auto const strain =
-        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "strain");
+    auto const strain = ip_meta_data["strain"];
     EXPECT_EQ(strain.field_name, "strain");
     EXPECT_EQ(strain.n_components, 6);
     EXPECT_EQ(strain.integration_order, 2);
 
-    auto const damage =
-        IntegrationPointMetaDataSingleField::fromJsonString(json_str, "damage");
+    auto const damage = ip_meta_data["damage"];
     EXPECT_EQ(damage.field_name, "damage");
     EXPECT_EQ(damage.n_components, 1);
     EXPECT_EQ(damage.integration_order, 1);
 }
+
+// TODO (naumov) Roundtrip tests for json conversion

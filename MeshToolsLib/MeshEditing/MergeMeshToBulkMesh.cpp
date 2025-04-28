@@ -124,7 +124,8 @@ bool createIntegrationPointProperties(
     int const pv_num_components,
     MeshLib::PropertyVector<T> const* const pv_bulk_mesh,
     std::unordered_map<std::string, double>& initial_value_dict,
-    MeshLib::Properties const& properties_bulk_mesh)
+    std::optional<MeshLib::IntegrationPointMetaData> const&
+        integration_point_meta_data)
 {
     auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
         merged_mesh, pv_name, MeshLib::MeshItemType::IntegrationPoint,
@@ -133,7 +134,7 @@ bool createIntegrationPointProperties(
     // Count the integration points
     std::size_t counter = 0;
     auto const ip_meta_data = MeshLib::getIntegrationPointMetaDataSingleField(
-        properties_bulk_mesh, pv_name);
+        integration_point_meta_data, pv_name);
 
     for (auto const element : merged_mesh.getElements())
     {
@@ -159,7 +160,8 @@ bool createMergedPropertyVector(
     MeshLib::Mesh& merged_mesh,
     std::unordered_map<std::string, double>& initial_value_dict,
     MeshLib::PropertyVector<T> const* const pv_bulk_mesh,
-    MeshLib::Properties const& properties_bulk_mesh)
+    std::optional<MeshLib::IntegrationPointMetaData> const&
+        integration_point_meta_data)
 {
     if (pv_bulk_mesh == nullptr)
     {
@@ -204,7 +206,7 @@ bool createMergedPropertyVector(
     {
         return createIntegrationPointProperties(
             merged_mesh, pv_name, pv_num_components, pv_bulk_mesh,
-            initial_value_dict, properties_bulk_mesh);
+            initial_value_dict, integration_point_meta_data);
     }
 
     return false;
@@ -303,6 +305,8 @@ std::unique_ptr<MeshLib::Mesh> mergeMeshToBulkMesh(
         "merged_mesh", new_node_vector, new_element_vector);
 
     MeshLib::Properties const& properties_bulk_mesh = bulk_mesh.getProperties();
+    auto const integration_point_meta_data =
+        MeshLib::getIntegrationPointMetaData(properties_bulk_mesh);
 
     MeshLib::applyToPropertyVectors(
         properties_bulk_mesh,
@@ -312,7 +316,7 @@ std::unique_ptr<MeshLib::Mesh> mergeMeshToBulkMesh(
                 *merged_mesh, initial_value_dict,
                 dynamic_cast<MeshLib::PropertyVector<decltype(type)> const*>(
                     property),
-                properties_bulk_mesh);
+                integration_point_meta_data);
         });
 
     for (auto node : interface_nodes_of_other_mesh)
