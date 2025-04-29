@@ -876,6 +876,14 @@ if(NOT OGS_USE_PETSC AND NOT WIN32)
     )
 endif()
 
+if(NOT OGS_USE_PETSC)
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy_to_OGS.py
+        RUNTIME 200
+        PYTHON_PACKAGES porepy@git+https://github.com/pmgbergen/porepy.git@v1.11 gmsh<=4.11
+    )
+endif()
+
 AddTest(
     NAME 2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
     PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents
