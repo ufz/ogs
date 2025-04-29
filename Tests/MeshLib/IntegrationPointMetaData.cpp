@@ -80,4 +80,22 @@ TEST(MeshLibIntegrationPointMetaDataSingleFieldTest, FindsAllUniqueQuantities)
     EXPECT_EQ(damage.integration_order, 1);
 }
 
-// TODO (naumov) Roundtrip tests for json conversion
+TEST(MeshLibIntegrationPointMetaDataSingleFieldTest, Empty)
+{
+    IntegrationPointMetaData const ip_meta_data{
+        std::vector<IntegrationPointMetaDataSingleField>{}};
+
+    ASSERT_TRUE(ip_meta_data.empty());
+    ASSERT_EQ("{\"integration_point_arrays\":[]}", ip_meta_data.toJsonString());
+}
+
+TEST(MeshLibIntegrationPointMetaDataSingleFieldTest, JsonStringRoundTrip)
+{
+    std::vector<IntegrationPointMetaDataSingleField> data = {
+        {"stress", 6, 2}, {"strain", 6, 2}, {"damage", 1, 1}};
+
+    IntegrationPointMetaData const ip_meta_data{data};
+
+    ASSERT_EQ(ip_meta_data,
+              IntegrationPointMetaData{ip_meta_data.toJsonString()});
+}

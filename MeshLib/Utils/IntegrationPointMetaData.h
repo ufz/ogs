@@ -31,6 +31,9 @@ struct IntegrationPointMetaDataSingleField
     std::string field_name;
     int n_components;
     int integration_order;
+
+    auto operator<=>(IntegrationPointMetaDataSingleField const&) const =
+        default;
 };
 
 /// Description of the stored integration point meta data for all fields.
@@ -61,6 +64,8 @@ public:
 
     IntegrationPointMetaDataSingleField const& operator[](
         std::string const& field_name) const;
+
+    auto operator<=>(IntegrationPointMetaData const&) const = default;
 
 private:
     void checkFieldNamesAreUnique() const;
