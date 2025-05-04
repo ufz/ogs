@@ -37,6 +37,127 @@
 
 namespace MeshToolsLib
 {
+
+template <typename T>
+void setSigma0(int const pv_num_components,
+               MeshLib::PropertyVector<T> const* const pv_bulk_mesh,
+               std::unordered_map<std::string, double>& initial_value_dict,
+               MeshLib::PropertyVector<T>& new_pv)
+{
+    std::vector<double> sigma0(pv_num_components, 0.0);
+    sigma0[0] = initial_value_dict["sxx"];
+    sigma0[1] = initial_value_dict["syy"];
+    sigma0[2] = initial_value_dict["szz"];
+
+    std::transform(new_pv.begin() + pv_bulk_mesh->size(),
+                   new_pv.end(),
+                   new_pv.begin() + pv_bulk_mesh->size(),
+                   [&, i = 0](T) mutable
+                   { return static_cast<T>(sigma0[i++ % sigma0.size()]); });
+}
+
+template <typename T>
+bool createNodeProperties(
+    MeshLib::Mesh& merged_mesh, std::string const& pv_name,
+    int const pv_num_components,
+    MeshLib::PropertyVector<T> const* const pv_bulk_mesh,
+    std::unordered_map<std::string, double>& initial_value_dict)
+{
+    auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
+        merged_mesh, pv_name, MeshLib::MeshItemType::Node, pv_num_components);
+    new_pv->resize(merged_mesh.getNumberOfNodes() * pv_num_components);
+
+    std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
+
+    if (pv_num_components > 1)
+    {
+        if (pv_name.find("sigma") != std::string::npos)
+        {
+            setSigma0(pv_num_components, pv_bulk_mesh, initial_value_dict,
+                      *new_pv);
+        }
+        return true;
+    }
+
+    // Map possible pv_name values to their corresponding dictionary
+    // keys
+    const std::unordered_map<std::string, std::string> pv_to_dict_key = {
+        {"pressure", "p"},
+        {"p", "p"},
+        {"gas_pressure", "pg"},
+        {"pg", "pg"},
+        {"capillary_pressure", "pc"},
+        {"pc", "pc"},
+        {"temperature", "T"},
+        {"T", "T"}};
+
+    T value = static_cast<T>(0.0);
+    auto it = pv_to_dict_key.find(pv_name);
+    if (it != pv_to_dict_key.end() && initial_value_dict.contains(it->second))
+    {
+        value = static_cast<T>(initial_value_dict[it->second]);
+    }
+    std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(), value);
+    return true;
+}
+
+template <typename T>
+bool createCellProperties(
+    MeshLib::Mesh& merged_mesh, std::string const& pv_name,
+    int const pv_num_components,
+    MeshLib::PropertyVector<T> const* const pv_bulk_mesh,
+    std::unordered_map<std::string, double>& initial_value_dict)
+{
+    auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
+        merged_mesh, pv_name, MeshLib::MeshItemType::Cell, pv_num_components);
+    new_pv->resize(merged_mesh.getNumberOfElements() * pv_num_components);
+
+    std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
+
+    double const value =
+        (pv_name == "MaterialIDs") ? (initial_value_dict["mat_id"]) : 0.0;
+
+    std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(),
+              static_cast<T>(value));
+    return true;
+}
+
+template <typename T>
+bool createIntegrationPointProperties(
+    MeshLib::Mesh& merged_mesh, std::string const& pv_name,
+    int const pv_num_components,
+    MeshLib::PropertyVector<T> const* const pv_bulk_mesh,
+    std::unordered_map<std::string, double>& initial_value_dict,
+    MeshLib::Properties const& properties_bulk_mesh)
+{
+    auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
+        merged_mesh, pv_name, MeshLib::MeshItemType::IntegrationPoint,
+        pv_num_components);
+
+    // Count the integration points
+    std::size_t counter = 0;
+    auto const ip_meta_data =
+        MeshLib::getIntegrationPointMetaData(properties_bulk_mesh, pv_name);
+
+    for (auto const element : merged_mesh.getElements())
+    {
+        int const number_of_integration_points =
+            MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
+                                                              *element);
+        counter += number_of_integration_points;
+    }
+    new_pv->resize(counter * pv_num_components);
+
+    std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
+
+    if (pv_name.find("sigma") != std::string::npos)
+    {
+        setSigma0(pv_num_components, pv_bulk_mesh, initial_value_dict, *new_pv);
+    }
+
+    return true;
+}
+
 template <typename T>
 bool createMergedPropertyVector(
     MeshLib::Mesh& merged_mesh,
@@ -61,35 +182,6 @@ bool createMergedPropertyVector(
 
     auto const pv_num_components = pv_bulk_mesh->getNumberOfGlobalComponents();
 
-    auto const set_sigma0 =
-        [&pv_name, &pv_bulk_mesh, &initial_value_dict,
-         &pv_num_components](MeshLib::PropertyVector<T>& new_pv)
-    {
-        if (pv_num_components > 1)
-        {
-            if (pv_name.find("sigma") != std::string::npos)
-            {
-                std::vector<double> sigma0(pv_num_components, 0.0);
-                sigma0[0] = initial_value_dict["sxx"];
-                sigma0[1] = initial_value_dict["syy"];
-                sigma0[2] = initial_value_dict["szz"];
-
-                std::transform(
-                    new_pv.begin() + pv_bulk_mesh->size(),
-                    new_pv.end(),
-                    new_pv.begin() + pv_bulk_mesh->size(),
-                    [&, i = 0](T) mutable
-                    { return static_cast<T>(sigma0[i++ % sigma0.size()]); });
-                return true;
-            }
-            std::fill(new_pv.begin() + pv_bulk_mesh->size(), new_pv.end(),
-                      static_cast<T>(0.0));
-            return true;
-        }
-
-        return false;
-    };
-
     if (pv_name == "OGS_VERSION" || pv_name == "IntegrationPointMetaData")
     {
         auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
@@ -102,87 +194,24 @@ bool createMergedPropertyVector(
 
     if (item_type == MeshLib::MeshItemType::Node)
     {
-        auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
-            merged_mesh, pv_name, item_type, pv_num_components);
-        new_pv->resize(merged_mesh.getNumberOfNodes() * pv_num_components);
-
-        std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
-
-        if (set_sigma0(*new_pv))
-        {
-            return true;
-        }
-
-        // Map possible pv_name values to their corresponding dictionary
-        // keys
-        const std::unordered_map<std::string, std::string> pv_to_dict_key = {
-            {"pressure", "p"},
-            {"p", "p"},
-            {"gas_pressure", "pg"},
-            {"pg", "pg"},
-            {"capillary_pressure", "pc"},
-            {"pc", "pc"},
-            {"temperature", "T"},
-            {"T", "T"}};
-
-        T value = static_cast<T>(0.0);
-        auto it = pv_to_dict_key.find(pv_name);
-        if (it != pv_to_dict_key.end() &&
-            initial_value_dict.contains(it->second))
-        {
-            value = static_cast<T>(initial_value_dict[it->second]);
-        }
-        std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(), value);
-        return true;
+        return createNodeProperties(merged_mesh, pv_name, pv_num_components,
+                                    pv_bulk_mesh, initial_value_dict);
     }
 
     if (item_type == MeshLib::MeshItemType::Cell)
     {
-        auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
-            merged_mesh, pv_name, item_type, pv_num_components);
-        new_pv->resize(merged_mesh.getNumberOfElements() * pv_num_components);
-
-        std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
-
-        if (pv_name == "MaterialIDs")
-        {
-            std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(),
-                      static_cast<T>(initial_value_dict["mat_id"]));
-            return true;
-        }
-        std::fill(new_pv->begin() + pv_bulk_mesh->size(), new_pv->end(),
-                  static_cast<T>(0.0));
-        return true;
+        return createCellProperties(merged_mesh, pv_name, pv_num_components,
+                                    pv_bulk_mesh, initial_value_dict);
     }
 
     if (item_type == MeshLib::MeshItemType::IntegrationPoint)
     {
-        auto new_pv = MeshLib::getOrCreateMeshProperty<T>(
-            merged_mesh, pv_name, item_type, pv_num_components);
-
-        // Count the integration points
-        std::size_t counter = 0;
-        auto const ip_meta_data =
-            MeshLib::getIntegrationPointMetaData(properties_bulk_mesh, pv_name);
-
-        for (auto const element : merged_mesh.getElements())
-        {
-            int const number_of_integration_points =
-                MeshToolsLib::getNumberOfElementIntegrationPoints(ip_meta_data,
-                                                                  *element);
-            counter += number_of_integration_points;
-        }
-        new_pv->resize(counter * pv_num_components);
-
-        std::copy(pv_bulk_mesh->begin(), pv_bulk_mesh->end(), new_pv->begin());
-
-        if (set_sigma0(*new_pv))
-        {
-            return true;
-        }
+        return createIntegrationPointProperties(
+            merged_mesh, pv_name, pv_num_components, pv_bulk_mesh,
+            initial_value_dict, properties_bulk_mesh);
     }
 
-    return true;
+    return false;
 }
 
 std::vector<MeshLib::Node*> findNodesInBoundedDomain(
