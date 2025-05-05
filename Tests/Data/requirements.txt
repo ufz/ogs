@@ -1,5 +1,5 @@
 --extra-index-url https://gitlab.kitware.com/api/v4/projects/13/packages/pypi/simple
-ogstools==0.6.0
+ogstools @ https://gitlab.opengeosys.org/ogs/tools/ogstools/-/archive/8c9eaaa4e23c1b2cc8ee9ba5d15a37684f2dd0a9/ogstools-8c9eaaa4e23c1b2cc8ee9ba5d15a37684f2dd0a9.tar.gz
 gmsh>=4.11
 h5py>=3.8
 git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c#egg=heatsource-py
@@ -8,7 +8,6 @@ matplotlib>=3.6
 numpy
 pandas>=1.5
 ipywidgets
-pyvista[all]>=0.40.1,<0.45
+pyvista[all]>=0.45
 seaborn>=0.12
 VTUinterface>=0.704
-vtk-osmesa>=9.2.6;platform_system=='Linux'

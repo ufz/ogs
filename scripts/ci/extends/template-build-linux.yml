@@ -17,25 +17,6 @@
     # Activate .venv via .envrc
     - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.envrc
     - |
-      function maybe_run_with_xvfb()
-      {
-          if [[ "$OSTYPE" == "darwin"* ]]; then
-            "$@"
-          elif command -v xvfb-run &> /dev/null ; then
-            local ctest_status_file="$build_dir_full/ctest_status"
-            rm -f "$ctest_status_file"
-            # status file and sh -c to workaround xvfb-run problems:
-            # /usr/bin/xvfb-run: line 186: kill: (<PID>) - No such process"
-            xvfb-run -a \
-                sh -c 'statf="$1"; shift; "$@"; echo "$?" >"$statf"' \
-                -- "$ctest_status_file" "$@" \
-                || true
-            [ 0 = "`cat "$ctest_status_file"`" ]
-          else
-            "$@"
-          fi
-      }
-
       if [[ -z "$TARGETS" ]]; then
 
         if [ "$BUILD_PACKAGE" = true ]; then
@@ -92,7 +73,7 @@
             # https://github.com/matplotlib/matplotlib/issues/25306:
             rm -rf "$(python -c 'import matplotlib as mpl; print(mpl.get_cachedir())')"
             echo "ctest arguments: ${ctest_arguments}"
-            maybe_run_with_xvfb ctest \
+            ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
                 --test-dir "${build_dir_full}" -T Start -T Test -T Submit \
                 ${ctest_arguments} \
