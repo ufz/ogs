@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core"]
+requires = ["scikit-build-core@git+https://github.com/scikit-build/scikit-build-core.git@824019a758fb450f716dab8bc9fcfa8d719e8468"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -24,10 +24,9 @@ test = ["pytest", "numpy"]
 [tool.scikit-build]
 build-dir = "_skbuild/{wheel_tag}"
 cmake.args = ["--preset", "wheel"]
-cmake.minimum-version = "3.22.0"
 experimental = true
 metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
-minimum-version = "0.5.0"
+minimum-version = "0.11.2"
 ninja.make-fallback = false
 wheel.packages = ["Applications/Python/ogs"]
 sdist.exclude = ["Tests/Data", "web"]
