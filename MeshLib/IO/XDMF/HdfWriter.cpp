@@ -312,6 +312,13 @@ void HdfWriter::writeStep(double const time)
                 attribute.data_start, attribute.data_type, attribute.data_space,
                 attribute.offsets, attribute.file_space, attribute.chunk_space,
                 attribute.name, output_step, mesh->datasets.at(attribute.name));
+            if (auto const flush_status = H5Fflush(_file, H5F_SCOPE_LOCAL);
+                flush_status < 0)
+            {
+                ERR("HdfWriter::writeStep(): Could not flush to file '{}' - "
+                    "status is '{}'.",
+                    _hdf5_filepath.string(), flush_status);
+            }
         }
     }
 }
