@@ -268,11 +268,28 @@ HdfWriter::~HdfWriter()
     {
         for (auto const& dataset : mesh->datasets)
         {
-            H5Dclose(dataset.second);
+            if (auto const status = H5Dclose(dataset.second); status < 0)
+            {
+                ERR("Could not close dataset with id '{}' - status is '{}'.",
+                    dataset.second, status);
+            }
         }
-        H5Gclose(mesh->group);
+        if (auto const err = H5Gclose(mesh->group); err < 0)
+        {
+            ERR("Could not close group with group id '{}' - status is '{}'.",
+                mesh->group, err);
+        }
     }
-    H5Gclose(_meshes_group);
+    if (auto const group_err = H5Gclose(_meshes_group); group_err < 0)
+    {
+        ERR("Could not close group with group id '{}' - status is '{}'.",
+            _meshes_group, group_err);
+    }
+    if (auto const status = H5Fflush(_file, H5F_SCOPE_LOCAL); status < 0)
+    {
+        ERR("Could not flush data to file '{}' - status is '{}'.",
+            _hdf5_filepath.string(), status);
+    }
     H5Fclose(_file);
 }
 
