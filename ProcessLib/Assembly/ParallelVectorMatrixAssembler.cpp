@@ -175,6 +175,9 @@ int getNumberOfThreads()
 
     if (!num_threads_env)
     {
+        INFO(
+            "Threads used for ParallelVectorMatrixAssembler: 1. This is the "
+            "default when OGS_ASM_THREADS environment variable is not set");
         return 1;
     }
 
@@ -212,6 +215,7 @@ int getNumberOfThreads()
             num_threads);
     }
 
+    INFO("Threads used for ParallelVectorMatrixAssembler: {}.", num_threads);
     return num_threads;
 }
 }  // namespace
