@@ -614,7 +614,25 @@ plotter.show()
 # %%
 # %cd {mesh_path}
 run(
-    "identifySubdomains -f -m domain.vtu -- physical_group_*.vtu",
+    "identifySubdomains -f -m domain.vtu -- "
+    "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
+    "physical_group_DSS2.vtu physical_group_DSS2a.vtu "
+    "physical_group_DSS3.vtu physical_group_DSS3a.vtu "
+    "physical_group_DSS4.vtu physical_group_DSS4a.vtu "
+    "physical_group_DSS5.vtu physical_group_DSS5a.vtu "
+    "physical_group_DSS6.vtu physical_group_DSS6a.vtu "
+    "physical_group_DSS7.vtu physical_group_DSS7a.vtu "
+    "physical_group_DSS8.vtu physical_group_DSS8a.vtu "
+    "physical_group_PEE1.vtu physical_group_PEE1a.vtu "
+    "physical_group_PEE2.vtu physical_group_PEE2a.vtu "
+    "physical_group_PEE3.vtu physical_group_PEE3a.vtu "
+    "physical_group_PEE4.vtu physical_group_PEE4a.vtu "
+    "physical_group_PEE5.vtu physical_group_PEE5a.vtu "
+    "physical_group_PEE6.vtu physical_group_PEE6a.vtu "
+    "physical_group_PEE7.vtu physical_group_PEE7a.vtu "
+    "physical_group_PEE8.vtu physical_group_PEE8a.vtu "
+    "physical_group_p_bottom.vtu physical_group_p_left.vtu "
+    "physical_group_p_right.vtu physical_group_p_top.vtu ",
     shell=True,
     check=True,
 )
@@ -896,11 +914,28 @@ plotter.show()
 # %cd {mesh_path_embedded}
 # !pwd
 run(
-    "identifySubdomains -f -m domain.vtu -- physical_group_*.vtu",
+    "identifySubdomains -f -m domain.vtu -- "
+    "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
+    "physical_group_DSS2.vtu physical_group_DSS2a.vtu "
+    "physical_group_DSS3.vtu physical_group_DSS3a.vtu "
+    "physical_group_DSS4.vtu physical_group_DSS4a.vtu "
+    "physical_group_DSS5.vtu physical_group_DSS5a.vtu "
+    "physical_group_DSS6.vtu physical_group_DSS6a.vtu "
+    "physical_group_DSS7.vtu physical_group_DSS7a.vtu "
+    "physical_group_DSS8.vtu physical_group_DSS8a.vtu "
+    "physical_group_PEE1.vtu physical_group_PEE1a.vtu "
+    "physical_group_PEE2.vtu physical_group_PEE2a.vtu "
+    "physical_group_PEE3.vtu physical_group_PEE3a.vtu "
+    "physical_group_PEE4.vtu physical_group_PEE4a.vtu "
+    "physical_group_PEE5.vtu physical_group_PEE5a.vtu "
+    "physical_group_PEE6.vtu physical_group_PEE6a.vtu "
+    "physical_group_PEE7.vtu physical_group_PEE7a.vtu "
+    "physical_group_PEE8.vtu physical_group_PEE8a.vtu "
+    "physical_group_p_bottom.vtu physical_group_p_left.vtu "
+    "physical_group_p_right.vtu physical_group_p_top.vtu ",
     shell=True,
     check=True,
 )
-
 # %cd -
 
 # %%
@@ -1099,7 +1134,25 @@ plotter.show()
 # %%
 # %cd {mesh_path_full}
 run(
-    "identifySubdomains -f -m domain.vtu -- physical_group_*.vtu",
+    "identifySubdomains -f -m domain.vtu -- "
+    "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
+    "physical_group_DSS2.vtu physical_group_DSS2a.vtu "
+    "physical_group_DSS3.vtu physical_group_DSS3a.vtu "
+    "physical_group_DSS4.vtu physical_group_DSS4a.vtu "
+    "physical_group_DSS5.vtu physical_group_DSS5a.vtu "
+    "physical_group_DSS6.vtu physical_group_DSS6a.vtu "
+    "physical_group_DSS7.vtu physical_group_DSS7a.vtu "
+    "physical_group_DSS8.vtu physical_group_DSS8a.vtu "
+    "physical_group_PEE1.vtu physical_group_PEE1a.vtu "
+    "physical_group_PEE2.vtu physical_group_PEE2a.vtu "
+    "physical_group_PEE3.vtu physical_group_PEE3a.vtu "
+    "physical_group_PEE4.vtu physical_group_PEE4a.vtu "
+    "physical_group_PEE5.vtu physical_group_PEE5a.vtu "
+    "physical_group_PEE6.vtu physical_group_PEE6a.vtu "
+    "physical_group_PEE7.vtu physical_group_PEE7a.vtu "
+    "physical_group_PEE8.vtu physical_group_PEE8a.vtu "
+    "physical_group_p_bottom.vtu physical_group_p_left.vtu "
+    "physical_group_p_right.vtu physical_group_p_top.vtu ",
     shell=True,
     check=True,
 )
