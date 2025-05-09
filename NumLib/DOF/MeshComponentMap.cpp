@@ -4,7 +4,10 @@
 #include "MeshComponentMap.h"
 
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/join.hpp>
 #include <range/v3/view/map.hpp>
+#include <range/v3/view/subrange.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Error.h"
 #include "MeshLib/MeshSubset.h"
@@ -13,6 +16,30 @@
 #ifdef USE_PETSC
 #include "MeshLib/NodePartitionedMesh.h"
 #endif
+
+namespace
+{
+/// Returns a range of lines for the given location.
+auto linesByLocation(NumLib::detail::ComponentGlobalIndexDict const& dict,
+                     MeshLib::Location const& l)
+{
+    auto const& m = dict.get<NumLib::detail::ByLocation>();
+    auto const [first, last] = m.equal_range(NumLib::detail::Line{l});
+    return ranges::make_subrange(first, last);
+}
+
+/// Returns a range of lines for all given locations in the order of the
+/// locations.
+auto linesByLocations(NumLib::detail::ComponentGlobalIndexDict const& dict,
+                      std::vector<MeshLib::Location> const& ls)
+{
+    return ls |
+           ranges::views::transform([&dict](MeshLib::Location const& l)
+                                    { return linesByLocation(dict, l); }) |
+           ranges::views::join;
+}
+
+}  // namespace
 
 namespace NumLib
 {
@@ -150,14 +177,9 @@ void MeshComponentMap::renumberByLocation(GlobalIndexType offset)
 
 std::vector<int> MeshComponentMap::getComponentIDs(const Location& l) const
 {
-    auto const& m = _dict.get<ByLocation>();
-    auto const p = m.equal_range(Line(l));
-    std::vector<int> vec_compID;
-    for (auto itr = p.first; itr != p.second; ++itr)
-    {
-        vec_compID.push_back(itr->comp_id);
-    }
-    return vec_compID;
+    return linesByLocation(_dict, l) |
+           ranges::views::transform([](auto const& e) { return e.comp_id; }) |
+           ranges::to<std::vector>;
 }
 
 GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
@@ -171,36 +193,19 @@ GlobalIndexType MeshComponentMap::getGlobalIndex(Location const& l,
 std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndices(
     const Location& l) const
 {
-    auto const& m = _dict.get<ByLocation>();
-    auto const p = m.equal_range(Line(l));
-    std::vector<GlobalIndexType> global_indices;
-    for (auto itr = p.first; itr != p.second; ++itr)
-    {
-        global_indices.push_back(itr->global_index);
-    }
-    return global_indices;
+    return linesByLocation(_dict, l) |
+           ranges::views::transform([](auto const& e)
+                                    { return e.global_index; }) |
+           ranges::to<std::vector>;
 }
 
 std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByLocation(
     std::vector<Location> const& ls) const
 {
-    // Create vector of global indices sorted by location containing all
-    // locations given in ls parameter.
-
-    std::vector<GlobalIndexType> global_indices;
-    global_indices.reserve(ls.size());
-
-    auto const& m = _dict.get<ByLocation>();
-    for (const auto& l : ls)
-    {
-        auto const p = m.equal_range(Line(l));
-        for (auto itr = p.first; itr != p.second; ++itr)
-        {
-            global_indices.push_back(itr->global_index);
-        }
-    }
-
-    return global_indices;
+    return linesByLocations(_dict, ls) |
+           ranges::views::transform([](auto const& e)
+                                    { return e.global_index; }) |
+           ranges::to<std::vector>;
 }
 
 std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
@@ -208,24 +213,17 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
 {
     // vector of (Component, global Index) pairs.
     using CIPair = std::pair<int, GlobalIndexType>;
-    std::vector<CIPair> pairs;
-    pairs.reserve(ls.size());
 
-    // Create a sub dictionary containing all lines with location from ls.
-    auto const& m = _dict.get<ByLocation>();
-    for (const auto& l : ls)
-    {
-        auto const p = m.equal_range(Line(l));
-        for (auto itr = p.first; itr != p.second; ++itr)
-        {
-            pairs.emplace_back(itr->comp_id, itr->global_index);
-        }
-    }
+    std::vector<CIPair> pairs =
+        linesByLocations(_dict, ls) |
+        ranges::views::transform(
+            [](auto const& e) { return CIPair{e.comp_id, e.global_index}; }) |
+        ranges::to<std::vector>();
 
     auto CIPairLess = [](CIPair const& a, CIPair const& b)
     { return a.first < b.first; };
 
-    // Create vector of global indices from sub dictionary sorting by component.
+    // Sort by component; stable to keep the location order within each.
     if (!std::is_sorted(pairs.begin(), pairs.end(), CIPairLess))
     {
         std::stable_sort(pairs.begin(), pairs.end(), CIPairLess);
