@@ -3,6 +3,9 @@
 
 #include "MeshComponentMap.h"
 
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/map.hpp>
+
 #include "BaseLib/Error.h"
 #include "MeshLib/MeshSubset.h"
 #include "MeshLib/Node.h"
@@ -228,12 +231,7 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
         std::stable_sort(pairs.begin(), pairs.end(), CIPairLess);
     }
 
-    std::vector<GlobalIndexType> global_indices;
-    global_indices.reserve(pairs.size());
-    transform(cbegin(pairs), cend(pairs), back_inserter(global_indices),
-              [&](const auto& pair) { return pair.second; });
-
-    return global_indices;
+    return pairs | ranges::views::values | ranges::to<std::vector>;
 }
 
 GlobalIndexType MeshComponentMap::getLocalIndex(
