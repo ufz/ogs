@@ -13,15 +13,11 @@
 
 #include <Eigen/Dense>
 #include <algorithm>
-#include <boost/range/combine.hpp>
 #include <cmath>
-#include <memory>
 #include <numeric>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/zip.hpp>
-#include <ranges>
 #include <tuple>
-#include <unordered_map>
 #include <vector>
 
 #include "BaseLib/Logging.h"
