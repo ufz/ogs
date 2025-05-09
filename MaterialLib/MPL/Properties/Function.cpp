@@ -97,18 +97,10 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
         {
             symbol_table.create_variable("t");
         }
-        else if (v == "x")
+        else if (v == "x" || v == "y" || v == "z")
         {
             symbol_table.create_variable("x");
-            spatial_position_is_required = true;
-        }
-        else if (v == "y")
-        {
             symbol_table.create_variable("y");
-            spatial_position_is_required = true;
-        }
-        else if (v == "z")
-        {
             symbol_table.create_variable("z");
             spatial_position_is_required = true;
         }
