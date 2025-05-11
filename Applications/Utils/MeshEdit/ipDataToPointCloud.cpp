@@ -125,6 +125,7 @@ std::vector<MeshLib::Node*> computePointCloudNodes(
 unsigned determineIntegrationOrder(MeshLib::Mesh const& mesh)
 {
     auto const& properties = mesh.getProperties();
+    auto const ip_meta_data = MeshLib::getIntegrationPointMetaData(properties);
 
     std::optional<unsigned> integration_order;
 
@@ -142,7 +143,7 @@ unsigned determineIntegrationOrder(MeshLib::Mesh const& mesh)
         }
 
         auto const order =
-            MeshLib::getIntegrationPointMetaData(properties, std::string(name))
+            MeshLib::getIntegrationPointMetaDataSingleField(ip_meta_data, name)
                 .integration_order;
 
         if (!integration_order)

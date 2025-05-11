@@ -252,12 +252,11 @@ std::size_t copyFieldPropertyDataToPartitions(
 
     std::size_t id_offset = 0;
 
+    auto const ip_meta_data = MeshLib::getIntegrationPointMetaDataSingleField(
+        MeshLib::getIntegrationPointMetaData(properties), pv.getPropertyName());
     auto copyFieldData =
         [&](std::vector<const MeshLib::Element*> const& elements)
     {
-        auto const ip_meta_data = MeshLib::getIntegrationPointMetaData(
-            properties, pv.getPropertyName());
-
         for (auto const element : elements)
         {
             int const number_of_element_field_data =
@@ -284,6 +283,8 @@ std::size_t copyFieldPropertyDataToPartitions(
 void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
                                           std::vector<Partition>& partitions)
 {
+    auto const& opt_ip_meta_data_all =
+        MeshLib::getIntegrationPointMetaData(properties);
     for (auto const& [name, property] : properties)
     {
         auto const item_type = property->getMeshItemType();
@@ -300,12 +301,12 @@ void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
             continue;
         }
 
-        std::string const property_name = property->getPropertyName();
+        auto const& ip_meta_data =
+            MeshLib::getIntegrationPointMetaDataSingleField(
+                opt_ip_meta_data_all, property->getPropertyName());
         auto countIntegrationPoints =
             [&](std::vector<const MeshLib::Element*> const& elements)
         {
-            auto const ip_meta_data =
-                MeshLib::getIntegrationPointMetaData(properties, property_name);
             std::size_t counter = 0;
             for (auto const element : elements)
             {
@@ -518,6 +519,8 @@ void checkFieldPropertyVectorSize(
     std::vector<MeshLib::Element*> const& global_mesh_elements,
     MeshLib::Properties const& properties)
 {
+    auto const& opt_ip_meta_data_all =
+        MeshLib::getIntegrationPointMetaData(properties);
     for (auto const& [name, property] : properties)
     {
         auto const item_type = property->getMeshItemType();
@@ -535,8 +538,9 @@ void checkFieldPropertyVectorSize(
         }
 
         std::size_t number_of_total_integration_points = 0;
-        auto const ip_meta_data = MeshLib::getIntegrationPointMetaData(
-            properties, property->getPropertyName());
+        auto const ip_meta_data =
+            MeshLib::getIntegrationPointMetaDataSingleField(
+                opt_ip_meta_data_all, property->getPropertyName());
         for (auto const element : global_mesh_elements)
         {
             int const number_of_integration_points =

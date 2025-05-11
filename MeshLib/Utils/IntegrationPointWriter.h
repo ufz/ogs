@@ -11,8 +11,11 @@
 #include <functional>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <string>
 #include <vector>
+
+#include "IntegrationPointMetaData.h"
 
 #pragma once
 
@@ -116,18 +119,9 @@ void addIntegrationPointDataToMesh(
     std::vector<std::unique_ptr<IntegrationPointWriter>> const&
         integration_point_writer);
 
-/// Description of the stored integration point data providing additional
-/// information for reconstruction and post-processing.
-struct IntegrationPointMetaData
-{
-    std::string const name;
-    int const n_components;
-    int const integration_order;
-};
-
-/// Returns integration point meta data for the given field name.
-///
+/// Returns integration point meta data contained in the mesh properties or an
+/// empty optional if the 'IntegrationPointMetaData' array does not exist.
 /// The data is read from a JSON encoded string stored in field data array.
-IntegrationPointMetaData getIntegrationPointMetaData(
-    MeshLib::Properties const& properties, std::string const& name);
+std::optional<IntegrationPointMetaData> getIntegrationPointMetaData(
+    MeshLib::Properties const& properties);
 }  // namespace MeshLib

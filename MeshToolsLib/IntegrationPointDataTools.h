@@ -18,13 +18,13 @@ namespace MeshLib
 class Element;
 class Properties;
 class PropertyVectorBase;
-struct IntegrationPointMetaData;
+struct IntegrationPointMetaDataSingleField;
 }  // namespace MeshLib
 
 namespace MeshToolsLib
 {
 int getNumberOfElementIntegrationPoints(
-    MeshLib::IntegrationPointMetaData const& ip_meta_data,
+    MeshLib::IntegrationPointMetaDataSingleField const& ip_meta_data,
     MeshLib::Element const& e);
 
 std::vector<std::size_t> getIntegrationPointDataOffsetsOfMeshElements(

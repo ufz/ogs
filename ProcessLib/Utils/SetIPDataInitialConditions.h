@@ -39,6 +39,9 @@ void setIPDataInitialConditions(
     MeshLib::Properties const& mesh_properties,
     LocalAssemblersVector& local_assemblers)
 {
+    auto const& opt_ip_meta_data_all =
+        MeshLib::getIntegrationPointMetaData(mesh_properties);
+
     for (auto const& ip_writer : _integration_point_writer)
     {
         // Find the mesh property with integration point writer's name.
@@ -58,7 +61,7 @@ void setIPDataInitialConditions(
         }
 
         auto const ip_meta_data =
-            getIntegrationPointMetaData(mesh_properties, name);
+            getIntegrationPointMetaDataSingleField(opt_ip_meta_data_all, name);
 
         // Check the number of components.
         if (ip_meta_data.n_components !=

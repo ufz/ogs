@@ -22,7 +22,7 @@ namespace MeshToolsLib
 {
 template <typename ElementType>
 int getNumberOfElementIntegrationPointsGeneral(
-    MeshLib::IntegrationPointMetaData const& ip_meta_data)
+    MeshLib::IntegrationPointMetaDataSingleField const& ip_meta_data)
 {
     using IntegrationPolicy =
         NumLib::GaussLegendreIntegrationPolicy<ElementType>;
@@ -34,7 +34,7 @@ int getNumberOfElementIntegrationPointsGeneral(
 }
 
 int getNumberOfElementIntegrationPoints(
-    MeshLib::IntegrationPointMetaData const& ip_meta_data,
+    MeshLib::IntegrationPointMetaDataSingleField const& ip_meta_data,
     MeshLib::Element const& e)
 {
     switch (e.getCellType())
@@ -111,8 +111,8 @@ std::vector<std::size_t> getIntegrationPointDataOffsetsOfMeshElements(
 
     std::vector<std::size_t> element_ip_data_offsets(mesh_elements.size() + 1);
     std::size_t counter = 0;
-    auto const ip_meta_data =
-        MeshLib::getIntegrationPointMetaData(properties, pv.getPropertyName());
+    auto const ip_meta_data = MeshLib::getIntegrationPointMetaDataSingleField(
+        MeshLib::getIntegrationPointMetaData(properties), pv.getPropertyName());
     for (std::size_t i = 0; i < mesh_elements.size(); i++)
     {
         auto const* const element = mesh_elements[i];
