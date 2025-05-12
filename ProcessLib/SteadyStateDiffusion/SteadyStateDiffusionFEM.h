@@ -113,6 +113,12 @@ public:
             auto const& sm = _shape_matrices[ip];
             auto const& wp = _integration_method.getWeightedPoint(ip);
 
+            pos = {std::nullopt, _element.getID(),
+                   MathLib::Point3d(
+                       NumLib::interpolateCoordinates<ShapeFunction,
+                                                      ShapeMatricesType>(
+                           _element, sm.N))};
+
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, sm.N, p_int_pt);
             vars.liquid_phase_pressure = p_int_pt;
@@ -215,17 +221,19 @@ public:
             *_process_data.media_map.getMedium(_element.getID());
 
         MaterialPropertyLib::VariableArray vars;
-        vars.temperature =
-            medium
-                .property(
-                    MaterialPropertyLib::PropertyType::reference_temperature)
-                .template value<double>(vars, pos, t, dt);
+
         double pressure = 0.0;
         for (unsigned i = 0; i < n_integration_points; ++i)
         {
             NumLib::shapeFunctionInterpolate(local_x, _shape_matrices[i].N,
                                              pressure);
             vars.liquid_phase_pressure = pressure;
+
+            pos = {std::nullopt, _element.getID(),
+                   MathLib::Point3d(
+                       NumLib::interpolateCoordinates<ShapeFunction,
+                                                      ShapeMatricesType>(
+                           _element, _shape_matrices[i].N))};
 
             auto const k = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium.property(MaterialPropertyLib::PropertyType::diffusion)
