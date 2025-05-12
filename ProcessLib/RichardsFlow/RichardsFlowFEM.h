@@ -172,6 +172,12 @@ public:
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
 
+            pos = {std::nullopt, _element.getID(),
+                   MathLib::Point3d(
+                       NumLib::interpolateCoordinates<ShapeFunction,
+                                                      ShapeMatricesType>(
+                           _element, _ip_data[ip].N))};
+
             vars.liquid_phase_pressure = p_int_pt;
             vars.capillary_pressure = -p_int_pt;
             // setting pG to 1 atm
@@ -316,6 +322,12 @@ public:
         {
             double p_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_x, _ip_data[ip].N, p_int_pt);
+
+            pos = {std::nullopt, _element.getID(),
+                   MathLib::Point3d(
+                       NumLib::interpolateCoordinates<ShapeFunction,
+                                                      ShapeMatricesType>(
+                           _element, _ip_data[ip].N))};
             vars.liquid_phase_pressure = p_int_pt;
             vars.capillary_pressure = -p_int_pt;
             // setting pG to 1 atm
