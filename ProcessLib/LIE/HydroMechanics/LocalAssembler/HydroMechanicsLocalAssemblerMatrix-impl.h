@@ -222,10 +222,15 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         variables.liquid_phase_pressure = N_p.dot(p);
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
         auto const B =
             LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
@@ -420,10 +425,15 @@ void HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
 
         variables.liquid_phase_pressure = N_p.dot(p);
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
         auto const B =
             LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 GlobalDim, ShapeFunctionDisplacement::NPOINTS, BBarMatrixType,
