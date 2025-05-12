@@ -8,11 +8,13 @@
  */
 #pragma once
 
+#include <map>
 #include <utility>
 #include <vector>
 
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/VariableType.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace MaterialPropertyLib
 {
@@ -30,7 +32,10 @@ public:
         std::string name,
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
-            dvalue_string_expressions);
+            dvalue_string_expressions,
+        std::map<std::string,
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves);
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
