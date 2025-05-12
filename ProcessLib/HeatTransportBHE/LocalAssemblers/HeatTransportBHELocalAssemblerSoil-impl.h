@@ -36,7 +36,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction>::
         HeatTransportBHEProcessData& process_data)
     : _process_data(process_data),
       _integration_method(integration_method),
-      _element_id(e.getID())
+      _element(e)
 {
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -48,9 +48,6 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction>::
         NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                   3 /* GlobalDim */>(e, is_axially_symmetric,
                                                      _integration_method);
-
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element_id);
 
     // ip data initialization
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -80,10 +77,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
     auto local_K = MathLib::createZeroedMatrix<NodalMatrixType>(
         local_K_data, ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
-
-    auto const& medium = *_process_data.media_map.getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium.phase("Solid");
     auto const& liquid_phase = medium.phase("AqueousLiquid");
 
@@ -98,6 +92,12 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
+
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         double T_int_pt = 0.0;
         NumLib::shapeFunctionInterpolate(local_x, N, T_int_pt);
@@ -185,7 +185,7 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
     if (_process_data._mass_lumping)
     {
         // only mass lumping at the BHE connected soil elements
-        if (_process_data.mass_lumping_soil_elements[_element_id])
+        if (_process_data.mass_lumping_soil_elements[_element.getID()])
         {
             local_M = local_M.colwise().sum().eval().asDiagonal();
         }
