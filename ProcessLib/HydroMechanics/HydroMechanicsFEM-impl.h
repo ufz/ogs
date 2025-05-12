@@ -204,10 +204,15 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_p = _ip_data[ip].N_p;
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -410,6 +415,13 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, _ip_data[ip].N_u))};
+
         double const p_int_pt = _ip_data[ip].N_p.dot(p);
 
         phase_pressure = p_int_pt;
@@ -527,6 +539,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const& N_p = _ip_data[ip].N_p;
         auto const& dNdx_p = _ip_data[ip].dNdx_p;
+
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionPressure,
+                                               ShapeMatricesTypePressure>(
+                    _element, _ip_data[ip].N_p))};
 
         double const p_int_pt = N_p.dot(p);
 
@@ -671,10 +690,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         auto const& N_p = _ip_data[ip].N_p;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -776,10 +799,14 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_u = _ip_data[ip].N_u;
         auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, N_u))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -870,10 +897,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
             auto const& N_u = _ip_data[ip].N_u;
             auto const& dNdx_u = _ip_data[ip].dNdx_u;
 
-            auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u);
+            x_position = {std::nullopt, _element.getID(),
+                          MathLib::Point3d(NumLib::interpolateCoordinates<
+                                           ShapeFunctionDisplacement,
+                                           ShapeMatricesTypeDisplacement>(
+                              _element, N_u))};
+
+            auto const x_coord = x_position.getCoordinates().value()[0];
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
@@ -939,6 +969,13 @@ void HydroMechanicsLocalAssembler<
                 auto& ip_data = _ip_data[ip];
 
                 auto const& N_p = ip_data.N_p;
+
+                x_position = {
+                    std::nullopt, _element.getID(),
+                    MathLib::Point3d(
+                        NumLib::interpolateCoordinates<
+                            ShapeFunctionPressure, ShapeMatricesTypePressure>(
+                            _element, N_p))};
 
                 auto const& eps = ip_data.eps;
                 auto const& eps_prev = ip_data.eps_prev;
@@ -1089,8 +1126,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
                          *_process_data.pressure_interpolated);
 
     int const elem_id = _element.getID();
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(elem_id);
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -1109,6 +1145,13 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     {
         auto const& eps = _ip_data[ip].eps;
         sigma_eff_sum += _ip_data[ip].sigma_eff;
+
+        ParameterLib::SpatialPosition x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, _ip_data[ip].N_u))};
 
         auto const alpha = medium->property(MPL::PropertyType::biot_coefficient)
                                .template value<double>(vars, x_position, t, dt);
