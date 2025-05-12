@@ -97,9 +97,6 @@ public:
 
         auto const& process_data = this->_process_data;
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(this->_element.getID());
-
         auto p_nodal_values = Eigen::Map<const NodalVectorType>(
             &local_x[pressure_index], pressure_size);
 
@@ -131,6 +128,13 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& N = Ns[ip];
             auto const& w = ip_data.integration_weight;
+
+            ParameterLib::SpatialPosition const pos{
+                std::nullopt, this->_element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        this->_element, N))};
 
             double T_int_pt = 0.0;
             double p_int_pt = 0.0;
