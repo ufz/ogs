@@ -156,8 +156,6 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& medium =
         this->process_data_.media_map.getMedium(this->element_.getID());
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(this->element_.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto& ip_data = ip_data_[ip];
@@ -168,6 +166,13 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         ip_data.N_u = sm_u.N;
         ip_data.dNdx_u = sm_u.dNdx;
+
+        ParameterLib::SpatialPosition x_position = {
+            std::nullopt, this->element_.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, ip_data.N_u))};
 
         ip_data.N_p = shape_matrices_p[ip].N;
         ip_data.dNdx_p = shape_matrices_p[ip].dNdx;
@@ -220,9 +225,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         this->process_data_.media_map.getMedium(this->element_.getID());
     MPL::VariableArray variables;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(this->element_.getID());
-
     auto const& solid_phase = medium->phase("Solid");
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
@@ -234,6 +236,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         auto const& N_p = ip_data_[ip].N_p;
+
+        ParameterLib::SpatialPosition x_position = {
+            std::nullopt, this->element_.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionPressure,
+                                               ShapeMatricesTypePressure>(
+                    this->element_, N_p))};
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -410,10 +419,14 @@ void RichardsMechanicsLocalAssembler<
         auto const& N_p = ip_data_[ip].N_p;
         auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, N_u);
+        x_position = {
+            std::nullopt, this->element_.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, N_u))};
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -1114,9 +1127,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(this->element_.getID());
-
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -1135,10 +1145,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_p = ip_data_[ip].N_p;
         auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, N_u);
+        ParameterLib::SpatialPosition x_position = {
+            std::nullopt, this->element_.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, N_u))};
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -1515,9 +1529,6 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(this->element_.getID());
-
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
@@ -1533,10 +1544,14 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_u = ip_data_[ip].N_u;
         auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, N_u);
+        ParameterLib::SpatialPosition x_position = {
+            std::nullopt, this->element_.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    this->element_, N_u))};
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
