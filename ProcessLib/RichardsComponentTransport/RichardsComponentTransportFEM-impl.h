@@ -26,7 +26,7 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::LocalAssemblerData(
     bool is_axially_symmetric,
     RichardsComponentTransportProcessData const& process_data,
     ProcessVariable const& transport_process_variable)
-    : _element_id(element.getID()),
+    : _element(element),
       _process_data(process_data),
       _integration_method(integration_method),
       _transport_process_variable(transport_process_variable)
@@ -79,9 +79,6 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
-
     auto p_nodal_values = Eigen::Map<const NodalVectorType>(
         &local_x[pressure_index], pressure_size);
 
@@ -93,7 +90,7 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
         GlobalDimMatrixType::Identity(GlobalDim, GlobalDim));
 
     // Get material properties
-    auto const& medium = *_process_data.media_map.getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& phase = medium.phase("AqueousLiquid");
     auto const& component =
         phase.component(_transport_process_variable.getName());
@@ -114,6 +111,12 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
         auto const& w = ip_data.integration_weight;
+
+        ParameterLib::SpatialPosition pos = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         double C_int_pt = 0.0;
         double p_int_pt = 0.0;
@@ -239,7 +242,7 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
 
     constexpr int process_id = 0;  // monolithic scheme
     auto const indices =
-        NumLib::getIndices(_element_id, *dof_table[process_id]);
+        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
     assert(!indices.empty());
     auto const local_x = x[process_id]->get(indices);
 
@@ -248,13 +251,10 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
         Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
         cache, GlobalDim, n_integration_points);
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
-
     MaterialPropertyLib::VariableArray vars;
 
     // Get material properties
-    auto const& medium = *_process_data.media_map.getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& phase = medium.phase("AqueousLiquid");
 
     auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
@@ -265,6 +265,12 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
         auto const& ip_data = _ip_data[ip];
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
+
+        ParameterLib::SpatialPosition pos = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         auto const dt = std::numeric_limits<double>::quiet_NaN();
         auto const K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -322,19 +328,16 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtSaturation(
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
     std::vector<double>& cache) const
 {
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element_id);
-
     MaterialPropertyLib::VariableArray vars;
 
-    auto const& medium = *_process_data.media_map.getMedium(_element_id);
+    auto const& medium = *_process_data.media_map.getMedium(_element.getID());
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
     constexpr int process_id = 0;  // monolithic scheme
     auto const indices =
-        NumLib::getIndices(_element_id, *dof_table[process_id]);
+        NumLib::getIndices(_element.getID(), *dof_table[process_id]);
     assert(!indices.empty());
     auto const local_x = x[process_id]->get(indices);
 
@@ -347,6 +350,12 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtSaturation(
     {
         auto const& ip_data = _ip_data[ip];
         auto const& N = ip_data.N;
+
+        ParameterLib::SpatialPosition pos = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         double C_int_pt = 0.0;
         double p_int_pt = 0.0;

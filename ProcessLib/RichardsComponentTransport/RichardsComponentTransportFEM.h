@@ -128,7 +128,7 @@ public:
         std::vector<double>& cache) const override;
 
 private:
-    unsigned const _element_id;
+    MeshLib::Element const& _element;
     RichardsComponentTransportProcessData const& _process_data;
 
     NumLib::GenericIntegrationMethod const& _integration_method;
