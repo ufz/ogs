@@ -37,7 +37,10 @@ public:
     PETScLinearSolver(std::string const& prefix,
                       std::string const& petsc_options);
 
-    ~PETScLinearSolver() { KSPDestroy(&solver_); }
+    ~PETScLinearSolver()
+    {
+        PetscCallAbort(PETSC_COMM_WORLD, KSPDestroy(&solver_));
+    }
     // TODO check if some args in LinearSolver interface can be made const&.
     bool solve(PETScMatrix& A, PETScVector& b, PETScVector& x);
 
@@ -45,7 +48,7 @@ public:
     PetscInt getNumberOfIterations() const
     {
         PetscInt its = 0;
-        KSPGetIterationNumber(solver_, &its);
+        PetscCallAbort(PETSC_COMM_WORLD, KSPGetIterationNumber(solver_, &its));
         return its;
     }
 

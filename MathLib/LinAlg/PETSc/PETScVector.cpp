@@ -16,14 +16,17 @@ PETScVector::PETScVector(const PetscInt vec_size, const bool is_global_size)
 {
     if (is_global_size)
     {
-        VecCreate(PETSC_COMM_WORLD, &v_);
-        VecSetSizes(v_, PETSC_DECIDE, vec_size);
+        PetscCallAbort(PETSC_COMM_WORLD, VecCreate(PETSC_COMM_WORLD, &v_));
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       VecSetSizes(v_, PETSC_DECIDE, vec_size));
     }
     else
     {
         // Fix size partitioning
         // the size can be associated to specific memory allocation of a matrix
-        VecCreateMPI(PETSC_COMM_WORLD, vec_size, PETSC_DECIDE, &v_);
+        PetscCallAbort(
+            PETSC_COMM_WORLD,
+            VecCreateMPI(PETSC_COMM_WORLD, vec_size, PETSC_DECIDE, &v_));
     }
 
     config();
@@ -38,15 +41,18 @@ PETScVector::PETScVector(const PetscInt vec_size,
     PetscInt nghosts = static_cast<PetscInt>(ghost_ids.size());
     if (is_global_size)
     {
-        VecCreateGhost(PETSC_COMM_WORLD, PETSC_DECIDE, vec_size, nghosts,
-                       ghost_ids.data(), &v_);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       VecCreateGhost(PETSC_COMM_WORLD, PETSC_DECIDE, vec_size,
+                                      nghosts, ghost_ids.data(), &v_));
     }
     else
     {
-        VecCreate(PETSC_COMM_WORLD, &v_);
-        VecSetType(v_, VECMPI);
-        VecSetSizes(v_, vec_size, PETSC_DECIDE);
-        VecMPISetGhost(v_, nghosts, ghost_ids.data());
+        PetscCallAbort(PETSC_COMM_WORLD, VecCreate(PETSC_COMM_WORLD, &v_));
+        PetscCallAbort(PETSC_COMM_WORLD, VecSetType(v_, VECMPI));
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       VecSetSizes(v_, vec_size, PETSC_DECIDE));
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       VecMPISetGhost(v_, nghosts, ghost_ids.data()));
     }
 
     config();
@@ -64,7 +70,7 @@ PETScVector::PETScVector(const PETScVector& existing_vec, const bool deep_copy)
     // Copy values
     if (deep_copy)
     {
-        VecCopy(existing_vec.v_, v_);
+        PetscCallAbort(PETSC_COMM_WORLD, VecCopy(existing_vec.v_, v_));
     }
 }
 
@@ -83,19 +89,21 @@ PETScVector::PETScVector(PETScVector&& other)
 
 void PETScVector::config()
 {
-    VecSetFromOptions(v_);
-    VecGetOwnershipRange(v_, &start_rank_, &end_rank_);
+    PetscCallAbort(PETSC_COMM_WORLD, VecSetFromOptions(v_));
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   VecGetOwnershipRange(v_, &start_rank_, &end_rank_));
 
-    VecGetLocalSize(v_, &size_loc_);
-    VecGetSize(v_, &size_);
+    PetscCallAbort(PETSC_COMM_WORLD, VecGetLocalSize(v_, &size_loc_));
+    PetscCallAbort(PETSC_COMM_WORLD, VecGetSize(v_, &size_));
 
-    VecSetOption(v_, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE);
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   VecSetOption(v_, VEC_IGNORE_NEGATIVE_INDICES, PETSC_TRUE));
 }
 
 void PETScVector::finalizeAssembly()
 {
-    VecAssemblyBegin(v_);
-    VecAssemblyEnd(v_);
+    PetscCallAbort(PETSC_COMM_WORLD, VecAssemblyBegin(v_));
+    PetscCallAbort(PETSC_COMM_WORLD, VecAssemblyEnd(v_));
 }
 
 void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
@@ -108,14 +116,14 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
     assert(static_cast<PetscInt>(u.size()) == size_);
 
     PetscInt state;
-    VecLockGet(v_, &state);
+    PetscCallAbort(PETSC_COMM_WORLD, VecLockGet(v_, &state));
     if (state != 0)
     {
         OGS_FATAL("PETSc vector is already locked for {:s} access.",
                   state > 0 ? "read" : "write");
     }
     PetscScalar* xp = nullptr;
-    VecGetArray(v_, &xp);
+    PetscCallAbort(PETSC_COMM_WORLD, VecGetArray(v_, &xp));
 
     BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
     BaseLib::MPI::allgatherv(std::span(xp, size_loc_), u, mpi);
@@ -124,7 +132,7 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
     //  for a communication load balance:
     // MPI_Barrier(PETSC_COMM_WORLD);
 
-    VecRestoreArray(v_, &xp);
+    PetscCallAbort(PETSC_COMM_WORLD, VecRestoreArray(v_, &xp));
 
 // TEST
 #ifdef TEST_MEM_PETSC
@@ -196,14 +204,16 @@ PetscScalar* PETScVector::getLocalVector() const
     PetscScalar* loc_array;
     if (created_with_ghost_id_ && !global_ids2local_ids_ghost_.empty())
     {
-        VecGhostUpdateBegin(v_, INSERT_VALUES, SCATTER_FORWARD);
-        VecGhostUpdateEnd(v_, INSERT_VALUES, SCATTER_FORWARD);
-        VecGhostGetLocalForm(v_, &v_loc_);
-        VecGetArray(v_loc_, &loc_array);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       VecGhostUpdateBegin(v_, INSERT_VALUES, SCATTER_FORWARD));
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       VecGhostUpdateEnd(v_, INSERT_VALUES, SCATTER_FORWARD));
+        PetscCallAbort(PETSC_COMM_WORLD, VecGhostGetLocalForm(v_, &v_loc_));
+        PetscCallAbort(PETSC_COMM_WORLD, VecGetArray(v_loc_, &loc_array));
     }
     else
     {
-        VecGetArray(v_, &loc_array);
+        PetscCallAbort(PETSC_COMM_WORLD, VecGetArray(v_, &loc_array));
     }
 
     return loc_array;
@@ -246,12 +256,12 @@ void PETScVector::restoreArray(PetscScalar* array) const
 {
     if (created_with_ghost_id_ && !global_ids2local_ids_ghost_.empty())
     {
-        VecRestoreArray(v_loc_, &array);
-        VecGhostRestoreLocalForm(v_, &v_loc_);
+        PetscCallAbort(PETSC_COMM_WORLD, VecRestoreArray(v_loc_, &array));
+        PetscCallAbort(PETSC_COMM_WORLD, VecGhostRestoreLocalForm(v_, &v_loc_));
     }
     else
     {
-        VecRestoreArray(v_, &array);
+        PetscCallAbort(PETSC_COMM_WORLD, VecRestoreArray(v_, &array));
     }
 }
 
@@ -277,7 +287,7 @@ void PETScVector::shallowCopy(const PETScVector& v)
 {
     destroy();
 
-    VecDuplicate(v.getRawVector(), &v_);
+    PetscCallAbort(PETSC_COMM_WORLD, VecDuplicate(v.getRawVector(), &v_));
 
     start_rank_ = v.start_rank_;
     end_rank_ = v.end_rank_;

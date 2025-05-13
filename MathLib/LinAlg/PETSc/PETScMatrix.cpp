@@ -50,7 +50,8 @@ PETScMatrix::PETScMatrix(const PETScMatrix& A)
       start_rank_(A.start_rank_),
       end_rank_(A.end_rank_)
 {
-    MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_);
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_));
 }
 
 PETScMatrix& PETScMatrix::operator=(PETScMatrix const& A)
@@ -65,12 +66,14 @@ PETScMatrix& PETScMatrix::operator=(PETScMatrix const& A)
     if (A_ != nullptr)
     {
         // TODO this is the slowest option for copying
-        MatCopy(A.A_, A_, DIFFERENT_NONZERO_PATTERN);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       MatCopy(A.A_, A_, DIFFERENT_NONZERO_PATTERN));
     }
     else
     {
         destroy();
-        MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_));
     }
 
     return *this;
@@ -87,18 +90,24 @@ void PETScMatrix::setRowsColumnsZero(std::vector<PetscInt> const& row_pos)
     // This avoids all reductions in the zero row routines
     // and thus improves performance for very large process counts.
     // See PETSc doc about MAT_NO_OFF_PROC_ZERO_ROWS.
-    MatSetOption(A_, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE);
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatSetOption(A_, MAT_NO_OFF_PROC_ZERO_ROWS, PETSC_TRUE));
 
     // Keep the non-zero pattern for the assignment operator.
-    MatSetOption(A_, MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE);
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatSetOption(A_, MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE));
 
     if (nrows > 0)
     {
-        MatZeroRows(A_, nrows, &row_pos[0], one, PETSC_NULLPTR, PETSC_NULLPTR);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       MatZeroRows(A_, nrows, &row_pos[0], one, PETSC_NULLPTR,
+                                   PETSC_NULLPTR));
     }
     else
     {
-        MatZeroRows(A_, 0, PETSC_NULLPTR, one, PETSC_NULLPTR, PETSC_NULLPTR);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       MatZeroRows(A_, 0, PETSC_NULLPTR, one, PETSC_NULLPTR,
+                                   PETSC_NULLPTR));
     }
 }
 
@@ -126,20 +135,26 @@ void PETScMatrix::viewer(const std::string& file_name,
 
 void PETScMatrix::create(const PetscInt d_nz, const PetscInt o_nz)
 {
-    MatCreate(PETSC_COMM_WORLD, &A_);
-    MatSetSizes(A_, n_loc_rows_, n_loc_cols_, nrows_, ncols_);
+    PetscCallAbort(PETSC_COMM_WORLD, MatCreate(PETSC_COMM_WORLD, &A_));
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatSetSizes(A_, n_loc_rows_, n_loc_cols_, nrows_, ncols_));
 
-    MatSetType(A_, MATAIJ);
-    MatSetFromOptions(A_);
+    PetscCallAbort(PETSC_COMM_WORLD, MatSetType(A_, MATAIJ));
+    PetscCallAbort(PETSC_COMM_WORLD, MatSetFromOptions(A_));
 
-    MatSeqAIJSetPreallocation(A_, d_nz, PETSC_NULLPTR);
-    MatMPIAIJSetPreallocation(A_, d_nz, PETSC_NULLPTR, o_nz, PETSC_NULLPTR);
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatSeqAIJSetPreallocation(A_, d_nz, PETSC_NULLPTR));
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatMPIAIJSetPreallocation(A_, d_nz, PETSC_NULLPTR, o_nz,
+                                             PETSC_NULLPTR));
     // If pre-allocation does not work one can use MatSetUp(A_), which is much
     // slower.
 
-    MatGetOwnershipRange(A_, &start_rank_, &end_rank_);
-    MatGetSize(A_, &nrows_, &ncols_);
-    MatGetLocalSize(A_, &n_loc_rows_, &n_loc_cols_);
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatGetOwnershipRange(A_, &start_rank_, &end_rank_));
+    PetscCallAbort(PETSC_COMM_WORLD, MatGetSize(A_, &nrows_, &ncols_));
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatGetLocalSize(A_, &n_loc_rows_, &n_loc_cols_));
 }
 
 bool finalizeMatrixAssembly(PETScMatrix& mat, const MatAssemblyType asm_type)
