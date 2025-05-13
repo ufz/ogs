@@ -157,7 +157,6 @@ void calculateFluxCorrectedTransportSerial(
         R_minus->set(k, tmp);
     }
 
-    auto alpha = newZeroedInstance<GlobalMatrix>(matrix_specification);
     for (int k = 0; k < F_raw.outerSize(); ++k)
     {
         for (RawMatrixType::InnerIterator it(F_raw, k); it; ++it)
@@ -169,28 +168,13 @@ void calculateFluxCorrectedTransportSerial(
                 double const R_minus_j = R_minus->get(it.col());
                 double const alpha_ij = std::min(R_plus_i, R_minus_j);
 
-                alpha->setValue(it.row(), it.col(), alpha_ij);
+                b.add(it.row(), alpha_ij * fij);
             }
             else
             {
                 double const R_minus_i = R_minus->get(it.row());
                 double const R_plus_j = R_plus->get(it.col());
                 double const alpha_ij = std::min(R_minus_i, R_plus_j);
-
-                alpha->setValue(it.row(), it.col(), alpha_ij);
-            }
-        }
-    }
-
-    // compute limited antidiffusive fluxes
-    for (int k = 0; k < F_raw.outerSize(); ++k)
-    {
-        for (RawMatrixType::InnerIterator it(F_raw, k); it; ++it)
-        {
-            if (it.row() != it.col())
-            {
-                double const fij = it.value();
-                double const alpha_ij = alpha->get(it.row(), it.col());
 
                 b.add(it.row(), alpha_ij * fij);
             }
