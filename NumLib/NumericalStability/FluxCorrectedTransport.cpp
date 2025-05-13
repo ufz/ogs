@@ -139,10 +139,12 @@ void calculateFluxCorrectedTransportSerial(
         double const Q_plus_i = Q_plus->get(k);
         double const P_plus_i = P_plus->get(k);
 
-        double const tmp =
-            P_plus_i == 0. ? 0.0 : std::min(1.0, mi * Q_plus_i / dt / P_plus_i);
+        if (P_plus_i == 0.0)
+        {
+            continue;
+        }
 
-        R_plus->set(k, tmp);
+        R_plus->set(k, std::min(1.0, mi * Q_plus_i / dt / P_plus_i));
     }
 
     for (auto k = R_minus->getRangeBegin(); k < R_minus->getRangeEnd(); ++k)
