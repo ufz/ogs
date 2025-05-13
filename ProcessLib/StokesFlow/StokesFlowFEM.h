@@ -149,9 +149,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& b = _process_data.specific_body_force;
 
         MaterialPropertyLib::VariableArray vars;
@@ -183,6 +180,13 @@ public:
             auto const& w = ip_data.integration_weight;
 
             double p_int_pt = 0.0;
+
+            ParameterLib::SpatialPosition const pos{
+                std::nullopt, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunctionPressure,
+                                                   ShapeMatrixTypePressure>(
+                        _element, N_p))};
 
             NumLib::shapeFunctionInterpolate(local_p, N_p, p_int_pt);
 
