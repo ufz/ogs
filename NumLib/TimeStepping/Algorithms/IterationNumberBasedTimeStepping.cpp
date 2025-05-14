@@ -103,9 +103,20 @@ double IterationNumberBasedTimeStepping::findMultiplier(
     double multiplier = _multiplier_vector.front();
     for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
     {
-        if (number_iterations >= _iter_times_vector[i])
+        if (i + 1 == _iter_times_vector.size())
         {
             multiplier = _multiplier_vector[i];
+            break;
+        }
+        else if ((number_iterations >= _iter_times_vector[i]) &&
+                 (number_iterations <= _iter_times_vector[i + 1]))
+        {
+            double const t = (number_iterations - _iter_times_vector[i]) /
+                             static_cast<double>(_iter_times_vector[i + 1] -
+                                                 _iter_times_vector[i]);
+            multiplier =
+                std::lerp(_multiplier_vector[i], _multiplier_vector[i + 1], t);
+            break;
         }
     }
 
