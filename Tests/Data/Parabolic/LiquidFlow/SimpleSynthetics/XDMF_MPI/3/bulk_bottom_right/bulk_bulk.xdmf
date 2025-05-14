@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
+<Domain>
+<Information Name="OGS_VERSION" Value="6.5.4-458-g7a7a3c12.dirty"/>
+<Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0"/>
+
+	<Geometry Origin="" Type="XYZ">
+		<DataItem DataType="Float" Dimensions="93 3" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/geometry|0 0 0:1 1 1:1 93 3:8 93 3</DataItem>
+	</Geometry>
+
+	<Topology Type="Quadrilateral">
+		<DataItem DataType="UInt" Dimensions="61 4" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/topology|0 0 0:1 1 1:1 61 4:8 61 4</DataItem>
+	</Topology>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|0 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|0 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|0 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0.29999999999999999"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|1 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|1 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|1 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0.59999999999999998"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|2 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|2 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|2 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="0.89999999999999991"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|3 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|3 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|3 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="1.2"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|4 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|4 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|4 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="1.5"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|5 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|5 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|5 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="1.7999999999999998"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|6 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|6 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|6 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+<Grid Name="Grid" GridType="Uniform">
+    <Time Value="2"/>
+
+	<xi:include xpointer="element(/1/1/2/1/2)"/>
+
+	<xi:include xpointer="element(/1/1/2/1/3)"/>
+
+
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/VolumetricFlowRate|7 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
+		<DataItem DataType="Float" Dimensions="93" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/pressure|7 0:1 1:1 93:8 93</DataItem>
+	</Attribute>
+	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
+		<DataItem DataType="Float" Dimensions="93 2" Format="HDF" Precision="8">bulk.h5:/meshes/bulk/v|7 0 0:1 1 1:1 93 2:8 93 2</DataItem>
+	</Attribute>
+</Grid>
+</Grid>
+</Domain>
+</Xdmf>

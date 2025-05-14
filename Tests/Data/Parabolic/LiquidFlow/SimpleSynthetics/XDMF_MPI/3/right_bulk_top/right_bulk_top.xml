@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="LiquidFlow.prj">
+  <add sel="/*/time_loop/output/meshes" after_includes="true">
+    <mesh>right</mesh>
+    <mesh>bulk</mesh>
+    <mesh>top</mesh>
+  </add>
+</OpenGeoSysProjectDiff>
