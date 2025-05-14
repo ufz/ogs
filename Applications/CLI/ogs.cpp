@@ -175,8 +175,17 @@ int main(int argc, char* argv[])
         {
             OGS_FATAL("Python exception thrown: {}", e.what());
         }
+        if solver_succeeded
+        {
+            INFO("[time] Simulation completed. It took {:g} s.",
+                 run_time.elapsed());
+        }
+        else
+        {
+            INFO("[time] Simulation failed. It took {:g} s.",
+                 run_time.elapsed());
+        }
 
-        INFO("[time] Execution took {:g} s.", run_time.elapsed());
         ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     }
     catch (std::exception& e)
