@@ -102,7 +102,7 @@ void initializeLogger(bool all_ranks_log)
     {
         auto const start_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on {:s} with {:d} MPI processes.", time_str,
+        INFO("OGS started on {:s} with MPI. MPI processes: {:d}.", time_str,
              world_size);
     }
 
@@ -111,7 +111,7 @@ void initializeLogger(bool all_ranks_log)
     {
         auto const start_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on {:s} with 1 process.", time_str);
+        INFO("OGS started on {:s} in serial mode.", time_str);
     }
 
 #endif
