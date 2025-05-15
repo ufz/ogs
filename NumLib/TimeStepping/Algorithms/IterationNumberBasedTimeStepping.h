@@ -14,6 +14,7 @@
 
 #include <vector>
 
+#include "MultiplyerInterpolationType.h"
 #include "TimeStepAlgorithm.h"
 
 namespace NumLib
@@ -89,6 +90,7 @@ public:
         double const min_dt,
         double const max_dt,
         double const initial_dt,
+        MultiplyerInterpolationType const multiplier_interpolation_type,
         std::vector<int>&& iter_times_vector,
         std::vector<double>&& multiplier_vector,
         std::vector<double> const& fixed_times_for_output);
@@ -125,6 +127,8 @@ private:
     const double _max_dt;
     /// Initial time step size.
     const double _initial_dt;
+    /// Interpolation type for the multiplier.
+    const MultiplyerInterpolationType _multiplier_interpolation_type;
     /// The maximum allowed iteration number to accept current time step.
     const int _max_iter;
     /// The number of nonlinear iterations.

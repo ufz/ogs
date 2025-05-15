@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "NumLib/TimeStepping/Algorithms/IterationNumberBasedTimeStepping.h"
+#include "NumLib/TimeStepping/Algorithms/MultiplyerInterpolationType.h"
 #include "NumLib/TimeStepping/TimeStep.h"
 #include "Tests/TestTools.h"
 #include "TimeSteppingTestingTools.h"
@@ -25,6 +26,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
 {
     std::vector<int> iter_times_vector = {0, 3, 5, 7};
     std::vector<double> multiplier_vector = {2.0, 1.0, 0.5, 0.25};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
     NumLib::IterationNumberBasedTimeStepping alg(
         1, 31, 1, 10, 1, std::move(iter_times_vector),
         std::move(multiplier_vector), {});
@@ -145,6 +148,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
 {
     std::vector<int> iter_times_vector = {0, 3, 5, 7};
     std::vector<double> multiplier_vector = {2.0, 1.0, 0.5, 0.25};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
     NumLib::IterationNumberBasedTimeStepping alg(
         1, 31, 1, 10, 1, std::move(iter_times_vector),
         std::move(multiplier_vector), {});
@@ -165,6 +170,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
     std::vector<int> iter_times_vector = {0, 3, 5, 7};
     std::vector<double> multiplier_vector = {2.0, 1.0, 0.5, 0.25};
     std::vector<double> fixed_output_times = {5, 20};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
     NumLib::IterationNumberBasedTimeStepping alg(
         1, 31, 1, 10, 1, std::move(iter_times_vector),
         std::move(multiplier_vector), {});

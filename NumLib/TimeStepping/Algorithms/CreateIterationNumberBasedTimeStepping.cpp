@@ -52,11 +52,21 @@ parseIterationNumberBasedTimeStepping(BaseLib::ConfigTree const& config)
         //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__multiplier}
         config.getConfigParameter<std::vector<double>>("multiplier");
 
+    std::string const multiplier_interpolation_type_string =
+        //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__multiplier_interpolation_type}
+        config.getConfigParameter<std::string>("multiplier_interpolation_type",
+                                               "PiecewiseConstant");
+    auto const multiplier_interpolation_type =
+        (multiplier_interpolation_type_string == "PiecewiseLinear")
+            ? MultiplyerInterpolationType::PiecewiseLinear
+            : MultiplyerInterpolationType::PiecewiseConstant;
+
     return {t_initial,
             t_end,
             minimum_dt,
             maximum_dt,
             initial_dt,
+            multiplier_interpolation_type,
             std::move(number_iterations),
             std::move(multiplier)};
 }
@@ -79,6 +89,7 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
     return std::make_unique<IterationNumberBasedTimeStepping>(
         parameters.t_initial, parameters.t_end, parameters.minimum_dt,
         parameters.maximum_dt, parameters.initial_dt,
+        parameters.multiplier_interpolation_type,
         std::move(parameters.number_iterations),
         std::move(parameters.multiplier), fixed_times_for_output);
 }
