@@ -16,8 +16,8 @@
 TEST(MaterialPropertyLib, Curve)
 {
     MathLib::PiecewiseLinearInterpolation curves{
-        {300, 307},  // coords
-        {300, 500}   // values
+        std::vector<int>({300, 307}),    // coords
+        std::vector<double>({300, 500})  // values
     };
 
     MaterialPropertyLib::VariableArray variable_array;
@@ -43,8 +43,8 @@ TEST(MaterialPropertyLib, Curve)
 TEST(MaterialPropertyLib, CurveTime)
 {
     MathLib::PiecewiseLinearInterpolation curves{
-        {0, 100},   // coords
-        {300, 500}  // values
+        std::vector<double>({0, 100}),   // coords
+        std::vector<double>({300, 500})  // values
     };
 
     MaterialPropertyLib::VariableArray variable_array;
@@ -68,8 +68,8 @@ TEST(MaterialPropertyLib, CurveTime)
 TEST(MaterialPropertyLib, CurvePos)
 {
     MathLib::PiecewiseLinearInterpolation curves{
-        {0, 100},   // coords
-        {300, 500}  // values
+        std::vector<int>({0, 100}),      // coords
+        std::vector<double>({300, 500})  // values
     };
 
     MaterialPropertyLib::VariableArray variable_array;
