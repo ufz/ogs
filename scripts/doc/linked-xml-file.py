@@ -12,6 +12,7 @@
 # attributes are untested.
 
 from collections import defaultdict
+from pathlib import Path
 from typing import TextIO
 import xml.etree.ElementTree as ET
 import sys
@@ -88,6 +89,12 @@ def get_tagpath(
     return tag_path, page_name, is_doc
 
 
+def remove_xml_header(xml_string: str) -> str:
+    if xml_string.startswith("<?xml"):
+        return "\n".join(xml_string.split("\n")[1:])
+    return xml_string
+
+
 def print_tags(
     node: ET.Element,
     level: int,
@@ -99,6 +106,18 @@ def print_tags(
 ) -> None:
     tag = node.tag
     rootpagename = page_name
+
+    # traverse down the included xml files
+    if tag == "include":
+        include_xml_path = Path(datadir) / Path(rel_filepath).parent / node.attrib["file"]
+        with open(include_xml_path, 'r') as included_xml_file:
+            xml_string = remove_xml_header(included_xml_file.read())
+        included_xml = ET.fromstring("<dummy>" + xml_string + "</dummy>")
+        for included_child in included_xml:
+            print_tags(
+                included_child, level, page_name, filehandle, typetag,
+                typetag_levels_up, rel_filepath
+            )  # fmt: skip
 
     if level > 0:
         page_name += "__" + tag if page_name else tag
