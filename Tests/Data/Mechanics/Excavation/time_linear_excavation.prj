@@ -131,7 +131,7 @@
             <!-- back-filling half of the tunnel -->
             <name>excavation_curve</name>
             <coords>1 2 8</coords>
-            <values>2.5 2 1.25</values>
+            <values>2.5 2 1.251</values>
         </curve>
     </curves>
     <process_variables>

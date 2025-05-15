@@ -29,8 +29,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
         NumLib::MultiplyerInterpolationType::PiecewiseConstant;
     NumLib::IterationNumberBasedTimeStepping alg(
-        1, 31, 1, 10, 1, std::move(iter_times_vector),
-        std::move(multiplier_vector), {});
+        1, 31, 1, 10, 1, multiplier_interpolation_type,
+        std::move(iter_times_vector), std::move(multiplier_vector), {});
 
     const double solution_error = 0.;
     auto const end_time = alg.end();
@@ -151,8 +151,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
     NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
         NumLib::MultiplyerInterpolationType::PiecewiseConstant;
     NumLib::IterationNumberBasedTimeStepping alg(
-        1, 31, 1, 10, 1, std::move(iter_times_vector),
-        std::move(multiplier_vector), {});
+        1, 31, 1, 10, 1, multiplier_interpolation_type,
+        std::move(iter_times_vector), std::move(multiplier_vector), {});
 
     std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1};
     const std::vector<double> expected_vec_t = {1,  2,  4,  8,  16,
@@ -173,8 +173,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
     NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
         NumLib::MultiplyerInterpolationType::PiecewiseConstant;
     NumLib::IterationNumberBasedTimeStepping alg(
-        1, 31, 1, 10, 1, std::move(iter_times_vector),
-        std::move(multiplier_vector), {});
+        1, 31, 1, 10, 1, multiplier_interpolation_type,
+        std::move(iter_times_vector), std::move(multiplier_vector), {});
 
     std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1, 1, 1, 1, 1};
     const std::vector<double> expected_vec_t = {1,  2,  4,  5,  7,  9,  10,
