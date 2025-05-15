@@ -20,8 +20,10 @@ namespace MaterialPropertyLib
 {
 /// A function property defined by mathematical expression. For the evaluation
 /// of the expressions the exprtk library is used. In the expressions all
-/// variables defined in MaterialPropertyLib::Variable enum, t for time and
-/// x,y,z for the spatial position can be used.
+/// variables defined in MaterialPropertyLib::Variable enum, t for time,
+/// x,y,z for the spatial position are supported, and curves from the
+/// `<curves>` section can be called using their names. A curve is a single
+/// argument function and can be used in an expression like `curveA(sin(t))`.
 ///
 /// \warning The evaluation calls are not to be used in parallel (openMP),
 /// because the values' updates are using the same space.
