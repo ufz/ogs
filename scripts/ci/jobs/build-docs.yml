@@ -24,6 +24,7 @@ build docs:
     - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot -o cmake-dependencies.svg
     - cmake . -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
     - cmake --build . --target doc 2>&1 | tee make-docs.output
+    - npx -y pagefind --site docs # pagefind index
     - cat make-docs.output DoxygenWarnings.log | grep 'warning:' | grep -v 'too many nodes\|perl:' > DoxygenWarnings-filtered.log
     - NUM_DOX_WARNINGS="`cat DoxygenWarnings-filtered.log | wc -l`"
     - echo "doxygen_warnings $NUM_DOX_WARNINGS" >> metrics.txt
