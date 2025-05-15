@@ -166,12 +166,15 @@ if(OGS_USE_MFRONT)
             )
             message(STATUS "Adding mgis-flags.patch.")
         endif()
+        if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
+            set(_enable_portable_build_option "enable-portable-build ON")
+        endif()
         CPMAddPackage(
             NAME MGIS
             GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
             GIT_TAG rliv-2.2
             OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
-                    "enable-website OFF" "CMAKE_POLICY_VERSION_MINIMUM 3.10"
+                    "enable-website OFF" "CMAKE_POLICY_VERSION_MINIMUM 3.10" ${_enable_portable_build_option}
             EXCLUDE_FROM_ALL YES SYSTEM TRUE ${_mgis_patch_args}
         )
         list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
@@ -463,6 +466,16 @@ if(OGS_BUILD_UTILS)
                  "CMAKE_C_FLAGS -D_POSIX_C_SOURCE=200809L" ${CPU_FLAGS}
             )
         endif()
+        if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
+            set(_gklib_patch_args
+                PATCHES ${PROJECT_SOURCE_DIR}/scripts/cmake/gklib.patch
+            )
+            set(_metis_genric_patch
+                ${PROJECT_SOURCE_DIR}/scripts/cmake/metis-generic-build.patch
+            )
+            message(STATUS "Adding gklib.patch.")
+            message(STATUS "Adding metis-generic-build.patch.")
+        endif()
         CPMFindPackage(
             NAME GKlib
             GIT_REPOSITORY https://github.com/KarypisLab/GKlib
@@ -470,15 +483,14 @@ if(OGS_BUILD_UTILS)
             VERSION 5.1.1
             OPTIONS "CMAKE_POLICY_DEFAULT_CMP0042 NEW" ${_metis_options}
                     "CMAKE_POLICY_VERSION_MINIMUM 3.10"
-            EXCLUDE_FROM_ALL YES SYSTEM TRUE
+            EXCLUDE_FROM_ALL YES SYSTEM TRUE ${_gklib_patch_args}
         )
         CPMFindPackage(
             NAME metis
             GIT_REPOSITORY https://github.com/KarypisLab/METIS
             VERSION 5.2.1
             EXCLUDE_FROM_ALL YES UPDATE_DISCONNECTED ON
-            PATCH_COMMAND git apply
-                          ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
+            PATCHES ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch ${_metis_genric_patch}
             OPTIONS ${_metis_options} "CMAKE_POLICY_VERSION_MINIMUM 3.10"
             SYSTEM TRUE
         )
