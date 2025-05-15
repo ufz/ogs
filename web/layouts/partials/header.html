@@ -17,8 +17,36 @@
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
 <script src="/pagefind/pagefind-ui.js"></script>
 <script>
+  function stripTrailingHashes(title) {
+    print(title)
+    return title.replace(/#$/, '');
+  }
+  // https://ogstools.opengeosys.org/stable/
+  const ogstools_url = "https://ogs.ogs.xyz/-/tools/ogstools/-/jobs/555397/artifacts/public/";
+
   window.addEventListener('DOMContentLoaded', (event) => {
-    new PagefindUI({ element: "#search", showSubResults: true, pageSize: 20 });
+    new PagefindUI({
+      element: "#search",
+      showSubResults: true,
+      pageSize: 20,
+      mergeFilter: {
+        resource: "OGS"
+      },
+      processResult: function (result) {
+        result.meta.title = stripTrailingHashes(result.meta.title);
+        if (result.meta.image && result.meta.image.startsWith("../../_images/")) {
+          const cleanedPath = result.meta.image.replace(/^(\.\.\/)+/, '');
+          result.meta.image = ogstools_url + cleanedPath;
+        }
+        return result;
+      },
+      mergeIndex: [{
+        bundlePath: ogstools_url + "pagefind",
+        mergeFilter: {
+          resource: "OGSTools"
+        }
+      }]
+    });
   });
 </script>
 
