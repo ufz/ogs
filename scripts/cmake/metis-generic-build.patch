@@ -1,0 +1,13 @@
+diff --git a/conf/gkbuild.cmake b/conf/gkbuild.cmake
+index 0e70a8e..79c5808 100644
+--- a/conf/gkbuild.cmake
++++ b/conf/gkbuild.cmake
+@@ -32,7 +32,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
+ if(VALGRIND)
+   set(GK_COPTIONS "${GK_COPTIONS} -march=x86-64 -mtune=generic")
+ else()
+-  set(GK_COPTIONS "${GK_COPTIONS} -march=native")
++  set(GK_COPTIONS "${GK_COPTIONS} -mtune=generic")
+ endif(VALGRIND)
+   if(NOT MINGW)
+       set(GK_COPTIONS "${GK_COPTIONS} -fPIC")
