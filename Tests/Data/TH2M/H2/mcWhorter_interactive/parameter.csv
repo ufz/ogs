@@ -1,0 +1,11 @@
+Property,Symbol,Key,Value,Range min,Range max,Scale,Unit,OGSTools
+Porosity,\varphi,phi,0.3,0.05,0.3,linear,1,Parameter
+Intrinsic permeability,K,K,1.00E-10,1.00E-16,1.00E-08,log,m²,Parameter
+Residual saturation of the wetting phase,'S_\mathrm{w,r}',Swr,0.02,0,0.3,linear,1,'[{"medium id": 0, "name": "saturation", "valuetag": "residual_liquid_saturation", "propertytype":"SaturationBrooksCorey"},{"medium id": 0, "name": "relative_permeability_nonwetting_phase", "valuetag": "residual_liquid_saturation", "propertytype":"RelPermBrooksCoreyNonwettingPhase"},{"medium id": 0, "name": "relative_permeability", "valuetag": "residual_liquid_saturation", "propertytype":"RelPermBrooksCorey"}]'
+Residual saturation of the non-wetting phase,'S_\mathrm{n,r}',Snr,0.001,0,0.3,linear,1,'[{"medium id": 0, "name": "saturation", "valuetag": "residual_gas_saturation", "propertytype":"SaturationBrooksCorey"},{"medium id": 0, "name": "relative_permeability_nonwetting_phase", "valuetag": "residual_gas_saturation", "propertytype":"RelPermBrooksCoreyNonwettingPhase"},{"medium id": 0, "name": "relative_permeability", "valuetag": "residual_gas_saturation", "propertytype":"RelPermBrooksCorey"}]'
+Dynamic viscosity of the wetting phase,\mu_\mathrm{n},mun,1.00E-03,1.0E-05,0.5,log,Pa&middot;s,Parameter
+Dynamic viscosity of the non-wetting pha,\mu_\mathrm{w},muw,1.00E-03,1.0E-05,0.5,log,Pa&middot;s,Parameter
+Brooks and Corey model parameter: entry pressure,p_\mathrm{e},Pe,5000,1.00E+03,1.00E+05,log,Pa,'[{"medium id": 0, "name": "saturation", "valuetag": "entry_pressure", "propertytype":"SaturationBrooksCorey"}]'
+Brooks and Corey model parameter: pore size distribution index,\lambda,lambda_,3.00E+00,1.50,3.00,linear,1,'[{"medium id": 0, "name": "saturation", "valuetag": "lambda", "propertytype":"SaturationBrooksCorey"},{"medium id": 0, "name": "relative_permeability_nonwetting_phase", "valuetag": "lambda", "propertytype":"RelPermBrooksCoreyNonwettingPhase"},{"medium id": 0, "name": "relative_permeability", "valuetag": "lambda", "propertytype":"RelPermBrooksCorey"}]'
+Initial saturation,S_\mathrm{w}(t=0),Si,0.2,1.00E-08,1.0,linear,1,Parameter
+Injection boundary saturation,S_\mathrm{w}(x=0),S0,0.9,1.00E-8,1.0,linear,1,Parameter

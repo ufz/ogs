@@ -465,4 +465,5 @@ AddTest(
 
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE TH2M/TH2/heatpipe/heatpipe.py RUNTIME 140)
+    NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter_interactive/mcWhorter_interactive.py RUNTIME 100)
 endif()
