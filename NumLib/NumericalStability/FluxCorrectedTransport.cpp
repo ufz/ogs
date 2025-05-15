@@ -135,8 +135,6 @@ void calculateFluxCorrectedTransportSerial(
         (M_raw * Eigen::VectorXd::Ones(M_raw.cols())).eval();
     for (auto k = R_plus->getRangeBegin(); k < R_plus->getRangeEnd(); ++k)
     {
-        double const mi = M_L(k);
-        double const Q_plus_i = Q_plus->get(k);
         double const P_plus_i = P_plus->get(k);
 
         if (P_plus_i == 0.0)
@@ -144,19 +142,21 @@ void calculateFluxCorrectedTransportSerial(
             continue;
         }
 
+        double const mi = M_L(k);
+        double const Q_plus_i = Q_plus->get(k);
         R_plus->set(k, std::min(1.0, mi * Q_plus_i / dt / P_plus_i));
     }
 
     for (auto k = R_minus->getRangeBegin(); k < R_minus->getRangeEnd(); ++k)
     {
+        double const P_minus_i = P_minus->get(k);
+        if (P_minus_i == 0.0)
+        {
+            continue;
+        }
         double const mi = M_L(k);
         double const Q_minus_i = Q_minus->get(k);
-        double const P_minus_i = P_minus->get(k);
-
-        double const tmp = P_minus_i == 0.
-                               ? 0.0
-                               : std::min(1.0, mi * Q_minus_i / dt / P_minus_i);
-        R_minus->set(k, tmp);
+        R_minus->set(k, std::min(1.0, mi * Q_minus_i / dt / P_minus_i));
     }
 
     for (int k = 0; k < F_raw.outerSize(); ++k)
