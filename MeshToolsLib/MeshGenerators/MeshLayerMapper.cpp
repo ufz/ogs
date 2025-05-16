@@ -291,7 +291,7 @@ bool MeshLayerMapper::layerMapping(MeshLib::Mesh const& mesh,
 {
     if (mesh.getDimension() != 2)
     {
-        ERR("MshLayerMapper::layerMapping() - requires 2D mesh");
+        ERR("MeshLayerMapper::layerMapping() - requires 2D mesh");
         return false;
     }
 
