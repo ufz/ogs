@@ -168,6 +168,12 @@ int main(int argc, char* argv[])
     }
 
     auto const result_mesh = mapper.getMesh("SubsurfaceMesh");
+    if (result_mesh == nullptr)
+    {
+        ERR("Mapper returned empty result for 'SubsurfaceMesh'.");
+        return EXIT_FAILURE;
+    }
+
     if (keep_materials_arg.getValue())
     {
         assignSurfaceMaterialIDsToSubsurfaceLayers(sfc_mesh.get(),
@@ -181,12 +187,6 @@ int main(int argc, char* argv[])
     }
 
     INFO("Writing mesh '{:s}' ... ", output_name);
-    if (result_mesh == nullptr)
-    {
-        ERR("Mapper returned empty result for 'SubsurfaceMesh'.");
-        return EXIT_FAILURE;
-    }
-
     auto const data_mode =
         use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
 
