@@ -1591,3 +1591,13 @@ AddTest(
     merged_mesh.vtu merged_mesh.vtu MaterialIDs MaterialIDs 1e-15 1e-15
 )
 
+AddTest(
+    NAME Utils_createLayeredMeshFromRasters
+    PATH Utils/createLayeredMeshFromRasters
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/createLayeredMeshFromRasters
+    EXECUTABLE createLayeredMeshFromRasters
+    EXECUTABLE_ARGS -i rectangular_tris_with_materials.vtu -o ${Data_BINARY_DIR}/Utils/createLayeredMeshFromRasters/raster_based_3d_mesh.vtu -t 0.1 -r rasters.txt --keep-surface-material-ids
+    TESTER vtkdiff-mesh
+    DIFF_DATA raster_based_3d_mesh.vtu raster_based_3d_mesh.vtu 1e-16
+)
+
