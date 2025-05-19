@@ -573,7 +573,6 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
                 "{:g}.",
                 damping);
         }
-        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping_reduction}
         auto const damping_reduction =
             //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping_reduction}
             config.getConfigParameterOptional<double>("damping_reduction");
