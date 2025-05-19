@@ -17,8 +17,52 @@
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
 <script src="/pagefind/pagefind-ui.js"></script>
 <script>
+  // pagefind config
+  const ogstools_url =  "https://ogs.ogs.xyz/tools/ogstools/" // TODO: after ogstools release change to: "https://ogstools.opengeosys.org/stable/";
+  const doxygen_url = "https://doxygen.opengeosys.org/";
+  // for testing in MRs:
+  // const ogstools_url = "https://ogs.ogs.xyz/-/tools/ogstools/-/jobs/555397/artifacts/public/";
+  // const doxygen_url = "https://ogs.ogs.xyz/-/ogs/-/jobs/556239/artifacts/build/docs/";
+
   window.addEventListener('DOMContentLoaded', (event) => {
-    new PagefindUI({ element: "#search", showSubResults: true, pageSize: 20 });
+    new PagefindUI({
+      element: "#search",
+      showSubResults: true,
+      pageSize: 20,
+      mergeFilter: {
+        resource: "OGS"
+      },
+      processResult: function (result) {
+        // Remove title anchors in ogstools
+        result.meta.title = result.meta.title.replace(/#$/, '');
+        // Images do not have the sites base_url included
+        if (result.meta.image) {
+          if (result.meta.image.startsWith("../../_images/")) {
+            const cleanedPath = result.meta.image.replace(/^(\.\.\/)+/, '');
+            result.meta.image = ogstools_url + cleanedPath;
+          }
+          if (result.url.startsWith("/docs/") && !(result.meta.image.startsWith("/docs/") || result.meta.image.startsWith("http"))) {
+            result.meta.image = result.url + result.meta.image;
+          }
+          if (result.meta.image.startsWith("doxygen.svg")) {
+            result.meta.image = doxygen_url + "doxygen.svg";
+          }
+        }
+        return result;
+      },
+      mergeIndex: [{
+        bundlePath: ogstools_url + "pagefind",
+        mergeFilter: {
+          resource: "OGSTools"
+        }
+      },
+      {
+        bundlePath: doxygen_url + "pagefind",
+        mergeFilter: {
+          resource: "Doxygen"
+        }
+      }]
+    });
   });
 </script>
 
