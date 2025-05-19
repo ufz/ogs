@@ -14,8 +14,6 @@
 
 #include "FileTools.h"
 
-#include <spdlog/fmt/bundled/core.h>
-
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/endian/conversion.hpp>
 #include <boost/interprocess/file_mapping.hpp>

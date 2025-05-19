@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <spdlog/fmt/bundled/ranges.h>
+#include <spdlog/fmt/ranges.h>
 
 #include <map>
 #include <range/v3/view/map.hpp>

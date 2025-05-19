@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include <spdlog/fmt/bundled/ostream.h>
+#include <spdlog/fmt/ostr.h>
 
 #include <iomanip>
 #include <ostream>
