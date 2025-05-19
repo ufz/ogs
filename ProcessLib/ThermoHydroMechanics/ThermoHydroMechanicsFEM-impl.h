@@ -427,7 +427,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                        .property(MaterialPropertyLib::PropertyType::
                                      thermal_osmosis_coefficient)
                        .value(vars, x_position, t, dt))
-             : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
+             : GlobalDimMatrixType::Zero(DisplacementDim, DisplacementDim));
 
     GlobalDimVectorType const velocity =
         -crv.k_rel * crv.K_over_mu * dNdx * p -
