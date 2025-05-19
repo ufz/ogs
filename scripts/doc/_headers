@@ -1,0 +1,3 @@
+/pagefind/*
+  Access-Control-Allow-Origin: https://www.opengeosys.org
+  Vary: Origin

@@ -49,6 +49,8 @@ build docs:
       - build/DoxygenWarnings.log
       - build/DoxygenWarnings-filtered.log
       - build/searchdata.xml
+      - scripts/doc/_headers
+      - script/doc/_redirects
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
@@ -71,7 +73,7 @@ deploy docs:
   script:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        cp scripts/doc/_redirects build/docs
+        cp scripts/doc/{_redirects,_headers} build/docs
         netlify deploy --prod --dir=build/docs --site $DOXYGEN_NETLIFY_SITE_ID
       else
         netlify link --name ogs-doxygen-${CI_COMMIT_TAG//./-}
