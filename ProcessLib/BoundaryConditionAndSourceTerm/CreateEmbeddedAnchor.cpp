@@ -45,6 +45,10 @@ std::unique_ptr<SourceTermBase> createEmbeddedAnchor(
                 "Every anchor element needs to have precisely two nodes.");
         }
     }
+#ifdef USE_PETSC
+    OGS_FATAL(
+        "The EmbeddedAnchor source term has not been tested with PETSc yet.");
+#endif
 
     return std::make_unique<EmbeddedAnchor<GlobalDim>>(
         bulk_mesh, dof_table_bulk, source_term_mesh_id, st_mesh, variable_id,

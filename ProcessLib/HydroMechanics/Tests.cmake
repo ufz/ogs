@@ -83,4 +83,6 @@ if (OGS_USE_MPI)
     OgsTest(PROJECTFILE HydroMechanics/ParallelComputing/SimpleHM/MultiMesh/drainage_staggered.prj WRAPPER mpirun -np 2)
     OgsTest(PROJECTFILE HydroMechanics/ParallelComputing/SimpleHM/SingleMesh/drainage.prj WRAPPER mpirun -np 2)
     OgsTest(PROJECTFILE HydroMechanics/ParallelComputing/SimpleHM/SingleMesh/drainage_staggered.prj WRAPPER mpirun -np 2)
+    OgsTest(PROJECTFILE HydroMechanics/EmbeddedAnchorSourceTerm/one_anchor.xml RUNTIME 1
+            PROPERTIES PASS_REGULAR_EXPRESSION "The EmbeddedAnchor source term has not been tested with PETSc yet.")
 endif()
