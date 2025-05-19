@@ -206,8 +206,9 @@
                     <initial_dt>86400</initial_dt>
                     <minimum_dt>864</minimum_dt>
                     <maximum_dt>8640000</maximum_dt>
-                    <number_iterations>1 5 10 15 20 25 30 35 40 45</number_iterations>
-                    <multiplier>1.8 1.6 1.4 1.2 1.1 1.05 0.9 0.85 0.8 0.7</multiplier>
+                    <number_iterations>1 20 45</number_iterations>
+                    <multiplier_interpolation_type>PiecewiseLinear</multiplier_interpolation_type>
+                    <multiplier>1.65 1.05 0.7</multiplier>
                 </time_stepping>
             </process>
         </processes>
@@ -384,6 +385,8 @@
             <name>nonlinear_solver</name>
             <type>Newton</type>
             <max_iter>50</max_iter>
+            <damping>0.8</damping>
+            <damping_reduction>3</damping_reduction>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
@@ -412,13 +415,13 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>porosity</field>
-            <absolute_tolerance>3e-15</absolute_tolerance>
+            <absolute_tolerance>5e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>8.3e-6</absolute_tolerance>
+            <absolute_tolerance>1.5e-5</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -430,7 +433,7 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>1.5e-6</absolute_tolerance>
+            <absolute_tolerance>2.5e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

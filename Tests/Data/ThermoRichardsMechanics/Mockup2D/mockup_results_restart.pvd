@@ -2,5 +2,7 @@
 <VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
   <Collection>
     <DataSet timestep="51840000" group="" part="0" file="mockup_results_restart_51840000.000000.vtu"/>
+    <DataSet timestep="69120000" group="" part="0" file="mockup_results_restart_69120000.000000.vtu"/>
+    <DataSet timestep="86400000" group="" part="0" file="mockup_results_restart_86400000.000000.vtu"/>
   </Collection>
 </VTKFile>
