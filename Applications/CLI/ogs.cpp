@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
         {
             OGS_FATAL("Python exception thrown: {}", e.what());
         }
-        if solver_succeeded
+        if (solver_succeeded)
         {
             INFO("[time] Simulation completed. It took {:g} s.",
                  run_time.elapsed());
@@ -194,21 +194,20 @@ int main(int argc, char* argv[])
         ogs_status = EXIT_FAILURE;
     }
 
+    if (ogs_status == EXIT_FAILURE)
     {
         auto const end_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(end_time);
-        INFO("Simulation completed on {:s}.", time_str);
-    }
-
-    if (ogs_status == EXIT_FAILURE)
-    {
-        ERR("OGS terminated with error.");
+        ERR("OGS terminated with error on {:s}.", time_str);
         return EXIT_FAILURE;
     }
 
     if (!test_definition)
     {
-        // There are no tests, so just exit;
+        auto const end_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(end_time);
+        DBUG("No test definition was found. No tests will be executed.");
+        INFO("OGS completed on {:s}.", time_str);
         return ogs_status;
     }
 
@@ -217,10 +216,18 @@ int main(int argc, char* argv[])
     INFO("# Running tests                          #");
     INFO("##########################################");
     INFO("");
-    if (!test_definition->runTests())
+    auto status = test_definition->runTests();
+    auto const end_time = std::chrono::system_clock::now();
+    auto const time_str = BaseLib::formatDate(end_time);
+    if (status)
     {
-        ERR("One of the tests failed.");
+        INFO("OGS completed on {:s}.", time_str);
+    }
+    else
+    {
+        ERR("OGS terminated on {:s}. One of the tests failed", time_str);
         return EXIT_FAILURE;
     }
+
     return EXIT_SUCCESS;
 }
