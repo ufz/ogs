@@ -361,6 +361,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         double time_dirichlet = 0.0;
 
         BaseLib::RunTime time_iteration;
+        INFO("Iteration #{:d} started.", iteration);
         time_iteration.start();
 
         timer_dirichlet.start();

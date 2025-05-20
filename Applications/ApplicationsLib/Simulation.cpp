@@ -106,7 +106,7 @@ void Simulation::initializeDataStructures(
 
     auto& time_loop = project_data->getTimeLoop();
     auto time_value = time_loop.currentTime()();
-    INFO("Time stepping at step #0 and time {} started.", time_value);
+    INFO("Time step #0 started. Time: {}. Step size: 0.", time_value);
 
     BaseLib::RunTime init_timer;
     init_timer.start();
