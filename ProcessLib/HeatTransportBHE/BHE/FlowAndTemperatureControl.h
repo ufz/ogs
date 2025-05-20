@@ -86,7 +86,7 @@ struct PowerCurveConstantFlow
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power = power_curve.getValue(time);
+        double const power = power_curve.getValue(time);
         if (std::abs(power) < 1e-12)
         {
             return {flow_rate, T_out};
@@ -105,7 +105,7 @@ struct PowerCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power = power_curve.getValue(time);
+        double const power = power_curve.getValue(time);
         double flow_rate = flow_curve.getValue(time);
         flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
 
@@ -127,7 +127,7 @@ struct BuildingPowerCurveConstantFlow
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power = building_power_curves.power_curve.getValue(time);
+        double const power = building_power_curves.power_curve.getValue(time);
         double const cop = building_power_curves.cop_curve.getValue(T_out);
 
         if (std::abs(power) < 1e-12)
@@ -150,17 +150,17 @@ struct BuildingPowerCurveHotWaterCurveActiveCoolingCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power_heating =
+        double const power_heating =
             building_heating_curves.power_curve.getValue(time);
         double const cop_heating =
             building_heating_curves.cop_curve.getValue(T_out);
 
-        double power_hot_water =
+        double const power_hot_water =
             building_hot_water_curves.power_curve.getValue(time);
         double const cop_hot_water =
             building_hot_water_curves.cop_curve.getValue(T_out);
 
-        double power_cooling =
+        double const power_cooling =
             building_active_cooling_curves.power_curve.getValue(time);
         double const cop_cooling =
             building_active_cooling_curves.cop_curve.getValue(T_out);
@@ -192,12 +192,12 @@ struct BuildingPowerCurveHotWaterCurvePassiveCoolingCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power_heating =
+        double const power_heating =
             building_heating_curves.power_curve.getValue(time);
         double const cop_heating =
             building_heating_curves.cop_curve.getValue(T_out);
 
-        double power_hot_water =
+        double const power_hot_water =
             building_hot_water_curves.power_curve.getValue(time);
         double const cop_hot_water =
             building_hot_water_curves.cop_curve.getValue(T_out);
@@ -231,12 +231,12 @@ struct BuildingPowerCurveHotWaterCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power_heating =
+        double const power_heating =
             building_heating_curves.power_curve.getValue(time);
         double const cop_heating =
             building_heating_curves.cop_curve.getValue(T_out);
 
-        double power_hot_water =
+        double const power_hot_water =
             building_hot_water_curves.power_curve.getValue(time);
         double const cop_hot_water =
             building_hot_water_curves.cop_curve.getValue(T_out);
@@ -266,12 +266,12 @@ struct BuildingPowerCurveActiveCoolingCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power_heating =
+        double const power_heating =
             building_heating_curves.power_curve.getValue(time);
         double const cop_heating =
             building_heating_curves.cop_curve.getValue(T_out);
 
-        double power_cooling =
+        double const power_cooling =
             building_active_cooling_curves.power_curve.getValue(time);
         double const cop_cooling =
             building_active_cooling_curves.cop_curve.getValue(T_out);
@@ -301,12 +301,12 @@ struct BuildingPowerCurvePassiveCoolingCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power_heating =
+        double const power_heating =
             building_heating_curves.power_curve.getValue(time);
         double const cop_heating =
             building_heating_curves.cop_curve.getValue(T_out);
 
-        double power_cooling = cooling_power.getValue(time);
+        double const power_cooling = cooling_power.getValue(time);
 
         double flow_rate = flow_curve.getValue(time);
         flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
@@ -333,7 +333,7 @@ struct BuildingPowerCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power_heating =
+        double const power_heating =
             building_heating_curves.power_curve.getValue(time);
         double const cop_heating =
             building_heating_curves.cop_curve.getValue(T_out);
@@ -341,7 +341,7 @@ struct BuildingPowerCurveFlowCurve
         double flow_rate = flow_curve.getValue(time);
         flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
 
-        double power = power_heating - power_heating / cop_heating;
+        double const power = power_heating - power_heating / cop_heating;
 
         if (std::abs(power) < 1e-12)
         {
@@ -361,7 +361,7 @@ struct ActiveCoolingCurveFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double power_cooling =
+        double const power_cooling =
             building_active_cooling_curves.power_curve.getValue(time);
         double const cop_cooling =
             building_active_cooling_curves.cop_curve.getValue(T_out);
@@ -369,7 +369,7 @@ struct ActiveCoolingCurveFlowCurve
         double flow_rate = flow_curve.getValue(time);
         flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
 
-        double power = power_cooling - power_cooling / cop_cooling;
+        double const power = power_cooling - power_cooling / cop_cooling;
 
         if (std::abs(power) < 1e-12)
         {
