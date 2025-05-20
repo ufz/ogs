@@ -17,6 +17,9 @@
 #include <string>
 
 #include "BaseLib/cpp23.h"
+#if defined(USE_PETSC)
+#include "BaseLib/MPI.h"
+#endif
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -319,7 +322,7 @@ XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
 
-ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
+ParentDataType getLocalTopologyType(MeshLib::Mesh const& mesh)
 {
     auto const& elements = mesh.getElements();
 
@@ -338,6 +341,31 @@ ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
 
     return cellTypeOGS2XDMF(ogs_cell_type).id;
 }
+
+#if !defined(USE_PETSC)
+ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
+{
+    return getLocalTopologyType(mesh);
+}
+#else
+ParentDataType getTopologyType(MeshLib::Mesh const& mesh)
+{
+    auto const local_topology_type = getLocalTopologyType(mesh);
+    // get the topology_type from other partitions
+    BaseLib::MPI::Mpi const mpi;
+
+    std::vector<int> const topology_types =
+        BaseLib::MPI::allgather(static_cast<int>(local_topology_type), mpi);
+
+    auto const common_topology_type =
+        std::all_of(topology_types.begin(), topology_types.end(),
+                    [&local_topology_type](int other)
+                    { return other == static_cast<int>(local_topology_type); })
+            ? local_topology_type
+            : ParentDataType::MIXED;
+    return common_topology_type;
+}
+#endif  // USE_PETSC
 
 std::pair<std::vector<std::size_t>, ParentDataType> transformToXDMFTopology(
     MeshLib::Mesh const& mesh, std::size_t const offset)

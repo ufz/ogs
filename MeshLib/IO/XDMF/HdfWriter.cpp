@@ -268,11 +268,28 @@ HdfWriter::~HdfWriter()
     {
         for (auto const& dataset : mesh->datasets)
         {
-            H5Dclose(dataset.second);
+            if (auto const status = H5Dclose(dataset.second); status < 0)
+            {
+                ERR("Could not close dataset with id '{}' - status is '{}'.",
+                    dataset.second, status);
+            }
         }
-        H5Gclose(mesh->group);
+        if (auto const err = H5Gclose(mesh->group); err < 0)
+        {
+            ERR("Could not close group with group id '{}' - status is '{}'.",
+                mesh->group, err);
+        }
     }
-    H5Gclose(_meshes_group);
+    if (auto const group_err = H5Gclose(_meshes_group); group_err < 0)
+    {
+        ERR("Could not close group with group id '{}' - status is '{}'.",
+            _meshes_group, group_err);
+    }
+    if (auto const status = H5Fflush(_file, H5F_SCOPE_LOCAL); status < 0)
+    {
+        ERR("Could not flush data to file '{}' - status is '{}'.",
+            _hdf5_filepath.string(), status);
+    }
     H5Fclose(_file);
 }
 
@@ -288,13 +305,21 @@ void HdfWriter::writeStep(double const time)
             auto const& dataset_hid = mesh->datasets.find(attribute.name);
             if (dataset_hid == mesh->datasets.end())
             {
-                OGS_FATAL("Writing HDF5 Dataset: {:s} failed.", attribute.name);
+                OGS_FATAL("Writing HDF5 Dataset: '{:s}' to file '{}' failed.",
+                          attribute.name, _hdf5_filepath.string());
             }
 
             writeDataSet(
                 attribute.data_start, attribute.data_type, attribute.data_space,
                 attribute.offsets, attribute.file_space, attribute.chunk_space,
                 attribute.name, output_step, mesh->datasets.at(attribute.name));
+            if (auto const flush_status = H5Fflush(_file, H5F_SCOPE_LOCAL);
+                flush_status < 0)
+            {
+                ERR("HdfWriter::writeStep(): Could not flush to file '{}' - "
+                    "status is '{}'.",
+                    _hdf5_filepath.string(), flush_status);
+            }
         }
     }
 }
