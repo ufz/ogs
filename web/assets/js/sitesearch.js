@@ -12,8 +12,13 @@ $(document).ready(function () {
     document.querySelector('.pagefind-ui__search-input').focus();
   });
 
+  // Trigger search popup for f without modifier keys only
   document.addEventListener('keydown', (event) => {
-    if (event.key == 'f') {
+    if (event.key == 'f' &&
+      !event.ctrlKey &&
+      !event.altKey &&
+      !event.metaKey &&
+      !event.shiftKey) {
 
       const modals = document.querySelectorAll('#modal-2');
       modals.forEach(element => {
