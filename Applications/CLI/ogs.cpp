@@ -55,19 +55,19 @@ void enableFloatingPointExceptions()
 }
 #endif  // _WIN32
 
-void signalHandler(int signum)
-{
-    auto const end_time = std::chrono::system_clock::now();
-    auto const time_str = BaseLib::formatDate(end_time);
-    std::cout << "error: Simulation aborted on " << time_str << ". Signal "
-              << strsignal(signum) << " (" << signum << ") received.\n";
-    exit(signum);
-}
-
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "BaseLib/MPI.h"
 #include "spdlog/sinks/null_sink.h"
+
+void signalHandler(int signum)
+{
+    auto const end_time = std::chrono::system_clock::now();
+    auto const time_str = BaseLib::formatDate(end_time);
+
+    ERR("Simulation aborted on {:s}. Received signal: {:d})", time_str, signum);
+    exit(signum);
+}
 
 void initializeLogger(bool all_ranks_log)
 {
@@ -121,17 +121,16 @@ int main(int argc, char* argv[])
 {
     CommandLineArguments cli_arg = parseCommandLineArguments(argc, argv);
 
-    signal(SIGINT, signalHandler);   // CTRL+C
-    signal(SIGQUIT, signalHandler);  // CTRL+<Backslash>
-    signal(SIGTERM, signalHandler);  // pkill -SIGTERM <process_id> , It is NOT
-                                     // possible to catch SIGKILL
-
     // Initialize MPI
     // also in python hook
     // check tools
     BaseLib::MPI::Setup mpi_setup(argc, argv);
     BaseLib::initOGSLogger(cli_arg.log_level);
     initializeLogger(cli_arg.log_parallel);
+
+    signal(SIGINT, signalHandler);   // CTRL+C
+    signal(SIGTERM, signalHandler);  // pkill -SIGTERM <process_id> , It is NOT
+                                     // possible to catch SIGKILL
 
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
     if (cli_arg.enable_fpe_is_set)
