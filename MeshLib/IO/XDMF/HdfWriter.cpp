@@ -305,7 +305,8 @@ void HdfWriter::writeStep(double const time)
             auto const& dataset_hid = mesh->datasets.find(attribute.name);
             if (dataset_hid == mesh->datasets.end())
             {
-                OGS_FATAL("Writing HDF5 Dataset: {:s} failed.", attribute.name);
+                OGS_FATAL("Writing HDF5 Dataset: '{:s}' to file '{}' failed.",
+                          attribute.name, _hdf5_filepath.string());
             }
 
             writeDataSet(
