@@ -122,7 +122,7 @@ public:
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto& SD = this->current_states_[ip];
-            auto& ip_data = _ip_data[ip];
+            auto& ip_data = ip_data_[ip];
 
             ParameterLib::SpatialPosition const x_position{
                 std::nullopt, this->element_.getID(),
@@ -165,7 +165,7 @@ public:
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override
     {
-        auto const& N_u = _secondary_data.N_u[integration_point];
+        auto const& N_u = secondary_data_.N_u[integration_point];
 
         // assumes N is stored contiguously in memory
         return Eigen::Map<const Eigen::RowVectorXd>(N_u.data(), N_u.size());
@@ -244,11 +244,11 @@ private:
             NumLib::Vectorial<ShapeFunctionDisplacement, DisplacementDim>>(x);
     }
 
-    std::vector<IpData, Eigen::aligned_allocator<IpData>> _ip_data;
+    std::vector<IpData, Eigen::aligned_allocator<IpData>> ip_data_;
 
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>
-        _secondary_data;
+        secondary_data_;
 
     static const int pressure_index = 0;
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;

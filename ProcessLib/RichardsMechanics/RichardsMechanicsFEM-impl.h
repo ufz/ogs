@@ -139,8 +139,8 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     unsigned const n_integration_points =
         this->integration_method_.getNumberOfPoints();
 
-    _ip_data.resize(n_integration_points);
-    _secondary_data.N_u.resize(n_integration_points);
+    ip_data_.resize(n_integration_points);
+    secondary_data_.N_u.resize(n_integration_points);
 
     auto const shape_matrices_u =
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
@@ -160,9 +160,9 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
     x_position.setElementID(this->element_.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto& ip_data = _ip_data[ip];
+        auto& ip_data = ip_data_[ip];
         auto const& sm_u = shape_matrices_u[ip];
-        _ip_data[ip].integration_weight =
+        ip_data_[ip].integration_weight =
             this->integration_method_.getWeightedPoint(ip).getWeight() *
             sm_u.integralMeasure * sm_u.detJ;
 
@@ -199,7 +199,7 @@ RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                             double>::quiet_NaN() /* t independent */);
         }
 
-        _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
+        secondary_data_.N_u[ip] = shape_matrices_u[ip].N;
     }
 }
 
@@ -233,7 +233,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& N_p = _ip_data[ip].N_p;
+        auto const& N_p = ip_data_[ip].N_p;
 
         double p_cap_ip;
         NumLib::shapeFunctionInterpolate(-p_L, N_p, p_cap_ip);
@@ -310,12 +310,12 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
         // restart.
-        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
                                            ShapeMatricesTypeDisplacement>(
@@ -402,13 +402,13 @@ void RichardsMechanicsLocalAssembler<
         this->integration_method_.getNumberOfPoints();
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data_[ip].integration_weight;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -454,7 +454,7 @@ void RichardsMechanicsLocalAssembler<
         auto const alpha =
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
-        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
 
@@ -673,7 +673,7 @@ void RichardsMechanicsLocalAssembler<
                                        MechanicalStrainData<DisplacementDim>>>(
                     SD_prev);
 
-            _ip_data[ip].updateConstitutiveRelation(
+            ip_data_[ip].updateConstitutiveRelation(
                 variables, t, x_position, dt, temperature, sigma_eff,
                 sigma_eff_prev, eps_m, eps_m_prev, this->solid_material_,
                 this->material_states_[ip].material_state_variables);
@@ -1127,13 +1127,13 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         [[maybe_unused]] auto models = createConstitutiveModels(
             this->process_data_, this->solid_material_);
 
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data_[ip].integration_weight;
 
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -1165,7 +1165,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         std::get<StrainData<DisplacementDim>>(SD).eps.noalias() = B * u;
 
         assembleWithJacobianEvalConstitutiveSetting(
-            t, dt, x_position, _ip_data[ip], variables, variables_prev, medium,
+            t, dt, x_position, ip_data_[ip], variables, variables_prev, medium,
             TemperatureData{temperature},
             CapillaryPressureData<DisplacementDim>{
                 p_cap_ip, p_cap_prev_ip,
@@ -1529,9 +1529,9 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& N_p = _ip_data[ip].N_p;
-        auto const& N_u = _ip_data[ip].N_u;
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& N_p = ip_data_[ip].N_p;
+        auto const& N_u = ip_data_[ip].N_u;
+        auto const& dNdx_u = ip_data_[ip].dNdx_u;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
@@ -1592,7 +1592,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             medium->property(MPL::PropertyType::biot_coefficient)
                 .template value<double>(variables, x_position, t, dt);
 
-        auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+        auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
             t, x_position, dt, temperature, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
 
@@ -1772,7 +1772,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                                        MechanicalStrainData<DisplacementDim>>>(
                     SD_prev);
 
-            _ip_data[ip].updateConstitutiveRelation(
+            ip_data_[ip].updateConstitutiveRelation(
                 variables, t, x_position, dt, temperature, sigma_eff,
                 sigma_eff_prev, eps_m, eps_m_prev, this->solid_material_,
                 this->material_states_[ip].material_state_variables);
@@ -1781,7 +1781,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& b = this->process_data_.specific_body_force;
 
         // Compute the velocity
-        auto const& dNdx_p = _ip_data[ip].dNdx_p;
+        auto const& dNdx_p = ip_data_[ip].dNdx_p;
         std::get<
             ProcessLib::ThermoRichardsMechanics::DarcyLawData<DisplacementDim>>(
             this->output_data_[ip])
