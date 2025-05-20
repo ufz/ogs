@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <spdlog/fmt/bundled/format.h>
+#include <spdlog/fmt/fmt.h>
 
 #include <cassert>
 #include <type_traits>

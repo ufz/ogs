@@ -11,7 +11,7 @@
 
 #include <gmock/gmock-matchers.h>
 #include <gtest/gtest.h>
-#include <spdlog/fmt/bundled/format.h>
+#include <spdlog/fmt/fmt.h>
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/SolidModels/MFront/CreateMFrontGeneric.h"

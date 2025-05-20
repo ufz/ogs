@@ -33,6 +33,7 @@ endif()
 
 if(GUIX_BUILD)
     find_package(spdlog REQUIRED)
+    target_compile_definitions(spdlog::spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
 else()
     CPMAddPackage(
         NAME spdlog

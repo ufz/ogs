@@ -10,8 +10,8 @@
 
 #pragma once
 
-#include <spdlog/fmt/bundled/ostream.h>
-#include <spdlog/fmt/bundled/ranges.h>
+#include <spdlog/fmt/ostr.h>
+#include <spdlog/fmt/ranges.h>
 
 #include <Eigen/Core>
 #include <concepts>

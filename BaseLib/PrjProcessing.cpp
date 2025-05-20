@@ -12,7 +12,6 @@
 
 #include <libxml/parser.h>
 #include <libxml/xmlstring.h>
-#include <spdlog/fmt/bundled/core.h>
 #include <xml_patch.h>
 
 #include <filesystem>

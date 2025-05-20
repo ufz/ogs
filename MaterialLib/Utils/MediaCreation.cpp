@@ -7,7 +7,7 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <spdlog/fmt/bundled/ranges.h>
+#include <spdlog/fmt/ranges.h>
 
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>

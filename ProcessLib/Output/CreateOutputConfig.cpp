@@ -10,7 +10,7 @@
 
 #include "CreateOutputConfig.h"
 
-#include <spdlog/fmt/bundled/ranges.h>
+#include <spdlog/fmt/ranges.h>
 
 #include <map>
 
