@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="RichardsFlow_2d_small_iteration_adaptive_dt.prj">
+    <add sel="/*/time_loop/processes/process/time_stepping"><multiplier_interpolation_type>PiecewiseLinear</multiplier_interpolation_type></add>
+</OpenGeoSysProjectDiff>

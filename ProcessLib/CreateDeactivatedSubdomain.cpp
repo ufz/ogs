@@ -157,9 +157,9 @@ static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
 
         // Using very large value for the curve's value, s.t. for any time from
         // start to end the whole subdomain is deactivated at once.
-        return {{start_time, end_time},
-                {std::numeric_limits<double>::max(),
-                 std::numeric_limits<double>::max()},
+        return {std::vector<double>({start_time, end_time}),
+                std::vector<double>({std::numeric_limits<double>::max(),
+                                     std::numeric_limits<double>::max()}),
                 false};
     }
 

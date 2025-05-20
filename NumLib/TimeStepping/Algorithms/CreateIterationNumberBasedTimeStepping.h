@@ -12,6 +12,8 @@
 #include <memory>
 #include <vector>
 
+#include "MultiplyerInterpolationType.h"
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -28,6 +30,7 @@ struct IterationNumberBasedTimeSteppingParameters final
     double minimum_dt;
     double maximum_dt;
     double initial_dt;
+    MultiplyerInterpolationType multiplier_interpolation_type;
     std::vector<int> number_iterations;
     std::vector<double> multiplier;
 };

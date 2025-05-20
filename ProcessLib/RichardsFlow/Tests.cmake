@@ -73,12 +73,21 @@ AddTest(
     EXECUTABLE_ARGS RichardsFlow_2d_small_iteration_adaptive_dt.prj
     REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 51
-    # No vtkdiff comparison here, because of the different file names for
-    # different machines, which again is due to the adaptive time stepping
-    # scheme. When the output file format can be specified in the project files,
-    # e.g. in the form Richards_%t where %t is the current time, the output will
-    # no longer be ambiguous.
+    richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
+    richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
 )
+
+AddTest(
+    NAME 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_PiecewiseLinear
+    PATH Parabolic/Richards
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS iteration_adaptive_dt_PiecewiseLinear.xml
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 51
+    richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
+    richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
+)
+
 
 #PETSc/MPI
 #AddTest(

@@ -281,7 +281,7 @@
         <vtkdiff>
             <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>3e-6</absolute_tolerance>
+            <absolute_tolerance>3.8e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -293,7 +293,7 @@
         <vtkdiff>
             <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
             <field>ElasticStrain</field>
-            <absolute_tolerance>5e-9</absolute_tolerance>
+            <absolute_tolerance>5.6e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

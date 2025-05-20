@@ -116,7 +116,7 @@
                 <variable>pressure</variable>
                 <variable>saturation</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <suffix>_t_{:time}</suffix>
         </output>
     </time_loop>
     <curves>

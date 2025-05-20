@@ -13,8 +13,10 @@
  */
 #include "PiecewiseLinearInterpolation.h"
 
+#include <algorithm>
 #include <cmath>
 #include <limits>
+#include <range/v3/range/conversion.hpp>
 #include <utility>
 
 #include "BaseLib/Error.h"
@@ -29,6 +31,31 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     bool supp_pnts_sorted)
     : supp_pnts_(std::move(supporting_points)),
       values_at_supp_pnts_(std::move(values_at_supp_pnts))
+{
+    if (!supp_pnts_sorted)
+    {
+        BaseLib::quicksort<double, double>(
+            supp_pnts_, static_cast<std::size_t>(0), supp_pnts_.size(),
+            values_at_supp_pnts_);
+    }
+
+    const auto it = std::adjacent_find(supp_pnts_.begin(), supp_pnts_.end());
+    if (it != supp_pnts_.end())
+    {
+        const std::size_t i = std::distance(supp_pnts_.begin(), it);
+        OGS_FATAL(
+            "Variable {:d} and variable {:d} are the same. Piecewise linear "
+            "interpolation is not possible\n",
+            i, i + 1);
+    }
+}
+
+PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
+    std::vector<int> const& supporting_points,
+    std::vector<double> const& values_at_supp_pnts,
+    bool supp_pnts_sorted)
+    : supp_pnts_(supporting_points | ranges::to<std::vector<double>>()),
+      values_at_supp_pnts_(values_at_supp_pnts)
 {
     if (!supp_pnts_sorted)
     {
@@ -74,9 +101,8 @@ double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
     double const f_r = values_at_supp_pnts_[interval_idx + 1];
 
     // compute linear interpolation polynom: y = m * (x - support[i]) + value[i]
-    const double m = (f_r - f) / (x_r - x);
-
-    return m * (pnt_to_interpolate - x) + f;
+    const double t = (pnt_to_interpolate - x) / (x_r - x);
+    return std::lerp(f, f_r, t);
 }
 
 double PiecewiseLinearInterpolation::getDerivative(

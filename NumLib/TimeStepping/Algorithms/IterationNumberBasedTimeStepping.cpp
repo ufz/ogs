@@ -19,12 +19,15 @@
 #include <utility>
 
 #include "BaseLib/Algorithm.h"
+#include "IterationNumberBasedTimeStepping.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace NumLib
 {
 IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
     double const t_initial, double const t_end, double const min_dt,
     double const max_dt, double const initial_dt,
+    MultiplyerInterpolationType const multiplier_interpolation_type,
     std::vector<int>&& iter_times_vector,
     std::vector<double>&& multiplier_vector,
     std::vector<double> const& fixed_times_for_output)
@@ -34,6 +37,7 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
       _min_dt(min_dt),
       _max_dt(max_dt),
       _initial_dt(initial_dt),
+      _multiplier_interpolation_type(multiplier_interpolation_type),
       _max_iter(_iter_times_vector.empty() ? 0 : _iter_times_vector.back()),
       _fixed_times_for_output(fixed_times_for_output)
 {
@@ -101,12 +105,26 @@ double IterationNumberBasedTimeStepping::findMultiplier(
     int const number_iterations, NumLib::TimeStep const& ts_current) const
 {
     double multiplier = _multiplier_vector.front();
-    for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
+    switch (_multiplier_interpolation_type)
     {
-        if (number_iterations >= _iter_times_vector[i])
+        case MultiplyerInterpolationType::PiecewiseLinear:
         {
-            multiplier = _multiplier_vector[i];
+            auto const& PWLI = MathLib::PiecewiseLinearInterpolation(
+                _iter_times_vector, _multiplier_vector, false);
+            multiplier = PWLI.getValue(number_iterations);
+            DBUG("Using piecewise linear iteration-based time stepping.");
+            break;
         }
+        case MultiplyerInterpolationType::PiecewiseConstant:
+            DBUG("Using piecewise constant iteration-based time stepping.");
+            for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
+            {
+                if (number_iterations >= _iter_times_vector[i])
+                {
+                    multiplier = _multiplier_vector[i];
+                }
+            }
+            break;
     }
 
     if (!ts_current.isAccepted() && (multiplier >= 1.0))
