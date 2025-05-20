@@ -133,9 +133,6 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
-
     auto const num_nodes = ShapeFunction::NPOINTS;
     auto const pg_nodal_values =
         Eigen::Map<const NodalVectorType>(&local_x[0], num_nodes);
@@ -161,6 +158,12 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
         double T_int_pt = 0.;
         NumLib::shapeFunctionInterpolate(local_x, N, pg_int_pt, pc_int_pt,
                                          Xc_int_pt, T_int_pt);
+
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         _pressure_wetting[ip] = pg_int_pt - pc_int_pt;
         double const ideal_gas_constant_times_T_int_pt =

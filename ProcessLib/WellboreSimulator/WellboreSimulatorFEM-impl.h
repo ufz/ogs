@@ -124,6 +124,12 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
         auto& vapor_mass_flowrate = ip_data.vapor_mass_flow_rate;
         auto& liquid_mass_flowrate = ip_data.liquid_mass_flow_rate;
 
+        pos = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
+
         double p_int_pt = 0.0;
         double v_int_pt = 0.0;
         double h_int_pt = 0.0;

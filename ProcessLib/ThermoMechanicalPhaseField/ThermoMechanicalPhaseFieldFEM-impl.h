@@ -69,9 +69,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         typename ShapeMatricesType::template VectorType<displacement_size>>(
         local_b_data, displacement_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -79,9 +76,13 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
@@ -156,9 +157,6 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         typename ShapeMatricesType::template VectorType<temperature_size>>(
         local_b_data, temperature_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -168,6 +166,12 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 
         auto& eps_m = _ip_data[ip].eps_m;
         auto& heatflux = _ip_data[ip].heatflux;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         auto rho_sr = _process_data.solid_density(t, x_position)[0];
         auto const alpha = _process_data.linear_thermal_expansion_coefficient(
@@ -240,15 +244,18 @@ void ThermoMechanicalPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         typename ShapeMatricesType::template VectorType<phasefield_size>>(
         local_b_data, phasefield_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         auto const& strain_energy_tensile = _ip_data[ip].strain_energy_tensile;
 

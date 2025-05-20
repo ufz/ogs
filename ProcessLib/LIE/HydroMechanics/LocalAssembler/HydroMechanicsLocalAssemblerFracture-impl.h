@@ -82,13 +82,18 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         aperture0_node_values = frac_prop.aperture0.getNodalValuesOnElement(
             e, /*time independent*/ 0);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(e.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         _ip_data.emplace_back(*_process_data.fracture_model);
         auto const& sm_u = shape_matrices_u[ip];
         auto const& sm_p = shape_matrices_p[ip];
+        ParameterLib::SpatialPosition x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
+                                               ShapeMatricesTypeDisplacement>(
+                    _element, sm_u.N))};
+
         auto& ip_data = _ip_data[ip];
         ip_data.integration_weight =
             sm_u.detJ * sm_u.integralMeasure *
@@ -223,6 +228,13 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto const& H_g = ip_data.H_u;
         auto const& identity2 =
             MaterialLib::Fracture::FractureIdentity2<GlobalDim>::value;
+
+        x_position = {
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionPressure,
+                                               ShapeMatricesTypePressure>(
+                    _element, N_p))};
 
         auto& mat = ip_data.fracture_material;
         auto& effective_stress = ip_data.sigma_eff;
@@ -382,6 +394,13 @@ void HydroMechanicsLocalAssemblerFracture<
         auto& C = ip_data.C;
         auto& state = *ip_data.material_state_variables;
         auto& b_m = ip_data.aperture;
+
+        x_position = {
+            std::nullopt, e_id,
+            MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunctionPressure,
+                                               ShapeMatricesTypePressure>(
+                    _element, ip_data.N_p))};
 
         // displacement jumps in local coordinates
         w.noalias() = R * H_g * nodal_g;

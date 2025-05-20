@@ -88,7 +88,7 @@ private:
     std::vector<ShapeMatrices, Eigen::aligned_allocator<ShapeMatrices>>
         _shape_matrices;
 
-    std::size_t const _element_id;
+    MeshLib::Element const& _element;
 
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 };

@@ -61,9 +61,6 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
     auto local_b = MathLib::createZeroedVector<LocalVectorType>(local_b_data,
                                                                 pressure_size);
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(this->_element.getID());
-
     auto const& process_data = this->_process_data;
     auto const& medium =
         *this->_process_data.media_map.getMedium(this->_element.getID());
@@ -89,6 +86,12 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         auto const& dNdx = ip_data.dNdx;
         auto const& N = Ns[ip];
         auto const& w = ip_data.integration_weight;
+
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, this->_element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                this->_element, N))};
 
         double p_int_pt = 0.0;
         double T_int_pt = 0.0;
@@ -189,9 +192,6 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
     auto local_K = MathLib::createZeroedMatrix<LocalMatrixType>(
         local_K_data, temperature_size, temperature_size);
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(this->_element.getID());
-
     auto const& process_data = this->_process_data;
     auto const& medium =
         *process_data.media_map.getMedium(this->_element.getID());
@@ -220,6 +220,12 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
         auto const& dNdx = ip_data.dNdx;
         auto const& N = Ns[ip];
         auto const& w = ip_data.integration_weight;
+
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, this->_element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                this->_element, N))};
 
         double p_at_xi = 0.;
         NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);

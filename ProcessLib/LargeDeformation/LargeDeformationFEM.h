@@ -334,9 +334,6 @@ public:
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(this->element_.getID());
-
         typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>
             constitutive_setting;
         auto const& medium =
@@ -351,10 +348,14 @@ public:
             auto const& N = _ip_data[ip].N_u;
             auto const& dNdx = _ip_data[ip].dNdx_u;
 
-            auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunction,
-                                               ShapeMatricesType>(
-                    this->element_, N);
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, this->element_.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        this->element_, N))};
+
+            auto const x_coord = x_position.getCoordinates().value()[0];
 
             // For the 2D case the 33-component is needed (and the four entries
             // of the non-symmetric matrix); In 3d there are nine entries.
@@ -464,9 +465,6 @@ public:
         unsigned const n_integration_points =
             this->integration_method_.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition x_position;
-        x_position.setElementID(this->element_.getID());
-
         typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>
             constitutive_setting;
 
@@ -480,10 +478,15 @@ public:
         {
             auto const& N = _ip_data[ip].N_u;
             auto const& dNdx = _ip_data[ip].dNdx_u;
-            auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunction,
-                                               ShapeMatricesType>(
-                    this->element_, N);
+
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, this->element_.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        this->element_, N))};
+
+            auto const x_coord = x_position.getCoordinates().value()[0];
 
             // For the 2D case the 33-component is needed (and the four entries
             // of the non-symmetric matrix); In 3d there are nine entries.

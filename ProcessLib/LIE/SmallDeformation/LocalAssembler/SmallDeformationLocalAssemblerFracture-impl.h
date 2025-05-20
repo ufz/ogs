@@ -71,13 +71,18 @@ SmallDeformationLocalAssemblerFracture<ShapeFunction, DisplacementDim>::
                           { return &_process_data.junction_properties[jid]; }) |
                       ranges::to<std::vector>;
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
         _ip_data.emplace_back(*_process_data.fracture_model);
         auto const& sm = _shape_matrices[ip];
         auto& ip_data = _ip_data[ip];
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, sm.N))};
+
         ip_data.integration_weight =
             _integration_method.getWeightedPoint(ip).getWeight() *
             sm.integralMeasure * sm.detJ;

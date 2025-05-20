@@ -169,9 +169,13 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
@@ -377,8 +381,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
 
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium->phase("Solid");
 
@@ -388,9 +390,14 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
@@ -514,8 +521,6 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid_phase = medium->phase("Solid");
     MPL::VariableArray variables;
@@ -525,6 +530,12 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         auto const& w = _ip_data[ip].integration_weight;
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
         const double T_ip = N.dot(local_T);  // T at integration point
         variables.temperature = T_ip;
