@@ -54,9 +54,9 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
     std::vector<int> const& supporting_points,
     std::vector<double> const& values_at_supp_pnts,
     bool supp_pnts_sorted)
+    : supp_pnts_(supporting_points | ranges::to<std::vector<double>>()),
+      values_at_supp_pnts_(values_at_supp_pnts)
 {
-    supp_pnts_ = supporting_points | ranges::to<std::vector<double>>();
-    values_at_supp_pnts_ = values_at_supp_pnts;
     if (!supp_pnts_sorted)
     {
         BaseLib::quicksort<double, double>(
