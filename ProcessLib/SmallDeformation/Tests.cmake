@@ -1,6 +1,7 @@
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e0.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/EmbeddedAnchorSourceTerm/beam_two_material.prj)
     if(OGS_USE_EIGEN_UNSUPPORTED)
         # DEPENDS for preventing race condition
         OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRS.xml
