@@ -7,6 +7,8 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <vector>
+
 #include "BaseLib/ConfigTree.h"
 #include "Function.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
