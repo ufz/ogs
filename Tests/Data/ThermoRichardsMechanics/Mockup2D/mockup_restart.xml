@@ -10,7 +10,7 @@
 
     <!-- This is the step size from the non-restart version (see base_file) **after** t = 51840000.000000 s.
          It's exact value is crucial to meet the tight tolerances set in this test. -->
-    <replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">7592286.4470802974</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">8640000</replace>
 
     <replace sel="/*/time_loop/output/prefix/text()">mockup_results_restart</replace>
 
