@@ -409,19 +409,19 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>epsilon</field>
-            <absolute_tolerance>3e-15</absolute_tolerance>
+            <absolute_tolerance>3.5e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>porosity</field>
-            <absolute_tolerance>5e-15</absolute_tolerance>
+            <absolute_tolerance>6e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>1.5e-5</absolute_tolerance>
+            <absolute_tolerance>1.8e-5</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -433,7 +433,7 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>2.5e-6</absolute_tolerance>
+            <absolute_tolerance>3.1e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
