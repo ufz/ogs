@@ -58,7 +58,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     }
     if (property_type == "Function")
     {
-        return createFunction(config);
+        return createFunction(config, curves);
     }
 
     if (property_type == "Parameter")

@@ -18,11 +18,25 @@
 #include <unordered_set>
 
 #include "BaseLib/Algorithm.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/VectorizedTensor.h"
 
 namespace MaterialPropertyLib
 {
+struct CurveWrapper : public exprtk::ifunction<double>
+{
+    explicit CurveWrapper(const MathLib::PiecewiseLinearInterpolation& curve)
+        : exprtk::ifunction<double>(1), _curve(curve)
+    {
+        exprtk::disable_has_side_effects(*this);
+    }
+
+    double operator()(const double& t) override { return _curve.getValue(t); }
+
+private:
+    const MathLib::PiecewiseLinearInterpolation& _curve;
+};
 // Passing symbol table by reference as required by register_symbol_table()
 // call.
 template <typename T>
@@ -57,13 +71,19 @@ public:
         std::vector<std::string> const& variables,
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
-            dvalue_string_expressions);
+            dvalue_string_expressions,
+        std::map<std::string,
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves);
 
 private:
     /// Create symbol table for given variables and populates the variable_array
     /// as needed.
     exprtk::symbol_table<double> createSymbolTable(
-        std::vector<std::string> const& variables);
+        std::vector<std::string> const& variables,
+        std::map<std::string,
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves);
 
 public:
     /// Value expressions.
@@ -79,15 +99,28 @@ public:
     /// constant pointers for exprtk.
     mutable VariableArray variable_array;
 
+    std::map<std::string, CurveWrapper> _curve_wrappers;
+
     bool spatial_position_is_required = false;
 };
 
 template <int D>
 exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
-    std::vector<std::string> const& variables)
+    std::vector<std::string> const& variables,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     exprtk::symbol_table<double> symbol_table;
     symbol_table.add_constants();
+
+    std::unordered_set<std::string> curve_names;
+    for (auto const& curve : curves)
+    {
+        curve_names.insert(curve.first);
+    }
+
+    std::unordered_set<std::string> used_curves;
 
     symbol_table.create_variable("t");
 
@@ -95,22 +128,18 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
     {
         if (v == "t")
         {
-            symbol_table.create_variable("t");
+            continue;
         }
-        else if (v == "x")
+        else if (v == "x" || v == "y" || v == "z")
         {
             symbol_table.create_variable("x");
-            spatial_position_is_required = true;
-        }
-        else if (v == "y")
-        {
             symbol_table.create_variable("y");
-            spatial_position_is_required = true;
-        }
-        else if (v == "z")
-        {
             symbol_table.create_variable("z");
             spatial_position_is_required = true;
+        }
+        else if (curve_names.contains(v))
+        {
+            used_curves.insert(v);
         }
         else
         {
@@ -144,6 +173,16 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
             variable_array.visitVariable(add_any_variable, variable);
         }
     }
+
+    for (const auto& name : used_curves)
+    {
+        const auto& curve_ptr = curves.at(name);
+        _curve_wrappers.emplace(name, CurveWrapper(*curve_ptr));
+    }
+    for (auto& [name, wrapper] : _curve_wrappers)
+    {
+        symbol_table.add_function(name, wrapper);
+    }
     return symbol_table;
 }
 
@@ -152,9 +191,12 @@ Function::Implementation<D>::Implementation(
     std::vector<std::string> const& variables,
     std::vector<std::string> const& value_string_expressions,
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
-        dvalue_string_expressions)
+        dvalue_string_expressions,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
-    auto symbol_table = createSymbolTable(variables);
+    auto symbol_table = createSymbolTable(variables, curves);
 
     // value expressions.
     value_expressions =
@@ -376,7 +418,10 @@ Function::Function(
     std::string name,
     std::vector<std::string> const& value_string_expressions,
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
-        dvalue_string_expressions)
+        dvalue_string_expressions,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     name_ = std::move(name);
 
@@ -384,8 +429,13 @@ Function::Function(
         collectVariables(value_string_expressions, dvalue_string_expressions);
 
     // filter the strings unrelated to time or spatial position
-    static const std::unordered_set<std::string> filter_not_variables = {
-        "t", "x", "y", "z"};
+    static std::unordered_set<std::string> filter_not_variables = {"t", "x",
+                                                                   "y", "z"};
+    for (auto const& curve : curves)
+    {
+        filter_not_variables.insert(curve.first);
+    }
+
     variables_ =
         variables |
         std::views::filter([](const std::string& s)
@@ -395,9 +445,9 @@ Function::Function(
         ranges::to<std::vector>;
 
     impl2_ = std::make_unique<Implementation<2>>(
-        variables, value_string_expressions, dvalue_string_expressions);
+        variables, value_string_expressions, dvalue_string_expressions, curves);
     impl3_ = std::make_unique<Implementation<3>>(
-        variables, value_string_expressions, dvalue_string_expressions);
+        variables, value_string_expressions, dvalue_string_expressions, curves);
 }
 
 std::variant<Function::Implementation<2>*, Function::Implementation<3>*>

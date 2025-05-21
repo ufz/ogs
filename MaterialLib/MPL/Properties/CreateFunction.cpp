@@ -9,10 +9,15 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "Function.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<Function> createFunction(BaseLib::ConfigTree const& config)
+std::unique_ptr<Function> createFunction(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Function");
@@ -60,6 +65,9 @@ std::unique_ptr<Function> createFunction(BaseLib::ConfigTree const& config)
     }
 
     return std::make_unique<MaterialPropertyLib::Function>(
-        std::move(property_name), value_expressions, dvalue_expressions);
+        std::move(property_name),
+        value_expressions,
+        dvalue_expressions,
+        curves);
 }
 }  // namespace MaterialPropertyLib

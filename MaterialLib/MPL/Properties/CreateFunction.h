@@ -23,5 +23,9 @@ class Function;
 
 namespace MaterialPropertyLib
 {
-std::unique_ptr<Function> createFunction(BaseLib::ConfigTree const& config);
+std::unique_ptr<Function> createFunction(
+    BaseLib::ConfigTree const& config,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves);
 }  // namespace MaterialPropertyLib
