@@ -143,9 +143,6 @@
 #ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPP
 #include "ProcessLib/TwoPhaseFlowWithPP/CreateTwoPhaseFlowWithPPProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPRHO
-#include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
-#endif
 
 namespace
 {
@@ -1200,20 +1197,6 @@ void ProjectData::parseProcesses(
         {
             process =
                 ProcessLib::TwoPhaseFlowWithPP::createTwoPhaseFlowWithPPProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _media);
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPRHO
-            if (type == "TWOPHASE_FLOW_PRHO")
-        {
-            WARN(
-                "The TWOPHASE_FLOW_PRHO process is deprecated and will be "
-                "removed in OGS-6.5.5.");
-            process = ProcessLib::TwoPhaseFlowWithPrho::
-                createTwoPhaseFlowWithPrhoProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _media);
