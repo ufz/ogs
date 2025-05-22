@@ -134,9 +134,6 @@
 #ifdef OGS_BUILD_PROCESS_THERMOHYDROMECHANICS
 #include "ProcessLib/ThermoHydroMechanics/CreateThermoHydroMechanicsProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
-#include "ProcessLib/ThermoMechanicalPhaseField/CreateThermoMechanicalPhaseFieldProcess.h"
-#endif
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICS
 #include "ProcessLib/ThermoMechanics/CreateThermoMechanicsProcess.h"
 #endif
@@ -1085,34 +1082,6 @@ void ProjectData::parseProcesses(
                     OGS_FATAL(
                         "THERMO_HYDRO_MECHANICS process does not support given "
                         "dimension");
-            }
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
-            if (type == "THERMO_MECHANICAL_PHASE_FIELD")
-        {
-            WARN(
-                "The THERMO_MECHANICAL_PHASE_FIELD process is deprecated and "
-                "will be removed in OGS-6.5.5.");
-            switch (_mesh_vec[0]->getDimension())
-            {
-                case 2:
-                    process = ProcessLib::ThermoMechanicalPhaseField::
-                        createThermoMechanicalPhaseFieldProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
-                case 3:
-                    process = ProcessLib::ThermoMechanicalPhaseField::
-                        createThermoMechanicalPhaseFieldProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
             }
         }
         else
