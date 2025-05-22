@@ -628,12 +628,6 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     BaseLib::RunTime time_timestep_process;
     time_timestep_process.start();
 
-    //    INFO(
-    //        "Solving process #{:d} at time step #{:d} and time {:f} with step
-    //        size {:f} started.", process_data.process_id, timestep_id, t(),
-    //        dt);
-    //
-
     INFO("Solving process #{:d} started.", process_data.process_id);
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(

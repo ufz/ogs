@@ -177,7 +177,7 @@ int getNumberOfThreads()
     {
         INFO(
             "Threads used for ParallelVectorMatrixAssembler: 1. This is the "
-            "default when OGS_ASM_THREADS environment variable is not set");
+            "default when OGS_ASM_THREADS environment variable is not set.");
         return 1;
     }
 

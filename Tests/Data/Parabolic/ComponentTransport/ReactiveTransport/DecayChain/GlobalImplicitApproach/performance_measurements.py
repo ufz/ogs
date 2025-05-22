@@ -128,7 +128,7 @@ for _name, case in cases:
     dfa = pd.DataFrame(records)
     dfb = fill_ogs_context(dfa)
     dfc = time_step_vs_iterations(dfb)
-    dfd = analysis_time_step(dfa)
+    dfd = analysis_time_step(dfb)
     dfd = dfd.droplevel("mpi_process")
     dfe = dfd.join(dfc)
     dfe = dfe.drop(0)  # remove timestep 0 (only output)

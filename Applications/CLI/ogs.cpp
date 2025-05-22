@@ -55,21 +55,21 @@ void enableFloatingPointExceptions()
 }
 #endif  // _WIN32
 
+#include <spdlog/sinks/null_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
 #include "BaseLib/MPI.h"
-#include "spdlog/sinks/null_sink.h"
 
 void signalHandler(int signum)
 {
     auto const end_time = std::chrono::system_clock::now();
     auto const time_str = BaseLib::formatDate(end_time);
 
-    ERR("Simulation aborted on {:s}. Received signal: {:d})", time_str, signum);
+    ERR("Simulation aborted on {:s}. Received signal: {:d}.", time_str, signum);
     exit(signum);
 }
 
-void initializeLogger(bool all_ranks_log)
+void initializeLogger([[maybe_unused]] bool const all_ranks_log)
 {
 #if defined(USE_PETSC)
     int mpi_rank;
@@ -80,7 +80,9 @@ void initializeLogger(bool all_ranks_log)
     if (all_ranks_log)
     {
         if (world_size > 1)
+        {
             spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
+        }
         // else untouched
     }
     else  // only rank 0 logs
@@ -224,7 +226,7 @@ int main(int argc, char* argv[])
     }
     else
     {
-        ERR("OGS terminated on {:s}. One of the tests failed", time_str);
+        ERR("OGS terminated on {:s}. One of the tests failed.", time_str);
         return EXIT_FAILURE;
     }
 

@@ -41,8 +41,6 @@ struct LinearSolverLibrarySetup final
         NumLib::cleanupGlobalMatrixProviders();
         PetscFinalize();
     }
-
-    // BaseLib::MPI::Setup mpi_setup;
 };
 }    // ApplicationsLib
 #elif defined(USE_LIS)

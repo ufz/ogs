@@ -48,7 +48,7 @@ void Simulation::initializeDataStructures(
 {
     INFO("Reading project file {}.",
          std::filesystem::relative(project).string());
-    DBUG("Project file: {}", std::filesystem::absolute(project).string());
+    DBUG("Project file: {}.", std::filesystem::absolute(project).string());
 
     std::stringstream prj_stream;
     BaseLib::prepareProjectFile(prj_stream, project, xml_patch_file_names,
@@ -150,8 +150,6 @@ static std::atomic<int> gSignalThatStoppedMe{-1};
 
 extern "C" void signalHandler(int signum)
 {
-    // the standard says you can set atomic variables
-    // you could also use a different memory barrier
     gSignalThatStoppedMe.store(signum);
 }
 

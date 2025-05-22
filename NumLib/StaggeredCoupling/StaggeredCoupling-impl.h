@@ -99,8 +99,11 @@ StaggeredCoupling::executeConcrete(
     {
         coupling_iteration_converged = true;
 
-        INFO("Global coupling iteration #{:d} started",
+        INFO("Global coupling iteration #{:d} started.",
              global_coupling_iteration);
+        BaseLib::RunTime coupling_iteration_timer;
+        coupling_iteration_timer.start();
+
         for (auto& coupling_node : coupling_nodes)
         {
             // For the dummy root node, perform sub-coupling computation.
@@ -161,8 +164,8 @@ StaggeredCoupling::executeConcrete(
 
         // At least to run two coupling iterations, meaning that the coupling
         // has at least two coupling nodes.
-        INFO("Global coupling iteration #{:d} took TODO",
-             global_coupling_iteration);
+        INFO("Global coupling iteration #{:d} took {:g} s.",
+             global_coupling_iteration, coupling_iteration_timer.elapsed());
         if (coupling_iteration_converged && global_coupling_iteration > 0)
         {
             break;
