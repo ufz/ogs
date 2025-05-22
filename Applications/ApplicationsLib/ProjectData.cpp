@@ -128,9 +128,6 @@
 #ifdef OGS_BUILD_PROCESS_SMALLDEFORMATIONNONLOCAL
 #include "ProcessLib/SmallDeformationNonlocal/CreateSmallDeformationNonlocalProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_TES
-#include "ProcessLib/TES/CreateTESProcess.h"
-#endif
 #ifdef OGS_BUILD_PROCESS_TH2M
 #include "ProcessLib/TH2M/CreateTH2MProcess.h"
 #endif
@@ -717,19 +714,6 @@ void ProjectData::parseProcesses(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, _mesh_vec, _media);
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_TES
-            if (type == "TES")
-        {
-            WARN(
-                "The TES process is deprecated and will be removed in "
-                "OGS-6.5.5.");
-            process = ProcessLib::TES::createTESProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config);
         }
         else
 #endif

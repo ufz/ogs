@@ -131,7 +131,6 @@ This order is used, e.g., to display the per component convergence of the non-li
 * [SmallDeformation](https://doxygen.opengeosys.org/da/d84/namespaceProcessLib_1_1SmallDeformation.html#processvariablessd)
 * [SmallDeformation Nonlocal](https://doxygen.opengeosys.org/d9/d9a/namespaceProcessLib_1_1SmallDeformationNonlocal.html#processvariablessdnl)
 * [SteadyStateDiffusion](https://doxygen.opengeosys.org/d8/d59/namespaceProcessLib_1_1SteadyStateDiffusion.html#processvariablesssd)
-* [TES](https://doxygen.opengeosys.org/d5/d3a/namespaceProcessLib_1_1TES.html#processvariablestes)
 * [TH2M](https://doxygen.opengeosys.org/d6/de7/namespaceProcessLib_1_1TH2M.html#processvariablesth2m)
 * [ThermalTwoPhaseFlowWithPP](https://doxygen.opengeosys.org/dd/d48/namespaceProcessLib_1_1ThermalTwoPhaseFlowWithPP.html#processvariables)
 * [ThermoMechanics](https://doxygen.opengeosys.org/d5/dd4/namespaceProcessLib_1_1ThermoMechanics.html#processvariablestm)
