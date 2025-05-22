@@ -14,8 +14,8 @@
 #include <array>
 #include <memory>
 
-#include "MaterialLib/Fluid/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
-#include "MaterialLib/Fluid/GibbsFreeEnergy/DimensionlessGibbsFreeEnergyRegion2.h"
+#include "MaterialLib/MPL/Properties/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
+#include "MaterialLib/MPL/Properties/GibbsFreeEnergy/DimensionlessGibbsFreeEnergyRegion2.h"
 #include "Tests/TestTools.h"
 
 using namespace MaterialLib;

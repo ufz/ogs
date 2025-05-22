@@ -14,7 +14,7 @@
 #include <cmath>
 
 #include "BaseLib/Error.h"
-#include "MaterialLib/Fluid/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
+#include "MaterialLib/MPL/Properties/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
 #include "MaterialLib/MPL/Properties/WaterSaturationCurveIAPWSIF97Region4.h"
 #include "MaterialLib/PhysicalConstant.h"
 
