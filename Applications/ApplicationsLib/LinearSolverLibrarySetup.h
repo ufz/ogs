@@ -29,7 +29,7 @@ namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
 {
-    LinearSolverLibrarySetup(int argc, char* argv[]) : mpi_setup(argc, argv)
+    LinearSolverLibrarySetup(int argc, char* argv[])
     {
         char help[] = "ogs6 with PETSc \n";
         PetscInitialize(&argc, &argv, nullptr, help);
@@ -41,8 +41,6 @@ struct LinearSolverLibrarySetup final
         NumLib::cleanupGlobalMatrixProviders();
         PetscFinalize();
     }
-
-    BaseLib::MPI::Setup mpi_setup;
 };
 }    // ApplicationsLib
 #elif defined(USE_LIS)

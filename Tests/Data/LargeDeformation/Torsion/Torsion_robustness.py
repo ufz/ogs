@@ -113,8 +113,7 @@ plotter.show()
 
 # %% jupyter={"source_hidden": true}
 log_file_raw = logparser.parse_file(f"{out_dir}/out.txt")
-log_file_df = pd.DataFrame(log_file_raw)
-log_df = logparser.fill_ogs_context(log_file_df)
+log_df = pd.DataFrame(log_file_raw)
 for ts in range(1, 6):
     dxs = log_df[log_df["time_step"] == ts]["dx"].dropna().to_numpy()
     slopes = np.log10(dxs)[1:] / np.log10(dxs)[:-1]

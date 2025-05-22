@@ -17,6 +17,8 @@
 
 #include <algorithm>
 #include <chrono>
+#include <csignal>
+#include <iostream>
 #include <sstream>
 
 #include "CommandLineArgumentParser.h"
@@ -53,10 +55,85 @@ void enableFloatingPointExceptions()
 }
 #endif  // _WIN32
 
+#include <spdlog/sinks/null_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+
+#include "BaseLib/MPI.h"
+
+void signalHandler(int signum)
+{
+    auto const end_time = std::chrono::system_clock::now();
+    auto const time_str = BaseLib::formatDate(end_time);
+
+    ERR("Simulation aborted on {:s}. Received signal: {:d}.", time_str, signum);
+    exit(signum);
+}
+
+void initializeLogger([[maybe_unused]] bool const all_ranks_log)
+{
+#if defined(USE_PETSC)
+    int mpi_rank;
+    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+    if (all_ranks_log)
+    {
+        if (world_size > 1)
+        {
+            spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
+        }
+        // else untouched
+    }
+    else  // only rank 0 logs
+    {
+        // set_pattern is untouched
+        spdlog::drop_all();
+        if (mpi_rank > 0)
+        {
+            BaseLib::console = spdlog::create<spdlog::sinks::null_sink_st>(
+                "ogs");  // do not log
+        }
+        else  // rank 0
+        {
+            auto console = BaseLib::console =
+                spdlog::stdout_color_st("ogs");  // st for performance
+        }
+    }
+
+    {
+        auto const start_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(start_time);
+        INFO("OGS started on {:s} with MPI. MPI processes: {:d}.", time_str,
+             world_size);
+    }
+
+#else  // defined(USE_PETSC)
+
+    {
+        auto const start_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(start_time);
+        INFO("OGS started on {:s} in serial mode.", time_str);
+    }
+
+#endif
+}
+
 int main(int argc, char* argv[])
 {
     CommandLineArguments cli_arg = parseCommandLineArguments(argc, argv);
+
+    // Initialize MPI
+    // also in python hook
+    // check tools
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
     BaseLib::initOGSLogger(cli_arg.log_level);
+    initializeLogger(cli_arg.log_parallel);
+
+    signal(SIGINT, signalHandler);   // CTRL+C
+    signal(SIGTERM, signalHandler);  // pkill -SIGTERM <process_id> , It is NOT
+                                     // possible to catch SIGKILL
+
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
     if (cli_arg.enable_fpe_is_set)
     {
@@ -64,16 +141,11 @@ int main(int argc, char* argv[])
     }
 #endif  // _WIN32
 
-    INFO("This is OpenGeoSys-6 version {:s}.",
-         GitInfoLib::GitInfo::ogs_version);
-
+    INFO(
+        "This is OpenGeoSys-6 version {:s}. Log version: {:d}, Log level: "
+        "{:s}.",
+        GitInfoLib::GitInfo::ogs_version, 2, cli_arg.log_level);
     BaseLib::createOutputDirectory(cli_arg.outdir);
-
-    {
-        auto const start_time = std::chrono::system_clock::now();
-        auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on {:s}.", time_str);
-    }
 
     std::optional<ApplicationsLib::TestDefinition> test_definition{
         std::nullopt};
@@ -104,8 +176,17 @@ int main(int argc, char* argv[])
         {
             OGS_FATAL("Python exception thrown: {}", e.what());
         }
+        if (solver_succeeded)
+        {
+            INFO("[time] Simulation completed. It took {:g} s.",
+                 run_time.elapsed());
+        }
+        else
+        {
+            INFO("[time] Simulation failed. It took {:g} s.",
+                 run_time.elapsed());
+        }
 
-        INFO("[time] Execution took {:g} s.", run_time.elapsed());
         ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     }
     catch (std::exception& e)
@@ -114,21 +195,20 @@ int main(int argc, char* argv[])
         ogs_status = EXIT_FAILURE;
     }
 
+    if (ogs_status == EXIT_FAILURE)
     {
         auto const end_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(end_time);
-        INFO("OGS terminated on {:s}.", time_str);
-    }
-
-    if (ogs_status == EXIT_FAILURE)
-    {
-        ERR("OGS terminated with error.");
+        ERR("OGS terminated with error on {:s}.", time_str);
         return EXIT_FAILURE;
     }
 
     if (!test_definition)
     {
-        // There are no tests, so just exit;
+        auto const end_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(end_time);
+        DBUG("No test definition was found. No tests will be executed.");
+        INFO("OGS completed on {:s}.", time_str);
         return ogs_status;
     }
 
@@ -137,10 +217,18 @@ int main(int argc, char* argv[])
     INFO("# Running tests                          #");
     INFO("##########################################");
     INFO("");
-    if (!test_definition->runTests())
+    auto status = test_definition->runTests();
+    auto const end_time = std::chrono::system_clock::now();
+    auto const time_str = BaseLib::formatDate(end_time);
+    if (status)
     {
-        ERR("One of the tests failed.");
+        INFO("OGS completed on {:s}.", time_str);
+    }
+    else
+    {
+        ERR("OGS terminated on {:s}. One of the tests failed.", time_str);
         return EXIT_FAILURE;
     }
+
     return EXIT_SUCCESS;
 }

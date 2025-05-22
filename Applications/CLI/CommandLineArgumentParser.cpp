@@ -15,6 +15,7 @@
 #include <tclap/CmdLine.h>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
 
@@ -55,6 +56,9 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
         "all",
 #endif
         "LOG_LEVEL");
+
+    TCLAP::SwitchArg log_parallel("", "log-parallel",
+                                  "enables all MPI ranks to log");
 
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
                 // currently
@@ -114,6 +118,7 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     cmd.add(script_dir_arg);
     cmd.add(write_prj_arg);
     cmd.add(log_level_arg);
+    cmd.add(log_parallel);
     cmd.add(nonfatal_arg);
     cmd.add(unbuffered_cout_arg);
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
@@ -140,6 +145,7 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
                               : script_dir_arg.getValue();
     cli_args.nonfatal = nonfatal_arg.getValue();
     cli_args.log_level = log_level_arg.getValue();
+    cli_args.log_parallel = log_parallel.getValue();
     cli_args.write_prj = write_prj_arg.getValue();
 
     // deactivate buffer for standard output if specified

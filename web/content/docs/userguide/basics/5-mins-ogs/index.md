@@ -40,7 +40,7 @@ Otherwise, maybe [Option 2](#binaries) might work for you.
 1. Create a Python virtual environment and activate it (for more details see
    [here](/docs/userguide/basics/introduction/)).
 2. Install the python package [OGSTools](https://ogstools.opengeosys.org):
-   `pip install ogstools`.
+   `pip install ogstools[ogs]`.
    It installs the [OpenGeoSys package](https://pypi.org/project/ogs/)
    for you and comes with our collection of Python pre- and post-processing
    tools and some selected packages that are commonly used together with OGS:

@@ -519,8 +519,8 @@ bool TimeLoop::executeTimeStep()
 
     const std::size_t timesteps = _accepted_steps + 1;
     // TODO(wenqing): , input option for time unit.
-    INFO("=== Time stepping at step #{:d} and time {} with step size {}",
-         timesteps, _current_time, _dt);
+    INFO("Time step #{:d} started. Time: {}. Step size: {}.", timesteps,
+         _current_time, _dt);
 
     updateDeactivatedSubdomains(_per_process_data, _current_time());
 
@@ -627,6 +627,8 @@ static NumLib::NonlinearSolverStatus solveMonolithicProcess(
 {
     BaseLib::RunTime time_timestep_process;
     time_timestep_process.start();
+
+    INFO("Solving process #{:d} started.", process_data.process_id);
 
     auto const nonlinear_solver_status = solveOneTimeStepOneProcess(
         x, x_prev, timestep_id, t(), dt, process_data, outputs);

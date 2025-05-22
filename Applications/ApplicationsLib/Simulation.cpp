@@ -21,6 +21,7 @@
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/PrjProcessing.h"
+#include "BaseLib/RunTime.h"
 #include "MeshLib/Mesh.h"
 #include "NumLib/NumericsConfig.h"
 #include "ProcessLib/TimeLoop.h"
@@ -35,12 +36,6 @@ Simulation::Simulation(int argc, char* argv[])
 #if defined(USE_PETSC)
     controller->Initialize(&argc, &argv, 1);
     vtkMPIController::SetGlobalController(controller);
-
-    {  // Can be called only after MPI_INIT.
-        int mpi_rank;
-        MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
-        spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
-    }
 #endif
 }
 
@@ -52,7 +47,8 @@ void Simulation::initializeDataStructures(
     std::string const& script_dir, bool const write_prj)
 {
     INFO("Reading project file {}.",
-         std::filesystem::absolute(project).string());
+         std::filesystem::relative(project).string());
+    DBUG("Project file: {}.", std::filesystem::absolute(project).string());
 
     std::stringstream prj_stream;
     BaseLib::prepareProjectFile(prj_stream, project, xml_patch_file_names,
@@ -109,7 +105,13 @@ void Simulation::initializeDataStructures(
     BaseLib::ConfigTree::assertNoSwallowedErrors();
 
     auto& time_loop = project_data->getTimeLoop();
+    auto time_value = time_loop.currentTime()();
+    INFO("Time step #0 started. Time: {}. Step size: 0.", time_value);
+
+    BaseLib::RunTime init_timer;
+    init_timer.start();
     time_loop.initialize();
+    INFO("Time step #0 took {:g} s.", init_timer.elapsed());
 }
 
 double Simulation::currentTime() const
@@ -142,6 +144,13 @@ bool Simulation::executeTimeStep()
 MeshLib::Mesh& Simulation::getMesh(std::string const& name)
 {
     return project_data->getMesh(name);
+}
+
+static std::atomic<int> gSignalThatStoppedMe{-1};
+
+extern "C" void signalHandler(int signum)
+{
+    gSignalThatStoppedMe.store(signum);
 }
 
 bool Simulation::executeSimulation()
