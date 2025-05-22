@@ -320,28 +320,6 @@ if(OGS_BUILD_GUI)
     endif()
 endif()
 
-if(OGS_USE_CVODE)
-    CPMAddPackage(
-        NAME CVODE
-        GITHUB_REPOSITORY ufz/cvode
-        VERSION 2.8.2
-        GIT_TAG 42d786bff4f950045d2de941677ecd4432cec855
-        OPTIONS "EXAMPLES_ENABLE OFF"
-        EXCLUDE_FROM_ALL YES SYSTEM TRUE
-    )
-    if(CVODE_ADDED)
-        add_library(CVODE::CVODE INTERFACE IMPORTED)
-        target_include_directories(
-            CVODE::CVODE SYSTEM INTERFACE ${CVODE_SOURCE_DIR}/include
-                                          ${CVODE_BINARY_DIR}/include
-        )
-        target_link_libraries(
-            CVODE::CVODE INTERFACE sundials_cvode_static
-                                   sundials_nvecserial_static
-        )
-    endif()
-endif()
-
 # VTK ###
 # ~~~
 # if(OGS_USE_INSITU)

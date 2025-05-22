@@ -45,6 +45,5 @@
  *
  * ${_subpage_dependencies}
  * * \subpage ODESolver
- * * \subpage ExternalODESolverInterface
  *
  */
