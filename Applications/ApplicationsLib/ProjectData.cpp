@@ -103,10 +103,6 @@
 #ifdef OGS_BUILD_PROCESS_LIQUIDFLOW
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_STOKESFLOW
-#include "ProcessLib/StokesFlow/CreateStokesFlowProcess.h"
-#endif
-
 #ifdef OGS_BUILD_PROCESS_THERMORICHARDSMECHANICS
 #include "ProcessLib/ThermoRichardsMechanics/CreateThermoRichardsMechanicsProcess.h"
 #endif
@@ -721,30 +717,6 @@ void ProjectData::parseProcesses(
                 name, *_mesh_vec[0], std::move(jacobian_assembler),
                 _process_variables, _parameters, integration_order,
                 process_config, _mesh_vec, _media);
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_STOKESFLOW
-            if (type == "StokesFlow")
-        {
-            WARN(
-                "The StokesFlow process is deprecated and will be removed in "
-                "OGS-6.5.5.");
-            switch (_mesh_vec[0]->getDimension())
-            {
-                case 2:
-                    process =
-                        ProcessLib::StokesFlow::createStokesFlowProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters, integration_order,
-                            process_config, _media);
-                    break;
-                default:
-                    OGS_FATAL(
-                        "StokesFlow process does not support given "
-                        "dimension {:d}",
-                        _mesh_vec[0]->getDimension());
-            }
         }
         else
 #endif

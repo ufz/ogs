@@ -26,7 +26,7 @@ set(_processes_list
 option(OGS_BUILD_DEPRECATED_PROCESSES "Build deprecated processes" OFF)
 if(OGS_BUILD_DEPRECATED_PROCESSES)
     set(_deprecated_processes TwoPhaseFlowWithPrho SmallDeformationNonlocal
-        TES ThermoMechanicalPhaseField StokesFlow)
+        TES ThermoMechanicalPhaseField)
     list(APPEND _processes_list ${_deprecated_processes})
     foreach(process ${_deprecated_processes})
         message(WARNING "${process} is deprecated and will be removed in OGS-6.5.5.")
