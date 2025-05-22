@@ -10,6 +10,7 @@
 
 #include "NonlinearSolver.h"
 
+#include <algorithm>
 #include <boost/algorithm/string.hpp>
 
 #include "BaseLib/ConfigTree.h"
@@ -449,6 +450,13 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 damping = _convergence_criterion->getDampingFactor(
                     minus_delta_x, *x[process_id], _damping);
             }
+            if (_damping_reduction)
+            {
+                damping =
+                    damping +
+                    (1 - damping) *
+                        std::clamp(iteration / *_damping_reduction, 0.0, 1.0);
+            }
             LinAlg::axpy(*x_new[process_id], -damping, minus_delta_x);
 
             if (postIterationCallback)
@@ -565,12 +573,15 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
                 "{:g}.",
                 damping);
         }
+        auto const damping_reduction =
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping_reduction}
+            config.getConfigParameterOptional<double>("damping_reduction");
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
-        return std::make_pair(
-            std::make_unique<ConcreteNLS>(linear_solver, max_iter,
-                                          recompute_jacobian, damping),
-            tag);
+        return std::make_pair(std::make_unique<ConcreteNLS>(
+                                  linear_solver, max_iter, recompute_jacobian,
+                                  damping, damping_reduction),
+                              tag);
     }
 #ifdef USE_PETSC
     if (boost::iequals(type, "PETScSNES"))
