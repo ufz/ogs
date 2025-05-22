@@ -5,14 +5,6 @@ add_subdirectory(Utils)
 # Source files
 get_source_files(SOURCES)
 
-append_source_files(SOURCES Fluid)
-append_source_files(SOURCES Fluid/Density)
-append_source_files(SOURCES Fluid/Viscosity)
-append_source_files(SOURCES Fluid/FluidProperties)
-append_source_files(SOURCES Fluid/SpecificHeatCapacity)
-append_source_files(SOURCES Fluid/ThermalConductivity)
-append_source_files(SOURCES Fluid/WaterVaporProperties)
-
 append_source_files(SOURCES MPL)
 append_source_files(SOURCES MPL/Properties)
 append_source_files(SOURCES MPL/Properties/CapillaryPressureSaturation)
