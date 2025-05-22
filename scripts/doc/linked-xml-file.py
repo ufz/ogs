@@ -12,6 +12,7 @@
 # attributes are untested.
 
 from collections import defaultdict
+from pathlib import Path
 from typing import TextIO
 import xml.etree.ElementTree as ET
 import sys
@@ -47,8 +48,10 @@ def format_if_documented(
                 page_name, tag_attr
             )
         )
-
-    return fmt.format(tag_attr_formatted, tag_attr, *args)
+    formatted_str = fmt.format(tag_attr_formatted, tag_attr, *args)
+    # escape "/*" which is used in patch files selections as this is interpreted
+    # by doxygen as an opening comment which will never be closed
+    return formatted_str.replace("/*", "./")
 
 
 def replace_prefix(tag: str, typetag: str) -> str:
@@ -88,6 +91,12 @@ def get_tagpath(
     return tag_path, page_name, is_doc
 
 
+def remove_xml_header(xml_string: str) -> str:
+    if xml_string.startswith("<?xml"):
+        return "\n".join(xml_string.split("\n")[1:])
+    return xml_string
+
+
 def print_tags(
     node: ET.Element,
     level: int,
@@ -99,6 +108,20 @@ def print_tags(
 ) -> None:
     tag = node.tag
     rootpagename = page_name
+
+    # traverse down the included xml files
+    if tag == "include":
+        include_xml_path = (
+            Path(datadir) / Path(rel_filepath).parent / node.attrib["file"]
+        )
+        with open(include_xml_path, "r") as included_xml_file:
+            xml_string = remove_xml_header(included_xml_file.read())
+        included_xml = ET.fromstring("<dummy>" + xml_string + "</dummy>")
+        for included_child in included_xml:
+            print_tags(
+                included_child, level, page_name, filehandle, typetag,
+                typetag_levels_up, rel_filepath
+            )  # fmt: skip
 
     if level > 0:
         page_name += "__" + tag if page_name else tag
@@ -240,14 +263,17 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
         relfilepath = os.path.relpath(filepath, datadir)
         pagename = "ogs_ctest_prj__" + relfilepath.replace("/", "__").replace(".", "__")
 
-        if fn.endswith(".prj"):
+        if fn.endswith((".prj", ".xml")):
+            if fn.endswith(".xml"):
+                with open(filepath, "r") as included_xml_file:
+                    if "OpenGeoSysProjectDiff" not in included_xml_file.read():
+                        continue
             outdoxfile = os.path.join(outdirpath, fn + ".dox")
             dirs_with_prj_files.add(reldirpath)
 
             subpages.append(pagename)
 
-            if not os.path.exists(outdirpath):
-                os.makedirs(outdirpath)
+            os.makedirs(outdirpath, exist_ok=True)
 
             # write linked prj file, cf. https://doxygen.opengeosys.org/d6/de3/ogs_ctest_prj__elliptic__circle_radius_1__circle_1e6_axi__prj
             with open(outdoxfile, "w", encoding="UTF-8") as fh:
@@ -284,8 +310,7 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
             subpages.append(pagename)
 
     if subpages:
-        if not os.path.exists(outdirpath):
-            os.makedirs(outdirpath)
+        os.makedirs(outdirpath, exist_ok=True)
 
         pagename = "ogs_ctest_prj__" + reldirpath.replace("/", "__").replace(".", "__")
         pagetitle = os.path.split(reldirpath)[1]
