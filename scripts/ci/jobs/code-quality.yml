@@ -11,6 +11,7 @@ cppcheck:
       -DOGS_USE_UNITY_BUILDS=OFF
     - bash cppcheck.sh
   artifacts:
+    when: always
     reports:
       codequality: build/cppcheck.json
     paths:
