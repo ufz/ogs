@@ -125,9 +125,6 @@
 #ifdef OGS_BUILD_PROCESS_SMALLDEFORMATION
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_SMALLDEFORMATIONNONLOCAL
-#include "ProcessLib/SmallDeformationNonlocal/CreateSmallDeformationNonlocalProcess.h"
-#endif
 #ifdef OGS_BUILD_PROCESS_TH2M
 #include "ProcessLib/TH2M/CreateTH2MProcess.h"
 #endif
@@ -1006,39 +1003,6 @@ void ProjectData::parseProcesses(
                     OGS_FATAL(
                         "SMALL_DEFORMATION process does not support given "
                         "dimension");
-            }
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_SMALLDEFORMATIONNONLOCAL
-            if (type == "SMALL_DEFORMATION_NONLOCAL")
-        {
-            WARN(
-                "The SMALL_DEFORMATION_NONLOCAL process is deprecated and will "
-                "be removed in OGS-6.5.5.");
-            switch (_mesh_vec[0]->getDimension())
-            {
-                case 2:
-                    process = ProcessLib::SmallDeformationNonlocal::
-                        createSmallDeformationNonlocalProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
-                case 3:
-                    process = ProcessLib::SmallDeformationNonlocal::
-                        createSmallDeformationNonlocalProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
-                default:
-                    OGS_FATAL(
-                        "SMALL_DEFORMATION_NONLOCAL process does not support "
-                        "given dimension {:d}",
-                        _mesh_vec[0]->getDimension());
             }
         }
         else

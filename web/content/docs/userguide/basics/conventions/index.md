@@ -129,7 +129,6 @@ This order is used, e.g., to display the per component convergence of the non-li
 * [RichardsComponentTransport](https://doxygen.opengeosys.org/d6/d3b/namespaceProcessLib_1_1RichardsComponentTransport.html#processvariablesrct)
 * [RichardsMechanics](https://doxygen.opengeosys.org/d6/d4a/namespaceProcessLib_1_1RichardsMechanics.html#processvariablesrm)
 * [SmallDeformation](https://doxygen.opengeosys.org/da/d84/namespaceProcessLib_1_1SmallDeformation.html#processvariablessd)
-* [SmallDeformation Nonlocal](https://doxygen.opengeosys.org/d9/d9a/namespaceProcessLib_1_1SmallDeformationNonlocal.html#processvariablessdnl)
 * [SteadyStateDiffusion](https://doxygen.opengeosys.org/d8/d59/namespaceProcessLib_1_1SteadyStateDiffusion.html#processvariablesssd)
 * [TH2M](https://doxygen.opengeosys.org/d6/de7/namespaceProcessLib_1_1TH2M.html#processvariablesth2m)
 * [ThermalTwoPhaseFlowWithPP](https://doxygen.opengeosys.org/dd/d48/namespaceProcessLib_1_1ThermalTwoPhaseFlowWithPP.html#processvariables)
