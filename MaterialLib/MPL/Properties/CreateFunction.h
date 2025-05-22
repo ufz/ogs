@@ -18,6 +18,11 @@ namespace BaseLib
 class ConfigTree;
 }
 
+namespace MathLib
+{
+class PiecewiseLinearInterpolation;
+}
+
 namespace MaterialPropertyLib
 {
 class Function;
