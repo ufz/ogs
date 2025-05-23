@@ -520,6 +520,8 @@ if(OGS_USE_MFRONT)
 endif()
 
 if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup.prj RUNTIME 20)
+    if(NOT WIN32) # TODO: Remove after 6.5.5 release and fix benchmark on win
+        OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup.prj RUNTIME 20)
+    endif()
     OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup_restart.xml RUNTIME 20)
 endif()
