@@ -1,5 +1,11 @@
 # OpenGeoSys changelog
 
+## Unreleased
+
+[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.6.0)
+
+----
+
 ## 6.5.5
 
 [Changelog for OpenGeoSys 6.5.5](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.5)

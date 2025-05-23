@@ -39,11 +39,12 @@ changelog_new_content = re.sub(
     r"\[Please see the wiki-page\]\(.*Release-notes-[0-9]+\.[0-9]+\.[0-9]+\)\n\n----",
     f"""[Please see the wiki-page](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-{increment_ver(new_version)})
 
+----
+
 ## {new_version}
 
 [Changelog for OpenGeoSys {new_version}](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-{new_version})
-
-----""",
+""",
     changelog_content,
 )
 

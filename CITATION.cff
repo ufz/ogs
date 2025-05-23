@@ -37,12 +37,12 @@ authors:
     - given-names: Renchao
       family-names: Lu
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Norbert
-      family-names: Grunwald
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jörg
       family-names: Buchwald
       orcid: "https://orcid.org/0000-0001-5174-3603"
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Norbert
+      family-names: Grunwald
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Tobias
       family-names: Meisel
@@ -68,15 +68,18 @@ authors:
       family-names: Kiszkurno
       orcid: "https://orcid.org/0000-0003-3304-4838"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Haibing
+      family-names: Shao
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Yonghui
       family-names: Huang
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Boyan
       family-names: Meng
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Haibing
-      family-names: Shao
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jäschke
+      family-names: Max
+      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
     - given-names: Jasper
       family-names: Bathmann
       affiliation: TU Bergakademie Freiberg
@@ -88,9 +91,6 @@ authors:
       family-names: Heinze
       oricd: "https://orcid.org/0009-0004-3449-8852"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Jäschke
-      family-names: Max
-      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
     - given-names: Jan
       family-names: Thiedau
       affiliation: >-
@@ -117,6 +117,9 @@ authors:
     - given-names: Xingyuan
       family-names: Miao
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Tao
+      family-names: You
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Tymofiy
       family-names: Gerasimov
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -127,6 +130,11 @@ authors:
     - given-names: Johannes
       family-names: Boog
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Kristof
+      family-names: Kessler
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
     - given-names: Marc
       family-names: Walther
       affiliation: TU Dresden
@@ -135,9 +143,6 @@ authors:
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Loer
       family-names: Frieder
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Tao
-      family-names: You
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jakob
       family-names: Randow
@@ -154,14 +159,13 @@ authors:
     - given-names: Kata
       family-names: Kurgyis
       affiliation: TU Bergakademie Freiberg
-    - given-names: Kristof
-      family-names: Kessler
-      affiliation: >-
-          Bundesanstalt für Geowissenschaften und Rohstoffe --
-          BGR
     - given-names: Linda
       family-names: Günther
       affiliation: TU Bergakademie Freiberg
+    - given-names: Philipp
+      family-names: Selzer
+      orcid: "https://orcid.org/0000-0001-9995-3634"
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Steffen
       family-names: Beese
       affiliation: >-
@@ -182,10 +186,6 @@ authors:
       affiliation: >-
           Bundesanstalt für Geowissenschaften und Rohstoffe --
           BGR
-    - given-names: Philipp
-      family-names: Selzer
-      orcid: "https://orcid.org/0000-0001-9995-3634"
-      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Falko
       family-names: Vehling
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -228,6 +228,8 @@ authors:
       family-names: Cai
     - given-names: Alireza
       family-names: Hassanzadegan
+    - given-names: Hailong
+      familiy-names: Sheng
     - given-names: Johannes
       family-names: Herfurth
       affiliation: >-
