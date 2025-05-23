@@ -148,6 +148,21 @@ template <typename T>
 void OctTree<POINT, MAX_POINTS>::getPointsInRange(
     T const& min, T const& max, std::vector<POINT*>& pnts) const
 {
+    if (max[0] == min[0] || max[1] == min[1] || max[2] == min[2])
+    {
+        ERR("The search range [{}, {}) x [{}, {}) x [{}, {}) is empty.", min[0],
+            max[0], min[1], max[1], min[2], max[2]);
+        return;
+    }
+
+    return getPointsInRange_(min, max, pnts);
+}
+
+template <typename POINT, std::size_t MAX_POINTS>
+template <typename T>
+void OctTree<POINT, MAX_POINTS>::getPointsInRange_(
+    T const& min, T const& max, std::vector<POINT*>& pnts) const
+{
     if (_ur[0] < min[0] || _ur[1] < min[1] || _ur[2] < min[2])
     {
         return;
@@ -172,7 +187,7 @@ void OctTree<POINT, MAX_POINTS>::getPointsInRange(
     {
         for (std::size_t k(0); k < 8; k++)
         {
-            _children[k]->getPointsInRange(min, max, pnts);
+            _children[k]->getPointsInRange_(min, max, pnts);
         }
     }
 }
