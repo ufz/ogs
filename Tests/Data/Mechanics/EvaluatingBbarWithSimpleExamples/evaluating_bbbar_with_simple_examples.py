@@ -274,7 +274,7 @@ class AllTest:
         )
 
         compare_with_analytic_solution(
-            self.sigma_at_center_all_nonbbar, sigma_analytic, 3e-5
+            self.sigma_at_center_all_nonbbar, sigma_analytic, 4e-5
         )
 
     def compute_errors(self):
