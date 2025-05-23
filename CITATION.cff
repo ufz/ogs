@@ -257,6 +257,9 @@ authors:
       family-names: Urpi
 identifiers:
     - type: doi
+      value: 10.5281/zenodo.15496721
+      description: Zenodo DOI for 6.5.5
+    - type: doi
       value: 10.5281/zenodo.14672997
       description: Zenodo DOI for 6.5.4
     - type: doi
