@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "MaterialLib/Fluid/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
+#include "MaterialLib/MPL/Properties/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
 #include "MaterialLib/MPL/Property.h"
 
 namespace MaterialPropertyLib

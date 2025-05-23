@@ -5,9 +5,6 @@ append_source_files(SOURCES Curve)
 append_source_files(SOURCES InterpolationAlgorithms)
 append_source_files(SOURCES Integration)
 append_source_files(SOURCES LinAlg)
-if(OGS_USE_CVODE)
-    append_source_files(SOURCES ODE)
-endif()
 append_source_files(SOURCES Nonlinear)
 append_source_files(SOURCES LinAlg/Eigen)
 
@@ -31,7 +28,6 @@ target_link_libraries(
         BaseLib
         $<$<TARGET_EXISTS:LAPACK::LAPACK>:LAPACK::LAPACK>
         $<$<BOOL:${OGS_USE_LIS}>:${LIS_LIBRARIES}>
-        $<$<BOOL:${OGS_USE_CVODE}>:CVODE::CVODE>
         $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
         Eigen3::Eigen
         Boost::math
@@ -51,7 +47,6 @@ target_compile_definitions(
     MathLib
     PUBLIC
         $<$<BOOL:${OGS_USE_LIS}>:USE_LIS>
-        $<$<BOOL:${OGS_USE_CVODE}>:CVODE_FOUND>
         $<$<BOOL:${EIGEN_NO_DEBUG}>:EIGEN_NO_DEBUG>
         $<$<BOOL:${EIGEN_DONT_VECTORIZE}>:EIGEN_DONT_VECTORIZE>
         $<$<BOOL:${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL}>:OGS_EIGEN_DYNAMIC_SHAPE_MATRICES>

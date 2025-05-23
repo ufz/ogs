@@ -1,1 +1,0 @@
-Residual thermal conductivity represents the property of medium in cracked region.

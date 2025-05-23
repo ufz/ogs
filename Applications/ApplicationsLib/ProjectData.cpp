@@ -103,10 +103,6 @@
 #ifdef OGS_BUILD_PROCESS_LIQUIDFLOW
 #include "ProcessLib/LiquidFlow/CreateLiquidFlowProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_STOKESFLOW
-#include "ProcessLib/StokesFlow/CreateStokesFlowProcess.h"
-#endif
-
 #ifdef OGS_BUILD_PROCESS_THERMORICHARDSMECHANICS
 #include "ProcessLib/ThermoRichardsMechanics/CreateThermoRichardsMechanicsProcess.h"
 #endif
@@ -129,12 +125,6 @@
 #ifdef OGS_BUILD_PROCESS_SMALLDEFORMATION
 #include "ProcessLib/SmallDeformation/CreateSmallDeformationProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_SMALLDEFORMATIONNONLOCAL
-#include "ProcessLib/SmallDeformationNonlocal/CreateSmallDeformationNonlocalProcess.h"
-#endif
-#ifdef OGS_BUILD_PROCESS_TES
-#include "ProcessLib/TES/CreateTESProcess.h"
-#endif
 #ifdef OGS_BUILD_PROCESS_TH2M
 #include "ProcessLib/TH2M/CreateTH2MProcess.h"
 #endif
@@ -144,9 +134,6 @@
 #ifdef OGS_BUILD_PROCESS_THERMOHYDROMECHANICS
 #include "ProcessLib/ThermoHydroMechanics/CreateThermoHydroMechanicsProcess.h"
 #endif
-#ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
-#include "ProcessLib/ThermoMechanicalPhaseField/CreateThermoMechanicalPhaseFieldProcess.h"
-#endif
 #ifdef OGS_BUILD_PROCESS_THERMOMECHANICS
 #include "ProcessLib/ThermoMechanics/CreateThermoMechanicsProcess.h"
 #endif
@@ -155,9 +142,6 @@
 #endif
 #ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPP
 #include "ProcessLib/TwoPhaseFlowWithPP/CreateTwoPhaseFlowWithPPProcess.h"
-#endif
-#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPRHO
-#include "ProcessLib/TwoPhaseFlowWithPrho/CreateTwoPhaseFlowWithPrhoProcess.h"
 #endif
 
 namespace
@@ -724,43 +708,6 @@ void ProjectData::parseProcesses(
         }
         else
 #endif
-#ifdef OGS_BUILD_PROCESS_STOKESFLOW
-            if (type == "StokesFlow")
-        {
-            WARN(
-                "The StokesFlow process is deprecated and will be removed in "
-                "OGS-6.5.5.");
-            switch (_mesh_vec[0]->getDimension())
-            {
-                case 2:
-                    process =
-                        ProcessLib::StokesFlow::createStokesFlowProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters, integration_order,
-                            process_config, _media);
-                    break;
-                default:
-                    OGS_FATAL(
-                        "StokesFlow process does not support given "
-                        "dimension {:d}",
-                        _mesh_vec[0]->getDimension());
-            }
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_TES
-            if (type == "TES")
-        {
-            WARN(
-                "The TES process is deprecated and will be removed in "
-                "OGS-6.5.5.");
-            process = ProcessLib::TES::createTESProcess(
-                name, *_mesh_vec[0], std::move(jacobian_assembler),
-                _process_variables, _parameters, integration_order,
-                process_config);
-        }
-        else
-#endif
 #ifdef OGS_BUILD_PROCESS_TH2M
             if (type == "TH2M")
         {
@@ -1054,39 +1001,6 @@ void ProjectData::parseProcesses(
         }
         else
 #endif
-#ifdef OGS_BUILD_PROCESS_SMALLDEFORMATIONNONLOCAL
-            if (type == "SMALL_DEFORMATION_NONLOCAL")
-        {
-            WARN(
-                "The SMALL_DEFORMATION_NONLOCAL process is deprecated and will "
-                "be removed in OGS-6.5.5.");
-            switch (_mesh_vec[0]->getDimension())
-            {
-                case 2:
-                    process = ProcessLib::SmallDeformationNonlocal::
-                        createSmallDeformationNonlocalProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
-                case 3:
-                    process = ProcessLib::SmallDeformationNonlocal::
-                        createSmallDeformationNonlocalProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
-                default:
-                    OGS_FATAL(
-                        "SMALL_DEFORMATION_NONLOCAL process does not support "
-                        "given dimension {:d}",
-                        _mesh_vec[0]->getDimension());
-            }
-        }
-        else
-#endif
 #ifdef OGS_BUILD_PROCESS_LIE_M
             if (type == "SMALL_DEFORMATION_WITH_LIE")
         {
@@ -1165,34 +1079,6 @@ void ProjectData::parseProcesses(
                     OGS_FATAL(
                         "THERMO_HYDRO_MECHANICS process does not support given "
                         "dimension");
-            }
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_THERMOMECHANICALPHASEFIELD
-            if (type == "THERMO_MECHANICAL_PHASE_FIELD")
-        {
-            WARN(
-                "The THERMO_MECHANICAL_PHASE_FIELD process is deprecated and "
-                "will be removed in OGS-6.5.5.");
-            switch (_mesh_vec[0]->getDimension())
-            {
-                case 2:
-                    process = ProcessLib::ThermoMechanicalPhaseField::
-                        createThermoMechanicalPhaseFieldProcess<2>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
-                case 3:
-                    process = ProcessLib::ThermoMechanicalPhaseField::
-                        createThermoMechanicalPhaseFieldProcess<3>(
-                            name, *_mesh_vec[0], std::move(jacobian_assembler),
-                            _process_variables, _parameters,
-                            _local_coordinate_system, integration_order,
-                            process_config);
-                    break;
             }
         }
         else
@@ -1311,20 +1197,6 @@ void ProjectData::parseProcesses(
         {
             process =
                 ProcessLib::TwoPhaseFlowWithPP::createTwoPhaseFlowWithPPProcess(
-                    name, *_mesh_vec[0], std::move(jacobian_assembler),
-                    _process_variables, _parameters, integration_order,
-                    process_config, _media);
-        }
-        else
-#endif
-#ifdef OGS_BUILD_PROCESS_TWOPHASEFLOWWITHPRHO
-            if (type == "TWOPHASE_FLOW_PRHO")
-        {
-            WARN(
-                "The TWOPHASE_FLOW_PRHO process is deprecated and will be "
-                "removed in OGS-6.5.5.");
-            process = ProcessLib::TwoPhaseFlowWithPrho::
-                createTwoPhaseFlowWithPrhoProcess(
                     name, *_mesh_vec[0], std::move(jacobian_assembler),
                     _process_variables, _parameters, integration_order,
                     process_config, _media);

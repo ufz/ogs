@@ -1,1 +1,0 @@
-\copydoc MaterialLib::Fluid::LinearTemperatureDependentDensity::_beta
