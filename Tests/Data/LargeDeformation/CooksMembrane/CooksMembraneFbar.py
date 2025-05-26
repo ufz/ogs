@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.2
+#       jupytext_version: 1.16.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -64,13 +64,9 @@ from pathlib import Path
 
 # Third-party imports
 import matplotlib.pyplot as plt
-import matplotlib.tri as tri
 import numpy as np
+import ogstools as ot
 import pyvista as pv
-import vtuIO
-
-# Local imports
-from ogs6py.ogs import OGS
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 
@@ -101,32 +97,34 @@ def get_top_uy(pvd_file_name):
 
 # %%
 def run_single_test(mesh_name, output_prefix, use_fbar=False, use_load_increment=False):
-    model = OGS(
-        INPUT_FILE="CooksMembrane.prj", PROJECT_FILE=Path(out_dir, "modified.prj")
+    prj = ot.Project(
+        input_file="CooksMembrane.prj", output_file=Path(out_dir, "modified.prj")
     )
-    model.replace_text(mesh_name, xpath="./mesh")
+
+    prj.replace_text(mesh_name, xpath="./mesh")
     if not use_fbar:
-        model.replace_text("none", xpath="./processes/process/f_bar")
-    model.replace_text(output_prefix, xpath="./time_loop/output/prefix")
+        prj.replace_text("none", xpath="./processes/process/f_bar")
+    prj.replace_text(output_prefix, xpath="./time_loop/output/prefix")
     vtu_file_name = output_prefix + "_ts_1_t_1.000000.vtu"
-    model.replace_text(vtu_file_name, xpath="./test_definition/vtkdiff[1]/file")
-    model.replace_text(vtu_file_name, xpath="./test_definition/vtkdiff[2]/file")
-    model.replace_text(vtu_file_name, xpath="./test_definition/vtkdiff[3]/file")
+    prj.replace_text(vtu_file_name, xpath="./test_definition/vtkdiff[1]/file")
+    prj.replace_text(vtu_file_name, xpath="./test_definition/vtkdiff[2]/file")
+    prj.replace_text(vtu_file_name, xpath="./test_definition/vtkdiff[3]/file")
 
     if use_load_increment:
-        model.replace_text(
+        prj.replace_text(
             0.5,
             xpath="./time_loop/processes/process[1]/time_stepping/timesteps/pair/delta_t",
         )
-        model.replace_text(
+        prj.replace_text(
             "FRamp",
             xpath="./process_variables/process_variable/boundary_conditions/boundary_condition[3]/parameter",
         )
 
-    model.write_input()
+    prj.write_input()
 
     # Run OGS
-    model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
+
+    prj.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
     # Get uy at the top
     return get_top_uy(output_prefix + ".pvd")
@@ -259,7 +257,7 @@ def plot_data(ne, u_y_fbar, uy_non_fbar, file_name=""):
 # %% [markdown]
 # ## Result
 #
-# ### Vertical diplacement at the top point
+# ### 1. Vertical diplacement at the top point
 #
 # The following figure shows that the convergence of the solutions obtained by using the F bar method follows the one presented in the paper by T. Elguedj et al [1]. However, the results obtained without the F bar method are quit far from the converged solution with the finest mesh.
 
@@ -267,50 +265,49 @@ def plot_data(ne, u_y_fbar, uy_non_fbar, file_name=""):
 plot_data(ne, uys_at_top_fbar, uys_at_top_non_fbar, "f_bar_linear.png")
 
 # %% [markdown]
-# ### Contour plot
+# ### 2. Contour plot of the results
 
 # %%
 nedges = ["4", "10", "15", "20", "25", "30"]
 
 
-def contour_plot(pvd_file_name, title):
-    file_name = get_last_vtu_file_name(pvd_file_name).absolute().as_posix()
+def contour_plot(pvd_file_name, title, fig_name=None):
+    ms_e = ot.MeshSeries(Path(out_dir, pvd_file_name))
+    last_vtu = ms_e[-1]
+    fig, axs = plt.subplots(1, 2, figsize=(6, 4))
 
-    m_plot = vtuIO.VTUIO(file_name, dim=2)
-    triang = tri.Triangulation(m_plot.points[:, 0], m_plot.points[:, 1])
-    triang = tri.Triangulation(m_plot.points[:, 0], m_plot.points[:, 1])
-    s_plot = m_plot.get_point_field("sigma")
-    s_trace = s_plot[:, 0] + s_plot[:, 1] + s_plot[:, 2]
-    u_plot = m_plot.get_point_field("displacement")
-
-    fig, ax = plt.subplots(ncols=2, figsize=(8, 3))
-    ax[0].set_title(title, loc="left", y=1.12)
-    plt.subplots_adjust(wspace=0.5)
-
-    contour_stress = ax[0].tricontourf(triang, s_trace, cmap="viridis")
-    contour_displacement = ax[1].tricontourf(triang, u_plot[:, 1], cmap="gist_rainbow")
-    fig.colorbar(contour_stress, ax=ax[0], label="Stress trace / MPa")
-    fig.colorbar(contour_displacement, ax=ax[1], label="Dispplacement / m")
-    fig.tight_layout()
-    plt.savefig(pvd_file_name + ".png")
-    plt.show()
+    last_vtu.plot_contourf(ot.variables.displacement[1], ax=axs[0], fontsize=8)
+    last_vtu.plot_contourf(ot.variables.stress["yy"], ax=axs[1], fontsize=8)
+    plt.title(title)
+    if fig_name:
+        plt.savefig(fig_name, bbox_inches="tight", dpi=300)
 
 
 # %% [markdown]
-# #### Results obtained without the F bar method:
+# #### 2.1. Non F-bar: Vertical displacement (left column) and vertical stress (right column):
 
 # %%
 for nedge, output_prefix in zip(nedges, output_prefices_non_fbar):
-    contour_plot(output_prefix + ".pvd", "Number of elements per side: " + nedge)
+    contour_plot(
+        output_prefix + ".pvd",
+        "Number of elements per side: " + nedge,
+        f"non_fbar_elements_per_side_{nedge}.png",
+    )
 
 # %% [markdown]
-# #### Results obtained with the F bar method:
+# #### 2.1. F-bar: Vertical displacement (left column) and vertical stress (right column):
 
 # %%
 for nedge, output_prefix in zip(nedges, output_prefices):
-    contour_plot(output_prefix + ".pvd", "Number of elements per side: " + nedge)
+    contour_plot(
+        output_prefix + ".pvd",
+        "Number of elements per side: " + nedge,
+        f"fbar_elements_per_side_{nedge}.png",
+    )
 
 # %% [markdown]
 # The contour plots show that even with the coarsest mesh, the F bar method still gives reasonable stress result.
+
+# %%
 
 # %%

@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.16.2
+#       jupytext_version: 1.16.6
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -58,11 +58,11 @@ import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+# Local imports
+import ogstools as ot
+
 # Third-party imports
 import pyvista as pv
-
-# Local imports
-from ogs6py.ogs import OGS
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 
@@ -89,13 +89,13 @@ class SingleOGSModel:
     def __init__(
         self, project_file, output_prefix, mesh_path, out_dir=out_dir, use_fbar=True
     ):
-        self.model = OGS(
-            INPUT_FILE=project_file, PROJECT_FILE=Path(out_dir, "modified.prj")
+        self.prj = ot.Project(
+            input_file=project_file, output_file=Path(out_dir, "modified.prj")
         )
 
-        self.model.replace_text(output_prefix, xpath="./time_loop/output/prefix")
+        self.prj.replace_text(output_prefix, xpath="./time_loop/output/prefix")
         if not use_fbar:
-            self.model.replace_text("none", xpath="./processes/process/f_bar")
+            self.prj.replace_text("none", xpath="./processes/process/f_bar")
 
         self.use_fbar = use_fbar
         self.out_dir = out_dir
@@ -105,19 +105,19 @@ class SingleOGSModel:
         self.resulted_mesh = pv.UnstructuredGrid()
 
     def reset_time_step_size(self, dt, n_steps):
-        self.model.replace_text(
+        self.prj.replace_text(
             dt,
             xpath="./time_loop/processes/process[1]/time_stepping/timesteps/pair[1]/delta_t",
         )
-        self.model.replace_text(
+        self.prj.replace_text(
             n_steps,
             xpath="./time_loop/processes/process[1]/time_stepping/timesteps/pair[1]/repeat",
         )
 
     def run(self):
-        self.model.write_input()
+        self.prj.write_input()
 
-        self.model.run_model(
+        self.prj.run_model(
             logfile=Path(self.out_dir, "out.txt"),
             args=f"-o {self.out_dir} -m {self.meth_path}",
         )
@@ -390,3 +390,7 @@ try:
     )
 except Exception:
     pass
+
+# %%
+
+# %%
