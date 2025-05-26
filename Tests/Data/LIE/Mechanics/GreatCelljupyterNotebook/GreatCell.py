@@ -78,7 +78,7 @@ if not out_dir.exists():
 # ## Great cell
 #
 # <div style="float: left; width: 50%; margin: 0 1em 1em 0;">
-#     <img src="figs/great-cell.png" alt="GREAT cell facility" style="width: 100%;" />
+#     <img src="figures/great-cell.png" alt="GREAT cell facility" style="width: 100%;" />
 #     <p style="text-align: center; font-size: 90%;"> <strong>Figure:</strong>  The GREAT cell facility.</p>
 # </div>
 #
@@ -100,11 +100,11 @@ if not out_dir.exists():
 #
 # <div style="display: flex; justify-content: space-between; align-items: center;">
 #   <div style="width: 49%; text-align: center;">
-#     <img src="figs/step2b1.png" alt="Typical rock sample" style="width: 60%; height: auto;" />
+#     <img src="figures/step2b1.png" alt="Typical rock sample" style="width: 60%; height: auto;" />
 #     <p>(a) Typical rock sample</p>
 #   </div>
 #   <div style="width: 49%; text-align: center;">
-#     <img src="figs/schematic_3d_crossSection.jpg" alt="Schematic cross-section" style="width: 50%; height: auto;" />
+#     <img src="figures/schematic_3d_crossSection.jpg" alt="Schematic cross-section" style="width: 50%; height: auto;" />
 #     <p>(b) Simplification for GREAT cell benchmarking</p>
 #   </div>
 # </div>
@@ -144,11 +144,11 @@ if not out_dir.exists():
 #
 # <div style="display: flex; justify-content: space-between; align-items: flex-start;">
 #   <div style="width: 70%; text-align: center;">
-#     <img src="figs/Schematic_all3.png" alt="GREAT benchmarks definition" style="width: 100%; height: auto;" />
+#     <img src="figures/Schematic_all3.png" alt="GREAT benchmarks definition" style="width: 100%; height: auto;" />
 #     <p><strong>Figure 1:</strong><br><em>Three sample types of GREAT cell benchmarks: intact, fractured (static), and propagating. Rotating boundary conditions are applied.</em></p>
 #   </div>
 #   <div style="width: 29%; text-align: center;">
-#     <img src="figs/schematic_pee_dss.png" alt="Schematic loading 2D UFZ" style="width: 100%; height: auto;" />
+#     <img src="figures/schematic_pee_dss.png" alt="Schematic loading 2D UFZ" style="width: 100%; height: auto;" />
 #     <p><strong>Figure 2:</strong><br><em>Geometry and location of PEEs and DSSs. Fracture aligned with PEE1/1a direction.</em></p>
 #   </div>
 # </div>
