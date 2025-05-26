@@ -32,6 +32,8 @@ install(
         ${MKL_ROOT_DIR}/redist/intel64
         ${MKL_ROOT_DIR}/../../tbb/latest/redist/intel64/vc_mt
         ${MKL_ROOT_DIR}/../../compiler/latest/windows/redist/intel64_win/compiler
+        ${MKL_ROOT_DIR}/bin
+        ${MKL_ROOT_DIR}/../../compiler/latest/bin
         ${CMAKE_BUILD_RPATH}
     RESOLVED_DEPENDENCIES_VAR _r_deps
     UNRESOLVED_DEPENDENCIES_VAR _u_deps
@@ -64,10 +66,14 @@ install(
     )
   endforeach()
   if(OGS_USE_MKL AND WIN32)
+    set(avx_path ${MKL_ROOT_DIR}/bin/mkl_avx512.2.dll)
+    if(NOT EXISTS ${avx_path})
+        set(avx_path ${MKL_ROOT_DIR}/redist/intel64/mkl_avx512.2.dll)
+    endif()
     file(INSTALL
           DESTINATION "${CMAKE_INSTALL_PREFIX}/${INSTALL_DIR}"
           TYPE SHARED_LIBRARY
-          FILES ${MKL_ROOT_DIR}/redist/intel64/mkl_avx512.2.dll
+          FILES ${avx_path}
           FOLLOW_SYMLINK_CHAIN
     )
   endif()
