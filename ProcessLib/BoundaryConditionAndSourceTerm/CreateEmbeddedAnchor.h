@@ -43,8 +43,6 @@ std::unique_ptr<SourceTermBase> createEmbeddedAnchor(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& st_mesh,
     MeshLib::Mesh const& bulk_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
-    std::size_t source_term_mesh_id, const int variable_id,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-        parameters);
+    std::size_t source_term_mesh_id, const int variable_id);
 
 }  // namespace ProcessLib

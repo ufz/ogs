@@ -20,6 +20,8 @@
 #include "ComputeNaturalCoordsAlgorithm.h"
 #include "InfoLib/GitInfo.h"
 
+namespace AU = ApplicationUtils;
+
 vtkSmartPointer<vtkUnstructuredGrid> readGrid(std::string const& input_filename)
 {
     if (!BaseLib::IsFileExisting(input_filename))
@@ -50,7 +52,64 @@ void writeGrid(vtkUnstructuredGrid* grid, std::string const& output_filename)
     writer->Write();
 }
 
-Eigen::MatrixX3d readJSON(TCLAP::ValueArg<std::string> const& input_filename)
+void checkJSONEntries(nlohmann::json const& data, size_t number_of_anchors)
+{
+    std::vector<std::string> required_keys = {"anchor_stiffness",
+                                              "anchor_radius"};
+    std::vector<std::string> optional_keys = {"maximum_anchor_stress",
+                                              "initial_anchor_stress",
+                                              "residual_anchor_stress"};
+    if (number_of_anchors == 0)
+    {
+        OGS_FATAL("No anchors found in the json.");
+    }
+    for (const auto& key : required_keys)
+    {
+        if (!data.contains(key))
+        {
+            OGS_FATAL("JSON file does not contain required key '{:s}'", key);
+        }
+        if (number_of_anchors != data[key].size())
+        {
+            OGS_FATAL(
+                "Number of anchor start points does not match the number of {} "
+                "entries.",
+                key);
+        }
+        for (size_t i = 0; i < number_of_anchors; ++i)
+        {
+            if (!data[key][i].is_number())
+            {
+                OGS_FATAL("Non-numeric element in JSON array for key {}!", key);
+            }
+        }
+    }
+    for (const auto& key : optional_keys)
+    {
+        if (data.contains(key))
+        {
+            if (number_of_anchors != data[key].size())
+            {
+                OGS_FATAL(
+                    "Number of anchor start points does not match the number "
+                    "of {} "
+                    "entries.",
+                    key);
+            }
+            for (size_t i = 0; i < number_of_anchors; ++i)
+            {
+                if (!data[key][i].is_number())
+                {
+                    OGS_FATAL("Non-numeric element in JSON array for key {}!",
+                              key);
+                }
+            }
+        }
+    }
+}
+
+AU::ComputeNaturalCoordsResult readJSON(
+    TCLAP::ValueArg<std::string> const& input_filename)
 {
     using json = nlohmann::json;
     std::ifstream f(input_filename.getValue());
@@ -61,16 +120,13 @@ Eigen::MatrixX3d readJSON(TCLAP::ValueArg<std::string> const& input_filename)
     json const data = json::parse(f);
 
     auto const number_of_anchors = data["anchor_start_points"].size();
-    if (number_of_anchors == 0)
-    {
-        OGS_FATAL("No anchors found in the json.");
-    }
     if (number_of_anchors != data["anchor_end_points"].size())
     {
         OGS_FATAL(
-            "Number of anchor start points does not match the number of end "
-            "points");
+            "Number of anchor start points does not match the number of "
+            "anchor end points.");
     }
+    checkJSONEntries(data, number_of_anchors);
 
     Eigen::MatrixX3d realcoords(2 * number_of_anchors, 3);
 
@@ -95,8 +151,62 @@ Eigen::MatrixX3d readJSON(TCLAP::ValueArg<std::string> const& input_filename)
         realcoords.row(2 * i + 1).noalias() =
             get_coordinates("anchor_end_points", i);
     }
-
-    return realcoords;
+    Eigen::VectorXd initial_anchor_stress(number_of_anchors);
+    Eigen::VectorXd maximum_anchor_stress(number_of_anchors);
+    Eigen::VectorXd residual_anchor_stress(number_of_anchors);
+    Eigen::VectorXd anchor_radius(number_of_anchors);
+    Eigen::VectorXd anchor_stiffness(number_of_anchors);
+    if (!data.contains("initial_anchor_stress"))
+    {
+        initial_anchor_stress.setZero();
+    }
+    else
+    {
+        for (size_t i = 0; i < number_of_anchors; ++i)
+        {
+            initial_anchor_stress(i) =
+                data["initial_anchor_stress"][i].get<double>();
+        }
+    }
+    if (!data.contains("maximum_anchor_stress"))
+    {
+        maximum_anchor_stress = Eigen::VectorXd::Constant(
+            number_of_anchors, std::numeric_limits<double>::max());
+    }
+    else
+    {
+        for (size_t i = 0; i < number_of_anchors; ++i)
+        {
+            maximum_anchor_stress(i) =
+                data["maximum_anchor_stress"][i].get<double>();
+        }
+    }
+    if (!data.contains("residual_anchor_stress"))
+    {
+        residual_anchor_stress = Eigen::VectorXd::Constant(
+            number_of_anchors, std::numeric_limits<double>::max());
+    }
+    else
+    {
+        for (size_t i = 0; i < number_of_anchors; ++i)
+        {
+            residual_anchor_stress(i) =
+                data["residual_anchor_stress"][i].get<double>();
+        }
+    }
+    for (size_t i = 0; i < number_of_anchors; ++i)
+    {
+        anchor_radius(i) = data["anchor_radius"][i].get<double>();
+        anchor_stiffness(i) = data["anchor_stiffness"][i].get<double>();
+    }
+    AU::ComputeNaturalCoordsResult json_data;
+    json_data.real_coords = realcoords;
+    json_data.initial_anchor_stress = initial_anchor_stress;
+    json_data.maximum_anchor_stress = maximum_anchor_stress;
+    json_data.residual_anchor_stress = residual_anchor_stress;
+    json_data.anchor_radius = anchor_radius;
+    json_data.anchor_stiffness = anchor_stiffness;
+    return json_data;
 }
 
 int main(int argc, char** argv)
@@ -155,14 +265,14 @@ int main(int argc, char** argv)
             OGS_FATAL("spdlog logger error occurred.");
         });
 
-    auto const realcoords = readJSON(json_filename_arg);
+    AU::ComputeNaturalCoordsResult const json_data =
+        readJSON(json_filename_arg);
     auto const bulk_mesh = readGrid(input_filename_arg.getValue());
 
     // Compute natural coordinates
-    namespace AU = ApplicationUtils;
-    AU::ComputeNaturalCoordsResult const result = AU::computeNaturalCoords(
-        bulk_mesh, realcoords, tolerance_arg.getValue(),
-        max_iter_arg.getValue());
+    AU::ComputeNaturalCoordsResult const result =
+        AU::computeNaturalCoords(bulk_mesh, json_data, tolerance_arg.getValue(),
+                                 max_iter_arg.getValue());
     // Write output
     auto const output_mesh = AU::toVTKGrid(result);
     writeGrid(output_mesh, output_filename_arg.getValue());

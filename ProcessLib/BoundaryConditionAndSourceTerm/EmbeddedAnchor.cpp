@@ -12,6 +12,7 @@
 
 #include <Eigen/Core>
 #include <cassert>
+#include <numbers>
 #include <numeric>
 #include <range/v3/view/enumerate.hpp>
 #include <unsupported/Eigen/KroneckerProduct>
@@ -143,8 +144,7 @@ EmbeddedAnchor<GlobalDim>::EmbeddedAnchor(
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
     std::size_t const source_term_mesh_id,
     MeshLib::Mesh const& st_mesh,
-    const int variable_id,
-    ParameterLib::Parameter<double> const& parameter)
+    const int variable_id)
     : dof_table_bulk_(dof_table_bulk),
       bulk_mesh_(bulk_mesh),
       source_term_mesh_id_(source_term_mesh_id),
@@ -156,21 +156,46 @@ EmbeddedAnchor<GlobalDim>::EmbeddedAnchor(
               std::array<int, GlobalDim> arr{};
               std::iota(arr.begin(), arr.end(), 0);
               return arr;
-          }()),
-      parameter_(parameter)
+          }())
 {
     DBUG("Create EmbeddedAnchor.");
     std::string_view const bulk_element_ids_string = "bulk_element_ids";
     bulk_element_ids_ =
         st_mesh_.getProperties().template getPropertyVector<std::size_t>(
             bulk_element_ids_string);
-    assert(bulk_element_ids_ != nullptr);
 
     std::string_view const natural_coordinates_string = "natural_coordinates";
     natural_coordinates_ =
         st_mesh_.getProperties().template getPropertyVector<double>(
             natural_coordinates_string);
-    assert(natural_coordinates_ != nullptr);
+
+    std::string_view const maximum_anchor_stress_string =
+        "maximum_anchor_stress";
+    maximum_anchor_stress_ =
+        st_mesh_.getProperties().template getPropertyVector<double>(
+            maximum_anchor_stress_string);
+
+    std::string_view const initial_anchor_stress_string =
+        "initial_anchor_stress";
+    initial_anchor_stress_ =
+        st_mesh_.getProperties().template getPropertyVector<double>(
+            initial_anchor_stress_string);
+
+    std::string_view const residual_anchor_stress_string =
+        "residual_anchor_stress";
+    residual_anchor_stress_ =
+        st_mesh_.getProperties().template getPropertyVector<double>(
+            residual_anchor_stress_string);
+
+    std::string_view const anchor_radius_string = "anchor_radius";
+    anchor_radius_ =
+        st_mesh_.getProperties().template getPropertyVector<double>(
+            anchor_radius_string);
+
+    std::string_view const anchor_stiffness_string = "anchor_stiffness";
+    anchor_stiffness_ =
+        st_mesh_.getProperties().template getPropertyVector<double>(
+            anchor_stiffness_string);
 }
 
 template <int GlobalDim>
@@ -225,7 +250,8 @@ void EmbeddedAnchor<GlobalDim>::
 }
 
 template <int GlobalDim>
-void EmbeddedAnchor<GlobalDim>::integrate(const double t, GlobalVector const& x,
+void EmbeddedAnchor<GlobalDim>::integrate(const double /*t*/,
+                                          GlobalVector const& x,
                                           GlobalVector& b,
                                           GlobalMatrix* jac) const
 {
@@ -236,6 +262,7 @@ void EmbeddedAnchor<GlobalDim>::integrate(const double t, GlobalVector const& x,
 
     for (MeshLib::Element const* const anchor_element : st_mesh_.getElements())
     {
+        auto const anchor_element_id = anchor_element->getID();
         std::vector<GlobalIndexType> global_indices;
         Eigen::Vector<double, 2 * GlobalDim> local_x;
         std::vector<Eigen::RowVectorXd> shape_matrices;
@@ -256,13 +283,32 @@ void EmbeddedAnchor<GlobalDim>::integrate(const double t, GlobalVector const& x,
         { return local_x(nodeLocalIndices<GlobalDim>(i)); };
         GlobalDimVector const l = l_original + u(1) - u(0);
 
-        double const K = parameter_(t, pos)[0];
-        GlobalDimVector const f = l_original / l_original_norm * K *
-                                  (l.norm() - l_original_norm) /
-                                  l_original_norm;
+        double const pirsquared =
+            std::numbers::pi *
+            std::pow((*anchor_radius_)[anchor_element_id], 2);
+        double const K = pirsquared * (*anchor_stiffness_)[anchor_element_id];
+        double const initial_force =
+            pirsquared * (*initial_anchor_stress_)[anchor_element_id];
+        double const max_force =
+            pirsquared * (*maximum_anchor_stress_)[anchor_element_id];
+        double const residual_force =
+            pirsquared * (*residual_anchor_stress_)[anchor_element_id];
 
-        GlobalDimMatrix const Df = l_original / l_original_norm * K *
-                                   l.transpose() / l.norm() / l_original_norm;
+        double const strain = (l.norm() - l_original_norm) / l_original_norm;
+
+        GlobalDimVector const f_friction =
+            residual_force * l_original / l_original_norm;
+        GlobalDimVector const f_elastic =
+            l_original / l_original_norm * (initial_force + K * strain);
+        GlobalDimVector const f =
+            ((f_elastic.norm() < max_force)) ? f_elastic : f_friction;
+
+        GlobalDimMatrix const Df_friction = GlobalDimMatrix::Zero();
+        GlobalDimMatrix const Df_elastic = l_original / l_original_norm * K *
+                                           l.transpose() / l.norm() /
+                                           l_original_norm;
+        GlobalDimMatrix const Df =
+            (f_elastic.norm() < max_force) ? Df_elastic : Df_friction;
 
         auto const& [local_rhs, local_Jac] = assembleLocalBJac<GlobalDim>(
             f, Df, shape_matrices, global_indices.size(), nodes_per_element);
