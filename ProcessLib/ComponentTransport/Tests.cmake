@@ -963,7 +963,7 @@ if(NOT OGS_USE_PETSC)
 
 endif()
 
-if(OGS_USE_PETS)
+if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/DecayChain.py RUNTIME 160)
 endif()
 
