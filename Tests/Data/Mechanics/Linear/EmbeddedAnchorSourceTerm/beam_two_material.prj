@@ -97,12 +97,6 @@
             <value>0.</value>
         </parameter>
         <parameter>
-            <name>spring_constant</name>
-            <!-- k = (0.05-u)/u*0.42/2 //-->
-            <type>Constant</type>
-            <value>3.2</value>
-        </parameter>
-        <parameter>
             <name>nu</name>
             <type>Constant</type>
             <value>0.0</value>
@@ -153,7 +147,6 @@
                 <source_term>
                     <mesh>anchors</mesh>
                     <type>EmbeddedAnchor</type>
-                    <anchor_force_constant>spring_constant</anchor_force_constant>
                 </source_term>
             </source_terms>
         </process_variable>

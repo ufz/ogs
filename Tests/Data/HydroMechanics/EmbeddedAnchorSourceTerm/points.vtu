@@ -4,22 +4,27 @@
     <Piece NumberOfPoints="6"                    NumberOfCells="3"                   >
       <PointData>
         <DataArray type="Float64" Name="natural_coordinates" NumberOfComponents="3" format="appended" RangeMin="0.28284271247"        RangeMax="1.4142135624"         offset="0"                   />
-        <DataArray type="UInt64" Name="bulk_element_ids" format="appended" RangeMin="0"                    RangeMax="41"                   offset="116"                 />
-        <DataArray type="UInt64" Name="point_cloud_node_ids" format="appended" RangeMin="0"                    RangeMax="5"                    offset="172"                 />
+        <DataArray type="UInt64" Name="bulk_element_ids" format="appended" RangeMin="0"                    RangeMax="41"                   offset="108"                 />
+        <DataArray type="UInt64" Name="point_cloud_node_ids" format="appended" RangeMin="0"                    RangeMax="5"                    offset="164"                 />
       </PointData>
       <CellData>
+        <DataArray type="Float64" Name="initial_anchor_stress" format="appended" RangeMin="0"                    RangeMax="0"                    offset="220"                 />
+        <DataArray type="Float64" Name="maximum_anchor_stress" format="appended" RangeMin="1e+20"                RangeMax="1e+20"                offset="260"                 />
+        <DataArray type="Float64" Name="residual_anchor_stress" format="appended" RangeMin="0"                    RangeMax="0"                    offset="312"                 />
+        <DataArray type="Float64" Name="anchor_cross_sectional_area" format="appended" RangeMin="0.007853981634"       RangeMax="0.007853981634"       offset="352"                 />
+        <DataArray type="Float64" Name="anchor_stiffness" format="appended" RangeMin="1e+13"                RangeMax="1e+13"                offset="404"                 />
       </CellData>
       <Points>
-        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="0.53851648182"        offset="228"                 />
+        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="0.53851648182"        offset="456"                 />
       </Points>
       <Cells>
-        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="316"                 />
-        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="372"                 />
-        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="420"                 />
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="544"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="600"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="648"                 />
       </Cells>
     </Piece>
   </UnstructuredGrid>
   <AppendedData encoding="base64">
-   _AQAAAACAAACQAAAAQwAAAA==eJxjYACBD/aMEHo/AxRoGoPAY/sZM0Hgpj1MfB6Y/9JeCyoPE58DFj+5H0YzoIAP9qg0AwPMvl//QeA9XD0AZ3Um2A==AQAAAACAAAAwAAAAFwAAAA==eJzjYoAAXiitBKW5GVCBJpQGAAqoAG4=AQAAAACAAAAwAAAAGAAAAA==eJxjYIAARijNBKWZoTQLlGaF0gABSAAQAQAAAACAAABIAAAALgAAAA==eJxjYGBgOHvGxw5IMXBdX2y3Q44VzG59fdEOxIeIK9uBMAMagOqzB7EBXHAOJg==AQAAAACAAAAwAAAAGAAAAA==eJxjYIAARijNBKWZoTQLlGaF0gABSAAQAQAAAACAAAAYAAAAEAAAAA==eJxjYoAAFijNBqUBALgADQ==AQAAAACAAAADAAAACwAAAA==eJxjZmYGAAAVAAo=
+   _AQAAAACAAACQAAAAPwAAAA==eJxjYACBD/aMEHo/AxSYGIPAY/sZM0Hgpj1MfB6Y/9JeEyoPE58DFj+5H0YzoIAP9qg0AwPMPlY0ewEcQCDzAQAAAACAAAAwAAAAFwAAAA==eJzjYoAAXiitBKW5GVCBJpQGAAqoAG4=AQAAAACAAAAwAAAAGAAAAA==eJxjYIAARijNBKWZoTQLlGaF0gABSAAQAQAAAACAAAAYAAAACwAAAA==eJxjYMAOAAAYAAE=AQAAAACAAAAYAAAAEwAAAA==eJxz6NlaIbte1MUBjQYAePMJWw==AQAAAACAAAAYAAAACwAAAA==eJxjYMAOAAAYAAE=AQAAAACAAAAYAAAAEwAAAA==eJyTUheftF+0wV4KjQYAWQ0HeA==AQAAAACAAAAYAAAAEwAAAA==eJxjYHB4OsdgkRMDGg0AY40IgA==AQAAAACAAABIAAAALgAAAA==eJxjYGBgOHvGxw5IMXBdX2y3Q44VzG59fdEOxIeIK9uBMAMagOqzB7EBXHAOJg==AQAAAACAAAAwAAAAGAAAAA==eJxjYIAARijNBKWZoTQLlGaF0gABSAAQAQAAAACAAAAYAAAAEAAAAA==eJxjYoAAFijNBqUBALgADQ==AQAAAACAAAADAAAACwAAAA==eJxjZmYGAAAVAAo=
   </AppendedData>
 </VTKFile>

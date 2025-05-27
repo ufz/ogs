@@ -14,5 +14,11 @@
         [1.0,
          0.42,
          0.0]
-    ]
+    ],
+    "maximum_anchor_stress": [500e26, 500e26],
+    "initial_anchor_stress": [0.0, 0.0],
+    "residual_anchor_stress": [500e26, 500e26],
+    "anchor_radius": [0.5641895835477563, 0.5641895835477563],
+    "anchor_stiffness": [3.2, 3.2]
+
 }

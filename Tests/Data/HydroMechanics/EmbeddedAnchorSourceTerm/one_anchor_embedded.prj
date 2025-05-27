@@ -147,11 +147,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>spring_constant</name>
-            <type>Constant</type>
-            <values>1e13</values>
-        </parameter>
-        <parameter>
             <name>displacementTop</name>
             <type>Constant</type>
             <value>0.05</value>
@@ -198,7 +193,6 @@
                     <mesh>one_anchor_embedded</mesh>
                     <type>EmbeddedAnchor</type>
                     <component>0</component>
-                    <anchor_force_constant>spring_constant</anchor_force_constant>
                 </source_term>
             </source_terms>
         </process_variable>

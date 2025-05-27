@@ -8,18 +8,23 @@
         <DataArray type="UInt64" Name="point_cloud_node_ids" format="appended" RangeMin="0"                    RangeMax="3"                    offset="116"                 />
       </PointData>
       <CellData>
+        <DataArray type="Float64" Name="initial_anchor_stress" format="appended" RangeMin="0"                    RangeMax="0"                    offset="168"                 />
+        <DataArray type="Float64" Name="maximum_anchor_stress" format="appended" RangeMin="1e+26"                RangeMax="1e+26"                offset="208"                 />
+        <DataArray type="Float64" Name="residual_anchor_stress" format="appended" RangeMin="0"                    RangeMax="0"                    offset="260"                 />
+        <DataArray type="Float64" Name="anchor_cross_sectional_area" format="appended" RangeMin="1"                    RangeMax="1"                    offset="300"                 />
+        <DataArray type="Float64" Name="anchor_stiffness" format="appended" RangeMin="1e+13"                RangeMax="1e+13"                offset="348"                 />
       </CellData>
       <Points>
-        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="appended" RangeMin="1.0307764064"         RangeMax="2.2638462845"         offset="168"                 />
+        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="appended" RangeMin="1.0307764064"         RangeMax="2.2638462845"         offset="400"                 />
       </Points>
       <Cells>
-        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="232"                 />
-        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="284"                 />
-        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="328"                 />
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="464"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="516"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="560"                 />
       </Cells>
     </Piece>
   </UnstructuredGrid>
   <AppendedData encoding="base64">
-   _AQAAAACAAABgAAAAIQAAAA==eJxjYACBC/ZgiuEBlIaBB/tRxT9AaZzq7dHVAwAURAu3AQAAAACAAAAgAAAAEQAAAA==eJxjYoAARijNhMYHAACgAAc=AQAAAACAAAAgAAAAEwAAAA==eJxjYIAARijNBKWZoTQAAHAABw==AQAAAACAAAAwAAAAHAAAAA==eJxjYHCwZ2BggGEHBoYGOwawGLo4RAwAbKkEtg==AQAAAACAAAAgAAAAEwAAAA==eJxjYIAARijNBKWZoTQAAHAABw==AQAAAACAAAAQAAAADgAAAA==eJxjYoAAFigNAABQAAc=AQAAAACAAAACAAAACgAAAA==eJxjZgYAAAsABw==
+   _AQAAAACAAABgAAAAIQAAAA==eJxjYACBC/ZgiuEBlIaBB/tRxT9AaZzq7dHVAwAURAu3AQAAAACAAAAgAAAAEQAAAA==eJxjYoAARijNhMYHAACgAAc=AQAAAACAAAAgAAAAEwAAAA==eJxjYIAARijNBKWZoTQAAHAABw==AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAAEwAAAA==eJwzZTba/mVtiKsplAYANWgGtw==AQAAAACAAAAQAAAACwAAAA==eJxjYEAFAAAQAAE=AQAAAACAAAAQAAAAEAAAAA==eJxjYACBD/YMUBoADcYCXw==AQAAAACAAAAQAAAAEwAAAA==eJxjYHB4OsdgkRMDlAYAK7YFqw==AQAAAACAAAAwAAAAHAAAAA==eJxjYHCwZ2BggGEHBoYGOwawGLo4RAwAbKkEtg==AQAAAACAAAAgAAAAEwAAAA==eJxjYIAARijNBKWZoTQAAHAABw==AQAAAACAAAAQAAAADgAAAA==eJxjYoAAFigNAABQAAc=AQAAAACAAAACAAAACgAAAA==eJxjZgYAAAsABw==
   </AppendedData>
 </VTKFile>
