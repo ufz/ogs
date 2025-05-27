@@ -537,3 +537,18 @@ TEST_F(GeoLibOctTree, TestRangeQueryWithOutsideRange)
     oct_tree->getPointsInRange(min_p, max_p, query_points);
     ASSERT_EQ(0u, query_points.size());
 }
+
+TEST_F(GeoLibOctTree, TestRangeQueryWithNullRange)
+{
+    generateEquidistantPoints3dUnitCube(21);
+    double const eps = std::numeric_limits<double>::epsilon() * 0.05;
+    auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
+
+    // range query for range outside the cube domain [min, max)
+    std::vector<GeoLib::Point*> query_points;
+    Eigen::Vector3d const min_p = ((max + min) / 2).array() - eps;
+    Eigen::Vector3d const max_p =
+        min_p.array() + eps;  // min_p is equal to max_p => range is empty
+    oct_tree->getPointsInRange(min_p, max_p, query_points);
+    ASSERT_EQ(0u, query_points.size());
+}

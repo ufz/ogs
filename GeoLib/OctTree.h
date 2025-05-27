@@ -127,6 +127,12 @@ private:
     /// @return true if the point is outside of the OctTree node.
     bool isOutside(POINT* pnt) const;
 
+    /// range query - returns all points inside the range [min[0], max[0]) x
+    /// [min[1], max[1]) x [min[2], max[2])
+    template <typename T>
+    void getPointsInRange_(T const& min, T const& max,
+                           std::vector<POINT*>& pnts) const;
+
     /// children are sorted:
     ///   _children[0] is north east lower child
     ///   _children[1] is north west lower child
