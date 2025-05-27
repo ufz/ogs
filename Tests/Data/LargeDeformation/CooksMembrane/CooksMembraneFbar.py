@@ -59,14 +59,12 @@
 # %%
 # Standard library imports
 import os
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 # Third-party imports
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
-import pyvista as pv
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 
@@ -75,30 +73,20 @@ if not out_dir.exists():
 
 
 # %%
-def get_last_vtu_file_name(pvd_file_name):
-    tree = ET.parse(Path(out_dir, pvd_file_name))
-    root = tree.getroot()
-    # Get the last DataSet tag
-    last_dataset = root.findall(".//DataSet")[-1]
-
-    # Get the 'file' attribute of the last DataSet tag
-    file_attribute = last_dataset.attrib["file"]
-    return Path(out_dir, file_attribute)
-
-
 def get_top_uy(pvd_file_name):
     top_point = (48.0e-3, 60.0e-3, 0)
-    file_name = get_last_vtu_file_name(pvd_file_name)
-    mesh = pv.read(file_name)
+    mesh = ot.MeshSeries(out_dir / pvd_file_name)[-1]
     p_id = mesh.find_closest_point(top_point)
-    u = mesh.point_data["displacement"][p_id]
-    return u[1]
+    return mesh.point_data["displacement"][p_id, 1]
 
 
 # %%
-def run_single_test(mesh_name, output_prefix, use_fbar=False, use_load_increment=False):
+def run_single_test(
+    mesh_name, output_prefix, use_fbar=False, use_load_increment=False
+):
     prj = ot.Project(
-        input_file="CooksMembrane.prj", output_file=Path(out_dir, "modified.prj")
+        input_file="CooksMembrane.prj",
+        output_file=out_dir / "modified.prj",
     )
 
     prj.replace_text(mesh_name, xpath="./mesh")
@@ -121,39 +109,18 @@ def run_single_test(mesh_name, output_prefix, use_fbar=False, use_load_increment
         )
 
     prj.write_input()
-
-    # Run OGS
-
     prj.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
-    # Get uy at the top
     return get_top_uy(output_prefix + ".pvd")
 
 
 # %%
-mesh_names = [
-    "mesh.vtu",
-    "mesh_n10.vtu",
-    "mesh_n15.vtu",
-    "mesh_n20.vtu",
-    "mesh_n25.vtu",
-    "mesh_n30.vtu",
-]
-load_increment_labels = [
-    False,
-    False,
-    False,
-    True,
-    True,
-    False,
-]
+nedges = [4, 10, 15, 20, 25, 30]
+mesh_names = [f"mesh{n}.vtu" for n in [""] + [f"_n{ne}" for ne in nedges[1:]]]
+load_increment_labels = [False, False, False, True, True, False]
 output_prefices = [
-    "cooks_membrane_ld_edge_div_4",
-    "cooks_membrane_ld_refined_mesh_10",
-    "cooks_membrane_ld_refined_mesh_15",
-    "cooks_membrane_ld_refined_mesh_20",
-    "cooks_membrane_ld_refined_mesh_25",
-    "cooks_membrane_ld_refined_mesh_30",
+    f"cooks_membrane_ld_{suffix}"
+    for suffix in ["edge_div_4"] + [f"_refined_mesh_{ne}" for ne in nedges[1:]]
 ]
 
 uys_at_top_fbar = []
@@ -161,7 +128,10 @@ for mesh_name, load_increment_label, output_prefix in zip(
     mesh_names, load_increment_labels, output_prefices
 ):
     uy_at_top = run_single_test(
-        mesh_name, output_prefix, use_fbar=True, use_load_increment=load_increment_label
+        mesh_name,
+        output_prefix,
+        use_fbar=True,
+        use_load_increment=load_increment_label,
     )
     uys_at_top_fbar.append(uy_at_top)
 
@@ -184,14 +154,7 @@ np.testing.assert_allclose(
 )
 
 # %%
-output_prefices_non_fbar = [
-    "cooks_membrane_ld_edge_div_4_non_fbar",
-    "cooks_membrane_ld_refined_mesh_10_non_fbar",
-    "cooks_membrane_ld_refined_mesh_15_non_fbar",
-    "cooks_membrane_ld_refined_mesh_20_non_fbar",
-    "cooks_membrane_ld_refined_mesh_25_non_fbar",
-    "cooks_membrane_ld_refined_mesh_30_non_fbar",
-]
+output_prefices_non_fbar = [prefix + "_non_fbar" for prefix in output_prefices]
 
 uys_at_top_non_fbar = []
 for mesh_name, load_increment_label, output_prefix in zip(
@@ -223,26 +186,16 @@ np.testing.assert_allclose(
     actual=uys_at_top_non_fbar, desired=expected_uys_at_top_non_fbar, atol=1e-10
 )
 
+
 # %%
-ne = [4, 10, 15, 20, 25, 30]
-
-
-def plot_data(ne, u_y_fbar, uy_non_fbar, file_name=""):
+def plot_data(u_y_fbar, uy_non_fbar, file_name=""):
     # Plotting
     plt.rcParams["figure.figsize"] = [5, 5]
 
     if len(u_y_fbar) != 0:
-        plt.plot(
-            ne, np.array(u_y_fbar) * 1e3, marker="o", linestyle="dashed", label="F bar"
-        )
+        plt.plot(nedges, np.array(u_y_fbar) * 1e3, "o--", label="F bar")
     if len(uy_non_fbar) != 0:
-        plt.plot(
-            ne,
-            np.array(uy_non_fbar) * 1e3,
-            marker="x",
-            linestyle="dashed",
-            label="non F bar",
-        )
+        plt.plot(nedges, np.array(uy_non_fbar) * 1e3, "x--", label="non F bar")
 
     plt.xlabel("Number of elements per side")
     plt.ylabel("Top right corner displacement /mm")
@@ -262,22 +215,19 @@ def plot_data(ne, u_y_fbar, uy_non_fbar, file_name=""):
 # The following figure shows that the convergence of the solutions obtained by using the F bar method follows the one presented in the paper by T. Elguedj et al [1]. However, the results obtained without the F bar method are quit far from the converged solution with the finest mesh.
 
 # %%
-plot_data(ne, uys_at_top_fbar, uys_at_top_non_fbar, "f_bar_linear.png")
+plot_data(uys_at_top_fbar, uys_at_top_non_fbar, "f_bar_linear.png")
 
 # %% [markdown]
 # ### 2. Contour plot of the results
 
+
 # %%
-nedges = ["4", "10", "15", "20", "25", "30"]
-
-
 def contour_plot(pvd_file_name, title, fig_name=None):
-    ms_e = ot.MeshSeries(Path(out_dir, pvd_file_name))
-    last_vtu = ms_e[-1]
+    last_mesh = ot.MeshSeries(Path(out_dir, pvd_file_name))[-1]
     fig, axs = plt.subplots(1, 2, figsize=(6, 4))
 
-    last_vtu.plot_contourf(ot.variables.displacement[1], ax=axs[0], fontsize=8)
-    last_vtu.plot_contourf(ot.variables.stress["yy"], ax=axs[1], fontsize=8)
+    last_mesh.plot_contourf(ot.variables.displacement[1], ax=axs[0], fontsize=8)
+    last_mesh.plot_contourf(ot.variables.stress["yy"], ax=axs[1], fontsize=8)
     plt.title(title)
     if fig_name:
         plt.savefig(fig_name, bbox_inches="tight", dpi=300)
@@ -290,7 +240,7 @@ def contour_plot(pvd_file_name, title, fig_name=None):
 for nedge, output_prefix in zip(nedges, output_prefices_non_fbar):
     contour_plot(
         output_prefix + ".pvd",
-        "Number of elements per side: " + nedge,
+        f"Number of elements per side: {nedge}",
         f"non_fbar_elements_per_side_{nedge}.png",
     )
 
@@ -301,7 +251,7 @@ for nedge, output_prefix in zip(nedges, output_prefices_non_fbar):
 for nedge, output_prefix in zip(nedges, output_prefices):
     contour_plot(
         output_prefix + ".pvd",
-        "Number of elements per side: " + nedge,
+        f"Number of elements per side: {nedge}",
         f"fbar_elements_per_side_{nedge}.png",
     )
 
