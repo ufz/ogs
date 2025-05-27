@@ -19,6 +19,7 @@ The different layers have to be listed in an extra `.txt`-file, where the top to
 ```bash
    createLayeredMeshFromRasters  -i <file name> -o <file name> -r <file name>
                                 [-t <floating point number>] [--ascii_output]
+                                [--keep-surface-material-ids]
                                 [--] [--version] [-h]
 
 
@@ -33,6 +34,10 @@ Where:
    -r <file name>,  --raster-list <file name>
      (required)  An ascii-file containing a list of raster files, starting
      from top (DEM) to bottom.
+
+   --keep-surface-material-ids
+     if the argument is present the materials defined in the surface mesh
+     are used to set the material information for the subsurface cells
 
    -t <floating point number>,  --thickness <floating point number>
      The minimum thickness of a layer to be integrated at any given
@@ -51,10 +56,12 @@ Where:
      Displays usage information and exits.
 ```
 
-## Example
+## Examples
+
+### First example: different material id value per layer
 
 <p align='center'>
- <img src = 2D.png width = "35%" height = "35%">
+ <img src = 2D.png width = "35%" height = "35%" alt = "2d input mesh">
 </p>
 <p align = "center">
 Fig.1 2D input mesh mapped to an elevation (generated with the tool <a href ="/docs/tools/preprocessing/meshmapping"> MeshMapping</a>, although it is not necessary to use a mapped mesh, a flat mesh is sufficient). The z-values of the mesh are scaled by a factor of 10.
@@ -79,8 +86,32 @@ path/to/raster-file/m6.asc
 ```
 
 <p align='center'>
- <img src = 3D.png width = "35%" height = "35%">
+ <img src = 3D.png width = "35%" height = "35%" alt = "layered output mesh">
 </p>
 <p align = "center">
 Fig.2 The layered 3D output mesh created from raster files. The different colors depict different material IDs. The z-values of the mesh are scaled by a factor of 10.
  </p>
+
+### Second example: Keep the material IDs given by the 2D input mesh
+
+2d input mesh and the input rasters:
+
+![2d top mesh](2d_top_with_edges.png)
+![bottom raster](bottom.png)
+![top raster](dem.png)
+
+rasters.txt
+
+```bash
+path/to/raster-file/dem.asc
+path/to/raster-file/bottom.asc
+```
+
+```bash
+createLayeredMeshFromRasters -i rectangular_tris_with_materials.vtu -o raster_based_3d_mesh.vtu -t 0.1 -r rasters.txt --keep-surface-material-ids
+```
+
+The result is then a 3d mesh with a material ID distribution as it is in the 2d
+mesh provided as input.
+
+![3d subsurface mesh](3d_mesh.png)

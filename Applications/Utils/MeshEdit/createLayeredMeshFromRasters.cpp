@@ -15,6 +15,9 @@
 #include <algorithm>
 #include <iterator>
 #include <memory>
+#include <range/v3/algorithm/copy.hpp>
+#include <range/v3/view/join.hpp>
+#include <range/v3/view/repeat_n.hpp>
 #include <string>
 #include <vector>
 
@@ -27,6 +30,37 @@
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
+
+void assignSurfaceMaterialIDsToSubsurfaceLayers(MeshLib::Mesh* sfc_mesh,
+                                                MeshLib::Mesh* subsurface_mesh)
+{
+    auto const* surface_material_ids = materialIDs(*sfc_mesh);
+    auto* subsurface_material_ids = materialIDs(*subsurface_mesh);
+    // reset the material ids
+    if (!surface_material_ids)
+    {
+        OGS_FATAL("Surface mesh does not contain material IDs");
+    }
+    if (surface_material_ids->empty())
+    {
+        OGS_FATAL("Surface mesh material IDs doesn't contain any values");
+    }
+    if (!subsurface_material_ids)
+    {
+        OGS_FATAL("Subsurface mesh does not contain material IDs");
+    }
+    if (subsurface_material_ids->size() % surface_material_ids->size() != 0)
+    {
+        OGS_FATAL("Could not determine the number of subsurface layers.");
+    }
+    int const number_of_layers =
+        subsurface_material_ids->size() / surface_material_ids->size();
+
+    ranges::copy(
+        ranges::views::repeat_n(*surface_material_ids, number_of_layers) |
+            ranges::views::join,
+        subsurface_material_ids->begin());
+}
 
 int main(int argc, char* argv[])
 {
@@ -63,6 +97,13 @@ int main(int argc, char* argv[])
         "(DEM) to bottom.",
         true, "", "file name");
     cmd.add(raster_path_arg);
+
+    TCLAP::SwitchArg keep_materials_arg(
+        "", "keep-surface-material-ids",
+        "if the argument is present the materials defined in the surface mesh "
+        "are used to set the material information for the subsurface cells",
+        false);
+    cmd.add(keep_materials_arg);
 
     TCLAP::ValueArg<std::string> mesh_out_arg(
         "o", "output-mesh-file", "The file name of the resulting 3D mesh.",
@@ -126,13 +167,6 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    std::string output_name(mesh_out_arg.getValue());
-    if (!BaseLib::hasFileExtension(".vtu", output_name))
-    {
-        output_name.append(".vtu");
-    }
-
-    INFO("Writing mesh '{:s}' ... ", output_name);
     auto const result_mesh = mapper.getMesh("SubsurfaceMesh");
     if (result_mesh == nullptr)
     {
@@ -140,6 +174,19 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    if (keep_materials_arg.getValue())
+    {
+        assignSurfaceMaterialIDsToSubsurfaceLayers(sfc_mesh.get(),
+                                                   result_mesh.get());
+    }
+
+    std::string output_name(mesh_out_arg.getValue());
+    if (!BaseLib::hasFileExtension(".vtu", output_name))
+    {
+        output_name.append(".vtu");
+    }
+
+    INFO("Writing mesh '{:s}' ... ", output_name);
     auto const data_mode =
         use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
 
