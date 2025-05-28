@@ -103,8 +103,9 @@ print(ms[0].point_data.keys())
 # %%
 # Plot soil temperature at observation points
 center_point = [0, 0, 0]
+ms_pts = ot.MeshSeries.extract_probe(ms, center_point)
+fig = ot.plot.line(ms_pts, "time", ot.variables.pressure, labels=["Center"])
 
-fig = ms.plot_probe(center_point, ot.variables.pressure, labels=["Center"])
 
 # %% [markdown]
 # As predicted, the pressure in the center exceeds the applied load and then levels out.
