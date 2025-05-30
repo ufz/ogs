@@ -1,4 +1,5 @@
 from pathlib import Path
+from subprocess import run
 
 import numpy as np
 import ogstools as ot
@@ -21,6 +22,7 @@ class SingleOGSModel:
         tension_cutoff=False,
         fracture_model_type=None,
         materials=None,
+        n_mpi=1,
     ):
         self.model = model
         self.method = method
@@ -34,6 +36,7 @@ class SingleOGSModel:
         self.mesh_path = Path(self.out_dir, mesh_path)
         self.materials = materials
         self.current_load_case = "default"
+        self.n_mpi = n_mpi
 
         print(f"mesh path: {mesh_path}")
         print(f"[DEBUG] Current working directory: {Path.cwd()}")
@@ -98,7 +101,6 @@ class SingleOGSModel:
     def run(self, times_string, PEE_load_values, material_name):
         try:
             self.apply_all_loads(times_string, PEE_load_values)
-
             if self.method == "LIE":
                 self.apply_materials_for_LIE(material_name, model_type=self.model_type)
             elif self.method == "VPF":
@@ -110,22 +112,32 @@ class SingleOGSModel:
             )
             self.model.write_input()
 
-            log_file_name = Path(self.out_dir, f"log_{self.output_prefix}.txt")
+            log_file_name = Path(self.out_dir, f"log_{output_file_name_prefix}.txt")
+            if self.method == "VPF":
+                wrapper = f"mpirun -n {self.n_mpi}"
+            else:
+                wrapper = None
+
             self.model.run_model(
-                logfile=log_file_name, args=f"-o {self.out_dir} -m {self.mesh_path}"
+                logfile=log_file_name,
+                wrapper=wrapper,
+                args=f"-o {self.out_dir} -m {self.mesh_path}",
             )
 
             return Path(self.out_dir, f"{output_file_name_prefix}.pvd")
         except Exception as e:
             print(f"An error occurred run: {e}")
 
-    def change_model_dt0_dt_min(self, dt0, dt_min):
-        self.model.replace_text(
-            dt0, xpath="./time_loop/processes/process/time_stepping/initial_dt"
-        )
-        self.model.replace_text(
-            dt_min, xpath="./time_loop/processes/process/time_stepping/minimum_dt"
-        )
+    def change_model_dt0_dt_min(self, dt0, dt_min, model_type):
+        if model_type == "HM2a":
+            self.model.replace_text(
+                dt0,
+                xpath="./time_loop/processes/process/time_stepping/initial_dt",
+            )
+            self.model.replace_text(
+                dt_min,
+                xpath="./time_loop/processes/process/time_stepping/minimum_dt",
+            )
 
     def change_model_for_impermeable_sample(self, n_bcs):
         self.model.replace_text(
@@ -134,6 +146,26 @@ class SingleOGSModel:
         for i in range(n_bcs + self.n_fracture_p_ncs, self.n_fracture_p_ncs, -1):
             xpath = f'./process_variables/process_variable[name="pressure"]/boundary_conditions/boundary_condition[{i}]'
             self.model.remove_element(xpath)
+
+    def update_fracture_effective_stress(self, model_type, load_case):
+        if model_type == "HM2b":
+            value = "0.0 -2.0e6"
+        elif model_type == "HM2a":
+            if load_case.upper() in ["C"]:
+                value = "0.0 -5.5e6"
+            elif load_case.upper() in ["A", "B", "E", "F"]:
+                value = "0.0 -4.0e6"
+            else:
+                msg = f"Invalid load case '{load_case}' for model type HM2a."
+                raise ValueError(msg)
+        else:
+            return
+        xpath = ".//parameters/parameter[name='fracture_effective_stress0']/values"
+        try:
+            self.model.replace_text(value, xpath=xpath)
+        except Exception as e:
+            msg = f"Failed to update 'fracture_effective_stress0': {e}"
+            raise RuntimeError(msg) from e
 
     def run_for_all_samples(
         self,
@@ -151,7 +183,10 @@ class SingleOGSModel:
             print(f"{separate_line}\n")
 
             if load_case in ["A", "B", "C", "E", "F"]:
-                self.change_model_dt0_dt_min(0.0001, 0.0001)
+                self.change_model_dt0_dt_min(0.001, 0.001, model_type=self.model_type)
+                self.update_fracture_effective_stress(
+                    model_type=self.model_type, load_case=load_case
+                )
 
             self.model.replace_text(
                 use_b_bar_value, xpath="./processes/process/use_b_bar"
@@ -179,6 +214,20 @@ class SingleOGSModel:
                 name="nu2", value=rubber["poisson_ratio"]
             )
 
+            if model_type in ["HM1", "HM2a", "HM2b"]:
+                rate = material["fluid"]["injectionFlowRate_Inlet"]
+                self.model.replace_parameter_value(
+                    name="injectionFlowRate_Inlet",
+                    value=rate,
+                )
+
+            if model_type in ["HM2a", "HM2b"]:
+                pout = material["fluid"]["p_outlet"]
+                self.model.replace_parameter_value(
+                    name="p_outlet",
+                    value=pout,
+                )
+
             if model_type in ["M1", "M2a", "M2b"]:
                 for mid in [0, 1]:
                     self.model.replace_phase_property_value(
@@ -188,59 +237,96 @@ class SingleOGSModel:
                         value=material["density_solid"],
                     )
                 self.model.replace_phase_property_value(
-                    mediumid=2, phase="Solid", name="density", value=rubber["density"]
+                    mediumid=2,
+                    phase="Solid",
+                    name="density",
+                    value=rubber["density"],
                 )
 
-            if model_type == "HM1":
-                for mid in [0, 1]:
+            if model_type in ["HM1", "HM2a", "HM2b"]:
+                mids = [0, 1, 2] if model_type == "HM1" else [0, 1, 2, 3]
+                for mid in mids:
+                    self.model.replace_phase_property_value(
+                        mediumid=mid,
+                        phase="AqueousLiquid",
+                        name="density",
+                        value=material["fluid"]["density"],
+                    )
+                    self.model.replace_phase_property_value(
+                        mediumid=mid,
+                        phase="AqueousLiquid",
+                        name="viscosity",
+                        value=material["fluid"]["viscosity"],
+                    )
+
+                    if mid == 2:
+                        # medium 2 is rubber
+                        sd = (
+                            rubber["density_solid"]
+                            if "density_solid" in rubber
+                            else rubber["density"]
+                        )
+                        src = "rubber"
+                    else:
+                        sd = (
+                            material["density_solid"]
+                            if "density_solid" in material
+                            else material["density"]
+                        )
+                        src = "material"
+
                     self.model.replace_phase_property_value(
                         mediumid=mid,
                         phase="Solid",
                         name="density",
-                        value=material["density_solid"],
+                        value=sd,
                     )
-                    self.model.replace_medium_property_value(
-                        mediumid=mid, name="biot_coefficient", value=material["biot"]
-                    )
-                    self.model.replace_medium_property_value(
-                        mediumid=mid,
-                        name="permeability",
-                        value=material["permeability"],
-                    )
-                    self.model.replace_medium_property_value(
-                        mediumid=mid, name="porosity", value=material["porosity"]
-                    )
+                    print(f"[mid={mid}] Solid density set from {src}: {sd}")
 
-                self.model.replace_phase_property_value(
-                    mediumid=2, phase="Solid", name="density", value=rubber["density"]
-                )
-                self.model.replace_medium_property_value(
-                    mediumid=2, name="permeability", value=rubber["permeability"]
-                )
-                self.model.replace_medium_property_value(
-                    mediumid=2, name="porosity", value=rubber["porosity"]
-                )
-                self.model.replace_medium_property_value(
-                    mediumid=2, name="biot_coefficient", value=rubber["biot"]
-                )
+                    if mid != 3:
+                        if mid < 2:
+                            bc, perm, poro = (
+                                material["biot"],
+                                material["permeability"],
+                                material["porosity"],
+                            )
+                        else:
+                            bc, perm, poro = (
+                                rubber["biot"],
+                                rubber["permeability"],
+                                rubber["porosity"],
+                            )
+
+                        self.model.replace_medium_property_value(
+                            mediumid=mid,
+                            name="biot_coefficient",
+                            value=bc,
+                        )
+                        self.model.replace_medium_property_value(
+                            mediumid=mid,
+                            name="permeability",
+                            value=perm,
+                        )
+                        self.model.replace_medium_property_value(
+                            mediumid=mid,
+                            name="porosity",
+                            value=poro,
+                        )
+                        print(f"[mid={mid}] Bulk properties set")
+                    else:
+                        print(f"[mid={mid}], fracture, Bulk skipped")
 
             if self.n_fracture_p_ncs > 0:
-                if model_type not in ["M2a", "M2b"]:
-                    self.model.replace_parameter_value(
-                        name="k_permeability_sample", value=material["permeability"]
-                    )
-                    self.model.replace_parameter_value(
-                        name="k_permeability_rubber", value=rubber["permeability"]
-                    )
-                    self.model.replace_parameter_value(
-                        name="phi", value=material["porosity"]
-                    )
+                if model_type in ["HM2a", "HM2b"]:
                     self.model.replace_parameter_value(
                         name="S_f", value=material["S_f"]
                     )
 
                 self.model.replace_parameter_value(name="Kn", value=material["k_n"])
                 self.model.replace_parameter_value(name="Ks", value=material["k_t"])
+                self.model.replace_parameter_value(
+                    name="aperture0", value=material["w_init"]
+                )
 
                 if self.fracture_model_type == "CohesiveZoneModeI":
                     print("DEBUG: Applying CohesiveZoneModeI fracture model")
@@ -291,7 +377,8 @@ class SingleOGSModel:
 
                 if not self.tension_cutoff:
                     self.model.replace_text(
-                        0, xpath="./processes/process/fracture_model/tension_cutoff"
+                        0,
+                        xpath="./processes/process/fracture_model/tension_cutoff",
                     )
 
         except KeyError as e:
@@ -330,23 +417,54 @@ class SingleOGSModel:
                 name="nu2", value=rubber["poisson_ratio"]
             )
 
-            if model_type in ["M1", "M2a", "M2b", "HM1"]:
-                for mid in [0, 1]:
-                    self.model.replace_medium_property_value(
-                        mediumid=mid,
-                        name="permeability",
-                        value=permeability,
-                    )
+            if model_type in ["HM3d"]:
+                self.model.replace_parameter_value(name="gc", value=material["Gc"])
+                Q0 = material["fluid"]["injectionFlowRate_Inlet"]
+                self.model.replace_parameter_value(
+                    name="injectionFlowRate_Inlet",
+                    value=str(Q0),
+                )
+
+            if model_type in ["HM2a", "HM2b"]:
+                Q0 = material["fluid"]["injectionFlowRate_Inlet"] / self.mesh_size
+                self.model.replace_parameter_value(
+                    name="injectionFlowRate_Inlet", value=Q0
+                )
+                self.model.replace_parameter_value(
+                    name="p_outlet", value=material["fluid"]["p_outlet"]
+                )
+            if model_type in ["HM1"]:
+                Q0 = (
+                    material["fluid"]["injectionFlowRate_Inlet"]
+                    / material["fluid"]["density"]
+                )
+                self.model.replace_parameter_value(
+                    name="injectionFlowRate_Inlet", value=Q0
+                )
+
+            for mid in [0, 1, 2]:
+                self.model.replace_phase_property_value(
+                    mediumid=mid,
+                    phase="AqueousLiquid",
+                    name="density",
+                    value=material["fluid"]["density"],
+                )
+                self.model.replace_phase_property_value(
+                    mediumid=mid,
+                    phase="AqueousLiquid",
+                    name="viscosity",
+                    value=material["fluid"]["viscosity"],
+                )
+
+            for mid in [0, 1]:
                 self.model.replace_medium_property_value(
-                    mediumid=2, name="permeability", value=permeability_rubber
+                    mediumid=mid,
+                    name="permeability",
+                    value=permeability,
                 )
-            else:
-                self.model.replace_parameter_value(
-                    name="k_permeability_sample", value=permeability
-                )
-                self.model.replace_parameter_value(
-                    name="k_permeability_rubber", value=permeability_rubber
-                )
+            self.model.replace_medium_property_value(
+                mediumid=2, name="permeability", value=permeability_rubber
+            )
 
             if self.mesh_size:
                 ls = 2 * self.mesh_size
@@ -355,7 +473,8 @@ class SingleOGSModel:
                 print("ls", ls)
 
             self.model.replace_text(
-                xpath="./processes/process/fluid_compressibility", value=material["c_f"]
+                xpath="./processes/process/fluid_compressibility",
+                value=material["c_f"],
             )
 
             for mid in [0, 1]:
@@ -376,13 +495,19 @@ class SingleOGSModel:
                 )
 
             self.model.replace_phase_property_value(
-                mediumid=2, phase="Solid", name="density", value=rubber["density"]
+                mediumid=2,
+                phase="Solid",
+                name="density",
+                value=rubber["density"],
             )
             self.model.replace_medium_property_value(
                 mediumid=2, name="porosity", value=rubber["porosity"]
             )
             self.model.replace_phase_property_value(
-                mediumid=2, phase="Solid", name="biot_coefficient", value=biot_rubber
+                mediumid=2,
+                phase="Solid",
+                name="biot_coefficient",
+                value=biot_rubber,
             )
 
             self.model.write_input()
@@ -411,8 +536,11 @@ class SingleOGSModel:
         model_type="default",
         use_b_bar_value="false",
         mesh_size=0.0005,
+        delta=0.00025,
+        borehole_r=0.005,
         tension_cutoff=False,
         fracture_model_type=None,
+        n_mpi=1,
     ):
         all_vtu_file_names = {key: [] for key in load_cases}
 
@@ -428,6 +556,12 @@ class SingleOGSModel:
                 crack_type=crack_type,
                 fracture_angle=0,
                 h1=mesh_size,
+                delta=delta,
+                borehole_r=borehole_r,
+                material_names=material_names,
+                materials=materials,
+                model_type=model_type,
+                n_mpi=n_mpi,
             )
 
         separate_line = "=" * 60
@@ -458,6 +592,7 @@ class SingleOGSModel:
                 tension_cutoff=tension_cutoff,
                 fracture_model_type=fracture_model_type,
                 materials=materials,
+                n_mpi=n_mpi,
             )
 
             print(f"{separate_line}")
@@ -483,82 +618,99 @@ class SingleOGSModel:
         return all_vtu_file_names
 
     @staticmethod
-    def set_crack_VPF(mesh_path, in_m, out_m, crack_type, fracture_angle, h1):
-        m = pv.read(Path(mesh_path, in_m))
-        n_points = m.number_of_points
-        pt_coords = m.points
-        MaterialIDs = m.cell_data["MaterialIDs"]
-        phasefield = np.ones(n_points)
-        pressure = np.ones(n_points)
+    def set_crack_VPF(
+        mesh_path,
+        in_m,
+        out_m,
+        crack_type,
+        fracture_angle,
+        h1,
+        delta,
+        borehole_r,
+        material_names,
+        materials,
+        model_type,
+        n_mpi,
+    ):
+        chosen = material_names[0]
+        w_init = materials[chosen]["w_init"]
+        mesh = pv.read(Path(mesh_path, in_m))
+        # --- pointwise data ---
+        pts = mesh.points[:, :2]
+        angle = np.radians(fracture_angle)
+        R = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
+        pts_rot = pts.dot(R.T)
+        tol = 0.001 * h1
 
-        r1 = 0.094  # full crack
-        r2 = 0.04  # half crack
+        mask_pts = np.zeros(len(pts), dtype=bool)
+        if model_type == "HM3d":
+            dist = np.linalg.norm(pts_rot, axis=1)
+            mask_pts = dist <= (borehole_r + delta + h1 * tol)
 
-        angle_rad = np.radians(fracture_angle)
-
-        for point_id in range(n_points):
-            x = pt_coords[point_id, 0]
-            y = pt_coords[point_id, 1]
-
-            # Rotate the coordinates
-            x_rotated = x * np.cos(angle_rad) - y * np.sin(angle_rad)
-            y_rotated = x * np.sin(angle_rad) + y * np.cos(angle_rad)
-
+        else:
             if crack_type == "full":
-                if (-r1 - 0.001 * h1 <= x_rotated <= r1 + 0.001 * h1) and (
-                    np.abs(y_rotated) < h1
-                ):
-                    phasefield[point_id] = 0
-                    pressure[point_id] = 1.0e6
-                else:
-                    phasefield[point_id] = 1
-                    pressure[point_id] = 1.0e5
+                mask_pts = (np.abs(pts_rot[:, 0]) <= (0.094 + tol)) & (
+                    np.abs(pts_rot[:, 1]) < h1
+                )
             elif crack_type == "half":
-                if (0 - 0.001 * h1 < x_rotated < r2 + 0.001 * h1) and (
-                    np.abs(y_rotated) < h1
-                ):
-                    phasefield[point_id] = 0
-                    pressure[point_id] = 1.0e6
-                else:
-                    phasefield[point_id] = 1
-                    pressure[point_id] = 1.0e5
-            else:
-                phasefield = np.ones(n_points)
-                pressure[point_id] = 1.0e5
+                mask_pts = (
+                    (pts_rot[:, 0] >= -tol)
+                    & (pts_rot[:, 0] <= (0.04 + tol))
+                    & (np.abs(pts_rot[:, 1]) < h1)
+                )
 
-        n_cells = m.n_cells
+        phasefield = np.ones(len(pts))
+        phasefield[mask_pts] = 0.0
+        mesh.point_data["pf-ic"] = phasefield
+
+        # --- cell-wise data ---
+        n_cells = mesh.n_cells
+        mat_ids = np.ones(n_cells, dtype=np.int32)
         width_ic = np.zeros(n_cells)
+        centers = mesh.cell_centers().points[:, :2]
+        pts_rot_c = centers.dot(R.T)
+        x, y = centers[:, 0], centers[:, 1]
 
-        for j in range(n_cells):
-            cell = m.GetCell(j)
-            x_min, x_max, y_min, y_max, z_min, z_max = cell.GetBounds()
-            x = (x_min + x_max) / 2
-            y = (y_min + y_max) / 2
+        mask_cells = np.zeros(n_cells, dtype=bool)
+        if model_type == "HM3d":
+            dist_c = np.linalg.norm(pts_rot_c, axis=1)
+            mask_cells = dist_c <= (borehole_r + delta + h1 * tol)
 
+        else:
             if crack_type == "full":
-                if (-r1 - 0.001 * h1 <= x <= r1 + 0.001 * h1) and (
-                    np.abs(y) < 0.5 * h1
-                ):
-                    width_ic[j] = 1e-5
-                else:
-                    width_ic[j] = 0.0
+                mask_cells = (np.abs(pts_rot_c[:, 0]) <= (0.094 + tol)) & (
+                    np.abs(pts_rot_c[:, 1]) < 0.5 * h1
+                )
             elif crack_type == "half":
-                if (0 <= x <= r2) and (np.abs(y) < 0.5 * h1):
-                    width_ic[j] = 1e-5
-                else:
-                    width_ic[j] = 0.0
+                mask_cells = (
+                    (pts_rot_c[:, 0] >= -tol)
+                    & (pts_rot_c[:, 0] <= (0.04 + tol))
+                    & (np.abs(pts_rot_c[:, 1]) < 0.5 * h1)
+                )
 
-            # Material ID
-            if (x**2 + y**2) <= 0.065**2:
-                MaterialIDs[j] = 0
-            elif 0.065**2 < (x**2 + y**2) <= 0.097**2 - 1e-3 * h1:
-                MaterialIDs[j] = 1
-            else:
-                MaterialIDs[j] = 2
+        width_ic[mask_cells] = w_init
+        dist2 = x**2 + y**2
+        r_inner = 0.065**2
+        r_mid_sq = 0.097**2 - 0.001 * h1
 
-        m.cell_data["width_ic"] = width_ic
-        m.point_data["pf-ic"] = phasefield
-        m.point_data["p-ic"] = pressure
-        m.cell_data["MaterialIDs"] = MaterialIDs
+        mask_mid = (dist2 > r_inner) & (dist2 < r_mid_sq)
+        mask_outer = dist2 >= r_mid_sq
 
-        m.save(Path(mesh_path, out_m), binary=False)
+        mat_ids[mask_cells] = 0
+        mat_ids[mask_mid] = 1
+        mat_ids[mask_outer] = 2
+
+        mesh.cell_data["MaterialIDs"] = mat_ids
+        mesh.cell_data["width_ic"] = width_ic
+        mesh.save(Path(mesh_path, out_m), binary=False)
+        if model_type == "HM3d":
+            run(
+                f"partmesh -s   -o {mesh_path} -i {mesh_path}/domain.vtu",
+                shell=True,
+                check=True,
+            )
+            run(
+                f"partmesh -m -n {n_mpi} -o {mesh_path} -i {mesh_path}/domain.vtu  -- {mesh_path}/physical_group_DSS1.vtu {mesh_path}/physical_group_DSS1a.vtu {mesh_path}/physical_group_DSS2.vtu {mesh_path}/physical_group_DSS2a.vtu {mesh_path}/physical_group_DSS3.vtu {mesh_path}/physical_group_DSS3a.vtu  {mesh_path}/physical_group_DSS4.vtu {mesh_path}/physical_group_DSS4a.vtu {mesh_path}/physical_group_DSS5.vtu {mesh_path}/physical_group_DSS5a.vtu {mesh_path}/physical_group_DSS6.vtu {mesh_path}/physical_group_DSS6a.vtu {mesh_path}/physical_group_DSS7.vtu {mesh_path}/physical_group_DSS7a.vtu {mesh_path}/physical_group_DSS8.vtu {mesh_path}/physical_group_DSS8a.vtu {mesh_path}/physical_group_PEE1.vtu {mesh_path}/physical_group_PEE1a.vtu {mesh_path}/physical_group_PEE2.vtu {mesh_path}/physical_group_PEE2a.vtu {mesh_path}/physical_group_PEE3.vtu {mesh_path}/physical_group_PEE3a.vtu {mesh_path}/physical_group_PEE4.vtu {mesh_path}/physical_group_PEE4a.vtu {mesh_path}/physical_group_PEE5.vtu {mesh_path}/physical_group_PEE5a.vtu {mesh_path}/physical_group_PEE6.vtu {mesh_path}/physical_group_PEE6a.vtu {mesh_path}/physical_group_PEE7.vtu {mesh_path}/physical_group_PEE7a.vtu {mesh_path}/physical_group_PEE8.vtu {mesh_path}/physical_group_PEE8a.vtu {mesh_path}/physical_group_p_bottom.vtu {mesh_path}/physical_group_p_left.vtu {mesh_path}/physical_group_p_right.vtu {mesh_path}/physical_group_p_top.vtu {mesh_path}/physical_group_borehole_boundary.vtu ",
+                shell=True,
+                check=True,
+            )
