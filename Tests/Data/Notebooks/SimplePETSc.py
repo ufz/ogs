@@ -58,7 +58,6 @@ ot.plot.line(
     "time",
     ot.variables.pressure,
     labels=["{label} linear interpolated" for label in points_labels],
-    interp_method="linear",
     ax=fig.axes[0],
     colors=["b", "r"],
     linestyles=["-", "-"],
