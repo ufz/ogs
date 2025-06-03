@@ -52,9 +52,10 @@ points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 points_labels = ["pt0", "pt1"]
 
 fig, ax = plt.subplots(nrows=1, ncols=1)
-
-mesh_series.plot_probe(
-    points_coords,
+ms_pts = ot.MeshSeries.extract_probe(mesh_series, points_coords)
+ot.plot.line(
+    ms_pts,
+    "time",
     ot.variables.pressure,
     labels=["{label} linear interpolated" for label in points_labels],
     interp_method="linear",

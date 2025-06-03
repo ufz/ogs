@@ -70,15 +70,18 @@ int initOGS(std::vector<std::string>& argv_str)
 
     BaseLib::initOGSLogger(cli_args.log_level);
 
-    INFO("This is OpenGeoSys-6 version {:s}.",
-         GitInfoLib::GitInfo::ogs_version);
+    INFO(
+        "This is OpenGeoSys-6 version {:s}. Log version: {:d}, Log level: "
+        "{:s}.",
+        GitInfoLib::GitInfo::ogs_version, 2, cli_args.log_level);
 
     BaseLib::createOutputDirectory(cli_args.outdir);
 
     {
         auto const start_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on {:s}.", time_str);
+        INFO("OGS started on {:s} in serial mode / Python embedded mode.",
+             time_str);
     }
 
     std::optional<ApplicationsLib::TestDefinition> test_definition{
@@ -114,7 +117,7 @@ int executeSimulation()
     {
         auto const start_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(start_time);
-        INFO("OGS started on {:s}.", time_str);
+        INFO("OGS started on {:s} in serial mode.", time_str);
     }
 
     auto ogs_status = EXIT_SUCCESS;
@@ -126,7 +129,16 @@ int executeSimulation()
         simulation->outputLastTimeStep();
         // TODO: test definition ?
 
-        INFO("[time] Execution took {:g} s.", run_time.elapsed());
+        if (solver_succeeded)
+        {
+            INFO("[time] Simulation completed. It took {:g} s.",
+                 run_time.elapsed());
+        }
+        else
+        {
+            INFO("[time] Simulation failed. It took {:g} s.",
+                 run_time.elapsed());
+        }
         ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
     }
     catch (std::exception& e)
@@ -135,10 +147,12 @@ int executeSimulation()
         ogs_status = EXIT_FAILURE;
     }
 
+    if (ogs_status == EXIT_FAILURE)
     {
         auto const end_time = std::chrono::system_clock::now();
         auto const time_str = BaseLib::formatDate(end_time);
-        INFO("OGS terminated on {:s}.", time_str);
+        ERR("OGS terminated with error on {:s}.", time_str);
+        return EXIT_FAILURE;
     }
 
     return ogs_status;
