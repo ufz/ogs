@@ -29,7 +29,6 @@ import os
 from pathlib import Path
 from subprocess import run
 
-import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
 
@@ -43,22 +42,16 @@ out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
 
-print(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt")
-run(f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt", shell=True, check=True)
+command = f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt"
+print(command)
+run(command, shell=True, check=True)
 
 # %%
 mesh_series = ot.MeshSeries(f"{prj_name}.pvd").scale(time=("s", "a"))
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
-points_labels = ["pt0", "pt1"]
+labels = [f"{label} linear interpolated" for label in ["pt0", "pt1"]]
 
-fig, ax = plt.subplots(nrows=1, ncols=1)
 ms_pts = ot.MeshSeries.extract_probe(mesh_series, points_coords)
-ot.plot.line(
-    ms_pts,
-    "time",
-    ot.variables.pressure,
-    labels=["{label} linear interpolated" for label in points_labels],
-    ax=fig.axes[0],
-    colors=["b", "r"],
-    linestyles=["-", "-"],
+fig = ot.plot.line(
+    ms_pts, "time", ot.variables.pressure, labels=labels, colors=["b", "r"]
 )
