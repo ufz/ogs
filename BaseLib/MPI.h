@@ -21,6 +21,10 @@
 namespace BaseLib::MPI
 {
 
+#ifdef USE_PETSC
+extern MPI_Comm OGS_COMM_WORLD;
+#endif
+
 struct Setup
 {
     Setup(int argc, char* argv[])
