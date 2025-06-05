@@ -14,6 +14,8 @@
 
 #ifdef USE_PETSC
 #include <mpi.h>
+
+#include "BaseLib/MPI.h"
 #endif
 
 namespace ChemistryLib
@@ -26,7 +28,7 @@ std::string specifyFileName(std::string const& project_file_name,
 #ifdef USE_PETSC
     int mpi_rank;
 
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    MPI_Comm_rank(BaseLib::MPI::OGS_COMM_WORLD, &mpi_rank);
     return project_file_name + "_phreeqc_pid_" + std::to_string(mpi_rank) +
            file_extension;
 #endif

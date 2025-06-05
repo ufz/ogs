@@ -26,6 +26,8 @@
 #include <vtkMPI.h>
 #include <vtkMPICommunicator.h>
 #include <vtkMPIController.h>
+
+#include "BaseLib/MPI.h"
 #endif
 
 class vtkXMLPUnstructuredGridWriter;
@@ -106,7 +108,7 @@ bool VtuInterface::writeVTU(std::string const& file_name,
         // Set the writer controller to same communicator as OGS
         vtkSmartPointer<vtkMPICommunicator> vtk_comm =
             vtkSmartPointer<vtkMPICommunicator>::New();
-        MPI_Comm mpi_comm = MPI_COMM_WORLD;
+        MPI_Comm mpi_comm = BaseLib::MPI::OGS_COMM_WORLD;
         vtkMPICommunicatorOpaqueComm vtk_opaque_comm(&mpi_comm);
         vtk_comm->InitializeExternal(&vtk_opaque_comm);
 

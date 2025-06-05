@@ -48,7 +48,7 @@ struct Setup
 #ifdef USE_PETSC
 struct Mpi
 {
-    Mpi(MPI_Comm const communicator = MPI_COMM_WORLD)
+    Mpi(MPI_Comm const communicator = OGS_COMM_WORLD)
         : communicator(communicator)
     {
         int mpi_init;
@@ -191,7 +191,7 @@ static std::vector<int> allgatherv(
 static inline bool anyOf(bool const val
 #ifdef USE_PETSC
                          ,
-                         Mpi const& mpi = Mpi{MPI_COMM_WORLD}
+                         Mpi const& mpi = Mpi{OGS_COMM_WORLD}
 #endif
 )
 {

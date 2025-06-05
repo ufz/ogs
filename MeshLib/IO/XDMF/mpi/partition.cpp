@@ -28,7 +28,7 @@ namespace MeshLib::IO
 bool isFileManager()
 {
     int mpi_rank;
-    MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
+    MPI_Comm_rank(BaseLib::MPI::OGS_COMM_WORLD, &mpi_rank);
     return mpi_rank == 0;
 }
 

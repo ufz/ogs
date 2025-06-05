@@ -336,7 +336,7 @@ std::vector<GeoLib::NamedRaster> readRasters(
 //    {
 // #if defined(USE_PETSC)
 //        int my_mpi_rank;
-//        MPI_Comm_rank(MPI_COMM_WORLD, &my_mpi_rank);
+//        MPI_Comm_rank(BaseLib::MPI::OGS_COMM_WORLD, &my_mpi_rank);
 // #endif
 //        FileIO::AsciiRasterInterface::writeRasterAsASC(
 //            named_raster.raster, output_directory + "/" +
