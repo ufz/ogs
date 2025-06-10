@@ -101,7 +101,7 @@ model.replace_text(time_end, xpath=f"{timestepping}/maximum_dt")
 
 # The following for loop generates a text with output times,which is then replaced by
 # the project file API (ogstools.Project) in the project file.
-new_line = "\u000A"
+new_line = "\u000a"
 timesteps = str(0.4 * 1e6 * 86400 * 365.25) + new_line
 for t in np.arange(0.6, 1.1, 0.1):
     timesteps += str(t * 1e6 * 86400 * 365.25) + new_line
