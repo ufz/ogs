@@ -81,9 +81,7 @@ def get_top_uy(pvd_file_name):
 
 
 # %%
-def run_single_test(
-    mesh_name, output_prefix, use_fbar=False, use_load_increment=False
-):
+def run_single_test(mesh_name, output_prefix, use_fbar=False, use_load_increment=False):
     prj = ot.Project(
         input_file="CooksMembrane.prj",
         output_file=out_dir / "modified.prj",
