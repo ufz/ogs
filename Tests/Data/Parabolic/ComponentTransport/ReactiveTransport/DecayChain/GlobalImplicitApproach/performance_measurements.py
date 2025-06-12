@@ -33,7 +33,6 @@ import pandas as pd
 import pyvista as pv
 from ogstools.logparser import (
     analysis_time_step,
-    fill_ogs_context,
     parse_file,
     time_step_vs_iterations,
 )
@@ -126,16 +125,14 @@ for _name, case in cases:
     records = parse_file(logfile)
 
     dfa = pd.DataFrame(records)
-    dfb = fill_ogs_context(dfa)
-    dfc = time_step_vs_iterations(dfb)
-    dfd = analysis_time_step(dfb)
-    dfd = dfd.droplevel("mpi_process")
+    dfc = time_step_vs_iterations(dfa)
+    dfd = analysis_time_step(dfa)
+
     dfe = dfd.join(dfc)
-    dfe = dfe.drop(0)  # remove timestep 0 (only output)
-
+    dff = dfe.droplevel("mpi_process")
+    dfg = dff[dff.index.get_level_values("time_step") != 0]
     exec_times.append(dfa["execution_time"].max())
-
-    stats.append(dfe)
+    stats.append(dfg)
 
 
 # %% jupyter={"source_hidden": true}
