@@ -44,6 +44,21 @@ AddTest(
 )
 
 AddTest(
+    NAME PhaseField_3D_beam_tens_AT1_sp
+    PATH PhaseField/beam
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS AT1_sp_tensile.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    RUNTIME 260
+    DIFF_DATA
+        expected_AT1_sp_tension_ts_11_t_1.000000.vtu AT1_sp_tension_ts_11_t_1.000000.vtu displacement displacement 1e-5 0
+        expected_AT1_sp_tension_ts_11_t_1.000000.vtu AT1_sp_tension_ts_11_t_1.000000.vtu phasefield phasefield 1e-6 0
+)
+
+AddTest(
     NAME PhaseField_3D_beam_tens_AT1_vd_2core
     PATH PhaseField/beam
     EXECUTABLE ogs
