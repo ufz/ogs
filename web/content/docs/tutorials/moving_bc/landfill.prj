@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>domain.vtu</mesh>
+        <mesh>bottom_domain.vtu</mesh>
+        <mesh>top_domain.vtu</mesh>
+        <mesh>top_lines.vtu</mesh>
+    </meshes>
+    <python_script>source_term.py</python_script>
+    <processes>
+        <process>
+            <name>HeatConduction</name>
+            <type>HEAT_CONDUCTION</type>
+            <linear>false</linear>
+            <!-- Set to false to allow time-dependent properties -->
+            <integration_order>2</integration_order>
+            <process_variables>
+                <process_variable>temperature</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="heat_flux" output_name="heat_flux"/>
+            </secondary_variables>
+        </process>
+    </processes>
+    <media>
+        <medium id="1">
+            <!-- Landfill waste -->
+            <phases/>
+            <properties>
+                <property>
+                    <name>specific_heat_capacity</name>
+                    <type>Function</type>
+                    <value>
+                        <expression>if(y &gt; 4 + t * 2e-7, 1e12, 2276)</expression>
+                        <!-- Landfill base at y=4 and Construction rate of about 2e-7 m/s (6.3 m/yr) -->
+                    </value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>1.15</value>
+                </property>
+                <property>
+                    <name>density</name>
+                    <type>Constant</type>
+                    <value>999</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="0">
+            <!-- Subsoil -->
+            <phases/>
+            <properties>
+                <property>
+                    <name>specific_heat_capacity</name>
+                    <type>Constant</type>
+                    <value>1500</value>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>Constant</type>
+                    <value>1.3</value>
+                </property>
+                <property>
+                    <name>density</name>
+                    <type>Constant</type>
+                    <value>2400</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="HeatConduction">
+                <nonlinear_solver>nonlinear_solver</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM1</norm_type>
+                    <abstol>1e-2</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>63072000</t_end>
+                    <!-- 2 years -->
+                    <timesteps>
+                        <pair>
+                            <repeat>292</repeat>
+                            <delta_t>216000</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <outputs>
+            <output>
+                <type>XDMF</type>
+                <prefix>Landfill_{:meshname}</prefix>
+                <meshes>
+                    <mesh>domain</mesh>
+                </meshes>
+                <timesteps>
+                    <pair>
+                        <repeat>1</repeat>
+                        <each_steps>1</each_steps>
+                    </pair>
+                </timesteps>
+                <variables>
+                    <variable> temperature </variable>
+                </variables>
+                <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            </output>
+        </outputs>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>T_amb</name>
+            <type>Constant</type>
+            <value>285.45</value>
+            <!-- 285.45 K = 12.3 &#194;&#176;C -->
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>T_amb</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>top_lines</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>T_amb</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+            <source_terms>
+                <source_term>
+                    <mesh>top_domain</mesh>
+                    <type>Python</type>
+                    <source_term_object>source</source_term_object>
+                </source_term>
+            </source_terms>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>nonlinear_solver</name>
+            <type>Newton</type>
+            <max_iter>5</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>CG</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-12</error_tolerance>
+            </eigen>
+            <petsc>
+                <prefix>gw</prefix>
+                <parameters>-gw_ksp_type cg -gw_pc_type bjacobi -gw_ksp_rtol 1e-16 -gw_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+</OpenGeoSysProject>
