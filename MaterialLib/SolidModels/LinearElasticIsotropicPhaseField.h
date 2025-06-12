@@ -27,6 +27,12 @@ namespace Phasefield
  * to degrade the elastic strain energy.
  */
 
+
+template <int DisplacementDim>
+MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> aOdotB(
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& A,
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const& B);
+
 /// heaviside function returns 1.0 if the argument is positive and 0.0 if
 /// negative
 inline double heaviside(double const v)
