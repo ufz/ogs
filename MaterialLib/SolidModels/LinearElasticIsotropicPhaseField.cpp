@@ -1,7 +1,54 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+
 #include "LinearElasticIsotropicPhaseField.h"
 
 namespace MaterialLib::Solids::Phasefield
 {
+double evaluateHTensSpectral(
+    int const i, int const j,
+    Eigen::Matrix<double, 3, 1> const& principal_strain)
+{
+    if (i == j)
+    {
+        return 0.0;
+    }
+    if (std::fabs(principal_strain[i] - principal_strain[j]) <
+        std::numeric_limits<double>::epsilon())
+    {
+        return 2 * heaviside(principal_strain[i]);
+    }
+    return 2 *
+           (macaulayTensile(principal_strain[i]) -
+            macaulayTensile(principal_strain[j])) /
+           (principal_strain[i] - principal_strain[j]);
+}
+
+double evaluateHCompSpectral(
+    int const i, int const j,
+    Eigen::Matrix<double, 3, 1> const& principal_strain)
+{
+    if (i == j)
+    {
+        return 0.0;
+    }
+    double num_zero = 1.e-14;
+
+    if (std::fabs(principal_strain[i] - principal_strain[j]) < num_zero)
+    {
+        return 2 * (1 - heaviside(principal_strain[i]));
+    }
+    return 2 *
+           (macaulayCompressive(principal_strain[i]) -
+            macaulayCompressive(principal_strain[j])) /
+           (principal_strain[i] - principal_strain[j]);
+}
 
 /**
  * Double–minor symmetrized tensor product
