@@ -23,17 +23,10 @@
 namespace
 {
 
-struct Dummy
-{
-    template <class T>
-    void operator()(T &/*obj*/) {}
-};
-
-template <class T_TIME_STEPPING, class T = Dummy>
+template <class T_TIME_STEPPING>
 std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                                  std::vector<int> const& number_iterations,
-                                 std::vector<double> const& fixed_output_times,
-                                 T* obj = nullptr)
+                                 std::vector<double> const& fixed_output_times)
 {
     std::vector<double> vec_t;
     vec_t.push_back(algorithm.begin()());
@@ -73,10 +66,6 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         algorithm.resetCurrentTimeStep(timestepper_dt, previous_timestep,
                                        current_timestep);
         // INFO("t: n={:d},t={:g},dt={:g}", t.steps(), t.current(), t.dt());
-        if (obj)
-        {
-            (*obj)(algorithm);  // do something
-        }
         if (current_timestep.isAccepted())
         {
             vec_t.push_back(current_timestep.current()());
