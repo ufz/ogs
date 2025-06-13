@@ -60,8 +60,6 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_TRUE(step_accepted);
     NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
                             current_timestep);
-    PIDStepper->resetCurrentTimeStep(timestepper_dt, previous_timestep,
-                                     current_timestep);
 
     // NumLib::TimeStep ts = PIDStepper->getTimeStep();
     double h_new = 0.01;
@@ -80,8 +78,6 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_TRUE(step_accepted1);
     NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
                             current_timestep);
-    PIDStepper->resetCurrentTimeStep(timestepper_dt1, previous_timestep,
-                                     current_timestep);
     /// ts = PIDStepper->getTimeStep();
     h_new = current_timestep.dt();
     ASSERT_EQ(2u, current_timestep.timeStepNumber());
@@ -98,8 +94,6 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_TRUE(step_accepted2);
     NumLib::updateTimeSteps(timestepper_dt2, previous_timestep,
                             current_timestep);
-    PIDStepper->resetCurrentTimeStep(timestepper_dt2, previous_timestep,
-                                     current_timestep);
     /// ts = PIDStepper->getTimeStep();
     h_new = current_timestep.dt();
     ASSERT_EQ(3u, current_timestep.timeStepNumber());
@@ -131,8 +125,6 @@ TEST(NumLibTimeStepping, testEvolutionaryPIDcontroller)
     ASSERT_TRUE(step_accepted4);
     NumLib::updateTimeSteps(timestepper_dt4, previous_timestep,
                             current_timestep);
-    PIDStepper->resetCurrentTimeStep(timestepper_dt4, previous_timestep,
-                                     current_timestep);
     /// ts = PIDStepper->getTimeStep();
     h_new = current_timestep.dt();
     ASSERT_EQ(4u, current_timestep.timeStepNumber());

@@ -63,8 +63,6 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
 
         NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
                                 current_timestep);
-        algorithm.resetCurrentTimeStep(timestepper_dt, previous_timestep,
-                                       current_timestep);
         // INFO("t: n={:d},t={:g},dt={:g}", t.steps(), t.current(), t.dt());
         if (current_timestep.isAccepted())
         {
