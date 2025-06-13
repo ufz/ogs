@@ -12,6 +12,7 @@
 
 #include <variant>
 
+#include "BaseLib/Error.h"
 #include "BuildingPowerCurves.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
@@ -27,15 +28,42 @@ struct FlowAndTemperature
     double const temperature;
 };
 
+inline FlowAndTemperature check_power_and_flow_rate(double flow_rate,
+                                                    double power,
+                                                    double heat_capacity,
+                                                    double density,
+                                                    double T_out,
+                                                    double flow_rate_min,
+                                                    double power_min)
+{
+    flow_rate = (std::abs(flow_rate) < flow_rate_min) ? 0.0 : flow_rate;
+
+    if (std::abs(power) < power_min)
+    {
+        return {flow_rate, T_out};
+    }
+
+    if (flow_rate == 0)
+    {
+        OGS_FATAL(
+            "BHE power {:0.2f} W with flow rate of 0 m3/s requested, "
+            "calculation not possible!",
+            power);
+    }
+    return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+};
+
 struct TemperatureCurveConstantFlow
 {
     FlowAndTemperature operator()(double const /*T_out*/,
                                   double const time) const
     {
-        return {flow_rate, temperature_curve.getValue(time)};
+        return {(std::abs(flow_rate) < flow_rate_min) ? 0.0 : flow_rate,
+                temperature_curve.getValue(time)};
     }
     double flow_rate;
     MathLib::PiecewiseLinearInterpolation const& temperature_curve;
+    double flow_rate_min;
     static constexpr bool is_power_bc = false;
 };
 
@@ -44,11 +72,13 @@ struct TemperatureCurveFlowCurve
     FlowAndTemperature operator()(double const /*T_out*/,
                                   double const time) const
     {
-        return {flow_rate_curve.getValue(time),
-                temperature_curve.getValue(time)};
+        double flow_rate = flow_rate_curve.getValue(time);
+        flow_rate = (std::abs(flow_rate) < flow_rate_min) ? 0.0 : flow_rate;
+        return {flow_rate, temperature_curve.getValue(time)};
     }
     MathLib::PiecewiseLinearInterpolation const& flow_rate_curve;
     MathLib::PiecewiseLinearInterpolation const& temperature_curve;
+    double flow_rate_min;
     static constexpr bool is_power_bc = false;
 };
 
@@ -57,12 +87,20 @@ struct FixedPowerConstantFlow
     FlowAndTemperature operator()(double const T_out,
                                   double const /*time*/) const
     {
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     double flow_rate;
     double power;  // Value is expected to be in Watt.
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -70,15 +108,23 @@ struct FixedPowerFlowCurve
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        double const flow_rate = flow_curve.getValue(time);
+
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     MathLib::PiecewiseLinearInterpolation const& flow_curve;
 
     double power;  // Value is expected to be in Watt.
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -87,17 +133,22 @@ struct PowerCurveConstantFlow
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
         double const power = power_curve.getValue(time);
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     MathLib::PiecewiseLinearInterpolation const& power_curve;
 
     double flow_rate;
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -106,20 +157,23 @@ struct PowerCurveFlowCurve
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
         double const power = power_curve.getValue(time);
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     MathLib::PiecewiseLinearInterpolation const& power_curve;
     MathLib::PiecewiseLinearInterpolation const& flow_curve;
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -127,22 +181,27 @@ struct BuildingPowerCurveConstantFlow
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        double const power = building_power_curves.power_curve.getValue(time);
+        double const power_building =
+            building_power_curves.power_curve.getValue(time);
         double const cop = building_power_curves.cop_curve.getValue(T_out);
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate,
-                power * (cop - 1) / cop / flow_rate / heat_capacity / density +
-                    T_out};
+        double const power = power_building - power_building / cop;
+
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_power_curves;
 
     double flow_rate;
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -165,18 +224,19 @@ struct BuildingPowerCurveHotWaterCurveActiveCoolingCurveFlowCurve
         double const cop_cooling =
             building_active_cooling_curves.cop_curve.getValue(T_out);
 
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
-        double power = power_heating - power_heating / cop_heating +
-                       power_hot_water - power_hot_water / cop_hot_water +
-                       power_cooling - power_cooling / cop_cooling;
+        double const power = power_heating - power_heating / cop_heating +
+                             power_hot_water - power_hot_water / cop_hot_water +
+                             power_cooling - power_cooling / cop_cooling;
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_heating_curves;
     BuildingPowerCurves const building_hot_water_curves;
@@ -185,6 +245,8 @@ struct BuildingPowerCurveHotWaterCurveActiveCoolingCurveFlowCurve
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -202,20 +264,21 @@ struct BuildingPowerCurveHotWaterCurvePassiveCoolingCurveFlowCurve
         double const cop_hot_water =
             building_hot_water_curves.cop_curve.getValue(T_out);
 
-        double power_cooling = cooling_power.getValue(time);
+        double const power_cooling = cooling_power.getValue(time);
 
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
-        double power = power_heating - power_heating / cop_heating +
-                       power_hot_water - power_hot_water / cop_hot_water +
-                       power_cooling;
+        double const power = power_heating - power_heating / cop_heating +
+                             power_hot_water - power_hot_water / cop_hot_water +
+                             power_cooling;
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_heating_curves;
     BuildingPowerCurves const building_hot_water_curves;
@@ -224,6 +287,8 @@ struct BuildingPowerCurveHotWaterCurvePassiveCoolingCurveFlowCurve
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -241,17 +306,18 @@ struct BuildingPowerCurveHotWaterCurveFlowCurve
         double const cop_hot_water =
             building_hot_water_curves.cop_curve.getValue(T_out);
 
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
-        double power = power_heating - power_heating / cop_heating +
-                       power_hot_water - power_hot_water / cop_hot_water;
+        double const power = power_heating - power_heating / cop_heating +
+                             power_hot_water - power_hot_water / cop_hot_water;
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_heating_curves;
     BuildingPowerCurves const building_hot_water_curves;
@@ -259,6 +325,8 @@ struct BuildingPowerCurveHotWaterCurveFlowCurve
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -276,17 +344,18 @@ struct BuildingPowerCurveActiveCoolingCurveFlowCurve
         double const cop_cooling =
             building_active_cooling_curves.cop_curve.getValue(T_out);
 
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
-        double power = power_heating - power_heating / cop_heating +
-                       power_cooling - power_cooling / cop_cooling;
+        double const power = power_heating - power_heating / cop_heating +
+                             power_cooling - power_cooling / cop_cooling;
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_heating_curves;
     BuildingPowerCurves const building_active_cooling_curves;
@@ -294,6 +363,8 @@ struct BuildingPowerCurveActiveCoolingCurveFlowCurve
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -308,17 +379,18 @@ struct BuildingPowerCurvePassiveCoolingCurveFlowCurve
 
         double const power_cooling = cooling_power.getValue(time);
 
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
-        double power =
+        double const power =
             power_heating - power_heating / cop_heating + power_cooling;
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_heating_curves;
     MathLib::PiecewiseLinearInterpolation const& cooling_power;
@@ -326,6 +398,8 @@ struct BuildingPowerCurvePassiveCoolingCurveFlowCurve
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -338,22 +412,25 @@ struct BuildingPowerCurveFlowCurve
         double const cop_heating =
             building_heating_curves.cop_curve.getValue(T_out);
 
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
         double const power = power_heating - power_heating / cop_heating;
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_heating_curves;
     MathLib::PiecewiseLinearInterpolation const& flow_curve;
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -366,22 +443,25 @@ struct ActiveCoolingCurveFlowCurve
         double const cop_cooling =
             building_active_cooling_curves.cop_curve.getValue(T_out);
 
-        double flow_rate = flow_curve.getValue(time);
-        flow_rate = (std::abs(flow_rate) < 1e-12) ? 0.0 : flow_rate;
+        double const flow_rate = flow_curve.getValue(time);
 
         double const power = power_cooling - power_cooling / cop_cooling;
 
-        if (std::abs(power) < 1e-12)
-        {
-            return {flow_rate, T_out};
-        }
-        return {flow_rate, power / flow_rate / heat_capacity / density + T_out};
+        return check_power_and_flow_rate(flow_rate,
+                                         power,
+                                         heat_capacity,
+                                         density,
+                                         T_out,
+                                         flow_rate_min,
+                                         power_min);
     }
     BuildingPowerCurves const building_active_cooling_curves;
     MathLib::PiecewiseLinearInterpolation const& flow_curve;
 
     double heat_capacity;
     double density;
+    double flow_rate_min;
+    double power_min;
     static constexpr bool is_power_bc = true;
 };
 
