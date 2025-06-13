@@ -361,3 +361,85 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
     ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
                       std::numeric_limits<double>::epsilon());
 }
+
+TEST(NumLib, TimeSteppingIterationNumberBased_simple)
+{
+    // *** initialization of IterationNumberBaseTimeStepping object
+    std::vector<int> iter_times_vector = {
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+    std::vector<double> multiplier_vector = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                             1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    std::vector<double> fixed_output_times = {};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
+    // *** original data
+    double const t_initial = 0.0;
+    double const t_end = 8000.0;
+    double const min_dt = 0.001;
+    double const max_dt = 2100;
+    double const initial_dt = 100;
+    NumLib::IterationNumberBasedTimeStepping alg(
+        t_initial, t_end, min_dt, max_dt, initial_dt,
+        multiplier_interpolation_type, std::move(iter_times_vector),
+        std::move(multiplier_vector), std::move(fixed_output_times));
+    // *** end initialization of IterationNumberBaseTimeStepping object
+
+    std::vector<int> const rejected_steps = {};
+    std::vector<int> nr_iterations = {
+        0, 4, 3,  9, 3,  5, 4, 3, 3, 7, 10, 4, 3, 3, 3, 5, 3, 4, 7, 15,
+        3, 7, 15, 3, 11, 8, 4, 5, 5, 4, 3,  3, 3, 3, 3, 3, 3, 5, 3, 3,
+        3, 3, 3,  3, 7,  5, 4, 4, 3, 3, 3,  3, 3, 3, 3, 3, 3, 3, 3, 4,
+        4, 3, 3,  3, 3,  3, 3, 3, 3, 3, 3,  3, 3, 3, 3, 3, 4, 3, 3, 3};
+    // current time step size:
+    const std::vector<double> expected_vec_t = {
+        0,    100,  200,  300,  400,  500,  600,  700,  800,  900,  1000, 1100,
+        1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
+        2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500,
+        3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700,
+        4800, 4900, 5000, 5100, 5200, 5300, 5400, 5500, 5600, 5700, 5800, 5900,
+        6000, 6100, 6200, 6300, 6400, 6500, 6600, 6700, 6800, 6900, 7000, 7100,
+        7200, 7300, 7400, 7500, 7600, 7700, 7800, 7900, 8000};
+
+    std::vector<double> const vec_t =
+        timeStepping(alg, nr_iterations, fixed_output_times, rejected_steps);
+
+    EXPECT_EQ(expected_vec_t.size(), vec_t.size());
+    ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
+                      std::numeric_limits<double>::epsilon());
+}
+
+TEST(NumLib, TimeSteppingIterationNumberBased_simple2)
+{
+    // *** initialization of IterationNumberBaseTimeStepping object
+    std::vector<int> iter_times_vector = {
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
+    std::vector<double> multiplier_vector = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+                                             1, 1, 1, 1, 1, 1, 1, 1, 1, .1};
+    std::vector<double> fixed_output_times = {};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
+    double const t_initial = 0.0;
+    double const t_end = 200.0;
+    double const min_dt = 10;
+    double const max_dt = 200;
+    double const initial_dt = 100;
+    NumLib::IterationNumberBasedTimeStepping alg(
+        t_initial, t_end, min_dt, max_dt, initial_dt,
+        multiplier_interpolation_type, std::move(iter_times_vector),
+        std::move(multiplier_vector), std::move(fixed_output_times));
+    // *** end initialization of IterationNumberBaseTimeStepping object
+
+    std::vector<int> const rejected_steps = {2};
+    std::vector<int> const nr_iterations = {0, 4, 3, 3,  3,  3,
+                                            3, 3, 9, 10, 19, 1};
+    // current time step size:
+    std::vector<double> const expected_vec_t = {
+        0, 100, 200, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200};
+
+    std::vector<double> const vec_t =
+        timeStepping(alg, nr_iterations, fixed_output_times, rejected_steps);
+
+    EXPECT_EQ(expected_vec_t.size(), vec_t.size());
+    ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
+                      std::numeric_limits<double>::epsilon());
+}
