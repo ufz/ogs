@@ -31,7 +31,7 @@
 # # Cook's membrane example for nearly incompressible solid under large deformation
 #
 # The example has been analyzed in many references, for example with the F-bar method in [1] and [2].
-# This example is also used as benchmark for [SmallDeformation](https://www.opengeosys.org/docs/benchmarks/small-deformations/cooksmembranefbar/). Hereby we analyze it again under finite strain assumption using the F-bar method for the total Lagrange formulation (see the attached [PDF](figures/F-bar-ogs.pdf) for its theory).
+# This example is also used as benchmark for [SmallDeformation](https://www.opengeosys.org/docs/benchmarks/small-deformations/cooksmembranebbar/). Hereby we analyze it again under finite strain assumption using the F-bar method for the total Lagrange formulation (see the attached [PDF](figures/F-bar-ogs.pdf) for its theory).
 # For the finite strain assumption, the constitutive law is replaced with a hyperelasticity one, the Neo-Hookean. The Neo-Hookean model defines an energy function as the sum of volumetric component $U_{\text{dil}}(\F)$ and deviatoric component $U_{\text{dev}}(\F)$ as
 # $$
 # \begin{align}
