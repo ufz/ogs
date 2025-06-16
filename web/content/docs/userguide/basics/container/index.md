@@ -16,14 +16,15 @@ To **build** OGS with the help of a container go to the [Developer Guide]({{< re
 
 </div>
 
-## With Singularity
-<!-- TODO: Update this section regarding Apptainer -->
+## With Apptainer
+
+[Apptainer](https://apptainer.org), formerly [Singularity](https://docs.sylabs.io/guides/3.5/user-guide/introduction.html) is a Linux container runtime.
 
 ### Prerequisites
 
-* A running installation of Singularity 3.0 or higher:
-  * Available on Eve (UFZ), `envinf1` / `envinf2` (UFZ), Juwels (SC Jülich), Taurus (TU Dresden).
-  * See the developer guide for [install instructions]({{< ref "singularity.md#prerequisites" >}}).
+* A running installation of Apptainer:
+  * Available on Eve (UFZ),  all envinfs (UFZ), Juwels (SC Jülich), Taurus (TU Dresden).
+  * See the Apptainers Admin guide for [install instructions](https://apptainer.org/docs/admin/latest/admin_quickstart.html#installation).
 
 ### Get a container image
 
@@ -46,13 +47,11 @@ Simply download an image from the latest master-branch build:
 * [ogs-petsc-mkl.squashfs](https://vip.s3.ufz.de/ogs/public/container/ogs/master/ogs-petsc-mkl.squashfs) (with PETSC- and MKL Pardiso-support )
 <!-- vale on -->
 
-Please note that these images have `.squashfs` as the file ending. Usage is the same as with `.sif`-files.
-
 ### Run OGS inside a Container (called from outside)
 
 ```bash
 # Linux only:
-singularity exec ogs-6.x.x-serial.sif ogs some/path/project.prj
+apptainer exec ogs-6.x.x-serial.squashfs ogs some/path/project.prj
 ```
 
 This starts the container, mounts your home directory inside the container, passes the current working directory and runs the `ogs` executable (in your home directory which is mounted inside the container) with the passed project file. When using
@@ -62,7 +61,7 @@ You can also specify the full executable path in the container:
 
 ```bash
 # Works on macOS too:
-singularity exec ogs-6.x.x-serial.sif /usr/local/ogs/bin/ogs ...
+apptainer exec ogs-6.x.x-serial.squashfs /usr/local/ogs/bin/ogs ...
 ```
 
 Running a benchmark:
@@ -71,29 +70,29 @@ Running a benchmark:
 # Create output directories
 mkdir -p _out _out_mpi
 # Run serial benchmark
-singularity exec ogs-6.x.x-serial.sif ogs -o _out [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
+apptainer exec ogs-6.x.x-serial.squashfs ogs -o _out [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 # Run serial benchmark with output validation (via vtkdiff)
-singularity exec ogs-6.x.x-serial.sif ogs -o _out -r [ogs-sources]/Tests/Data/Mechanics/Linear [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
+apptainer exec ogs-6.x.x-serial.squashfs ogs -o _out -r [ogs-sources]/Tests/Data/Mechanics/Linear [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 # Run parallel benchmark with MPI
-mpirun -np 4 singularity ogs ogs-6.x.x-openmpi-2.1.2.sif ogs -o _out_mpi [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
+mpirun -np 4 apptainer ogs ogs-6.x.x-openmpi-2.1.2.squashfs ogs -o _out_mpi [ogs-sources]/Tests/Data/Mechanics/Linear/disc_with_hole.prj
 ```
 
 You can run other contained executables as well, e.g. `vtkdiff`:
 
 ```bash
-singularity exec ogs-6.x.x-serial.sif vtkdiff --help
+apptainer exec ogs-6.x.x-serial.squashfs vtkdiff --help
 ```
 
-You can interactively explore the container with `singularity shell` (you can see that you are **in** the container because of the `Singularity [container image file]:...>` prefix of the shell):
+You can interactively explore the container with `apptainer shell` (you can see that you are **in** the container because of the `Apptainer>` prefix of the shell):
 
 ```bash
 # Shell into container
-singularity shell ogs-6.x.x-serial.sif
-# List files in the container
-Singularity ogs-6.x.x-serial.sif:...> ls /scif/apps/ogs/bin
+apptainer shell ogs-6.x.x-serial.squashfs
+# List binaries in the container
+Apptainer> ls $PATH
 ... ogs vtkdiff
 # Exit the container and get back to your hosts shell
-Singularity ogs-6.x.x-serial.sif:...> exit
+Apptainer> exit
 ```
 
 ### Custom Python environment for the container
@@ -102,7 +101,7 @@ For certain benchmarks or tutorials you may need additional Python packages. You
 
 ```bash
 mkdir my-working-directory && cd my-working-directory
-singularity shell my-container.sif
+apptainer shell my-container.squashfs
 
 # Now in the container
 virtualenv .venv
@@ -114,12 +113,5 @@ exit
 # Now outside the container
 # The virtualenv-directory .venv still persists
 # If you want to run something in the container with exec, source the venv before:
-singularity exec my-container.sif bash -c 'source .venv/bin/activate && ogs ...'
+apptainer exec my-container.squashfs bash -c 'source .venv/bin/activate && ogs ...'
 ```
-
-### Run the DataExplorer inside a Container
-
-* Get a Singularity container with the DataExplorer (has `-gui` in its name)
-* `singularity exec ogs-xxx-gui-xxx.sif DataExplorer`
-
-You may use this container on e.g. `envinf1` with X11 forwarding (`ssh -XY envinf1`).
