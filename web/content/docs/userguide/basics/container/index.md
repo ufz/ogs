@@ -5,38 +5,25 @@ author = "Lars Bilke"
 weight = 31
 +++
 
-<div class='note'>
+This page describes how to **run** OGS with the help of a Linux container (for **users**) with [Apptainer](https://apptainer.org), formerly [Singularity](https://docs.sylabs.io/guides/3.5/user-guide/introduction.html).
 
-### Important note
-
-<!-- TODO: Consider to place this section somewhere outside of basics, e.g., as an individual section as the context may be
-considered already pretty advanced. -->
-This page describes how to **run** OGS with the help of a Linux container (for **users**).
-To **build** OGS with the help of a container go to the [Developer Guide]({{< ref "singularity.md" >}}) (for **developers**).
-
-</div>
-
-## With Apptainer
-
-[Apptainer](https://apptainer.org), formerly [Singularity](https://docs.sylabs.io/guides/3.5/user-guide/introduction.html) is a Linux container runtime.
-
-### Prerequisites
+## Prerequisites
 
 * A running installation of Apptainer:
   * Available on Eve (UFZ),  all envinfs (UFZ), Juwels (SC Jülich), Taurus (TU Dresden).
   * See the Apptainers Admin guide for [install instructions](https://apptainer.org/docs/admin/latest/admin_quickstart.html#installation).
 
-### Get a container image
+## Get a container image
 
-#### Recommended option on EVE: use prebuilt images
+### Recommended option on EVE: use prebuilt images
 
 On the EVE cluster system (UFZ) you can use prebuilt images which can be used for [PETSc-based cluster jobs]({{< ref "parallel_computing_mpi.md#2a-use-a-container-to-launch-mpi-ogs" >}}).
 
-#### Option: Download a release image (preferred)
+### Option: Download a release image (preferred)
 
 Simply download an image from the [releases]({{< ref "/releases" >}}) page.
 
-#### Option: Download image from the latest master-branch build
+### Option: Download image from the latest master-branch build
 
 Simply download an image from the latest master-branch build:
 
@@ -47,7 +34,7 @@ Simply download an image from the latest master-branch build:
 * [ogs-petsc-mkl.squashfs](https://vip.s3.ufz.de/ogs/public/container/ogs/master/ogs-petsc-mkl.squashfs) (with PETSC- and MKL Pardiso-support )
 <!-- vale on -->
 
-### Run OGS inside a Container (called from outside)
+## Run OGS inside a Container (called from outside)
 
 ```bash
 # Linux only:
@@ -95,7 +82,7 @@ Apptainer> ls $PATH
 Apptainer> exit
 ```
 
-### Custom Python environment for the container
+## Custom Python environment for the container
 
 For certain benchmarks or tutorials you may need additional Python packages. You can create a Python [virtual environment](https://virtualenv.pypa.io/en/latest/) inside the container (stored on your host) and install packages via `pip` (inside the container):
 
