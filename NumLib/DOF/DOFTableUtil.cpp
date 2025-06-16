@@ -128,6 +128,31 @@ std::vector<GlobalIndexType> getIndices(
     return indices;
 }
 
+std::vector<GlobalIndexType> getIndices(
+    std::size_t const variable_id,
+    std::size_t const component_id,
+    std::size_t const bulk_element_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table)
+{
+    auto const& ms =
+        dof_table.getMeshSubset(variable_id, component_id).getMesh();
+    std::vector<GlobalIndexType> indices;
+    auto const& bulk_element = ms.getElement(bulk_element_id);
+    auto const global_component =
+        dof_table.getGlobalComponent(variable_id, component_id);
+    auto const mesh_id = ms.getID();
+
+    for (auto const node_id : bulk_element->nodes() | MeshLib::views::ids)
+    {
+        MeshLib::Location const loc{mesh_id, MeshLib::MeshItemType::Node,
+                                    node_id};
+        // TODO: possible issues on higher order meshes with first order
+        // variables (e.g. pressure in HM).
+        indices.push_back(dof_table.getGlobalIndex(loc, global_component));
+    }
+    return indices;
+}
+
 NumLib::LocalToGlobalIndexMap::RowColumnIndices getRowColumnIndices(
     std::size_t const id,
     NumLib::LocalToGlobalIndexMap const& dof_table,

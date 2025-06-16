@@ -180,6 +180,11 @@ ProcessVariable::ProcessVariable(
                     // dummy value
                     component_id = 0;
                 }
+                else if (type == "EmbeddedAnchor")
+                {
+                    // dummy value
+                    component_id = 0;
+                }
                 else
                 {
                     OGS_FATAL(
@@ -304,9 +309,9 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 
     // If none of the deactivated subdomains is active at current time, then the
     // _ids_of_active_elements remain empty.
-    if (std::none_of(
-            begin(_deactivated_subdomains), end(_deactivated_subdomains),
-            [&](auto const& ds) { return ds.isInTimeSupportInterval(time); }))
+    if (std::none_of(begin(_deactivated_subdomains),
+                     end(_deactivated_subdomains), [&](auto const& ds)
+                     { return ds.isInTimeSupportInterval(time); }))
     {
         // Also mark all of the elements as active.
         assert(_is_active != nullptr);  // guaranteed by constructor
@@ -349,15 +354,15 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
     }
 }
 
-std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
-    const NumLib::LocalToGlobalIndexMap& dof_table,
-    const int variable_id,
+std::vector<std::unique_ptr<SourceTermBase>> ProcessVariable::createSourceTerms(
+    const NumLib::LocalToGlobalIndexMap& dof_table, const int variable_id,
     unsigned const integration_order,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::vector<std::reference_wrapper<ProcessVariable>> const&
-        all_process_variables_for_this_process)
+        all_process_variables_for_this_process,
+    const MeshLib::Mesh& bulk_mesh)
 {
-    std::vector<std::unique_ptr<SourceTerm>> source_terms;
+    std::vector<std::unique_ptr<SourceTermBase>> source_terms;
 
     transform(cbegin(_source_term_configs), cend(_source_term_configs),
               back_inserter(source_terms),
@@ -366,7 +371,7 @@ std::vector<std::unique_ptr<SourceTerm>> ProcessVariable::createSourceTerms(
                   return createSourceTerm(
                       config, dof_table, config.mesh, variable_id,
                       integration_order, _shapefunction_order, parameters,
-                      all_process_variables_for_this_process);
+                      all_process_variables_for_this_process, bulk_mesh);
               });
 
     return source_terms;

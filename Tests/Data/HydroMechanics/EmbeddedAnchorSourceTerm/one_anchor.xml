@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="one_anchor.prj">
+    <replace msel="/*/process_variables/process_variable/source_terms/source_term/type/text()">EmbeddedAnchor</replace>
+</OpenGeoSysProjectDiff>

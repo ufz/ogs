@@ -13,6 +13,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoMechanics/InitialStates/into_initial_state.prj)
     OgsTest(PROJECTFILE ThermoMechanics/InitialStates/equilibrium_restart.prj)
     OgsTest(PROJECTFILE ThermoMechanics/InitialStates/non_equilibrium_initial_state.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/EmbeddedAnchorSourceTerm/prism_hex.prj)
     # Staggered Scheme
     OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/TM_Quad/iglu_quarter_plane_strain_quad.prj RUNTIME 67)
     OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/CreepAfterExcavation/CreepAfterExcavation.prj RUNTIME 67)

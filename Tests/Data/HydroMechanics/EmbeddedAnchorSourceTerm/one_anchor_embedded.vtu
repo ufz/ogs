@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="2"                    NumberOfCells="1"                   >
+      <PointData>
+        <DataArray type="Float64" Name="natural_coordinates" NumberOfComponents="3" format="appended" RangeMin="2.355138688e-15"      RangeMax="1"                    offset="0"                   />
+        <DataArray type="UInt64" Name="bulk_element_ids" format="appended" RangeMin="37"                   RangeMax="87"                   offset="68"                  />
+        <DataArray type="UInt64" Name="point_cloud_node_ids" format="appended" RangeMin="0"                    RangeMax="1"                    offset="112"                 />
+      </PointData>
+      <CellData>
+      </CellData>
+      <Points>
+        <DataArray type="Float32" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0.8500000028"         RangeMax="1.1335784228"         offset="156"                 />
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="216"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="260"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="300"                 />
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+  <AppendedData encoding="base64">
+   _AQAAAACAAAAwAAAAHwAAAA==eJxjYACBe3tYwPSH/Qwo4N6eD/9B4K4NTAQA8mwL7A==AQAAAACAAAAQAAAADgAAAA==eJxTZYCAcCgNAAUYAH0=AQAAAACAAAAQAAAADgAAAA==eJxjYIAARigNAAAYAAI=AQAAAACAAAAYAAAAGwAAAA==eJxjYHCwP3vmjB0DGDjYz5oZaQ9iAQBNaAVtAQAAAACAAAAQAAAADgAAAA==eJxjYIAARigNAAAYAAI=AQAAAACAAAAIAAAACwAAAA==eJxjYoAAAAAYAAM=AQAAAACAAAABAAAACQAAAA==eJxjBgAABAAE
+  </AppendedData>
+</VTKFile>

@@ -37,6 +37,14 @@ std::vector<GlobalIndexType> getIndices(
     std::size_t const mesh_item_id,
     NumLib::LocalToGlobalIndexMap const& dof_table);
 
+//! Returns nodal indices for the item identified by \c component_item_id and
+//! \c variable_id and \c bulk_element_id from thegiven \c dof_table.
+std::vector<GlobalIndexType> getIndices(
+    std::size_t const variable_id,
+    std::size_t const component_id,
+    std::size_t const bulk_element_id,
+    NumLib::LocalToGlobalIndexMap const& dof_table);
+
 //! Returns row/column indices for the item identified by \c id from the
 //! given \c dof_table.
 LocalToGlobalIndexMap::RowColumnIndices getRowColumnIndices(
