@@ -6,6 +6,7 @@ Algolia
 Aluminol
 Alves
 Appelo
+Apptainer
 Atteia
 Autolinks
 BC[s?]
@@ -41,6 +42,7 @@ Eigen
 Elastoplastic
 Elsevier
 Engesgaard
+envinfs
 Eskilson
 Everton
 Fairhurst
