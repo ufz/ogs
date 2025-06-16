@@ -123,31 +123,3 @@ singularity exec my-container.sif bash -c 'source .venv/bin/activate && ogs ...'
 * `singularity exec ogs-xxx-gui-xxx.sif DataExplorer`
 
 You may use this container on e.g. `envinf1` with X11 forwarding (`ssh -XY envinf1`).
-
-----
-
-## With Docker
-
-Although Singularity is the preferred container runtime you can use [Docker](https://www.docker.com) too.
-
-### Prerequisites
-
-* A running [installation of Docker](https://docs.docker.com/get-docker/)
-
-### Run OGS inside a Docker container
-
-* Get the container: `docker pull registry.opengeosys.org/ogs/ogs/ogs-serial`
-* Start interactive container session: `docker run --rm -it registry.opengeosys.org/ogs/ogs/ogs-serial`
-* Run `ogs`: `/usr/local/ogs/bin/ogs --version`
-* Exit the container: `exit`
-
-You will notice that the interactive session in your container is isolated from your host, i.e. you do not have access to files on your host. You need to explicitly [mount](https://docs.docker.com/storage/bind-mounts/) them on `docker run`:
-
-```bash
-mkdir ~/ogs_out
-docker run --rm -it -v $HOME/code/ogs6/ogs/Tests/Data:/tmp/data:ro -v $HOME/ogs_out:/tmp/out registry.opengeosys.org/ogs/ogs/ogs-serial
-/usr/local/ogs/bin/ogs -o /tmp/out /tmp/data/Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e4.prj
-exit
-ls ~/ogs_out
-# [shows ogs generated output files]
-```
