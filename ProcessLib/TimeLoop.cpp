@@ -577,7 +577,7 @@ void TimeLoop::outputLastTimeStep() const
     // output last time step
     if (successful_time_step)
     {
-        outputSolutions(_accepted_steps + _rejected_steps, _current_time(),
+        outputSolutions(_accepted_steps, _current_time(),
                         &Output::doOutputLastTimestep);
     }
 }
