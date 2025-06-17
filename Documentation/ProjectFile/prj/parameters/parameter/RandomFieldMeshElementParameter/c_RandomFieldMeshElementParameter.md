@@ -1,1 +1,0 @@
-Defines a parameter with random values in each mesh element with a uniform distribution in a given range. A given seed for initializing the random number generator allows for repeatability of the random field.
