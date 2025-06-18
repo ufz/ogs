@@ -131,8 +131,8 @@
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>1</t_end>
+                    <t_initial>-0.5</t_initial>
+                    <t_end>0.5</t_end>
                     <timesteps>
                         <pair>
                             <repeat>10</repeat>
@@ -153,8 +153,8 @@
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>1</t_end>
+                    <t_initial>-0.5</t_initial>
+                    <t_end>0.5</t_end>
                     <timesteps>
                         <pair>
                             <repeat>10</repeat>
