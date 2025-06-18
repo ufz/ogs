@@ -208,6 +208,7 @@ struct HdfWriter::HdfMesh final
 
 HdfWriter::HdfWriter(std::vector<MeshHdfData> const& meshes,
                      unsigned long long const initial_step,
+                     double const initial_time,
                      std::filesystem::path const& filepath,
                      bool const use_compression,
                      bool const is_file_manager,
@@ -216,7 +217,7 @@ HdfWriter::HdfWriter(std::vector<MeshHdfData> const& meshes,
       _file(createFile(filepath, n_files)),
       _meshes_group(
           H5Gcreate2(_file, "/meshes", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)),
-      _step_times{0},  // ToDo need to be initial time
+      _step_times{initial_time},
       _use_compression(checkCompression() && use_compression),
       _is_file_manager(is_file_manager)
 {

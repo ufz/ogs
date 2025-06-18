@@ -40,6 +40,8 @@ public:
      * @param meshes meta data of meshes to be written
      * @param initial_step number of the step (temporal collection), usually 0,
      * greater 0 with continuation of simulation
+     * @param initial_time start time; usually 0, but may differ (e.g. for
+     * restart).
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param use_compression if true gzip compression is enabled
      * @param is_file_manager True if process (in parallel execution) is
@@ -47,6 +49,7 @@ public:
      */
     HdfWriter(std::vector<MeshHdfData> const& meshes,
               unsigned long long initial_step,
+              double initial_time,
               std::filesystem::path const& filepath,
               bool use_compression,
               bool is_file_manager,
