@@ -167,18 +167,23 @@ points_labels = ["pt0", "pt1"]
 fig, ax = plt.subplots(nrows=1, ncols=1)
 
 colors = {"x": ["b", "r"], "y": ["g", "m"]}
-linestyles = {"linear": ["-", "-"], "nearest": ["--", "--"]}
+linestyles = {"linear": "-", "nearest": "--"}
 
 for component in ["x", "y"]:
     for interp_method in ["linear", "nearest"]:
         labels = [f"$u_{component}$ {label} {interp_method}" for label in points_labels]
 
-        ms.plot_probe(
-            points_coords,
+        ms_pts = ot.MeshSeries.extract_probe(
+            ms, points_coords, interp_method=interp_method
+        ).scale(time=("s", "a"))
+        ot.plot.line(
+            ms_pts,
+            "time",
             ot.variables.displacement[component],
             labels=labels,
-            interp_method=interp_method,
             ax=fig.axes[0],
             colors=colors[component],
-            linestyles=linestyles[interp_method],
+            linestyle=linestyles[interp_method],
         )
+
+# %%
