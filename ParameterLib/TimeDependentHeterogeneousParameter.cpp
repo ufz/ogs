@@ -116,18 +116,18 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
     //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "TimeDependentHeterogeneousParameter");
     auto const time_series_config =
-        //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneousParameter__time_series}
+        //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneous__time_series}
         config.getConfigSubtree("time_series");
 
     std::vector<TimeDependentHeterogeneousParameter::PairTimeParameterName>
         time_series;
-    //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneousParameter__time_series__pair}
+    //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneous__time_series__pair}
     for (auto const p : time_series_config.getConfigSubtreeList("pair"))
     {
-        //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneousParameter__time_series__pair__time}
+        //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneous__time_series__pair__time}
         auto time = p.getConfigParameter<double>("time");
         auto parameter_name =
-            //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneousParameter__time_series__pair__parameter_name}
+            //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneous__time_series__pair__parameter_name}
             p.getConfigParameter<std::string>("parameter_name");
         time_series.emplace_back(time, parameter_name);
     }

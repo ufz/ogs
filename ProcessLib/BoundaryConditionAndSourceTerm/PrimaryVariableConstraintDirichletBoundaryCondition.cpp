@@ -116,7 +116,7 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "PrimaryVariableConstraintDirichlet");
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__parameter}
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichlet__parameter}
     auto const param_name = config.getConfigParameter<std::string>("parameter");
     DBUG("Using parameter {:s}", param_name);
 
@@ -124,7 +124,7 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
         param_name, parameters, 1, &bc_mesh);
 
     auto const threshold_parameter_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__threshold_parameter}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichlet__threshold_parameter}
         config.getConfigParameter<std::string>("threshold_parameter");
     DBUG("Using parameter {:s} as threshold_parameter",
          threshold_parameter_name);
@@ -133,7 +133,7 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
         threshold_parameter_name, parameters, 1, &bc_mesh);
 
     auto const comparison_operator_string =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichletBoundaryCondition__comparison_operator}
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichlet__comparison_operator}
         config.getConfigParameter<std::string>("comparison_operator");
     if (comparison_operator_string != "greater" &&
         comparison_operator_string != "less")
