@@ -106,6 +106,15 @@ if(_build_chemistry_lib)
     endif()
 endif()
 
+if(GUIX_BUILD)
+    find_package(Eigen3 REQUIRED)
+    if("${Eigen3_VERSION}" VERSION_GREATER 3.4)
+        set(OGS_USE_EIGEN_UNSUPPORTED ON CACHE BOOL "" FORCE)
+    else()
+        set(OGS_USE_EIGEN_UNSUPPORTED OFF CACHE BOOL "" FORCE)
+    endif()
+endif()
+
 set(_eigen_version ${ogs.minimum_version.eigen})
 set(_eigen_url
     https://gitlab.com/libeigen/eigen/-/archive/${_eigen_version}/eigen-${_eigen_version}.tar.gz
