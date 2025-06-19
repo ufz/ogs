@@ -20,11 +20,10 @@ build guix:
   script:
     - which guix
     - guix describe
-    # SteadyStateDiffusion only!
     - |
       if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci::guix\ only.* ]]; then
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-serial --with-source=ogs-serial=$PWD --with-c-toolchain=ogs-serial=gcc-toolchain@13.3.0
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc --with-source=ogs-petsc=$PWD --with-input=openmpi=openmpi@4.1.6 --with-c-toolchain=ogs-petsc=gcc-toolchain@13.3.0
+        guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest.scm
+        guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-petsc.scm
         guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-mkl --with-source=ogs-petsc-mkl=$PWD --with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://www.vtk.org/files/release/9.3/VTK-9.3.1.tar.gz --with-input=openmpi=openmpi@4.1.6 --with-c-toolchain=ogs-petsc-mkl=gcc-toolchain@13.3.0
       else
         guix time-machine -C scripts/guix/channels.scm -- build ogs-ssd --with-source=ogs-ssd=$PWD --with-c-toolchain=ogs-ssd=gcc-toolchain@13.3.0
