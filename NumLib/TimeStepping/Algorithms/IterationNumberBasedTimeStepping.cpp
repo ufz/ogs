@@ -165,6 +165,9 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize(
         return std::clamp(dt, _min_dt, _max_dt);
     }
 
+    // restrict dt to _max_dt before taking fixed times for output into account
+    dt = std::min(dt, _max_dt);
+
     // find first fixed timestep for output larger than the current time, i.e.,
     // current time < fixed output time
     auto fixed_output_time_it = std::find_if(
