@@ -26,18 +26,20 @@ The package definitions for OGS are defined in [this repo](https://gitlab.openge
 ### From local source tree
 
 ```bash
-# builds ogs serial config
-guix time-machine -C scripts/guix/channels.scm -- \
-  build ogs-serial --with-source=ogs@6.4.4-testing=$PWD
-# SteadyStateDiffuion process only:
-guix time-machine -C scripts/guix/channels.scm -- \
-  build ogs-ssd --with-source=ogs-ssd@6.4.4-testing=$PWD
+# builds ogs serial config and starts isolated shell (like in a container)
+guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest.scm
 # ogs petsc config
-guix time-machine -C scripts/guix/channels.scm -- \
-  build ogs-petsc --with-source=ogs-petsc@6.4.4-testing=$PWD
+guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-petsc.scm
 ```
 
-The version string starting after `@` can be set individually. To get the dependency tree:
+To create an archivable Apptainer container:
+
+```bash
+guix time-machine -C scripts/guix/channels.scm -- pack -m scripts/guix/manifest.scm \
+  -RR --format=squashfs
+```
+
+To get the dependency tree:
 
 ```bash
 guix time-machine -C scripts/guix/channels.scm -- graph ogs-serial | dot -Tpdf > dag.pdf
