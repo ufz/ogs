@@ -441,8 +441,8 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
     std::ifstream in(dump_file);
     if (!in)
     {
-        // return if phreeqc dump file doesn't exist. Normally, this happens in
-        // the first time step.
+        // return if phreeqc dump file doesn't exist. This happens in
+        // the first time step when no dump file is provided by the user.
         return;
     }
 
@@ -521,6 +521,7 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
         if (dump)
         {
             auto const& aqueous_solutions_prev = dump->aqueous_solutions_prev;
+            // Print previous aqueous solution if it exists.
             if (!aqueous_solutions_prev.empty())
             {
                 os << aqueous_solutions_prev[chemical_system_id] << "\n\n";
@@ -563,6 +564,14 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
         auto const& surface = phreeqc_io._chemical_system->surface;
         if (!surface.empty())
         {
+            // To get the amount of surface species from the previous time step,
+            // an equilibration calculation with the previous aqueous solution
+            // is needed. The previous aqueous solution is saved using the
+            // PHREEQC keyword "DUMP" in the dump file and then stored as
+            // SOLUTION_RAW within aqueous_solutions_prev. Along with the
+            // PHREEQC keyword 'SURFACE', distinguish between the current and
+            // previous solutions, the previous solution number is added to the
+            // total number of chemical systems (_num_chemical_systems).
             os << "SURFACE " << chemical_system_id + 1 << "\n";
             std::size_t aqueous_solution_id =
                 dump->aqueous_solutions_prev.empty()
@@ -604,7 +613,10 @@ std::ostream& operator<<(std::ostream& os, PhreeqcIO const& phreeqc_io)
             {
                 os << "-no_edl\n";
             }
-
+            // Here the PHREEQC "save" command is printed to save the solution
+            // internally in PHREEQC. The solution composition is saved after
+            // equilibration with the surface has been completed. The solution
+            // will not be saved for use in the next PHREEQC run.
             os << "SAVE solution " << chemical_system_id + 1 << "\n";
         }
 

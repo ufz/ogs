@@ -1,1 +1,1 @@
-Contains a number of statements for calculating custom secondary variables.
+Contains a set of statements for calculating custom secondary variables. By default, the OGS and PHREEQC output files only deliver the concentrations of the solution components, the equilibrium phases, and the kinetic reactants. The user can define the calculation and output of component surface concentrations or total component concentrations of surfaces and solutions using PHREEQC's special basic statements and functions.  
