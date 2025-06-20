@@ -78,7 +78,7 @@
                 <variable>ElasticStrain</variable>
                 <variable>EquivalentPlasticStrain</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <suffix>_t_{:time}</suffix>
         </output>
     </time_loop>
     <media>
@@ -288,7 +288,7 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>slope_ts_129_t_5_000000.vtu</file>
+            <file>slope_t_5_000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>2e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

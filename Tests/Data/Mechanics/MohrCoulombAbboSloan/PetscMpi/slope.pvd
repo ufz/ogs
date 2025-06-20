@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
-  <Collection>
-    <DataSet timestep="0" group="" part="0" file="slope_ts_0_t_0_000000.pvtu"/>
-    <DataSet timestep="5" group="" part="0" file="slope_ts_131_t_5_000000.pvtu"/>
-  </Collection>
-</VTKFile>
