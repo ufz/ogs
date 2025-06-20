@@ -332,7 +332,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
     const std::vector<double> expected_vec_t = {1,  2,  4,  8,  16,
                                                 24, 28, 29, 30, 31};
 
-    std::vector<double> vec_t = timeStepping(alg, nr_iterations, {});
+    std::vector<double> vec_t = timeStepping(alg, nr_iterations, {}, {});
 
     ASSERT_EQ(expected_vec_t.size(), vec_t.size());
     ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
@@ -355,7 +355,7 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
                                                 11, 12, 14, 18, 20, 24, 31};
 
     std::vector<double> vec_t =
-        timeStepping(alg, nr_iterations, fixed_output_times);
+        timeStepping(alg, nr_iterations, fixed_output_times, {});
 
     EXPECT_EQ(expected_vec_t.size(), vec_t.size());
     ASSERT_ARRAY_NEAR(expected_vec_t, vec_t, expected_vec_t.size(),
