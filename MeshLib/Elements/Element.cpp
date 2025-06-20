@@ -68,8 +68,28 @@ std::optional<unsigned> Element::addNeighbor(Element* e)
                 // similar to be sure e is a neighbour of this
                 if ((++count) >= dim)
                 {
-                    _neighbors[this->identifyFace(face_nodes)] = e;
-                    return std::optional<unsigned>(e->identifyFace(face_nodes));
+                    auto const this_face_id = this->identifyFace(face_nodes);
+                    if (this_face_id == std::numeric_limits<unsigned>::max())
+                    {
+                        OGS_FATAL(
+                            "Could not find face of {} for the face nodes [{}, "
+                            "{}, {}].",
+                            *this, *face_nodes[0], *face_nodes[1],
+                            *face_nodes[2]);
+                    }
+                    _neighbors[this_face_id] = e;
+                    auto const neighbors_face_id = e->identifyFace(face_nodes);
+                    if (neighbors_face_id ==
+                        std::numeric_limits<unsigned>::max())
+                    {
+                        OGS_FATAL(
+                            "Could not find face of the neighbour {} for the "
+                            "face nodes [{}, {}, {}].\n"
+                            "For the {} the face id {} was identified.",
+                            *e, *face_nodes[0], *face_nodes[1], *face_nodes[2],
+                            *this, this_face_id);
+                    }
+                    return neighbors_face_id;
                 }
             }
         }
