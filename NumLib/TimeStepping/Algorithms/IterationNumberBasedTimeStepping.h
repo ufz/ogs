@@ -112,10 +112,6 @@ private:
     double getNextTimeStepSize(NumLib::TimeStep const& ts_previous,
                                NumLib::TimeStep const& ts_current) const;
 
-    /// Find a multiplier for the given number of iterations.
-    double findMultiplier(int const number_iterations,
-                          NumLib::TimeStep const& ts_current) const;
-
     /// This vector stores the number of iterations to which the respective
     /// multiplier coefficient will be applied.
     const std::vector<int> _iter_times_vector;
@@ -137,5 +133,12 @@ private:
     bool _previous_time_step_accepted = true;
     std::vector<double> const _fixed_times_for_output;
 };
+
+/// Find a multiplier for the given number of iterations.
+double findMultiplier(
+    int const number_iterations, bool const current_time_step_is_accepted,
+    std::vector<int> const& nonlinear_iteration_numbers,
+    std::vector<double> const& multipliers,
+    MultiplyerInterpolationType const multiplier_interpolation_type);
 
 }  // namespace NumLib
