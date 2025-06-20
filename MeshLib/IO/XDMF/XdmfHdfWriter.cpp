@@ -165,9 +165,9 @@ XdmfHdfWriter::XdmfHdfWriter(
         filepath.parent_path() / (filepath.stem().string() + ".h5");
 
     auto const is_file_manager = isFileManager();
-    _hdf_writer = std::make_unique<HdfWriter>(std::move(hdf_meshes), time_step,
-                                              hdf_filepath, use_compression,
-                                              is_file_manager, n_files);
+    _hdf_writer = std::make_unique<HdfWriter>(
+        std::move(hdf_meshes), time_step, initial_time, hdf_filepath,
+        use_compression, is_file_manager, n_files);
 
     // --------------- XDMF ---------------------
     // The light data is only written by just one process
