@@ -22,6 +22,47 @@
 #include "Tests/TestTools.h"
 #include "TimeSteppingTestingTools.h"
 
+TEST(NumLib, TimeSteppingIterationNumberBasedConstructor_emptyInput)
+{
+    std::vector<int> nonlinear_iteration_numbers = {};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
+    EXPECT_THROW(
+        NumLib::IterationNumberBasedTimeStepping alg(
+            1, 31, 1, 10, 1, multiplier_interpolation_type,
+            std::move(nonlinear_iteration_numbers), std::move(multipliers), {}),
+        std::runtime_error);
+}
+
+TEST(NumLib,
+     TimeSteppingIterationNumberBasedConstructor_unsortedIterationNumbers)
+{
+    std::vector<int> nonlinear_iteration_numbers = {3, 2, 1};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
+    EXPECT_THROW(
+        NumLib::IterationNumberBasedTimeStepping alg(
+            1, 31, 1, 10, 1, multiplier_interpolation_type,
+            std::move(nonlinear_iteration_numbers), std::move(multipliers), {}),
+        std::runtime_error);
+}
+
+TEST(NumLib,
+     TimeSteppingIterationNumberBasedConstructor_inputVectorSizeMismatch)
+{
+    std::vector<int> nonlinear_iteration_numbers = {1, 2, 3};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
+    EXPECT_THROW(
+        NumLib::IterationNumberBasedTimeStepping alg(
+            1, 31, 1, 10, 1, multiplier_interpolation_type,
+            std::move(nonlinear_iteration_numbers), std::move(multipliers), {}),
+        std::runtime_error);
+}
+
 TEST(NumLib, TimeSteppingIterationNumberBased1)
 {
     std::vector<int> iter_times_vector = {0, 3, 5, 7};
