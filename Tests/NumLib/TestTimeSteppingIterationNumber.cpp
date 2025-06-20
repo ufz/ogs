@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+#include <ranges>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -61,6 +62,152 @@ TEST(NumLib,
             1, 31, 1, 10, 1, multiplier_interpolation_type,
             std::move(nonlinear_iteration_numbers), std::move(multipliers), {}),
         std::runtime_error);
+}
+
+TEST(NumLib, findMultiplierTimestepAcceptedPiecewiseConstant)
+{
+    std::vector<int> nonlinear_iteration_numbers = {1, 2, 3, 4};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+
+    bool const current_time_step_is_accepted = true;
+    for (auto const [n, m] :
+         std::views::zip(nonlinear_iteration_numbers, multipliers))
+    {
+        auto const multiplier = NumLib::findMultiplier(
+            n, current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers,
+            NumLib::MultiplyerInterpolationType::PiecewiseConstant);
+
+        EXPECT_EQ(m, multiplier);
+    }
+}
+
+TEST(
+    NumLib,
+    findMultiplierTimestepAcceptedPiecewiseLinearInterpolationAtIntervalBoundaries)
+{
+    std::vector<int> nonlinear_iteration_numbers = {2, 4, 6, 8};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+
+    bool const current_time_step_is_accepted = true;
+    for (auto const [n, m] :
+         std::views::zip(nonlinear_iteration_numbers, multipliers))
+    {
+        auto const multiplier = NumLib::findMultiplier(
+            n, current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers, NumLib::MultiplyerInterpolationType::PiecewiseLinear);
+
+        EXPECT_EQ(m, multiplier);
+    }
+}
+
+TEST(
+    NumLib,
+    findMultiplierTimestepAcceptedPiecewiseLinearInterpolationOutsideBoundaries)
+{
+    std::vector<int> nonlinear_iteration_numbers = {2, 4, 6, 8};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+
+    bool const current_time_step_is_accepted = true;
+
+    {
+        // only one nonlinear iteration
+        auto const multiplier = NumLib::findMultiplier(
+            1, current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers, NumLib::MultiplyerInterpolationType::PiecewiseLinear);
+        EXPECT_EQ(multipliers.front(), multiplier);
+    }
+
+    {
+        // more nonlinear iterations as in the vector
+        // nonlinear_iteration_numbers
+        auto const multiplier = NumLib::findMultiplier(
+            nonlinear_iteration_numbers.back() + 1,
+            current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers, NumLib::MultiplyerInterpolationType::PiecewiseLinear);
+        EXPECT_EQ(multipliers.back(), multiplier);
+    }
+}
+
+TEST(
+    NumLib,
+    findMultiplierTimestepAcceptedPiecewiseConstantInterpolationOutsideBoundaries)
+{
+    std::vector<int> nonlinear_iteration_numbers = {2, 4, 6, 8};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+
+    bool const current_time_step_is_accepted = true;
+
+    {
+        // only one nonlinear iteration
+        auto const multiplier = NumLib::findMultiplier(
+            1, current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers,
+            NumLib::MultiplyerInterpolationType::PiecewiseConstant);
+        EXPECT_EQ(multipliers.front(), multiplier);
+    }
+
+    {
+        // more nonlinear iterations as in the vector
+        // nonlinear_iteration_numbers
+        auto const multiplier = NumLib::findMultiplier(
+            nonlinear_iteration_numbers.back() + 1,
+            current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers, NumLib::MultiplyerInterpolationType::PiecewiseLinear);
+        EXPECT_EQ(multipliers.back(), multiplier);
+    }
+}
+
+TEST(NumLib,
+     findMultiplierTimestepAcceptedPiecewiseLinearInterpolationInIntervalCenter)
+{
+    std::vector<int> nonlinear_iteration_numbers = {2, 4, 6, 8};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+
+    bool const current_time_step_is_accepted = true;
+    // check with iteration numbers not contained in vector
+    // nonlinear_iteration_numbers
+    for (std::size_t i = 1; i < nonlinear_iteration_numbers.size(); ++i)
+    {
+        auto const multiplier = NumLib::findMultiplier(
+            (nonlinear_iteration_numbers[i] +
+             nonlinear_iteration_numbers[i - 1]) /
+                2,
+            current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers, NumLib::MultiplyerInterpolationType::PiecewiseLinear);
+
+        EXPECT_EQ((multipliers[i] + multipliers[i - 1]) / 2, multiplier);
+    }
+}
+
+TEST(NumLib, findMultiplierTimestepRejected)
+{
+    std::vector<int> nonlinear_iteration_numbers = {1, 2, 3, 4};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+
+    bool const current_time_step_is_accepted = false;
+    for (auto const [n, m] :
+         std::views::zip(nonlinear_iteration_numbers, multipliers))
+    {
+        auto const multiplier = NumLib::findMultiplier(
+            n, current_time_step_is_accepted, nonlinear_iteration_numbers,
+            multipliers,
+            NumLib::MultiplyerInterpolationType::PiecewiseConstant);
+
+        if (m < 1)
+        {
+            EXPECT_EQ(m, multiplier);
+        }
+        else
+        {
+            // in case of a rejected timestep and multiplier >= 1: the smallest
+            // of the multipliers
+            auto const min_multiplier =
+                *std::min_element(multipliers.begin(), multipliers.end());
+
+            EXPECT_EQ(min_multiplier, multiplier);
+        }
+    }
 }
 
 TEST(NumLib, TimeSteppingIterationNumberBased1)
