@@ -334,6 +334,13 @@ public:
             auto const& N = Ns[ip];
             auto const& chemical_system_id = ip_data.chemical_system_id;
 
+            // set position with N as the shape matrix at the current
+            // integration point
+            pos.setCoordinates(MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunction,
+                                               ShapeMatricesType>(_element,
+                                                                  N)));
+
             auto const n_component = _transport_process_variables.size();
             std::vector<double> C_int_pt(n_component);
             for (unsigned component_id = 0; component_id < n_component;

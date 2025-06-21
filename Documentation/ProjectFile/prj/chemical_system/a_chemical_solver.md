@@ -1,1 +1,1 @@
-specify a solver for geochemical calculation. At the moment, only Phreeqc is supported. Note that, the Phreeqc version used is 3.5.0.
+specify a solver for geochemical calculation. Available attributes are `Phreeqc` and `SelfContained`. `PhreeqcKernel` is not accessible for the time being. Note that, the PHREEQC version used is 3.5.0.

@@ -1,1 +1,1 @@
-specify a number of custom secondary variables.
+specify a set of custom secondary variables.

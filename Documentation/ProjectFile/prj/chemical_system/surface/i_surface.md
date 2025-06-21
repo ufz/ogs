@@ -1,1 +1,3 @@
 define surface complexion model.
+When using the PHREEQC chemical solver, the initial amounts of surface species for the first time step are derived using an equilibrium calculation based on the initial solution. This means that the composition of the initial solution stays constant for this calculation. For the following time steps the amounts of surface species of the previous time step are calculated using an equilibrium calculation with the solution from the previous time step, which is stored in the dump file below the keyword "Solution_RAW". In the beginning of a simulation a pre-existing dump file might be deleted.
+When using the PHREEQC chemical solver, the surface names must match those listed under the SURFACE_MASTER_SPECIES keyword in the database.

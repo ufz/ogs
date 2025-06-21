@@ -109,7 +109,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto const project_file_name = BaseLib::joinPaths(
         output_directory,
         BaseLib::extractBaseNameWithoutExtension(config.getProjectFileName()));
-
+    // old dump file is deleted if it exists
     auto dump = surface.empty() && exchangers.empty()
                     ? nullptr
                     : std::make_unique<PhreeqcIOData::Dump>(project_file_name);
