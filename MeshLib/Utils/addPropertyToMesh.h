@@ -32,7 +32,7 @@ namespace MeshLib
 template <typename T>
 void addPropertyToMesh(Mesh& mesh, std::string_view name,
                        MeshItemType item_type, std::size_t number_of_components,
-                       std::vector<T> const& values)
+                       std::span<T const> values)
 {
     if (item_type == MeshItemType::Node)
     {

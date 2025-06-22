@@ -540,25 +540,25 @@ void addBulkIDPropertiesToMesh(
     // transmit the original node ids of the bulk mesh as a property
     if (!node_to_bulk_node_id_map_name.empty())
     {
-        MeshLib::addPropertyToMesh(surface_mesh, node_to_bulk_node_id_map_name,
-                                   MeshLib::MeshItemType::Node, 1,
-                                   node_to_bulk_node_id_map);
+        MeshLib::addPropertyToMesh<std::size_t>(
+            surface_mesh, node_to_bulk_node_id_map_name,
+            MeshLib::MeshItemType::Node, 1, {node_to_bulk_node_id_map});
     }
 
     // transmit the original bulk element ids as a property
     if (!element_to_bulk_element_id_map_name.empty())
     {
-        MeshLib::addPropertyToMesh(
+        MeshLib::addPropertyToMesh<std::size_t>(
             surface_mesh, element_to_bulk_element_id_map_name,
-            MeshLib::MeshItemType::Cell, 1, element_to_bulk_element_id_map);
+            MeshLib::MeshItemType::Cell, 1, {element_to_bulk_element_id_map});
     }
 
     // transmit the face id of the original bulk element as a property
     if (!element_to_bulk_face_id_map_name.empty())
     {
-        MeshLib::addPropertyToMesh(
+        MeshLib::addPropertyToMesh<std::size_t>(
             surface_mesh, element_to_bulk_face_id_map_name,
-            MeshLib::MeshItemType::Cell, 1, element_to_bulk_face_id_map);
+            MeshLib::MeshItemType::Cell, 1, {element_to_bulk_face_id_map});
     }
 }
 

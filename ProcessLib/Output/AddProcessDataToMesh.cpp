@@ -10,6 +10,8 @@
 
 #include "AddProcessDataToMesh.h"
 
+#include <span>
+
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
@@ -75,7 +77,7 @@ static void addSecondaryVariableNodes(
     }
 
     // Copy result
-    nodal_values.copyValues(nodal_values_mesh);
+    nodal_values.copyValues(std::span{nodal_values_mesh});
 }
 
 static void addSecondaryVariableResiduals(
@@ -126,7 +128,7 @@ static void addSecondaryVariableResiduals(
     }
 
     // Copy result
-    residuals.copyValues(residuals_mesh);
+    residuals.copyValues(std::span{residuals_mesh});
 }
 
 static std::vector<double> copySolutionVector(GlobalVector const& x)

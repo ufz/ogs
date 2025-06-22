@@ -613,7 +613,9 @@ static bool convert(NcFile const& dataset, NcVar const& var,
                 MeshLib::PropertyVector<double> const* const vec =
                     temp->getProperties().getPropertyVector<double>(array_name);
                 if (vec == nullptr)
+                {
                     return false;
+                }
                 MeshLib::addPropertyToMesh<double>(
                     *mesh, array_name, MeshLib::MeshItemType::Cell, 1, *vec);
             }

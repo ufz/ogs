@@ -59,8 +59,8 @@ struct ParameterLibParameter : public ::testing::Test
 TEST_F(ParameterLibParameter, GroupBasedParameterElement)
 {
     std::vector<int> mat_ids({0, 1, 2, 3});
-    MeshLib::addPropertyToMesh(*meshes[0], "MaterialIDs",
-                               MeshLib::MeshItemType::Cell, 1, mat_ids);
+    MeshLib::addPropertyToMesh<int>(*meshes[0], "MaterialIDs",
+                                    MeshLib::MeshItemType::Cell, 1, {mat_ids});
 
     auto parameter = constructParameterFromString(
         "<name>parameter</name>"
@@ -86,8 +86,9 @@ TEST_F(ParameterLibParameter, GroupBasedParameterElement)
 TEST_F(ParameterLibParameter, GroupBasedParameterNode)
 {
     std::vector<int> group_ids({0, 1, 2, 3, 4});
-    MeshLib::addPropertyToMesh(*meshes[0], "PointGroupIDs",
-                               MeshLib::MeshItemType::Node, 1, group_ids);
+    MeshLib::addPropertyToMesh<int>(*meshes[0], "PointGroupIDs",
+                                    MeshLib::MeshItemType::Node, 1,
+                                    {group_ids});
 
     auto parameter = constructParameterFromString(
         "<name>parameter</name>"
@@ -169,8 +170,8 @@ TEST_F(ParameterLibParameter, GetNodalValuesOnElement_constant)
 TEST_F(ParameterLibParameter, GetNodalValuesOnElement_node)
 {
     std::vector<double> node_ids({0, 1, 2, 3, 4});
-    MeshLib::addPropertyToMesh(*meshes[0], "NodeIDs",
-                               MeshLib::MeshItemType::Node, 1, node_ids);
+    MeshLib::addPropertyToMesh<double>(
+        *meshes[0], "NodeIDs", MeshLib::MeshItemType::Node, 1, {node_ids});
 
     auto const parameter = constructParameterFromString(
         "<name>parameter</name>"
@@ -195,8 +196,9 @@ TEST_F(ParameterLibParameter, GetNodalValuesOnElement_node)
 TEST_F(ParameterLibParameter, GetNodalValuesOnElement_element)
 {
     std::vector<double> element_ids({0, 1, 2, 3});
-    MeshLib::addPropertyToMesh(*meshes[0], "ElementIDs",
-                               MeshLib::MeshItemType::Cell, 1, element_ids);
+    MeshLib::addPropertyToMesh<double>(*meshes[0], "ElementIDs",
+                                       MeshLib::MeshItemType::Cell, 1,
+                                       {element_ids});
 
     auto const parameter = constructParameterFromString(
         "<name>parameter</name>"
@@ -218,8 +220,8 @@ TEST_F(ParameterLibParameter, GetNodalValuesOnElement_element)
 TEST_F(ParameterLibParameter, GetNodalValuesOnElement_curveScaledNode)
 {
     std::vector<double> node_ids({0, 1, 2, 3, 4});
-    MeshLib::addPropertyToMesh(*meshes[0], "NodeIDs",
-                               MeshLib::MeshItemType::Node, 1, node_ids);
+    MeshLib::addPropertyToMesh<double>(
+        *meshes[0], "NodeIDs", MeshLib::MeshItemType::Node, 1, {node_ids});
 
     std::vector<std::unique_ptr<ParameterBase>> parameters;
     parameters.emplace_back(

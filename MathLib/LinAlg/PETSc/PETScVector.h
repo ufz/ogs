@@ -19,6 +19,7 @@
 #include <petscvec.h>
 
 #include <map>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -189,6 +190,13 @@ public:
        hold the current vector data.
     */
     void copyValues(std::vector<PetscScalar>& u) const;
+
+    /*!
+       Copy local entries including ghost ones to a span.
+       \param u a span for the values of local entries. If the sizes of the
+       vector and the span mismatch, an exception will be thrown.
+    */
+    void copyValues(std::span<PetscScalar> u) const;
 
     /*! View the global vector for test purpose. Do not use it for output a big
        vector.

@@ -68,9 +68,9 @@ int main(int argc, char* argv[])
         MeshLib::String2MeshQualityType(criterion_arg.getValue());
     MeshToolsLib::ElementQualityInterface element_quality(*mesh, type);
     auto const element_quality_vector = element_quality.getQualityVector();
-    MeshLib::addPropertyToMesh(*mesh, criterion_arg.getValue(),
-                               MeshLib::MeshItemType::Cell, 1,
-                               element_quality_vector);
+    MeshLib::addPropertyToMesh<double>(*mesh, criterion_arg.getValue(),
+                                       MeshLib::MeshItemType::Cell, 1,
+                                       {element_quality_vector});
     INFO("Writing mesh '{:s}' ... ", mesh_out_arg.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, mesh_out_arg.getValue());
     INFO("done.");

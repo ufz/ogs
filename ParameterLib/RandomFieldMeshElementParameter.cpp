@@ -50,8 +50,8 @@ std::unique_ptr<ParameterBase> createRandomFieldMeshElementParameter(
     auto gen = [&distr, &generator]() { return distr(generator); };
     generate(begin(values), end(values), gen);
 
-    MeshLib::addPropertyToMesh(mesh, field_name, MeshLib::MeshItemType::Cell, 1,
-                               values);
+    MeshLib::addPropertyToMesh<double>(
+        mesh, field_name, MeshLib::MeshItemType::Cell, 1, {values});
 
     auto const& property =
         mesh.getProperties().getPropertyVector<double>(field_name);
