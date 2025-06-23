@@ -107,18 +107,16 @@ bool Element::isBoundaryElement() const
 
 std::ostream& operator<<(std::ostream& os, Element const& e)
 {
-    os << "Element #" << e._id << " @ " << &e << " with "
+    os << "element #" << e._id << " @ " << &e << " with "
        << e.getNumberOfNeighbors() << " neighbours\n";
 
     unsigned const nnodes = e.getNumberOfNodes();
     MeshLib::Node* const* const nodes = e.getNodes();
-    os << "MeshElemType: "
-       << static_cast<std::underlying_type<MeshElemType>::type>(e.getGeomType())
+    os << "MeshElemType: " << MeshLib::MeshElemType2String(e.getGeomType())
        << " with " << nnodes << " nodes: {\n";
     for (unsigned n = 0; n < nnodes; ++n)
     {
-        os << "  #" << nodes[n]->getID() << " @ " << nodes[n] << " coords ["
-           << *nodes[n] << "]\n";
+        os << "  " << *nodes[n] << " @ " << nodes[n] << '\n';
     }
     return os << '}';
 }
