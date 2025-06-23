@@ -106,6 +106,10 @@ lam.setEntryName("EquivalentPlasticStrainMatrix");
     sin_6_lodeT = sin(6. * lodeT);
     tan_3_lodeT = tan(3. * lodeT);
 
+    /*
+    Note that the case for phi=0 / psi=0 corresponds to a Tresca surface.
+    In that case, a looses physical relevance.
+    */
     aG = (psi != 0. && phi != 0.) ? (c / tan(psi) - c / tan(phi) + a) : a;
 
     // Compute initial elastic strain
