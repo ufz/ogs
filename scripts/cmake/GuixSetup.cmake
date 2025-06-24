@@ -1,4 +1,15 @@
-if(NOT DEFINED ENV{GUIX_ENVIRONMENT} AND NOT DEFINED ENV{NIX_BUILD_TOP})
+string(REPLACE ":" ";" PATH_LIST "$ENV{PATH}")
+
+foreach(path_entry IN LISTS PATH_LIST)
+    message(STATUS "Checking: ${path_entry}")
+    if("${path_entry}" MATCHES "^/gnu/store/[a-z0-9]*-profile/(bin|sbin)$")
+        set(MATCHED_GUIX_PATH "${path_entry}")
+        message(STATUS "Guix dev environment detected: ${MATCHED_GUIX_PATH}")
+        break()
+    endif()
+endforeach()
+
+if(NOT DEFINED ENV{GUIX_ENVIRONMENT} AND NOT DEFINED ENV{NIX_BUILD_TOP} AND NOT DEFINED MATCHED_GUIX_PATH)
     return()
 endif()
 
@@ -17,7 +28,9 @@ if(DEFINED ENV{NIX_BUILD_TOP})
 endif()
 
 set(GUIX_BUILD ON CACHE BOOL "" FORCE)
-set(OGS_BUILD_TESTING OFF CACHE BOOL "" FORCE) # TODO: not yet supported
+if(NOT DEFINED MATCHED_GUIX_PATH)
+    set(OGS_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+endif()
 set(OGS_INSTALL_DEPENDENCIES OFF CACHE BOOL "" FORCE) # handled by guix
 set(OGS_CPU_ARCHITECTURE OFF CACHE BOOL "" FORCE) # enables guix --tune
 set(BUILD_SHARED_LIBS ON CACHE BOOL "" FORCE)
