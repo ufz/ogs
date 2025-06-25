@@ -44,6 +44,7 @@ binaries_list = [
     "ipDataToPointCloud",
     "Layers2Grid",
     "MapGeometryToMeshSurface",
+    "mergeMeshToBulkMesh",
     "Mesh2Raster",
     "MoveGeometry",
     "MoveMesh",
