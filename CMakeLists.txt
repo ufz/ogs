@@ -272,3 +272,19 @@ include(Features)
 printEnabledProcesses()
 
 printMKLUsage()
+
+# Check wheel binaries
+list(SORT _OGS_EXECUTABLES)
+list(REMOVE_ITEM _OGS_EXECUTABLES testrunner SWMMConverter) # SWMMConverter is win-only
+
+if(OGS_BUILD_WHEEL)
+    execute_process(
+        COMMAND ${Python_EXECUTABLE} scripts/python/compare_binaries.py "${_OGS_EXECUTABLES}"
+        ECHO_OUTPUT_VARIABLE
+        ECHO_ERROR_VARIABLE
+        RESULT_VARIABLE result
+    )
+    if(NOT result EQUAL 0)
+        message(FATAL_ERROR "Binary list comparison failed. Please update binaries_list in provide_ogs_cli_tools_via_wheel.py!")
+    endif()
+endif()
