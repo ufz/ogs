@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/ostr.h>
+
 #include <cstdlib>
 #include <limits>
 #include <vector>
@@ -56,5 +58,14 @@ public:
     /// Copy constructor
     Node(const Node &node);
 
+    friend std::ostream& operator<<(std::ostream& os, Node const& n);
 }; /* class */
 }  // namespace MeshLib
+
+namespace fmt
+{
+template <>
+struct formatter<::MeshLib::Node> : ostream_formatter
+{
+};
+}  // namespace fmt

@@ -35,4 +35,10 @@ Node::Node(double x, double y, double z, std::size_t id)
 }
 
 Node::Node(const Node& node) : MathLib::Point3dWithID(node, node.getID()) {}
+
+std::ostream& operator<<(std::ostream& os, MeshLib::Node const& n)
+{
+    return os << "node #" << n.getID() << " { "
+              << static_cast<MathLib::Point3d const&>(n) << "}";
+}
 }  // namespace MeshLib

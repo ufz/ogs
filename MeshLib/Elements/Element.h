@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/ostr.h>
+
 #include <limits>
 #include <optional>
 #include <span>
@@ -248,3 +250,11 @@ unsigned getNodeIDinElement(Element const& element, const Node* node);
 std::size_t getNodeIndex(Element const& element, unsigned idx);
 
 }  // namespace MeshLib
+
+namespace fmt
+{
+template <>
+struct formatter<::MeshLib::Element> : ostream_formatter
+{
+};
+}  // namespace fmt
