@@ -51,6 +51,10 @@ int main(int argc, char* argv[])
     QCoreApplication app(argc, argv, false);
 #endif
 
+#ifdef USE_PETSC
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
+#endif
+
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(argc,
                                                                           argv);
 
