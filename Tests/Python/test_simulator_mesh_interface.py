@@ -89,8 +89,8 @@ def test_simulator():
             )
         )
 
-    import ogs.mesh as mesh  # noqa: F401
-    from ogs import simulator
+    import ogs.mesh as mesh  # noqa: F401, PLC0415
+    from ogs import simulator  # noqa: PLC0415
 
     current_dir = Path(__file__).parent.resolve()
     arguments = [

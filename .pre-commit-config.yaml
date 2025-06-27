@@ -83,7 +83,7 @@ repos:
       - id: vale
         args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.9.9"
+    rev: "v0.12.1"
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]
@@ -93,7 +93,7 @@ repos:
   # Run this hook (and all other manual hooks if any) with:
   # pre-commit run --hook-stage manual
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.9.9"
+    rev: "v0.12.1"
     hooks:
       - id: ruff
         types_or: [python, pyi, jupyter]

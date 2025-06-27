@@ -24,6 +24,8 @@
 # This notebook checks that the reference results for the `ipDataToPointCloud` tool are correct.
 
 # %%
+import json
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pyvista as pv
@@ -95,8 +97,6 @@ check_all_points_inside_bbox_2D(mesh, point_cloud)
 # %%
 def set_integration_order_to_3(path):
     mesh = pv.read(path)
-
-    import json
 
     ip_meta_str = bytes(mesh.field_data["IntegrationPointMetaData"]).decode("utf-8")
     ip_meta = json.loads(ip_meta_str)
