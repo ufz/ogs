@@ -4,7 +4,6 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path("Applications").joinpath("Python").absolute()))
-# ruff: noqa: E402
 from ogs._internal.provide_ogs_cli_tools_via_wheel import (
     pyproject_get_binaries,
 )

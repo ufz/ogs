@@ -86,7 +86,7 @@ def ogs():
 
 
 def ogs_with_args(argv):
-    import ogs.simulator as sim
+    import ogs.simulator as sim  # noqa: PLC0415
 
     return_code = sim.initialize(argv)
 
