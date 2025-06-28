@@ -73,6 +73,7 @@ a.setEntryName("TensionCutOffParameter");
 @LocalVariable real sin_6_lodeT;
 @LocalVariable real tan_3_lodeT;
 @LocalVariable real multi;
+@LocalVariable real aG;
 
 @InitLocalVariables
 {
@@ -93,6 +94,12 @@ a.setEntryName("TensionCutOffParameter");
     cos_6_lodeT = cos(6. * lodeT);
     sin_6_lodeT = sin(6. * lodeT);
     tan_3_lodeT = tan(3. * lodeT);
+
+    /*
+    Note that the case for phi=0 / psi=0 corresponds to a Tresca surface.
+    In that case, a looses physical relevance.
+    */
+    aG = (psi != 0. && phi != 0.) ? (c / tan(psi) - c / tan(phi) + a) : a;
 
     // Compute initial elastic strain
     const auto S = invert(D);
@@ -223,8 +230,7 @@ a.setEntryName("TensionCutOffParameter");
         const auto dev_s_squared = computeJ3Derivative(
             sig);  // replaces dev_s_squared = deviator(square(s));
         const auto dG_dI1 = sin_psi / 3.;
-        const auto root = max(sqrt(J2 * KG * KG + a * a * tan(phi) * tan(phi) *
-                                                      cos(psi) * cos(psi)),
+        const auto root = max(sqrt(J2 * KG * KG + aG * aG * sin_psi * sin_psi),
                               local_zero_tolerance);
         const auto dG_dJ2 = KG / (2. * root) * (KG - tan_3_lode * dKG_dlode);
         const auto dG_dJ3 = J2 * KG * tan_3_lode / (3. * J3 * root) * dKG_dlode;
