@@ -48,6 +48,7 @@ set(_mfront_behaviours
     StandardElasticityBrick
     StandardElasticityBrickOrtho
     ThermoPoroElasticity
+    WeakPlaneModel_nonIter
 )
 
 if((OGS_BUILD_WHEEL AND NOT APPLE_ARM) OR GUIX_BUILD OR CONDA_BUILD)
