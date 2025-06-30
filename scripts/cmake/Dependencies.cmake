@@ -390,7 +390,7 @@ if(OGS_USE_PETSC)
     endif()
 endif()
 
-if(OGS_BUILD_TESTING AND NOT GUIX_BUILD)
+if(NOT GUIX_BUILD)
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf

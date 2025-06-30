@@ -118,6 +118,8 @@ function(ogs_add_library targetName)
     endif()
 endfunction()
 
+set(_OGS_EXECUTABLES "" CACHE INTERNAL "")
+
 # Replacement for ogs_add_executable() for ogs executables
 function(ogs_add_executable targetName)
     cmake_parse_arguments(ogs_add_executable "" "" "" ${ARGN})
@@ -154,6 +156,9 @@ function(ogs_add_executable targetName)
         PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
                 -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
     )
+    set(ogs_executables "${_OGS_EXECUTABLES}")
+    list(APPEND ogs_executables "${targetName}")
+    set(_OGS_EXECUTABLES "${ogs_executables}" CACHE INTERNAL "list of exes")
 endfunction()
 
 # Parses current directory into a list
