@@ -51,6 +51,10 @@ int main(int argc, char* argv[])
     QCoreApplication app(argc, argv, false);
 #endif
 
+#ifdef USE_PETSC
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
+#endif
+
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(argc,
                                                                           argv);
 
@@ -65,7 +69,7 @@ int main(int argc, char* argv[])
 #ifdef USE_PETSC
     {  // Can be called only after MPI_INIT.
         int mpi_rank;
-        MPI_Comm_rank(PETSC_COMM_WORLD, &mpi_rank);
+        MPI_Comm_rank(BaseLib::MPI::OGS_COMM_WORLD, &mpi_rank);
         spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
     }
 #endif

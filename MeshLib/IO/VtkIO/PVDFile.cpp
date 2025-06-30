@@ -16,6 +16,8 @@
 
 #ifdef USE_PETSC
 #include <mpi.h>
+
+#include "BaseLib/MPI.h"
 #endif
 
 #include "BaseLib/Error.h"
@@ -29,7 +31,7 @@ void PVDFile::addVTUFile(const std::string& vtu_fname, double timestep)
 {
 #ifdef USE_PETSC
     int mpi_size;
-    MPI_Comm_size(MPI_COMM_WORLD, &mpi_size);
+    MPI_Comm_size(BaseLib::MPI::OGS_COMM_WORLD, &mpi_size);
     if (mpi_size == 1)
     {
         _datasets.emplace_back(timestep, vtu_fname);

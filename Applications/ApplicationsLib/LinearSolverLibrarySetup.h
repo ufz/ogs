@@ -23,8 +23,11 @@
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
 #if defined(USE_PETSC)
-#include <petsc.h>
 #include <mpi.h>
+#include <petsc.h>
+
+#include "BaseLib/MPI.h"
+
 namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
@@ -32,6 +35,7 @@ struct LinearSolverLibrarySetup final
     LinearSolverLibrarySetup(int argc, char* argv[])
     {
         char help[] = "ogs6 with PETSc \n";
+        PETSC_COMM_WORLD = BaseLib::MPI::OGS_COMM_WORLD;
         PetscInitialize(&argc, &argv, nullptr, help);
         MPI_Comm_set_errhandler(PETSC_COMM_WORLD, MPI_ERRORS_RETURN);
     }
