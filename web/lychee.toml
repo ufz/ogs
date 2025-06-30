@@ -8,6 +8,7 @@ exclude = [
   "all\\.css",
   "eigen\\.tuxfamily.org",
   "www\\.ufz\\.de/vislab",
-  "mont_terri_experimente.html"
+  "mont_terri_experimente.html",
+  "coolprop\\.org",
 ]
 exclude_path = ["public/releases/"]
