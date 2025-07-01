@@ -2,7 +2,7 @@
         (name 'guix-ogs)
         (url "https://gitlab.opengeosys.org/ogs/inf/guix-ogs.git")
         (branch "master")
-        (commit "1460c5f48b51cb2a02cfdac0114d778f53e8a161"))
+        (commit "bbe622c0eb1eea15863b90a10e91f842dcf259a8"))
       (channel
         (name 'guix-science-nonfree)
         (url "https://codeberg.org/guix-science/guix-science-nonfree.git")
@@ -21,7 +21,7 @@
            "CA4F 8CF4 37D7 478F DA05  5FD4 4213 7701 1A37 8446"))))
       (channel
         (name 'guix)
-        (url "https://codeberg.org/guix/guix-mirror.git")
+        (url "https://codeberg.org/guix/guix.git")
         (branch "master")
         (commit "e7d73a08d569904f8a71db5b84f5fafaf0dff188")
         (introduction

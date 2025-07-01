@@ -3,31 +3,43 @@ list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 set(CMAKE_FOLDER ThirdParty)
 
 if(OGS_BUILD_TESTING)
-    CPMAddPackage(
-        NAME googletest
-        GITHUB_REPOSITORY google/googletest
-        VERSION ${ogs.minimum_version.gtest}
-        GIT_TAG v${ogs.tested_version.gtest}
-        OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt ON"
-                "BUILD_SHARED_LIBS OFF"
-        EXCLUDE_FROM_ALL YES SYSTEM TRUE
-    )
-    if(googletest_ADDED AND WIN32)
-        target_compile_options(gtest PRIVATE /EHsc)
-        target_compile_options(gmock PRIVATE /EHsc)
-    endif()
-
-    CPMAddPackage(
-        NAME autocheck
-        GITHUB_REPOSITORY ufz/autocheck
-        GIT_TAG e388ecbb31c49fc2724c8d0436da313b6edca7fd
-        DOWNLOAD_ONLY YES
-    )
-    if(autocheck_ADDED)
-        add_library(autocheck INTERFACE IMPORTED)
-        target_include_directories(
-            autocheck SYSTEM INTERFACE ${autocheck_SOURCE_DIR}/include
+    if(GUIX_BUILD)
+        find_package(GTest REQUIRED)
+        add_library(gtest ALIAS GTest::gtest)
+        add_library(gmock ALIAS GTest::gmock)
+        find_program(VTKDIFF_TOOL vtkdiff REQUIRED)
+        add_executable(vtkdiff IMPORTED GLOBAL)
+        set_target_properties(vtkdiff PROPERTIES
+            IMPORTED_LOCATION "${VTKDIFF_TOOL}"
         )
+        add_library(autocheck INTERFACE IMPORTED)
+    else()
+        CPMAddPackage(
+            NAME googletest
+            GITHUB_REPOSITORY google/googletest
+            VERSION ${ogs.minimum_version.gtest}
+            GIT_TAG v${ogs.tested_version.gtest}
+            OPTIONS "INSTALL_GTEST OFF" "gtest_force_shared_crt ON"
+                    "BUILD_SHARED_LIBS OFF"
+            EXCLUDE_FROM_ALL YES SYSTEM TRUE
+        )
+        if(googletest_ADDED AND WIN32)
+            target_compile_options(gtest PRIVATE /EHsc)
+            target_compile_options(gmock PRIVATE /EHsc)
+        endif()
+
+        CPMAddPackage(
+            NAME autocheck
+            GITHUB_REPOSITORY ufz/autocheck
+            GIT_TAG e388ecbb31c49fc2724c8d0436da313b6edca7fd
+            DOWNLOAD_ONLY YES
+        )
+        if(autocheck_ADDED)
+            add_library(autocheck INTERFACE IMPORTED)
+            target_include_directories(
+                autocheck SYSTEM INTERFACE ${autocheck_SOURCE_DIR}/include
+            )
+        endif()
     endif()
 endif()
 
