@@ -191,7 +191,6 @@ message(STATUS "${_benchmark_run_commands}")
 include(packaging/Pack)
 
 # ---- Subdirectories ----
-include_directories(${PROJECT_SOURCE_DIR})
 include(scripts/cmake/CheckHeaderCompilation.cmake)
 
 add_subdirectory(Applications)
