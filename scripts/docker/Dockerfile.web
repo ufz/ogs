@@ -1,4 +1,4 @@
-FROM python:3-slim
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 RUN pip install LinkChecker==10.2.1
 CMD [ "/bin/bash" ]
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
