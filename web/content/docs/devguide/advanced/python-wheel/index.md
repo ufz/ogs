@@ -110,7 +110,7 @@ For generating the various wheels for different Python versions and platforms [`
 You can test it locally with, e.g. only building for Python 3.10:
 
 ```bash
-CIBW_BUILD="cp310*" pipx run cibuildwheel
+CIBW_BUILD="cp310*" uvx cibuildwheel
 ```
 
 Please note that on Linux `cibuildwheel` runs the builds inside [`manylinux`](https://github.com/pypa/manylinux) Docker containers. On other platforms the build happens with native tools. See the [`cibuildwheel` docs](https://cibuildwheel.readthedocs.io/en/stable/#how-it-works) for more information.
