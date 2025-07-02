@@ -1,0 +1,22 @@
+{{ define "main" }}
+<div class="flex w-full">
+  <div id="matrix-container">
+    <div id="features"></div>
+    <div id="files"></div>
+    <div id="project-viewer"></div>
+  </div>
+</div>
+{{ end }}
+
+{{ define "head" }}
+<link rel="icon" type="image/png" href="{{ .RelPermalink }}favicon.png">
+<!-- No google fonts, because of cookies and tracking. -->
+<link rel="stylesheet" href="https://unpkg.com/prismjs/themes/prism-coy.css" />
+<link rel="stylesheet" href="{{ .RelPermalink }}styles.css">
+{{ end }}
+
+{{ define "footer" }}
+<script src="https://unpkg.com/prismjs/components/prism-core.min.js"></script>
+<script src="https://unpkg.com/prismjs/components/prism-markup.min.js"></script>
+<script src="{{ .RelPermalink }}main.js" type="module"></script>
+{{ end }}
