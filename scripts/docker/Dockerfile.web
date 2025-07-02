@@ -1,4 +1,4 @@
-FROM python:3-slim
+FROM ghcr.io/astral-sh/uv:python3.13-bookworm-slim
 RUN pip install LinkChecker==10.2.1
 CMD [ "/bin/bash" ]
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -16,7 +16,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y yarn \
     && rm -rf /var/lib/apt/lists/*
 RUN npm install netlify-cli -g
-ENV HUGO_VERSION=0.122.0
+ENV HUGO_VERSION=0.147.9
 RUN curl -fSL -O "https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb" \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y /hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
     && rm /hugo_extended_${HUGO_VERSION}_linux-amd64.deb

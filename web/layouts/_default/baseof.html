@@ -3,43 +3,49 @@
 
 <head>
   {{ partial "header.html" . }}
+  {{ block "head" . }}
+  {{ end }}
 </head>
 
 <body class="selection:bg-yellow-200">
   {{ partialCached "nav-bar.html" . .Section .Type }}
 
-  <div class="xl:container xl:mx-auto px-2">
+  {{ if eq .Layout "featurematrix" }}
+  <div class="px-2">
+    {{ else }}
+    <div class="xl:container xl:mx-auto px-2">
+      {{ end }}
 
-    {{ block "main" . }}
+      {{ block "main" . }}
+      {{ end }}
+
+    </div>
+
+    {{ block "footer" . }}
     {{ end }}
 
-  </div>
+    {{ partial "global-footer-nav.html" . }}
 
-  {{ block "footer" . }}
-  {{ end }}
+    {{ partial "footer.html" . }}
 
-  {{ partial "global-footer-nav.html" . }}
-
-  {{ partial "footer.html" . }}
-
-  <div class="modal micromodal-slide" id="modal-2" aria-hidden="true">
-    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
-      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-2-title">
-        <header class="modal__header">
-          <h2 class="modal__title" id="modal-2-title">
-            Search
-          </h2>
-        </header>
-        <main class="modal__content" id="modal-2-content">
-          <div id="search"></div>
-        </main>
-        <footer class="modal__footer">
-          <button class="modal__btn modal__btn-primary" data-micromodal-close=""
-            aria-label="Close this dialog window">Close</button>
-        </footer>
+    <div class="modal micromodal-slide" id="modal-2" aria-hidden="true">
+      <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-2-title">
+          <header class="modal__header">
+            <h2 class="modal__title" id="modal-2-title">
+              Search
+            </h2>
+          </header>
+          <main class="modal__content" id="modal-2-content">
+            <div id="search"></div>
+          </main>
+          <footer class="modal__footer">
+            <button class="modal__btn modal__btn-primary" data-micromodal-close=""
+              aria-label="Close this dialog window">Close</button>
+          </footer>
+        </div>
       </div>
     </div>
-  </div>
 
 </body>
 

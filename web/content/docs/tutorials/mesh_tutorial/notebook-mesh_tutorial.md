@@ -1,5 +1,5 @@
 +++
-date = "2023-010-13T11:00:13+01:00"
+date = "2023-10-13T11:00:13+01:00"
 title = "Mesh Tutorial"
 author = "Christoph Lehmann, Feliks Kiszkurno, Frieder Loer"
 weight = 2
