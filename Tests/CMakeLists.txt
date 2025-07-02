@@ -18,13 +18,6 @@ add_dependencies(ctest ${test_dependencies})
 add_dependencies(ctest-large ${test_dependencies})
 
 # testrunner ###
-
-# VS2012 doesn't support correctly the tuples yet See
-# http://code.google.com/p/googletest/issues/detail?id=412
-if(MSVC)
-    add_definitions(/D_VARIADIC_MAX=10)
-endif()
-
 get_source_files(TEST_SOURCES)
 append_source_files(TEST_SOURCES BaseLib)
 append_source_files(TEST_SOURCES FileIO)
