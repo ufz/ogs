@@ -11,4 +11,4 @@ exclude = [
   "mont_terri_experimente.html",
   "coolprop\\.org",
 ]
-exclude_path = ["public/releases/"]
+exclude_path = ["public/releases/", "public/docs/featurematrix/bundle/"]
