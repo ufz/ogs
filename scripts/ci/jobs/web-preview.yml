@@ -18,6 +18,8 @@ preview web site:
     - cp -rl ../build/*/web/content ./ || true
     # Symlink for prj link checks (data-link shortcode)
     - ln -s ../Tests .
+    # Symlinks in content not allowed
+    - ! find web/content -type l -print -quit | grep -q . || echo "Symlink(s) in web/content now allowed:" && find web/content -type l
     - yarn
     - yarn build
   rules:
