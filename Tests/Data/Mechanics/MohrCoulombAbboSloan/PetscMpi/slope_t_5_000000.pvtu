@@ -3,7 +3,7 @@
   <PUnstructuredGrid GhostLevel="1">
     <FieldData>
       <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="18" format="binary" RangeMin="45" RangeMax="103">
-        AQAAAAAAAAAAgAAAAAAAABIAAAAAAAAAGgAAAAAAAAA=eF4z0zPVM9W1NNdNtzBMMU0zSzMHACY8BGk=
+        AQAAAAAAAAAAgAAAAAAAABIAAAAAAAAAGgAAAAAAAAA=eF4z0zPVM9Y1MtNNT0xMTU0xSkwBACleBQs=
       </DataArray>
     </FieldData>
     <PPointData>
