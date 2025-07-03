@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/bundled/ostream.h>
+
 #include <cstddef>
 #include <limits>
 
@@ -84,6 +86,14 @@ public:
     void setAccepted(bool const accepted) { _is_accepted = accepted; }
     bool isAccepted() const { return _is_accepted; }
 
+    friend inline std::ostream& operator<<(std::ostream& os, TimeStep const& ts)
+    {
+        return os << "previous: " << ts.previous()
+                  << " | current: " << ts.current() << " | dt: " << ts.dt()
+                  << " | timestep number: " << ts.timeStepNumber()
+                  << " | is_accepted: " << ts.isAccepted();
+    }
+
 private:
     /// previous time step
     Time _previous;
@@ -105,3 +115,8 @@ inline void updateTimeSteps(double const dt, TimeStep& previous_timestep,
 }
 
 }  // namespace NumLib
+
+template <>
+struct fmt::formatter<NumLib::TimeStep> : fmt::ostream_formatter
+{
+};
