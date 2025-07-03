@@ -136,8 +136,8 @@ Bibliography items from *Documentation/bibliography/*.bib can be referenced by t
 The bib-file has to be converted into a yaml-file with the [pybtex-convert](https://docs.pybtex.org/cmdline.html)-tool:
 
 ```sh
-pipx run --spec pybtex pybtex-convert Documentation/bibliography/ogs.bib web/data/bib_ogs.yaml
-pipx run --spec pybtex pybtex-convert Documentation/bibliography/other.bib web/data/bib_other.yaml
+uvx --from pybtex pybtex-convert Documentation/bibliography/ogs.bib web/data/bib_ogs.yaml
+uvx --from pybtex pybtex-convert Documentation/bibliography/other.bib web/data/bib_other.yaml
 ```
 
 This yaml-file is then used by the shortcode.

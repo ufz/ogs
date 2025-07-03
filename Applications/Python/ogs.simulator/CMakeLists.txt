@@ -16,6 +16,6 @@ target_link_libraries(
     simulator PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib tclap
                       _python_mesh
 )
-target_include_directories(simulator PRIVATE ../../CLI)
+target_include_directories(simulator PRIVATE ../../CLI ${PROJECT_SOURCE_DIR})
 
 install(TARGETS simulator LIBRARY DESTINATION ${_py_install_location})

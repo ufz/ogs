@@ -113,6 +113,9 @@ function(ogs_add_library targetName)
         endif()
     endif()
 
+    # Add project root to include directories for cross-library includes
+    target_include_directories(${targetName} PRIVATE ${PROJECT_SOURCE_DIR})
+
     if(MSVC)
         GroupSourcesByFolder(${targetName})
     endif()
@@ -156,6 +159,10 @@ function(ogs_add_executable targetName)
         PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
                 -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
     )
+
+    # Add project root to include directories for cross-library includes
+    target_include_directories(${targetName} PRIVATE ${PROJECT_SOURCE_DIR})
+
     set(ogs_executables "${_OGS_EXECUTABLES}")
     list(APPEND ogs_executables "${targetName}")
     set(_OGS_EXECUTABLES "${ogs_executables}" CACHE INTERNAL "list of exes")

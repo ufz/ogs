@@ -10,5 +10,6 @@ endif()
 target_link_libraries(
     callbacks PRIVATE ProcessLibBoundaryConditionAndSourceTermPythonModule
 )
+target_include_directories(callbacks PRIVATE ${PROJECT_SOURCE_DIR})
 
 install(TARGETS callbacks LIBRARY DESTINATION ${_py_install_location})

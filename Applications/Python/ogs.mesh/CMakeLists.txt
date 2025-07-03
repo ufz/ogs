@@ -4,6 +4,7 @@ add_library(_python_mesh STATIC OGSMesh.cpp)
 target_link_libraries(
     _python_mesh PUBLIC MeshLib BaseLib GitInfoLib pybind11::pybind11
 )
+target_include_directories(_python_mesh PRIVATE ${PROJECT_SOURCE_DIR})
 
 # The actual Python module should only contain the binding code.
 pybind11_add_module(mesh MODULE ogs_mesh_python_module.cpp)
@@ -16,5 +17,6 @@ if(_link_options)
 endif()
 
 target_link_libraries(mesh PRIVATE _python_mesh)
+target_include_directories(mesh PRIVATE ${PROJECT_SOURCE_DIR})
 
 install(TARGETS mesh LIBRARY DESTINATION ${_py_install_location})
