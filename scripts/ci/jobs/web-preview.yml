@@ -10,6 +10,8 @@ preview web site:
   variables:
     HUGO_ENVIRONMENT: "staging"
   script:
+    # Symlinks in content not allowed
+    - ! find web/content -type l -print -quit | grep -q . || echo "Symlink(s) in web/content now allowed:" && find web/content -type l
     - cd web
     - python scripts/convert_notebooks.py
     # Copy notebook pages
