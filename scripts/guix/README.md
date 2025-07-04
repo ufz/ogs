@@ -22,7 +22,8 @@ guix time-machine -C scripts/guix/channels.scm -- pack -f squashfs -m scripts/gu
 ...
 apptainer shell  /gnu/store/...-bash-glibc-locales-nss-certs-coreutils-squashfs-pack.gz.squashfs
 # Now in the container
-cmake -G Ninja `realpath /gnu/store/*-ogs-source-1.0`
+cmake -G Ninja `realpath /gnu/store/*-ogs-source-1.0` -B build --preset release # or debug
+cd build
 ninja
 ninja tests
 ctest -LE large -j 16
