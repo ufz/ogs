@@ -30,6 +30,8 @@ set_target_properties(
 file(
     COPY ogs/.
     DESTINATION ${_py_build_location}
+    # for guix development container with included (read-only) source code:
+    NO_SOURCE_PERMISSIONS # defaults to 644
     PATTERN "__pycache__" EXCLUDE
     PATTERN "CMakeLists.txt" EXCLUDE
 )
