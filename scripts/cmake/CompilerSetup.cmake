@@ -69,16 +69,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.1.1
            OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.2.1
            OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.3.0
-        )
-            # See https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/4597
-            add_compile_options(
-                $<$<COMPILE_LANGUAGE:CXX>:-Wno-dangling-reference>
-                $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
-                $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
-                $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overread>
-            )
-        endif()
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 14.1.1
+           OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 14.1.1
            OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 14.2.1
         )
             # See https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/5037
