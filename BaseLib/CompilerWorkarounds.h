@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if defined(__GNUC__) && __GNUC__ == 14
+#if defined(__GNUC__) && __GNUC__ >= 13
 #define OGS_NO_DANGLING [[gnu::no_dangling]]
 #else
 #define OGS_NO_DANGLING
