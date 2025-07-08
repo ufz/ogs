@@ -192,11 +192,17 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double const thickness,
         return new_mesh;
     }
 
+    int next_material_id = 0;  // default, if materials are not available.
+
+    if (materials != nullptr)
+    {
+        next_material_id = *ranges::max_element(*materials) + 1;
+    }
+
     auto initial_values =
         materials ? ranges::any_view<int const>{*materials}
-                  : ranges::views::repeat_n(
-                        layer_id.value_or(*ranges::max_element(*materials) + 1),
-                        mesh.getNumberOfElements());
+                  : ranges::views::repeat_n(layer_id.value_or(next_material_id),
+                                            mesh.getNumberOfElements());
 
     auto additional_values = [&]() -> ranges::any_view<int const>
     {
@@ -209,8 +215,7 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double const thickness,
         }
         else
         {
-            int const new_layer_id =
-                layer_id.value_or(*ranges::max_element(*materials) + 1);
+            int const new_layer_id = layer_id.value_or(next_material_id);
             auto const n_new_props =
                 subsfc_elements.size() - mesh.getNumberOfElements();
             return ranges::views::repeat_n(new_layer_id, n_new_props);
