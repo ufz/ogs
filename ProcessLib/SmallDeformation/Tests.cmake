@@ -1,4 +1,7 @@
 if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_reference.prj RUNTIME 200)
+    OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_anchors.xml RUNTIME 200)
+    OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_anchors_prestress.xml RUNTIME 200)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e0.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/EmbeddedAnchorSourceTerm/beam_two_material.prj)
