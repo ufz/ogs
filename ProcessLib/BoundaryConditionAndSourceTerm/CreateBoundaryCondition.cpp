@@ -20,6 +20,7 @@
 #include "HCNonAdvectiveFreeComponentFlowBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
+#include "ParameterLib/Parameter.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "PrimaryVariableConstraintDirichletBoundaryCondition.h"
 #include "Python/PythonBoundaryCondition.h"
