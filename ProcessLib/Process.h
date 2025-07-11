@@ -351,6 +351,12 @@ protected:
     std::vector<GlobalIndexType>
     getIndicesOfResiduumWithoutInitialCompensation() const override;
 
+    /// Sets the release nodal forces from the computed non-equilibrium
+    /// residuum. The forces are used in excavation modelling via the
+    /// `ReleaseNodalForce` boundary condition.
+    void setReleaseNodalForces(GlobalVector const* r_neq,
+                               int const process_id) override;
+
 private:
     void initializeExtrapolator();
 
