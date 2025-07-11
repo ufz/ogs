@@ -47,6 +47,9 @@ public:
     virtual std::vector<GlobalIndexType>
     getIndicesOfResiduumWithoutInitialCompensation() const = 0;
 
+    virtual void setReleaseNodalForces(GlobalVector const* /*r_neq*/,
+                                       int const /*process_id*/) = 0;
+
     /*! Writes the residual at point \c x to \c res.
      *
      * \pre assemble() must have been called before with the same argument \c x.
@@ -111,6 +114,9 @@ public:
     /// vector that do not need initial non-equilibrium compensation.
     virtual std::vector<GlobalIndexType>
     getIndicesOfResiduumWithoutInitialCompensation() const = 0;
+
+    virtual void setReleaseNodalForces(GlobalVector const* /*r_neq*/,
+                                       int const /*process_id*/) = 0;
 
     //! Writes the linearized equation system matrix to \c A.
     //! \pre assemble() must have been called before.
