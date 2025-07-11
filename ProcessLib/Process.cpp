@@ -555,7 +555,7 @@ Process::getIndicesOfResiduumWithoutInitialCompensation() const
 void Process::setReleaseNodalForces(GlobalVector const* r_neq,
                                     int const process_id)
 {
-    _boundary_conditions[process_id].setNodalReleasedForces(r_neq);
+    _boundary_conditions[process_id].setReleaseNodalForces(r_neq);
 }
 
 }  // namespace ProcessLib
