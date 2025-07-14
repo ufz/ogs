@@ -68,7 +68,7 @@
                 <type>LinearElasticIsotropic</type>
                 <normal_stiffness>Kn</normal_stiffness>
                 <shear_stiffness>Ks</shear_stiffness>
-                <penalty_aperture_cutoff>1e-12</penalty_aperture_cutoff>
+                <penalty_aperture_cutoff>1e-14</penalty_aperture_cutoff>
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
@@ -238,29 +238,24 @@
         <parameter>
             <name>Kn</name>
             <type>Constant</type>
-            <!--value>100e9</value-->
             <value>10e9</value>
         </parameter>
         <parameter>
             <name>Ks</name>
             <type>Constant</type>
-            <!--value>100e9</value-->
             <value>4e9</value>
         </parameter>
         <parameter>
             <name>effective_stress0</name>
             <type>Constant</type>
-<!--            <values>-3e6 -3e6 -3e6 0</values>-->
         <values>0.e6 0.e6 0.e6 0</values>
         </parameter>
         <parameter>
             <name>fracture_effective_stress0</name>
             <type>Constant</type>
-<!--            <values>0.0 -2e6</values>-->
             <values>0 0 0.0</values>
         </parameter>
         <!-- initial values -->
-
         <parameter>
             <name>u0</name>
             <type>Constant</type>

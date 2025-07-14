@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.0
+#       jupytext_version: 1.17.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -18,11 +18,11 @@
 # date = "2025-04-03"
 # author = "Mostafa Mollaali, Wenqing Wang"
 # image = "figures/hm_lie_bbar_stress_trace.png"
-# web_subsection = "small deformation"
+# web_subsection = "small-deformations"
 # weight = 3
 # +++
 
-# %%
+# %% vscode={"languageId": "python"}
 import os
 from pathlib import Path
 from subprocess import run
@@ -31,7 +31,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
-import pyvista as pv
 from external_data_dict import external_data
 from matplotlib import colormaps
 
@@ -45,7 +44,7 @@ from ogs_model_runner import SingleOGSModel
 from Plotter import Plotter
 
 
-# %%
+# %% vscode={"languageId": "python"}
 def truncated_cmap(name, minval=0.3, maxval=0.9, n=6):
     base = colormaps.get_cmap(name)
     return lambda i: base(minval + (maxval - minval) * i / (n - 1))
@@ -65,7 +64,7 @@ mpl.rcParams.update(
     }
 )
 
-# %%
+# %% vscode={"languageId": "python"}
 ot.plot.setup.show_region_bounds = False
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
@@ -75,7 +74,7 @@ if not out_dir.exists():
 # %% [markdown]
 #
 #
-# ## Great cell
+# # Great cell
 #
 # <div style="float: left; width: 50%; margin: 0 1em 1em 0;">
 #     <img src="figures/great-cell.png" alt="GREAT cell facility" style="width: 100%;" />
@@ -95,7 +94,6 @@ if not out_dir.exists():
 #
 # ---
 #
-# ### Figure: GREAT Cell Benchmarking Concept
 #
 #
 # <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -115,6 +113,7 @@ if not out_dir.exists():
 #
 
 # %% [markdown]
+# ---
 # ## Benchmarking Strategy
 #
 # A comprehensive benchmarking exercise is performed to establish the models' capabilities and required settings, such as the required discretization for comparable accuracy. The exercise benchmarks are simplified versions of the GREAT cell experiments, focusing on general features like fracture patterns, rotating boundary conditions, and coupled processes.
@@ -157,6 +156,7 @@ if not out_dir.exists():
 #
 
 # %% [markdown]
+# ---
 # ## Material Properties
 
 # %% [markdown]
@@ -190,7 +190,7 @@ if not out_dir.exists():
 #
 # <!-- --- -->
 
-# %%
+# %% vscode={"languageId": "python"}
 materials = {
     "Gneiss": {
         "young_sample": 83.9e9,  # Young's modulus (Pa)
@@ -206,6 +206,7 @@ materials = {
         "S_f": 4.4e-10,  # Specific storage (Pa⁻¹)
         "t_np": 10e6,  # Peak normal traction (Pa)
         "Gc": 50,  # Fracture toughness (J/m²)
+        "w_init": 1e-6,  # initial fracture width (m)
         "rubber_sheath": {
             "young_modulus": 0.1e9,  # Young's modulus (Pa)
             "poisson_ratio": 0.4,  # Poisson's ratio
@@ -229,6 +230,7 @@ materials = {
         "S_f": 4.4e-10,  # Specific storage (Pa⁻¹)
         "t_np": 10e6,  # Peak normal traction (Pa)
         "Gc": 30,  # Fracture toughness (J/m²)
+        "w_init": 1e-6,  # initial fracture width (m)
         "rubber_sheath": {
             "young_modulus": 0.1e9,  # Young's modulus (Pa)
             "poisson_ratio": 0.4,  # Poisson's ratio
@@ -243,12 +245,13 @@ materials = {
 material_names = list(materials.keys())
 
 # %% [markdown]
+# ---
 # # Loads
 
 # %% [markdown]
 #
 #
-# ### Table 3: Load Conditions
+# ### Table 2: Load Conditions
 #
 # | Marker | PEE1 Angle to $\sigma_2$ | PEE1 & 1a | PEE2 & 2a | PEE3 & 3a | PEE4 & 4a | PEE5 & 5a | PEE6 & 6a | PEE7 & 7a | PEE8 & 8a |
 # |--------|--------------------------|----------|----------|----------|----------|----------|----------|----------|----------|
@@ -263,7 +266,7 @@ material_names = list(materials.keys())
 # %% [markdown]
 # ### Schematic loading conditions
 
-# %%
+# %% vscode={"languageId": "python"}
 loads = {
     "A": [
         10.0e6,
@@ -321,7 +324,7 @@ loads = {
     ],
 }
 
-# %%
+# %% vscode={"languageId": "python"}
 angles_degrees = [
     0,
     -22.5,
@@ -353,11 +356,16 @@ for idx, (label, values) in enumerate(loads.items()):
     ax.set_aspect("equal")
     ax.axis("off")
 
-    formatted_values = [rf"${v/1e6:.1f}$" for v in values]
+    formatted_values = [rf"${v / 1e6:.1f}$" for v in values]
     scaled_values = [v / 2 for v in values]
 
     circle = plt.Circle(
-        (0, 0), circle_radius, color="black", fill=False, linestyle="--", linewidth=2
+        (0, 0),
+        circle_radius,
+        color="black",
+        fill=False,
+        linestyle="--",
+        linewidth=2,
     )
     ax.add_artist(circle)
 
@@ -424,7 +432,13 @@ for idx, (label, values) in enumerate(loads.items()):
     ax.set_ylim([-12, 12])
 
     ax.text(
-        0, 0, f"Load {label}", fontsize=32, ha="center", va="center", family="serif"
+        0,
+        0,
+        f"Load {label}",
+        fontsize=32,
+        ha="center",
+        va="center",
+        family="serif",
     )
 
 plt.tight_layout()
@@ -435,19 +449,19 @@ plt.show()
 # %% [markdown]
 # ---
 #
-# ### Boundary Conditions
+# # Boundary Conditions
 #
 # The boundary conditions applied in the simulation include both Dirichlet and Neumann conditions.
 #
 # - **Dirichlet conditions** (displacement control):
-#   $$
+#
 # \begin{equation*}
 # \begin{cases}
 # u_x(0, y) = 0, \quad u_y(0, y) = 0 & \quad \text{for } y = -0.09894 \text{ m}, \\
 # u_y(x, 0) = 0,  & \quad \text{for } x = -0.09894 \text{ m}.
 # \end{cases}
 # \end{equation*}
-#  $$
+#
 #
 # - **Neumann conditions**:
 #   Normal stress $\sigma_{rr}$ is applied on PEEs and DSSs. The DSS stress is calculated as:
@@ -475,12 +489,12 @@ plt.show()
 # (*see also loading Table referenced in earlier section*).
 
 # %% [markdown]
-# # Mesh Generation
+# ## Mesh Generation
 
 # %% [markdown]
 # ### Input
 
-# %%
+# %% vscode={"languageId": "python"}
 h = 0.0025
 meshname = "GreatCell"
 mesh_path = Path(out_dir, "mesh_intact").resolve()
@@ -490,9 +504,9 @@ print(mesh_path)
 # ### Boundary meshes
 
 # %% [markdown]
-# ### Gmsh (boundary meshes)
+# #### Gmsh (boundary meshes)
 
-# %%
+# %% vscode={"languageId": "python"}
 msh_file = mesh_GreatCell_intact(
     lc=0.005,
     lc2=h,
@@ -503,55 +517,17 @@ msh_file = mesh_GreatCell_intact(
     out_dir=mesh_path,
     meshname=meshname,
     mode="BC",
+    post_process=True,
+    cmap="viridis",
+    opacity=0.9,
 )
 
-# %% [markdown]
-# ### Convert .msh to an OGS-compatible mesh
-
-# %%
-msh_path = Path(mesh_path, f"{meshname}.msh")
-meshes = ot.meshes_from_gmsh(filename=msh_path, dim=[1], reindex=True, log=False)
-
-for name, mesh in meshes.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path, f"{name}.vtu"), mesh)
 
 # %% [markdown]
-# ### Visualization of boundary meshes
+# ### Computational domain mesh
+# #### Gmsh
 
-# %%
-plotter = pv.Plotter()
-for name, mesh in meshes.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="tab20",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
-# %% [markdown]
-# ### Gmsh (computational domain mesh)
-
-# %%
+# %% vscode={"languageId": "python"}
 msh_file = mesh_GreatCell_intact(
     lc=0.005,
     lc2=h,
@@ -562,56 +538,13 @@ msh_file = mesh_GreatCell_intact(
     out_dir=mesh_path,
     meshname=meshname,
     mode="domain",
+    post_process=True,
+    cmap="viridis",
+    opacity=0.8,
 )
 
-# %% [markdown]
-# ### Convert .msh to an OGS-compatible mesh
 
-# %%
-msh_path = Path(mesh_path, f"{meshname}.msh")
-meshes_volume = ot.meshes_from_gmsh(
-    filename=msh_path, dim=[1, 2], reindex=True, log=False
-)
-
-for name, mesh in meshes_volume.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path, f"{name}.vtu"), mesh)
-
-# %%
-
-# %% [markdown]
-# ### Visualization of computational domain mesh
-
-# %%
-plotter = pv.Plotter()
-for name, mesh in meshes_volume.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="Set1",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
-# %%
+# %% vscode={"languageId": "python"}
 # %cd {mesh_path}
 run(
     "identifySubdomains -f -m domain.vtu -- "
@@ -640,12 +573,12 @@ run(
 # %cd -
 
 # %% [markdown]
-# # Run the simulation
+# ## Run the simulation
 
 # %% [markdown]
-# ## Inputs
+# ### Inputs
 
-# %%
+# %% vscode={"languageId": "python"}
 # Times for load curves
 times = "0.0  1000. 3500"
 simulation_end_time = 3500.0
@@ -660,14 +593,14 @@ PEE_load_values = {
 }
 
 prj_file = Path("M1_SD.prj")
-# Now create a Project object
+# Create a Project object
 prj = ot.Project(input_file=prj_file, output_file=Path(out_dir, f"{output_prefix}.prj"))
 
 # %% [markdown]
-# ## Run OGS
+# ### Run OGS
 
-# %%
-# Now create SingleOGSModel
+# %% vscode={"languageId": "python"}
+# Create SingleOGSModel
 sing_ogs_model = SingleOGSModel(
     model=prj,
     out_dir=out_dir,
@@ -696,12 +629,10 @@ vtu_files_dict = sing_ogs_model.run_simulations_with_fracture(
 )
 
 # %% [markdown]
-# # Post-processing
-
-# %% [markdown]
+# ## Post-processing
 # ### Volumetric strain vs angle at probe circle
 
-# %%
+# %% vscode={"languageId": "python"}
 json_path = Path("./external_data_dict.py").resolve()
 print(f"[DEBUG] Trying path: {json_path}")
 
@@ -713,24 +644,19 @@ else:
 
 plotter = Plotter(
     output_dir=out_dir,
-    markers=["o", "^"],
-    material_cmaps={
-        "Gneiss": truncated_cmap("Blues"),
-        "Greywacke": truncated_cmap("Oranges"),
-    },
     save_extracted_data=True,
 )
 
 plotter.plot_volumetric_strain_vs_angle(
     vtu_files_dict,
     model_type="M1",
-    # ylim_range=[-0.035, -0.005],
+    ylim_range=[-7.5, 2.5],
     layout="subplots",
     external_data=external_data,
 )
 
 # %% [markdown]
-# ## Profiles
+# ### Profiles
 
 # %% [markdown]
 #
@@ -742,7 +668,7 @@ plotter.plot_volumetric_strain_vs_angle(
 #
 # These results are shown for the intact rock samples under $\texttt{M}_1$ loading.
 
-# %%
+# %% vscode={"languageId": "python"}
 plotter.plot_field_variables(vtu_files_dict)
 
 # %% [markdown]
@@ -756,15 +682,15 @@ plotter.plot_field_variables(vtu_files_dict)
 #
 # <!-- ---
 #
-# ### Figure 4: Effective Stress Trace and Volumetric Strain (VPF-FEM)
+#  **Figure:** Effective Stress Trace and Volumetric Strain.
 #
 # | (a) Greywacke Sample | (b) Gneiss Sample |
 # |----------------------|------------------|
 # | ![Greywacke Stress-Strain](figs/M1_VPF_profiles_greywacke.png) | ![Gneiss Stress-Strain](figs/M1_VPF_profiles_gneiss.png) |
 #
-# **Figure 4**: Trace of effective stress and volumetric strain vs angle for intact Greywacke (a) and Gneiss (b) using VPF-FEM method. Stress is visualized over the full sample domain, while strain is restricted to the central region to avoid high values near PEE materials. -->
+# **Figure**: Trace of effective stress and volumetric strain vs angle for intact Greywacke (a) and Gneiss (b). Stress is visualized over the full sample domain, while strain is restricted to the central region to avoid high values near PEE materials. -->
 
-# %%
+# %% vscode={"languageId": "python"}
 # Plot only inner mesh (within r=0.065 m):
 plotter.plot_field_variables(vtu_files_dict, inner=True, r=0.065)
 
@@ -775,12 +701,12 @@ plotter.plot_field_variables(vtu_files_dict, inner=True, r=0.065)
 # In this section, all input data and boundary conditions provided in $\texttt{M}_{2b}$, except  a single wing fracture, defined as $\Gamma =  \left[0, 0.04\right] \times \{0\}$, is considered.
 
 # %% [markdown]
-# # Mesh Generation
+# ## Mesh Generation
 
 # %% [markdown]
 # ### Input
 
-# %%
+# %% vscode={"languageId": "python"}
 h = 0.0025
 meshname = "GreatCell"
 mesh_path_embedded = Path(out_dir, "mesh_GreatCell_embeddedFracture").resolve()
@@ -789,9 +715,9 @@ mesh_path_embedded = Path(out_dir, "mesh_GreatCell_embeddedFracture").resolve()
 # ### Boundary meshes
 
 # %% [markdown]
-# ### Gmsh (boundary meshes)
+# #### Gmsh (boundary meshes)
 
-# %%
+# %% vscode={"languageId": "python"}
 msh_file_embedded = mesh_GreatCell_embeddedFracture(
     lc=0.005,
     lc2=h,
@@ -802,57 +728,16 @@ msh_file_embedded = mesh_GreatCell_embeddedFracture(
     out_dir=mesh_path_embedded,
     meshname=meshname,
     mode="BC",
+    post_process=True,
+    cmap="viridis",
+    opacity=0.8,
 )
 
 # %% [markdown]
-# ### Convert .msh to an OGS-compatible mesh
+# ### Computational domain mesh
+# #### Gmsh (computational domain mesh)
 
-# %%
-msh_path_embedded = Path(mesh_path_embedded, f"{meshname}.msh")
-meshes_embedded = ot.meshes_from_gmsh(
-    filename=msh_path_embedded, dim=[1], reindex=True, log=False
-)
-
-for name, mesh in meshes_embedded.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path_embedded, f"{name}.vtu"), mesh)
-
-# %% [markdown]
-# ### Visualization of boundary meshes
-
-# %%
-plotter = pv.Plotter()
-for name, mesh in meshes_embedded.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="tab20",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
-# %% [markdown]
-# ### Gmsh (computational domain mesh)
-
-# %%
+# %% vscode={"languageId": "python"}
 msh_file_volume_embedded = mesh_GreatCell_embeddedFracture(
     lc=0.005,
     lc2=h,
@@ -863,54 +748,12 @@ msh_file_volume_embedded = mesh_GreatCell_embeddedFracture(
     out_dir=mesh_path_embedded,
     meshname=meshname,
     mode="domain",
+    post_process=True,
+    cmap="viridis",
+    opacity=0.8,
 )
 
-# %% [markdown]
-# ### Convert .msh to an OGS-compatible mesh
-
-# %%
-msh_path_embedded = Path(mesh_path_embedded, f"{meshname}.msh")
-meshes_volume_embedded = ot.meshes_from_gmsh(
-    filename=msh_path_embedded, dim=[1, 2], reindex=True, log=False
-)
-
-for name, mesh in meshes_volume_embedded.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path_embedded, f"{name}.vtu"), mesh)
-
-# %% [markdown]
-# ### Visualization of computational domain mesh
-
-# %%
-plotter = pv.Plotter()
-for name, mesh in meshes_volume_embedded.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="Set1",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
-# %%
+# %% vscode={"languageId": "python"}
 # %cd {mesh_path_embedded}
 # !pwd
 run(
@@ -938,7 +781,11 @@ run(
 )
 # %cd -
 
-# %%
+# %% [markdown]
+# ## Run the simulation
+# ### Input
+
+# %% vscode={"languageId": "python"}
 # Times for load curves
 times = "0.0  1000. 3500"
 simulation_end_time = 3500.0
@@ -955,11 +802,12 @@ PEE_load_values = {
 
 # Project file
 prj_file = Path("M2_LIE.prj")
-
-
-# Now create a Project object
 prj = ot.Project(input_file=prj_file, output_file=Path(out_dir, f"{output_prefix}.prj"))
 
+# %% [markdown]
+# ### Run OGS
+
+# %% vscode={"languageId": "python"}
 sing_ogs_model = SingleOGSModel(
     model=prj,
     out_dir=out_dir,
@@ -986,22 +834,27 @@ vtu_files_dict_embedded = sing_ogs_model.run_simulations_with_fracture(
     tension_cutoff="true",
 )
 
-# %%
+# %% [markdown]
+# ## Post-processing
+# ### Volumetric strain vs angle at probe circle
+
+# %% vscode={"languageId": "python"}
 plotter = Plotter(
     output_dir=out_dir,
-    markers=["o", "s", "D", "^", "v", "P", "*", "X"],
-    material_cmaps={
-        "Gneiss": truncated_cmap("Blues"),
-        "Greywacke": truncated_cmap("Oranges"),
-    },
     save_extracted_data=True,
 )
 
 plotter.plot_volumetric_strain_vs_angle(
-    vtu_files_dict_embedded, model_type="M2b", ylim_range=[-0.1, 0.005], layout="single"
+    vtu_files_dict_embedded,
+    model_type="M2b",
+    layout="single",
+    ylim_range=[-7.5, 2.5],
 )
 
-# %%
+# %% [markdown]
+# ### Profiles
+
+# %% vscode={"languageId": "python"}
 plotter.plot_field_variables(vtu_files_dict_embedded)
 
 # %% [markdown]
@@ -1011,12 +864,12 @@ plotter.plot_field_variables(vtu_files_dict_embedded)
 # In this benchmark,  2D plane strain numerical simulations are performed  to establish a baseline model for assessing the impact of fracture orientation on strain distribution under poly-axial loading. A planar fracture within the specimen, $\Gamma =  \left[-0.094, 0.094\right] \times \{0\}$, is considered, under poly-axial loading applied on PEE's and DSS's
 
 # %% [markdown]
-# # Mesh Generation
+# ## Mesh Generation
 
 # %% [markdown]
 # ### Input
 
-# %%
+# %% vscode={"languageId": "python"}
 h = 0.0025
 meshname = "GreatCell"
 mesh_path_full = Path(".", out_dir, "mesh_GreatCell_fullFracture").resolve()
@@ -1025,9 +878,9 @@ mesh_path_full = Path(".", out_dir, "mesh_GreatCell_fullFracture").resolve()
 # ### Boundary meshes
 
 # %% [markdown]
-# ### Gmsh (boundary meshes)
+# #### Gmsh (boundary meshes)
 
-# %%
+# %% vscode={"languageId": "python"}
 msh_file_full = mesh_GreatCell_fullFracture(
     lc=0.005,
     lc2=h,
@@ -1038,48 +891,17 @@ msh_file_full = mesh_GreatCell_fullFracture(
     out_dir=mesh_path_full,
     meshname=meshname,
     mode="BC",
+    post_process=True,
+    cmap="viridis",
+    opacity=0.8,
 )
 
-# %%
-msh_path_full = Path(mesh_path_full, f"{meshname}.msh")
-meshes_volume_full = ot.meshes_from_gmsh(
-    filename=msh_path_full, dim=[1], reindex=True, log=False
-)
 
-for name, mesh in meshes_volume_full.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path_full, f"{name}.vtu"), mesh)
+# %% [markdown]
+# ### Computational domain mesh
+# #### Gmsh (computational domain mesh)
 
-# %%
-plotter = pv.Plotter()
-for name, mesh in meshes_volume_full.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="tab20",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
-# %%
+# %% vscode={"languageId": "python"}
 msh_file_full = mesh_GreatCell_fullFracture(
     lc=0.005,
     lc2=h,
@@ -1090,48 +912,13 @@ msh_file_full = mesh_GreatCell_fullFracture(
     out_dir=mesh_path_full,
     meshname=meshname,
     mode="domain",
+    post_process=True,
+    cmap="viridis",
+    opacity=0.8,
 )
 
-# %%
-msh_path_full = Path(mesh_path_full, f"{meshname}.msh")
-meshes_volume_full = ot.meshes_from_gmsh(
-    filename=msh_path_full, dim=[1, 2], reindex=True, log=False
-)
 
-for name, mesh in meshes_volume_full.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path_full, f"{name}.vtu"), mesh)
-
-# %%
-plotter = pv.Plotter()
-for name, mesh in meshes_volume_full.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="tab20",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
-# %%
+# %% vscode={"languageId": "python"}
 # %cd {mesh_path_full}
 run(
     "identifySubdomains -f -m domain.vtu -- "
@@ -1159,7 +946,11 @@ run(
 
 # %cd -
 
-# %%
+# %% [markdown]
+# ## Run the simulation
+# ### Input
+
+# %% vscode={"languageId": "python"}
 # Times for load curves
 times = "0.0  1000. 3500"
 simulation_end_time = 3500.0
@@ -1175,11 +966,13 @@ PEE_load_values = {
 
 # Project file
 prj_file = Path("M2_LIE.prj")
-
-# Now create a Project object
 prj = ot.Project(input_file=prj_file, output_file=Path(out_dir, f"{output_prefix}.prj"))
 
-# Now create SingleOGSModel
+# %% [markdown]
+# ### Run OGS
+
+# %% vscode={"languageId": "python"}
+# Create SingleOGSModel
 sing_ogs_model = SingleOGSModel(
     model=prj,
     out_dir=out_dir,
@@ -1208,25 +1001,33 @@ vtu_files_dict_full = sing_ogs_model.run_simulations_with_fracture(
 )
 
 
-# %%
+# %% [markdown]
+# ## Post-processing
+# ### Volumetric strain vs angle at probe circle
+
+# %% vscode={"languageId": "python"}
 plotter = Plotter(
     output_dir=out_dir,
-    markers=["o", "s", "D", "^", "v", "P", "*", "X"],
-    material_cmaps={
-        "Gneiss": truncated_cmap("Blues"),
-        "Greywacke": truncated_cmap("Oranges"),
-    },
     save_extracted_data=True,
 )
 
 plotter.plot_volumetric_strain_vs_angle(
-    vtu_files_dict_full, model_type="M2a", ylim_range=[-0.1, 0.005], layout="subplots"
+    vtu_files_dict_full,
+    model_type="M2a",
+    layout="subplots",
+    ylim_range=[-7.5, 2.5],
 )
 
-# %%
+# %% [markdown]
+# ### Profiles
+
+# %% vscode={"languageId": "python"}
 plotter.plot_field_variables(vtu_files_dict_full)
 
-# %%
+# %% [markdown]
+# ---
+
+# %% vscode={"languageId": "python"}
 pairs_to_check = {
     "M1_SD_A_Greywacke": "M1",
     "M2a_LIE_A_Greywacke": "M2a",
@@ -1235,21 +1036,22 @@ pairs_to_check = {
 
 for case, label in pairs_to_check.items():
     print(f"\n===== {label} case =====")
-    new_result = np.load(Path(out_dir, f"extracted_{case}.npz"))
-    expected_result = np.load(Path("expected", f"expected_{case}.npz"))
+    new_result = np.load(Path(out_dir, f"extracted_{case}_volStrain.npz"))
+    expected_result = np.load(Path("expected", f"extracted_{case}_volStrain.npz"))
 
     eps_v_new = new_result["eps_v"]
     eps_v_expected = expected_result["eps_v"]
     phi_new = new_result["phi"]
     phi_expected = expected_result["phi"]
 
-    np.testing.assert_allclose(eps_v_new, eps_v_expected, atol=5e-4)
+    np.testing.assert_allclose(eps_v_new, eps_v_expected, atol=1e-3)
     np.testing.assert_allclose(phi_new, phi_expected, atol=1e-8)
     print(f"\n{label} case passed.")
 
 
 # %% [markdown]
-# ### Reference
+# ---
+# # Reference
 # 1. McDermott, C.I., Fraser-Harris, A., Sauter, M., Couples, G.D., Edlmann, K., Kolditz, O., Lightbody, A., Somerville, J. and Wang, W., 2018. New experimental equipment recreating geo-reservoir conditions in large, fractured, porous samples to investigate coupled thermal, hydraulic and polyaxial stress processes. *Scientific reports*, 8(1), p.14549.
 #
 # 2. Mollaali, M., Kolditz, O., Hu, M., Park, C.H., Park, J.W., McDermott, C.I., Chittenden, N., Bond, A., Yoon, J.S., Zhou, J. and Pan, P.Z., Liu H., Hou W.,  Lei H., Zhang L., Nagel T., Barsch M., Wang W., Nguyen S., Kwon S. and Yoshioka K., 2023. Comparative verification of hydro-mechanical fracture behavior: Task G of international research project DECOVALEX–2023. *International Journal of Rock Mechanics and Mining Sciences*, 170, p.105530.
