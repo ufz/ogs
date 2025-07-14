@@ -141,8 +141,9 @@ ProcessVariable::ProcessVariable(
                 component_id = 0;
             }
 
-            _bc_configs.emplace_back(std::move(bc_config), bc_mesh,
-                                     component_id);
+            _bc_configs.emplace_back(
+                std::move(bc_config), bc_mesh, component_id,
+                _compensate_non_equilibrium_initial_residuum);
         }
     }
     else
