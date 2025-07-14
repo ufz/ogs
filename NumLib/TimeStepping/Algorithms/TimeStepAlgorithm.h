@@ -40,12 +40,6 @@ public:
     Time begin() const { return _t_initial; }
     /// return the end of time steps
     Time end() const { return _t_end; }
-    /// reset the current step size from the previous time
-    virtual void resetCurrentTimeStep(const double /*dt*/,
-                                      TimeStep& /*ts_previous*/,
-                                      TimeStep& /*ts_current*/)
-    {
-    }
 
     /// Move to the next time step
     /// \param solution_error Solution error \f$e_n\f$ between two successive

@@ -415,9 +415,6 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
             auto& ppd = *_per_process_data[i];
             NumLib::updateTimeSteps(dt(), ppd.timestep_previous,
                                     ppd.timestep_current);
-            auto& timestep_algorithm = ppd.timestep_algorithm;
-            timestep_algorithm->resetCurrentTimeStep(
-                dt(), ppd.timestep_previous, ppd.timestep_current);
         }
 
         auto& x = *_process_solutions[i];
@@ -695,16 +692,13 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
 
     _last_step_rejected = nonlinear_solver_status.error_norms_met;
 
+    for (auto const& process_data : _per_process_data)
     {
-        for (auto const& process_data : _per_process_data)
-        {
-            auto& pcs = process_data->process;
-            int const process_id = process_data->process_id;
-            auto& ode_sys = *process_data->tdisc_ode_sys;
-            pcs.solveReactionEquation(_process_solutions,
-                                      _process_solutions_prev, t(), dt, ode_sys,
-                                      process_id);
-        }
+        auto& pcs = process_data->process;
+        int const process_id = process_data->process_id;
+        auto& ode_sys = *process_data->tdisc_ode_sys;
+        pcs.solveReactionEquation(_process_solutions, _process_solutions_prev,
+                                  t(), dt, ode_sys, process_id);
     }
 
     return nonlinear_solver_status;
