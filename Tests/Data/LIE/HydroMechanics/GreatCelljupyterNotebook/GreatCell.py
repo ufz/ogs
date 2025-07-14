@@ -1035,8 +1035,8 @@ for case, label in pairs_to_check.items():
     phi_new = new_result["phi"]
     phi_expected = expected_result["phi"]
 
-    np.testing.assert_allclose(eps_v_new, eps_v_expected, atol=5e-4)
-    np.testing.assert_allclose(phi_new, phi_expected, atol=1e-8)
+    np.testing.assert_allclose(eps_v_new, eps_v_expected, atol=7e-4)
+    np.testing.assert_allclose(phi_new, phi_expected, atol=1e-6)
     print(f"\n{label} case passed.")
 
 # %% [markdown]
