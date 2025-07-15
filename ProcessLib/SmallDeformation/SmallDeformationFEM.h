@@ -163,6 +163,38 @@ public:
         }
     }
 
+    void setInitialConditionsConcrete(Eigen::VectorXd const local_x,
+                                      double const /*t*/,
+                                      int const /*process_id*/) override
+    {
+        unsigned const n_integration_points =
+            this->integration_method_.getNumberOfPoints();
+        auto const B_dil_bar = getDilatationalBBarMatrix();
+
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            auto const& N = ip_data_[ip].N_u;
+            auto const& dNdx = ip_data_[ip].dNdx_u;
+            ParameterLib::SpatialPosition const x_position{
+                std::nullopt, this->element_.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        this->element_, N))};
+
+            auto const x_coord =
+                NumLib::interpolateXCoordinate<ShapeFunction,
+                                               ShapeMatricesType>(
+                    this->element_, N);
+            auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
+                DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
+                typename BMatricesType::BMatrixType>(
+                dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_);
+
+            this->output_data_[ip].eps_data.eps.noalias() = B * local_x;
+        }
+    }
+
     typename ConstitutiveRelations::ConstitutiveData<DisplacementDim>
     updateConstitutiveRelations(
         BMatrixType const& B, Eigen::Ref<Eigen::VectorXd const> const& u,
