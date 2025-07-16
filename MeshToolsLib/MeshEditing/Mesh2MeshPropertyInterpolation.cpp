@@ -58,6 +58,7 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(
     {
         dest_properties =
             dest_mesh.getProperties().getPropertyVector<double>(_property_name);
+        assert(dest_properties->size() != dest_mesh.getNumberOfElements());
     }
     else
     {
@@ -65,7 +66,8 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(
              _property_name);
         dest_properties =
             dest_mesh.getProperties().createNewPropertyVector<double>(
-                _property_name, MeshLib::MeshItemType::Cell, 1);
+                _property_name, MeshLib::MeshItemType::Cell,
+                dest_mesh.getNumberOfElements(), 1);
         if (!dest_properties)
         {
             WARN(
@@ -74,10 +76,6 @@ bool Mesh2MeshPropertyInterpolation::setPropertiesForMesh(
                 _property_name);
             return false;
         }
-    }
-    if (dest_properties->size() != dest_mesh.getNumberOfElements())
-    {
-        dest_properties->resize(dest_mesh.getNumberOfElements());
     }
 
     interpolatePropertiesForMesh(dest_mesh, *dest_properties);

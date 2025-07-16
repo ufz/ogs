@@ -11,6 +11,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <range/v3/algorithm/fill.hpp>
 
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
@@ -76,7 +77,7 @@ void transformVariableFromGlobalVector(
     // "breaks" visualization, e.g. of heat or mass flow rate
     // with Taylor-Hood elements. I.e., all lower order
     // properties would have NaN on the higher order nodes.
-    std::fill(begin(output_vector), end(output_vector), 0);
+    ranges::fill(output_vector, 0);
 
     int const n_components =
         local_to_global_index_map.getNumberOfVariableComponents(variable_id);
@@ -105,7 +106,8 @@ void transformVariableFromGlobalVector(
     GlobalVector const& input_vector_on_bulk_mesh, int const variable_id,
     NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
     MeshLib::PropertyVector<double>& output_vector_on_submesh,
-    std::vector<std::size_t> const& map_submesh_node_id_to_bulk_mesh_node_id,
+    std::span<std::size_t const> const&
+        map_submesh_node_id_to_bulk_mesh_node_id,
     Functor map_function)
 {
     MathLib::LinAlg::setLocalAccessibleVector(input_vector_on_bulk_mesh);
@@ -114,8 +116,7 @@ void transformVariableFromGlobalVector(
     // "breaks" visualization, e.g. of heat or mass flow rate
     // with Taylor-Hood elements. I.e., all lower order
     // properties would have NaN on the higher order nodes.
-    std::fill(begin(output_vector_on_submesh), end(output_vector_on_submesh),
-              0);
+    ranges::fill(output_vector_on_submesh, 0);
 
     int const n_components =
         local_to_global_index_map.getNumberOfVariableComponents(variable_id);

@@ -160,9 +160,9 @@ MeshLib::Mesh createMeshFromSelectedNodes(
 
     // The resulting mesh without elements containing the selected nodes.
     MeshLib::Mesh result("boundary_mesh", some_nodes, {});
-    addPropertyToMesh(result,
-                      MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-                      MeshLib::MeshItemType::Node, 1, selected_nodes);
+    addPropertyToMesh<std::size_t>(
+        result, MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+        MeshLib::MeshItemType::Node, 1, {selected_nodes});
     return result;
 }
 

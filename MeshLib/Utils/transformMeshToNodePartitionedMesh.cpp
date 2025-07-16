@@ -31,10 +31,10 @@
 
 namespace
 {
-bool isRegularNode(
-    MeshLib::NodePartitionedMesh const& bulk_mesh,
-    std::vector<std::size_t> const& local_bulk_node_ids_for_subdomain,
-    std::size_t const subdomain_node_id)
+bool isRegularNode(MeshLib::NodePartitionedMesh const& bulk_mesh,
+                   std::span<std::size_t const>
+                       local_bulk_node_ids_for_subdomain,
+                   std::size_t const subdomain_node_id)
 {
     return (!bulk_mesh.isGhostNode(
         local_bulk_node_ids_for_subdomain[subdomain_node_id]));
@@ -96,8 +96,8 @@ unsigned long computeNumberOfRegularNodes(NodePartitionedMesh const* bulk_mesh,
     unsigned long const number_of_regular_nodes = ranges::count_if(
         subdomain_nodes | MeshLib::views::ids,
         [&](std::size_t const id) {
-            return isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain,
-                                 id);
+            return isRegularNode(*bulk_mesh,
+                                 {local_bulk_node_ids_for_subdomain}, id);
         });
 
     DBUG("[{}] number of regular nodes: {}", subdomain_mesh->getName(),
@@ -147,7 +147,7 @@ computeRegularBaseNodeGlobalNodeIDsOfSubDomainPartition(
     // set the global id for the regular base nodes
     for (auto const id : subdomain_nodes | MeshLib::views::ids)
     {
-        if (isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain, id))
+        if (isRegularNode(*bulk_mesh, {local_bulk_node_ids_for_subdomain}, id))
         {
             subdomain_global_node_ids.emplace_back(partition_offset + id);
         }
@@ -170,7 +170,7 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
     std::vector<std::size_t> subdomain_node_id_to_bulk_node_id;
     for (auto const id : subdomain_mesh->getNodes() | MeshLib::views::ids)
     {
-        if (!isRegularNode(*bulk_mesh, local_bulk_node_ids_for_subdomain, id))
+        if (!isRegularNode(*bulk_mesh, {local_bulk_node_ids_for_subdomain}, id))
         {
             auto const bulk_node_id = local_bulk_node_ids_for_subdomain[id];
             // this puts the global bulk node id at pos:

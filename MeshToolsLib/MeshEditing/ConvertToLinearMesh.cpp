@@ -136,8 +136,9 @@ std::unique_ptr<MeshLib::Mesh> convertToLinearMesh(
         auto const n_src_comp = double_property->getNumberOfGlobalComponents();
         auto new_prop =
             new_mesh->getProperties().createNewPropertyVector<double>(
-                name, MeshLib::MeshItemType::Node, n_src_comp);
-        new_prop->resize(new_mesh->getNumberOfNodes() * n_src_comp);
+                name, MeshLib::MeshItemType::Node, new_mesh->getNumberOfNodes(),
+                n_src_comp);
+        assert(new_prop != nullptr);
 
         for (std::size_t k = 0; k < org_nodes.size(); ++k)
         {

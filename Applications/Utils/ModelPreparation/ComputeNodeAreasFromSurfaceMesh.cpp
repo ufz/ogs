@@ -103,13 +103,13 @@ int main(int argc, char* argv[])
     {
         orig_node_ids =
             surface_mesh->getProperties().createNewPropertyVector<std::size_t>(
-                id_prop_name.getValue(), MeshLib::MeshItemType::Node, 1);
+                id_prop_name.getValue(), MeshLib::MeshItemType::Node,
+                surface_mesh->getNumberOfNodes(), 1);
         if (!orig_node_ids)
         {
             ERR("Fatal error: could not create property.");
             return EXIT_FAILURE;
         }
-        orig_node_ids->resize(surface_mesh->getNumberOfNodes());
         std::iota(orig_node_ids->begin(), orig_node_ids->end(), 0);
     }
     else

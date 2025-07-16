@@ -17,8 +17,11 @@
 #include <lis.h>
 
 #include <cassert>
+#include <span>
 #include <string>
 #include <vector>
+
+#include "BaseLib/Error.h"
 
 namespace MathLib
 {
@@ -116,6 +119,22 @@ public:
     void copyValues(std::vector<double>& u) const
     {
         u.resize(size());
+        lis_vector_get_values(vec_, 0, size(), u.data());
+    }
+
+    /// Copy local entries to a span.
+    /// \param u a span for the values of local entries of correct size. If the
+    /// sizes mismatch, exception will be thrown.
+    void copyValues(std::span<double> u) const
+    {
+        if (u.size() != size())
+        {
+            OGS_FATAL(
+                "LisVector::copyValues() size mismatch. Trying to copy a "
+                "vector "
+                "of size {:d} to a span of size {:d}.",
+                size(), u.size());
+        }
         lis_vector_get_values(vec_, 0, size(), u.data());
     }
 

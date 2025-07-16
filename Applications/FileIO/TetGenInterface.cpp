@@ -261,10 +261,7 @@ MeshLib::Mesh* TetGenInterface::readTetGenMesh(std::string const& nodes_fname,
     {
         auto* const mat_props = properties.createNewPropertyVector<int>(
             "MaterialIDs", MeshLib::MeshItemType::Cell);
-        mat_props->reserve(elements.size());
-        std::copy(materials.cbegin(),
-                  materials.cend(),
-                  std::back_inserter(*mat_props));
+        mat_props->assign(materials);
     }
 
     const std::string mesh_name(

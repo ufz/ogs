@@ -9,6 +9,10 @@
 
 #include "AppendLinesAlongPolyline.h"
 
+#include <range/v3/view/any_view.hpp>
+#include <range/v3/view/common.hpp>
+#include <range/v3/view/repeat_n.hpp>
+
 #include "BaseLib/Logging.h"
 #include "GeoLib/Polyline.h"
 #include "GeoLib/PolylineVec.h"
@@ -81,18 +85,14 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
     {
         OGS_FATAL("Could not create MaterialIDs cell vector in new mesh.");
     }
-    new_material_ids->reserve(new_mesh->getNumberOfElements());
-    if (material_ids != nullptr)
-    {
-        std::copy(begin(*material_ids), end(*material_ids),
-                  std::back_inserter(*new_material_ids));
-    }
-    else
-    {
-        new_material_ids->resize(mesh.getNumberOfElements());
-    }
-    std::copy(begin(new_mat_ids), end(new_mat_ids),
-              std::back_inserter(*new_material_ids));
+
+    auto initial_values =
+        material_ids ? ranges::any_view<int const>(*material_ids)
+                     : ranges::views::repeat_n(0, mesh.getNumberOfElements());
+
+    new_material_ids->assign(ranges::views::common(
+        ranges::views::concat(initial_values, new_mat_ids)));
+
     return new_mesh;
 }
 

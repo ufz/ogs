@@ -11,6 +11,8 @@
 
 #include <cassert>
 #include <iterator>
+#include <range/v3/range/concepts.hpp>
+#include <range/v3/view/common.hpp>
 #include <string>
 #include <utility>
 #include <vector>
@@ -52,15 +54,17 @@ protected:
 /// the template specialisation for pointer types below.
 /// \tparam PROP_VAL_TYPE typical this is a scalar, a vector or a matrix
 template <typename PROP_VAL_TYPE>
-class PropertyVector : public std::vector<PROP_VAL_TYPE>,
-                       public PropertyVectorBase
+class PropertyVector : public PropertyVectorBase
 {
     friend class Properties;
 
 public:
-    std::size_t getNumberOfTuples() const
+    using value_type = PROP_VAL_TYPE;
+
+public:
+    constexpr std::size_t getNumberOfTuples() const
     {
-        return std::vector<PROP_VAL_TYPE>::size() / _n_components;
+        return size() / _n_components;
     }
 
     //! Returns the value for the given component stored in the given tuple.
@@ -68,8 +72,7 @@ public:
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
-        return this->operator[](tuple_index* getNumberOfGlobalComponents() +
-                                component);
+        return data_[tuple_index * getNumberOfGlobalComponents() + component];
     }
 
     //! Returns the value for the given component stored in the given tuple.
@@ -78,22 +81,92 @@ public:
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
-        return this->operator[](tuple_index* getNumberOfGlobalComponents() +
-                                component);
+        return data_[tuple_index * getNumberOfGlobalComponents() + component];
     }
 
     PropertyVectorBase* clone(
         std::vector<std::size_t> const& exclude_positions) const override
     {
-        auto* t(new PropertyVector<PROP_VAL_TYPE>(
-            _property_name, _mesh_item_type, _n_components));
-        BaseLib::excludeObjectCopy(*this, exclude_positions, *t);
-        return t;
+        auto* cloned_pv = new PropertyVector<PROP_VAL_TYPE>(
+            _property_name, _mesh_item_type, _n_components);
+        cloned_pv->data_ = BaseLib::excludeObjectCopy(data_, exclude_positions);
+        return cloned_pv;
     }
 
     /// Method returns the number of tuples times the number of tuple
     /// components.
-    std::size_t size() const { return std::vector<PROP_VAL_TYPE>::size(); }
+    constexpr std::size_t size() const { return data_.size(); }
+
+    constexpr std::ptrdiff_t ssize() const { return std::ssize(data_); }
+
+    // Same as begin, but semantically different; begin, end are pairs of
+    // iterators, data returns raw pointer.
+    constexpr const PROP_VAL_TYPE* data() const { return data_.data(); }
+    constexpr PROP_VAL_TYPE* data() { return data_.data(); }
+
+    constexpr PROP_VAL_TYPE* begin() { return data_.data(); }
+    constexpr PROP_VAL_TYPE* end() { return data_.data() + data_.size(); }
+
+    constexpr const PROP_VAL_TYPE* cbegin() const { return data_.data(); }
+    constexpr const PROP_VAL_TYPE* cend() const
+    {
+        return data_.data() + data_.size();
+    }
+    constexpr const PROP_VAL_TYPE* begin() const { return cbegin(); }
+    constexpr const PROP_VAL_TYPE* end() const { return cend(); }
+
+    constexpr PROP_VAL_TYPE& operator[](std::size_t const pos)
+    {
+        if constexpr (std::is_same_v<PROP_VAL_TYPE, bool>)
+        {
+            static_assert(!std::is_same_v<PROP_VAL_TYPE, bool>,
+                          "PropertyVector<bool>::operator[] cannot be "
+                          "instantiated for booleans.");
+        }
+        else
+        {
+            return data_[pos];
+        }
+    }
+    constexpr PROP_VAL_TYPE const& operator[](std::size_t const pos) const
+    {
+        return data_[pos];
+    }
+
+    constexpr void resize(std::size_t const size) { data_.resize(size); }
+    constexpr void resize(std::size_t const size, const PROP_VAL_TYPE& value)
+    {
+        data_.resize(size, value);
+    }
+
+    template <typename R>
+        requires std::ranges::input_range<R> &&
+                 std::convertible_to<std::ranges::range_value_t<R>,
+                                     PROP_VAL_TYPE>
+    constexpr void assign(R&& r)
+    {
+#if __cpp_lib_containers_ranges >= 202202L
+        data_.assign_range(r);
+#else
+        if constexpr (ranges::common_range<R>)
+        {
+            data_.assign(r.begin(), r.end());
+        }
+        else
+        {
+            data_.assign(ranges::views::common(r).begin(),
+                         ranges::views::common(r).end());
+        }
+#endif
+    }
+
+    constexpr void push_back(const PROP_VAL_TYPE& value)
+    {
+        data_.push_back(value);
+    }
+
+    constexpr void clear() { data_.clear(); }
+    constexpr bool empty() const { return data_.empty(); }
 
 protected:
     /// @brief The constructor taking meta information for the data.
@@ -104,8 +177,7 @@ protected:
     explicit PropertyVector(std::string const& property_name,
                             MeshItemType mesh_item_type,
                             std::size_t n_components)
-        : std::vector<PROP_VAL_TYPE>(),
-          PropertyVectorBase(property_name, mesh_item_type, n_components)
+        : PropertyVectorBase(property_name, mesh_item_type, n_components)
     {
     }
 
@@ -120,10 +192,13 @@ protected:
                    std::string const& property_name,
                    MeshItemType mesh_item_type,
                    std::size_t n_components)
-        : std::vector<PROP_VAL_TYPE>(n_property_values * n_components),
-          PropertyVectorBase(property_name, mesh_item_type, n_components)
+        : PropertyVectorBase(property_name, mesh_item_type, n_components),
+          data_(n_property_values * n_components)
     {
     }
+
+private:
+    std::vector<PROP_VAL_TYPE> data_;
 };
 
 /// Class template PropertyVector is a std::vector with template parameter
@@ -136,8 +211,7 @@ protected:
 /// \tparam T pointer type, the type the type points to is typical a scalar,
 /// a vector or a matrix type
 template <typename T>
-class PropertyVector<T*> : public std::vector<std::size_t>,
-                           public PropertyVectorBase
+class PropertyVector<T*> : public PropertyVectorBase
 {
     friend class Properties;
 
@@ -155,13 +229,10 @@ public:
     /// correct property value/object.
     T* const& operator[](std::size_t id) const
     {
-        return _values[std::vector<std::size_t>::operator[](id)];
+        return _values[_item2group_mapping[id]];
     }
 
-    T*& operator[](std::size_t id)
-    {
-        return _values[std::vector<std::size_t>::operator[](id)];
-    }
+    T*& operator[](std::size_t id) { return _values[_item2group_mapping[id]]; }
 
     void initPropertyValue(std::size_t group_id, T const& value)
     {
@@ -193,17 +264,11 @@ public:
         _values[group_id] = p;
     }
 
-    std::size_t getNumberOfTuples() const
-    {
-        return std::vector<std::size_t>::size();
-    }
+    std::size_t getNumberOfTuples() const { return _item2group_mapping.size(); }
 
     /// Method returns the number of tuples times the number of tuple
     /// components.
-    std::size_t size() const
-    {
-        return _n_components * std::vector<std::size_t>::size();
-    }
+    std::size_t size() const { return _n_components * getNumberOfTuples(); }
 
     PropertyVectorBase* clone(
         std::vector<std::size_t> const& exclude_positions) const override
@@ -211,7 +276,7 @@ public:
         // create new PropertyVector with modified mapping
         PropertyVector<T*>* t(new PropertyVector<T*>(
             _values.size() / _n_components,
-            BaseLib::excludeObjectCopy(*this, exclude_positions),
+            BaseLib::excludeObjectCopy(_item2group_mapping, exclude_positions),
             _property_name, _mesh_item_type, _n_components));
         // copy pointers to property values
         for (std::size_t j(0); j < _values.size(); j++)
@@ -227,6 +292,7 @@ public:
     {
         assert(component < _n_components);
         assert(tuple_index < getNumberOfTuples());
+
         const double* p = this->operator[](tuple_index);
         if (p == nullptr)
         {
@@ -256,16 +322,19 @@ protected:
                    std::string const& property_name,
                    MeshItemType mesh_item_type,
                    std::size_t n_components)
-        : std::vector<std::size_t>(std::move(item2group_mapping)),
-          PropertyVectorBase(property_name, mesh_item_type, n_components),
+        : PropertyVectorBase(property_name, mesh_item_type, n_components),
+          _item2group_mapping(std::move(item2group_mapping)),
           _values(n_prop_groups * n_components)
     {
     }
 
 private:
+    std::vector<std::size_t> _item2group_mapping;
     std::vector<T*> _values;
     // hide method
     T* at(std::size_t);
 };
 
+static_assert(ranges::contiguous_range<PropertyVector<double>>);
+static_assert(ranges::sized_range<PropertyVector<double>>);
 }  // end namespace MeshLib

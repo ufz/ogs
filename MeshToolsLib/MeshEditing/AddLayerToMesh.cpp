@@ -16,6 +16,12 @@
 #include <map>
 #include <memory>
 #include <numeric>
+#include <range/v3/algorithm/max_element.hpp>
+#include <range/v3/view/any_view.hpp>
+#include <range/v3/view/common.hpp>
+#include <range/v3/view/concat.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/repeat_n.hpp>
 #include <vector>
 
 #include "BaseLib/Logging.h"
@@ -108,11 +114,11 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double const thickness,
         // add property storing node ids
         auto* const pv =
             sfc_mesh->getProperties().createNewPropertyVector<std::size_t>(
-                prop_name, MeshLib::MeshItemType::Node, 1);
+                prop_name, MeshLib::MeshItemType::Node,
+                sfc_mesh->getNumberOfNodes(), 1);
         if (pv)
         {
-            pv->resize(sfc_mesh->getNumberOfNodes());
-            std::iota(pv->begin(), pv->end(), 0);
+            pv->assign(ranges::views::iota(0u, sfc_mesh->getNumberOfNodes()));
         }
         else
         {
@@ -186,31 +192,38 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double const thickness,
         return new_mesh;
     }
 
-    new_materials->reserve(subsfc_elements.size());
-    std::copy(materials->cbegin(), materials->cend(),
-              std::back_inserter(*new_materials));
+    int next_material_id = 0;  // default, if materials are not available.
 
-    if (copy_material_ids &&
-        sfc_mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
+    if (materials != nullptr)
     {
-        auto const& sfc_material_ids =
-            *sfc_mesh->getProperties().getPropertyVector<int>("MaterialIDs");
-        std::copy(sfc_material_ids.cbegin(), sfc_material_ids.cend(),
-                  std::back_inserter(*new_materials));
-    }
-    else
-    {
-        int const new_layer_id =
-            layer_id.has_value()
-                ? layer_id.value()
-                : *(std::max_element(materials->cbegin(), materials->cend())) +
-                      1;
-        auto const n_new_props(subsfc_elements.size() -
-                               mesh.getNumberOfElements());
-        std::fill_n(std::back_inserter(*new_materials), n_new_props,
-                    new_layer_id);
+        next_material_id = *ranges::max_element(*materials) + 1;
     }
 
+    auto initial_values =
+        materials ? ranges::any_view<int const>{*materials}
+                  : ranges::views::repeat_n(layer_id.value_or(next_material_id),
+                                            mesh.getNumberOfElements());
+
+    auto additional_values = [&]() -> ranges::any_view<int const>
+    {
+        if (copy_material_ids &&
+            sfc_mesh->getProperties().existsPropertyVector<int>("MaterialIDs"))
+        {
+            return ranges::any_view<int const>{
+                *sfc_mesh->getProperties().getPropertyVector<int>(
+                    "MaterialIDs")};
+        }
+        else
+        {
+            int const new_layer_id = layer_id.value_or(next_material_id);
+            auto const n_new_props =
+                subsfc_elements.size() - mesh.getNumberOfElements();
+            return ranges::views::repeat_n(new_layer_id, n_new_props);
+        }
+    }();
+
+    new_materials->assign(ranges::views::common(
+        ranges::views::concat(initial_values, additional_values)));
     return new_mesh;
 }
 

@@ -67,9 +67,8 @@ PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
     }
 
     auto result = mesh.getProperties().template createNewPropertyVector<T>(
-        property_name, item_type, number_of_components);
+        property_name, item_type, numberOfMeshItems(), number_of_components);
     assert(result);
-    result->resize(numberOfMeshItems() * number_of_components);
     return result;
 }
 }  // namespace MeshLib

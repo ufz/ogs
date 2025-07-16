@@ -15,6 +15,10 @@
 #include "MeshLayerMapper.h"
 
 #include <algorithm>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/join.hpp>
+#include <range/v3/view/repeat_n.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Logging.h"
 #include "GeoLib/Raster.h"
@@ -76,7 +80,12 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(
         return nullptr;
     }
 
-    materials->reserve(nElems * nLayers);
+    auto layer_to_material_id = [&](unsigned const layer_id)
+    { return ranges::views::repeat_n(nLayers - layer_id, nOrgElems); };
+    materials->assign(ranges::views::iota(0u, nLayers + 1) |
+                      ranges::views::transform(layer_to_material_id) |
+                      ranges::views::join);
+
     double z_offset(0.0);
 
     for (unsigned layer_id = 0; layer_id <= nLayers; ++layer_id)
@@ -103,7 +112,6 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(
         }
 
         node_offset -= nNodes;
-        const unsigned mat_id(nLayers - layer_id);
 
         for (unsigned i = 0; i < nOrgElems; ++i)
         {
@@ -137,7 +145,6 @@ MeshLib::Mesh* MeshLayerMapper::createStaticLayers(
             {
                 OGS_FATAL("MeshLayerMapper: Unknown element type to extrude.");
             }
-            materials->push_back(mat_id);
         }
     }
     return new MeshLib::Mesh(mesh_name, new_nodes, new_elems,

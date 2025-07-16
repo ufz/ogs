@@ -16,6 +16,7 @@
 
 #include <numeric>
 #include <range/v3/algorithm/copy.hpp>
+#include <range/v3/algorithm/transform.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 
@@ -897,8 +898,8 @@ unsigned getNumberOfUniqueNodes(MeshLib::Element const* const element)
 }
 
 template <typename T>
-void fillNodeProperty(std::vector<T>& new_prop,
-                      std::vector<T> const& old_prop,
+void fillNodeProperty(MeshLib::PropertyVector<T>& new_prop,
+                      MeshLib::PropertyVector<T> const& old_prop,
                       std::vector<size_t> const& node_ids)
 {
     std::size_t const n_nodes = node_ids.size();
@@ -913,13 +914,14 @@ void fillNodeProperty(std::vector<T>& new_prop,
 }
 
 template <typename T>
-void fillElemProperty(std::vector<T>& new_prop,
-                      std::vector<T> const& old_prop,
+void fillElemProperty(MeshLib::PropertyVector<T>& new_prop,
+                      MeshLib::PropertyVector<T> const& old_prop,
                       std::vector<size_t> const& elem_ids)
 {
-    std::transform(elem_ids.cbegin(), elem_ids.cend(),
-                   std::back_inserter(new_prop),
-                   [&](std::size_t const i) { return old_prop[i]; });
+    assert(new_prop.size() == old_prop.size());
+    assert(new_prop.size() == elem_ids.size());
+    ranges::transform(elem_ids, new_prop.begin(),
+                      [&](std::size_t const i) { return old_prop[i]; });
 }
 
 /// Copies all scalar arrays according to the restructured Node- and
@@ -970,7 +972,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
             auto const* p = props.getPropertyVector<int>(
                 name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<int>(
-                name, MeshLib::MeshItemType::Cell, 1);
+                name, MeshLib::MeshItemType::Cell, p->size(), 1);
             fillElemProperty(*new_cell_vec, *p, elem_ids);
             continue;
         }
@@ -980,7 +982,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
             auto const* p = props.getPropertyVector<float>(
                 name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<float>(
-                name, MeshLib::MeshItemType::Cell, 1);
+                name, MeshLib::MeshItemType::Cell, p->size(), 1);
             fillElemProperty(*new_cell_vec, *p, elem_ids);
             continue;
         }
@@ -990,7 +992,7 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
             auto const* p = props.getPropertyVector<double>(
                 name, MeshLib::MeshItemType::Cell, 1);
             auto new_cell_vec = new_properties.createNewPropertyVector<double>(
-                name, MeshLib::MeshItemType::Cell, 1);
+                name, MeshLib::MeshItemType::Cell, p->size(), 1);
             fillElemProperty(*new_cell_vec, *p, elem_ids);
             continue;
         }

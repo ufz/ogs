@@ -126,18 +126,15 @@ private:
         char const* const array_name(array.GetName());
 
         auto* const vec = properties.createNewPropertyVector<T>(
-            array_name, type, nComponents);
+            array_name, type, nTuples, nComponents);
         if (!vec)
         {
             WARN("Array {:s} could not be converted to PropertyVector.",
                  array_name);
             return;
         }
-        vec->reserve(nTuples * nComponents);
         auto* data_array = static_cast<T*>(array.GetVoidPointer(0));
-        std::copy(&data_array[0],
-                  &data_array[nTuples * nComponents],
-                  std::back_inserter(*vec));
+        vec->assign(std::span<T>(data_array, nTuples * nComponents));
         return;
     }
 };

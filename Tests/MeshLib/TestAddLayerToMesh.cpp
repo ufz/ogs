@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <memory>
+#include <range/v3/algorithm/fill.hpp>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -115,17 +116,19 @@ TEST(MeshLib, AddTopLayerToTriMesh)
     std::unique_ptr<MeshLib::Mesh> const mesh(
         MeshToolsLib::MeshGenerator::generateRegularTriMesh(5, 5));
     std::string const& mat_name("MaterialIDs");
-    auto* const mats = mesh->getProperties().createNewPropertyVector<int>(
-        mat_name, MeshLib::MeshItemType::Cell);
+    auto* mats = mesh->getProperties().createNewPropertyVector<int>(
+        mat_name, MeshLib::MeshItemType::Cell, mesh->getNumberOfElements(), 1);
+    ASSERT_NE(nullptr, mats);
     if (mats)
     {
-        mats->resize(mesh->getNumberOfElements(), 0);
+        ranges::fill(mats->begin(), mats->end(), 0);
     }
-    auto* const test = mesh->getProperties().createNewPropertyVector<double>(
-        "test", MeshLib::MeshItemType::Cell);
+    auto* test = mesh->getProperties().createNewPropertyVector<double>(
+        "test", MeshLib::MeshItemType::Cell, mesh->getNumberOfElements(), 1);
+    ASSERT_NE(nullptr, test);
     if (test)
     {
-        test->resize(mesh->getNumberOfElements(), 0.1);
+        ranges::fill(*test, 0.1);
     }
     ASSERT_EQ(2, mesh->getProperties().size());
     double const height(1);
@@ -307,10 +310,10 @@ TEST(MeshLib, AddBottomLayerToPrismMesh)
     double const height(1);
     std::string const& mat_name("MaterialIDs");
     auto* const mats = mesh2->getProperties().createNewPropertyVector<int>(
-        mat_name, MeshLib::MeshItemType::Cell);
+        mat_name, MeshLib::MeshItemType::Cell, mesh2->getNumberOfElements(), 1);
     if (mats)
     {
-        mats->resize(mesh2->getNumberOfElements(), 0);
+        ranges::fill(mats->begin(), mats->end(), 0);
     }
 
     std::unique_ptr<MeshLib::Mesh> const result(MeshToolsLib::addLayerToMesh(

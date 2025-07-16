@@ -101,7 +101,7 @@ std::ostream& Partition::writeConfig(std::ostream& os) const
 
 std::size_t partitionLookup(std::size_t const& node_id,
                             std::vector<std::size_t> const& partition_ids,
-                            std::vector<std::size_t> const& node_id_mapping)
+                            std::span<std::size_t const> const node_id_mapping)
 {
     return partition_ids[node_id_mapping[node_id]];
 }
@@ -140,7 +140,7 @@ findGhostNodesInPartition(
     std::vector<MeshLib::Element const*> const& ghost_elements,
     std::vector<std::size_t> const& partition_ids,
     MeshLib::Mesh const& mesh,
-    std::vector<std::size_t> const& node_id_mapping)
+    std::span<std::size_t const> const node_id_mapping)
 {
     std::vector<MeshLib::Node*> base_ghost_nodes;
     std::vector<MeshLib::Node*> higher_order_ghost_nodes;
@@ -415,13 +415,14 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
 {
     auto* vtk_ghost_type =
         partitioned_properties.createNewPropertyVector<unsigned char>(
-            "vtkGhostType", MeshLib::MeshItemType::Cell);
+            "vtkGhostType", MeshLib::MeshItemType::Cell, total_number_of_cells,
+            1);
     if (vtk_ghost_type == nullptr)
     {
         OGS_FATAL("Could not create vtkGhostType cell data array.");
     }
 
-    vtk_ghost_type->resize(total_number_of_cells);
+    assert(vtk_ghost_type->size() == total_number_of_cells);
     std::size_t offset = 0;
     for (auto const& partition : partitions)
     {
@@ -567,7 +568,7 @@ void checkFieldPropertyVectorSize(
 std::vector<std::vector<std::size_t>> computePartitionIDPerElement(
     std::vector<std::size_t> const& node_partition_map,
     std::vector<MeshLib::Element*> const& elements,
-    std::vector<std::size_t> const& bulk_node_ids)
+    std::span<std::size_t const> const bulk_node_ids)
 {
     auto node_partition_ids = ranges::views::transform(
         [&](MeshLib::Element const* const element)
@@ -587,7 +588,7 @@ void distributeNodesToPartitions(
     std::vector<Partition>& partitions,
     std::vector<std::size_t> const& nodes_partition_ids,
     std::vector<MeshLib::Node*> const& nodes,
-    std::vector<std::size_t> const& bulk_node_ids)
+    std::span<std::size_t const> const bulk_node_ids)
 {
     for (auto const* const node : nodes)
     {
@@ -669,7 +670,7 @@ void distributeElementsIntoPartitions(
 void determineAndAppendGhostNodesToPartitions(
     std::vector<Partition>& partitions, MeshLib::Mesh const& mesh,
     std::vector<std::size_t> const& nodes_partition_ids,
-    std::vector<std::size_t> const& node_id_mapping)
+    std::span<std::size_t const> const node_id_mapping)
 {
     for (std::size_t part_id = 0; part_id < partitions.size(); part_id++)
     {
@@ -696,7 +697,7 @@ void determineAndAppendGhostNodesToPartitions(
 void partitionMesh(std::vector<Partition>& partitions,
                    MeshLib::Mesh const& mesh,
                    std::vector<std::size_t> const& nodes_partition_ids,
-                   std::vector<std::size_t> const& bulk_node_ids)
+                   std::span<std::size_t const> const bulk_node_ids)
 {
     BaseLib::RunTime run_timer;
     run_timer.start();

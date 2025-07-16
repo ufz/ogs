@@ -80,10 +80,12 @@ std::unique_ptr<MeshLib::Mesh> createMeshFromElementSelection(
         true /* compute_element_neighbors */);
     assert(mesh != nullptr);
 
-    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Cell),
-                      MeshLib::MeshItemType::Cell, 1, bulk_element_ids);
-    addPropertyToMesh(*mesh, getBulkIDString(MeshLib::MeshItemType::Node),
-                      MeshLib::MeshItemType::Node, 1, bulk_node_ids);
+    addPropertyToMesh<std::size_t>(
+        *mesh, getBulkIDString(MeshLib::MeshItemType::Cell),
+        MeshLib::MeshItemType::Cell, 1, {bulk_element_ids});
+    addPropertyToMesh<std::size_t>(
+        *mesh, getBulkIDString(MeshLib::MeshItemType::Node),
+        MeshLib::MeshItemType::Node, 1, {bulk_node_ids});
 
     return mesh;
 }

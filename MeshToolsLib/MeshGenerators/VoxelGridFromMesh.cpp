@@ -119,12 +119,14 @@ void mapArray(MeshLib::Mesh& grid, VTK_TYPE vtk_arr, std::string const& name)
         // Error message
         return;
     }
-    auto& arr = *grid.getProperties().createNewPropertyVector<T>(
-        name, MeshLib::MeshItemType::Cell, vtk_arr->GetNumberOfComponents());
     std::size_t const n_elems = cell_ids->size();
-    arr.resize(n_elems);
+    auto& arr = *grid.getProperties().createNewPropertyVector<T>(
+        name, MeshLib::MeshItemType::Cell, n_elems,
+        vtk_arr->GetNumberOfComponents());
     for (std::size_t j = 0; j < n_elems; ++j)
+    {
         arr[j] = vtk_arr->GetValue((*cell_ids)[j]);
+    }
 }
 
 template <typename T>

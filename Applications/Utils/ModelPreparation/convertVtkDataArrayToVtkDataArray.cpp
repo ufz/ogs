@@ -37,14 +37,14 @@ std::pair<bool, std::string> castPropertyVectorToPropertyVector(
                                   property_vector_name_in + "' not found.");
     }
     auto* new_pv = properties.createNewPropertyVector<T2>(
-        property_vector_name_out, MeshLib::MeshItemType::Cell, 1);
+        property_vector_name_out, MeshLib::MeshItemType::Cell,
+        orig_pv->getNumberOfTuples(), 1);
     if (!new_pv)
     {
         return std::make_pair(false,
                               "Could not create new property vector '" +
                                   property_vector_name_in + "' not found.");
     }
-    new_pv->resize(orig_pv->getNumberOfTuples());
     for (std::size_t i(0); i < new_pv->getNumberOfTuples(); ++i)
     {
         (*new_pv)[i] = static_cast<T2>((*orig_pv)[i]);

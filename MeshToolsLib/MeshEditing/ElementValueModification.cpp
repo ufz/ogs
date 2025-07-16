@@ -15,6 +15,9 @@
 #include "ElementValueModification.h"
 
 #include <algorithm>
+#include <range/v3/algorithm/fill.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Element.h"
@@ -59,13 +62,9 @@ bool ElementValueModification::replace(MeshLib::Mesh& mesh,
         }
     }
 
-    for (std::size_t i = 0; i < n_property_tuples; ++i)
-    {
-        if ((*property_value_vec)[i] == old_value)
-        {
-            (*property_value_vec)[i] = new_value;
-        }
-    }
+    auto const old_values_filter = ranges::views::filter(
+        [&old_value](auto const& v) { return v == old_value; });
+    ranges::fill(*property_value_vec | old_values_filter, new_value);
 
     return true;
 }
@@ -102,12 +101,10 @@ std::size_t ElementValueModification::condense(MeshLib::Mesh& mesh)
         reverse_mapping[value_mapping[i]] = i;
     }
 
-    std::size_t const n_property_values(property_value_vector->size());
-    for (std::size_t i = 0; i < n_property_values; ++i)
-    {
-        (*property_value_vector)[i] =
-            reverse_mapping[(*property_value_vector)[i]];
-    }
+    property_value_vector->assign(
+        *property_value_vector |
+        ranges::views::transform([&](auto const v)
+                                 { return reverse_mapping[v]; }));
 
     return nValues;
 }
@@ -127,19 +124,20 @@ std::size_t ElementValueModification::setByElementType(
         return 0;
     }
 
-    std::vector<MeshLib::Element*> const& elements(mesh.getElements());
-    std::size_t cnt(0);
-    for (std::size_t k(0); k < elements.size(); k++)
-    {
-        if (elements[k]->getGeomType() != ele_type)
-        {
-            continue;
-        }
-        (*property_value_vector)[k] = new_value;
-        cnt++;
-    }
+    auto const element_type_filter =
+        ranges::views::filter([&](MeshLib::Element const* const e)
+                              { return e->getGeomType() == ele_type; });
 
-    return cnt;
+    auto selected_element_ids =
+        mesh.getElements() | element_type_filter | MeshLib::views::ids;
+
+    ranges::fill(
+        selected_element_ids |
+            ranges::views::transform([&](std::size_t const k) -> auto&
+                                     { return (*property_value_vector)[k]; }),
+        new_value);
+
+    return ranges::distance(selected_element_ids);
 }
 
 }  // namespace MeshToolsLib

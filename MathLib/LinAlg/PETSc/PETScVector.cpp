@@ -174,6 +174,21 @@ void PETScVector::copyValues(std::vector<PetscScalar>& u) const
     restoreArray(loc_x);
 }
 
+void PETScVector::copyValues(std::span<PetscScalar> u) const
+{
+    if (u.size() != static_cast<std::size_t>(getLocalSize() + getGhostSize()))
+    {
+        OGS_FATAL(
+            "PETScVector::copyValues() size mismatch. Trying to copy a vector "
+            "of size {:d} to a span of size {:d}.",
+            getLocalSize() + getGhostSize(), u.size());
+    }
+
+    PetscScalar* loc_x = getLocalVector();
+    std::copy_n(loc_x, getLocalSize() + getGhostSize(), u.begin());
+    restoreArray(loc_x);
+}
+
 PetscScalar PETScVector::get(const PetscInt idx) const
 {
     if (created_with_ghost_id_)

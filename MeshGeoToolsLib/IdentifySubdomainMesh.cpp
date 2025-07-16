@@ -153,7 +153,8 @@ void updateOrCheckExistingSubdomainProperty(
     auto& properties = mesh.getProperties();
     if (!properties.existsPropertyVector<std::size_t>(property_name))
     {
-        addPropertyToMesh(mesh, property_name, mesh_item_type, 1, values);
+        addPropertyToMesh<std::size_t>(mesh, property_name, mesh_item_type, 1,
+                                       {values});
         return;
     }
 
@@ -186,7 +187,7 @@ void updateOrCheckExistingSubdomainProperty(
     }
 
     INFO("Overwriting '{:s}' property.", property_name);
-    original_property.assign(values.begin(), values.end());
+    original_property.assign(values);
 }
 }  // namespace
 
