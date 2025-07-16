@@ -135,6 +135,18 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 }
 
 template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+                                        double const t, int const process_id)
+{
+    DBUG("Set initial conditions of SmallDeformationProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::setInitialConditions, local_assemblers_,
+        getDOFTables(x.size()), x, t, process_id);
+}
+
+template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
