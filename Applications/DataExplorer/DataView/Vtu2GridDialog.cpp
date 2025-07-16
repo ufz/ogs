@@ -193,14 +193,15 @@ void Vtu2GridDialog::accept()
                         (*cellsize)[1], (*cellsize)[2])));
     }
 
-    std::vector<int>* cell_ids =
+    MeshLib::PropertyVector<int>* cell_ids =
         grid->getProperties().createNewPropertyVector<int>(
             VoxelGridFromMesh::cell_id_name, MeshLib::MeshItemType::Cell, 1);
     if (cell_ids == nullptr)
     {
         OGSError::box("Could not create cell ids.");
     }
-    *cell_ids = VoxelGridFromMesh::assignCellIds(mesh, min, dims, *cellsize);
+    cell_ids->assign(
+        VoxelGridFromMesh::assignCellIds(mesh, min, dims, *cellsize));
     if (!VoxelGridFromMesh::removeUnusedGridCells(mesh, grid))
     {
         return;
