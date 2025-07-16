@@ -15,6 +15,7 @@
 
 #include <algorithm>
 
+#include "ComputeNaturalCoordsResult.h"
 #include "ComputeNaturalCoordsSolver.h"
 #include "FindCellsForPoints.h"
 #include "MathLib/FormattingUtils.h"
@@ -23,19 +24,6 @@
 
 namespace ApplicationUtils
 {
-struct ComputeNaturalCoordsResult
-{
-    Eigen::MatrixXd natural_coords;
-    Eigen::MatrixXd real_coords;
-    Eigen::VectorXd initial_anchor_stress;
-    Eigen::VectorXd maximum_anchor_stress;
-    Eigen::VectorXd residual_anchor_stress;
-    Eigen::VectorXd anchor_cross_sectional_area;
-    Eigen::VectorXd anchor_stiffness;
-    Eigen::VectorX<vtkIdType> bulk_element_ids;
-    Eigen::VectorX<vtkIdType> point_cloud_node_ids;
-    bool success;
-};
 
 class ComputeNaturalCoordsIntermediateResult
 {
@@ -270,6 +258,7 @@ vtkSmartPointer<vtkUnstructuredGrid> toVTKGrid(
 
     // Points ------------------------------------------------------------------
     vtkNew<vtkPoints> points;
+    points->SetDataTypeToDouble();
     points->SetNumberOfPoints(n_pts);
 
     auto const& css = result.real_coords;
