@@ -203,6 +203,18 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
 }
 
 template <int DisplacementDim>
+void ThermoMechanicsProcess<DisplacementDim>::
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+                                        double const t, int const process_id)
+{
+    DBUG("Set initial conditions of SmallDeformationProcess.");
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &LocalAssemblerInterface::setInitialConditions, _local_assemblers,
+        getDOFTables(x.size()), x, t, process_id);
+}
+
+template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
