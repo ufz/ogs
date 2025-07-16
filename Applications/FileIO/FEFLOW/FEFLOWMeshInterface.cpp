@@ -707,7 +707,7 @@ void FEFLOWMeshInterface::setMaterialIDs(
     std::vector<GeoLib::Polyline*> const& lines,
     std::vector<std::vector<std::size_t>> const& vec_elementsets,
     std::vector<MeshLib::Element*> const& vec_elements,
-    std::vector<int>& material_ids)
+    MeshLib::PropertyVector<int>& material_ids)
 {
     assert(material_ids.size() == vec_elements.size());
     if (!vec_elementsets.empty())
