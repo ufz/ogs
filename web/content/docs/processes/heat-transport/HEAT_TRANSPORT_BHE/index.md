@@ -116,13 +116,13 @@ Four type of flow and temperature control patterns are provided in OGS.
 
 * `FixedPowerConstantFlow`:\
   It means the BHE has a fixed thermal load and the refrigerant flow rate in the borehole is kept as a constant.
-  The fixed heating load value was defined by the key word `<power>` , and the flow rate is given by `<flow_rate>`.
+  The fixed heating load value was defined by the keyword `<power>` , and the flow rate is given by `<flow_rate>`.
 * `FixedPowerFlowCurve`:\
   It means the BHE has a fixed thermal load and the flow rate is following a time dependent curve.
-  The key word `<power>` is kept the same, while the flow rate is defined by a curve in the `<curves>`.
+  The keyword `<power>` is kept the same, while the flow rate is defined by a curve in the `<curves>`.
 * `PowerCurveConstantFlow`:\
   It means BHE has a constant flow rate while the power is various following a curve.
-  The key word `<flow_rate>` applies here, along with the curve defined in the `<curves>`.
+  The keyword `<flow_rate>` applies here, along with the curve defined in the `<curves>`.
 * `TemperatureCurveConstantFlow`:\
   It means BHE has a constant `<flow_rate>` while the inflow temperature following the values defined in the `<curves>`.
 * `TemperatureCurveFlowCurve`:\
@@ -131,6 +131,19 @@ Four type of flow and temperature control patterns are provided in OGS.
   It means both the BHE thermal load and flow rate values are following the corresponding curves.
 * `BuildingPowerCurveConstantFlow`:\
   It means the BHE thermal load is following a building heat load depending on a COP curve while the flow rate is kept as a constant.
+* `AdvancedBuildingPowerCurvesFlowCurve`:\
+  It means the BHE thermal load is following a building heat load, which is determined by both the value defined in the `<power_curve>`, as well as the value in the `<cop_curve>`.
+  This configuration is designed to consider the effect of source temperature on the heat pump efficiency.
+  To define the space heating load from the building, the heating power value is defined in the group <heating>.
+  For thermal load for the drinking hot water, the keyword  `<hot_water>` is used.
+  This configuration is designed to reflect different cop curves caused by the different demand of sink temperatures at the heat pump.
+  Cooling can also be taken into account within the keyword `<cooling>`.
+  With the keyword `<active>`, passive cooling (false) or active cooling (true) can be specified.
+  Default is passive cooling.
+  The cooling load is defined in the `<power_curve>`.
+  For active cooling, a `<cop_curve>` is needed.
+  Under the setting of `AdvancedBuildingPowerCurvesFlowCurve`, every combination is possible.
+  The flow rate values are following the corresponding curve `<flow_rate_curve>`.
 
 The unit of `<power>` is in $\mathrm{W}$ and `<flow_rate>` is in $\mathrm{m^{3}/s}$. For heating applications, thermal energy is extracted from the subsurface, then a negative power value should be given. It is vice versa for cooling applications.
 
