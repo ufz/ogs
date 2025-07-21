@@ -80,6 +80,40 @@ ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
 }
 
 template <typename ShapeFunction, int DisplacementDim>
+void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
+    setInitialConditionsConcrete(Eigen::VectorXd const local_x,
+                                 double const /*t*/,
+                                 int const /*process_id*/)
+{
+    unsigned const n_integration_points =
+        this->_integration_method.getNumberOfPoints();
+    auto const local_u =
+        local_x.template segment<displacement_size>(displacement_index);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto const& N = _ip_data[ip].N;
+        auto const& dNdx = _ip_data[ip].dNdx;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
+
+        auto const x_coord = x_position.getCoordinates().value()[0];
+
+        auto const& B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunction::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx, N, x_coord, _is_axially_symmetric);
+
+        _ip_data[ip].eps.noalias() = B * local_u;
+    }
+}
+
+template <typename ShapeFunction, int DisplacementDim>
 std::size_t ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     setIPDataInitialConditions(std::string_view const name,
                                double const* values,

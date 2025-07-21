@@ -68,6 +68,10 @@ private:
         std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const&
             media) override;
 
+    void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+                                             double const t,
+                                             int const process_id) override;
+
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
                                  std::vector<GlobalVector*> const& x_prev,

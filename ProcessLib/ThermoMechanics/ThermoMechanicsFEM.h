@@ -225,6 +225,10 @@ public:
         }
     }
 
+    void setInitialConditionsConcrete(Eigen::VectorXd const local_x,
+                                      double const t,
+                                      int const process_id) override;
+
     void postTimestepConcrete(Eigen::VectorXd const& /*local_x*/,
                               Eigen::VectorXd const& /*local_x_prev*/,
                               double const /*t*/, double const /*dt*/,
