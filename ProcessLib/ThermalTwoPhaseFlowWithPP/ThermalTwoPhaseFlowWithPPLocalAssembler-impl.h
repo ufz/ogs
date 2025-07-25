@@ -246,6 +246,7 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
         vars.enthalpy_of_evaporation = latent_heat_evaporation;
 
         // saturated vapour pressure
+        vars.molar_mass = air_mol_mass;
         double const p_sat =
             water_vapour_component
                 .property(MaterialPropertyLib::PropertyType::vapour_pressure)
