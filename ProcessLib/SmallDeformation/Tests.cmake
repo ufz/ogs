@@ -393,3 +393,10 @@ NotebookTest(
     SKIP_WEB
 )
 OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)
+
+if(OGS_USE_PETSC)
+NotebookTest(
+    NOTEBOOKFILE Mechanics/ReleaseNodalForceKirsch/mpi_parallel_run_kirsch.py
+    RUNTIME 30
+)
+endif()

@@ -182,6 +182,14 @@
                 <max_iteration_step>10000</max_iteration_step>
                 <error_tolerance>1e-20</error_tolerance>
             </eigen>
+             <petsc>
+                <parameters>
+                    -ksp_type bcgs
+                    -pc_type bjacobi
+                    -ksp_rtol 1.e-18 -ksp_atol 1.e-18
+                    -ksp_max_it 4000
+                </parameters>
+            </petsc>           
         </linear_solver>
     </linear_solvers>
 </OpenGeoSysProject>
