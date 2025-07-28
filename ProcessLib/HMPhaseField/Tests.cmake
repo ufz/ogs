@@ -165,6 +165,7 @@ AddTest(
         expected_KGD_4core_cohesive_linear_softening_ts_5_t_200_000000_3.vtu KGD_4core_cohesive_linear_softening_ts_5_t_200_000000_3.vtu pressure pressure 1e-8 1e-5
 )
 
-if( OGS_USE_PETSC)
+if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF.py RUNTIME 1300)
+    NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCelllHM_VPF_propagating.py RUNTIME 1300)
 endif()
