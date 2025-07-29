@@ -1,0 +1,1 @@
+\copydoc ProcessLib::TimeDecayDirichletBoundaryCondition::time_decay_parameter_
