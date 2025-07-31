@@ -10,8 +10,8 @@
 @Author Thomas Nagel;
 @Date 20 / 07 / 2024;
 @Description{
-    Implementation of non - associated flow rule of the Brown yield criterion,
-    which is derived based on the work of Hoek and Brown,
+    Implementation of a Weakness Plane Model Based on the Non-Associative
+    Coulomb Yield Criterion
     https :  // doi.org/10.1016/j.jrmge.2018.08.001.
             Adding three arbitrarily oriented joint sets and elastic
                 orthotropy.All plastic models are non -

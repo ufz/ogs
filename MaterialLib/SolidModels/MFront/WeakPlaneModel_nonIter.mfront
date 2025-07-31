@@ -10,7 +10,7 @@
 @DSL DefaultDSL;
 @Author Mehran Ghasabe, Thomas Nagel;
 @Date 05 / 03 / 2025;
-@Description{Non - Iterative Weakness Planes Model};
+@Description{Non - Iterative Weakness Plane Model};
 @Behaviour WeakPlaneModel_nonIter;
 
 @ModellingHypotheses{".+"};
