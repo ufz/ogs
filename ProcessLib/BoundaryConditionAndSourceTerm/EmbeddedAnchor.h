@@ -48,7 +48,7 @@ private:
     MeshLib::PropertyVector<double> const* maximum_anchor_stress_ = nullptr;
     MeshLib::PropertyVector<double> const* initial_anchor_stress_ = nullptr;
     MeshLib::PropertyVector<double> const* residual_anchor_stress_ = nullptr;
-    MeshLib::PropertyVector<double> const* anchor_radius_ = nullptr;
+    MeshLib::PropertyVector<double> const* cross_sectional_area_ = nullptr;
     MeshLib::PropertyVector<double> const* anchor_stiffness_ = nullptr;
 };
 

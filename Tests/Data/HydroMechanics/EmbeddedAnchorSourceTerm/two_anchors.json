@@ -18,6 +18,6 @@
     "maximum_anchor_stress": [1e26, 1e26],
     "initial_anchor_stress": [0, 0],
     "residual_anchor_stress": [0, 0],
-    "anchor_radius": [0.5641895835477563, 0.5641895835477563],
+    "anchor_cross_sectional_area": [1, 1],
     "anchor_stiffness": [1e13, 1e13]
 }

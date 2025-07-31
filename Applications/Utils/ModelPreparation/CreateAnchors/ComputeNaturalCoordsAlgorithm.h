@@ -30,7 +30,7 @@ struct ComputeNaturalCoordsResult
     Eigen::VectorXd initial_anchor_stress;
     Eigen::VectorXd maximum_anchor_stress;
     Eigen::VectorXd residual_anchor_stress;
-    Eigen::VectorXd anchor_radius;
+    Eigen::VectorXd anchor_cross_sectional_area;
     Eigen::VectorXd anchor_stiffness;
     Eigen::VectorX<vtkIdType> bulk_element_ids;
     Eigen::VectorX<vtkIdType> point_cloud_node_ids;
@@ -57,7 +57,7 @@ public:
         Eigen::VectorXd const& initial_anchor_stress,
         Eigen::VectorXd const& maximum_anchor_stress,
         Eigen::VectorXd const& residual_anchor_stress,
-        Eigen::VectorXd const& anchor_radius,
+        Eigen::VectorXd const& anchor_cross_sectional_area,
         Eigen::VectorXd const& anchor_stiffness)
     {
         auto bei = Eigen::Map<Eigen::VectorX<vtkIdType>>(
@@ -69,7 +69,7 @@ public:
                 initial_anchor_stress,
                 maximum_anchor_stress,
                 residual_anchor_stress,
-                anchor_radius,
+                anchor_cross_sectional_area,
                 anchor_stiffness,
                 bei,
                 pcni,
@@ -171,10 +171,10 @@ ComputeNaturalCoordsResult computeNaturalCoords(
                       bulk_element_id, rc_idx);
     }
 
-    return result.finished(json_data.initial_anchor_stress,
-                           json_data.maximum_anchor_stress,
-                           json_data.residual_anchor_stress,
-                           json_data.anchor_radius, json_data.anchor_stiffness);
+    return result.finished(
+        json_data.initial_anchor_stress, json_data.maximum_anchor_stress,
+        json_data.residual_anchor_stress, json_data.anchor_cross_sectional_area,
+        json_data.anchor_stiffness);
 }
 
 template <typename T>
@@ -300,7 +300,8 @@ vtkSmartPointer<vtkUnstructuredGrid> toVTKGrid(
                         result.maximum_anchor_stress);
     addCellData<double>(grid, "residual_anchor_stress",
                         result.residual_anchor_stress);
-    addCellData<double>(grid, "anchor_radius", result.anchor_radius);
+    addCellData<double>(grid, "anchor_cross_sectional_area",
+                        result.anchor_cross_sectional_area);
     addCellData<double>(grid, "anchor_stiffness", result.anchor_stiffness);
     return grid;
 }

@@ -55,7 +55,7 @@ void writeGrid(vtkUnstructuredGrid* grid, std::string const& output_filename)
 void checkJSONEntries(nlohmann::json const& data, size_t number_of_anchors)
 {
     std::vector<std::string> required_keys = {"anchor_stiffness",
-                                              "anchor_radius"};
+                                              "anchor_cross_sectional_area"};
     std::vector<std::string> optional_keys = {"maximum_anchor_stress",
                                               "initial_anchor_stress",
                                               "residual_anchor_stress"};
@@ -154,7 +154,7 @@ AU::ComputeNaturalCoordsResult readJSON(
     Eigen::VectorXd initial_anchor_stress(number_of_anchors);
     Eigen::VectorXd maximum_anchor_stress(number_of_anchors);
     Eigen::VectorXd residual_anchor_stress(number_of_anchors);
-    Eigen::VectorXd anchor_radius(number_of_anchors);
+    Eigen::VectorXd anchor_cross_sectional_area(number_of_anchors);
     Eigen::VectorXd anchor_stiffness(number_of_anchors);
     if (!data.contains("initial_anchor_stress"))
     {
@@ -196,7 +196,8 @@ AU::ComputeNaturalCoordsResult readJSON(
     }
     for (size_t i = 0; i < number_of_anchors; ++i)
     {
-        anchor_radius(i) = data["anchor_radius"][i].get<double>();
+        anchor_cross_sectional_area(i) =
+            data["anchor_cross_sectional_area"][i].get<double>();
         anchor_stiffness(i) = data["anchor_stiffness"][i].get<double>();
     }
     AU::ComputeNaturalCoordsResult json_data;
@@ -204,7 +205,7 @@ AU::ComputeNaturalCoordsResult readJSON(
     json_data.initial_anchor_stress = initial_anchor_stress;
     json_data.maximum_anchor_stress = maximum_anchor_stress;
     json_data.residual_anchor_stress = residual_anchor_stress;
-    json_data.anchor_radius = anchor_radius;
+    json_data.anchor_cross_sectional_area = anchor_cross_sectional_area;
     json_data.anchor_stiffness = anchor_stiffness;
     return json_data;
 }

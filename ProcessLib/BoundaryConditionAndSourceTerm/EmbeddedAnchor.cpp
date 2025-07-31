@@ -12,7 +12,6 @@
 
 #include <Eigen/Core>
 #include <cassert>
-#include <numbers>
 #include <numeric>
 #include <range/v3/view/enumerate.hpp>
 #include <unsupported/Eigen/KroneckerProduct>
@@ -187,10 +186,11 @@ EmbeddedAnchor<GlobalDim>::EmbeddedAnchor(
         st_mesh_.getProperties().template getPropertyVector<double>(
             residual_anchor_stress_string);
 
-    std::string_view const anchor_radius_string = "anchor_radius";
-    anchor_radius_ =
+    std::string_view const anchor_cross_sectional_area_string =
+        "anchor_cross_sectional_area";
+    cross_sectional_area_ =
         st_mesh_.getProperties().template getPropertyVector<double>(
-            anchor_radius_string);
+            anchor_cross_sectional_area_string);
 
     std::string_view const anchor_stiffness_string = "anchor_stiffness";
     anchor_stiffness_ =
@@ -283,16 +283,16 @@ void EmbeddedAnchor<GlobalDim>::integrate(const double /*t*/,
         { return local_x(nodeLocalIndices<GlobalDim>(i)); };
         GlobalDimVector const l = l_original + u(1) - u(0);
 
-        double const pirsquared =
-            std::numbers::pi *
-            std::pow((*anchor_radius_)[anchor_element_id], 2);
-        double const K = pirsquared * (*anchor_stiffness_)[anchor_element_id];
+        double const K = (*cross_sectional_area_)[anchor_element_id] *
+                         (*anchor_stiffness_)[anchor_element_id];
         double const initial_force =
-            pirsquared * (*initial_anchor_stress_)[anchor_element_id];
-        double const max_force =
-            pirsquared * (*maximum_anchor_stress_)[anchor_element_id];
+            (*cross_sectional_area_)[anchor_element_id] *
+            (*initial_anchor_stress_)[anchor_element_id];
+        double const max_force = (*cross_sectional_area_)[anchor_element_id] *
+                                 (*maximum_anchor_stress_)[anchor_element_id];
         double const residual_force =
-            pirsquared * (*residual_anchor_stress_)[anchor_element_id];
+            (*cross_sectional_area_)[anchor_element_id] *
+            (*residual_anchor_stress_)[anchor_element_id];
 
         double const strain = (l.norm() - l_original_norm) / l_original_norm;
 
