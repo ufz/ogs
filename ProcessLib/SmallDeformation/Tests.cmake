@@ -351,6 +351,20 @@ AddTest(
     simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
 )
 
+AddTest(
+    NAME Mechanics_FailLinearSolverCompute
+    PATH Mechanics/Linear
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS cube_1e0_fail_lin_solver.xml
+    WRAPPER time
+    REQUIREMENTS NOT OGS_USE_MPI
+    RUNTIME 1
+    PROPERTIES
+    # Time step size of 0.125 means the time step has been halved twice from its initial size.
+    # That proves that OGS gracefully handles such conditions
+    PASS_REGULAR_EXPRESSION "The new step size of 0[.]125 is the same as that of the previous rejected time step[.]"
+)
+
 if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.py RUNTIME 1)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.py RUNTIME 5)

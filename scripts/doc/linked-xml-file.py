@@ -19,6 +19,7 @@ import sys
 import os
 import json
 from signal import SIG_DFL, SIGPIPE, signal
+import re
 
 signal(SIGPIPE, SIG_DFL)
 
@@ -34,10 +35,39 @@ outdir = os.path.join(docauxdir, "dox", "CTestProjectFiles")
 INDENT = "&nbsp;" * 2
 
 
+def escape(s: str) -> str:
+    """
+    Escapes characters that could cause trouble with Doxygen.
+
+    Also makes sure that newlines and indentation work.
+    """
+
+    # HTML escape sequence (&#47) does not work
+    # <span> only works if an attribute (e.g. style) is present
+    ESCAPE_SLASH = '<span style="">/</span>'
+
+    # * " is treated specially sometimes, cf. https://www.doxygen.nl/manual/commands.html#cmdquot
+    # * @ is special (JavaDoc commands)
+    # * /* and */ start/end comments; we replace the / to avoid trouble with them
+    s_escaped = s.replace('"', r"\"").replace("@", r"\@").replace("/", ESCAPE_SLASH)
+    s_newline = s_escaped.replace("\n", "<br>\n")
+
+    # finally, use &nbsp; for indentation
+    return re.sub(
+        r"^\s+",
+        lambda m: "&nbsp;" * len(m.group(0)),
+        s_newline,
+        flags=re.MULTILINE,
+    )
+
+
 def format_if_documented(
     is_doc: bool, fmt: str, page_name: str, tag_attr: str, nowarn: bool, *args
 ) -> str:
     "Apply doxygen formatting to tag or attribute."
+
+    tag_attr = escape(tag_attr)
+
     if is_doc:
         tag_attr_formatted = rf'\ref {page_name} "{tag_attr}"'
     elif nowarn:
@@ -48,10 +78,7 @@ def format_if_documented(
                 page_name, tag_attr
             )
         )
-    formatted_str = fmt.format(tag_attr_formatted, tag_attr, *args)
-    # escape "/*" which is used in patch files selections as this is interpreted
-    # by doxygen as an opening comment which will never be closed
-    return formatted_str.replace("/*", "./")
+    return fmt.format(tag_attr_formatted, tag_attr, *args)
 
 
 def replace_prefix(tag: str, typetag: str) -> str:
@@ -141,7 +168,12 @@ def print_tags(
         attrpagename = "ogs_file_attr__" + attrpath.replace(".", "__")
         a_is_doc = (attrpath, False) in documented_tags_attrs
         attrs += format_if_documented(
-            a_is_doc, ' {0}="{2}"', attrpagename, attr, True, value
+            a_is_doc,
+            r" {0}=\"{2}\"",
+            attrpagename,
+            attr,
+            True,
+            escape(value),
         )
         if a_is_doc:
             map_attr_to_prj_files[attrpath].add(rel_filepath)
@@ -153,7 +185,9 @@ def print_tags(
         )
 
         if node.text and node.text.strip():
-            filehandle.write(INDENT * (level + 1) + node.text.strip() + "<br>\n")
+            filehandle.write(
+                INDENT * (level + 1) + escape(node.text.strip()) + "<br>\n"
+            )
 
         for child in node:
             if child.tag == "type" and child.text and child.text.strip():
@@ -186,7 +220,7 @@ def print_tags(
                 filehandle.write(
                     format_if_documented(
                         is_doc, fmt, fullpagename, tag, True, attrs,
-                        node.text.strip(),
+                        escape(node.text.strip()),
                     )  # fmt: skip
                 )
             else:
@@ -201,7 +235,11 @@ def print_tags(
                 # If the content of a type tag is undocumented no red
                 # "undocumented..." HTML code will be generated.
                 type_text_formatted = format_if_documented(
-                    type_is_doc, "{0}", typepagename, node.text.strip(), False
+                    type_is_doc,
+                    "{0}",
+                    typepagename,
+                    escape(node.text.strip()),
+                    False,
                 )
 
                 fmt = INDENT * level + "\\<{0}{2}\\>{3}\\</{1}\\><br>\n"
