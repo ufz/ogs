@@ -101,36 +101,38 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
     }
 }
 
-double IterationNumberBasedTimeStepping::findMultiplier(
-    int const number_iterations, NumLib::TimeStep const& ts_current) const
+double findMultiplier(
+    int const number_iterations, bool const current_time_step_is_accepted,
+    std::vector<int> const& nonlinear_iteration_numbers,
+    std::vector<double> const& multipliers,
+    MultiplyerInterpolationType const multiplier_interpolation_type)
 {
-    double multiplier = _multiplier_vector.front();
-    switch (_multiplier_interpolation_type)
+    double multiplier = multipliers.front();
+    switch (multiplier_interpolation_type)
     {
         case MultiplyerInterpolationType::PiecewiseLinear:
         {
-            auto const& PWLI = MathLib::PiecewiseLinearInterpolation(
-                _iter_times_vector, _multiplier_vector, false);
-            multiplier = PWLI.getValue(number_iterations);
+            auto const& pwli = MathLib::PiecewiseLinearInterpolation(
+                nonlinear_iteration_numbers, multipliers, false);
+            multiplier = pwli.getValue(number_iterations);
             DBUG("Using piecewise linear iteration-based time stepping.");
             break;
         }
         case MultiplyerInterpolationType::PiecewiseConstant:
             DBUG("Using piecewise constant iteration-based time stepping.");
-            for (std::size_t i = 0; i < _iter_times_vector.size(); i++)
+            for (std::size_t i = 0; i < nonlinear_iteration_numbers.size(); i++)
             {
-                if (number_iterations >= _iter_times_vector[i])
+                if (number_iterations >= nonlinear_iteration_numbers[i])
                 {
-                    multiplier = _multiplier_vector[i];
+                    multiplier = multipliers[i];
                 }
             }
             break;
     }
 
-    if (!ts_current.isAccepted() && (multiplier >= 1.0))
+    if (!current_time_step_is_accepted && (multiplier >= 1.0))
     {
-        return *std::min_element(_multiplier_vector.begin(),
-                                 _multiplier_vector.end());
+        return *std::min_element(multipliers.begin(), multipliers.end());
     }
 
     return multiplier;
@@ -152,7 +154,10 @@ double IterationNumberBasedTimeStepping::getNextTimeStepSize(
         // Attention: for the first time step and second iteration the
         // ts_prev.dt is 0 and 0*multiplier is the next dt, which will be
         // clamped to the minimum dt.
-        dt = ts_previous.dt() * findMultiplier(_iter_times, ts_current);
+        dt = ts_previous.dt() *
+             findMultiplier(_iter_times, ts_current.isAccepted(),
+                            _iter_times_vector, _multiplier_vector,
+                            _multiplier_interpolation_type);
     }
 
     if (_fixed_times_for_output.empty())
