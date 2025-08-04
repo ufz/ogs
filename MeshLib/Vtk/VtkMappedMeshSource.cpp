@@ -15,6 +15,7 @@
 
 #include <vtkCellType.h>
 #include <vtkDemandDrivenPipeline.h>
+#include <vtkImplicitArray.h>
 #include <vtkInformation.h>
 #include <vtkInformationVector.h>
 #include <vtkSmartPointer.h>
@@ -24,8 +25,9 @@
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Node.h"
 #include "MeshLib/VtkOGSEnum.h"
-#include "VtkMeshNodalCoordinatesTemplate.h"
+#include "MeshNodalCoordinatesBackend.h"
 
 namespace MeshLib
 {
@@ -79,9 +81,12 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     // Points
     this->Points->Reset();
 
-    vtkSmartPointer<VtkMeshNodalCoordinatesTemplate<double>> nodeCoords =
-        vtkSmartPointer<VtkMeshNodalCoordinatesTemplate<double>>::New();
-    nodeCoords->SetNodes(_mesh->getNodes());
+    MeshNodalCoordinatesBackend backend(_mesh->getNodes());
+
+    vtkNew<vtkImplicitArray<MeshNodalCoordinatesBackend>> nodeCoords;
+    nodeCoords->ConstructBackend(backend);
+    nodeCoords->SetNumberOfComponents(3);
+    nodeCoords->SetNumberOfTuples(_mesh->getNumberOfNodes());
     this->Points->SetData(nodeCoords);
     output->SetPoints(this->Points.GetPointer());
 
