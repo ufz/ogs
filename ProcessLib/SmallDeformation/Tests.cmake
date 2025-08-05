@@ -363,9 +363,7 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     PROPERTIES
-    # Time step size of 0.125 means the time step has been halved twice from its initial size.
-    # That proves that OGS gracefully handles such conditions
-    PASS_REGULAR_EXPRESSION "The new step size of 0[.]125 is the same as that of the previous rejected time step[.]"
+    PASS_REGULAR_EXPRESSION "Time stepper cannot reduce the time step size further[.]"
 )
 
 if(NOT OGS_USE_PETSC)
