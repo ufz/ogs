@@ -213,11 +213,6 @@ ProcessVariable::ProcessVariable(
 
 ProcessVariable::ProcessVariable(ProcessVariable&&) = default;
 
-std::string const& ProcessVariable::getName() const
-{
-    return _name;
-}
-
 MeshLib::Mesh const& ProcessVariable::getMesh() const
 {
     return _mesh;
