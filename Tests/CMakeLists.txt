@@ -198,3 +198,5 @@ endif()
 # cmake-format: on
 
 unset(CMAKE_FOLDER)
+
+add_subdirectory(Dlopen)
