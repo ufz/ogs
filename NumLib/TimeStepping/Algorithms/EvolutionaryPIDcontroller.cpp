@@ -20,9 +20,10 @@
 
 namespace NumLib
 {
-std::tuple<bool, double> EvolutionaryPIDcontroller::next(
-    double const solution_error, int const /*number_iterations*/,
-    NumLib::TimeStep& /*timestep_previous*/, NumLib::TimeStep& timestep_current)
+double EvolutionaryPIDcontroller::next(double const solution_error,
+                                       int const /*number_iterations*/,
+                                       NumLib::TimeStep& /*timestep_previous*/,
+                                       NumLib::TimeStep& timestep_current)
 {
     const bool is_previous_step_accepted = timestep_current.isAccepted();
 
@@ -50,7 +51,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
             "\t or the simulation will be halted.",
             _tol, h_new);
 
-        return std::make_tuple(timestep_current.isAccepted(), h_new);
+        return h_new;
     }
 
     // step accepted.
@@ -60,7 +61,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
     {
         _e_n_minus1 = e_n;
 
-        return std::make_tuple(timestep_current.isAccepted(), _h0);
+        return _h0;
     }
     else
     {
@@ -98,7 +99,7 @@ std::tuple<bool, double> EvolutionaryPIDcontroller::next(
         _e_n_minus2 = _e_n_minus1;
         _e_n_minus1 = e_n;
 
-        return std::make_tuple(timestep_current.isAccepted(), h_new);
+        return h_new;
     }
 }
 

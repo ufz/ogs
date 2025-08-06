@@ -49,11 +49,11 @@ public:
     /// the next step
     /// \param ts_current the current time step used to compute the size of the
     /// next step
-    /// \return A step acceptance flag and the computed step size.
-    virtual std::tuple<bool, double> next(const double solution_error,
-                                          int number_iterations,
-                                          NumLib::TimeStep& ts_previous,
-                                          NumLib::TimeStep& ts_current) = 0;
+    /// \return the computed step size.
+    virtual double next(const double solution_error,
+                        int number_iterations,
+                        NumLib::TimeStep& ts_previous,
+                        NumLib::TimeStep& ts_current) = 0;
 
     /// Get a flag to indicate whether this algorithm needs to compute
     /// solution error. The default return value is false.

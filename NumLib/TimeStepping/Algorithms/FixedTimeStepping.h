@@ -52,9 +52,9 @@ public:
                       std::vector<RepeatDtPair> const& repeat_dt_pairs,
                       std::vector<double> const& fixed_times_for_output);
 
-    std::tuple<bool, double> next(double solution_error, int number_iterations,
-                                  NumLib::TimeStep& ts_previous,
-                                  NumLib::TimeStep& ts_current) override;
+    double next(double solution_error, int number_iterations,
+                NumLib::TimeStep& ts_previous,
+                NumLib::TimeStep& ts_current) override;
 
     static bool areRepeatDtPairsValid(
         std::vector<RepeatDtPair> const& repeat_dt_pairs);

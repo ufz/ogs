@@ -213,15 +213,16 @@ FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
     }
 }
 
-std::tuple<bool, double> FixedTimeStepping::next(
-    double const /*solution_error*/, int const /*number_iterations*/,
-    NumLib::TimeStep& /*ts_previous*/, NumLib::TimeStep& ts_current)
+double FixedTimeStepping::next(double const /*solution_error*/,
+                               int const /*number_iterations*/,
+                               NumLib::TimeStep& /*ts_previous*/,
+                               NumLib::TimeStep& ts_current)
 {
     // check if last time step
     if (ts_current.timeStepNumber() == _dt_vector.size() ||
         ts_current.current() >= end())
     {
-        return std::make_tuple(true, 0.0);
+        return 0.0;
     }
 
     double dt = _dt_vector[ts_current.timeStepNumber()];
@@ -230,7 +231,7 @@ std::tuple<bool, double> FixedTimeStepping::next(
         dt = end()() - ts_current.current()();
     }
 
-    return std::make_tuple(true, dt);
+    return dt;
 }
 
 bool FixedTimeStepping::areRepeatDtPairsValid(

@@ -97,9 +97,9 @@ public:
 
     ~IterationNumberBasedTimeStepping() override = default;
 
-    std::tuple<bool, double> next(double solution_error, int number_iterations,
-                                  NumLib::TimeStep& ts_previous,
-                                  NumLib::TimeStep& ts_current) override;
+    double next(double solution_error, int number_iterations,
+                NumLib::TimeStep& ts_previous,
+                NumLib::TimeStep& ts_current) override;
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 
