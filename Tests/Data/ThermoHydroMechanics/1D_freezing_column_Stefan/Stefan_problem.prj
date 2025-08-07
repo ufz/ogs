@@ -173,12 +173,12 @@
         <parameter>
             <name>E_ice</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>9.1e9</value>
         </parameter>
         <parameter>
             <name>nu_ice</name>
             <type>Constant</type>
-            <value>0</value>
+            <value>0.33</value>
         </parameter>
         <parameter>
             <name>T0</name>
