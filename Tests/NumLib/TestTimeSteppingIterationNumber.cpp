@@ -328,8 +328,8 @@ TEST(NumLib, TimeSteppingIterationNumberBased2)
         1, 31, 1, 10, 1, multiplier_interpolation_type,
         std::move(iter_times_vector), std::move(multiplier_vector), {});
 
-    std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1};
-    const std::vector<double> expected_vec_t = {1,  2,  4,  8,  16,
+    std::vector<int> const nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1};
+    std::vector<double> const expected_vec_t = {1,  2,  4,  8,  16,
                                                 24, 28, 29, 30, 31};
 
     std::vector<double> vec_t = timeStepping(alg, nr_iterations, {}, {});
@@ -350,8 +350,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
         1, 31, 1, 10, 1, multiplier_interpolation_type,
         std::move(iter_times_vector), std::move(multiplier_vector), {});
 
-    std::vector<int> nr_iterations = {0, 2, 2, 2, 4, 6, 8, 4, 1, 1, 1, 1, 1};
-    const std::vector<double> expected_vec_t = {1,  2,  4,  5,  7,  9,  10,
+    std::vector<int> const nr_iterations = {0, 2, 2, 2, 4, 6, 8,
+                                            4, 1, 1, 1, 1, 1};
+    std::vector<double> const expected_vec_t = {1,  2,  4,  5,  7,  9,  10,
                                                 11, 12, 14, 18, 20, 24, 31};
 
     std::vector<double> vec_t =
@@ -365,19 +366,22 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
 TEST(NumLib, TimeSteppingIterationNumberBased_simple)
 {
     // *** initialization of IterationNumberBaseTimeStepping object
-    std::vector<int> iter_times_vector = {
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-    std::vector<double> multiplier_vector = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                             1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    std::vector<double> fixed_output_times = {};
+    auto iter_times_vector =
+        ranges::views::iota(1, 21) | ranges::to<std::vector>;
+
+    std::vector multiplier_vector(20, 1.0);
+
+    std::vector<double> const fixed_output_times = {};
+
     NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
         NumLib::MultiplyerInterpolationType::PiecewiseConstant;
-    // *** original data
+
     double const t_initial = 0.0;
     double const t_end = 8000.0;
     double const min_dt = 0.001;
     double const max_dt = 2100;
     double const initial_dt = 100;
+
     NumLib::IterationNumberBasedTimeStepping alg(
         t_initial, t_end, min_dt, max_dt, initial_dt,
         multiplier_interpolation_type, std::move(iter_times_vector),
@@ -385,20 +389,16 @@ TEST(NumLib, TimeSteppingIterationNumberBased_simple)
     // *** end initialization of IterationNumberBaseTimeStepping object
 
     std::vector<int> const rejected_steps = {};
-    std::vector<int> nr_iterations = {
+    std::vector<int> const nr_iterations = {
         0, 4, 3,  9, 3,  5, 4, 3, 3, 7, 10, 4, 3, 3, 3, 5, 3, 4, 7, 15,
         3, 7, 15, 3, 11, 8, 4, 5, 5, 4, 3,  3, 3, 3, 3, 3, 3, 5, 3, 3,
         3, 3, 3,  3, 7,  5, 4, 4, 3, 3, 3,  3, 3, 3, 3, 3, 3, 3, 3, 4,
         4, 3, 3,  3, 3,  3, 3, 3, 3, 3, 3,  3, 3, 3, 3, 3, 4, 3, 3, 3};
-    // current time step size:
-    const std::vector<double> expected_vec_t = {
-        0,    100,  200,  300,  400,  500,  600,  700,  800,  900,  1000, 1100,
-        1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300,
-        2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200, 3300, 3400, 3500,
-        3600, 3700, 3800, 3900, 4000, 4100, 4200, 4300, 4400, 4500, 4600, 4700,
-        4800, 4900, 5000, 5100, 5200, 5300, 5400, 5500, 5600, 5700, 5800, 5900,
-        6000, 6100, 6200, 6300, 6400, 6500, 6600, 6700, 6800, 6900, 7000, 7100,
-        7200, 7300, 7400, 7500, 7600, 7700, 7800, 7900, 8000};
+
+    auto const expected_vec_t =
+        ranges::views::iota(0, static_cast<int>(nr_iterations.size()) + 1) |
+        ranges::views::transform([](int i) { return (i * 100.0); }) |
+        ranges::to<std::vector>;
 
     std::vector<double> const vec_t =
         timeStepping(alg, nr_iterations, fixed_output_times, rejected_steps);
@@ -411,10 +411,10 @@ TEST(NumLib, TimeSteppingIterationNumberBased_simple)
 TEST(NumLib, TimeSteppingIterationNumberBased_simple2)
 {
     // *** initialization of IterationNumberBaseTimeStepping object
-    std::vector<int> iter_times_vector = {
-        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
-    std::vector<double> multiplier_vector = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-                                             1, 1, 1, 1, 1, 1, 1, 1, 1, .1};
+    auto iter_times_vector =
+        ranges::views::iota(1, 21) | ranges::to<std::vector>;
+    std::vector multiplier_vector(19, 1.0);
+    multiplier_vector.emplace_back(0.1);  // multiplier for rejected step
     std::vector<double> fixed_output_times = {};
     NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
         NumLib::MultiplyerInterpolationType::PiecewiseConstant;
