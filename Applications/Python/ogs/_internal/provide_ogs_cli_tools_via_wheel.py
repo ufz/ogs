@@ -2,6 +2,7 @@ import os
 import platform
 import subprocess
 import sys
+import sysconfig
 from pathlib import Path
 
 from . import OGS_USE_PATH
@@ -115,9 +116,17 @@ def ogs_with_args(argv):
 
 
 if "PEP517_BUILD_BACKEND" not in os.environ:
-    # Here, we assume that this script is installed, e.g., in a virtual environment
-    # alongside a "bin" directory.
-    OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"  # installed wheel
+    try:
+        # Test for editable wheel with activated venv
+        import _ogs_editable  # noqa: F401
+
+        site_packages_path = sysconfig.get_paths()["purelib"]
+        OGS_BIN_DIR = Path(site_packages_path) / "bin"
+    except ImportError:
+        # Here, we assume that this script is installed, e.g., in a virtual environment
+        # alongside a "bin" directory.
+        OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"  # installed wheel
+
     if not OGS_BIN_DIR.exists():
         OGS_BIN_DIR = OGS_BIN_DIR.parent  # build directory
 
