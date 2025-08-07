@@ -70,12 +70,26 @@ aggregate ctest logs:
   tags: [envinf, shell]
   script:
     - |
+      out_root=build/log_summary
       python -m venv .venv_custom_job
       . .venv_custom_job/bin/activate
       pip install pandas
       mkdir -p build/log_summary
       set -x
-      Applications/Python/ogs/dev/ogs_log_summary.py --snippet-out --out build/log_summary/ -v build/*/logs &>build/log_summary/ogs_log_summary.txt
+      Applications/Python/ogs/dev/ogs_log_summary.py --snippet-out --out "$out_root" -v build/*/logs &>"$out_root/ogs_log_summary.txt"
+      #
+      # summarize failed ctests
+      #
+      function exists() {
+        [ -e "$1" ]
+      }
+      if exists build/*/Testing/Temporary/LastTestsFailed*.log
+      then
+        out_dir="$out_root/Testing/Temporary"
+        mkdir -p "$out_dir"
+        echo "### Failed ctests from all jobs (and number of jobs where they failed):"
+        cut -d':' -f2- build/*/Testing/Temporary/LastTestsFailed*.log | sort | uniq -c | tee "$out_dir/LastTestsFailed.log"
+      fi
   rules:
     - when: always
   artifacts:

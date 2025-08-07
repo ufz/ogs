@@ -3,6 +3,7 @@
     when: always
     paths:
       - build/*/logs
+      - build/*/Testing/Temporary/LastTestsFailed*.log
       - build/*/Tests/ctest-junit.xml
       - build/*/Tests/testrunner.xml
       - build/*/make.txt
