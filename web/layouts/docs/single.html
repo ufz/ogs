@@ -47,17 +47,36 @@
       <div class="block md:hidden mb-4">
         <details>
           <summary>
-          <span class="font-bold text-brand-500">Table of Contents</span>
-          <span class="text-sm italic text-gray-700">(click to toggle)</span>
+            <span class="font-bold text-brand-500">Table of Contents</span>
+            <span class="text-sm italic text-gray-700">(click to toggle)</span>
           </summary>
           <div class="ml-4 mt-2">
-          {{.TableOfContents}}
+            {{.TableOfContents}}
           </div>
         </details>
-        </div>
+      </div>
       {{ end }}
 
       <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
+
+        {{ range $project := .Page.Params.projects }}
+        {{ with site.GetPage (printf "projects/%s" (urlize $project)) }}
+        {{ $projectLink := .Permalink }}
+        {{ with .Resources.Get "logo.png" }}
+        {{ $mostDominant := index .Colors 0 }}
+        {{ $darkest := index (sort .Colors "Luminance") 0 }}
+        {{ $filter := images.Padding 1 $darkest }}
+        {{ with .Fit "200x100" }}
+        {{ with .Filter $filter }}
+        <a href="{{ $projectLink }}"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"
+            alt="portrait" class="no-fancybox float-left mr-8"></a>
+        {{ end }}
+        {{ end }}
+        {{ end }}
+        {{ end }}
+        {{ end }}
+        <div class="clear-left"></div>
+
         {{ .Content }}
       </div>
 
@@ -75,7 +94,7 @@
       <div class="mb-2 font-bold text-brand-500">On this page</div>
       {{.TableOfContents}}
     </div>
-    </div>
+  </div>
   {{ end }}
 </div>
 {{ end }}

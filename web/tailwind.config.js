@@ -4,10 +4,11 @@ const colors = require('tailwindcss/colors')
 module.exports = {
   content: [
     './layouts/**/*.html',
+    './content/**/*.md',
   ],
   theme: {
     extend: {
-      typography (theme) {
+      typography(theme) {
         return {
           DEFAULT: {
             css: {

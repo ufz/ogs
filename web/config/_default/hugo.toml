@@ -137,6 +137,7 @@ weight = 5
 name = "Data Explorer Manual"
 url = "https://gitlab.opengeosys.org/ogs/documentation/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build"
 post = "Manual for the graphical user interface for OpenGeoSys, the Data Explorer."
+weight = 8
 [menu.docs.params]
 category = "User"
 
@@ -162,5 +163,17 @@ weight = 4
 [menu.docs.params]
 category = "User"
 
+[[menu.docs]]
+name = "DigBen & EURAD Model Hub"
+url = "/hub"
+post = "The Model Hub the entry point to a collection of interactive benchmark and validation models."
+weight = 9
+[menu.docs.params]
+category = "User"
+
 [security.funcs]
 getenv = ['^HUGO_', '^CI_']
+
+[taxonomies]
+project = 'projects'
+model = 'models'
