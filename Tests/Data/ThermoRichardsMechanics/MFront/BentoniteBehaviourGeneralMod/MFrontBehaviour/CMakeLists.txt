@@ -16,3 +16,4 @@ target_include_directories(
 )
 
 set_target_properties(OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly PROPERTIES EXCLUDE_FROM_ALL FALSE)
+install(TARGETS OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly)
