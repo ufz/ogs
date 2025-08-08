@@ -150,7 +150,8 @@
                 <property>
                     <name>volume_fraction</name>
                     <type>TemperatureDependentFraction</type>
-                    <steepness>0.5</steepness>
+                    <!-- High value required s.t. no ice formation happens when temperature oscillates. The former would influence pressure. -->
+                    <steepness>20</steepness>
                     <characteristic_temperature>273.15</characteristic_temperature>
                 </property>
                 <property>
@@ -378,8 +379,8 @@
         <vtkdiff>
             <regex>WithFreezingPhase_ts_.*.vtu</regex>
             <field>temperature</field>
-            <absolute_tolerance>1.5e-12</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>1.6e-12</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>WithFreezingPhase_ts_.*.vtu</regex>
