@@ -459,13 +459,14 @@ TEST(NumLib, TimeSteppingIterationNumberBased_simple2)
 TEST(NumLib, TimeSteppingIterationNumberBasedSandwich_0c)
 {
     // *** initialization of IterationNumberBaseTimeStepping object
-    auto iter_times_vector =
-        ranges::views::iota(1, 21) | ranges::to<std::vector>;
-
     std::vector<double> multiplier_vector = {
         5,      4.25,   3.5,    2.75,   2,      1.6333, 1.2667,
         0.9,    0.8333, 0.7667, 0.7,    0.6333, 0.5667, 0.5,
         0.4333, 0.3667, 0.3,    0.2333, 0.1667, 0.1};
+
+    auto iter_times_vector =
+        ranges::views::iota(1, static_cast<int>(multiplier_vector.size() + 1)) |
+        ranges::to<std::vector>;
 
     std::vector<double> fixed_output_times = {
         0,       432000,  440640,  950400,  959040,  3024000, 3032640,
