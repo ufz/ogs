@@ -12,7 +12,11 @@
 
 #include <gtest/gtest.h>
 
-#include <ranges>
+#include <algorithm>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip.hpp>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -71,7 +75,7 @@ TEST(NumLib, findMultiplierTimestepAcceptedPiecewiseConstant)
 
     bool const current_time_step_is_accepted = true;
     for (auto const [n, m] :
-         std::views::zip(nonlinear_iteration_numbers, multipliers))
+         ranges::views::zip(nonlinear_iteration_numbers, multipliers))
     {
         auto const multiplier = NumLib::findMultiplier(
             n, current_time_step_is_accepted, nonlinear_iteration_numbers,
@@ -91,7 +95,7 @@ TEST(
 
     bool const current_time_step_is_accepted = true;
     for (auto const [n, m] :
-         std::views::zip(nonlinear_iteration_numbers, multipliers))
+         ranges::views::zip(nonlinear_iteration_numbers, multipliers))
     {
         auto const multiplier = NumLib::findMultiplier(
             n, current_time_step_is_accepted, nonlinear_iteration_numbers,
@@ -187,7 +191,7 @@ TEST(NumLib, findMultiplierTimestepRejected)
 
     bool const current_time_step_is_accepted = false;
     for (auto const [n, m] :
-         std::views::zip(nonlinear_iteration_numbers, multipliers))
+         ranges::views::zip(nonlinear_iteration_numbers, multipliers))
     {
         auto const multiplier = NumLib::findMultiplier(
             n, current_time_step_is_accepted, nonlinear_iteration_numbers,
