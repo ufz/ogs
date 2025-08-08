@@ -417,11 +417,16 @@ TEST(NumLib, TimeSteppingIterationNumberBased_simple)
 TEST(NumLib, TimeSteppingIterationNumberBased_simple2)
 {
     // *** initialization of IterationNumberBaseTimeStepping object
-    auto iter_times_vector =
-        ranges::views::iota(1, 21) | ranges::to<std::vector>;
-    std::vector multiplier_vector(19, 1.0);
+    constexpr int number_of_multipliers = 20;
+    std::vector multiplier_vector(number_of_multipliers - 1, 1.0);
     multiplier_vector.emplace_back(0.1);  // multiplier for rejected step
+
+    auto iter_times_vector =
+        ranges::views::iota(1, static_cast<int>(multiplier_vector.size() + 1)) |
+        ranges::to<std::vector>;
+
     std::vector<double> fixed_output_times = {};
+
     NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
         NumLib::MultiplyerInterpolationType::PiecewiseConstant;
     double const t_initial = 0.0;
