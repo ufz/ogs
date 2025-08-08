@@ -132,11 +132,6 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>spring_constant</name>
-            <type>Constant</type>
-            <values>1e13</values>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>
@@ -169,7 +164,6 @@
                     <mesh>prism_hex_anchors</mesh>
                     <type>EmbeddedAnchor</type>
                     <component>0</component>
-                    <anchor_force_constant>spring_constant</anchor_force_constant>
                 </source_term>
             </source_terms>
         </process_variable>

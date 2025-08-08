@@ -1,0 +1,231 @@
+/**
+ * \file
+ * \copyright
+ * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
+ *            Distributed under a Modified BSD License.
+ *              See accompanying file LICENSE.txt or
+ *              http://www.opengeosys.org/project/license
+ */
+
+@Author Thomas Nagel;
+@Date 20 / 07 / 2024;
+@Description{
+    Implementation of a Weakness Plane Model Based on the Non-Associative
+    Coulomb Yield Criterion
+    https :  // doi.org/10.1016/j.jrmge.2018.08.001.
+            Adding three arbitrarily oriented joint sets and elastic
+                orthotropy.All plastic models are non -
+        associated.
+};
+
+@DSL Implicit;
+@Behaviour WeakPlaneModel;
+@Algorithm NewtonRaphson;
+@MaximumNumberOfIterations 500;
+@Brick StandardElasticity;
+@Theta 1.0;
+@Epsilon 1e-14;
+@ModellingHypotheses{".+"};
+@RequireStiffnessTensor<UnAltered>;
+@StateVariable real lamWP;
+lamWP.setEntryName("EquivalentPlasticStrainWP");
+// add an auxialary state variable storing
+// Equivalent Plastic Strain from the previous time step
+
+// Material properties for the failure criterion
+// weakness plane cohesion
+@MaterialProperty real c_wp;
+c_wp.setEntryName("PlaneCohesion");
+// weakness plane friction angle
+@MaterialProperty real phi_wp;
+phi_wp.setEntryName("PlaneFrictionAngle");
+// weakness plane dilatancy angle
+@MaterialProperty real psi_wp;
+psi_wp.setEntryName("PlaneDilatancyAngle");
+
+// set of normal vectors
+@MaterialProperty real normals[3];
+normals.setEntryName("Normals");
+
+@MaterialProperty real visc;
+visc.setEntryName("Viscosity");
+
+@Parameter local_zero_tolerance = 1e-14;
+
+@MaximalTimeStepScalingFactor 1.2;
+@MinimalTimeStepScalingFactor 0.5;
+
+// Local variable
+@LocalVariable bool plastic_loadingWP;
+@LocalVariable real tan_phi_wp;
+@LocalVariable real tan_psi_wp;
+@LocalVariable real tractions[3];
+@LocalVariable real slips[3];
+@LocalVariable real normal_stresses;
+@LocalVariable real shear_stresses;
+
+@Private
+{
+    real yieldFunctionWP()
+    {
+        // Compute the yield function for the specified component.
+        // Assuming s[0], s[1], and s[2] correspond to normal stresses on the
+        // weak planes, and adjusting the indices accordingly based on your
+        // actual stress tensor layout.
+        return shear_stresses - c_wp + normal_stresses * tan_phi_wp;
+    }
+
+    void calculate_tractions(const Stensor& s)
+    {
+        constexpr auto sqrt2 = math::Cste<real>::sqrt2;
+        // Calculate tractions for 3D and 2D cases
+        if (s.size() == 6)
+        {
+            tractions[0] = s[0] * normals[0] + s[3] / sqrt2 * normals[1] +
+                           s[4] / sqrt2 * normals[2];
+            tractions[1] = s[3] / sqrt2 * normals[0] + s[1] * normals[1] +
+                           s[5] / sqrt2 * normals[2];
+            tractions[2] = s[4] / sqrt2 * normals[0] +
+                           s[5] / sqrt2 * normals[1] + s[2] * normals[2];
+        }
+        else
+        {
+            tractions[0] = s[0] * normals[0] + s[3] / sqrt2 * normals[1];
+            tractions[1] = s[3] / sqrt2 * normals[0] + s[1] * normals[1];
+            tractions[2] = s[2] * normals[2];
+        }
+        // normal stresses
+        normal_stresses = 0;
+        for (int i = 0; i < 3; ++i)
+            normal_stresses += tractions[i] * normals[i];
+
+        // shear stresses and slip directions
+        for (int i = 0; i < 3; ++i)
+            slips[i] = tractions[i] - normal_stresses * normals[i];
+
+        shear_stresses = 0;
+        for (int i = 0; i < 3; ++i)
+            shear_stresses += slips[i] * slips[i];
+        shear_stresses = std::sqrt(shear_stresses);
+
+        for (int i = 0; i < 3; ++i)
+        {
+            if (shear_stresses > local_zero_tolerance * D(0, 0))
+                slips[i] = slips[i] / shear_stresses;
+            else
+                slips[i] = normals[i];  // no slip should occur in this case;
+                                        // keeping values well defined.
+        }
+        return;
+    }
+
+    Stensor a_otimes_b(const real avec[3], const real bvec[3], const int dim)
+    {
+        auto a_ot_b = Stensor::Id();
+        constexpr auto sqrt2 = math::Cste<real>::sqrt2;
+
+        for (int i = 0; i < 3; ++i)
+            a_ot_b[i] = avec[i] * bvec[i];
+        a_ot_b[3] = (avec[0] * bvec[1] + avec[1] * bvec[0]) / sqrt2;
+        if (dim == 6)
+        {
+            a_ot_b[4] = (avec[0] * bvec[2] + avec[2] * bvec[0]) / sqrt2;
+            a_ot_b[5] = (avec[1] * bvec[2] + avec[2] * bvec[1]) / sqrt2;
+        }
+        return a_ot_b;
+    }
+}
+
+@InitLocalVariables
+{
+    constexpr auto pi = 3.14159265358979323846;
+
+    tan_phi_wp = std::tan(phi_wp * pi / 180);
+    tan_psi_wp = std::tan(psi_wp * pi / 180);
+
+    // Compute initial elastic strain
+    const auto S = invert(D);
+    eel = S * sig;
+
+    // elastic prediction
+    const auto sig_el = computeElasticPrediction();
+
+    // The three invariant
+    const auto s_el = deviator(sig_el);
+
+    // weak plane Coulomb
+    calculate_tractions(sig_el);
+    plastic_loadingWP = yieldFunctionWP() > 0.;
+}
+
+@Integrator
+{
+    constexpr auto id = Stensor::Id();
+    constexpr auto id4 = Stensor4::Id();
+
+    calculate_tractions(sig);
+
+    if (plastic_loadingWP)
+    {
+        const auto Fy = yieldFunctionWP();
+
+        // flow direction and yield function gradient
+        auto n = id;
+        const Stensor n_otimes_n =
+            a_otimes_b(&normals[0], &normals[0], sig.size());
+        const Stensor n_otimes_m =
+            a_otimes_b(&normals[0], &slips[0], sig.size());
+        const Stensor n_otimes_e0 =
+            a_otimes_b(&normals[0], (const real[3]){1, 0, 0}, sig.size());
+        const Stensor n_otimes_e1 =
+            a_otimes_b(&normals[0], (const real[3]){0, 1, 0}, sig.size());
+        const Stensor n_otimes_e2 =
+            a_otimes_b(&normals[0], (const real[3]){0, 0, 1}, sig.size());
+
+        n = tan_psi_wp * n_otimes_n + n_otimes_m;
+
+        auto nF = id;
+        nF = tan_phi_wp * n_otimes_n + n_otimes_m;
+
+        Stensor4 dn_dsig = id4;
+        dn_dsig = (n_otimes_e0 ^ n_otimes_e0) + (n_otimes_e1 ^ n_otimes_e1) +
+                  (n_otimes_e2 ^ n_otimes_e2) - (n_otimes_n ^ n_otimes_n) -
+                  (n_otimes_m ^ n_otimes_m);
+        if (shear_stresses > local_zero_tolerance)
+            dn_dsig /= shear_stresses;
+
+        // residuals
+        feel += dlamWP * n;
+        flamWP = Fy / D(0, 0) - dlamWP * visc;
+        // Jacobian
+        dfeel_ddeel += theta * dlamWP * (dn_dsig * D);
+        dfeel_ddlamWP = n;
+        dflamWP_ddlamWP = strain(0.) - visc;
+        dflamWP_ddeel = theta * (nF | D) / D(0, 0);
+    }
+}
+
+@AdditionalConvergenceChecks
+{
+    if (converged)
+    {
+        calculate_tractions(sig);
+        if (plastic_loadingWP)
+        {
+            if (dlamWP < 0)
+            {
+                // deactivating weak plane
+                converged = plastic_loadingWP = false;
+            }
+        }
+        else
+        {
+            const auto Fy = yieldFunctionWP();
+            if (Fy > 0)
+            {
+                converged = false;
+                plastic_loadingWP = true;
+            }
+        }
+    }
+}

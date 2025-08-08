@@ -21,8 +21,8 @@ public:
     explicit EmbeddedAnchor(MeshLib::Mesh const& bulk_mesh,
                             NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
                             std::size_t const source_term_mesh_id,
-                            MeshLib::Mesh const& st_mesh, const int variable_id,
-                            ParameterLib::Parameter<double> const& parameter);
+                            MeshLib::Mesh const& st_mesh,
+                            const int variable_id);
 
     void getShapeMatricesAndGlobalIndicesAndDisplacements(
         MeshLib::Element const* const anchor_element,
@@ -43,9 +43,13 @@ private:
     MeshLib::Mesh const& st_mesh_;
     int const variable_id_;
     std::array<int, GlobalDim> const component_ids_;
-    ParameterLib::Parameter<double> const& parameter_;
     MeshLib::PropertyVector<std::size_t> const* bulk_element_ids_ = nullptr;
     MeshLib::PropertyVector<double> const* natural_coordinates_ = nullptr;
+    MeshLib::PropertyVector<double> const* maximum_anchor_stress_ = nullptr;
+    MeshLib::PropertyVector<double> const* initial_anchor_stress_ = nullptr;
+    MeshLib::PropertyVector<double> const* residual_anchor_stress_ = nullptr;
+    MeshLib::PropertyVector<double> const* cross_sectional_area_ = nullptr;
+    MeshLib::PropertyVector<double> const* anchor_stiffness_ = nullptr;
 };
 
 extern template class EmbeddedAnchor<2>;

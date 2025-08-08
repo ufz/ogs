@@ -1537,6 +1537,11 @@ AddTest(
     points.vtu points.vtu natural_coordinates natural_coordinates 1e-12 0
     points.vtu points.vtu bulk_element_ids bulk_element_ids 0 0
     points.vtu points.vtu point_cloud_node_ids point_cloud_node_ids 0 0
+    points.vtu points.vtu initial_anchor_stress initial_anchor_stress 0 0
+    points.vtu points.vtu maximum_anchor_stress maximum_anchor_stress 0 0
+    points.vtu points.vtu residual_anchor_stress residual_anchor_stress 0 0
+    points.vtu points.vtu anchor_cross_sectional_area anchor_cross_sectional_area 0 0
+    points.vtu points.vtu anchor_stiffness anchor_stiffness 0 0
 )
 AddTest(
     NAME CreateAnchors_inside_elements_3D
@@ -1550,6 +1555,11 @@ AddTest(
     points_3D.vtu points_3D.vtu natural_coordinates natural_coordinates 1e-12 0
     points_3D.vtu points_3D.vtu bulk_element_ids bulk_element_ids 0 0
     points_3D.vtu points_3D.vtu point_cloud_node_ids point_cloud_node_ids 0 0
+    points_3D.vtu points_3D.vtu initial_anchor_stress initial_anchor_stress 0 0
+    points_3D.vtu points_3D.vtu maximum_anchor_stress maximum_anchor_stress 0 0
+    points_3D.vtu points_3D.vtu residual_anchor_stress residual_anchor_stress 0 0
+    points_3D.vtu points_3D.vtu anchor_cross_sectional_area anchor_cross_sectional_area 0 0
+    points_3D.vtu points_3D.vtu anchor_stiffness anchor_stiffness 0 0
 )
 AddTest(
     NAME CreateAnchors_inside_elements_vtkdiff-mesh

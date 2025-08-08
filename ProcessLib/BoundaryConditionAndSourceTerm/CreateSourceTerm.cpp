@@ -140,11 +140,11 @@ std::unique_ptr<SourceTermBase> createSourceTerm(
             case 2:
                 return ProcessLib::createEmbeddedAnchor<2>(
                     config.config, config.mesh, bulk_mesh, dof_table_bulk,
-                    source_term_mesh.getID(), variable_id, parameters);
+                    source_term_mesh.getID(), variable_id);
             case 3:
                 return ProcessLib::createEmbeddedAnchor<3>(
                     config.config, config.mesh, bulk_mesh, dof_table_bulk,
-                    source_term_mesh.getID(), variable_id, parameters);
+                    source_term_mesh.getID(), variable_id);
             default:
                 OGS_FATAL(
                     "Anchor can not be instantiated "
