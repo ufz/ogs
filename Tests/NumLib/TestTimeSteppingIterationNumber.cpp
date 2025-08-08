@@ -370,10 +370,12 @@ TEST(NumLib, TimeSteppingIterationNumberBased2FixedOutputTimes)
 TEST(NumLib, TimeSteppingIterationNumberBased_simple)
 {
     // *** initialization of IterationNumberBaseTimeStepping object
-    auto iter_times_vector =
-        ranges::views::iota(1, 21) | ranges::to<std::vector>;
+    constexpr int number_of_multipliers = 20;
+    std::vector multiplier_vector(number_of_multipliers, 1.0);
 
-    std::vector multiplier_vector(20, 1.0);
+    auto iter_times_vector =
+        ranges::views::iota(1, static_cast<int>(multiplier_vector.size() + 1)) |
+        ranges::to<std::vector>;
 
     std::vector<double> const fixed_output_times = {};
 
