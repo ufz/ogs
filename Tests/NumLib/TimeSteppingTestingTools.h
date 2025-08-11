@@ -26,7 +26,8 @@ namespace
 template <class T_TIME_STEPPING>
 std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                                  std::vector<int> const& number_iterations,
-                                 std::vector<double> const& fixed_output_times)
+                                 std::vector<double> const& fixed_output_times,
+                                 std::vector<int> const& rejected_time_steps)
 {
     std::vector<double> vec_t;
     vec_t.push_back(algorithm.begin()());
@@ -36,14 +37,31 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
     NumLib::TimeStep previous_timestep(algorithm.begin());
 
     double const solution_error = 0;
+    int time_step_counter = 0;
+    std::size_t idx = 0;
+    bool step_accepted = false;
+    bool last_time_step_rejected = false;
+    double timestepper_dt = 0.0;
+
     for (auto const& i : number_iterations)
     {
-        auto [step_accepted, timestepper_dt] = algorithm.next(
-            solution_error, i, previous_timestep, current_timestep);
-        if (!step_accepted)
+        if (idx < rejected_time_steps.size() &&
+            time_step_counter == rejected_time_steps[idx])
         {
-            break;
+            current_timestep.setAccepted(false);
+            idx++;
+            std::tie(step_accepted, timestepper_dt) = algorithm.next(
+                solution_error, i, previous_timestep, current_timestep);
+            last_time_step_rejected = true;
         }
+        else
+        {
+            std::tie(step_accepted, timestepper_dt) = algorithm.next(
+                solution_error, i, previous_timestep, current_timestep);
+            time_step_counter++;
+            last_time_step_rejected = false;
+        }
+
         if (current_timestep.current() + timestepper_dt ==
             current_timestep.current())
         {
@@ -61,17 +79,16 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                 ? end_time() - current_timestep.current()()
                 : timestepper_dt;
 
-        NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
-                                current_timestep);
-        // INFO("t: n={:d},t={:g},dt={:g}", t.steps(), t.current(), t.dt());
-        if (current_timestep.isAccepted())
+        if (!last_time_step_rejected)
         {
-            vec_t.push_back(current_timestep.current()());
+            NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
+                                    current_timestep);
         }
         else
         {
-            //INFO("*** rejected.");
+            current_timestep = previous_timestep;
         }
+        vec_t.push_back(current_timestep.current()());
     }
 
     return vec_t;

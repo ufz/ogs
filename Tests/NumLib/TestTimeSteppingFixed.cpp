@@ -83,7 +83,7 @@ protected:
                             std::vector<double> const expected_times) const
     {
         std::vector<double> times =
-            timeStepping(algorithm, dummy_number_iterations, {});
+            timeStepping(algorithm, dummy_number_iterations, {}, {});
 
         ASSERT_EQ(expected_times.size(), times.size());
         ASSERT_ARRAY_NEAR(expected_times, times, expected_times.size(),
