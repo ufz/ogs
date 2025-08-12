@@ -8,7 +8,6 @@
  */
 
 #include <tclap/CmdLine.h>
-#include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
 #include <fstream>
@@ -20,29 +19,24 @@
 #include "BaseLib/TCLAPArguments.h"
 #include "ComputeNaturalCoordsAlgorithm.h"
 #include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 namespace AU = ApplicationUtils;
 
 vtkSmartPointer<vtkUnstructuredGrid> readGrid(std::string const& input_filename)
 {
-    if (!BaseLib::IsFileExisting(input_filename))
-    {
-        OGS_FATAL("'{:s}' file does not exist.", input_filename);
-    }
-
-    vtkNew<vtkXMLUnstructuredGridReader> reader;
-    reader->SetFileName(input_filename.c_str());
-    reader->Update();
-
-    if (!reader->GetOutput())
+    vtkSmartPointer<vtkUnstructuredGrid> grid =
+        MeshLib::IO::VtuInterface::readVtuFileToVtkUnstructuredGrid(
+            input_filename);
+    if (grid == nullptr)
     {
         OGS_FATAL("Could not open file '{}'", input_filename);
     }
-    if (reader->GetOutput()->GetNumberOfCells() == 0)
+    if (grid->GetNumberOfCells() == 0)
     {
         OGS_FATAL("Mesh file '{}' contains no cells.", input_filename);
     }
-    return reader->GetOutput();
+    return grid;
 }
 
 void writeGrid(vtkUnstructuredGrid* grid, std::string const& output_filename)
