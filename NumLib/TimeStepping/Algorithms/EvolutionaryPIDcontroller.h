@@ -64,10 +64,10 @@ public:
     {
     }
 
-    std::tuple<bool, double> next(double solution_error,
-                                  int number_iterations,
-                                  NumLib::TimeStep& timestep_previous,
-                                  NumLib::TimeStep& timestep_current) override;
+    double next(double solution_error,
+                int number_iterations,
+                NumLib::TimeStep& timestep_previous,
+                NumLib::TimeStep& timestep_current) override;
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 

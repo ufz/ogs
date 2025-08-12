@@ -228,9 +228,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     auto const end_time = alg.end();
     NumLib::TimeStep previous_timestep(alg.begin());
     NumLib::TimeStep current_timestep(alg.begin());
-    auto [step_accepted, timestepper_dt] =
+    auto timestepper_dt =
         alg.next(solution_error, 1, previous_timestep, current_timestep);
-    ASSERT_TRUE(step_accepted);
+    ASSERT_TRUE(current_timestep.isAccepted());
     timestepper_dt = (current_timestep.current() + timestepper_dt > end_time)
                          ? end_time() - current_timestep.current()()
                          : timestepper_dt;
@@ -242,18 +242,18 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(1., current_timestep.dt());
     ASSERT_TRUE(current_timestep.isAccepted());
 
-    auto [step_accepted1, timestepper_dt1] =
+    auto timestepper_dt1 =
         alg.next(solution_error, 1, previous_timestep, current_timestep);
-    ASSERT_TRUE(step_accepted1);
+    ASSERT_TRUE(current_timestep.isAccepted());
     timestepper_dt1 = (current_timestep.current() + timestepper_dt1 > end_time)
                           ? end_time() - current_timestep.current()()
                           : timestepper_dt1;
     NumLib::updateTimeSteps(timestepper_dt1, previous_timestep,
                             current_timestep);
 
-    auto [step_accepted2, timestepper_dt2] =
+    auto timestepper_dt2 =
         alg.next(solution_error, 3, previous_timestep, current_timestep);
-    ASSERT_TRUE(step_accepted2);
+    ASSERT_TRUE(current_timestep.isAccepted());
     timestepper_dt2 = (current_timestep.current() + timestepper_dt2 > end_time)
                           ? end_time() - current_timestep.current()()
                           : timestepper_dt2;
@@ -265,9 +265,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(2., current_timestep.dt());
     ASSERT_TRUE(current_timestep.isAccepted());
 
-    auto [step_accepted3, timestepper_dt3] =
+    auto timestepper_dt3 =
         alg.next(solution_error, 5, previous_timestep, current_timestep);
-    ASSERT_TRUE(step_accepted3);
+    ASSERT_TRUE(current_timestep.isAccepted());
     timestepper_dt3 = (current_timestep.current() + timestepper_dt3 > end_time)
                           ? end_time() - current_timestep.current()()
                           : timestepper_dt3;
@@ -279,9 +279,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(1., current_timestep.dt());
     ASSERT_TRUE(current_timestep.isAccepted());
 
-    auto [step_accepted4, timestepper_dt4] =
+    auto timestepper_dt4 =
         alg.next(solution_error, 7, previous_timestep, current_timestep);
-    ASSERT_TRUE(step_accepted4);
+    ASSERT_TRUE(current_timestep.isAccepted());
     timestepper_dt4 = (current_timestep.current() + timestepper_dt4 > end_time)
                           ? end_time() - current_timestep.current()()
                           : timestepper_dt4;
@@ -293,9 +293,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(1., current_timestep.dt());
     ASSERT_TRUE(current_timestep.isAccepted());
 
-    auto [step_accepted5, timestepper_dt5] =
+    auto timestepper_dt5 =
         alg.next(solution_error, 8, previous_timestep, current_timestep);
-    ASSERT_TRUE(step_accepted5);
+    ASSERT_TRUE(current_timestep.isAccepted());
     timestepper_dt5 = (current_timestep.current() + timestepper_dt5 > end_time)
                           ? end_time() - current_timestep.current()()
                           : timestepper_dt5;
@@ -307,9 +307,9 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_EQ(1., current_timestep.dt());
     ASSERT_TRUE(current_timestep.isAccepted());
 
-    auto [step_accepted6, timestepper_dt6] =
+    auto timestepper_dt6 =
         alg.next(solution_error, 4, previous_timestep, current_timestep);
-    ASSERT_TRUE(step_accepted6);
+    ASSERT_TRUE(current_timestep.isAccepted());
     NumLib::updateTimeSteps(timestepper_dt6, previous_timestep,
                             current_timestep);
     timestepper_dt6 = (current_timestep.current() + timestepper_dt6 > end_time)

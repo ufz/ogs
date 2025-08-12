@@ -39,7 +39,6 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
     double const solution_error = 0;
     int time_step_counter = 0;
     std::size_t idx = 0;
-    bool step_accepted = false;
     bool last_time_step_rejected = false;
     double timestepper_dt = 0.0;
 
@@ -50,13 +49,13 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         {
             current_timestep.setAccepted(false);
             idx++;
-            std::tie(step_accepted, timestepper_dt) = algorithm.next(
+            timestepper_dt = algorithm.next(
                 solution_error, i, previous_timestep, current_timestep);
             last_time_step_rejected = true;
         }
         else
         {
-            std::tie(step_accepted, timestepper_dt) = algorithm.next(
+            timestepper_dt = algorithm.next(
                 solution_error, i, previous_timestep, current_timestep);
             time_step_counter++;
             last_time_step_rejected = false;

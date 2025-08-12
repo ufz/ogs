@@ -328,11 +328,11 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
         ppd.timestep_current.setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
 
-        auto [previous_step_accepted, timestepper_dt] = timestep_algorithm.next(
+        auto const timestepper_dt = timestep_algorithm.next(
             solution_error, ppd.nonlinear_solver_status.number_iterations,
             ppd.timestep_previous, ppd.timestep_current);
 
-        if (!previous_step_accepted)
+        if (!ppd.timestep_current.isAccepted())
         {
             // Not all processes have accepted steps.
             all_process_steps_accepted = false;

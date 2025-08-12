@@ -97,9 +97,9 @@ public:
 
     ~IterationNumberBasedTimeStepping() override = default;
 
-    std::tuple<bool, double> next(double solution_error, int number_iterations,
-                                  NumLib::TimeStep& ts_previous,
-                                  NumLib::TimeStep& ts_current) override;
+    double next(double solution_error, int number_iterations,
+                NumLib::TimeStep& ts_previous,
+                NumLib::TimeStep& ts_current) override;
 
     bool isSolutionErrorComputationNeeded() const override { return true; }
 
@@ -130,7 +130,6 @@ private:
     /// The number of nonlinear iterations.
     int _iter_times = 0;
 
-    bool _previous_time_step_accepted = true;
     std::vector<double> const _fixed_times_for_output;
 };
 

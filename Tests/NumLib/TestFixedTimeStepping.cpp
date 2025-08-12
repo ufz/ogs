@@ -104,7 +104,7 @@ TEST_F(NumLibFixedTimeStepping, next)
             NumLib::Time(0), NumLib::Time(t_initial), 0);
         for (auto const& expected_time_point : expected_time_points)
         {
-            auto [is_next, step_size] =
+            auto const step_size =
                 fixed_time_stepping.next(0.0 /* solution_error */,
                                          0 /* number_of_iterations */,
                                          ts_dummy,
@@ -166,7 +166,7 @@ TEST_F(NumLibFixedTimeStepping, next_StaticTest)
     NumLib::TimeStep ts_current(NumLib::Time(0), NumLib::Time(t_initial), 0);
     for (auto const& expected_time_point : expected_time_points)
     {
-        auto [is_next, step_size] =
+        auto const step_size =
             fixed_time_stepping.next(0.0 /* solution_error */,
                                      0 /* number_of_iterations */,
                                      ts_dummy,
