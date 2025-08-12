@@ -76,31 +76,28 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
         return std::make_tuple(_previous_time_step_accepted,
                                getNextTimeStepSize(ts_previous, ts_current));
     }
-    else
-    {
-        double dt = getNextTimeStepSize(ts_previous, ts_current);
-        // In case it is the first time be rejected, re-computed dt again with
-        // current dt
-        if (std::abs(dt - ts_current.dt()) <
-            std::numeric_limits<double>::epsilon())
-        {
-            // time step was rejected, keep dt for the next dt computation.
-            ts_previous =  // essentially equal to _ts_prev.dt = _ts_current.dt.
-                TimeStep{ts_previous.previous(), ts_previous.previous() + dt,
-                         ts_previous.timeStepNumber()};
-            dt = getNextTimeStepSize(ts_previous, ts_current);
-        }
 
+    double dt = getNextTimeStepSize(ts_previous, ts_current);
+    // In case it is the first time be rejected, re-computed dt again with
+    // current dt
+    if (std::abs(dt - ts_current.dt()) < std::numeric_limits<double>::epsilon())
+    {
         // time step was rejected, keep dt for the next dt computation.
-        ts_previous =  // essentially equal to ts_previous.dt = _ts_current.dt.
+        ts_previous =  // essentially equal to _ts_prev.dt = _ts_current.dt.
             TimeStep{ts_previous.previous(), ts_previous.previous() + dt,
                      ts_previous.timeStepNumber()};
-        ts_current = TimeStep{ts_current.previous(), ts_current.previous() + dt,
-                              ts_current.timeStepNumber()};
-
-        _previous_time_step_accepted = false;
-        return std::make_tuple(_previous_time_step_accepted, dt);
+        dt = getNextTimeStepSize(ts_previous, ts_current);
     }
+
+    // time step was rejected, keep dt for the next dt computation.
+    ts_previous =  // essentially equal to ts_previous.dt = _ts_current.dt.
+        TimeStep{ts_previous.previous(), ts_previous.previous() + dt,
+                 ts_previous.timeStepNumber()};
+    ts_current = TimeStep{ts_current.previous(), ts_current.previous() + dt,
+                          ts_current.timeStepNumber()};
+
+    _previous_time_step_accepted = false;
+    return std::make_tuple(_previous_time_step_accepted, dt);
 }
 
 double findMultiplier(
