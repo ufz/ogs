@@ -72,7 +72,7 @@ public:
 
     ProcessVariable(ProcessVariable&&);
 
-    std::string const& getName() const;
+    std::string const& getName() const { return _name; }
 
     /// Returns a mesh on which the process variable is defined.
     MeshLib::Mesh const& getMesh() const;

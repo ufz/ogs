@@ -287,3 +287,11 @@ if(OGS_BUILD_WHEEL)
         message(FATAL_ERROR "Binary list comparison failed. Please update binaries_list in provide_ogs_cli_tools_via_wheel.py!")
     endif()
 endif()
+
+if(TARGET ogs_test_dlopen)
+    # Has to come last in this top-level CMakeLists.txt to add tests for all shared libraries.
+    # We pass ${Python_LIBRARIES} as additional lib(s) to load, because many OGS libs
+    # (e.g. each process, because of a cyclic dependency between the generic process lib and (Python) BCs)
+    # depend on them and they are not explicitly linked against.
+    for_each_subdir("${PROJECT_SOURCE_DIR}" add_dlopen_tests ${Python_LIBRARIES})
+endif()
