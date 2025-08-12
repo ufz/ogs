@@ -47,8 +47,8 @@ VtuInterface::VtuInterface(MeshLib::Mesh const* const mesh, int const dataMode,
     }
 }
 
-MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name,
-                                         bool const compute_element_neighbors)
+vtkSmartPointer<vtkUnstructuredGrid>
+VtuInterface::readVtuFileToVtkUnstructuredGrid(std::string const& file_name)
 {
     if (!BaseLib::IsFileExisting(file_name))
     {
@@ -72,6 +72,18 @@ MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name,
     if (vtkGrid->GetNumberOfPoints() == 0)
     {
         ERR("Mesh '{:s}' contains zero points.", file_name);
+        return nullptr;
+    }
+    return vtkGrid;
+}
+
+MeshLib::Mesh* VtuInterface::readVTUFile(std::string const& file_name,
+                                         bool const compute_element_neighbors)
+{
+    vtkSmartPointer<vtkUnstructuredGrid> vtkGrid =
+        VtuInterface::readVtuFileToVtkUnstructuredGrid(file_name);
+    if (vtkGrid == nullptr)
+    {
         return nullptr;
     }
 
