@@ -31,12 +31,11 @@ namespace MPL = MaterialPropertyLib;
 std::unique_ptr<MaterialPropertyLib::Property>
 createTestSaturationWeightedThermalConductivityProperty(
     const char xml[], int const geometry_dimension,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::function<std::unique_ptr<MaterialPropertyLib::Property>(
         int const geometry_dimension,
         BaseLib::ConfigTree const& config,
-        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-            parameters)>
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)>
         createProperty)
 {
     auto ptree = Tests::readXml(xml);
