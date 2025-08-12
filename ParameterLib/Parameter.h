@@ -208,4 +208,28 @@ std::unique_ptr<ParameterBase> createParameter(
 std::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
                                                MeshLib::Mesh const& mesh);
 
+/**
+ * Returns a Parameter<double>& based on the value of the given config tag.
+ *
+ * If the config entry `<tag_name>` is a double, creates a ConstantParameter
+ * with that value, adds it to `parameters`, and returns it.
+ *
+ * If the entry is a string, interprets it as the name of an existing parameter
+ * and returns a reference to that parameter.
+ *
+ * @param config           The configuration tree to read from.
+ * @param parameters       The parameter storage vector (will be modified if
+ *                         an inline constant is created).
+ * @param property_name    Name of the property (used for auto-generated
+ *                         parameter names in the inline case).
+ * @param tag_name         XML/ConfigTree tag name to read.
+ * @param inline_suffix    Suffix for auto-generated parameter names.
+ */
+Parameter<double>& getNamedOrCreateInlineParameter(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterBase>>& parameters,
+    std::string const& property_name,
+    std::string const& tag_name,
+    std::string const& inline_suffix);
+
 }  // namespace ParameterLib
