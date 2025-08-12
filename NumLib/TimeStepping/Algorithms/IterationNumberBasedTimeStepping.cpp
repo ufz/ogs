@@ -64,7 +64,7 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
 {
     _iter_times = number_iterations;
 
-    if (_previous_time_step_accepted)
+    if (ts_previous.isAccepted())
     {
         ts_previous = ts_current;
     }
@@ -72,8 +72,8 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
     // confirm current time and move to the next if accepted
     if (ts_current.isAccepted())
     {
-        _previous_time_step_accepted = true;
-        return std::make_tuple(_previous_time_step_accepted,
+        ts_previous.setAccepted(true);
+        return std::make_tuple(ts_current.isAccepted(),
                                getNextTimeStepSize(ts_previous, ts_current));
     }
 
@@ -96,8 +96,7 @@ std::tuple<bool, double> IterationNumberBasedTimeStepping::next(
     ts_current = TimeStep{ts_current.previous(), ts_current.previous() + dt,
                           ts_current.timeStepNumber()};
 
-    _previous_time_step_accepted = false;
-    return std::make_tuple(_previous_time_step_accepted, dt);
+    return std::make_tuple(ts_previous.isAccepted(), dt);
 }
 
 double findMultiplier(

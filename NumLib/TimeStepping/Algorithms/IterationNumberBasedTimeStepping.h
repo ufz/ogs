@@ -130,7 +130,6 @@ private:
     /// The number of nonlinear iterations.
     int _iter_times = 0;
 
-    bool _previous_time_step_accepted = true;
     std::vector<double> const _fixed_times_for_output;
 };
 
