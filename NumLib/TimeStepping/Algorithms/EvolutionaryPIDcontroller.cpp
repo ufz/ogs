@@ -63,44 +63,40 @@ double EvolutionaryPIDcontroller::next(double const solution_error,
 
         return _h0;
     }
-    else
-    {
-        const double h_n = timestep_current.dt();
-        double h_new = h_n;
+    const double h_n = timestep_current.dt();
+    double h_new = h_n;
 
-        if (e_n > zero_threshold)
+    if (e_n > zero_threshold)
+    {
+        if (_e_n_minus1 > zero_threshold)
         {
-            if (_e_n_minus1 > zero_threshold)
+            if (_e_n_minus2 > zero_threshold)
             {
-                if (_e_n_minus2 > zero_threshold)
-                {
-                    h_new = std::pow(_e_n_minus1 / e_n, _kP) *
-                            std::pow(_tol / e_n, _kI) *
-                            std::pow(
-                                _e_n_minus1 * _e_n_minus1 / (e_n * _e_n_minus2),
-                                _kD) *
-                            h_n;
-                }
-                else
-                {
-                    h_new = std::pow(_e_n_minus1 / e_n, _kP) *
-                            std::pow(_tol / e_n, _kI) * h_n;
-                }
+                h_new =
+                    std::pow(_e_n_minus1 / e_n, _kP) *
+                    std::pow(_tol / e_n, _kI) *
+                    std::pow(_e_n_minus1 * _e_n_minus1 / (e_n * _e_n_minus2),
+                             _kD) *
+                    h_n;
             }
             else
             {
-                h_new = std::pow(_tol / e_n, _kI) * h_n;
+                h_new = std::pow(_e_n_minus1 / e_n, _kP) *
+                        std::pow(_tol / e_n, _kI) * h_n;
             }
         }
-
-        h_new =
-            limitStepSize(h_new, is_previous_step_accepted, timestep_current);
-
-        _e_n_minus2 = _e_n_minus1;
-        _e_n_minus1 = e_n;
-
-        return h_new;
+        else
+        {
+            h_new = std::pow(_tol / e_n, _kI) * h_n;
+        }
     }
+
+    h_new = limitStepSize(h_new, is_previous_step_accepted, timestep_current);
+
+    _e_n_minus2 = _e_n_minus1;
+    _e_n_minus1 = e_n;
+
+    return h_new;
 }
 
 double EvolutionaryPIDcontroller::limitStepSize(
