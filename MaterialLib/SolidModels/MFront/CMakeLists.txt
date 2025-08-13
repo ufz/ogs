@@ -52,57 +52,44 @@ set(_mfront_behaviours
     WeakPlaneModel_nonIter
 )
 
-if((OGS_BUILD_WHEEL AND NOT APPLE_ARM) OR GUIX_BUILD OR CONDA_BUILD)
-    # Build behaviours lib with mfront executable
-    foreach(behaviour ${_mfront_behaviours})
-        list(APPEND _mfront_behaviour_files
-             "${CMAKE_CURRENT_SOURCE_DIR}/${behaviour}.mfront"
-        )
-    endforeach()
-    set(_generated_mfront_lib
-        ${CMAKE_CURRENT_BINARY_DIR}/src/libBehaviour${CMAKE_SHARED_LIBRARY_SUFFIX}
+# Build behaviours lib with mfront executable
+foreach(behaviour ${_mfront_behaviours})
+    list(APPEND _mfront_behaviour_files
+            "${CMAKE_CURRENT_SOURCE_DIR}/${behaviour}.mfront"
     )
-    set(_copied_mfront_lib
-        ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libOgsMFrontBehaviour${CMAKE_SHARED_LIBRARY_SUFFIX}
-    )
-    add_custom_command(
-        OUTPUT ${_copied_mfront_lib}
-        COMMAND
-            ${CMAKE_COMMAND} -E env PATH="${TFELHOME}/bin:$ENV{PATH}" mfront
-            --interface=generic --silent-build=true # suppresses output
-                                                    # (compiler warnings), does
-                                                    # not work?
-            --obuild=level0 ${_mfront_behaviour_files} # TODO: check for debug?
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_generated_mfront_lib}
-                ${_copied_mfront_lib}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND_EXPAND_LISTS
-        DEPENDS ${_mfront_behaviour_files}
-    )
-    add_custom_target(
-        InternalOgsMFrontBehaviour ALL DEPENDS ${_copied_mfront_lib}
-    )
-    add_library(OgsMFrontBehaviour SHARED IMPORTED)
-    set_target_properties(
-        OgsMFrontBehaviour PROPERTIES IMPORTED_LOCATION ${_copied_mfront_lib}
-                                      IMPORTED_NO_SONAME TRUE
-    )
-    install(FILES ${_copied_mfront_lib} TYPE LIB PERMISSIONS
-        OWNER_READ GROUP_READ WORLD_READ
-        OWNER_WRITE GROUP_WRITE
-        OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
-else()
-    # Build behaviours lib as part of ogs' build process
-    mfront_behaviours_check_library(OgsMFrontBehaviour ${_mfront_behaviours})
-    # ------------------------------ ATTENTION --------------------------------
-    # Disable warnings for generated OgsMFrontBehaviour. To enable warnings
-    # comment out the following target_compile_options()-statement:
-    target_compile_options(
-        OgsMFrontBehaviour PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
-                                   $<$<CXX_COMPILER_ID:MSVC>:/W0>
-    )
-    target_link_libraries(
-        MaterialLib_SolidModels_MFront PUBLIC OgsMFrontBehaviour
-    )
-    install(TARGETS OgsMFrontBehaviour)
-endif()
+endforeach()
+set(_generated_mfront_lib
+    ${CMAKE_CURRENT_BINARY_DIR}/src/libBehaviour${CMAKE_SHARED_LIBRARY_SUFFIX}
+)
+set(_copied_mfront_lib
+    ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/libOgsMFrontBehaviour${CMAKE_SHARED_LIBRARY_SUFFIX}
+)
+add_custom_command(
+    OUTPUT ${_copied_mfront_lib}
+    COMMAND
+        ${CMAKE_COMMAND} -E env PATH="${TFELHOME}/bin:$ENV{PATH}" mfront
+        --interface=generic --silent-build=true # suppresses output
+                                                # (compiler warnings), does
+                                                # not work?
+        --obuild=level0 ${_mfront_behaviour_files} # TODO: check for debug?
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_generated_mfront_lib}
+            ${_copied_mfront_lib}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    COMMAND_EXPAND_LISTS
+    DEPENDS ${_mfront_behaviour_files}
+)
+add_custom_target(
+    InternalOgsMFrontBehaviour ALL DEPENDS ${_copied_mfront_lib}
+)
+add_library(OgsMFrontBehaviour SHARED IMPORTED)
+set_target_properties(
+    OgsMFrontBehaviour PROPERTIES IMPORTED_LOCATION ${_copied_mfront_lib}
+                                    IMPORTED_NO_SONAME TRUE
+)
+target_link_libraries(
+    MaterialLib_SolidModels_MFront PUBLIC OgsMFrontBehaviour
+)
+install(FILES ${_copied_mfront_lib} TYPE LIB PERMISSIONS
+    OWNER_READ GROUP_READ WORLD_READ
+    OWNER_WRITE GROUP_WRITE
+    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
