@@ -56,6 +56,8 @@ struct HydroMechanicsProcessData
     /// tackle the  volumetric locking.
     const bool use_b_bar;
 
+    std::vector<JunctionProperty> junction_properties = {};
+
     MeshLib::PropertyVector<int> const* mesh_prop_materialIDs = nullptr;
     std::vector<int> map_materialID_to_fractureID = {};
 

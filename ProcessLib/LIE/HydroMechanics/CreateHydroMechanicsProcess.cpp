@@ -11,6 +11,8 @@
 #include "CreateHydroMechanicsProcess.h"
 
 #include <cassert>
+#include <range/v3/numeric/accumulate.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "HydroMechanicsProcess.h"
 #include "HydroMechanicsProcessData.h"
@@ -220,13 +222,17 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 &mesh));
     }
 
-    if (p_u_process_variables.size() - 1 /*for pressure*/ !=
-        fracture_properties.size())
+    std::size_t const n_var_du =
+        ranges::accumulate(
+            process_variables | ranges::views::transform(ranges::size),
+            std::size_t{0}) -
+        2 /* for pressure and displacement */;
+    if (n_var_du != fracture_properties.size())
     {
         OGS_FATAL(
             "The number of displacement jumps {} and the number of "
             "<fracture_properties> {} are not consistent.",
-            p_u_process_variables.size() - 1,
+            n_var_du,
             fracture_properties.size());
     }
 
