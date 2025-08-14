@@ -63,20 +63,37 @@ VtkVisImageItem::~VtkVisImageItem()
 
 void VtkVisImageItem::Initialize(vtkRenderer* renderer)
 {
-    auto* img = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
-    img->Update();
-    // VtkGeoImageSource* img = dynamic_cast<VtkGeoImageSource*>(_algorithm);
+    auto* image = dynamic_cast<vtkImageAlgorithm*>(_algorithm);
+    if (!image)
+    {
+        OGSError::box("Cast to image failed.");
+        return;
+    }
+    image->Update();
 
     double origin[3];
     double spacing[3];
     double range[2];
-    img->GetOutput()->GetOrigin(origin);
-    img->GetOutput()->GetSpacing(spacing);
-    // img->getRange(range);
-    img->GetOutput()->GetPointData()->GetScalars()->GetRange(range);
+    vtkImageData* image_data = image->GetOutput();
+    if (!image_data)
+    {
+        OGSError::box("GetOutput() - Image could not be initialized.");
+        return;
+    }
+    image_data->GetOrigin(origin);
+    image_data->GetSpacing(spacing);
+    vtkPointData* point_data = image_data->GetPointData();
+    if (point_data)
+    {
+        auto* scalars = point_data->GetScalars();
+        if (scalars)
+        {
+            scalars->GetRange(range);
+        }
+    }
     vtkImageShiftScale* scale = vtkImageShiftScale::New();
     scale->SetOutputScalarTypeToUnsignedChar();
-    scale->SetInputConnection(img->GetOutputPort());
+    scale->SetInputConnection(image->GetOutputPort());
     scale->SetShift(-range[0]);
     scale->SetScale(255.0 / (range[1] - range[0]));
 

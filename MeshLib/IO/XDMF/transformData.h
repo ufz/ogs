@@ -52,7 +52,7 @@ XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
  * \brief  Create meta data for topology used for HDF5 and XDMF
  * \param values actual topology values to get size and memory location
  * \param parent_data_type XDMF topological element data types as listed in the
- * enum ParentDataTypei
+ * enum ParentDataType
  * \param n_files specifies the number of files. If greater
  * than 1 it groups the data of each process to n_files \param chunk_size_bytes
  * Data will be split into chunks. The parameter specifies the size (in bytes)
