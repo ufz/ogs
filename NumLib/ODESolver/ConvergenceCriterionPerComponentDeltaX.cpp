@@ -122,8 +122,10 @@ void ConvergenceCriterionPerComponentDeltaX::setDOFTable(
         static_cast<int>(_abstols.size()))
     {
         OGS_FATAL(
-            "The number of components in the DOF table and the number of "
-            "tolerances given do not match.");
+            "The number of components in the DOF table ({:d}) and the number "
+            "of tolerances given ({:d}) do not match.",
+            _dof_table->getNumberOfGlobalComponents(),
+            static_cast<int>(_abstols.size()));
     }
 }
 
