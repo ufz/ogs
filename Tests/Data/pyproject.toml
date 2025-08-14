@@ -5,9 +5,9 @@ description = "Test environment for Notebook-based tests"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-  ## nb environment
+  ### nb environment ###
+  # Use no-X11 version on Linux:
   "gmsh==4.13.1.dev1; platform_system == 'Linux'",
-  "gmsh>=4.11",
   "gmsh>=4.12.0; platform_system != 'Linux'",
   "h5py>=3.8",
   "heatsource-py @ git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c",
@@ -17,10 +17,11 @@ dependencies = [
   "numpy",
   "ogstools==0.7.0",
   "pandas>=1.5",
+  # TODO: Implement fix for PyVista 0.46 in ogstools:
   "pyvista[all]==0.45",
   "seaborn>=0.12",
   "VTUinterface>=0.704",
-  ## dev tools
+  ### dev tools ###
   "gcovr==6.0",
   "jupytext>=1.14.5",
   "nbconvert>=7.16.5",
