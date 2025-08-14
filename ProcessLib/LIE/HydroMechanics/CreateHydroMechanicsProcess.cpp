@@ -251,7 +251,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config.getConfigParameterOptional<bool>("deactivate_matrix_in_flow");
     bool const deactivate_matrix_in_flow =
         opt_deactivate_matrix_in_flow && *opt_deactivate_matrix_in_flow;
-    ;
+
     if (deactivate_matrix_in_flow)
         INFO("Deactivate matrix elements in flow calculation.");
 
