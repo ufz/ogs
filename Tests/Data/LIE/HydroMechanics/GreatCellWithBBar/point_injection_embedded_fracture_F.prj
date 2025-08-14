@@ -79,6 +79,7 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
+                <material_id>1</material_id>
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <deactivate_matrix_in_flow>true</deactivate_matrix_in_flow>
@@ -92,7 +93,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>1.0e-13 1e-13 1e-13 1e-14 1e-14</reltols>
+                    <reltols>1.0e-13 1e-13 1e-13 1e-14 1e-14 1e-16 1e-16</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
