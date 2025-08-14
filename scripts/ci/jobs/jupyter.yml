@@ -1,28 +1,41 @@
-test notebooks via wheel:
-  stage: build
-  tags: [envinf3, shell]
+test linux wheel via notebooks:
+  stage: test
+  tags: [envinf, shell]
   needs: []
-  before_script:
-    - cd Tests/Data
-    - python -m venv --upgrade-deps .venv
-    - source .venv/bin/activate
-    - pip install -r requirements.txt
-    - pip install --force-reinstall --pre --no-index --find-links https://vip.s3.ufz.de/ogs/public/ci/python/gmsh/index.html "gmsh>=4.11"
-    - pip install -r requirements-dev.txt
-    - pip install -r requirements-ogs.txt
+  variables:
+    OGS_GROUP: ogs-local
+  parallel:
+    matrix:
+      - OGS_GROUP: ogs-local
+        UV_ARGS: ""
+      - OGS_GROUP: ogs-master
+        UV_ARGS: "--upgrade-package ogs"
+      - OGS_GROUP: [ogs-master, ogs-pypi] # maintenance test upgrading all dependencies
+        UV_ARGS: "--upgrade"
+  rules:
+    - if: '$OGS_GROUP == "ogs-master" && $CI_COMMIT_BRANCH == "master"' # don't test master on master
+      when: never
+    - if: '$OGS_GROUP == "ogs-pypi" && $CI_PIPELINE_SOURCE == "merge_request_event"' # don't test MR against pypi
+      when: never
+    - if: '$UV_ARGS == "--upgrade" && $CI_PIPELINE_SOURCE == "merge_request_event"' # Maintenance test manual on MR
+      when: manual
+      allow_failure: true
+    - if: '$UV_ARGS =~ /.*--upgrade.*/'
+      allow_failure: true
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
   script:
+    - cd Tests/Data
+    - uv run --group ${OGS_GROUP} ${UV_ARGS} pytest
     # https://github.com/matplotlib/matplotlib/issues/25306:
-    - rm -rf "$(python -c 'import matplotlib as mpl; print(mpl.get_cachedir())')"
+    - rm -rf "$(uv run python -c 'import matplotlib as mpl; print(mpl.get_cachedir())')"
     # Glacier tutorial
     - |
       cd ../../web/content/docs/tutorials/advancing-glacier
-      python mesh_basin.py
-      msh2vtu mesh_basin.msh --reindex
-      ogs OGSinput_basin.prj
+      uv run --project ../../../../../Tests/Data python mesh_basin.py
+      uv run --project ../../../../../Tests/Data msh2vtu mesh_basin.msh --reindex
+      uv run --project ../../../../../Tests/Data --group ${OGS_GROUP} ${UV_ARGS} ogs OGSinput_basin.prj
       cd -
-    # Append mtest install directory to PYTHONPATH
-    - export PYTHONPATH=/opt/tfel-rliv-4.0/lib/python3.11/site-packages:$PYTHONPATH
-    - export LD_LIBRARY_PATH=/opt/tfel-rliv-4.0/lib:$LD_LIBRARY_PATH
     # TODO:
     #  - better timeout
     #  - run in parallel
@@ -31,7 +44,7 @@ test notebooks via wheel:
           | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
           | xargs grep -l "jupytext_version" \
           | xargs grep -L "ci skip" \
-          | xargs python Notebooks/testrunner.py --out _out
+          | xargs uv run --group ${OGS_GROUP} ${UV_ARGS} python Notebooks/testrunner.py --out _out
   artifacts:
     when: always
     paths:
