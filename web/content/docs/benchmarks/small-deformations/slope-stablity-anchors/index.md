@@ -57,11 +57,12 @@ The actual Anchors are the activated by the corresponding source term type:
     <source_term>
         <mesh>four_anchors_prestress</mesh>
         <type>EmbeddedAnchor</type>
-        <external_anchor_head_load>force0</external_anchor_head_load>
     </source_term>
 </source_terms>
 ```
 
 The following plot shows the difference in the displacement of the left and the right side without anchors, with relaxed and prestressed anchors.
+(Keep in mind that the simulation time in the ctest was shortened for faster executions in the ci-test pipeline.
+Details can be found in the reference `prj` file: `fault_slip_SD_noniterWP_reference.prj`)
 
 ![Displacement Graph](output_19_0.png)
