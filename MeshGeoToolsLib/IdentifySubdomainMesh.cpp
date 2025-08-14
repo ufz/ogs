@@ -151,7 +151,8 @@ void updateOrCheckExistingSubdomainProperty(
     MeshLib::MeshItemType const mesh_item_type, bool const force_overwrite)
 {
     auto& properties = mesh.getProperties();
-    if (!properties.existsPropertyVector<std::size_t>(property_name))
+    if (!properties.existsPropertyVector<std::size_t>(property_name,
+                                                      mesh_item_type, 1))
     {
         addPropertyToMesh<std::size_t>(mesh, property_name, mesh_item_type, 1,
                                        {values});
