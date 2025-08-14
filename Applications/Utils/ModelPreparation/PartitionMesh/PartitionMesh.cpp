@@ -27,6 +27,40 @@
 
 using namespace ApplicationUtils;
 
+void addGlobalIDsToMesh(MeshLib::Properties& mesh_properties,
+                        MeshLib::MeshItemType const mesh_item_type,
+                        std::size_t const number_of_items)
+{
+    if (!mesh_properties.existsPropertyVector<std::size_t>(
+            MeshLib::globalIDString(mesh_item_type), mesh_item_type, 1))
+    {
+        auto* global_ids = mesh_properties.createNewPropertyVector<std::size_t>(
+            MeshLib::globalIDString(mesh_item_type), mesh_item_type,
+            number_of_items, 1);
+        if (!global_ids)
+        {
+            OGS_FATAL("Could not create PropertyVector '{}'.",
+                      MeshLib::globalIDString(mesh_item_type));
+        }
+        global_ids->assign(ranges::views::iota(0u, number_of_items));
+    }
+}
+
+void addGlobalIDsToMesh(MeshLib::Mesh& mesh)
+{
+    auto& mesh_properties = mesh.getProperties();
+
+    addGlobalIDsToMesh(mesh_properties, MeshLib::MeshItemType::Node,
+                       mesh.getNumberOfNodes());
+    INFO("Property {} is added to mesh {}",
+         MeshLib::globalIDString(MeshLib::MeshItemType::Node), mesh.getName());
+
+    addGlobalIDsToMesh(mesh_properties, MeshLib::MeshItemType::Cell,
+                       mesh.getNumberOfElements());
+    INFO("Property {} is added to mesh {}",
+         MeshLib::globalIDString(MeshLib::MeshItemType::Cell), mesh.getName());
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -110,6 +144,8 @@ int main(int argc, char* argv[])
          mesh_ptr->getNumberOfNodes(),
          mesh_ptr->getNumberOfElements());
 
+    addGlobalIDsToMesh(*mesh_ptr);
+
     std::string const output_file_name_wo_extension = BaseLib::joinPaths(
         output_directory,
         BaseLib::extractBaseNameWithoutExtension(mesh_input.getValue()));
@@ -191,6 +227,8 @@ int main(int argc, char* argv[])
         INFO("Mesh '{:s}' from file '{:s}' read: {:d} nodes, {:d} elements.",
              mesh->getName(), filename, mesh->getNumberOfNodes(),
              mesh->getNumberOfElements());
+
+        addGlobalIDsToMesh(*mesh);
 
         std::string const other_mesh_output_file_name_wo_extension =
             BaseLib::joinPaths(
