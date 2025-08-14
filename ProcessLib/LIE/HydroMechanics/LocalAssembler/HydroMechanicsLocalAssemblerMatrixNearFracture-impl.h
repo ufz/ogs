@@ -37,9 +37,13 @@ HydroMechanicsLocalAssemblerMatrixNearFracture<
           integration_method, is_axially_symmetric, process_data),
       _e_center_coords(getCenterOfGravity(e).data())
 {
-    // currently not supporting multiple fractures
-    _fracture_props.push_back(process_data.fracture_property.get());
-    _fracID_to_local.insert({0, 0});
+    for (auto fid : process_data.vec_ele_connected_fractureIDs[e.getID()])
+    {
+        _fracID_to_local.insert({fid, _fracture_props.size()});
+        _fracture_props.push_back(&_process_data.fracture_properties[fid]);
+    }
+
+    // TODO(naumov) Junctions not yet implemented.
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

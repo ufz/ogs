@@ -204,27 +204,30 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     // Fracture properties
-    std::unique_ptr<FractureProperty> frac_prop = nullptr;
-    auto opt_fracture_properties_config =
+    std::vector<FractureProperty> fracture_properties;
+    for (
+        auto fracture_properties_config :
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties}
-        config.getConfigSubtreeOptional("fracture_properties");
-    if (opt_fracture_properties_config)
+        config.getConfigSubtreeList("fracture_properties"))
     {
-        auto& fracture_properties_config = *opt_fracture_properties_config;
-
-        frac_prop = std::make_unique<ProcessLib::LIE::FractureProperty>(
-            0 /*fracture_id*/, 0 /*material_id*/,
+        fracture_properties.emplace_back(
+            fracture_properties.size(),
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__material_id}
+            fracture_properties_config.getConfigParameter<int>("material_id"),
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
                 fracture_properties_config, "initial_aperture", parameters, 1,
                 &mesh));
-        if (frac_prop->aperture0.isTimeDependent())
-        {
-            OGS_FATAL(
-                "The initial aperture parameter '{:s}' must not be "
-                "time-dependent.",
-                frac_prop->aperture0.name);
-        }
+    }
+
+    if (p_u_process_variables.size() - 1 /*for pressure*/ !=
+        fracture_properties.size())
+    {
+        OGS_FATAL(
+            "The number of displacement jumps {} and the number of "
+            "<fracture_properties> {} are not consistent.",
+            p_u_process_variables.size() - 1,
+            fracture_properties.size());
     }
 
     // initial effective stress in matrix
@@ -305,7 +308,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     HydroMechanicsProcessData<GlobalDim> process_data{
         materialIDs(mesh),         std::move(solid_constitutive_relations),
         std::move(media_map),      specific_body_force,
-        std::move(fracture_model), std::move(frac_prop),
+        std::move(fracture_model), std::move(fracture_properties),
         initial_effective_stress,  initial_fracture_effective_stress,
         deactivate_matrix_in_flow, use_b_bar};
 

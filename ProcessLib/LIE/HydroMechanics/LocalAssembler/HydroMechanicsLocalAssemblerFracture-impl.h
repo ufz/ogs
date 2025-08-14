@@ -74,13 +74,16 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
                                   ShapeMatricesTypePressure, GlobalDim>(
             e, is_axially_symmetric, integration_method);
 
-    auto const& frac_prop = *_process_data.fracture_property;
+    auto mat_id = (*_process_data.mesh_prop_materialIDs)[e.getID()];
+    auto frac_id = _process_data.map_materialID_to_fractureID[mat_id];
+    _fracture_property = &_process_data.fracture_properties[frac_id];
 
     // Get element nodes for aperture0 interpolation from nodes to integration
     // point. The aperture0 parameter is time-independent.
     typename ShapeMatricesTypeDisplacement::NodalVectorType
-        aperture0_node_values = frac_prop.aperture0.getNodalValuesOnElement(
-            e, /*time independent*/ 0);
+        aperture0_node_values =
+            _fracture_property->aperture0.getNodalValuesOnElement(
+                e, /*time independent*/ 0);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -178,8 +181,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         Eigen::Ref<Eigen::MatrixXd> J_pp, Eigen::Ref<Eigen::MatrixXd> J_pg,
         Eigen::Ref<Eigen::MatrixXd> J_gg, Eigen::Ref<Eigen::MatrixXd> J_gp)
 {
-    auto const& frac_prop = *_process_data.fracture_property;
-    auto const& R = frac_prop.R;
+    auto const& R = _fracture_property->R;
 
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
@@ -371,8 +373,7 @@ void HydroMechanicsLocalAssemblerFracture<
 {
     auto const nodal_g = local_x.segment(displacement_index, displacement_size);
 
-    auto const& frac_prop = *_process_data.fracture_property;
-    auto const& R = frac_prop.R;
+    auto const& R = _fracture_property->R;
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
     auto constexpr index_normal = GlobalDim - 1;

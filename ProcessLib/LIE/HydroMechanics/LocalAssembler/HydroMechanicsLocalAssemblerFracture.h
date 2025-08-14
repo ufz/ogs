@@ -157,7 +157,9 @@ private:
 
     using GlobalDimVectorType = Eigen::Matrix<double, GlobalDim, 1>;
 
+private:
     HydroMechanicsProcessData<GlobalDim>& _process_data;
+    FractureProperty const* _fracture_property = nullptr;
 
     std::vector<IntegrationPointDataType,
                 Eigen::aligned_allocator<IntegrationPointDataType>>
