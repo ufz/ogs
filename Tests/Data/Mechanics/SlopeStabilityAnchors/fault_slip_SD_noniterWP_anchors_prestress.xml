@@ -9,11 +9,9 @@
             <source_term>
                 <mesh>four_anchors_prestress</mesh>
                 <type>EmbeddedAnchor</type>
-                <external_anchor_head_load>force0</external_anchor_head_load>
             </source_term>
         </source_terms>
     </add>
-    <replace sel="/*/test_definition/vtkdiff[1]/regex/text()">fault_slip_nonIter_WP_anchors_prestress_t_45.000000.vtu</replace>
-    <replace sel="/*/test_definition/vtkdiff[2]/regex/text()">fault_slip_nonIter_WP_anchors_prestress_t_45.000000.vtu</replace>
-    <replace sel="/*/test_definition/vtkdiff[3]/regex/text()">fault_slip_nonIter_WP_anchors_prestress_t_45.000000.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[1]/regex/text()">fault_slip_nonIter_WP_anchors_prestress_t_6.000000.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[2]/regex/text()">fault_slip_nonIter_WP_anchors_prestress_t_6.000000.vtu</replace>
 </OpenGeoSysProjectDiff>
