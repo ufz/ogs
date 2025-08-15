@@ -36,8 +36,8 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <int GlobalDim>
-HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
+template <int DisplacementDim>
+HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
     std::string name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -45,7 +45,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
-    HydroMechanicsProcessData<GlobalDim>&& process_data,
+    HydroMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
     bool const use_monolithic_scheme)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
@@ -101,7 +101,7 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     {
         // based on the 1st element assuming a fracture forms a straight line
         setFractureProperty(
-            GlobalDim,
+            DisplacementDim,
             *_vec_fracture_elements[fracture_prop.fracture_id][0],
             fracture_prop);
     }
@@ -222,8 +222,8 @@ HydroMechanicsProcess<GlobalDim>::HydroMechanicsProcess(
     _process_data.mesh_prop_materialIDs = material_ids;
 }
 
-template <int GlobalDim>
-void HydroMechanicsProcess<GlobalDim>::constructDofTable()
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
 {
     //------------------------------------------------------------
     // prepare mesh subsets to define DoFs
@@ -254,16 +254,16 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     // displacement_jump_fracture, and displacement_jump_junction)
     std::vector<MeshLib::MeshSubset> all_mesh_subsets;
     all_mesh_subsets.emplace_back(*_mesh_subset_nodes_p);
-    std::generate_n(std::back_inserter(all_mesh_subsets), GlobalDim,
+    std::generate_n(std::back_inserter(all_mesh_subsets), DisplacementDim,
                     [&]() { return *_mesh_subset_matrix_nodes; });
     for (auto const& ms : _mesh_subset_fracture_nodes)
     {
         std::generate_n(std::back_inserter(all_mesh_subsets),
-                        GlobalDim,
+                        DisplacementDim,
                         [&]() { return *ms; });
     }
     std::generate_n(std::back_inserter(all_mesh_subsets),
-                    GlobalDim,
+                    DisplacementDim,
                     [&]() { return *_mesh_subset_junction_nodes; });
 
     // The corresponding number of components for (pressure, displacement,
@@ -273,7 +273,7 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     vec_n_components.insert(
         vec_n_components.end(),
         1 + _vec_fracture_mat_IDs.size() + _vec_junction_nodes.size(),
-        GlobalDim);  // all displacements
+        DisplacementDim);  // all displacements
 
     auto const all_fracture_matrix_elements = _vec_fracture_matrix_elements |
                                               ranges::views::join |
@@ -310,16 +310,16 @@ void HydroMechanicsProcess<GlobalDim>::constructDofTable()
     DBUG("created {:d} DoF", _local_to_global_index_map->size());
 }
 
-template <int GlobalDim>
-void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    assert(mesh.getDimension() == GlobalDim);
+    assert(mesh.getDimension() == DisplacementDim);
     INFO("[LIE/HM] creating local assemblers");
     ProcessLib::LIE::HydroMechanics::createLocalAssemblers<
-        GlobalDim, HydroMechanicsLocalAssemblerMatrix,
+        DisplacementDim, HydroMechanicsLocalAssemblerMatrix,
         HydroMechanicsLocalAssemblerMatrixNearFracture,
         HydroMechanicsLocalAssemblerFracture>(
         mesh.getElements(), dof_table, _local_assemblers,
@@ -337,23 +337,23 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
                              std::move(get_ip_values_function)));
     };
 
-    add_secondary_variable(
-        "sigma",
-        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime,
-        &LocalAssemblerInterface::getIntPtSigma);
+    add_secondary_variable("sigma",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtSigma);
 
-    add_secondary_variable(
-        "epsilon",
-        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime,
-        &LocalAssemblerInterface::getIntPtEpsilon);
+    add_secondary_variable("epsilon",
+                           MathLib::KelvinVector::KelvinVectorType<
+                               DisplacementDim>::RowsAtCompileTime,
+                           &LocalAssemblerInterface::getIntPtEpsilon);
 
-    add_secondary_variable("velocity", GlobalDim,
+    add_secondary_variable("velocity", DisplacementDim,
                            &LocalAssemblerInterface::getIntPtDarcyVelocity);
 
-    add_secondary_variable("fracture_velocity", GlobalDim,
+    add_secondary_variable("fracture_velocity", DisplacementDim,
                            &LocalAssemblerInterface::getIntPtFractureVelocity);
 
-    add_secondary_variable("fracture_stress", GlobalDim,
+    add_secondary_variable("fracture_stress", DisplacementDim,
                            &LocalAssemblerInterface::getIntPtFractureStress);
 
     add_secondary_variable("fracture_aperture", 1,
@@ -366,15 +366,16 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     _process_data.element_stresses = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "sigma_avg",
         MeshLib::MeshItemType::Cell,
-        MathLib::KelvinVector::KelvinVectorType<GlobalDim>::RowsAtCompileTime);
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime);
 
     _process_data.element_velocities = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "velocity_avg",
-        MeshLib::MeshItemType::Cell, GlobalDim);
+        MeshLib::MeshItemType::Cell, DisplacementDim);
 
     for (MeshLib::Element const* e : _mesh.getElements())
     {
-        if (e->getDimension() < GlobalDim)
+        if (e->getDimension() < DisplacementDim)
         {
             continue;
         }
@@ -426,17 +427,17 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     _process_data.element_local_jumps =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "local_jump_w_avg",
-            MeshLib::MeshItemType::Cell, GlobalDim);
+            MeshLib::MeshItemType::Cell, DisplacementDim);
 
     _process_data.element_fracture_stresses =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "fracture_stress_avg",
-            MeshLib::MeshItemType::Cell, GlobalDim);
+            MeshLib::MeshItemType::Cell, DisplacementDim);
 
     _process_data.element_fracture_velocities =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "fracture_velocity_avg",
-            MeshLib::MeshItemType::Cell, GlobalDim);
+            MeshLib::MeshItemType::Cell, DisplacementDim);
 
     auto mesh_prop_b = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "fracture_aperture_avg",
@@ -448,7 +449,7 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     {
         for (MeshLib::Element const* e : _mesh.getElements())
         {
-            if (e->getDimension() == GlobalDim)
+            if (e->getDimension() == DisplacementDim)
             {
                 continue;
             }
@@ -488,16 +489,16 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     _process_data.mesh_prop_nodal_forces =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "NodalForces",
-            MeshLib::MeshItemType::Node, GlobalDim);
+            MeshLib::MeshItemType::Node, DisplacementDim);
     assert(_process_data.mesh_prop_nodal_forces->size() ==
-           GlobalDim * mesh.getNumberOfNodes());
+           DisplacementDim * mesh.getNumberOfNodes());
 
     _process_data.mesh_prop_nodal_forces_jump =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "NodalForcesJump",
-            MeshLib::MeshItemType::Node, GlobalDim);
+            MeshLib::MeshItemType::Node, DisplacementDim);
     assert(_process_data.mesh_prop_nodal_forces_jump->size() ==
-           GlobalDim * mesh.getNumberOfNodes());
+           DisplacementDim * mesh.getNumberOfNodes());
 
     _process_data.mesh_prop_hydraulic_flow =
         MeshLib::getOrCreateMeshProperty<double>(
@@ -508,8 +509,8 @@ void HydroMechanicsProcess<GlobalDim>::initializeConcreteProcess(
     _process_data.mesh_prop_b = mesh_prop_b;
 }
 
-template <int GlobalDim>
-void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, const double t, double const dt,
     int const process_id)
@@ -572,14 +573,14 @@ void HydroMechanicsProcess<GlobalDim>::postTimestepConcreteProcess(
     }
 }
 
-template <int GlobalDim>
-bool HydroMechanicsProcess<GlobalDim>::isLinear() const
+template <int DisplacementDim>
+bool HydroMechanicsProcess<DisplacementDim>::isLinear() const
 {
     return false;
 }
 
-template <int GlobalDim>
-void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
@@ -594,11 +595,12 @@ void HydroMechanicsProcess<GlobalDim>::assembleConcreteProcess(
         dof_table, t, dt, x, x_prev, process_id, &M, &K, &b);
 }
 
-template <int GlobalDim>
-void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
-    const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalVector& b, GlobalMatrix& Jac)
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::
+    assembleWithJacobianConcreteProcess(
+        const double t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, int const process_id,
+        GlobalVector& b, GlobalMatrix& Jac)
 {
     DBUG("AssembleWithJacobian HydroMechanicsProcess.");
 
@@ -621,8 +623,8 @@ void HydroMechanicsProcess<GlobalDim>::assembleWithJacobianConcreteProcess(
     copyRhs(2, *_process_data.mesh_prop_nodal_forces_jump);
 }
 
-template <int GlobalDim>
-void HydroMechanicsProcess<GlobalDim>::preTimestepConcreteProcess(
+template <int DisplacementDim>
+void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const dt,
     int const process_id)
 {

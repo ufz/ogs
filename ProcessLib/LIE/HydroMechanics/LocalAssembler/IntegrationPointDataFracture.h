@@ -20,12 +20,15 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <typename HMatricesType, typename ShapeMatrixTypeDisplacement,
-          typename ShapeMatrixTypePressure, int GlobalDim>
+template <typename HMatricesType,
+          typename ShapeMatrixTypeDisplacement,
+          typename ShapeMatrixTypePressure,
+          int DisplacementDim>
 struct IntegrationPointDataFracture final
 {
     explicit IntegrationPointDataFracture(
-        MaterialLib::Fracture::FractureModelBase<GlobalDim>& fracture_material_)
+        MaterialLib::Fracture::FractureModelBase<DisplacementDim>&
+            fracture_material_)
         : fracture_material(fracture_material_),
           material_state_variables(
               fracture_material.createMaterialStateVariables()),
@@ -33,7 +36,7 @@ struct IntegrationPointDataFracture final
     {
     }
 
-    using GlobalDimVectorType = Eigen::Matrix<double, GlobalDim, 1>;
+    using GlobalDimVectorType = Eigen::Matrix<double, DisplacementDim, 1>;
 
     typename HMatricesType::HMatrixType H_u;
     typename HMatricesType::ForceVectorType sigma_eff, sigma_eff_prev;
@@ -46,9 +49,10 @@ struct IntegrationPointDataFracture final
     double aperture0 = 0.0;
     double permeability = 0.0;
 
-    MaterialLib::Fracture::FractureModelBase<GlobalDim>& fracture_material;
+    MaterialLib::Fracture::FractureModelBase<DisplacementDim>&
+        fracture_material;
     std::unique_ptr<typename MaterialLib::Fracture::FractureModelBase<
-        GlobalDim>::MaterialStateVariables>
+        DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
     Eigen::MatrixXd C;

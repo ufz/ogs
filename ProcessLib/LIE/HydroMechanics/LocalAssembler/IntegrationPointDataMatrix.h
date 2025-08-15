@@ -22,24 +22,25 @@ namespace LIE
 namespace HydroMechanics
 {
 template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
-          typename ShapeMatrixTypePressure, int GlobalDim, unsigned NPoints>
+          typename ShapeMatrixTypePressure, int DisplacementDim,
+          unsigned NPoints>
 struct IntegrationPointDataMatrix final
 {
     explicit IntegrationPointDataMatrix(
-        MaterialLib::Solids::MechanicsBase<GlobalDim>& solid_material)
+        MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material)
         : solid_material(solid_material),
           material_state_variables(
               solid_material.createMaterialStateVariables()),
-          darcy_velocity(GlobalDimVector::Zero())
+          darcy_velocity(DisplacementDimVector::Zero())
     {
     }
 
-    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
+    using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
 
     typename ShapeMatrixTypeDisplacement::NodalRowVectorType N_u;
     typename ShapeMatrixTypeDisplacement::GlobalDimNodalMatrixType dNdx_u;
     typename ShapeMatrixTypeDisplacement::template MatrixType<
-        GlobalDim, NPoints * GlobalDim>
+        DisplacementDim, NPoints * DisplacementDim>
         H_u;
     typename BMatricesType::KelvinVectorType sigma_eff, sigma_eff_prev;
     typename BMatricesType::KelvinVectorType eps, eps_prev;
@@ -50,9 +51,9 @@ struct IntegrationPointDataMatrix final
     using GlobalDimVectorType =
         typename ShapeMatrixTypePressure::GlobalDimVectorType;
 
-    MaterialLib::Solids::MechanicsBase<GlobalDim>& solid_material;
+    MaterialLib::Solids::MechanicsBase<DisplacementDim>& solid_material;
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
-        GlobalDim>::MaterialStateVariables>
+        DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
     typename BMatricesType::KelvinMatrixType C;

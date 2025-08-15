@@ -30,7 +30,7 @@ namespace HydroMechanics
 namespace MPL = MaterialPropertyLib;
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 class HydroMechanicsLocalAssemblerMatrix
     : public HydroMechanicsLocalAssemblerInterface
 {
@@ -47,7 +47,7 @@ public:
         std::vector<unsigned> const& dofIndex_to_localIndex,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        HydroMechanicsProcessData<GlobalDim>& process_data);
+        HydroMechanicsProcessData<DisplacementDim>& process_data);
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
@@ -157,24 +157,24 @@ protected:
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =
-        ShapeMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
+        ShapeMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
     using BMatricesType =
-        BMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
+        BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
 
     using BBarMatrixType = typename BMatricesType::BBarMatrixType;
 
     // Types for pressure.
     using ShapeMatricesTypePressure =
-        ShapeMatrixPolicyType<ShapeFunctionPressure, GlobalDim>;
+        ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
 
     using IntegrationPointDataType =
         IntegrationPointDataMatrix<BMatricesType, ShapeMatricesTypeDisplacement,
-                                   ShapeMatricesTypePressure, GlobalDim,
+                                   ShapeMatricesTypePressure, DisplacementDim,
                                    ShapeFunctionDisplacement::NPOINTS>;
     using GlobalDimMatrixType =
         typename ShapeMatricesTypePressure::GlobalDimMatrixType;
 
-    using GlobalDimVector = Eigen::Matrix<double, GlobalDim, 1>;
+    using DisplacementDimVector = Eigen::Matrix<double, DisplacementDim, 1>;
 
     std::optional<BBarMatrixType> getDilatationalBBarMatrix() const
     {
@@ -184,14 +184,14 @@ protected:
         }
 
         return LinearBMatrix::computeDilatationalBbar<
-            GlobalDim, ShapeFunctionDisplacement::NPOINTS,
+            DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
             ShapeFunctionDisplacement, BBarMatrixType,
             ShapeMatricesTypeDisplacement, IntegrationPointDataType>(
             _ip_data, this->_element, this->_integration_method,
             this->_is_axially_symmetric);
     }
 
-    HydroMechanicsProcessData<GlobalDim>& _process_data;
+    HydroMechanicsProcessData<DisplacementDim>& _process_data;
 
     std::vector<IntegrationPointDataType,
                 Eigen::aligned_allocator<IntegrationPointDataType>>
@@ -201,9 +201,9 @@ protected:
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;
     static const int displacement_index = ShapeFunctionPressure::NPOINTS;
     static const int displacement_size =
-        ShapeFunctionDisplacement::NPOINTS * GlobalDim;
+        ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
     static const int kelvin_vector_size =
-        MathLib::KelvinVector::kelvin_vector_dimensions(GlobalDim);
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
 
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>

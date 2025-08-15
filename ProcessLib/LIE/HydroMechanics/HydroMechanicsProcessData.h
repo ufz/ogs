@@ -32,18 +32,18 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <int GlobalDim>
+template <int DisplacementDim>
 struct HydroMechanicsProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids;
-    std::map<int,
-             std::shared_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
+    std::map<int, std::shared_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
-    Eigen::Matrix<double, GlobalDim, 1> const specific_body_force;
-    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
+    Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
         fracture_model;
     std::vector<FractureProperty> fracture_properties;
 

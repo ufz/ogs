@@ -28,35 +28,35 @@ namespace HydroMechanics
 {
 namespace MPL = MaterialPropertyLib;
 
-template <int GlobalDim, typename RotationMatrix>
-Eigen::Matrix<double, GlobalDim, GlobalDim> createRotatedTensor(
+template <int DisplacementDim, typename RotationMatrix>
+Eigen::Matrix<double, DisplacementDim, DisplacementDim> createRotatedTensor(
     RotationMatrix const& R, double const value)
 {
-    using M = Eigen::Matrix<double, GlobalDim, GlobalDim>;
+    using M = Eigen::Matrix<double, DisplacementDim, DisplacementDim>;
     M tensor = M::Zero();
-    tensor.diagonal().head(GlobalDim - 1).setConstant(value);
+    tensor.diagonal().head(DisplacementDim - 1).setConstant(value);
     return (R.transpose() * tensor * R).eval();
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
-                                     ShapeFunctionPressure, GlobalDim>::
+                                     ShapeFunctionPressure, DisplacementDim>::
     HydroMechanicsLocalAssemblerFracture(
         MeshLib::Element const& e,
         std::size_t const /*local_matrix_size*/,
         std::vector<unsigned> const& dofIndex_to_localIndex,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        HydroMechanicsProcessData<GlobalDim>& process_data)
+        HydroMechanicsProcessData<DisplacementDim>& process_data)
     : HydroMechanicsLocalAssemblerInterface(
           e, is_axially_symmetric, integration_method,
-          ShapeFunctionDisplacement::NPOINTS * GlobalDim +
+          ShapeFunctionDisplacement::NPOINTS * DisplacementDim +
               ShapeFunctionPressure::NPOINTS,
           dofIndex_to_localIndex),
       _process_data(process_data)
 {
-    assert(e.getDimension() == GlobalDim - 1);
+    assert(e.getDimension() == DisplacementDim - 1);
 
     unsigned const n_integration_points =
         integration_method.getNumberOfPoints();
@@ -66,12 +66,13 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     auto const shape_matrices_u =
         NumLib::initShapeMatrices<ShapeFunctionDisplacement,
-                                  ShapeMatricesTypeDisplacement, GlobalDim>(
-            e, is_axially_symmetric, integration_method);
+                                  ShapeMatricesTypeDisplacement,
+                                  DisplacementDim>(e, is_axially_symmetric,
+                                                   integration_method);
 
     auto const shape_matrices_p =
         NumLib::initShapeMatrices<ShapeFunctionPressure,
-                                  ShapeMatricesTypePressure, GlobalDim>(
+                                  ShapeMatricesTypePressure, DisplacementDim>(
             e, is_axially_symmetric, integration_method);
 
     auto mat_id = (*_process_data.mesh_prop_materialIDs)[e.getID()];
@@ -102,10 +103,11 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
             sm_u.detJ * sm_u.integralMeasure *
             integration_method.getWeightedPoint(ip).getWeight();
 
-        ip_data.H_u.setZero(GlobalDim,
-                            ShapeFunctionDisplacement::NPOINTS * GlobalDim);
+        ip_data.H_u.setZero(
+            DisplacementDim,
+            ShapeFunctionDisplacement::NPOINTS * DisplacementDim);
         computeHMatrix<
-            GlobalDim, ShapeFunctionDisplacement::NPOINTS,
+            DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
             typename ShapeMatricesTypeDisplacement::NodalRowVectorType,
             HMatrixType>(sm_u.N, ip_data.H_u);
         ip_data.N_p = sm_p.N;
@@ -114,21 +116,21 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         _secondary_data.N[ip] = sm_u.N;
 
         // Initialize current time step values
-        ip_data.w.setZero(GlobalDim);
-        ip_data.sigma_eff.setZero(GlobalDim);
+        ip_data.w.setZero(DisplacementDim);
+        ip_data.sigma_eff.setZero(DisplacementDim);
 
         // Previous time step values are not initialized and are set later.
-        ip_data.w_prev.resize(GlobalDim);
-        ip_data.sigma_eff_prev.resize(GlobalDim);
+        ip_data.w_prev.resize(DisplacementDim);
+        ip_data.sigma_eff_prev.resize(DisplacementDim);
 
-        ip_data.C.resize(GlobalDim, GlobalDim);
+        ip_data.C.resize(DisplacementDim, DisplacementDim);
 
         ip_data.aperture0 = aperture0_node_values.dot(sm_u.N);
         ip_data.aperture = ip_data.aperture0;
 
         auto const initial_effective_stress =
             _process_data.initial_fracture_effective_stress(0, x_position);
-        for (int i = 0; i < GlobalDim; i++)
+        for (int i = 0; i < DisplacementDim; i++)
         {
             ip_data.sigma_eff[i] = initial_effective_stress[i];
             ip_data.sigma_eff_prev[i] = initial_effective_stress[i];
@@ -137,9 +139,9 @@ HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
-void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
-                                          ShapeFunctionPressure, GlobalDim>::
+          int DisplacementDim>
+void HydroMechanicsLocalAssemblerFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     assembleWithJacobianConcrete(double const t, double const dt,
                                  Eigen::VectorXd const& local_x,
                                  Eigen::VectorXd const& local_x_prev,
@@ -168,9 +170,9 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
-void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
-                                          ShapeFunctionPressure, GlobalDim>::
+          int DisplacementDim>
+void HydroMechanicsLocalAssemblerFracture<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     assembleBlockMatricesWithJacobian(
         double const t, double const dt,
         Eigen::Ref<const Eigen::VectorXd> const& p,
@@ -185,7 +187,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
-    auto constexpr index_normal = GlobalDim - 1;
+    auto constexpr index_normal = DisplacementDim - 1;
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace_p =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
@@ -203,7 +205,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 
     // Projection of the body force vector at the element.
     Eigen::MatrixXd const global2local_rotation =
-        R.template topLeftCorner<ShapeFunctionPressure::DIM, GlobalDim>();
+        R.template topLeftCorner<ShapeFunctionPressure::DIM, DisplacementDim>();
 
     GlobalDimVectorType const gravity_vec = global2local_rotation.transpose() *
                                             global2local_rotation *
@@ -229,7 +231,7 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
         auto const& dNdx_p = ip_data.dNdx_p;
         auto const& H_g = ip_data.H_u;
         auto const& identity2 =
-            MaterialLib::Fracture::FractureIdentity2<GlobalDim>::value;
+            MaterialLib::Fracture::FractureIdentity2<DisplacementDim>::value;
 
         x_position = {
             std::nullopt, _element.getID(),
@@ -364,19 +366,20 @@ void HydroMechanicsLocalAssemblerFracture<ShapeFunctionDisplacement,
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssemblerFracture<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
-    GlobalDim>::postTimestepConcreteWithVector(const double t,
-                                               double const /*dt*/,
-                                               Eigen::VectorXd const& local_x)
+    DisplacementDim>::postTimestepConcreteWithVector(const double t,
+                                                     double const /*dt*/,
+                                                     Eigen::VectorXd const&
+                                                         local_x)
 {
     auto const nodal_g = local_x.segment(displacement_index, displacement_size);
 
     auto const& R = _fracture_property->R;
     // the index of a normal (normal to a fracture plane) component
     // in a displacement vector
-    auto constexpr index_normal = GlobalDim - 1;
+    auto constexpr index_normal = DisplacementDim - 1;
 
     ParameterLib::SpatialPosition x_position;
     auto const e_id = _element.getID();
@@ -432,9 +435,9 @@ void HydroMechanicsLocalAssemblerFracture<
     double ele_b = 0;
     double ele_k = 0;
     typename HMatricesType::ForceVectorType ele_sigma_eff =
-        HMatricesType::ForceVectorType::Zero(GlobalDim);
+        HMatricesType::ForceVectorType::Zero(DisplacementDim);
     typename HMatricesType::ForceVectorType ele_w =
-        HMatricesType::ForceVectorType::Zero(GlobalDim);
+        HMatricesType::ForceVectorType::Zero(DisplacementDim);
     GlobalDimVectorType ele_velocity = GlobalDimVectorType::Zero();
 
     double ele_Fs = -std::numeric_limits<double>::max();
@@ -458,23 +461,23 @@ void HydroMechanicsLocalAssemblerFracture<
     (*_process_data.mesh_prop_k_f)[element_id] = ele_k;
 
     Eigen::Map<GlobalDimVectorType>(
-        &(*_process_data.element_fracture_stresses)[e_id * GlobalDim]) =
+        &(*_process_data.element_fracture_stresses)[e_id * DisplacementDim]) =
         ele_sigma_eff;
 
     Eigen::Map<GlobalDimVectorType>(
-        &(*_process_data.element_fracture_velocities)[e_id * GlobalDim]) =
+        &(*_process_data.element_fracture_velocities)[e_id * DisplacementDim]) =
         ele_velocity;
 
     Eigen::Map<GlobalDimVectorType>(
-        &(*_process_data.element_local_jumps)[e_id * GlobalDim]) = ele_w;
+        &(*_process_data.element_local_jumps)[e_id * DisplacementDim]) = ele_w;
 
     (*_process_data.mesh_prop_fracture_shear_failure)[element_id] = ele_Fs;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtFractureVelocity(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -483,9 +486,9 @@ std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
 {
     unsigned const n_integration_points = _ip_data.size();
     cache.clear();
-    auto cache_matrix = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, GlobalDim, n_integration_points);
+    auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, DisplacementDim, n_integration_points);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -496,9 +499,9 @@ std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtFractureStress(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -507,9 +510,9 @@ std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
 {
     unsigned const n_integration_points = _ip_data.size();
     cache.clear();
-    auto cache_matrix = MathLib::createZeroedMatrix<
-        Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
-        cache, GlobalDim, n_integration_points);
+    auto cache_matrix = MathLib::createZeroedMatrix<Eigen::Matrix<
+        double, DisplacementDim, Eigen::Dynamic, Eigen::RowMajor>>(
+        cache, DisplacementDim, n_integration_points);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -520,9 +523,9 @@ std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtFractureAperture(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,
@@ -534,9 +537,9 @@ std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 std::vector<double> const& HydroMechanicsLocalAssemblerFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtFracturePermeability(
         const double /*t*/,
         std::vector<GlobalVector*> const& /*x*/,

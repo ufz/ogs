@@ -22,10 +22,10 @@ namespace HydroMechanics
 {
 class HydroMechanicsLocalAssemblerInterface;
 
-template <int GlobalDim>
+template <int DisplacementDim>
 class HydroMechanicsProcess final : public Process
 {
-    static_assert(GlobalDim == 2 || GlobalDim == 3,
+    static_assert(DisplacementDim == 2 || DisplacementDim == 3,
                   "Currently LIE::HydroMechanicsProcess "
                   "supports only 2D or 3D.");
 
@@ -40,7 +40,7 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
-        HydroMechanicsProcessData<GlobalDim>&& process_data,
+        HydroMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         bool const use_monolithic_scheme);
 
@@ -79,7 +79,7 @@ private:
                                     int const process_id) override;
 
 private:
-    HydroMechanicsProcessData<GlobalDim> _process_data;
+    HydroMechanicsProcessData<DisplacementDim> _process_data;
 
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 

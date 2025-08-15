@@ -20,9 +20,9 @@ namespace LIE
 namespace HydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 HydroMechanicsLocalAssemblerMatrixNearFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure, GlobalDim>::
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     HydroMechanicsLocalAssemblerMatrixNearFracture(
         MeshLib::Element const& e,
         std::size_t const n_variables,
@@ -30,9 +30,9 @@ HydroMechanicsLocalAssemblerMatrixNearFracture<
         std::vector<unsigned> const& dofIndex_to_localIndex,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        HydroMechanicsProcessData<GlobalDim>& process_data)
-    : HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
-                                         ShapeFunctionPressure, GlobalDim>(
+        HydroMechanicsProcessData<DisplacementDim>& process_data)
+    : HydroMechanicsLocalAssemblerMatrix<
+          ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>(
           e, n_variables, local_matrix_size, dofIndex_to_localIndex,
           integration_method, is_axially_symmetric, process_data),
       _e_center_coords(getCenterOfGravity(e).data())
@@ -47,15 +47,14 @@ HydroMechanicsLocalAssemblerMatrixNearFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssemblerMatrixNearFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure,
-    GlobalDim>::assembleWithJacobianConcrete(double const t, double const dt,
-                                             Eigen::VectorXd const& local_x,
-                                             Eigen::VectorXd const&
-                                                 local_x_prev,
-                                             Eigen::VectorXd& local_b,
-                                             Eigen::MatrixXd& local_J)
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    assembleWithJacobianConcrete(double const t, double const dt,
+                                 Eigen::VectorXd const& local_x,
+                                 Eigen::VectorXd const& local_x_prev,
+                                 Eigen::VectorXd& local_b,
+                                 Eigen::MatrixXd& local_J)
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
@@ -131,11 +130,11 @@ void HydroMechanicsLocalAssemblerMatrixNearFracture<
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
-          int GlobalDim>
+          int DisplacementDim>
 void HydroMechanicsLocalAssemblerMatrixNearFracture<
-    ShapeFunctionDisplacement, ShapeFunctionPressure,
-    GlobalDim>::postTimestepConcreteWithVector(double const t, double const dt,
-                                               Eigen::VectorXd const& local_x)
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    postTimestepConcreteWithVector(double const t, double const dt,
+                                   Eigen::VectorXd const& local_x)
 {
     auto p = const_cast<Eigen::VectorXd&>(local_x).segment(pressure_index,
                                                            pressure_size);
