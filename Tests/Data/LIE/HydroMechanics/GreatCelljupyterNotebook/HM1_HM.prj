@@ -38,17 +38,13 @@
         <mesh>physical_group_p_right.vtu</mesh>
         <mesh>physical_group_p_top.vtu</mesh>
         <mesh>physical_group_p_bottom.vtu</mesh>
+        <mesh>physical_group_Inlet.vtu</mesh>
     </meshes>
     <processes>
         <process>
-            <name>M</name>
-            <type>SMALL_DEFORMATION_WITH_LIE</type>
-            <integration_order>3</integration_order>
-            <use_b_bar>false</use_b_bar>
-            <process_variables>
-                <process_variable>displacement</process_variable>
-                <process_variable>displacement_jump1</process_variable>
-            </process_variables>
+            <name>HM</name>
+            <type>HYDRO_MECHANICS</type>
+            <integration_order>2</integration_order>
             <constitutive_relation id="0">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E1</youngs_modulus>
@@ -64,131 +60,231 @@
                 <youngs_modulus>E2</youngs_modulus>
                 <poissons_ratio>nu2</poissons_ratio>
             </constitutive_relation>
-            <fracture_model>
-                <type>LinearElasticIsotropic</type>
-                <normal_stiffness>Kn</normal_stiffness>
-                <shear_stiffness>Ks</shear_stiffness>
-                <penalty_aperture_cutoff>1e-14</penalty_aperture_cutoff>
-                <tension_cutoff>1</tension_cutoff>
-            </fracture_model>
-            <fracture_properties>
-                <material_id>3</material_id>
-                <initial_aperture>aperture0</initial_aperture>
-            </fracture_properties>
+            <process_variables>
+                <pressure>pressure</pressure>
+                <displacement>displacement</displacement>
+            </process_variables>
             <secondary_variables>
                 <secondary_variable internal_name="sigma" output_name="sigma"/>
                 <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="fracture_aperture" output_name="fracture_aperture"/>
-                <secondary_variable internal_name="fracture_stress" output_name="fracture_stress"/>
             </secondary_variables>
+            <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2.750e3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.01</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-19</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.8</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2.750e3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.01</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-19</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.8</value>
+                </property>
+            </properties>
+        </medium>
+        <medium id="2">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2.750e3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.001</value>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1.e-20</value>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>.99</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
     <time_loop>
         <processes>
-            <process ref="M">
-                <nonlinear_solver>basic_newton_u</nonlinear_solver>
+            <process ref="HM">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1e-15</abstol>
+                    <reltols>1e-12 1e-12 1e-12</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                    <type>FixedTimeStepping</type>
+                    <type>IterationNumberBasedTimeStepping</type>
                     <t_initial>0</t_initial>
+                    <!--3000 + 500 s-->
                     <t_end>3500</t_end>
-                    <timesteps>
-                        <pair>
-                            <repeat>1</repeat>
-                            <delta_t>100.0</delta_t>
-                        </pair>
-                    </timesteps>
+                    <initial_dt>0.01</initial_dt>
+                    <minimum_dt>0.01</minimum_dt>
+                    <maximum_dt>200</maximum_dt>
+                    <number_iterations>1 2 5 10  20</number_iterations>
+                    <multiplier>       1.6 1.4 1.0 0.7 0.5</multiplier>
                 </time_stepping>
             </process>
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>great_cell_2D_embedded_fracture_M</prefix>
+            <prefix>GreatCell_2D</prefix>
             <variables>
                 <variable>MaterialIDs</variable>
                 <variable>displacement</variable>
-                <variable>displacement_jump1</variable>
-                <variable>fracture_stress</variable>
-                <variable>fracture_aperture</variable>
+                <variable>pressure</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
-                <variable>levelset1</variable>
             </variables>
             <output_iteration_results>false</output_iteration_results>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
-                    <each_steps>5</each_steps>
+                    <each_steps>1</each_steps>
                 </pair>
             </timesteps>
         </output>
     </time_loop>
-    <media>
-        <medium id="0">
-            <phases>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                    </properties>
-                </phase>
-            </phases>
-        </medium>
-        <medium id="1">
-            <phases>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value>0.0</value>
-                        </property>
-                    </properties>
-                </phase>
-            </phases>
-        </medium>
-        <medium id="2">
-            <phases>
-                <phase>
-                    <type>Solid</type>
-                    <properties>
-                        <property>
-                            <name>density</name>
-                            <type>Constant</type>
-                            <value>2650</value>
-                        </property>
-                    </properties>
-                </phase>
-            </phases>
-        </medium>
-    </media>
     <parameters>
         <parameter>
             <name>E1</name>
             <type>Constant</type>
-            <value>3.85e9</value>
+            <value>8.39e10</value>
         </parameter>
         <parameter>
             <name>nu1</name>
             <type>Constant</type>
-            <value>0.4</value>
+            <value>0.21</value>
         </parameter>
         <parameter>
             <name>E2</name>
             <type>Constant</type>
-            <value>1e8</value>
+            <value>1.e8</value>
         </parameter>
         <parameter>
             <name>nu2</name>
@@ -196,70 +292,25 @@
             <value>0.4</value>
         </parameter>
         <parameter>
-            <name>rho_sr</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>2650</value>
-            </index_values>
-            <index_values>
-                <index>1</index>
-                <value>2650</value>
-            </index_values>
-            <index_values>
-                <index>2</index>
-                <value>2650</value>
-            </index_values>
-            <!--type>Constant</type>
-            <value>2650</value-->
-        </parameter>
-        <parameter>
-            <name>rho_fr</name>
+            <name>injectionFlowRate_Inlet</name>
             <type>Constant</type>
-            <value>1e3</value>
+            <values>2.085e-6</values>
         </parameter>
         <parameter>
-            <name>mu</name>
-            <type>Constant</type>
-            <value>1e-3</value>
-        </parameter>
-        <!-- Fracture properties -->
-        <parameter>
-            <name>f_thickness</name>
-            <type>Constant</type>
-            <value>1.0</value>
+            <name>injectionFlowRate_Inlet_ramp</name>
+            <type>CurveScaled</type>
+            <curve>timeRamp</curve>
+            <parameter>injectionFlowRate_Inlet</parameter>
         </parameter>
         <parameter>
-            <name>aperture0</name>
-            <type>Constant</type>
-            <value>1e-5</value>
-        </parameter>
-        <parameter>
-            <name>Kn</name>
-            <type>Constant</type>
-            <value>10e9</value>
-        </parameter>
-        <parameter>
-            <name>Ks</name>
-            <type>Constant</type>
-            <value>4e9</value>
-        </parameter>
-        <parameter>
-            <name>effective_stress0</name>
-            <type>Constant</type>
-        <values>0.e6 0.e6 0.e6 0</values>
-        </parameter>
-        <parameter>
-            <name>fracture_effective_stress0</name>
-            <type>Constant</type>
-            <values>0 0 0.0</values>
-        </parameter>
-        <!-- initial values -->
-        <parameter>
-            <name>u0</name>
+            <name>displacement0</name>
             <type>Constant</type>
             <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>pressure_ic</name>
+            <type>Constant</type>
+            <value>0.1e6</value>
         </parameter>
         <parameter>
             <name>zero</name>
@@ -466,6 +517,11 @@
     </parameters>
     <curves>
         <curve>
+            <name>timeRamp</name>
+            <coords>0 2999.9 3000 3500</coords>
+            <values>0.0 0.0 1.0 1.0</values>
+        </curve>
+        <curve>
             <name>PEE1_SURFACE_CURVE</name>
             <coords>0 500</coords>
             <values>-7730000.0 -7730000.0 </values>
@@ -628,220 +684,423 @@
     </curves>
     <process_variables>
         <process_variable>
-            <name>displacement</name>
-            <components>2</components>
+            <name>pressure</name>
+            <components>1</components>
             <order>1</order>
-            <initial_condition>u0</initial_condition>
+            <initial_condition>pressure_ic</initial_condition>
+            <source_terms>
+                <source_term>
+                    <mesh>physical_group_Inlet</mesh>
+                    <type>Nodal</type>
+                    <parameter>injectionFlowRate_Inlet_ramp</parameter>
+                </source_term>
+            </source_terms>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_p_bottom</mesh>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>zero</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>physical_group_p_bottom</mesh>
-                    <type>Dirichlet</type>
-                    <component>1</component>
-                    <parameter>zero</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>physical_group_p_left</mesh>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>zero</parameter>
-                </boundary_condition>
-                
-                <boundary_condition>
                     <mesh>physical_group_PEE1</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE1_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE2</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE2_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE3</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE3_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE4</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE4_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE5</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE5_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE6</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE6_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE7</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE7_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE8</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE8_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE1a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE1a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE2a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE2a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE3a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE3a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE4a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE4a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE5a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE5a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE6a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE6a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE7a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE7a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_PEE8a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>PEE8a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS1</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS1_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS2</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS2_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS3</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS3_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS4</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS4_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS5</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS5_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS6</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS6_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS7</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS7_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS8</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS8_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS1a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS1a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS2a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS2a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS3a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS3a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS4a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS4a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS5a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS5a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS6a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS6a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS7a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS7a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
                 <boundary_condition>
                     <mesh>physical_group_DSS8a</mesh>
-                    <type>NormalTraction</type>
-                    <parameter>DSS8a_SURFACE_CURVE</parameter>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ic</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
-        <process_variable>
-            <name>displacement_jump1</name>
-            <components>2</components>
-            <order>1</order>
-            <initial_condition>u0</initial_condition>
-            <boundary_conditions>
-            </boundary_conditions>
-        </process_variable>
+            <process_variable>
+                <name>displacement</name>
+                <components>2</components>
+                <order>1</order>
+                <initial_condition>displacement0</initial_condition>
+                <boundary_conditions>
+                    <boundary_condition>
+                        <mesh>physical_group_p_bottom</mesh>
+                        <type>Dirichlet</type>
+                        <component>0</component>
+                        <parameter>zero</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_p_bottom</mesh>
+                        <type>Dirichlet</type>
+                        <component>1</component>
+                        <parameter>zero</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_p_left</mesh>
+                        <type>Dirichlet</type>
+                        <component>0</component>
+                        <parameter>zero</parameter>
+                    </boundary_condition>
+                    
+                    <boundary_condition>
+                        <mesh>physical_group_PEE1</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE1_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE2</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE2_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE3</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE3_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE4</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE4_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE5</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE5_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE6</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE6_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE7</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE7_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE8</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE8_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE1a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE1a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE2a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE2a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE3a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE3a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE4a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE4a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE5a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE5a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE6a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE6a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE7a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE7a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_PEE8a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>PEE8a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS1</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS1_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS2</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS2_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS3</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS3_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS4</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS4_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS5</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS5_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS6</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS6_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS7</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS7_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS8</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS8_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS1a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS1a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS2a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS2a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS3a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS3a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS4a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS4a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS5a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS5a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS6a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS6a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS7a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS7a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                    <boundary_condition>
+                        <mesh>physical_group_DSS8a</mesh>
+                        <type>NormalTraction</type>
+                        <parameter>DSS8a_SURFACE_CURVE</parameter>
+                    </boundary_condition>
+                </boundary_conditions>
+            </process_variable>
     </process_variables>
     <nonlinear_solvers>
         <nonlinear_solver>
-            <name>basic_newton_u</name>
+            <name>basic_newton</name>
             <type>Newton</type>
-            <max_iter>659</max_iter>
-            <linear_solver>linear_solver_u</linear_solver>
+            <max_iter>50</max_iter>
+            <linear_solver>linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
     <linear_solvers>
         <linear_solver>
-            <name>linear_solver_u</name>
+            <name>linear_solver</name>
             <eigen>
+                <!--solver_type>BiCGSTAB</solver_type>
+                <precon_type>ILUT</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-16</error_tolerance-->
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
-            </eigen>
+             </eigen>
             <petsc>
                 <parameters>
                     -ksp_type bcgs
-                    -pc_type ilu
+                    -pc_type lu
                     -ksp_rtol 1.e-20 -ksp_atol 1.e-18
                     -ksp_max_it 4000
                 </parameters>
