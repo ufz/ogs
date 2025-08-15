@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Initial fracture's aperture \f$a_0\f$ parameter.
