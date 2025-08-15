@@ -45,8 +45,8 @@ if(OGS_USE_PIP)
         add_test(
             NAME pytest
             COMMAND
-                ${CMAKE_COMMAND} -DEXECUTABLE=pytest
-                "-DEXECUTABLE_ARGS=-ra;${OGS_PYTEST_ARGS};-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
+                ${CMAKE_COMMAND} -DEXECUTABLE=${UV_TOOL_PATH}
+                "-DEXECUTABLE_ARGS=run;pytest;-ra;${OGS_PYTEST_ARGS};-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
                                                                             # because
                 # passed as list see https://stackoverflow.com/a/33248574/80480
                 -DBINARY_PATH=${_binary_path}
@@ -58,6 +58,10 @@ if(OGS_USE_PIP)
                 -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
         )
-        set_tests_properties(pytest PROPERTIES LABELS "default;python" COST 10)
+        set_tests_properties(pytest PROPERTIES
+            LABELS "default;python"
+            COST 10
+            ENVIRONMENT
+                "CI=1;PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}")
     endif()
 endif()

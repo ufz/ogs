@@ -20,6 +20,7 @@
 #   PYTHON_PACKAGES package_x=1.2.3 package_y=0.1.x # optional
 #   RUNTIME <in seconds> # optional for optimizing ctest duration
 #                          values should be taken from envinf job
+#   LABELS <labelA;labelB;...> # optional, defaults to "default"
 #   WORKING_DIRECTORY # optional, specify the working directory of the test
 #   DISABLED # optional, disables the test
 #   PROPERTIES <test properties> # optional
@@ -268,26 +269,6 @@ function(AddTest)
         list(APPEND labels large)
     endif()
 
-    if(AddTest_PYTHON_PACKAGES)
-        list(APPEND labels python_modules)
-        if(OGS_USE_PIP)
-            # Info has to be passed by global property because it is not
-            # possible to set cache variables from inside a function.
-            set_property(
-                GLOBAL APPEND PROPERTY AddTest_PYTHON_PACKAGES
-                                       ${AddTest_PYTHON_PACKAGES}
-            )
-        else()
-            message(
-                STATUS
-                    "Warning: Benchmark ${AddTest_NAME} requires these "
-                    "Python packages: ${AddTest_PYTHON_PACKAGES}!\n Make sure to "
-                    "have them installed in your current Python environment OR "
-                    "set OGS_USE_PIP=ON!"
-            )
-        endif()
-    endif()
-
     _add_test(${TEST_NAME})
 
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
@@ -352,6 +333,11 @@ macro(_add_test TEST_NAME)
         "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
     )
 
+    if(OGS_USE_PIP AND DEFINED AddTest_PYTHON_PACKAGES)
+        list(APPEND labels additional_python_modules)
+        list(APPEND _uv_run_args uv run --with ${AddTest_PYTHON_PACKAGES})
+    endif()
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
@@ -364,6 +350,7 @@ macro(_add_test TEST_NAME)
             "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
             "-DLOG_FILE_BASENAME=${TEST_NAME}.txt"
             "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
+            "-DUV_RUN_ARGS=${_uv_run_args}"
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
@@ -392,6 +379,8 @@ macro(_add_test TEST_NAME)
                    LABELS
                    "${labels}"
                    ${timeout}
+                   ENVIRONMENT
+                   "CI=1;PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
     )
 endmacro()
 
