@@ -102,12 +102,8 @@ web_subsection = "small-deformations" # required for notebooks in Tests/Data onl
 
 - Frontmatter needs to be in [TOML](https://toml.io)-format.
 - For notebooks describing benchmarks `web_subsection` needs to be set to a sub-folder in [web/content/docs/benchmarks](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web/content/docs/benchmarks) (if not set the notebook page will not be linked from navigation bar / benchmark gallery on the web page).
-- If you edit a Markdown-based notebook with Jupyter and the Jupytext extension please don't add the two newlines but make sure that the frontmatter has its own cell (not mixed with markdown content).
-- For (deprecated) `.ipynb`-based notebooks the frontmatter needs to be given in the first cell. See existing notebooks for reference.
 
 ### Notebook setup
-
-The first cell after the frontmatter needs to be a `markdown`-cell!
 
 #### Markdown cells
 
@@ -157,7 +153,7 @@ The first cell after the frontmatter needs to be a `markdown`-cell!
 
 ### Execution environment
 
-In CI the notebooks are executed with all dependencies installed into a virtual environment in the build directory. The installed packages are defined in `Test/Data/requirements.txt`. The same setup can be enabled locally by setting the CMake option `OGS_USE_PIP=ON`. E.g.
+In CI the notebooks are executed with all dependencies installed into a virtual environment in the build directory. The installed packages are defined in `Test/Data/pyproject.toml` and are installed with [`uv`](https://github.com/astral-sh/uv). The same setup can be enabled locally by setting the CMake option `OGS_USE_PIP=ON`. E.g.
 
 ```bash
 cmake --preset release -DOGS_USE_PIP=ON    # Creates the virtual environment
@@ -183,6 +179,7 @@ endif()
 - `NOTEBOOKFILE` is relative to `Tests/Data`.
 - If your notebook requires additional dependencies add them with `PYTHON_PACKAGES`.
 - If the notebook is in `web/content` it is important to prefix the notebook file name with `notebook-`! The prefix is required to indicate Hugo that this is a notebook and not a regular markdown page.
+- `RUNTIME` larger than 600 s is executed as large benchmark job.
 
 <div class='note'>
 
@@ -194,7 +191,6 @@ Then e.g. run all notebook test (`-R nb`) in parallel (`-j 4`) with:
 
 ```bash
 # cd into build directory
-source .venv/bin/activate # Is created with OGS_USE_PIP=ON, see above note on environment.
 ctest -R nb -j 4 --output-on-failure
 ```
 

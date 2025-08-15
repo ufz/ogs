@@ -17,7 +17,7 @@ The minimum prerequisites to build OGS are:
 - Git (version control tool, at least version {{< dataFile "versions.minimum_version.git" >}})
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
 - A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
-- Python interpreter and libraries
+- Python interpreter and libraries (and optionally the `uv` virtual environment management tool)
 - *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
 
 <div class='note'>
@@ -292,6 +292,8 @@ brew install python
 ```
 
 </div>
+
+If you want to execute or develop Jupyter notebooks for more interactive benchmarks please install [`uv`](https://docs.astral.sh/uv/getting-started/installation/), a tool which handles Python dependencies and virtual environments. See the [Jupyter page]({{< ref "jupyter-docs.md" >}}) for more info.
 
 ## Optional: Install Qt, NetCDF and other dependencies for the Data Explorer
 
