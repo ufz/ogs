@@ -495,6 +495,9 @@ if(OGS_BUILD_UTILS)
             SYSTEM TRUE
         )
         if(GKlib_ADDED AND metis_ADDED)
+            if(DEFINED OpenMP_C_INCLUDE_DIRS)
+                target_include_directories(GKlib PUBLIC ${OpenMP_C_INCLUDE_DIRS})
+            endif()
             target_include_directories(
                 metis SYSTEM
                 PUBLIC ${GKlib_SOURCE_DIR} ${metis_SOURCE_DIR}/include
@@ -503,6 +506,7 @@ if(OGS_BUILD_UTILS)
             target_compile_definitions(
                 metis PUBLIC IDXTYPEWIDTH=64 REALTYPEWIDTH=32
             )
+            target_link_libraries(metis PRIVATE GKlib)
             install(TARGETS mpmetis GKlib)
         endif()
         list(APPEND DISABLE_WARNINGS_TARGETS metis mpmetis GKlib)
