@@ -29,9 +29,8 @@ endif()
 configure_file(scripts/cmake/gcovr.cfg.in gcovr.cfg @ONLY)
 
 find_program(GCOVR_EXECUTABLE NAMES gcovr)
-if(NOT GCOVR_EXECUTABLE)
-    list(APPEND OGS_PYTHON_PACKAGES "gcovr==6.0")
-    set(GCOVR_EXECUTABLE ${LOCAL_VIRTUALENV_BIN_DIR}/gcovr CACHE PATH "" FORCE)
+if(NOT GCOVR_EXECUTABLE AND OGS_USE_PIP)
+    set(GCOVR_EXECUTABLE uvx gcovr==6.0 CACHE PATH "" FORCE)
 endif()
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/coverage/html)
