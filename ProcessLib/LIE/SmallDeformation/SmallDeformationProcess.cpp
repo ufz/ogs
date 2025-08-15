@@ -10,6 +10,10 @@
 
 #include "SmallDeformationProcess.h"
 
+#include "LocalAssembler/CreateLocalAssemblers.h"
+#include "LocalAssembler/SmallDeformationLocalAssemblerFracture.h"
+#include "LocalAssembler/SmallDeformationLocalAssemblerMatrix.h"
+#include "LocalAssembler/SmallDeformationLocalAssemblerMatrixNearFracture.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
@@ -17,10 +21,6 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/LIE/Common/BranchProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerFracture.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerMatrix.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerMatrixNearFracture.h"
 
 namespace ProcessLib
 {
@@ -44,6 +44,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
               std::move(secondary_variables)),
       _process_data(std::move(process_data))
 {
+    INFO("[LIE/M] looking for fracture elements in the given mesh");
     std::vector<std::pair<std::size_t, std::vector<int>>>
         vec_branch_nodeID_matIDs;
     std::vector<std::pair<std::size_t, std::vector<int>>>
@@ -228,12 +229,15 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
         vec_var_elements.push_back(&_vec_junction_fracture_matrix_elements[i]);
     }
 
+    INFO("[LIE/M] creating a DoF table");
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets),
             vec_n_components,
             vec_var_elements,
             NumLib::ComponentOrder::BY_COMPONENT);
+
+    DBUG("[LIE/M] created {:d} DoF", _local_to_global_index_map->size());
 }
 
 template <int DisplacementDim>
@@ -422,6 +426,7 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
         getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
         &b);
 }
+
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::
     assembleWithJacobianConcreteProcess(
@@ -431,14 +436,15 @@ void SmallDeformationProcess<DisplacementDim>::
 {
     DBUG("AssembleWithJacobian SmallDeformationProcess.");
 
+    // Call global assembler for each local assembly item.
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
         process_id, &b, &Jac);
 }
+
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const dt,
@@ -451,6 +457,7 @@ void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
         _local_assemblers, getActiveElementIDs(), *_local_to_global_index_map,
         *x[process_id], t, dt);
 }
+
 // ------------------------------------------------------------------------------------
 // template instantiation
 // ------------------------------------------------------------------------------------

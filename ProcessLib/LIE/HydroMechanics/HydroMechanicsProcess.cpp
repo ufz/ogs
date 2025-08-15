@@ -307,7 +307,7 @@ void HydroMechanicsProcess<DisplacementDim>::constructDofTable()
             vec_var_elements,
             NumLib::ComponentOrder::BY_COMPONENT);
 
-    DBUG("created {:d} DoF", _local_to_global_index_map->size());
+    DBUG("[LIE/HM] created {:d} DoF", _local_to_global_index_map->size());
 }
 
 template <int DisplacementDim>

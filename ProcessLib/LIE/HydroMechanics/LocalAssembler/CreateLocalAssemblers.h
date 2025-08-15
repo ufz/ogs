@@ -46,7 +46,7 @@ void createLocalAssemblers(
                              LocalAssemblerFractureImplementation,
                              DisplacementDim, ExtraCtorArgs...>;
 
-    DBUG("Create local assemblers for HydroMechanics with LIE.");
+    DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
@@ -86,6 +86,8 @@ void createLocalAssemblers(
     NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
+    DBUG("Create local assemblers.");
+
     detail::createLocalAssemblers<
         DisplacementDim, LocalAssemblerMatrixImplementation,
         LocalAssemblerMatrixNearFractureImplementation,
