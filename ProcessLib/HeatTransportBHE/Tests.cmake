@@ -378,6 +378,7 @@ AddTest(
     BHE_GW_advection_ts_10_t_500.000000.vtu BHE_GW_advection_ts_10_t_500.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
 
+# TODO: update to newer Python or remove!
 if("${Python_VERSION}" VERSION_LESS 3.9)
     AddTest(
         NAME HeatTransportBHE_3D_3BHEs_array
