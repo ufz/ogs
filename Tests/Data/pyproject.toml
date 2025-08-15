@@ -1,0 +1,69 @@
+[project]
+name = "OGS-Test-Environment"
+version = "0.1.0"
+description = "Test environment for Notebook-based tests"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  ### nb environment ###
+  # Use no-X11 version on Linux:
+  "gmsh==4.13.1.dev1; platform_system == 'Linux'",
+  "gmsh>=4.12.0; platform_system != 'Linux'",
+  "h5py>=3.8",
+  "heatsource-py @ git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c",
+  "ipywidgets",
+  "jupyterlab>=3.4.8",
+  "matplotlib>=3.6",
+  "numpy",
+  "ogstools==0.7.0",
+  "pandas>=1.5",
+  # TODO: Implement fix for PyVista 0.46 in ogstools:
+  "pyvista[all]==0.45",
+  "seaborn>=0.12",
+  "VTUinterface>=0.704",
+  ### dev tools ###
+  "gcovr==6.0",
+  "jupytext>=1.14.5",
+  "nbconvert>=7.16.5",
+  "nbformat>=5.7.3",
+  "papermill>=2.6.0",
+  "pytest>=8.2.2",
+  "toml>=0.10.2",
+]
+
+# Usage:
+# uv run --group ogs-local pytest
+# uv run --group ogs-master --upgrade-package ogs pytest
+# uv run --group ogs-pypi --upgrade-package ogs pytest
+# --upgrade-package uses latest, ignoring version in lockfile
+[dependency-groups]
+ogs-local = ["ogs"]
+ogs-master = ["ogs>=6.5.6.dev0"] # Bump after release!
+ogs-pypi = ["ogs"]
+
+[tool.uv]
+conflicts = [
+  [
+    { group = "ogs-local" },
+    { group = "ogs-master" },
+    { group = "ogs-pypi" },
+  ],
+]
+
+[tool.uv.sources]
+gmsh = { index = "gmsh-nox", marker = "platform_system == 'Linux'" }
+ogs = [
+  { path = "../..", group = "ogs-local" },        # builds ogs from local source
+  { index = "ogs-gitlab", group = "ogs-master" }, # fetches last master wheel from GitLab
+  # ogs-pypi implicit
+]
+
+[[tool.uv.index]]
+name = "gmsh-nox"
+url = "https://gmsh.info/python-packages-dev-nox"
+explicit = true
+
+[[tool.uv.index]]
+name = "ogs-gitlab"
+url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple"
+explicit = true

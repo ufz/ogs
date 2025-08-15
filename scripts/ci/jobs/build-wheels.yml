@@ -25,7 +25,6 @@ workflow:
 
 include:
   - local: "scripts/ci/extends/*.yml"
-  - local: "scripts/ci/jobs/jupyter.yml"
 
 .wheels_template: &wheels_template
   stage: build
@@ -93,18 +92,3 @@ publish wheels to pypi (dev):
       uvx twine upload --repository pypi
       --username __token__ --password ${PYPI_TOKEN}
       wheelhouse/*
-
-test notebooks via wheel:
-  stage: test
-  needs: ["build wheels linux"]
-  rules:
-    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
-    - when: manual
-  before_script:
-    - cd Tests/Data
-    - python3.10 -m venv --upgrade-deps .venv
-    - source .venv/bin/activate
-    - pip install -r requirements.txt
-    - pip install --force-reinstall --pre --no-index --find-links https://vip.s3.ufz.de/ogs/public/ci/python/gmsh/index.html "gmsh>=4.11"
-    - pip install -r requirements-dev.txt
-    - pip install ${CI_PROJECT_DIR}/wheelhouse/ogs-*-cp310-cp310-manylinux_2_28_x86_64.whl
