@@ -2,6 +2,53 @@ if(OGS_BUILD_WHEEL)
     return()
 endif()
 
+# CMake function to handle pybind11 version-compatible linker flags
+# This prevents the linker from stripping the module initialization function
+function(dont_strip_pybind11_init_function target_name module_name)
+    # Only apply when building static libraries to prevent symbol stripping
+    if(BUILD_SHARED_LIBS)
+        return()
+    endif()
+
+    set(pybind11_init_function "")
+
+    # Detect pybind11 version
+    if(DEFINED pybind11_VERSION)
+        if(pybind11_VERSION VERSION_GREATER_EQUAL "3.0")
+            set(pybind11_init_function "pybind11_init_${module_name}")
+        else()
+            set(pybind11_init_function "pybind11_init_impl_${module_name}")
+        endif()
+    elseif(DEFINED PYBIND11_VERSION_MAJOR)
+        if(PYBIND11_VERSION_MAJOR GREATER_EQUAL 3)
+            set(pybind11_init_function "pybind11_init_${module_name}")
+        else()
+            set(pybind11_init_function "pybind11_init_impl_${module_name}")
+        endif()
+    endif()
+
+    message(STATUS "Using pybind11 init function: ${pybind11_init_function}")
+
+    # Linker flags to prevent symbol stripping
+    if(COMPILER_IS_GCC OR COMPILER_IS_CLANG)
+        if(APPLE)
+            target_link_options(${target_name} PRIVATE
+                "LINKER:-u,_${pybind11_init_function}")
+        else()
+            target_link_options(${target_name} PRIVATE
+                "LINKER:--undefined=${pybind11_init_function}")
+        endif()
+    elseif(COMPILER_IS_MSVC)
+        target_link_options(${target_name} PRIVATE
+            "/INCLUDE:${pybind11_init_function}")
+    else()
+        # Fallback for unsupported compilers
+        message(WARNING "Unsupported compiler, manual linker configuration may be needed")
+    endif()
+
+    message(STATUS "Applied linker flags to prevent stripping of ${pybind11_init_function}")
+endfunction()
+
 # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):
 # undefined reference to `_Py_ZeroStruct' it could be that OGS is compiled with
 # the wrong Python version. I (Ch. Leh.) observed the following: The symbol
@@ -43,12 +90,9 @@ target_link_libraries(
 target_compile_definitions(
     ogs_embedded_python
     PUBLIC OGS_EMBED_PYTHON_INTERPRETER
-           # Add macro definition, because static libs make special handling
-           # necessary s.t. the embedded OpenGeoSys Python module won't be
-           # removed by the linker.
-           $<$<BOOL:${BUILD_SHARED_LIBS}>:PRIVATE
-           OGS_BUILD_SHARED_LIBS>
 )
+
+dont_strip_pybind11_init_function(ogs_embedded_python "OpenGeoSys")
 
 ogs_add_executable(ogs ogs.cpp CommandLineArgumentParser.cpp)
 
