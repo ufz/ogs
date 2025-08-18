@@ -1,6 +1,6 @@
 set(_config_content
     "OGS_USE_PETSC = '@OGS_USE_PETSC@'" "OGS_VERSION = '@OGS_VERSION@'"
-    "OGS_USE_MKL = '@OGS_USE_MKL@'"
+    "OGS_USE_MKL = '@OGS_USE_MKL@'" "OGS_COVERAGE = '@OGS_COVERAGE@'"
 )
 string(REPLACE ";" "\n" _config_content "${_config_content}")
 set(_config_file ${PROJECT_BINARY_DIR}/site-packages/ogs/config.py)
