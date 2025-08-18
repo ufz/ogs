@@ -16,8 +16,11 @@
 
 #include <cstddef>
 #include <list>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/istream.hpp>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace BaseLib
@@ -83,4 +86,31 @@ std::string randomString(std::size_t length);
 //! Append '-' and a number such that the name is unique.
 std::string getUniqueName(std::vector<std::string> const& existing_names,
                           std::string const& input_name);
+
+/**
+ *   Tries to parse a whitespace-separated list of values from a string.
+ *   Returns std::nullopt if parsing fails and sets the bad token index.
+ */
+template <typename T>
+std::optional<std::vector<T>> tryParseVector(std::string const& raw,
+                                             std::size_t* bad_token_idx)
+{
+    std::istringstream iss{raw};
+
+    // Create a range that reads T values from the stream
+    auto values = ranges::istream_view<T>(iss);
+    std::vector<T> out = ranges::to<std::vector>(values);
+
+    // Check if we consumed the entire input
+    if (!iss.eof())
+    {
+        if (bad_token_idx)
+        {
+            *bad_token_idx = out.size() + 1;
+        }
+        return std::nullopt;
+    }
+    return out;
+}
+
 }  // end namespace BaseLib
