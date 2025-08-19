@@ -38,7 +38,7 @@ template <typename LocalAssemblerInterface,
           template <typename, int> class LocalAssemblerDataMatrix,
           template <typename, int> class LocalAssemblerDataMatrixNearFracture,
           template <typename, int> class LocalAssemblerDataFracture,
-          int GlobalDim, typename... ConstructorArgs>
+          int DisplacementDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {
     struct IsElementEnabled
@@ -46,7 +46,7 @@ class LocalDataInitializer final
         template <typename ElementTraits>
         constexpr bool operator()(ElementTraits*) const
         {
-            if constexpr (GlobalDim < ElementTraits::ShapeFunction::DIM)
+            if constexpr (DisplacementDim < ElementTraits::ShapeFunction::DIM)
             {
                 return false;
             }
@@ -111,8 +111,8 @@ public:
         auto const varIDs = _dof_table.getElementVariableIDs(id);
 
         std::vector<unsigned> dofIndex_to_localIndex;
-        if (mesh_item.getDimension() < GlobalDim ||
-            n_global_components > GlobalDim)
+        if (mesh_item.getDimension() < DisplacementDim ||
+            n_global_components > DisplacementDim)
         {
             dofIndex_to_localIndex.resize(n_local_dof);
             unsigned dof_id = 0;
@@ -173,25 +173,26 @@ private:
                 template getIntegrationMethod<
                     typename ShapeFunction::MeshElement>(integration_order);
 
-            if (e.getDimension() == GlobalDim)
+            if (e.getDimension() == DisplacementDim)
             {
                 if (dofIndex_to_localIndex.empty())
                 {
                     return LADataIntfPtr{
-                        new LocalAssemblerDataMatrix<ShapeFunction, GlobalDim>{
+                        new LocalAssemblerDataMatrix<ShapeFunction,
+                                                     DisplacementDim>{
                             e, local_matrix_size, integration_method,
                             std::forward<ConstructorArgs>(args)...}};
                 }
 
                 return LADataIntfPtr{
                     new LocalAssemblerDataMatrixNearFracture<ShapeFunction,
-                                                             GlobalDim>{
+                                                             DisplacementDim>{
                         e, n_variables, local_matrix_size,
                         dofIndex_to_localIndex, integration_method,
                         std::forward<ConstructorArgs>(args)...}};
             }
             return LADataIntfPtr{
-                new LocalAssemblerDataFracture<ShapeFunction, GlobalDim>{
+                new LocalAssemblerDataFracture<ShapeFunction, DisplacementDim>{
                     e, n_variables, local_matrix_size, dofIndex_to_localIndex,
                     integration_method,
                     std::forward<ConstructorArgs>(args)...}};
