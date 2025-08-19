@@ -24,14 +24,18 @@
 
 # %% vscode={"languageId": "python"}
 import os
+import shutil
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from subprocess import run
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import meshio
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 from matplotlib import colormaps
 
 mechanics_path = Path(
@@ -505,7 +509,9 @@ run(
     check=True,
 )
 
-# %cd -
+# %% [markdown]
+# Since the mesh may differ slightly depending on the operating system (macOS or Linux),
+# we use the following pre-existing mesh path for ctest.
 
 # %% vscode={"languageId": "python"}
 mesh_path_pre_existing = Path("mesh_borehole_pre_existing").resolve()
@@ -569,7 +575,7 @@ prj = ot.Project(input_file=prj_file, output_file=Path(out_dir, f"{output_prefix
 sing_ogs_model = SingleOGSModel(
     model=prj,
     out_dir=out_dir,
-    mesh_path=mesh_path,
+    mesh_path=mesh_path_pre_existing_copy,
     output_prefix=output_prefix,
     method="VPF",
     n_fracture_p_ncs=n_fracture_p_ncs,
@@ -582,7 +588,7 @@ sing_ogs_model = SingleOGSModel(
 vtu_files_dict_HM = sing_ogs_model.run_simulations_with_fracture(
     times=times,
     base_project_file=prj_file,
-    mesh_path=mesh_path,
+    mesh_path=mesh_path_pre_existing_copy,
     load_cases=PEE_load_values,
     material_names=material_names,
     materials=materials,
@@ -634,6 +640,7 @@ plotter.plot_observation_points_vs_time(
     time_max=3500,
 )
 
+
 # %% vscode={"languageId": "python"}
 ref_base = "HM3d_VPF_A_Gneiss_ts_78_t_3500_000000"
 expected_dir = Path("expected")
@@ -641,8 +648,6 @@ out_dir = Path(out_dir)
 series_prefix = ref_base.split("_ts_")[0]
 pvd_path = out_dir.joinpath(f"{series_prefix}.pvd")
 
-tol_time = 1e-8
-tol_pressure = 5e-4
 
 def last_pvtu_from_series(pvd: Path, prefix: str) -> Path:
     ds = ET.parse(pvd).getroot().findall(".//DataSet")
@@ -658,20 +663,117 @@ def last_pvtu_from_series(pvd: Path, prefix: str) -> Path:
         raise RuntimeError(msg)
     return (pvd.parent.joinpath(ds[-1].attrib["file"])).resolve()
 
-    time_new = new_result["times"]
-    time_exp = expected_result["times"]
-    pres_new = new_result["values"]
-    pres_exp = expected_result["values"]
 
 ref_pvtu = expected_dir.joinpath(f"{ref_base}.pvtu")
 ref_vtu = expected_dir.joinpath(f"{ref_base}.vtu")
 run(["pvtu2vtu", "-i", str(ref_pvtu), "-o", str(ref_vtu)], check=True)
 
-    np.testing.assert_allclose(
-        pres_new,
-        pres_exp,
-        atol=tol_pressure,
-        err_msg=f"{label}: pressure arrays differ",
-    )
+last_pvtu = last_pvtu_from_series(pvd_path, series_prefix)
+last_vtu = last_pvtu.with_suffix(".vtu")
+run(["pvtu2vtu", "-i", str(last_pvtu), "-o", str(last_vtu)], check=True)
 
-    print(f"\n{label} case passed.")
+
+# ---------------- VTU comparer ----------------
+def read_mesh(path):
+    m = meshio.read(str(path))
+    pts = m.points.astype(float)
+    if pts.shape[1] == 2:
+        pts = np.c_[pts, np.zeros(len(pts))]
+    return pts, m.point_data
+
+
+def sort_index_by_points(pts):
+    return np.lexsort((pts[:, 2], pts[:, 1], pts[:, 0]))
+
+
+def reorder_point_data(pd, idx):
+    out = {}
+    for k, v in pd.items():
+        arr = np.asarray(v)
+        if arr.ndim == 1:
+            arr = arr[:, None]
+        out[k] = arr[idx]
+    return out
+
+
+def safe_max_rel_diff(a, b):
+    denom = np.maximum(np.abs(b), 1e-12)
+    return float(np.max(np.abs((a - b) / denom)))
+
+
+def compare_arrays(a, b, rtol=1e-6, atol=1e-8, equal_nan=False):
+    a = np.asarray(a)
+    b = np.asarray(b)
+    if a.ndim == 1:
+        a = a[:, None]
+    if b.ndim == 1:
+        b = b[:, None]
+    if a.shape != b.shape:
+        return {"status": "SHAPE MISMATCH", "a_shape": a.shape, "b_shape": b.shape}
+    try:
+        np.testing.assert_allclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan)
+        return {"status": "MATCH"}
+    except AssertionError:
+        return {
+            "status": "MISMATCH",
+            "max_abs_diff": float(np.max(np.abs(a - b))),
+            "max_rel_diff": safe_max_rel_diff(a, b),
+            "count_not_close": int(
+                np.sum(~np.isclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan))
+            ),
+            "a_min": float(np.nanmin(a)),
+            "a_max": float(np.nanmax(a)),
+            "b_min": float(np.nanmin(b)),
+            "b_max": float(np.nanmax(b)),
+        }
+
+
+def compare_vtu_files(
+    fileA, fileB, array_names=None, rtol=1e-6, atol=1e-8, equal_nan=False
+):
+    ptsA, pdA = read_mesh(fileA)
+    ptsB, pdB = read_mesh(fileB)
+
+    if len(ptsA) != len(ptsB):
+        return {
+            "fatal": "Different point counts",
+            "A_points": len(ptsA),
+            "B_points": len(ptsB),
+        }
+
+    idxA = sort_index_by_points(ptsA)
+    idxB = sort_index_by_points(ptsB)
+    ptsA_sorted = ptsA[idxA]
+    ptsB_sorted = ptsB[idxB]
+
+    # looser atol for float noise in coordinates
+    if not np.allclose(ptsA_sorted, ptsB_sorted, rtol=0.0, atol=1e-9):
+        return {"fatal": "Point coordinate mismatch even after sorting"}
+
+    pdA_sorted = reorder_point_data(pdA, idxA)
+    pdB_sorted = reorder_point_data(pdB, idxB)
+
+    if array_names is None:
+        names = sorted(set(pdA_sorted.keys()) & set(pdB_sorted.keys()))
+    else:
+        names = [n for n in array_names if n in pdA_sorted and n in pdB_sorted]
+
+    out = {"point_data": {}, "compared_arrays": names}
+    for name in names:
+        out["point_data"][name] = compare_arrays(
+            pdA_sorted[name], pdB_sorted[name], rtol, atol, equal_nan
+        )
+    return out
+
+
+res = compare_vtu_files(
+    ref_vtu,
+    last_vtu,
+    array_names=["displacement"],
+    rtol=1e-4,
+    atol=1e-4,
+    equal_nan=True,
+)
+
+for name, result in res["point_data"].items():
+    assert result["status"] == "MATCH", f"Field '{name}' mismatch: {result}"
