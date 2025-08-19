@@ -78,6 +78,8 @@ environment-pass = [
 
 [tool.cibuildwheel.linux.config-settings]
 "cmake.define.OGS_CPU_ARCHITECTURE" = "sandybridge"
+# testrunner does not link in manylinux_x image, there is no python library
+"cmake.define.OGS_BUILD_TESTING" = "OFF"
 
 # maybe this should be moved to CMake logic, i.e. disabling both features on win
 [tool.cibuildwheel.windows.config-settings]

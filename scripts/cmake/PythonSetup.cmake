@@ -5,7 +5,9 @@ message(STATUS "┌─ PythonSetup.cmake")
 list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 
 set(_python_componets Interpreter Development.Module)
-if(NOT OGS_BUILD_WHEEL)
+# manylinux_x image used in cibuildwheel on Linux does not contain
+# the python library.
+if(NOT (LINUX AND DEFINED ENV{CIBUILDWHEEL}))
     list(APPEND _python_componets Development.Embed)
 endif()
 
