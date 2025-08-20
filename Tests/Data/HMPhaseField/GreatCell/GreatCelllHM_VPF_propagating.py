@@ -158,39 +158,42 @@ materials = {
             "biot": 0.6,  # Biot coefficient
         },
     },
-    "Greywacke": {
-        "young_sample": 26.87e9,  # Young's modulus (Pa)
-        "nu_sample": 0.27,  # Poisson's ratio
-        "biot": 0.8,  # Biot coefficient
-        "porosity": 0.005,  # Porosity
-        "permeability": 2.58e-19,  # Permeability (m²)
-        "density_solid": 2650,  # Solid density (kg/m³)
-        "k_n": 100e9,  # Normal stiffness (Pa/m)
-        "k_t": 50e9,  # Tangential stiffness (Pa/m)
-        "c_f": 4.4e-10,  # Fluid compressibility (Pa⁻¹)
-        "k_s": 1.95e10,  # Solid bulk modulus (Pa)
-        "S_f": 4.4e-10,  # Specific storage (Pa⁻¹)
-        "t_np": 10e6,  # Peak normal traction (Pa)
-        "Gc": 35.65,  # Fracture toughness (J/m²)
-        "w_init": 1e-6,  # initial fracture width (m)
-        "fluid": {
-            "density": 1000.0,  # Fluid density (kg/m³)
-            "viscosity": 1.0e-3,  # Fluid viscosity (Pa·s)
-            "injectionFlowRate_Inlet": 3.75e-7,  # 1.75e-7,  # Injection flow rate (m³/s)
-            "p_outlet": 3.45e6,  # Outlet pressure (Pa)
-        },
-        "rubber_sheath": {
-            "young_modulus": 26.87e9,  # Young's modulus (Pa)
-            "poisson_ratio": 0.27,  # Poisson's ratio
-            "porosity": 0.005,  # Porosity
-            "permeability": 2.58e-19,  # Permeability (m²)
-            "density": 2650,  # Density (kg/m³)
-            "biot": 0.8,  # Biot coefficient
-        },
-    },
+    # "Greywacke": {
+    #     "young_sample": 26.87e9,  # Young's modulus (Pa)
+    #     "nu_sample": 0.27,  # Poisson's ratio
+    #     "biot": 0.8,  # Biot coefficient
+    #     "porosity": 0.005,  # Porosity
+    #     "permeability": 2.58e-19,  # Permeability (m²)
+    #     "density_solid": 2650,  # Solid density (kg/m³)
+    #     "k_n": 100e9,  # Normal stiffness (Pa/m)
+    #     "k_t": 50e9,  # Tangential stiffness (Pa/m)
+    #     "c_f": 4.4e-10,  # Fluid compressibility (Pa⁻¹)
+    #     "k_s": 1.95e10,  # Solid bulk modulus (Pa)
+    #     "S_f": 4.4e-10,  # Specific storage (Pa⁻¹)
+    #     "t_np": 10e6,  # Peak normal traction (Pa)
+    #     "Gc": 35.65,  # Fracture toughness (J/m²)
+    #     "w_init": 1e-6,  # initial fracture width (m)
+    #     "fluid": {
+    #         "density": 1000.0,  # Fluid density (kg/m³)
+    #         "viscosity": 1.0e-3,  # Fluid viscosity (Pa·s)
+    #         "injectionFlowRate_Inlet": 3.75e-7,  # 1.75e-7,  # Injection flow rate (m³/s)
+    #         "p_outlet": 3.45e6,  # Outlet pressure (Pa)
+    #     },
+    #     "rubber_sheath": {
+    #         "young_modulus": 26.87e9,  # Young's modulus (Pa)
+    #         "poisson_ratio": 0.27,  # Poisson's ratio
+    #         "porosity": 0.005,  # Porosity
+    #         "permeability": 2.58e-19,  # Permeability (m²)
+    #         "density": 2650,  # Density (kg/m³)
+    #         "biot": 0.8,  # Biot coefficient
+    #     },
+    # },
 }
 
 material_names = list(materials.keys())
+
+# %% [markdown]
+# To run the benchmark with Greywacke, uncomment the "Greywacke" section in the `materials` dictionary above, also it suggested to use finer mesh size `h=0.001` for Greywacke.
 
 # %% [markdown]
 # ---
@@ -597,8 +600,8 @@ output_prefix = "HM3d_VPF"
 # Load
 PEE_load_values = {
     "A": [10.0e6, 6.64e6, 4.46e6, 1.17e6, 1.0e6, 3.82e6, 7.80e6, 9.95e6],
-    # "B": [7.80e6, 9.95e6, 10.0e6, 6.64e6, 4.46e6, 1.17e6, 1.0e6, 3.82e6],
-    # "C": [1.0e6, 3.82e6, 7.80e6, 9.95e6, 10.0e6, 6.64e6, 4.46e6, 1.17e6],
+    "B": [7.80e6, 9.95e6, 10.0e6, 6.64e6, 4.46e6, 1.17e6, 1.0e6, 3.82e6],
+    "C": [1.0e6, 3.82e6, 7.80e6, 9.95e6, 10.0e6, 6.64e6, 4.46e6, 1.17e6],
 }
 
 prj_file = Path("HM3d_VPF.prj")
