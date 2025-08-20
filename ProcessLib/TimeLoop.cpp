@@ -531,6 +531,7 @@ bool TimeLoop::executeTimeStep()
 bool TimeLoop::calculateNextTimeStep()
 {
     const double prev_dt = _dt();
+    // keep a copy of _current_time to check if a new point in time is computed
     auto const current_time = _current_time;
 
     const std::size_t timesteps = _accepted_steps + 1;
@@ -548,11 +549,17 @@ bool TimeLoop::calculateNextTimeStep()
         outputSolutions(timesteps, current_time(), &Output::doOutput);
     }
 
+    // check if the newly computed time point (=_current_time + _dt()) differs
+    // from the previously computed time point (current_time) saved at the
+    // beginning of the method
     if (current_time == (_current_time + _dt()))
     {
-        ERR("Time step size of {} is too small.\n"
-            "Time stepping stops at step {:d} and at time of {}.",
-            _dt, timesteps, _current_time);
+        DBUG("current time == previous time + dt : {:a} == {:a} + {:a} = {:a}",
+             current_time(), _current_time(), _dt(), _current_time() + _dt());
+        ERR("The time increment {} results in exactly the same time {} as the "
+            "last rejected time step.\n"
+            "Time stepping stops at time step {:d} and time {}.",
+            _dt, current_time, timesteps, _current_time);
         return false;
     }
 
