@@ -53,7 +53,20 @@ public:
     static const unsigned face_nodes[6][4];
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[12][2];
+    constexpr static const unsigned edge_nodes[12][2] = {
+        {0, 1},  // Edge 0
+        {1, 2},  // Edge 1
+        {2, 3},  // Edge 2
+        {0, 3},  // Edge 3
+        {4, 5},  // Edge 4
+        {5, 6},  // Edge 5
+        {6, 7},  // Edge 6
+        {4, 7},  // Edge 7
+        {0, 4},  // Edge 8
+        {1, 5},  // Edge 9
+        {2, 6},  // Edge 10
+        {3, 7}   // Edge 11
+    };
 
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::LinearEdgeReturn;

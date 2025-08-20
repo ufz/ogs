@@ -32,7 +32,9 @@ public:
     static const CellType cell_type = CellType::LINE3;
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[1][3];
+    constexpr static const unsigned edge_nodes[1][3] = {
+        {0, 1, 2}  // Edge 0
+    };
 
     /// Edge rule
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;

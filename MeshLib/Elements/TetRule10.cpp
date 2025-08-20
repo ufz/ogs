@@ -25,15 +25,6 @@ const unsigned TetRule10::face_nodes[4][6] = {
     {2, 0, 3, 6, 7, 9}   // Face 3
 };
 
-const unsigned TetRule10::edge_nodes[6][3] = {
-    {0, 1, 4},  // Edge 0
-    {1, 2, 5},  // Edge 1
-    {0, 2, 6},  // Edge 2
-    {0, 3, 7},  // Edge 3
-    {1, 3, 8},  // Edge 4
-    {2, 3, 9}   // Edge 5
-};
-
 const Element* TetRule10::getFace(const Element* e, unsigned i)
 {
     if (i < n_faces)

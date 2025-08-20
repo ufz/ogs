@@ -25,18 +25,6 @@ const unsigned PrismRule15::face_nodes[5][8] = {
     {3, 4, 5, 9, 10, 11, 99, 99}  // Face 4
 };
 
-const unsigned PrismRule15::edge_nodes[9][3] = {
-    {0, 1, 6},   // Edge 0
-    {1, 2, 7},   // Edge 1
-    {0, 2, 8},   // Edge 2
-    {0, 3, 12},  // Edge 3
-    {1, 4, 13},  // Edge 4
-    {2, 5, 14},  // Edge 5
-    {3, 4, 9},   // Edge 6
-    {4, 5, 10},  // Edge 7
-    {3, 5, 11}   // Edge 8
-};
-
 const unsigned PrismRule15::n_face_nodes[5] = {6, 8, 8, 8, 6};
 
 const Element* PrismRule15::getFace(const Element* e, unsigned i)

@@ -28,21 +28,6 @@ const unsigned HexRule20::face_nodes[6][8] = {
     {4, 5, 6, 7, 12, 13, 14, 15}   // Face 5
 };
 
-const unsigned HexRule20::edge_nodes[12][3] = {
-    {0, 1, 8},   // Edge 0
-    {1, 2, 9},   // Edge 1
-    {2, 3, 10},  // Edge 2
-    {0, 3, 11},  // Edge 3
-    {4, 5, 12},  // Edge 4
-    {5, 6, 13},  // Edge 5
-    {6, 7, 14},  // Edge 6
-    {4, 7, 15},  // Edge 7
-    {0, 4, 16},  // Edge 8
-    {1, 5, 17},  // Edge 9
-    {2, 6, 18},  // Edge 10
-    {3, 7, 19}   // Edge 11
-};
-
 const Element* HexRule20::getFace(const Element* e, unsigned i)
 {
     if (i < n_faces)

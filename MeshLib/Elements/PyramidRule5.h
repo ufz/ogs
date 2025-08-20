@@ -53,7 +53,16 @@ public:
     static const unsigned face_nodes[5][4];
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[8][2];
+    constexpr static const unsigned edge_nodes[8][2] = {
+        {0, 1},  // Edge 0
+        {1, 2},  // Edge 1
+        {2, 3},  // Edge 2
+        {0, 3},  // Edge 3
+        {0, 4},  // Edge 4
+        {1, 4},  // Edge 5
+        {2, 4},  // Edge 6
+        {3, 4}   // Edge 7
+    };
 
     /// Constant: Table for the number of nodes for each face
     static const unsigned n_face_nodes[5];

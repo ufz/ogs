@@ -25,17 +25,6 @@ const unsigned PyramidRule13::face_nodes[5][8] = {
     {0, 3, 2, 1, 8, 7, 6, 5}       // Face 4
 };
 
-const unsigned PyramidRule13::edge_nodes[8][3] = {
-    {0, 1, 5},   // Edge 0
-    {1, 2, 6},   // Edge 1
-    {2, 3, 7},   // Edge 2
-    {3, 0, 8},   // Edge 3
-    {0, 4, 9},   // Edge 4
-    {1, 4, 10},  // Edge 5
-    {2, 4, 11},  // Edge 6
-    {3, 4, 12}   // Edge 7
-};
-
 const unsigned PyramidRule13::n_face_nodes[5] = {6, 6, 6, 6, 8};
 
 const Element* PyramidRule13::getFace(const Element* e, unsigned i)

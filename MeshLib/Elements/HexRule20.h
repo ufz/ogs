@@ -54,7 +54,20 @@ public:
     static const unsigned face_nodes[6][8];
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[12][3];
+    constexpr static const unsigned edge_nodes[12][3] = {
+        {0, 1, 8},   // Edge 0
+        {1, 2, 9},   // Edge 1
+        {2, 3, 10},  // Edge 2
+        {0, 3, 11},  // Edge 3
+        {4, 5, 12},  // Edge 4
+        {5, 6, 13},  // Edge 5
+        {6, 7, 14},  // Edge 6
+        {4, 7, 15},  // Edge 7
+        {0, 4, 16},  // Edge 8
+        {1, 5, 17},  // Edge 9
+        {2, 6, 18},  // Edge 10
+        {3, 7, 19}   // Edge 11
+    };
 
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;
