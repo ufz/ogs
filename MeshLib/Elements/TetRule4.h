@@ -48,7 +48,12 @@ public:
     static const CellType cell_type = CellType::TET4;
 
     /// Constant: Local node index table for faces
-    static const unsigned face_nodes[4][3];
+    constexpr static const unsigned face_nodes[4][3] = {
+        {0, 2, 1},  // Face 0
+        {0, 1, 3},  // Face 1
+        {1, 2, 3},  // Face 2
+        {2, 0, 3}   // Face 3
+    };
 
     /// Constant: Local node index table for edge
     constexpr static const unsigned edge_nodes[6][2] = {

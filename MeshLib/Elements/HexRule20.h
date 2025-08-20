@@ -51,7 +51,14 @@ public:
     static const CellType cell_type = CellType::HEX20;
 
     /// Constant: Local node index table for faces
-    static const unsigned face_nodes[6][8];
+    constexpr static const unsigned face_nodes[6][8] = {
+        {0, 3, 2, 1, 11, 10, 9, 8},    // Face 0
+        {0, 1, 5, 4, 8, 17, 12, 16},   // Face 1
+        {1, 2, 6, 5, 9, 18, 13, 17},   // Face 2
+        {2, 3, 7, 6, 10, 19, 14, 18},  // Face 3
+        {3, 0, 4, 7, 11, 16, 15, 19},  // Face 4
+        {4, 5, 6, 7, 12, 13, 14, 15}   // Face 5
+    };
 
     /// Constant: Local node index table for edge
     constexpr static const unsigned edge_nodes[12][3] = {

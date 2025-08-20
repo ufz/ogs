@@ -18,13 +18,6 @@
 
 namespace MeshLib
 {
-const unsigned TetRule10::face_nodes[4][6] = {
-    {0, 2, 1, 6, 5, 4},  // Face 0
-    {0, 1, 3, 4, 8, 7},  // Face 1
-    {1, 2, 3, 5, 9, 8},  // Face 2
-    {2, 0, 3, 6, 7, 9}   // Face 3
-};
-
 const Element* TetRule10::getFace(const Element* e, unsigned i)
 {
     if (i < n_faces)

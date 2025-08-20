@@ -43,7 +43,12 @@ public:
     static const CellType cell_type = CellType::QUAD9;
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[4][3];
+    constexpr static const unsigned edge_nodes[4][3] = {
+        {0, 1, 4},  // Edge 0
+        {1, 2, 5},  // Edge 1
+        {2, 3, 6},  // Edge 2
+        {3, 0, 7}   // Edge 3
+    };
 
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::QuadraticEdgeReturn;

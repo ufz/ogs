@@ -20,15 +20,6 @@
 
 namespace MeshLib
 {
-const unsigned HexRule8::face_nodes[6][4] = {
-    {0, 3, 2, 1},  // Face 0
-    {0, 1, 5, 4},  // Face 1
-    {1, 2, 6, 5},  // Face 2
-    {2, 3, 7, 6},  // Face 3
-    {3, 0, 4, 7},  // Face 4
-    {4, 5, 6, 7}   // Face 5
-};
-
 const Element* HexRule8::getFace(const Element* e, unsigned i)
 {
     if (i < n_faces)

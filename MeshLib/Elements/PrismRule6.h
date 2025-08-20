@@ -51,7 +51,13 @@ public:
     static const CellType cell_type = CellType::PRISM6;
 
     /// Constant: Local node index table for faces
-    static const unsigned face_nodes[5][4];
+    constexpr static const unsigned face_nodes[5][4] = {
+        {0, 2, 1, 99},  // Face 0
+        {0, 1, 4, 3},   // Face 1
+        {1, 2, 5, 4},   // Face 2
+        {2, 0, 3, 5},   // Face 3
+        {3, 4, 5, 99}   // Face 4
+    };
 
     /// Constant: Local node index table for edge
     constexpr static const unsigned edge_nodes[9][2] = {

@@ -50,7 +50,13 @@ public:
     static const CellType cell_type = CellType::PYRAMID13;
 
     /// Constant: Local node index table for faces
-    static const unsigned face_nodes[5][8];
+    constexpr static const unsigned face_nodes[5][8] = {
+        {0, 1, 4, 5, 10, 9, 99, 99},   // Face 0
+        {1, 2, 4, 6, 11, 10, 99, 99},  // Face 1
+        {2, 3, 4, 7, 12, 11, 99, 99},  // Face 2
+        {3, 0, 4, 8, 9, 12, 99, 99},   // Face 3
+        {0, 3, 2, 1, 8, 7, 6, 5}       // Face 4
+    };
 
     /// Constant: Local node index table for edge
     constexpr static const unsigned edge_nodes[8][3] = {

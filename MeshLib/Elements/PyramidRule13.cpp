@@ -17,14 +17,6 @@
 
 namespace MeshLib
 {
-const unsigned PyramidRule13::face_nodes[5][8] = {
-    {0, 1, 4, 5, 10, 9, 99, 99},   // Face 0
-    {1, 2, 4, 6, 11, 10, 99, 99},  // Face 1
-    {2, 3, 4, 7, 12, 11, 99, 99},  // Face 2
-    {3, 0, 4, 8, 9, 12, 99, 99},   // Face 3
-    {0, 3, 2, 1, 8, 7, 6, 5}       // Face 4
-};
-
 const unsigned PyramidRule13::n_face_nodes[5] = {6, 6, 6, 6, 8};
 
 const Element* PyramidRule13::getFace(const Element* e, unsigned i)
