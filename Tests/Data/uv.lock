@@ -936,20 +936,6 @@ wheels = [
 ]
 
 [[package]]
-name = "gcovr"
-version = "6.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "jinja2" },
-    { name = "lxml" },
-    { name = "pygments" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/19/6d/2942ab8c693f2b9f97052d6a6de4c27323a3bd85af7d062dc5bd3a2a9604/gcovr-6.0.tar.gz", hash = "sha256:8638d5f44def10e38e3166c8a33bef6643ec204687e0ac7d345ce41a98c5750b", size = 77476, upload-time = "2023-03-08T23:00:11.342Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/e9/4eb38ed44d7485a6343f24db3cfc773362a50f3413d7c11678cac2ec6dec/gcovr-6.0-py2.py3-none-any.whl", hash = "sha256:2e52019fdb76c6e327f48c2a2d8555fb5e362570b79cc74c5498804d1ce54a60", size = 94053, upload-time = "2023-03-08T23:00:09.545Z" },
-]
-
-[[package]]
 name = "gmsh"
 version = "4.13.1.dev1+nox"
 source = { registry = "https://gmsh.info/python-packages-dev-nox" }
@@ -2375,7 +2361,6 @@ name = "ogs-test-environment"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "gcovr" },
     { name = "gmsh", version = "4.13.1.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "gmsh", version = "4.14.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "h5py" },
@@ -2411,11 +2396,8 @@ ogs-pypi = [
 
 [package.metadata]
 requires-dist = [
-    { name = "gcovr", specifier = "==6.0" },
-    { name = "gmsh", marker = "sys_platform != 'linux'", specifier = ">=4.11" },
     { name = "gmsh", marker = "sys_platform != 'linux'", specifier = ">=4.12.0" },
     { name = "gmsh", marker = "sys_platform == 'linux'", specifier = "==4.13.1.dev1", index = "https://gmsh.info/python-packages-dev-nox" },
-    { name = "gmsh", marker = "sys_platform == 'linux'", specifier = ">=4.11", index = "https://gmsh.info/python-packages-dev-nox" },
     { name = "h5py", specifier = ">=3.8" },
     { name = "heatsource-py", git = "https://github.com/joergbuchwald/heatsource_thm?rev=bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c" },
     { name = "ipywidgets" },

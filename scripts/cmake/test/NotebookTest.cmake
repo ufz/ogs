@@ -1,3 +1,23 @@
+#
+# NotebookTest
+# -------
+#
+# Creates application test runs. Order of arguments can be arbitrary.
+#
+# ~~~
+# NotebookTest(
+#   NAME <name of the the test>
+#   NOTEBOOKFILE <path to the notebook file>
+#   PYTHON_PACKAGES package_x=1.2.3 package_y=0.1.x # optional, additional
+#                                                     Python packages to install
+#   RUNTIME <in seconds> # optional for optimizing ctest duration
+#                          values should be taken from envinf job
+#   LABELS <labelA;labelB;...> # optional, defaults to "default"
+#   PROPERTIES <test properties> # optional
+#   SKIP_WEB # optional, skips the web site generation
+# )
+# ~~~
+#
 # cmake-lint: disable=C0103,R0915,R0912
 function(NotebookTest)
 
@@ -7,7 +27,7 @@ function(NotebookTest)
 
     set(options DISABLED SKIP_WEB)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
-    set(multiValueArgs WRAPPER RESOURCE_LOCK PROPERTIES LABELS PYTHON_PACKAGES)
+    set(multiValueArgs PROPERTIES LABELS PYTHON_PACKAGES)
     cmake_parse_arguments(
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -75,7 +95,12 @@ function(NotebookTest)
 
     set(TEST_NAME "nb-${NotebookTest_DIR}/${NotebookTest_NAME_WE}")
 
-    set(_exe_args Notebooks/testrunner.py --out ${Data_BINARY_DIR})
+    if(OGS_USE_PIP AND DEFINED NotebookTest_PYTHON_PACKAGES)
+        list(APPEND labels additional_python_modules)
+        list(APPEND _uv_run_args --with ${NotebookTest_PYTHON_PACKAGES})
+    endif()
+
+    set(_exe_args run ${_uv_run_args} python Notebooks/testrunner.py --out ${Data_BINARY_DIR})
     if(NOT NotebookTest_SKIP_WEB)
         list(APPEND _exe_args --hugo)
         if(DEFINED ENV{CI})
@@ -83,26 +108,6 @@ function(NotebookTest)
         endif()
     endif()
     list(APPEND _exe_args ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME})
-
-    if(NotebookTest_PYTHON_PACKAGES)
-        list(APPEND labels python_modules)
-        if(OGS_USE_PIP)
-            # Info has to be passed by global property because it is not
-            # possible to set cache variables from inside a function.
-            set_property(
-                GLOBAL APPEND PROPERTY AddTest_PYTHON_PACKAGES
-                                       ${NotebookTest_PYTHON_PACKAGES}
-            )
-        else()
-            message(
-                STATUS
-                    "Warning: Benchmark ${NotebookTest_NAME} requires these "
-                    "Python packages: ${NotebookTest_PYTHON_PACKAGES}!\n Make sure to "
-                    "have them installed in your current Python environment OR "
-                    "set OGS_USE_PIP=ON!"
-            )
-        endif()
-    endif()
 
     isTestCommandExpectedToSucceed(${TEST_NAME} ${NotebookTest_PROPERTIES})
     message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
@@ -112,7 +117,8 @@ function(NotebookTest)
         COMMAND
             ${CMAKE_COMMAND} ${CMAKE_COMMAND}
             # TODO: only works if notebook is in a leaf directory
-            -DEXECUTABLE=${Python_EXECUTABLE} "-DEXECUTABLE_ARGS=${_exe_args}"
+            -DEXECUTABLE=${UV_TOOL_PATH}
+            "-DEXECUTABLE_ARGS=${_exe_args}"
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR}
             "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
             "-DLOG_FILE_BASENAME=${NotebookTest_NAME_WE}.txt"
@@ -139,7 +145,7 @@ function(NotebookTest)
                    "${labels}"
                    ${timeout}
                    ENVIRONMENT
-                   "CI=1;PYDEVD_DISABLE_FILE_VALIDATION=1"
+                   "CI=1;PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
     )
 
 endfunction()

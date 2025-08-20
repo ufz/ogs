@@ -221,11 +221,6 @@ endif()
 
 include(UnityBuildSettings)
 
-if(OGS_USE_PIP)
-    setup_venv()
-    setup_venv_dependent_ctests()
-endif()
-
 message(STATUS "${_benchmark_run_commands}")
 
 if(OGS_WRITE_BENCHMARK_COMMANDS)
@@ -244,14 +239,28 @@ if(WIN32)
         "$Env:PATH += \";C:/Program Files (x86)/Intel/oneAPI/compiler/latest/windows/redist/intel64_win/compiler\""
         "$Env:OGS_USE_PATH = \"1\""
     )
+    if(OGS_USE_PIP)
+        list(APPEND _envrc_content
+            "$Env:UV_PROJECT = \"${PROJECT_SOURCE_DIR}/Tests/Data\""
+            "$Env:UV_PROJECT_ENVIRONMENT = \"${PROJECT_BINARY_DIR}/.venv\""
+            "$Env:UV_FROZEN = \"1\""
+        )
+    endif()
     string(REPLACE ";$" "\n$" _envrc_content "${_envrc_content}")
 else()
     set(_envrc_content
-        "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source ${PROJECT_BINARY_DIR}/.venv/bin/activate"
-        "export PATH=${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}:$PATH"
+        "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source \"${PROJECT_BINARY_DIR}/.venv/bin/activate\""
+        "export PATH=\"${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}:$PATH\""
         "export OGS_USE_PATH=1"
-        "export PYTHONPATH=${PROJECT_BINARY_DIR}/site-packages:$PYTHONPATH"
+        "export PYTHONPATH=\"${PROJECT_BINARY_DIR}/site-packages:$PYTHONPATH\""
     )
+    if(OGS_USE_PIP)
+        list(APPEND _envrc_content
+            "export UV_PROJECT=\"${PROJECT_SOURCE_DIR}/Tests/Data\""
+            "export UV_PROJECT_ENVIRONMENT=\"${PROJECT_BINARY_DIR}/.venv\""
+            "export UV_FROZEN=1"
+        )
+    endif()
     if(TFEL_WITH_PYTHON)
         set(_envrc_content "${_envrc_content}"
                            "export PYTHONPATH=${TFEL_WITH_PYTHON}:$PYTHONPATH"
