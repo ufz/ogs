@@ -282,7 +282,7 @@
             </eigen>
             <petsc>
                 <prefix>gw</prefix>
-                <parameters>-gw_ksp_type bcgs -gw_pc_type jacobi -gw_ksp_rtol 1.e-16 -gw_ksp_max_it 10000</parameters>
+                <parameters>-gw_ksp_type bcgs -gw_pc_type sor -gw_ksp_rtol 1.e-16 -gw_ksp_max_it 10000</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
