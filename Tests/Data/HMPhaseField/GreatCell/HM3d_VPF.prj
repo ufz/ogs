@@ -254,21 +254,21 @@
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-12</abstol>
-                    <reltol>1.e-4</reltol>
+                    <reltol>1.e-6</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the second process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-12</abstol>
-                    <reltol>1.e-4</reltol>
+                    <reltol>1.e-6</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the third process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-12</abstol>
-                    <reltol>1.e-4</reltol>
+                    <reltol>1.e-6</reltol>
                 </convergence_criterion>
             </convergence_criteria>
             <!-- <local_coupling_processes>
@@ -285,7 +285,7 @@
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1e-12</abstol>
-                    <reltol>1.e-6</reltol>
+                    <reltol>1.e-8</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -309,7 +309,7 @@
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1e-12</abstol>
-                    <reltol>1.e-6</reltol>
+                    <reltol>1.e-8</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -333,7 +333,7 @@
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1e-12</abstol>
-                    <reltol>1.e-6</reltol>
+                    <reltol>1.e-8</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -1493,7 +1493,7 @@
                 <error_tolerance>1e-16</error_tolerance>
             </eigen>
             <petsc>
-                <parameters>-ksp_type cg -pc_type bjacobi -ksp_atol 1e-10 -ksp_rtol 1e-10 -snes_type vinewtonrsls -snes_linesearch_type l2 -snes_atol 1.e-6 -snes_rtol 1.e-6 -snes_max_it 1000 -snes_monitor </parameters>
+                <parameters>-ksp_type cg -pc_type bjacobi -ksp_atol 1e-10 -ksp_rtol 1e-10 -snes_type vinewtonrsls -snes_linesearch_type l2 -snes_atol 1.e-8 -snes_rtol 1.e-8 -snes_max_it 1000 -snes_monitor </parameters>
             </petsc>
         </linear_solver>
         <linear_solver>
