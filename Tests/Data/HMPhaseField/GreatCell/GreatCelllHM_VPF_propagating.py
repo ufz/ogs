@@ -477,35 +477,72 @@ msh_file = mesh_GreatCell_Borehole_VPF(
 )
 
 # %% vscode={"languageId": "python"}
-# %cd {mesh_path}
+mesh_dir = Path(mesh_path).resolve()
+
 run(
-    "NodeReordering -i domain.vtu -o domain.vtu",
-    shell=True,
+    [
+        "NodeReordering",
+        "-i",
+        str(mesh_dir.joinpath("domain.vtu")),
+        "-o",
+        str(mesh_dir.joinpath("domain.vtu")),
+    ],
+    cwd=mesh_dir,
     check=True,
 )
 
+physical_groups = [
+    "physical_group_DSS1.vtu",
+    "physical_group_DSS1a.vtu",
+    "physical_group_DSS2.vtu",
+    "physical_group_DSS2a.vtu",
+    "physical_group_DSS3.vtu",
+    "physical_group_DSS3a.vtu",
+    "physical_group_DSS4.vtu",
+    "physical_group_DSS4a.vtu",
+    "physical_group_DSS5.vtu",
+    "physical_group_DSS5a.vtu",
+    "physical_group_DSS6.vtu",
+    "physical_group_DSS6a.vtu",
+    "physical_group_DSS7.vtu",
+    "physical_group_DSS7a.vtu",
+    "physical_group_DSS8.vtu",
+    "physical_group_DSS8a.vtu",
+    "physical_group_PEE1.vtu",
+    "physical_group_PEE1a.vtu",
+    "physical_group_PEE2.vtu",
+    "physical_group_PEE2a.vtu",
+    "physical_group_PEE3.vtu",
+    "physical_group_PEE3a.vtu",
+    "physical_group_PEE4.vtu",
+    "physical_group_PEE4a.vtu",
+    "physical_group_PEE5.vtu",
+    "physical_group_PEE5a.vtu",
+    "physical_group_PEE6.vtu",
+    "physical_group_PEE6a.vtu",
+    "physical_group_PEE7.vtu",
+    "physical_group_PEE7a.vtu",
+    "physical_group_PEE8.vtu",
+    "physical_group_PEE8a.vtu",
+    "physical_group_p_bottom.vtu",
+    "physical_group_p_left.vtu",
+    "physical_group_p_right.vtu",
+    "physical_group_p_top.vtu",
+    "physical_group_borehole_boundary.vtu",
+]
+
+group_paths = [str(mesh_dir.joinpath(name)) for name in physical_groups]
+
 run(
-    "identifySubdomains -f -m domain.vtu -- "
-    "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
-    "physical_group_DSS2.vtu physical_group_DSS2a.vtu "
-    "physical_group_DSS3.vtu physical_group_DSS3a.vtu "
-    "physical_group_DSS4.vtu physical_group_DSS4a.vtu "
-    "physical_group_DSS5.vtu physical_group_DSS5a.vtu "
-    "physical_group_DSS6.vtu physical_group_DSS6a.vtu "
-    "physical_group_DSS7.vtu physical_group_DSS7a.vtu "
-    "physical_group_DSS8.vtu physical_group_DSS8a.vtu "
-    "physical_group_PEE1.vtu physical_group_PEE1a.vtu "
-    "physical_group_PEE2.vtu physical_group_PEE2a.vtu "
-    "physical_group_PEE3.vtu physical_group_PEE3a.vtu "
-    "physical_group_PEE4.vtu physical_group_PEE4a.vtu "
-    "physical_group_PEE5.vtu physical_group_PEE5a.vtu "
-    "physical_group_PEE6.vtu physical_group_PEE6a.vtu "
-    "physical_group_PEE7.vtu physical_group_PEE7a.vtu "
-    "physical_group_PEE8.vtu physical_group_PEE8a.vtu "
-    "physical_group_p_bottom.vtu physical_group_p_left.vtu "
-    "physical_group_p_right.vtu physical_group_p_top.vtu "
-    "physical_group_borehole_boundary.vtu ",
-    shell=True,
+    [
+        "identifySubdomains",
+        "-f",
+        "-m",
+        str(mesh_dir.joinpath("domain.vtu")),
+        "--",
+        *group_paths,
+    ],
+    cwd=mesh_dir,
     check=True,
 )
 
