@@ -1,18 +1,21 @@
 # cmake-lint: disable=C0103
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 
 # Sets up ctest that are dependent on the virtual env, e.g. using ogstools
 function(setup_venv_dependent_ctests)
     if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND OGS_BUILD_PROCESS_HT)
-        execute_process(
-            COMMAND
-                uv run python
-                ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/generateInvalidMediaForHT.py
-            WORKING_DIRECTORY
-                ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles
-            RESULT_VARIABLE GEN_INVALID_RES
-        )
-        if(NOT GEN_INVALID_RES EQUAL 0)
-            message(SEND_ERROR "generateInvalidMediaForHT.py failed with status ${GEN_INVALID_RES}.")
+        if(NOT EXISTS ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT_specific_heat_capacity_viscosity_porosity.prj)
+            execute_process(
+                COMMAND
+                    uv run python
+                    ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/generateInvalidMediaForHT.py
+                WORKING_DIRECTORY
+                    ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles
+                RESULT_VARIABLE GEN_INVALID_RES
+            )
+            if(NOT GEN_INVALID_RES EQUAL 0)
+                message(SEND_ERROR "generateInvalidMediaForHT.py failed with status ${GEN_INVALID_RES}.")
+            endif()
         endif()
         file(GLOB HT_INVALID_PRJ_FILES
              ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj
@@ -87,13 +90,12 @@ if(OGS_USE_PIP)
                     "To disable uv set OGS_USE_PIP=OFF."
             )
         endif()
-
-        setup_venv_dependent_ctests()
     else()
         find_package(Python ${ogs.minimum_version.python}...<3.14
             COMPONENTS ${_python_componets} REQUIRED)
         set(ENV{UV_PYTHON} ${Python_EXECUTABLE})
     endif()
+    setup_venv_dependent_ctests()
     # Create jupytext config
     file(
         WRITE
