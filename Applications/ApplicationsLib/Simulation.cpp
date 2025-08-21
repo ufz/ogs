@@ -133,11 +133,12 @@ bool Simulation::executeTimeStep()
     if (time_loop.currentTime() < time_loop.endTime())
     {
         auto const result = time_loop.executeTimeStep();
-        if (time_loop.calculateNextTimeStep())
-        {
-            time_loop.outputLastTimeStep();
-        }
+        time_loop.calculateNextTimeStep();
         return result;
+    }
+    if (time_loop.currentTime() >= time_loop.endTime())
+    {
+        time_loop.outputLastTimeStep();
     }
     return false;
 }
