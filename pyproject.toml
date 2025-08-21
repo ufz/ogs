@@ -66,8 +66,8 @@ testpaths = ["Tests"]
 python_files = ["test_*.py"]
 addopts = "--strict-markers"
 markers = [
-    "performance_test: These tests need an isolated environment such that time measurements are reasonable.",
-    "ogs_needs_serial_build: These test do not run with an OGS PETSc build.",
+  "performance_test: These tests need an isolated environment such that time measurements are reasonable.",
+  "ogs_needs_serial_build: These test do not run with an OGS PETSc build.",
 ]
 
 [tool.cibuildwheel]
@@ -138,8 +138,8 @@ select = [
   "PD",   # pandas-vet
 ]
 extend-ignore = [
-  "PLR",   # Design related pylint codes
-  "E501",  # Line too long
+  "PLR",  # Design related pylint codes
+  "E501", # Line too long
   # RUF005 should be disabled when using numpy, see
   # https://github.com/charliermarsh/ruff/issues/2142:
   "RUF005",
