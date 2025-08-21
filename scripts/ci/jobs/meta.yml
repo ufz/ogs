@@ -5,7 +5,37 @@ meta:
   variables:
     GIT_DEPTH: 1000
   script:
-    - echo "OGS_VERSION=${CI_COMMIT_TAG:-`git describe --tags --long --dirty --always`}" >> build.env
+    - echo "OGS_VERSION=${CI_COMMIT_TAG:-$(git describe --tags --long --dirty --always)}" >> build.env
+    - cat build.env
+    - |
+      if [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        echo "Parsing CI-variables from MR description..."
+
+        # Fetch MR description from GitLab API
+        MR_DESC=$(curl --silent --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+          "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID" \
+          | jq -r '.description')
+
+        in_block=0
+        while IFS= read -r line; do
+          if [[ "$line" =~ ^CI-variables: ]]; then
+            in_block=1
+            continue
+          fi
+          if [[ "$line" =~ ^\`\`\` ]] && [ $in_block -eq 1 ]; then
+            in_block=2
+            continue
+          fi
+          if [[ "$line" =~ ^\`\`\` ]] && [ $in_block -eq 2 ]; then
+            in_block=0
+            continue
+          fi
+          if [ $in_block -eq 2 ]; then
+            export "$line"
+            echo "$line" >> build.env
+          fi
+        done <<< "$MR_DESC"
+      fi
     - cat build.env
   artifacts:
     reports:
