@@ -135,6 +135,9 @@ function(AddTest)
     endif()
 
     # check requirements, disable if not met
+
+    # When testing the installed wheel assume executable is in PATH
+    # from venv.
     if(NOT TARGET ${AddTest_EXECUTABLE} AND NOT OGS_BUILD_WHEEL)
         return()
     endif()
@@ -225,6 +228,8 @@ function(AddTest)
     if(TARGET ${AddTest_EXECUTABLE} AND NOT OGS_BUILD_WHEEL)
         set(AddTest_EXECUTABLE_PARSED $<TARGET_FILE:${AddTest_EXECUTABLE}>)
     else()
+        # When testing the installed wheel assume executable is in PATH
+        # from venv.
         set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
     endif()
 

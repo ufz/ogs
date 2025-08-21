@@ -77,7 +77,7 @@ build with pip:
     - python -m venv .venv
     - source .venv/bin/activate
     - pip install -e .[test] -v
-    - ln -s _skbuild build
+    - ln -s _skbuild build # .test-artifacts expects a directory "build"
     - pytest
     - ctest --test-dir _skbuild/cp* -LE large
 

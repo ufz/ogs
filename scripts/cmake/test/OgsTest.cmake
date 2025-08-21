@@ -109,6 +109,8 @@ macro(_ogs_add_test TEST_NAME)
 
     set(_ogs_exe $<TARGET_FILE:ogs>)
     if(OGS_BUILD_WHEEL)
+        # When testing the installed wheel assume executable is in PATH
+        # from venv.
         set(_ogs_exe ogs)
     endif()
 
