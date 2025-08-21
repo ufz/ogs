@@ -155,34 +155,7 @@ int executeSimulation()
         return EXIT_FAILURE;
     }
 
-    if (!test_definition)
-    {
-        auto const end_time = std::chrono::system_clock::now();
-        auto const time_str = BaseLib::formatDate(end_time);
-        DBUG("No test definition was found. No tests will be executed.");
-        INFO("OGS completed on {:s}.", time_str);
-        return ogs_status;
-    }
-
-    INFO("");
-    INFO("##########################################");
-    INFO("# Running tests                          #");
-    INFO("##########################################");
-    INFO("");
-    auto status = test_definition->runTests();
-    auto const end_time = std::chrono::system_clock::now();
-    auto const time_str = BaseLib::formatDate(end_time);
-    if (status)
-    {
-        INFO("OGS completed on {:s}.", time_str);
-    }
-    else
-    {
-        ERR("OGS terminated on {:s}. One of the tests failed.", time_str);
-        return EXIT_FAILURE;
-    }
-
-    return EXIT_SUCCESS;
+    return Simulation::runTestDefinitions(test_definition, ogs_status);
 }
 
 int executeTimeStep()

@@ -19,6 +19,7 @@
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "Applications/InSituLib/Adaptor.h"
 #include "BaseLib/ConfigTreeUtil.h"
+#include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/PrjProcessing.h"
 #include "BaseLib/RunTime.h"
@@ -192,4 +193,37 @@ Simulation::~Simulation()
 #if defined(USE_PETSC)
     controller->Finalize(1);
 #endif
+}
+
+int Simulation::runTestDefinitions(
+    std::optional<ApplicationsLib::TestDefinition>& test_definition,
+    int& ogs_status)
+{
+    if (!test_definition)
+    {
+        auto const end_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(end_time);
+        DBUG("No test definition was found. No tests will be executed.");
+        INFO("OGS completed on {:s}.", time_str);
+        return ogs_status;
+    }
+
+    INFO("");
+    INFO("##########################################");
+    INFO("# Running tests                          #");
+    INFO("##########################################");
+    INFO("");
+    auto status = test_definition->runTests();
+    auto const end_time = std::chrono::system_clock::now();
+    auto const time_str = BaseLib::formatDate(end_time);
+    if (status)
+    {
+        INFO("OGS completed on {:s}.", time_str);
+    }
+    else
+    {
+        ERR("OGS terminated on {:s}. One of the tests failed.", time_str);
+        return EXIT_FAILURE;
+    }
+    return EXIT_SUCCESS;
 }
