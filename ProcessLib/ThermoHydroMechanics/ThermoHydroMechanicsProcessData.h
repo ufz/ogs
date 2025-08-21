@@ -57,6 +57,7 @@ struct ThermoHydroMechanicsProcessData
 
     NumLib::NumericalStabilization stabilizer;
 
+    MeshLib::PropertyVector<double>* element_phi_fr = nullptr;
     MeshLib::PropertyVector<double>* element_fluid_density = nullptr;
     MeshLib::PropertyVector<double>* element_viscosity = nullptr;
     MeshLib::PropertyVector<double>* element_stresses = nullptr;

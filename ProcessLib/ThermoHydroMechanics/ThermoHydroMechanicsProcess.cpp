@@ -246,6 +246,10 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         "viscosity", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtViscosity);
 
+    _process_data.element_phi_fr = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "ice_volume_fraction_avg",
+        MeshLib::MeshItemType::Cell, 1);
+
     _process_data.element_fluid_density =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "fluid_density_avg",

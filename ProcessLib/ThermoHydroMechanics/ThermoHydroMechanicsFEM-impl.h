@@ -937,6 +937,7 @@ void ThermoHydroMechanicsLocalAssembler<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
+    double phi_fr_avg = 0;
     double fluid_density_avg = 0;
     double viscosity_avg = 0;
 
@@ -947,15 +948,18 @@ void ThermoHydroMechanicsLocalAssembler<
     {
         auto& ip_data = _ip_data[ip];
 
+        phi_fr_avg += _ip_data[ip].phi_fr;
         fluid_density_avg += _ip_data_output[ip].fluid_density;
         viscosity_avg += _ip_data_output[ip].viscosity;
         sigma_avg += ip_data.sigma_eff;
     }
 
+    phi_fr_avg /= n_integration_points;
     fluid_density_avg /= n_integration_points;
     viscosity_avg /= n_integration_points;
     sigma_avg /= n_integration_points;
 
+    (*_process_data.element_phi_fr)[_element.getID()] = phi_fr_avg;
     (*_process_data.element_fluid_density)[_element.getID()] =
         fluid_density_avg;
     (*_process_data.element_viscosity)[_element.getID()] = viscosity_avg;
