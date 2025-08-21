@@ -1,42 +1,6 @@
 # cmake-lint: disable=C0103
 include(${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 
-# Sets up ctest that are dependent on the virtual env, e.g. using ogstools
-function(setup_venv_dependent_ctests)
-    if(NOT OGS_USE_MPI AND OGS_BUILD_TESTING AND OGS_BUILD_PROCESS_HT)
-        if(NOT EXISTS ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT_specific_heat_capacity_viscosity_porosity.prj)
-            execute_process(
-                COMMAND
-                    uv run python
-                    ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/generateInvalidMediaForHT.py
-                WORKING_DIRECTORY
-                    ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles
-                RESULT_VARIABLE GEN_INVALID_RES
-            )
-            if(NOT GEN_INVALID_RES EQUAL 0)
-                message(SEND_ERROR "generateInvalidMediaForHT.py failed with status ${GEN_INVALID_RES}.")
-            endif()
-        endif()
-        file(GLOB HT_INVALID_PRJ_FILES
-             ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj
-        )
-        foreach(ht_invalid_prj_file ${HT_INVALID_PRJ_FILES})
-            string(
-                REPLACE ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT
-                        "invalid" ht_invalid_prj_file_short
-                        ${ht_invalid_prj_file}
-            )
-            AddTest(
-                NAME HT_${ht_invalid_prj_file_short}
-                PATH Parabolic/HT/InvalidProjectFiles
-                EXECUTABLE ogs
-                EXECUTABLE_ARGS ${ht_invalid_prj_file}
-                RUNTIME 1 PROPERTIES WILL_FAIL TRUE
-            )
-        endforeach()
-    endif()
-endfunction()
-
 message(STATUS "┌─ PythonSetup.cmake")
 list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 
@@ -95,7 +59,7 @@ if(OGS_USE_PIP)
             COMPONENTS ${_python_componets} REQUIRED)
         set(ENV{UV_PYTHON} ${Python_EXECUTABLE})
     endif()
-    setup_venv_dependent_ctests()
+
     # Create jupytext config
     file(
         WRITE

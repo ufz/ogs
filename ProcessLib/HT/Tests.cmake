@@ -509,3 +509,38 @@ AddTest(
     HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu temperature temperature 1.e-9 1.0e-8
     HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu pressure pressure 1.e-9 1.0e-8
 )
+
+if(OGS_USE_PIP AND NOT OGS_USE_MPI)
+    if(NOT EXISTS ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT_specific_heat_capacity_viscosity_porosity.prj)
+        execute_process(
+            COMMAND
+                uv run python
+                ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/generateInvalidMediaForHT.py
+            WORKING_DIRECTORY
+                ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles
+            RESULT_VARIABLE GEN_INVALID_RES
+        )
+        if(GEN_INVALID_RES EQUAL 0)
+            message(STATUS "generateInvalidMediaForHT.py succeeded.")
+        else()
+            message(SEND_ERROR "generateInvalidMediaForHT.py failed with status ${GEN_INVALID_RES}.")
+        endif()
+    endif()
+    file(GLOB HT_INVALID_PRJ_FILES
+            ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj
+    )
+    foreach(ht_invalid_prj_file ${HT_INVALID_PRJ_FILES})
+        string(
+            REPLACE ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT
+                    "invalid" ht_invalid_prj_file_short
+                    ${ht_invalid_prj_file}
+        )
+        AddTest(
+            NAME HT_${ht_invalid_prj_file_short}
+            PATH Parabolic/HT/InvalidProjectFiles
+            EXECUTABLE ogs
+            EXECUTABLE_ARGS ${ht_invalid_prj_file}
+            RUNTIME 1 PROPERTIES WILL_FAIL TRUE
+        )
+    endforeach()
+endif()
