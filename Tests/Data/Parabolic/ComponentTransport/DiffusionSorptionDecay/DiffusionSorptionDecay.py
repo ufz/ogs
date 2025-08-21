@@ -22,10 +22,10 @@
 #
 
 # %% [markdown]
-# # 1. Diffusion-sorption-decay problem
+# # Diffusion-sorption-decay problem
 
 # %% [markdown]
-# ## 1.1 Problem description
+# ## Problem description
 
 # %% [markdown]
 # This benchmark is meant to model radionuclide migration through a semi-infinite column of undisturbed Opalinus Clay (OPA), which could potentially serve as a geological repository for radioactive waste. In this benchmark, Cesium ($^{135}$Cs) is chosen for investigation because it may be present in the repository if the disposal canister is ruptured. In view of the low hydraulic conductivity of OPA, Cesium migration is considered to be dominated by diffusion. Two additional processes are also considered, including (i) retardation resulting from solute sorption on the clay, and (ii) concentration attenuation caused by radioactive decay over time.
@@ -51,27 +51,27 @@
 # where $t_{1/2}$ [s] is the half life of the diffusing radionuclide.
 
 # %% [markdown]
-# ## 1.2 Model setups
+# ## Model setups
 
 # %% [markdown]
 # Our simulation domain is set to be 20 meters long, which is sufficient to ensure that the concentration profile does not reach the right-hand boundary during simulation. The simulated time is one million years. Initially, the entire domain is assumed to be solute free, i.e., $c_{\mathrm{ini}}(x, 0) = 0$. The inlet concentration is held at 1 mol/L throughout the simulation, i.e., $c(0, t) = 1$ mol/L. The spatial domain is discretized by linear line elements with a length of 0.01 meter each. The time step size of one thousand years is used in the simulation. The linearized governing equation is iteratively solved using the Newton-Raphson method.
 #
 # The table below summarizes the parameters used in the simulation.
 #
-# | Parameter | Value | Unit |
-# | :-: | :-: | :-: |
-# | Porosity $\phi$ | 0.12 | - |
-# | Pore diffusion coefficient $\mathrm{D_p}$ | 8.33e-11 | m$^2$/s |
-# | OPA bulk density $\rho$ | 2394 | kg/m$^3$ |
-# | Distribution coefficient $k_{d}$ | 0.5 | m$^3$/kg |
-# | $^{135}$Cs half life $t_{1/2}$ | 2.3e6 | year |
-# | Time step size $\Delta t$ | 1e3 | year |
-# | Grid size $\Delta x$ | 0.01 | m|
+# |                 Parameter                 |  Value   |   Unit   |
+# | :---------------------------------------: | :------: | :------: |
+# |              Porosity $\phi$              |   0.12   |    -     |
+# | Pore diffusion coefficient $\mathrm{D_p}$ | 8.33e-11 | m$^2$/s  |
+# |          OPA bulk density $\rho$          |   2394   | kg/m$^3$ |
+# |     Distribution coefficient $k_{d}$      |   0.5    | m$^3$/kg |
+# |      $^{135}$Cs half life $t_{1/2}$       |  2.3e6   |   year   |
+# |         Time step size $\Delta t$         |   1e3    |   year   |
+# |           Grid size $\Delta x$            |   0.01   |    m     |
 #
 # Notes: The parameter values are sourced from Nagra (2002).
 
 # %% [markdown]
-# ## 1.3 Results
+# ## Results
 
 # %% [markdown]
 # **Analytical solution**
@@ -90,99 +90,69 @@
 # %%
 import os
 from pathlib import Path
-from subprocess import run
 
 import matplotlib.pyplot as plt
 import numpy as np
-import vtuIO
-from matplotlib.pyplot import cm
-from scipy import special
+import ogstools as ot
+from scipy.special import erfc
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+out_dir.mkdir(parents=True, exist_ok=True)
+
+
+def plot_results_and_errors(ms: ot.MeshSeries, analytical_func):
+    "Plot numerical results against analytical solution"
+    var = ot.variables.Scalar("Cs", "mol/L", "mol/L", "Cs concentration")
+    ref_vals = analytical_func(ms[0].points[:, 0], ms.timevalues)
+    labels = [f"{tv / 86400 / 365.25:.0e} a" for tv in ms.timevalues]
+    abs_err = ms["Cs"] - ref_vals
+    max_errors = [2e-1, 2e-2, 2e-3, 5e-4]  # per timevalue
+    assert np.all(np.abs(abs_err.T) <= max_errors)
+
+    fig_res_err, axs = plt.subplots(1, 2, figsize=(11, 4))
+    axs: list[plt.Axes]
+
+    ms.point_data[var.anasol.data_name] = ref_vals
+    ms.point_data[var.abs_error.data_name] = abs_err
+    ot.plot.line(ms, var, ax=axs[0], marker="o", labels=labels)
+    ot.plot.line(ms, var.anasol, ax=axs[0], ls="--")
+    ot.plot.line(ms, var.abs_error, ax=axs[1])
+    axs[0].plot([], [], "-ok", ms=3, label="OGS-numerical")
+    axs[0].plot([], [], "--k", label="analytical")
+    axs[0].legend(fontsize=10)
+    axs[1].set_yscale("symlog", linthresh=0.001)
+    for ax_i in [axs[0], axs[1]]:
+        ax_i.set_xscale("log")
+    ot.plot.utils.update_font_sizes(axs, 10)
+    fig_res_err.tight_layout()
+
 
 # %%
 ###Model parameters###
-# Effective diffusion coefficient [m2/s]
-De = 1e-11
-# Porosity [-]
-phi = 0.12
-# Pore diffusion coefficient [m2/s]
-Dp = De / phi
-# Porous medium bulk density [kg/m3]
-rho = 2.394e3
-# Distribution coefficient [m3/kg]
-Kd = 0.5
-# 135-Cs Half-life [year]
-half_life = 2.3e6
-# Decay constant [1/s]
-alpha = np.log(2) / half_life / 3.1536e7  # unit conversion from year to second
-
-###Spatial and temporal discretization###
-# Distance [m]
-x = np.linspace(0, 2, num=201)
-# Time [year]
-time = np.array([1e3, 1e4, 1e5, 1e6])
+De = 1e-11  #    Effective diffusion coefficient [m2/s]
+phi = 0.12  #    Porosity [-]
+Dp = De / phi  # Pore diffusion coefficient [m2/s]
+rho = 2.394e3  # Porous medium bulk density [kg/m3]
+Kd = 0.5  #      Distribution coefficient [m3/kg]
+half_life = 2.3e6  # 135-Cs Half-life [year]
+alpha = np.log(2) / half_life / 3.1536e7  # Decay constant [1/s]
 
 ###Initial condition and boundary conditions###
-# Initial condition [mol/L]
-c_ini = 0
-# Inlet concentration [mol/L]
-c_inlet = 1
+c_ini = 0  #     Initial condition [mol/L]
+c_inlet = 1  #   Inlet concentration [mol/L]
 
 ###Intermediate parameters###
-# Retardation factor [-]
-R = 1 + rho * Kd / phi
-
-###Analytical solution###
-c = np.empty((0, x.size))
-for t in time * 3.1536e7:  # unit conversion from year to second
-    c_t = (
-        c_inlet
-        / 2
-        * (
-            np.exp(-x * (alpha * R / Dp) ** 0.5)
-            * special.erfc(x / 2 * (R / Dp / t) ** 0.5 - (alpha * t) ** 0.5)
-            + np.exp(x * (alpha * R / Dp) ** 0.5)
-            * special.erfc(x / 2 * (R / Dp / t) ** 0.5 + (alpha * t) ** 0.5)
-        )
-    )
-    c = np.vstack([c, c_t])
+R = 1 + rho * Kd / phi  # Retardation factor [-]
 
 
-# %% [markdown]
-# The analytically computed $^{135}$Cs concentration profiles at $t$ = 10$^3$, 10$^4$, 10$^5$, and 10$^6$ years are plotted as shown in the figure below.
-
-
-# %%
-# plot analytical solution
-def plot_analytical_solutions():
-    fig, ax = plt.subplots()
-
-    ax.set_xlim((0, 2))
-    ax.set_ylim((0, 1))
-
-    plt.xlabel("Distance [m]")
-    plt.ylabel("$^{135}$ Cs concentration [mol/L]")
-
-    color_map = iter(cm.rainbow(np.linspace(0, 1, len(time))))
-
-    for c_t, t, color in zip(c, time, color_map):
-        ax.plot(
-            x,
-            c_t,
-            linestyle="-",
-            lw=1.5,
-            label=str(np.format_float_scientific(t)) + " years",
-            c=color,
-            zorder=10,
-            clip_on=False,
+def c_diff_sorp_dec(x_arr: np.ndarray, t_arr: np.ndarray) -> np.ndarray:
+    def H(x_arr: np.ndarray, t_arr: np.ndarray, sign: float):
+        x_, t_ = (x_arr[:, None], t_arr[None, :])
+        return np.exp(sign * x_ * (alpha * R / Dp) ** 0.5) * erfc(
+            0.5 * x_ @ (R / Dp / t_) ** 0.5 + sign * (alpha * t_) ** 0.5
         )
 
-    ax.legend(frameon=False, loc="upper right", numpoints=1, fontsize=12, ncol=1)
-
-    ax.xaxis.grid(color="gray", linestyle="dashed")
-    ax.yaxis.grid(color="gray", linestyle="dashed")
-
-
-plot_analytical_solutions()
+    return 0.5 * c_inlet * (H(x_arr, t_arr, 1) + H(x_arr, t_arr, -1)).T
 
 
 # %% [markdown]
@@ -195,60 +165,16 @@ plot_analytical_solutions()
 
 # %%
 # Run OGS simulation
-prj_name = "1D_DiffusionSorptionDecay"
-prj_file = f"{prj_name}.prj"
+name = "1D_DiffusionSorptionDecay"
+model = ot.Project(
+    input_file=f"{name}.prj", output_file=out_dir / f"{name}_modified.prj"
+)
+model.write_input()
+model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m .")
 
-out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
-
-print(f"ogs {prj_file} > out.txt")
-run(f"ogs {prj_file} -o {out_dir} > {out_dir}/out.txt", shell=True, check=True)
-
-# Read simulation results
-pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", dim=1)
-
-
-def plot_simulation_results():
-    fig, ax = plt.subplots()
-
-    ax.set_xlim((0, 2))
-    ax.set_ylim((0, 1))
-
-    plt.xlabel("Distance [m]")
-    plt.ylabel("$^{135}$ Cs concentration [mol/L]")
-
-    color_map = iter(cm.rainbow(np.linspace(0, 1, len(time))))
-    # Plot analytical solutions
-    for c_t, color in zip(c, color_map):
-        ax.plot(x, c_t, linestyle="-", lw=1.5, c=color, zorder=10, clip_on=False)
-
-    # Add simulation results
-    color_map = iter(cm.rainbow(np.linspace(0, 1, len(time))))
-    for t, color in zip(time, color_map):
-        c_t = pvdfile.read_set_data(
-            t * 3.1536e7, "Cs", data_type="point", pointsetarray=[(i, 0, 0) for i in x]
-        )
-        plt.plot(
-            x,
-            c_t,
-            label="Sim. " + str(np.format_float_scientific(t)) + " years",
-            color=color,
-            marker="o",
-            markevery=5,
-            linestyle="",
-            zorder=10,
-            clip_on=False,
-        )
-
-    ax.legend(frameon=False, loc="upper right", numpoints=1, fontsize=12, ncol=1)
-
-    ax.xaxis.grid(color="gray", linestyle="dashed")
-    ax.yaxis.grid(color="gray", linestyle="dashed")
-
-
-plot_simulation_results()
-
+# %% Read and plot simulation results
+ms_DSD = ot.MeshSeries(out_dir / f"{name}.pvd")[1:]
+plot_results_and_errors(ms_DSD, c_diff_sorp_dec)
 
 # %% [markdown]
 # In the figure above, it can be seen that the numerical profiles and analytical solutions agree well at different times.
@@ -259,47 +185,25 @@ plot_simulation_results()
 # To evaluate the accuracy of numerical solution, the Euclidean norm of the approximate solution error $|| \mathbf{c} - \mathbf{c}^{\mathrm{exact}}||_{2} = \left(\sum\mathop{}_{\mkern-5mu i} |c_i - c_{i}^{\mathrm{exact}}|^2 \right)^{1/2}$ over the entire domain is calculated based on the exact analytical solution $\mathbf{c}^{\mathrm{exact}}$.
 
 # %%
-l2_norm_error = np.empty((0, 1))
+c_sim = ms_DSD.values("Cs")
+c_ref = c_diff_sorp_dec(ms_DSD[0].points[:, 0], ms_DSD.timevalues)
+l2_norm_error = np.log10(np.sum((c_sim - c_ref) ** 2, axis=-1) ** 0.5)
+np.testing.assert_array_less(l2_norm_error, -0.5)
 
-for c_ext, t in zip(c, time):
-    c_sim = pvdfile.read_set_data(
-        t * 3.1536e7, "Cs", data_type="point", pointsetarray=[(i, 0, 0) for i in x]
-    )
-
-    l2_norm_error_t = np.log10(np.sum((c_sim - c_ext) ** 2) ** 0.5)
-    l2_norm_error = np.vstack([l2_norm_error, l2_norm_error_t])
-
-
-# %%
-def plot_l2_norm_error():
-    fig, ax = plt.subplots()
-
-    ax.set_xlim((0, 1e6))
-    ax.set_ylim((-4, 0))
-
-    plt.xlabel("Time [year]")
-    plt.ylabel(r"Log $||\mathbf{c}-\mathbf{c^{exact}}||_{2}$")
-
-    ax.plot(
-        time, l2_norm_error, linestyle="-", lw=1.5, marker="o", zorder=10, clip_on=False
-    )
-
-    ax.xaxis.grid(color="gray", linestyle="dashed")
-    ax.yaxis.grid(color="gray", linestyle="dashed")
-
-
-# %%
-plot_l2_norm_error()
-
+fig, ax = plt.subplots()
+ax.set_xlabel("Time [year]")
+ax.set_ylabel(r"Log $||\mathbf{c}-\mathbf{c^{exact}}||_{2}$")
+ax.semilogx(ms_DSD.timevalues / 86400 / 365.25, l2_norm_error, "-o", lw=1.5)
+ax.grid(True, "both")
 
 # %% [markdown]
 # As the simulation time increases, the L$_2$ error norm decreases rapidly and evenually drops down to 10$^{-3}$.
 
 # %% [markdown]
-# # 2. Advection-diffusion-sorption-decay problem
+# # Advection-diffusion-sorption-decay problem
 
 # %% [markdown]
-# ## 2.1 Problem description
+# ## Problem description
 
 # %% [markdown]
 # From the preceding example, we further incorporate advective transport within OPA. The mass balance equation is thus extended into
@@ -311,24 +215,24 @@ plot_l2_norm_error()
 # with the Darcy velocity $q$ [m/s]. Note that the effect of velocity-dependent dispersion is neglected.
 
 # %% [markdown]
-# ## 2.2 Model setups
+# ## Model setups
 
 # %% [markdown]
 # The parameters used in this example are kept the same as in the preceding one (see the table below), except we addtionally consider a constant Darcy velocity of 2e-11 m/s through OPA.
 #
-# | Parameter | Value | Unit |
-# | :-: | :-: | :-: |
-# | Porosity $\phi$ | 0.12 | - |
-# | Pore diffusion coefficient $\mathrm{D_p}$ | 8.33e-11 | m$^2$/s |
-# | OPA bulk density $\rho$ | 2394 | kg/m$^3$ |
-# | Distribution coefficient $k_{\mathrm{d}}$ | 0.5 | m$^3$/kg |
-# | $^{135}$Cs half life $t_{1/2}$ | 2.3e6 | year |
-# | Darcy velocity $q$ | 2e-11 | m/s |
-# | Time step size $\Delta t$ | 1e3 | year |
-# | Grid size $\Delta x$ | 0.01 | m|
+# |                 Parameter                 |  Value   |   Unit   |
+# | :---------------------------------------: | :------: | :------: |
+# |              Porosity $\phi$              |   0.12   |    -     |
+# | Pore diffusion coefficient $\mathrm{D_p}$ | 8.33e-11 | m$^2$/s  |
+# |          OPA bulk density $\rho$          |   2394   | kg/m$^3$ |
+# | Distribution coefficient $k_{\mathrm{d}}$ |   0.5    | m$^3$/kg |
+# |      $^{135}$Cs half life $t_{1/2}$       |  2.3e6   |   year   |
+# |            Darcy velocity $q$             |  2e-11   |   m/s    |
+# |         Time step size $\Delta t$         |   1e3    |   year   |
+# |           Grid size $\Delta x$            |   0.01   |    m     |
 
 # %% [markdown]
-# ## 2.3 Results
+# ## Results
 
 # %% [markdown]
 # **Analytical solution**
@@ -357,75 +261,48 @@ plot_l2_norm_error()
 #
 # with the pore water velocity $v$ [m/s], i.e., $v = q \,/ \phi$, and $\mu = \alpha R$.
 
-# %% [markdown]
-# With the python script provided below, the $^{135}$Cs concentration profiles at $t$ = 10$^3$, 10$^4$, 10$^5$, and 10$^6$ years are analytically computed.
-
-
 # %%
-# Auxilary functions
-def H(x, t):
-    return 0.5 * np.exp((v - u) * x / 2 / D) * special.erfc(
-        (R * x - u * t) / 2 / (D * R * t) ** 0.5
-    ) + 0.5 * np.exp((v + u) * x / 2 / D) * special.erfc(
-        (R * x + u * t) / 2 / (D * R * t) ** 0.5
-    )
-
-
-def M(x, t):
-    return -c_ini * np.exp(-mu * t / R) * (
-        0.5 * special.erfc((R * x - v * t) / 2 / (D * R * t) ** 0.5)
-        + 0.5
-        * np.exp(v * x / D)
-        * special.erfc((R * x + v * t) / 2 / (D * R * t) ** 0.5)
-    ) + c_ini * np.exp(-mu * t / R)
-
-
 ###Input parameters###
-# Effective diffusion coefficient [m2/s]
-De = 1e-11
-# Porosity [-]
-phi = 0.12
-# Pore diffusion coefficient [m2/s]
-D = De / phi
-# Porous medium bulk density [kg/m3]
-rho = 2.394e3
-# Distribution coefficient [m3/kg]
-Kd = 0.5
-# Retardation factor [-]
-R = 1 + rho * Kd / phi
-# 135-Cs Half-life [year]
-half_life = 2.3e6
-# Decay constant [1/s]
-k = np.log(2) / half_life / 3.1536e7  # unit conversion from year to second
+De = 1e-11  #    Effective diffusion coefficient [m2/s]
+phi = 0.12  #    Porosity [-]
+D = De / phi  #  Pore diffusion coefficient [m2/s]
+rho = 2.394e3  # Porous medium bulk density [kg/m3]
+Kd = 0.5  #      Distribution coefficient [m3/kg]
+R = 1 + rho * Kd / phi  #   Retardation factor [-]
+half_life = 2.3e6  #        135-Cs Half-life [year]
+k = np.log(2) / half_life / 3.1536e7  # Decay constant [1/s]
 # Include advective mechansim
-# Darcy velocity [m/s]
-q = 2e-11
-# Pore water velocity [m/s]
-v = q / phi
-
-###Spatial and temporal discretization###
-# Distance [m]
-x = np.linspace(0, 2, num=201)
-# Time [year]
-time = np.array([1e3, 1e4, 1e5, 1e6])
+q = 2e-11  #    Darcy velocity [m/s]
+v = q / phi  #  Pore water velocity [m/s]
 
 ###Initial condition and boundary conditions###
-# Initial condition [mol/L]
-c_ini = 0
-# Inflow concentration [mol/L]
-c0 = 1
+c_ini = 0  #    Initial condition [mol/L]
+c0 = 1  #       Inflow concentration [mol/L]
 
 ###Intermediate parameters###
 mu = k * R
 u = v * (1 + 4 * mu * D / v**2) ** 0.5
 
-###Analytical solution###
-c = np.empty((0, x.size))
-for t in time * 3.1536e7:  # unit conversion from year to second
-    c_t = c0 * H(x, t) + M(x, t)
-    c = np.vstack([c, c_t])
 
-plot_analytical_solutions()
+def c_adv_diff_sorp_dec(x_arr: np.ndarray, t_arr: np.ndarray) -> np.ndarray:
+    "Analytical solution"
+
+    def H(x_arr: np.ndarray, t_arr: np.ndarray):
+        x, t = (x_arr[:, None], t_arr[None, :])
+        return 0.5 * np.exp((v - u) * x / 2 / D) * erfc(
+            (R * x - u * t) / 2 / (D * R * t) ** 0.5
+        ) + 0.5 * np.exp((v + u) * x / 2 / D) * erfc(
+            (R * x + u * t) / 2 / (D * R * t) ** 0.5
+        )
+
+    def M(x_arr: np.ndarray, t_arr: np.ndarray):
+        x, t = (x_arr[:, None], t_arr[None, :])
+        return -c_ini * np.exp(-mu * t / R) * (
+            0.5 * erfc((R * x - v * t) / 2 / (D * R * t) ** 0.5)
+            + 0.5 * np.exp(v * x / D) * erfc((R * x + v * t) / 2 / (D * R * t) ** 0.5)
+        ) + c_ini * np.exp(-mu * t / R)
+
+    return c0 * (H(x_arr, t_arr) + M(x_arr, t_arr)).T
 
 
 # %% [markdown]
@@ -438,22 +315,16 @@ plot_analytical_solutions()
 
 # %%
 # Run OGS simulation
-prj_name = "1D_AdvectionDiffusionSorptionDecay"
-prj_file = f"../AdvectionDiffusionSorptionDecay/{prj_name}.prj"
+name = "AdvectionDiffusionSorptionDecay"
+model = ot.Project(
+    input_file=f"../{name}/1D_{name}.prj", output_file=out_dir / f"{name}_modified.prj"
+)
+model.write_input()
+model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m ../{name}/")
 
-out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
-
-print(f"ogs {prj_file} > {prj_name}.txt")
-run(f"ogs {prj_file} -o {out_dir} > {prj_name}.txt", shell=True, check=True)
-
-# Read simulation results
-pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", dim=1)
-
-# Plot simulation results
-plot_simulation_results()
-
+# %% Read simulation results
+ms_ADSD = ot.MeshSeries(out_dir / f"1D_{name}.pvd")[1:]
+plot_results_and_errors(ms_ADSD, c_adv_diff_sorp_dec)
 
 # %% [markdown]
 # As shown in the figure above, the numerical and analytical solutions at different times reach in a good agreement.
