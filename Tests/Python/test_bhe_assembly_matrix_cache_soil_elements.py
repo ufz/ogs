@@ -40,7 +40,7 @@ def test_assembly_optimization(tmp_path, capfd, monkeypatch):
         outdir.mkdir()
         with monkeypatch.context() as ctx:
             ctx.setenv("OMP_NUM_THREADS", "1")  # enforce a single thread
-            status = cli.ogs(testsrcdir / prj_or_patch, o=outdir)
+            status = cli.ogs((testsrcdir / prj_or_patch).as_posix(), o=outdir)
 
         captured = capfd.readouterr()
         with (outdir / "ogs.log").open("w") as fh:

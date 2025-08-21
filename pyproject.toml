@@ -19,7 +19,22 @@ repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
 [project.optional-dependencies]
-test = ["pytest", "numpy"]
+test = [
+  "pytest",
+  "numpy",
+  # Use no-X11 version on Linux:
+  "gmsh==4.13.1.dev1; platform_system == 'Linux'",
+  "gmsh>=4.12.0; platform_system != 'Linux'",
+  "ogstools",
+]
+
+[tool.uv.sources]
+gmsh = { index = "gmsh-nox", marker = "platform_system == 'Linux'" }
+
+[[tool.uv.index]]
+name = "gmsh-nox"
+url = "https://gmsh.info/python-packages-dev-nox"
+explicit = true
 
 [tool.scikit-build]
 build-dir = "_skbuild/{wheel_tag}"
@@ -62,6 +77,7 @@ skip = ["*musllinux*"]
 test-extras = "test"
 test-command = "pytest {project}/Tests/Python"
 build-verbosity = 1
+build-frontend = "build[uv]"
 
 [tool.cibuildwheel.linux]
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
