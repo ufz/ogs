@@ -18,13 +18,12 @@ documentation = "https://opengeosys.org/docs"
 repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
-[project.optional-dependencies]
-test = [
-  "pytest",
-  "numpy",
+[dependency-groups]
+dev = ["pytest", "numpy"]
+dev-all = [
+  { include-group = "dev" },
   # Use no-X11 version on Linux:
   "gmsh==4.13.1.dev1; platform_system == 'Linux'",
-  "gmsh>=4.12.0; platform_system != 'Linux'",
   "ogstools",
 ]
 
@@ -74,12 +73,17 @@ markers = [
 archs = "auto64"
 build = ["cp3{9,10,11,12,13}-*"]
 skip = ["*musllinux*"]
-test-extras = "test"
+test-groups = "dev-all"
 test-command = "pytest {project}/Tests/Python"
 build-verbosity = 1
 build-frontend = "build[uv]"
 
 [tool.cibuildwheel.linux]
+# On Linux there is no X11 which requires gmsh-nox which comes from a custom
+# source which is not respected during cibuildwheel testing. Therefore test
+# without ogstools. See
+# https://github.com/astral-sh/uv/issues/11989#issuecomment-2702122011
+test-groups = "dev"
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
 before-all = "dnf install -y epel-release && dnf install -y ccache"
 # See https://github.com/NixOS/patchelf/issues/446, wait for patchelf 0.19
