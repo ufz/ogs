@@ -136,10 +136,6 @@ bool Simulation::executeTimeStep()
         time_loop.calculateNextTimeStep();
         return result;
     }
-    if (time_loop.currentTime() >= time_loop.endTime())
-    {
-        time_loop.outputLastTimeStep();
-    }
     return false;
 }
 

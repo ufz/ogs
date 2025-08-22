@@ -191,6 +191,7 @@ OGSMesh getMesh(std::string const& name)
 
 void finalize()
 {
+    simulation->outputLastTimeStep();
     simulation.reset(nullptr);
 
     // TODO don't use global project directory, shared among different OGS
