@@ -166,5 +166,5 @@ AddTest(
 )
 
 if( OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCell.py RUNTIME 1300)
+    NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF.py RUNTIME 1300)
 endif()
