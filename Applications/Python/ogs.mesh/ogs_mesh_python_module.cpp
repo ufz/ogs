@@ -10,20 +10,13 @@
  *
  */
 
-#include <algorithm>
 #include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <spdlog/spdlog.h>
 
+#include <algorithm>
 #include <numeric>
-#include <range/v3/numeric.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/enumerate.hpp>
-#include <range/v3/view/indirect.hpp>
-#include <range/v3/view/map.hpp>
-#include <range/v3/view/transform.hpp>
-#include <vector>
 
 #include "BaseLib/ExportSymbol.h"
 #include "BaseLib/Logging.h"
@@ -35,13 +28,32 @@ PYBIND11_MODULE(mesh, m)
 {
     m.attr("__name__") = "ogs.mesh";
     m.doc() = "pybind11 ogs mesh example plugin";
+
+    pybind11::enum_<MeshLib::MeshItemType>(m, "MeshItemType")
+        .value("Node", MeshLib::MeshItemType::Node)
+        .value("Edge", MeshLib::MeshItemType::Edge)
+        .value("Face", MeshLib::MeshItemType::Face)
+        .value("Cell", MeshLib::MeshItemType::Cell)
+        .value("IntegrationPoint", MeshLib::MeshItemType::IntegrationPoint)
+        .export_values()
+        // Add nice string conversion
+        .def("__str__",
+             [](MeshLib::MeshItemType t) { return std::string(toString(t)); });
+
     pybind11::class_<OGSMesh>(m, "OGSMesh")
         .def("getPointCoordinates", &OGSMesh::getPointCoordinates,
              "get node coordinates")
         .def("getCells", &OGSMesh::getCells,
              pybind11::return_value_policy::copy, "get cells")
-        .def("getPointDataArray", &OGSMesh::getPointDataArray, "get point data")
-        .def("setPointDataArray", &OGSMesh::setPointDataArray, "set point data")
-        .def("setCellDataArray", &OGSMesh::setCellDataArray, "set cell data")
-        .def("getCellDataArray", &OGSMesh::getCellDataArray, "get cell data");
+        .def("dataArrayNames", &OGSMesh::getDataArrayNames,
+             "get names of all data arrays / property "
+             "vectors stored in the mesh")
+        .def("meshItemType", &OGSMesh::meshItemType, pybind11::arg("name"),
+             "returns MeshItemType")
+        .def("dataArray", &OGSMesh::dataArray_dispatch,
+             pybind11::return_value_policy::reference, pybind11::arg("name"),
+             pybind11::arg("dtype"),
+             "Access a data array / property vector (accesses OGS memory "
+             "directly using numpy array with appropriate shape)")
+        .def("materialIDs", &OGSMesh::materialIDs, "get material ids");
 }
