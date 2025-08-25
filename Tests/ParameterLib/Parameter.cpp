@@ -23,6 +23,7 @@
 #include "MeshLib/PropertyVector.h"
 #include "MeshLib/Utils/addPropertyToMesh.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/CurveScaledParameter.h"
 #include "ParameterLib/GroupBasedParameter.h"
 #include "Tests/TestTools.h"
@@ -259,4 +260,106 @@ TEST_F(ParameterLibParameter, GetNodalValuesOnElement_curveScaledNode)
 
     ASSERT_TRUE(testNodalValuesOfElement(meshes[0]->getElements(),
                                          expected_value, *parameter, t));
+}
+
+TEST_F(ParameterLibParameter,
+       GetNamedOrCreateInlineParameter_EmptyInlineValuesThrows)
+{
+    // empty inline values
+    auto const xml =
+        "<property>"
+        "  <dry_thermal_conductivity></dry_thermal_conductivity>"
+        "</property>";
+
+    auto xml_ptree = Tests::readXml(xml);
+    BaseLib::ConfigTree config_tree(std::move(xml_ptree), "",
+                                    BaseLib::ConfigTree::onerror,
+                                    BaseLib::ConfigTree::onwarning);
+
+    std::vector<std::unique_ptr<ParameterBase>> parameters;
+
+    EXPECT_THROW((void)getNamedOrCreateInlineParameter(
+                     config_tree.getConfigSubtree("property"),
+                     parameters,
+                     "SaturationWeightedThermalConductivity",
+                     "dry_thermal_conductivity",
+                     "dry_inline"),
+                 std::runtime_error);
+}
+
+TEST_F(ParameterLibParameter,
+       GetNamedOrCreateInlineParameter_InlineConstantCreated)
+{
+    auto const xml =
+        "<property>"
+        "  <dry_thermal_conductivity>1.0 2.0</dry_thermal_conductivity>"
+        "</property>";
+
+    auto xml_ptree = Tests::readXml(xml);
+    BaseLib::ConfigTree config_tree(std::move(xml_ptree), "",
+                                    BaseLib::ConfigTree::onerror,
+                                    BaseLib::ConfigTree::onwarning);
+
+    std::vector<std::unique_ptr<ParameterBase>> parameters;
+
+    auto& p = getNamedOrCreateInlineParameter(
+        config_tree.getConfigSubtree("property"),
+        parameters,
+        "SaturationWeightedThermalConductivity",
+        "dry_thermal_conductivity",
+        "dry_inline");
+
+    ASSERT_EQ(parameters.size(), 1u);
+    auto const& created = parameters.back();
+    EXPECT_EQ(created->name,
+              "SaturationWeightedThermalConductivity_dry_inline");
+
+    double const t = 0.0;
+    ParameterLib::SpatialPosition x;
+    auto const values = p(t, x);
+    ASSERT_EQ(values.size(), 2u);
+    EXPECT_EQ(values[0], 1.0);
+    EXPECT_EQ(values[1], 2.0);
+}
+
+TEST_F(ParameterLibParameter,
+       GetNamedOrCreateInlineParameter_InlineParameterCreated)
+{
+    std::string pname = "lambda_dry";
+    auto const xml =
+        "<property>"
+        "  <dry_thermal_conductivity>" +
+        pname +
+        "</dry_thermal_conductivity>"
+        "</property>";
+
+    auto xml_ptree = Tests::readXml(xml.c_str());
+    BaseLib::ConfigTree config_tree(std::move(xml_ptree), "",
+                                    BaseLib::ConfigTree::onerror,
+                                    BaseLib::ConfigTree::onwarning);
+
+    std::vector<std::unique_ptr<ParameterBase>> parameters;
+    const std::vector<double> lambda_dry = {1.23456, 2.34567};
+
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>(
+            pname, std::move(lambda_dry)));
+
+    auto& p = getNamedOrCreateInlineParameter(
+        config_tree.getConfigSubtree("property"),
+        parameters,
+        "SaturationWeightedThermalConductivity",
+        "dry_thermal_conductivity",
+        "dry_inline");
+
+    ASSERT_EQ(parameters.size(), 1u);
+    EXPECT_EQ(p.name, pname);
+
+    double const t = 0.0;
+    ParameterLib::SpatialPosition x;
+    auto const values = p(t, x);
+
+    ASSERT_EQ(values.size(), lambda_dry.size());
+    EXPECT_EQ(values[0], lambda_dry[0]);
+    EXPECT_EQ(values[1], lambda_dry[1]);
 }
