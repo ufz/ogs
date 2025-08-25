@@ -49,6 +49,8 @@ Python wheel builds are driven by [scikit-build-core](https://scikit-build-core.
 
 The entry point is `pyproject.toml` in the root directory. It uses the `wheel` CMake preset. The preset can be overridden and even other CMake options can be passed via the environment variable `CMAKE_ARGS` (see also the [scikit-build-core documentation](https://scikit-build-core.readthedocs.io/en/latest/configuration/index.html#configuring-cmake-arguments-and-defines)).
 
+Requires `pip` >= 25.1!
+
 You can locally develop and test with the following setup:
 
 ```bash
@@ -57,12 +59,12 @@ python3 -m venv .venv
 # Activate the environment
 source .venv/bin/activate
 # Install (build) the local Python project
-pip install -v .[test]
+pip install -v --group dev-all
 ...
 Successfully installed ogs-6.4.2.dev1207
 
 # To build with additional CMake arguments, e.g.:
-pip install -v .[test] --config-settings=cmake.define.OGS_BUILD_PROCESSES=SteadyStateDiffusion"
+pip install -v --group dev-all --config-settings=cmake.define.OGS_BUILD_PROCESSES=SteadyStateDiffusion"
 ```
 
 The `pip install`-step starts a new CMake-based ogs build in `_skbuild`-subdirectory (inside the source code) using the `wheel`-preset. When the CMake build is done it installs the wheel into the activated virtual environment and you can interact with it.
@@ -95,7 +97,7 @@ python3
 >>> sim.initialize(["", "--help"])
 ```
 
-If you make modifications on the C++ side you need to run `make` (regular build) or `pip install .[test]` (wheel build) again. Modifications on the Python tests are immediately available to `pytest`.
+If you make modifications on the C++ side you need to run `make` (regular build) or `pip install --group dev-all` (wheel build) again. Modifications on the Python tests are immediately available to `pytest`.
 
 ## Module structure
 

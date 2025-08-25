@@ -72,7 +72,7 @@ publish wheels:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
     - when: never
   script:
-    - PEP517_BUILD_BACKEND=1 uvx --from build pyproject-build --sdist --outdir wheelhouse
+    - uvx --from build pyproject-build --sdist --outdir wheelhouse
     - >
       uvx twine upload
       ${PYPI_REPO}
@@ -87,7 +87,7 @@ publish wheels to pypi (dev):
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       when: manual
   script:
-    - PEP517_BUILD_BACKEND=1 uvx --from build pyproject-build --sdist --outdir wheelhouse
+    - uvx --from build pyproject-build --sdist --outdir wheelhouse
     - >
       uvx twine upload --repository pypi
       --username __token__ --password ${PYPI_TOKEN}

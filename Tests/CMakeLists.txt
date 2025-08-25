@@ -55,11 +55,9 @@ set_source_files_properties(
 set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
 append_source_files(TEST_SOURCES ParameterLib)
 
-if(NOT OGS_BUILD_WHEEL)
-    append_source_files(TEST_SOURCES ProcessLib)
-    if(OGS_BUILD_PROCESS_TH2M)
-        append_source_files(TEST_SOURCES ProcessLib/TH2M)
-    endif()
+append_source_files(TEST_SOURCES ProcessLib)
+if(OGS_BUILD_PROCESS_TH2M)
+    append_source_files(TEST_SOURCES ProcessLib/TH2M)
 endif()
 
 append_source_files(TEST_SOURCES ProcessLib/Graph)
@@ -96,7 +94,7 @@ target_sources(
 target_link_libraries(
     testrunner
     PRIVATE
-        $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ApplicationsLib>
+        ApplicationsLib
         ApplicationsFileIO
         autocheck
         gmock
@@ -109,8 +107,8 @@ target_link_libraries(
         MeshToolsLib
         NumLib
         ParameterLib
-        $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:ProcessLib>
-        $<$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>:Processes>
+        ProcessLib
+        Processes
         TestInfoLib
         VTK::FiltersGeneral
         VTK::FiltersSources
@@ -121,6 +119,7 @@ target_link_libraries(
         $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
         $<$<TARGET_EXISTS:petsc>:petsc>
+        $<$<TARGET_EXISTS:Python::Python>:Python::Python>
     PUBLIC $<$<BOOL:${OGS_USE_MFRONT}>:OgsMFrontBehaviourForUnitTests>
 )
 

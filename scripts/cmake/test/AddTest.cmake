@@ -135,7 +135,10 @@ function(AddTest)
     endif()
 
     # check requirements, disable if not met
-    if(NOT TARGET ${AddTest_EXECUTABLE})
+
+    # When testing the installed wheel assume executable is in PATH
+    # from venv.
+    if(NOT TARGET ${AddTest_EXECUTABLE} AND NOT OGS_BUILD_WHEEL)
         return()
     endif()
     if(${AddTest_REQUIREMENTS})
@@ -222,9 +225,11 @@ function(AddTest)
     endif()
 
     # -----------
-    if(TARGET ${AddTest_EXECUTABLE})
+    if(TARGET ${AddTest_EXECUTABLE} AND NOT OGS_BUILD_WHEEL)
         set(AddTest_EXECUTABLE_PARSED $<TARGET_FILE:${AddTest_EXECUTABLE}>)
     else()
+        # When testing the installed wheel assume executable is in PATH
+        # from venv.
         set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
     endif()
 
@@ -278,8 +283,10 @@ function(AddTest)
         _set_omp_test_properties()
     endif()
 
-    add_dependencies(ctest ${AddTest_EXECUTABLE})
-    add_dependencies(ctest-large ${AddTest_EXECUTABLE})
+    if(NOT OGS_BUILD_WHEEL)
+        add_dependencies(ctest ${AddTest_EXECUTABLE})
+        add_dependencies(ctest-large ${AddTest_EXECUTABLE})
+    endif()
 
     if(OGS_WRITE_BENCHMARK_COMMANDS)
         string(

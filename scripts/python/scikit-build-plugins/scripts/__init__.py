@@ -4,9 +4,15 @@ import sys
 from pathlib import Path
 
 sys.path.append(str(Path("Applications").joinpath("Python").absolute()))
-from ogs._internal.provide_ogs_cli_tools_via_wheel import (
-    pyproject_get_binaries,
-)
+from ogs._internal.binaries_list import binaries_list
+
+
+def pyproject_get_binaries():
+    return {
+        binary: f"ogs._internal.provide_ogs_cli_tools_via_wheel:{binary}"
+        for binary in binaries_list
+    }
+
 
 __all__ = ["dynamic_metadata"]
 

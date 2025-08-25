@@ -84,8 +84,6 @@ int initOGS(std::vector<std::string>& argv_str)
              time_str);
     }
 
-    std::optional<ApplicationsLib::TestDefinition> test_definition{
-        std::nullopt};
     auto ogs_status = EXIT_SUCCESS;
 
     try
@@ -121,13 +119,15 @@ int executeSimulation()
     }
 
     auto ogs_status = EXIT_SUCCESS;
+    std::optional<ApplicationsLib::TestDefinition> test_definition{
+        std::nullopt};
 
     try
     {
         run_time.start();
         bool solver_succeeded = simulation->executeSimulation();
         simulation->outputLastTimeStep();
-        // TODO: test definition ?
+        test_definition = simulation->getTestDefinition();
 
         if (solver_succeeded)
         {
@@ -155,7 +155,7 @@ int executeSimulation()
         return EXIT_FAILURE;
     }
 
-    return ogs_status;
+    return Simulation::runTestDefinitions(test_definition);
 }
 
 int executeTimeStep()

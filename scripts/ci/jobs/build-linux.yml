@@ -66,3 +66,25 @@ build linux ubuntu perf:
     CTEST_PARALLEL_LEVEL: 1 # Run ctests serially
     CTEST_TIMEOUT: 480
     OGS_PERFORMANCE_TESTS_ALLOWED_TO_FAIL: false
+
+build with pip:
+  stage: build
+  tags: [shell, envinf]
+  needs: []
+  extends:
+    - .test-artifacts
+  script:
+    - python -m venv .venv
+    - source .venv/bin/activate
+    - pip install --upgrade pip
+    - pip install -e . --group dev -v
+    - ln -s _skbuild build # .test-artifacts expects a directory "build"
+    - pytest
+    - ctest --test-dir _skbuild/cp* -LE large
+
+# WIP: standalone ctest config with:
+# cd build-dir
+# fd CTestTestfile.cmake -E _deps -0 | rsync -a --files-from=- --from0 ./ /tmp/ctestfiles/
+# ctest --test-dir /tmp/ctestfiles
+#
+# although some benchmarks still have the build-dir hard-coded

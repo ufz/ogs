@@ -5,12 +5,16 @@ message(STATUS "┌─ PythonSetup.cmake")
 list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 
 set(_python_componets Interpreter Development.Module)
-if(NOT OGS_BUILD_WHEEL)
+# manylinux_x image used in cibuildwheel on Linux does not contain
+# the python library.
+if(NOT (LINUX AND DEFINED ENV{CIBUILDWHEEL}))
     list(APPEND _python_componets Development.Embed)
 endif()
 
 if(OGS_USE_PIP)
     set(LOCAL_VIRTUALENV_DIR ${PROJECT_BINARY_DIR}/.venv CACHE INTERNAL "")
+    # The test environment from Tests/Data is used, not the top-level environment
+    # which is used for building wheels only.
     set(ENV{UV_PROJECT} ${PROJECT_SOURCE_DIR}/Tests/Data)
     set(ENV{UV_PROJECT_ENVIRONMENT} ${LOCAL_VIRTUALENV_DIR})
     set(ENV{UV_FROZEN} 1)

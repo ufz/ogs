@@ -4,10 +4,6 @@ function(OgsTest)
         return()
     endif()
 
-    if(OGS_BUILD_WHEEL)
-        return()
-    endif()
-
     set(options DISABLED)
     set(oneValueArgs PROJECTFILE RUNTIME)
     set(multiValueArgs WRAPPER PROPERTIES LABELS)
@@ -111,10 +107,17 @@ macro(_ogs_add_test TEST_NAME)
         "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
     )
 
+    set(_ogs_exe $<TARGET_FILE:ogs>)
+    if(OGS_BUILD_WHEEL)
+        # When testing the installed wheel assume executable is in PATH
+        # from venv.
+        set(_ogs_exe ogs)
+    endif()
+
     add_test(
         NAME ${TEST_NAME}
         COMMAND
-            ${CMAKE_COMMAND} -DEXECUTABLE=$<TARGET_FILE:ogs>
+            ${CMAKE_COMMAND} -DEXECUTABLE=${_ogs_exe}
             "-DEXECUTABLE_ARGS=${_exe_args}"
             "-DWRAPPER_COMMAND=${OgsTest_WRAPPER}"
             -DWORKING_DIRECTORY=${OgsTest_BINARY_DIR}

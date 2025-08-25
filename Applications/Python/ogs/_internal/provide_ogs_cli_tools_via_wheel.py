@@ -2,89 +2,14 @@ import os
 import platform
 import subprocess
 import sys
-from pathlib import Path
 
 from . import OGS_USE_PATH
+from .binaries_list import binaries_list
+from .get_bin_dir import get_bin_dir
 
-binaries_list = [
-    "addDataToRaster",
-    "AddElementQuality",
-    "AddFaultToVoxelGrid",
-    "AddLayer",
-    "appendLinesAlongPolyline",
-    "AssignRasterDataToMesh",
-    "checkMesh",
-    "ComputeNodeAreasFromSurfaceMesh",
-    "computeSurfaceNodeIDsInPolygonalRegion",
-    "constructMeshesFromGeometry",
-    "convertGEO",
-    "convertToLinearMesh",
-    "convertVtkDataArrayToVtkDataArray",
-    "CreateAnchors",
-    "CreateBoundaryConditionsAlongPolylines",
-    "createIntermediateRasters",
-    "createLayeredMeshFromRasters",
-    "createMeshElemPropertiesFromASCRaster",
-    "createNeumannBc",
-    "createQuadraticMesh",
-    "createRaster",
-    "createTetgenSmeshFromRasters",
-    "editMaterialID",
-    "ExtractBoundary",
-    "ExtractMaterials",
-    "ExtractSurface",
-    "generateGeometry",
-    "generateMatPropsFromMatID",
-    "generateStructuredMesh",
-    "geometryToGmshGeo",
-    "GMSH2OGS",
-    "GocadSGridReader",
-    "GocadTSurfaceReader",
-    "identifySubdomains",
-    "IntegrateBoreholesIntoMesh",
-    "ipDataToPointCloud",
-    "Layers2Grid",
-    "MapGeometryToMeshSurface",
-    "mergeMeshToBulkMesh",
-    "Mesh2Raster",
-    "MeshMapping",
-    "MoveGeometry",
-    "MoveMesh",
-    "moveMeshNodes",
-    "mpmetis",
-    "NodeReordering",
-    "ogs",
-    "OGS2VTK",
-    "partmesh",
-    "postLIE",
-    "PVD2XDMF",
-    "pvtu2vtu",
-    "queryMesh",
-    "Raster2ASC",
-    "Raster2Mesh",
-    "RemoveGhostData",
-    "removeMeshElements",
-    "RemoveUnusedPoints",
-    "ReorderMesh",
-    "ResetPropertiesInPolygonalRegion",
-    "reviseMesh",
-    "scaleProperty",
-    "swapNodeCoordinateAxes",
-    "TecPlotTools",
-    "TIN2VTK",
-    "VTK2OGS",
-    "VTK2TIN",
-    "vtkdiff",
-    "Vtu2Grid",
-    "xdmfdiff",
-]
-
-
-def pyproject_get_binaries():
-    return {
-        binary: f"ogs._internal.provide_ogs_cli_tools_via_wheel:{binary}"
-        for binary in binaries_list
-    }
+OGS_BIN_DIR = get_bin_dir()
+if platform.system() == "Windows":
+    os.add_dll_directory(OGS_BIN_DIR)
 
 
 # Not used when OGS_USE_PATH is true!
@@ -114,31 +39,22 @@ def ogs_with_args(argv):
     return return_code
 
 
-if "PEP517_BUILD_BACKEND" not in os.environ:
-    # Here, we assume that this script is installed, e.g., in a virtual environment
-    # alongside a "bin" directory.
-    OGS_BIN_DIR = Path(__file__).parent.parent.parent / "bin"  # installed wheel
-    if not OGS_BIN_DIR.exists():
-        OGS_BIN_DIR = OGS_BIN_DIR.parent  # build directory
+def _program(name, args):
+    exe = OGS_BIN_DIR / name
+    env = None  # by default use unmodified environment
+    if OGS_USE_PATH:
+        exe = name
+        env = os.environ.copy()
+        # prevent infinite recursion if OGS in PATH happens to be this very
+        # script
+        env["OGS_USE_PATH"] = "0"
+        print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
+    return subprocess.run([exe] + args, env=env).returncode  # noqa: PLW1510
 
-    if platform.system() == "Windows":
-        os.add_dll_directory(OGS_BIN_DIR)
 
-    def _program(name, args):
-        exe = OGS_BIN_DIR / name
-        env = None  # by default use unmodified environment
-        if OGS_USE_PATH:
-            exe = name
-            env = os.environ.copy()
-            # prevent infinite recursion if OGS in PATH happens to be this very
-            # script
-            env["OGS_USE_PATH"] = "0"
-            print(f"OGS_USE_PATH is true: {name} from $PATH is used!")
-        return subprocess.run([exe] + args, env=env).returncode  # noqa: PLW1510
-
-    FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
-    for f in binaries_list:
-        if f == "ogs" and not OGS_USE_PATH:
-            continue  # provided by separate function
-        # When OGS_USE_PATH is true then ogs()-function above is not used!
-        exec(FUNC_TEMPLATE.format(f))
+FUNC_TEMPLATE = """def {0}(): raise SystemExit(_program("{0}", sys.argv[1:]))"""
+for f in binaries_list:
+    if f == "ogs" and not OGS_USE_PATH:
+        continue  # provided by separate function
+    # When OGS_USE_PATH is true then ogs()-function above is not used!
+    exec(FUNC_TEMPLATE.format(f))

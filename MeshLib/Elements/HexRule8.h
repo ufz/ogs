@@ -50,10 +50,30 @@ public:
     static const CellType cell_type = CellType::HEX8;
 
     /// Constant: Local node index table for faces
-    static const unsigned face_nodes[6][4];
+    constexpr static const unsigned face_nodes[6][4] = {
+        {0, 3, 2, 1},  // Face 0
+        {0, 1, 5, 4},  // Face 1
+        {1, 2, 6, 5},  // Face 2
+        {2, 3, 7, 6},  // Face 3
+        {3, 0, 4, 7},  // Face 4
+        {4, 5, 6, 7}   // Face 5
+    };
 
     /// Constant: Local node index table for edge
-    static const unsigned edge_nodes[12][2];
+    constexpr static const unsigned edge_nodes[12][2] = {
+        {0, 1},  // Edge 0
+        {1, 2},  // Edge 1
+        {2, 3},  // Edge 2
+        {0, 3},  // Edge 3
+        {4, 5},  // Edge 4
+        {5, 6},  // Edge 5
+        {6, 7},  // Edge 6
+        {4, 7},  // Edge 7
+        {0, 4},  // Edge 8
+        {1, 5},  // Edge 9
+        {2, 6},  // Edge 10
+        {3, 7}   // Edge 11
+    };
 
     /// Returns the i-th edge of the element.
     using EdgeReturn = MeshLib::LinearEdgeReturn;
