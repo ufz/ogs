@@ -22,10 +22,10 @@
 #
 
 # %% [markdown]
-# # 1. Two-layer diffusion problem
+# # Two-layer diffusion problem
 
 # %% [markdown]
-# ## 1.1 Problem description
+# ## Problem description
 
 # %% [markdown]
 # In waste repositories, radionuclide release can be expected after rupture of waste canisters to occur in the engineered barrier system, which contains multiple layers of materials and host rocks. In this benchamrk, a tracer (HTO) diffusion process through a two-layer barrier is simulated. The barrier is comprised of a bentonite buffer layer and an opalinus clay (OPA) layer.
@@ -39,26 +39,26 @@
 # where $c$ [mol/m$^3$] represents the HTO concentration. $\mathrm{D_p}$ [m$^2$/s] is the pore diffusion coefficient for HTO, and $\phi$ [-] is the porosity of the media.
 
 # %% [markdown]
-# ## 1.2 Model setups
+# ## Model setups
 
 # %% [markdown]
 # The computational domain is assumed to be 20 meters long. It consists of a 0.625 meter thick layer of bentonite buffer, and the rest is filled with OPA. The simulation time is one million years. Initially, the entire domain is assumed to be solute free, i.e. $c_{\mathrm{ini}}(x, 0) = 0$. The inlet concentration is held at 1 mol/L throughout the simulation, i.e. $c(0, t) = 1$ mol/L. In the numerical model, the spatial domain is discretized by linear line elements with a length of 0.005 meter each. The time step size of 1000 years is used in the simulation. The discretized governing equation is iteratively solved using the Newton-Raphson method.
 #
 # The table below summarizes the parameters used in the simulation.
 #
-# | Parameter | Value | Unit |
-# | :-: | :-: | :-: |
-# | Porosity of bentonite $\phi_{\mathrm{b}}$ | 0.36 | - |
-# | Porosity of OPA $\phi_{\mathrm{OPA}}$ | 0.12 | - |
+# |                         Parameter                          |  Value   |  Unit   |
+# | :--------------------------------------------------------: | :------: | :-----: |
+# |         Porosity of bentonite $\phi_{\mathrm{b}}$          |   0.36   |    -    |
+# |           Porosity of OPA $\phi_{\mathrm{OPA}}$            |   0.12   |    -    |
 # | Pore diffusion coefficient in bentonite $\mathrm{D_{p,b}}$ | 5.55e-10 | m$^2$/s |
-# | Pore diffusion coefficient in OPA $\mathrm{D_{p,OPA}}$ | 8.33e-11 | m$^2$/s |
-# | Time step size $\Delta t$ | 1e3 | year |
-# | Grid size $\Delta x$ | 0.01 | m|
+# |   Pore diffusion coefficient in OPA $\mathrm{D_{p,OPA}}$   | 8.33e-11 | m$^2$/s |
+# |                 Time step size $\Delta t$                  |   1e3    |  year   |
+# |                    Grid size $\Delta x$                    |   0.01   |    m    |
 #
 # Notes: The parameter values are sourced from Nagra (2002).
 
 # %% [markdown]
-# ## 1.3 Results
+# ## Results
 
 # %% [markdown]
 # **Analytical solution**
@@ -72,66 +72,59 @@
 # %%
 import os
 from pathlib import Path
-from subprocess import run
 
 import matplotlib.pyplot as plt
 import numpy as np
+import ogstools as ot
 import pandas as pd
-import vtuIO
 from IPython.display import Image, display
-from matplotlib.pyplot import cm
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # %%
-# plot semi-analytical solution
-# Time [year]
-time = np.array([1e3, 1e4, 1e5, 1e6])
-
-result_file = "./SemiAnalyticalSolutionResults.csv"
+ref_data_file = "./SemiAnalyticalSolutionResults.csv"
 soln = pd.read_csv(
-    result_file,
-    sep=",",
-    header=None,
-    skiprows=0,
-    names=["x", "1e3", "1e4", "1e5", "1e6"],
-    index_col=False,
-)
+    ref_data_file, sep=",", header=None, skiprows=0,
+    names=["x", "1e3", "1e4", "1e5", "1e6"], index_col=False,
+)  # fmt: skip
 
 
-def plot_analytical_solutions():
-    fig, ax = plt.subplots()
+def plot_results(ms: ot.MeshSeries, var: ot.variables.Variable) -> plt.Figure:
+    "Plot numerical results against analytical solution if available"
+    n_cols = 2 if var.data_name == "HTO" else 1
+    figsize = (11, 4) if n_cols == 2 else (8, 6)
+    fig_res, axs_ = plt.subplots(1, n_cols, figsize=figsize)
+    axs: list[plt.Axes] = [axs_] if n_cols == 1 else axs_
+    labels = [f"{tv:.0e} a" for tv in ms.timevalues]
+    ot.plot.line(ms, var, ax=axs[0], labels=labels)
+    axs[0].plot([], [], "-k", label="OGS-numerical")
 
-    ax.set_xlim((0, 20))
-    ax.set_ylim((0, 1))
+    if n_cols == 2:
+        axs[0].plot([], [], "--k", label="semi-analytical")
+        data = soln[["1e3", "1e4", "1e5", "1e6"]].to_numpy().T
+        x = ms[0].points[:, 0]
+        ref_vals = np.asarray([np.interp(x, soln["x"], vals) for vals in data])
+        abs_err = ms[var.data_name] - ref_vals
 
-    plt.xlabel("Distance [m]")
-    plt.ylabel("HTO concentration [mol/L]")
+        ms.point_data["ref_vals"] = ref_vals
+        ms.point_data[var.abs_error.data_name] = abs_err
+        ot.plot.line(ms, "ref_vals", ax=axs[0], ls="--")
+        ot.plot.line(ms, var.abs_error, ax=axs[1])
+        axs[1].set_yscale("symlog", linthresh=0.001)
 
-    color_map = iter(cm.rainbow(np.linspace(0, 1, len(time))))
+        max_errors = [2e-1, 2e-2, 4e-3, 5e-4]  # per timevalue
+        assert np.all(np.abs(abs_err.T) <= max_errors)
 
-    # represent the bentonite layer
-    plt.axvspan(0, 0.625, facecolor="royalblue", alpha=0.2)
-    # represent the OPA host rock
-    plt.axvspan(0.625, 20, facecolor="orange", alpha=0.05)
+    axs[0].legend(loc="best", fontsize=10)
+    for ax in axs:
+        ax.axvspan(0, 0.625, color="royalblue", alpha=0.2)  # bentonite layer
+        ax.axvspan(0.625, 20, color="orange", alpha=0.1)  # OPA host rock
+        ax.margins(x=0)
+    ot.plot.utils.update_font_sizes(axs, 10)
 
-    for col_name, t, color in zip(soln[["1e3", "1e4", "1e5", "1e6"]], time, color_map):
-        ax.plot(
-            soln["x"],
-            soln[col_name],
-            linestyle="-",
-            lw=1.5,
-            label=str(np.format_float_scientific(t)) + " years",
-            c=color,
-            zorder=10,
-            clip_on=False,
-        )
-
-    ax.legend(frameon=False, loc="center right", numpoints=1, fontsize=12, ncol=1)
-
-    ax.xaxis.grid(color="gray", linestyle="dashed")
-    ax.yaxis.grid(color="gray", linestyle="dashed")
-
-
-plot_analytical_solutions()
+    fig_res.tight_layout()
+    return fig_res
 
 
 # %% [markdown]
@@ -144,74 +137,17 @@ plot_analytical_solutions()
 
 # %%
 # Run OGS simulation
-prj_name = "1D_MultiLayerDiffusion"
-prj_file = f"{prj_name}.prj"
+name = "1D_MultiLayerDiffusion"
+model = ot.Project(
+    input_file=f"{name}.prj", output_file=out_dir / f"{name}_modified.prj"
+)
+model.write_input()
+model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m .")
 
-out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
-
-print(f"ogs {prj_file} > out.txt")
-run(f"ogs {prj_file} -o {out_dir} > {out_dir}/out.txt", shell=True, check=True)
-
-# Read simulation results
-pvdfile = vtuIO.PVDIO(f"{out_dir}/{prj_name}.pvd", dim=1)
-
-
-def plot_simulation_results():
-    fig, ax = plt.subplots()
-
-    ax.set_xlim((0, 20))
-    ax.set_ylim((0, 1))
-
-    plt.xlabel("Distance [m]")
-    plt.ylabel("HTO concentration [mol/L]")
-
-    # represent the bentonite layer
-    plt.axvspan(0, 0.625, facecolor="royalblue", alpha=0.2)
-    # represent the OPA host rock
-    plt.axvspan(0.625, 20, facecolor="orange", alpha=0.05)
-
-    color_map = iter(cm.rainbow(np.linspace(0, 1, len(time))))
-
-    # Plot semi-analytical solutions
-    for col_name, _t, color in zip(soln[["1e3", "1e4", "1e5", "1e6"]], time, color_map):
-        ax.plot(
-            soln["x"],
-            soln[col_name],
-            linestyle="-",
-            lw=1.5,
-            c=color,
-            zorder=10,
-            clip_on=False,
-        )
-
-    # Add simulation results
-    x = np.linspace(0, 20, num=201)
-    color_map = iter(cm.rainbow(np.linspace(0, 1, len(time))))
-    for t, color in zip(time, color_map):
-        c_t = pvdfile.read_set_data(
-            t * 3.1536e7, "HTO", data_type="point", pointsetarray=[(i, 0, 0) for i in x]
-        )
-        plt.plot(
-            x,
-            c_t,
-            label="Sim. " + str(np.format_float_scientific(t)) + " years",
-            color=color,
-            marker="o",
-            markevery=5,
-            linestyle="",
-            zorder=10,
-            clip_on=False,
-        )
-
-    ax.legend(frameon=False, loc="center right", numpoints=1, fontsize=12, ncol=1)
-
-    ax.xaxis.grid(color="gray", linestyle="dashed")
-    ax.yaxis.grid(color="gray", linestyle="dashed")
-
-
-plot_simulation_results()
+# %% Read simulation results
+ms_MLD = ot.MeshSeries(out_dir / f"{name}.pvd").scale(time=("s", "a"))[1:]
+HTO_var = ot.variables.Scalar("HTO", "mol/L", "mol/L", "HTO concentration")
+fig = plot_results(ms_MLD, HTO_var)
 
 
 # %% [markdown]
@@ -224,55 +160,16 @@ plot_simulation_results()
 # Here is a sketch that shows how we calculate the molar flux at the node.
 
 # %%
-display(Image(filename="./sketch_molar_flux_calculation.jpg", width=400))
+display(Image(filename="./sketch_molar_flux_calculation.jpg", width=100))
 
 
 # %% [markdown]
 # Additionally, we compute the molar flux profiles at $t$ = 10$^3$, 10$^4$, 10$^5$, and 10$^6$ years. The implementation of molar flux output can be viewed <a href="https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/4006">at this link</a>.
 
-
 # %%
-def plot_molar_flux():
-    fig, ax = plt.subplots()
-
-    ax.set_xlim((0, 20))
-
-    plt.xlabel("Distance [m]")
-    plt.ylabel("Mass flux [mol/m$^2$/s]")
-
-    # represent the bentonite layer
-    plt.axvspan(0, 0.625, facecolor="royalblue", alpha=0.2)
-    # represent the OPA host rock
-    plt.axvspan(0.625, 20, facecolor="orange", alpha=0.05)
-
-    # plot total mass flux
-    x = np.linspace(0, 20, num=201)
-    color_map = iter(cm.rainbow(np.linspace(0, 1, len(time))))
-    for t, color in zip(time, color_map):
-        c_t = pvdfile.read_set_data(
-            t * 3.1536e7,
-            "HTOFlux",
-            data_type="point",
-            pointsetarray=[(i, 0, 0) for i in x],
-        )
-        plt.plot(
-            x,
-            c_t,
-            label="Sim. " + str(np.format_float_scientific(t)) + " years",
-            color=color,
-            linestyle="-",
-            lw=1.5,
-            zorder=10,
-            clip_on=False,
-        )
-
-    ax.legend(frameon=False, loc="center right", numpoints=1, fontsize=12, ncol=1)
-
-    ax.xaxis.grid(color="gray", linestyle="dashed")
-    ax.yaxis.grid(color="gray", linestyle="dashed")
-
-
-plot_molar_flux()
+HTO_flux_var = ot.variables.Scalar("HTOFlux", "mol/m$^2$/s")
+fig = plot_results(ms_MLD, HTO_flux_var)
+fig.axes[0].set_yscale("log")
 
 
 # %% [markdown]
