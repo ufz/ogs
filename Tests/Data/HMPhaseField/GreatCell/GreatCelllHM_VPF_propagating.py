@@ -18,7 +18,7 @@
 # date = "2025-04-03"
 # author = "Mostafa Mollaali"
 # image = "figures/hm_lie_bbar_stress_trace.png"
-# web_subsection = "HM-PHASE-FIELD"
+# web_subsection = "phase-field"
 # weight = 3
 # +++
 
