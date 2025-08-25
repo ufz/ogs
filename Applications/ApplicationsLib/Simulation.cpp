@@ -196,8 +196,7 @@ Simulation::~Simulation()
 }
 
 int Simulation::runTestDefinitions(
-    std::optional<ApplicationsLib::TestDefinition>& test_definition,
-    int& ogs_status)
+    std::optional<ApplicationsLib::TestDefinition>& test_definition)
 {
     if (!test_definition)
     {
@@ -205,7 +204,7 @@ int Simulation::runTestDefinitions(
         auto const time_str = BaseLib::formatDate(end_time);
         DBUG("No test definition was found. No tests will be executed.");
         INFO("OGS completed on {:s}.", time_str);
-        return ogs_status;
+        return EXIT_SUCCESS;
     }
 
     INFO("");

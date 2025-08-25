@@ -203,7 +203,5 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    return Simulation::runTestDefinitions(test_definition, ogs_status);
-
-    return EXIT_SUCCESS;
+    return Simulation::runTestDefinitions(test_definition);
 }

@@ -155,7 +155,7 @@ int executeSimulation()
         return EXIT_FAILURE;
     }
 
-    return Simulation::runTestDefinitions(test_definition, ogs_status);
+    return Simulation::runTestDefinitions(test_definition);
 }
 
 int executeTimeStep()

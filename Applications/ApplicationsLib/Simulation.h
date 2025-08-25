@@ -51,8 +51,7 @@ public:
     OGS_EXPORT_SYMBOL ~Simulation();
 
     OGS_EXPORT_SYMBOL static int runTestDefinitions(
-        std::optional<ApplicationsLib::TestDefinition>& test_definition,
-        int& ogs_status);
+        std::optional<ApplicationsLib::TestDefinition>& test_definition);
 
 private:
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup;
