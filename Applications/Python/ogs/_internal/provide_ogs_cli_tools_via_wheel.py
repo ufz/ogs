@@ -4,87 +4,8 @@ import subprocess
 import sys
 
 from . import OGS_USE_PATH
+from .binaries_list import binaries_list
 from .get_bin_dir import get_bin_dir
-
-binaries_list = [
-    "addDataToRaster",
-    "AddElementQuality",
-    "AddFaultToVoxelGrid",
-    "AddLayer",
-    "appendLinesAlongPolyline",
-    "AssignRasterDataToMesh",
-    "checkMesh",
-    "ComputeNodeAreasFromSurfaceMesh",
-    "computeSurfaceNodeIDsInPolygonalRegion",
-    "constructMeshesFromGeometry",
-    "convertGEO",
-    "convertToLinearMesh",
-    "convertVtkDataArrayToVtkDataArray",
-    "CreateAnchors",
-    "CreateBoundaryConditionsAlongPolylines",
-    "createIntermediateRasters",
-    "createLayeredMeshFromRasters",
-    "createMeshElemPropertiesFromASCRaster",
-    "createNeumannBc",
-    "createQuadraticMesh",
-    "createRaster",
-    "createTetgenSmeshFromRasters",
-    "editMaterialID",
-    "ExtractBoundary",
-    "ExtractMaterials",
-    "ExtractSurface",
-    "generateGeometry",
-    "generateMatPropsFromMatID",
-    "generateStructuredMesh",
-    "geometryToGmshGeo",
-    "GMSH2OGS",
-    "GocadSGridReader",
-    "GocadTSurfaceReader",
-    "identifySubdomains",
-    "IntegrateBoreholesIntoMesh",
-    "ipDataToPointCloud",
-    "Layers2Grid",
-    "MapGeometryToMeshSurface",
-    "mergeMeshToBulkMesh",
-    "Mesh2Raster",
-    "MeshMapping",
-    "MoveGeometry",
-    "MoveMesh",
-    "moveMeshNodes",
-    "mpmetis",
-    "NodeReordering",
-    "ogs",
-    "OGS2VTK",
-    "partmesh",
-    "postLIE",
-    "PVD2XDMF",
-    "pvtu2vtu",
-    "queryMesh",
-    "Raster2ASC",
-    "Raster2Mesh",
-    "RemoveGhostData",
-    "removeMeshElements",
-    "RemoveUnusedPoints",
-    "ReorderMesh",
-    "ResetPropertiesInPolygonalRegion",
-    "reviseMesh",
-    "scaleProperty",
-    "swapNodeCoordinateAxes",
-    "TecPlotTools",
-    "TIN2VTK",
-    "VTK2OGS",
-    "VTK2TIN",
-    "vtkdiff",
-    "Vtu2Grid",
-    "xdmfdiff",
-]
-
-
-def pyproject_get_binaries():
-    return {
-        binary: f"ogs._internal.provide_ogs_cli_tools_via_wheel:{binary}"
-        for binary in binaries_list
-    }
 
 
 # Not used when OGS_USE_PATH is true!

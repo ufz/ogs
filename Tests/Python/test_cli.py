@@ -1,5 +1,6 @@
 import ogs._internal.provide_ogs_cli_tools_via_wheel as ogs_cli_wheel
 import pytest
+from ogs._internal.binaries_list import binaries_list
 
 from . import push_argv
 
@@ -14,6 +15,6 @@ def _run(program, args):
 
 def test_binaries():
     ignore_list = ["moveMeshNodes", "mpmetis"]  # have no --version cli flag
-    for f in ogs_cli_wheel.binaries_list:
+    for f in binaries_list:
         if f not in ignore_list:
             _run(f, ["--version"])

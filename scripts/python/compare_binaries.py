@@ -12,7 +12,7 @@ if __name__ == "__main__":
     parent_dir = (script_dir / "../../Applications/Python").resolve()
     sys.path.insert(0, str(parent_dir))
 
-    from ogs._internal.provide_ogs_cli_tools_via_wheel import binaries_list
+    from ogs._internal.binaries_list import binaries_list
 
     cmake_set = set(cmake_binaries)
     python_set = set(binaries_list)

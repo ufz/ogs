@@ -1,8 +1,9 @@
 import subprocess
 
 from . import OGS_USE_PATH
+from .binaries_list import binaries_list
 from .get_bin_dir import get_bin_dir
-from .provide_ogs_cli_tools_via_wheel import binaries_list, ogs_with_args
+from .provide_ogs_cli_tools_via_wheel import ogs_with_args
 
 
 class CLI:
