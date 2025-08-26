@@ -121,7 +121,7 @@ output_prefices = [
 
 uys_at_top_fbar = []
 for mesh_name, load_increment_label, output_prefix in zip(
-    mesh_names, load_increment_labels, output_prefices
+    mesh_names, load_increment_labels, output_prefices, strict=False
 ):
     uy_at_top = run_single_test(
         mesh_name,
@@ -154,7 +154,7 @@ output_prefices_non_fbar = [prefix + "_non_fbar" for prefix in output_prefices]
 
 uys_at_top_non_fbar = []
 for mesh_name, load_increment_label, output_prefix in zip(
-    mesh_names, load_increment_labels, output_prefices_non_fbar
+    mesh_names, load_increment_labels, output_prefices_non_fbar, strict=False
 ):
     uy_at_top = run_single_test(
         mesh_name,
@@ -233,7 +233,7 @@ def contour_plot(pvd_file_name, title, fig_name=None):
 # #### 2.1. Non F-bar: Vertical displacement (left column) and vertical stress (right column):
 
 # %%
-for nedge, output_prefix in zip(nedges, output_prefices_non_fbar):
+for nedge, output_prefix in zip(nedges, output_prefices_non_fbar, strict=False):
     contour_plot(
         output_prefix + ".pvd",
         f"Number of elements per side: {nedge}",
@@ -244,7 +244,7 @@ for nedge, output_prefix in zip(nedges, output_prefices_non_fbar):
 # #### 2.1. F-bar: Vertical displacement (left column) and vertical stress (right column):
 
 # %%
-for nedge, output_prefix in zip(nedges, output_prefices):
+for nedge, output_prefix in zip(nedges, output_prefices, strict=False):
     contour_plot(
         output_prefix + ".pvd",
         f"Number of elements per side: {nedge}",

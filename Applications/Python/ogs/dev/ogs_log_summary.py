@@ -118,7 +118,7 @@ def parse_ogs_log(log_fh):
         except KeyError:
             continue
         assert len(abs_norm) == len(rel_norm)
-        for comp, (a, r) in enumerate(zip(abs_norm, rel_norm)):
+        for comp, (a, r) in enumerate(zip(abs_norm, rel_norm, strict=False)):
             new_rec = dict(rec)
             new_rec["abs_maximum_norm"] = a
             new_rec["rel_maximum_norm"] = r

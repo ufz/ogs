@@ -84,7 +84,11 @@ def computeConcentrations(x, t, v, D, k, radionuclides, c_inlet):
     a = {}
 
     a_inlet = dict(
-        zip(radionuclides, computeInitialAuxiliaryVariable(c_inlet, list(k.values())))
+        zip(
+            radionuclides,
+            computeInitialAuxiliaryVariable(c_inlet, list(k.values())),
+            strict=False,
+        )
     )
 
     c["[Cm-247]"] = computeAnalyticalSolution(
@@ -210,7 +214,11 @@ def computeGradients(x, t, v, D, k, radionuclides, c_inlet):
     grad_a = {}
 
     a_inlet = dict(
-        zip(radionuclides, computeInitialAuxiliaryVariable(c_inlet, list(k.values())))
+        zip(
+            radionuclides,
+            computeInitialAuxiliaryVariable(c_inlet, list(k.values())),
+            strict=False,
+        )
     )
 
     grad_c["[Cm-247]"] = computeGradAnalyticalSolution(

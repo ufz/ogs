@@ -121,7 +121,7 @@ ax.set_ylabel(r"$\bar p$ / Pa")
 add_leg = True
 
 
-for t, fn in zip(ts, fns):
+for t, fn in zip(ts, fns, strict=False):
     print("###### time", t)
     reader.SetFileName(fn)
     reader.Update()

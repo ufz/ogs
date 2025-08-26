@@ -16,7 +16,7 @@ ts = ref_A[:, 0]
 epss = ref_A[:, 1 : (1 + 6)]
 sigmas = ref_A[:, (1 + 6) : (1 + 12)]
 
-for t, eps, sigma in zip(ts, epss, sigmas):
+for t, eps, sigma in zip(ts, epss, sigmas, strict=False):
     # assert that we don't have to bother with permuting the shear
     # components from MFront ordering to VTK ordering
     assert all(eps[3:] == 0)
