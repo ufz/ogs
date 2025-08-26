@@ -156,11 +156,7 @@ def mesh_GreatCell_intact(
     **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
-    if not out_path.exists():
-        out_path.mkdir(parents=True)
-        print(f"Created output directory: {out_dir}")
-    else:
-        print(f"Output directory already exists: {out_dir}")
+    out_path.mkdir(parents=True, exist_ok=True)
 
     if not gmsh.isInitialized():
         gmsh.initialize()
@@ -322,11 +318,7 @@ def mesh_GreatCell_embeddedFracture(
     **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
-    if not out_path.exists():
-        out_path.mkdir(parents=True)
-        print(f"Created output directory: {out_dir}")
-    else:
-        print(f"Output directory already exists: {out_dir}")
+    out_path.mkdir(parents=True, exist_ok=True)
 
     if not gmsh.isInitialized():
         gmsh.initialize()
@@ -490,11 +482,7 @@ def mesh_GreatCell_fullFracture(
     **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
-    if not out_path.exists():
-        out_path.mkdir(parents=True)
-        print(f"Created output directory: {out_dir}")
-    else:
-        print(f"Output directory already exists: {out_dir}")
+    out_path.mkdir(parents=True, exist_ok=True)
 
     if not gmsh.isInitialized():
         gmsh.initialize()
@@ -711,11 +699,7 @@ def mesh_GreatCell_VPF(
     **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
-    if not out_path.exists():
-        out_path.mkdir(parents=True)
-        print(f"Created output directory: {out_dir}")
-    else:
-        print(f"Output directory already exists: {out_dir}")
+    out_path.mkdir(parents=True, exist_ok=True)
 
     if not gmsh.isInitialized():
         gmsh.initialize()

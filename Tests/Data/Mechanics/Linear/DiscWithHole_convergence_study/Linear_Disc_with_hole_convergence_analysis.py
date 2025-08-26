@@ -89,8 +89,7 @@ logging.getLogger("matplotlib.ticker").disabled = True
 
 # %% jupyter={"source_hidden": true}
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 
 # %% jupyter={"source_hidden": true}
@@ -266,11 +265,9 @@ for idx in STUDY_indices:
 for idx in STUDY_indices:
     input_file = f"{out_dir}/disc_with_hole_idx_is_{idx}.msh"
     msh2vtu_out_dir = Path(f"{out_dir}/disc_with_hole_idx_is_{idx}")
-    if not msh2vtu_out_dir.exists():
-        msh2vtu_out_dir.mkdir(parents=True)
+    msh2vtu_out_dir.mkdir(parents=True, exist_ok=True)
     meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
     for name, mesh in meshes.items():
-        output_path = f"{out_dir}/disc_with_hole_idx_is_{idx}"
         filename = f"disc_with_hole_idx_is_{idx}_{name}.vtu"
         pv.save_meshio(msh2vtu_out_dir / filename, mesh)
     # %cd {out_dir}/disc_with_hole_idx_is_{idx}

@@ -123,8 +123,7 @@ import numpy as np
 import ogstools as ot
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # %% initial state and analytical solutions
 p_0 = 1e6

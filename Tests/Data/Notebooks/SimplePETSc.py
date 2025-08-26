@@ -39,8 +39,7 @@ prj_file = f"{data_dir}/EllipticPETSc/{prj_name}.prj"
 
 # %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 command = f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt"
 print(command)

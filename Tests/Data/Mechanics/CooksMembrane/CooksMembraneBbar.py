@@ -71,8 +71,7 @@ import pyvista as pv
 import vtuIO
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 
 # %%

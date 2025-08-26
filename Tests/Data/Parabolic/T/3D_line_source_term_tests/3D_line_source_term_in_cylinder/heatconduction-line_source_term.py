@@ -173,8 +173,7 @@ def t_analytical(x, y):
 # %%
 # Create output path if it doesn't exist yet
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # %%
 model = ot.Project(

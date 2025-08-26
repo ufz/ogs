@@ -81,8 +81,7 @@ plt.rcParams["figure.figsize"] = (8, 6)
 
 # %% jupyter={"source_hidden": true}
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # %% jupyter={"source_hidden": true}
 model_s = ot.Project(

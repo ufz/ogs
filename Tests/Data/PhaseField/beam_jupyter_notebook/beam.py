@@ -60,10 +60,7 @@ import pyvista as pv
 data_dir = os.environ.get("OGS_DATA_DIR", "../../..")
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
-
-output_dir = out_dir
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # define method to be assigned to model, to replace a specific curve, given by name
 # (analogue to replace_parameter method)
@@ -215,7 +212,7 @@ def ogs_beam(
     t0 = time.time()
     print("  > OGS started execution ...")
     run(
-        f"mpirun -n 3 ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+        f"mpirun -n 3 ogs {out_dir}/{prj_name} -o {out_dir} >> {logfile}",
         check=True,
         shell=True,
     )
@@ -388,7 +385,7 @@ fig, ax = plt.subplots()
 plt.rc("text", usetex=True)
 fig.set_size_inches(18.5, 10.5)
 for i, pre in enumerate(prefixes):
-    pvd = output_dir / f"{pre}.pvd"
+    pvd = out_dir / f"{pre}.pvd"
     if pvd.is_file():
         curve = force_displ_from_pvd(pvd)
         ax.plot(

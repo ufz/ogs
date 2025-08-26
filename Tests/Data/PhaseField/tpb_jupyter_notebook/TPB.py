@@ -56,12 +56,8 @@ import pyvista as pv
 
 # %%
 data_dir = os.environ.get("OGS_DATA_DIR", "../../..")
-
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
-
-output_dir = out_dir
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # define function to replace a specific curve, given by name
 
@@ -207,14 +203,14 @@ def ogs_TPB(
     if MPI:
         print(f"  > OGS started execution with MPI - {ncores} cores...")
         run(
-            f"mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            f"mpirun --bind-to none -np {ncores} ogs {out_dir}/{prj_name} -o {out_dir} >> {logfile}",
             shell=True,
             check=True,
         )
     else:
         print("  > OGS started execution ...")
         run(
-            f"ogs {out_dir}/{prj_name} -o {output_dir} >> {logfile}",
+            f"ogs {out_dir}/{prj_name} -o {out_dir} >> {logfile}",
             shell=True,
             check=True,
         )
@@ -357,7 +353,7 @@ colors = ["#ffdf4d", "#006ddb", "#8f4e00", "#ff6db6"]
 
 fig, ax = plt.subplots()
 for i, pre in enumerate(prefixes):
-    pvd = f"{output_dir}/{pre}.pvd"
+    pvd = f"{out_dir}/{pre}.pvd"
     if Path(pvd).is_file():
         curve = force_displ_from_pvd(pvd)
         plt.plot(

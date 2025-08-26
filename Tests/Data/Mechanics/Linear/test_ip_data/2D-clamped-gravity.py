@@ -30,10 +30,9 @@ pv.set_jupyter_backend("static")
 # %
 
 outdir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not outdir.exists():
-    outdir.mkdir(parents=True)
-    with (outdir / ".gitignore").open(mode="w") as fh:
-        fh.write("*\n")
+outdir.mkdir(parents=True, exist_ok=True)
+with (outdir / ".gitignore").open(mode="w") as fh:
+    fh.write("*\n")
 
 # %% [markdown]
 # # Problem Description

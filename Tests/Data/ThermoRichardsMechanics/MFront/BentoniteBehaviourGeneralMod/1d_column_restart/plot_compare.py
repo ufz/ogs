@@ -6,11 +6,9 @@ import numpy as np
 import postprocessing_utils as pu
 
 outdir = Path("out")
-
-if not outdir.exists():
-    outdir.mkdir()
-    with (outdir / ".gitignore").open("w") as fh:
-        fh.write("*\n")
+outdir.mkdir(exist_ok=True)
+with (outdir / ".gitignore").open("w") as fh:
+    fh.write("*\n")
 
 
 def run():

@@ -23,7 +23,8 @@ It was published in this state to make existing content available to users and h
 
 Inside of this block, all media of the simulation are defined.
 There has to be a medium for every value of Material IDs used in the mesh.
-Those IDs are assigned when the mesh is created or converted by msh2vtu script.
+Those IDs can be assigned when the mesh is created or converted from the Gmsh
+.msh format to the .vtu format via ogstools.
 
 ```xml
 <media>
