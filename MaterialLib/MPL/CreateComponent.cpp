@@ -24,7 +24,7 @@ namespace
 std::unique_ptr<MaterialPropertyLib::Component> createComponent(
     int const geometry_dimension,
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
@@ -75,7 +75,7 @@ namespace MaterialPropertyLib
 std::vector<std::unique_ptr<Component>> createComponents(
     int const geometry_dimension,
     std::optional<BaseLib::ConfigTree> const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&

@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "ConfigTree.h"
+#include "StringTools.h"
 
 namespace BaseLib
 {
@@ -87,24 +88,20 @@ std::optional<std::vector<T>> ConfigTree::getConfigParameterOptionalImpl(
 {
     if (auto p = getConfigSubtreeOptional(param))
     {
-        std::istringstream sstr{p->getValue<std::string>()};
-        std::vector<T> result;
-        T value;
-        while (sstr >> value)
+        std::string const raw = p->getValue<std::string>();
+
+        std::size_t bad_idx = 0;
+        if (auto parsed = BaseLib::tryParseVector<T>(raw, &bad_idx))
         {
-            result.push_back(value);
-        }
-        if (!sstr.eof())  // The stream is not read until the end, must be an
-                          // error. result contains number of read values.
-        {
-            error("Value for key <" + param + "> `" + shortString(sstr.str()) +
-                  "' not convertible to a vector of the desired type."
-                  " Could not convert token no. " +
-                  std::to_string(result.size() + 1) + ".");
-            return std::nullopt;
+            return parsed;  // OK
         }
 
-        return std::make_optional(result);
+        // preserve original error wording & token index
+        error("Value for key <" + param + "> `" + shortString(raw) +
+              "' not convertible to a vector of the desired type."
+              " Could not convert token no. " +
+              std::to_string(bad_idx) + ".");
+        return std::nullopt;  // not reached
     }
 
     return std::nullopt;

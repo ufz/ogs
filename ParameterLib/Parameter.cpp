@@ -120,4 +120,47 @@ std::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
            "parameter's domain of definition mesh differs from the boundary "
            "condition or source term domain of definition mesh.";
 }
+
+Parameter<double>& getNamedOrCreateInlineParameter(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterBase>>& parameters,
+    std::string const& property_name,
+    std::string const& tag_name,
+    std::string const& inline_suffix)
+{
+    std::string const raw = config.getConfigParameter<std::string>(tag_name);
+
+    // try to parse number(s) (if empty - no inline-values)
+    std::size_t bad_idx = 0;
+    if (auto values = BaseLib::tryParseVector<double>(raw, &bad_idx); values)
+    {
+        if (values->empty())
+        {
+            OGS_FATAL(
+                "Empty inline value list in <{:s}> for property '{:s}'. "
+                "Provide at least one numeric value (e.g., \"1.23 4.56\") or "
+                "specify the name of an existing parameter. "
+                "Raw input was: \"{:s}\".",
+                tag_name, property_name, raw);
+        }
+
+        // collect all existing parameter names for checks against uniqueness
+        std::vector<std::string> existing_names;
+        existing_names.reserve(parameters.size());
+        std::transform(parameters.begin(), parameters.end(),
+                       std::back_inserter(existing_names),
+                       [](auto const& p) { return p->name; });
+
+        // assign inline values as constant parameter
+        std::string pname = BaseLib::getUniqueName(
+            existing_names, property_name + "_" + inline_suffix);
+        using P = ConstantParameter<double>;
+        parameters.push_back(std::make_unique<P>(pname, std::move(*values)));
+        return static_cast<Parameter<double>&>(*parameters.back());
+    }
+
+    // No inline values -> 'raw' is just a parameter name, now find that
+    // parameter.
+    return findParameter<double>(raw, parameters, 0, nullptr);
+}
 }  // namespace ParameterLib

@@ -25,7 +25,7 @@ std::unique_ptr<Medium> createMedium(
     int const material_id,
     int const geometry_dimension,
     BaseLib::ConfigTree const& config,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&

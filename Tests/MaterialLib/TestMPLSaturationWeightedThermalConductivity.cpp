@@ -31,12 +31,11 @@ namespace MPL = MaterialPropertyLib;
 std::unique_ptr<MaterialPropertyLib::Property>
 createTestSaturationWeightedThermalConductivityProperty(
     const char xml[], int const geometry_dimension,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::function<std::unique_ptr<MaterialPropertyLib::Property>(
         int const geometry_dimension,
         BaseLib::ConfigTree const& config,
-        std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
-            parameters)>
+        std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)>
         createProperty)
 {
     auto ptree = Tests::readXml(xml);
@@ -50,32 +49,16 @@ createTestSaturationWeightedThermalConductivityProperty(
     return createProperty(geometry_dimension, sub_config, parameters);
 }
 
-TEST(MaterialPropertyLib,
-     SaturationWeightedThermalConductivity1Darithmetic_squareroot)
+void run_test_SaturationWeightedThermalConductivity1Darithmetic_squareroot(
+    std::string const& xml,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
+    double const k_T_dry,
+    double const k_T_wet)
 {
-    const char xml[] =
-        "<property>"
-        "   <name>thermal_conductivity</name>"
-        "   <type>SaturationWeightedThermalConductivity</type>"
-        "   <mean_type>arithmetic_squareroot</mean_type>"
-        "   <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>"
-        "   <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>"
-        "</property>";
-
-    double const k_T_dry = 0.1;
-    double const k_T_wet = 0.3;
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
-    parameters.push_back(
-        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_dry",
-                                                                  k_T_dry));
-    parameters.push_back(
-        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_wet",
-                                                                  k_T_wet));
-
-    const int dimemsion = 1;
+    const int dimension = 1;
     std::unique_ptr<MPL::Property> const k_T_ptr =
         createTestSaturationWeightedThermalConductivityProperty(
-            xml, dimemsion, parameters,
+            xml.c_str(), dimension, parameters,
             MPL::createSaturationWeightedThermalConductivity);
 
     MPL::Property const& k_T_property = *k_T_ptr;
@@ -178,8 +161,9 @@ TEST(MaterialPropertyLib,
     }
 }
 
-TEST(MaterialPropertyLib,
-     SaturationWeightedThermalConductivity3Darithmetic_squareroot)
+TEST(
+    MaterialPropertyLib,
+    SaturationWeightedThermalConductivity1Darithmetic_squareroot_parameter_version)
 {
     const char xml[] =
         "<property>"
@@ -190,8 +174,9 @@ TEST(MaterialPropertyLib,
         "   <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>"
         "</property>";
 
-    std::vector<double> k_T_dry{0.1, 0.1, 0.1};
-    std::vector<double> k_T_wet{0.3, 0.3, 0.3};
+    double k_T_dry(0.1);
+    double k_T_wet(0.3);
+
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
     parameters.push_back(
         std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_dry",
@@ -200,10 +185,42 @@ TEST(MaterialPropertyLib,
         std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_wet",
                                                                   k_T_wet));
 
-    const int dimemsion = 3;
+    run_test_SaturationWeightedThermalConductivity1Darithmetic_squareroot(
+        xml, parameters, k_T_dry, k_T_wet);
+}
+
+TEST(
+    MaterialPropertyLib,
+    SaturationWeightedThermalConductivity1Darithmetic_squareroot_inline_version)
+{
+    double k_T_dry(0.1);
+    double k_T_wet(0.3);
+
+    std::ostringstream oss;
+    oss << "<property>" << "   <name>thermal_conductivity</name>"
+        << "   <type>SaturationWeightedThermalConductivity</type>"
+        << "   <mean_type>arithmetic_squareroot</mean_type>"
+        << "   <dry_thermal_conductivity>" << k_T_dry
+        << "</dry_thermal_conductivity>" << "   <wet_thermal_conductivity>"
+        << k_T_wet << "</wet_thermal_conductivity>" << "</property>";
+    std::string xml = oss.str();
+
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
+
+    run_test_SaturationWeightedThermalConductivity1Darithmetic_squareroot(
+        xml, parameters, k_T_dry, k_T_wet);
+}
+
+void run_test_SaturationWeightedThermalConductivity3D(
+    std::string const& xml,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
+    std::vector<double> const& k_T_dry,
+    std::vector<double> const& k_T_wet)
+{
+    const int dimension = 3;
     std::unique_ptr<MPL::Property> const k_T_ptr =
         createTestSaturationWeightedThermalConductivityProperty(
-            xml, dimemsion, parameters,
+            xml.c_str(), dimension, parameters,
             MPL::createSaturationWeightedThermalConductivity);
 
     MPL::Property const& k_T_property = *k_T_ptr;
@@ -331,6 +348,57 @@ TEST(MaterialPropertyLib,
         }
     }
 }
+
+TEST(MaterialPropertyLib,
+     SaturationWeightedThermalConductivity3D_parameter_version)
+{
+    const char xml[] =
+        "<property>"
+        "   <name>thermal_conductivity</name>"
+        "   <type>SaturationWeightedThermalConductivity</type>"
+        "   <mean_type>arithmetic_squareroot</mean_type>"
+        "   <dry_thermal_conductivity>k_T_dry</dry_thermal_conductivity>"
+        "   <wet_thermal_conductivity>k_T_wet</wet_thermal_conductivity>"
+        "</property>";
+
+    std::vector<double> k_T_dry{0.1, 0.1, 0.1};
+    std::vector<double> k_T_wet{0.3, 0.3, 0.3};
+
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_dry",
+                                                                  k_T_dry));
+    parameters.push_back(
+        std::make_unique<ParameterLib::ConstantParameter<double>>("k_T_wet",
+                                                                  k_T_wet));
+
+    run_test_SaturationWeightedThermalConductivity3D(xml, parameters, k_T_dry,
+                                                     k_T_wet);
+}
+
+TEST(MaterialPropertyLib,
+     SaturationWeightedThermalConductivity3D_inline_version)
+{
+    std::vector<double> k_T_dry{0.1, 0.1, 0.1};
+    std::vector<double> k_T_wet{0.3, 0.3, 0.3};
+
+    std::ostringstream oss;
+    oss << "<property>" << "   <name>thermal_conductivity</name>"
+        << "   <type>SaturationWeightedThermalConductivity</type>"
+        << "   <mean_type>arithmetic_squareroot</mean_type>"
+        << "   <dry_thermal_conductivity>" << k_T_dry[0] << " " << k_T_dry[1]
+        << " " << k_T_dry[2] << "</dry_thermal_conductivity>"
+        << "   <wet_thermal_conductivity>" << k_T_wet[0] << " " << k_T_wet[1]
+        << " " << k_T_wet[2] << "</wet_thermal_conductivity>" << "</property>";
+
+    std::string xml = oss.str();
+
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
+
+    run_test_SaturationWeightedThermalConductivity3D(xml, parameters, k_T_dry,
+                                                     k_T_wet);
+}
+
 TEST(MaterialPropertyLib,
      SaturationWeightedThermalConductivity1Darithmetic_linear)
 {
