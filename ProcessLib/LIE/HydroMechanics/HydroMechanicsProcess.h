@@ -77,6 +77,7 @@ private:
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     double const t, double const dt,
                                     int const process_id) override;
+    void updateElementLevelSets(MeshLib::Element const& e, MeshLib::Mesh& mesh);
 
 private:
     HydroMechanicsProcessData<DisplacementDim> _process_data;

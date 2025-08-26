@@ -241,6 +241,54 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
 }
 
 template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::updateElementLevelSets(
+    MeshLib::Element const& e, MeshLib::Mesh& mesh)
+{
+    Eigen::Vector3d const pt(getCenterOfGravity(e).asEigenVector3d());
+    std::vector<FractureProperty*> e_fracture_props;
+    std::unordered_map<int, int> e_fracID_to_local;
+    unsigned tmpi = 0;
+    for (auto fid : _process_data.vec_ele_connected_fractureIDs[e.getID()])
+    {
+        e_fracture_props.push_back(&_process_data.fracture_properties[fid]);
+        e_fracID_to_local.insert({fid, tmpi++});
+    }
+    std::vector<JunctionProperty*> e_junction_props;
+    std::unordered_map<int, int> e_juncID_to_local;
+    tmpi = 0;
+    for (auto fid : _process_data.vec_ele_connected_junctionIDs[e.getID()])
+    {
+        e_junction_props.push_back(&_process_data.junction_properties[fid]);
+        e_juncID_to_local.insert({fid, tmpi++});
+    }
+    std::vector<double> const levelsets(uGlobalEnrichments(
+        e_fracture_props, e_junction_props, e_fracID_to_local, pt));
+
+    auto update_levelset_property = [&](unsigned const i, int const id,
+                                        unsigned const levelset_idx_offset,
+                                        unsigned const name_offset)
+    {
+        auto levelset_property = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh),
+            "levelset" + std::to_string(id + 1 + name_offset),
+            MeshLib::MeshItemType::Cell, 1);
+        levelset_property->resize(mesh.getNumberOfElements());
+        (*levelset_property)[e.getID()] = levelsets[i + levelset_idx_offset];
+    };
+
+    for (unsigned i = 0; i < e_fracture_props.size(); i++)
+    {
+        update_levelset_property(i, e_fracture_props[i]->fracture_id, 0, 0);
+    }
+    for (unsigned i = 0; i < e_junction_props.size(); i++)
+    {
+        update_levelset_property(i, e_junction_props[i]->junction_id,
+                                 e_fracture_props.size(),
+                                 _process_data.fracture_properties.size());
+    }
+}
+
+template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
     NumLib::LocalToGlobalIndexMap const& dof_table,
     MeshLib::Mesh const& mesh,
@@ -304,48 +352,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             continue;
         }
 
-        Eigen::Vector3d const pt(getCenterOfGravity(*e).asEigenVector3d());
-        std::vector<FractureProperty*> e_fracture_props;
-        std::unordered_map<int, int> e_fracID_to_local;
-        unsigned tmpi = 0;
-        for (auto fid : _process_data.vec_ele_connected_fractureIDs[e->getID()])
-        {
-            e_fracture_props.push_back(&_process_data.fracture_properties[fid]);
-            e_fracID_to_local.insert({fid, tmpi++});
-        }
-        std::vector<JunctionProperty*> e_junction_props;
-        std::unordered_map<int, int> e_juncID_to_local;
-        tmpi = 0;
-        for (auto fid : _process_data.vec_ele_connected_junctionIDs[e->getID()])
-        {
-            e_junction_props.push_back(&_process_data.junction_properties[fid]);
-            e_juncID_to_local.insert({fid, tmpi++});
-        }
-        std::vector<double> const levelsets(uGlobalEnrichments(
-            e_fracture_props, e_junction_props, e_fracID_to_local, pt));
-
-        for (unsigned i = 0; i < e_fracture_props.size(); i++)
-        {
-            auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh),
-                "levelset" +
-                    std::to_string(e_fracture_props[i]->fracture_id + 1),
-                MeshLib::MeshItemType::Cell, 1);
-            mesh_prop_levelset->resize(mesh.getNumberOfElements());
-            (*mesh_prop_levelset)[e->getID()] = levelsets[i];
-        }
-        for (unsigned i = 0; i < e_junction_props.size(); i++)
-        {
-            auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh),
-                "levelset" +
-                    std::to_string(e_junction_props[i]->junction_id + 1 +
-                                   _process_data.fracture_properties.size()),
-                MeshLib::MeshItemType::Cell, 1);
-            mesh_prop_levelset->resize(mesh.getNumberOfElements());
-            (*mesh_prop_levelset)[e->getID()] =
-                levelsets[i + e_fracture_props.size()];
-        }
+        updateElementLevelSets(*e, const_cast<MeshLib::Mesh&>(mesh));
     }
 
     _process_data.element_local_jumps =
