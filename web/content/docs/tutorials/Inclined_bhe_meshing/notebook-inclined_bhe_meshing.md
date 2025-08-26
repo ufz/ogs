@@ -26,9 +26,8 @@ The geometry is a 3D structure that has 3 boreholes (2 inclined and 1 vertical) 
 
 ```python
 # environment variable for output path
-out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
-if not Path(out_dir).exists():
-    Path(out_dir).mkdir(parents=True)
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+out_dir.mkdir(parents=True, exist_ok=True)
 
 exe_dir = os.environ.get("OGS_BINARY_DIR")
 

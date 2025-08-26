@@ -20,16 +20,12 @@ from ogs_and_mfront import (
     write_test_definition_snippet,
 )
 
-if not Path("out").exists():
-    Path("out").mkdir()
-    with Path("out/.gitignore").open("w") as fh:
-        fh.write("*\n")
-
-if not Path("out/plot_mtest").exists():
-    Path("out/plot_mtest").mkdir()
-
-if not Path("out/plot_mtest_vs_ogs").exists():
-    Path("out/plot_mtest_vs_ogs").mkdir()
+out_dir = Path("out")
+out_dir.mkdir(exist_ok=True)
+with Path("out/.gitignore").open("w") as fh:
+    fh.write("*\n")
+(out_dir / "plot_mtest").mkdir(exist_ok=True)
+(out_dir / "plot_mtest_vs_ogs").mkdir(exist_ok=True)
 
 dt = 0.0125
 mtest_output_file = "out/confined_compression_mtest.res"

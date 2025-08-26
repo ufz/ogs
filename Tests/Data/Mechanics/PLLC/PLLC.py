@@ -46,8 +46,7 @@ data_dir = os.environ.get(
 input_file = f"{data_dir}/Mechanics/PLLC/{prj_name}.prj"
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 os.chdir(out_dir)
 

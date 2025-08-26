@@ -289,8 +289,7 @@ for delta_z in Z:
 # %%
 # Create output path
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # %%
 # Create an OGS-object
@@ -327,8 +326,6 @@ model.run_model(logfile=Path(out_dir) / "log.txt", args=f"-o {out_dir} -m .")
 # The impact of initial temperature condition in numerical model is decreasing with the increasing of the operational time as shown in Figure 2.
 
 # %%
-out_dir = os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out")
-
 # Load the result
 ms = ot.MeshSeries(f"{out_dir}/BHE_1P.pvd")
 

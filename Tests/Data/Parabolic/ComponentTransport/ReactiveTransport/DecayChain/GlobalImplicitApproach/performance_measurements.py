@@ -45,8 +45,7 @@ os.environ["OMP_NUM_THREADS"] = "1"
 from pathlib import Path
 
 out_dir_base = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir_base.exists():
-    out_dir_base.mkdir(parents=True)
+out_dir_base.mkdir(parents=True, exist_ok=True)
 
 print("base output directory is", out_dir_base)
 
@@ -99,10 +98,9 @@ cases = [
 # %%
 for _name, case in cases:
     outdir = get_out_dir(case)
-    if not outdir.exists():
-        outdir.mkdir(parents=True)
-        with (outdir / ".gitignore").open(mode="w") as fh:
-            fh.write("*\n")
+    outdir.mkdir(parents=True, exist_ok=True)
+    with (outdir / ".gitignore").open(mode="w") as fh:
+        fh.write("*\n")
 
     print(f"running case {case}")
     with (outdir / "ogs-out.txt").open(mode="w") as fh:

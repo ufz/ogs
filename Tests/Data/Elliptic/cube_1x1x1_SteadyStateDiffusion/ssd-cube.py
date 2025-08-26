@@ -36,8 +36,7 @@ import pyvista as pv
 # similar to regular benchmark tests. On local testing it will output to the
 # notebooks source directory under a _out-subdirectory.
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 if "CI" in os.environ:
     pv.set_jupyter_backend("static")

@@ -106,8 +106,7 @@ def ogata_banks_analytical(t, x):
 
 # %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # %% Modify the project so that the simulation runs for a longer time.
 model = ot.Project(input_file="ogata-banks.prj", output_file=f"{out_dir}/modified.prj")

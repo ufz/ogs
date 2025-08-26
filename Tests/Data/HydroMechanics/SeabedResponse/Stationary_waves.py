@@ -375,12 +375,11 @@ fig.tight_layout()
 # %% [markdown]
 # Since the problem can be simplified to a planar geometry, a two-dimensional mesh is constructed for the numerical solution. Here, the Gmsh application programming interface (API) for python is used to generate a structured mesh of rectangular shape. This allows a parametric input of the geometry's dimensions and the mesh refinement. The generated mesh consists of quadratic elements, which have mid-side-nodes. In that way, displacements between nodes at the vertices can be interpolated using a higher order polynomial.
 #
-# For the further use in OpenGeoSys, the gmsh-mesh is converted to the vtu-format using the msh2vtu script.
+# For the further use in OpenGeoSys, the gmsh-mesh is converted to the vtu-format.
 
 # %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 
 # %%

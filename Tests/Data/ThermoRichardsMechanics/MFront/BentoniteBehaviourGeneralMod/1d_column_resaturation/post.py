@@ -14,11 +14,9 @@ from postprocessing_utils import (
 )
 
 outdir = Path("out")
-
-if not outdir.exists():
-    outdir.mkdir()
-    with (outdir / ".gitignore").open("w") as fh:
-        fh.write("*\n")
+outdir.mkdir(exist_ok=True)
+with (outdir / ".gitignore").open("w") as fh:
+    fh.write("*\n")
 
 
 def run():

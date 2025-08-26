@@ -496,8 +496,7 @@ M, sL_eff_list = full_Euler(dsL_eff, y0, sL_eff_low, sL_eff_high)
 
 # %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 prj_file = "heat_pipe_rough.prj"
 model = ot.Project(input_file=prj_file, output_file=prj_file)

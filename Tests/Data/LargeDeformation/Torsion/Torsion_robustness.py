@@ -71,8 +71,7 @@ fig.tight_layout()
 
 # %% jupyter={"source_hidden": true}
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-if not out_dir.exists():
-    out_dir.mkdir(parents=True)
+out_dir.mkdir(parents=True, exist_ok=True)
 
 # %% jupyter={"source_hidden": true}
 model = ot.Project(input_file="bar1to6_torsion.prj", output_file="bar1to6_torsion.prj")
