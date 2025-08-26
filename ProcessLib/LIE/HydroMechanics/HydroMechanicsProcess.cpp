@@ -109,8 +109,8 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
     // set branches
     for (auto const& [vec_branch_nodeID, matID] : vec_branch_nodeID_matIDs)
     {
-        auto master_matId = matID[0];
-        auto slave_matId = matID[1];
+        auto const master_matId = matID[0];
+        auto const slave_matId = matID[1];
         auto& master_frac =
             _process_data.fracture_properties
                 [_process_data.map_materialID_to_fractureID[master_matId]];
