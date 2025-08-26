@@ -40,6 +40,7 @@ foreach(process ${_enabled_processes})
        OR process STREQUAL "RichardsMechanics"
        OR process STREQUAL "TH2M"
        OR process STREQUAL "ThermoRichardsMechanics"
+       OR process STREQUAL "PhaseField"
     )
         append_source_files(SOURCES Common/HydroMechanics)
         break()
