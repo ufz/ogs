@@ -9,7 +9,7 @@ repos:
         exclude: "^Tests/Data/.*|^Tests/Python/res/test_docu_scripts/|^web/static|^Documentation/.vale/.*|.*\\.patch"
       - id: check-added-large-files
         args: [--maxkb 1024]
-        exclude: "^Tests/Data/uv.lock"
+        exclude: "uv.lock"
       - id: check-merge-conflict
       - id: check-xml
         exclude: '^Tests/Data/.*\.xml'
