@@ -270,6 +270,12 @@ else()
         GIT_REPOSITORY https://gitlab.opengeosys.org/ogs/libs/xmlpatch.git
         OPTIONS "BUILD_SHARED_LIBS OFF" SYSTEM TRUE
     )
+    if(NOT WIN32)
+        ogs_add_executable(apply_xmlpatch ${xmlpatch_SOURCE_DIR}/tests/xml_patch_main.c)
+        target_link_libraries(apply_xmlpatch PRIVATE xmlpatch)
+        target_compile_definitions(apply_xmlpatch PRIVATE -DVERSION="0.4.3")
+        install(TARGETS apply_xmlpatch RUNTIME DESTINATION bin)
+    endif()
 endif()
 
 if(OGS_BUILD_SWMM)

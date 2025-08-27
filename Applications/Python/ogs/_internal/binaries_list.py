@@ -1,3 +1,5 @@
+import sys
+
 binaries_list = [
     "addDataToRaster",
     "AddElementQuality",
@@ -70,3 +72,6 @@ binaries_list = [
     "Vtu2Grid",
     "xdmfdiff",
 ]
+
+if sys.platform != "win32":
+    binaries_list.append("apply_xmlpatch")
