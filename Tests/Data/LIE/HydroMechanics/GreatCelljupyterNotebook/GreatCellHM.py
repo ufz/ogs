@@ -76,7 +76,7 @@ out_dir.mkdir(parents=True, exist_ok=True)
 # # Great cell
 #
 # The GREAT cell is a  poly-axial rock-testing device that reproduces subsurface conditions down to 3.5 km depth on 200 mm-diameter samples. It imposes a rotating stress field, injects fluid through a central borehole, and records both fiber-optic strain and pore-pressure data—providing a rich dataset for validating coupled hydro-mechanical models. For full details, see the GREAT cell benchmark docs:
-# [https://www.opengeosys.org/docs/benchmarks/small-deformation/greatcell/](https://www.opengeosys.org/docs/benchmarks/small-deformation/greatcell/)
+# [www.opengeosys.org/docs/benchmarks/small-deformations/greatcell/](https://www.opengeosys.org/docs/benchmarks/small-deformations/greatcell/)
 #
 #
 # Here, in our 2D, small-deformation benchmark suite, we employ the LIE (lower-dimensional interface element) hydro-mechanical process to model fractures as interfaces. The cases are:
@@ -282,7 +282,9 @@ for idx, (label, values) in enumerate(loads.items()):
 
     top_points_x, top_points_y = [], []
 
-    for i, (x, y, value) in enumerate(zip(circle_x, circle_y, scaled_values)):
+    for i, (x, y, value) in enumerate(
+        zip(circle_x, circle_y, scaled_values, strict=False)
+    ):
         unit_vector = np.array([x, y]) / circle_radius
         line_end = np.array([x, y]) + unit_vector * value / 1e6
 

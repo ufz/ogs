@@ -72,7 +72,7 @@ def extract_data(mesh_iterator, line_mesh=None):
         profiles.append(profile.point_data)
 
         # aggregations
-        for agg_n, agg_f in zip(agg_names, agg_fcts):
+        for agg_n, agg_f in zip(agg_names, agg_fcts, strict=False):
             agg_rec = {}
             for n in mesh.array_names:
                 d = mesh.get_array(n)
@@ -224,7 +224,7 @@ def plot_profiles(ts, line_mesh, profiles, quantities, out_dir, profiles_ref=Non
         for a in axs:
             a.set_prop_cycle(color=mpl.colormaps["rainbow"](np.linspace(0, 1, len(ts))))
 
-        for ti, (t, prof) in enumerate(zip(ts, profiles)):
+        for ti, (t, prof) in enumerate(zip(ts, profiles, strict=False)):
             qty_values = prof[qty_name] if comp is None else prof[qty_name][:, comp]
             (h,) = ax.plot(
                 coords,

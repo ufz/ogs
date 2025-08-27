@@ -367,7 +367,7 @@ results = [
 ]
 
 i = 1
-for label, result in zip(labels, results):
+for label, result in zip(labels, results, strict=False):
     mesh = pv.read(result)
     print(mesh.point_data.keys())
 

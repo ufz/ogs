@@ -1,7 +1,7 @@
 import colorsys
 import math
 from pathlib import Path
-from typing import ClassVar, Optional
+from typing import ClassVar
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -222,7 +222,7 @@ class Plotter:
         ylim_range=None,
         layout="single",
         downsample: int = 1,
-        markevery: Optional[int] = None,
+        markevery: int | None = None,
         external_data=None,
     ):
         self.setup_plot_style()
@@ -455,7 +455,7 @@ class Plotter:
         self, file_list: list[str], material_names: list[str], fracture_mat_id=3
     ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
         by_material: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-        for vtu_file, mat_name in zip(file_list, material_names):
+        for vtu_file, mat_name in zip(file_list, material_names, strict=False):
             mesh = ot.MeshSeries(self.output_dir / vtu_file)[-1]
             sub = self.get_sub_mesh_by_material(mesh, fracture_mat_id)
             coords = sub.points
@@ -484,7 +484,7 @@ class Plotter:
         self, file_list: list[str], material_names: list[str]
     ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
         width_by_material: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-        for vtu_file, material_name in zip(file_list, material_names):
+        for vtu_file, material_name in zip(file_list, material_names, strict=False):
             mesh = ot.MeshSeries(self.output_dir / vtu_file)[-1]
             cell_data = mesh.cell_data
 
@@ -513,7 +513,7 @@ class Plotter:
         stress_type: str = "normal",
     ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
         stress_by_material: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-        for vtu_file, material_name in zip(file_list, material_names):
+        for vtu_file, material_name in zip(file_list, material_names, strict=False):
             mesh = ot.MeshSeries(self.output_dir / vtu_file)[-1]
             cell_data = mesh.cell_data
             point_data = mesh.point_data
@@ -662,10 +662,10 @@ class Plotter:
         self,
         pee_load_values: dict[str, list[float]],
         metric: str = "width",
-        methods_to_include: Optional[list[str]] = None,
-        ylim_range: Optional[tuple[float, float]] = None,
-        external_data: Optional[dict[str, dict[str, dict[str, list[float]]]]] = None,
-        benchmark_tag: Optional[str] = None,
+        methods_to_include: list[str] | None = None,
+        ylim_range: tuple[float, float] | None = None,
+        external_data: dict[str, dict[str, dict[str, list[float]]]] | None = None,
+        benchmark_tag: str | None = None,
     ) -> np.ndarray:
         if methods_to_include is None:
             methods_to_include = ["VPF", "LIE"]
@@ -836,12 +836,11 @@ class Plotter:
         widthProfile: dict[str, dict[str, tuple[np.ndarray, np.ndarray]]],
         benchmark_tag: str,
         downsample: int = 1,
-        markevery: Optional[int] = None,
-        ylim: Optional[tuple[float, float]] = None,
+        markevery: int | None = None,
+        ylim: tuple[float, float] | None = None,
         method_label: str = "FEM",
-        external_data: Optional[
-            dict[str, dict[str, dict[str, dict[str, list[float]]]]]
-        ] = None,
+        external_data: dict[str, dict[str, dict[str, dict[str, list[float]]]]]
+        | None = None,
     ) -> None:
         self.setup_plot_style()
         for load_case, mat_prof in widthProfile.items():
@@ -974,7 +973,7 @@ class Plotter:
 
     @staticmethod
     def load_external_data(
-        ext_dir: str | Path, benchmark_tag: Optional[str] = None
+        ext_dir: str | Path, benchmark_tag: str | None = None
     ) -> dict[str, dict]:
         """
         Scans ext_dir for extracted_*.npz and returns dicts:

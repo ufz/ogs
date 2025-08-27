@@ -29,7 +29,7 @@ def probeFileAlongLine(filename):
 def convertPointDataToPandasDF(line_data):
     point_data = line_data.GetPointData()
     data = {}
-    for k, v in zip(point_data.keys(), point_data.values()):
+    for k, v in zip(point_data.keys(), point_data.values(), strict=False):
         data[k] = vtk_to_numpy(v)
 
     coords = line_data.GetPoints()[:, 0]  # x-coordinates

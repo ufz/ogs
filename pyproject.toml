@@ -9,7 +9,7 @@ description = "OpenGeoSys Python wheel"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 authors = [{ email = "info@opengeosys.org" }, { name = "OpenGeoSys Community" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = ["pandas"]
 
 [project.urls]
@@ -24,6 +24,7 @@ dev-all = [
   { include-group = "dev" },
   # Use no-X11 version on Linux:
   "gmsh==4.13.1.dev1; platform_system == 'Linux'",
+  "gmsh>=4.12.0; platform_system != 'Linux'",
   "ogstools",
 ]
 
@@ -71,7 +72,7 @@ markers = [
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = ["cp3{9,10,11,12,13}-*"]
+build = ["cp3{10,11,12,13}-*"]
 skip = ["*musllinux*"]
 test-groups = "dev-all"
 test-command = "pytest {project}/Tests/Python"

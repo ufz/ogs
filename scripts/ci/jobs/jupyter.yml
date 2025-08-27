@@ -13,38 +13,88 @@ test linux wheel via notebooks:
       - OGS_GROUP: [ogs-master, ogs-pypi] # maintenance test upgrading all dependencies
         UV_ARGS: "--upgrade"
   rules:
-    - if: '$OGS_GROUP == "ogs-master" && $CI_COMMIT_BRANCH == "master"' # don't test master on master
+    # don't test master on master
+    - if: '$OGS_GROUP == "ogs-master" && $CI_COMMIT_BRANCH == "master"'
       when: never
-    - if: '$OGS_GROUP == "ogs-pypi" && $CI_PIPELINE_SOURCE == "merge_request_event"' # don't test MR against pypi
+
+    # don't test MR against pypi
+    - if: '$OGS_GROUP == "ogs-pypi" && $CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
-    - if: '$UV_ARGS == "--upgrade" && $CI_PIPELINE_SOURCE == "merge_request_event"' # Maintenance test manual on MR
+
+    # Maintenance test manual on MR
+    - if: '$UV_ARGS == "--upgrade" && $CI_PIPELINE_SOURCE == "merge_request_event"'
       when: manual
       allow_failure: true
+
+    # Upgrade jobs may fail
     - if: '$UV_ARGS =~ /.*--upgrade.*/'
       allow_failure: true
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+    # ogs-local MR only if certain files changed
+    - if: '$OGS_GROUP == "ogs-local" && $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - Tests/Data/**/*.py
+        - "**/pyproject.toml"
+        - "**/*.h"
+        - "**/*.cpp"
+
+    # ogs-master MR only if certain files changed
+    - if: '$OGS_GROUP == "ogs-master" && $CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - Tests/Data/**/*.py
+        - Tests/Data/pyproject.toml
+
+    # Run on master
     - if: '$CI_COMMIT_BRANCH == "master"'
   script:
     - cd Tests/Data
     - uv run --group ${OGS_GROUP} ${UV_ARGS} pytest
     # https://github.com/matplotlib/matplotlib/issues/25306:
     - rm -rf "$(uv run python -c 'import matplotlib as mpl; print(mpl.get_cachedir())')"
-    # Glacier tutorial
-    - |
-      cd ../../web/content/docs/tutorials/advancing-glacier
-      uv run --project ../../../../../Tests/Data python mesh_basin.py
-      uv run --project ../../../../../Tests/Data msh2vtu mesh_basin.msh --reindex
-      uv run --project ../../../../../Tests/Data --group ${OGS_GROUP} ${UV_ARGS} ogs OGSinput_basin.prj
-      cd -
     # TODO:
     #  - better timeout
     #  - run in parallel
     - |
-      find . -type f -iname '*.py' \
+      if [[ "$CI_COMMIT_BRANCH" == "master" ]]; then
+        # Glacier tutorial
+        cd ../../web/content/docs/tutorials/advancing-glacier
+        uv run --project ../../../../../Tests/Data python mesh_basin.py
+        uv run --project ../../../../../Tests/Data msh2vtu mesh_basin.msh --reindex
+        uv run --project ../../../../../Tests/Data --group ${OGS_GROUP} ${UV_ARGS} ogs OGSinput_basin.prj
+        cd -
+        echo "Running on all .py files (master branch)..."
+        find . -type f -iname '*.py' \
           | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
           | xargs grep -l "jupytext_version" \
           | xargs grep -L "ci skip" \
           | xargs uv run --group ${OGS_GROUP} ${UV_ARGS} python Notebooks/testrunner.py --out _out
+        exit $?
+      elif [[ "$CI_PIPELINE_SOURCE" == "merge_request_event" ]]; then
+        echo "Running on changed .py files (MR)..."
+        base_ref="$CI_MERGE_REQUEST_TARGET_BRANCH_SHA"
+        changed_py_files=$(git diff --name-only "$base_ref" "$CI_COMMIT_SHA" \
+          | grep '^Tests/Data/.*\.py$' \
+          | sed 's|^Tests/Data/||' \
+          | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
+          || true)
+
+        # Collect filtered files into a variable
+        files=$(echo "$changed_py_files" \
+          | xargs grep -l "jupytext_version" \
+          | xargs grep -L "ci skip" \
+          || true)
+
+        if [[ -z "$files" ]]; then
+          echo "No files left to test after filtering, skipping."
+          exit 0
+        fi
+
+        echo "Running changed notebook files:"
+        echo "$files"
+
+        uv run --group ${OGS_GROUP} ${UV_ARGS} python Notebooks/testrunner.py --out _out $files
+        exit $?
+      fi
   artifacts:
     when: always
     paths:

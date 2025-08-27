@@ -102,7 +102,9 @@ def aggregate_ogs_results(recs):
     names = ("min", "max", "mean", "std")
     fs = (np.min, np.max, np.mean, np.std)
 
-    return {n: [aggregate(rec, f) for rec in recs] for n, f in zip(names, fs)}
+    return {
+        n: [aggregate(rec, f) for rec in recs] for n, f in zip(names, fs, strict=False)
+    }
     # recs_min = [ aggregate(rec, np.min) for rec in recs ]
     # print(recs_min)
 

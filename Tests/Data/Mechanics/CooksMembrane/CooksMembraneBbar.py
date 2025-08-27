@@ -140,7 +140,7 @@ output_prefices_non_bbar = [
 ]
 
 uys_at_top_non_bbar = []
-for mesh_name, output_prefix in zip(mesh_names, output_prefices_non_bbar):
+for mesh_name, output_prefix in zip(mesh_names, output_prefices_non_bbar, strict=False):
     uy_at_top = run_single_test(mesh_name, output_prefix)
     uys_at_top_non_bbar.append(uy_at_top)
 
@@ -169,7 +169,7 @@ output_prefices = [
 ]
 
 uys_at_top_bbar = []
-for mesh_name, output_prefix in zip(mesh_names, output_prefices):
+for mesh_name, output_prefix in zip(mesh_names, output_prefices, strict=False):
     uy_at_top = run_single_test(mesh_name, output_prefix, "true")
     uys_at_top_bbar.append(uy_at_top)
 
@@ -262,14 +262,14 @@ def contour_plot(pvd_file_name, title):
 # #### Results obtained without the B bar method:
 
 # %%
-for nedge, output_prefix in zip(nedges, output_prefices_non_bbar):
+for nedge, output_prefix in zip(nedges, output_prefices_non_bbar, strict=False):
     contour_plot(output_prefix + ".pvd", "Number of elements per side: " + nedge)
 
 # %% [markdown]
 # #### Results obtained with the B bar method:
 
 # %%
-for nedge, output_prefix in zip(nedges, output_prefices):
+for nedge, output_prefix in zip(nedges, output_prefices, strict=False):
     contour_plot(output_prefix + ".pvd", "Number of elements per side: " + nedge)
 
 # %% [markdown]

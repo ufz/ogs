@@ -139,7 +139,7 @@ df_stats = pd.DataFrame()
 # df_stats = stats[0].copy()
 # df_stats["case_name"] = cases[0][0]
 
-for (name, _case), stat in zip(cases, stats):
+for (name, _case), stat in zip(cases, stats, strict=False):
     tmp = stat.copy()
     tmp["case_name"] = name
     df_stats = pd.concat([df_stats, tmp])
@@ -499,7 +499,7 @@ def compare_optimizations_to_base_case(cases):
 
         assert np.allclose(base_ts, var_ts, atol=1e-15, rtol=0)
 
-        for bm, vm in zip(base_meshes, var_meshes):
+        for bm, vm in zip(base_meshes, var_meshes, strict=False):
             # point coordinates
             assert np.allclose(bm.points, vm.points, atol=1e-15, rtol=0)
 
