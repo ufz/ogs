@@ -77,7 +77,7 @@ if not out_dir.exists():
 # # Great cell
 #
 # The GREAT cell is a  poly-axial rock-testing device that reproduces subsurface conditions down to 3.5 km depth on 200 mm-diameter samples. It imposes a rotating stress field, injects fluid through a central borehole, and records both fiber-optic strain and pore-pressure data—providing a rich dataset for validating coupled hydro-mechanical models. For full details, see the GREAT cell benchmark docs:
-#  [www.opengeosys.org/docs/benchmarks/small-deformations/greatcell/](https://www.opengeosys.org/docs/benchmarks/small-deformations/greatcell/)
+#  [www.opengeosys.org/docs/benchmarks/small-deformations/greatcellm/](https://www.opengeosys.org/docs/benchmarks/small-deformations/greatcellm/)
 #
 #
 #
