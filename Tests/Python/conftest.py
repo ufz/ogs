@@ -1,6 +1,8 @@
 import os
+import platform
 from pathlib import Path
 
+import ogs
 import pytest
 
 
@@ -20,6 +22,13 @@ def pytest_runtest_setup(item):
                 reason="the environment variable OGS_PERFORMANCE_TESTS_ALLOWED_TO_FAIL says that performance tests might fail",
                 run=True,
                 strict=False,
+            )
+        )
+
+    if platform.system() == "Windows" and ogs.OGS_USE_MKL == "ON":
+        os.add_dll_directory(
+            Path(
+                "C:/Program Files (x86)/Intel/oneAPI/compiler/latest/windows/redist/intel64_win/compiler"
             )
         )
 
