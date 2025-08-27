@@ -3,6 +3,9 @@ build win:
     - .template-build-win
     - .test-artifacts
     - .vs-environment
+  rules:
+    - when: manual
+      allow_failure: true
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
@@ -10,6 +13,7 @@ build win:
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_PIP=ON
 
+# Default config which is packaged on release
 build win mkl:
   extends:
     - .template-build-win
@@ -17,7 +21,6 @@ build win mkl:
     - .vs-environment
     - .vs-mkl-environment
   rules:
-    # Build package on master and release
     - if: ($CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH) || $CI_COMMIT_TAG
       variables:
         BUILD_PACKAGE: "true"
@@ -28,6 +31,7 @@ build win mkl:
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_MKL=ON
+      -DOGS_USE_PIP=ON
 
 build win msvc:
   extends:
