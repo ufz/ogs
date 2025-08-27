@@ -14,8 +14,6 @@ build win mkl:
   extends:
     - .template-build-win
     - .test-artifacts
-    # oneAPI MKL results in Stack overflow during compilation of MathLib on Visual Studio 2022
-    # therefore using 2019
     - .vs-environment
     - .vs-mkl-environment
   rules:
