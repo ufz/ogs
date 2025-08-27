@@ -35,13 +35,13 @@
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
             <deactivate_matrix_in_flow>true</deactivate_matrix_in_flow>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="velocity" output_name="velocity"/>
-                <secondary_variable internal_name="fracture_velocity" output_name="fracture_velocity"/>
-                <secondary_variable internal_name="fracture_permeability" output_name="fracture_permeability"/>
-                <secondary_variable internal_name="fracture_stress" output_name="fracture_stress"/>
-                <secondary_variable internal_name="fracture_aperture" output_name="fracture_aperture"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="velocity"/>
+                <secondary_variable name="fracture_velocity"/>
+                <secondary_variable name="fracture_permeability"/>
+                <secondary_variable name="fracture_stress"/>
+                <secondary_variable name="fracture_aperture"/>
             </secondary_variables>
         </process>
     </processes>

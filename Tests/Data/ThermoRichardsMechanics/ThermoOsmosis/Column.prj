@@ -23,7 +23,7 @@
                 <temperature>temperature</temperature>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="saturation" output_name="saturation"/>
+                <secondary_variable name="saturation"/>
                 <secondary_variable type="static" internal_name="sigma" output_name="sigma"/>
                 <secondary_variable type="static" internal_name="epsilon" output_name="epsilon"/>
             </secondary_variables>

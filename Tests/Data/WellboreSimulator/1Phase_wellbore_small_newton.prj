@@ -19,11 +19,11 @@
             </jacobian_assembler>
             <specific_body_force> -9.81 </specific_body_force>
             <secondary_variables>
-                <secondary_variable internal_name="vapor_mass_flow_rate" output_name="vapor_mass_flow_rate"/>
-                <secondary_variable internal_name="liquid_mass_flow_rate" output_name="liquid_mass_flow_rate"/>
-                <secondary_variable internal_name="temperature" output_name="temperature"/>
-                <secondary_variable internal_name="dryness" output_name="dryness"/>
-                <secondary_variable internal_name="vapor_volume_fraction" output_name="vapor_volume_fraction"/>
+                <secondary_variable name="vapor_mass_flow_rate"/>
+                <secondary_variable name="liquid_mass_flow_rate"/>
+                <secondary_variable name="temperature"/>
+                <secondary_variable name="dryness"/>
+                <secondary_variable name="vapor_volume_fraction"/>
             </secondary_variables>
             <wellbore>
                 <length>20</length>

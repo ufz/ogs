@@ -24,13 +24,13 @@
                 <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="saturation" output_name="saturation"/>
-                <secondary_variable internal_name="swelling_stress" output_name="swelling_stress"/>
-                <secondary_variable internal_name="porosity" output_name="porosity"/>
-                <secondary_variable internal_name="intrinsic_permeability" output_name="intrinsic_permeability"/>
-                <secondary_variable internal_name="relative_permeability" output_name="relative_permeability"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="saturation"/>
+                <secondary_variable name="swelling_stress"/>
+                <secondary_variable name="porosity"/>
+                <secondary_variable name="intrinsic_permeability"/>
+                <secondary_variable name="relative_permeability"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
         </process>

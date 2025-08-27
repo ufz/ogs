@@ -35,8 +35,8 @@
                 <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="sigma_total" output_name="sigma_total"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable name="sigma_total"/>
+                <secondary_variable name="epsilon"/>
             </secondary_variables>
             <specific_body_force>0 0 0</specific_body_force>
             <initial_stress type="total">initial_stress</initial_stress>
