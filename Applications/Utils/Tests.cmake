@@ -1611,3 +1611,14 @@ AddTest(
     DIFF_DATA raster_based_3d_mesh.vtu raster_based_3d_mesh.vtu 1e-16
 )
 
+AddTest(
+    NAME xmlpatch
+    PATH Elliptic/square_1x1_SteadyStateDiffusion
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE apply_xmlpatch
+    EXECUTABLE_ARGS -f square_1e0.prj -p square_neumann.xml -o
+        ${Data_BINARY_DIR}/Elliptic/square_1x1_SteadyStateDiffusion/square_1e0_neumann_patched.prj
+    TESTER diff
+    DIFF_DATA square_1e0_neumann_patched.prj
+    REQUIREMENTS NOT WIN32
+)
