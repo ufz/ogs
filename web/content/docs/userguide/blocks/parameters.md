@@ -53,6 +53,11 @@ There are the following types available:
 
 - [Constant](/docs/userguide/blocks/parameters/#constant)
 - [CurveScaled](/docs/userguide/blocks/parameters/#curvescaled)
+- [Function](/docs/userguide/blocks/parameters/#Function)
+- [MeshElement](/docs/userguide/blocks/parameters/#meshelement)
+- [MeshNode](/docs/userguide/blocks/parameters/#meshelement)
+- [RandomFieldMeshElement](/docs/userguide/blocks/parameters/#RandomFieldMeshElement)
+- [TimeDependentHeterogeneous](/docs/userguide/blocks/parameters/#TimeDependentHeterogeneous)
 
 Each of them will be discussed below.
 The same type can be used to define media properties in the [media block](/docs/userguide/blocks/media/).
@@ -112,3 +117,82 @@ Following variables are accessible from CurveScaled:
     <values>0.0 10.0</values>
 </curve>
 ```
+
+
+
+### Function
+It is also possible to define parameters using a function, enabling spatially varying or time-dependent behavior of the paramter. These functions are defined in the necessary `<expression></expression>` subtag. Valid variables are `x, y, z and t`, so the spatial parameters and the time. You can even incorporate predefined curves from the [curves section](/docs/userguide/blocks/curves/) of the project file.
+
+```xml
+<parameter>
+    <name>density</name>
+    <type>Function</type>
+    <expression>2000 - CurveName(x^2 + y^2) * TimeDependentCurve(t)</expression>
+</parameter>
+```
+
+### Group
+The group type parameter is defined by a specific value or values for each of the group ids. The group_id_property specifies the name of the data array in the mesh that define the group. In the `<index_values></index_values>` subtags, the values of the parameters in those groupids are defined. The `<index></index>` subtag represents the values of the group id, while the `<values></values>` or `<value></value>` subtags define the values of the paramter for fields where aforementioned group id matches the index.
+
+```xml
+<parameter>
+    <name>K</name>
+    <type>Group</type>
+    <group_id_property>MaterialIDs</group_id_property>
+    <index_values>
+        <index>0</index>
+        <values>1 1 1</values>
+    </index_values>
+    <index_values>
+        <index>1</index>
+        <values>1 1 0.1</values>
+    </index_values>
+    <index_values>
+        <index>2</index>
+        <values>0.1 0.1 1</values>
+    </index_values>
+    <use_local_coordinate_system>true</use_local_coordinate_system>
+</parameter>
+```
+
+<h3 id = "meshelement"> MeshElement and MeshNode</h3>
+Parameters of type "MeshElement" or "MeshNode" are defined by a data array in a given mesh. The difference between "MeshElement" and "MeshNode" type is the underlying data type. While "MeshElements" use cell labels, "MeshNode" uses point labels. Which to use is dependent on the parameter or the provided data.
+
+ The mesh must be loaded in the [mesh section](docs/userguide/blocks/Meshes) of the project file. To specify the data array which contains the desired information, use the `<field_name></field_name>` subtag. The mesh can be defined in the `<mesh></mesh>` subtag If there is not `<mesh>` tag is not present, the first defined mesh will be used.
+
+
+```xml
+<parameter>
+    <name>K_rho_over_mu__eff</name>
+    <type>MeshElement</type>
+    <field_name>K_rho_over_mu__eff</field_name>
+</parameter>
+<parameter>
+    <name>mass_flux</name>
+    <type>MeshNode</type>
+    <mesh>inhomogeneous_permeability_top</mesh>
+    <field_name>mass_flux</field_name>
+</parameter>
+```
+
+
+### RandomFieldMeshElement
+Defines a parameter with random values in each mesh element with a uniform distribution in a given range. The range can be defined in the `<range></range>` subtag. A given seed (`<seed></seed>` subtag) for initializing the random number generator allows for repeatability of the random field. The `<field_name></field_name>` tag defines the name of the output variable that will contain this parameter.
+
+```xml
+<parameter>
+    <name>phi</name>
+    <type>RandomFieldMeshElement</type>
+    <field_name>phi_xy</field_name>
+    <range>0 3.1415926535</range>
+    <seed>20210422</seed>
+</parameter>
+```
+
+
+### TimeDependentHeterogeneous
+<div class="note">
+
+Work in progress. This section is not yet documented.
+
+</div>
