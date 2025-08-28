@@ -23,7 +23,6 @@ dev = ["pytest", "numpy"]
 dev-all = [
   { include-group = "dev" },
   # Use no-X11 version on Linux:
-  # DROP
   "gmsh==4.13.1.dev1; platform_system == 'Linux'",
   "gmsh>=4.12.0; platform_system != 'Linux'",
   "ogstools",
