@@ -11,6 +11,8 @@
 #include "CreateHydroMechanicsProcess.h"
 
 #include <cassert>
+#include <range/v3/numeric/accumulate.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "HydroMechanicsProcess.h"
 #include "HydroMechanicsProcessData.h"
@@ -34,7 +36,7 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <int GlobalDim>
+template <int DisplacementDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
     std::string const& name,
     MeshLib::Mesh& mesh,
@@ -93,7 +95,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
              variable->getName(), "process_variable");
 
         if (pv_name.find("displacement") != std::string::npos &&
-            variable->getNumberOfGlobalComponents() != GlobalDim)
+            variable->getNumberOfGlobalComponents() != DisplacementDim)
         {
             OGS_FATAL(
                 "Number of components of the process variable '{:s}' is "
@@ -101,7 +103,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
                 "{:d}",
                 variable->getName(),
                 variable->getNumberOfGlobalComponents(),
-                GlobalDim);
+                DisplacementDim);
         }
 
         if (!use_monolithic_scheme)
@@ -141,30 +143,30 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     /// \section parametersliehm Process Parameters
     auto solid_constitutive_relations =
-        MaterialLib::Solids::createConstitutiveRelations<GlobalDim>(
+        MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, materialIDs(mesh), config);
 
     // Specific body force
-    Eigen::Matrix<double, GlobalDim, 1> specific_body_force;
+    Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
         std::vector<double> const b =
             //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__specific_body_force}
             config.getConfigParameter<std::vector<double>>(
                 "specific_body_force");
-        if (b.size() != GlobalDim)
+        if (b.size() != DisplacementDim)
         {
             OGS_FATAL(
                 "The size of the specific body force vector does not match the "
                 "displacement dimension. Vector size is {:d}, displacement "
                 "dimension is {:d}",
-                b.size(), GlobalDim);
+                b.size(), DisplacementDim);
         }
 
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
     // Fracture constitutive relation.
-    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
+    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
         fracture_model = nullptr;
     auto const opt_fracture_model_config =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_model}
@@ -180,19 +182,20 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         if (frac_type == "LinearElasticIsotropic")
         {
             fracture_model =
-                MaterialLib::Fracture::createLinearElasticIsotropic<GlobalDim>(
-                    parameters, fracture_model_config);
+                MaterialLib::Fracture::createLinearElasticIsotropic<
+                    DisplacementDim>(parameters, fracture_model_config);
         }
         else if (frac_type == "Coulomb")
         {
-            fracture_model = MaterialLib::Fracture::createCoulomb<GlobalDim>(
-                parameters, fracture_model_config);
+            fracture_model =
+                MaterialLib::Fracture::createCoulomb<DisplacementDim>(
+                    parameters, fracture_model_config);
         }
         else if (frac_type == "CohesiveZoneModeI")
         {
             fracture_model = MaterialLib::Fracture::CohesiveZoneModeI::
-                createCohesiveZoneModeI<GlobalDim>(parameters,
-                                                   fracture_model_config);
+                createCohesiveZoneModeI<DisplacementDim>(parameters,
+                                                         fracture_model_config);
         }
         else
         {
@@ -204,27 +207,34 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     }
 
     // Fracture properties
-    std::unique_ptr<FractureProperty> frac_prop = nullptr;
-    auto opt_fracture_properties_config =
+    std::vector<FractureProperty> fracture_properties;
+    for (
+        auto fracture_properties_config :
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties}
-        config.getConfigSubtreeOptional("fracture_properties");
-    if (opt_fracture_properties_config)
+        config.getConfigSubtreeList("fracture_properties"))
     {
-        auto& fracture_properties_config = *opt_fracture_properties_config;
-
-        frac_prop = std::make_unique<ProcessLib::LIE::FractureProperty>(
-            0 /*fracture_id*/, 0 /*material_id*/,
+        fracture_properties.emplace_back(
+            fracture_properties.size(),
+            //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__material_id}
+            fracture_properties_config.getConfigParameter<int>("material_id"),
             ParameterLib::findParameter<double>(
                 //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__fracture_properties__initial_aperture}
                 fracture_properties_config, "initial_aperture", parameters, 1,
                 &mesh));
-        if (frac_prop->aperture0.isTimeDependent())
-        {
-            OGS_FATAL(
-                "The initial aperture parameter '{:s}' must not be "
-                "time-dependent.",
-                frac_prop->aperture0.name);
-        }
+    }
+
+    std::size_t const n_var_du =
+        ranges::accumulate(
+            process_variables | ranges::views::transform(ranges::size),
+            std::size_t{0}) -
+        2 /* for pressure and displacement */;
+    if (n_var_du != fracture_properties.size())
+    {
+        OGS_FATAL(
+            "The number of displacement jumps {} and the number of "
+            "<fracture_properties> {} are not consistent.",
+            n_var_du,
+            fracture_properties.size());
     }
 
     // initial effective stress in matrix
@@ -232,7 +242,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_effective_stress}
         "initial_effective_stress", parameters,
-        MathLib::KelvinVector::kelvin_vector_dimensions(GlobalDim), &mesh);
+        MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
+        &mesh);
     DBUG("Use '{:s}' as initial effective stress parameter.",
          initial_effective_stress.name);
 
@@ -241,7 +252,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         double>(
         config,
         //! \ogs_file_param_special{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__initial_fracture_effective_stress}
-        "initial_fracture_effective_stress", parameters, GlobalDim, &mesh);
+        "initial_fracture_effective_stress", parameters, DisplacementDim,
+        &mesh);
     DBUG("Use '{:s}' as initial fracture effective stress parameter.",
          initial_fracture_effective_stress.name);
 
@@ -251,7 +263,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         config.getConfigParameterOptional<bool>("deactivate_matrix_in_flow");
     bool const deactivate_matrix_in_flow =
         opt_deactivate_matrix_in_flow && *opt_deactivate_matrix_in_flow;
-    ;
+
     if (deactivate_matrix_in_flow)
         INFO("Deactivate matrix elements in flow calculation.");
 
@@ -286,7 +298,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         auto const& medium = *media_map.getMedium(element_id);
 
         // For fracture element
-        if (mesh.getElement(element_id)->getDimension() != GlobalDim)
+        if (mesh.getElement(element_id)->getDimension() != DisplacementDim)
         {
             ParameterLib::SpatialPosition x_position;
             MaterialPropertyLib::VariableArray variables;
@@ -302,10 +314,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         }
     }
 
-    HydroMechanicsProcessData<GlobalDim> process_data{
+    HydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),         std::move(solid_constitutive_relations),
         std::move(media_map),      specific_body_force,
-        std::move(fracture_model), std::move(frac_prop),
+        std::move(fracture_model), std::move(fracture_properties),
         initial_effective_stress,  initial_fracture_effective_stress,
         deactivate_matrix_in_flow, use_b_bar};
 
@@ -313,7 +325,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
 
     ProcessLib::createSecondaryVariables(config, secondary_variables);
 
-    return std::make_unique<HydroMechanicsProcess<GlobalDim>>(
+    return std::make_unique<HydroMechanicsProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),

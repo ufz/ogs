@@ -48,7 +48,7 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <int GlobalDim>
+template <int DisplacementDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
     std::string const& name,
     MeshLib::Mesh& mesh,

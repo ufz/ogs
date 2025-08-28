@@ -1,1 +1,1 @@
-\ogs_missing_documentation
+Properties for each fracture in the mesh.

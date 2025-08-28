@@ -27,6 +27,7 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
+                <material_id>1</material_id>
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
@@ -48,7 +49,7 @@
                 <convergence_criterion>
                     <type>PerComponentResidual</type>
                     <norm_type>NORM2</norm_type>
-                    <abstols>1e-18 1e-7 1e-5 1e-7 1e-8 1e-6 1e-8</abstols>
+                    <abstols>1e-18 1e-7 1e-5 1e-7 1e-8 1e-6 1e-8 1e-16 1e-16 1e-16</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>

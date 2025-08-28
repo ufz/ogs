@@ -32,20 +32,21 @@ namespace LIE
 {
 namespace HydroMechanics
 {
-template <int GlobalDim>
+template <int DisplacementDim>
 struct HydroMechanicsProcessData
 {
     MeshLib::PropertyVector<int> const* const material_ids;
-    std::map<int,
-             std::shared_ptr<MaterialLib::Solids::MechanicsBase<GlobalDim>>>
+    std::map<int, std::shared_ptr<
+                      MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
-    Eigen::Matrix<double, GlobalDim, 1> const specific_body_force;
-    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<GlobalDim>>
+    Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
+    std::unique_ptr<MaterialLib::Fracture::FractureModelBase<DisplacementDim>>
         fracture_model;
-    std::unique_ptr<FractureProperty> fracture_property;
+    std::vector<FractureProperty> fracture_properties;
+
     ParameterLib::Parameter<double> const& initial_effective_stress;
     ParameterLib::Parameter<double> const& initial_fracture_effective_stress;
 
@@ -54,6 +55,15 @@ struct HydroMechanicsProcessData
     /// An indicator to use the B bar method \cite hughes1980generalization to
     /// tackle the  volumetric locking.
     const bool use_b_bar;
+
+    std::vector<JunctionProperty> junction_properties = {};
+
+    MeshLib::PropertyVector<int> const* mesh_prop_materialIDs = nullptr;
+    std::vector<int> map_materialID_to_fractureID = {};
+
+    // a table of connected fracture IDs for each element
+    std::vector<std::vector<int>> vec_ele_connected_fractureIDs = {};
+    std::vector<std::vector<int>> vec_ele_connected_junctionIDs = {};
 
     std::unique_ptr<MeshLib::ElementStatus> p_element_status = nullptr;
     ParameterLib::Parameter<double> const* p0 = nullptr;

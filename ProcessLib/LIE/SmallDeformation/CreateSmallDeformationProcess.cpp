@@ -171,8 +171,10 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     if (n_var_du < fracture_properties.size())
     {
         OGS_FATAL(
-            "The number of displacement jumps and the number of "
-            "<fracture_properties> are not consistent");
+            "The number of displacement jumps {} and the number of "
+            "<fracture_properties> {} are not consistent.",
+            n_var_du,
+            fracture_properties.size());
     }
 
     // Reference temperature

@@ -214,3 +214,10 @@ private:
 };
 
 }  // namespace NumLib
+
+#ifndef NDEBUG
+template <>
+struct fmt::formatter<NumLib::LocalToGlobalIndexMap> : fmt::ostream_formatter
+{
+};
+#endif  // NDEBUG

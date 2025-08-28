@@ -22,10 +22,10 @@ namespace HydroMechanics
 {
 class HydroMechanicsLocalAssemblerInterface;
 
-template <int GlobalDim>
+template <int DisplacementDim>
 class HydroMechanicsProcess final : public Process
 {
-    static_assert(GlobalDim == 2 || GlobalDim == 3,
+    static_assert(DisplacementDim == 2 || DisplacementDim == 3,
                   "Currently LIE::HydroMechanicsProcess "
                   "supports only 2D or 3D.");
 
@@ -40,7 +40,7 @@ public:
         unsigned const integration_order,
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
-        HydroMechanicsProcessData<GlobalDim>&& process_data,
+        HydroMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
         bool const use_monolithic_scheme);
 
@@ -77,18 +77,25 @@ private:
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     double const t, double const dt,
                                     int const process_id) override;
+    void updateElementLevelSets(MeshLib::Element const& e, MeshLib::Mesh& mesh);
 
 private:
-    HydroMechanicsProcessData<GlobalDim> _process_data;
+    HydroMechanicsProcessData<DisplacementDim> _process_data;
 
     std::vector<std::unique_ptr<LocalAssemblerInterface>> _local_assemblers;
 
     std::vector<MeshLib::Element*> _vec_matrix_elements;
-    std::vector<MeshLib::Element*> _vec_fracture_elements;
-    std::vector<MeshLib::Element*> _vec_fracture_matrix_elements;
-    std::vector<MeshLib::Node*> _vec_fracture_nodes;
+    std::vector<int> _vec_fracture_mat_IDs;
+    std::vector<std::vector<MeshLib::Element*>> _vec_fracture_elements;
+    std::vector<std::vector<MeshLib::Element*>> _vec_fracture_matrix_elements;
+    std::vector<std::vector<MeshLib::Node*>> _vec_fracture_nodes;
+    std::vector<MeshLib::Node*> _vec_junction_nodes;
+    std::vector<std::vector<MeshLib::Element*>>
+        _vec_junction_fracture_matrix_elements;
 
-    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_fracture_nodes;
+    std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
+        _mesh_subset_fracture_nodes;
+    std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_junction_nodes;
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_matrix_nodes;
 
     std::vector<MeshLib::Node*> _mesh_nodes_p;

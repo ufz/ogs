@@ -75,6 +75,7 @@ private:
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     double const t, double const dt,
                                     const int process_id) override;
+    void updateElementLevelSets(MeshLib::Element const& e, MeshLib::Mesh& mesh);
 
 private:
     SmallDeformationProcessData<DisplacementDim> _process_data;

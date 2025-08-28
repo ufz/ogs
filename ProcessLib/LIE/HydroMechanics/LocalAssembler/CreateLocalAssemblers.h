@@ -23,7 +23,7 @@ namespace HydroMechanics
 {
 namespace detail
 {
-template <int GlobalDim,
+template <int DisplacementDim,
           template <typename, typename, int>
           class LocalAssemblerMatrixImplementation,
           template <typename, typename, int>
@@ -39,12 +39,14 @@ void createLocalAssemblers(
     ExtraCtorArgs&&... extra_ctor_args)
 {
     // Shape matrices initializer
-    using LocalDataInitializer = LocalDataInitializer<
-        LocalAssemblerInterface, LocalAssemblerMatrixImplementation,
-        LocalAssemblerMatrixNearFractureImplementation,
-        LocalAssemblerFractureImplementation, GlobalDim, ExtraCtorArgs...>;
+    using LocalDataInitializer =
+        LocalDataInitializer<LocalAssemblerInterface,
+                             LocalAssemblerMatrixImplementation,
+                             LocalAssemblerMatrixNearFractureImplementation,
+                             LocalAssemblerFractureImplementation,
+                             DisplacementDim, ExtraCtorArgs...>;
 
-    DBUG("Create local assemblers for HydroMechanics with LIE.");
+    DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
     local_assemblers.resize(mesh_elements.size());
 
@@ -69,7 +71,7 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <int GlobalDim,
+template <int DisplacementDim,
           template <typename, typename, int>
           class LocalAssemblerMatrixImplementation,
           template <typename, typename, int>
@@ -84,8 +86,10 @@ void createLocalAssemblers(
     NumLib::IntegrationOrder const integration_order,
     ExtraCtorArgs&&... extra_ctor_args)
 {
+    DBUG("Create local assemblers.");
+
     detail::createLocalAssemblers<
-        GlobalDim, LocalAssemblerMatrixImplementation,
+        DisplacementDim, LocalAssemblerMatrixImplementation,
         LocalAssemblerMatrixNearFractureImplementation,
         LocalAssemblerFractureImplementation>(
         dof_table, mesh_elements, local_assemblers, integration_order,

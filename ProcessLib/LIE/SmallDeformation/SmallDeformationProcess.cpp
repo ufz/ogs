@@ -10,6 +10,10 @@
 
 #include "SmallDeformationProcess.h"
 
+#include "LocalAssembler/CreateLocalAssemblers.h"
+#include "LocalAssembler/SmallDeformationLocalAssemblerFracture.h"
+#include "LocalAssembler/SmallDeformationLocalAssemblerMatrix.h"
+#include "LocalAssembler/SmallDeformationLocalAssemblerMatrixNearFracture.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
@@ -17,10 +21,6 @@
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/LIE/Common/BranchProperty.h"
 #include "ProcessLib/LIE/Common/MeshUtils.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/CreateLocalAssemblers.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerFracture.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerMatrix.h"
-#include "ProcessLib/LIE/SmallDeformation/LocalAssembler/SmallDeformationLocalAssemblerMatrixNearFracture.h"
 
 namespace ProcessLib
 {
@@ -44,6 +44,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
               std::move(secondary_variables)),
       _process_data(std::move(process_data))
 {
+    INFO("[LIE/M] looking for fracture elements in the given mesh");
     std::vector<std::pair<std::size_t, std::vector<int>>>
         vec_branch_nodeID_matIDs;
     std::vector<std::pair<std::size_t, std::vector<int>>>
@@ -99,8 +100,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     // set branches
     for (auto const& [vec_branch_nodeID, matID] : vec_branch_nodeID_matIDs)
     {
-        auto master_matId = matID[0];
-        auto slave_matId = matID[1];
+        auto const master_matId = matID[0];
+        auto const slave_matId = matID[1];
         auto& master_frac =
             _process_data.fracture_properties
                 [_process_data.map_materialID_to_fractureID[master_matId]];
@@ -228,12 +229,63 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
         vec_var_elements.push_back(&_vec_junction_fracture_matrix_elements[i]);
     }
 
+    INFO("[LIE/M] creating a DoF table");
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets),
             vec_n_components,
             vec_var_elements,
             NumLib::ComponentOrder::BY_COMPONENT);
+
+    DBUG("[LIE/M] created {:d} DoF", _local_to_global_index_map->size());
+}
+
+template <int DisplacementDim>
+void SmallDeformationProcess<DisplacementDim>::updateElementLevelSets(
+    MeshLib::Element const& e, MeshLib::Mesh& mesh)
+{
+    Eigen::Vector3d const pt(getCenterOfGravity(e).asEigenVector3d());
+    std::vector<FractureProperty*> e_fracture_props;
+    std::unordered_map<int, int> e_fracID_to_local;
+    unsigned tmpi = 0;
+    for (auto fid : _process_data.vec_ele_connected_fractureIDs[e.getID()])
+    {
+        e_fracture_props.push_back(&_process_data.fracture_properties[fid]);
+        e_fracID_to_local.insert({fid, tmpi++});
+    }
+    std::vector<JunctionProperty*> e_junction_props;
+    std::unordered_map<int, int> e_juncID_to_local;
+    tmpi = 0;
+    for (auto fid : _process_data.vec_ele_connected_junctionIDs[e.getID()])
+    {
+        e_junction_props.push_back(&_process_data.junction_properties[fid]);
+        e_juncID_to_local.insert({fid, tmpi++});
+    }
+    std::vector<double> const levelsets(uGlobalEnrichments(
+        e_fracture_props, e_junction_props, e_fracID_to_local, pt));
+
+    auto update_levelset_property = [&](unsigned const i, int const id,
+                                        unsigned const levelset_idx_offset,
+                                        unsigned const name_offset)
+    {
+        auto levelset_property = MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh),
+            "levelset" + std::to_string(id + 1 + name_offset),
+            MeshLib::MeshItemType::Cell, 1);
+        levelset_property->resize(mesh.getNumberOfElements());
+        (*levelset_property)[e.getID()] = levelsets[i + levelset_idx_offset];
+    };
+
+    for (unsigned i = 0; i < e_fracture_props.size(); i++)
+    {
+        update_levelset_property(i, e_fracture_props[i]->fracture_id, 0, 0);
+    }
+    for (unsigned i = 0; i < e_junction_props.size(); i++)
+    {
+        update_levelset_property(i, e_junction_props[i]->junction_id,
+                                 e_fracture_props.size(),
+                                 _process_data.fracture_properties.size());
+    }
 }
 
 template <int DisplacementDim>
@@ -300,48 +352,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
             continue;
         }
 
-        Eigen::Vector3d const pt(getCenterOfGravity(*e).asEigenVector3d());
-        std::vector<FractureProperty*> e_fracture_props;
-        std::unordered_map<int, int> e_fracID_to_local;
-        unsigned tmpi = 0;
-        for (auto fid : _process_data.vec_ele_connected_fractureIDs[e->getID()])
-        {
-            e_fracture_props.push_back(&_process_data.fracture_properties[fid]);
-            e_fracID_to_local.insert({fid, tmpi++});
-        }
-        std::vector<JunctionProperty*> e_junction_props;
-        std::unordered_map<int, int> e_juncID_to_local;
-        tmpi = 0;
-        for (auto fid : _process_data.vec_ele_connected_junctionIDs[e->getID()])
-        {
-            e_junction_props.push_back(&_process_data.junction_properties[fid]);
-            e_juncID_to_local.insert({fid, tmpi++});
-        }
-        std::vector<double> const levelsets(uGlobalEnrichments(
-            e_fracture_props, e_junction_props, e_fracID_to_local, pt));
-
-        for (unsigned i = 0; i < e_fracture_props.size(); i++)
-        {
-            auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh),
-                "levelset" +
-                    std::to_string(e_fracture_props[i]->fracture_id + 1),
-                MeshLib::MeshItemType::Cell, 1);
-            mesh_prop_levelset->resize(mesh.getNumberOfElements());
-            (*mesh_prop_levelset)[e->getID()] = levelsets[i];
-        }
-        for (unsigned i = 0; i < e_junction_props.size(); i++)
-        {
-            auto mesh_prop_levelset = MeshLib::getOrCreateMeshProperty<double>(
-                const_cast<MeshLib::Mesh&>(mesh),
-                "levelset" +
-                    std::to_string(e_junction_props[i]->junction_id + 1 +
-                                   _process_data.fracture_properties.size()),
-                MeshLib::MeshItemType::Cell, 1);
-            mesh_prop_levelset->resize(mesh.getNumberOfElements());
-            (*mesh_prop_levelset)[e->getID()] =
-                levelsets[i + e_fracture_props.size()];
-        }
+        updateElementLevelSets(*e, const_cast<MeshLib::Mesh&>(mesh));
     }
 
     _process_data.element_local_jumps =
@@ -422,6 +433,7 @@ void SmallDeformationProcess<DisplacementDim>::assembleConcreteProcess(
         getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
         &b);
 }
+
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::
     assembleWithJacobianConcreteProcess(
@@ -431,14 +443,15 @@ void SmallDeformationProcess<DisplacementDim>::
 {
     DBUG("AssembleWithJacobian SmallDeformationProcess.");
 
+    // Call global assembler for each local assembly item.
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
-    // Call global assembler for each local assembly item.
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
         _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
         process_id, &b, &Jac);
 }
+
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, double const dt,
@@ -451,6 +464,7 @@ void SmallDeformationProcess<DisplacementDim>::preTimestepConcreteProcess(
         _local_assemblers, getActiveElementIDs(), *_local_to_global_index_map,
         *x[process_id], t, dt);
 }
+
 // ------------------------------------------------------------------------------------
 // template instantiation
 // ------------------------------------------------------------------------------------

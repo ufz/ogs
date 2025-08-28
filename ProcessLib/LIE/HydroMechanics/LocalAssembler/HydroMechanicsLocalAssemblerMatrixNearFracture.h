@@ -25,17 +25,17 @@ namespace HydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 
-          int GlobalDim>
+          int DisplacementDim>
 class HydroMechanicsLocalAssemblerMatrixNearFracture
     : public HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                                 ShapeFunctionPressure,
 
-                                                GlobalDim>
+                                                DisplacementDim>
 {
     using Base = HydroMechanicsLocalAssemblerMatrix<ShapeFunctionDisplacement,
                                                     ShapeFunctionPressure,
 
-                                                    GlobalDim>;
+                                                    DisplacementDim>;
 
 public:
     HydroMechanicsLocalAssemblerMatrixNearFracture(
@@ -50,7 +50,7 @@ public:
         std::vector<unsigned> const& dofIndex_to_localIndex,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        HydroMechanicsProcessData<GlobalDim>& process_data);
+        HydroMechanicsProcessData<DisplacementDim>& process_data);
 
 private:
     void assembleWithJacobianConcrete(double const t, double const dt,

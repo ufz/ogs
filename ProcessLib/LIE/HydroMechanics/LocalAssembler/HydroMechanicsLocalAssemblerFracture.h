@@ -26,7 +26,7 @@ namespace HydroMechanics
 {
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
 
-          int GlobalDim>
+          int DisplacementDim>
 class HydroMechanicsLocalAssemblerFracture
     : public HydroMechanicsLocalAssemblerInterface
 {
@@ -42,7 +42,7 @@ public:
         std::vector<unsigned> const& dofIndex_to_localIndex,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        HydroMechanicsProcessData<GlobalDim>& process_data);
+        HydroMechanicsProcessData<DisplacementDim>& process_data);
 
     void preTimestepConcrete(std::vector<double> const& /*local_x*/,
                              double const /*t*/,
@@ -140,24 +140,25 @@ private:
 
     // Types for displacement.
     using ShapeMatricesTypeDisplacement =
-        ShapeMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
+        ShapeMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
     using HMatricesType =
-        HMatrixPolicyType<ShapeFunctionDisplacement, GlobalDim>;
+        HMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;
     using HMatrixType = typename HMatricesType::HMatrixType;
 
     // Types for pressure.
     using ShapeMatricesTypePressure =
-        ShapeMatrixPolicyType<ShapeFunctionPressure, GlobalDim>;
+        ShapeMatrixPolicyType<ShapeFunctionPressure, DisplacementDim>;
 
     // Types for the integration point data
-    using IntegrationPointDataType =
-        IntegrationPointDataFracture<HMatricesType,
-                                     ShapeMatricesTypeDisplacement,
-                                     ShapeMatricesTypePressure, GlobalDim>;
+    using IntegrationPointDataType = IntegrationPointDataFracture<
+        HMatricesType, ShapeMatricesTypeDisplacement, ShapeMatricesTypePressure,
+        DisplacementDim>;
 
-    using GlobalDimVectorType = Eigen::Matrix<double, GlobalDim, 1>;
+    using GlobalDimVectorType = Eigen::Matrix<double, DisplacementDim, 1>;
 
-    HydroMechanicsProcessData<GlobalDim>& _process_data;
+private:
+    HydroMechanicsProcessData<DisplacementDim>& _process_data;
+    FractureProperty const* _fracture_property = nullptr;
 
     std::vector<IntegrationPointDataType,
                 Eigen::aligned_allocator<IntegrationPointDataType>>
@@ -167,7 +168,7 @@ private:
     static const int pressure_size = ShapeFunctionPressure::NPOINTS;
     static const int displacement_index = ShapeFunctionPressure::NPOINTS;
     static const int displacement_size =
-        ShapeFunctionDisplacement::NPOINTS * GlobalDim;
+        ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
 
     SecondaryData<
         typename ShapeMatricesTypeDisplacement::ShapeMatrices::ShapeType>

@@ -23,7 +23,7 @@ namespace SmallDeformation
 {
 namespace detail
 {
-template <int GlobalDim,
+template <int DisplacementDim,
           template <typename, int> class LocalAssemblerMatrixImplementation,
           template <typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
@@ -37,10 +37,12 @@ void createLocalAssemblers(
     ExtraCtorArgs&&... extra_ctor_args)
 {
     // Shape matrices initializer
-    using LocalDataInitializer = LocalDataInitializer<
-        LocalAssemblerInterface, LocalAssemblerMatrixImplementation,
-        LocalAssemblerMatrixNearFractureImplementation,
-        LocalAssemblerFractureImplementation, GlobalDim, ExtraCtorArgs...>;
+    using LocalDataInitializer =
+        LocalDataInitializer<LocalAssemblerInterface,
+                             LocalAssemblerMatrixImplementation,
+                             LocalAssemblerMatrixNearFractureImplementation,
+                             LocalAssemblerFractureImplementation,
+                             DisplacementDim, ExtraCtorArgs...>;
 
     DBUG("Create local assemblers.");
     // Populate the vector of local assemblers.
@@ -67,7 +69,7 @@ void createLocalAssemblers(
  * The first two template parameters cannot be deduced from the arguments.
  * Therefore they always have to be provided manually.
  */
-template <int GlobalDim,
+template <int DisplacementDim,
           template <typename, int> class LocalAssemblerMatrixImplementation,
           template <typename, int>
           class LocalAssemblerMatrixNearFractureImplementation,
@@ -83,7 +85,7 @@ void createLocalAssemblers(
     DBUG("Create local assemblers.");
 
     detail::createLocalAssemblers<
-        GlobalDim, LocalAssemblerMatrixImplementation,
+        DisplacementDim, LocalAssemblerMatrixImplementation,
         LocalAssemblerMatrixNearFractureImplementation,
         LocalAssemblerFractureImplementation>(
         dof_table, mesh_elements, local_assemblers, integration_order,
