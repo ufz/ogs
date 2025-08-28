@@ -78,6 +78,11 @@ test linux wheel via notebooks:
           | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
           || true)
 
+        if [[ -z "$changed_py_files" ]]; then
+          echo "No changed notebook files, skipping."
+          exit 0
+        fi
+
         # Collect filtered files into a variable
         files=$(echo "$changed_py_files" \
           | xargs grep -l "jupytext_version" \
