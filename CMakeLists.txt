@@ -246,6 +246,14 @@ if(WIN32)
             "$Env:UV_FROZEN = \"1\""
         )
     endif()
+
+    if(OGS_USE_MKL)
+        list(APPEND _envrc_content
+            "Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\compiler\\latest\\env\\vars.bat\""
+            "Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\env\\vars.bat\""
+        )
+    endif()
+
     string(REPLACE ";$" "\n$" _envrc_content "${_envrc_content}")
 else()
     set(_envrc_content
