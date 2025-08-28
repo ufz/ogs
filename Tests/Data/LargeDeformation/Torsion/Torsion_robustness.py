@@ -12,8 +12,7 @@
 #
 # ## Convergence under large deformations (preliminary)
 #
-# In this benchmark we impose large tensile and torsional deformations on a
-# hyperelastic prismatic bar.
+# In this benchmark we impose large tensile and torsional deformations on a hyperelastic prismatic bar.
 # The material model is a Saint-Venant-Kirchhoff material law for initial testing.
 
 # %% jupyter={"source_hidden": true}
@@ -28,87 +27,45 @@ import pyvista as pv
 from ogstools import logparser
 
 # %% jupyter={"source_hidden": true}
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
-plt.rcParams["font.family"] = "serif"
+pv.set_jupyter_backend("static" if "CI" in os.environ else "client")
 
-# %% [markdown]
-# ## Boundary conditions
-#
-# The bar of dimensions $1 \times 1 \times 6$ m³ is stretched by $\lambda = 1.5$
-# in the axial direction and twisted by 180°.
-# The following graph illustrates the torsion bc.
-
-
-# %% jupyter={"source_hidden": true}
-def R(x, y):
-    return np.sqrt(x**2 + y**2)
-
-
-def phi(x, y):
-    theta = np.arctan2(y, x)
-    return np.where(theta < 0, theta + 2 * np.pi, theta)
-
-
-def u(x, y):
-    ux = R(x, y) * np.cos(phi(x, y) + np.pi / 20) - x
-    uy = R(x, y) * np.sin(phi(x, y) + np.pi / 20) - y
-    return [ux, uy]
-
-
-# %% jupyter={"source_hidden": true}
-x = np.linspace(-0.5, 0.5, 10)
-y = x.copy()
-X, Y = np.meshgrid(x, y)
-fig, ax = plt.subplots(dpi=120)
-ax.plot(X, Y, marker="s", color="red", ls="", alpha=0.5)
-ax.quiver(X, Y, u(X, Y)[0], u(X, Y)[1], pivot="mid")
-ax.set_aspect("equal")
-ax.set_xlabel("$x$ / m")
-ax.set_ylabel("$y$ / m")
-ax.set_title("Displacement-controlled torsion on face of prismatic bar")
-fig.tight_layout()
-
-# %% jupyter={"source_hidden": true}
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
 # %% jupyter={"source_hidden": true}
 model = ot.Project(input_file="bar1to6_torsion.prj", output_file="bar1to6_torsion.prj")
+model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir}")
+mesh = ot.MeshSeries(out_dir / "bar1to6_torsion.pvd")[-1]
+
+# %% [markdown]
+# ## Boundary conditions
+#
+# The bar of dimensions $1 \times 1 \times 6$ m³ is stretched by $\lambda = 1.5$ in the axial direction and twisted by 180°.
+# The following graph illustrates the torsion bc.
 
 # %% jupyter={"source_hidden": true}
-model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
+top_pts = mesh.points[:, 2] == mesh.bounds[5]
+top_surf = mesh.extract_points(top_pts, False, False).delaunay_2d()
+fig = ot.plot.contourf(top_surf, ot.variables.displacement, figsize=(8, 6), fontsize=14)
 
 # %% [markdown]
 # Let's plot the result.
 
 # %% jupyter={"source_hidden": true}
-reader = pv.get_reader(f"{out_dir}/bar1to6_torsion.pvd")
-print(reader.time_values)
-reader.set_active_time_value(0.05)
-mesh = reader.read()[0]
-
-# %% jupyter={"source_hidden": true}
-plotter = pv.Plotter(shape=(1, 2), window_size=[1000, 500])
-
-warped = mesh.warp_by_vector("displacement")
-plotter.subplot(0, 0)
-plotter.add_mesh(mesh, show_edges=True, show_scalar_bar=False)
-plotter.show_bounds(ticks="outside", font_size=10)
-plotter.add_axes()
-plotter.add_text("undeformed", font_size=10)
-
-plotter.subplot(0, 1)
-plotter.add_mesh(warped, show_edges=True, scalars="displacement")
-plotter.add_text("deformed", font_size=10)
-plotter.show()
+pl = pv.Plotter()
+pl.camera_position = (-0.5, -0.5, 0.4)
+pl.add_mesh(mesh, color="lightgrey", style="wireframe", line_width=1)
+deformed_mesh = mesh.warp_by_vector("displacement")
+pl.add_mesh(deformed_mesh, scalars="displacement", show_edges=True, cmap="jet")
+pl.show_axes()
+pl.reset_camera()
+pl.show()
 
 # %% [markdown]
 # ## Convergence
 #
 # What we're more interested in, is the convergence behaviour over time.
-# The large deformations were applied in only 5 load steps to challenge the
-# algorithm.
+# The large deformations were applied in only 5 load steps to challenge the  algorithm.
 
 # %% jupyter={"source_hidden": true}
 log_file_raw = logparser.parse_file(f"{out_dir}/out.txt")
@@ -141,7 +98,5 @@ ax.legend()
 fig.tight_layout()
 
 # %% [markdown]
-# We observe quadratic convergence in the proximity of the solution supporting the
-# implementation of the geometric stiffness matrix. The last iteration converges
-# slightly less then quadratic since we reach the numerical precision limit at
-# this point.
+# We observe quadratic convergence in the proximity of the solution supporting the implementation of the geometric stiffness matrix.
+# The last iteration converges slightly less then quadratic since we reach the numerical precision limit at this point.

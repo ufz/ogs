@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProjectDiff base_file="CooksMembrane.prj">
     <replace msel="/*/mesh/text()"> mesh_n20.vtu</replace>
-    <replace msel="/*/time_loop/output/prefix/text()">cooks_membrane_ld_refined_mesh_20</replace>
-    <replace msel="/*/test_definition/vtkdiff[1]/file/text()">cooks_membrane_ld_refined_mesh_20_ts_2_t_1.000000.vtu</replace>
-    <replace msel="/*/test_definition/vtkdiff[2]/file/text()">cooks_membrane_ld_refined_mesh_20_ts_2_t_1.000000.vtu</replace>
-    <replace msel="/*/test_definition/vtkdiff[3]/file/text()">cooks_membrane_ld_refined_mesh_20_ts_2_t_1.000000.vtu</replace>
+    <replace msel="/*/time_loop/output/prefix/text()">cooks_membrane_ld_n_20</replace>
+    <replace msel="/*/test_definition/vtkdiff[1]/file/text()">cooks_membrane_ld_n_20_ts_2_t_1.000000.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[2]/file/text()">cooks_membrane_ld_n_20_ts_2_t_1.000000.vtu</replace>
+    <replace msel="/*/test_definition/vtkdiff[3]/file/text()">cooks_membrane_ld_n_20_ts_2_t_1.000000.vtu</replace>
     <replace msel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[3]/parameter/text()">FRamp</replace>
     <replace msel="/*/time_loop/processes/process[1]/time_stepping/timesteps/pair/repeat/text()">2</replace>
     <replace msel="/*/time_loop/processes/process[1]/time_stepping/timesteps/pair/delta_t/text()">0.5</replace>

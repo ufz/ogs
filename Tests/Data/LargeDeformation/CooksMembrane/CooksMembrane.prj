@@ -183,19 +183,19 @@
 
     <test_definition>
         <vtkdiff>
-            <file>cooks_membrane_ld_edge_div_4_ts_1_t_1.000000.vtu</file>
+            <file>cooks_membrane_ld_n_4_ts_1_t_1.000000.vtu</file>
             <field>displacement</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
             <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>cooks_membrane_ld_edge_div_4_ts_1_t_1.000000.vtu</file>
+            <file>cooks_membrane_ld_n_4_ts_1_t_1.000000.vtu</file>
             <field>epsilon</field>
             <absolute_tolerance>2e-10</absolute_tolerance>
             <relative_tolerance>5e-7</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>cooks_membrane_ld_edge_div_4_ts_1_t_1.000000.vtu</file>
+            <file>cooks_membrane_ld_n_4_ts_1_t_1.000000.vtu</file>
             <field>sigma</field>
             <absolute_tolerance>2e-6</absolute_tolerance>
             <relative_tolerance>8e-9</relative_tolerance>

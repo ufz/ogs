@@ -18,5 +18,5 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE LargeDeformation/ThickCylindricalShell/ThickCylindricalShell.prj RUNTIME 15)
 
     NotebookTest(NOTEBOOKFILE LargeDeformation/CooksMembrane/CooksMembraneFbar.py RUNTIME 15)
-    NotebookTest(NOTEBOOKFILE LargeDeformation/MoreBenchmarkUsingFbar.py RUNTIME 50)
+    NotebookTest(NOTEBOOKFILE LargeDeformation/FbarBenchmarksLocking.py RUNTIME 50)
 endif()
