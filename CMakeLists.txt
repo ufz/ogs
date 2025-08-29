@@ -234,9 +234,8 @@ endif()
 if(WIN32)
     set(_envrc_file_ending ".ps1")
     set(_envrc_content
-        "$Env:PYTHONPATH = \"${PROJECT_BINARY_DIR}/site-packages;\" + $Env:PYTHONPATH"
-        "$Env:PATH = \"${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR};\" + $Env:PATH"
-        "$Env:PATH += \";C:/Program Files (x86)/Intel/oneAPI/compiler/latest/windows/redist/intel64_win/compiler\""
+        "$Env:PYTHONPATH += \"\;${PROJECT_BINARY_DIR}/site-packages\""
+        "$Env:PATH += \"\;${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}\""
         "$Env:OGS_USE_PATH = \"1\""
     )
     if(OGS_USE_PIP)
@@ -246,15 +245,14 @@ if(WIN32)
             "$Env:UV_FROZEN = \"1\""
         )
     endif()
-
     if(OGS_USE_MKL)
         list(APPEND _envrc_content
+            "$Env:PATH += \"\;C:/Program Files (x86)/Intel/oneAPI/compiler/latest/bin\""
+            "$Env:PATH += \"\;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/bin\""
             "Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\compiler\\latest\\env\\vars.bat\""
             "Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\env\\vars.bat\""
         )
     endif()
-
-    string(REPLACE ";$" "\n$" _envrc_content "${_envrc_content}")
 else()
     set(_envrc_content
         "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source \"${PROJECT_BINARY_DIR}/.venv/bin/activate\""
@@ -274,9 +272,9 @@ else()
                            "export PYTHONPATH=${TFEL_WITH_PYTHON}:$PYTHONPATH"
         )
     endif()
-    string(REPLACE ";" "\n" _envrc_content "${_envrc_content}")
 endif()
-file(CONFIGURE OUTPUT .envrc${_envrc_file_ending} CONTENT "${_envrc_content}")
+string(JOIN "\n" _envrc_content_text ${_envrc_content})
+file(CONFIGURE OUTPUT .envrc${_envrc_file_ending} CONTENT "${_envrc_content_text}")
 
 check_header_compilation()
 
