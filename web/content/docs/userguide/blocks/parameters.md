@@ -158,9 +158,9 @@ The group type parameter is defined by a specific value or values for each of th
 
 <h3 id = "meshelement"> MeshElement and MeshNode</h3>
 
-Parameters of type "MeshElement" or "MeshNode" are defined by a data array in a given mesh. The difference between "MeshElement" and "MeshNode" type is the underlying data type. While "MeshElements" use cell labels, "MeshNode" uses point labels. Which to use is dependent on the parameter or the provided data.
+Parameters of type "MeshElement" or "MeshNode" are defined by a data array in a given mesh. The difference between "MeshElement" and "MeshNode" type is the underlying data type. While "MeshElements" use cell labels, "MeshNode" uses point labels. Which to use is dependent on the parameter or the provided data. Usually primary variables use node data while cell data is used for secondary variables. See [process variables](/docs/userguide/blocks/processes/#process-variables) for more information on variable types.
 
- The mesh must be loaded in the [mesh section](docs/userguide/blocks/Meshes) of the project file. To specify the data array which contains the desired information, use the `<field_name></field_name>` subtag. The mesh can be defined in the `<mesh></mesh>` subtag If there is not `<mesh>` tag is not present, the first defined mesh will be used.
+ The mesh must be loaded in the [mesh section](docs/userguide/blocks/Meshes) of the project file. To specify the data array which contains the desired information, use the `<field_name></field_name>` subtag. The mesh can be defined in the `<mesh></mesh>` subtag. If there is not `<mesh>` tag is not present, the first defined mesh will be used.
 
 ```xml
 <parameter>
