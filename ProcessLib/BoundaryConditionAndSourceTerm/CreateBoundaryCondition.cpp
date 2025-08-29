@@ -15,6 +15,7 @@
 #include "BoundaryConditionConfig.h"
 #include "ConstraintDirichletBoundaryCondition.h"
 #include "CreateDirichletBoundaryConditionWithinTimeInterval.h"
+#include "CreateTimeDecayDirichletBoundaryCondition.h"
 #include "DirichletBoundaryCondition.h"
 #include "HCNonAdvectiveFreeComponentFlowBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
@@ -74,6 +75,12 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         return ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
             config.config, config.boundary_mesh, dof_table, variable_id,
             *config.component_id, parameters);
+    }
+    if (type == "TimeDecayDirichlet")
+    {
+        return ProcessLib::createTimeDecayDirichletBoundaryCondition(
+            variable_id, *config.component_id, config.config,
+            config.boundary_mesh, dof_table, parameters);
     }
     if (type == "Neumann")
     {
