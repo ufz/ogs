@@ -1,7 +1,7 @@
 +++
-date = "2018-02-27T11:00:13+01:00"
+date = "2025-08-29T09:00:13+01:00"
 title = "Parameters"
-author = "Feliks Kiszkurno"
+author = "Feliks Kiszkurno, Florian Berger"
 weight = 5
 +++
 
@@ -119,9 +119,9 @@ Following variables are accessible from CurveScaled:
 ```
 
 
-
 ### Function
-It is also possible to define parameters using a function, enabling spatially varying or time-dependent behavior of the paramter. These functions are defined in the necessary `<expression></expression>` subtag. Valid variables are `x, y, z and t`, so the spatial parameters and the time. You can even incorporate predefined curves from the [curves section](/docs/userguide/blocks/curves/) of the project file.
+
+It is also possible to define parameters using a function, enabling spatially varying or time-dependent behavior of the parameter. These functions are defined in the necessary `<expression></expression>` subtag. Valid variables are `x, y, z and t`, so the spatial parameters and the time. You can even incorporate predefined curves from the [curves section](/docs/userguide/blocks/curves/) of the project file.
 
 ```xml
 <parameter>
@@ -132,7 +132,8 @@ It is also possible to define parameters using a function, enabling spatially va
 ```
 
 ### Group
-The group type parameter is defined by a specific value or values for each of the group ids. The group_id_property specifies the name of the data array in the mesh that define the group. In the `<index_values></index_values>` subtags, the values of the parameters in those groupids are defined. The `<index></index>` subtag represents the values of the group id, while the `<values></values>` or `<value></value>` subtags define the values of the paramter for fields where aforementioned group id matches the index.
+
+The group type parameter is defined by a specific value or values for each of the group ids. The group_id_property specifies the name of the data array in the mesh that define the group. In the `<index_values></index_values>` subtags, the values of the parameters in those groupids are defined. The `<index></index>` subtag represents the values of the group id, while the `<values></values>` or `<value></value>` subtags define the values of the parameter for fields where aforementioned group id matches the index.
 
 ```xml
 <parameter>
@@ -156,10 +157,10 @@ The group type parameter is defined by a specific value or values for each of th
 ```
 
 <h3 id = "meshelement"> MeshElement and MeshNode</h3>
+
 Parameters of type "MeshElement" or "MeshNode" are defined by a data array in a given mesh. The difference between "MeshElement" and "MeshNode" type is the underlying data type. While "MeshElements" use cell labels, "MeshNode" uses point labels. Which to use is dependent on the parameter or the provided data.
 
  The mesh must be loaded in the [mesh section](docs/userguide/blocks/Meshes) of the project file. To specify the data array which contains the desired information, use the `<field_name></field_name>` subtag. The mesh can be defined in the `<mesh></mesh>` subtag If there is not `<mesh>` tag is not present, the first defined mesh will be used.
-
 
 ```xml
 <parameter>
@@ -175,8 +176,8 @@ Parameters of type "MeshElement" or "MeshNode" are defined by a data array in a 
 </parameter>
 ```
 
-
 ### RandomFieldMeshElement
+
 Defines a parameter with random values in each mesh element with a uniform distribution in a given range. The range can be defined in the `<range></range>` subtag. A given seed (`<seed></seed>` subtag) for initializing the random number generator allows for repeatability of the random field. The `<field_name></field_name>` tag defines the name of the output variable that will contain this parameter.
 
 ```xml
@@ -191,6 +192,7 @@ Defines a parameter with random values in each mesh element with a uniform distr
 
 
 ### TimeDependentHeterogeneous
+
 <div class="note">
 
 Work in progress. This section is not yet documented.
