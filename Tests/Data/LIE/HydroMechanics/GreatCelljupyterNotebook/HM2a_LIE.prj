@@ -88,6 +88,7 @@
             </fracture_model>
             <fracture_properties>
                 <initial_aperture>aperture0</initial_aperture>
+                <material_id>1</material_id>
             </fracture_properties>
             <deactivate_matrix_in_flow>false</deactivate_matrix_in_flow>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
@@ -100,7 +101,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>1.0e-10 1e-10 1e-10 1e-10 1e-10</reltols>
+                    <reltols>10e-10 1e-10 1e-10 1e-10 1e-10 1e-10 1e-10</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
