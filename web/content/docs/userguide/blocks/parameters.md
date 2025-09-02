@@ -137,7 +137,7 @@ You can even incorporate predefined curves from the [curves section](/docs/userg
 
 The group type parameter is defined by a specific value or values for each of the group ids.
 The `<group_id_property></group_id_property>` tag specifies the name of the data array in the mesh that define the group.
-In the `<index_values></index_values>` subtags, the values of the parameters in those groupids are defined.
+In the `<index_values></index_values>` subtags, the values of the parameters in those group ids are defined.
 Inside this tag you will find the `<index></index>` subtag, that represents the values of the group id, while the `<values></values>` or `<value></value>` subtags define the values of the parameter for fields where aforementioned group id matches the index.
 
 ```xml
