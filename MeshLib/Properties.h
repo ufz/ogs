@@ -218,6 +218,32 @@ constexpr std::string_view getBulkIDString(MeshItemType mesh_item_type)
     }
 }
 
+constexpr std::string_view globalIDString(
+    MeshLib::MeshItemType const mesh_item_type)
+{
+    switch (mesh_item_type)
+    {
+        case MeshLib::MeshItemType::Node:
+        {
+            return "global_node_ids";
+        }
+        case MeshLib::MeshItemType::Cell:
+        {
+            return "global_element_ids";
+        }
+        case MeshItemType::Edge:
+            OGS_FATAL("MeshItemType::Edge is not handled in globalIDString.");
+        case MeshItemType::Face:
+            OGS_FATAL("MeshItemType::Face is not handled in globalIDString.");
+        case MeshItemType::IntegrationPoint:
+            OGS_FATAL(
+                "MeshItemType::IntegrationPoint is not handled in "
+                "globalIDString.");
+        default:
+            return "";
+    }
+}
+
 #include "Properties-impl.h"
 
 } // end namespace MeshLib
