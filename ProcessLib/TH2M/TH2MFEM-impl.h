@@ -225,7 +225,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.total_stress_model.eval(current_state.eff_stress_data,
                                        ip_cv.biot_data, current_state.chi_S_L,
                                        pGR_data, pCap_data,
-                                       ip_cv.total_stress_data);
+                                       ip_out.total_stress_data);
 
         models.pure_liquid_density_model.eval({pos, t, dt}, media_data,
                                               pGR_data, pCap_data, T_data,
@@ -269,7 +269,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         models.permeability_model.eval(
             {pos, t, dt}, media_data, current_state.S_L_data, pGR_data,
             pCap_data, T_data, current_state.transport_porosity_data,
-            ip_cv.total_stress_data, current_state.mechanical_strain_data,
+            ip_out.total_stress_data, current_state.mechanical_strain_data,
             ip_out.eps_data, ip_cv.equivalent_plastic_strain_data,
             ip_out.permeability_data);
 

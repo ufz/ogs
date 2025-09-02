@@ -31,6 +31,8 @@ void addReflectedSecondaryVariables(
             unsigned const num_comp,
             auto&& flattened_ip_data_accessor)
         {
+            DBUG("Add secondary variable '{:s}' extrapolation (reflection).",
+                 name);
             secondary_variables.addSecondaryVariable(
                 name,
                 makeExtrapolator2(num_comp, extrapolator, local_assemblers,
