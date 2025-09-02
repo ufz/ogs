@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
-    <mesh>mesh.vtu</mesh>
+    <mesh>mesh_n04.vtu</mesh>
     <geometry>boundary.gml</geometry>
     <processes>
         <process>
@@ -69,7 +69,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>cooks_membrane_ld_edge_div_4</prefix>
+            <prefix>cooks_membrane_ld_n_4</prefix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -129,7 +129,7 @@
             <coords>0 0.5 1</coords>
             <values>0 0.5 1</values>
         </curve>
-    </curves>    
+    </curves>
     <process_variables>
         <process_variable>
             <name>displacement</name>
