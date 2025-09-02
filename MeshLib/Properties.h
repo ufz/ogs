@@ -210,10 +210,10 @@ constexpr std::string_view getBulkIDString(MeshItemType mesh_item_type)
             break;
         default:
             OGS_FATAL(
-                "Unknown mesh item type {:s}. At the moment mapping names only "
+                "Unknown mesh item type '{}'. At the moment mapping names only "
                 "for mesh item types 'Node', 'Cell', 'Edge', and 'Face' are "
                 "specified.",
-                MeshLib::toString(mesh_item_type));
+                static_cast<int>(mesh_item_type));
             return "";
     }
 }
