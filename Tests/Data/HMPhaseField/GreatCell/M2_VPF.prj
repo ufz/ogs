@@ -1006,15 +1006,6 @@
             <order>1</order>
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
-<!--                <boundary_condition>-->
-<!--                  <mesh>physical_group_Source</mesh>-->
-<!--                  <type>DirichletWithinTimeInterval</type>-->
-<!--                  <parameter>pressure_bh</parameter>-->
-<!--                      <time_interval>-->
-<!--                              <start> 2999.9 </start>-->
-<!--                              <end> 3500 </end>-->
-<!--                      </time_interval>-->
-<!--                </boundary_condition>-->
                 <boundary_condition>
                     <mesh>physical_group_PEE1</mesh>
                     <type>Dirichlet</type>
