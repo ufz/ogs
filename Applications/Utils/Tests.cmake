@@ -1406,6 +1406,8 @@ if(NOT OGS_USE_PETSC)
                  RUNTIME 10)
     NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/Inclined_bhe_meshing/notebook-inclined_bhe_meshing.md
                  RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/transport_tutorial/notebook-transport_tutorial.py
+                 RUNTIME 10)
 endif()
 
 AddTest(
