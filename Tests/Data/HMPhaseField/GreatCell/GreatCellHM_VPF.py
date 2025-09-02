@@ -37,7 +37,9 @@ import ogstools as ot
 import pyvista as pv
 from matplotlib import colormaps
 
-mechanics_path = Path("../../LIE/Mechanics/GreatCelljupyterNotebook").resolve()
+mechanics_path = Path(
+    "..", "..", "LIE", "Mechanics", "GreatCelljupyterNotebook"
+).resolve()
 sys.path.insert(0, str(mechanics_path))
 # Local modules
 from mesh_generator import (  # noqa: E402
@@ -877,7 +879,7 @@ msh_file_VPF = mesh_GreatCell_VPF(
 # #### Convert .msh to an OGS-compatible mesh
 
 # %% vscode={"languageId": "python"}
-msh_path_VPF = mesh_path_VPF / f"{meshname}.msh"
+msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
 meshes_volume_VPF = ot.meshes_from_gmsh(
     filename=msh_path_VPF, dim=[0, 1], reindex=True, log=False
 )
@@ -940,14 +942,14 @@ msh_file_VPF = mesh_GreatCell_VPF(
 # #### Convert .msh to an OGS-compatible mesh
 
 # %% vscode={"languageId": "python"}
-msh_path_VPF = mesh_path_VPF / f"{meshname}.msh"
+msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
 meshes_volume_VPF = ot.meshes_from_gmsh(
     filename=msh_path_VPF, dim=[2], reindex=True, log=False
 )
 
 for name, mesh in meshes_volume_VPF.items():
     print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(mesh_path_VPF / f"{name}.vtu", mesh)
+    pv.save_meshio(mesh_path_VPF.joinpath(f"{name}.vtu"), mesh)
 
 # %% [markdown]
 # #### Visualization of computational domain mesh
