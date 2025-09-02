@@ -308,7 +308,7 @@ def width_calculation(filename):
             ["grad_dx", "grad_dy", "grad_dz", "grad_dx", "grad_dy", "grad_dz"]
         )
         keys = keys.reshape((2, 3))[:, : arr.shape[1]].ravel()
-        return dict(zip(keys, mesh_d["gradient"].T, strict=False))
+        return dict(zip(keys, mesh_d["gradient"].T, strict=True))
 
     gradients_d = gradients_to_dict(mesh_d["gradient"])
     mesh.point_data.update(gradients_d)

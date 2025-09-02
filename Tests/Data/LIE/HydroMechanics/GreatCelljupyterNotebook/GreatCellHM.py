@@ -283,7 +283,7 @@ for idx, (label, values) in enumerate(loads.items()):
     top_points_x, top_points_y = [], []
 
     for i, (x, y, value) in enumerate(
-        zip(circle_x, circle_y, scaled_values, strict=False)
+        zip(circle_x, circle_y, scaled_values, strict=True)
     ):
         unit_vector = np.array([x, y]) / circle_radius
         line_end = np.array([x, y]) + unit_vector * value / 1e6

@@ -87,7 +87,7 @@ def computeConcentrations(x, t, v, D, k, radionuclides, c_inlet):
         zip(
             radionuclides,
             computeInitialAuxiliaryVariable(c_inlet, list(k.values())),
-            strict=False,
+            strict=True,
         )
     )
 
@@ -217,7 +217,7 @@ def computeGradients(x, t, v, D, k, radionuclides, c_inlet):
         zip(
             radionuclides,
             computeInitialAuxiliaryVariable(c_inlet, list(k.values())),
-            strict=False,
+            strict=True,
         )
     )
 

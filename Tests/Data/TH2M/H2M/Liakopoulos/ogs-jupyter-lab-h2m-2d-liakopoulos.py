@@ -80,7 +80,7 @@ def plot_sample(var: ot.variables.Scalar) -> None:
     fig, ax = plt.subplots(figsize=[6, 3], dpi=150)
     ax.set_xlabel(r"$y$ / m")
     ax.set_ylabel(var.get_label())
-    for mesh, t in zip(ms, ms.timevalues, strict=False):
+    for mesh, t in zip(ms, ms.timevalues, strict=True):
         line_mesh = mesh.sample_over_line([0, 0, 0], [0, 1, 0])
         vals = line_mesh.sample(mesh)[var.data_name]
         assert np.all(np.abs(vals) <= max_vals[var.data_name]), max(abs(vals))
