@@ -14,6 +14,7 @@
 #include <memory>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
 
 namespace ParameterLib
@@ -25,11 +26,6 @@ struct Parameter;
 namespace MeshLib
 {
 class Mesh;
-}
-
-namespace NumLib
-{
-class LocalToGlobalIndexMap;
 }
 
 namespace ProcessLib
