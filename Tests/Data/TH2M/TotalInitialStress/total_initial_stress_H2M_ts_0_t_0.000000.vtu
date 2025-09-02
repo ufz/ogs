@@ -10,20 +10,21 @@
         <DataArray type="Float64" Name="displacement" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="0"                    offset="160"                 />
         <DataArray type="Float64" Name="p_GR" format="appended" RangeMin="100000"               RangeMax="100000"               offset="220"                 />
         <DataArray type="Float64" Name="sigma" NumberOfComponents="6" format="appended" RangeMin="1200000"              RangeMax="1200000"              offset="288"                 />
+        <DataArray type="Float64" Name="sigma_total" NumberOfComponents="6" format="appended" RangeMin="2297825.0586"         RangeMax="2297825.0586"         offset="452"                 />
       </PointData>
       <CellData>
       </CellData>
       <Points>
-        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.7320508076"         offset="392"                 />
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="appended" RangeMin="0"                    RangeMax="1.7320508076"         offset="616"                 />
       </Points>
       <Cells>
-        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="476"                 />
-        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="560"                 />
-        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="620"                 />
+        <DataArray type="Int64" Name="connectivity" format="appended" RangeMin=""                     RangeMax=""                     offset="700"                 />
+        <DataArray type="Int64" Name="offsets" format="appended" RangeMin=""                     RangeMax=""                     offset="784"                 />
+        <DataArray type="UInt8" Name="types" format="appended" RangeMin=""                     RangeMax=""                     offset="844"                 />
       </Cells>
     </Piece>
   </UnstructuredGrid>
   <AppendedData encoding="base64">
-   _AQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9A1sTDVTU9JNEtJNUg010vJLCqpBABQywdAAQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAAEwAAAAAAAAA=eF5jYGBgcCjXPshAJg0Ais8NGQ==AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAADAAAAAAAAAA=eF5jYBjaAAAAwAABAQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAAEQAAAAAAAAA=eF5jYACCrB8ODGTSAIl/DRE=AQAAAAAAAAAAgAAAAAAAAIABAAAAAAAALQAAAAAAAAA=eF5jYEAFTEDc4G90kIEEQIr6f////6+nofo/JKr/RqJ6UsOHhQG/egADcR33AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAAHAAAAAAAAAA=eF5jYMAHPtjjlcaQh/GJ1YdLPy51mDQAp2EONQ==AQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAAHgAAAAAAAAA=eF5jYIAARijNDKWZoDQLlGaF0uxQmg1KAwAC8AAdAQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAACwAAAAAAAAA=eF7jYIAAAABIAAk=AQAAAAAAAAAAgAAAAAAAAAEAAAAAAAAACQAAAAAAAAA=eF7jAQAADQAN
+   _AQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9U1NjXXTTcxNUxONE0z1kvJLCqpBABL+wbjAQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAAEwAAAAAAAAA=eF5jYGBgcCjXPshAJg0Ais8NGQ==AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAADAAAAAAAAAA=eF5jYBjaAAAAwAABAQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAAEQAAAAAAAAA=eF5jYACCrB8ODGTSAIl/DRE=AQAAAAAAAAAAgAAAAAAAAIABAAAAAAAAWQAAAAAAAAA=eF7zV9Mpsb391NYfSn/4//9/vb/RQQYcIAiqDkYzA8Ua8KiPgKqD0T9INJ+JAb/5pjM3XPiac3wvjOYgoD4fqg5GE/KvB1QdjP5DQH04VF04ke4BAMlvYvY=AQAAAAAAAAAAgAAAAAAAAIABAAAAAAAAWQAAAAAAAAA=eF578x8IMjUOvoHSL4BUfYvdQQYcgB1EZGkcRKYb8Kj/DDUXRn8gYD4TiACai0zjM58Hqg5GcxFQ/wrqDhj9jIB7fkPVwegfBNRzgAigO5BpfO4BAHOEXKQ=AQAAAAAAAAAAgAAAAAAAAMAAAAAAAAAAHAAAAAAAAAA=eF5jYMAHPtjjlcaQh/GJ1YdLPy51mDQAp2EONQ==AQAAAAAAAAAAgAAAAAAAAEAAAAAAAAAAHgAAAAAAAAA=eF5jYIAARijNDKWZoDQLlGaF0uxQmg1KAwAC8AAdAQAAAAAAAAAAgAAAAAAAAAgAAAAAAAAACwAAAAAAAAA=eF7jYIAAAABIAAk=AQAAAAAAAAAAgAAAAAAAAAEAAAAAAAAACQAAAAAAAAA=eF7jAQAADQAN
   </AppendedData>
 </VTKFile>

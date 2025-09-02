@@ -129,6 +129,7 @@ struct OutputData
     DiffusionVelocityData<DisplacementDim> diffusion_velocity_data;
     DarcyVelocityData<DisplacementDim> darcy_velocity_data;
     ProcessLib::ConstitutiveRelations::StrainData<DisplacementDim> eps_data;
+    TotalStressData<DisplacementDim> total_stress_data;
 
     static auto reflect()
     {
@@ -143,7 +144,8 @@ struct OutputData
                                               &Self::solid_density_data,
                                               &Self::diffusion_velocity_data,
                                               &Self::darcy_velocity_data,
-                                              &Self::eps_data);
+                                              &Self::eps_data,
+                                              &Self::total_stress_data);
     }
 };
 
@@ -164,7 +166,6 @@ struct ConstitutiveTempData
     BiotData biot_data;
     SolidCompressibilityData beta_p_SR;
     SolidThermalExpansionData<DisplacementDim> s_therm_exp_data;
-    TotalStressData<DisplacementDim> total_stress_data;
     EquivalentPlasticStrainData equivalent_plastic_strain_data;
     ViscosityData viscosity_data;
     PhaseTransitionData phase_transition_data;
