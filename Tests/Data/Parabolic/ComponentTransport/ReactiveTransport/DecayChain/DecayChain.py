@@ -528,7 +528,7 @@ color_map = cm.rainbow(np.linspace(0, 1, radionuclides.size))
 ax1.set(xlabel="Distance [m]", ylabel="Concentration [mol/L]")
 
 # GIA numerical solution
-for radionuclide, color in zip(radionuclides[:-1], color_map, strict=True):
+for radionuclide, color in zip(radionuclides[:-1], color_map[:-1], strict=True):
     c_gia = pvdfile_GIA.read_set_data(
         t * 3.1536e7,
         radionuclide,
@@ -559,7 +559,7 @@ ax1.yaxis.grid(color="gray", linestyle="dashed")
 ax2.set(xlabel="Distance [m]", ylabel="Concentration [mol/L]")
 
 # OS numerical solution
-for radionuclide, color in zip(radionuclides[:-1], color_map, strict=True):
+for radionuclide, color in zip(radionuclides[:-1], color_map[:-1], strict=True):
     c_os = pvdfile_OS.read_set_data(
         t * 3.1536e7,
         radionuclide,
