@@ -22,7 +22,7 @@ deploy web site:
     - curl -fSL -O https://gitlab.opengeosys.org/ogs/inf/featurematrix/-/archive/main/featurematrix-main.tar.gz
     - tar xf featurematrix-main.tar.gz
     - cd featurematrix-main
-    - uv run FindFeatures.py .. --json ../web/content/docs/featurematrix/bundle/features.json
+    - uv run featurematrix/FindFeatures.py .. --json ../web/content/docs/featurematrix/bundle/features.json
     - cp -r styles.css utils.js main.js ../web/content/docs/featurematrix/bundle/
     - cd ..
     - |
