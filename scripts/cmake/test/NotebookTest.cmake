@@ -97,7 +97,9 @@ function(NotebookTest)
 
     if(OGS_USE_PIP AND DEFINED NotebookTest_PYTHON_PACKAGES)
         list(APPEND labels additional_python_modules)
-        list(APPEND _uv_run_args --with ${NotebookTest_PYTHON_PACKAGES})
+        foreach(_package ${NotebookTest_PYTHON_PACKAGES})
+            list(APPEND _uv_run_args --with ${_package})
+        endforeach()
     endif()
 
     set(_exe_args run ${_uv_run_args} python Notebooks/testrunner.py --out ${Data_BINARY_DIR})
