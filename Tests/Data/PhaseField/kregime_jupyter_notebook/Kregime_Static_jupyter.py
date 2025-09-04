@@ -77,7 +77,7 @@ import pyvista as pv
 # %%
 
 pi = math.pi
-plt.rcParams["text.usetex"] = True
+plt.rcParams["text.usetex"] = False
 
 # %%
 E = 1.0
@@ -346,7 +346,7 @@ def width_calculation(filename):
         slice_mesh = mesh.slice(normal=normal, origin=point)
         y_slice = slice_mesh.points[:, 1]
         Wnode_slice = slice_mesh.point_data["Wnode"]
-        width_i = np.trapz(Wnode_slice, x=y_slice)  # noqa: NPY201
+        width_i = np.trapezoid(Wnode_slice, x=y_slice)
         if width_i >= 0:
             width_line[i] = width_i
         r_i[i] = (
