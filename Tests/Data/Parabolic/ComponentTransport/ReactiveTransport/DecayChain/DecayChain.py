@@ -86,7 +86,7 @@ half_lifes = np.array([1.56e7, 7.37e3, 2.41e4, 7.04e8, 3.28e4, 21.773])
 # First-order decay constant [1/s]
 k = {
     radionuclide: np.log(2) / half_life / 3.1536e7
-    for radionuclide, half_life in zip(radionuclides, half_lifes, strict=False)
+    for radionuclide, half_life in zip(radionuclides, half_lifes, strict=True)
 }
 
 ###Initial and boundary conditions###
@@ -157,7 +157,7 @@ ax.set(xlabel="Distance [m]", ylabel="Concentration [mol/L]")
 
 color_map = cm.rainbow(np.linspace(0, 1, radionuclides.size))
 
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     ax.plot(
         x,
         c[radionuclide],
@@ -194,7 +194,7 @@ color_map = cm.rainbow(np.linspace(0, 1, radionuclides.size))
 
 fig, (ax, ax2, ax3) = plt.subplots(1, 3)
 
-for name, color in zip(radionuclides, color_map, strict=False):
+for name, color in zip(radionuclides, color_map, strict=True):
     grad_cs = grad_c[name]
     grad_cs_num = grad_c_num[name]
     xs = x_mid
@@ -290,7 +290,7 @@ color_map = cm.rainbow(np.linspace(0, 1, radionuclides.size))
 ax1.set(xlabel="Distance [m]", ylabel="Concentration [mol/L]")
 
 # Analytical solution
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     ax1.plot(
         x,
         c[radionuclide],
@@ -303,7 +303,7 @@ for radionuclide, color in zip(radionuclides, color_map, strict=False):
     )
 
 # GIA numerical solution
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     c_gia = pvdfile_GIA.read_set_data(
         t * 3.1536e7,
         radionuclide,
@@ -323,7 +323,7 @@ for radionuclide, color in zip(radionuclides, color_map, strict=False):
     )
 
 # OS numerical solution
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     c_os = pvdfile_OS.read_set_data(
         t * 3.1536e7,
         radionuclide,
@@ -347,9 +347,7 @@ for radionuclide, color in zip(radionuclides, color_map, strict=False):
 with h5py.File("./solution_reference_code.hdf5", "r") as f:
     species_ = f["species"][:]
     x_ = f["x"][:]
-    for s_, radionuclide, color in zip(
-        species_, radionuclides, color_map, strict=False
-    ):
+    for s_, radionuclide, color in zip(species_, radionuclides, color_map, strict=True):
         data_ = f[s_][:]
         ax1.plot(
             x_,
@@ -459,7 +457,7 @@ color_map = cm.rainbow(np.linspace(0, 1, radionuclides.size))
 ax1.set(xlabel="$x$ / m", ylabel="molar flux / mol L$^{-1}$ m s$^{-1}$")
 
 # Analytical solution
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     ax1.plot(
         x,
         molar_flux_ana[radionuclide],
@@ -473,7 +471,7 @@ for radionuclide, color in zip(radionuclides, color_map, strict=False):
 
 
 # GIA numerical solution
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     c_gia = pvdfile_GIA.read_set_data(
         t * 3.1536e7,
         radionuclide + "Flux",
@@ -530,7 +528,7 @@ color_map = cm.rainbow(np.linspace(0, 1, radionuclides.size))
 ax1.set(xlabel="Distance [m]", ylabel="Concentration [mol/L]")
 
 # GIA numerical solution
-for radionuclide, color in zip(radionuclides[:-1], color_map, strict=False):
+for radionuclide, color in zip(radionuclides[:-1], color_map[:-1], strict=True):
     c_gia = pvdfile_GIA.read_set_data(
         t * 3.1536e7,
         radionuclide,
@@ -561,7 +559,7 @@ ax1.yaxis.grid(color="gray", linestyle="dashed")
 ax2.set(xlabel="Distance [m]", ylabel="Concentration [mol/L]")
 
 # OS numerical solution
-for radionuclide, color in zip(radionuclides[:-1], color_map, strict=False):
+for radionuclide, color in zip(radionuclides[:-1], color_map[:-1], strict=True):
     c_os = pvdfile_OS.read_set_data(
         t * 3.1536e7,
         radionuclide,
@@ -650,7 +648,7 @@ ax_max = sys.float_info.min
 check_x_selection = x >= x_mesh[1]
 
 # difference GIA minus analytical
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     c_gia = pvdfile_GIA.read_set_data(
         t * 3.1536e7,
         radionuclide + "Flux",
@@ -809,7 +807,7 @@ ax_max = sys.float_info.min
 x_mid = 0.5 * (x[1:] + x[:-1])
 
 # difference GIA minus analytical
-for radionuclide, color in zip(radionuclides, color_map, strict=False):
+for radionuclide, color in zip(radionuclides, color_map, strict=True):
     c_gia = mesh.point_data[radionuclide + "Flux_residual"]
     c_ana = molar_flux_ana2[radionuclide]
 

@@ -370,7 +370,7 @@ for t, time_value in enumerate(reader.time_values):
         ["thetax_x", "thetax_y", "thetax_z", "thetay_x", "thetay_y", "thetay_z"]
     )
     keys = keys.reshape((2, 3))[:, : mesh_theta["gradient"].shape[1]].ravel()
-    gradients_theta = dict(zip(keys, mesh_theta["gradient"].T, strict=False))
+    gradients_theta = dict(zip(keys, mesh_theta["gradient"].T, strict=True))
     mesh.point_data.update(gradients_theta)
     # --------------------------------------------------------------------------------
     # define grad u
@@ -380,7 +380,7 @@ for t, time_value in enumerate(reader.time_values):
 
     keys = np.array(["Ux_x", "Ux_y", "Ux_z", "Uy_x", "Uy_y", "Uy_z"])
     keys = keys.reshape((2, 3))[:, : mesh_u["gradient"].shape[1]].ravel()
-    gradients_u = dict(zip(keys, mesh_u["gradient"].T, strict=False))
+    gradients_u = dict(zip(keys, mesh_u["gradient"].T, strict=True))
     mesh.point_data.update(gradients_u)
 
     # --------------------------------------------------------------------------------
@@ -438,7 +438,7 @@ for t, time_value in enumerate(reader.time_values):
     Y = mesh.points[:, 1]
     G_theta_i = mesh.point_data["G_theta_node"]
 
-    domain_points = np.array(list(zip(X, Y, strict=False)))
+    domain_points = np.array(list(zip(X, Y, strict=True)))
     tri = Delaunay(domain_points)
 
     def area_from_3_points(x, y, z):

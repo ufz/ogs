@@ -304,11 +304,8 @@ def width_calculation(filename):
 
     def gradients_to_dict(arr):
         """A helper method to label the gradients into a dictionary."""
-        keys = np.array(
-            ["grad_dx", "grad_dy", "grad_dz", "grad_dx", "grad_dy", "grad_dz"]
-        )
-        keys = keys.reshape((2, 3))[:, : arr.shape[1]].ravel()
-        return dict(zip(keys, mesh_d["gradient"].T, strict=False))
+        keys = ["grad_dx", "grad_dy", "grad_dz"]
+        return dict(zip(keys, arr.T, strict=True))
 
     gradients_d = gradients_to_dict(mesh_d["gradient"])
     mesh.point_data.update(gradients_d)

@@ -33,7 +33,7 @@ if len(pointsA) != len(pointsB):
     print("Mismatch of number of points!")
     exit(1)
 
-for pointA, pointB in zip(pointsA, pointsB, strict=False):
+for pointA, pointB in zip(pointsA, pointsB, strict=True):
     if int(pointA.getAttribute("id")) != int(pointB.getAttribute("id")):
         print("Points do not have the same order!")
         exit(1)
@@ -59,14 +59,14 @@ if len(polysA) != len(polysB):
     print("Mismatch of number of polylines!")
     exit(1)
 
-for polyA, polyB in zip(polysA, polysB, strict=False):
+for polyA, polyB in zip(polysA, polysB, strict=True):
     if int(polyA.getAttribute("id")) != int(polyB.getAttribute("id")):
         print("Polylines do not have the same order!")
         exit(1)
 
     pntsA = polyA.getElementsByTagName("pnt")
     pntsB = polyA.getElementsByTagName("pnt")
-    for pntA, pntB in zip(pntsA, pntsB, strict=False):
+    for pntA, pntB in zip(pntsA, pntsB, strict=True):
         if int(pntA.childNodes[0].nodeValue) != int(pntB.childNodes[0].nodeValue):
             print(f"Polyline with id={polyA.getAttribute('id')} differ!")
             exit(1)

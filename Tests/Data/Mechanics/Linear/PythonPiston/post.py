@@ -70,7 +70,7 @@ probe.SetInputData(loc)
 uys = np.zeros(len(ts))
 ps = np.zeros(len(ts))
 
-for i, (t, fn) in enumerate(zip(ts, fns, strict=False)):
+for i, (t, fn) in enumerate(zip(ts, fns, strict=True)):
     print("###### time", t)
     reader.SetFileName(fn)
     probe.Update()

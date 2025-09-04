@@ -455,7 +455,7 @@ class Plotter:
         self, file_list: list[str], material_names: list[str], fracture_mat_id=3
     ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
         by_material: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-        for vtu_file, mat_name in zip(file_list, material_names, strict=False):
+        for vtu_file, mat_name in zip(file_list, material_names, strict=True):
             mesh = ot.MeshSeries(self.output_dir / vtu_file)[-1]
             sub = self.get_sub_mesh_by_material(mesh, fracture_mat_id)
             coords = sub.points
@@ -484,7 +484,7 @@ class Plotter:
         self, file_list: list[str], material_names: list[str]
     ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
         width_by_material: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-        for vtu_file, material_name in zip(file_list, material_names, strict=False):
+        for vtu_file, material_name in zip(file_list, material_names, strict=True):
             mesh = ot.MeshSeries(self.output_dir / vtu_file)[-1]
             cell_data = mesh.cell_data
 
@@ -513,7 +513,7 @@ class Plotter:
         stress_type: str = "normal",
     ) -> dict[str, tuple[np.ndarray, np.ndarray]]:
         stress_by_material: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-        for vtu_file, material_name in zip(file_list, material_names, strict=False):
+        for vtu_file, material_name in zip(file_list, material_names, strict=True):
             mesh = ot.MeshSeries(self.output_dir / vtu_file)[-1]
             cell_data = mesh.cell_data
             point_data = mesh.point_data

@@ -44,7 +44,7 @@ def sigma(T):
     return -C * eps_T(T)
 
 
-for t, T in zip(ts, Ts, strict=False):
+for t, T in zip(ts, Ts, strict=True):
     sigma_ = np.tile(sigma(T).T, (nnodes, 1))
 
     sigma_vtk = numpy_to_vtk(sigma_, 1)
