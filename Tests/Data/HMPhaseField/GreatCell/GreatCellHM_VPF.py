@@ -1100,6 +1100,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 vtu_files_dict_embedded = sing_ogs_model.run_simulations_with_fracture(
@@ -1117,6 +1118,7 @@ vtu_files_dict_embedded = sing_ogs_model.run_simulations_with_fracture(
     crack_type="half",
     fracture_model_type="VolumetricDeviatoric",
     mesh_size=h,
+    n_mpi=2,
 )
 
 # %% [markdown]
@@ -1185,6 +1187,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 # Run simulations
@@ -1203,6 +1206,7 @@ vtu_files_dict_full = sing_ogs_model.run_simulations_with_fracture(
     crack_type="full",
     fracture_model_type="VolumetricDeviatoric",
     mesh_size=h,
+    n_mpi=2,
 )
 
 
@@ -1281,6 +1285,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 vtu_files_dict_embedded_HM = sing_ogs_model.run_simulations_with_fracture(
@@ -1298,6 +1303,7 @@ vtu_files_dict_embedded_HM = sing_ogs_model.run_simulations_with_fracture(
     crack_type="half",
     fracture_model_type="Isotropic",
     mesh_size=h,
+    n_mpi=2,
 )
 
 # %% [markdown]
@@ -1422,6 +1428,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 vtu_files_dict_full_HM = sing_ogs_model.run_simulations_with_fracture(
@@ -1439,6 +1446,7 @@ vtu_files_dict_full_HM = sing_ogs_model.run_simulations_with_fracture(
     crack_type="full",
     fracture_model_type="Isotropic",
     mesh_size=h,
+    n_mpi=2,
 )
 
 

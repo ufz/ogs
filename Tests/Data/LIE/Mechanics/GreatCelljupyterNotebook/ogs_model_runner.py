@@ -703,14 +703,68 @@ class SingleOGSModel:
         mesh.cell_data["MaterialIDs"] = mat_ids
         mesh.cell_data["width_ic"] = width_ic
         mesh.save(Path(mesh_path, out_m), binary=False)
+
+        def run_partmesh(mesh_path, n_mpi, physical_groups):
+            run(
+                f"partmesh -s -o {mesh_path} -i {mesh_path}/domain.vtu",
+                shell=True,
+                check=True,
+            )
+            run(
+                f"partmesh -m -n {n_mpi} -o {mesh_path} -i {mesh_path}/domain.vtu -- "
+                + " ".join(f"{mesh_path}/{group}" for group in physical_groups),
+                shell=True,
+                check=True,
+            )
+
+        HM3D_GROUPS = [
+            "physical_group_DSS1.vtu",
+            "physical_group_DSS1a.vtu",
+            "physical_group_DSS2.vtu",
+            "physical_group_DSS2a.vtu",
+            "physical_group_DSS3.vtu",
+            "physical_group_DSS3a.vtu",
+            "physical_group_DSS4.vtu",
+            "physical_group_DSS4a.vtu",
+            "physical_group_DSS5.vtu",
+            "physical_group_DSS5a.vtu",
+            "physical_group_DSS6.vtu",
+            "physical_group_DSS6a.vtu",
+            "physical_group_DSS7.vtu",
+            "physical_group_DSS7a.vtu",
+            "physical_group_DSS8.vtu",
+            "physical_group_DSS8a.vtu",
+            "physical_group_PEE1.vtu",
+            "physical_group_PEE1a.vtu",
+            "physical_group_PEE2.vtu",
+            "physical_group_PEE2a.vtu",
+            "physical_group_PEE3.vtu",
+            "physical_group_PEE3a.vtu",
+            "physical_group_PEE4.vtu",
+            "physical_group_PEE4a.vtu",
+            "physical_group_PEE5.vtu",
+            "physical_group_PEE5a.vtu",
+            "physical_group_PEE6.vtu",
+            "physical_group_PEE6a.vtu",
+            "physical_group_PEE7.vtu",
+            "physical_group_PEE7a.vtu",
+            "physical_group_PEE8.vtu",
+            "physical_group_PEE8a.vtu",
+            "physical_group_p_bottom.vtu",
+            "physical_group_p_left.vtu",
+            "physical_group_p_right.vtu",
+            "physical_group_p_top.vtu",
+            "physical_group_borehole_boundary.vtu",
+        ]
+
+        HM2_GROUPS = HM3D_GROUPS[:-1] + [  # same as HM3D but replace last element
+            "physical_group_Inlet.vtu",
+            "physical_group_Outlet_R_embeddedFracture.vtu",
+            "physical_group_Outlet_R_fullFracture.vtu",
+            "physical_group_Outlet_L_fullFracture.vtu",
+        ]
+
         if model_type == "HM3d":
-            run(
-                f"partmesh -s   -o {mesh_path} -i {mesh_path}/domain.vtu",
-                shell=True,
-                check=True,
-            )
-            run(
-                f"partmesh -m -n {n_mpi} -o {mesh_path} -i {mesh_path}/domain.vtu  -- {mesh_path}/physical_group_DSS1.vtu {mesh_path}/physical_group_DSS1a.vtu {mesh_path}/physical_group_DSS2.vtu {mesh_path}/physical_group_DSS2a.vtu {mesh_path}/physical_group_DSS3.vtu {mesh_path}/physical_group_DSS3a.vtu  {mesh_path}/physical_group_DSS4.vtu {mesh_path}/physical_group_DSS4a.vtu {mesh_path}/physical_group_DSS5.vtu {mesh_path}/physical_group_DSS5a.vtu {mesh_path}/physical_group_DSS6.vtu {mesh_path}/physical_group_DSS6a.vtu {mesh_path}/physical_group_DSS7.vtu {mesh_path}/physical_group_DSS7a.vtu {mesh_path}/physical_group_DSS8.vtu {mesh_path}/physical_group_DSS8a.vtu {mesh_path}/physical_group_PEE1.vtu {mesh_path}/physical_group_PEE1a.vtu {mesh_path}/physical_group_PEE2.vtu {mesh_path}/physical_group_PEE2a.vtu {mesh_path}/physical_group_PEE3.vtu {mesh_path}/physical_group_PEE3a.vtu {mesh_path}/physical_group_PEE4.vtu {mesh_path}/physical_group_PEE4a.vtu {mesh_path}/physical_group_PEE5.vtu {mesh_path}/physical_group_PEE5a.vtu {mesh_path}/physical_group_PEE6.vtu {mesh_path}/physical_group_PEE6a.vtu {mesh_path}/physical_group_PEE7.vtu {mesh_path}/physical_group_PEE7a.vtu {mesh_path}/physical_group_PEE8.vtu {mesh_path}/physical_group_PEE8a.vtu {mesh_path}/physical_group_p_bottom.vtu {mesh_path}/physical_group_p_left.vtu {mesh_path}/physical_group_p_right.vtu {mesh_path}/physical_group_p_top.vtu {mesh_path}/physical_group_borehole_boundary.vtu ",
-                shell=True,
-                check=True,
-            )
+            run_partmesh(mesh_path, n_mpi, HM3D_GROUPS)
+        elif model_type in ["M2a", "M2b", "HM2a", "HM2b"]:
+            run_partmesh(mesh_path, n_mpi, HM2_GROUPS)

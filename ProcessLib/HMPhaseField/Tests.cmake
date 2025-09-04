@@ -166,7 +166,10 @@ AddTest(
 )
 
 if(OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF.py RUNTIME 1300)
+    NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF.py
+        RUNTIME 1300
+        PROPERTIES PROCESSORS 2
+    )
     NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF_propagating.py
         RUNTIME 800
         PROPERTIES PROCESSORS 4
