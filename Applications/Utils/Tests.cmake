@@ -690,10 +690,6 @@ AddTest(
     AmmerSubsurfaceGrid.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
 )
 
-if(SNAKEMAKE AND TEE_TOOL_PATH)
-    add_dependencies(ctest Layers2Grid AddFaultToVoxelGrid)
-endif()
-
 AddTest(
     NAME partmesh_with_field_data
     PATH NodePartitionedMesh/partmesh
