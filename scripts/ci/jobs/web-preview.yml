@@ -2,7 +2,7 @@ preview web site:
   stage: build
   image: $WEB_IMAGE
   needs:
-    - job: ci_images
+    - job: meta
     - job: "build linux arch"
       optional: true
     - job: "build mac petsc"
