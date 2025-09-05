@@ -13,7 +13,6 @@ variables:
   BUILD_CTEST: "true"
   CTEST_ARGS: "" # If not empty supply arguments to select tests
   CTEST_TIMEOUT: "" # in minutes
-  CPU_TARGET: ivybridge # envinf1 has oldest cpu
   ARTIFACTS_PAGES_URL: https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts
   PIPELINE_NAME: "Default pipeline name"
   # by default skip performance tests, they can be enabled on isolated test machines
