@@ -288,23 +288,6 @@ function(AddTest)
         add_dependencies(ctest-large ${AddTest_EXECUTABLE})
     endif()
 
-    if(OGS_WRITE_BENCHMARK_COMMANDS)
-        string(
-            REPLACE
-                ";"
-                " "
-                _cmd
-                "${AddTest_WRAPPER} ${AddTest_WRAPPER_ARGS} ${AddTest_EXECUTABLE} ${AddTest_EXECUTABLE_ARGS}"
-        )
-        string(REPLACE "${Data_BINARY_DIR}/" "" _cmd "${_cmd}")
-        string(REPLACE "-o" "" _cmd "${_cmd}")
-        # string(STRIP "${_cmd}" _cmd)
-        set(_benchmark_run_commands
-            "${_benchmark_run_commands} ${AddTest_EXECUTABLE} ; ${_cmd} ; ${TEST_NAME}\n"
-            CACHE INTERNAL ""
-        )
-    endif()
-
     if(NOT AddTest_TESTER OR OGS_COVERAGE)
         return()
     endif()

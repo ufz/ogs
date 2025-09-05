@@ -184,10 +184,6 @@ option(OGS_USE_MFRONT
 
 option(OGS_INCLUDE_WHAT_YOU_USE "Enable include-what-you-use checks." OFF)
 
-option(OGS_WRITE_BENCHMARK_COMMANDS "" OFF)
-message(STATUS "${_benchmark_run_commands}")
-# set(_benchmark_run_commands "exe ; cmd ; name\n" CACHE INTERNAL "")
-
 include(packaging/Pack)
 
 # ---- Subdirectories ----
@@ -220,27 +216,10 @@ if(OGS_BUILD_TESTING AND PROJECT_IS_TOP_LEVEL)
 endif()
 
 include(UnityBuildSettings)
-
-message(STATUS "${_benchmark_run_commands}")
-
-if(OGS_WRITE_BENCHMARK_COMMANDS)
-    file(WRITE ${PROJECT_BINARY_DIR}/benchmark_commands.csv
-         "${_benchmark_run_commands}"
-    )
-    unset(_benchmark_run_commands CACHE)
-endif()
-
 include(GenerateEnvrcFile)
-
 check_header_compilation()
-
-include(scripts/cmake/MarkVariablesAdvanced.cmake)
-unset(PRE_INSTALL_RUN CACHE)
-
 include(Features)
-
 printEnabledProcesses()
-
 printMKLUsage()
 
 # Check wheel binaries
