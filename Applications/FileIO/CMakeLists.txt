@@ -40,7 +40,6 @@ target_precompile_headers(ApplicationsFileIO PRIVATE [["BaseLib/Error.h"]]
     [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] [["MeshLib/Mesh.h"]])
 
 foreach(xsd OpenGeoSysCND.xsd OpenGeoSysNum.xsd OpenGeoSysProject.xsd)
-    # cmake-lint: disable=E1126
     file(COPY_FILE XmlIO/${xsd} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${xsd}
          ONLY_IF_DIFFERENT
     )

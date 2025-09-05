@@ -37,7 +37,6 @@ if(OGS_USE_NETCDF)
 endif()
 
 foreach(xsd OpenGeoSysGLI.xsd OpenGeoSysSTN.xsd)
-    # cmake-lint: disable=E1126
     file(COPY_FILE IO/XmlIO/${xsd} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${xsd}
          ONLY_IF_DIFFERENT
     )
