@@ -1533,6 +1533,10 @@ for case, label in pairs_to_check.items():
     eps_v_expected = expected_result["eps_v"]
     phi_new = new_result["phi"]
     phi_expected = expected_result["phi"]
+    print(
+        f"eps_v_new shape: {eps_v_new.shape}, eps_v_expected shape: {eps_v_expected.shape}"
+    )
+    print(f"phi_new shape: {phi_new.shape}, phi_expected shape: {phi_expected.shape}")
 
     np.testing.assert_allclose(eps_v_new, eps_v_expected, atol=5e-4)
     np.testing.assert_allclose(phi_new, phi_expected, atol=1e-8)

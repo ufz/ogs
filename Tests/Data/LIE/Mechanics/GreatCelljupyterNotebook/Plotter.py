@@ -1,6 +1,8 @@
 import colorsys
 import math
+import xml.etree.ElementTree as ET
 from pathlib import Path
+from subprocess import run
 from typing import ClassVar
 
 import matplotlib.pyplot as plt
@@ -93,13 +95,6 @@ class Plotter:
         marker = self.MATERIAL_MARKERS.get(material, self.MATERIAL_MARKERS["Default"])
         linestyle = self.LOAD_LINESTYLES.get(load_case, self.LOAD_LINESTYLES["Default"])
         return color, marker, linestyle
-
-    def get_mesh(self, filename: str, r=0.065, inner=False) -> ot.Mesh:
-        mesh = ot.MeshSeries(filename)[-1]
-        if inner:
-            radii = np.asarray([np.linalg.norm(cell.center) for cell in mesh.cell])
-            return ot.Mesh(mesh.extract_cells(radii < r))
-        return mesh
 
     def _plot_mesh(self, filename, save_file=None, r=0.065, inner=False):
         mesh = self.get_mesh(filename, r, inner)
@@ -202,10 +197,82 @@ class Plotter:
         msg = "vtu_input must be str, list, or dict"
         raise TypeError(msg)
 
-    def inner_mesh(self, filename: str) -> ot.Mesh:
-        mesh = ot.MeshSeries(self.output_dir / filename)[-1]
+    def _last_from_pvd(self, pvd: Path, suffix: str, prefix: str | None) -> Path:
+        if not pvd.is_file():
+            msg = f"Provided path is not a file: {pvd}"
+            raise FileNotFoundError(msg)
+        ds = ET.parse(pvd).getroot().findall(".//DataSet")
+        items = []
+        for d in ds:
+            f = d.attrib.get("file", "")
+            if not f.endswith(suffix):
+                continue
+            if prefix and not f.startswith(prefix):
+                continue
+            t = float(d.attrib.get("timestep", "0"))
+            items.append((t, f))
+        if not items:
+            msg = f"No matching DataSet (suffix={suffix}, prefix={prefix}) in {pvd}"
+            raise RuntimeError(msg)
+        items.sort(key=lambda x: x[0])
+        return (pvd.parent / items[-1][1]).resolve()
+
+    def _resolve_to_vtu(self, path: Path, series_prefix: str | None = None) -> Path:
+        """Return a VTU ready to load. Uses pvtu2vtu only if a .pvtu is actually used."""
+        if not path.exists():
+            msg = f"File not found: {path}"
+            raise FileNotFoundError(msg)
+
+        if path.suffix == ".vtu":
+            return path
+
+        if path.suffix == ".pvtu":
+            out_vtu = path.with_suffix(".vtu")
+            run(["pvtu2vtu", "-i", str(path), "-o", str(out_vtu)], check=True)
+            return out_vtu
+
+        if path.suffix == ".pvd":
+            try:
+                last_pvtu = self._last_from_pvd(path, ".pvtu", series_prefix)
+                out_vtu = last_pvtu.with_suffix(".vtu")
+                run(["pvtu2vtu", "-i", str(last_pvtu), "-o", str(out_vtu)], check=True)
+                return out_vtu
+            except RuntimeError:
+                return self._last_from_pvd(path, ".vtu", series_prefix)
+        msg = f"Unsupported file format: {path.suffix}"
+        raise ValueError(msg)
+
+    def get_mesh(
+        self,
+        filename: str | Path,
+        r=0.065,
+        inner=False,
+        series_prefix: str | None = None,
+    ) -> ot.Mesh:
+        path = (
+            self.output_dir / Path(filename)
+            if not Path(filename).is_absolute()
+            else Path(filename)
+        )
+        vtu_path = self._resolve_to_vtu(path, series_prefix=series_prefix)
+        mesh = ot.MeshSeries(vtu_path)[-1]
+        if inner:
+            radii = np.asarray([np.linalg.norm(cell.center) for cell in mesh.cell])
+            return ot.Mesh(mesh.extract_cells(radii < float(r)))
+        return mesh
+
+    def inner_mesh(
+        self, filename: str | Path, r: float = 0.065, series_prefix: str | None = None
+    ) -> ot.Mesh:
+        path = (
+            self.output_dir / Path(filename)
+            if not Path(filename).is_absolute()
+            else Path(filename)
+        )
+        vtu_path = self._resolve_to_vtu(path, series_prefix=series_prefix)
+        mesh = ot.MeshSeries(vtu_path)[-1]
         radii = np.asarray([np.linalg.norm(cell.center) for cell in mesh.cell])
-        return ot.Mesh(mesh.extract_cells(radii < 0.065))
+        return ot.Mesh(mesh.extract_cells(radii < float(r)))
 
     def sorted_angles_eps_trace(self, filename: str) -> tuple[np.ndarray, np.ndarray]:
         edge = self.inner_mesh(filename).extract_feature_edges()
