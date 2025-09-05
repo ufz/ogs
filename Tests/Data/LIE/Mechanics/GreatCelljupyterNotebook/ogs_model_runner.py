@@ -114,7 +114,7 @@ class SingleOGSModel:
 
             log_file_name = Path(self.out_dir, f"log_{output_file_name_prefix}.txt")
             if self.method == "VPF":
-                wrapper = f"mpirun -n {self.n_mpi}"
+                wrapper = f"mpirun --bind-to none -n {self.n_mpi}"
             else:
                 wrapper = None
 
