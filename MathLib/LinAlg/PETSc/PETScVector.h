@@ -127,7 +127,15 @@ public:
     template <class T_SUBVEC>
     void add(const std::vector<PetscInt>& e_idxs, const T_SUBVEC& sub_vec)
     {
-        VecSetValues(v_, e_idxs.size(), &e_idxs[0], &sub_vec[0], ADD_VALUES);
+        if constexpr (std::is_pointer_v<T_SUBVEC>)
+        {
+            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec, ADD_VALUES);
+        }
+        else
+        {
+            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec.data(),
+                         ADD_VALUES);
+        }
     }
 
     /*!
@@ -140,7 +148,16 @@ public:
     template <class T_SUBVEC>
     void set(const std::vector<PetscInt>& e_idxs, const T_SUBVEC& sub_vec)
     {
-        VecSetValues(v_, e_idxs.size(), &e_idxs[0], &sub_vec[0], INSERT_VALUES);
+        if constexpr (std::is_pointer_v<T_SUBVEC>)
+        {
+            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec,
+                         INSERT_VALUES);
+        }
+        else
+        {
+            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec.data(),
+                         INSERT_VALUES);
+        }
     }
 
     // TODO preliminary
