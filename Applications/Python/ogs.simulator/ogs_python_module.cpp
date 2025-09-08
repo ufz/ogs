@@ -189,6 +189,11 @@ OGSMesh getMesh(std::string const& name)
     return OGSMesh(simulation->getMesh(name));
 }
 
+std::vector<std::string> getMeshNames()
+{
+    return simulation->getMeshNames();
+}
+
 void finalize()
 {
     simulation->outputLastTimeStep();
@@ -217,5 +222,6 @@ PYBIND11_MODULE(simulator, m)
     m.def("executeSimulation", &executeSimulation, "execute OGS simulation");
     m.def("executeTimeStep", &executeTimeStep, "execute OGS time step");
     m.def("getMesh", &getMesh, "get unstructured grid from ogs");
+    m.def("getMeshNames", &getMeshNames, "get names of all meshes from ogs");
     m.def("finalize", &finalize, "finalize OGS simulation");
 }
