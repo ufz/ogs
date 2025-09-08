@@ -176,3 +176,13 @@ function(current_dir_as_list baseDir outList)
     string(REPLACE "/" ";" DIR_LIST ${REL_DIR})
     set(${outList} ${DIR_LIST} PARENT_SCOPE)
 endfunction()
+
+# Removes -fuse-ld=lld from target link options to avoid stripping PyInit symbols
+function(ogs_remove_lld_linker_option target)
+    # lld linker strips out PyInit_OpenGeoSys symbol. Use standard linker.
+    get_target_property(_link_options ${target} LINK_OPTIONS)
+    if(_link_options)
+        list(REMOVE_ITEM _link_options -fuse-ld=lld)
+        set_target_properties(${target} PROPERTIES LINK_OPTIONS "${_link_options}")
+    endif()
+endfunction()

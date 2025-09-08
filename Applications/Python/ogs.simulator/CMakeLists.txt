@@ -5,12 +5,7 @@ pybind11_add_module(
     ../../CLI/CommandLineArgumentParser.cpp
 )
 
-# lld linker strips out PyInit_OpenGeoSys symbol. Use standard linker.
-get_target_property(_link_options simulator LINK_OPTIONS)
-if(_link_options)
-    list(REMOVE_ITEM _link_options -fuse-ld=lld)
-    set_target_properties(simulator PROPERTIES LINK_OPTIONS "${_link_options}")
-endif()
+ogs_remove_lld_linker_option(simulator)
 
 target_link_libraries(
     simulator PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib tclap
