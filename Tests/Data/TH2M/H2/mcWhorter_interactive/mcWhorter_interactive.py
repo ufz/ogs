@@ -21,6 +21,7 @@
 # web_subsection = "th2m"
 # coupling = "th2m"
 # weight = 5
+# models = [ "analytical" ]
 # +++
 #
 

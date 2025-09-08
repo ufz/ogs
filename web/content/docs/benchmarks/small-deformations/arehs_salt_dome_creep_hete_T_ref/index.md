@@ -5,6 +5,7 @@ project = ["Mechanics/CreepWithHeterogeneousReferenceTemperature/arehs-salt-M_gr
 date = "2021-06-21T11:28:56+02:00"
 title = "Creep analysis with a heterogeneous reference temperature"
 image = "arehs-salt-T_elements.png"
+models = [ "field" ]
 +++
 
 {{< data-link >}}

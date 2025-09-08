@@ -5,6 +5,7 @@ weight = 115
 project = ["Mechanics/Ehlers/cube_1e0_dp.prj"]
 author = "Xing-Yuan Miao"
 image = "dp_test.png"
+models = [ "material" ]
 +++
 
 {{< data-link >}}

@@ -1,6 +1,7 @@
 +++
 title = "Processes"
 layout = "subsections"
+models = "processes"
 
 [cascade]
 breadcrumbs = true

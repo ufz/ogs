@@ -5,6 +5,7 @@ date = "2022-02-07T13:19:49+01:00"
 author = "Wenqing Wang and Sonja Kaiser"
 image = "decovalex_2023_c.png"
 projects = [ "eurad" ]
+models = [ "url" ]
 +++
 
 {{< data-link >}}

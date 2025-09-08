@@ -5,6 +5,7 @@ project = ["Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_volumetricsource
 author = "Tom Fischer"
 weight = 102
 image = "square_1e2_volumetricsourceterm_pcs_0_ts_1_t_1.000000_Pressure_AnalyticalSolution_VolumetricSourceTerm.png"
+models = [ "analytical" ]
 +++
 
 {{< data-link >}}
