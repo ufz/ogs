@@ -23,6 +23,7 @@ Boussinesq
 Brasileira
 Brato
 Bruns
+Bure
 Carranza-Torres
 CLion
 CSS
@@ -158,6 +159,7 @@ Quadro
 Quirijn
 Ramey
 recondensation
+Reiche
 relref
 Revista
 Roboto
@@ -210,5 +212,6 @@ Xcode
 Xeon
 XPath
 Youngs
+Zeche
 Zenodo
 zlib

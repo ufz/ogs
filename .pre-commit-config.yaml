@@ -35,7 +35,7 @@ repos:
       - id: nbqa-black
         additional_dependencies: [jupytext, black==23.1.0]
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.2
+    rev: v2.4.1
     hooks:
       - id: codespell
         exclude: 'Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp|^scripts/cmake/CPM.cmake|Documentation/.vale/.*|.*\.ipynb|.*\.svg|^GeoLib/predicates.c'
