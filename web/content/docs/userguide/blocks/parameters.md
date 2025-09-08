@@ -170,7 +170,7 @@ Which to use is dependent on the parameter or the provided data.
 Usually primary variables use node data while cell data is used for secondary variables.
 See [process variables](/docs/userguide/blocks/processes/#process-variables) for more information on variable types.
 
-The mesh must be loaded in the [mesh section](docs/userguide/blocks/Meshes) of the project file.
+The mesh must be loaded in the [mesh section](/docs/userguide/blocks/meshes) of the project file.
 To specify the data array which contains the desired information, use the `<field_name></field_name>` subtag.
 This field must be present in the mesh defined in the `<mesh></mesh>` subtag.
 If the`<mesh></mesh>` tag is not set, the first defined mesh will be used.
