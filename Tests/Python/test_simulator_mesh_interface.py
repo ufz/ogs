@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
+from ogs import mesh  # noqa F401
 
 
 def crossProduct(v, w):
@@ -80,8 +81,8 @@ def checkCells(cells, celltypes, points):
 
 @pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
-    import ogs.mesh as mesh  # noqa: F401, PLC0415
-    from ogs import simulator  # noqa: PLC0415
+    import ogs.mesh as OGSMesh  # noqa: F401, PLC0415
+    from ogs import OGSSimulation  # noqa: PLC0415
 
     current_dir = Path(__file__).parent.resolve()
     arguments = [
@@ -92,36 +93,37 @@ def test_simulator():
 
     try:
         print("Python: OpenGeoSys.init ...")
-        assert simulator.initialize(arguments) == 0
+        sim = ogs.OGSSimulator.OGSSimulation(arguments)
 
-        top_boundary_grid = simulator.getMesh("cuboid_1x1x1_hex_27_top_boundary")
+        top_boundary_grid = sim.getMesh("cuboid_1x1x1_hex_27_top_boundary")
         # compare grid point coordinates with expected point coordinates
         points = np.array(top_boundary_grid.getPointCoordinates())
         number_of_points = int(len(points) / 3)
         points.shape = (number_of_points, 3)
         comparePointCoordinates(points)
         # set top boundary conditions values for first time step
-        bc_values_for_first_time_step = np.ones(number_of_points) * 5e6
-        top_boundary_grid.setPointDataArray(
-            "values_set_from_python", bc_values_for_first_time_step, 1
+        bc_values_for_first_time_step = top_boundary_grid.dataArray(
+            "values_set_from_python", "double"
         )
+        bc_values_for_first_time_step[:] = np.ones(number_of_points) * 5e6
 
         print("Python: OpenGeoSys.executeSimulation ...")
-        assert simulator.executeTimeStep() == 0
-        print("Python: simulator.executeTimeStep() done")
-        top_boundary_grid = simulator.getMesh("cuboid_1x1x1_hex_27_top_boundary")
+        assert sim.executeTimeStep() == 0
+        print("Python: sim.executeTimeStep() done")
+        top_boundary_grid = sim.getMesh("cuboid_1x1x1_hex_27_top_boundary")
 
         (cells, celltypes) = top_boundary_grid.getCells()
         checkCells(cells, celltypes, points)
 
-        # set values of cell data array and get it back
+        # reset values of cell data array and get it back
+        bc_values_for_second_time_step = top_boundary_grid.dataArray(
+            "values_set_from_python", "double"
+        )
         bc_values_for_second_time_step = np.ones(number_of_points) * 1e7
-        top_boundary_grid.setPointDataArray(
-            "values_set_from_python", bc_values_for_second_time_step, 1
+        read_back_bc_values = top_boundary_grid.dataArray(
+            "values_set_from_python", "double"
         )
-        read_back_bc_values = top_boundary_grid.getPointDataArray(
-            "values_set_from_python", 1
-        )
+
         # check lengths
         if len(read_back_bc_values) != len(bc_values_for_second_time_step):
             print(
@@ -134,11 +136,11 @@ def test_simulator():
         if not comparison.all():
             print("Python: error: data arrays contain different values")
 
-        print("Python: simulator.executeTimeStep() ...")
-        simulator.executeTimeStep()
-        print("Python: simulator.executeTimeStep() done")
+        print("Python: sim.executeTimeStep() ...")
+        sim.executeTimeStep()
+        print("Python: sim.executeTimeStep() done")
         print("Python: update OGS done")
 
     finally:
         print("Python: OpenGeoSys.finalize() ...")
-        simulator.finalize()
+        sim.finalize()
