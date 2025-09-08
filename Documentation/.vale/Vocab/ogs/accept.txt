@@ -215,3 +215,4 @@ Youngs
 Zeche
 Zenodo
 zlib
+[Gg]eosystem[s]
