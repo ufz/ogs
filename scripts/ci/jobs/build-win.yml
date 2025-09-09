@@ -6,6 +6,7 @@ build win:
   rules:
     - when: manual
       allow_failure: true
+  needs: [ meta ]
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
@@ -25,6 +26,7 @@ build win mkl:
       variables:
         BUILD_PACKAGE: "true"
     - when: always
+  needs: [ meta ]
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
@@ -42,6 +44,7 @@ build win msvc:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - when: manual
       allow_failure: true
+  needs: [ meta ]
   variables:
     CMAKE_PRESET: msvc-release
     BUILD_TESTS: "false"

@@ -22,7 +22,7 @@ include:
 # child pipelines
 wheels:
   stage: build
-  needs: []
+  needs: [meta]
   trigger:
     include: /scripts/ci/jobs/build-wheels.yml
   rules:

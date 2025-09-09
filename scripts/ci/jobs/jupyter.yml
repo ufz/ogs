@@ -1,7 +1,7 @@
 test linux wheel via notebooks:
   stage: test
   tags: [envinf, shell]
-  needs: []
+  needs: [meta]
   variables:
     OGS_GROUP: ogs-local
   parallel:

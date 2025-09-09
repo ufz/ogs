@@ -52,7 +52,7 @@ meta:
           fi
           if [ $in_block -eq 2 ]; then
             if [[ "$line" =~ [\;\|\&\`\(\)\{\}] ]]; then
-                echo "Invalid characters in $line (from MR description).
+                echo "Invalid characters in $line (from MR description)."
                 exit 1
             fi
             export "$line"
