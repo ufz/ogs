@@ -42,21 +42,19 @@
       {{ end }}
       {{ end }}
       {{ if $logo }}
-      <li
-        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 dark:-outline-offset-1 dark:outline-white/10">
+      <li class="overflow-hidden rounded-xl outline outline-1 outline-gray-200">
         <a href="{{ .pages.Page.RelPermalink }}">
           {{ if .showTitle}}
-          <div class="-my-3 divide-y divide-gray-100 px-6 pt-6  dark:divide-white/10 bg-gray-50 dark:bg-gray-800/50">
-            <div class="text-gray-500 dark:text-gray-400 text-center">
+          <div class="-my-3 divide-y divide-gray-100 bg-gray-50 px-6 pt-6">
+            <div class="text-gray-500 text-center">
               <span class="uppercase">{{ .pages.Page.Title }}</span>
             </div>
           </div>
           {{ end }}
-          <div
-            class="items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6 dark:border-white/10 dark:bg-gray-800/50">
+          <div class="items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
             {{ with $logo }}
             <img src="{{ .RelPermalink }}" alt="Logo"
-              class="w-full h-48 p-2 flex-none rounded-lg bg-white object-contain ring-1 ring-gray-900/10 dark:bg-gray-700 dark:ring-white/10 no-fancybox" />
+              class="w-full h-48 p-2 flex-none rounded-lg bg-white object-contain ring-1 ring-gray-900/10 no-fancybox" />
             {{ end }}
           </div>
         </a>
@@ -64,13 +62,12 @@
       {{ else }}
       {{ if eq .taxonomy "Custom" }}
       <li
-        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 dark:-outline-offset-1 dark:outline-white/10 content-center bg-blue-600 text-gray-100">
+        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-blue-600 text-gray-100">
         {{ else }}
-      <li
-        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 dark:-outline-offset-1 dark:outline-white/10 content-center bg-gray-50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400">
+      <li class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-gray-50 text-gray-500">
         {{ end }}
         <a href="{{ .pages.Page.RelPermalink }}">
-          <div class="-my-3 divide-y divide-gray-100 px-6 pt-6 dark:divide-white/10 ">
+          <div class="-my-3 divide-y divide-gray-100 px-6 pt-6">
             <div class="text-center leading-10 text-2xl ">
               <span class="uppercase">{{ .pages.Page.Title }}</span>
             </div>
