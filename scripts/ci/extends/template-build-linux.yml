@@ -78,10 +78,10 @@
             ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
                 --test-dir "${build_dir_full}" -T Start -T Test -T Submit \
+                --no-tests=error \
                 ${ctest_arguments} \
                 --output-junit Tests/ctest.xml \
-                --stop-time "`date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`" \
-                --no-tests=error
+                --stop-time "`date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`"
           fi
         fi
 

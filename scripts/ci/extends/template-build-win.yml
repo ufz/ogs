@@ -44,7 +44,7 @@
             $ctest_arguments += "large"
         }
 
-        ctest --preset=$env:CMAKE_PRESET $ctest_arguments --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test --no-tests=error
+        ctest --preset=$env:CMAKE_PRESET --no-tests=error $ctest_arguments --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test
         $ctestExitCode = $LASTEXITCODE
         ctest --test-dir $build_directory_full -T submit; $null
         if ($ctestExitCode -ne 0) {
