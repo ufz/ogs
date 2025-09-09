@@ -20,6 +20,7 @@ preview web site:
     - ln -s ../Tests .
     - yarn
     - yarn build
+    - echo "Website available at $CI_PAGES_URL"
   rules:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
     - if: $CI_MERGE_REQUEST_ID
@@ -31,13 +32,12 @@ preview web site:
         - Tests/Data/**/*.md
         - Tests/Data/**/*.py
         - Tests/Data/Notebooks/testrunner.py
-  artifacts:
-    paths:
-      - web/public
-    expire_in: 1 week
+  pages:
+    publish: web/public
+    path_prefix: 'mr-$CI_MERGE_REQUEST_IID'
   environment:
     name: web preview $CI_MERGE_REQUEST_IID
-    url: ${ARTIFACTS_PAGES_URL}/web/public/index.html
+    url: $CI_PAGES_URL
   cache:
     paths:
       - web/node_modules
