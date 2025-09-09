@@ -34,6 +34,47 @@ static constexpr int EXIT_ARGPARSE_EXIT_OK = 2;  // "mangled" TCLAP status
 static_assert(EXIT_FAILURE == 1);
 static_assert(EXIT_SUCCESS == 0);
 
+int checkCommandLineArguments(std::vector<std::string>& argv_str)
+{
+    INFO("Parsing the OGS commandline ...");
+    int argc = argv_str.size();
+    char** argv = new char*[argc];
+    for (int i = 0; i < argc; ++i)
+    {
+        argv[i] = argv_str[i].data();
+    }
+
+    CommandLineArguments cli_args;
+    try
+    {
+        cli_args = parseCommandLineArguments(argc, argv, false);
+    }
+    catch (TCLAP::ArgException const& e)
+    {
+        ERR("Parsing the OGS commandline failed: {}", e.what());
+        BaseLib::unsetProjectDirectory();
+
+        // "mangle" TCLAP's status
+        return EXIT_ARGPARSE_FAILURE;
+    }
+    catch (TCLAP::ExitException const& e)
+    {
+        if (e.getExitStatus() == 0)
+        {
+            BaseLib::unsetProjectDirectory();
+            return EXIT_ARGPARSE_EXIT_OK;
+        }
+
+        BaseLib::unsetProjectDirectory();
+        // "mangle" TCLAP's status
+        return EXIT_ARGPARSE_FAILURE;
+    }
+
+    INFO("Parsing the OGS commandline passed");
+    BaseLib::unsetProjectDirectory();
+    return EXIT_SUCCESS;
+}
+
 // Needs to be exported, see
 // https://pybind11.readthedocs.io/en/stable/advanced/misc.html#partitioning-code-over-multiple-extension-modules
 class PYBIND11_EXPORT OGSSimulation
@@ -62,6 +103,7 @@ public:
 
             // "mangle" TCLAP's status
             cli_parse_status = EXIT_ARGPARSE_FAILURE;
+            throw(e);
         }
         catch (TCLAP::ExitException const& e)
         {
@@ -72,6 +114,7 @@ public:
 
             // "mangle" TCLAP's status
             cli_parse_status = EXIT_ARGPARSE_FAILURE;
+            throw(e);
         }
 
         BaseLib::initOGSLogger(cli_args.log_level);
@@ -105,6 +148,8 @@ public:
         {
             ERR("{}", e.what());
             ogs_status = EXIT_FAILURE;
+            BaseLib::unsetProjectDirectory();
+            throw(e);
         }
         INFO("OpenGeoSys is now initialized.");
     }
@@ -232,6 +277,9 @@ PYBIND11_MODULE(OGSSimulator, m)
 {
     m.attr("__name__") = "ogs.OGSSimulator";
     m.doc() = "pybind11 ogs plugin";
+
+    m.def("check_command_line_arguments", &checkCommandLineArguments,
+          "check the command line arguments");
 
     pybind11::class_<OGSSimulation>(m, "OGSSimulation")
         .def(pybind11::init<std::vector<std::string>&>())
