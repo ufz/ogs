@@ -24,7 +24,7 @@ AddTest(
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu fracture_stress fracture_stress 8e-6 1e-12
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu fracture_aperture fracture_aperture 1e-12 1e-12
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu fracture_permeability fracture_permeability 1e-12 1e-12
-    single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu MassFlowRate MassFlowRate 1e-12 0
+    single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu VolumetricFlowRate VolumetricFlowRate 1e-12 0
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu NodalForces NodalForces 5e-6 0
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu NodalForcesJump NodalForcesJump 1e-6 0
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu sigma sigma 2e-5 0

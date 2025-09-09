@@ -423,7 +423,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>TM_.*.vtu</regex>
-            <field>MassFlowRate</field>
+            <field>VolumetricFlowRate</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>

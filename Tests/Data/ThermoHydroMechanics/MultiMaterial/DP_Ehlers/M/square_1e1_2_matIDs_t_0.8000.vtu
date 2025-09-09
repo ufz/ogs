@@ -19,7 +19,7 @@
       <PointData>
         <DataArray type="Float64" Name="EquivalentPlasticStrain" format="appended" RangeMin="0"                    RangeMax="0.0001669833"         offset="5032"                />
         <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-0"                   RangeMax="-0"                   offset="5144"                />
-        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-6.8661795894e-16"    RangeMax="5.4684317446e-16"     offset="5212"                />
+        <DataArray type="Float64" Name="VolumetricFlowRate" format="appended" RangeMin="-6.8661795894e-16"    RangeMax="5.4684317446e-16"     offset="5212"                />
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="6.2546344414e-18"     RangeMax="0.027913543666"       offset="5484"                />
         <DataArray type="Float64" Name="displacement" NumberOfComponents="2" format="appended" RangeMin="0"                    RangeMax="0.00056568542495"     offset="5748"                />
         <DataArray type="Float64" Name="eps_p.D" NumberOfComponents="4" format="appended" RangeMin="0"                    RangeMax="0.00011807502378"     offset="5956"                />
