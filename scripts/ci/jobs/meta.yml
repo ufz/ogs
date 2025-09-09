@@ -1,12 +1,78 @@
+.ci_images_changes: &ci_images_changes
+  changes:
+    - scripts/ci/jobs/ci_images.yml
+    - scripts/docker/Dockerfile.pre-commit
+    - scripts/docker/Dockerfile.web
+
 meta:
   stage: preparation
-  tags: [shell]
+  tags: [shell, envinf]
   needs: []
   variables:
     GIT_DEPTH: 1000
+    CONTAINER_REGISTRY: ${CI_REGISTRY}/ogs/ogs
+    CONTAINER_TAG: latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      <<: *ci_images_changes
+      variables:
+        BUILD_CONTAINER: "true"
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      <<: *ci_images_changes
+      variables:
+        BUILD_CONTAINER: "true"
+        CONTAINER_TAG: ${CI_COMMIT_REF_SLUG}
+        CONTAINER_REGISTRY: ${CI_REGISTRY}/${CI_PROJECT_PATH}
+    - when: always
   script:
-    - echo "OGS_VERSION=${CI_COMMIT_TAG:-`git describe --tags --long --dirty --always`}" >> build.env
+    - echo "OGS_VERSION=${CI_COMMIT_TAG:-$(git describe --tags --long --dirty --always)}" >> build.env
     - cat build.env
+    - |
+      if [ -n "$CI_MERGE_REQUEST_IID" ]; then
+        echo "Parsing CI-variables from MR description..."
+
+        # Fetch MR description from GitLab API
+        MR_DESC=$(curl --silent --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
+          "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID" \
+          | jq -r '.description')
+
+        in_block=0
+        while IFS= read -r line; do
+          if [[ "$line" =~ ^CI-variables: ]]; then
+            in_block=1
+            continue
+          fi
+          if [[ "$line" =~ ^\`\`\` ]] && [ $in_block -eq 1 ]; then
+            in_block=2
+            continue
+          fi
+          if [[ "$line" =~ ^\`\`\` ]] && [ $in_block -eq 2 ]; then
+            in_block=0
+            continue
+          fi
+          if [ $in_block -eq 2 ]; then
+            if [[ "$line" =~ [\;\|\&\`\(\)\{\}] ]]; then
+                echo "Invalid characters in $line (from MR description)."
+                exit 1
+            fi
+            export "$line"
+            echo "$line" >> build.env
+          fi
+        done <<< "$MR_DESC"
+      fi
+    # ci_images
+    - |
+      echo "PRECOMMIT_IMAGE=${CONTAINER_REGISTRY}/pre-commit:${CONTAINER_TAG}" >> build.env
+      echo "WEB_IMAGE=${CONTAINER_REGISTRY}/web:${CONTAINER_TAG}" >> build.env
+      cat build.env
+      if [ "${BUILD_CONTAINER}" != true ]; then exit 0; fi
+    - source build.env
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - cd ${CI_PROJECT_DIR}
+    - docker build --cache-from $PRECOMMIT_IMAGE -t $PRECOMMIT_IMAGE -f scripts/docker/Dockerfile.pre-commit scripts/docker
+    - docker push $PRECOMMIT_IMAGE
+    - docker build --cache-from $WEB_IMAGE -t $WEB_IMAGE -f scripts/docker/Dockerfile.web scripts/docker
+    - docker push $WEB_IMAGE
   artifacts:
     reports:
       dotenv: build.env

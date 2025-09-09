@@ -1,6 +1,8 @@
 import os
+import platform
 from pathlib import Path
 
+import ogs
 import pytest
 
 
@@ -22,6 +24,12 @@ def pytest_runtest_setup(item):
                 strict=False,
             )
         )
+
+    if platform.system() == "Windows" and ogs.OGS_USE_MKL == "ON":
+        os.add_dll_directory(
+            Path("C:/Program Files (x86)/Intel/oneAPI/compiler/latest/bin")
+        )
+        os.add_dll_directory(Path("C:/Program Files (x86)/Intel/oneAPI/mkl/latest/bin"))
 
 
 @pytest.fixture(scope="session")

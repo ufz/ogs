@@ -1,11 +1,9 @@
 import os
-import platform
 import sys
 import tempfile
 from pathlib import Path
 
 import numpy as np
-import ogs
 import pytest
 
 
@@ -82,13 +80,6 @@ def checkCells(cells, celltypes, points):
 
 @pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
-    if platform.system() == "Windows" and ogs.OGS_USE_MKL == "ON":
-        os.add_dll_directory(
-            Path(
-                "C:/Program Files (x86)/Intel/oneAPI/compiler/latest/windows/redist/intel64_win/compiler"
-            )
-        )
-
     import ogs.mesh as mesh  # noqa: F401, PLC0415
     from ogs import simulator  # noqa: PLC0415
 

@@ -184,10 +184,6 @@ option(OGS_USE_MFRONT
 
 option(OGS_INCLUDE_WHAT_YOU_USE "Enable include-what-you-use checks." OFF)
 
-option(OGS_WRITE_BENCHMARK_COMMANDS "" OFF)
-message(STATUS "${_benchmark_run_commands}")
-# set(_benchmark_run_commands "exe ; cmd ; name\n" CACHE INTERNAL "")
-
 include(packaging/Pack)
 
 # ---- Subdirectories ----
@@ -220,65 +216,10 @@ if(OGS_BUILD_TESTING AND PROJECT_IS_TOP_LEVEL)
 endif()
 
 include(UnityBuildSettings)
-
-message(STATUS "${_benchmark_run_commands}")
-
-if(OGS_WRITE_BENCHMARK_COMMANDS)
-    file(WRITE ${PROJECT_BINARY_DIR}/benchmark_commands.csv
-         "${_benchmark_run_commands}"
-    )
-    unset(_benchmark_run_commands CACHE)
-endif()
-
-# cmake-lint: disable=E1126
-if(WIN32)
-    set(_envrc_file_ending ".ps1")
-    set(_envrc_content
-        "$Env:PYTHONPATH = \"${PROJECT_BINARY_DIR}/site-packages;\" + $Env:PYTHONPATH"
-        "$Env:PATH = \"${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR};\" + $Env:PATH"
-        "$Env:PATH += \";C:/Program Files (x86)/Intel/oneAPI/compiler/latest/windows/redist/intel64_win/compiler\""
-        "$Env:OGS_USE_PATH = \"1\""
-    )
-    if(OGS_USE_PIP)
-        list(APPEND _envrc_content
-            "$Env:UV_PROJECT = \"${PROJECT_SOURCE_DIR}/Tests/Data\""
-            "$Env:UV_PROJECT_ENVIRONMENT = \"${PROJECT_BINARY_DIR}/.venv\""
-            "$Env:UV_FROZEN = \"1\""
-        )
-    endif()
-    string(REPLACE ";$" "\n$" _envrc_content "${_envrc_content}")
-else()
-    set(_envrc_content
-        "[ -d \"${PROJECT_BINARY_DIR}/.venv\" ] && source \"${PROJECT_BINARY_DIR}/.venv/bin/activate\""
-        "export PATH=\"${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}:$PATH\""
-        "export OGS_USE_PATH=1"
-        "export PYTHONPATH=\"${PROJECT_BINARY_DIR}/site-packages:$PYTHONPATH\""
-    )
-    if(OGS_USE_PIP)
-        list(APPEND _envrc_content
-            "export UV_PROJECT=\"${PROJECT_SOURCE_DIR}/Tests/Data\""
-            "export UV_PROJECT_ENVIRONMENT=\"${PROJECT_BINARY_DIR}/.venv\""
-            "export UV_FROZEN=1"
-        )
-    endif()
-    if(TFEL_WITH_PYTHON)
-        set(_envrc_content "${_envrc_content}"
-                           "export PYTHONPATH=${TFEL_WITH_PYTHON}:$PYTHONPATH"
-        )
-    endif()
-    string(REPLACE ";" "\n" _envrc_content "${_envrc_content}")
-endif()
-file(CONFIGURE OUTPUT .envrc${_envrc_file_ending} CONTENT "${_envrc_content}")
-
+include(GenerateEnvrcFile)
 check_header_compilation()
-
-include(scripts/cmake/MarkVariablesAdvanced.cmake)
-unset(PRE_INSTALL_RUN CACHE)
-
 include(Features)
-
 printEnabledProcesses()
-
 printMKLUsage()
 
 # Check wheel binaries

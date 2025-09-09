@@ -31,17 +31,6 @@ build linux (no unity):
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: ci-no-unity
 
-build linux (no deps, no procs):
-  extends: .template-build-linux
-  tags: [shell, envinf]
-  needs: [meta]
-  timeout: 2h
-  variables:
-    BUILD_TESTS: "false"
-    BUILD_CTEST: "false"
-    CMAKE_ARGS: -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
-    CMAKE_PRESET: ci-simplest
-
 build linux debug with sanitizers:
   extends:
     - .template-build-linux
@@ -70,7 +59,7 @@ build linux ubuntu perf:
 build with pip:
   stage: build
   tags: [shell, envinf]
-  needs: []
+  needs: [meta]
   extends:
     - .test-artifacts
   script:
@@ -79,8 +68,14 @@ build with pip:
     - pip install --upgrade pip
     - pip install -e . --group dev -v
     - ln -s _skbuild build # .test-artifacts expects a directory "build"
-    - pytest
-    - ctest --test-dir _skbuild/cp* -LE large
+    - |
+      if [ "$BUILD_TESTS" = true ]; then
+        pytest
+      fi
+    - |
+      if [ "$BUILD_CTEST" = true ]; then
+        ctest --test-dir _skbuild/cp* -LE large ${CTEST_ARGS}
+      fi
 
 # WIP: standalone ctest config with:
 # cd build-dir

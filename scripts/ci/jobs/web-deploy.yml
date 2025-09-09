@@ -2,7 +2,7 @@ deploy web site:
   stage: package
   image: $WEB_IMAGE
   needs:
-    - job: ci_images
+    - job: meta
     - job: "build linux arch"
     - job: "build linux petsc"
     - job: release

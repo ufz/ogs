@@ -44,7 +44,9 @@
 
           ctest_arguments=""
           if [[ ! -z "$CTEST_ARGS" ]]; then
-            ctest_arguments="${CTEST_ARGS}"
+            # Remove quotes from CTEST_ARGS
+            ctest_arguments=${CTEST_ARGS#\"}
+            ctest_arguments=${ctest_arguments%\"}
             ctest_timeout=90 # Assume large
           else
             ctest_arguments="--preset=${CMAKE_PRESET}${preset_postfix}"
@@ -76,10 +78,10 @@
             ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
                 --test-dir "${build_dir_full}" -T Start -T Test -T Submit \
+                --no-tests=error \
                 ${ctest_arguments} \
                 --output-junit Tests/ctest.xml \
-                --stop-time "`date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`" \
-                --no-tests=error
+                --stop-time "`date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`"
           fi
         fi
 

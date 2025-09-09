@@ -175,13 +175,6 @@
       }
     },
     {
-      "name": "ci-simplest",
-      "inherits": "release",
-      "cacheVariables": {
-        "OGS_BUILD_UTILS": "OFF"
-      }
-    },
-    {
       "name": "ci-no-unity",
       "inherits": [
         "release-all",
@@ -313,10 +306,6 @@
     {
       "name": "coverage",
       "configurePreset": "coverage"
-    },
-    {
-      "name": "ci-simplest",
-      "configurePreset": "ci-simplest"
     },
     {
       "name": "ci-no-unity",

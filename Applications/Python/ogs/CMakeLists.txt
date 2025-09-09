@@ -1,4 +1,3 @@
-# cmake-lint: disable=E1126
 set(_config_content
     "OGS_USE_PETSC = '@OGS_USE_PETSC@'" "OGS_VERSION = '@OGS_VERSION@'"
     "OGS_USE_MKL = '@OGS_USE_MKL@'"

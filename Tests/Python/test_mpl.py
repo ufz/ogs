@@ -2,8 +2,12 @@ import inspect
 import math
 
 import numpy as np
-import ogs.mpl as mpl
 import pytest
+
+# TODO: On Win with OGS_USE_MKL=ON there is a DLL load error.
+pytest.importorskip("ogs.mpl", exc_type=ImportError)
+
+import ogs.mpl as mpl
 
 
 def get_public_classes(module):

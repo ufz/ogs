@@ -30,7 +30,8 @@ ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
 target_link_libraries(
     MaterialLib PUBLIC BaseLib Eigen3::Eigen MaterialLib_SolidModels
                        MaterialLib_FractureModels MaterialLib_Utils
-    PRIVATE MathLib MeshLib ParameterLib exprtk Boost::math
+                       MathLib MeshLib
+    PRIVATE ParameterLib exprtk Boost::math
 )
 
 target_precompile_headers(

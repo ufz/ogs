@@ -46,36 +46,46 @@ Or use the merge request label `ci::skip`.
 
 ## (Temporarily) reduce pipeline run time
 
-During work on MR you may want to reduce the pipeline run time to get feedback faster. You can use a pre-configured reduced pipeline or manually editing the pipeline configuration files.
+During work on MR you may want to reduce the pipeline run time to get feedback faster.
+Following options are available and can be combined:
 
-## Pre-configured reduced pipelines
+### Modify CI environment variables in the MR description
+
+Set environment variables used during CI pipeline in the merge request description. The syntax is
+
+<!-- markdownlint-disable -->
+    CI-variables:
+    ```
+    CTEST_ARGS="-R pytest"
+    BUILD_TESTS="false"
+    ```
+<!-- markdownlint-restore -->
+
+Possible variables to set:
+
+- `CTEST_ARGS`: Are passed to `ctest` invocations. Use e.g. `-R` to select specific tests (such as your currently worked on benchmark) or `-LE` to exclude labelled tests.
+- `BUILD_TESTS`: Disable unit tests (`testrunner`) when set to `false`.
+- `BUILD_CTESTS`: Disable benchmark / notebook tests when set to `false`.
+
+### Pre-configured reduced pipelines using MR labels
 
 These pipelines can be selected by using merge request labels:
 
 - `ci::web only`: Runs Jupyter notebook ctests only and builds the web site.
+- `ci::web only (fast)`: Creates a static web site preview without running Jupyter notebook ctests.
 - `ci::linux only` and `ci::mac only` and `ci::win only`: Runs platform specific builds only.
 
-## More MR labels affecting CI pipelines
+More MR labels affecting CI pipelines:
 
 - `ci_large` for enabling large ctests in merge request pipelines. Combine with `ci::linux only` for faster feedback on the benchmarks.
 
-### Manually editing `.gitlab-ci.yml` and `scripts/ci/pipelines/regular.yml`
+### Manually editing `.gitlab-ci.yml` and `scripts/ci/pipelines/regular.yml` (advanced usage)
 
 You can change the pipeline by editing the `.gitlab-ci.yml` and `scripts/ci/jobs/*.yml` files. It is good practice to mark these changes with commits starting with `drop: ...` in the commit message so they can be removed later easily.
 
-These variables in `.gitlab-ci.yml` modify the pipeline:
-
-- `BUILD_TESTS`: Set this to `false` to disable unit tests.
-- `BUILD_CTEST`: Set this to `false` to disable CTest (benchmark) tests.
-- `CTEST_ARGS`: Supply additional arguments to the `ctest`-command to select which benchmarks are run, e.g.:
-  - `-R nb` would select all notebook-based tests and would disable all other benchmarks
-  - `-LE large` would exclude all tests with label `large`
-
 All jobs get included in the `include:`-section in the file `scripts/ci/pipelines/regular.yml`. You can simple comment out files to disable jobs defined in that files. Please note that some jobs depend on other jobs.
 
-### `scripts/ci/jobs/*.yml`
-
-All jobs are defined in these files. You can disable a single job by prefixing its name with a dot, e.g.:
+All jobs are defined `scripts/ci/jobs/*.yml`. You can disable a single job by prefixing its name with a dot, e.g.:
 
 ```yml
 # enabled job:

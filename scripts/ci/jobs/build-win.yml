@@ -3,6 +3,10 @@ build win:
     - .template-build-win
     - .test-artifacts
     - .vs-environment
+  rules:
+    - when: manual
+      allow_failure: true
+  needs: [ meta ]
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
@@ -10,26 +14,26 @@ build win:
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_PIP=ON
 
+# Default config which is packaged on release
 build win mkl:
   extends:
     - .template-build-win
     - .test-artifacts
-    # oneAPI MKL results in Stack overflow during compilation of MathLib on Visual Studio 2022
-    # therefore using 2019
     - .vs-environment
     - .vs-mkl-environment
   rules:
-    # Build package on master and release
     - if: ($CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH) || $CI_COMMIT_TAG
       variables:
         BUILD_PACKAGE: "true"
     - when: always
+  needs: [ meta ]
   variables:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
       -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_MKL=ON
+      -DOGS_USE_PIP=ON
 
 build win msvc:
   extends:
@@ -40,6 +44,7 @@ build win msvc:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - when: manual
       allow_failure: true
+  needs: [ meta ]
   variables:
     CMAKE_PRESET: msvc-release
     BUILD_TESTS: "false"

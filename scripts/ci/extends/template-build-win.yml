@@ -32,7 +32,19 @@
       elseif (-Not ($env:CI_MERGE_REQUEST_LABELS -match "unit_tests")) { $ctest_condition = $true }
       if($env:BUILD_CTEST -eq "true" -And $ctest_condition -eq $true)
       {
-        ctest --preset=$env:CMAKE_PRESET -LE large --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test --no-tests=error
+        $ctest_arguments = @()
+
+        if ($env:CTEST_ARGS -and $env:CTEST_ARGS.Trim() -ne "") {
+            # Split CTEST_ARGS into separate args (assuming space-delimited)
+            $ctest_arguments += $env:CTEST_ARGS.Trim('"').Split(" ")
+        }
+
+        if ($env:BUILD_CTEST_LARGE -ne "true") {
+            $ctest_arguments += "-LE"
+            $ctest_arguments += "large"
+        }
+
+        ctest --preset=$env:CMAKE_PRESET --no-tests=error $ctest_arguments --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test
         $ctestExitCode = $LASTEXITCODE
         ctest --test-dir $build_directory_full -T submit; $null
         if ($ctestExitCode -ne 0) {

@@ -9,6 +9,7 @@ lint:
     - "C0301"
     - "C0301" # Line to long.
     - "C0113" # Missing COMMAND for optional dependencies.
+    - "E1126" # Invalid form descriminator.
 
 parse:
   vartags:
