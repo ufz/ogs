@@ -59,23 +59,41 @@
 
       <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
 
-        {{ range $project := .Page.Params.projects }}
-        {{ with site.GetPage (printf "projects/%s" (urlize $project)) }}
-        {{ $projectLink := .Permalink }}
-        {{ with .Resources.Get "logo.png" }}
-        {{ $mostDominant := index .Colors 0 }}
-        {{ $darkest := index (sort .Colors "Luminance") 0 }}
-        {{ $filter := images.Padding 1 $darkest }}
-        {{ with .Fit "200x100" }}
-        {{ with .Filter $filter }}
-        <a href="{{ $projectLink }}"><img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}"
-            alt="portrait" class="no-fancybox float-left mr-8"></a>
+
+        {{ $items := slice }}
+
+        {{ range $p := .Page.Params.projects }}
+        {{ $items = $items | append (dict "type" "project" "name" $p) }}
         {{ end }}
+
+        {{ range $m := .Page.Params.models }}
+        {{ $items = $items | append (dict "type" "model" "name" $m) }}
         {{ end }}
-        {{ end }}
-        {{ end }}
-        {{ end }}
-        <div class="clear-left"></div>
+
+        <div class="grid auto-cols-max grid-flow-col justify-around">
+
+          {{ range $item := $items }}
+          {{ with site.GetPage (printf "%s/%s" (pluralize $item.type) (urlize $item.name)) }}
+
+          {{ $link := .Permalink }}
+          {{ $logo := .Resources.Get "logo.svg" }}
+          {{ if not $logo }}
+          {{ $logo = .Resources.Get "logo.png" }}
+          {{ end }}
+          {{ if not $logo }}
+          {{ $logo = .Resources.Get "logo.jpg" }}
+          {{ end }}
+
+          {{ with $logo }}
+          <div>
+            <a href="{{ $link }}">
+              <img src="{{ .RelPermalink }}" alt="{{ $item.type }} logo" class="h-16 no-fancybox">
+            </a>
+          </div>
+          {{ end }}
+          {{ end }}
+          {{ end }}
+        </div>
 
         {{ .Content }}
       </div>
