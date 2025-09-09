@@ -32,7 +32,7 @@ meta:
         echo "Parsing CI-variables from MR description..."
 
         # Fetch MR description from GitLab API
-        MR_DESC=$(curl --silent --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        MR_DESC=$(curl --silent --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID" \
           | jq -r '.description')
 
@@ -51,6 +51,10 @@ meta:
             continue
           fi
           if [ $in_block -eq 2 ]; then
+            if [[ "$line" =~ [\;\|\&\`\(\)\{\}] ]]; then
+                echo "Invalid characters in $line (from MR description).
+                exit 1
+            fi
             export "$line"
             echo "$line" >> build.env
           fi
