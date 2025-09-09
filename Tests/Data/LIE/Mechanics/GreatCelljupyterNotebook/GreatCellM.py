@@ -20,6 +20,8 @@
 # image = "figures/hm_lie_bbar_stress_trace.png"
 # web_subsection = "small-deformations"
 # weight = 3
+# projects = [ "decovalex" ]
+# models = [ "lab" ]
 # +++
 
 # %% vscode={"languageId": "python"}

@@ -7,10 +7,10 @@
     "index": "hugo && npm_config_yes=true npx pagefind --site 'public' --output-subdir ../static/pagefind"
   },
   "devDependencies": {
-    "@tailwindcss/aspect-ratio": "^0.4.0",
-    "@tailwindcss/line-clamp": "=0.3.1",
-    "@tailwindcss/typography": "=0.5.2",
-    "tailwindcss": "=3.1.6"
+    "@tailwindcss/aspect-ratio": "0.4.2",
+    "@tailwindcss/line-clamp": "0.4.4",
+    "@tailwindcss/typography": "0.5.16",
+    "tailwindcss": "3.4.17"
   },
   "dependencies": {}
 }

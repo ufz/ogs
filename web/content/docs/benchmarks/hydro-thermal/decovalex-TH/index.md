@@ -5,6 +5,7 @@ date = "2018-02-13T12:42:53+01:00"
 title = "An example of the coupled thermal hydraulic processes in the FEBEX type repository"
 weight = 161
 image = "decovalex_TH_domain_pT.png"
+projects = [ "decovalex" ]
 +++
 
 {{< data-link >}}

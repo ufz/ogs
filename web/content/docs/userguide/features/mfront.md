@@ -2,6 +2,7 @@
 title = "Using MFront with OpenGeoSys"
 author = "Feliks Kiszkurno"
 weight = 2
+models = [ "material" ]
 +++
 <div class="note">
 

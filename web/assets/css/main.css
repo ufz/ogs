@@ -39,9 +39,11 @@ cite::before {
 #TableOfContents a {
   @apply text-gray-700;
 }
+
 #TableOfContents a:hover {
   @apply text-gray-900;
 }
+
 #TableOfContents ul ul {
   @apply ml-2;
   @apply mt-0;
@@ -152,6 +154,11 @@ figcaption h4::before {
 figcaption {
   @apply text-center;
   @apply mb-6;
+}
+
+.not-prose figcaption {
+  @apply mt-4;
+  @apply text-sm;
 }
 
 img[src$='#33%'] {

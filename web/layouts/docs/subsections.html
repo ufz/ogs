@@ -10,7 +10,7 @@
     {{ end }}
     {{ $sections := .Sections }}
     {{ if .Params.sort_alphabetically }}
-      {{ $sections = sort .Sections "Title" }}
+    {{ $sections = sort .Sections "Title" }}
     {{ end }}
     <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
       <div class="space-y-8">
@@ -18,7 +18,7 @@
           <h1 class="">Featured {{ .Title }}</h1>
         </div>
         <ul role="list"
-          class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+          class="grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
           {{ range $sections }}
           {{ if .Params.featured }}
           {{ partial "components/gallery-item.html" . }}
@@ -31,7 +31,7 @@
           {{ .Content }}
         </div>
         <ul role="list"
-          class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+          class="grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
           {{ range $sections }}
           {{ partial "components/gallery-item.html" . }}
           {{ end }}

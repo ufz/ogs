@@ -29,7 +29,7 @@
 
         {{ if gt (len .Pages) 0 }}
         <ul role="list"
-          class="space-y-12 grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+          class="grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
           {{ range where .Pages "Params.gallery" "!=" "false" }}
           {{ partial "components/gallery-item.html" . }}
           {{ end }}
