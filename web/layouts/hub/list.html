@@ -4,6 +4,8 @@
 
   <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none">
 
+    <h2 class="prose prose-lg lg:hidden block">DigBen & EURAD#HERMES Model-Hub and Software Framework</h2>
+
     <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
 
       {{ $all := slice
@@ -62,9 +64,10 @@
       {{ else }}
       {{ if eq .taxonomy "Custom" }}
       <li
-        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-blue-600 text-gray-100">
+        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-blue-600 text-gray-100 hidden lg:block">
         {{ else }}
-      <li class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-gray-50 text-gray-500">
+      <li
+        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-gray-50 text-gray-500 h-40 md:h-60">
         {{ end }}
         <a href="{{ .pages.Page.RelPermalink }}">
           <div class="-my-3 divide-y divide-gray-100 px-6 pt-6">
