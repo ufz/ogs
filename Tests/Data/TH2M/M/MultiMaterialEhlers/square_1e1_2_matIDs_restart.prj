@@ -43,9 +43,9 @@
                 <gammap>gammap</gammap>
                 <tangent_type>Plastic</tangent_type>
                 <nonlinear_solver>
-                    <maximum_iterations>100</maximum_iterations>
+                    <maximum_iterations>1000</maximum_iterations>
                     <residuum_tolerance>1e-14</residuum_tolerance>
-                    <increment_tolerance>0</increment_tolerance>
+                    <increment_tolerance>1e-14</increment_tolerance>
                 </nonlinear_solver>
             </constitutive_relation>
             <reference_temperature>zero</reference_temperature>
