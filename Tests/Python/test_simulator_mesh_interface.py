@@ -81,9 +81,6 @@ def checkCells(cells, celltypes, points):
 
 @pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
-    import ogs.OGSMesh as OGSMesh  # noqa: F401, PLC0415
-    from ogs import OGSSimulation  # noqa: PLC0415
-
     current_dir = Path(__file__).parent.resolve()
     arguments = [
         "",
