@@ -17,7 +17,7 @@
 
 #include <algorithm>
 
-#include "../ogs.mesh/OGSMesh.h"
+#include "../ogs.OGSMesh/OGSMesh.h"
 #include "Applications/ApplicationsLib/Simulation.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
 #include "BaseLib/DateTools.h"

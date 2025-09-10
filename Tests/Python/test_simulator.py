@@ -7,7 +7,7 @@ import pytest
 
 @pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
-    from ogs import OGSSimulator  # noqa: PLC0415
+    from ogs import OGSSimulation  # noqa: PLC0415
 
     current_dir = Path(__file__).parent.resolve()
     arguments = [
@@ -17,7 +17,7 @@ def test_simulator():
     ]
 
     print("Python OGSSimulation() ...")
-    sim = OGSSimulator.OGSSimulation(arguments)
+    sim = OGSSimulation(arguments)
     print("Python sim.execute_simulation() ...")
     assert sim.execute_simulation() == 0
     print("Python sim.close() ...")

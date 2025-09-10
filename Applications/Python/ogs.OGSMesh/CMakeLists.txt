@@ -7,11 +7,11 @@ target_link_libraries(
 target_include_directories(_python_mesh PRIVATE ${PROJECT_SOURCE_DIR})
 
 # The actual Python module should only contain the binding code.
-pybind11_add_module(mesh MODULE ogs_mesh_python_module.cpp)
+pybind11_add_module(OGSMesh MODULE ogs_mesh_python_module.cpp)
 
-ogs_remove_lld_linker_option(mesh)
+ogs_remove_lld_linker_option(OGSMesh)
 
-target_link_libraries(mesh PRIVATE _python_mesh)
-target_include_directories(mesh PRIVATE ${PROJECT_SOURCE_DIR})
+target_link_libraries(OGSMesh PRIVATE _python_mesh)
+target_include_directories(OGSMesh PRIVATE ${PROJECT_SOURCE_DIR})
 
-install(TARGETS mesh LIBRARY DESTINATION ${_py_install_location})
+install(TARGETS OGSMesh LIBRARY DESTINATION ${_py_install_location})

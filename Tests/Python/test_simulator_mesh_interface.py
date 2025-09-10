@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from ogs import OGSSimulator, mesh
+from ogs import OGSMesh, OGSSimulation
 
 
 def crossProduct(v, w):
@@ -92,32 +92,32 @@ def test_simulator():
     ]
 
     print("Python OGSSimulation() ...")
-    sim = OGSSimulator.OGSSimulation(arguments)
-    top_boundary_grid: mesh = sim.mesh("cuboid_1x1x1_hex_27_top_boundary")
+    sim = OGSSimulation(arguments)
+    top_boundary_grid: OGSMesh = sim.mesh("cuboid_1x1x1_hex_27_top_boundary")
     # compare grid point coordinates with expected point coordinates
     points = np.array(top_boundary_grid.getPointCoordinates())
     number_of_points = int(len(points) / 3)
     points.shape = (number_of_points, 3)
     comparePointCoordinates(points)
     # set top boundary conditions values for first time step
-    bc_values_for_first_time_step = top_boundary_grid.dataArray(
+    bc_values_for_first_time_step = top_boundary_grid.data_array(
         "values_set_from_python", "double"
     )
     bc_values_for_first_time_step[:] = np.ones(number_of_points) * 5e6
 
     assert sim.execute_time_step() == 0
     print("Python: sim.execute_time_step() done")
-    top_boundary_grid: mesh = sim.mesh("cuboid_1x1x1_hex_27_top_boundary")
+    top_boundary_grid: OGSMesh = sim.mesh("cuboid_1x1x1_hex_27_top_boundary")
 
     (cells, celltypes) = top_boundary_grid.getCells()
     checkCells(cells, celltypes, points)
 
     # reset values of cell data array and get it back
-    bc_values_for_second_time_step = top_boundary_grid.dataArray(
+    bc_values_for_second_time_step = top_boundary_grid.data_array(
         "values_set_from_python", "double"
     )
     bc_values_for_second_time_step = np.ones(number_of_points) * 1e7
-    read_back_bc_values = top_boundary_grid.dataArray(
+    read_back_bc_values = top_boundary_grid.data_array(
         "values_set_from_python", "double"
     )
 

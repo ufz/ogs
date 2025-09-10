@@ -145,8 +145,6 @@ public:
         throw std::runtime_error("Unsupported dtype: " + dtype);
     }
 
-    pybind11::object materialIDs() { return dataArray<int>("MaterialIDs"); }
-
 private:
     MeshLib::Mesh& _mesh;
     std::map<std::string, pybind11::array> data_array_mapping;

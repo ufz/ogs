@@ -18,14 +18,14 @@ endif()
 
 add_subdirectory(ogs)
 add_subdirectory(ogs.OGSSimulator)
-add_subdirectory(ogs.mesh)
+add_subdirectory(ogs.OGSMesh)
 add_subdirectory(ogs.mpl)
 if(OGS_BUILD_WHEEL)
     add_subdirectory(ogs.callbacks)
 endif()
 
 set_target_properties(
-    OGSSimulator mesh mpl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_py_build_location}
+    OGSSimulator OGSMesh mpl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_py_build_location}
 )
 file(
     COPY ogs/.
