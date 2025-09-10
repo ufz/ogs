@@ -283,16 +283,17 @@ PYBIND11_MODULE(OGSSimulator, m)
 
     pybind11::class_<OGSSimulation>(m, "OGSSimulation")
         .def(pybind11::init<std::vector<std::string>&>())
-        .def("currentTime", &OGSSimulation::currentTime, "get current OGS time")
-        .def("endTime", &OGSSimulation::endTime, "get end OGS time")
-        .def("executeSimulation", &OGSSimulation::executeSimulation,
+        .def("current_time", &OGSSimulation::currentTime,
+             "get current OGS time")
+        .def("end_time", &OGSSimulation::endTime, "get end OGS time")
+        .def("execute_simulation", &OGSSimulation::executeSimulation,
              "execute OGS simulation")
-        .def("executeTimeStep", &OGSSimulation::executeTimeStep,
+        .def("execute_time_step", &OGSSimulation::executeTimeStep,
              "execute OGS time step")
-        .def("getMesh", &OGSSimulation::getMesh,
+        .def("mesh", &OGSSimulation::getMesh,
              pybind11::return_value_policy::automatic_reference,
              pybind11::arg("name"), "get unstructured grid from ogs")
-        .def("getMeshNames", &OGSSimulation::getMeshNames,
+        .def("mesh_names", &OGSSimulation::getMeshNames,
              "get names of all meshes from ogs")
-        .def("finalize", &OGSSimulation::finalize, "finalize OGS simulation");
+        .def("close", &OGSSimulation::finalize, "finalize OGS simulation");
 }

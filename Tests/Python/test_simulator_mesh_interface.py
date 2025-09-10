@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from ogs import mesh  # noqa F401
+from ogs import OGSSimulator, mesh
 
 
 def crossProduct(v, w):
@@ -81,7 +81,7 @@ def checkCells(cells, celltypes, points):
 
 @pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
-    import ogs.mesh as OGSMesh  # noqa: F401, PLC0415
+    import ogs.OGSMesh as OGSMesh  # noqa: F401, PLC0415
     from ogs import OGSSimulation  # noqa: PLC0415
 
     current_dir = Path(__file__).parent.resolve()
@@ -91,56 +91,50 @@ def test_simulator():
         "-o " + tempfile.mkdtemp(),
     ]
 
-    try:
-        print("Python: OpenGeoSys.init ...")
-        sim = ogs.OGSSimulator.OGSSimulation(arguments)
+    print("Python OGSSimulation() ...")
+    sim = OGSSimulator.OGSSimulation(arguments)
+    top_boundary_grid: mesh = sim.mesh("cuboid_1x1x1_hex_27_top_boundary")
+    # compare grid point coordinates with expected point coordinates
+    points = np.array(top_boundary_grid.getPointCoordinates())
+    number_of_points = int(len(points) / 3)
+    points.shape = (number_of_points, 3)
+    comparePointCoordinates(points)
+    # set top boundary conditions values for first time step
+    bc_values_for_first_time_step = top_boundary_grid.dataArray(
+        "values_set_from_python", "double"
+    )
+    bc_values_for_first_time_step[:] = np.ones(number_of_points) * 5e6
 
-        top_boundary_grid = sim.getMesh("cuboid_1x1x1_hex_27_top_boundary")
-        # compare grid point coordinates with expected point coordinates
-        points = np.array(top_boundary_grid.getPointCoordinates())
-        number_of_points = int(len(points) / 3)
-        points.shape = (number_of_points, 3)
-        comparePointCoordinates(points)
-        # set top boundary conditions values for first time step
-        bc_values_for_first_time_step = top_boundary_grid.dataArray(
-            "values_set_from_python", "double"
+    assert sim.execute_time_step() == 0
+    print("Python: sim.execute_time_step() done")
+    top_boundary_grid: mesh = sim.mesh("cuboid_1x1x1_hex_27_top_boundary")
+
+    (cells, celltypes) = top_boundary_grid.getCells()
+    checkCells(cells, celltypes, points)
+
+    # reset values of cell data array and get it back
+    bc_values_for_second_time_step = top_boundary_grid.dataArray(
+        "values_set_from_python", "double"
+    )
+    bc_values_for_second_time_step = np.ones(number_of_points) * 1e7
+    read_back_bc_values = top_boundary_grid.dataArray(
+        "values_set_from_python", "double"
+    )
+
+    # check lengths
+    if len(read_back_bc_values) != len(bc_values_for_second_time_step):
+        print(
+            "Python: error: data array size mismatch: got "
+            + str(len(read_back_bc_values))
+            + ", expected "
+            + str(len(bc_values_for_second_time_step))
         )
-        bc_values_for_first_time_step[:] = np.ones(number_of_points) * 5e6
+    comparison = read_back_bc_values == bc_values_for_second_time_step
+    if not comparison.all():
+        print("Python: error: data arrays contain different values")
 
-        print("Python: OpenGeoSys.executeSimulation ...")
-        assert sim.executeTimeStep() == 0
-        print("Python: sim.executeTimeStep() done")
-        top_boundary_grid = sim.getMesh("cuboid_1x1x1_hex_27_top_boundary")
-
-        (cells, celltypes) = top_boundary_grid.getCells()
-        checkCells(cells, celltypes, points)
-
-        # reset values of cell data array and get it back
-        bc_values_for_second_time_step = top_boundary_grid.dataArray(
-            "values_set_from_python", "double"
-        )
-        bc_values_for_second_time_step = np.ones(number_of_points) * 1e7
-        read_back_bc_values = top_boundary_grid.dataArray(
-            "values_set_from_python", "double"
-        )
-
-        # check lengths
-        if len(read_back_bc_values) != len(bc_values_for_second_time_step):
-            print(
-                "Python: error: data array size mismatch: got "
-                + str(len(read_back_bc_values))
-                + ", expected "
-                + str(len(bc_values_for_second_time_step))
-            )
-        comparison = read_back_bc_values == bc_values_for_second_time_step
-        if not comparison.all():
-            print("Python: error: data arrays contain different values")
-
-        print("Python: sim.executeTimeStep() ...")
-        sim.executeTimeStep()
-        print("Python: sim.executeTimeStep() done")
-        print("Python: update OGS done")
-
-    finally:
-        print("Python: OpenGeoSys.finalize() ...")
-        sim.finalize()
+    print("Python: sim.execute_time_step() ...")
+    sim.execute_time_step()
+    print("Python: sim.execute_time_step() done")
+    print("Python: sim.close() ...")
+    sim.close()

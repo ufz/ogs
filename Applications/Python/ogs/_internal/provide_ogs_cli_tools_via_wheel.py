@@ -18,7 +18,6 @@ def ogs():
 
 
 def ogs_with_args(argv):
-
     from ogs.OGSSimulator import (  # noqa: PLC0415
         OGSSimulation,
         check_command_line_arguments,
@@ -40,8 +39,8 @@ def ogs_with_args(argv):
         print("Could not construct OGSSimulation object")
         return_code = 1  # EXIT_FAILURE
     else:
-        return_code = sim.executeSimulation()
-        sim.finalize()
+        return_code = sim.execute_simulation()
+        sim.close()
     return return_code
 
 
