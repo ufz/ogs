@@ -10,9 +10,10 @@ set(OGS_EXTERNAL_DEPENDENCIES_CACHE ""
     CACHE PATH "Directory containing source archives of external dependencies."
 )
 
+set(_defaultCMakeArgs "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>")
 if(CCACHE_EXECUTABLE)
-    set(_defaultCMakeArgs "-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
-                          "-DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
+    list(APPEND _defaultCMakeArgs "-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
+                                  "-DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
     )
 endif()
 
@@ -269,6 +270,7 @@ endif()
 if(NOT ZLIB_FOUND)
     BuildExternalProject(
         ZLIB ${_zlib_source} CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                                        "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
                                         ${_defaultCMakeArgs}
     )
     message(
@@ -484,7 +486,7 @@ if(NOT VTK_FOUND)
             message(STATUS "Applying VTK Mac patch")
         endif()
         if(LINUX)
-            # No pacthes on Linux
+            # No patches on Linux
             unset(_vtk_patch)
         endif()
     endif()
