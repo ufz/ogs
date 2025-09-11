@@ -313,17 +313,7 @@
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <!-- TODO (naumov) Include epsilon field after fixing initial
-                conditions setting in SmallDeformation. Only the first time
-                step of the restart mismatches in the epsilon field.
-            -->
-            <file>square_1e1_2_matIDs_restart_t_1.0000.vtu</file>
-            <field>epsilon</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
-        </vtkdiff>
-        <vtkdiff>
-            <regex>square_1e1_2_matIDs_restart_t_0.[89]000.vtu</regex>
+            <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
             <field>epsilon</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
