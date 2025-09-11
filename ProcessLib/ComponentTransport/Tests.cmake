@@ -880,7 +880,8 @@ if(NOT OGS_USE_PETSC)
     NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy_to_OGS.py
         RUNTIME 200
-        PYTHON_PACKAGES porepy@git+https://github.com/pmgbergen/porepy.git@v1.11 gmsh<=4.11
+        # numpy and scipy from Tests/Data env are newer, version requirements taken from porepy pyproject.toml
+        PYTHON_PACKAGES porepy@git+https://github.com/pmgbergen/porepy.git@v1.11 numpy<2.2 scipy<1.16
     )
 endif()
 
