@@ -882,9 +882,6 @@ user_parameters = {
 
 # %%
 project_file = Path("DFN_HC.prj")
-print("Looking for .prj file at:", str(project_file.absolute()))
-print("Exists?", project_file.exists())
-print("Current working directory:", Path.cwd())
 
 project = ot.Project(
     input_file=project_file, output_file=Path(f"{out_dir}/DFN_HC_final.prj")
