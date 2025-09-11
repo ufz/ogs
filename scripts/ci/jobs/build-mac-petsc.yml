@@ -1,5 +1,5 @@
 build mac petsc:
-  tags: [mac, arm64]
+  tags: [mac, arm64, petsc]
   extends:
     - .template-build-linux
     - .test-artifacts
@@ -11,3 +11,4 @@ build mac petsc:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
+      -DOGS_USE_MFRONT=ON

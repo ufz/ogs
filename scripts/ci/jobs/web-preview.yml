@@ -5,7 +5,7 @@ preview web site:
     - job: meta
     - job: "build linux arch"
       optional: true
-    - job: "build mac petsc"
+    - job: "build linux petsc"
       optional: true
   variables:
     HUGO_ENVIRONMENT: "staging"
