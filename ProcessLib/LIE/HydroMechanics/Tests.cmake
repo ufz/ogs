@@ -245,11 +245,11 @@ AddTest(
     NAME LIE_HM_great_cell_2D_point_injection_embedded_fracture_F_PMMA
     PATH LIE/HydroMechanics/GreatCellWithBBar
     EXECUTABLE ogs
-    EXECUTABLE_ARGS point_injection_embedded_fracture_F.prj
+    EXECUTABLE_ARGS HM2b_LIE_F.prj -m mesh_GreatCell_embeddedFracture
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 15
+    RUNTIME 30
     DIFF_DATA
     point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu pressure pressure 1e-10 1e-14
     point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu point_injection_embedded_fracture_F_PMMA_ts_67_t_2500.000000.vtu displacement displacement 1e-15 1e-15
