@@ -91,7 +91,6 @@ public:
             argv[i] = argv_str[i].data();
         }
 
-        int cli_parse_status = EXIT_ARGPARSE_EXIT_OK;
         CommandLineArguments cli_args;
         try
         {
@@ -102,18 +101,10 @@ public:
             ERR("Parsing the OGS commandline failed: {}", e.what());
 
             // "mangle" TCLAP's status
-            cli_parse_status = EXIT_ARGPARSE_FAILURE;
             throw(e);
         }
         catch (TCLAP::ExitException const& e)
         {
-            if (e.getExitStatus() == 0)
-            {
-                cli_parse_status = EXIT_ARGPARSE_EXIT_OK;
-            }
-
-            // "mangle" TCLAP's status
-            cli_parse_status = EXIT_ARGPARSE_FAILURE;
             throw(e);
         }
 
@@ -164,7 +155,6 @@ public:
             INFO("OGS started on {:s} in serial mode.", time_str);
         }
 
-        auto ogs_status = EXIT_SUCCESS;
         std::optional<ApplicationsLib::TestDefinition> test_definition{
             std::nullopt};
 
@@ -220,9 +210,9 @@ public:
         return ogs_status;
     }
 
-    double currentTime() { return simulation->currentTime(); }
+    double currentTime() const { return simulation->currentTime(); }
 
-    double endTime() { return simulation->endTime(); }
+    double endTime() const { return simulation->endTime(); }
 
     OGSMesh& getMesh(std::string const& name)
     {
@@ -245,7 +235,7 @@ public:
         return it->second;
     }
 
-    std::vector<std::string> getMeshNames()
+    std::vector<std::string> getMeshNames() const
     {
         return simulation->getMeshNames();
     }
