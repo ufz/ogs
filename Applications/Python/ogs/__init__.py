@@ -6,4 +6,3 @@ config_spec = importlib.util.find_spec(".config", package="ogs")
 if config_spec is not None:
     from ._internal.wrap_cli_tools import cli  # noqa: F401
     from .config import *  # noqa: F403
-    from .OGSSimulator import OGSSimulation  # noqa: F401

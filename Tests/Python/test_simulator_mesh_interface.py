@@ -5,7 +5,6 @@ from pathlib import Path
 
 import numpy as np
 import pytest
-from ogs import OGSMesh, OGSSimulation
 
 
 def crossProduct(v, w):
@@ -81,6 +80,9 @@ def checkCells(cells, celltypes, points):
 
 @pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
+    import ogs.OGSMesh as OGSMesh  # noqa: PLC0415
+    from ogs.OGSSimulator import OGSSimulation  # noqa: PLC0415
+
     current_dir = Path(__file__).parent.resolve()
     arguments = [
         "",
