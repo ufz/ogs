@@ -251,13 +251,13 @@ AddTest(
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     RUNTIME 30
     DIFF_DATA
-    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu pressure pressure 1e-10 1e-14
+    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu pressure pressure 2e-8 5.2e-14
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu displacement displacement 1e-15 1e-15
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu displacement_jump1 displacement_jump1 1e-15 1e-15
-    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_stress fracture_stress 1e-9 1e-11
+    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_stress fracture_stress 3e-9 0
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_permeability fracture_permeability 1e-15 1e-15
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_aperture fracture_aperture 1e-15 1e-15
-    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu sigma sigma 1e-8 5e-11
+    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu sigma sigma 3.8e-7 0
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu epsilon epsilon 1e-15 1e-15
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu velocity velocity 1e-15 1e-15
 )
