@@ -263,7 +263,7 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCellWithBBar/great_cell_LIE.py RUNTIME 40)
+    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCellWithBBar/great_cell_LIE.py RUNTIME 80)
     NotebookTest(NOTEBOOKFILE LIE/Mechanics/GreatCelljupyterNotebook/GreatCellM.py RUNTIME 350)
     NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCelljupyterNotebook/GreatCellHM.py RUNTIME 1050)
 endif()
