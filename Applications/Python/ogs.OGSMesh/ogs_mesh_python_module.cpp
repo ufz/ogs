@@ -41,10 +41,9 @@ PYBIND11_MODULE(OGSMesh, m)
              [](MeshLib::MeshItemType t) { return std::string(toString(t)); });
 
     pybind11::class_<OGSMesh>(m, "OGSMesh")
-        .def("getPointCoordinates", &OGSMesh::getPointCoordinates,
-             "get node coordinates")
-        .def("getCells", &OGSMesh::getCells,
-             pybind11::return_value_policy::copy, "get cells")
+        .def("points", &OGSMesh::getPointCoordinates, "get node coordinates")
+        .def("cells", &OGSMesh::getCells, pybind11::return_value_policy::copy,
+             "get cells")
         .def("data_array_names", &OGSMesh::getDataArrayNames,
              "get names of all data arrays / property "
              "vectors stored in the mesh")
