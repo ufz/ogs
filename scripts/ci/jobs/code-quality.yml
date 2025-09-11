@@ -22,8 +22,8 @@ ruff:
   needs: []
   tags: [envinf, shell]
   script:
-    - uvx ruff check --exit-zero --output-format gitlab . > ruff-report.json
-    - uvx ruff check .
+    - uvx ruff==0.13.0 check --exit-zero --output-format gitlab . > ruff-report.json
+    - uvx ruff==0.13.0 check .
   artifacts:
     reports:
       codequality: ruff-report.json

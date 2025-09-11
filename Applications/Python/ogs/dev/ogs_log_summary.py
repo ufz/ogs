@@ -36,7 +36,7 @@ def _round_2_digits(d, rounding_mode):
         (0, dig, 1 - len(dig))
     )  # sign=0 is positive -> absolute value will be rounded
     d2_round = d2.quantize(Decimal("0.1"), rounding=rounding_mode)
-    sign2, dig2, exp2 = d2_round.as_tuple()
+    _sign2, dig2, exp2 = d2_round.as_tuple()
     d3 = Decimal((sign, dig2, exp2 - 1 + len(dig) + exp))
     # print(f"-+-> d={d}, {rounding_mode}\n +-> sign={sign}, dig={dig}, len(dig)={len(dig)}, exp={exp}\n +-> sign2={sign2}, dig2={dig2}, len(dig2)={len(dig2)}, exp2={exp2}\n +-> d3={float(d3)}")
 
@@ -50,7 +50,7 @@ def _round_up_2_digits(d):
         return d
 
     # work around an error in Python's Decimal implementation
-    up, down = (ROUND_UP, ROUND_DOWN) if d >= 0 else (ROUND_DOWN, ROUND_UP)
+    up, _down = (ROUND_UP, ROUND_DOWN) if d >= 0 else (ROUND_DOWN, ROUND_UP)
 
     return _round_2_digits(d_, up)
 

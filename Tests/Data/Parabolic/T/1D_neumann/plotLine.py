@@ -33,7 +33,7 @@ def convertPointDataToPandasDF(line_data):
         data[k] = vtk_to_numpy(v)
 
     coords = line_data.GetPoints()[:, 0]  # x-coordinates
-    df = pd.concat(  # noqa: PD901
+    df = pd.concat(
         [pd.DataFrame(v) for k, v in data.items()], axis=1, keys=list(data.keys())
     )
     df.index = coords
@@ -267,7 +267,7 @@ def singleTimeStep(ts):
     data = []
     for c in cases:
         line = probeFileAlongLine(c + "_ts_" + str(ts) + "_t_" + str(t) + ".000000.vtu")
-        df = convertPointDataToPandasDF(line)  # noqa: PD901
+        df = convertPointDataToPandasDF(line)
         df["analytical"] = temperature_analytical.temperature(df.index, t)
         df["error"] = df["temperature"].sub(df["analytical"], axis=0)
         print(
@@ -280,7 +280,7 @@ def singleTimeStep(ts):
         )
         data.append(df[["temperature", "error", "analytical"]])
 
-    df = pd.concat(data, keys=cases, names=["case"], axis=1)  # noqa: PD901
+    df = pd.concat(data, keys=cases, names=["case"], axis=1)
     plotCases(
         df[df[("picard_masslumping", "error")].abs() > 1e-6],
         "temperature_error_ts_" + str(ts) + "_t_" + str(t),

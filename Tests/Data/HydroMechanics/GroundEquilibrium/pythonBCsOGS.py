@@ -37,7 +37,7 @@ def ExternalDisplacement(x, t):
 # -------------
 class BCH_SurfacePressure(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        _x, _y, _z = coords
 
         value = 0.0
 
@@ -46,7 +46,7 @@ class BCH_SurfacePressure(OpenGeoSys.BoundaryCondition):
 
 class BCH_VerticalPressure(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        _x, y, _z = coords
 
         value = -rho_W * g * y
 
@@ -59,7 +59,7 @@ class BCM_VerticalTraction_X(OpenGeoSys.BoundaryCondition):
     def getFlux(
         self, _t, coords, _primary_vars
     ):  # here Neumann BC: flux of linear momentum
-        x, y, z = coords
+        _x, y, _z = coords
 
         value = (
             (nu / (1 - nu) * ((phi - 1) * rho_W + (1 - phi) * rho_S) + rho_W) * g * y
@@ -71,7 +71,7 @@ class BCM_VerticalTraction_X(OpenGeoSys.BoundaryCondition):
 
 class BCM_MonitoringTraction(OpenGeoSys.BoundaryCondition):
     def getFlux(self, t, coords, primary_vars):
-        x, y, z = coords
+        x, _y, _z = coords
         uy_actual = primary_vars[2]
 
         uy_target = ExternalDisplacement(x, t)
@@ -88,7 +88,7 @@ class BCM_MonitoringTraction(OpenGeoSys.BoundaryCondition):
 
 class BCM_SurfaceDisplacement_Y(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, _y, _z = coords
 
         # prescribe displacement u_y
         value = ExternalDisplacement(x, t)

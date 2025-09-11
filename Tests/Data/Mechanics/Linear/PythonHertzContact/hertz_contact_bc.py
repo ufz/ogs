@@ -90,7 +90,7 @@ class HertzContactBC(OpenGeoSys.BoundaryCondition):
                 self._boundary_x_coords.sort()
 
         x, y, z = coords
-        ux, uy = primary_vars
+        _ux, uy = primary_vars
 
         if not self._boundary_x_coords_are_initialized(t):
             self._boundary_x_coords.append(x)

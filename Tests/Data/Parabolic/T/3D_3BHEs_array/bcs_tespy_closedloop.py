@@ -180,7 +180,7 @@ nw = load_network("./pre/tespy_nw_closedloop")
 nw.set_attr(iterinfo=False)
 
 # create bhe dataframe of the network system from bhe_network.csv
-df = create_dataframe()  # noqa: PD901
+df = create_dataframe()
 n_BHE = np.size(df.iloc[:, 0])
 
 # create local variables of the components label and connections label in
