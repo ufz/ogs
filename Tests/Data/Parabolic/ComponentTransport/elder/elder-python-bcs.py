@@ -6,7 +6,7 @@ except ModuleNotFoundError:
 
 class BCPressure(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, _y, z = coords
 
         if x == -150 and z == 75:
             # prescribe pressure of 0
@@ -18,7 +18,7 @@ class BCPressure(OpenGeoSys.BoundaryCondition):
 
 class BCConcentration(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, _t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, _y, z = coords
 
         if z == -75:
             # prescribe concentration of 0

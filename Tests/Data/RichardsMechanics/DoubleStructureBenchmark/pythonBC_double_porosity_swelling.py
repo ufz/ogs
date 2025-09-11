@@ -26,7 +26,7 @@ pJ = -4e8  # Pa
 # -------------
 class BCH_PressureJump(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        _x, _y, _z = coords
 
         if t0 <= t <= tJ:
             value = p0 + (pJ - p0) * (t - t0) / (tJ - t0)

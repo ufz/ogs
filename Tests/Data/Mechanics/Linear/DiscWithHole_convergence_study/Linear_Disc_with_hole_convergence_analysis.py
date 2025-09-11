@@ -595,13 +595,13 @@ def plot_stress_distribution_along_xaxis():
         sig_rt_sorted = sig_rt[indices_sorted]
 
         # compute errors
-        f_abs_rr, f_rel_rr = compute_abs_and_rel_stress_error_rr(
+        f_abs_rr, _f_rel_rr = compute_abs_and_rel_stress_error_rr(
             sig_rr_sorted, dist_sorted, -90
         )
-        f_abs_tt, f_rel_tt = compute_abs_and_rel_stress_error_tt(
+        f_abs_tt, _f_rel_tt = compute_abs_and_rel_stress_error_tt(
             sig_tt_sorted, dist_sorted, -90
         )
-        f_abs_rt, f_rel_rt = compute_abs_and_rel_stress_error_rt(
+        f_abs_rt, _f_rel_rt = compute_abs_and_rel_stress_error_rt(
             sig_rt_sorted, dist_sorted, -90
         )
 

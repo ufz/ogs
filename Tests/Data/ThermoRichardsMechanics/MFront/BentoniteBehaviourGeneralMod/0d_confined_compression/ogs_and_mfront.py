@@ -42,7 +42,7 @@ def parse_mtest_res_header(f):
         for line in fh:
             if not line.startswith("#"):
                 break
-            col, name = line.strip().split(": ")
+            _col, name = line.strip().split(": ")
 
             if m := multi_comp_re.match(name):
                 name = f"{m.group(3)}"

@@ -12,11 +12,11 @@ with (outdir / ".gitignore").open("w") as fh:
 
 
 def run():
-    ts, line_mesh, dfs_aggregation, profiles = pu.extract_data(
+    ts, line_mesh, _dfs_aggregation, profiles = pu.extract_data(
         pu.IterPvd("out/ogs/bentonite_column.pvd")
     )
 
-    ts_ref, line_mesh_ref, dfs_aggregation_ref, profiles_ref = pu.extract_data(
+    ts_ref, _line_mesh_ref, _dfs_aggregation_ref, profiles_ref = pu.extract_data(
         pu.IterVtus(
             [
                 "bentonite_column_ts_0_t_41242.9_sec.vtu",

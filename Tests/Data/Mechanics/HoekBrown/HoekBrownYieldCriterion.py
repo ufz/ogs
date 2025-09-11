@@ -192,7 +192,7 @@ mtest.setVerboseMode(mtest.VerboseLevel.VERBOSE_QUIET)
 
 # %%
 def ErrorAnalysis(refFile, calFile, input1, input2, labelx, labely, tol):
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 5.5))
+    _fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 5.5))
     file_path1 = refFolder_name / refFile
     file_path2 = calFolder_name / calFile
 

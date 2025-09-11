@@ -22,7 +22,7 @@ class plot_with_error:
         self.data.append([x, y, style, label])
 
     def plot(self, xlim=None):
-        fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(6, 6))
+        _fig, (ax0, ax1) = plt.subplots(2, 1, sharex=True, figsize=(6, 6))
 
         ax0.plot(self.x_ref, self.y_ref, self.style, label=self.label_ref)
 

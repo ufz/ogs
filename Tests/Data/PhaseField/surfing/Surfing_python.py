@@ -56,7 +56,7 @@ def AsymptoticSolution_Y(x, y, t):
 # Dirichlet BCs X-dir
 class BCTop_X(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert y == b
         value = AsymptoticSolution_X(x, y, t)
         return (True, value)
@@ -64,7 +64,7 @@ class BCTop_X(OpenGeoSys.BoundaryCondition):
 
 class BCLeft_X(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert x == 0.0
         value = AsymptoticSolution_X(x, y, t)
         return (True, value)
@@ -72,7 +72,7 @@ class BCLeft_X(OpenGeoSys.BoundaryCondition):
 
 class BCBottom_X(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert y == 0.0
         value = AsymptoticSolution_X(x, y, t)
         return (True, value)
@@ -80,7 +80,7 @@ class BCBottom_X(OpenGeoSys.BoundaryCondition):
 
 class BCRight_X(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert x == a
         value = AsymptoticSolution_X(x, y, t)
         return (True, value)
@@ -89,7 +89,7 @@ class BCRight_X(OpenGeoSys.BoundaryCondition):
 # Dirichlet BCs Y-dir
 class BCTop_Y(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert y == b
         value = AsymptoticSolution_Y(x, y, t)
         return (True, value)
@@ -97,7 +97,7 @@ class BCTop_Y(OpenGeoSys.BoundaryCondition):
 
 class BCLeft_Y(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert x == 0.0
         value = AsymptoticSolution_Y(x, y, t)
         return (True, value)
@@ -105,7 +105,7 @@ class BCLeft_Y(OpenGeoSys.BoundaryCondition):
 
 class BCBottom_Y(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert y == 0.0
         value = AsymptoticSolution_Y(x, y, t)
         return (True, value)
@@ -113,7 +113,7 @@ class BCBottom_Y(OpenGeoSys.BoundaryCondition):
 
 class BCRight_Y(OpenGeoSys.BoundaryCondition):
     def getDirichletBCValue(self, t, coords, _node_id, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         assert x == a
         value = AsymptoticSolution_Y(x, y, t)
         return (True, value)

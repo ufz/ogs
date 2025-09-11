@@ -24,7 +24,7 @@ class BC_Y(OpenGeoSys.BoundaryCondition):
     def getFlux(
         self, t, coords, _primary_vars
     ):  # here Neumann BC: flux of linear momentum
-        x, y, z = coords
+        x, _y, _z = coords
 
         # print("x = ", x)
         # print("t = ", t)

@@ -23,7 +23,7 @@ def laplace_solution(x, y):
 # source term for the benchmark
 class SinXSinYSourceTerm(OpenGeoSys.SourceTerm):
     def getFlux(self, _t, coords, _primary_vars):
-        x, y, z = coords
+        x, y, _z = coords
         value = laplace_solution(x, y)
         Jac = [0.0]
         return (value, Jac)
