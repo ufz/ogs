@@ -18,7 +18,7 @@
         <DataArray type="Float64" Name="ElasticStrain" NumberOfComponents="4" format="appended" RangeMin="0.00038625852385"     RangeMax="0.00083628891455"     offset="8808"                />
         <DataArray type="Float64" Name="EquivalentPlasticStrain" format="appended" RangeMin="0.00027934342396"     RangeMax="0.00053507166467"     offset="9720"                />
         <DataArray type="Float64" Name="HeatFlowRate" format="appended" RangeMin="-2.9322956507e-08"    RangeMax="6286234.2794"         offset="9992"                />
-        <DataArray type="Float64" Name="MassFlowRate" format="appended" RangeMin="-0.0001041290866"     RangeMax="-1.2410194943e-05"    offset="10152"               />
+        <DataArray type="Float64" Name="VolumetricFlowRate" format="appended" RangeMin="-0.0001041290866"     RangeMax="-1.2410194943e-05"    offset="10152"               />
         <DataArray type="Float64" Name="NodalForces" NumberOfComponents="2" format="appended" RangeMin="4.3655745685e-11"     RangeMax="237994.76193"         offset="10424"               />
         <DataArray type="Float64" Name="PlasticVolumetricStrain" format="appended" RangeMin="-0.00051540597503"    RangeMax="0"                    offset="10760"               />
         <DataArray type="Float64" Name="PreConsolidationPressure" format="appended" RangeMin="0"                    RangeMax="554564.10586"         offset="10964"               />

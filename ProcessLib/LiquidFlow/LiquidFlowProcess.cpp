@@ -46,8 +46,12 @@ LiquidFlowProcess::LiquidFlowProcess(
 {
     DBUG("Create Liquid flow process.");
 
+    std::string const residuum_name =
+        _process_data.equation_balance_type == EquationBalanceType::volume
+            ? "VolumetricFlowRate"
+            : "MassFlowRate";
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "VolumetricFlowRate", MeshLib::MeshItemType::Node, 1);
+        mesh, residuum_name, MeshLib::MeshItemType::Node, 1);
 }
 
 void LiquidFlowProcess::initializeConcreteProcess(

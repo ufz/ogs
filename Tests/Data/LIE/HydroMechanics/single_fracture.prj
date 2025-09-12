@@ -81,7 +81,7 @@
                 <variable>pressure_interpolated</variable>
                 <variable>displacement</variable>
                 <variable>displacement_jump1</variable>
-                <variable>MassFlowRate</variable>
+                <variable>VolumetricFlowRate</variable>
                 <variable>NodalForces</variable>
                 <variable>NodalForcesJump</variable>
                 <variable>sigma</variable>

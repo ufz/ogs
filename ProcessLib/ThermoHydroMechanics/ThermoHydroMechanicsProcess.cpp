@@ -50,7 +50,7 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
+        mesh, "VolumetricFlowRate", MeshLib::MeshItemType::Node, 1);
 
     _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);

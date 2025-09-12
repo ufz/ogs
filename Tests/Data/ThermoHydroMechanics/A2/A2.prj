@@ -214,7 +214,7 @@
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
                 <variable>HeatFlowRate</variable>
-                <variable>MassFlowRate</variable>
+                <variable>VolumetricFlowRate</variable>
                 <variable>NodalForces</variable>
             </variables>
         </output>
@@ -473,7 +473,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
-            <field>MassFlowRate</field>
+            <field>VolumetricFlowRate</field>
             <absolute_tolerance>5e-13</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>
