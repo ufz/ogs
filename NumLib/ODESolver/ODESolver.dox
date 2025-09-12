@@ -10,10 +10,9 @@ The aim of the library's design is being able to formulate FEM processes without
 having to care which time discretization scheme and which nonlinear iteration
 method will be used to solve it.
 
-The library offers different time discretization schemes, cf. \ref
-concept_time_discretization "the conceputal remarks on them", namely the forward
-and backward Euler and Crank-Nicolson methods and Backward Differentiation
-Formulas. The design follows Gear's method, which also underlies the DASSL
+The library currently offers the backward Euler time discretization schemes, cf. \ref
+concept_time_discretization "the conceputal remarks on them".
+The design follows Gear's method, which also underlies the DASSL
 algorithm of Petzold et al., cf. Differential-algebraic equations article,
 section [Numerical methods/Direct discretization]
 (https://web.archive.org/web/20240423230323/http://www.scholarpedia.org/article/Differential-algebraic_equations#Numerical_methods.2FDirect_discretization)

@@ -12,7 +12,6 @@
 
 #include "MeshLib/Mesh.h"
 #include "MeshLib/PropertyVector.h"
-#include "MeshLib/Utils/getOrCreateMeshProperty.h"
 
 namespace MeshLib
 {
