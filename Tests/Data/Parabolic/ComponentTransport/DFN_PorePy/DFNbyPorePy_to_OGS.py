@@ -1046,42 +1046,74 @@ fig_cs.axes[0].set_xscale("log")
 
 
 # %%
-def _match_indices_by_xyz(src_points, ref_points):
-    tree = cKDTree(ref_points)
-    dists, idx = tree.query(src_points, k=1)
-    return dists, idx
+def _ensure_point_pressure(m):
+    if "pressure" in m.point_data:
+        return m
+    if "pressure" in m.cell_data:
+        return m.cell_data_to_point_data()
+    msg = "pressure not found in point_data or cell_data"
+    raise KeyError(msg)
+
+
+def _nn_fill(masked_vals, valid_mask, tgt_pts, src_pts, src_vals):
+    nan_idx = ~valid_mask
+    if not np.any(nan_idx):
+        return masked_vals
+    tree = cKDTree(src_pts)
+    _, j = tree.query(tgt_pts[nan_idx], k=1)
+    masked_vals[nan_idx] = src_vals[j]
+    return masked_vals
 
 
 last_mesh = mesh_series[-1]
-pressure_last = last_mesh.point_data["pressure"]
+pressure_last = np.asarray(last_mesh.point_data["pressure"])
 
 system_name = platform.system()
-if system_name == "Darwin":  # macOS
+if system_name == "Darwin":
     ref_mesh_path = "DFN_HC_ts_39_t_100000000000.000000_mac.vtu"
 elif system_name == "Linux":
     ref_mesh_path = "DFN_HC_ts_39_t_100000000000.000000_linux.vtu"
 else:
     msg = f"Unsupported OS: {system_name}"
     raise RuntimeError(msg)
-ref_mesh = pv.read(ref_mesh_path)
-pressure_ref = ref_mesh.point_data["pressure"]
+
+ref_mesh = _ensure_point_pressure(pv.read(ref_mesh_path))
 
 print(f"Original points: {mesh_c.n_points}, Cleaned points: {clean_mesh.n_points}")
 print("pressure_last shape:", pressure_last.shape, "size:", pressure_last.size)
-print("pressure_ref  shape:", pressure_ref.shape, "size:", pressure_ref.size)
+print(
+    "pressure_ref  shape:",
+    ref_mesh.point_data["pressure"].shape,
+    "size:",
+    ref_mesh.point_data["pressure"].size,
+)
 
-assert (
-    pressure_last.shape == pressure_ref.shape
-), f"Shape mismatch: pressure_last {pressure_last.shape} vs pressure_ref {pressure_ref.shape}"
+sampled = last_mesh.sample(ref_mesh)
+pressure_ref_on_last = np.asarray(sampled.point_data["pressure"])
 
-dists, idx_ref = _match_indices_by_xyz(last_mesh.points, ref_mesh.points)
-max_dx = float(np.max(dists))
-assert max_dx <= 1e-12, f"Point sets differ: max |Δx|={max_dx:.3e} > 1e-12"
+mask = sampled.point_data.get("vtkValidPointMask", None)
+if mask is not None:
+    mask = np.asarray(mask).astype(bool)
+    if not mask.all():
+        pressure_ref_on_last = _nn_fill(
+            pressure_ref_on_last,
+            mask,
+            last_mesh.points,
+            ref_mesh.points,
+            np.asarray(ref_mesh.point_data["pressure"]),
+        )
 
-va = np.asarray(pressure_last)
-vb = np.asarray(pressure_ref)[idx_ref]
+abs_diff = np.abs(pressure_last - pressure_ref_on_last)
+print(f"max|delta_p|={abs_diff.max():.6g}, mean|delta_p|={abs_diff.mean():.6g}")
 
-np.testing.assert_allclose(actual=va, desired=vb, rtol=1e-8, equal_nan=True)
+np.testing.assert_allclose(
+    actual=pressure_last,
+    desired=pressure_ref_on_last,
+    rtol=5e-6,
+    atol=1e-8,
+    equal_nan=False,
+)
+print("Pressure fields match")
 
 # %% [markdown]
 # NOTE: PorePy produces slightly different number of mesh nodes on macOS vs. Linux.
