@@ -354,14 +354,22 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     crv.K_over_mu = intrinsic_permeability / ip_data_output.viscosity;
 
     crv.k_rel = 1.;
+    crv.dk_rel_dT = 0;
     if (frozen_liquid_phase)
     {
         ip_data.phi_fr =
             (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
                 .template value<double>(vars, x_position, t, dt);
 
+        double const dphi_fr_dT =
+            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::temperature,
+                    x_position, t, dt);
+
         // TODO (naumov) Extract this as a property.
         crv.k_rel = 1. - (1. - 1e-5) * ip_data.phi_fr / porosity;
+        crv.dk_rel_dT = -(1. - 1e-5) / porosity * dphi_fr_dT;
     }
 
     auto const& b = _process_data.specific_body_force;
@@ -752,6 +760,11 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         laplace_p.noalias() +=
             dNdx.transpose() * crv.k_rel * crv.K_over_mu * dNdx * w;
+        local_Jac
+            .template block<pressure_size, temperature_size>(pressure_index,
+                                                             temperature_index)
+            .noalias() += dNdx.transpose() * crv.dk_rel_dT * crv.K_over_mu *
+                          (dNdx * p) * N * w;
 
         storage_p.noalias() +=
             N.transpose() *
