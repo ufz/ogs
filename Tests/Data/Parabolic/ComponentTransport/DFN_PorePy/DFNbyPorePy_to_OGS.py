@@ -23,6 +23,7 @@
 # %%
 import json
 import os
+import platform
 from pathlib import Path
 
 import numpy as np
@@ -1046,14 +1047,32 @@ fig_cs.axes[0].set_xscale("log")
 last_mesh = mesh_series[-1]
 pressure_last = last_mesh.point_data["pressure"]
 
-ref_mesh = pv.read("DFN_HC_ts_39_t_100000000000.000000.vtu")
+system_name = platform.system()
+if system_name == "Darwin":  # macOS
+    ref_mesh_path = "DFN_HC_ts_39_t_100000000000.000000_mac.vtu"
+elif system_name == "Linux":
+    ref_mesh_path = "DFN_HC_ts_39_t_100000000000.000000_linux.vtu"
+else:
+    msg = f"Unsupported OS: {system_name}"
+    raise RuntimeError(msg)
+ref_mesh = pv.read(ref_mesh_path)
 pressure_ref = ref_mesh.point_data["pressure"]
 
-assert pressure_last.shape == pressure_ref.shape
+print(f"Original points: {mesh_c.n_points}, Cleaned points: {clean_mesh.n_points}")
+print("pressure_last shape:", pressure_last.shape, "size:", pressure_last.size)
+print("pressure_ref  shape:", pressure_ref.shape, "size:", pressure_ref.size)
+
+assert (
+    pressure_last.shape == pressure_ref.shape
+), f"Shape mismatch: pressure_last {pressure_last.shape} vs pressure_ref {pressure_ref.shape}"
 
 np.testing.assert_allclose(
-    actual=pressure_last, desired=pressure_ref, rtol=1e-6, atol=1e-4, equal_nan=True
+    actual=pressure_last, desired=pressure_ref, rtol=1e-10, equal_nan=True
 )
+# %% [markdown]
+# NOTE: PorePy produces slightly different mesh point coordinates on macOS vs. Linux.
+# This causes small variations in the output arrays. To avoid flaky test failures,
+# we accept either platform's expected results until the root cause is resolved.
 
 
 # %% [markdown]
