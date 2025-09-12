@@ -86,7 +86,7 @@ if not out_dir.exists():
 # # Problem description
 
 # %% [markdown]
-# ![alt text](figs/schematic.png)
+# ![alt text](figures/schematic.png)
 
 
 # %% [markdown]
