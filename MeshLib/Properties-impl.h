@@ -167,10 +167,10 @@ PropertyVector<T>* Properties::getPropertyVector(std::string_view name)
 }
 
 template <typename T>
-bool Properties::hasPropertyVector(std::string const& name,
+bool Properties::hasPropertyVector(std::string_view name,
                                    MeshItemType const item_type) const
 {
-    auto const it = _properties.find(name);
+    auto const it = _properties.find(std::string(name));
 
     if (it == _properties.end())
     {

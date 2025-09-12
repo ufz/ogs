@@ -7,7 +7,7 @@ import pytest
 
 @pytest.mark.skipif("OGS_USE_PATH" in os.environ, reason="Works in wheel only.")
 def test_simulator():
-    import ogs.simulator as sim  # noqa: PLC0415
+    from ogs.OGSSimulator import OGSSimulation  # noqa: PLC0415
 
     current_dir = Path(__file__).parent.resolve()
     arguments = [
@@ -16,11 +16,9 @@ def test_simulator():
         "-o " + tempfile.mkdtemp(),
     ]
 
-    try:
-        print("Python OpenGeoSys.init ...")
-        assert sim.initialize(arguments) == 0
-        print("Python OpenGeoSys.executeSimulation ...")
-        assert sim.executeSimulation() == 0
-    finally:
-        print("Python OpenGeoSys.finalize() ...")
-        sim.finalize()
+    print("Python OGSSimulation() ...")
+    sim = OGSSimulation(arguments)
+    print("Python sim.execute_simulation() ...")
+    assert sim.execute_simulation() == 0
+    print("Python sim.close() ...")
+    sim.close()

@@ -1323,3 +1323,8 @@ MeshLib::Mesh& ProjectData::getMesh(std::string const& mesh_name) const
 {
     return MeshLib::findMeshByName(_mesh_vec, mesh_name);
 }
+
+std::vector<std::string> ProjectData::getMeshNames() const
+{
+    return _mesh_vec | MeshLib::views::names | ranges::to<std::vector>;
+}
