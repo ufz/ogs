@@ -11,25 +11,25 @@ build guix:
     GIT_SUBMODULE_STRATEGY: recursive
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
-      allow_failure: true
+      when: never
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
     - changes:
-        - scripts/guix/channels.scm
+        - scripts/guix/*.scm
+        - scripts/ci/jobs/build-guix.yml
     - when: manual
       allow_failure: true
+  parallel:
+    matrix:
+      - GUIX_MANIFEST: ["manifest.scm", "manifest-petsc.scm", "manifest-mkl.scm", "manifest-petsc-mkl.scm"]
   script:
-    - which guix
-    - guix describe
+    - SCIENCE_CHANNELS_ARG=""
+    - LOAD_ARG=""
     - |
-      if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci::guix\ only.* ]]; then
-        guix time-machine -C scripts/guix/channels.scm -- build -m scripts/guix/manifest.scm
-        guix time-machine -C scripts/guix/channels.scm -- build -m scripts/guix/manifest-petsc.scm
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-mkl --with-source=ogs-petsc-mkl=$PWD --with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://www.vtk.org/files/release/9.3/VTK-9.3.1.tar.gz --with-input=openmpi=openmpi@4.1.6
-      else
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-ssd --with-source=ogs-ssd=$PWD
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-ssd --with-source=ogs-petsc-ssd=$PWD --with-input=openmpi=openmpi@4.1.6
-        guix time-machine -C scripts/guix/channels.scm -- build ogs-petsc-mkl-ssd --with-source=ogs-petsc-mkl-ssd=$PWD --with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://www.vtk.org/files/release/9.3/VTK-9.3.1.tar.gz --with-input=openmpi=openmpi@4.1.6
+      if [[ "$GUIX_MANIFEST" =~ .*-mkl\.scm ]]; then
+        SCIENCE_CHANNELS_ARG="-science";
+        LOAD_ARG="-L scripts/guix/packages"
       fi
+    - guix time-machine -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- build -m scripts/guix/${GUIX_MANIFEST} ${LOAD_ARG}
 
 deploy container:
   stage: build
@@ -54,7 +54,7 @@ deploy container:
         # keep vtk source parameter: default vtk 9.3.0 download misses
         # ThirdParty/eigen/vtkeigen subdirectory. Use explicit download
         # from GitHub-tag.
-        GUIX_ARGS="${GUIX_ARGS} --with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://www.vtk.org/files/release/9.3/VTK-9.3.1.tar.gz"
+        GUIX_ARGS="${GUIX_ARGS} -L scripts/guix/packages --with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://www.vtk.org/files/release/9.3/VTK-9.3.1.tar.gz"
       fi
       # Add openmpi package for mpirun
       if [[ "$GUIX_PACKAGE" =~ .*petsc.* ]]; then
