@@ -72,7 +72,7 @@ public:
                   << "Where: " << std::endl
                   << std::endl;
 
-        std::string message = _cmd.getMessage();
+        std::string const message = _cmd.getMessage();
         std::list<TCLAP::ArgGroup*> argSets = _cmd.getArgGroups();
 
         std::list<TCLAP::Arg*> unlabelled;
@@ -82,9 +82,9 @@ public:
         {
             TCLAP::ArgGroup& argGroup = **sit;
 
-            int visible = CountVisibleArgs(argGroup);
-            bool exclusive = visible > 1 && argGroup.isExclusive();
-            bool forceRequired = visible == 1 && argGroup.isRequired();
+            int const visible = CountVisibleArgs(argGroup);
+            bool const exclusive = visible > 1 && argGroup.isExclusive();
+            bool const forceRequired = visible == 1 && argGroup.isRequired();
             if (exclusive)
             {
                 spacePrint(std::cout,
@@ -110,13 +110,13 @@ public:
                 }
 
                 // Added by LB:
-                std::string shortID = arg.shortID();
+                std::string const shortID = arg.shortID();
                 std::smatch match;
-                bool required = arg.isRequired() || forceRequired;
+                bool const required = arg.isRequired() || forceRequired;
                 std::stringstream ss;
                 if (std::regex_search(shortID, match, std::regex("<([^>]+)>")))
                 {
-                    std::string identifier = match[1];
+                    std::string const identifier = match[1];
 
                     ss << identifier;
                     tryPrintValue<std::string>(*it, ss, required);
