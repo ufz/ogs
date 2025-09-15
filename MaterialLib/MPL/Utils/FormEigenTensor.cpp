@@ -12,6 +12,7 @@
 #include "FormEigenTensor.h"
 
 #include "MaterialLib/MPL/PropertyType.h"
+#include "MathLib/FormattingUtils.h"
 
 namespace MaterialPropertyLib
 {
@@ -31,8 +32,10 @@ struct FormEigenTensor
         {
             return values.asDiagonal();
         }
-        OGS_FATAL("Cannot convert 2d vector to {:d}x{:d} diagonal matrix.",
-                  GlobalDim, GlobalDim);
+        OGS_FATAL(
+            "Cannot convert 2d vector with values [{}] to {:d}x{:d} diagonal "
+            "matrix.",
+            values, GlobalDim, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
@@ -42,8 +45,10 @@ struct FormEigenTensor
         {
             return values.asDiagonal();
         }
-        OGS_FATAL("Cannot convert 3d vector to {:d}x{:d} diagonal matrix.",
-                  GlobalDim, GlobalDim);
+        OGS_FATAL(
+            "Cannot convert 3d vector with values [{}] to {:d}x{:d} diagonal "
+            "matrix.",
+            values, GlobalDim, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
@@ -53,8 +58,9 @@ struct FormEigenTensor
         {
             return values;
         }
-        OGS_FATAL("Cannot convert a 2d tensor to {:d}x{:d} matrix", GlobalDim,
-                  GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 2d tensor with values [{}] to {:d}x{:d} matrix",
+            values, GlobalDim, GlobalDim);
     }
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
         Eigen::Matrix<double, 3, 3> const& values) const
@@ -63,8 +69,9 @@ struct FormEigenTensor
         {
             return values;
         }
-        OGS_FATAL("Cannot convert a 3d tensor to {:d}x{:d} matrix", GlobalDim,
-                  GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 3d tensor with values [{}] to {:d}x{:d} matrix",
+            values, GlobalDim, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
@@ -94,8 +101,10 @@ struct FormEigenTensor
             return result;
         }
 
-        OGS_FATAL("Cannot convert a symmetric 3d tensor to a {}x{} matrix",
-                  GlobalDim, GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a symmetric 3d tensor with values [{}] to a {}x{} "
+            "matrix",
+            values, GlobalDim, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, GlobalDim> operator()(
@@ -106,8 +115,10 @@ struct FormEigenTensor
             return values;
         }
 
-        OGS_FATAL("Cannot convert a dynamic {}x{} matrix to a {}x{} matrix",
-                  values.rows(), values.cols(), GlobalDim, GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a dynamic {}x{} matrix with values [{}] to a {}x{} "
+            "matrix",
+            values.rows(), values.cols(), values, GlobalDim, GlobalDim);
     }
 };
 
