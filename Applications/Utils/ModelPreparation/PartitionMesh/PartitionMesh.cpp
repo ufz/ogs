@@ -46,26 +46,26 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_input(
         "i", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name of input mesh");
+        "Input (.vtu). The name of the file containing the input mesh", true,
+        "", "INPUT_FILE");
     cmd.add(mesh_input);
 
     TCLAP::ValueArg<std::string> metis_mesh_input(
         "x", "metis-mesh-input-file",
-        "base name (without .mesh extension) of the file containing the metis "
-        "input mesh",
-        false, "",
-        "base name (without .mesh extension) of the file containing the metis "
-        "input mesh");
+        "Input (.mesh). Base name (without .mesh extension) of the file "
+        "containing the metis input mesh",
+        false, "", "BASE_FILENAME_INPUT");
     cmd.add(metis_mesh_input);
 
     TCLAP::ValueArg<std::string> output_directory_arg(
-        "o", "output", "directory name for the output files", false, "",
-        "directory");
+        "o", "output", "Output. Directory name for the output files", false, "",
+        "OUTPUT_PATH");
     cmd.add(output_directory_arg);
 
-    TCLAP::ValueArg<int> nparts("n", "np", "the number of partitions", false, 2,
-                                "integer");
+    TCLAP::ValueArg<int> nparts("n", "np",
+                                "the number of partitions, "
+                                "(min = 0)",
+                                false, 2, "N_PARTS");
     cmd.add(nparts);
 
     TCLAP::SwitchArg ogs2metis_flag(
@@ -80,8 +80,8 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> log_level_arg(
         "l", "log-level",
-        "the verbosity of logging messages: none, error, warn, info, debug, "
-        "all",
+        "the verbosity of logging messages: none, error, "
+        "warn, info, debug, all",
         false,
 #ifdef NDEBUG
         "info",

@@ -19,6 +19,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -36,10 +37,11 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_input(
         "i", "mesh-input-file-base",
-        "the base name of the files containing the input mesh, i.e., the file "
-        "name without the string beginning with '_partitioned' and ending with "
-        "'.bin'",
-        true, "", "base_file_name_of_input_mesh");
+        "Input (.bin). The base name of the files containing the input mesh, "
+        "i.e., the file "
+        "name without the string beginning with '_partitioned' and ending "
+        "with ",
+        true, "", "BASE_FILENAME_INPUT_MESH");
     cmd.add(mesh_input);
 
     TCLAP::ValueArg<std::string> output_directory_arg(
@@ -48,22 +50,12 @@ int main(int argc, char* argv[])
         true, "", "directory/base_file_name_without_extensions");
     cmd.add(output_directory_arg);
 
-    TCLAP::ValueArg<std::string> log_level_arg(
-        "l", "log-level",
-        "the verbosity of logging messages: none, error, warn, info, debug, "
-        "all",
-        false,
-#ifdef NDEBUG
-        "info",
-#else
-        "all",
-#endif
-        "LOG_LEVEL");
-    cmd.add(log_level_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(*log_level_arg);
 
     cmd.parse(argc, argv);
 
-    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
+    BaseLib::setConsoleLogLevel(log_level_arg->getValue());
     spdlog::set_pattern("%^%l:%$ %v");
     spdlog::set_error_handler(
         [](const std::string& msg)

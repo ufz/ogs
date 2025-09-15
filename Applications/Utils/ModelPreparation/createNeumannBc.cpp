@@ -90,11 +90,11 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> in_mesh(
         "i",
         "in-mesh",
-        "the surface mesh that has an element property for the Neumann "
-        "boundary condition",
+        "Input (.vtu | .msh). The surface mesh input file that has an element "
+        "property for the Neumann boundary condition",
         true,
         "",
-        "filename for surface mesh input");
+        "INPUT_FILE");
     cmd.add(in_mesh);
 
     TCLAP::ValueArg<std::string> property_in_arg(
@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
         "boundary condition",
         true,
         "",
-        "string (property name)");
+        "PROP_IN_NAME");
     cmd.add(property_in_arg);
 
     TCLAP::ValueArg<std::string> property_out_arg(
@@ -114,16 +114,16 @@ int main(int argc, char* argv[])
         "boundary condition",
         true,
         "",
-        "string (property name)");
+        "PROP_OUT_NAME");
     cmd.add(property_out_arg);
 
     TCLAP::ValueArg<std::string> result_file(
         "o",
         "result-out",
-        "the file name the result will be written to ",
+        "Output (.txt). The output file name the result will be written to",
         true,
         "",
-        "output file name");
+        "OUTPUT_FILE");
     cmd.add(result_file);
     cmd.parse(argc, argv);
 
