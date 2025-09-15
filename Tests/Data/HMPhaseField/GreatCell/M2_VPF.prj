@@ -1424,7 +1424,7 @@
                 <error_tolerance>1e-16</error_tolerance>
             </eigen>
             <petsc>
-                <parameters>-ksp_type cg -pc_type bjacobi -ksp_atol 1e-10 -ksp_rtol 1e-10 -snes_type vinewtonrsls -snes_linesearch_type l2 -snes_atol 1.e-5 -snes_rtol 1.e-5 -snes_max_it 1000 -snes_monitor </parameters>
+                <parameters>-ksp_type bcgs -pc_type bjacobi -ksp_atol 1e-10 -ksp_rtol 1e-10 -snes_type vinewtonrsls -snes_linesearch_type l2 -snes_atol 1.e-5 -snes_rtol 1.e-5 -snes_max_it 1000 -snes_monitor </parameters>
             </petsc>
         </linear_solver>
         <linear_solver>
@@ -1437,7 +1437,7 @@
             </eigen>
             <petsc>
                 <prefix>u</prefix>
-                <parameters>-u_ksp_type cg -u_pc_type hypre -u_pc_hypre_type boomeramg -u_pc_hypre_boomeramg_strong_threshold 0.7 -u_ksp_atol 1e-12 -u_ksp_rtol 1e-12 </parameters>
+                <parameters>-u_ksp_type bcgs -u_pc_type hypre -u_pc_hypre_type boomeramg -u_pc_hypre_boomeramg_strong_threshold 0.7 -u_ksp_atol 1e-12 -u_ksp_rtol 1e-12 </parameters>
             </petsc>
         </linear_solver>
         <linear_solver>
@@ -1450,7 +1450,7 @@
             </eigen>
             <petsc>
                 <prefix>p</prefix>
-                <parameters>-p_ksp_type cg -p_ksp_monitor -p_pc_type hypre -p_pc_hypre_type boomeramg -p_pc_hypre_boomeramg_strong_threshold 0.7 -p_ksp_atol 1e-12 -p_ksp_rtol 1e-12  </parameters>
+                <parameters>-p_ksp_type bcgs -p_pc_type hypre -p_pc_hypre_type boomeramg -p_pc_hypre_boomeramg_strong_threshold 0.7 -p_ksp_atol 1e-12 -p_ksp_rtol 1e-12  </parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
