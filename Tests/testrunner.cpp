@@ -51,28 +51,11 @@ int main(int argc, char* argv[])
     QCoreApplication app(argc, argv, false);
 #endif
 
-#ifdef USE_PETSC
     BaseLib::MPI::Setup mpi_setup(argc, argv);
-#endif
+    BaseLib::initOGSLogger(logLevel);
 
     ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(argc,
                                                                           argv);
-
-    BaseLib::setConsoleLogLevel(logLevel);
-    spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler(
-        [](const std::string& msg)
-        {
-            std::cerr << "spdlog error: " << msg << std::endl;
-            OGS_FATAL("spdlog logger error occurred.");
-        });
-#ifdef USE_PETSC
-    {  // Can be called only after MPI_INIT.
-        int mpi_rank;
-        MPI_Comm_rank(BaseLib::MPI::OGS_COMM_WORLD, &mpi_rank);
-        spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
-    }
-#endif
 
     try
     {

@@ -29,25 +29,30 @@ void initOGSLogger(std::string const& log_level);
 template <typename... Args>
 void DBUG(fmt::format_string<Args...> fmt, Args&&... args)
 {
+    assert(BaseLib::console != nullptr);
     BaseLib::console->debug(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
 void INFO(fmt::format_string<Args...> fmt, Args&&... args)
 {
+    assert(BaseLib::console != nullptr);
     BaseLib::console->info(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
 void WARN(fmt::format_string<Args...> fmt, Args&&... args)
 {
+    assert(BaseLib::console != nullptr);
     BaseLib::console->warn(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
 void ERR(fmt::format_string<Args...> fmt, Args&&... args)
 {
+    assert(BaseLib::console != nullptr);
     BaseLib::console->error(fmt, std::forward<Args>(args)...);
 }
 template <typename... Args>
 void CRITICAL(fmt::format_string<Args...> fmt, Args&&... args)
 {
+    assert(BaseLib::console != nullptr);
     BaseLib::console->critical(fmt, std::forward<Args>(args)...);
 }
