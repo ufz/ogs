@@ -12,12 +12,10 @@
  *
  */
 
-// STL
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <string>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/MPI.h"
@@ -139,16 +137,17 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> ogs_mesh_arg(
         "o",
         "out",
-        "filename for output mesh (if extension is .msh, old OGS-5 fileformat "
+        "Output (.msh | .vtk). Filename for output mesh (if extension is .msh, "
+        "old OGS-5 file format "
         "is written, if extension is .vtu, a vtk unstructure grid file is "
         "written (OGS-6 mesh format))",
         true,
         "",
-        "filename as string");
+        "OUTPUT_FILE");
     cmd.add(ogs_mesh_arg);
 
-    TCLAP::ValueArg<std::string> gmsh_mesh_arg("i", "in", "gmsh input file",
-                                               true, "", "filename as string");
+    TCLAP::ValueArg<std::string> gmsh_mesh_arg("i", "in", "Input (.msh) file",
+                                               true, "", "INPUT_FILE");
     cmd.add(gmsh_mesh_arg);
 
     TCLAP::SwitchArg valid_arg("v", "validation", "validate the mesh");

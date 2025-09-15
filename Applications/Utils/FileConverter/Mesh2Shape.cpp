@@ -29,13 +29,13 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> output_arg("o", "output-file",
-                                            "Esri Shapefile (*.shp)", true, "",
-                                            "output_file.shp");
+                                            "Output (.shp). Esri Shapefile",
+                                            true, "", "OUTPUT_FILE");
     cmd.add(output_arg);
 
     TCLAP::ValueArg<std::string> input_arg("i", "input-file",
-                                           "OGS mesh file (*.vtu, *.msh)", true,
-                                           "", "input_file.vtu");
+                                           "Input (.vtu | .msh). OGS mesh file",
+                                           true, "", "INPUT_FILE");
     cmd.add(input_arg);
 
     cmd.parse(argc, argv);

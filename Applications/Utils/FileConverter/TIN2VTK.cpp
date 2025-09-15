@@ -39,13 +39,17 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2025, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> inArg(
-        "i", "input-tin-file", "the name of the file containing the input TIN",
-        true, "", "string");
+    TCLAP::ValueArg<std::string> inArg("i", "input-tin-file",
+                                       "Input (.tin). The name "
+                                       "of the input file "
+                                       "containing the input TIN ",
+                                       true, "", "INPUT_FILE");
     cmd.add(inArg);
     TCLAP::ValueArg<std::string> outArg(
         "o", "output-vtu-file",
-        "the name of the file the mesh will be written to", true, "", "string");
+        "Output (.vtu). The name of the output file "
+        "the mesh will be written to",
+        true, "", "OUTPUT_FILE");
     cmd.add(outArg);
     cmd.parse(argc, argv);
 

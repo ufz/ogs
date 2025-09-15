@@ -660,13 +660,13 @@ int main(int argc, char* argv[])
         "n", "nodata",
         "explicitly specifies the no data value used in the dataset (usually "
         "it is not necessary to set this)",
-        false, no_data_input, "integer specifying no data value");
+        false, no_data_input, "NODATA_VALUE");
     cmd.add(arg_nodata);
 
     std::vector<std::string> allowed_elems{"tri", "quad", "prism", "hex"};
     TCLAP::ValuesConstraint<std::string> allowed_elem_vals(allowed_elems);
     TCLAP::ValueArg<std::string> arg_elem_type(
-        "e", "elem-type", "the element type used in the resulting OGS mesh",
+        "e", "elem-type", "the element type used in the resulting OGS mesh, ",
         false, "", &allowed_elem_vals);
     cmd.add(arg_elem_type);
 
@@ -689,13 +689,13 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::size_t> arg_time_end(
         "", "timestep-last",
         "last time step to be extracted (only for time-dependent variables!)",
-        false, 0, "integer specifying index of time step");
+        false, 0, "TIME_END");
     cmd.add(arg_time_end);
 
     TCLAP::ValueArg<std::size_t> arg_time_start(
         "", "timestep-first",
         "first time step to be extracted (only for time-dependent variables!)",
-        false, 0, "integer specifying index of time step");
+        false, 0, "TIMESTEP_FIRST");
     cmd.add(arg_time_start);
 
     std::vector<std::size_t> allowed_dims{0, 1, 2, 3};
@@ -726,16 +726,16 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> arg_varname(
         "v", "var", "variable included in the the netCDF file", false, "",
-        "string containing the variable name");
+        "VAR_NAME");
     cmd.add(arg_varname);
 
     TCLAP::ValueArg<std::string> arg_output(
-        "o", "output", "the OGS mesh output file", true, "",
-        "string containing the path and file name");
+        "o", "output", "Output (.vtu). The OGS mesh output file", true, "",
+        "OUTPUT_FILE");
     cmd.add(arg_output);
-    TCLAP::ValueArg<std::string> arg_input(
-        "i", "input", "the netCDF input file", true, "",
-        "string containing the path and file name");
+    TCLAP::ValueArg<std::string> arg_input("i", "input",
+                                           "Input (.nc). The netCDF input file",
+                                           true, "", "INPUT_FILE");
     cmd.add(arg_input);
     cmd.parse(argc, argv);
 

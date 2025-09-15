@@ -116,7 +116,8 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> log_level_arg(
         "l", "log-level",
-        "the verbosity of logging messages: none, error, warn, info, "
+        "the verbosity of logging messages: "
+        " none, error, warn, info, "
         "debug, "
         "all",
         false,
@@ -128,13 +129,13 @@ int main(int argc, char* argv[])
         "LOG_LEVEL");
     cmd.add(log_level_arg);
 
-    TCLAP::UnlabeledValueArg<std::string> pvd_file_arg("pvd-file", "pvd file",
-                                                       true, "", "file");
+    TCLAP::UnlabeledValueArg<std::string> pvd_file_arg(
+        "pvd-file", "Input (.pvd) file", true, "", "INPUT_FILE");
     cmd.add(pvd_file_arg);
 
-    TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
-                                            "the output directory to write to",
-                                            false, ".", "PATH");
+    TCLAP::ValueArg<std::string> outdir_arg(
+        "o", "output-directory", "Output. The output directory to write to",
+        false, ".", "OUTPUT_PATH");
     cmd.add(outdir_arg);
 
     cmd.parse(argc, argv);
