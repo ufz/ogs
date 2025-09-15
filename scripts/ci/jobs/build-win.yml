@@ -6,6 +6,7 @@ build win:
   rules:
     - if: ($CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH) || $CI_COMMIT_TAG
       when: manual
+      allow_failure: true
       variables:
         BUILD_PACKAGE: "true"
     - when: manual
