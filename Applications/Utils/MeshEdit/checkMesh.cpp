@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::UnlabeledValueArg<std::string> mesh_arg(
-        "mesh-file", "input mesh file", true, "", "string");
+        "mesh-file", "Input (.vtu | .msh). Mesh file", true, "", "INPUT_FILE");
     cmd.add(mesh_arg);
     TCLAP::SwitchArg valid_arg("v", "validation", "validate the mesh");
     cmd.add(valid_arg);

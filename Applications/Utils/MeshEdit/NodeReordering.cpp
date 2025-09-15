@@ -179,12 +179,13 @@ int main(int argc, char* argv[])
                                     &allowed_values);
     cmd.add(method_arg);
     TCLAP::ValueArg<std::string> output_mesh_arg(
-        "o", "output_mesh", "the name of the output mesh file", true, "",
-        "filename");
+        "o", "output_mesh", "Output (.vtu). The name of the output mesh file",
+        true, "", "OUTPUT_FILE");
     cmd.add(output_mesh_arg);
     TCLAP::ValueArg<std::string> input_mesh_arg(
-        "i", "input_mesh", "the name of the input mesh file", true, "",
-        "filename");
+        "i", "input_mesh",
+        "Input (.vtu | .vtk | .msh). The name of the input mesh file", true, "",
+        "INPUT_FILE");
     cmd.add(input_mesh_arg);
     cmd.parse(argc, argv);
 

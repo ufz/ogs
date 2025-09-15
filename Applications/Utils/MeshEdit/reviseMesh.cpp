@@ -39,20 +39,22 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<unsigned> minDim_arg(
         "d", "min-ele-dim",
         "Minimum dimension of elements to be inserted into new mesh", false, 1,
-        "unsigned");
+        "MIN_DIMENSION");
     cmd.add(minDim_arg);
 
     TCLAP::ValueArg<double> eps_arg(
         "e", "eps", "Minimum distance for nodes not to be collapsed", false,
-        std::numeric_limits<double>::epsilon(), "float");
+        std::numeric_limits<double>::epsilon(), "MIN_DISTANCE");
     cmd.add(eps_arg);
 
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-mesh-file", "output mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file",
+                                            "Output (.vtu) mesh file", true, "",
+                                            "OUTPUT_FILE");
     cmd.add(output_arg);
 
-    TCLAP::ValueArg<std::string> input_arg(
-        "i", "input-mesh-file", "input mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file",
+                                           "Input (.vtu) mesh file", true, "",
+                                           "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

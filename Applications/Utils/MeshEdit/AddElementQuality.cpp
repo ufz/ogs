@@ -33,8 +33,9 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> mesh_out_arg(
-        "o", "output_mesh_file", "output mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> mesh_out_arg("o", "output_mesh_file",
+                                              "Output (.vtu | .msh) mesh file ",
+                                              true, "", "OUTPUT_FILE");
     cmd.add(mesh_out_arg);
     std::vector<std::string> allowed_element_criterions{
         "ElementSize", "EdgeRatio", "EquiAngleSkew", "RadiusEdgeRatio",
@@ -45,8 +46,9 @@ int main(int argc, char* argv[])
         "c", "quality_criterion", "quality criterion", true,
         "",  &element_criterions};
     cmd.add(criterion_arg);
-    TCLAP::ValueArg<std::string> mesh_in_arg(
-        "i", "input_mesh_file", "input mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> mesh_in_arg("i", "input_mesh_file",
+                                             "Input (.vtu | .msh) mesh file",
+                                             true, "", "INPUT_FILE");
     cmd.add(mesh_in_arg);
     cmd.parse(argc, argv);
 

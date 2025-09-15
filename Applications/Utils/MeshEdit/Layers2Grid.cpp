@@ -7,13 +7,12 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
 
 #include "BaseLib/IO/readStringListFromFile.h"
 #include "BaseLib/MPI.h"
@@ -46,32 +45,38 @@ int main(int argc, char* argv[])
         false);
     cmd.add(dilate_arg);
 
-    TCLAP::ValueArg<double> z_arg("z", "cellsize-z",
-                                  "edge length of cubes in z-direction (depth)",
-                                  false, 1000, "floating point number");
+    TCLAP::ValueArg<double> z_arg(
+        "z", "cellsize-z",
+        "edge length of cubes in z-direction (depth), "
+        "(min = 0)",
+        false, 1000, "CELLSIZE-Z");
     cmd.add(z_arg);
 
     TCLAP::ValueArg<double> y_arg(
-        "y", "cellsize-y", "edge length of cubes in y-direction (latitude)",
-        false, 1000, "floating point number");
+        "y", "cellsize-y",
+        "edge length of cubes in y-direction (latitude), "
+        "(min = 0)",
+        false, 1000, "CELLSIZE-Y");
     cmd.add(y_arg);
 
     TCLAP::ValueArg<double> x_arg(
         "x", "cellsize-x",
         "edge length of cubes in x-direction (longitude) or all directions, if "
-        "y and z are not set",
-        true, 1000, "floating point number");
+        "y and z are not set, (min = 0)",
+        true, 1000, "CELLSIZE-X");
     cmd.add(x_arg);
 
     TCLAP::ValueArg<std::string> output_arg(
-        "o", "output", "name of output mesh (*.vtu)", true, "", "string");
+        "o", "output", "Output (.vtu). Name of output mesh file", true, "",
+        "OUTPUT_FILE");
     cmd.add(output_arg);
 
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input",
-        "name of the input file list containing the paths the all input layers "
+        "Input (.vtu). Name of the input file list containing the paths the "
+        "all input layers "
         "in correct order from top to bottom",
-        true, "", "string");
+        true, "", "INPUT_FILE_LIST");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

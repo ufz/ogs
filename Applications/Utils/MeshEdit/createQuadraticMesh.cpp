@@ -30,11 +30,13 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> input_arg(
-        "i", "input-mesh-file", "input mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file",
+                                           "Input (.vtu | .msh) mesh file",
+                                           true, "", "INPUT_FILE");
     cmd.add(input_arg);
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-mesh-file", "output mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file",
+                                            "Output (.vtu | .msh) mesh file",
+                                            true, "", "OUTPUT_FILE");
     cmd.add(output_arg);
     TCLAP::SwitchArg add_centre_node_arg("c", "add-centre-node",
                                          "add centre node", false);

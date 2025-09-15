@@ -48,27 +48,29 @@ int main(int argc, char* argv[])
     cmd.add(use_ascii_arg);
     TCLAP::ValueArg<double> angle_arg(
         "a", "angle",
-        "tolerated angle (in degrees) between given normal and element normal",
-        false, 90, "floating point value");
+        "tolerated angle (in degrees) between given normal and "
+        "element normal, (min = 0), (max = 360)",
+        false, 90, "ANGLE");
     cmd.add(angle_arg);
     TCLAP::ValueArg<double> z("z", "z-component", "z component of the normal",
-                              false, -1.0, "floating point value");
+                              false, -1.0, "Z-COMPONENT");
     cmd.add(z);
     TCLAP::ValueArg<double> y("y", "y-component", "y component of the normal",
-                              false, 0, "floating point value");
+                              false, 0, "Y-COMPONENT");
     cmd.add(y);
     TCLAP::ValueArg<double> x("x", "x-component", "x component of the normal",
-                              false, 0, "floating point value");
+                              false, 0, "X-COMPONENT");
     cmd.add(x);
     TCLAP::ValueArg<std::string> mesh_out(
         "o", "mesh-output-file",
-        "the name of the file the surface mesh should be written to", false, "",
-        "file name of output mesh");
+        "Output (.vtu). The name of the file the surface mesh should be "
+        "written to",
+        false, "", "OUTPUT_FILE");
     cmd.add(mesh_out);
     TCLAP::ValueArg<std::string> mesh_in(
         "i", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name of input mesh");
+        "Input (.vtu). The name of the file containing the input mesh", true,
+        "", "INPUT_FILE");
     cmd.add(mesh_in);
     cmd.parse(argc, argv);
 

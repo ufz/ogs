@@ -128,10 +128,12 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in_arg(
-        "i", "input", "name of the input mesh file", true, "", "string");
+        "i", "input", "Input (.vtu). Name of the input mesh file", true, "",
+        "INPUT_FILE");
     cmd.add(mesh_in_arg);
     TCLAP::ValueArg<std::string> mesh_out_arg(
-        "o", "output", "name of the output mesh file", true, "", "string");
+        "o", "output", "Output (.vtu). Name of the output mesh file", true, "",
+        "OUTPUT_FILE");
     cmd.add(mesh_out_arg);
 
     cmd.parse(argc, argv);

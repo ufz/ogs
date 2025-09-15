@@ -244,11 +244,12 @@ int main(int argc, char** argv)
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> arg_out_file(
-        "o", "output-file", "the output mesh (point cloud, VTU file)", true, "",
-        "path");
+        "o", "output-file", "Output (.vtu). The output mesh (point cloud)",
+        true, "", "OUTPUT_FILE");
     cmd.add(arg_out_file);
-    TCLAP::ValueArg<std::string> arg_in_file(
-        "i", "input-file", "the input mesh (VTU file)", true, "", "path");
+    TCLAP::ValueArg<std::string> arg_in_file("i", "input-file",
+                                             "Input (.vtu). The input mesh",
+                                             true, "", "INPUT_FILE");
     cmd.add(arg_in_file);
 
     cmd.parse(argc, argv);
