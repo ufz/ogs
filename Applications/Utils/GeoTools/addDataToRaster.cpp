@@ -78,10 +78,10 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> out_raster_arg(
         "o",
         "output_raster",
-        "the output raster is stored to a file of this name",
+        "Output (.asc). The output raster is stored to a file of this name",
         true,
         "",
-        "filename for raster output");
+        "OUTPUT_FILE");
     cmd.add(out_raster_arg);
 
     TCLAP::ValueArg<double> scaling_arg(
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
         "value the function sin(x pi) sin(y pi) will be scaled with",
         false,
         1,
-        "double value");
+        "SCALING");
     cmd.add(scaling_arg);
 
     TCLAP::ValueArg<double> offset_arg(
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
         "constant added to the function 'scaling * sin(x pi) * sin(y pi)'",
         false,
         0,
-        "double value");
+        "OFFSET");
     cmd.add(offset_arg);
 
     TCLAP::ValueArg<double> ll_x_arg(
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
         "x coordinate of lower left point of axis aligned rectangular region",
         false,
         0,
-        "double value");
+        "LL_X");
     cmd.add(ll_x_arg);
     TCLAP::ValueArg<double> ll_y_arg(
         "",
@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
         "y coordinate of lower left point of axis aligned rectangular region",
         false,
         0,
-        "double value");
+        "LL_Y");
     cmd.add(ll_y_arg);
     TCLAP::ValueArg<double> ur_x_arg("",
                                      "ur_x",
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
                                      "axis aligned rectangular region",
                                      false,
                                      0,
-                                     "double value");
+                                     "UR_X");
     cmd.add(ur_x_arg);
     TCLAP::ValueArg<double> ur_y_arg("",
                                      "ur_y",
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
                                      "axis aligned rectangular region",
                                      false,
                                      0,
-                                     "double value");
+                                     "UR_Y");
 
     cmd.add(ur_y_arg);
     std::vector<std::string> allowed_functions_vector{"sinxsiny", "exp",
@@ -144,8 +144,9 @@ int main(int argc, char* argv[])
         "", &allowed_functions);
     cmd.add(function_arg);
     TCLAP::ValueArg<std::string> input_arg("i", "input",
-                                           "Name of the input raster (*.asc)",
-                                           true, "", "input file name");
+                                           "Input (.asc). "
+                                           "Name of the input raster file",
+                                           true, "", "INPUT_FILE");
     cmd.add(input_arg);
 
     cmd.parse(argc, argv);
