@@ -7,16 +7,14 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
+#include <QCoreApplication>
 #include <algorithm>
 #include <cmath>
 #include <memory>
 #include <string>
 #include <vector>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
-
-#include <QCoreApplication>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
 #include "Applications/FileIO/Gmsh/GmshReader.h"
@@ -385,33 +383,35 @@ int main(int argc, char* argv[])
     cmd.add(bound_arg);
     TCLAP::ValueArg<double> res_arg(
         "r", "resolution",
-        "desired edge length of triangles in the resulting slice.", true, 0,
-        "floating point number");
+        "desired edge length of triangles in the resulting slice, (min = 0)",
+        true, 0, "RESOLUTION");
     cmd.add(res_arg);
     TCLAP::ValueArg<double> end_y_arg(
         "", "end-y", "y-coordinates of the end point defining the slice", true,
-        0, "floating point number");
+        0, "END_Y");
     cmd.add(end_y_arg);
     TCLAP::ValueArg<double> end_x_arg(
         "", "end-x", "x-coordinates of the end point defining the slice", true,
-        0, "floating point number");
+        0, "END_X");
     cmd.add(end_x_arg);
     TCLAP::ValueArg<double> start_y_arg(
         "", "start-y", "y-coordinates of the start point defining the slice",
-        true, 0, "floating point number");
+        true, 0, "START_Y");
     cmd.add(start_y_arg);
     TCLAP::ValueArg<double> start_x_arg(
         "", "start-x", "x-coordinates of the start point defining the slice",
-        true, 0, "floating point number");
+        true, 0, "START_X");
     cmd.add(start_x_arg);
     TCLAP::ValueArg<std::string> output_arg(
-        "o", "output", "name of output mesh (*.vtu)", true, "", "string");
+        "o", "output", "Output (.vtu). Name of output mesh file", true, "",
+        "OUTPUT_FILE");
     cmd.add(output_arg);
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input",
-        "name of the input file list containing the paths the all input layers "
+        "Input (.vtu | .msh). Name of the input file list containing the paths "
+        "the all input layers "
         "in correct order from top to bottom",
-        true, "", "string");
+        true, "", "INPUT_FILE_LIST");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

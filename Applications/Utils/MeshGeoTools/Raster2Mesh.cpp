@@ -7,11 +7,10 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <memory>
 #include <string>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
 
 #include "BaseLib/MPI.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
@@ -41,7 +40,7 @@ int main(int argc, char* argv[])
         "n", "arrayname",
         "Name of the scalar array. Only required if assigning pixel values to "
         "cell data has been selected (default name is 'Values').",
-        false, "", "name of data array");
+        false, "", "ARRAY_NAME");
     cmd.add(array_name_arg);
     std::vector<std::string> pixel_vals{"elevation", "materials", "scalar"};
     TCLAP::ValuesConstraint<std::string> pixel_val_options(pixel_vals);
@@ -49,23 +48,23 @@ int main(int argc, char* argv[])
         "p", "pixel-type",
         "The choice how pixel values should be interpreted by the software: "
         "'elevation' adjusts z-coordinates; 'materials' sets (integer) "
-        "material IDs; 'scalar' creates a (floating-point) array associated "
+        "material IDs; 'scalar' creates a (floating-point) array associated. "
         "with mesh elements.",
         true, "", &pixel_val_options);
     cmd.add(arg_pixel_type);
     std::vector<std::string> allowed_elems{"tri", "quad"};
     TCLAP::ValuesConstraint<std::string> allowed_elem_vals(allowed_elems);
     TCLAP::ValueArg<std::string> arg_elem_type(
-        "e", "elem-type", "The element type used in the resulting OGS mesh.",
+        "e", "elem-type", "The element type used in the resulting OGS mesh",
         true, "", &allowed_elem_vals);
     cmd.add(arg_elem_type);
-    TCLAP::ValueArg<std::string> output_arg("o", "output",
-                                            "Name of the output mesh (*.vtu)",
-                                            true, "", "output file name");
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output", "Output (.vtu). Name of the output mesh file", true, "",
+        "OUTPUT_FILE");
     cmd.add(output_arg);
-    TCLAP::ValueArg<std::string> input_arg("i", "input",
-                                           "Name of the input raster (*.asc)",
-                                           true, "", "input file name");
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input", "Input (.asc). Name of the input raster file", true, "",
+        "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

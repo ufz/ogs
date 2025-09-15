@@ -7,14 +7,13 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include <tclap/CmdLine.h>
+
 #include <iterator>
 #include <limits>
 #include <memory>
 #include <string>
 #include <vector>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
 
 #include "BaseLib/MPI.h"
 #include "GeoLib/GEOObjects.h"
@@ -90,32 +89,36 @@ int main(int argc, char* argv[])
 
     double const dmax = std::numeric_limits<double>::max();
     TCLAP::ValueArg<double> max_elevation_arg(
-        "", "max-elevation", "Maximum elevation for an integrated borehole",
-        false, 0, "a number");
+        "", "max-elevation",
+        "Maximum elevation for an integrated borehole, "
+        "(min = 0)",
+        false, 0, "MAX_ELEVATION");
     cmd.add(max_elevation_arg);
     TCLAP::ValueArg<double> min_elevation_arg(
-        "", "min-elevation", "Minimum elevation for an integrated borehole",
-        false, 0, "a number");
+        "", "min-elevation",
+        "Minimum elevation for an integrated borehole, "
+        "(min = 0)",
+        false, 0, "MIN_ELEVATION");
     cmd.add(min_elevation_arg);
     TCLAP::ValueArg<int> max_id_arg(
         "", "max-id", "Maximum MaterialID for an integrated borehole", false,
-        -1, "a number");
+        -1, "MAX_ID");
     cmd.add(max_id_arg);
     TCLAP::ValueArg<int> min_id_arg(
         "", "min-id", "Minimum MaterialID for an integrated borehole", false,
-        -1, "a number");
+        -1, "MIN_ID");
     cmd.add(min_id_arg);
-    TCLAP::ValueArg<std::string> geo_arg("g", "geo",
-                                         "Name of the geometry file (*.gml)",
-                                         true, "", "geometry file name");
+    TCLAP::ValueArg<std::string> geo_arg(
+        "g", "geo", "Input (.gml). Name of the geometry file", true, "",
+        "INPUT_FILE");
     cmd.add(geo_arg);
-    TCLAP::ValueArg<std::string> output_arg("o", "output",
-                                            "Name of the output mesh (*.vtu)",
-                                            true, "", "output file name");
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output", "Output (.vtu). Name of the mesh file", true, "",
+        "OUTPUT_FILE");
     cmd.add(output_arg);
-    TCLAP::ValueArg<std::string> input_arg("i", "input",
-                                           "Name of the input mesh (*.vtu)",
-                                           true, "", "input file name");
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input", "Input (.vtu). Name of the mesh file", true, "",
+        "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

@@ -85,17 +85,18 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in(
         "m", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name of input mesh");
+        "Input (.vtu). The name of the file containing the input mesh", true,
+        "", "INPUT_FILE");
     cmd.add(mesh_in);
     TCLAP::ValueArg<std::string> geo_in(
-        "g", "geo-file", "the name of the gml file containing the polygons",
-        true, "", "file name of input geometry");
+        "g", "geo-file",
+        "Input (.gml). The name of the input file containing the polygons",
+        true, "", "INPUT_FILE");
     cmd.add(geo_in);
 
-    TCLAP::ValueArg<std::string> gmsh_path_arg("", "gmsh-path",
-                                               "the path to the gmsh binary",
-                                               false, "", "path as string");
+    TCLAP::ValueArg<std::string> gmsh_path_arg(
+        "", "gmsh-path", "Input (.msh). The path to the input binary file",
+        false, "", "INPUT_FILE");
     cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 

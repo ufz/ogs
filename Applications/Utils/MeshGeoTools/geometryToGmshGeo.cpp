@@ -9,7 +9,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-// ThirdParty
 #include <tclap/CmdLine.h>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
@@ -29,40 +28,40 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> geo_output_arg(
-        "o", "output", "output gmsh geometry file (*.geo)", true, "",
-        "output file");
+        "o", "output", "Output (.geo) gmsh geometry file ", true, "",
+        "OUTPUT_FILE");
     cmd.add(geo_output_arg);
     TCLAP::MultiArg<std::string> geo_input_arg(
-        "i", "input", "input geometry file (*.gml)", true, "input file name");
+        "i", "input", "Input (.gml) geometry file", true, "INPUT_FILE");
     cmd.add(geo_input_arg);
     TCLAP::ValueArg<unsigned> max_number_of_points_in_quadtree_leaf_arg(
-        "", "max_points_in_quadtree_leaf", "positive number", false, 2,
-        "max points in a quadtree leaf before the leaf is split");
+        "", "max_points_in_quadtree_leaf", "positive number/ (min = 0)", false,
+        2, "POINTS_QUADTREE");
     cmd.add(max_number_of_points_in_quadtree_leaf_arg);
     TCLAP::ValueArg<double> mesh_density_scaling_points_arg(
-        "", "mesh_density_scaling_at_points", "positive floating point number",
-        false, 0.2, "desired mesh density at points");
+        "", "mesh_density_scaling_at_points",
+        "positive floating point number, (min = 0)", false, 0.2,
+        "SCALING_POINTS");
     cmd.add(mesh_density_scaling_points_arg);
     TCLAP::ValueArg<double> mesh_density_scaling_stations_arg(
         "", "mesh_density_scaling_at_stations",
-        "positive floating point number", false, 0.05,
-        "desired mesh density at stations");
+        "positive floating point number, (min = 0)", false, 0.05,
+        "SCALING_STATIONS");
     cmd.add(mesh_density_scaling_stations_arg);
     TCLAP::ValueArg<double> average_point_density_arg(
         "a", "average_point_density",
         "average point density / average edge length as a positive floating "
-        "point number",
-        false, 1,
-        "desired point density / edge length in homogeneous meshing approach");
+        "point number, (min = 0)",
+        false, 1, "AVERAGE_POINT_DENSITY");
     cmd.add(average_point_density_arg);
     TCLAP::SwitchArg homogeneous_flag(
         "", "homogeneous", "Use Gmsh homogeneous meshing method.", false);
     cmd.add(homogeneous_flag);
     TCLAP::ValueArg<std::string> merged_geometries_output(
         "", "write_merged_geometries",
-        "file name for the output of the internal created geometry (*.gml) "
-        "(useful for debugging the data)",
-        false, "", "output file name");
+        "Output (.gml). File name for the output of the internal created "
+        "geometry (useful for debugging the data)",
+        false, "", "OUTPUT_FILE");
     cmd.add(merged_geometries_output);
 
     cmd.parse(argc, argv);
