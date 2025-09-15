@@ -20,6 +20,7 @@
 
 #include "BaseLib/Algorithm.h"
 #include "IterationNumberBasedTimeStepping.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseConstantInterpolation.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace NumLib
@@ -118,13 +119,11 @@ double findMultiplier(
         }
         case MultiplyerInterpolationType::PiecewiseConstant:
             DBUG("Using piecewise constant iteration-based time stepping.");
-            for (std::size_t i = 0; i < nonlinear_iteration_numbers.size(); i++)
-            {
-                if (number_iterations >= nonlinear_iteration_numbers[i])
-                {
-                    multiplier = multipliers[i];
-                }
-            }
+            auto const& piecewise_constant_interpolation =
+                MathLib::PiecewiseConstantInterpolation(
+                    nonlinear_iteration_numbers, multipliers);
+            multiplier =
+                piecewise_constant_interpolation.value(number_iterations);
             break;
     }
 
