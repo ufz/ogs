@@ -12,6 +12,7 @@
 #include "FormEigenVector.h"
 
 #include "MaterialLib/MPL/PropertyType.h"
+#include "MathLib/FormattingUtils.h"
 
 namespace MaterialPropertyLib
 {
@@ -32,7 +33,8 @@ struct FormEigenVector
         {
             return Eigen::Matrix<double, 3, 1>{value, value, value};
         }
-        OGS_FATAL("Cannot convert a scalar to a {:d}d vector.", GlobalDim);
+        OGS_FATAL("Cannot convert a scalar {} to a {:d}d vector.", value,
+                  GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
@@ -42,7 +44,9 @@ struct FormEigenVector
         {
             return values;
         }
-        OGS_FATAL("Cannot convert a 2d vector to a {:d}d vector.", GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 2d vector with values [{}] to a {:d}d vector.",
+            values, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
@@ -52,37 +56,49 @@ struct FormEigenVector
         {
             return values;
         }
-        OGS_FATAL("Cannot convert a 3d vector to a {:d}d vector.", GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 3d vector with values [{}] to a {:d}d vector.",
+            values, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
-        Eigen::Matrix<double, 2, 2> const& /*values*/) const
+        Eigen::Matrix<double, 2, 2> const& values) const
     {
-        OGS_FATAL("Cannot convert a 2d tensor to a {:d}d Vector.", GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 2d tensor with values [{}] to a {:d}d Vector.",
+            values, GlobalDim);
     }
     Eigen::Matrix<double, GlobalDim, 1> operator()(
-        Eigen::Matrix<double, 3, 3> const& /*values*/) const
+        Eigen::Matrix<double, 3, 3> const& values) const
     {
-        OGS_FATAL("Cannot convert a 3d tensor to a {:d}d Vector.", GlobalDim);
-    }
-
-    Eigen::Matrix<double, GlobalDim, 1> operator()(
-        Eigen::Matrix<double, 4, 1> const& /*values*/) const
-    {
-        OGS_FATAL("Cannot convert a 4d vector to a {:d}d vector.", GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 3d tensor with values [{}] to a {:d}d Vector.",
+            values, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
-        Eigen::Matrix<double, 6, 1> const& /*values*/) const
+        Eigen::Matrix<double, 4, 1> const& values) const
     {
-        OGS_FATAL("Cannot convert a 6d vector to a {:d}d vector.", GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 4d vector with values [{}] to a {:d}d vector.",
+            values, GlobalDim);
     }
 
     Eigen::Matrix<double, GlobalDim, 1> operator()(
-        Eigen::MatrixXd const& /*values*/) const
+        Eigen::Matrix<double, 6, 1> const& values) const
     {
-        OGS_FATAL("Cannot convert a dynamic Eigen matrix to a {:d}d vector ",
-                  GlobalDim);
+        OGS_FATAL(
+            "Cannot convert a 6d vector with values [{}] to a {:d}d vector.",
+            values, GlobalDim);
+    }
+
+    Eigen::Matrix<double, GlobalDim, 1> operator()(
+        Eigen::MatrixXd const& values) const
+    {
+        OGS_FATAL(
+            "Cannot convert a dynamic {}x{} Eigen matrix with values [{}] to a "
+            "{:d}d vector ",
+            values.rows(), values.cols(), values, GlobalDim);
     }
 };
 

@@ -12,6 +12,7 @@
 #include "GetSymmetricTensor.h"
 
 #include "MaterialLib/MPL/PropertyType.h"
+#include "MathLib/FormattingUtils.h"
 
 namespace MaterialPropertyLib
 {
@@ -47,7 +48,9 @@ struct GetSymmetricTensor
             result << values(0, 0), values(1, 1), 0., values(0, 1);
             return result;
         }
-        OGS_FATAL("Cannot convert 2d matrix to 3d symmetric Tensor.");
+        OGS_FATAL(
+            "Cannot convert 2d matrix with values [{}] to 3d symmetric Tensor.",
+            values);
     }
 
     SymmetricTensor<GlobalDim> operator()(Eigen::Matrix3d const& values) const
@@ -59,7 +62,10 @@ struct GetSymmetricTensor
                 values(1, 2), values(0, 2);
             return result;
         }
-        OGS_FATAL("Cannot convert 3d matrix to 2d symmetric Tensor.");
+        OGS_FATAL(
+            "Cannot convert 3d matrix with values [{}] to 2d symmetric "
+            "Tensor.",
+            values);
     }
 
     SymmetricTensor<GlobalDim> operator()(
@@ -69,7 +75,10 @@ struct GetSymmetricTensor
         {
             return values;
         }
-        OGS_FATAL("Cannot convert 3d symmetric tensor to 2d symmetric tensor.");
+        OGS_FATAL(
+            "Cannot convert 3d symmetric tensor with values [{}] to 2d "
+            "symmetric tensor.",
+            values);
     }
 
     SymmetricTensor<GlobalDim> operator()(
@@ -79,15 +88,18 @@ struct GetSymmetricTensor
         {
             return values;
         }
-        OGS_FATAL("Cannot convert 2d symmetric tensor to 3d symmetric tensor.");
+        OGS_FATAL(
+            "Cannot convert 2d symmetric tensor with values [{}] to 3d "
+            "symmetric tensor.",
+            values);
     }
 
-    SymmetricTensor<GlobalDim> operator()(
-        Eigen::MatrixXd const& /*values*/) const
+    SymmetricTensor<GlobalDim> operator()(Eigen::MatrixXd const& values) const
     {
         OGS_FATAL(
-            "Cannot convert dynamic Eigen matrix to {:d}d symmetric tensor.",
-            GlobalDim);
+            "Cannot convert dynamic Eigen {}x{} matrix with values [{}] to "
+            "{:d}d symmetric tensor.",
+            values.rows(), values.cols(), values, GlobalDim);
     }
 };
 
