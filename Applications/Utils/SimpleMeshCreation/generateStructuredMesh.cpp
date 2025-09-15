@@ -76,80 +76,102 @@ int main(int argc, char* argv[])
     allowed_ele_types.emplace_back("tet");
     allowed_ele_types.emplace_back("pyramid");
     TCLAP::ValuesConstraint<std::string> allowedVals(allowed_ele_types);
-    TCLAP::ValueArg<std::string> eleTypeArg(
-        "e", "element-type",
-        "element type to be created: line | tri | quad | hex | prism | tet | "
-        "pyramid",
-        true, "line", &allowedVals);
+    TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type",
+                                            "element type to be created", true,
+                                            "line", &allowedVals);
     cmd.add(eleTypeArg);
     TCLAP::ValueArg<std::string> mesh_out(
         "o", "mesh-output-file",
-        "the name of the file the mesh will be written to", true, "",
-        "file name of output mesh");
+        "Output (.vtu). The name of the file the mesh will be written to", true,
+        "", "OUTPUT_FILE");
     cmd.add(mesh_out);
-    TCLAP::ValueArg<double> lengthXArg(
-        "", "lx", "length of a domain in x direction", false, 10.0, "real");
+    TCLAP::ValueArg<double> lengthXArg("", "lx",
+                                       "length of a domain in x direction, "
+                                       "(min = 0)",
+                                       false, 10.0, "LENGTH_X");
     cmd.add(lengthXArg);
-    TCLAP::ValueArg<double> lengthYArg(
-        "", "ly", "length of a domain in y direction", false, 10.0, "real");
+    TCLAP::ValueArg<double> lengthYArg("", "ly",
+                                       "length of a domain in y direction, "
+                                       "(min = 0)",
+                                       false, 10.0, "LENGTH_Y");
     cmd.add(lengthYArg);
-    TCLAP::ValueArg<double> lengthZArg(
-        "", "lz", "length of a domain in z direction", false, 10.0, "real");
+    TCLAP::ValueArg<double> lengthZArg("", "lz",
+                                       "length of a domain in z direction, "
+                                       "(min = 0)",
+                                       false, 10.0, "LENGTH_Z");
     cmd.add(lengthZArg);
     TCLAP::ValueArg<unsigned> nsubdivXArg(
-        "", "nx", "the number of subdivision in x direction", false, 10,
-        "integer");
+        "", "nx",
+        "the number of subdivision in x direction, "
+        "(min = 0)",
+        false, 10, "SUBDIVISIONS_X");
     cmd.add(nsubdivXArg);
     TCLAP::ValueArg<unsigned> nsubdivYArg(
-        "", "ny", "the number of subdivision in y direction", false, 10,
-        "integer");
+        "", "ny",
+        "the number of subdivision in y direction, "
+        "(min = 0)",
+        false, 10, "SUBDIVISIONS_Y");
     cmd.add(nsubdivYArg);
     TCLAP::ValueArg<unsigned> nsubdivZArg(
-        "", "nz", "the number of subdivision in z direction", false, 10,
-        "integer");
+        "", "nz",
+        "the number of subdivision in z direction, "
+        "(min = 0)",
+        false, 10, "SUBDIVISIONS_Z");
     cmd.add(nsubdivZArg);
     // in case of gradual refinement
-    TCLAP::ValueArg<double> d0XArg(
-        "", "dx0", "initial cell length in x direction", false, 1, "real");
+    TCLAP::ValueArg<double> d0XArg("", "dx0",
+                                   "initial cell length in x direction, "
+                                   "(min = 0)",
+                                   false, 1, "INITIAL_X");
     cmd.add(d0XArg);
-    TCLAP::ValueArg<double> d0YArg(
-        "", "dy0", "initial cell length in y direction", false, 1, "real");
+    TCLAP::ValueArg<double> d0YArg("", "dy0",
+                                   "initial cell length in y direction, "
+                                   "(min = 0)",
+                                   false, 1, "INITIAL_Y");
     cmd.add(d0YArg);
-    TCLAP::ValueArg<double> d0ZArg(
-        "", "dz0", "initial cell length in z direction", false, 1, "real");
+    TCLAP::ValueArg<double> d0ZArg("", "dz0",
+                                   "initial cell length in z direction, "
+                                   "(min = 0)",
+                                   false, 1, "INITIAL_Z");
     cmd.add(d0ZArg);
-    TCLAP::ValueArg<double> dmaxXArg(
-        "", "dx-max", "maximum cell length in x direction", false,
-        std::numeric_limits<double>::max(), "real");
+    TCLAP::ValueArg<double> dmaxXArg("", "dx-max",
+                                     "maximum cell length in x direction, "
+                                     "(min = 0)",
+                                     false, std::numeric_limits<double>::max(),
+                                     "MAX_X");
     cmd.add(dmaxXArg);
-    TCLAP::ValueArg<double> dmaxYArg(
-        "", "dy-max", "maximum cell length in y direction", false,
-        std::numeric_limits<double>::max(), "real");
+    TCLAP::ValueArg<double> dmaxYArg("", "dy-max",
+                                     "maximum cell length in y direction, "
+                                     "(min = 0)",
+                                     false, std::numeric_limits<double>::max(),
+                                     "MAX_Y");
     cmd.add(dmaxYArg);
-    TCLAP::ValueArg<double> dmaxZArg(
-        "", "dz-max", "maximum cell length in z direction", false,
-        std::numeric_limits<double>::max(), "real");
+    TCLAP::ValueArg<double> dmaxZArg("", "dz-max",
+                                     "maximum cell length in z direction, "
+                                     "(min = 0)",
+                                     false, std::numeric_limits<double>::max(),
+                                     "MAX_Z");
     cmd.add(dmaxZArg);
     TCLAP::ValueArg<double> multiXArg("", "mx", "multiplier in x direction",
-                                      false, 1, "real");
+                                      false, 1, "MULTIPLIER_X");
     cmd.add(multiXArg);
     TCLAP::ValueArg<double> multiYArg("", "my", "multiplier in y direction",
-                                      false, 1, "real");
+                                      false, 1, "MULTIPLIER_Y");
     cmd.add(multiYArg);
     TCLAP::ValueArg<double> multiZArg("", "mz", "multiplier in z direction",
-                                      false, 1, "real");
+                                      false, 1, "MULTIPLIER_Z");
     cmd.add(multiZArg);
     TCLAP::ValueArg<double> originXArg(
         "", "ox", "mesh origin (lower left corner) in x direction", false, 0,
-        "real");
+        "ORIGIN_X");
     cmd.add(originXArg);
     TCLAP::ValueArg<double> originYArg(
         "", "oy", "mesh origin (lower left corner) in y direction", false, 0,
-        "real");
+        "ORIGIN_Y");
     cmd.add(originYArg);
     TCLAP::ValueArg<double> originZArg(
         "", "oz", "mesh origin (lower left corner) in z direction", false, 0,
-        "real");
+        "ORIGIN_Z");
     cmd.add(originZArg);
 
     // parse arguments

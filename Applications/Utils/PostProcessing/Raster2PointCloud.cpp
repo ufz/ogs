@@ -7,15 +7,14 @@
  *              http://www.opengeosys.org/project/license
  */
 
-#include <algorithm>
-#include <memory>
-#include <string>
-
-// ThirdParty
 #include <tclap/CmdLine.h>
 #include <vtkPolyDataAlgorithm.h>
 #include <vtkSmartPointer.h>
 #include <vtkXMLPolyDataWriter.h>
+
+#include <algorithm>
+#include <memory>
+#include <string>
 
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkImageDataToPointCloudFilter.h"
@@ -54,27 +53,31 @@ int main(int argc, char* argv[])
     cmd.add(gamma_arg);
     TCLAP::ValueArg<std::size_t> max_points_arg(
         "p", "max-points",
-        "Maximum number of points per pixel (default: 1000).", false, 0,
-        "maximum points per pixel");
+        "Maximum number of points per pixel (default: 1000), "
+        "(min = 0).",
+        false, 0, "maximum points per pixel");
     cmd.add(max_points_arg);
     TCLAP::ValueArg<double> max_height_arg(
         "e", "max-elevation",
-        "Maximum elevation of randomly created points (default: 5000).", false,
-        0.0, "maximum point elevation");
+        "Maximum elevation of randomly created points "
+        "(default: 5000).",
+        false, 0.0, "maximum point elevation");
     cmd.add(max_height_arg);
     TCLAP::ValueArg<std::string> output_arg(
         "o", "output",
-        "Path to output polydata files (*.vtp). Specifying 'file.vtp' will "
+        "Output (.vtp). Path to output polydata files. "
+        "Specifying 'file.vtp' will "
         "make the programme write a series of files called 'file0.vtp', "
         "'file1.vtp', etc.",
-        true, "", "output file name");
+        true, "", "OUTPUT_FILE");
     cmd.add(output_arg);
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input",
-        "Path to input raster files (*.asc). Specifying 'file.asc' will make "
+        "Input (.asc). Path to input raster files. "
+        "Specifying 'file.asc' will make "
         "the programme look for a series of files called 'file0.asc', "
         "'file1.asc', etc.",
-        true, "", "input file name");
+        true, "", "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 
