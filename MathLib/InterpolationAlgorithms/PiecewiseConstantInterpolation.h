@@ -14,6 +14,8 @@
 
 #include <vector>
 
+#include "BaseLib/Logging.h"
+
 namespace MathLib
 {
 /**
