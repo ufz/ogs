@@ -75,7 +75,7 @@ test linux wheel via notebooks:
         changed_py_files=$(git diff --name-only "$base_ref" "$CI_COMMIT_SHA" \
           | grep '^Tests/Data/.*\.py$' \
           | sed 's%^Tests/Data/%%' \
-          | grep -Ev '(\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc)' \
+          | grep -Ev '(\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc|PorePy)' \
           | grep -v '(standard input)' \
           || true)
 
