@@ -20,12 +20,14 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #ifndef WIN32
 #include "BaseLib/MemWatch.h"
 #endif
 
 #include "Applications/FileIO/Gmsh/GmshReader.h"
+#include "BaseLib/Logging.h"
 #include "GeoLib/AABB.h"
 #include "MeshGeoToolsLib/IdentifySubdomainMesh.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -162,6 +164,9 @@ int main(int argc, char* argv[])
         "if set, lines will not be written to the ogs mesh");
     cmd.add(exclude_lines_arg);
 
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
+
     std::string const gmsh2_opt_message =
         "if set, the mesh is generated with Gmsh version 2 and it is saved"
         " (or exported) as \"Version 2 ASCII\" format";
@@ -172,6 +177,7 @@ int main(int argc, char* argv[])
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     // *** read mesh
     INFO("Reading {:s}.", gmsh_mesh_arg.getValue());

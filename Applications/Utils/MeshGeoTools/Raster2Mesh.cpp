@@ -12,7 +12,9 @@
 #include <memory>
 #include <string>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
@@ -66,9 +68,12 @@ int main(int argc, char* argv[])
         "i", "input", "Input (.asc). Name of the input raster file", true, "",
         "INPUT_FILE");
     cmd.add(input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();

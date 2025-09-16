@@ -17,17 +17,12 @@
 
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 
 int main(int argc, char* argv[])
 {
-    WARN(
-        "Due to lack of functionality to handle VTU field data, this tool is "
-        "replaced with a new tool, pvtu2vtu. Please use pvtu2vtu instead. If "
-        "you use this tool, please make sure that the field data of the VTU "
-        "file are not used in an OGS simulation.");
-
     TCLAP::CmdLine cmd(
         "Reads a VTK partitioned unstructured grid (*.pvtu), cleans the ghost "
         "information and saves the data as as a regular, connected mesh file."
@@ -47,9 +42,19 @@ int main(int argc, char* argv[])
         "i", "input", "Input (.pvtu). The partitioned input mesh file", true,
         "", "INPUT_FILE");
     cmd.add(input_arg);
+
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
+
+    WARN(
+        "Due to lack of functionality to handle VTU field data, this tool is "
+        "replaced with a new tool, pvtu2vtu. Please use pvtu2vtu instead. If "
+        "you use this tool, please make sure that the field data of the VTU "
+        "file are not used in an OGS simulation.");
 
     vtkSmartPointer<vtkXMLPUnstructuredGridReader> reader =
         vtkSmartPointer<vtkXMLPUnstructuredGridReader>::New();

@@ -10,7 +10,9 @@
 #include <tclap/CmdLine.h>
 #include <vtkXMLUnstructuredGridReader.h>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
@@ -63,9 +65,12 @@ int main(int argc, char* argv[])
         "i", "input", "Input (.vtu | .msh). The 3D input mesh file", true, "",
         "INPUT_FILE");
     cmd.add(input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     if ((y_arg.isSet() && !z_arg.isSet()) ||
         ((!y_arg.isSet() && z_arg.isSet())))

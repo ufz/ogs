@@ -12,7 +12,9 @@
 
 #include <memory>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -69,10 +71,13 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> eleTypeArg("e", "element-type", "element type",
                                             false, "", &allowed_elems);
     cmd.add(eleTypeArg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
 
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     if (!replaceArg.isSet() && !condenseArg.isSet() && !specifyArg.isSet())
     {

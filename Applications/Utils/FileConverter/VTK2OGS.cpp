@@ -16,7 +16,9 @@
 
 #include <string>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -42,9 +44,12 @@ int main(int argc, char* argv[])
         "Output (.msh). The name of the file the mesh will be written to", true,
         "", "OUTPUT_FILE");
     cmd.add(mesh_out);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     MeshLib::Mesh* mesh(
         MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));

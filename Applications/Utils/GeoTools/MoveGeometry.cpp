@@ -13,7 +13,9 @@
 
 #include <tclap/CmdLine.h>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -43,9 +45,12 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> geo_input_arg(
         "i", "input", "Input (.gml) geometry file", true, "", "INPUT_FILE");
     cmd.add(geo_input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     GeoLib::GEOObjects geo_objects;
     GeoLib::IO::BoostXmlGmlInterface xml(geo_objects);

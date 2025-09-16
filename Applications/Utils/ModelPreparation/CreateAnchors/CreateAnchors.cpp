@@ -7,7 +7,6 @@
  *
  */
 
-#include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
@@ -17,6 +16,8 @@
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "ComputeNaturalCoordsAlgorithm.h"
 #include "InfoLib/GitInfo.h"
 
@@ -224,18 +225,8 @@ int main(int argc, char** argv)
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> log_level_arg(
-        "l", "log-level",
-        "the verbosity of logging messages: "
-        "none, error, warn, "
-        "info, debug, all",
-        false,
-#ifdef NDEBUG
-        "info",
-#else
-        "all",
-#endif
-        "LOG_LEVEL", cmd);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
 
     TCLAP::ValueArg<std::string> input_filename_arg(
         "i", "input", "Input (.vtu) bulk mesh file", true, "", "INPUT_FILE",
@@ -262,14 +253,8 @@ int main(int argc, char** argv)
 
     cmd.parse(argc, argv);
 
-    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
-    spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler(
-        [](const std::string& msg)
-        {
-            std::cerr << "spdlog error: " << msg << std::endl;
-            OGS_FATAL("spdlog logger error occurred.");
-        });
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     AU::ComputeNaturalCoordsResult const json_data =
         readJSON(json_filename_arg);

@@ -10,8 +10,10 @@
 
 #include <tclap/CmdLine.h>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshGeoToolsLib/IdentifySubdomainMesh.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -95,9 +97,12 @@ int main(int argc, char* argv[])
         "subdomain_meshes_filenames", "mesh file names.", true,
         "SUBDOMAIN_NAME");
     cmd.add(subdomain_meshes_filenames_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     //
     // The bulk mesh.

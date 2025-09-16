@@ -12,7 +12,9 @@
 
 #include <numeric>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "GeoLib/Point.h"
@@ -232,9 +234,12 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> geo_output_arg(
         "o", "output", "Output (.gml) geometry file", true, "", "OUTPUT_FILE");
     cmd.add(geo_output_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     auto const p0 = GeoLib::Point{x0.getValue(), y0.getValue(), z0.getValue()};
     auto const p1 = GeoLib::Point{x1.getValue(), y1.getValue(), z1.getValue()};

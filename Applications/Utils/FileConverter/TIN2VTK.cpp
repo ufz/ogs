@@ -9,6 +9,8 @@
 
 #include <tclap/CmdLine.h>
 
+#include "BaseLib/TCLAPArguments.h"
+
 // STL
 #include <memory>
 #include <string>
@@ -26,6 +28,7 @@
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 
 // MeshLib
+#include "BaseLib/Logging.h"
 #include "MeshLib/Mesh.h"
 #include "MeshToolsLib/convertMeshToGeo.h"
 
@@ -51,9 +54,12 @@ int main(int argc, char* argv[])
         "the mesh will be written to",
         true, "", "OUTPUT_FILE");
     cmd.add(outArg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     INFO("reading the TIN file...");
     const std::string tinFileName(inArg.getValue());

@@ -16,7 +16,9 @@
 #include <string>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
@@ -51,7 +53,6 @@ double getClosestPointElevation(MeshLib::Node const& p,
 
 int main(int argc, char* argv[])
 {
-    BaseLib::MPI::Setup mpi_setup(argc, argv);
     TCLAP::CmdLine cmd(
         "Changes the elevation of 2D mesh nodes based on either raster data or "
         "another 2D mesh. In addition, a low pass filter can be applied to "
@@ -62,6 +63,8 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2025, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     TCLAP::SwitchArg lowpass_arg(
         "", "lowpass",
         "Applies a lowpass filter to elevation over connected nodes.", false);
@@ -96,6 +99,9 @@ int main(int argc, char* argv[])
         "i", "input", "Input (.vtu | .msh) mesh file", true, "", "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
+
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::readMeshFromFile(input_arg.getValue()));

@@ -10,7 +10,9 @@
 
 #include <tclap/CmdLine.h>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -78,9 +80,13 @@ int main(int argc, char* argv[])
         "Allows multiple mesh nodes in eps environment.");
     cmd.add(multiple_nodes_allowed_arg);
 
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
+
     std::unique_ptr<MeshLib::Mesh> mesh{
         MeshLib::IO::readMeshFromFile(mesh_arg.getValue())};
 

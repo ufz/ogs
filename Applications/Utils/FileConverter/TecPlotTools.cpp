@@ -15,8 +15,10 @@
 #include <string_view>
 #include <vector>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/StringTools.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/Point.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -475,9 +477,12 @@ int main(int argc, char* argv[])
                                            "Input (.plt). TecPlot input file",
                                            true, "", "INPUT_FILE");
     cmd.add(input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     if (!input_arg.isSet())
     {
