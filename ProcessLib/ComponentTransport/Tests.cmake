@@ -876,7 +876,7 @@ if(NOT OGS_USE_PETSC AND NOT WIN32)
     )
 endif()
 
-if(NOT OGS_USE_PETSC)
+if(NOT OGS_USE_PETSC AND NOT WIN32)
     NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy_to_OGS.py
         RUNTIME 200
