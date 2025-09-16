@@ -11,11 +11,4 @@ links = [
 ]
 +++
 
-<div class="not-prose">
-{{< figure
-  src="mt-terri.png"
-  class="float-right ml-8"
->}}
-</div>
-
 Unlike [laboratory experiments (LAB)]({{< relref "models/lab">}}) conducted under well-defined conditions, experimental analysis in underground research laboratories such as Mont Terri (Opalinus clay), Bure (Callovo-Oxfordian clay) and "Reiche Zeche" (gneiss) poses greater modelling challenges due to the uncertain subsurface conditions.
