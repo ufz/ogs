@@ -10,12 +10,11 @@
 
 #include <tclap/CmdLine.h>
 
-#include <memory>
 #include <string>
 
 namespace BaseLib
 {
 
-std::unique_ptr<TCLAP::ValueArg<std::string>> makeLogLevelArg();
+TCLAP::ValueArg<std::string> makeLogLevelArg();
 
 }  // namespace BaseLib
