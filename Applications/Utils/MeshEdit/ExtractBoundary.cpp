@@ -43,13 +43,14 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in(
         "i", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name of input mesh");
+        "Input (.vtu). The name of the file containing the input mesh", true,
+        "", "INPUT_FILE");
     cmd.add(mesh_in);
     TCLAP::ValueArg<std::string> mesh_out(
         "o", "mesh-output-file",
-        "the name of the file the surface mesh should be written to", false, "",
-        "file name of output mesh");
+        "Output (.vtu). The name of the file the surface mesh should be "
+        "written to",
+        false, "", "OUTPUT_FILE");
     cmd.add(mesh_out);
 
     TCLAP::SwitchArg use_ascii_arg("", "ascii-output",

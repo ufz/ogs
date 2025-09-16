@@ -37,12 +37,13 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> mesh_arg("m",
-                                          "mesh",
-                                          "the mesh to open from a file",
-                                          false,
-                                          "",
-                                          "filename for mesh input");
+    TCLAP::ValueArg<std::string> mesh_arg(
+        "m",
+        "mesh",
+        "Input (.msh). The mesh to open from a file",
+        false,
+        "",
+        "INPUT_FILE");
     cmd.add(mesh_arg);
 
     cmd.parse(argc, argv);

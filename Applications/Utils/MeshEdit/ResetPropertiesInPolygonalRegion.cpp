@@ -43,9 +43,10 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_out(
         "o", "mesh-output-file",
-        "the name of the file the mesh will be written to, format depends on "
+        "Output. The name of the file the mesh will be written to, format "
+        "depends on "
         "the given file name extension",
-        true, "", "file name");
+        true, "", "OUTPUT_FILE");
     cmd.add(mesh_out);
     TCLAP::ValueArg<std::string> polygon_name_arg(
         "p", "polygon-name", "name of polygon in the geometry", true, "",
@@ -53,9 +54,9 @@ int main(int argc, char* argv[])
     cmd.add(polygon_name_arg);
     TCLAP::ValueArg<std::string> geometry_fname(
         "g", "geometry",
-        "the name of the file containing the input geometry (gli or gml "
-        "format)",
-        true, "", "file name");
+        "Input (.gli | .gml). The name of the file containing the input "
+        "geometry",
+        true, "", "INPUT_FILE");
     cmd.add(geometry_fname);
     TCLAP::SwitchArg any_of_arg(
         "", "any_of",
@@ -66,29 +67,30 @@ int main(int argc, char* argv[])
     cmd.add(any_of_arg);
     TCLAP::ValueArg<char> char_property_arg(
         "c", "char-property-value", "new property value (data type char)",
-        false, 'A', "character");
+        false, 'A', "CHAR_PROPERTY_VALUE");
     cmd.add(char_property_arg);
     TCLAP::ValueArg<int> int_property_arg("i", "int-property-value",
                                           "new property value (data type int)",
-                                          false, 0, "number");
+                                          false, 0, "INT_PROPERTY_VALUE");
     cmd.add(int_property_arg);
     TCLAP::ValueArg<std::string> property_name_arg(
         "n", "property-name", "name of property in the mesh", false,
-        "MaterialIDs", "string");
+        "MaterialIDs", "PROPERTY_NAME");
     cmd.add(property_name_arg);
     TCLAP::ValueArg<int> restrict_arg(
         "r", "restrict-to-MaterialID",
         "Restrict resetting the property to the material id", false, -1,
-        "MaterialID");
+        "RESTRICT_MATERIAL_ID");
     cmd.add(restrict_arg);
     TCLAP::ValueArg<std::string> mesh_in(
         "m", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name");
+        "Input (.vtu | .vtk | .msh). The name of the file containing the input "
+        "mesh",
+        true, "", "INPUT_FILE");
     cmd.add(mesh_in);
-    TCLAP::ValueArg<std::string> gmsh_path_arg("", "gmsh-path",
-                                               "the path to the gmsh binary",
-                                               false, "", "path as string");
+    TCLAP::ValueArg<std::string> gmsh_path_arg(
+        "", "gmsh-path", "Input (.msh). The path to the input binary", false,
+        "", "INPUT_FILE");
     cmd.add(gmsh_path_arg);
     cmd.parse(argc, argv);
 

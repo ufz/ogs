@@ -53,15 +53,15 @@ int main(int argc, char* argv[])
         "m", "material-id",
         "The MaterialID for which elements should be extracted into a new "
         "mesh.",
-        false, 0, "Number specifying the MaterialID");
+        false, 0, "MATERIAL_ID");
     cmd.add(arg_mat_id);
-    TCLAP::ValueArg<std::string> output_arg("o", "output",
-                                            "Name of the output mesh (*.vtu)",
-                                            true, "", "output file name");
+    TCLAP::ValueArg<std::string> output_arg(
+        "o", "output", "Output (.vtu). Name of the output mesh", true, "",
+        "OUTPUT_FILE");
     cmd.add(output_arg);
-    TCLAP::ValueArg<std::string> input_arg("i", "input",
-                                           "Name of the input mesh (*.vtu)",
-                                           true, "", "input file name");
+    TCLAP::ValueArg<std::string> input_arg(
+        "i", "input", "Input (.vtu). Name of the input mesh", true, "",
+        "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

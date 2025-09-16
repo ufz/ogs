@@ -133,12 +133,14 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> arg_out_file(
-        "o", "output-file", "the name of the new PVD or VTU file", true, "",
-        "path");
+        "o", "output-file",
+        "Output (.vtu | .pvd). The name of the new PVD or VTU file", true, "",
+        "OUTPUT_PATH");
     cmd.add(arg_out_file);
     TCLAP::ValueArg<std::string> arg_in_file(
-        "i", "input-file", "the original PVD or VTU file name", true, "",
-        "path");
+        "i", "input-file",
+        "Input (.vtu | .pvd). The original PVD or VTU file name", true, "",
+        "INPUT_FILE");
     cmd.add(arg_in_file);
     TCLAP::SwitchArg nooverwrite_arg(
         "",

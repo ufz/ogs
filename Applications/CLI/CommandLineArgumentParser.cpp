@@ -15,7 +15,8 @@
 #include <tclap/CmdLine.h>
 
 #include "BaseLib/FileTools.h"
-#include "BaseLib/Logging.h"
+#include "BaseLib/TCLAPArguments.h"
+#include "BaseLib/TCLAPOutput.h"
 #include "InfoLib/CMakeInfo.h"
 #include "InfoLib/GitInfo.h"
 
@@ -42,23 +43,9 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
         GitInfoLib::GitInfo::ogs_version + "\n\n" +
             "CMake arguments: " + CMakeInfoLib::CMakeInfo::cmake_args);
 
+    BaseLib::TCLAPOutput tclapOutput;
+    cmd.setOutput(&tclapOutput);
     cmd.setExceptionHandling(exit_on_exception);
-
-    TCLAP::ValueArg<std::string> log_level_arg(
-        "l", "log-level",
-        "the verbosity of logging messages: none, error, warn, info, "
-        "debug, "
-        "all",
-        false,
-#ifdef NDEBUG
-        "info",
-#else
-        "all",
-#endif
-        "LOG_LEVEL");
-
-    TCLAP::SwitchArg log_parallel("", "log-parallel",
-                                  "enables all MPI ranks to log");
 
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
                 // currently
@@ -70,36 +57,39 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
 
     TCLAP::ValueArg<std::string> reference_path_arg(
         "r", "reference",
-        "Run output result comparison after successful simulation "
+        "Input. Run output result comparison after successful simulation "
         "comparing to all files in the given path. This requires test "
         "definitions to be present in the project file.",
-        false, "", "PATH");
+        false, "", "REF_PATH");
 
     TCLAP::UnlabeledValueArg<std::string> project_arg(
         "project-file",
-        "Path to the ogs6 project file.",
+        "Input (.prj|.xml). Path to the ogs6 project file",
         true,
         "",
         "PROJECT_FILE");
 
     TCLAP::MultiArg<std::string> xml_patch_files_arg(
         "p", "xml-patch",
-        "the xml patch file(s) which is (are) applied (in the given order) "
+        "Input (.xml). The xml patch file(s) which is (are) applied (in the "
+        "given order) "
         "to the PROJECT_FILE",
-        false, "");
+        false, "XML_PATCH_FILE");
 
-    TCLAP::ValueArg<std::string> outdir_arg("o", "output-directory",
-                                            "the output directory to write to",
-                                            false, "", "PATH");
+    TCLAP::ValueArg<std::string> outdir_arg(
+        "o", "output-directory", "Output. The output directory to write to",
+        false, "", "OUTPUT_PATH");
 
     TCLAP::ValueArg<std::string> mesh_dir_arg(
         "m", "mesh-input-directory",
-        "the directory where the meshes are read from", false, "", "PATH");
+        "Input. The directory where the meshes are read from", false, "",
+        "MESH_DIR_PATH");
 
     TCLAP::ValueArg<std::string> script_dir_arg(
         "s", "script-input-directory",
-        "the directory where script files (e.g. Python BCs) are read from",
-        false, "", "PATH");
+        "Input. The directory where script files (e.g. Python BCs) are read "
+        "from",
+        false, "", "SCRIPT_DIR_PATH");
 
     TCLAP::SwitchArg write_prj_arg("",
                                    "write-prj",
@@ -117,8 +107,8 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     cmd.add(mesh_dir_arg);
     cmd.add(script_dir_arg);
     cmd.add(write_prj_arg);
-    cmd.add(log_level_arg);
-    cmd.add(log_parallel);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg.get());
     cmd.add(nonfatal_arg);
     cmd.add(unbuffered_cout_arg);
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
@@ -144,8 +134,7 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
                               ? BaseLib::getProjectDirectory()
                               : script_dir_arg.getValue();
     cli_args.nonfatal = nonfatal_arg.getValue();
-    cli_args.log_level = log_level_arg.getValue();
-    cli_args.log_parallel = log_parallel.getValue();
+    cli_args.log_level = log_level_arg->getValue();
     cli_args.write_prj = write_prj_arg.getValue();
 
     // deactivate buffer for standard output if specified

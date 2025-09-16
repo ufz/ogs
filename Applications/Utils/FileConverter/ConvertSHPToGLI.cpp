@@ -172,12 +172,14 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2025, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> shapefile_arg("s",
-                                               "shape-file",
-                                               "the name of the shape file ",
-                                               true,
-                                               "",
-                                               "shape file");
+    TCLAP::ValueArg<std::string> shapefile_arg(
+        "s",
+        "shape-file",
+        "Input (.shp). The name of the input shape "
+        "file",
+        true,
+        "",
+        "INPUT_FILE");
     cmd.add(shapefile_arg);
 
     cmd.parse(argc, argv);

@@ -70,19 +70,23 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in(
         "i", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name of input mesh");
+        "Input (.vtu). The name of the file containing the input mesh", true,
+        "", "INPUT_FILE");
     cmd.add(mesh_in);
+
+    std::vector<std::string> allowed_types_vector{
+        "bulk_node_ids", "bulk_element_ids", "bulk_edge_ids", "bulk_face_ids"};
+    TCLAP::ValuesConstraint<std::string> allowed_types(allowed_types_vector);
     TCLAP::ValueArg<std::string> id_prop_name(
         "", "id-prop-name",
         "the name of the property containing the id information", false,
-        std::string(MeshLib::getBulkIDString(MeshLib::MeshItemType::Node)),
-        "property name");
+        "bulk_node_ids", &allowed_types);
     cmd.add(id_prop_name);
     TCLAP::ValueArg<std::string> out_base_fname(
         "p", "output-base-name",
-        "the path and base file name the output will be written to", false, "",
-        "output path and base name as one string");
+        "Output (.csv | .txt). The path and base file name the output will be "
+        "written to",
+        false, "", "BASE_FILENAME_OUTPUT");
     cmd.add(out_base_fname);
 
     cmd.parse(argc, argv);

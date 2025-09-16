@@ -467,11 +467,13 @@ int main(int argc, char* argv[])
     TCLAP::SwitchArg convert_arg("c", "convert",
                                  "convert TecPlot data into OGS meshes");
     cmd.add(convert_arg);
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-file", "output mesh file", false, "", "string");
+    TCLAP::ValueArg<std::string> output_arg("o", "output-file",
+                                            "Output (.vtu). Output mesh file",
+                                            false, "", "OUTPUT_FILE");
     cmd.add(output_arg);
-    TCLAP::ValueArg<std::string> input_arg(
-        "i", "input-file", "TecPlot input file", true, "", "string");
+    TCLAP::ValueArg<std::string> input_arg("i", "input-file",
+                                           "Input (.plt). TecPlot input file",
+                                           true, "", "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

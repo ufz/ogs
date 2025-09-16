@@ -34,13 +34,13 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_in(
         "i", "mesh-input-file",
-        "the name of the file containing the input mesh", true, "",
-        "file name of input mesh");
+        "Input (.vtk). The name of the file containing the input mesh", true,
+        "", "INPUT_FILE");
     cmd.add(mesh_in);
     TCLAP::ValueArg<std::string> mesh_out(
         "o", "mesh-output-file",
-        "the name of the file the mesh will be written to", true, "",
-        "file name of output mesh");
+        "Output (.msh). The name of the file the mesh will be written to", true,
+        "", "OUTPUT_FILE");
     cmd.add(mesh_out);
     cmd.parse(argc, argv);
 

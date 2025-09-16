@@ -38,25 +38,26 @@ int main(int argc, char* argv[])
     // Define a value argument and add it to the command line.
     // A value arg defines a flag and a type of value that it expects,
     // such as "-m meshfile".
-    TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "input mesh file", true,
-                                          "", "string");
+    TCLAP::ValueArg<std::string> mesh_arg("m", "mesh", "Input (.vtu) mesh file",
+                                          true, "", "INPUT_FILE");
 
     // Add the argument mesh_arg to the CmdLine object. The CmdLine object
     // uses this Arg to parse the command line.
     cmd.add(mesh_arg);
 
     TCLAP::ValueArg<double> x_arg("x", "x", "displacement in x direction",
-                                  false, 0.0, "floating point number");
+                                  false, 0.0, "DISPLACEMENT_X");
     cmd.add(x_arg);
     TCLAP::ValueArg<double> y_arg("y", "y", "displacement in y direction",
-                                  false, 0.0, "floating point number");
+                                  false, 0.0, "DISPLACEMENT_Y");
     cmd.add(y_arg);
     TCLAP::ValueArg<double> z_arg("z", "z", "displacement in z direction",
-                                  false, 0.0, "floating point number");
+                                  false, 0.0, "DISPLACEMENT_Z");
     cmd.add(z_arg);
 
-    TCLAP::ValueArg<std::string> mesh_out_arg(
-        "o", "output-mesh", "output mesh file", false, "", "string");
+    TCLAP::ValueArg<std::string> mesh_out_arg("o", "output-mesh",
+                                              "Output (.vtu) mesh file", false,
+                                              "", "OUTPUT_FILE");
     cmd.add(mesh_out_arg);
 
     cmd.parse(argc, argv);

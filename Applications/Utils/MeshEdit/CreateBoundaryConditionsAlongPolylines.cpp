@@ -141,41 +141,44 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> output_base_fname(
         "o", "output-base-file-name",
-        "the base name of the file the output (geometry (gli) and boundary "
+        "Output. The base name of the file the output (geometry (gli) and "
+        "boundary "
         "condition (bc)) will be written to",
-        true, "", "file name");
+        true, "", "BASE_FILENAME_OUTPUT");
     cmd.add(output_base_fname);
 
+    std::vector<std::string> allowed_types_vector{"LIQUID_FLOW",
+                                                  "GROUNDWATER_FLOW"};
+    TCLAP::ValuesConstraint<std::string> allowed_types(allowed_types_vector);
     TCLAP::ValueArg<std::string> bc_type(
         "t", "type",
         "the process type the boundary condition will be written for currently "
         "LIQUID_FLOW (primary variable PRESSURE1) and GROUNDWATER_FLOW "
-        "(primary variable HEAD, default) are supported",
-        true, "",
-        "process type as string (LIQUID_FLOW or GROUNDWATER_FLOW (default))");
+        "(primary variable HEAD, default) are supported, ",
+        true, "", &allowed_types);
     cmd.add(bc_type);
 
     TCLAP::ValueArg<double> search_length_arg(
-        "s", "search-length",
-        "The size of the search length. The default value is "
-        "std::numeric_limits<double>::epsilon()",
-        false, std::numeric_limits<double>::epsilon(), "floating point number");
+        "s", "search-length", "The size of the search length ", false,
+        std::numeric_limits<double>::epsilon(), "SEARCH_LENGTH");
     cmd.add(search_length_arg);
 
     TCLAP::ValueArg<std::string> geometry_fname(
         "i", "input-geometry",
-        "the name of the file containing the input geometry", true, "",
-        "file name");
+        "Input (.gml | .gli). The name of the input file containing the "
+        "geometry",
+        true, "", "INPUT_FILE");
     cmd.add(geometry_fname);
 
     TCLAP::ValueArg<std::string> mesh_arg(
-        "m", "mesh-file", "the name of the file containing the mesh", true, "",
-        "file name");
+        "m", "mesh-file",
+        "Input (.vtu). The name of the input file containing the mesh", true,
+        "", "INPUT_FILE");
     cmd.add(mesh_arg);
 
-    TCLAP::ValueArg<std::string> gmsh_path_arg("g", "gmsh-path",
-                                               "the path to the gmsh binary",
-                                               false, "", "path as string");
+    TCLAP::ValueArg<std::string> gmsh_path_arg(
+        "g", "gmsh-path", "Input (.msh). The path to the gmsh binary", false,
+        "", "INPUT_FILE");
     cmd.add(gmsh_path_arg);
 
     cmd.parse(argc, argv);

@@ -50,14 +50,15 @@ int main(int argc, char* argv[])
     cmd.add(export_lines_arg);
 
     TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-dir", "output directory", true, "", "output dir");
+        "o", "output-dir", "Output directory", true, "", "OUTPUT_PATH");
     cmd.add(output_arg);
 
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input-file",
-        "Gocad triangular surfaces file (*.ts). Provide a file with unix file "
+        "Input (.ts | .pl | .mx). Gocad triangular surfaces file"
+        "Provide a file with unix file "
         "endings under unix. Use dos2unix to convert. ",
-        true, "", "filename.ts");
+        true, "", "INPUT_FILE");
     cmd.add(input_arg);
 
     cmd.parse(argc, argv);

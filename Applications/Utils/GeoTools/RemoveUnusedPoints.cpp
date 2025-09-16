@@ -51,10 +51,11 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> geo_output_arg(
-        "o", "output", "output geometry", true, "", "gml file");
+        "o", "output", "Output (.gml) geometry", true, "", "OUTPUT_FILE");
     cmd.add(geo_output_arg);
     TCLAP::ValueArg<std::string> geo_input_arg(
-        "i", "input", "input geometry", true, "conceptual model", "gml file");
+        "i", "input", "Input (.gml) geometry", true, "conceptual model",
+        "INPUT_FILE");
     cmd.add(geo_input_arg);
     cmd.parse(argc, argv);
 

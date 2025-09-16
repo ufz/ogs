@@ -35,13 +35,13 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::UnlabeledValueArg<std::string> mesh_arg(
-        "mesh-file", "input mesh file", true, "", "string");
+        "mesh-file", "Input (.vtu) mesh file", true, "", "INPUT_FILE");
     cmd.add(mesh_arg);
     TCLAP::MultiArg<std::size_t> eleId_arg("e", "element-id", "element ID",
-                                           false, "number");
+                                           false, "ELEMENT_ID");
     cmd.add(eleId_arg);
     TCLAP::MultiArg<std::size_t> nodeId_arg("n", "node-id", "node ID", false,
-                                            "number");
+                                            "NODE_ID");
     cmd.add(nodeId_arg);
     TCLAP::SwitchArg showNodeWithMaxEle_arg(
         "", "show-node-with-max-elements",

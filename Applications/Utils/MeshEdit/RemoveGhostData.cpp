@@ -39,12 +39,13 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
 
     TCLAP::ValueArg<std::string> output_arg(
-        "o", "output", "the output mesh (*.vtu)", true, "", "output.vtu");
+        "o", "output", "Output (.vtu). The output mesh file", true, "",
+        "OUTPUT_FILE");
     cmd.add(output_arg);
 
     TCLAP::ValueArg<std::string> input_arg(
-        "i", "input", "the partitioned input mesh (*.pvtu)", true, "",
-        "input.pvtu");
+        "i", "input", "Input (.pvtu). The partitioned input mesh file", true,
+        "", "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

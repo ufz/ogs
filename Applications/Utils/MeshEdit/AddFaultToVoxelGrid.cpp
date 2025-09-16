@@ -7,20 +7,20 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "MeshToolsLib/MeshGenerators/AddFaultToVoxelGrid.h"
+
+#include <tclap/CmdLine.h>
+
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
 
 #include "BaseLib/MPI.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Mesh.h"
-#include "MeshToolsLib/MeshGenerators/AddFaultToVoxelGrid.h"
 
 int main(int argc, char* argv[])
 {
@@ -39,25 +39,28 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2025, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<int> id_arg("m", "material",
-                                "material id for cells intersected by fault",
-                                false, mat_not_set, "non-negative integer");
+    TCLAP::ValueArg<int> id_arg(
+        "m", "material",
+        "material id for cells intersected by fault, (min = 0)", false,
+        mat_not_set, "MATERIAL_ID");
     cmd.add(id_arg);
 
     TCLAP::ValueArg<std::string> output_arg(
-        "o", "output", "name of output mesh (*.vtu)", true, "", "string");
+        "o", "output", "Output (.vtu). Name of output mesh file", true, "",
+        "OUTPUT_FILE");
     cmd.add(output_arg);
 
     TCLAP::ValueArg<std::string> fault_arg(
-        "f", "fault", "name of mesh representing fault (*.vtu)", true, "",
-        "string");
+        "f", "fault", "Input (.vtu). Name of mesh file representing fault",
+        true, "", "INPUT_FILE");
     cmd.add(fault_arg);
 
     TCLAP::ValueArg<std::string> input_arg(
         "i", "input",
-        "name of the input file list containing the paths the all input layers "
+        "Input (.vtu). Name of the input file containing the paths the "
+        "all input "
         "in correct order from top to bottom",
-        true, "", "string");
+        true, "", "INPUT_FILE");
     cmd.add(input_arg);
     cmd.parse(argc, argv);
 

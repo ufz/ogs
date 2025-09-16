@@ -48,27 +48,29 @@ int main(int argc, char* argv[])
         "s",
         "searchlength",
         "search length determining radius for the node search algorithm. "
-        "Non-negative floating point number (default 1e-16) ",
+        "Non-negative floating point number, (min = 0)",
         false,
         1e-16,
         "float");
     cmd.add(search_length_arg);
 
-    TCLAP::ValueArg<std::string> geometry_arg("g",
-                                              "geometry",
-                                              "the file name the geometry",
-                                              true,
-                                              "",
-                                              "geometry file name");
+    TCLAP::ValueArg<std::string> geometry_arg(
+        "g",
+        "geometry",
+        "Input (.gml | .gli). The file name of the input geometry",
+        true,
+        "",
+        "INPUT_FILE");
     cmd.add(geometry_arg);
 
     TCLAP::ValueArg<std::string> mesh_arg(
         "m",
         "mesh",
-        "the file name of the mesh where the geometry is defined",
+        "Input (.vtu). "
+        "The file name of the input mesh where the geometry is defined",
         true,
         "",
-        "mesh file name");
+        "INPUT_FILE");
     cmd.add(mesh_arg);
 
     TCLAP::SwitchArg multiple_nodes_allowed_arg(

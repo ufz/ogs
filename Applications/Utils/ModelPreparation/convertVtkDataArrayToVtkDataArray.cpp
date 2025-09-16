@@ -64,13 +64,15 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
+    std::vector<std::string> allowed_types_vector{"int", "double"};
+    TCLAP::ValuesConstraint<std::string> allowed_types(allowed_types_vector);
     TCLAP::ValueArg<std::string> new_property_data_type_arg(
         "t",
         "new-property-data-type",
-        "the name of the data type as string (int or double)",
+        "the name of the data type as string",
         false,
         "int",
-        "data type as string");
+        &allowed_types);
     cmd.add(new_property_data_type_arg);
 
     TCLAP::ValueArg<std::string> new_property_arg(
@@ -80,11 +82,12 @@ int main(int argc, char* argv[])
         "stored",
         false,
         "MaterialIDs",
-        "name of the new cell data array (PropertyVector) as string");
+        "NEW_PROP_NAME");
     cmd.add(new_property_arg);
 
-    TCLAP::ValueArg<std::string> out_mesh_arg(
-        "o", "out-mesh", "output mesh file name", true, "", "file name");
+    TCLAP::ValueArg<std::string> out_mesh_arg("o", "out-mesh",
+                                              "Output (.vtk) mesh file name",
+                                              true, "", "OUTPUT_FILE");
     cmd.add(out_mesh_arg);
 
     TCLAP::ValueArg<std::string> property_arg(
@@ -93,11 +96,11 @@ int main(int argc, char* argv[])
         "the name of the existing cell data array (PropertyVector)",
         true,
         "",
-        "property name as string");
+        "EXISTING_PROP_NAME");
     cmd.add(property_arg);
 
     TCLAP::ValueArg<std::string> mesh_arg(
-        "i", "in-mesh", "input mesh file name", true, "", "file name");
+        "i", "in-mesh", "Input (.vtk) mesh file name", true, "", "INPUT_FILE");
     cmd.add(mesh_arg);
 
     cmd.parse(argc, argv);

@@ -43,58 +43,61 @@ int main(int argc, char* argv[])
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> bulk_mesh_in(
         "b", "bulk-mesh-input-file",
-        "the name of the file containing the input bulk mesh", true, "",
-        "file name of the input bulk mesh");
+        "Input (.vtk | .msh). The name of the file containing the input bulk "
+        "mesh",
+        true, "", "INPUT_FILE");
     cmd.add(bulk_mesh_in);
     TCLAP::ValueArg<std::string> mesh_in(
         "i", "mesh-input-file",
-        "the name of the file containing the input mesh to be merged", true, "",
-        "file name of the input mesh to be merged");
+        "Input (.vtk | .msh). The name of the file containing the input mesh "
+        "to be merged",
+        true, "", "INPUT_FILE");
     cmd.add(mesh_in);
     TCLAP::ValueArg<std::string> mesh_out(
         "o", "mesh-output-file",
-        "the name of the file the merged mesh should be written to", true, "",
-        "file name of the merged mesh for output");
+        "Output (.vtk | .msh). The name of the file the merged mesh should be "
+        "written to",
+        true, "", "OUTPUT_FILE");
     cmd.add(mesh_out);
 
     TCLAP::ValueArg<double> p("", "pressure",
                               "initial pressure value in the mesh to be merged",
-                              false, 0.0, "floating point value");
+                              false, 0.0, "PRESSURE");
     cmd.add(p);
 
     TCLAP::ValueArg<double> pg(
         "", "gas_pressure",
         "initial gas pressure value in the mesh to be merged", false, 0.0,
-        "floating point value");
+        "GAS_PRESSURE");
     cmd.add(pg);
 
     TCLAP::ValueArg<double> pc(
         "", "capillary_pressure",
         "initial capillary pressure value in the mesh to be merged", false, 0.0,
-        "floating point value");
+        "CAPILLARY_PRESSURE");
     cmd.add(pc);
 
     TCLAP::ValueArg<double> T(
         "", "temperature", "initial temperature value in the mesh to be merged",
-        false, 290.0, "floating point value");
+        false, 290.0, "TEMPERATURE");
     cmd.add(T);
 
     TCLAP::ValueArg<double> sxx(
         "", "sigma_xx", "initial stress xx value in the mesh to be merged",
-        false, 0.0, "floating point value");
+        false, 0.0, "SIGMA_XX");
     cmd.add(sxx);
     TCLAP::ValueArg<double> syy(
         "", "sigma_yy", "initial stress yy value in the mesh to be merged",
-        false, 0.0, "floating point value");
+        false, 0.0, "SIGMA_YY");
     cmd.add(syy);
     TCLAP::ValueArg<double> szz(
         "", "sigma_zz", "initial stress zz value in the mesh to be merged",
-        false, 0.0, "floating point value");
+        false, 0.0, "SIGMA_ZZ");
     cmd.add(szz);
 
-    TCLAP::ValueArg<int> mat_id("", "material_id",
-                                "Material ID of the mesh to be merged", false,
-                                0.0, "integer cell value");
+    TCLAP::ValueArg<int> mat_id(
+        "", "material_id", "Material ID of the mesh to be merged, (min = 0)",
+        false, 0.0, "MATERIAL_ID");
     cmd.add(mat_id);
 
     cmd.parse(argc, argv);

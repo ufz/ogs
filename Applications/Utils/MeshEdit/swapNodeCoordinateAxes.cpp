@@ -97,17 +97,19 @@ int main(int argc, char* argv[])
             "Copyright (c) 2012-2025, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
-    TCLAP::ValueArg<std::string> input_arg(
-        "i", "input-mesh-file", "input mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> input_arg("i", "input-mesh-file",
+                                           "Input (.vtu) mesh file", true, "",
+                                           "INPUT_FILE");
     cmd.add(input_arg);
-    TCLAP::ValueArg<std::string> output_arg(
-        "o", "output-mesh-file", "output mesh file", true, "", "string");
+    TCLAP::ValueArg<std::string> output_arg("o", "output-mesh-file",
+                                            "Output (.vtu) mesh file", true, "",
+                                            "OUTPUT_FILE");
     cmd.add(output_arg);
     TCLAP::ValueArg<std::string> new_order_arg(
         "n", "new-order",
         "the new order of swapped coordinate values (e.g. 'xzy' for converting "
         "XYZ values to XZY values)",
-        true, "", "string");
+        true, "", "NEW_ORDER");
     cmd.add(new_order_arg);
     cmd.parse(argc, argv);
 

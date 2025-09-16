@@ -8,7 +8,6 @@
  *              http://www.opengeosys.org/project/license
  */
 
-// ThirdParty
 #include <tclap/CmdLine.h>
 
 #include <numeric>
@@ -187,54 +186,51 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<double> z0("", "z0", "z coordinate of the first point",
-                               true, 0.0, "z0");
+                               true, 0.0, "Z0");
     cmd.add(z0);
     TCLAP::ValueArg<double> y0("", "y0", "y coordinate of the first point",
-                               true, 0.0, "y0");
+                               true, 0.0, "Y0");
     cmd.add(y0);
     TCLAP::ValueArg<double> x0("", "x0", "x coordinate of the first point",
-                               true, 0.0, "x0");
+                               true, 0.0, "X0");
     cmd.add(x0);
     TCLAP::ValueArg<double> z1("", "z1", "z coordinate of the first point",
-                               true, 1.0, "z1");
+                               true, 1.0, "Z1");
     cmd.add(z1);
     TCLAP::ValueArg<double> y1("", "y1", "y coordinate of the first point",
-                               true, 1.0, "y1");
+                               true, 1.0, "Y1");
     cmd.add(y1);
     TCLAP::ValueArg<double> x1("", "x1", "x coordinate of the first point",
-                               true, 1.0, "x1");
+                               true, 1.0, "X1");
     cmd.add(x1);
     TCLAP::ValueArg<int> nx("", "nx", "number of subdivisions in x direction",
-                            false, 0, "number of subdivisions in x direction");
+                            false, 0, "NX");
     cmd.add(nx);
     TCLAP::ValueArg<int> nx1("", "nx1", "number of subdivisions in x direction",
-                             false, -1,
-                             "number of subdivisions in x direction");
+                             false, -1, "NX1");
     cmd.add(nx1);
     TCLAP::ValueArg<int> ny("", "ny", "number of subdivisions in y direction",
-                            false, 0, "number of subdivisions in y direction");
+                            false, 0, "NY");
     cmd.add(ny);
     TCLAP::ValueArg<int> ny1("", "ny1", "number of subdivisions in y direction",
-                             false, -1,
-                             "number of subdivisions in y direction");
+                             false, -1, "NY1");
     cmd.add(ny1);
     TCLAP::ValueArg<int> nz("", "nz", "number of subdivisions in z direction",
                             false, 0, "number of subdivisions in z direction");
     cmd.add(nz);
     TCLAP::ValueArg<int> nz1("", "nz1", "number of subdivisions in z direction",
-                             false, -1,
-                             "number of subdivisions in z direction");
+                             false, -1, "NZ1");
     cmd.add(nz1);
     TCLAP::ValueArg<std::string> geometry_name(
         "", "geometry_name", "name of the generated geometry", false,
-        "conceptual model", "name of the geometry");
+        "conceptual model", "GEOMETRY_NAME");
     cmd.add(geometry_name);
     TCLAP::ValueArg<std::string> polyline_name(
         "", "polyline_name", "name of the generated polyline", false,
-        "polyline", "name of the generated polyline");
+        "polyline", "POLYLINE_NAME");
     cmd.add(polyline_name);
     TCLAP::ValueArg<std::string> geo_output_arg(
-        "o", "output", "output geometry file (*.gml)", true, "", "output file");
+        "o", "output", "Output (.gml) geometry file", true, "", "OUTPUT_FILE");
     cmd.add(geo_output_arg);
     cmd.parse(argc, argv);
 

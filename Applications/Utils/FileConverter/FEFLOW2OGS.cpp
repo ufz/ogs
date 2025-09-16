@@ -8,11 +8,10 @@
  *
  */
 
+#include <tclap/CmdLine.h>
+
 #include <memory>
 #include <string>
-
-// ThirdParty
-#include <tclap/CmdLine.h>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/MPI.h"
@@ -45,15 +44,16 @@ int main(int argc, char* argv[])
     TCLAP::ValueArg<std::string> ogs_mesh_arg(
         "o",
         "out",
-        "filename for output mesh (if extension is msh, old OGS fileformat is "
+        "Output. Filename for output mesh (if extension is msh, old OGS file "
+        "format is "
         "written)",
         true,
         "",
-        "filename as string");
+        "OUTPUT_FILE");
     cmd.add(ogs_mesh_arg);
 
     TCLAP::ValueArg<std::string> feflow_mesh_arg(
-        "i", "in", "FEFLOW input file (*.fem)", true, "", "filename as string");
+        "i", "in", "Input (.fem). FEFLOW input file", true, "", "INPUT_FILE");
     cmd.add(feflow_mesh_arg);
 
     cmd.parse(argc, argv);

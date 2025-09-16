@@ -226,8 +226,9 @@ int main(int argc, char** argv)
 
     TCLAP::ValueArg<std::string> log_level_arg(
         "l", "log-level",
-        "the verbosity of logging messages: none, error, warn, info, debug, "
-        "all",
+        "the verbosity of logging messages: "
+        "none, error, warn, "
+        "info, debug, all",
         false,
 #ifdef NDEBUG
         "info",
@@ -237,14 +238,17 @@ int main(int argc, char** argv)
         "LOG_LEVEL", cmd);
 
     TCLAP::ValueArg<std::string> input_filename_arg(
-        "i", "input", "Input bulk mesh", true, "", "VTU_FILE", cmd);
+        "i", "input", "Input (.vtu) bulk mesh file", true, "", "INPUT_FILE",
+        cmd);
 
     TCLAP::ValueArg<std::string> output_filename_arg(
-        "o", "output", "Anchor mesh", true, "", "VTU_FILE", cmd);
+        "o", "output", "Output (.vtu). Anchor mesh file", true, "",
+        "OUTPUT_FILE", cmd);
 
     TCLAP::ValueArg<std::string> json_filename_arg(
-        "f", "json-file", "JSON file containing anchor start and end points",
-        true, "", "JSON_FILE", cmd);
+        "f", "json-file",
+        "Input (.json) JSON file containing anchor start and end points", true,
+        "", "INPUT_FILE", cmd);
 
     TCLAP::ValueArg<double> tolerance_arg(
         "", "tolerance", "Tolerance/Search length", false,
@@ -252,8 +256,9 @@ int main(int argc, char** argv)
 
     TCLAP::ValueArg<unsigned> max_iter_arg(
         "", "max-iter",
-        "maximum number of iterations of the internal root-finding algorithm",
-        false, 5, "int", cmd);
+        "maximum number of iterations of the internal root-finding "
+        "algorithm, (min = 0)",
+        false, 5, "MAX_ITER", cmd);
 
     cmd.parse(argc, argv);
 

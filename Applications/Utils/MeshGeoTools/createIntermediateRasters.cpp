@@ -32,17 +32,22 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::size_t> number_arg(
-        "n", "number", "number of rasters to be calculated", false, 1, "int");
+        "n", "number",
+        "number of rasters to be calculated, "
+        "(min = 0)",
+        false, 1, "int");
     cmd.add(number_arg);
     TCLAP::ValueArg<std::string> output_arg("o", "output-file",
-                                            "Raster output file (*.asc)", true,
-                                            "", "output.asc");
+                                            "Output (.asc). Raster output file",
+                                            true, "", "OUTPUT_FILE");
     cmd.add(output_arg);
     TCLAP::ValueArg<std::string> input2_arg(
-        "", "file2", "Second DEM-raster file", true, "", "file2.asc");
+        "", "file2", "Input (.asc). Second DEM-raster input file", true, "",
+        "INPUT_FILE");
     cmd.add(input2_arg);
     TCLAP::ValueArg<std::string> input1_arg(
-        "", "file1", "First DEM-raster file", true, "", "file1.asc");
+        "", "file1", "Input (.asc) First DEM-raster input file", true, "",
+        "INPUT_FILE");
     cmd.add(input1_arg);
 
     cmd.parse(argc, argv);
