@@ -79,7 +79,7 @@ if not out_dir.exists():
 
 # %% [markdown]
 # # Great cell
-# ## **$\texttt{HM}_{3d}$: Fracture Nucleation from Borehole under Poly-Axial Stress**
+# ## $\texttt{HM}_{3d}$: Fracture Nucleation from Borehole under Poly-Axial Stress
 
 # The **$\texttt{HM}_{3d}$** benchmark simulates **fracture nucleation** directly from a borehole in an intact rock sample subjected to **poly-axial stress conditions**.
 
