@@ -70,8 +70,8 @@ set_property(
 )
 # cmake-lint: disable=C0103
 if(OGS_EIGEN_PARALLEL_BACKEND STREQUAL "OpenMP")
+    set(OpenMP_RUNTIME_MSVC experimental) # `llvm` is not redistributable
     # this pulls in libgomp dependency, when MKL is enabled libiomp5 is used.
-    set(OpenMP_RUNTIME_MSVC llvm)
     find_package(OpenMP COMPONENTS C CXX)
 endif()
 
