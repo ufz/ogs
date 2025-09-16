@@ -37,7 +37,9 @@ import ogstools as ot
 import pyvista as pv
 from matplotlib import colormaps
 
-mechanics_path = Path("../../LIE/Mechanics/GreatCelljupyterNotebook").resolve()
+mechanics_path = Path(
+    "..", "..", "LIE", "Mechanics", "GreatCelljupyterNotebook"
+).resolve()
 sys.path.insert(0, str(mechanics_path))
 # Local modules
 from mesh_generator import (  # noqa: E402
@@ -877,7 +879,7 @@ msh_file_VPF = mesh_GreatCell_VPF(
 # #### Convert .msh to an OGS-compatible mesh
 
 # %% vscode={"languageId": "python"}
-msh_path_VPF = mesh_path_VPF / f"{meshname}.msh"
+msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
 meshes_volume_VPF = ot.meshes_from_gmsh(
     filename=msh_path_VPF, dim=[0, 1], reindex=True, log=False
 )
@@ -940,14 +942,14 @@ msh_file_VPF = mesh_GreatCell_VPF(
 # #### Convert .msh to an OGS-compatible mesh
 
 # %% vscode={"languageId": "python"}
-msh_path_VPF = mesh_path_VPF / f"{meshname}.msh"
+msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
 meshes_volume_VPF = ot.meshes_from_gmsh(
     filename=msh_path_VPF, dim=[2], reindex=True, log=False
 )
 
 for name, mesh in meshes_volume_VPF.items():
     print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(mesh_path_VPF / f"{name}.vtu", mesh)
+    pv.save_meshio(mesh_path_VPF.joinpath(f"{name}.vtu"), mesh)
 
 # %% [markdown]
 # #### Visualization of computational domain mesh
@@ -1098,6 +1100,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 vtu_files_dict_embedded = sing_ogs_model.run_simulations_with_fracture(
@@ -1115,6 +1118,7 @@ vtu_files_dict_embedded = sing_ogs_model.run_simulations_with_fracture(
     crack_type="half",
     fracture_model_type="VolumetricDeviatoric",
     mesh_size=h,
+    n_mpi=2,
 )
 
 # %% [markdown]
@@ -1183,6 +1187,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 # Run simulations
@@ -1201,6 +1206,7 @@ vtu_files_dict_full = sing_ogs_model.run_simulations_with_fracture(
     crack_type="full",
     fracture_model_type="VolumetricDeviatoric",
     mesh_size=h,
+    n_mpi=2,
 )
 
 
@@ -1279,6 +1285,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 vtu_files_dict_embedded_HM = sing_ogs_model.run_simulations_with_fracture(
@@ -1296,6 +1303,7 @@ vtu_files_dict_embedded_HM = sing_ogs_model.run_simulations_with_fracture(
     crack_type="half",
     fracture_model_type="Isotropic",
     mesh_size=h,
+    n_mpi=2,
 )
 
 # %% [markdown]
@@ -1420,6 +1428,7 @@ sing_ogs_model = SingleOGSModel(
     n_fracture_p_ncs=n_fracture_p_ncs,
     model_type=model_type,
     materials=materials,
+    n_mpi=2,
 )
 
 vtu_files_dict_full_HM = sing_ogs_model.run_simulations_with_fracture(
@@ -1437,6 +1446,7 @@ vtu_files_dict_full_HM = sing_ogs_model.run_simulations_with_fracture(
     crack_type="full",
     fracture_model_type="Isotropic",
     mesh_size=h,
+    n_mpi=2,
 )
 
 
@@ -1523,6 +1533,10 @@ for case, label in pairs_to_check.items():
     eps_v_expected = expected_result["eps_v"]
     phi_new = new_result["phi"]
     phi_expected = expected_result["phi"]
+    print(
+        f"eps_v_new shape: {eps_v_new.shape}, eps_v_expected shape: {eps_v_expected.shape}"
+    )
+    print(f"phi_new shape: {phi_new.shape}, phi_expected shape: {phi_expected.shape}")
 
     np.testing.assert_allclose(eps_v_new, eps_v_expected, atol=5e-4)
     np.testing.assert_allclose(phi_new, phi_expected, atol=1e-8)

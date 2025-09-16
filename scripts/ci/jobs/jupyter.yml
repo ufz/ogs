@@ -74,8 +74,9 @@ test linux wheel via notebooks:
         base_ref="$CI_MERGE_REQUEST_TARGET_BRANCH_SHA"
         changed_py_files=$(git diff --name-only "$base_ref" "$CI_COMMIT_SHA" \
           | grep '^Tests/Data/.*\.py$' \
-          | sed 's|^Tests/Data/||' \
-          | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
+          | sed 's%^Tests/Data/%%' \
+          | grep -Ev '(\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc)' \
+          | grep -v '(standard input)' \
           || true)
 
         if [[ -z "$changed_py_files" ]]; then
@@ -87,6 +88,7 @@ test linux wheel via notebooks:
         files=$(echo "$changed_py_files" \
           | xargs grep -l "jupytext_version" \
           | xargs grep -L "ci skip" \
+          | grep -v '(standard input)' \
           || true)
 
         if [[ -z "$files" ]]; then

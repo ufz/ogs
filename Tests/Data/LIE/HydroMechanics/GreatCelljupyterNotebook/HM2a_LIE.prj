@@ -87,8 +87,8 @@
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
+                <material_id>3</material_id>
                 <initial_aperture>aperture0</initial_aperture>
-                <material_id>1</material_id>
             </fracture_properties>
             <deactivate_matrix_in_flow>false</deactivate_matrix_in_flow>
             <initial_fracture_effective_stress>fracture_effective_stress0</initial_fracture_effective_stress>
