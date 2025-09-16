@@ -4,7 +4,7 @@ check web links:
   tags: [envinf4, docker] # pinning for cache
   extends:
     - .rules-master-manual
-  needs: [meta, "build linux arch", "build mac petsc"]
+  needs: [meta, "build linux arch", "build linux petsc"]
   image: $WEB_IMAGE
   variables:
     HUGO_ENVIRONMENT: "staging"
