@@ -2,6 +2,8 @@
 title = "Processes"
 layout = "subsections"
 models = "processes"
+show_recent = true
+show_featured = false
 
 [cascade]
 breadcrumbs = true
