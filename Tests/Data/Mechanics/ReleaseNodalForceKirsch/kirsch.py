@@ -177,6 +177,7 @@ def runBenchmark(
     mesh_dir,
     order=2,
     standard_approach=False,
+    use_element_deactivation=False,
     ogs_path=None,
 ):
     prj = ot.Project(
@@ -215,6 +216,28 @@ def runBenchmark(
             t_end="1",
             repeat="1",
             delta_t="1.0",
+        )
+
+    if use_element_deactivation:
+        prj.add_block(
+            blocktag="deactivated_subdomains",
+            parent_xpath="./process_variables/process_variable",
+        )
+        prj.add_block(
+            blocktag="deactivated_subdomain",
+            parent_xpath="./process_variables/process_variable/deactivated_subdomains",
+            taglist=["time_interval", "material_ids"],
+            textlist=["", "1"],
+        )
+        prj.add_element(
+            parent_xpath="./process_variables/process_variable/deactivated_subdomains/deactivated_subdomain/time_interval",
+            tag="start",
+            text="0",
+        )
+        prj.add_element(
+            parent_xpath="./process_variables/process_variable/deactivated_subdomains/deactivated_subdomain/time_interval",
+            tag="end",
+            text="1e+18",
         )
 
     prj.write_input()
@@ -543,7 +566,7 @@ ax[1].legend()
 plt.show()
 
 # %% [markdown]
-# In the next two figures, the radial stress $\sigma_r$ profiles along the $\theta = 90^\circ$ axis are similarly compared across the standard approach, the release nodal force approach, and the analytical solution. The same conclusion as above can be drawn.
+# In the two figures above, the radial stress $\sigma_r$ profiles along the $\theta = 90^\circ$ axis are similarly compared across the standard approach, the release nodal force approach, and the analytical solution. The same conclusion as above can be drawn.
 
 # %%
 fig, ax = plt.subplots(1, 2, figsize=(12, 4))
@@ -770,12 +793,128 @@ plt.show()
 # Over time, the absolute displacement values increase, particularly at the boundary ($r = 6.5\,\text{m}$), where the maximum displacement change occurs as expected.
 
 # %% [markdown]
-# #### 6. Conclusions
+# #### 6. Simulation using element deactivation
 #
-# The implemented ReleaseNodalForce type boundary condition is verified using the classic example of Kirsch's problem.
+# For comparison, we also simulate the same problem using element deactivation.
+# In this case, the domain includes the hole, and the elements inside the hole are deactivated throughout the entire simulation. The stress values at their integration points of the deactivated elements are set to zero to ensure accurate extrapolation.
+
+
+# %%
+if not gmsh.isInitialized():
+    gmsh.initialize()
+
+gmsh.model.add("Mesh")
+
+mesh_generator = MeshGenerator(gmsh_model=gmsh.model)
+mesh_dir_with_hole = Path(out_dir, "Mesh", "Entire")
+mesh_generator.generate_meshes(out_dir=mesh_dir_with_hole, with_cavern=True, order=2)
+
+gmsh.finalize()
+
+# %%
+pvd_ed = runBenchmark(
+    project_file="kirsch.prj",
+    out_dir=out_dir,
+    output_prefix="kirsch_element_deactivation",
+    mesh_dir=mesh_dir_with_hole,
+    order=2,
+    use_element_deactivation=True,
+)
+
+# %%
+ms_ed = ot.MeshSeries(pvd_ed).scale(time=("s", "d"))
+
+extracted_ms_ed_x = ot.MeshSeries.extract_probe(ms_ed, probes)
+extracted_ms_ed_y = ot.MeshSeries.extract_probe(ms_ed, y_axis)
+
+# %%
+fig = ms_ed[-1].plot_contourf(
+    ot.variables.displacement["x"],
+    figsize=(6, 4),
+    fontsize=8,
+    cmap="jet",
+)
+
+# %%
+fig = ms_ed[-1].plot_contourf(
+    ot.variables.stress["xx"],
+    figsize=(6, 4),
+    fontsize=8,
+    cmap="jet",
+)
+
+# %%
+
+# %%
+fig, ax = plt.subplots(1, 1, figsize=(6, 4))
+ot.plot.lineplots.line(
+    extracted_ms_ed_x[-1],
+    ot.variables.stress["xx"],
+    ax=ax,
+    fontsize=9,
+    linewidth=0.8,
+    color="C2",
+    marker="s",
+    markersize=5,
+    label="Release nodal force (element deactivation, quadratic)",
+)
+
+a = 6.5
+sigma_t = -20  # MPa
+sigma_x_a = np.asarray(
+    [
+        0.5 * (3.0 * a * a / (r * r) - 3 * a**4 / (r**4)) * sigma_t
+        for r in np.linspace(6.5, 70.0, 35)
+    ],
+)
+plt.plot(xs, sigma_x_a, color="C0", label="Analytical solution")
+plt.legend()
+plt.show()
+
+# %% [markdown]
+# In the above figure, the radial stress $\sigma_r$ profiles along the $\theta = 0^\circ$ axis, obtained using the release nodal force approach together with the element deactivation and the analytical solution, are compared.
+
+# %%
+fig, ax = plt.subplots(1, 1, figsize=(6, 4))
+ot.plot.lineplots.line(
+    extracted_ms_ed_y[-1],
+    ot.variables.stress["yy"],
+    ax=ax,
+    fontsize=9,
+    linewidth=0.8,
+    color="C2",
+    marker="s",
+    markersize=5,
+    label="Release nodal force (element deactivation, quadratic)",
+)
+
+a = 6.5
+sigma_t = -20  # MPa
+sigma_y_a = np.asarray(
+    [
+        0.5 * (2.0 - 5.0 * a * a / (r * r) + 3 * a**4 / (r**4)) * sigma_t
+        for r in np.linspace(6.5, 70.0, 35)
+    ],
+)
+plt.plot(ys, sigma_y_a, color="C0", label="Analytical solution")
+plt.legend()
+plt.show()
+
+# %% [markdown]
+# In the above figure, the radial stress $\sigma_r$ profiles along the $\theta = 90^\circ$ axis, obtained using the release nodal force approach together with the element deactivation and the analytical solution, are compared.
+
+# %% [markdown]
+# #### 7. Conclusions
+#
+# The implemented `ReleaseNodalForce` type boundary condition is verified using the classic example of Kirsch's problem.
 #
 # Verification is carried out by analyzing Kirsch's problem using both the release nodal force approach and the standard approach. By comparing the solutions obtained from the standard approach and the analytical solution, the correctness of the present method and its implementation is validated.
 # In the near field, the numerical method yields highly accurate stress results.
+#
 # In the far field, the numerical results show a small, acceptable error compared to the analytical solution, which is for an ideal model with an infinite domain.
 #
+# This boundary condition can be used together with the element deactivation approach. In this case, the stress values in the deactivated element must be set to zero to ensure accurate stress extrapolation.
+#
 # Additionally, the benchmark is evaluated using linear elements, which result in significant stress errors due extrapolation. Therefore, linear elements should be avoided in stress analyses to ensure accurate results.
+
+# %%

@@ -112,10 +112,14 @@
         </parameter>
         <parameter>
             <name>sigma0</name>
-            <type>Constant</type>
-            <values>0.0 -20e6 0.0 0.0</values>
+            <type>Function</type>
+            <expression> 0.0 </expression>
+            <expression>
+                if (sqrt(x^2 + (y + 857)^2)&gt;6.5) -20e6; else 0.0
+            </expression>
+            <expression>0.0 </expression>
+            <expression>0</expression>
         </parameter>
-
         <parameter>
             <name>sigma_top</name>
             <type>Constant</type>
