@@ -1,3 +1,4 @@
+import os
 import sysconfig
 from pathlib import Path
 
@@ -8,10 +9,11 @@ def get_bin_dir():
 
     if not OGS_BIN_DIR.exists():
         # bin in regular cmake build-directory
-        print(
-            "Warning: OGS_BIN_DIR does not exist, falling back to possible "
-            "build directory location."
-        )
+        if "CI" not in os.environ:
+            print(
+                "Warning: OGS_BIN_DIR does not exist, falling back to possible "
+                "build directory location."
+            )
         OGS_BIN_DIR = Path(__file__).parent.parent.parent.parent / "bin"
 
     return OGS_BIN_DIR
