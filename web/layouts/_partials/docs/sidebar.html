@@ -83,7 +83,7 @@
             <span {{ if $isListPage }} class="text-brand-500" {{end}}>
               {{ .Title | upper }}
               {{ if .Params.collapsed }}
-                <i class="fal fa-caret-{{ if $isListPage }}down{{ else }}right{{ end }}"></i>
+                <span class="hidden lg:inline"><i class="fal fa-caret-{{ if $isListPage }}down{{ else }}right{{ end }}"></i></span>
               {{ end }}
             </span>
         {{ if or .Params.breadcrumbs .Params.collapsed }}
