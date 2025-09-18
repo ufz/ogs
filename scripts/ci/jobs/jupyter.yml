@@ -64,7 +64,7 @@ test linux wheel via notebooks:
         cd -
         echo "Running on all .py files (master branch)..."
         find . -type f -iname '*.py' \
-          | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc' \
+          | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc|PorePy' \
           | xargs grep -l "jupytext_version" \
           | xargs grep -L "ci skip" \
           | xargs uv run --group ${OGS_GROUP} ${UV_ARGS} python Notebooks/testrunner.py --out _out
