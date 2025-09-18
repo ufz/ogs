@@ -37,7 +37,24 @@ meta:
           | jq -r '.description')
 
         in_block=0
+        in_comment=0
+
         while IFS= read -r line; do
+          # Track HTML comment start/end
+          if [[ "$line" =~ "<!--" ]]; then
+            in_comment=1
+          fi
+          if [[ "$line" =~ "-->" ]]; then
+            in_comment=0
+            continue
+          fi
+
+          # Skip everything inside comment
+          if [ $in_comment -eq 1 ]; then
+            continue
+          fi
+
+          # Detect CI variables block
           if [[ "$line" =~ ^CI-variables: ]]; then
             in_block=1
             continue
