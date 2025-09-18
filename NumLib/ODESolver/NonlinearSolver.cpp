@@ -117,6 +117,7 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
 
     std::vector<double> zero_entries(selected_global_indices.size(), 0.0);
     _r_neq->set(selected_global_indices, zero_entries);
+    _equation_system->setReleaseNodalForces(_r_neq, process_id);
 
     MathLib::LinAlg::finalizeAssembly(*_r_neq);
 
@@ -325,6 +326,7 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
     std::vector<double> zero_entries(selected_global_indices.size(), 0.0);
 
     _r_neq->set(selected_global_indices, zero_entries);
+    _equation_system->setReleaseNodalForces(_r_neq, process_id);
 
     MathLib::LinAlg::finalizeAssembly(*_r_neq);
 }

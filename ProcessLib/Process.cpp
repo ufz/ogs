@@ -552,4 +552,10 @@ Process::getIndicesOfResiduumWithoutInitialCompensation() const
     return indices;
 }
 
+void Process::setReleaseNodalForces(GlobalVector const* r_neq,
+                                    int const process_id)
+{
+    _boundary_conditions[process_id].setReleaseNodalForces(r_neq);
+}
+
 }  // namespace ProcessLib

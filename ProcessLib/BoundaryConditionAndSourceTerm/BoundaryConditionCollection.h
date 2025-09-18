@@ -27,6 +27,8 @@ public:
     {
     }
 
+    void setReleaseNodalForces(GlobalVector const* r_neq) const;
+
     void applyNaturalBC(const double t, std::vector<GlobalVector*> const& x,
                         int const process_id, GlobalMatrix* K, GlobalVector& b,
                         GlobalMatrix* Jac) const;

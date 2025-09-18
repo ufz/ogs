@@ -94,6 +94,12 @@ public:
         return _ode.getIndicesOfResiduumWithoutInitialCompensation();
     }
 
+    void setReleaseNodalForces(GlobalVector const* r_neq,
+                               int const process_id) override
+    {
+        _ode.setReleaseNodalForces(r_neq, process_id);
+    }
+
     void getResidual(GlobalVector const& x_new_timestep,
                      GlobalVector const& x_prev,
                      GlobalVector& res) const override;
@@ -200,6 +206,12 @@ public:
     getIndicesOfResiduumWithoutInitialCompensation() const override
     {
         return _ode.getIndicesOfResiduumWithoutInitialCompensation();
+    }
+
+    void setReleaseNodalForces(GlobalVector const* r_neq,
+                               int const process_id) override
+    {
+        _ode.setReleaseNodalForces(r_neq, process_id);
     }
 
     void getA(GlobalMatrix& A) const override
