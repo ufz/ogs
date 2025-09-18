@@ -14,24 +14,43 @@
     {{ end }}
     <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
       <div class="space-y-8">
+        {{ if .Params.show_recent }}
+        <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none prose">
+          <h2 class="">Recent Entries</h2>
+        </div>
+        <ul role="list"
+          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-4 space-y-0 text-sm lg:text-base">
+          {{ $allPages := slice }}
+          {{ range $sections }}
+          {{ $allPages = $allPages | append .Pages }}
+          {{ end }}
+
+          {{ range first 8 (sort (where $allPages "Params.notebook" "!=" nil) "Date" "desc") }}
+          {{ partial "components/gallery-item.html" . }}
+          {{ end }}
+        </ul>
+        {{ end }}
+
+        {{ if .Params.show_featured }}
         <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none prose">
           <h1 class="">Featured {{ .Title }}</h1>
         </div>
         <ul role="list"
-          class="grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-8 space-y-0 text-sm lg:text-base">
           {{ range $sections }}
           {{ if .Params.featured }}
           {{ partial "components/gallery-item.html" . }}
           {{ end }}
           {{ end }}
         </ul>
+        {{ end }}
 
         <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none prose">
           <h2 class="">All {{ .Title }}</h2>
           {{ .Content }}
         </div>
         <ul role="list"
-          class="grid grid-cols-2 sm:grid-cols-3  sm:gap-x-6 gap-y-12 space-y-0 lg:grid-cols-4 lg:gap-x-8">
+          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-8 space-y-0 text-sm lg:text-base">
           {{ range $sections }}
           {{ partial "components/gallery-item.html" . }}
           {{ end }}
