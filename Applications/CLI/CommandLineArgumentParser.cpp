@@ -47,6 +47,9 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     cmd.setOutput(&tclapOutput);
     cmd.setExceptionHandling(exit_on_exception);
 
+    TCLAP::SwitchArg log_parallel("", "log-parallel",
+                                  "enables all MPI ranks to log");
+
 #ifndef _WIN32  // TODO: On windows floating point exceptions are not handled
                 // currently
     TCLAP::SwitchArg enable_fpe_arg("", "enable-fpe",
@@ -107,6 +110,7 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     cmd.add(mesh_dir_arg);
     cmd.add(script_dir_arg);
     cmd.add(write_prj_arg);
+    cmd.add(log_parallel);
     auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg.get());
     cmd.add(nonfatal_arg);
@@ -134,6 +138,7 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
                               ? BaseLib::getProjectDirectory()
                               : script_dir_arg.getValue();
     cli_args.nonfatal = nonfatal_arg.getValue();
+    cli_args.log_parallel = log_parallel.getValue();
     cli_args.log_level = log_level_arg->getValue();
     cli_args.write_prj = write_prj_arg.getValue();
 
