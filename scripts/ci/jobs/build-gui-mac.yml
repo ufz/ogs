@@ -3,9 +3,7 @@ build gui mac:
     - .template-build-linux
     - .test-artifacts
   stage: build
-  tags:
-    - mac
-    - arm64
+  tags: [mac, arm64]
   needs: [meta]
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'

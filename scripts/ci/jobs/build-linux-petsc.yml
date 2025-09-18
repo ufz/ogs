@@ -2,10 +2,7 @@ build linux petsc:
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags:
-    - envinf
-    - shell
-    - petsc
+  tags: [envinf, shell, petsc]
   needs: [meta]
   timeout: 3h
   variables:

@@ -1,7 +1,7 @@
 check web links:
   stage: check
   allow_failure: true
-  tags: [envinf4, docker] # pinning for cache
+  tags: [envinf4] # pinning for cache
   extends:
     - .rules-master-manual
   needs: [meta, "build linux arch", "build linux petsc"]

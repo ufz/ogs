@@ -3,8 +3,7 @@ build linux frontend:
     - .template-build-linux
     - .test-artifacts
     - .rules-master-manual
-  tags:
-    - frontend2
+  tags: [frontend2]
   needs: [meta]
   allow_failure: true
   variables:
@@ -19,8 +18,7 @@ build linux frontend petsc:
     - .template-build-linux
     - .test-artifacts
     - .rules-master-manual
-  tags:
-    - frontend2
+  tags: [frontend2]
   needs: [meta]
   allow_failure: true
   variables:

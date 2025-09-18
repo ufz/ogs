@@ -6,7 +6,7 @@
 
 meta:
   stage: preparation
-  tags: [shell, envinf]
+  tags: [shell, docker]
   needs: []
   variables:
     GIT_DEPTH: 1000
