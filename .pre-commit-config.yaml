@@ -84,9 +84,9 @@ repos:
       - id: vale
         args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.13.0"
+    rev: "v0.13.1"
     hooks:
-      - id: ruff
+      - id: ruff-check
         types_or: [python, pyi, jupyter]
         args: [--output-format=full]
   # A variant of the ruff hook above that automatically applies proposed fixes.
@@ -94,9 +94,9 @@ repos:
   # Run this hook (and all other manual hooks if any) with:
   # pre-commit run --hook-stage manual
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.13.0"
+    rev: "v0.13.1"
     hooks:
-      - id: ruff
+      - id: ruff-check
         types_or: [python, pyi, jupyter]
         args: [--output-format=full, --fix, --exit-non-zero-on-fix]
         stages: [manual]
