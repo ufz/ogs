@@ -93,7 +93,7 @@ if not out_dir.exists():
 # This test provides insight into fluid-driven fracture processes under realistic in situ conditions and is especially useful for validating **coupled hydro-mechanical models**.
 
 #  **For full details**, visit the GREAT Cell benchmark page:
-# [https://www.opengeosys.org/docs/benchmarks/small-deformation/greatcell](https://www.opengeosys.org/docs/benchmarks/small-deformation/greatcell)
+# [www.opengeosys.org/docs/benchmarks/small-deformations/greatcellm/](https://www.opengeosys.org/docs/benchmarks/small-deformations/greatcellm/)
 
 
 # %% [markdown]
