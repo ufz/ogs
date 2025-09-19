@@ -27,11 +27,3 @@ ruff:
   artifacts:
     reports:
       codequality: ruff-report.json
-
-# Disabled, see !3053
-.code_quality:
-  stage: check
-  needs: []
-  rules:
-  variables:
-    DOCKER_TLS_CERTDIR: "/certs"
