@@ -15,6 +15,7 @@
 #include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "MaterialLib/MPL/Properties/Constant.h"
 #include "MaterialLib/MPL/Properties/Linear.h"
 #include "MaterialLib/MPL/Property.h"
@@ -368,6 +369,12 @@ void bindLinear(py::module_& m)
 
 PYBIND11_MODULE(mpl, m)
 {
+#ifndef NDEBUG
+    BaseLib::initOGSLogger("all");
+#else   // NDEBUG
+    BaseLib::initOGSLogger("info");
+#endif  // NDEBUG
+
     m.attr("__name__") = "ogs.mpl";
     m.doc() = "pybind11 ogs MPL bindings";
 

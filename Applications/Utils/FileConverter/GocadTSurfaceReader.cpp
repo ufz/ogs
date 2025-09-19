@@ -10,7 +10,9 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/FileIO/GocadIO/GocadAsciiReader.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
@@ -45,7 +47,7 @@ int main(int argc, char* argv[])
     cmd.add(export_surfaces_arg);
 
     TCLAP::SwitchArg export_lines_arg(
-        "l", "lines-only",
+        "", "lines-only",
         "if set, only PLine datasets will be parsed from the input file");
     cmd.add(export_lines_arg);
 
@@ -59,11 +61,14 @@ int main(int argc, char* argv[])
         "Provide a file with unix file "
         "endings under unix. Use dos2unix to convert. ",
         true, "", "INPUT_FILE");
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.add(input_arg);
 
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     if (export_lines_arg.isSet() && export_surfaces_arg.isSet())
     {

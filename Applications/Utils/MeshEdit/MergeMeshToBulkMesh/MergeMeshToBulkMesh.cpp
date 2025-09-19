@@ -20,9 +20,11 @@
 #include <vector>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
 #include "BaseLib/StringTools.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -99,10 +101,13 @@ int main(int argc, char* argv[])
         "", "material_id", "Material ID of the mesh to be merged, (min = 0)",
         false, 0.0, "MATERIAL_ID");
     cmd.add(mat_id);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
 
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     BaseLib::RunTime timer;
     timer.start();

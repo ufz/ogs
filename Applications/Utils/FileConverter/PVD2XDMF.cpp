@@ -18,8 +18,8 @@
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/MemWatch.h"
-#include "BaseLib/RunTime.h"
 #include "BaseLib/StringTools.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/XDMF/XdmfHdfWriter.h"
@@ -114,19 +114,7 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
-    TCLAP::ValueArg<std::string> log_level_arg(
-        "l", "log-level",
-        "the verbosity of logging messages: "
-        " none, error, warn, info, "
-        "debug, "
-        "all",
-        false,
-#ifdef NDEBUG
-        "info",
-#else
-        "all",
-#endif
-        "LOG_LEVEL");
+    auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg);
 
     TCLAP::UnlabeledValueArg<std::string> pvd_file_arg(
@@ -139,8 +127,9 @@ int main(int argc, char* argv[])
     cmd.add(outdir_arg);
 
     cmd.parse(argc, argv);
+
     BaseLib::MPI::Setup mpi_setup(argc, argv);
-    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     auto const pvd_file_dir = BaseLib::extractPath(pvd_file_arg.getValue());
 

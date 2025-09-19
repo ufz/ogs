@@ -19,7 +19,9 @@
 #include "Applications/DataExplorer/VtkVis/VtkGeoImageSource.h"
 #include "Applications/DataExplorer/VtkVis/VtkImageDataToPointCloudFilter.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "InfoLib/GitInfo.h"
 
@@ -79,9 +81,12 @@ int main(int argc, char* argv[])
         "'file1.asc', etc.",
         true, "", "INPUT_FILE");
     cmd.add(input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::string const input_name = input_arg.getValue().c_str();
     std::string const output_name = output_arg.getValue().c_str();

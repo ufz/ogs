@@ -16,7 +16,9 @@
 #include <memory>
 #include <string>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -42,6 +44,8 @@ int main(int argc, char* argv[])
         "Output (.vtk), The name of the file the mesh will be written to", true,
         "", "OUTPUT_FILE");
     cmd.add(mesh_out);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     TCLAP::SwitchArg use_ascii_arg(
         "", "ascii_output",
         "Write VTU output in ASCII file. Due to possible rounding the ascii "
@@ -50,6 +54,7 @@ int main(int argc, char* argv[])
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));

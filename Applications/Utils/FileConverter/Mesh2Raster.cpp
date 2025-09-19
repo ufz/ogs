@@ -14,7 +14,9 @@
 #include <memory>
 #include <string>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/AABB.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -48,9 +50,12 @@ int main(int argc, char* argv[])
         "i", "input-file", "Input (.vtu | .msh). Mesh input file", true, "",
         "string");
     cmd.add(input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     INFO("Rasterising mesh...");
     std::unique_ptr<MeshLib::Mesh> const mesh(

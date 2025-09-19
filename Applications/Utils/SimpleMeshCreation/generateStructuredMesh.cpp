@@ -15,8 +15,10 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/Subdivision.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
@@ -175,8 +177,12 @@ int main(int argc, char* argv[])
     cmd.add(originZArg);
 
     // parse arguments
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
+
     const std::string eleTypeName(eleTypeArg.getValue());
     const MeshLib::MeshElemType eleType =
         MeshLib::String2MeshElemType(eleTypeName);

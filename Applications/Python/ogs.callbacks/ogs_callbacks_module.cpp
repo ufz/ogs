@@ -13,12 +13,18 @@
 
 #include <algorithm>
 
+#include "BaseLib/Logging.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/BHEInflowPythonBoundaryConditionModule.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/PythonBoundaryConditionModule.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/Python/PythonSourceTermModule.h"
 
 PYBIND11_MODULE(callbacks, m)
 {
+#ifndef NDEBUG
+    BaseLib::initOGSLogger("all");
+#else   // NDEBUG
+    BaseLib::initOGSLogger("info");
+#endif  // NDEBUG
     m.attr("__name__") = "ogs.callbacks";
     ProcessLib::pythonBindBoundaryCondition(m);
     ProcessLib::bheInflowpythonBindBoundaryCondition(m);

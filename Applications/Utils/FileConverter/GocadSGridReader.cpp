@@ -18,7 +18,9 @@
 
 #include "Applications/FileIO/GocadIO/GenerateFaceSetMeshes.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -55,10 +57,13 @@ int main(int argc, char* argv[])
         "s", "sg", "Input (.sg). Gocad stratigraphic grid filename", true, "",
         "INPUT_FILE");
     cmd.add(sg_file_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
 
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     // read the Gocad SGrid
     INFO("Start reading Gocad SGrid.");

@@ -19,20 +19,30 @@
 #include <iostream>
 #include <map>
 
-#ifdef USE_PETSC
-#include <mpi.h>
-#include <petscsys.h>
-#endif
-
 #include "Error.h"
+#include "MPI.h"
+
+namespace
+{
+#ifdef USE_PETSC
+static int mpi_rank = -1;
+void mpi_error_handler(const std::string& msg)
+{
+    assert(mpi_rank != -1);
+    std::cerr << "[" << mpi_rank << "] spdlog error: " << msg << std::endl;
+    std::abort();
+}
+#endif  // USE_PETSC
+void error_handler(const std::string& msg)
+{
+    std::cerr << "spdlog error: " << msg << std::endl;
+    std::abort();
+}
+}  // namespace
 
 namespace BaseLib
 {
-#ifdef USE_PETSC
-std::shared_ptr<spdlog::logger> console = spdlog::stdout_color_mt("ogs");
-#else   // USE_PETSC
-std::shared_ptr<spdlog::logger> console = spdlog::stdout_color_st("ogs");
-#endif  // USE_PETSC
+std::shared_ptr<spdlog::logger> console;
 
 void setConsoleLogLevel(std::string const& level_string)
 {
@@ -53,13 +63,28 @@ void setConsoleLogLevel(std::string const& level_string)
 
 void initOGSLogger(std::string const& log_level)
 {
-    BaseLib::setConsoleLogLevel(log_level);
-    spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler(
-        [](const std::string& msg)
+    if (!console)
+    {
+#ifdef USE_PETSC
+        console = spdlog::stdout_color_mt("ogs");
+#else   // USE_PETSC
+        console = spdlog::stdout_color_st("ogs");
+#endif  // USE_PETSC
+        // Default pattern and error handler both for MPI and non-MPI builds.
+        spdlog::set_pattern("%^%l:%$ %v");
+        spdlog::set_error_handler(error_handler);
+
+#ifdef USE_PETSC
+        int mpi_init;
+        MPI_Initialized(&mpi_init);
+        if (mpi_init == 1)
         {
-            std::cerr << "spdlog error: " << msg << std::endl;
-            OGS_FATAL("spdlog logger error occurred.");
-        });
+            MPI_Comm_rank(BaseLib::MPI::OGS_COMM_WORLD, &mpi_rank);
+            spdlog::set_pattern(fmt::format("[{}] %^%l:%$ %v", mpi_rank));
+            spdlog::set_error_handler(mpi_error_handler);
+        }
+#endif  // USE_PETSC
+    }
+    BaseLib::setConsoleLogLevel(log_level);
 }
 }  // namespace BaseLib

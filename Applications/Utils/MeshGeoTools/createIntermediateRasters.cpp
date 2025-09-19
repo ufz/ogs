@@ -13,7 +13,9 @@
 #include <string>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
@@ -49,10 +51,13 @@ int main(int argc, char* argv[])
         "", "file1", "Input (.asc) First DEM-raster input file", true, "",
         "INPUT_FILE");
     cmd.add(input1_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
 
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::unique_ptr<GeoLib::Raster> dem1(
         FileIO::AsciiRasterInterface::readRaster(input1_arg.getValue()));

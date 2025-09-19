@@ -17,8 +17,10 @@
 #include <vector>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/StringTools.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
@@ -72,9 +74,12 @@ int main(int argc, char* argv[])
         "Input (.vtu). The name of the file containing the input mesh", true,
         "", "INPUT_FILE");
     cmd.add(mesh_in);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh const> mesh(MeshLib::IO::readMeshFromFile(
         mesh_in.getValue(), true /* compute_element_neighbors */));

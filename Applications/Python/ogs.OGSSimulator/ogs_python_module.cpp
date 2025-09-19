@@ -82,8 +82,6 @@ class PYBIND11_EXPORT OGSSimulation
 public:
     explicit OGSSimulation(std::vector<std::string>& argv_str)
     {
-        INFO("OGSSimulation::OGSSimulation(std::vector<std::string>&)");
-
         int argc = argv_str.size();
         char** argv = new char*[argc];
         for (int i = 0; i < argc; ++i)
@@ -98,7 +96,8 @@ public:
         }
         catch (TCLAP::ArgException const& e)
         {
-            ERR("Parsing the OGS commandline failed: {}", e.what());
+            std::cerr << "Parsing the OGS commandline failed: " << e.what()
+                      << '\n';
 
             // "mangle" TCLAP's status
             throw(e);
@@ -109,6 +108,8 @@ public:
         }
 
         BaseLib::initOGSLogger(cli_args.log_level);
+
+        DBUG("OGSSimulation::OGSSimulation(std::vector<std::string>&)");
 
         INFO(
             "This is OpenGeoSys-6 version {:s}. Log version: {:d}, Log level: "
@@ -265,6 +266,7 @@ private:
 /// https://github.com/pybind/pybind11/issues/1391#issuecomment-912642979
 PYBIND11_MODULE(OGSSimulator, m)
 {
+    BaseLib::initOGSLogger("info");
     m.attr("__name__") = "ogs.OGSSimulator";
     m.doc() = "pybind11 ogs plugin";
 

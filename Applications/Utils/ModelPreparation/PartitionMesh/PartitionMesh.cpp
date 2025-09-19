@@ -12,13 +12,14 @@
 
 */
 
-#include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
 #include "BaseLib/CPUTime.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "Metis.h"
@@ -78,17 +79,7 @@ int main(int argc, char* argv[])
         false);
     cmd.add(exe_metis_flag);
 
-    TCLAP::ValueArg<std::string> log_level_arg(
-        "l", "log-level",
-        "the verbosity of logging messages: none, error, "
-        "warn, info, debug, all",
-        false,
-#ifdef NDEBUG
-        "info",
-#else
-        "all",
-#endif
-        "LOG_LEVEL");
+    auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg);
 
     // All the remaining arguments are used as file names for boundary/subdomain
@@ -100,15 +91,7 @@ int main(int argc, char* argv[])
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
-
-    BaseLib::setConsoleLogLevel(log_level_arg.getValue());
-    spdlog::set_pattern("%^%l:%$ %v");
-    spdlog::set_error_handler(
-        [](const std::string& msg)
-        {
-            std::cerr << "spdlog error: " << msg << std::endl;
-            OGS_FATAL("spdlog logger error occurred.");
-        });
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     const auto output_directory = output_directory_arg.getValue();
     BaseLib::createOutputDirectory(output_directory);

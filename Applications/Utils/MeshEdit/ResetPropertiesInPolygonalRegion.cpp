@@ -17,7 +17,9 @@
 #include <vector>
 
 #include "Applications/FileIO/readGeometryFromFile.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
 #include "InfoLib/GitInfo.h"
@@ -92,9 +94,12 @@ int main(int argc, char* argv[])
         "", "gmsh-path", "Input (.msh). The path to the input binary", false,
         "", "INPUT_FILE");
     cmd.add(gmsh_path_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     // *** read geometry
     GeoLib::GEOObjects geometries;

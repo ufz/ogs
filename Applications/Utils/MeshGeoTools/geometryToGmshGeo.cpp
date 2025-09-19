@@ -12,7 +12,9 @@
 #include <tclap/CmdLine.h>
 
 #include "Applications/FileIO/Gmsh/GMSHInterface.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -63,10 +65,13 @@ int main(int argc, char* argv[])
         "geometry (useful for debugging the data)",
         false, "", "OUTPUT_FILE");
     cmd.add(merged_geometries_output);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
 
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     GeoLib::GEOObjects geo_objects;
     for (auto const& geometry_name : geo_input_arg.getValue())

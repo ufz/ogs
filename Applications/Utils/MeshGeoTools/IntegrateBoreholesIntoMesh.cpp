@@ -15,7 +15,9 @@
 #include <string>
 #include <vector>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
@@ -120,9 +122,12 @@ int main(int argc, char* argv[])
         "i", "input", "Input (.vtu). Name of the mesh file", true, "",
         "INPUT_FILE");
     cmd.add(input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::pair<int, int> mat_limits(0, std::numeric_limits<int>::max());
     std::pair<double, double> elevation_limits(

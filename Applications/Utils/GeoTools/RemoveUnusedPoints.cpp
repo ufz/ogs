@@ -20,6 +20,9 @@
 #include <range/v3/view/zip.hpp>
 #include <vector>
 
+#include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "GeoLib/Point.h"
@@ -57,7 +60,12 @@ int main(int argc, char* argv[])
         "i", "input", "Input (.gml) geometry", true, "conceptual model",
         "INPUT_FILE");
     cmd.add(geo_input_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
+
+    BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     GeoLib::GEOObjects geometry;
     GeoLib::IO::BoostXmlGmlInterface xml{geometry};

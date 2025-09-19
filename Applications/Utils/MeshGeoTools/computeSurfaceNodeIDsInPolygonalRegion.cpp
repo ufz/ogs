@@ -22,7 +22,9 @@
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Polygon.h"
 #include "InfoLib/GitInfo.h"
@@ -98,9 +100,12 @@ int main(int argc, char* argv[])
         "", "gmsh-path", "Input (.msh). The path to the input binary file",
         false, "", "INPUT_FILE");
     cmd.add(gmsh_path_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::unique_ptr<MeshLib::Mesh const> mesh(
         MeshLib::IO::readMeshFromFile(mesh_in.getValue()));

@@ -13,7 +13,6 @@
 #include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <spdlog/spdlog.h>
 
 #include <algorithm>
 #include <numeric>
@@ -26,6 +25,11 @@
 /// python module name is OpenGeoSys
 PYBIND11_MODULE(OGSMesh, m)
 {
+#ifndef NDEBUG
+    BaseLib::initOGSLogger("all");
+#else   // NDEBUG
+    BaseLib::initOGSLogger("info");
+#endif  // NDEBUG
     m.attr("__name__") = "ogs.mesh";
     m.doc() = "pybind11 ogs mesh example plugin";
 

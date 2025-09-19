@@ -9,21 +9,17 @@
 
 #include <tclap/CmdLine.h>
 
-// STL
 #include <fstream>
 #include <memory>
 #include <string>
 
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
-#include "InfoLib/GitInfo.h"
-
-// GeoLib
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/TINInterface.h"
 #include "GeoLib/Surface.h"
-
-// MeshLib
+#include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/Mesh.h"
@@ -50,9 +46,12 @@ int main(int argc, char* argv[])
         "Output (.tin). The name of the file the TIN will be written to", true,
         "", "OUTPUT_FILE");
     cmd.add(mesh_out);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
     std::unique_ptr<MeshLib::Mesh> mesh(
         MeshLib::IO::VtuInterface::readVTUFile(mesh_in.getValue()));
     INFO("Mesh read: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
