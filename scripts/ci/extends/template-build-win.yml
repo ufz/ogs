@@ -1,7 +1,6 @@
 .template-build-win:
   stage: build
-  tags:
-    - windows
+  tags: [windows]
   needs: [meta]
   script:
     - $build_directory_full = "..\build\" + $env:CMAKE_PRESET

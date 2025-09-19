@@ -104,7 +104,7 @@ deploy doxysearch:
 
 check docs links:
   stage: check
-  tags: [envinf4, docker] # pinning for cache
+  tags: [envinf4] # pinning for cache
   allow_failure: true
   image:
     name: lycheeverse/lychee
