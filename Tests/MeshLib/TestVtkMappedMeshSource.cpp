@@ -18,7 +18,6 @@
 #include <vtkPointData.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
-#include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
 #include <memory>
@@ -262,11 +261,10 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             ASSERT_TRUE(vtuInterface.writeToFile(test_data_file));
 
             // -- Read back VTK mesh
-            vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
-                vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-            reader->SetFileName(test_data_file.c_str());
-            reader->Update();
-            vtkUnstructuredGrid* vtkMesh = reader->GetOutput();
+            vtkSmartPointer<vtkUnstructuredGrid> vtkMesh =
+                MeshLib::IO::VtuInterface::readVtuFileToVtkUnstructuredGrid(
+                    test_data_file);
+            ASSERT_NE(vtkMesh, nullptr);
 
             // Both VTK meshes should be identical
             ASSERT_EQ(vtkMesh->GetNumberOfPoints(),

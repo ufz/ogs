@@ -14,9 +14,12 @@
 
 #pragma once
 
-#include <string>
-#include <filesystem>
+#include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
 #include <vtkXMLWriter.h>
+
+#include <filesystem>
+#include <string>
 
 namespace MeshLib {
 class Mesh;
@@ -47,6 +50,9 @@ public:
     static MeshLib::Mesh* readVTUFile(
         std::string const& file_name,
         bool const compute_element_neighbors = false);
+
+    static vtkSmartPointer<vtkUnstructuredGrid>
+    readVtuFileToVtkUnstructuredGrid(std::string const& file_name);
 
     /// Read an unstructured grid from a legacy VTK file.
     /// Other data structures such as PolyData are ignored.

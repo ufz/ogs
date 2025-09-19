@@ -8,12 +8,12 @@
  */
 
 #include <tclap/CmdLine.h>
-#include <vtkXMLUnstructuredGridReader.h>
 
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
+#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshSearch/ElementSearch.h"
@@ -94,11 +94,13 @@ int main(int argc, char* argv[])
 
     std::array<double, 3> const cellsize = {x_size, y_size, z_size};
 
-    vtkSmartPointer<vtkXMLUnstructuredGridReader> reader =
-        vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-    reader->SetFileName(input_arg.getValue().c_str());
-    reader->Update();
-    vtkSmartPointer<vtkUnstructuredGrid> mesh = reader->GetOutput();
+    vtkSmartPointer<vtkUnstructuredGrid> mesh =
+        MeshLib::IO::VtuInterface::readVtuFileToVtkUnstructuredGrid(
+            input_arg.getValue());
+    if (mesh == nullptr)
+    {
+        return EXIT_FAILURE;
+    }
 
     double* const bounds = mesh->GetBounds();
     MathLib::Point3d const min(

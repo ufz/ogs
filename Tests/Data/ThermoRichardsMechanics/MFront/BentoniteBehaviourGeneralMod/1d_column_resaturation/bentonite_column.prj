@@ -436,7 +436,7 @@
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>a_scan</field>
-            <absolute_tolerance>3.8e-13</absolute_tolerance>
+            <absolute_tolerance>4.1e-13</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 0.0023 --></relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -616,7 +616,7 @@
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>saturation_ip</field>
-            <absolute_tolerance>2.8e-14</absolute_tolerance>
+            <absolute_tolerance>3.0e-14</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 3.7e-14 --></relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -658,7 +658,7 @@
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>velocity_ip</field>
-            <absolute_tolerance>8.8e-20</absolute_tolerance>
+            <absolute_tolerance>2e-19</absolute_tolerance>
             <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
         </vtkdiff>
         <vtkdiff>

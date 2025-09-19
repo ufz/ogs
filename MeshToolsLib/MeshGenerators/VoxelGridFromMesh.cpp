@@ -15,7 +15,6 @@
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
 #include <vtkLongLongArray.h>
-#include <vtkXMLUnstructuredGridReader.h>
 
 #include <cassert>
 #include <cmath>
