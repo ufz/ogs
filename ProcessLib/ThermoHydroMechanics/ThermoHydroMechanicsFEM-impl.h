@@ -353,6 +353,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             .template value<double>(vars, x_position, t, dt);
     crv.K_over_mu = intrinsic_permeability / ip_data_output.viscosity;
 
+    crv.k_rel = 1.;
     if (frozen_liquid_phase)
     {
         ip_data.phi_fr =
@@ -360,10 +361,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                 .template value<double>(vars, x_position, t, dt);
 
         // TODO (naumov) Extract this as a property.
-        double const relative_permeability =
-            1. - (1. - 1e-5) * ip_data.phi_fr / porosity;
-
-        crv.K_over_mu *= relative_permeability;
+        crv.k_rel = 1. - (1. - 1e-5) * ip_data.phi_fr / porosity;
     }
 
     auto const& b = _process_data.specific_body_force;
@@ -390,9 +388,10 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                        .value(vars, x_position, t, dt))
              : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
 
-    GlobalDimVectorType const velocity = -crv.K_over_mu * dNdx * p -
-                                         crv.K_pT_thermal_osmosis * dNdx * T +
-                                         crv.K_over_mu * fluid_density * b;
+    GlobalDimVectorType const velocity =
+        -crv.k_rel * crv.K_over_mu * dNdx * p -
+        crv.K_pT_thermal_osmosis * dNdx * T +
+        crv.k_rel * crv.K_over_mu * fluid_density * b;
     ip_data_output.velocity = velocity;
 
     //
@@ -751,7 +750,8 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         // pressure equation, pressure part (K_pp and M_pp).
         //
-        laplace_p.noalias() += dNdx.transpose() * crv.K_over_mu * dNdx * w;
+        laplace_p.noalias() +=
+            dNdx.transpose() * crv.k_rel * crv.K_over_mu * dNdx * w;
 
         storage_p.noalias() +=
             N.transpose() *
@@ -777,7 +777,8 @@ void ThermoHydroMechanicsLocalAssembler<
         //  RHS, pressure part
         //
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
-            dNdx.transpose() * fluid_density * crv.K_over_mu * b * w;
+            dNdx.transpose() * fluid_density * crv.k_rel * crv.K_over_mu * b *
+            w;
         //
         // pressure equation, temperature part (M_pT)
         //
@@ -827,8 +828,9 @@ void ThermoHydroMechanicsLocalAssembler<
             dNdx.transpose() * T_int_pt * crv.K_pT_thermal_osmosis * dNdx * w;
 
         // linearized darcy
-        dKTT_dp.noalias() -= fluid_density * crv.c_f * N.transpose() *
-                             (dNdx * T).transpose() * crv.K_over_mu * dNdx * w;
+        dKTT_dp.noalias() -= fluid_density * crv.c_f * crv.k_rel *
+                             N.transpose() * (dNdx * T).transpose() *
+                             crv.K_over_mu * dNdx * w;
 
         /* TODO (Joerg) Temperature changes due to thermal dilatation of the
          * fluid, which are usually discarded as being very small.
@@ -858,7 +860,7 @@ void ThermoHydroMechanicsLocalAssembler<
                 dNdx.transpose() *
                 (-T_int_pt * fluid_volumetric_thermal_expansion_coefficient /
                 fluid_compressibility) *
-                fluid_density * K_over_mu * b * w;
+                fluid_density * crv.k_rel * K_over_mu * b * w;
             MTu part for rhs and Jacobian:
                 (-T_int_pt *
                 Invariants::trace(solid_linear_thermal_expansion_coefficient) /
@@ -867,7 +869,7 @@ void ThermoHydroMechanicsLocalAssembler<
             KTp part for rhs and Jacobian:
                 dNdx.transpose() *
                 (T_int_pt * fluid_volumetric_thermal_expansion_coefficient *
-                K_over_mu / fluid_compressibility) *
+                crv.k_rel * K_over_mu / fluid_compressibility) *
                 dNdx * w;
         }
          */
