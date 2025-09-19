@@ -14,12 +14,11 @@
 
 #pragma once
 
-#include <lis.h>
-
 #include <string>
 #include <vector>
 
 #include "LisCheck.h"
+#include "LisWrapper.h"
 #include "MathLib/LinAlg/RowColumnIndices.h"
 #include "MathLib/LinAlg/SetMatrixSparsity.h"
 

@@ -13,11 +13,10 @@
 
 #pragma once
 
-#include <lis.h>
-
 #include <vector>
 
 #include "BaseLib/Logging.h"
+#include "LisWrapper.h"
 
 namespace MathLib
 {

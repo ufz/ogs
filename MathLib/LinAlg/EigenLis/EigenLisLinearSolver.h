@@ -10,12 +10,11 @@
 
 #pragma once
 
-#include <lis.h>
-
 #include <vector>
 
 #include "MathLib/LinAlg/LinearSolverOptions.h"
 #include "MathLib/LinAlg/LinearSolverOptionsParser.h"
+#include "MathLib/LinAlg/Lis/LisWrapper.h"
 
 namespace MathLib
 {

@@ -10,10 +10,6 @@
 
 #include "EigenLisLinearSolver.h"
 
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include "BaseLib/Logging.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
 #include "MathLib/LinAlg/Eigen/EigenVector.h"
