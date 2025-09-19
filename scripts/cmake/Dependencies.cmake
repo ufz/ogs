@@ -337,9 +337,9 @@ if(OGS_BUILD_GUI)
         CPMAddPackage(
             NAME Shapelib
             GITHUB_REPOSITORY OSGeo/shapelib
-            VERSION 1.5.0-dev
-            GIT_TAG 21ae8fc16afa15a1b723077b6cec3a9abc592f6a
+            VERSION 1.6.1
             EXCLUDE_FROM_ALL YES SYSTEM TRUE
+            OPTIONS "BUILD_TESTING OFF"
         )
         target_include_directories(
             shp SYSTEM INTERFACE $<BUILD_INTERFACE:${Shapelib_SOURCE_DIR}>
