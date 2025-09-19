@@ -67,28 +67,21 @@ set(_copied_mfront_lib
 add_custom_command(
     OUTPUT ${_copied_mfront_lib}
     COMMAND
-        ${CMAKE_COMMAND} -E env PATH="${TFELHOME}/bin:$ENV{PATH}" mfront
-        --interface=generic --silent-build=true # suppresses output
-                                                # (compiler warnings), does
-                                                # not work?
+        ${CMAKE_COMMAND} -E env PATH="${TFELHOME}/bin:$ENV{PATH}"
+                                CMAKE_POLICY_VERSION_MINIMUM="3.10"
+                                --
+        mfront
+        --interface=generic
         --obuild=level0 ${_mfront_behaviour_files} # TODO: check for debug?
+        --generator=cmake
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_generated_mfront_lib}
             ${_copied_mfront_lib}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMAND_EXPAND_LISTS
     DEPENDS ${_mfront_behaviour_files}
 )
-add_custom_target(
-    InternalOgsMFrontBehaviour ALL DEPENDS ${_copied_mfront_lib}
-)
-add_library(OgsMFrontBehaviour SHARED IMPORTED)
-set_target_properties(
-    OgsMFrontBehaviour PROPERTIES IMPORTED_LOCATION ${_copied_mfront_lib}
-                                    IMPORTED_NO_SONAME TRUE
-)
-target_link_libraries(
-    MaterialLib_SolidModels_MFront PUBLIC OgsMFrontBehaviour
-)
+add_custom_target(build_mfront ALL DEPENDS ${_copied_mfront_lib})
+add_dependencies(MaterialLib_SolidModels_MFront build_mfront)
 install(FILES ${_copied_mfront_lib} TYPE LIB PERMISSIONS
     OWNER_READ GROUP_READ WORLD_READ
     OWNER_WRITE GROUP_WRITE
