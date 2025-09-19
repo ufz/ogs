@@ -144,6 +144,10 @@ authors:
     - given-names: Loer
       family-names: Frieder
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Florian
+      family-names: Berger
+      affiliation: >-
+          Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Jakob
       family-names: Randow
       affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
@@ -171,6 +175,10 @@ authors:
       affiliation: >-
           Bundesanstalt für Geowissenschaften und Rohstoffe --
           BGR
+    - given-names: Thorben
+      family-names: Stehling
+      affiliation: >-
+          Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Vahid Ziaei
       family-names: Rad
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -255,6 +263,15 @@ authors:
           BGR
     - given-names: Luca
       family-names: Urpi
+    - given-names: Jan
+      family-names: Tecklenburg
+      affiliation: >-
+          Bundesanstalt für Geowissenschaften und Rohstoffe --
+          BGR
+    - given-names: Devansh
+      family-names: Shukla
+      affiliation: >-
+          BHelmholtz Centre for Environmental Research -- UFZ
 identifiers:
     - type: doi
       value: 10.5281/zenodo.15496721
