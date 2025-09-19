@@ -455,23 +455,11 @@ endif()
 if(NOT VTK_FOUND)
     file(
         DOWNLOAD
-        https://gitlab.kitware.com/bilke/vtk/-/commit/b70e3e103cf711e080f23171201c7d030187146b.patch
-        ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-win.patch
-    )
-    file(
-        DOWNLOAD
         https://gitlab.kitware.com/bilke/vtk/-/commit/70b16fda87f82520fa29b48c6a62bafa405d8ee2.patch
         ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch
     )
     if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
         set(_vtk_patch PATCH_COMMAND git apply)
-        if(WIN32)
-            # Fixes https://gitlab.kitware.com/vtk/vtk/-/issues/19178
-            list(APPEND _vtk_patch
-                 "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-win.patch"
-            )
-            message(STATUS "Applying VTK Win patch")
-        endif()
         if(APPLE)
             # Fixes https://stackoverflow.com/questions/9894961
             list(APPEND _vtk_patch
@@ -479,8 +467,8 @@ if(NOT VTK_FOUND)
             )
             message(STATUS "Applying VTK Mac patch")
         endif()
-        if(LINUX)
-            # No patches on Linux
+        if(LINUX OR WIN32)
+            # No patches on Linux and Win
             unset(_vtk_patch)
         endif()
     endif()
