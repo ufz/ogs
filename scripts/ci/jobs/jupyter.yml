@@ -10,7 +10,8 @@ test linux wheel via notebooks:
         UV_ARGS: ""
       - OGS_GROUP: ogs-master
         UV_ARGS: "--upgrade-package ogs"
-      - OGS_GROUP: [ogs-master, ogs-pypi] # maintenance test upgrading all dependencies
+      # maintenance test upgrading all dependencies
+      - OGS_GROUP: [ogs-local, ogs-master, ogs-pypi]
         UV_ARGS: "--upgrade"
   rules:
     # don't test master on master
