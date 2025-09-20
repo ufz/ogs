@@ -68,6 +68,9 @@ authors:
       family-names: Kiszkurno
       orcid: "https://orcid.org/0000-0003-3304-4838"
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Jäschke
+      family-names: Max
+      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
     - given-names: Haibing
       family-names: Shao
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
@@ -77,9 +80,6 @@ authors:
     - given-names: Boyan
       family-names: Meng
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
-    - given-names: Jäschke
-      family-names: Max
-      affiliation: "Hochschule für Technik, Wirtschaft und Kultur Leipzig"
     - given-names: Jasper
       family-names: Bathmann
       affiliation: TU Bergakademie Freiberg
@@ -273,6 +273,9 @@ authors:
       affiliation: >-
           BHelmholtz Centre for Environmental Research -- UFZ
 identifiers:
+    - type: doi
+      value: 10.5281/zenodo.17162299
+      description: Zenodo DOI for 6.5.6
     - type: doi
       value: 10.5281/zenodo.15496721
       description: Zenodo DOI for 6.5.5
