@@ -292,6 +292,12 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         solid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template value<double>(vars, x_position, t, dt);
 
+    auto const drho_SR_dT =
+        solid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template dValue<double>(vars,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     x_position, t, dt);
+
     auto const porosity =
         medium->property(MaterialPropertyLib::PropertyType::porosity)
             .template value<double>(vars, x_position, t, dt);
@@ -479,6 +485,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     crv.effective_volumetric_heat_capacity =
         porosity * fluid_density * crv.c_f +
         (1.0 - porosity) * solid_density * c_s;
+    double dC_eff_dT = porosity * crv.drho_LR_dT * crv.c_f +
+                       (1.0 - porosity) * drho_SR_dT * c_s;
 
     if (frozen_liquid_phase)
     {
@@ -582,7 +590,6 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             phi_fr * ip_data_output.rho_fr * c_fr -
             l_fr * ip_data_output.rho_fr * dphi_fr_dT;
 
-        // part of dMTT_dT derivative for freezing
         double const d2phi_fr_dT2 =
             (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
                 .template d2Value<double>(
@@ -597,11 +604,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         crv.J_uT_fr = phi_fr * C_IR * ice_linear_thermal_expansion_coefficient;
 
-        crv.J_TT_fr =
-            ((ip_data_output.rho_fr * c_fr - fluid_density * crv.c_f) *
-                 dphi_fr_dT +
-             l_fr * ip_data_output.rho_fr * d2phi_fr_dT2) *
-            dT_int_pt / dt;
+        // part of dMTT_dT derivative for freezing
+        dC_eff_dT += -dphi_fr_dT * fluid_density * crv.c_f -
+                     phi_fr * crv.drho_LR_dT * crv.c_f +
+                     dphi_fr_dT * ip_data_output.rho_fr * c_fr -
+                     l_fr * ip_data_output.rho_fr * d2phi_fr_dT2;
         double const storage_p_fr_coeff =
             (porosity * crv.beta_IR + (alpha - porosity) * crv.beta_SR) *
                 ip_data_output.rho_fr / fluid_density -
@@ -615,6 +622,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                  crv.beta) -
             crv.mass_exchange;
     }
+    crv.J_TT = dC_eff_dT * dT_int_pt / dt;
     return crv;
 }
 
@@ -850,16 +858,12 @@ void ThermoHydroMechanicsLocalAssembler<
             N.transpose() * dip_flux_vector_dT.transpose() * dNdx * T * N * w;
         average_velocity_norm += velocity.norm();
 
-        if (has_frozen_liquid_phase)
-        {
-            local_Jac
-                .template block<temperature_size, temperature_size>(
-                    temperature_index, temperature_index)
-                .noalias() -= N.transpose() * crv.J_TT_fr * N * w;
-        }
-
         MTT.noalias() +=
             N.transpose() * crv.effective_volumetric_heat_capacity * N * w;
+        local_Jac
+            .template block<temperature_size, temperature_size>(
+                temperature_index, temperature_index)
+            .noalias() += N.transpose() * crv.J_TT * N * w;
 
         //
         // temperature equation, pressure part

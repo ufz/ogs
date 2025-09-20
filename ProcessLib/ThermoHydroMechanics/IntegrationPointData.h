@@ -273,11 +273,11 @@ struct ConstitutiveRelationsValues
     double fluid_compressibility;
     double rho;
     double drho_LR_dT;
+    double J_TT;
 
     // Freezing related values.
     double beta_IR;
     double beta_T_SI;
-    double J_TT_fr;
     double mass_exchange;
     double k_rel;
     double dk_rel_dT;
