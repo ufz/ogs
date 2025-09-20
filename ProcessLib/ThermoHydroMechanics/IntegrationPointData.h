@@ -278,6 +278,7 @@ struct ConstitutiveRelationsValues
     double mass_exchange;
     double k_rel;
     double dk_rel_dT;
+    double storage_p_fr;
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;
