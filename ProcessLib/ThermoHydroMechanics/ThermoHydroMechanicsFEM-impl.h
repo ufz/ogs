@@ -407,6 +407,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         crv.K_pT_thermal_osmosis * dNdx * T +
         crv.k_rel * crv.K_over_mu * fluid_density * b;
     ip_data_output.velocity = velocity;
+    crv.dvelocity_dT =
+        -crv.dk_rel_dT * crv.K_over_mu * dNdx * p +
+        // TODO(naumov): - crv.K_pT_thermal_osmosis * dNdx * dT_dT +
+        (crv.dk_rel_dT * fluid_density + crv.k_rel * crv.drho_LR_dT) *
+            crv.K_over_mu * b;
 
     //
     // displacement equation, displacement part
@@ -658,6 +663,9 @@ void ThermoHydroMechanicsLocalAssembler<
     typename ShapeMatricesTypePressure::NodalMatrixType KTp;
     KTp.setZero(temperature_size, pressure_size);
 
+    typename ShapeMatricesTypePressure::NodalMatrixType dKTT_dT_T;
+    dKTT_dT_T.setZero(temperature_size, pressure_size);
+
     typename ShapeMatricesTypePressure::NodalMatrixType dKTT_dp;
     dKTT_dp.setZero(temperature_size, pressure_size);
 
@@ -832,6 +840,14 @@ void ThermoHydroMechanicsLocalAssembler<
             dNdx.transpose() * crv.effective_thermal_conductivity * dNdx * w;
 
         ip_flux_vector.emplace_back(velocity * fluid_density * crv.c_f);
+        // Without any flux correction the flux derivative is as follows. The
+        // contribution to KTT is different if any stabilization scheme is used,
+        // but this is ignored for the moment.
+        GlobalDimVectorType const dip_flux_vector_dT =
+            crv.dvelocity_dT * fluid_density * crv.c_f +
+            velocity * crv.drho_LR_dT * crv.c_f;
+        dKTT_dT_T.noalias() +=
+            N.transpose() * dip_flux_vector_dT.transpose() * dNdx * T * N * w;
         average_velocity_norm += velocity.norm();
 
         if (has_frozen_liquid_phase)
@@ -907,7 +923,7 @@ void ThermoHydroMechanicsLocalAssembler<
     local_Jac
         .template block<temperature_size, temperature_size>(temperature_index,
                                                             temperature_index)
-        .noalias() += KTT + MTT / dt;
+        .noalias() += KTT + dKTT_dT_T + MTT / dt;
 
     // temperature equation, pressure part
     local_Jac

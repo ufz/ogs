@@ -255,6 +255,7 @@ struct ConstitutiveRelationsValues
 {
     using DimMatrix =
         typename MatrixPolicyType::MatrixType<DisplacementDim, DisplacementDim>;
+    using DimVector = MatrixPolicyType::VectorType<DisplacementDim>;
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim>
@@ -262,6 +263,8 @@ struct ConstitutiveRelationsValues
     DimMatrix K_over_mu;
     DimMatrix K_pT_thermal_osmosis;
     DimMatrix effective_thermal_conductivity;
+    DimVector dvelocity_dT = DimVector::Constant(
+        DisplacementDim, std::numeric_limits<double>::quiet_NaN());
     double alpha_biot;
     double beta;
     double beta_SR;
