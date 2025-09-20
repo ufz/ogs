@@ -269,6 +269,7 @@ struct ConstitutiveRelationsValues
     double effective_volumetric_heat_capacity;
     double fluid_compressibility;
     double rho;
+    double drho_LR_dT;
 
     // Freezing related values.
     double beta_IR;

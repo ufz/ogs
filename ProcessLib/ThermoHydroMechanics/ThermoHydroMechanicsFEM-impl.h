@@ -343,6 +343,12 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
     crv.fluid_compressibility = 1 / fluid_density * drho_dp;
 
+    crv.drho_LR_dT =
+        liquid_phase.property(MaterialPropertyLib::PropertyType::density)
+            .template dValue<double>(vars,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     x_position, t, dt);
+
     double const fluid_volumetric_thermal_expansion_coefficient =
         MaterialPropertyLib::getLiquidThermalExpansivity(
             liquid_phase, vars, fluid_density, x_position, t, dt);
@@ -792,6 +798,13 @@ void ThermoHydroMechanicsLocalAssembler<
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx.transpose() * fluid_density * crv.k_rel * crv.K_over_mu * b *
             w;
+        local_Jac
+            .template block<pressure_size, temperature_size>(pressure_index,
+                                                             temperature_index)
+            .noalias() -=
+            dNdx.transpose() *
+            (fluid_density * crv.dk_rel_dT + crv.drho_LR_dT * crv.k_rel) *
+            crv.K_over_mu * b * N * w;
         //
         // pressure equation, temperature part (M_pT)
         //
