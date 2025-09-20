@@ -285,6 +285,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     vars.temperature = T_int_pt;
     double const p_int_pt = N.dot(p);
     vars.liquid_phase_pressure = p_int_pt;
+    double const p_prev_int_pt = N.dot(p_prev);
+    double const dp_int_pt = p_int_pt - p_prev_int_pt;
 
     vars.liquid_saturation = 1.0;
 
@@ -616,6 +618,14 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
              (alpha - porosity) * crv.beta_SR);
         crv.storage_p_fr = phi_fr / porosity * storage_p_fr_coeff;
 
+        double const dstorage_p_fr_coeff_dT =
+            (porosity * crv.beta_IR + (alpha - porosity) * crv.beta_SR) *
+            crv.drho_LR_dT / (fluid_density * fluid_density);
+
+        crv.J_pT_fr = (dphi_fr_dT * storage_p_fr_coeff +
+                       phi_fr * dstorage_p_fr_coeff_dT) /
+                      porosity * dp_int_pt / dt;
+
         crv.storage_T_fr =
             phi_fr / porosity *
                 (crv.beta_T_SI * ip_data_output.rho_fr / fluid_density -
@@ -809,6 +819,11 @@ void ThermoHydroMechanicsLocalAssembler<
         if (has_frozen_liquid_phase)
         {
             storage_p.noalias() += N.transpose() * crv.storage_p_fr * N * w;
+
+            local_Jac
+                .template block<pressure_size, temperature_size>(
+                    pressure_index, temperature_index)
+                .noalias() += N.transpose() * crv.J_pT_fr * N * w;
         }
 
         laplace_T.noalias() +=
