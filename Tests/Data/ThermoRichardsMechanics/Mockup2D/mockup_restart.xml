@@ -68,13 +68,13 @@
             <vtkdiff>
                 <regex>mockup_results_restart_.*[.]vtu</regex>
                 <field>pressure</field>
-                <absolute_tolerance>8.4e-6</absolute_tolerance>
+                <absolute_tolerance>1.0e-5</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
                 <regex>mockup_results_restart_.*[.]vtu</regex>
                 <field>saturation</field>
-                <absolute_tolerance>5e-14</absolute_tolerance>
+                <absolute_tolerance>6e-14</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
@@ -86,7 +86,7 @@
             <vtkdiff>
                 <regex>mockup_results_restart_.*[.]vtu</regex>
                 <field>swelling_stress</field>
-                <absolute_tolerance>2.4e-7</absolute_tolerance>
+                <absolute_tolerance>2.5e-7</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>

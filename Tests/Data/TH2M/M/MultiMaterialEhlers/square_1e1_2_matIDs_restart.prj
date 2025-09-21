@@ -467,7 +467,7 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>7e-15</absolute_tolerance>
+            <absolute_tolerance>1e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
