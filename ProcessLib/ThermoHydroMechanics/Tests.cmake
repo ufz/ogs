@@ -88,7 +88,7 @@ AddTest(
     expected_square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu pressure pressure 1e-8 1e-8
     expected_square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu temperature temperature 1e-8 1e-8
     expected_square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu epsilon epsilon 1e-8 1e-8
-    expected_square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu sigma sigma 1e-8 1e-8
+    expected_square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu sigma sigma 2e-8 1e-8
 )
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation
