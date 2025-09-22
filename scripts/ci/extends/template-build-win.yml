@@ -11,7 +11,7 @@
     - mkdir build # We are inside the OGS source directory, now. This "build" dir will be, too.
     # Create symlink https://stackoverflow.com/a/34905638/80480
     - cmd /c mklink /D $artifacts_dir $env:CI_PROJECT_DIR\$build_directory_full
-    - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS -DOGS_BUILD_DEPRECATED_PROCESSES=ON"
+    - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
     - $cmake_cmd
     - Invoke-Expression $cmake_cmd
     # Activate .venv
@@ -32,11 +32,11 @@
       $ctest_condition = $false
       if ($null -eq $env:CI_MERGE_REQUEST_LABELS) { $ctest_condition = $true }
       elseif (-Not ($env:CI_MERGE_REQUEST_LABELS -match "unit_tests")) { $ctest_condition = $true }
-      if($env:BUILD_CTEST -eq "true" -And $ctest_condition -eq $true)
+      if(($env:BUILD_CTEST -eq "true") -And ($ctest_condition -eq $true))
       {
         $ctest_arguments = @()
 
-        if ($env:CTEST_ARGS -and $env:CTEST_ARGS.Trim() -ne "") {
+        if ($env:CTEST_ARGS -And ($env:CTEST_ARGS.Trim() -ne "")) {
             # Split CTEST_ARGS into separate args (assuming space-delimited)
             $ctest_arguments += $env:CTEST_ARGS.Trim('"').Split(" ")
         }
@@ -54,7 +54,7 @@
         }
       }
     - |
-      if($env:CHECK_WARNINGS -eq "true" -and (cat $log_file | Select-String -Pattern ': warning') )
+      if(($env:CHECK_WARNINGS -eq "true") -And (cat $log_file | Select-String -Pattern ': warning') )
       {
           Write-Output 'There were compiler warnings:\n'
           cat $log_file | Select-String -Pattern ': warning'
