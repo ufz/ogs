@@ -468,6 +468,12 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     MaterialPropertyLib::PropertyType::thermal_conductivity)
                 .value(vars, x_position, t, dt));
 
+    crv.dlambda_eff_dT = MaterialPropertyLib::formEigenTensor<DisplacementDim>(
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .dValue(vars, MaterialPropertyLib::Variable::temperature,
+                    x_position, t, dt));
+
     // Thermal conductivity is moved outside and zero matrix is passed instead
     // due to multiplication with fluid's density times specific heat capacity.
     crv.effective_thermal_conductivity.noalias() +=
@@ -861,6 +867,8 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         KTT.noalias() +=
             dNdx.transpose() * crv.effective_thermal_conductivity * dNdx * w;
+        dKTT_dT_T.noalias() +=
+            dNdx.transpose() * crv.dlambda_eff_dT * dNdx * T * N * w;
 
         ip_flux_vector.emplace_back(velocity * fluid_density * crv.c_f);
         // Without any flux correction the flux derivative is as follows. The

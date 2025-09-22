@@ -263,6 +263,7 @@ struct ConstitutiveRelationsValues
     DimMatrix K_over_mu;
     DimMatrix K_pT_thermal_osmosis;
     DimMatrix effective_thermal_conductivity;
+    DimMatrix dlambda_eff_dT;
     DimVector dvelocity_dT = DimVector::Constant(
         DisplacementDim, std::numeric_limits<double>::quiet_NaN());
     double alpha_biot;
