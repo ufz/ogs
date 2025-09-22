@@ -690,8 +690,8 @@ void ThermoHydroMechanicsLocalAssembler<
     typename ShapeMatricesTypePressure::NodalMatrixType dKTT_dT_T;
     dKTT_dT_T.setZero(temperature_size, pressure_size);
 
-    typename ShapeMatricesTypePressure::NodalMatrixType dKTT_dp;
-    dKTT_dp.setZero(temperature_size, pressure_size);
+    typename ShapeMatricesTypePressure::NodalMatrixType dKTT_dp_T;
+    dKTT_dp_T.setZero(temperature_size, pressure_size);
 
     typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
     laplace_p.setZero(pressure_size, pressure_size);
@@ -895,9 +895,9 @@ void ThermoHydroMechanicsLocalAssembler<
             dNdx.transpose() * T_int_pt * crv.K_pT_thermal_osmosis * dNdx * w;
 
         // linearized darcy
-        dKTT_dp.noalias() -= fluid_density * crv.c_f * crv.k_rel *
-                             N.transpose() * (dNdx * T).transpose() *
-                             crv.K_over_mu * dNdx * w;
+        dKTT_dp_T.noalias() -= fluid_density * crv.c_f * crv.k_rel *
+                               N.transpose() * (dNdx * T).transpose() *
+                               crv.K_over_mu * dNdx * w;
 
         /* TODO (Joerg) Temperature changes due to thermal dilatation of the
          * fluid, which are usually discarded as being very small.
@@ -956,7 +956,7 @@ void ThermoHydroMechanicsLocalAssembler<
     local_Jac
         .template block<temperature_size, pressure_size>(temperature_index,
                                                          pressure_index)
-        .noalias() += KTp + dKTT_dp;
+        .noalias() += KTp + dKTT_dp_T;
 
     // displacement equation, pressure part
     local_Jac
