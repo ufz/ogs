@@ -603,6 +603,12 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             (porosity * crv.fluid_compressibility +
              (alpha - porosity) * crv.beta_SR);
         crv.storage_p_fr = phi_fr / porosity * storage_p_fr_coeff;
+
+        crv.storage_T_fr =
+            phi_fr / porosity *
+                (crv.beta_T_SI * ip_data_output.rho_fr / fluid_density -
+                 crv.beta) -
+            crv.mass_exchange;
     }
     return crv;
 }
@@ -811,14 +817,7 @@ void ThermoHydroMechanicsLocalAssembler<
 
         if (has_frozen_liquid_phase)
         {
-            storage_T.noalias() +=
-                N.transpose() *
-                (_ip_data[ip].phi_fr / _ip_data[ip].porosity *
-                     (crv.beta_T_SI * _ip_data_output[ip].rho_fr /
-                          fluid_density -
-                      crv.beta) -
-                 crv.mass_exchange) *
-                N * w;
+            storage_T.noalias() += N.transpose() * crv.storage_T_fr * N * w;
         }
 
         //
