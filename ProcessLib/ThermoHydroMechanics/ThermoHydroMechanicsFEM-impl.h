@@ -835,7 +835,7 @@ void ThermoHydroMechanicsLocalAssembler<
     local_Jac
         .template block<pressure_size, temperature_size>(pressure_index,
                                                          temperature_index)
-        .noalias() -= storage_T / dt - laplace_T;
+        .noalias() += -storage_T / dt + laplace_T;
 
     // pressure equation, pressure part.
     local_Jac
