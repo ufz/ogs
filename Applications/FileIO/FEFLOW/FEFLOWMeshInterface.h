@@ -118,6 +118,17 @@ private:
         std::ifstream& in,
         std::vector<std::vector<std::size_t>>& vec_elementsets);
 
+    /// read MAT_I_FLOW data (material properties of flow problem)
+    void readMAT_I_FLOW(
+        std::ifstream& in,
+        const FEM_DIM& fem_dim,
+        std::vector<std::string>& vec_element_property_names,
+        std::vector<std::vector<double>>& vec_element_property_values);
+
+    /// read element values of a material property in MAT_I_FLOW data
+    void read_material_property_values(std::ifstream& in,
+                                       std::vector<double>& vec_element_values);
+
     void setMaterialIDs(
         FEM_CLASS const& fem_class,
         FEM_DIM const& fem_dim,

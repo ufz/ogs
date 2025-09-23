@@ -47,6 +47,8 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
     std::vector<MeshLib::Element*> vec_elements;
 
     std::vector<std::vector<std::size_t>> vec_elementsets;
+    std::vector<std::string> vec_element_property_names;
+    std::vector<std::vector<double>> vec_element_property_values;
 
     std::string line_string;
     std::stringstream line_stream;
@@ -216,6 +218,13 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
                                                       points, lines);
         }
         //....................................................................
+        // MAT_I_FLOW
+        else if (line_string == "MAT_I_FLOW")
+        {
+            readMAT_I_FLOW(in, fem_dim, vec_element_property_names,
+                           vec_element_property_values);
+        }
+        //....................................................................
     }
     in.close();
 
@@ -236,6 +245,32 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
         opt_material_ids->resize(mesh->getNumberOfElements());
         setMaterialIDs(fem_class, fem_dim, lines, vec_elementsets, vec_elements,
                        *opt_material_ids);
+    }
+    if (!vec_element_property_names.empty())
+    {
+        for (unsigned prop_id = 0; prop_id < vec_element_property_names.size();
+             prop_id++)
+        {
+            const std::string& property_name =
+                vec_element_property_names[prop_id];
+            const std::vector<double>& vec_property_values =
+                vec_element_property_values[prop_id];
+            assert(vec_property_values.size() == mesh->getNumberOfElements());
+            auto opt_element_property_values(
+                mesh->getProperties().createNewPropertyVector<double>(
+                    property_name, MeshLib::MeshItemType::Cell, 1));
+            if (!opt_element_property_values)
+            {
+                WARN("Could not create PropertyVector for {:s} in Mesh.",
+                     property_name);
+            }
+            else
+            {
+                opt_element_property_values->resize(
+                    mesh->getNumberOfElements());
+                opt_element_property_values->assign(vec_property_values);
+            }
+        }
     }
 
     if (isXZplane)
@@ -698,6 +733,139 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
     if (std::isalpha(line_string[0]))
     {
         in.seekg(pos_prev_line);
+    }
+}
+
+void FEFLOWMeshInterface::read_material_property_values(
+    std::ifstream& in, std::vector<double>& vec_element_values)
+{
+    double property_value = 0;
+    std::string str_elementList;
+    std::string line_string;
+    std::stringstream line_stream;
+    unsigned prev_mode = 0;
+    std::streamoff pos_prev_line = 0;
+    while (true)
+    {
+        pos_prev_line = in.tellg();
+        std::getline(in, line_string);
+        boost::trim_right(line_string);
+        if (line_string.empty())
+            continue;
+
+        // check mode
+        unsigned mode = 0;  // 0: exit, 1: value + corresponding element
+                            // numbers, 2: continued line of mode 1
+        if ((!in || (line_string[0] != ' ' && line_string[0] != '\t')) &&
+            prev_mode != 0)
+            mode = 0;
+        else if (line_string[0] != '\t')
+            mode = 1;
+        else if (line_string[0] == '\t')
+            mode = 2;
+        prev_mode = mode;
+
+        // process stocked data
+        if (mode != 2 && !str_elementList.empty())
+        {
+            // process previous lines
+            auto vec_elementIDs = getIndexList(str_elementList);
+            for (auto elementID : vec_elementIDs)
+                vec_element_values[elementID - 1] = property_value;
+            str_elementList.clear();
+        }
+
+        if (mode == 0)
+        {
+            // move stream position to previous line
+            in.seekg(pos_prev_line);
+            break;
+        }
+        else if (mode == 1)
+        {
+            line_stream.str(line_string);
+            line_stream >> property_value;
+            std::getline(line_stream, str_elementList);
+            boost::trim(str_elementList);
+            line_stream.clear();
+        }
+        else if (mode == 2)
+        {
+            // continue reading node range
+            boost::trim_if(line_string, boost::is_any_of("\t"));
+            str_elementList += " " + line_string;
+        }
+    }
+}
+
+void FEFLOWMeshInterface::readMAT_I_FLOW(
+    std::ifstream& in,
+    const FEM_DIM& fem_dim,
+    std::vector<std::string>& vec_element_property_names,
+    std::vector<std::vector<double>>& vec_element_property_values)
+{
+    std::string line_string;
+    std::stringstream line_stream;
+
+    auto is_header_of_material_property = [](const std::string& line_string)
+    {
+        if (line_string.empty())
+            return false;
+        return static_cast<bool>(isdigit(line_string.at(0)));
+    };
+
+    auto is_end_of_MAT_I_FLOW = [](const std::string& line_string)
+    { return (isalpha(line_string.at(0))); };
+
+    auto get_material_property_name = [](const std::string& line_string)
+    {
+        auto split_quoted_string = [](const std::string& str)
+        {
+            std::vector<std::string> vec_str;
+            std::string s;
+            std::istringstream ss(str);
+            while (ss >> std::quoted(s))
+                vec_str.push_back(s);
+            return vec_str;
+        };
+
+        std::vector<std::string> vec_str(split_quoted_string(line_string));
+        if (vec_str.size() < 3)
+            return std::string("");
+        return vec_str[2];
+    };
+
+    std::streamoff pos_prev_line = 0;
+    while (!in.eof())
+    {
+        pos_prev_line = in.tellg();
+        std::getline(in, line_string);
+        boost::trim_right(line_string);
+        if (line_string.empty())
+            continue;
+        if (is_end_of_MAT_I_FLOW(line_string))
+        {
+            // move stream position to previous line
+            in.seekg(pos_prev_line);
+            break;
+        }
+
+        if (is_header_of_material_property(line_string))
+        {
+            const std::string property_name =
+                get_material_property_name(line_string);
+            if (!property_name.empty())
+            {
+                INFO("read element property {:s}", property_name);
+                vec_element_property_names.push_back(property_name);
+                vec_element_property_values.resize(
+                    vec_element_property_values.size() + 1);
+                std::vector<double>& vec_values =
+                    vec_element_property_values.back();
+                vec_values.resize(fem_dim.n_elements);
+                read_material_property_values(in, vec_values);
+            }
+        }
     }
 }
 
