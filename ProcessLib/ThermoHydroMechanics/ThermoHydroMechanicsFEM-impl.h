@@ -520,6 +520,13 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     vars, MaterialPropertyLib::Variable::temperature,
                     x_position, t, dt);
 
+        double const d2phi_fr_dT2 =
+            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+                .template d2Value<double>(
+                    vars, MaterialPropertyLib::Variable::temperature,
+                    MaterialPropertyLib::Variable::temperature, x_position, t,
+                    dt);
+
         double const phi_fr_prev = [&]()
         {
             MaterialPropertyLib::VariableArray vars_prev;
@@ -531,6 +538,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         crv.mass_exchange = -dphi_fr_dT * porosity *
                             (1. - ip_data_output.rho_fr / fluid_density);
+        double const dmass_exchange_dT =
+            -d2phi_fr_dT2 * porosity *
+                (1. - ip_data_output.rho_fr / fluid_density) +
+            dphi_fr_dT * porosity * ip_data_output.rho_fr * crv.drho_LR_dT /
+                (fluid_density * fluid_density);
 
         // alpha_T^I
         MathLib::KelvinVector::KelvinVectorType<
@@ -598,13 +610,6 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             phi_fr * ip_data_output.rho_fr * c_fr -
             l_fr * ip_data_output.rho_fr * dphi_fr_dT;
 
-        double const d2phi_fr_dT2 =
-            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                .template d2Value<double>(
-                    vars, MaterialPropertyLib::Variable::temperature,
-                    MaterialPropertyLib::Variable::temperature, x_position, t,
-                    dt);
-
         crv.J_uu_fr = phi_fr * C_IR;
 
         auto const& sigma_eff_ice = ip_data.sigma_eff_ice;
@@ -637,6 +642,14 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                 (crv.beta_T_SI * ip_data_output.rho_fr / fluid_density -
                  crv.beta) -
             crv.mass_exchange;
+        double const dstorage_T_fr_dT =
+            dphi_fr_dT / porosity *
+                (crv.beta_T_SI * ip_data_output.rho_fr / fluid_density -
+                 crv.beta) +
+            phi_fr / porosity * crv.beta_T_SI * ip_data_output.rho_fr *
+                crv.drho_LR_dT / (fluid_density * fluid_density) -
+            dmass_exchange_dT;
+        crv.J_pT_fr += dstorage_T_fr_dT * dT_int_pt / dt;
     }
     crv.J_TT = dC_eff_dT * dT_int_pt / dt;
     return crv;
