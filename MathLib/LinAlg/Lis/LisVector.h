@@ -14,14 +14,13 @@
 
 #pragma once
 
-#include <lis.h>
-
 #include <cassert>
 #include <span>
 #include <string>
 #include <vector>
 
 #include "BaseLib/Error.h"
+#include "LisWrapper.h"
 
 namespace MathLib
 {

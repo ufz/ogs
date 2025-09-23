@@ -46,9 +46,9 @@ struct LinearSolverLibrarySetup final
         PetscFinalize();
     }
 };
-}    // ApplicationsLib
+}  // namespace ApplicationsLib
 #elif defined(USE_LIS)
-#include <lis.h>
+#include "MathLib/LinAlg/Lis/LisWrapper.h"
 namespace ApplicationsLib
 {
 struct LinearSolverLibrarySetup final
@@ -64,7 +64,7 @@ struct LinearSolverLibrarySetup final
         lis_finalize();
     }
 };
-}    // ApplicationsLib
+}  // namespace ApplicationsLib
 #else
 namespace ApplicationsLib
 {
@@ -86,10 +86,7 @@ struct LinearSolverLibrarySetup final
 #endif
         INFO("Eigen use {:d} threads", Eigen::nbThreads());
     }
-    ~LinearSolverLibrarySetup()
-    {
-        NumLib::cleanupGlobalMatrixProviders();
-    }
+    ~LinearSolverLibrarySetup() { NumLib::cleanupGlobalMatrixProviders(); }
 };
 }  // namespace ApplicationsLib
 #endif
