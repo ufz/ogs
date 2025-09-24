@@ -73,7 +73,8 @@ if(OGS_USE_PIP)
   "@jupyterlab/docmanager-extension:plugin": {
     "defaultViewers": {
       "markdown": "Jupytext Notebook",
-      "myst": "Jupytext Notebook"
+      "myst": "Jupytext Notebook",
+      "python": "Jupytext Notebook"
     }
   }
 }

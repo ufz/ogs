@@ -10,13 +10,6 @@ deploy web site:
   rules:
     - if: $CI_COMMIT_TAG
     - if: '$CI_COMMIT_BRANCH == "master"'
-      changes:
-        - web/**/*
-        - scripts/ci/jobs/web.yml
-        - Tests/Data/**/*.ipynb
-    - if: '$CI_COMMIT_BRANCH == "master"'
-      when: manual
-      allow_failure: true
   script:
     # FeatureMatrix
     - curl -fSL -O https://gitlab.opengeosys.org/ogs/inf/featurematrix/-/archive/main/featurematrix-main.tar.gz

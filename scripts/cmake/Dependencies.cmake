@@ -2,6 +2,11 @@ message(STATUS "┌─ Dependencies.cmake")
 list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 set(CMAKE_FOLDER ThirdParty)
 
+if(NOT CPM_SOURCE_CACHE)
+    message(WARNING "CPM_SOURCE_CACHE is not set. We highly recommend to set it, "
+                    "see https://www.opengeosys.org/docs/devguide/packages/cpm/.")
+endif()
+
 if(OGS_BUILD_TESTING)
     if(GUIX_BUILD)
         find_package(GTest REQUIRED)
@@ -182,12 +187,15 @@ if(OGS_USE_MFRONT)
         # Patch only works when CPM_SOURCE_CACHE is set. Following conditional
         # logic can be removed if
         # https://github.com/cpm-cmake/CPM.cmake/issues/577 is resolved.
-        if(NOT "${CPM_SOURCE_CACHE}" STREQUAL "")
-            set(_mgis_patch_args
-                PATCHES ${PROJECT_SOURCE_DIR}/scripts/cmake/mgis-flags.patch
-            )
-            message(STATUS "Adding mgis-flags.patch.")
+        if(NOT CPM_SOURCE_CACHE)
+            message(FATAL_ERROR "CPM_SOURCE_CACHE not set but is required when "
+                "patched third-party libraries are use, see "
+                "https://www.opengeosys.org/docs/devguide/packages/cpm/.")
         endif()
+        set(_mgis_patch_args
+            PATCHES ${PROJECT_SOURCE_DIR}/scripts/cmake/mgis-flags.patch
+        )
+        message(STATUS "Adding mgis-flags.patch.")
         if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
             set(_enable_portable_build_option "enable-portable-build ON")
         endif()
