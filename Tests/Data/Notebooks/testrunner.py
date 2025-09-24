@@ -98,10 +98,11 @@ def check_and_modify_frontmatter():
     # Insert Jupyter header with notebook source and binderhub link in second cell
     repo = "https://gitlab.opengeosys.org/ogs/ogs"
     branch = "master"
+    binder_tag = "6.5.6-0.7.0"
     if "CI_MERGE_REQUEST_SOURCE_PROJECT_URL" in os.environ:
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
         branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
-    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/master?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1"
+    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1"
     text = """
 <div class="note">
     <p style="margin-top: 0; margin-bottom: 0;">
