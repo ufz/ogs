@@ -181,20 +181,18 @@ void ThermoHydroMechanicsLocalAssembler<
                                                    double const t,
                                                    int const /*process_id*/)
 {
-    if (!_process_data.initial_stress.isTotalStress())
-    {
-        return;
-    }
-
     // TODO: For staggered scheme, overload
     // LocalAssemblerInterface::setInitialConditions to enable local_x contains
     // the primary variables from all coupled processes.
-    auto const p = local_x.template segment<pressure_size>(pressure_index);
+    auto const [T, p, u] = localDOF(local_x);
 
     double const dt = 0.0;
 
     MPL::VariableArray vars;
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    auto* const frozen_liquid_phase = medium->hasPhase("FrozenLiquid")
+                                          ? &medium->phase("FrozenLiquid")
+                                          : nullptr;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -207,13 +205,25 @@ void ThermoHydroMechanicsLocalAssembler<
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
                     _element, N_u))};
-        auto const alpha_b =
-            medium->property(MPL::PropertyType::biot_coefficient)
-                .template value<double>(vars, x_position, t, dt);
 
         auto& sigma_eff = _ip_data[ip].sigma_eff;
-        sigma_eff.noalias() += alpha_b * N.dot(p) * Invariants::identity2;
+        if (_process_data.initial_stress.isTotalStress())
+        {
+            auto const alpha_b =
+                medium->property(MPL::PropertyType::biot_coefficient)
+                    .template value<double>(vars, x_position, t, dt);
+
+            sigma_eff.noalias() += alpha_b * N.dot(p) * Invariants::identity2;
+        }
         _ip_data[ip].sigma_eff_prev.noalias() = sigma_eff;
+
+        vars.temperature = N.dot(T);
+        if (frozen_liquid_phase)
+        {
+            _ip_data[ip].phi_fr =
+                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+                    .template value<double>(vars, x_position, t, dt);
+        }
     }
 }
 
