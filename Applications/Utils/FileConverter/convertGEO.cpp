@@ -15,7 +15,9 @@
 
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "Applications/FileIO/writeGeometryToFile.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "InfoLib/GitInfo.h"
 
@@ -48,9 +50,12 @@ int main(int argc, char* argv[])
         "g", "gmsh-path", "Input (.msh). The path to the gmsh binary file",
         false, "", "INPUT_FILE");
     cmd.add(gmsh_path_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     GeoLib::GEOObjects geoObjects;
     FileIO::readGeometryFromFile(argInputFileName.getValue(), geoObjects,

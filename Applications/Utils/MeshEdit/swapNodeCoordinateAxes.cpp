@@ -15,6 +15,7 @@
 
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
@@ -111,9 +112,12 @@ int main(int argc, char* argv[])
         "XYZ values to XZY values)",
         true, "", "NEW_ORDER");
     cmd.add(new_order_arg);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     const std::string str_order = new_order_arg.getValue();
     std::array<int, 3> new_order = {{}};

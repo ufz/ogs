@@ -20,7 +20,9 @@
 #include "Applications/FileIO/readGeometryFromFile.h"
 #include "Applications/FileIO/writeGeometryToFile.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "InfoLib/GitInfo.h"
@@ -181,9 +183,12 @@ int main(int argc, char* argv[])
         "", "INPUT_FILE");
     cmd.add(gmsh_path_arg);
 
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     // *** read mesh
     INFO("Reading mesh '{:s}' ... ", mesh_arg.getValue());

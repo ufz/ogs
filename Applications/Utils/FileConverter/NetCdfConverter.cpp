@@ -9,7 +9,6 @@
 
 #include <tclap/CmdLine.h>
 
-// STL
 #include <cctype>
 #include <iostream>
 #include <limits>
@@ -23,6 +22,7 @@
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
@@ -737,9 +737,12 @@ int main(int argc, char* argv[])
                                            "Input (.nc). The netCDF input file",
                                            true, "", "INPUT_FILE");
     cmd.add(arg_input);
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     NcFile dataset(arg_input.getValue().c_str(), NcFile::read);
 

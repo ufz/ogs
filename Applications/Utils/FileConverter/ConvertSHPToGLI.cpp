@@ -11,17 +11,15 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-
+#include <shapefil.h>
 #include <tclap/CmdLine.h>
 
-// STL
 #include <fstream>
 #include <vector>
 
-// ShapeLib
-#include <shapefil.h>
-
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlGmlInterface.h"
 #include "GeoLib/IO/XmlIO/Qt/XmlStnInterface.h"
@@ -182,9 +180,12 @@ int main(int argc, char* argv[])
         "INPUT_FILE");
     cmd.add(shapefile_arg);
 
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::string fname(shapefile_arg.getValue());
 

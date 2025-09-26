@@ -14,8 +14,10 @@
 #include <string>
 
 #include "BaseLib/FileTools.h"
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #ifndef WIN32
 #include "BaseLib/MemWatch.h"
@@ -56,9 +58,12 @@ int main(int argc, char* argv[])
         "i", "in", "Input (.fem). FEFLOW input file", true, "", "INPUT_FILE");
     cmd.add(feflow_mesh_arg);
 
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     // *** read mesh
     INFO("Reading {:s}.", feflow_mesh_arg.getValue());

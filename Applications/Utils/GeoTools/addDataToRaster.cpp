@@ -8,7 +8,6 @@
  *              http://www.opengeosys.org/project/license
  *
  */
-
 #include <tclap/CmdLine.h>
 
 #include <algorithm>
@@ -17,7 +16,9 @@
 #include <numbers>
 #include <numeric>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Point.h"
@@ -149,9 +150,12 @@ int main(int argc, char* argv[])
                                            true, "", "INPUT_FILE");
     cmd.add(input_arg);
 
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     std::array input_points = {
         GeoLib::Point{{ll_x_arg.getValue(), ll_y_arg.getValue(), 0}},
