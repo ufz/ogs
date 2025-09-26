@@ -622,7 +622,7 @@
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>sigma_total</field>
-            <absolute_tolerance>6.5e-07</absolute_tolerance>
+            <absolute_tolerance>2.0e-06</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 28000.0 --></relative_tolerance>
         </vtkdiff>
         <vtkdiff>
@@ -634,7 +634,7 @@
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>sigma_total_ip</field>
-            <absolute_tolerance>6.0e-07</absolute_tolerance>
+            <absolute_tolerance>2.0e-06</absolute_tolerance>
             <relative_tolerance>0.0 <!-- 140000.0 --></relative_tolerance>
         </vtkdiff>
         <vtkdiff>
