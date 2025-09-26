@@ -13,7 +13,9 @@
 
 #include <memory>
 
+#include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "BaseLib/TCLAPOutput.h"
 #include "GeoLib/AABB.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
@@ -68,9 +70,12 @@ int main(int argc, char* argv[])
         "LL_X");
     cmd.add(ll_x_arg);
 
+    auto log_level_arg = BaseLib::makeLogLevelArg();
+    cmd.add(log_level_arg);
     cmd.parse(argc, argv);
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
+    BaseLib::initOGSLogger(log_level_arg.getValue());
 
     GeoLib::RasterHeader header{
         n_cols.getValue(),
