@@ -20,6 +20,12 @@ VTK_MODULE_INIT(vtkRenderingOpenGL2)
 
 int main(int argc, char* argv[])
 {
+#ifdef NDEBUG
+    BaseLib::initOGSLogger("info");
+#else
+    BaseLib::initOGSLogger("all");
+#endif
+
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
