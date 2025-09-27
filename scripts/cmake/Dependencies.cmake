@@ -239,7 +239,9 @@ else()
                 ${_boost_options}
     )
 endif()
-if(NOT Boost_ADDED)
+if(Boost_ADDED)
+    list(APPEND DISABLE_WARNINGS_TARGETS boost_serialization boost_wserialization)
+else()
     # Boost from system found. There are only Boost::headers and Boost::boost
     # targets.
     foreach(lib ${BOOST_INCLUDE_LIBRARIES})
