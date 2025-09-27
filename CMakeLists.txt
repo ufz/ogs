@@ -8,6 +8,15 @@ if(CMAKE_VERSION GREATER_EQUAL 3.30)
     cmake_policy(SET CMP0167 NEW)
 endif()
 
+if(APPLE)
+    # Setting the deployment target to current macOS major version
+    cmake_host_system_information(RESULT _os_release QUERY OS_RELEASE)
+    string(REGEX MATCH "^[0-9]+" _os_release_major "${_os_release}")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET ${_os_release_major}.0 CACHE STRING
+        "Minimum macOS operating system version for deployment"
+    )
+endif()
+
 project(OGS-6)
 
 option(OGS_BUILD_WHEEL "Build Python wheels of OGS" OFF)
