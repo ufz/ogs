@@ -13,3 +13,6 @@ build gui linux:
       allow_failure: true
   variables:
     CMAKE_PRESET: release-gui
+    # VTK from system is linked against Qt 6
+    CMAKE_ARGS: >-
+      -DOGS_BUILD_VTK=ON
