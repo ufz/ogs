@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index a15d19a..7a505dc 100644
+index a15d19a..a059c74 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -37,7 +37,7 @@ include(./conf/gkbuild.cmake)
+@@ -37,16 +37,16 @@ include(./conf/gkbuild.cmake)
  
  # Add include directories.
  # i.e., the -I equivalent
@@ -11,8 +11,12 @@ index a15d19a..7a505dc 100644
  include_directories(${GKLIB_PATH}/include)
  include_directories(${CMAKE_INSTALL_PREFIX}/include)
  
-@@ -47,6 +47,6 @@ link_directories(${GKLIB_PATH}/lib)
- link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+ # List of paths that the compiler will search for library files.
+ # i.e., the -L equivalent
+-link_directories(${GKLIB_PATH}/lib)
+-link_directories(${CMAKE_INSTALL_PREFIX}/lib)
++#link_directories(${GKLIB_PATH}/lib)
++#link_directories(${CMAKE_INSTALL_PREFIX}/lib)
  
  # Recursively look for CMakeLists.txt in subdirs.
 -add_subdirectory("build/xinclude")

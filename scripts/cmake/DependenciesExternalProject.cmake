@@ -329,6 +329,9 @@ if(WIN32 OR HDF5_USE_STATIC_LIBRARIES)
     set(HDF5_USE_STATIC_LIBRARIES ON)
     list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
 endif()
+if(APPLE)
+    list(APPEND _hdf5_options "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+endif()
 
 # With apple clang 15 there are errors when the cpm compiled hdf5 has a
 # different version than the one bundled with vtk, see
@@ -420,6 +423,9 @@ list(REMOVE_DUPLICATES VTK_OPTIONS)
 list(APPEND VTK_OPTIONS "-DBUILD_SHARED_LIBS=OFF"
      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 )
+if(APPLE)
+    list(APPEND VTK_OPTIONS "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+endif()
 message(STATUS "VTK_OPTIONS: ${VTK_OPTIONS}")
 if(OGS_USE_PETSC AND EXISTS ${build_dir_HDF5})
     # Use local hdf5 build
