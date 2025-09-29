@@ -69,7 +69,7 @@ deploy docs:
   variables:
     GIT_STRATEGY: none # no checkout
   before_script:
-    - npm install -g netlify-cli --unsafe-perm=true
+    - npm install -g netlify-cli
   script:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
