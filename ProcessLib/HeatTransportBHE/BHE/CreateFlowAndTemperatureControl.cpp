@@ -65,22 +65,22 @@ CoolingVariant createCoolingVariant(
 };
 
 FlowAndTemperatureControl createHeatingHotWaterCooling(
-    BuildingPowerCurves const& heating,
-    BuildingPowerCurves const& hot_water,
-    CoolingVariant const& cooling,
+    std::optional<BuildingPowerCurves> const& heating,
+    std::optional<BuildingPowerCurves> const& hot_water,
+    std::optional<CoolingVariant> const& cooling,
     MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(cooling))
+    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
     {
         return FlowAndTemperatureControl{
             std::in_place_type<
                 BuildingPowerCurveHotWaterCurveActiveCoolingCurveFlowCurve>,
-            heating,
-            hot_water,
-            std::get<BuildingPowerCurves>(cooling),
+            *heating,
+            *hot_water,
+            std::get<BuildingPowerCurves>(*cooling),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
@@ -92,11 +92,11 @@ FlowAndTemperatureControl createHeatingHotWaterCooling(
         return FlowAndTemperatureControl{
             std::in_place_type<
                 BuildingPowerCurveHotWaterCurvePassiveCoolingCurveFlowCurve>,
-            heating,
-            hot_water,
+            *heating,
+            *hot_water,
             std::get<
                 std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
-                cooling)
+                *cooling)
                 .get(),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
@@ -107,20 +107,20 @@ FlowAndTemperatureControl createHeatingHotWaterCooling(
 };
 
 FlowAndTemperatureControl createHeatingCooling(
-    BuildingPowerCurves const& heating,
-    BuildingPowerCurves const& /*hot_water*/,
-    CoolingVariant const& cooling,
+    std::optional<BuildingPowerCurves> const& heating,
+    std::optional<BuildingPowerCurves> const& /*hot_water*/,
+    std::optional<CoolingVariant> const& cooling,
     MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(cooling))
+    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
     {
         return FlowAndTemperatureControl{
             std::in_place_type<BuildingPowerCurveActiveCoolingCurveFlowCurve>,
-            heating,
-            std::get<BuildingPowerCurves>(cooling),
+            *heating,
+            std::get<BuildingPowerCurves>(*cooling),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
@@ -131,10 +131,10 @@ FlowAndTemperatureControl createHeatingCooling(
     {
         return FlowAndTemperatureControl{
             std::in_place_type<BuildingPowerCurvePassiveCoolingCurveFlowCurve>,
-            heating,
+            *heating,
             std::get<
                 std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
-                cooling)
+                *cooling)
                 .get(),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
@@ -145,20 +145,20 @@ FlowAndTemperatureControl createHeatingCooling(
 };
 
 FlowAndTemperatureControl createHotWaterCooling(
-    BuildingPowerCurves const& /*heating*/,
-    BuildingPowerCurves const& hot_water,
-    CoolingVariant const& cooling,
+    std::optional<BuildingPowerCurves> const& /*heating*/,
+    std::optional<BuildingPowerCurves> const& hot_water,
+    std::optional<CoolingVariant> const& cooling,
     MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(cooling))
+    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
     {
         return FlowAndTemperatureControl{
             std::in_place_type<BuildingPowerCurveActiveCoolingCurveFlowCurve>,
-            hot_water,
-            std::get<BuildingPowerCurves>(cooling),
+            *hot_water,
+            std::get<BuildingPowerCurves>(*cooling),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
@@ -169,10 +169,10 @@ FlowAndTemperatureControl createHotWaterCooling(
     {
         return FlowAndTemperatureControl{
             std::in_place_type<BuildingPowerCurvePassiveCoolingCurveFlowCurve>,
-            hot_water,
+            *hot_water,
             std::get<
                 std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
-                cooling)
+                *cooling)
                 .get(),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
@@ -183,19 +183,19 @@ FlowAndTemperatureControl createHotWaterCooling(
 };
 
 FlowAndTemperatureControl createCooling(
-    BuildingPowerCurves const& /*heating*/,
-    BuildingPowerCurves const& /*hot_water*/,
-    CoolingVariant const& cooling,
+    std::optional<BuildingPowerCurves> const& /*heating*/,
+    std::optional<BuildingPowerCurves> const& /*hot_water*/,
+    std::optional<CoolingVariant> const& cooling,
     MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(cooling))
+    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
     {
         return FlowAndTemperatureControl{
             std::in_place_type<ActiveCoolingCurveFlowCurve>,
-            std::get<BuildingPowerCurves>(cooling),
+            std::get<BuildingPowerCurves>(*cooling),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
@@ -208,7 +208,7 @@ FlowAndTemperatureControl createCooling(
             std::in_place_type<PowerCurveFlowCurve>,
             std::get<
                 std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
-                cooling)
+                *cooling)
                 .get(),
             flow_rate_curve,
             refrigerant.specific_heat_capacity,
@@ -220,9 +220,9 @@ FlowAndTemperatureControl createCooling(
 
 using FactoryAdvancedBuildingCurvesFlowCurve =
     std::function<FlowAndTemperatureControl(
-        BuildingPowerCurves const&,                    // heating
-        BuildingPowerCurves const&,                    // hot water
-        CoolingVariant const&,                         // cooling
+        std::optional<BuildingPowerCurves>,            // heating
+        std::optional<BuildingPowerCurves>,            // hot water
+        std::optional<CoolingVariant>,                 // cooling
         MathLib::PiecewiseLinearInterpolation const&,  // flow rate curve
         RefrigerantProperties const&,
         double const,    // flow rate min
@@ -234,14 +234,16 @@ const std::map<std::tuple<bool, bool, bool>,  // heating, hot_water,
     advancedBuildingPowerCurvesFlowCurve = {
         {{true, true, true}, &createHeatingHotWaterCooling},
         {{true, true, false},
-         [](auto const& heating, auto const& hot_water, auto const& /*cooling*/,
+         [](std::optional<BuildingPowerCurves> const& heating,
+            std::optional<BuildingPowerCurves> const& hot_water,
+            std::optional<CoolingVariant> const& /*cooling*/,
             auto const& flow_rate_curve, auto const& refrigerant,
             auto const flow_rate_min, auto const power_min)
          {
              return FlowAndTemperatureControl{
                  std::in_place_type<BuildingPowerCurveHotWaterCurveFlowCurve>,
-                 heating,
-                 hot_water,
+                 *heating,
+                 *hot_water,
                  flow_rate_curve,
                  refrigerant.specific_heat_capacity,
                  refrigerant.density,
@@ -251,14 +253,15 @@ const std::map<std::tuple<bool, bool, bool>,  // heating, hot_water,
         {{true, false, true}, &createHeatingCooling},
         {{false, true, true}, &createHotWaterCooling},
         {{true, false, false},
-         [](auto const& heating, auto const& /*hot_water*/,
-            auto const& /*cooling*/, auto const& flow_rate_curve,
-            auto const& refrigerant, auto const flow_rate_min,
-            auto const power_min)
+         [](std::optional<BuildingPowerCurves> const& heating,
+            std::optional<BuildingPowerCurves> const& /*hot_water*/,
+            std::optional<CoolingVariant> const& /*cooling*/,
+            auto const& flow_rate_curve, auto const& refrigerant,
+            auto const flow_rate_min, auto const power_min)
          {
              return FlowAndTemperatureControl{
                  std::in_place_type<BuildingPowerCurveFlowCurve>,
-                 heating,
+                 *heating,
                  flow_rate_curve,
                  refrigerant.specific_heat_capacity,
                  refrigerant.density,
@@ -266,14 +269,15 @@ const std::map<std::tuple<bool, bool, bool>,  // heating, hot_water,
                  power_min};
          }},
         {{false, true, false},
-         [](auto const& /*heating*/, auto const& hot_water,
-            auto const& /*cooling*/, auto const& flow_rate_curve,
-            auto const& refrigerant, auto const flow_rate_min,
-            auto const power_min)
+         [](std::optional<BuildingPowerCurves> const& /*heating*/,
+            std::optional<BuildingPowerCurves> const& hot_water,
+            std::optional<CoolingVariant> const& /*cooling*/,
+            auto const& flow_rate_curve, auto const& refrigerant,
+            auto const flow_rate_min, auto const power_min)
          {
              return FlowAndTemperatureControl{
                  std::in_place_type<BuildingPowerCurveFlowCurve>,
-                 hot_water,
+                 *hot_water,
                  flow_rate_curve,
                  refrigerant.specific_heat_capacity,
                  refrigerant.density,
@@ -329,9 +333,9 @@ FlowAndTemperatureControl createAdvancedBuildingPowerCurvesFlowCurve(
             "implemented.");
     auto factory = it->second;
 
-    return factory(*building_heating_curves,
-                   *building_hot_water_curves,
-                   *building_cooling_curves,
+    return factory(building_heating_curves,
+                   building_hot_water_curves,
+                   building_cooling_curves,
                    flow_rate_curve,
                    refrigerant,
                    flow_rate_min,
