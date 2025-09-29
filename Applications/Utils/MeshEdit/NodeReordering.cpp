@@ -40,51 +40,51 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
                       bool const forced)
 {
     std::size_t n_corrected_elements = 0;
-    std::size_t const nElements(elements.size());
-    for (std::size_t i = 0; i < nElements; ++i)
+    // std::size_t const nElements(elements.size());
+    for (auto const element : elements)
     {
-        if (!forced && elements[i]->testElementNodeOrder())
+        if (!forced && element->testElementNodeOrder())
         {
             continue;
         }
         n_corrected_elements++;
 
-        const unsigned nElemNodes(elements[i]->getNumberOfBaseNodes());
-        std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(),
-                                          elements[i]->getNodes() + nElemNodes);
+        const unsigned nElemNodes(element->getNumberOfBaseNodes());
+        std::vector<MeshLib::Node*> nodes(element->getNodes(),
+                                          element->getNodes() + nElemNodes);
 
-        switch (elements[i]->getGeomType())
+        switch (element->getGeomType())
         {
             case MeshLib::MeshElemType::TETRAHEDRON:
                 for (std::size_t j = 0; j < 4; ++j)
                 {
-                    elements[i]->setNode(j, nodes[(j + 1) % 4]);
+                    element->setNode(j, nodes[(j + 1) % 4]);
                 }
                 break;
             case MeshLib::MeshElemType::PYRAMID:
-                elements[i]->setNode(0, nodes[1]);
-                elements[i]->setNode(1, nodes[0]);
-                elements[i]->setNode(2, nodes[3]);
-                elements[i]->setNode(3, nodes[2]);
+                element->setNode(0, nodes[1]);
+                element->setNode(1, nodes[0]);
+                element->setNode(2, nodes[3]);
+                element->setNode(3, nodes[2]);
                 break;
             case MeshLib::MeshElemType::PRISM:
                 for (std::size_t j = 0; j < 3; ++j)
                 {
-                    elements[i]->setNode(j, nodes[j + 3]);
-                    elements[i]->setNode(j + 3, nodes[j]);
+                    element->setNode(j, nodes[j + 3]);
+                    element->setNode(j + 3, nodes[j]);
                 }
                 break;
             case MeshLib::MeshElemType::HEXAHEDRON:
                 for (std::size_t j = 0; j < 4; ++j)
                 {
-                    elements[i]->setNode(j, nodes[j + 4]);
-                    elements[i]->setNode(j + 4, nodes[j]);
+                    element->setNode(j, nodes[j + 4]);
+                    element->setNode(j + 4, nodes[j]);
                 }
                 break;
             default:
                 for (std::size_t j = 0; j < nElemNodes; ++j)
                 {
-                    elements[i]->setNode(j, nodes[nElemNodes - j - 1]);
+                    element->setNode(j, nodes[nElemNodes - j - 1]);
                 }
         }
     }
@@ -97,21 +97,20 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
 /// InSitu-Lib
 void fixVtkInconsistencies(std::vector<MeshLib::Element*>& elements)
 {
-    std::size_t const nElements(elements.size());
-    for (std::size_t i = 0; i < nElements; ++i)
+    for (auto* const element : elements)
     {
-        const unsigned nElemNodes(elements[i]->getNumberOfBaseNodes());
-        std::vector<MeshLib::Node*> nodes(elements[i]->getNodes(),
-                                          elements[i]->getNodes() + nElemNodes);
+        const unsigned nElemNodes(element->getNumberOfBaseNodes());
+        std::vector<MeshLib::Node*> nodes(element->getNodes(),
+                                          element->getNodes() + nElemNodes);
 
         for (std::size_t j = 0; j < nElemNodes; ++j)
         {
-            if (elements[i]->getGeomType() == MeshLib::MeshElemType::PRISM)
+            if (element->getGeomType() == MeshLib::MeshElemType::PRISM)
             {
                 for (std::size_t k = 0; k < 3; ++k)
                 {
-                    elements[i]->setNode(k, nodes[k + 3]);
-                    elements[i]->setNode(k + 3, nodes[k]);
+                    element->setNode(k, nodes[k + 3]);
+                    element->setNode(k + 3, nodes[k]);
                 }
                 break;
             }
