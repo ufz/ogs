@@ -876,7 +876,12 @@ if(NOT OGS_USE_PETSC AND NOT WIN32)
     )
 endif()
 
-if(NOT OGS_USE_PETSC AND NOT WIN32)
+# TODO: does not work on m1-mac (mac-bilke-623)
+# see https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/5307
+# and https://github.com/pmgbergen/porepy/issues/1473
+if(NOT OGS_USE_PETSC AND
+   NOT WIN32 AND
+   NOT "${HOSTNAME}" MATCHES "mac-bilke-623")
     NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy_to_OGS.py
         RUNTIME 200
