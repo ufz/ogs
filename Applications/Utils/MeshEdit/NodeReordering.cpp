@@ -11,6 +11,7 @@
 
 #include <tclap/CmdLine.h>
 
+#include <Eigen/Dense>
 #include <algorithm>
 #include <array>
 #include <memory>
@@ -21,34 +22,96 @@
 #include "BaseLib/MPI.h"
 #include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
+#include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/GetSpaceDimension.h"
+#include "NumLib/Fem/ShapeFunction/ShapeHex20.h"
+#include "NumLib/Fem/ShapeFunction/ShapeHex8.h"
+#include "NumLib/Fem/ShapeFunction/ShapeLine2.h"
+#include "NumLib/Fem/ShapeFunction/ShapeLine3.h"
+#include "NumLib/Fem/ShapeFunction/ShapePoint1.h"
+#include "NumLib/Fem/ShapeFunction/ShapePrism15.h"
+#include "NumLib/Fem/ShapeFunction/ShapePrism6.h"
+#include "NumLib/Fem/ShapeFunction/ShapePyra13.h"
+#include "NumLib/Fem/ShapeFunction/ShapePyra5.h"
+#include "NumLib/Fem/ShapeFunction/ShapeQuad4.h"
+#include "NumLib/Fem/ShapeFunction/ShapeQuad8.h"
+#include "NumLib/Fem/ShapeFunction/ShapeQuad9.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTet10.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTet4.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTri3.h"
+#include "NumLib/Fem/ShapeFunction/ShapeTri6.h"
+
+template <typename GradShapeFunction, int Dim>
+bool checkJacobianDeterminant(MeshLib::Element const& e,
+                              int const mesh_space_dimension,
+                              std::array<double, Dim> const& xi,
+                              bool const check_reordered = false)
+{
+    Eigen::Matrix<double, GradShapeFunction::DIM, GradShapeFunction::NPOINTS,
+                  Eigen::RowMajor>
+        dNdxi;
+    Eigen::Map<Eigen::VectorXd> dN_vec(dNdxi.data(), dNdxi.size());
+    GradShapeFunction::computeGradShapeFunction(xi.data(), dN_vec);
+    MeshLib::ElementCoordinatesMappingLocal ele_local_coord(
+        e, mesh_space_dimension);
+    // check the determinant of the Jacobian
+    Eigen::MatrixXd J = Eigen::MatrixXd::Zero(Dim, Dim);
+
+    for (unsigned k = 0; k < GradShapeFunction::NPOINTS; k++)
+    {
+        const MathLib::Point3d& mapped_pt =
+            ele_local_coord.getMappedCoordinates(k);
+        // outer product of dNdr and mapped_pt for a particular node
+        J += dNdxi.col(k) * mapped_pt.asEigenVector3d().head(Dim).transpose();
+    }
+
+    if (!check_reordered)
+    {
+        return !(J.determinant() < 0);
+    }
+
+    if (J.determinant() < 0)
+    {
+        OGS_FATAL(
+            "Element {:d} has negative Jacobian determinant {:g}. "
+            "NodeReordering fails.",
+            e.getID(), J.determinant());
+    }
+
+    return true;
+}
 
 /**
- * \brief Reverses order of nodes. In particular, this fixes issues between OGS5
- * and OGS6 meshes.
+ * \brief Reverses order of nodes. In particular, this fixes issues between
+ * (Gmsh or OGS5) and OGS6 meshes.
  *
  * \param elements  Mesh elements whose nodes should be reordered
  * \param forced    If true, nodes are reordered for all
- * elements, if false it is first checked if the node order is correct according
- * to OGS6 element definitions.
+ * elements, if false it is first checked if the node order is correct
+ * according to OGS6 element definitions.
  */
 void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
-                      bool const forced)
+                      int const mesh_space_dimension, bool const forced)
 {
     std::size_t n_corrected_elements = 0;
-    // std::size_t const nElements(elements.size());
+
+    auto reverse_nodes_non_3d =
+        [](MeshLib::Element& element, const std::vector<MeshLib::Node*>& nodes)
+    {
+        const unsigned nElemNodes = nodes.size();
+        for (std::size_t j = 0; j < nElemNodes; ++j)
+        {
+            element.setNode(j, nodes[nElemNodes - j - 1]);
+        }
+    };
+
     for (auto const element : elements)
     {
-        if (!forced && element->testElementNodeOrder())
-        {
-            continue;
-        }
-        n_corrected_elements++;
-
         const unsigned nElemNodes(element->getNumberOfBaseNodes());
         std::vector<MeshLib::Node*> nodes(element->getNodes(),
                                           element->getNodes() + nElemNodes);
@@ -56,36 +119,149 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
         switch (element->getGeomType())
         {
             case MeshLib::MeshElemType::TETRAHEDRON:
+            {
+                std::array<double, 3> xi = {0.25, 0.25, 0.25};
+                if (bool const correct_node_ordering =
+                        checkJacobianDeterminant<NumLib::ShapeTet4, 3>(
+                            *element, mesh_space_dimension, xi);
+                    correct_node_ordering)
+                {
+                    continue;
+                };
                 for (std::size_t j = 0; j < 4; ++j)
                 {
                     element->setNode(j, nodes[(j + 1) % 4]);
                 }
-                break;
-            case MeshLib::MeshElemType::PYRAMID:
-                element->setNode(0, nodes[1]);
-                element->setNode(1, nodes[0]);
-                element->setNode(2, nodes[3]);
-                element->setNode(3, nodes[2]);
-                break;
+                if (forced)
+                {
+                    checkJacobianDeterminant<NumLib::ShapeTet4, 3>(
+                        *element, mesh_space_dimension, xi,
+                        true /*check_reordered*/);
+                }
+
+                n_corrected_elements++;
+            }
+            break;
             case MeshLib::MeshElemType::PRISM:
+            {
+                std::array<double, 3> xi = {1.0 / 3.0, 1.0 / 3.0, 0.5};
+                if (bool const correct_node_ordering =
+                        checkJacobianDeterminant<NumLib::ShapePrism6, 3>(
+                            *element, mesh_space_dimension, xi);
+                    correct_node_ordering)
+                {
+                    continue;
+                };
                 for (std::size_t j = 0; j < 3; ++j)
                 {
                     element->setNode(j, nodes[j + 3]);
                     element->setNode(j + 3, nodes[j]);
                 }
-                break;
+                if (forced)
+                {
+                    checkJacobianDeterminant<NumLib::ShapePrism6, 3>(
+                        *element, mesh_space_dimension, xi,
+                        true /*check_reordered*/);
+                }
+
+                n_corrected_elements++;
+            }
+            break;
             case MeshLib::MeshElemType::HEXAHEDRON:
+            {
+                std::array<double, 3> xi = {0.5, 0.5, 0.5};
+                if (bool const correct_node_ordering =
+                        checkJacobianDeterminant<NumLib::ShapeHex8, 3>(
+                            *element, mesh_space_dimension, xi);
+                    correct_node_ordering)
+                {
+                    continue;
+                };
                 for (std::size_t j = 0; j < 4; ++j)
                 {
                     element->setNode(j, nodes[j + 4]);
                     element->setNode(j + 4, nodes[j]);
                 }
+                if (forced)
+                {
+                    checkJacobianDeterminant<NumLib::ShapeHex8, 3>(
+                        *element, mesh_space_dimension, xi,
+                        true /*check_reordered*/);
+                }
+                n_corrected_elements++;
+            }
+            break;
+            case MeshLib::MeshElemType::LINE:
+            {
+                std::array<double, 1> xi = {0.5};
+                if (bool const correct_node_ordering =
+                        checkJacobianDeterminant<NumLib::ShapeLine2, 1>(
+                            *element, mesh_space_dimension, xi);
+                    correct_node_ordering)
+                {
+                    continue;
+                };
+
+                reverse_nodes_non_3d(*element, nodes);
+
+                if (forced)
+                {
+                    checkJacobianDeterminant<NumLib::ShapeLine2, 1>(
+                        *element, mesh_space_dimension, xi,
+                        true /*check_reordered*/);
+                }
+
+                n_corrected_elements++;
+            }
+            break;
+            case MeshLib::MeshElemType::QUAD:
+            {
+                std::array<double, 2> xi = {0.0, 0.0};
+                if (bool const correct_node_ordering =
+                        checkJacobianDeterminant<NumLib::ShapeQuad4, 2>(
+                            *element, mesh_space_dimension, xi);
+                    correct_node_ordering)
+                {
+                    continue;
+                };
+                reverse_nodes_non_3d(*element, nodes);
+
+                if (forced)
+                {
+                    checkJacobianDeterminant<NumLib::ShapeQuad4, 2>(
+                        *element, mesh_space_dimension, xi,
+                        true /*check_reordered*/);
+                }
+                n_corrected_elements++;
+            }
+            break;
+            case MeshLib::MeshElemType::TRIANGLE:
+            {
+                std::array<double, 2> xi = {1.0 / 3.0, 1.0 / 3.0};
+                if (bool const correct_node_ordering =
+                        checkJacobianDeterminant<NumLib::ShapeTri3, 2>(
+                            *element, mesh_space_dimension, xi);
+                    correct_node_ordering)
+                {
+                    continue;
+                };
+                reverse_nodes_non_3d(*element, nodes);
+                if (forced)
+                {
+                    checkJacobianDeterminant<NumLib::ShapeTri3, 2>(
+                        *element, mesh_space_dimension, xi,
+                        true /*check_reordered*/);
+                }
+                n_corrected_elements++;
+            }
+            break;
+            case MeshLib::MeshElemType::POINT:
                 break;
             default:
-                for (std::size_t j = 0; j < nElemNodes; ++j)
-                {
-                    element->setNode(j, nodes[nElemNodes - j - 1]);
-                }
+                OGS_FATAL(
+                    "Element type {:d} not supported for node "
+                    "reordering.",
+                    static_cast<int>(element->getGeomType()));
         }
     }
 
@@ -159,7 +335,8 @@ int main(int argc, char* argv[])
         "Reorders mesh nodes in elements to make old or incorrectly ordered "
         "meshes compatible with OGS6.\n"
         "Three options are available:\n"
-        "Method 0: Reversing order of nodes for all elements.\n"
+        "Method 0: Reversing order of nodes and checking again for all "
+        "elements.\n"
         "Method 1: Reversing order of nodes unless it's perceived correct by "
         "OGS6 standards. This is the default selection.\n"
         "Method 2: Fixing node ordering issues between VTK and OGS6 (only "
@@ -207,9 +384,20 @@ int main(int argc, char* argv[])
     if (!method_arg.isSet() || method_arg.getValue() < 2)
     {
         bool const forced = (method_arg.getValue() == 0);
+
+        if (forced)
+        {
+            INFO("Method 0: Reversing order of nodes will be checked again.");
+        }
+        INFO(
+            "Method: Reversing order of nodes unless it is considered correct "
+            "by the OGS6 standard, i.e. such that det(J) > 0, where J is the "
+            "Jacobian of the global-to-local coordinate transformation.");
+        int const mesh_space_dimension =
+            MeshLib::getSpaceDimension(mesh->getNodes());
         reverseNodeOrder(
             const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()),
-            forced);
+            mesh_space_dimension, forced);
     }
     else if (method_arg.getValue() == 2)
     {
