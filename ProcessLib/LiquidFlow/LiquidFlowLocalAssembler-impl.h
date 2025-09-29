@@ -30,8 +30,18 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     std::vector<double>& local_M_data, std::vector<double>& local_K_data,
     std::vector<double>& local_b_data)
 {
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    // Dummy integration point
+    unsigned const ip = 0;
+    // auto const& ip_data = _ip_data[ip];
+    auto const& Ns = _process_data.shape_matrix_cache
+                         .NsHigherOrder<typename ShapeFunction::MeshElement>();
+    auto const& N = Ns[ip];
+
+    ParameterLib::SpatialPosition const pos{
+        std::nullopt, _element.getID(),
+        MathLib::Point3d(
+            NumLib::interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                _element, N))};
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
@@ -140,10 +150,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto& phase_pressure = medium.hasPhase("Gas") ? vars.gas_phase_pressure
                                                   : vars.liquid_phase_pressure;
 
-    vars.temperature =
-        medium[MaterialPropertyLib::PropertyType::reference_temperature]
-            .template value<double>(vars, pos, t, dt);
-
     GlobalDimVectorType const projected_body_force_vector =
         _process_data.element_rotation_matrices[_element.getID()] *
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
@@ -158,6 +164,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& N = Ns[ip];
 
         phase_pressure = N.dot(local_p_vec);
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
+
+        vars.temperature =
+            medium[MaterialPropertyLib::PropertyType::reference_temperature]
+                .template value<double>(vars, pos, t, dt);
 
         auto const [fluid_density, viscosity] =
             MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, pos,
@@ -241,8 +256,18 @@ LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
     auto const n_integration_points = _integration_method.getNumberOfPoints();
     velocity_cache.clear();
 
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    // Dummy integration point
+    unsigned const ip = 0;
+    // auto const& ip_data = _ip_data[ip];
+    auto const& Ns = _process_data.shape_matrix_cache
+                         .NsHigherOrder<typename ShapeFunction::MeshElement>();
+    auto const& N = Ns[ip];
+
+    ParameterLib::SpatialPosition const pos{
+        std::nullopt, _element.getID(),
+        MathLib::Point3d(
+            NumLib::interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                _element, N))};
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     MaterialPropertyLib::VariableArray vars;
@@ -276,7 +301,7 @@ template <typename LaplacianGravityVelocityCalculator,
 void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     computeProjectedDarcyVelocity(
         const double t, const double dt, std::vector<double> const& local_x,
-        ParameterLib::SpatialPosition const& pos,
+        ParameterLib::SpatialPosition const& /* TODO{naumov) delete */,
         VelocityCacheType& darcy_velocity_at_ips) const
 {
     auto const local_matrix_size = local_x.size();
@@ -295,10 +320,6 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto& phase_pressure = medium.hasPhase("Gas") ? vars.gas_phase_pressure
                                                   : vars.liquid_phase_pressure;
 
-    vars.temperature =
-        medium[MaterialPropertyLib::PropertyType::reference_temperature]
-            .template value<double>(vars, pos, t, dt);
-
     GlobalDimVectorType const projected_body_force_vector =
         _process_data.element_rotation_matrices[_element.getID()] *
         _process_data.element_rotation_matrices[_element.getID()].transpose() *
@@ -313,7 +334,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
         auto const& N = Ns[ip];
 
         phase_pressure = N.dot(local_p_vec);
+        ParameterLib::SpatialPosition const pos{
+            std::nullopt, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, N))};
 
+        vars.temperature =
+            medium[MaterialPropertyLib::PropertyType::reference_temperature]
+                .template value<double>(vars, pos, t, dt);
         auto const [fluid_density, viscosity] =
             MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, pos,
                                                              fluid_phase, vars);
