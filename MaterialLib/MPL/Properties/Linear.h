@@ -20,6 +20,16 @@ struct IndependentVariable
     StringOrVariable type;
     VariableType reference_condition;  // scalar or vector
     VariableType slope;                // scalar or matrix
+    std::optional<double> min;
+    std::optional<double> max;
+
+    double valueClamped(VariableArray const& variable_array,
+                        ParameterLib::SpatialPosition const& pos,
+                        double const t) const;
+
+    double valueUnclamped(VariableArray const& variable_array,
+                          ParameterLib::SpatialPosition const& pos,
+                          double const t) const;
 };
 
 /// The linear property class. This property calculates the linear relationship.

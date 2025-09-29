@@ -48,6 +48,16 @@ std::unique_ptr<Linear> createLinear(BaseLib::ConfigTree const& config)
             //! \ogs_file_param{properties__property__Linear__independent_variable__slope}
             independent_variable_config.getConfigParameter<double>("slope");
 
+        auto const min =
+            //! \ogs_file_param{properties__property__Linear__independent_variable__min}
+            independent_variable_config.getConfigParameterOptional<double>(
+                "min");
+
+        auto const max =
+            //! \ogs_file_param{properties__property__Linear__independent_variable__max}
+            independent_variable_config.getConfigParameterOptional<double>(
+                "max");
+
         static const std::unordered_set<std::string> filter_not_variables = {
             "t", "x", "y", "z"};
         MaterialPropertyLib::StringOrVariable ivt;
@@ -59,8 +69,9 @@ std::unique_ptr<Linear> createLinear(BaseLib::ConfigTree const& config)
         {
             ivt = variable_name;
         }
+
         MaterialPropertyLib::IndependentVariable iv{ivt, reference_condition,
-                                                    slope};
+                                                    slope, min, max};
 
         ivs.push_back(std::move(iv));
     }

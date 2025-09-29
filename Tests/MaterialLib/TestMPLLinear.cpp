@@ -18,7 +18,8 @@ TEST(MaterialPropertyLib, Linear)
     double const m = 1.0;
     double const x_ref = 293.15;
     MaterialPropertyLib::IndependentVariable const iv{
-        MaterialPropertyLib::Variable::temperature, x_ref, m};
+        MaterialPropertyLib::Variable::temperature, x_ref, m, std::monostate{},
+        std::monostate{}};
 
     std::vector<MaterialPropertyLib::IndependentVariable> ivs{iv};
     MaterialPropertyLib::Linear linear_property{"linear", y_ref, ivs};
@@ -53,7 +54,8 @@ TEST(MaterialPropertyLib, LinearWithTime)
     double const m = 1.0;
     double const x_ref = 0.0;
 
-    MaterialPropertyLib::IndependentVariable const iv{"t", x_ref, m};
+    MaterialPropertyLib::IndependentVariable const iv{
+        "t", x_ref, m, std::monostate{}, std::monostate{}};
 
     std::vector<MaterialPropertyLib::IndependentVariable> ivs{iv};
     MaterialPropertyLib::Linear linear_property{"linear", y_ref, ivs};
@@ -80,9 +82,12 @@ TEST(MaterialPropertyLib, LinearWithPos)
     double const m = 1.0;
     double const x_ref = 0.0;
 
-    MaterialPropertyLib::IndependentVariable const iv_x{"x", x_ref, m};
-    MaterialPropertyLib::IndependentVariable const iv_y{"y", x_ref, m};
-    MaterialPropertyLib::IndependentVariable const iv_z{"z", x_ref, m};
+    MaterialPropertyLib::IndependentVariable const iv_x{
+        "x", x_ref, m, std::monostate{}, std::monostate{}};
+    MaterialPropertyLib::IndependentVariable const iv_y{
+        "y", x_ref, m, std::monostate{}, std::monostate{}};
+    MaterialPropertyLib::IndependentVariable const iv_z{
+        "z", x_ref, m, std::monostate{}, std::monostate{}};
 
     std::vector<MaterialPropertyLib::IndependentVariable> ivs_x{iv_x};
     MaterialPropertyLib::Linear linear_property_x{"linear", y_ref, ivs_x};
@@ -136,9 +141,11 @@ TEST(MaterialPropertyLib, BiLinearTemperaturePosition)
     double const T_ref = 273.15;
     double const T = 293.15;
 
-    MaterialPropertyLib::IndependentVariable const iv_x{"x", x_ref, m};
+    MaterialPropertyLib::IndependentVariable const iv_x{
+        "x", x_ref, m, std::monostate{}, std::monostate{}};
     MaterialPropertyLib::IndependentVariable const iv_T{
-        MaterialPropertyLib::Variable::temperature, T_ref, m};
+        MaterialPropertyLib::Variable::temperature, T_ref, m, std::monostate{},
+        std::monostate{}};
 
     MaterialPropertyLib::Linear p{"bi-linear x T", y_ref, {iv_x, iv_T}};
 
