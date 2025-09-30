@@ -43,6 +43,9 @@ workflow:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
       variables:
         PIPELINE_NAME: "guix only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::gui only.*/
+      variables:
+        PIPELINE_NAME: "gui only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
     - if: $CI_MERGE_REQUEST_IID # merge requests
       variables:
         PIPELINE_NAME: "MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
@@ -77,6 +80,9 @@ include:
   - local: "/scripts/ci/pipelines/guix.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
+  - local: "/scripts/ci/pipelines/gui.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::gui only.*/
   - local: "/scripts/ci/jobs/build-wheels.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
