@@ -1,0 +1,7 @@
+include:
+  - local: "/scripts/ci/extends/*.yml"
+  - local: "/scripts/ci/jobs/pre-commit.yml"
+  - local: "/scripts/ci/jobs/meta.yml"
+  - local: "/scripts/ci/jobs/build-gui-linux.yml"
+  - local: "/scripts/ci/jobs/build-gui-mac.yml"
+  - local: "/scripts/ci/jobs/build-gui-win.yml"

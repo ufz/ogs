@@ -6,6 +6,7 @@ build gui linux:
   needs: [meta]
   tags: [envinf, shell]
   rules:
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::gui only.*/
     - if: '$CI_COMMIT_BRANCH == "master"'
     - changes:
         - Applications/DataExplorer/**/*
