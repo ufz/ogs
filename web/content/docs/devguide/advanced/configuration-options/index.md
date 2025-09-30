@@ -65,3 +65,8 @@ CMake switches to enable / disable parts of OGS.
   To enable 64-bit array indices in MKL add `-DMKL_INTERFACE=ilp64` on the first CMake run (with a clean CMake cache) but this seems [not supported by Eigen](https://libeigen.gitlab.io/docs/TopicUsingIntelMKL.html).
 
 - `OGS_EIGEN_PARALLEL_BACKEND` - Defaults to `OpenMP`. Defaults to `MKL` when `OGS_USE_MKL=ON`. May be set to `OpenMP` when MKL is on which also enables OpenMP multithreading. This pulls in another OpenMP implementation besides the Intel MKL OpenMP which is an **experimental feature!**. If you want to use OpenMP parallelized assembly with MKL enabled you also need to explicitly set `OGS_EIGEN_PARALLEL_BACKEND=OpenMP`!
+- `OGS_PETSC_CONFIG_OPTIONS` – Can be used to build a specific PETSc configuration, arguments are passed to PETSc's `./configure`-command. E.g. to build with MUMPS:
+
+  ```bash
+  cmake --preset release-petsc -DOGS_PETSC_CONFIG_OPTIONS="--download-superlu --download-superlu_dist --download-scalapack --download-mumps --with-cc=mpicc --with-cxx=mpic++ --with-fc=mpif90"
+  ```
