@@ -975,8 +975,7 @@ public:
 
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);
-        auto const local_T =
-            local_x.template segment<temperature_size>(temperature_index);
+        auto const local_T = getLocalTemperature(t, local_x);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, temperature_size, temperature_size);
@@ -1675,18 +1674,41 @@ public:
                 &local_x[0][pressure_index], pressure_size);
             auto const local_C = Eigen::Map<const NodalVectorType>(
                 &local_x[0][first_concentration_index], concentration_size);
-            return calculateIntPtDarcyVelocity(t, local_p, local_C, cache);
+            NodalVectorType local_T;
+            local_T.setConstant(ShapeFunction::NPOINTS,
+                                std::numeric_limits<double>::quiet_NaN());
+            int const temperature_index =
+                _process_data.isothermal ? -1 : ShapeFunction::NPOINTS;
+            if (temperature_index != -1)
+            {
+                local_T = Eigen::Map<const NodalVectorType>(
+                    &local_x[0][temperature_index], temperature_size);
+            }
+            return calculateIntPtDarcyVelocity(t, local_p, local_C, local_T,
+                                               cache);
         }
 
         // multiple processes, must be staggered.
         {
             constexpr int pressure_process_id = 0;
             constexpr int concentration_process_id = 1;
+            constexpr int temperature_process_id = -1;  // The temperature
+                                                        // coupling in staggered
+                                                        // scheme not available.
             auto const local_p = Eigen::Map<const NodalVectorType>(
                 &local_x[pressure_process_id][0], pressure_size);
             auto const local_C = Eigen::Map<const NodalVectorType>(
                 &local_x[concentration_process_id][0], concentration_size);
-            return calculateIntPtDarcyVelocity(t, local_p, local_C, cache);
+            NodalVectorType local_T;
+            local_T.setConstant(ShapeFunction::NPOINTS,
+                                std::numeric_limits<double>::quiet_NaN());
+            if (temperature_process_id != -1)
+            {
+                local_T = Eigen::Map<const NodalVectorType>(
+                    &local_x[temperature_process_id][0], temperature_size);
+            }
+            return calculateIntPtDarcyVelocity(t, local_p, local_C, local_T,
+                                               cache);
         }
     }
 
@@ -1694,6 +1716,7 @@ public:
         const double t,
         Eigen::Ref<const NodalVectorType> const& p_nodal_values,
         Eigen::Ref<const NodalVectorType> const& C_nodal_values,
+        Eigen::Ref<const NodalVectorType> const& T_nodal_values,
         std::vector<double>& cache) const
     {
         auto const n_integration_points =
@@ -1730,13 +1753,16 @@ public:
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
+            double T_int_pt = 0.0;
 
             NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
             NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
+            NumLib::shapeFunctionInterpolate(T_nodal_values, N, T_int_pt);
 
             vars.concentration = C_int_pt;
             vars.liquid_phase_pressure = p_int_pt;
             vars.porosity = porosity;
+            vars.temperature = T_int_pt;
 
             // TODO (naumov) Temporary value not used by current material
             // models. Need extension of secondary variables interface.
@@ -1844,9 +1870,10 @@ public:
             local_x.template segment<pressure_size>(pressure_index);
         auto const local_C = local_x.template segment<concentration_size>(
             first_concentration_index);
+        auto const local_T = getLocalTemperature(t, local_x);
 
         std::vector<double> ele_velocity;
-        calculateIntPtDarcyVelocity(t, local_p, local_C, ele_velocity);
+        calculateIntPtDarcyVelocity(t, local_p, local_C, local_T, ele_velocity);
 
         auto const n_integration_points =
             _integration_method.getNumberOfPoints();
@@ -2088,7 +2115,7 @@ private:
     }
 
     NodalVectorType getLocalTemperature(double const t,
-                                        Eigen::VectorXd const& local_x)
+                                        Eigen::VectorXd const& local_x) const
     {
         NodalVectorType local_T;
         if (_process_data.isothermal)
