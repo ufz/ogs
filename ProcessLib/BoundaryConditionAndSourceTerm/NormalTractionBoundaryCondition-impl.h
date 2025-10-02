@@ -27,6 +27,7 @@ template <int GlobalDim, template <typename /* shp fct */, int /* global dim */>
 NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     NormalTractionBoundaryCondition(
         unsigned const integration_order, unsigned const shapefunction_order,
+        MeshLib::Mesh const& bulk_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, MeshLib::Mesh const& bc_mesh,
         ParameterLib::Parameter<double> const& pressure)
@@ -48,6 +49,8 @@ NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 
     // Compute normal vectors for each element in the boundary condition mesh.
+    auto const* const bulk_element_ids = MeshLib::bulkElementIDs(_bc_mesh);
+    assert(bulk_element_ids != nullptr);
     auto const& elements = _bc_mesh.getElements();
     _element_normals.resize(elements.size());
     for (std::size_t i = 0; i < elements.size(); ++i)
@@ -63,6 +66,22 @@ NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
                                            .normalized();
             element_normal[0] = -v1[1];
             element_normal[1] = v1[0];
+            element_normal[2] = 0.;  // Replace the nan; only elements in
+                                     // xy-plane handled correctly.
+
+            // Compute center of the bulk element to correctly orient the
+            // normal.
+            auto const* bulk_element =
+                bulk_mesh.getElement((*bulk_element_ids)[e.getID()]);
+            assert(bulk_element != nullptr);
+            auto const c =
+                MeshLib::getCenterOfGravity(*bulk_element).asEigenVector3d();
+            // Flip n if the normal points toward c:
+            // <element_normal, c - n0> > 0.
+            if (element_normal.dot(c - e.getNode(0)->asEigenVector3d()) > 0)
+            {
+                element_normal = -element_normal;
+            }
         }
         else
         {
@@ -104,6 +123,7 @@ std::unique_ptr<NormalTractionBoundaryCondition<
     GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>
 createNormalTractionBoundaryCondition(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    MeshLib::Mesh const& bulk_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     unsigned const integration_order, unsigned const shapefunction_order,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
@@ -121,8 +141,8 @@ createNormalTractionBoundaryCondition(
         parameter_name, parameters, 1, &bc_mesh);
     return std::make_unique<NormalTractionBoundaryCondition<
         GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>(
-        integration_order, shapefunction_order, dof_table, variable_id, bc_mesh,
-        pressure);
+        integration_order, shapefunction_order, bulk_mesh, dof_table,
+        variable_id, bc_mesh, pressure);
 }
 
 }  // namespace NormalTractionBoundaryCondition

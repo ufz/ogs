@@ -39,6 +39,7 @@ public:
     /// A local DOF-table, a subset of the given one, is constructed.
     NormalTractionBoundaryCondition(
         unsigned const integration_order, unsigned const shapefunction_order,
+        MeshLib::Mesh const& bulk_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, MeshLib::Mesh const& bc_mesh,
         ParameterLib::Parameter<double> const& pressure);
