@@ -12,6 +12,7 @@
 
 #include <numeric>
 
+#include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
 #include "NormalTractionBoundaryConditionLocalAssembler.h"
 #include "ParameterLib/Utils.h"
@@ -46,6 +47,34 @@ NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
 
     MeshLib::MeshSubset bc_mesh_subset(_bc_mesh, bc_nodes);
 
+    // Compute normal vectors for each element in the boundary condition mesh.
+    auto const& elements = _bc_mesh.getElements();
+    _element_normals.resize(elements.size());
+    for (std::size_t i = 0; i < elements.size(); ++i)
+    {
+        auto const& e = *elements[i];
+        Eigen::Vector3d element_normal;
+
+        // TODO Extend to rotated 2d meshes and line elements.
+        if (e.getGeomType() == MeshLib::MeshElemType::LINE)
+        {
+            Eigen::Vector3d const v1 = (e.getNode(1)->asEigenVector3d() -
+                                        e.getNode(0)->asEigenVector3d())
+                                           .normalized();
+            element_normal[0] = -v1[1];
+            element_normal[1] = v1[0];
+        }
+        else
+        {
+            auto const n = MeshLib::FaceRule::getSurfaceNormal(e).normalized();
+            for (int d = 0; d < GlobalDim; ++d)
+            {
+                element_normal[d] = n[d];
+            }
+        }
+        _element_normals[i] = element_normal;
+    }
+
     // Create local DOF table from the BC mesh subset for the given variable and
     // component ids.
     _dof_table_boundary = dof_table_bulk.deriveBoundaryConstrainedMap(
@@ -55,7 +84,7 @@ NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
         GlobalDim, LocalAssemblerImplementation>(
         *_dof_table_boundary, shapefunction_order, _bc_mesh.getElements(),
         _local_assemblers, NumLib::IntegrationOrder{integration_order},
-        _bc_mesh.isAxiallySymmetric(), _pressure);
+        _bc_mesh.isAxiallySymmetric(), _pressure, _element_normals);
 }
 
 template <int GlobalDim, template <typename /* shp fct */, int /* global dim */>

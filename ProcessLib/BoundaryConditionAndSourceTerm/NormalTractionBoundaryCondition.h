@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Dense>
+
 #include "BoundaryCondition.h"
 #include "MeshLib/MeshSubset.h"
 #include "NormalTractionBoundaryConditionLocalAssembler.h"
@@ -69,6 +71,9 @@ private:
         _local_assemblers;
 
     ParameterLib::Parameter<double> const& _pressure;
+
+    /// Normal vectors for each element in the boundary condition mesh.
+    std::vector<Eigen::Vector3d> _element_normals;
 };
 
 template <int GlobalDim>
