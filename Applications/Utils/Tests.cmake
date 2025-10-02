@@ -1190,25 +1190,13 @@ AddTest(
 )
 
 AddTest(
-    NAME NodeOrdering_M0
-    PATH MeshLib/
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
+    NAME NodeOrdering_gmsh_quad_tri_linear.vtu
+    PATH Utils/NodeReordering/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
     EXECUTABLE NodeReordering
-    EXECUTABLE_ARGS -i ReorderTestMesh.vtu -o ${Data_BINARY_DIR}/MeshLib/ReorderTestMeshM0.vtu -m 0
-    REQUIREMENTS NOT (OGS_USE_MPI)
+    EXECUTABLE_ARGS -i gmsh_quad_tri_linear.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/gmsh_quad_tri_linear_corrected.vtu REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
-    DIFF_DATA ReorderTestMeshM0.vtu ReorderTestMeshM0.vtu 1.e-16
-)
-
-AddTest(
-    NAME NodeOrdering_M1
-    PATH MeshLib/
-    WORKING_DIRECTORY ${Data_SOURCE_DIR}/MeshLib
-    EXECUTABLE NodeReordering
-    EXECUTABLE_ARGS -i ReorderTestMesh.vtu -o ${Data_BINARY_DIR}/MeshLib/ReorderTestMeshM1.vtu -m 1
-    REQUIREMENTS NOT (OGS_USE_MPI)
-    TESTER vtkdiff-mesh
-    DIFF_DATA ReorderTestMeshM1.vtu ReorderTestMeshM1.vtu 1.e-16
+    DIFF_DATA gmsh_quad_tri_linear_corrected.vtu gmsh_quad_tri_linear_corrected.vtu 1.e-16
 )
 
 AddTest(
