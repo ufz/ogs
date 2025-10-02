@@ -393,6 +393,7 @@ NotebookTest(
     SKIP_WEB
 )
 OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)
+OgsTest(PROJECTFILE Mechanics/Linear/NormalTraction/normal_traction.prj)
 
 if(OGS_USE_PETSC)
 NotebookTest(

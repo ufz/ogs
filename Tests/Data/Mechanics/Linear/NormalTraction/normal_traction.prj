@@ -180,4 +180,24 @@ Material parameters listed under https://ipjournal.interpore.org/index.php/inter
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>normal_traction_ts_1_t_1.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>normal_traction_ts_1_t_1.000000.vtu</file>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>normal_traction_ts_1_t_1.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
