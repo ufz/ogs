@@ -37,7 +37,7 @@ include(CTest)
 
 # ---- Preliminary Options ----
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-option(BUILD_SHARED_LIBS "Create shared libraries?" OFF)
+option(BUILD_SHARED_LIBS "Create shared libraries?" ON)
 option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
 set(CMAKE_LIBRARY_SEARCH_PATH ""
     CACHE PATH

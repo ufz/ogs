@@ -9,7 +9,6 @@ build linux arch:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
-      -DBUILD_SHARED_LIBS=ON
       -DOGS_USE_MKL=ON
       -DOGS_USE_NETCDF=ON
   before_script:
