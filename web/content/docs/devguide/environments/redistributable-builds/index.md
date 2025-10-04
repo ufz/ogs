@@ -52,10 +52,6 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 See Linux-tab!
 </div>
 
-## Shared vs. static libraries
-
-Try to use static libraries as much as possible. For OGS itself use `BUILD_SHARED_LIBS=OFF`, which already defaults to `OFF`.
-
 ## Package the build
 
 Use the `package`-target which tries to gather all dependencies and fixes up shared library paths:

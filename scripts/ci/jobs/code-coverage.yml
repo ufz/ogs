@@ -7,7 +7,6 @@ code coverage:
     TARGETS: "all tests ctest"
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
-      -DBUILD_SHARED_LIBS=ON
   script:
     - !reference [.template-build-linux, script]
     - cmake --build --preset $CMAKE_PRESET -t process_coverage

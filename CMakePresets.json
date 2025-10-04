@@ -57,7 +57,6 @@
       "name": "_petsc",
       "hidden": true,
       "cacheVariables": {
-        "BUILD_SHARED_LIBS": "ON",
         "OGS_USE_PETSC": "ON"
       },
       "environment": {
@@ -205,15 +204,13 @@
         "OGS_BUILD_WHEEL": "ON",
         "OGS_INSTALL_DEPENDENCIES": "OFF",
         "OGS_USE_PIP": "OFF",
-        "OGS_USE_MFRONT": "ON",
-        "BUILD_SHARED_LIBS": "ON"
+        "OGS_USE_MFRONT": "ON"
       }
     },
     {
       "name": "sanitizer",
       "inherits": "debug-all",
       "cacheVariables": {
-        "BUILD_SHARED_LIBS": "ON",
         "OGS_CXX_FLAGS": "-O3;-fno-var-tracking",
         "OGS_EIGEN_DYNAMIC_SHAPE_MATRICES": "OFF",
         "ENABLE_ASAN": "ON",

@@ -129,7 +129,12 @@ endif() # GEOTIFF_FOUND
 set(CMAKE_AUTOUIC NO)
 qt5_wrap_ui(genUiHeaders ${UIS})
 
-ogs_add_library(QtDataView ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
+if(WIN32)
+    # Circular dependency to e.g. VtkVis
+    set(_static STATIC)
+endif()
+
+ogs_add_library(QtDataView ${_static} ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
 target_include_directories(
     QtDataView PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 )

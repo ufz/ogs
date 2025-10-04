@@ -1,6 +1,11 @@
 get_source_files(SOURCES)
 
-ogs_add_library(ThermoRichardsFlow ${SOURCES})
+if(WIN32)
+    # Exceeds library limit of 65535 objects
+    set(_static STATIC)
+endif()
+
+ogs_add_library(ThermoRichardsFlow ${_static} ${SOURCES})
 target_link_libraries(ThermoRichardsFlow PUBLIC ProcessLib PRIVATE ParameterLib)
 
 target_precompile_headers(ThermoRichardsFlow PRIVATE [["BaseLib/Error.h"]]

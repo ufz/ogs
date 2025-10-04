@@ -12,6 +12,6 @@ clang tidy:
     - cd $BUILD_DIR
     - >
       cmake .. -G Ninja
-      -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF
+      -DBUILD_TESTING=OFF
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE
     - cmake --build . --target run-clang-tidy
