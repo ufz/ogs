@@ -41,6 +41,7 @@ target_link_libraries(
     VtkVisFilter
     PUBLIC MeshLib
     PRIVATE GeoLib
+            DataHolderLib
             MeshToolsLib
             Qt5::Core
             Qt5::Widgets
@@ -152,7 +153,12 @@ source_group("UI Files" FILES ${UIS})
 set(CMAKE_AUTOUIC NO)
 qt5_wrap_ui(genUiHeaders ${UIS})
 
-ogs_add_library(VtkVis ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
+if(WIN32 OR APPLE)
+    # Circular dependency to e.g. QtDataView
+    set(_static STATIC)
+endif()
+
+ogs_add_library(VtkVis ${_static} ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
 target_include_directories(VtkVis PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if(GEOTIFF_FOUND)
     target_compile_definitions(VtkVis PRIVATE GEOTIFF_FOUND)
@@ -165,6 +171,7 @@ target_link_libraries(
     PUBLIC BaseLib
            GeoLib
            MeshLib
+           MeshToolsLib
            DataHolderLib
            QtBase
            VtkVisFilter
