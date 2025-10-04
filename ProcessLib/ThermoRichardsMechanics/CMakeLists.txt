@@ -7,7 +7,12 @@ if (OGS_USE_MFRONT)
                         ConstitutiveStressSaturation_StrainPressureTemperature)
 endif()
 
-ogs_add_library(ThermoRichardsMechanics ${SOURCES})
+if(WIN32)
+    # Exceeds library limit of 65535 objects
+    set(_static STATIC)
+endif()
+
+ogs_add_library(ThermoRichardsMechanics ${_static} ${SOURCES})
 target_link_libraries(
     ThermoRichardsMechanics PUBLIC ProcessLib PRIVATE ParameterLib
 )

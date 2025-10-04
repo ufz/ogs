@@ -1,7 +1,12 @@
 get_source_files(SOURCES)
 append_source_files(SOURCES ConstitutiveRelations)
 
-ogs_add_library(RichardsMechanics ${SOURCES})
+if(WIN32)
+    # Exceeds library limit of 65535 objects
+    set(_static STATIC)
+endif()
+
+ogs_add_library(RichardsMechanics ${_static} ${SOURCES})
 target_link_libraries(RichardsMechanics PUBLIC ProcessLib PRIVATE ParameterLib)
 
 target_precompile_headers(RichardsMechanics PRIVATE [["BaseLib/Error.h"]]

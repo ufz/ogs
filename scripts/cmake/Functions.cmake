@@ -81,8 +81,9 @@ function(ogs_add_library targetName)
                 -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
     )
 
-    if(BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS AND NOT "${type}" STREQUAL "STATIC")
         install(TARGETS ${targetName}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
                 LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         )
     endif()
