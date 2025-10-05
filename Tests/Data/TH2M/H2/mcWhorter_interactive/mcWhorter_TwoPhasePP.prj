@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>mesh_line.vtu</mesh>
     <geometry>mcwt.gml</geometry>
@@ -37,7 +37,7 @@
         <parameter>
             <name>K</name>
             <type>Constant</type>
-            <value>1.0e-10</value>
+            <value>1e-10</value>
         </parameter>
         <parameter>
             <name>Swr</name>
@@ -72,14 +72,14 @@
         <parameter>
             <name>pci</name>
             <type>Constant</type>
-            <value>8571.18</value>
+            <value>8793.060606699997</value>
         </parameter>
         <parameter>
             <name>pc0</name>
             <type>Constant</type>
-            <value>5191.02</value>
-        </parameter>        
-    </parameters>    
+            <value>5180.877745148153</value>
+        </parameter>
+    </parameters>
     <processes>
         <process>
             <name>GW23</name>
@@ -150,25 +150,25 @@
                 <property>
                     <name>saturation</name>
                     <type>SaturationBrooksCorey</type>
-                    <residual_liquid_saturation>Swr</residual_liquid_saturation>
-                    <residual_gas_saturation>Snr</residual_gas_saturation>
-                    <lambda>lambda_</lambda>
-                    <entry_pressure>Pe</entry_pressure>
+                    <residual_liquid_saturation>0.02</residual_liquid_saturation>
+                    <residual_gas_saturation>0.001</residual_gas_saturation>
+                    <lambda>3.0</lambda>
+                    <entry_pressure>5000.0</entry_pressure>
                 </property>
                 <property>
                     <name>relative_permeability</name>
                     <type>RelPermBrooksCorey</type>
-                    <residual_liquid_saturation>Swr</residual_liquid_saturation>
-                    <residual_gas_saturation>Snr</residual_gas_saturation>
-                    <lambda>lambda_</lambda>
+                    <residual_liquid_saturation>0.02</residual_liquid_saturation>
+                    <residual_gas_saturation>0.001</residual_gas_saturation>
+                    <lambda>3.0</lambda>
                     <min_relative_permeability>0</min_relative_permeability>
                 </property>
                 <property>
                     <name>relative_permeability_nonwetting_phase</name>
                     <type>RelPermBrooksCoreyNonwettingPhase</type>
-                    <residual_liquid_saturation>Swr</residual_liquid_saturation>
-                    <residual_gas_saturation>Snr</residual_gas_saturation>
-                    <lambda>lambda_</lambda>
+                    <residual_liquid_saturation>0.02</residual_liquid_saturation>
+                    <residual_gas_saturation>0.001</residual_gas_saturation>
+                    <lambda>3.0</lambda>
                     <min_relative_permeability>1e-9</min_relative_permeability>
                 </property>
                 <property>

@@ -36,7 +36,7 @@
 <parameter>
     <name>normal_traction_edge</name>
     <type>Constant</type>
-    <value>0.1e6</value>
+    <value>-0.1e6</value>
 </parameter>
 <parameter>
     <name>normal_traction_hole</name>
