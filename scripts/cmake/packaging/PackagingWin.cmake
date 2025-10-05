@@ -18,3 +18,9 @@ set(CPACK_NSIS_MENU_LINKS
     "bin" "Executables folder" "http://www.opengeosys.org" "Website"
     "https://github.com/ufz/ogs" "Source code on GitHub"
 )
+
+cmake_path(CONVERT $ENV{VCToolsRedistDir} TO_CMAKE_PATH_LIST _vc_redist_dir)
+install(
+  FILES "${_vc_redist_dir}/x64/Microsoft.VC143.CRT/msvcp140.dll"
+  DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
