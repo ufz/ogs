@@ -16,18 +16,3 @@ set(CPACK_DMG_BACKGROUND_IMAGE
     ${PROJECT_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.png
 )
 set(CPACK_DMG_DS_STORE ${PROJECT_SOURCE_DIR}/scripts/packaging/.DS_Store)
-
-if(OGS_USE_CONAN)
-    file(GLOB MATCHED_FILES LIST_DIRECTORIES false
-         "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/*.dylib*"
-    )
-    install(FILES ${MATCHED_FILES} DESTINATION lib)
-
-    # macOS frameworks are directories, exclude header files
-    file(GLOB MATCHED_DIRECTORIES
-         "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.framework"
-    )
-    install(DIRECTORY ${MATCHED_DIRECTORIES} DESTINATION bin PATTERN "Headers"
-                                                                     EXCLUDE
-    )
-endif()

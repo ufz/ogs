@@ -18,8 +18,3 @@ set(CPACK_NSIS_MENU_LINKS
     "bin" "Executables folder" "http://www.opengeosys.org" "Website"
     "https://github.com/ufz/ogs" "Source code on GitHub"
 )
-
-if(OGS_USE_CONAN)
-    file(GLOB MATCHED_FILES "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/*.dll")
-    install(FILES ${MATCHED_FILES} DESTINATION bin)
-endif()
