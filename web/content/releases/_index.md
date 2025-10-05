@@ -16,7 +16,7 @@ icon = "far fa-arrow-right"
 # url encode job name, https://www.w3schools.com/tags/ref_urlencode.ASP
 [[head_downloads]]
 name = "Latest Windows CLI"
-url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/build?job=build+win"
+url = "https://gitlab.opengeosys.org/ogs/ogs/-/jobs/artifacts/master/browse/build?job=build+win+mkl"
 note = "Download and unpack .zip-file"
 icon = "fab fa-windows"
 
