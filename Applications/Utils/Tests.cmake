@@ -1580,6 +1580,18 @@ AddTest(
     TESTER vtkdiff-mesh
     DIFF_DATA points_3D.vtu points_3D.vtu 1.e-12
 )
+AddTest(
+    NAME CreateAnchors_bonded_anchors
+    PATH Mechanics/SlopeStabilityAnchors/mesh
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/<PATH>
+    EXECUTABLE CreateAnchors
+    EXECUTABLE_ARGS -i geo_domain_2D_q8.vtu -f four_anchors_nails.json
+                    -o ${Data_BINARY_DIR}/<PATH>/four_anchors_nails.vtu
+                    --tolerance 1e-6
+                    --max-iter 10
+    TESTER vtkdiff-mesh
+    DIFF_DATA four_anchors_nails.vtu four_anchors_nails.vtu 3.e-13
+)
 
 AddTest(
     NAME Utils_mergeMeshToBulkMesh
