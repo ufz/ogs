@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 
 # ruff: noqa: E402
 import pytest
@@ -42,6 +43,10 @@ def run(data, tmp_path):
 @pytest.mark.skipif(
     ogs.OGS_COVERAGE == "ON",
     reason="used VTK version is likely too old",
+)
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="remove skip if ogstools version is updated to 0.7.2",
 )
 def test_error_msg(tmp_path):
     bulk_mesh_gmsh = tmp_path / "rect.msh"

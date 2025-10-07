@@ -1,5 +1,6 @@
 import json
 import subprocess
+import sys
 
 # ruff: noqa: E402
 import pytest
@@ -20,6 +21,10 @@ import ogstools as ot
 )
 @pytest.mark.parametrize(
     "order_intersections", [(1, [6, 6, 6, 6, 10]), (2, [6, 6, 6, 6, 10])]
+)
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="remove skip if ogstools version is updated to 0.7.2",
 )
 def test_number_intersection(tmp_path, order_intersections):
     order, intersections = order_intersections

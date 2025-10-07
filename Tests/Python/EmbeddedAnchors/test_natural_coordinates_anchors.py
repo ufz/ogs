@@ -2,6 +2,7 @@ import json
 import pathlib
 import random
 import subprocess
+import sys
 
 # ruff: noqa: E402
 import pytest
@@ -13,6 +14,10 @@ import ogstools as ot
 
 
 @pytest.mark.parametrize("order", [1, 2])
+@pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="remove skip if ogstools version is updated to 0.7.2",
+)
 def test_natural_coordinates(tmp_path, order):
     ot.meshlib.rect(
         lengths=1.0,
