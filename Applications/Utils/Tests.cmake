@@ -1194,9 +1194,26 @@ AddTest(
     PATH Utils/NodeReordering/
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
     EXECUTABLE NodeReordering
-    EXECUTABLE_ARGS -i gmsh_quad_tri_linear.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/gmsh_quad_tri_linear_corrected.vtu REQUIREMENTS NOT (OGS_USE_MPI)
+    EXECUTABLE_ARGS -i gmsh_quad_tri_linear.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/gmsh_quad_tri_linear_corrected.vtu -m 0 REQUIREMENTS NOT (OGS_USE_MPI)
     TESTER vtkdiff-mesh
     DIFF_DATA gmsh_quad_tri_linear_corrected.vtu gmsh_quad_tri_linear_corrected.vtu 1.e-16
+)
+
+# The following test uses a mesh that contains only one line element, one triangle element,
+# one quadrilateral element, one tetrahedron element, one hexahedron element, one prism element,
+# and one pyramid element, all in linear order. All 3D elements have incorrect node ordering,
+# which leads to a negative Jacobian determinant. The test checks whether node reordering
+# works for all element types. Since the mesh is 3D, the line, triangle, and quadrilateral elements
+# mapped in 3D space always satisfy det(J) >= 0 due to the global-to-local coordinate transformation.
+# Therefore, only the 3D elements are reordered in the test.
+AddTest(
+    NAME NodeOrdering_simple_mesh_with_all_3d_geo_types_linear
+    PATH Utils/NodeReordering
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i simple_mesh_with_all_3d_geo_types_linear.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/reordered_simple_mesh_with_all_3d_geo_types_linear.vtu -m 0 REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA reordered_simple_mesh_with_all_3d_geo_types_linear.vtu reordered_simple_mesh_with_all_3d_geo_types_linear.vtu 1.e-16
 )
 
 AddTest(
