@@ -35,7 +35,9 @@ struct IntersectionResult
 /// @param free_fraction The fraction of the line segment to consider for
 /// intersections.
 /// @param tol Tolerance for considering points as identical.
-/// @return
+/// @return a vector of vectors containing the intersection results which need
+/// to be converted using setPhysicalPropertiesForIntersectionPoints() to fill
+/// in physical properties and to obtain the final anchor format
 std::vector<std::vector<IntersectionResult>> getOrderedAnchorCoords(
     vtkUnstructuredGrid* grid,
     Eigen::MatrixX3d const& realcoords,
@@ -48,7 +50,8 @@ std::vector<std::vector<IntersectionResult>> getOrderedAnchorCoords(
 /// mesh.
 /// @param original_anchor_data The original anchor data read from the JSON
 /// file.
-/// @return
+/// @return struct containing the anchor data which will be stored in the
+/// unstructured grid
 AU::ComputeNaturalCoordsResult setPhysicalPropertiesForIntersectionPoints(
     std::vector<std::vector<IntersectionResult>> const& anchor_coords,
     AU::ComputeNaturalCoordsResult const& original_anchor_data);
