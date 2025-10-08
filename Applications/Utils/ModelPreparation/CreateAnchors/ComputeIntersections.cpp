@@ -124,7 +124,6 @@ std::vector<IntersectionResult> findOrderedIntersections(
         if (!isDuplicate && (t < tol || t > free_fraction))
         {
             IntersectionResult result;
-            // result.cellId = cellId;
             result.t = t;
             result.point = x_vec;
             intersections.push_back(result);
