@@ -1,4 +1,4 @@
-set(EXE_SOURCES CreateAnchors.cpp)
+set(EXE_SOURCES CreateAnchors.cpp ComputeIntersections.cpp)
 
 ogs_add_executable(CreateAnchors ${EXE_SOURCES})
 

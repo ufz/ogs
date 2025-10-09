@@ -39,7 +39,7 @@ Anchor elements can be defined in JSON files by giving the start and end points 
     "maximum_anchor_stress": [500e26, 500e26, 500e26, 500e26],
     "initial_anchor_stress": [5e7, 5e7, 5e7, 5e7],
     "residual_anchor_stress": [250e6, 250e6, 250e6, 250e6],
-    "anchor_radius": [0.2, 0.2, 0.2, 0.2],
+    "anchor_cross_sectional_area": [0.12566370614359174, 0.12566370614359174, 0.12566370614359174, 0.12566370614359174],
     "anchor_stiffness": [100e9, 100e9, 100e9, 100e9]
 }
 ```

@@ -17,6 +17,7 @@
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
 #include "BaseLib/TCLAPArguments.h"
+#include "ComputeIntersections.h"
 #include "ComputeNaturalCoordsAlgorithm.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
@@ -51,9 +52,9 @@ void checkJSONEntries(nlohmann::json const& data, size_t number_of_anchors)
 {
     std::vector<std::string> required_keys = {"anchor_stiffness",
                                               "anchor_cross_sectional_area"};
-    std::vector<std::string> optional_keys = {"maximum_anchor_stress",
-                                              "initial_anchor_stress",
-                                              "residual_anchor_stress"};
+    std::vector<std::string> optional_keys = {
+        "maximum_anchor_stress", "initial_anchor_stress",
+        "residual_anchor_stress", "free_fraction"};
     if (number_of_anchors == 0)
     {
         OGS_FATAL("No anchors found in the json.");
@@ -98,12 +99,28 @@ void checkJSONEntries(nlohmann::json const& data, size_t number_of_anchors)
                     OGS_FATAL("Non-numeric element in JSON array for key {}!",
                               key);
                 }
+                if (key == "free_fraction")
+                {
+                    double const free_fraction_number =
+                        data["free_fraction"][i].get<double>();
+                    if (free_fraction_number < 0.0 ||
+                        free_fraction_number > 1.0)
+                    {
+                        OGS_FATAL(
+                            "Free fraction must be in the range [0, 1] but is "
+                            "{} for anchor #{}.",
+                            free_fraction_number, i);
+                    }
+                }
             }
         }
     }
 }
 
-AU::ComputeNaturalCoordsResult readJSON(
+/// Reads a JSON file containing anchor start and end points and physical
+/// properties of the anchors. Also returns the free fraction of each anchor.
+/// If the free fraction is not given, it is set to 1.0 for all anchors.
+std::tuple<AU::ComputeNaturalCoordsResult, Eigen::VectorXd> readJSON(
     TCLAP::ValueArg<std::string> const& input_filename)
 {
     using json = nlohmann::json;
@@ -151,6 +168,7 @@ AU::ComputeNaturalCoordsResult readJSON(
     Eigen::VectorXd residual_anchor_stress(number_of_anchors);
     Eigen::VectorXd anchor_cross_sectional_area(number_of_anchors);
     Eigen::VectorXd anchor_stiffness(number_of_anchors);
+    Eigen::VectorXd free_fraction(number_of_anchors);
     if (!data.contains("initial_anchor_stress"))
     {
         initial_anchor_stress.setZero();
@@ -189,6 +207,18 @@ AU::ComputeNaturalCoordsResult readJSON(
                 data["residual_anchor_stress"][i].get<double>();
         }
     }
+    if (!data.contains("free_fraction"))
+    {
+        free_fraction = Eigen::VectorXd::Constant(number_of_anchors, 1.0);
+    }
+    else
+    {
+        for (size_t i = 0; i < number_of_anchors; ++i)
+        {
+            free_fraction(i) = data["free_fraction"][i].get<double>();
+        }
+    }
+
     for (size_t i = 0; i < number_of_anchors; ++i)
     {
         anchor_cross_sectional_area(i) =
@@ -202,7 +232,8 @@ AU::ComputeNaturalCoordsResult readJSON(
     json_data.residual_anchor_stress = residual_anchor_stress;
     json_data.anchor_cross_sectional_area = anchor_cross_sectional_area;
     json_data.anchor_stiffness = anchor_stiffness;
-    return json_data;
+    json_data.success = true;
+    return {json_data, free_fraction};
 }
 
 int main(int argc, char** argv)
@@ -250,14 +281,22 @@ int main(int argc, char** argv)
     BaseLib::MPI::Setup mpi_setup(argc, argv);
     BaseLib::initOGSLogger(log_level_arg.getValue());
 
-    AU::ComputeNaturalCoordsResult const json_data =
-        readJSON(json_filename_arg);
+    auto const& [json_data, free_fraction] = readJSON(json_filename_arg);
     auto const bulk_mesh = readGrid(input_filename_arg.getValue());
 
+    auto split_anchor_coords =
+        getOrderedAnchorCoords(bulk_mesh, json_data.real_coords, free_fraction,
+                               tolerance_arg.getValue());
+
+    AU::ComputeNaturalCoordsResult const anchor_data =
+        setPhysicalPropertiesForIntersectionPoints(split_anchor_coords,
+                                                   json_data);
+    ///
+
     // Compute natural coordinates
-    AU::ComputeNaturalCoordsResult const result =
-        AU::computeNaturalCoords(bulk_mesh, json_data, tolerance_arg.getValue(),
-                                 max_iter_arg.getValue());
+    AU::ComputeNaturalCoordsResult const result = AU::computeNaturalCoords(
+        bulk_mesh, anchor_data, tolerance_arg.getValue(),
+        max_iter_arg.getValue());
     // Write output
     auto const output_mesh = AU::toVTKGrid(result);
     writeGrid(output_mesh, output_filename_arg.getValue());
