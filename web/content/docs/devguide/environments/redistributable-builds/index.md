@@ -21,8 +21,8 @@ If a binary runs on a different machine depends on a lot of factors. The followi
 
 ### Default compiler flags
 
-- `/favor:blend`: Optimizes for AMD **and** Intel architectures, see [MSDN docs](https://msdn.microsoft.com/en-us/library/ms173505.aspx)
-- `/arch:sse2` on [32-bit](https://msdn.microsoft.com/en-us//library/7t5yh4fd.aspx), `/arch` undefined on [64-bit](https://msdn.microsoft.com/en-us/library/jj620901.aspx)
+- `/favor:blend`: Optimizes for AMD **and** Intel architectures, see [MSDN docs](https://learn.microsoft.com/en-us/cpp/build/reference/favor-optimize-for-architecture-specifics)
+- `/arch:sse2` on [32-bit](https://learn.microsoft.com/en-us/cpp/build/reference/arch-x86), `/arch` undefined on [64-bit](https://learn.microsoft.com/en-us/cpp/build/reference/arch-x64)
 
 ### Optimization CMake options
 
