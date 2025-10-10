@@ -1,12 +1,3 @@
-.input_handling: &input_handling
-  - |
-    if [[ -n "$OGSTOOLS_REF" ]]; then
-      cd Tests/Data
-      sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS_REF\"|" pyproject.toml
-      uv lock
-      cd -
-    fi
-
 build linux arch:
   extends:
     - .template-build-linux
@@ -22,7 +13,6 @@ build linux arch:
       -DOGS_USE_NETCDF=ON
   before_script:
     - source /opt/intel/oneapi/setvars.sh
-    - *input_handling
 
 build linux petsc:
   extends:
@@ -38,5 +28,3 @@ build linux petsc:
       -DOGS_USE_PIP=ON
       -DOGS_USE_MFRONT=ON
     CTEST_ARGS: -L default|petsc-mumps
-  before_script:
-    - *input_handling
