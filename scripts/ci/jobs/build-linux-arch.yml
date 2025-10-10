@@ -2,6 +2,8 @@ spec:
   inputs:
     ogstools:
       default: ''
+    ctest_args:
+      default: ''
 ---
 
 build linux arch:
@@ -26,4 +28,8 @@ build linux arch:
         sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS\"|" pyproject.toml
         uv lock
         cd -
+      fi
+      _ctest_args="$[[ inputs.ctest_args ]]"
+      if [[ -n "$_ctest_args" ]]; then
+        export CTEST_ARGS=$_ctest_args
       fi
