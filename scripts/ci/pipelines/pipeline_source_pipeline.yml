@@ -1,4 +1,4 @@
 include:
   - local: "/scripts/ci/jobs/build-linux-arch.yml"
     rules:
-      - if: '"$[[ inputs.pipeline_type ]]" == "notebooks"'
+      - if: $PIPELINE_TYPE == "notebooks"
