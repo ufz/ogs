@@ -1,5 +1,4 @@
 include:
-  - local: "/scripts/ci/jobs/meta.yml"
   # jobs, can be individually disabled for testing
   - local: "/scripts/ci/jobs/pre-commit.yml"
   - local: "/scripts/ci/pipelines/linux.yml"

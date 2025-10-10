@@ -70,6 +70,7 @@ workflow:
 
 include:
   - local: "scripts/ci/extends/*.yml"
+  - local: "/scripts/ci/jobs/meta.yml"
   - local: "/scripts/ci/pipelines/regular.yml"
     rules:
       - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/ && $CI_PIPELINE_SOURCE != "pipeline"
