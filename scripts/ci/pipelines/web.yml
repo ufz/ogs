@@ -2,6 +2,5 @@ include:
   - local: "/scripts/ci/jobs/meta.yml"
   - local: "/scripts/ci/jobs/pre-commit.yml"
   - local: "/scripts/ci/jobs/build-linux-arch.yml"
-  - local: "/scripts/ci/jobs/build-linux-petsc.yml"
   - local: "/scripts/ci/jobs/web-preview.yml"
   - local: "/scripts/ci/jobs/web-check.yml"
