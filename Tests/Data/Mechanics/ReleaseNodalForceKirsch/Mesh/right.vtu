@@ -6,7 +6,6 @@
         <DataArray type="UInt64" Name="bulk_node_ids" format="appended" RangeMin="2"                    RangeMax="4454"                 offset="0"                   />
       </PointData>
       <CellData>
-        <DataArray type="UInt64" Name="bulk_elem_ids" format="appended" RangeMin="97"                   RangeMax="110"                  offset="320"                 />
         <DataArray type="UInt64" Name="bulk_element_ids" format="appended" RangeMin="19"                   RangeMax="593"                  offset="480"                 />
       </CellData>
       <Points>

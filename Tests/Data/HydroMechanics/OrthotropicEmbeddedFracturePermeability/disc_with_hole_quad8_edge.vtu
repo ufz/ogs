@@ -25,7 +25,7 @@ AQAAAACAAADoAQAAaQAAAA==eJwtxUMCwwAAALB2/f/DZtu27R2WXBIGf5HjTjjplNPOOOuc8y646JLL
 </DataArray>
 </PointData>
 <CellData>
-<DataArray type="UInt64" Name="bulk_elem_ids" format="binary">
+<DataArray type="UInt64" Name="bulk_element_ids" format="binary">
 AQAAAACAAADwAAAAQQAAAA==eJwtxVkSQ1AAADA8+77T+1+zLTMkP/mG6PHz35ej9C124uDUmXMXLl25duPWnXsPHj159uLVm3cfPv3xDRmgBbA=
 </DataArray>
 </CellData>

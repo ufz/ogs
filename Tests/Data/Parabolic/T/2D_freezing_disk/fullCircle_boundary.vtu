@@ -25,7 +25,7 @@ AQAAAACAAADAAQAAZAAAAA==eJwtxUUCggAAADDsbsEWO8DO///Mg9tlQfCXcdY5511w0SWXXXHVNdfd
 </DataArray>
 </PointData>
 <CellData>
-<DataArray type="UInt64" Name="bulk_elem_ids" format="binary">
+<DataArray type="UInt64" Name="bulk_element_ids" format="binary">
 AQAAAACAAADAAQAAmAAAAA==eJw1zrsOAVEUheEZiU6iFo0XoJIIJZEoFKJySVxixDO4vKkXQMEEI0wlMZ/T/Odfe52dU8kFvzPNENzDjBue8AUf6u/leXmKffM6P2FTfvRuJL/yFe/pzXibb/UGPDF/y194kXf0CnyMN72IP/j8/1++w9Cej3kJW/KY06DrMuGxPWv+5Et+5gdMsYgN+2pYlZf5F7fwHBo=
 </DataArray>
 </CellData>
