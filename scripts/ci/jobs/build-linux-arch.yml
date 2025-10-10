@@ -13,3 +13,18 @@ build linux arch:
       -DOGS_USE_NETCDF=ON
   before_script:
     - source /opt/intel/oneapi/setvars.sh
+
+build linux petsc:
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  tags: [envinf, shell, petsc]
+  needs: [meta]
+  timeout: 3h
+  variables:
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
+    CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: >-
+      -DOGS_USE_PIP=ON
+      -DOGS_USE_MFRONT=ON
+    CTEST_ARGS: -L default|petsc-mumps

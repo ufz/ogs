@@ -1,0 +1,28 @@
+include:
+  - local: "/scripts/ci/pipelines/regular.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/
+  - local: "/scripts/ci/pipelines/web.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/
+  - local: "/scripts/ci/pipelines/web-fast.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only \(fast.*/
+  - local: "/scripts/ci/pipelines/linux.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
+  - local: "/scripts/ci/pipelines/mac.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::mac only.*/
+  - local: "/scripts/ci/pipelines/win.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::win only.*/
+  - local: "/scripts/ci/pipelines/guix.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
+  - local: "/scripts/ci/pipelines/gui.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::gui only.*/
+  - local: "/scripts/ci/jobs/build-wheels.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/

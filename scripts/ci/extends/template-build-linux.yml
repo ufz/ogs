@@ -5,7 +5,13 @@
     when: runner_system_failure
 
   script:
-    - 'echo "For debugging run: docker run --rm -it -v $CI_BUILDS_DIR:/builds -w=$CI_PROJECT_DIR $CI_JOB_IMAGE"'
+    - |
+      if [[ -n "$OGSTOOLS_REF" ]]; then
+        cd Tests/Data
+        sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS_REF\"|" pyproject.toml
+        uv lock
+        cd -
+      fi
     - build_dir_full=../build/${CMAKE_PRESET}
     - log_file=$build_dir_full/make.txt
     - rm -rf $build_dir_full

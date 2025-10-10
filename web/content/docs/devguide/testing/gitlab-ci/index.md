@@ -66,6 +66,7 @@ Possible variables to set:
 - `CTEST_ARGS`: Are passed to `ctest` invocations. Use e.g. `-R` to select specific tests (such as your currently worked on benchmark) or `-LE` to exclude labelled tests.
 - `BUILD_TESTS`: Disable unit tests (`testrunner`) when set to `false`.
 - `BUILD_CTEST`: Disable benchmark / notebook tests when set to `false`.
+- `OGSTOOLS_REF`: Change ogstools version used in notebook tests (used by ogstools CI).
 
 ### Pre-configured reduced pipelines using MR labels
 

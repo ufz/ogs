@@ -1,0 +1,4 @@
+include:
+  - local: "/scripts/ci/jobs/build-linux-arch.yml"
+    rules:
+      - if: $PIPELINE_TYPE == "notebooks"

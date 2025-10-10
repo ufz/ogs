@@ -22,6 +22,9 @@ workflow:
   name: "$PIPELINE_NAME"
   rules:
     # Disable CI for non-MR user-scoped pipelines
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
+      variables:
+        PIPELINE_NAME: "child pipeline"
     - if: '$CI_MERGE_REQUEST_IID == null && $CI_PROJECT_PATH != "ogs/ogs"'
       when: never
     - if: "$CI_MERGE_REQUEST_LABELS =~ /.*(workflow::paused|ci::skip).*/"
@@ -56,33 +59,13 @@ workflow:
 
 include:
   - local: "scripts/ci/extends/*.yml"
-  - local: "/scripts/ci/pipelines/regular.yml"
+  - local: "/scripts/ci/jobs/meta.yml"
+  - local: "/scripts/ci/pipelines/pipeline_source_regular.yml"
     rules:
-      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/
-  - local: "/scripts/ci/pipelines/web.yml"
+      - if: '$CI_PIPELINE_SOURCE != "schedule" && $CI_PIPELINE_SOURCE != "pipeline"'
+  - local: "/scripts/ci/pipelines/pipeline_source_pipeline.yml"
     rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/
-  - local: "/scripts/ci/pipelines/web-fast.yml"
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only \(fast.*/
-  - local: "/scripts/ci/pipelines/scheduled.yml"
+      - if: '$CI_PIPELINE_SOURCE == "pipeline"'
+  - local: "/scripts/ci/pipelines/pipeline_source_schedule.yml"
     rules:
       - if: '$CI_PIPELINE_SOURCE == "schedule"'
-  - local: "/scripts/ci/pipelines/linux.yml"
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
-  - local: "/scripts/ci/pipelines/mac.yml"
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::mac only.*/
-  - local: "/scripts/ci/pipelines/win.yml"
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::win only.*/
-  - local: "/scripts/ci/pipelines/guix.yml"
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
-  - local: "/scripts/ci/pipelines/gui.yml"
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::gui only.*/
-  - local: "/scripts/ci/jobs/build-wheels.yml"
-    rules:
-      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
