@@ -1,3 +1,16 @@
+spec:
+  inputs:
+    pipeline_type:
+      default: ''
+      options: ["", "regular", "web", "web-fast", "linux", "mac", "win", "guix", "wheels", "notebooks"]
+    ogstools:
+      default: ''
+    ctest_args:
+      default: ''
+    build_ctest_large:
+      default: "$BUILD_CTEST_LARGE"
+---
+
 stages:
   - preparation
   - build
@@ -22,6 +35,7 @@ workflow:
   name: "$PIPELINE_NAME"
   rules:
     # Disable CI for non-MR user-scoped pipelines
+    - if: $CI_PIPELINE_SOURCE == "pipeline"
     - if: '$CI_MERGE_REQUEST_IID == null && $CI_PROJECT_PATH != "ogs/ogs"'
       when: never
     - if: "$CI_MERGE_REQUEST_LABELS =~ /.*(workflow::paused|ci::skip).*/"
@@ -58,31 +72,43 @@ include:
   - local: "scripts/ci/extends/*.yml"
   - local: "/scripts/ci/pipelines/regular.yml"
     rules:
-      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/
+      - if: $CI_PIPELINE_SOURCE != "schedule" && $CI_MERGE_REQUEST_LABELS !~ /.*ci::\w* only.*/ && $CI_PIPELINE_SOURCE != "pipeline"
+      - if: '"$[[ inputs.pipeline_type ]]" == "regular" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/pipelines/web.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/
+      - if: '"$[[ inputs.pipeline_type ]]" == "web" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/pipelines/web-fast.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only \(fast.*/
+      - if: '"$[[ inputs.pipeline_type ]]" == "web-fast" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/pipelines/scheduled.yml"
     rules:
       - if: '$CI_PIPELINE_SOURCE == "schedule"'
   - local: "/scripts/ci/pipelines/linux.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
+      - if: '"$[[ inputs.pipeline_type ]]" == "linux" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/pipelines/mac.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::mac only.*/
+      - if: '"$[[ inputs.pipeline_type ]]" == "mac" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/pipelines/win.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::win only.*/
+      - if: '"$[[ inputs.pipeline_type ]]" == "win" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/pipelines/guix.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
+      - if: '"$[[ inputs.pipeline_type ]]" == "guix" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/pipelines/gui.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::gui only.*/
+      - if: '"$[[ inputs.pipeline_type ]]" == "gui" && $CI_PIPELINE_SOURCE == "pipeline"'
   - local: "/scripts/ci/jobs/build-wheels.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
+      - if: '"$[[ inputs.pipeline_type ]]" == "wheels" && $CI_PIPELINE_SOURCE == "pipeline"'
+  - local: "/scripts/ci/jobs/build-linux-arch.yml"
+    rules:
+      - if: '"$[[ inputs.pipeline_type ]]" == "notebooks" && $CI_PIPELINE_SOURCE == "pipeline"'
