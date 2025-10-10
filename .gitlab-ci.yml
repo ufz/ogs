@@ -3,12 +3,6 @@ spec:
     pipeline_type:
       default: ''
       options: ["", "regular", "web", "web-fast", "linux", "mac", "win", "guix", "wheels", "notebooks"]
-    ogstools:
-      default: ''
-    ctest_args:
-      default: ''
-    build_ctest_large:
-      default: "$BUILD_CTEST_LARGE"
 ---
 
 stages:
@@ -36,6 +30,8 @@ workflow:
   rules:
     # Disable CI for non-MR user-scoped pipelines
     - if: $CI_PIPELINE_SOURCE == "pipeline"
+      variables:
+        PIPELINE_NAME: "child pipeline"
     - if: '$CI_MERGE_REQUEST_IID == null && $CI_PROJECT_PATH != "ogs/ogs"'
       when: never
     - if: "$CI_MERGE_REQUEST_LABELS =~ /.*(workflow::paused|ci::skip).*/"

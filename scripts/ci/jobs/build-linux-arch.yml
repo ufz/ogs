@@ -1,29 +1,10 @@
-spec:
-  inputs:
-    ogstools:
-      default: ''
-    ctest_args:
-      default: ''
-    build_ctest_large:
-      default: "$BUILD_CTEST_LARGE"
----
-
 .input_handling: &input_handling
   - |
-    OGSTOOLS="$[[ inputs.ogstools ]]"
-    if [[ -n "$OGSTOOLS" ]]; then
+    if [[ -n "$OGSTOOLS_REF" ]]; then
       cd Tests/Data
-      sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS\"|" pyproject.toml
+      sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS_REF\"|" pyproject.toml
       uv lock
       cd -
-    fi
-    _ctest_args="$[[ inputs.ctest_args ]]"
-    if [[ -n "$_ctest_args" ]]; then
-      export CTEST_ARGS="$_ctest_args $CTEST_ARGS"
-    fi
-    _build_ctest_large="$[[ inputs.build_ctest_large ]]"
-    if [ "$_build_ctest_large" == true ]; then
-      export BUILD_CTEST_LARGE=true
     fi
 
 build linux arch:
