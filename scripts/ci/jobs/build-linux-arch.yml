@@ -1,3 +1,9 @@
+spec:
+  inputs:
+    ogstools:
+      default: ''
+---
+
 build linux arch:
   extends:
     - .template-build-linux
@@ -13,3 +19,11 @@ build linux arch:
       -DOGS_USE_NETCDF=ON
   before_script:
     - source /opt/intel/oneapi/setvars.sh
+    - |
+      OGSTOOLS="$[[ inputs.ogstools ]]"
+      if [[ -n "$OGSTOOLS" ]]; then
+        cd Tests/Data
+        sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS\"|" pyproject.toml
+        uv lock
+        cd -
+      fi
