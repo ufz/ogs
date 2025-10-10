@@ -4,7 +4,27 @@ spec:
       default: ''
     ctest_args:
       default: ''
+    build_ctest_large:
+      default: "$BUILD_CTEST_LARGE"
 ---
+
+.input_handling: &input_handling
+  - |
+    OGSTOOLS="$[[ inputs.ogstools ]]"
+    if [[ -n "$OGSTOOLS" ]]; then
+      cd Tests/Data
+      sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS\"|" pyproject.toml
+      uv lock
+      cd -
+    fi
+    _ctest_args="$[[ inputs.ctest_args ]]"
+    if [[ -n "$_ctest_args" ]]; then
+      export CTEST_ARGS="$_ctest_args $CTEST_ARGS"
+    fi
+    _build_ctest_large="$[[ inputs.build_ctest_large ]]"
+    if [ "$_build_ctest_large" == true ]; then
+      export BUILD_CTEST_LARGE=true
+    fi
 
 build linux arch:
   extends:
@@ -21,15 +41,4 @@ build linux arch:
       -DOGS_USE_NETCDF=ON
   before_script:
     - source /opt/intel/oneapi/setvars.sh
-    - |
-      OGSTOOLS="$[[ inputs.ogstools ]]"
-      if [[ -n "$OGSTOOLS" ]]; then
-        cd Tests/Data
-        sed -i "s|\"ogstools==.*\"|\"$OGSTOOLS\"|" pyproject.toml
-        uv lock
-        cd -
-      fi
-      _ctest_args="$[[ inputs.ctest_args ]]"
-      if [[ -n "$_ctest_args" ]]; then
-        export CTEST_ARGS=$_ctest_args
-      fi
+    - *input_handling
