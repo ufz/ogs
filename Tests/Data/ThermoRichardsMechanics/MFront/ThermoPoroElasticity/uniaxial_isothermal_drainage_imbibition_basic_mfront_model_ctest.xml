@@ -20,9 +20,9 @@
     <add sel="/*/time_loop/output/variables">
         <variable>sigma</variable>
     </add>
-    <remove sel="/*/processes/process/secondary_variables/secondary_variable[@internal_name=&quot;sigma_total&quot;]" />
+    <remove sel="/*/processes/process/secondary_variables/secondary_variable[@name=&quot;sigma_total&quot;]" />
     <add sel="/*/processes/process/secondary_variables">
-        <secondary_variable internal_name="sigma" output_name="sigma" />
+        <secondary_variable name="sigma"/>
     </add>
 
     <add sel="/*">

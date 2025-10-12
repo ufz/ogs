@@ -97,10 +97,10 @@ model_s.replace_text(
 )
 model_s.replace_text("square_1e0_small", xpath="./time_loop/output/prefix")
 model_s.remove_element(
-    xpath="./processes/process/secondary_variables/secondary_variable[@internal_name='deformation_gradient']"
+    xpath="./processes/process/secondary_variables/secondary_variable[@name='deformation_gradient']"
 )
 model_s.remove_element(
-    xpath="./processes/process/secondary_variables/secondary_variable[@internal_name='volume_ratio']"
+    xpath="./processes/process/secondary_variables/secondary_variable[@name='volume_ratio']"
 )
 model_s.remove_element(xpath=".//vtkdiff[field='deformation_gradient']")
 model_s.remove_element(xpath=".//vtkdiff[field='volume_ratio']")
