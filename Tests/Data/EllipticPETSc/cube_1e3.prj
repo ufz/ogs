@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <mesh>cube_1x1x1_hex_1e3.vtu</mesh>
+    <meshes>
+        <mesh>cube_1x1x1_hex_1e3.vtu</mesh>
+    </meshes>
     <geometry>cube_1x1x1.gml</geometry>
     <processes>
         <process>
@@ -55,6 +57,10 @@
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
+                <variable> Linear_1_to_minus1 </variable>
+                <!-- required for PvtuToVtu -->
+                <variable> global_node_ids </variable>
+                <variable> global_element_ids </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
