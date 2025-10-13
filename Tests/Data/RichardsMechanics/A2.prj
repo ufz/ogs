@@ -25,10 +25,10 @@
                 <pressure>pressure</pressure>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="saturation" output_name="saturation"/>
-                <secondary_variable internal_name="velocity" output_name="velocity"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="saturation"/>
+                <secondary_variable name="velocity"/>
             </secondary_variables>
             <initial_stress>sigma0</initial_stress>
         </process>

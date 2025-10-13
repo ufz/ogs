@@ -23,8 +23,8 @@
                 <relative_epsilons>1e-6 1e-6 1e-6 1e-6</relative_epsilons>
             </jacobian_assembler>
             <secondary_variables>
-                <secondary_variable internal_name="saturation" output_name="saturation"/>
-                <secondary_variable internal_name="pressure_wetting" output_name="pressure_wetting"/>
+                <secondary_variable name="saturation"/>
+                <secondary_variable name="pressure_wetting"/>
                 <secondary_variable internal_name="gas_molar_fraction_water" output_name="xwG"/>
                 <secondary_variable internal_name="liquid_molar_fraction_contaminant" output_name="xcL"/>
                 <secondary_variable internal_name="gas_molar_fraction_contaminant" output_name="xcG"/>

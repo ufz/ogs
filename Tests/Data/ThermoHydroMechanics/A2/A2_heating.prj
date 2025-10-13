@@ -27,11 +27,11 @@
                 <temperature>temperature</temperature>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="velocity" output_name="velocity"/>
-                <secondary_variable internal_name="fluid_density" output_name="fluid_density"/>
-                <secondary_variable internal_name="viscosity" output_name="viscosity"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="velocity"/>
+                <secondary_variable name="fluid_density"/>
+                <secondary_variable name="viscosity"/>
             </secondary_variables>
         </process>
     </processes>

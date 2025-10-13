@@ -20,7 +20,7 @@
             </process_variables>
             <specific_body_force>0 0.0 0.0</specific_body_force>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable name="sigma"/>
             </secondary_variables>
         </process>
     </processes>

@@ -37,10 +37,10 @@
                 <process_variable>displacement</process_variable>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
-                <secondary_variable internal_name="HardeningStrain" output_name="HardeningStrain"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="ElasticStrain"/>
+                <secondary_variable name="HardeningStrain"/>
             </secondary_variables>
             <reference_temperature>T_ref</reference_temperature>
         </process>

@@ -29,10 +29,10 @@
             </process_variables>
             <specific_body_force>0 0</specific_body_force>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="sigma_ice" output_name="sigma_ice"/>
-                <secondary_variable internal_name="ice_volume_fraction" output_name="ice_volume_fraction"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="sigma_ice"/>
+                <secondary_variable name="ice_volume_fraction"/>
+                <secondary_variable name="epsilon"/>
             </secondary_variables>
         </process>
     </processes>

@@ -14,8 +14,8 @@
             <specific_body_force>0 0</specific_body_force>
             <secondary_variables>
                 <secondary_variable internal_name="velocity" output_name="darcy_velocity"/>
-                <secondary_variable internal_name="dry_density_solid" output_name="dry_density_solid"/>
-                <secondary_variable internal_name="porosity" output_name="porosity"/>
+                <secondary_variable name="dry_density_solid"/>
+                <secondary_variable name="porosity"/>
             </secondary_variables>
         </process>
     </processes>

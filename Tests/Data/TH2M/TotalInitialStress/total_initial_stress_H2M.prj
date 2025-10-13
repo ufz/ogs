@@ -22,8 +22,8 @@
             <reference_temperature>T0</reference_temperature>
             <specific_body_force>0 0.0 0.0</specific_body_force>
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="sigma_total" output_name="sigma_total"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="sigma_total"/>
             </secondary_variables>
         </process>
     </processes>

@@ -34,16 +34,16 @@
                 <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="sigma_total" output_name="sigma_total"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="saturation" output_name="saturation"/>
-                <secondary_variable internal_name="porosity" output_name="porosity"/>
-                <secondary_variable internal_name="e" output_name="e"/>
-                <secondary_variable internal_name="em" output_name="em"/>
-                <secondary_variable internal_name="eM" output_name="eM"/>
-                <secondary_variable internal_name="SrM" output_name="SrM"/>
-                <secondary_variable internal_name="a_scan" output_name="a_scan"/>
-                <secondary_variable internal_name="re" output_name="re"/>
+                <secondary_variable name="sigma_total"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="saturation"/>
+                <secondary_variable name="porosity"/>
+                <secondary_variable name="e"/>
+                <secondary_variable name="em"/>
+                <secondary_variable name="eM"/>
+                <secondary_variable name="SrM"/>
+                <secondary_variable name="a_scan"/>
+                <secondary_variable name="re"/>
             </secondary_variables>
             <specific_body_force>0 0 0</specific_body_force>
             <initial_stress type="total">initial_stress</initial_stress>

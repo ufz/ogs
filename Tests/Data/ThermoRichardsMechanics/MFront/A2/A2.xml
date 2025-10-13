@@ -87,9 +87,9 @@
     <add sel="/*/time_loop/output/variables">
         <variable>sigma_total</variable>
     </add>
-    <remove sel="/*/processes/process/secondary_variables/secondary_variable[@internal_name=&quot;sigma&quot;]" />
+    <remove sel="/*/processes/process/secondary_variables/secondary_variable[@name=&quot;sigma&quot;]" />
     <add sel="/*/processes/process/secondary_variables">
-        <secondary_variable internal_name="sigma_total" output_name="sigma_total" />
+        <secondary_variable name="sigma_total"/>
     </add>
 
     <!-- Due to different stress measures we cannot test against the stress values from the original test -->

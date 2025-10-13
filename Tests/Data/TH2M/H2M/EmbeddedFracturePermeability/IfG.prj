@@ -41,12 +41,12 @@
                 <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="velocity_gas" output_name="velocity_gas"/>
-                <secondary_variable internal_name="velocity_liquid" output_name="velocity_liquid"/>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
-                <secondary_variable internal_name="gas_density" output_name="gas_density"/>
-                <secondary_variable internal_name="saturation" output_name="saturation"/>
+                <secondary_variable name="velocity_gas"/>
+                <secondary_variable name="velocity_liquid"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="gas_density"/>
+                <secondary_variable name="saturation"/>
             </secondary_variables>
             <mass_lumping>false</mass_lumping>
             <specific_body_force>0 0</specific_body_force>

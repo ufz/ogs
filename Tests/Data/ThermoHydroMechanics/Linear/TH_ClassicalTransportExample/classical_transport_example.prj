@@ -21,7 +21,7 @@
                 <temperature>C</temperature>
             </process_variables>
             <secondary_variables>
-                <secondary_variable internal_name="velocity" output_name="velocity"/>
+                <secondary_variable name="velocity"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
             <numerical_stabilization>

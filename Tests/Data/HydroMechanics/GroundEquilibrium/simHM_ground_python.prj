@@ -39,8 +39,8 @@
             <specific_body_force>0 -9.81</specific_body_force>
             <!--define the output quantities derived from the primary variables-->
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
-                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
                 <secondary_variable internal_name="velocity" output_name="DarcyVelocity"/>
             </secondary_variables>
         </process>

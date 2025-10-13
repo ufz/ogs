@@ -40,7 +40,7 @@
             </fracture_properties>
             <!--
             <secondary_variables>
-                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable name="sigma"/>
             </secondary_variables>
             -->
         </process>
