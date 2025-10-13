@@ -36,7 +36,7 @@ NumLib::NonlinearSolverStatus StaggeredCoupling::execute(
     {
         WARN(
             "The coupling iterations reaches its maximum number in time step "
-            "#{:d} at t = {:g} s",
+            "#{:d} at t = {:g}",
             timestep_id, t);
     }
 
