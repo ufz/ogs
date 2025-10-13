@@ -10,9 +10,9 @@
 #include "EffectiveThermalConductivityPorosityMixing.h"
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/PropertyType.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ParameterLib/CoordinateSystem.h"
-#include "ParameterLib/Parameter.h"
 
 namespace MaterialPropertyLib
 {
@@ -94,12 +94,122 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::value(
 }
 template <>
 PropertyDataType EffectiveThermalConductivityPorosityMixing<1>::dValue(
-    VariableArray const&, Variable const, ParameterLib::SpatialPosition const&,
-    double const, double const) const
+    VariableArray const& variable_array, Variable const variable,
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
-    OGS_FATAL(
-        "dValue is not implemented for "
-        "EffectiveThermalConductivityPorosityMixing");
+    if (variable != Variable::temperature)
+    {
+        OGS_FATAL(
+            "The derivative of the "
+            "EffectiveThermalConductivityPorosityMixing is implemented only "
+            "w.r.t. temperature.");
+    }
+
+    auto const& medium = std::get<Medium*>(scale_);
+
+    // Assuming there is either a gas phase or a liquid phase or both.
+    auto const gas_phase =
+        medium->hasPhase("Gas") ? &medium->phase("Gas") : nullptr;
+    auto const liquid_phase = medium->hasPhase("AqueousLiquid")
+                                  ? &medium->phase("AqueousLiquid")
+                                  : nullptr;
+    // Assuming there is always a solid phase.
+    auto const& solid_phase = medium->phase("Solid");
+
+    auto const gas_thermal_conductivity =
+        gas_phase
+            ? gas_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
+    auto const liquid_thermal_conductivity =
+        liquid_phase
+            ? liquid_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
+    auto const solid_thermal_conductivity =
+        solid_phase
+            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template value<double>(variable_array, pos, t, dt);
+
+    auto const porosity = variable_array.porosity;
+    auto const S_L = variable_array.liquid_saturation;
+    auto const S_G = 1. - S_L;
+
+    auto const phi_G = porosity * S_G;
+    auto const phi_L = porosity * S_L;
+    auto const phi_S = 1. - porosity;
+
+    // Derivatives of thermal conductivities w.r.t. temperature
+    auto const d_gas_thermal_conductivity_dT =
+        gas_phase
+            ? gas_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template dValue<double>(variable_array,
+                                           Variable::temperature, pos, t, dt)
+            : 0.;
+
+    auto const d_liquid_thermal_conductivity_dT =
+        liquid_phase
+            ? liquid_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template dValue<double>(variable_array,
+                                           Variable::temperature, pos, t, dt)
+            : 0.;
+
+    auto const d_solid_thermal_conductivity_dT =
+        solid_phase
+            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<double>(variable_array, Variable::temperature, pos,
+                                     t, dt);
+
+    // For volume fractions, we need to consider derivatives w.r.t. porosity and
+    // saturation. Assuming porosity and saturation may depend on temperature
+    // d(phi_G)/dT =
+    //  = d(porosity * S_G)/dT
+    //  = d(porosity)/dT * S_G + porosity * d(S_G)/dT
+    //  = d(porosity)/dT * S_G - porosity * d(S_L)/dT
+    // d(phi_L)/dT =
+    //  = d(porosity * S_L)/dT
+    //  = d(porosity)/dT * S_L + porosity * d(S_L)/dT
+    // d(phi_S)/dT =
+    //  = d(1 - porosity)/dT
+    //  = -d(porosity)/dT.
+    double const d_porosity_dT =
+        medium->property(MaterialPropertyLib::PropertyType::porosity)
+            .template dValue<double>(variable_array, Variable::temperature, pos,
+                                     t, dt);
+    double const d_S_L_dT =
+        // Some processes might not have saturation property (like THM) and
+        // saturation passed in the variable_array is always 1.
+        medium->hasProperty(MaterialPropertyLib::PropertyType::saturation)
+            ? medium->property(MaterialPropertyLib::PropertyType::saturation)
+                  .template dValue<double>(variable_array,
+                                           Variable::temperature, pos, t, dt)
+            : 0.;
+
+    auto const d_phi_G_dT = d_porosity_dT * S_G - porosity * d_S_L_dT;
+    auto const d_phi_L_dT = d_porosity_dT * S_L + porosity * d_S_L_dT;
+    auto const d_phi_S_dT = -d_porosity_dT;
+
+    // Total derivative of effective thermal conductivity w.r.t. temperature
+    double const d_effective_thermal_conductivity_dT =
+        d_phi_G_dT * gas_thermal_conductivity +
+        phi_G * d_gas_thermal_conductivity_dT +
+        d_phi_L_dT * liquid_thermal_conductivity +
+        phi_L * d_liquid_thermal_conductivity_dT +
+        d_phi_S_dT * solid_thermal_conductivity +
+        phi_S * d_solid_thermal_conductivity_dT;
+
+    return d_effective_thermal_conductivity_dT;
 }
 //
 // For 2D and 3D problems
@@ -191,12 +301,136 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
 
 template <int GlobalDim>
 PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::dValue(
-    VariableArray const&, Variable const, ParameterLib::SpatialPosition const&,
-    double const, double const) const
+    VariableArray const& variable_array, Variable const variable,
+    ParameterLib::SpatialPosition const& pos, double const t,
+    double const dt) const
 {
-    OGS_FATAL(
-        "dValue is not implemented for "
-        "EffectiveThermalConductivityPorosityMixing");
+    if (variable != Variable::temperature)
+    {
+        OGS_FATAL(
+            "The derivative of the "
+            "EffectiveThermalConductivityPorosityMixing is implemented only "
+            "w.r.t. temperature.");
+    }
+
+    auto const& medium = std::get<Medium*>(scale_);
+    // Assuming there is either a gas phase or a liquid phase or both.
+    auto const gas_phase =
+        medium->hasPhase("Gas") ? &medium->phase("Gas") : nullptr;
+    auto const liquid_phase = medium->hasPhase("AqueousLiquid")
+                                  ? &medium->phase("AqueousLiquid")
+                                  : nullptr;
+    // Assuming there is always a solid phase.
+    auto const& solid_phase = medium->phase("Solid");
+
+    auto const gas_thermal_conductivity =
+        gas_phase
+            ? gas_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
+    auto const liquid_thermal_conductivity =
+        liquid_phase
+            ? liquid_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template value<double>(variable_array, pos, t, dt)
+            : 0.;
+
+    auto solid_thermal_conductivity = formEigenTensor<GlobalDim>(
+        solid_phase
+            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .value(variable_array, pos, t, dt));
+
+    auto const porosity = variable_array.porosity;
+
+    auto const S_L = variable_array.liquid_saturation;
+    auto const S_G = 1. - S_L;
+
+    auto const phi_G = porosity * S_G;
+    auto const phi_L = porosity * S_L;
+    auto const phi_S = 1. - porosity;
+
+    // Derivatives of thermal conductivities w.r.t. temperature
+    auto const d_gas_thermal_conductivity_dT =
+        gas_phase
+            ? gas_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template dValue<double>(variable_array,
+                                           Variable::temperature, pos, t, dt)
+            : 0.;
+
+    auto const d_liquid_thermal_conductivity_dT =
+        liquid_phase
+            ? liquid_phase
+                  ->property(
+                      MaterialPropertyLib::PropertyType::thermal_conductivity)
+                  .template dValue<double>(variable_array,
+                                           Variable::temperature, pos, t, dt)
+            : 0.;
+
+    auto d_solid_thermal_conductivity_dT = formEigenTensor<GlobalDim>(
+        solid_phase
+            .property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .dValue(variable_array, Variable::temperature, pos, t, dt));
+
+    // For volume fractions, we need to consider derivatives w.r.t. porosity and
+    // saturation. Assuming porosity and saturation may depend on temperature
+    // d(phi_G)/dT =
+    //  = d(porosity * S_G)/dT
+    //  = d(porosity)/dT * S_G + porosity * d(S_G)/dT
+    //  = d(porosity)/dT * S_G - porosity * d(S_L)/dT
+    // d(phi_L)/dT =
+    //  = d(porosity * S_L)/dT
+    //  = d(porosity)/dT * S_L + porosity * d(S_L)/dT
+    // d(phi_S)/dT =
+    //  = d(1 - porosity)/dT
+    //  = -d(porosity)/dT.
+    double const d_porosity_dT =
+        medium->property(MaterialPropertyLib::PropertyType::porosity)
+            .template dValue<double>(variable_array, Variable::temperature, pos,
+                                     t, dt);
+    double const d_S_L_dT =
+        // Some processes might not have saturation property (like THM) and
+        // saturation passed in the variable_array is always 1.
+        medium->hasProperty(MaterialPropertyLib::PropertyType::saturation)
+            ? medium->property(MaterialPropertyLib::PropertyType::saturation)
+                  .template dValue<double>(variable_array,
+                                           Variable::temperature, pos, t, dt)
+            : 0.;
+
+    auto const d_phi_G_dT = d_porosity_dT * S_G - porosity * d_S_L_dT;
+    auto const d_phi_L_dT = d_porosity_dT * S_L + porosity * d_S_L_dT;
+    auto const d_phi_S_dT = -d_porosity_dT;
+
+    // Local coordinate transformation is only applied for the case that the
+    // initial solid thermal conductivity is given with orthotropic assumption.
+    if (local_coordinate_system_ &&
+        (solid_thermal_conductivity.cols() == GlobalDim))
+    {
+        solid_thermal_conductivity =
+            local_coordinate_system_->rotateTensor<GlobalDim>(
+                solid_thermal_conductivity, pos);
+        d_solid_thermal_conductivity_dT =
+            local_coordinate_system_->rotateTensor<GlobalDim>(
+                d_solid_thermal_conductivity_dT, pos);
+    }
+
+    auto const I = Eigen::Matrix<double, GlobalDim, GlobalDim>::Identity();
+    Eigen::Matrix<double, GlobalDim, GlobalDim> const
+        d_effective_thermal_conductivity_dT =
+            (d_phi_G_dT * gas_thermal_conductivity +
+             phi_G * d_gas_thermal_conductivity_dT +
+             d_phi_L_dT * liquid_thermal_conductivity +
+             phi_L * d_liquid_thermal_conductivity_dT) *
+                I +
+            d_phi_S_dT * solid_thermal_conductivity +
+            phi_S * d_solid_thermal_conductivity_dT;
+
+    return d_effective_thermal_conductivity_dT;
 }
 template class EffectiveThermalConductivityPorosityMixing<2>;
 template class EffectiveThermalConductivityPorosityMixing<3>;
