@@ -62,7 +62,7 @@
                 <type>LinearElasticIsotropic</type>
                 <normal_stiffness>Kn</normal_stiffness>
                 <shear_stiffness>Ks</shear_stiffness>
-                <penalty_aperture_cutoff>1e-9</penalty_aperture_cutoff>
+                <penalty_aperture_cutoff>1e-12</penalty_aperture_cutoff>
                 <tension_cutoff>1</tension_cutoff>
             </fracture_model>
             <fracture_properties>
