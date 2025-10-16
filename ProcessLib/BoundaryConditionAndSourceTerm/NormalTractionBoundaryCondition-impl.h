@@ -11,6 +11,8 @@
 #pragma once
 
 #include <numeric>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/MeshSearch/NodeSearch.h"
@@ -22,6 +24,53 @@ namespace ProcessLib
 {
 namespace NormalTractionBoundaryCondition
 {
+
+/// Computes the normal vector for a boundary element.
+/// \param element The boundary element.
+/// \param bulk_element The corresponding bulk element.
+/// \tparam GlobalDim Global dimension of the problem.
+/// \return The computed normal vector.
+template <int GlobalDim>
+Eigen::Vector3d computeElementNormal(const MeshLib::Element& element,
+                                     const MeshLib::Element& bulk_element)
+{
+    Eigen::Vector3d normal;
+
+    // TODO Extend to rotated 2d meshes and line elements.
+    if (element.getGeomType() == MeshLib::MeshElemType::LINE)
+    {
+        Eigen::Vector3d const v1 = (element.getNode(1)->asEigenVector3d() -
+                                    element.getNode(0)->asEigenVector3d())
+                                       .normalized();
+        normal[0] = -v1[1];
+        normal[1] = v1[0];
+        normal[2] = 0.;  // Replace the nan; only elements in
+                         // xy-plane handled correctly.
+
+        // Compute center of the bulk element to correctly orient the
+        // normal.
+        auto const c =
+            MeshLib::getCenterOfGravity(bulk_element).asEigenVector3d();
+        // Flip n if the normal points toward c:
+        // <normal, c - n0> > 0.
+        if (normal.dot(c - element.getNode(0)->asEigenVector3d()) > 0)
+        {
+            normal = -normal;
+        }
+    }
+    else
+    {
+        auto const n =
+            MeshLib::FaceRule::getSurfaceNormal(element).normalized();
+        for (int d = 0; d < GlobalDim; ++d)
+        {
+            normal[d] = n[d];
+        }
+    }
+
+    return normal;
+}
+
 template <int GlobalDim, template <typename /* shp fct */, int /* global dim */>
                          class LocalAssemblerImplementation>
 NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
@@ -52,47 +101,19 @@ NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
     auto const* const bulk_element_ids = MeshLib::bulkElementIDs(_bc_mesh);
     assert(bulk_element_ids != nullptr);
     auto const& elements = _bc_mesh.getElements();
-    _element_normals.resize(elements.size());
-    for (std::size_t i = 0; i < elements.size(); ++i)
-    {
-        auto const& e = *elements[i];
-        Eigen::Vector3d element_normal;
-
-        // TODO Extend to rotated 2d meshes and line elements.
-        if (e.getGeomType() == MeshLib::MeshElemType::LINE)
-        {
-            Eigen::Vector3d const v1 = (e.getNode(1)->asEigenVector3d() -
-                                        e.getNode(0)->asEigenVector3d())
-                                           .normalized();
-            element_normal[0] = -v1[1];
-            element_normal[1] = v1[0];
-            element_normal[2] = 0.;  // Replace the nan; only elements in
-                                     // xy-plane handled correctly.
-
-            // Compute center of the bulk element to correctly orient the
-            // normal.
-            auto const* bulk_element =
-                bulk_mesh.getElement((*bulk_element_ids)[e.getID()]);
-            assert(bulk_element != nullptr);
-            auto const c =
-                MeshLib::getCenterOfGravity(*bulk_element).asEigenVector3d();
-            // Flip n if the normal points toward c:
-            // <element_normal, c - n0> > 0.
-            if (element_normal.dot(c - e.getNode(0)->asEigenVector3d()) > 0)
+    _element_normals =
+        elements |
+        ranges::views::transform(
+            [&](const MeshLib::Element* e_ptr)
             {
-                element_normal = -element_normal;
-            }
-        }
-        else
-        {
-            auto const n = MeshLib::FaceRule::getSurfaceNormal(e).normalized();
-            for (int d = 0; d < GlobalDim; ++d)
-            {
-                element_normal[d] = n[d];
-            }
-        }
-        _element_normals[i] = element_normal;
-    }
+                // Compute the corresponding bulk element for normal orientation
+                auto const* bulk_element =
+                    bulk_mesh.getElement((*bulk_element_ids)[e_ptr->getID()]);
+                assert(bulk_element != nullptr);
+
+                return computeElementNormal<GlobalDim>(*e_ptr, *bulk_element);
+            }) |
+        ranges::to<std::vector<Eigen::Vector3d>>();
 
     // Create local DOF table from the BC mesh subset for the given variable and
     // component ids.
