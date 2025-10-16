@@ -34,18 +34,12 @@ template <int GlobalDim>
 Eigen::Vector3d computeElementNormal(const MeshLib::Element& element,
                                      const MeshLib::Element& bulk_element)
 {
-    Eigen::Vector3d normal;
-
-    // TODO Extend to rotated 2d meshes and line elements.
     if (element.getGeomType() == MeshLib::MeshElemType::LINE)
     {
-        Eigen::Vector3d const v1 = (element.getNode(1)->asEigenVector3d() -
-                                    element.getNode(0)->asEigenVector3d())
-                                       .normalized();
-        normal[0] = -v1[1];
-        normal[1] = v1[0];
-        normal[2] = 0.;  // Replace the nan; only elements in
-                         // xy-plane handled correctly.
+        auto const n = MeshLib::FaceRule::getSurfaceNormal(bulk_element);
+        Eigen::Vector3d const e = element.getNode(1)->asEigenVector3d() -
+                                  element.getNode(0)->asEigenVector3d();
+        Eigen::Vector3d const normal = e.cross(n).normalized();
 
         // Compute center of the bulk element to correctly orient the
         // normal.
@@ -55,19 +49,14 @@ Eigen::Vector3d computeElementNormal(const MeshLib::Element& element,
         // <normal, c - n0> > 0.
         if (normal.dot(c - element.getNode(0)->asEigenVector3d()) > 0)
         {
-            normal = -normal;
+            return -normal;
         }
-    }
-    else
-    {
-        auto const n =
-            MeshLib::FaceRule::getSurfaceNormal(element).normalized();
-        for (int d = 0; d < GlobalDim; ++d)
-        {
-            normal[d] = n[d];
-        }
+        return normal;
     }
 
+    Eigen::Vector3d normal =
+        MeshLib::FaceRule::getSurfaceNormal(element).normalized();
+    normal.tail<3 - GlobalDim>().setZero();
     return normal;
 }
 
