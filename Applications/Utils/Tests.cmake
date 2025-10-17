@@ -1217,6 +1217,46 @@ AddTest(
 )
 
 AddTest(
+    NAME NodeOrdering_quadratic_quad_tri
+    PATH Utils/NodeReordering
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i quadratic_quad_tri.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/reodered_quadratic_quad_tri.vtu -m 0 REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA reodered_quadratic_quad_tri.vtu reodered_quadratic_quad_tri.vtu 1.e-16
+)
+
+AddTest(
+    NAME NodeOrdering_simple_mesh_2nd_1D_2D_hex20_tet10
+    PATH Utils/NodeReordering
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i simple_mesh_2nd_1D_2D_hex20_tet10.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/reordered_simple_mesh_2nd_1D_2D_hex20_tet10.vtu -m 0 REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA reordered_simple_mesh_2nd_1D_2D_hex20_tet10.vtu reordered_simple_mesh_2nd_1D_2D_hex20_tet10.vtu 1.e-16
+)
+
+AddTest(
+    NAME NodeOrdering_prism15
+    PATH Utils/NodeReordering
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i prism15.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/reordered_prism15.vtu -m 0 REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA reordered_prism15.vtu reordered_prism15.vtu 1.e-16
+)
+
+AddTest(
+    NAME NodeOrdering_pyramid13
+    PATH Utils/NodeReordering
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i pyramid13.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/reordered_pyramid13.vtu -m 0 REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA reordered_pyramid13.vtu reordered_pyramid13.vtu 1.e-16
+)
+
+AddTest(
     NAME 1D_HeatConduction_dirichlet-line_60_heat
     PATH Parabolic/T/1D_dirichlet
     EXECUTABLE PVD2XDMF
