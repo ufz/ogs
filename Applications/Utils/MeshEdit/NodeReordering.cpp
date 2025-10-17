@@ -63,6 +63,7 @@ bool checkJacobianDeterminant(MeshLib::Element const& e,
         e, mesh_space_dimension);
 
     Eigen::MatrixXd J = Eigen::MatrixXd::Zero(Dim, Dim);
+    assert(e.getNumberOfNodes() == GradShapeFunction::NPOINTS);
     for (unsigned k = 0; k < GradShapeFunction::NPOINTS; k++)
     {
         const MathLib::Point3d& mapped_pt =
@@ -129,8 +130,8 @@ static const std::array<ElementReorderConfigBase,
     };
 
     auto order_nodes_quadratic_quad =
-        [&swap_nodes_i_j](MeshLib::Element& element,
-                          const std::vector<MeshLib::Node*>& nodes)
+        [swap_nodes_i_j](MeshLib::Element& element,
+                         const std::vector<MeshLib::Node*>& nodes)
     {
         swap_nodes_i_j(element, nodes, 1, 3);
         swap_nodes_i_j(element, nodes, 5, 6);
@@ -302,6 +303,14 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
             OGS_FATAL("Element type `{:s}' does not exist.",
                       MeshLib::CellType2String(cell_type));
         }
+        // This check is already done in MeshLib::readMeshFromFile(). Therefore,
+        // this is just a safeguard.
+        if (cell_type == MeshLib::CellType::HEX27 ||
+            cell_type == MeshLib::CellType::PRISM18)
+        {
+            OGS_FATAL("Element type `{:s}' is not supported in OGS.",
+                      MeshLib::CellType2String(cell_type));
+        }
 
         if (cell_type == MeshLib::CellType::POINT1)
         {
@@ -322,9 +331,25 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
         std::vector<MeshLib::Node*> nodes(element->getNodes(),
                                           element->getNodes() + nElemNodes);
 
+        double const element_volume_origin = element->computeVolume();
+
         element_config.reorder_element_nodes(*element, nodes);
 
-        // Verify reordering again if forced
+        // Ensure that the element volume did not change.
+        double const element_volume = element->computeVolume();
+        //  We use a fixed tolerance here because for very small elements the
+        //  machine epsilon might be too small.
+        if (std::fabs(element_volume - element_volume_origin) > 1e-14)
+        {
+            OGS_FATAL(
+                "Reordering of element {:d} nodes failed as its volume changed "
+                "from {:.12e} to {:.12e}.",
+                element->getID(), element_volume_origin, element_volume);
+        }
+        // Element::computeVolume() uses the element vertecies to compute
+        // the element volume, so the change of edge nodes are not
+        // considered. Therefore, we need to additionally check the Jacobian
+        // determinant here if forced is true.
         if (forced)
         {
             element_config.is_node_ordering_correct(
