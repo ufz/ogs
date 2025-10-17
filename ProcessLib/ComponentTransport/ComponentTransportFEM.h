@@ -970,8 +970,11 @@ public:
                                        std::vector<double>& local_K_data,
                                        std::vector<double>& /*local_b_data*/)
     {
+        // In the staggered HTC process, number of components might be non-zero.
         assert(local_x.size() ==
-               pressure_size + temperature_size + concentration_size);
+               pressure_size + temperature_size +
+                   concentration_size *
+                       static_cast<int>(_transport_process_variables.size()));
 
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);
@@ -1013,6 +1016,13 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& w = ip_data.integration_weight;
             auto const& N = Ns[ip];
+
+            ParameterLib::SpatialPosition const pos(
+                {}, this->_element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double p_at_xi = 0.;
             NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
@@ -1691,10 +1701,20 @@ public:
         // multiple processes, must be staggered.
         {
             constexpr int pressure_process_id = 0;
-            constexpr int concentration_process_id = 1;
-            constexpr int temperature_process_id = -1;  // The temperature
-                                                        // coupling in staggered
-                                                        // scheme not available.
+            int concentration_process_id = 1;
+            // Normally temperature process is not there,
+            // hence set the default temperature index to -1
+            int temperature_process_id = -1;
+
+            // check whether temperature process exists
+            if (!_process_data.isothermal)
+            {
+                // if temperature process exists, its id is 1
+                temperature_process_id = 1;
+                // then the concentration index shifts to 2
+                concentration_process_id = 2;
+            }
+
             auto const local_p = Eigen::Map<const NodalVectorType>(
                 &local_x[pressure_process_id][0], pressure_size);
             auto const local_C = Eigen::Map<const NodalVectorType>(
