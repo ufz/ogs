@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <mesh>two_cracks_branch.vtu</mesh>
     <geometry>single_joint.gml</geometry>
@@ -33,10 +33,10 @@
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
-                <secondary_variable name="sigma" />
-                <secondary_variable name="epsilon" />
-                <secondary_variable name="fracture_stress" />
-                <secondary_variable name="fracture_aperture" />
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="fracture_stress"/>
+                <secondary_variable name="fracture_aperture"/>
             </secondary_variables>
         </process>
     </processes>
@@ -206,4 +206,48 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>two_cracks_branch_pull_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>two_cracks_branch_pull_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump1</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>two_cracks_branch_pull_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump2</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>two_cracks_branch_pull_ts_.*_t_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>1e-6</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>two_cracks_branch_pull_ts_.*_t_.*.vtu</regex>
+            <field>sigma_avg</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>1e-6</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>two_cracks_branch_pull_ts_.*_t_.*.vtu</regex>
+            <field>fracture_stress</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>5e-6</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>two_cracks_branch_pull_ts_.*_t_.*.vtu</regex>
+            <field>fracture_stress_avg</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>5e-6</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
