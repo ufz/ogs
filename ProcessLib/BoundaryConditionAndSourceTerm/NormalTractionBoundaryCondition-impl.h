@@ -54,10 +54,9 @@ Eigen::Vector3d computeElementNormal(const MeshLib::Element& element,
         return normal;
     }
 
-    Eigen::Vector3d normal =
-        MeshLib::FaceRule::getSurfaceNormal(element).normalized();
+    Eigen::Vector3d normal = MeshLib::FaceRule::getSurfaceNormal(element);
     normal.tail<3 - GlobalDim>().setZero();
-    return normal;
+    return normal.normalized();
 }
 
 template <int GlobalDim, template <typename /* shp fct */, int /* global dim */>
