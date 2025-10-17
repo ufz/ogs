@@ -120,16 +120,14 @@ static const std::array<ElementReorderConfigBase,
                         static_cast<int>(MeshLib::CellType::enum_length)>
     element_configs_array = []
 {
-    // Generic node reversal for 1D/2D elements
-    auto reverse_nodes_non_3d =
-        [](MeshLib::Element& element, const std::vector<MeshLib::Node*>& nodes)
+    auto swap_nodes_i_j = [](MeshLib::Element& element,
+                             const std::vector<MeshLib::Node*>& nodes,
+                             unsigned const i, unsigned const j)
     {
-        const unsigned nElemNodes = nodes.size();
-        for (std::size_t j = 0; j < nElemNodes; ++j)
-        {
-            element.setNode(j, nodes[nElemNodes - j - 1]);
-        }
+        element.setNode(i, nodes[j]);
+        element.setNode(j, nodes[i]);
     };
+
     std::array<ElementReorderConfigBase,
                static_cast<int>(MeshLib::CellType::enum_length)>
         arr{};
@@ -137,72 +135,56 @@ static const std::array<ElementReorderConfigBase,
     arr[static_cast<int>(MeshLib::CellType::LINE2)] =
         makeElementConfig<NumLib::ShapeLine2, 1>(
             {0.5},
-            [&reverse_nodes_non_3d](MeshLib::Element& element,
-                                    const std::vector<MeshLib::Node*>& nodes)
-            { reverse_nodes_non_3d(element, nodes); });
+            [&swap_nodes_i_j](MeshLib::Element& element,
+                              const std::vector<MeshLib::Node*>& nodes)
+            { swap_nodes_i_j(element, nodes, 0, 1); });
 
     arr[static_cast<int>(MeshLib::CellType::TRI3)] =
         makeElementConfig<NumLib::ShapeTri3, 2>(
             {1.0 / 3.0, 1.0 / 3.0},
-            [&reverse_nodes_non_3d](MeshLib::Element& element,
-                                    const std::vector<MeshLib::Node*>& nodes)
-            { reverse_nodes_non_3d(element, nodes); });
+            [&swap_nodes_i_j](MeshLib::Element& element,
+                              const std::vector<MeshLib::Node*>& nodes)
+            { swap_nodes_i_j(element, nodes, 1, 2); });
 
     arr[static_cast<int>(MeshLib::CellType::QUAD4)] =
         makeElementConfig<NumLib::ShapeQuad4, 2>(
             {0.0, 0.0},
-            [&reverse_nodes_non_3d](MeshLib::Element& element,
-                                    const std::vector<MeshLib::Node*>& nodes)
-            { reverse_nodes_non_3d(element, nodes); });
+            [&swap_nodes_i_j](MeshLib::Element& element,
+                              const std::vector<MeshLib::Node*>& nodes)
+            { swap_nodes_i_j(element, nodes, 0, 2); });
 
     arr[static_cast<int>(MeshLib::CellType::TET4)] =
         makeElementConfig<NumLib::ShapeTet4, 3>(
             {0.25, 0.25, 0.25},
-            [](MeshLib::Element& element,
-               const std::vector<MeshLib::Node*>& nodes)
-            {
-                for (std::size_t j = 0; j < 4; ++j)
-                {
-                    element.setNode(j, nodes[(j + 1) % 4]);
-                }
-            });
+            [&swap_nodes_i_j](MeshLib::Element& element,
+                              const std::vector<MeshLib::Node*>& nodes)
+            { swap_nodes_i_j(element, nodes, 1, 2); });
 
     arr[static_cast<int>(MeshLib::CellType::PRISM6)] =
         makeElementConfig<NumLib::ShapePrism6, 3>(
             {1.0 / 3.0, 1.0 / 3.0, 0.5},
-            [](MeshLib::Element& element,
-               const std::vector<MeshLib::Node*>& nodes)
+            [&swap_nodes_i_j](MeshLib::Element& element,
+                              const std::vector<MeshLib::Node*>& nodes)
             {
-                for (std::size_t j = 0; j < 3; ++j)
-                {
-                    element.setNode(j, nodes[j + 3]);
-                    element.setNode(j + 3, nodes[j]);
-                }
+                swap_nodes_i_j(element, nodes, 1, 2);
+                swap_nodes_i_j(element, nodes, 4, 5);
             });
 
     arr[static_cast<int>(MeshLib::CellType::PYRAMID5)] =
         makeElementConfig<NumLib::ShapePyra5, 3>(
             {0.25, 0.25, 0.5},
-            [](MeshLib::Element& element,
-               const std::vector<MeshLib::Node*>& nodes)
-            {
-                element.setNode(0, nodes[1]);
-                element.setNode(1, nodes[0]);
-                element.setNode(2, nodes[3]);
-                element.setNode(3, nodes[2]);
-            });
+            [&swap_nodes_i_j](MeshLib::Element& element,
+                              const std::vector<MeshLib::Node*>& nodes)
+            { swap_nodes_i_j(element, nodes, 0, 2); });
 
     arr[static_cast<int>(MeshLib::CellType::HEX8)] =
         makeElementConfig<NumLib::ShapeHex8, 3>(
             {0.5, 0.5, 0.5},
-            [](MeshLib::Element& element,
-               const std::vector<MeshLib::Node*>& nodes)
+            [&swap_nodes_i_j](MeshLib::Element& element,
+                              const std::vector<MeshLib::Node*>& nodes)
             {
-                for (std::size_t j = 0; j < 4; ++j)
-                {
-                    element.setNode(j, nodes[j + 4]);
-                    element.setNode(j + 4, nodes[j]);
-                }
+                swap_nodes_i_j(element, nodes, 0, 2);
+                swap_nodes_i_j(element, nodes, 4, 6);
             });
 
     return arr;
