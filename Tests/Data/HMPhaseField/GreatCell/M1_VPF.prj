@@ -640,162 +640,162 @@
         <curve>
             <name>PEE1_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7730000.0 -7730000.0 </values>
+            <values>7730000.0 7730000.0 </values>
         </curve>
         <curve>
             <name>PEE2_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-5700000.0 -5700000.0</values>
+            <values>5700000.0 5700000.0</values>
         </curve>
         <curve>
             <name>PEE3_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-4390000.0 -4390000.0</values>
+            <values>4390000.0 4390000.0</values>
         </curve>
         <curve>
             <name>PEE4_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-2400000.0 -2400000.0</values>
+            <values>2400000.0 2400000.0</values>
         </curve>
         <curve>
             <name>PEE5_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-2300000.0 -2300000.0</values>
+            <values>2300000.0 2300000.0</values>
         </curve>
         <curve>
             <name>PEE6_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-4000000.0 -4000000.0</values>
+            <values>4000000.0 4000000.0</values>
         </curve>
         <curve>
             <name>PEE7_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-6400000.0 -6400000.0</values>
+            <values>6400000.0 6400000.0</values>
         </curve>
         <curve>
             <name>PEE8_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7700000.0 -7700000.0</values>
+            <values>7700000.0 7700000.0</values>
         </curve>
         <curve>
             <name>PEE1a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7730000.0 -7730000.0</values>
+            <values>7730000.0 7730000.0</values>
         </curve>
         <curve>
             <name>PEE2a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-5700000.0 -5700000.0</values>
+            <values>5700000.0 5700000.0</values>
         </curve>
         <curve>
             <name>PEE3a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-4390000.0 -4390000.0</values>
+            <values>4390000.0 4390000.0</values>
         </curve>
         <curve>
             <name>PEE4a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-2400000.0 -2400000.0</values>
+            <values>2400000.0 2400000.0</values>
         </curve>
         <curve>
             <name>PEE5a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-2300000.0 -2300000.0</values>
+            <values>2300000.0 2300000.0</values>
         </curve>
         <curve>
             <name>PEE6a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-4000000.0 -4000000.0</values>
+            <values>4000000.0 4000000.0</values>
         </curve>
         <curve>
             <name>PEE7a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-6400000.0 -6400000.0</values>
+            <values>6400000.0 6400000.0</values>
         </curve>
         <curve>
             <name>PEE8a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7700000.0 -7700000.0</values>
+            <values>7700000.0 7700000.0</values>
         </curve>
         <curve>
             <name>DSS1_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-6715000.0 -6715000.0</values>
+            <values>6715000.0 6715000.0</values>
         </curve>
         <curve>
             <name>DSS2_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-5045000.0 -5045000.0</values>
+            <values>5045000.0 5045000.0</values>
         </curve>
         <curve>
             <name>DSS3_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-3395000.0 -3395000.0</values>
+            <values>3395000.0 3395000.0</values>
         </curve>
         <curve>
             <name>DSS4_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-2350000.0 -2350000.0</values>
+            <values>2350000.0 2350000.0</values>
         </curve>
         <curve>
             <name>DSS5_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-3150000.0 -3150000.0</values>
+            <values>3150000.0 3150000.0</values>
         </curve>
         <curve>
             <name>DSS6_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-5200000.0 -5200000.0</values>
+            <values>5200000.0 5200000.0</values>
         </curve>
         <curve>
             <name>DSS7_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7050000.0 -7050000.0</values>
+            <values>7050000.0 7050000.0</values>
         </curve>
         <curve>
             <name>DSS8_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7715000.0 -7715000.0</values>
+            <values>7715000.0 7715000.0</values>
         </curve>
         <curve>
             <name>DSS1a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-6715000.0 -6715000.0</values>
+            <values>6715000.0 6715000.0</values>
         </curve>
         <curve>
             <name>DSS2a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-5045000.0 -5045000.0</values>
+            <values>5045000.0 5045000.0</values>
         </curve>
         <curve>
             <name>DSS3a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-3395000.0 -3395000.0</values>
+            <values>3395000.0 3395000.0</values>
         </curve>
         <curve>
             <name>DSS4a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-2350000.0 -2350000.0</values>
+            <values>2350000.0 2350000.0</values>
         </curve>
         <curve>
             <name>DSS5a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-3150000.0 -3150000.0</values>
+            <values>3150000.0 3150000.0</values>
         </curve>
         <curve>
             <name>DSS6a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-5200000.0 -5200000.0</values>
+            <values>5200000.0 5200000.0</values>
         </curve>
         <curve>
             <name>DSS7a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7050000.0 -7050000.0</values>
+            <values>7050000.0 7050000.0</values>
         </curve>
         <curve>
             <name>DSS8a_SURFACE_CURVE</name>
             <coords>0 500</coords>
-            <values>-7715000.0 -7715000.0</values>
+            <values>7715000.0 7715000.0</values>
         </curve>
     </curves>
     <process_variables>

@@ -222,4 +222,48 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>sfrac_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>sfrac_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump1</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>sfrac_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump2</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>sfrac_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump3</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>sfrac_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump4</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>sfrac_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump4</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>sfrac_ts_.*_t_.*.vtu</regex>
+            <field>fracture_stress_avg</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>5e-6</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

@@ -62,7 +62,8 @@ public:
         std::size_t const local_matrix_size,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        ParameterLib::Parameter<double> const& pressure)
+        ParameterLib::Parameter<double> const& pressure,
+        std::vector<Eigen::Vector3d> const& element_normals)
         : _integration_method(integration_method),
           _pressure(pressure),
           _element(e)
@@ -79,27 +80,6 @@ public:
                                       ShapeMatricesType, GlobalDim>(
                 e, is_axially_symmetric, _integration_method);
 
-        GlobalDimVectorType element_normal(GlobalDim);
-
-        // TODO Extend to rotated 2d meshes and line elements.
-        if (e.getGeomType() == MeshLib::MeshElemType::LINE)
-        {
-            Eigen::Vector3d const v1 = e.getNode(1)->asEigenVector3d() -
-                                       e.getNode(0)->asEigenVector3d();
-            element_normal[GlobalDim - 1] = 0;
-            element_normal[0] = -v1[1];
-            element_normal[1] = v1[0];
-            element_normal.normalize();
-        }
-        else
-        {
-            auto const n = MeshLib::FaceRule::getSurfaceNormal(e).normalized();
-            for (int i = 0; i < GlobalDim; ++i)
-            {
-                element_normal[i] = n[i];
-            }
-        }
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             double const integration_weight =
@@ -107,7 +87,8 @@ public:
                 shape_matrices_u[ip].integralMeasure *
                 shape_matrices_u[ip].detJ;
 
-            _ip_data.emplace_back(shape_matrices_u[ip].N, element_normal,
+            _ip_data.emplace_back(shape_matrices_u[ip].N,
+                                  element_normals[e.getID()].head<GlobalDim>(),
                                   integration_weight);
         }
     }

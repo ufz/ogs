@@ -162,7 +162,7 @@
         <parameter>
             <name>internal_pressure_value</name>
             <type>Constant</type>
-            <value>-1.0</value>
+            <value>1.0</value>
         </parameter>
         <parameter>
             <name>internal_pressure</name>

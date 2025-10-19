@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <Eigen/Dense>
+
 #include "BoundaryCondition.h"
 #include "MeshLib/MeshSubset.h"
 #include "NormalTractionBoundaryConditionLocalAssembler.h"
@@ -37,6 +39,7 @@ public:
     /// A local DOF-table, a subset of the given one, is constructed.
     NormalTractionBoundaryCondition(
         unsigned const integration_order, unsigned const shapefunction_order,
+        MeshLib::Mesh const& bulk_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
         int const variable_id, MeshLib::Mesh const& bc_mesh,
         ParameterLib::Parameter<double> const& pressure);
@@ -69,6 +72,9 @@ private:
         _local_assemblers;
 
     ParameterLib::Parameter<double> const& _pressure;
+
+    /// Normal vectors for each element in the boundary condition mesh.
+    std::vector<Eigen::Vector3d> _element_normals;
 };
 
 template <int GlobalDim>

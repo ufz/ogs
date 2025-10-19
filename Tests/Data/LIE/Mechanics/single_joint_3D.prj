@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='ISO-8859-1'?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <mesh>single_joint_beta50_3D.vtu</mesh>
     <geometry>single_joint_3D.gml</geometry>
@@ -32,10 +32,10 @@
                 <initial_aperture>aperture0</initial_aperture>
             </fracture_properties>
             <secondary_variables>
-                <secondary_variable name="sigma" />
-                <secondary_variable name="epsilon" />
-                <secondary_variable name="fracture_stress" />
-                <secondary_variable name="fracture_aperture" />
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="fracture_stress"/>
+                <secondary_variable name="fracture_aperture"/>
             </secondary_variables>
         </process>
     </processes>
@@ -228,4 +228,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>single_joint_.*D_ts_.*_t_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>single_joint_.*D_ts_.*_t_.*.vtu</regex>
+            <field>displacement_jump1</field>
+            <absolute_tolerance>1e-16</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

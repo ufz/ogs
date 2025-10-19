@@ -315,67 +315,67 @@
         <global_process_coupling>
             <max_iter>6</max_iter>
             <convergence_criteria>
-            <!-- convergence criterion for process p -->
+                <!-- convergence criterion for process p -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process Cs -->
+                <!-- convergence criterion for process Cs -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process C(4) -->
+                <!-- convergence criterion for process C(4) -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process Ca -->
+                <!-- convergence criterion for process Ca -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process Cl -->
+                <!-- convergence criterion for process Cl -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process K -->
+                <!-- convergence criterion for process K -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process Mg -->
+                <!-- convergence criterion for process Mg -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process Na -->
+                <!-- convergence criterion for process Na -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process S(6) -->
+                <!-- convergence criterion for process S(6) -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process Sr -->
+                <!-- convergence criterion for process Sr -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltol>1e-14</reltol>
                 </convergence_criterion>
-            <!-- convergence criterion for process H -->
+                <!-- convergence criterion for process H -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
@@ -398,7 +398,7 @@
                 <time_stepping>
                     <type>FixedTimeStepping</type>
                     <t_initial>0.0</t_initial>
-<!--                     <t_end>31536000000000.0</t_end>
+                    <!--                     <t_end>31536000000000.0</t_end>
                     <timesteps>
                         <pair>
                             <repeat>157680</repeat>
@@ -976,29 +976,29 @@
         </process_variable>
     </process_variables>
     <nonlinear_solvers>
-            <nonlinear_solver>
-                <name>basic_picard</name>
-                <type>Picard</type>
-                <max_iter>100</max_iter>
-                <linear_solver>general_linear_solver</linear_solver>
-            </nonlinear_solver>
-        </nonlinear_solvers>
-        <linear_solvers>
-            <linear_solver>
-                <name>general_linear_solver</name>
-                <!-- <lis>-i bicgstab -p ilut -tol 1e-6 -maxiter 20000</lis> -->
-                <eigen>
-                    <solver_type>BiCGSTAB</solver_type>
-                    <precon_type>ILUT</precon_type>
-                    <max_iteration_step>100</max_iteration_step>
-                    <error_tolerance>1e-14</error_tolerance>
-                </eigen>
-                <!-- <petsc>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>100</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <!-- <lis>-i bicgstab -p ilut -tol 1e-6 -maxiter 20000</lis> -->
+            <eigen>
+                <solver_type>BiCGSTAB</solver_type>
+                <precon_type>ILUT</precon_type>
+                <max_iteration_step>100</max_iteration_step>
+                <error_tolerance>1e-14</error_tolerance>
+            </eigen>
+            <!-- <petsc>
                     <prefix>hc</prefix>
                     <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-6 -hc_ksp_max_it 20000</parameters>
                 </petsc> -->
-            </linear_solver>
-        </linear_solvers>
+        </linear_solver>
+    </linear_solvers>
     <test_definition>
         <vtkdiff>
             <regex>Cs_ts_[0-9]*_t_[0-9]*.000000.vtu</regex>
@@ -1013,4 +1013,4 @@
             <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
     </test_definition>
-    </OpenGeoSysProject>
+</OpenGeoSysProject>

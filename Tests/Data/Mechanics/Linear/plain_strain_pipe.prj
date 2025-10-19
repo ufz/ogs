@@ -107,7 +107,7 @@
         <parameter>
             <name>pressure_outside</name>
             <type>Constant</type>
-            <value>0.1</value>
+            <value>-0.1</value>
         </parameter>
     </parameters>
     <process_variables>

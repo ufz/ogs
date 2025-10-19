@@ -215,7 +215,7 @@
         <parameter>
             <name>overburden</name>
             <type>Constant</type>
-            <value>-1000</value>
+            <value>1000</value>
         </parameter>
     </parameters>
     <process_variables>

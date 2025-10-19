@@ -567,7 +567,7 @@ class SingleOGSModel:
         separate_line = "=" * 60
 
         for key in load_cases:
-            pee_load_values = -1 * np.array(
+            pee_load_values = np.array(
                 [
                     np.zeros(len(load_cases[key]), dtype=float),
                     load_cases[key],

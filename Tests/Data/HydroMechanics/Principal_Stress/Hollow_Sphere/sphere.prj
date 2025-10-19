@@ -153,12 +153,12 @@
         <parameter>
             <name>p_in</name>
             <type>Constant</type>
-            <value>-1e3</value>
+            <value>1e3</value>
         </parameter>
         <parameter>
             <name>p_out</name>
             <type>Constant</type>
-            <value>-1.01325e5</value>
+            <value>1.01325e5</value>
         </parameter>
         <parameter>
             <name>p_in_x</name>
