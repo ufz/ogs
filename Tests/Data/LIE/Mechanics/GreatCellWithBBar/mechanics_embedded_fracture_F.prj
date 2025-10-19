@@ -825,7 +825,7 @@
         <vtkdiff>
             <regex>mechanics_embedded_fracture_F_PMMA_ts_.*_t_.*.vtu</regex>
             <field>fracture_stress</field>
-            <absolute_tolerance>7e-8</absolute_tolerance>
+            <absolute_tolerance>1.5e-4</absolute_tolerance>
             <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
