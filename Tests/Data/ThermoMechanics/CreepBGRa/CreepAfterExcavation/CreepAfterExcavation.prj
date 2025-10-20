@@ -174,6 +174,7 @@
                 <variable>epsilon</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <fixed_output_times>9417600 35337600 86400000</fixed_output_times>
         </output>
     </time_loop>
     <parameters>
