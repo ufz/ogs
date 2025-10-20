@@ -66,6 +66,7 @@
             <variables>
                 <variable>displacement</variable>
                 <variable>pressure</variable>
+                <variable>pressure_interpolated</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
