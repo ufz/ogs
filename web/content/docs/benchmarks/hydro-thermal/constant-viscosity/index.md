@@ -9,9 +9,9 @@ image = "compare.png"
 
 {{< data-link >}}
 
-## Equations
+## Hydro-thermal process
 
-See [this PDF](HT-Process.pdf).
+For more details on the hydro-thermal process and its implementation in OpenGeoSys, please see [hydro-thermal process page in Processes](/docs/processes/thermal-processes/hydro-thermal/).
 
 ## Problem description
 

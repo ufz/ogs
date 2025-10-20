@@ -13,7 +13,7 @@ However, there are some exceptions to that rule concerning empirical laws. For i
 vapor diffusion and latent heat implemented, which assume that temperature is given in Kelvin. Therefore, we recommend just
 using SI units everywhere.
 
-For more information on how to come up with a self-consistent unit scheme see [this PDF](units_ogs.pdf).
+For more information on how to come up with a self-consistent unit scheme see [OGS Units page](/docs/userguide/basics/units/).
 <!-- TODO: Consider updating and extending the pdf-file on unit conventions. -->
 
 ### Dimensional analysis of source and boundary terms based on their primary variables
