@@ -3,13 +3,14 @@
 
 #include "FEFLOWGeoInterface.h"
 
-#include <QDomElement>
-#include <QString>
-#include <QtXml/QDomDocument>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+
 #include <boost/algorithm/string/trim.hpp>
 #include <cctype>
 #include <fstream>
 #include <memory>
+#include <sstream>
 
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
@@ -17,6 +18,59 @@
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/Point.h"
 #include "GeoLib/Polygon.h"
+
+namespace
+{
+
+inline std::string getProp(xmlNodePtr node, const char* name)
+{
+    if (!node)
+    {
+        return {};
+    }
+    xmlChar* v = xmlGetProp(node, reinterpret_cast<const xmlChar*>(name));
+    if (!v)
+    {
+        return {};
+    }
+    std::string s(reinterpret_cast<const char*>(v));
+    xmlFree(v);
+    return s;
+}
+
+inline std::string getText(xmlNodePtr node)
+{
+    if (!node)
+    {
+        return {};
+    }
+    xmlChar* v = xmlNodeGetContent(node);
+    if (!v)
+    {
+        return {};
+    }
+    std::string s(reinterpret_cast<const char*>(v));
+    xmlFree(v);
+    return s;
+}
+
+inline xmlNodePtr firstChild(xmlNodePtr parent, const char* name)
+{
+    if (!parent)
+    {
+        return nullptr;
+    }
+    for (xmlNodePtr n = parent->children; n; n = n->next)
+    {
+        if (n->type == XML_ELEMENT_NODE &&
+            xmlStrcmp(n->name, reinterpret_cast<const xmlChar*>(name)) == 0)
+        {
+            return n;
+        }
+    }
+    return nullptr;
+}
+}  // namespace
 
 namespace FileIO
 {
@@ -42,13 +96,10 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
     while (!in.eof())
     {
         std::getline(in, line_string);
-        //....................................................................
-        // CLASS: the version number follows afterward, e.g. CLASS (v.5.313)
         if (line_string.find("CLASS") != std::string::npos)
         {
             std::getline(in, line_string);
             line_stream.str(line_string);
-            // problem class, time mode, problem orientation, dimension, ...
             unsigned dummy = 0;
             for (int i = 0; i < 3; i++)
             {
@@ -57,8 +108,6 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
             line_stream >> dimension;
             line_stream.clear();
         }
-        //....................................................................
-        // GRAVITY
         else if (line_string == "GRAVITY")
         {
             std::getline(in, line_string);
@@ -67,18 +116,14 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
             line_stream >> vec[0] >> vec[1] >> vec[2];
             if (vec[0] == 0.0 && vec[1] == -1.0 && vec[2] == 0.0)
             {
-                // x-z plane
                 isXZplane = true;
             }
             line_stream.clear();
         }
-        //....................................................................
-        // SUPERMESH
         else if (line_string == "SUPERMESH")
         {
             readSuperMesh(in, dimension, points, lines);
         }
-        //....................................................................
     }
     in.close();
 
@@ -104,33 +149,31 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
     }
 }
 
-void FEFLOWGeoInterface::readPoints(QDomElement& nodesEle,
+void FEFLOWGeoInterface::readPoints(xmlNodePtr nodesEle,
                                     const std::string& tag,
                                     int dim,
                                     std::vector<GeoLib::Point*>& points)
 {
-    QDomElement xmlEle =
-        nodesEle.firstChildElement(QString::fromStdString(tag));
-    if (xmlEle.isNull())
+    xmlNodePtr xmlEle = firstChild(nodesEle, tag.c_str());
+    if (xmlEle == nullptr)
     {
         return;
     }
-    QString str_pt_list1 = xmlEle.text();
-    std::istringstream ss(str_pt_list1.toStdString());
+
+    std::istringstream ss(getText(xmlEle));
     std::string line_str;
-    while (!ss.eof())
+    while (std::getline(ss, line_str))
     {
-        std::getline(ss, line_str);
-        boost::trim_right(line_str);
+        boost::algorithm::trim_right(line_str);
         if (line_str.empty())
         {
             continue;
         }
         std::istringstream line_ss(line_str);
         std::size_t pt_id = 0;
-        std::array<double, 3> pt_xyz;
+        std::array<double, 3> pt_xyz{};
         line_ss >> pt_id;
-        for (int i = 0; i < dim; i++)
+        for (int i = 0; i < dim; ++i)
         {
             line_ss >> pt_xyz[i];
         }
@@ -143,7 +186,7 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
                                        std::vector<GeoLib::Point*>& points,
                                        std::vector<GeoLib::Polyline*>& lines)
 {
-    // get XML strings
+    // Read XML block
     std::ostringstream oss;
     std::string line_string;
     while (true)
@@ -156,73 +199,115 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
             break;
         }
     }
-    const QString strXML(oss.str().c_str());
+    const std::string xml_str = oss.str();
 
-    // convert string to XML
-    QDomDocument doc;
-    if (!doc.setContent(strXML))
+    xmlInitParser();
+    xmlDocPtr doc =
+        xmlReadMemory(xml_str.c_str(), static_cast<int>(xml_str.size()),
+                      "supermesh.xml", nullptr, XML_PARSE_NOBLANKS);
+    if (doc == nullptr)
     {
         ERR("FEFLOWGeoInterface::readSuperMesh(): Illegal XML format error");
+        xmlCleanupParser();
         return;
     }
 
-    // get geometry data from XML
-    QDomElement docElem = doc.documentElement();  // #supermesh
-    // #nodes
-    QDomElement nodesEle = docElem.firstChildElement("nodes");
-    if (nodesEle.isNull())
+    xmlNodePtr docElem = xmlDocGetRootElement(doc);
+    if (docElem == nullptr)
     {
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
         return;
     }
 
+    xmlNodePtr nodesEle = firstChild(docElem, "nodes");
+    if (nodesEle == nullptr)
     {
-        const QString str = nodesEle.attribute("count");
-        const long n_points = str.toLong();
-        points.resize(n_points);
-        // fixed
-        readPoints(nodesEle, "fixed", dimension, points);
-        readPoints(nodesEle, "linear", dimension, points);
-        readPoints(nodesEle, "parabolic", dimension, points);
-    }
-
-    // #polygons
-    QDomElement polygonsEle = docElem.firstChildElement("polygons");
-    if (polygonsEle.isNull())
-    {
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
         return;
     }
 
+    const std::string cnt = getProp(nodesEle, "count");
+    const long n_points = cnt.empty() ? 0L : std::stol(cnt);
+
+    // Use unique_ptr for RAII-based cleanup
+    std::vector<std::unique_ptr<GeoLib::Point>> temp_points;
+    temp_points.resize(static_cast<std::size_t>(n_points));
+
+    // Convert to raw pointer vector for readPoints compatibility
+    std::vector<GeoLib::Point*> raw_points(static_cast<std::size_t>(n_points),
+                                           nullptr);
+
+    readPoints(nodesEle, "fixed", static_cast<int>(dimension), raw_points);
+    readPoints(nodesEle, "linear", static_cast<int>(dimension), raw_points);
+    readPoints(nodesEle, "parabolic", static_cast<int>(dimension), raw_points);
+
+    // Transfer ownership to unique_ptrs
+    for (std::size_t i = 0; i < raw_points.size(); ++i)
     {
-        QDomNode child = polygonsEle.firstChild();
-        while (!child.isNull())
+        temp_points[i].reset(raw_points[i]);
+    }
+
+    xmlNodePtr polygonsEle = firstChild(docElem, "polygons");
+    if (polygonsEle == nullptr)
+    {
+        // unique_ptrs will automatically clean up
+        xmlFreeDoc(doc);
+        xmlCleanupParser();
+        return;
+    }
+
+    std::vector<std::unique_ptr<GeoLib::Polyline>> temp_lines;
+
+    for (xmlNodePtr child = polygonsEle->children; child; child = child->next)
+    {
+        if (child->type != XML_ELEMENT_NODE ||
+            xmlStrcmp(child->name,
+                      reinterpret_cast<const xmlChar*>("polygon")) != 0)
         {
-            if (child.nodeName() != "polygon")
-            {
-                child = child.nextSibling();
-                continue;
-            }
-            QDomElement xmlEle = child.firstChildElement("nodes");
-            if (xmlEle.isNull())
-            {
-                continue;
-            }
-            const QString str = xmlEle.attribute("count");
-            const std::size_t n_points = str.toLong();
-            QString str_ptId_list = xmlEle.text().simplified();
-            {
-                auto* line = new GeoLib::Polyline(points);
-                lines.push_back(line);
-                std::istringstream ss(str_ptId_list.toStdString());
-                for (std::size_t i = 0; i < n_points; i++)
-                {
-                    int pt_id = 0;
-                    ss >> pt_id;
-                    line->addPoint(pt_id - 1);
-                }
-                line->addPoint(line->getPointID(0));
-            }
-            child = child.nextSibling();
+            continue;
         }
+
+        xmlNodePtr nodes = firstChild(child, "nodes");
+        if (nodes == nullptr)
+        {
+            continue;
+        }
+
+        const std::string cnt_nodes = getProp(nodes, "count");
+        const std::size_t n_pts =
+            cnt_nodes.empty() ? 0u
+                              : static_cast<std::size_t>(std::stol(cnt_nodes));
+        std::string pt_ids = getText(nodes);
+        BaseLib::trim(pt_ids);
+
+        auto line = std::make_unique<GeoLib::Polyline>(raw_points);
+
+        std::istringstream ss(pt_ids);
+        for (std::size_t i = 0; i < n_pts; ++i)
+        {
+            int pt_id = 0;
+            ss >> pt_id;
+            line->addPoint(pt_id - 1);
+        }
+        // close the polygon
+        line->addPoint(line->getPointID(0));
+
+        temp_lines.push_back(std::move(line));
+    }
+
+    xmlFreeDoc(doc);
+    xmlCleanupParser();
+
+    // Only transfer ownership to output vectors if everything succeeded
+    for (auto& pt : temp_points)
+    {
+        points.push_back(pt.release());
+    }
+    for (auto& line : temp_lines)
+    {
+        lines.push_back(line.release());
     }
 }
 

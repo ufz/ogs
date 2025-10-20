@@ -3,18 +3,18 @@
 
 #pragma once
 
+#include <libxml/tree.h>
+
 #include <iosfwd>
 #include <string>
 #include <vector>
-
-class QDomElement;
 
 namespace GeoLib
 {
 class GEOObjects;
 class Point;
 class Polyline;
-}
+}  // namespace GeoLib
 
 namespace FileIO
 {
@@ -47,7 +47,7 @@ public:
 
 private:
     //// read point data in Supermesh
-    static void readPoints(QDomElement& nodesEle, const std::string& tag,
-                           int dim, std::vector<GeoLib::Point*>& points);
+    static void readPoints(xmlNodePtr nodesEle, const std::string& tag, int dim,
+                           std::vector<GeoLib::Point*>& points);
 };
 }  // namespace FileIO

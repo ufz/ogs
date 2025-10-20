@@ -27,6 +27,7 @@ binaries_list = [
     "ExtractBoundary",
     "ExtractMaterials",
     "ExtractSurface",
+    "FEFLOW2OGS",
     "generateGeometry",
     "generateMatPropsFromMatID",
     "generateStructuredMesh",

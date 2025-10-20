@@ -7,6 +7,7 @@ append_source_and_header_files(
     Gmsh
     Legacy
     GocadIO
+    FEFLOW
 )
 
 if(NOT OGS_BUILD_GUI)
@@ -16,7 +17,7 @@ endif()
 
 if(OGS_BUILD_GUI)
     append_source_and_header_files(
-        _sources _headers _private DIRECTORIES XmlIO/Qt FEFLOW
+        _sources _headers _private DIRECTORIES XmlIO/Qt
     )
 endif()
 
@@ -37,8 +38,14 @@ target_link_libraries(
            $<$<TARGET_EXISTS:shp>:shp>
            $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
            Boost::dynamic_bitset
+           $<$<NOT:$<BOOL:${WIN32}>>:LibXml2::LibXml2>
     PRIVATE MeshLib MeshToolsLib GitInfoLib
 )
+
+if(WIN32)
+    get_target_property(_libxml_include LibXml2::LibXml2 INCLUDE_DIRECTORIES)
+    target_include_directories(ApplicationsFileIO PUBLIC ${_libxml_include})
+endif()
 
 target_precompile_headers(
     ApplicationsFileIO PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
