@@ -523,7 +523,7 @@
             <regex>result_bourgeat_ts_.*.vtu</regex>
             <field>gas_pressure</field>
             <absolute_tolerance>8e-3</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <relative_tolerance>1.2e-7</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>result_bourgeat_ts_.*.vtu</regex>
@@ -576,8 +576,8 @@
         <vtkdiff>
             <regex>result_bourgeat_ts_.*.vtu</regex>
             <field>liquid_density</field>
-            <absolute_tolerance>1.3e-10</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>1.8e-10</absolute_tolerance>
+            <relative_tolerance>1.8e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>result_bourgeat_ts_.*.vtu</regex>

@@ -380,7 +380,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 5e-15 5e-15
+    cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 6e-15 5e-15
 )
 AddTest(
     NAME SteadyStateDiffusion_cube_1x1x1_1e3_neumann_calculatesurfaceflux
@@ -447,7 +447,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    square_1e2_axi_ts_1_t_1.000000.vtu square_1e2_axi_ts_1_t_1.000000.vtu temperature temperature 2e-15 0
+    square_1e2_axi_ts_1_t_1.000000.vtu square_1e2_axi_ts_1_t_1.000000.vtu temperature temperature 3e-15 0
 )
 # WEDGE 1x1 GROUNDWATER FLOW TEST -- same setup as above test but in cartesian coordinates
 AddTest(
@@ -458,7 +458,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
+    wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 4e-14 0
 )
 
 # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC, 1e4

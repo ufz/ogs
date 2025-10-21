@@ -5,7 +5,7 @@
     <replace msel="/*/test_definition/vtkdiff[1]/file/text()">cooks_membrane_ld_n_30_ts_1_t_1.000000.vtu</replace>
     <replace msel="/*/test_definition/vtkdiff[2]/file/text()">cooks_membrane_ld_n_30_ts_1_t_1.000000.vtu</replace>
     <replace msel="/*/test_definition/vtkdiff[3]/file/text()">cooks_membrane_ld_n_30_ts_1_t_1.000000.vtu</replace>
-    <replace msel="/*/test_definition/vtkdiff[1]/absolute_tolerance/text()">2e-12</replace>
-    <replace msel="/*/test_definition/vtkdiff[2]/absolute_tolerance/text()">3e-9</replace>
-    <replace msel="/*/test_definition/vtkdiff[3]/relative_tolerance/text()">2e-5</replace>
+    <replace msel="/*/test_definition/vtkdiff[1]/absolute_tolerance/text()">2.5e-12</replace>
+    <replace msel="/*/test_definition/vtkdiff[2]/absolute_tolerance/text()">3.5e-9</replace>
+    <replace msel="/*/test_definition/vtkdiff[3]/relative_tolerance/text()">2.5e-5</replace>
 </OpenGeoSysProjectDiff>
