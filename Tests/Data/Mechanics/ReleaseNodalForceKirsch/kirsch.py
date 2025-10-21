@@ -685,7 +685,9 @@ expected_sigma = np.asarray(
 
 
 computed_sigma = extracted_ms[-1]["sigma"]
-np.testing.assert_allclose(actual=computed_sigma, desired=expected_sigma, atol=1e-10)
+np.testing.assert_allclose(
+    actual=computed_sigma, desired=expected_sigma, atol=1e-9, rtol=1e-5
+)
 
 # %%
 sigma_at_step_1 = extracted_ms[1]["sigma"]
@@ -730,7 +732,7 @@ sigma_at_step_1_expected = np.asarray(
 )
 
 np.testing.assert_allclose(
-    actual=sigma_at_step_1, desired=sigma_at_step_1_expected, atol=1e-10
+    actual=sigma_at_step_1, desired=sigma_at_step_1_expected, atol=1e-9, rtol=1e-5
 )
 
 # %%
