@@ -8,6 +8,7 @@
  */
 
 #include <concepts>
+#include <optional>
 #include <range/v3/range/concepts.hpp>
 #include <range/v3/range/traits.hpp>
 #if defined(__cpp_lib_containers_ranges) && \
