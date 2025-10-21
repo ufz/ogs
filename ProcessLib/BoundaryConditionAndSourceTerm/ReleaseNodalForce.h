@@ -42,8 +42,10 @@ namespace ProcessLib
  * The initial state assumes a non-equilibrium stress \f$ \sigma_0 \f$. In the
  * finite element method, the nodal force is given by:
  * \f[
- *   \mathbf{b} = \int \left( \text{B}^T (\mathbf{\sigma} - \mathbf{\sigma}_0) +
- *   (\mathbf{f} - \mathbf{f}_0) \right) N \, \mathrm{d}\Omega + \int_{\Gamma_q}
+ *   \mathbf{b} = \int \left( \text{B}^\top (\mathbf{\sigma} -
+ * \mathbf{\sigma}_0) +
+ *    \mathbf{N}^\top (\mathbf{f} - \mathbf{f}_0) \right)  \, \mathrm{d}\Omega +
+ * \int_{\Gamma_q}
  * (\boldsymbol{\sigma}-\boldsymbol{\sigma}_0)\cdot \mathbf n \mathrm{d}\Gamma
  * \f]
  * where:
@@ -54,14 +56,16 @@ namespace ProcessLib
  *   - \f$ \mathbf{f}_0 \f$ is the initial body force,
  *   - \f$\int_{\Gamma_q}\f$ is the boundary where the traction condition is
  * applied, and \f$ \mathbf n\f$ is the outward normal of the boundary,
- *   - \f$ N \f$ is the shape function,
+ *   - \f$ \mathbf{N} \f$ is the shape function,
  *   - \f$ \Omega \f$ is the domain of integration.
  *
  * After excavation, the stress and body force inside the excavated domain
  * vanish, leaving non-zero nodal forces at the exposed surface nodes. These are
  * computed as:
  * \f[
- *   \mathbf{b}_0 = -\int \left( \text{B}^T \mathbf{\sigma}_0 + \mathbf{f}_0 N
+ *   \mathbf{b}_0 = -\int \left( \text{B}^\top \mathbf{\sigma}_0 +
+ * \mathbf{N}^\top
+ * \mathbf{f}_0
  * \right)  \, \mathrm{d}\Omega - \int_{\Gamma_q} \boldsymbol{\sigma}_0 \cdot
  * \mathbf n \mathrm{d}\Gamma
  * \f]
