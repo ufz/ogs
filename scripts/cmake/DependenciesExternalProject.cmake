@@ -185,6 +185,10 @@ if(OGS_USE_PETSC)
         if(NOT "--download-fc" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
             list(APPEND _configure_opts --with-fc=0)
         endif()
+        if(APPLE)
+            # fixes "error moving ...f2cblaslapack... libraries", uses newer make
+            list(APPEND _configure_opts --download-make)
+        endif()
 
         unset(ENV{PETSC_DIR})
         BuildExternalProject(
