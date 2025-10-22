@@ -14,6 +14,58 @@
 
 namespace MaterialPropertyLib
 {
+double IndependentVariable::valueClamped(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& pos,
+    double const t) const
+{
+    double x = valueUnclamped(variable_array, pos, t);
+
+    if (min)
+    {
+        x = std::max(x, *min);
+    }
+    if (max)
+    {
+        x = std::min(x, *max);
+    }
+
+    return x;
+}
+
+double IndependentVariable::valueUnclamped(
+    VariableArray const& variable_array,
+    ParameterLib::SpatialPosition const& pos,
+    double const t) const
+{
+    if (auto* var_ptr = std::get_if<Variable>(&type))
+    {
+        return std::get<double>(variable_array[*var_ptr]);
+    }
+
+    if (auto* str_ptr = std::get_if<std::string>(&type))
+    {
+        if (*str_ptr == "t")
+            return t;
+
+        if (*str_ptr == "x")
+            return pos.getCoordinates().value()[0];
+
+        if (*str_ptr == "y")
+            return pos.getCoordinates().value()[1];
+
+        if (*str_ptr == "z")
+            return pos.getCoordinates().value()[2];
+
+        OGS_FATAL("Unknown independent variable {:s} for a linear property.",
+                  *str_ptr)
+    }
+
+    OGS_FATAL(
+        "Could not convert independent_variable neither to a Variable nor "
+        "to a std::string.");
+}
+
 Linear::Linear(std::string name,
                PropertyDataType const& property_reference_value,
                std::vector<IndependentVariable> const& vs)
@@ -31,32 +83,7 @@ PropertyDataType Linear::value(VariableArray const& variable_array,
         [&variable_array, pos, t](double const initial_linearized_ratio,
                                   auto const& iv)
     {
-        double x = 0.0;
-        if (auto* var_ptr = std::get_if<Variable>(&iv.type))
-        {
-            x = std::get<double>(variable_array[*var_ptr]);
-        }
-        else if (auto* str_ptr = std::get_if<std::string>(&iv.type))
-        {
-            if (*str_ptr == "t")
-                x = t;
-            else if (*str_ptr == "x")
-                x = pos.getCoordinates().value()[0];
-            else if (*str_ptr == "y")
-                x = pos.getCoordinates().value()[1];
-            else if (*str_ptr == "z")
-                x = pos.getCoordinates().value()[2];
-            else
-                OGS_FATAL(
-                    "Unknown independent_variable {:s} for curve property.",
-                    *str_ptr)
-        }
-        else
-        {
-            OGS_FATAL(
-                "Could not convert independent_variable neither to a Variable "
-                "nor to a std::string.");
-        }
+        double const x = iv.valueClamped(variable_array, pos, t);
 
         return initial_linearized_ratio +
                std::get<double>(iv.slope) *
@@ -72,10 +99,10 @@ PropertyDataType Linear::value(VariableArray const& variable_array,
     return std::get<double>(value_) * linearized_ratio_to_reference_value;
 }
 
-PropertyDataType Linear::dValue(VariableArray const& /*variable_array*/,
+PropertyDataType Linear::dValue(VariableArray const& variable_array,
                                 Variable const variable,
-                                ParameterLib::SpatialPosition const& /*pos*/,
-                                double const /*t*/, double const /*dt*/) const
+                                ParameterLib::SpatialPosition const& pos,
+                                double const t, double const /*dt*/) const
 {
     auto const independent_variable = std::find_if(
         independent_variables_.begin(),
@@ -89,10 +116,26 @@ PropertyDataType Linear::dValue(VariableArray const& /*variable_array*/,
             return false;
         });
 
-    return independent_variable != independent_variables_.end()
-               ? std::get<double>(value_) *
-                     std::get<double>(independent_variable->slope)
-               : decltype(value_){};
+    auto const zero = decltype(value_){};
+    if (independent_variable == independent_variables_.end())
+    {
+        return zero;
+    }
+
+    auto const& iv = *independent_variable;
+
+    double const x = iv.valueUnclamped(variable_array, pos, t);
+
+    if (iv.min && x < *iv.min)
+    {
+        return zero;
+    }
+    if (iv.max && x > *iv.max)
+    {
+        return zero;
+    }
+
+    return std::get<double>(value_) * std::get<double>(iv.slope);
 }
 
 PropertyDataType Linear::d2Value(VariableArray const& /*variable_array*/,
