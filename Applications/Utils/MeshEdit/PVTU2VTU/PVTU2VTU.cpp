@@ -378,6 +378,75 @@ makeNodesUnique(std::vector<MeshLib::Node*> const& all_merged_nodes_tmp,
     return {unique_merged_nodes, merged_node_map};
 }
 
+std::unique_ptr<MeshLib::Mesh> mergeSubdomainMeshes(
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
+{
+    BaseLib::RunTime merged_element_timer;
+    merged_element_timer.start();
+    // If structured binding is used for the returned tuple, Mac compiler gives
+    // an error in reference to local binding in calling applyToPropertyVectors.
+    auto [regular_elements, merged_element_map] = getRegularElements(meshes);
+    INFO(
+        "Collection of {} regular elements and computing element map took {} s",
+        regular_elements.size(), merged_element_timer.elapsed());
+
+    // alternative implementation of getNodesOfRegularElements
+    BaseLib::RunTime collect_nodes_timer;
+    collect_nodes_timer.start();
+    auto [all_merged_nodes_tmp, partition_offsets] =
+        getMergedNodesVector(meshes);
+    INFO("Collection of {} nodes and computing offsets took {} s",
+         all_merged_nodes_tmp.size(), collect_nodes_timer.elapsed());
+
+    BaseLib::RunTime merged_nodes_timer;
+    merged_nodes_timer.start();
+    GeoLib::AABB aabb(all_merged_nodes_tmp.begin(), all_merged_nodes_tmp.end());
+    auto oct_tree = std::unique_ptr<GeoLib::OctTree<MeshLib::Node, 16>>(
+        GeoLib::OctTree<MeshLib::Node, 16>::createOctTree(
+            aabb.getMinPoint(), aabb.getMaxPoint(), 1e-16));
+
+    auto [unique_merged_nodes, merged_node_map] =
+        makeNodesUnique(all_merged_nodes_tmp, partition_offsets, *oct_tree);
+    INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
+         unique_merged_nodes.size(), merged_nodes_timer.elapsed());
+
+    BaseLib::RunTime reset_nodes_in_elements_timer;
+    reset_nodes_in_elements_timer.start();
+    auto const extent = aabb.getMaxPoint() - aabb.getMinPoint();
+    resetNodesInRegularElements(regular_elements, *oct_tree, extent);
+    INFO("Reset nodes in regular elements took {} s",
+         reset_nodes_in_elements_timer.elapsed());
+
+    BaseLib::RunTime mesh_creation_timer;
+    mesh_creation_timer.start();
+    // The Node pointers of 'merged_nodes' and Element pointers of
+    // 'regular_elements' are shared with 'meshes', the partitioned meshes.
+    auto merged_mesh = std::make_unique<MeshLib::Mesh>(
+        "pvtu_merged_mesh", unique_merged_nodes, regular_elements,
+        false /* compute_element_neighbors */);
+    INFO("creation of merged mesh took {} s", mesh_creation_timer.elapsed());
+
+    auto const& properties = meshes[0]->getProperties();
+
+    BaseLib::RunTime property_timer;
+    property_timer.start();
+    applyToPropertyVectors(
+        properties,
+        [&, &merged_node_map = merged_node_map,
+         &merged_element_map = merged_element_map](auto type,
+                                                   auto const& property)
+        {
+            return createPropertyVector<decltype(type)>(
+                *merged_mesh, meshes,
+                dynamic_cast<MeshLib::PropertyVector<decltype(type)> const*>(
+                    property),
+                properties, merged_node_map, merged_element_map);
+        });
+    INFO("merge properties into merged mesh took {} s",
+         property_timer.elapsed());
+    return merged_mesh;
+}
+
 int main(int argc, char* argv[])
 {
     TCLAP::CmdLine cmd(
@@ -399,6 +468,7 @@ int main(int argc, char* argv[])
         "i", "input", "Input (.pvtu). The partitioned input mesh file", true,
         "", "INPUT_FILE");
     cmd.add(input_arg);
+
     auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg);
     cmd.parse(argc, argv);
@@ -442,71 +512,10 @@ int main(int argc, char* argv[])
     }
     INFO("Reading meshes took {} s", io_timer.elapsed());
 
-    BaseLib::RunTime merged_element_timer;
-    merged_element_timer.start();
-    // If structured binding is used for the returned tuple, Mac compiler gives
-    // an error in reference to local binding in calling applyToPropertyVectors.
-    auto [regular_elements, merged_element_map] = getRegularElements(meshes);
-    INFO(
-        "Collection of {} regular elements and computing element map took {} s",
-        regular_elements.size(), merged_element_timer.elapsed());
+    std::unique_ptr<MeshLib::Mesh> merged_mesh;
+    merged_mesh = mergeSubdomainMeshes(meshes);
 
-    // alternative implementation of getNodesOfRegularElements
-    BaseLib::RunTime collect_nodes_timer;
-    collect_nodes_timer.start();
-    auto [all_merged_nodes_tmp, partition_offsets] =
-        getMergedNodesVector(meshes);
-    INFO("Collection of {} nodes and computing offsets took {} s",
-         all_merged_nodes_tmp.size(), collect_nodes_timer.elapsed());
-
-    BaseLib::RunTime merged_nodes_timer;
-    merged_nodes_timer.start();
-    GeoLib::AABB aabb(all_merged_nodes_tmp.begin(), all_merged_nodes_tmp.end());
-    auto oct_tree = std::unique_ptr<GeoLib::OctTree<MeshLib::Node, 16>>(
-        GeoLib::OctTree<MeshLib::Node, 16>::createOctTree(
-            aabb.getMinPoint(), aabb.getMaxPoint(), 1e-16));
-
-    auto [unique_merged_nodes, merged_node_map] =
-        makeNodesUnique(all_merged_nodes_tmp, partition_offsets, *oct_tree);
-    INFO("Make nodes unique ({} unique nodes) / computing map took {} s",
-         unique_merged_nodes.size(), merged_nodes_timer.elapsed());
-
-    BaseLib::RunTime reset_nodes_in_elements_timer;
-    reset_nodes_in_elements_timer.start();
-    auto const extent = aabb.getMaxPoint() - aabb.getMinPoint();
-    resetNodesInRegularElements(regular_elements, *oct_tree, extent);
-    INFO("Reset nodes in regular elements took {} s",
-         reset_nodes_in_elements_timer.elapsed());
-
-    BaseLib::RunTime mesh_creation_timer;
-    mesh_creation_timer.start();
-    // The Node pointers of 'merged_nodes' and Element pointers of
-    // 'regular_elements' are shared with 'meshes', the partitioned meshes.
-    MeshLib::Mesh merged_mesh =
-        MeshLib::Mesh("pvtu_merged_mesh", unique_merged_nodes, regular_elements,
-                      false /* compute_element_neighbors */);
-    INFO("creation of merged mesh took {} s", mesh_creation_timer.elapsed());
-
-    auto const& properties = meshes[0]->getProperties();
-
-    BaseLib::RunTime property_timer;
-    property_timer.start();
-    applyToPropertyVectors(
-        properties,
-        [&, &merged_node_map = merged_node_map,
-         &merged_element_map = merged_element_map](auto type,
-                                                   auto const& property)
-        {
-            return createPropertyVector<decltype(type)>(
-                merged_mesh, meshes,
-                dynamic_cast<MeshLib::PropertyVector<decltype(type)> const*>(
-                    property),
-                properties, merged_node_map, merged_element_map);
-        });
-    INFO("merge properties into merged mesh took {} s",
-         property_timer.elapsed());
-
-    MeshLib::IO::VtuInterface writer(&merged_mesh);
+    MeshLib::IO::VtuInterface writer(merged_mesh.get());
 
     BaseLib::RunTime writing_timer;
     writing_timer.start();
@@ -523,7 +532,7 @@ int main(int argc, char* argv[])
     // memory by these pointers are released by 'meshes' automatically.
     // Therefore, only node vector and element vector of merged_mesh should be
     // cleaned.
-    merged_mesh.shallowClean();
+    merged_mesh->shallowClean();
 
     return EXIT_SUCCESS;
 }
