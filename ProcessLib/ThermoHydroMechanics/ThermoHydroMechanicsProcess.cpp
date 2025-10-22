@@ -219,6 +219,12 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         &LocalAssemblerInterface<DisplacementDim>::getIntPtSigmaIce);
 
     add_secondary_variable(
+        "epsilon_0",
+        MathLib::KelvinVector::KelvinVectorType<
+            DisplacementDim>::RowsAtCompileTime,
+        &LocalAssemblerInterface<DisplacementDim>::getIntPtEpsilon0);
+
+    add_secondary_variable(
         "epsilon_m",
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime,
@@ -245,6 +251,10 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     add_secondary_variable(
         "viscosity", 1,
         &LocalAssemblerInterface<DisplacementDim>::getIntPtViscosity);
+
+    _process_data.element_phi_fr = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "ice_volume_fraction_avg",
+        MeshLib::MeshItemType::Cell, 1);
 
     _process_data.element_fluid_density =
         MeshLib::getOrCreateMeshProperty<double>(

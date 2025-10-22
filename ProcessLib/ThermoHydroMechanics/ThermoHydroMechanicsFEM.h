@@ -300,6 +300,25 @@ private:
             _ip_data, &IpData::sigma_eff_ice, cache);
     }
 
+    std::vector<double> getEpsilon0() const override
+    {
+        constexpr int kelvin_vector_size =
+            MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
+
+        return transposeInPlace<kelvin_vector_size>(
+            [this](std::vector<double>& values)
+            { return getIntPtEpsilon0(0, {}, {}, values); });
+    }
+
+    virtual std::vector<double> const& getIntPtEpsilon0(
+        const double /*t*/,
+        std::vector<GlobalVector*> const& /*x*/,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& /*dof_table*/,
+        std::vector<double>& cache) const override
+    {
+        return ProcessLib::getIntegrationPointKelvinVectorData<DisplacementDim>(
+            _ip_data, &IpData::eps0, cache);
+    }
     std::vector<double> getEpsilonM() const override
     {
         constexpr int kelvin_vector_size =
