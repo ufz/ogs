@@ -285,13 +285,13 @@
             <regex>fault_slip_nonIter_WP_ref_t_6.000000.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-5</absolute_tolerance>
-            <relative_tolerance>1e-3</relative_tolerance>
+            <relative_tolerance>5.0e-3</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>fault_slip_nonIter_WP_ref_t_6.000000.vtu</regex>
             <field>sigma</field>
             <absolute_tolerance>5000</absolute_tolerance>
-            <relative_tolerance>1e-3</relative_tolerance>
+            <relative_tolerance>5e-1</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

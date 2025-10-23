@@ -144,23 +144,16 @@ inline void computeMappingMatrices(
             shapemat,
             FieldType<ShapeMatrixType::DNDR>());
 
-        auto const dim = T_SHAPE_FUNC::DIM;
-        auto const nnodes = T_SHAPE_FUNC::NPOINTS;
+        auto constexpr nnodes = T_SHAPE_FUNC::NPOINTS;
 
         // jacobian: J=[dx/dr dy/dr // dx/ds dy/ds]
         for (auto k = decltype(nnodes){0}; k < nnodes; k++)
         {
             const MathLib::Point3d& mapped_pt =
                 ele_local_coord.getMappedCoordinates(k);
-            // outer product of dNdr and mapped_pt for a particular node
-            for (auto i_r = decltype(dim){0}; i_r < dim; i_r++)
-            {
-                for (auto j_x = decltype(dim){0}; j_x < dim; j_x++)
-                {
-                    shapemat.J(i_r, j_x) +=
-                        shapemat.dNdr(i_r, k) * mapped_pt[j_x];
-                }
-            }
+            shapemat.J +=
+                shapemat.dNdr.col(k) *
+                mapped_pt.asEigenVector3d().head(T_SHAPE_FUNC::DIM).transpose();
         }
 
         shapemat.detJ = shapemat.J.determinant();

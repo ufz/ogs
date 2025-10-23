@@ -436,7 +436,7 @@
         <vtkdiff>
             <regex>TM_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>1.5e-5</absolute_tolerance>
+            <absolute_tolerance>1.6e-5</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>

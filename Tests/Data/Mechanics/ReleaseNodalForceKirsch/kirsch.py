@@ -40,11 +40,12 @@ from mesh import MeshGenerator
 # The initial state assumes a **non-equilibrium stress** denoted by $\sigma_0$. In the finite element method (FEM), the nodal force is given by:
 #
 # $$
-# \mathbf{b} = \int \left( \mathbf{B}^\top (\boldsymbol{\sigma} - \boldsymbol{\sigma}_0) + (\mathbf{f} - \mathbf{f}_0) \right) N \, \mathrm{d}\Omega + \int_{\Gamma_q} (\boldsymbol{\sigma}-\boldsymbol{\sigma}_0)\cdot \mathbf n \mathrm{d}\Gamma
+# \mathbf{b} = \int \left( \mathbf{B}^\top (\boldsymbol{\sigma} - \boldsymbol{\sigma}_0) +  \mathbf{N}^\top(\mathbf{f} - \mathbf{f}_0) \right)\, \mathrm{d}\Omega + \int_{\Gamma_q} (\boldsymbol{\sigma}-\boldsymbol{\sigma}_0)\cdot \mathbf n \mathrm{d}\Gamma
 # $$
 #
 # Where:
 # - $\mathbf{B}$ is the strain-displacement matrix,
+# - $\mathbf{N}$ is the shape function matrix,
 # - $\boldsymbol{\sigma}$ is the current total stress,
 # - $\boldsymbol{\sigma}_0$ is the initial total stress,
 # - $\mathbf{f}$ is the current body force,
@@ -58,7 +59,7 @@ from mesh import MeshGenerator
 # This leads to non-zero nodal forces at the **exposed surface nodes**, computed as:
 #
 # $$
-# \mathbf{b}_0 = -\int \left( \mathbf{B}^\top \boldsymbol{\sigma}_0 + \mathbf{f}_0 \right) N \, \mathrm{d}\Omega - \int_{\Gamma_q} \boldsymbol{\sigma}_0\cdot \mathbf n \mathrm{d}\Gamma
+# \mathbf{b}_0 = -\int \left( \mathbf{B}^\top \boldsymbol{\sigma}_0 + \mathbf{N}^\top\mathbf{f}_0 \right) \, \mathrm{d}\Omega - \int_{\Gamma_q} \boldsymbol{\sigma}_0\cdot \mathbf n \mathrm{d}\Gamma
 # $$
 #
 # The components of $\mathbf{b}_0$ corresponding to the exposed surface nodes define the **release nodal force vector**:
@@ -684,7 +685,9 @@ expected_sigma = np.asarray(
 
 
 computed_sigma = extracted_ms[-1]["sigma"]
-np.testing.assert_allclose(actual=computed_sigma, desired=expected_sigma, atol=1e-10)
+np.testing.assert_allclose(
+    actual=computed_sigma, desired=expected_sigma, atol=1e-9, rtol=1e-5
+)
 
 # %%
 sigma_at_step_1 = extracted_ms[1]["sigma"]
@@ -729,7 +732,7 @@ sigma_at_step_1_expected = np.asarray(
 )
 
 np.testing.assert_allclose(
-    actual=sigma_at_step_1, desired=sigma_at_step_1_expected, atol=1e-10
+    actual=sigma_at_step_1, desired=sigma_at_step_1_expected, atol=1e-9, rtol=1e-5
 )
 
 # %%

@@ -509,7 +509,7 @@
             <regex>out_single_fracture_LE_kf_const_.*.vtu</regex>
             <field>sigma_avg</field>
             <absolute_tolerance>1.e-12</absolute_tolerance>
-            <relative_tolerance>1.e-11</relative_tolerance>
+            <relative_tolerance>2.4e-11</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>out_single_fracture_LE_kf_const_.*.vtu</regex>

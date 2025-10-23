@@ -115,6 +115,7 @@
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1e-11</abstol>
+                    <reltol>1e-14</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
