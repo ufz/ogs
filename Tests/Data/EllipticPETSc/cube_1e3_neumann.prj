@@ -45,6 +45,10 @@
             <variables>
                 <variable> pressure </variable>
                 <variable> v      </variable>
+                <variable> D1_left_front_N1_right </variable>
+                <!-- required for pvtu2vtu -->
+                <variable> global_node_ids </variable>
+                <variable> global_element_ids </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

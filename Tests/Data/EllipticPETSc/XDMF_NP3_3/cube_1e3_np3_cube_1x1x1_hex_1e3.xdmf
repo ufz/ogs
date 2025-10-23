@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Xdmf xmlns:xi="http://www.w3.org/2001/XInclude" Version="3.0">
 <Domain>
-<Information Name="OGS_VERSION" Value="6.5.3-249-g94b41f50.dirty"/>
+<Information Name="OGS_VERSION" Value="6.5.6-107-g216f77a4.dirty"/>
 <Grid CollectionType="Temporal" GridType="Collection" Name="Collection">
 <Grid Name="Grid" GridType="Uniform">
     <Time Value="0"/>
 
 	<Geometry Origin="" Type="XYZ">
-		<DataItem DataType="Float" Dimensions="643 3" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/geometry|0 0 0:1 1 1:1 643 3:2 643 3</DataItem>
+		<DataItem DataType="Float" Dimensions="638 3" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/geometry|0 0 0:1 1 1:1 638 3:2 638 3</DataItem>
 	</Geometry>
 
 	<Topology Type="Hexahedron">
-		<DataItem DataType="UInt" Dimensions="417 8" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/topology|0 0 0:1 1 1:1 417 8:2 417 8</DataItem>
+		<DataItem DataType="UInt" Dimensions="414 8" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/topology|0 0 0:1 1 1:1 414 8:2 414 8</DataItem>
 	</Topology>
 
 
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="643" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/pressure|0 0:1 1:1 643:2 643</DataItem>
+		<DataItem DataType="Float" Dimensions="638" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/pressure|0 0:1 1:1 638:2 638</DataItem>
 	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
-		<DataItem DataType="Float" Dimensions="643 3" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/v|0 0 0:1 1 1:1 643 3:2 643 3</DataItem>
+		<DataItem DataType="Float" Dimensions="638 3" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/v|0 0 0:1 1 1:1 638 3:2 638 3</DataItem>
 	</Attribute>
 </Grid>
 <Grid Name="Grid" GridType="Uniform">
@@ -31,10 +31,10 @@
 
 
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="pressure" Type="None">
-		<DataItem DataType="Float" Dimensions="643" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/pressure|1 0:1 1:1 643:2 643</DataItem>
+		<DataItem DataType="Float" Dimensions="638" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/pressure|1 0:1 1:1 638:2 638</DataItem>
 	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="v" Type="None">
-		<DataItem DataType="Float" Dimensions="643 3" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/v|1 0 0:1 1 1:1 643 3:2 643 3</DataItem>
+		<DataItem DataType="Float" Dimensions="638 3" Format="HDF" Precision="8">cube_1e3_np3.h5:/meshes/cube_1x1x1_hex_1e3/v|1 0 0:1 1 1:1 638 3:2 638 3</DataItem>
 	</Attribute>
 </Grid>
 </Grid>

@@ -1,19 +1,28 @@
 <?xml version="1.0"?>
-<VTKFile type="PUnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+<VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
   <PUnstructuredGrid GhostLevel="1">
+    <FieldData>
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="25" format="binary" RangeMin="45" RangeMax="121">
+        AQAAAAAAAAAAgAAAAAAAABkAAAAAAAAAIQAAAAAAAAA=eF4z0zPVM9M1NDDXTTcyNEszN0800UvJLCqpBABJ6gaz
+      </DataArray>
+    </FieldData>
     <PPointData>
       <PDataArray type="Float64" Name="D1_left_front_N1_right"/>
       <PDataArray type="Float64" Name="Linear_1_to_minus1"/>
+      <PDataArray type="UInt64" Name="global_node_ids"/>
       <PDataArray type="Float64" Name="pressure"/>
+      <PDataArray type="Float64" Name="v" NumberOfComponents="3"/>
     </PPointData>
     <PCellData>
       <PDataArray type="Int32" Name="MaterialIDs"/>
+      <PDataArray type="UInt64" Name="global_element_ids"/>
+      <PDataArray type="UInt8" Name="vtkGhostType"/>
     </PCellData>
     <PPoints>
       <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
     </PPoints>
-    <Piece Source="cube_1e3_pcs_0_ts_1_t_1_000000_0.vtu"/>
-    <Piece Source="cube_1e3_pcs_0_ts_1_t_1_000000_1.vtu"/>
-    <Piece Source="cube_1e3_pcs_0_ts_1_t_1_000000_2.vtu"/>
+    <Piece Source="cube_1e3_ts_1_t_1_000000_0.vtu"/>
+    <Piece Source="cube_1e3_ts_1_t_1_000000_1.vtu"/>
+    <Piece Source="cube_1e3_ts_1_t_1_000000_2.vtu"/>
   </PUnstructuredGrid>
 </VTKFile>
