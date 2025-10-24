@@ -4,6 +4,7 @@ OGS_USE_PETSC = '@OGS_USE_PETSC@'
 OGS_VERSION = '@OGS_VERSION@'
 OGS_USE_MKL = '@OGS_USE_MKL@'
 OGS_COVERAGE = '@OGS_COVERAGE@'
+OGS_GUIX_BUILD = '@GUIX_BUILD@'
 ")
 
 install(FILES ${_config_file} DESTINATION ${_py_install_location})
