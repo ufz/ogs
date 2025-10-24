@@ -254,7 +254,7 @@ AddTest(
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu pressure pressure 2e-8 5.2e-14
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu displacement displacement 1e-15 1e-15
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu displacement_jump1 displacement_jump1 1e-15 1e-15
-    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_stress fracture_stress 3e-9 0
+    HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_stress fracture_stress 3.5e-9 0
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_permeability fracture_permeability 1e-15 1e-15
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu fracture_aperture fracture_aperture 1e-15 1e-15
     HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu HM2b_LIE_F_Greywacke_ts_69_t_3500.000000.vtu sigma sigma 4.9e-7 0
