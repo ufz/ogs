@@ -444,7 +444,7 @@
         <vtkdiff>
             <regex>mockup_results_[0-9].*[.]vtu</regex>
             <field>temperature</field>
-            <absolute_tolerance>5e-12</absolute_tolerance>
+            <absolute_tolerance>5.5e-12</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

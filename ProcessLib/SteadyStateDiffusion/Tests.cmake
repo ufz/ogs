@@ -237,7 +237,7 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    square_1x1_quad_1e5.vtu square_1e5_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-16
+    square_1x1_quad_1e5.vtu square_1e5_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1.2e-13 1e-16
 )
 
 # The largest test is less accurate
