@@ -12,7 +12,7 @@ set(TOOLS
     Mesh2Raster
     PVD2XDMF
     Raster2ASC
-    FEFLOW2OGS
+    FEFLOW2OGS_C
 )
 
 if(OGS_USE_NETCDF)
