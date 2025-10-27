@@ -18,7 +18,7 @@ namespace ProcessLib
 struct BoundaryConditionConfig final
 {
     BaseLib::ConfigTree config;
-    MeshLib::Mesh const& boundary_mesh;
+    std::vector<std::reference_wrapper<const MeshLib::Mesh>> boundary_meshes;
     std::optional<int> const component_id;
     bool compensate_non_equilibrium_initial_residuum = false;
 };
