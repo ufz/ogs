@@ -102,12 +102,10 @@
             <initial_condition>T0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>mesh_1x1_left</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>T0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <mesh>mesh_1x1_right</mesh>
+                    <meshes>
+                        <mesh>mesh_1x1_left</mesh>
+                        <mesh>mesh_1x1_right</mesh>
+                    </meshes>
                     <type>Dirichlet</type>
                     <parameter>T0</parameter>
                 </boundary_condition>
