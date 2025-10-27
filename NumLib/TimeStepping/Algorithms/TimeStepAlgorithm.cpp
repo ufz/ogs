@@ -9,8 +9,7 @@
 
 #include "TimeStepAlgorithm.h"
 
-#include <algorithm>
-#include <limits>
+#include <range/v3/algorithm/upper_bound.hpp>
 
 #include "NumLib/TimeStepping/Time.h"
 
@@ -20,17 +19,18 @@ double possiblyClampDtToNextFixedTime(
     Time const& t, double const dt,
     std::vector<double> const& fixed_output_times)
 {
-    auto const specific_time = std::upper_bound(
-        std::cbegin(fixed_output_times), std::cend(fixed_output_times), t());
+    auto const specific_time = ranges::upper_bound(
+        fixed_output_times, t, ranges::less{}, [](auto t) { return Time(t); });
 
-    if (specific_time == std::cend(fixed_output_times))
+    if (specific_time == ranges::cend(fixed_output_times))
     {
         return dt;
     }
 
-    if ((t < Time(*specific_time)) && t + dt > Time(*specific_time))
+    Time const fixed_output_time(*specific_time);
+    if ((t < fixed_output_time) && (t + dt) > fixed_output_time)
     {
-        double const t_to_specific_time = *specific_time - t();
+        double const t_to_specific_time = fixed_output_time() - t();
         return t_to_specific_time;
     }
 
