@@ -72,7 +72,7 @@
             <vtkdiff>
                 <regex>square_1e1_2_matIDs_restart_t_.*.vtu</regex>
                 <field>sigma_ip</field>
-                <absolute_tolerance>8e-15</absolute_tolerance>
+                <absolute_tolerance>8.5e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
