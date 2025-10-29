@@ -75,6 +75,13 @@
             ctest_group="master"
           fi
 
+          # Don't submit on multi-project pipelines, e.g. triggered from ogstools
+          # as they run just a subset of benchmarks and therefore CDash complains
+          # about missing tests.
+          if [ "${CI_PIPELINE_SOURCE}" != "pipeline" ]; then
+            ctest_arguments="${ctest_arguments} -T Submit"
+          fi
+
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
             echo "Skipping ctests because of unit_tests-label."
           else
@@ -83,7 +90,7 @@
             echo "ctest arguments: ${ctest_arguments}"
             ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
-                --test-dir "${build_dir_full}" -T Start -T Test -T Submit \
+                --test-dir "${build_dir_full}" -T Start -T Test \
                 --no-tests=error \
                 ${ctest_arguments} \
                 --output-junit Tests/ctest.xml \
