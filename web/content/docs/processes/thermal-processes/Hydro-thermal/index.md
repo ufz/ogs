@@ -5,7 +5,7 @@ title = "Hydro-Thermal Process"
 weight = 3
 +++
 
-The content of this webpage was taken from [this document](HT-Process.pdf).
+The content of this webpage was taken from [this document](/docs/benchmarks/hydro-thermal/constant-viscosity/HT-Process.pdf).
 
 ## $1 H T$ process
 
