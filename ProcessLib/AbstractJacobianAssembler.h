@@ -11,6 +11,8 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <range/v3/view.hpp>
+#include <range/v3/view/transform.hpp>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -23,7 +25,7 @@ class LocalAssemblerInterface;
 class AbstractJacobianAssembler
 {
 public:
-    //! Constructs a new instance.
+    //! Constructs a new instance for the numerical Jacobian.
     //! \param absolute_epsilons perturbations of the components of the local
     //! solution vector used    for evaluating the finite differences.
     explicit AbstractJacobianAssembler(
@@ -64,7 +66,88 @@ public:
 
     virtual ~AbstractJacobianAssembler() = default;
 
+    /**
+     * Checks that the number of specified perturbations is not smaller
+     * than the maximum number of non-deformation degrees of freedom per node.
+     */
+    void checkPerturbationSize(
+        int const max_non_deformation_dofs_per_node) const
+    {
+        if (absolute_epsilons_.empty())
+        {  // No epsilons specified — this assembler is used for the Picard
+           // nonlinear solver or for the Newton nonlinear solver with
+           // analytical Jacobian, so there is nothing to do.
+            return;
+        }
+
+        int const num_abs_eps = static_cast<int>(absolute_epsilons_.size());
+        // TODO: restrict to equal for future?
+        if (num_abs_eps < max_non_deformation_dofs_per_node)
+        {
+            OGS_FATAL(
+                "The number of specified epsilons ({:d}) is smaller than the "
+                "maximum number of non-deformation d.o.f.s per node ({:d}).",
+                num_abs_eps, max_non_deformation_dofs_per_node);
+        }
+        if (num_abs_eps > max_non_deformation_dofs_per_node)
+        {
+            WARN(
+                "The number of specified epsilons ({:d}) is larger than the "
+                "maximum number of non-deformation d.o.f.s per node ({:d}). "
+                "The extra epsilons will be ignored.",
+                num_abs_eps, max_non_deformation_dofs_per_node);
+        }
+    }
+
+    void setNonDeformationComponentIDs(
+        std::vector<int> const& non_deformation_component_ids)
+    {
+        // Repeated in checkPerturbationSize to cover staggered scheme in TH2M
+        // and THM, which may be supported in future.
+        if (absolute_epsilons_.empty())
+        {  // No epsilons specified — this assembler is used for the Picard
+           // nonlinear solver or for the Newton nonlinear solver with
+           // analytical Jacobian, so there is nothing to do.
+            return;
+        }
+
+        // So far, the number of specified perturbations is checked inside this
+        // function, assuming the TH2M and THM processes do not use the
+        // staggered scheme. If the staggered scheme is supported in these
+        // processes, call `checkPerturbationSize(...)` and then
+        // `setNonDeformationComponentIDsNoSizeCheck(...)` instead.
+        checkPerturbationSize(non_deformation_component_ids.size());
+
+        non_deformation_component_ids_ = non_deformation_component_ids;
+    }
+
+    void setNonDeformationComponentIDsNoSizeCheck(
+        std::vector<int> const& non_deformation_component_ids)
+    {
+        non_deformation_component_ids_ = non_deformation_component_ids;
+    }
+
+    auto getVariableComponentEpsilonsView() const
+    {
+        assert(!non_deformation_component_ids_.empty());
+        namespace rv = ranges::views;
+        return non_deformation_component_ids_ |
+               rv::transform(
+                   [this](int comp_id) -> double const&
+                   {
+                       return absolute_epsilons_[static_cast<std::size_t>(
+                           comp_id)];
+                   });
+    }
+
+    auto isPerturbationEnabled() const { return !absolute_epsilons_.empty(); }
+
 protected:
+    /// IDs of the components that are not deformation variables. Used by the
+    /// numerical Jacobian assembler. It is manipulated by processes that use
+    /// the numerical Jacobian assembler. Therefore, it is thread-safe.
+    std::vector<int> non_deformation_component_ids_;
+
     std::vector<double> const absolute_epsilons_;
 };
 
