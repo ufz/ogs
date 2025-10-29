@@ -32,16 +32,6 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     std::vector<double> local_M_data(local_Jac_data.size());
     std::vector<double> local_K_data(local_Jac_data.size());
 
-    // TODO do not check in every call.
-    if (local_x_data.size() % absolute_epsilons_.size() != 0)
-    {
-        OGS_FATAL(
-            "The number of specified epsilons ({:d}) and the number of local "
-            "d.o.f.s ({:d}) do not match, i.e., the latter is not divisible by "
-            "the former.",
-            absolute_epsilons_.size(), local_x_data.size());
-    }
-
     auto const num_r_c =
         static_cast<Eigen::MatrixXd::Index>(local_x_data.size());
 
@@ -55,10 +45,11 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
         MathLib::createZeroedMatrix(local_Jac_data, num_r_c, num_r_c);
     _local_x_perturbed_data = local_x_data;
 
+    assert(this->non_deformation_component_ids_.size() > 0);
     auto const num_dofs_per_component =
-        local_x_data.size() / absolute_epsilons_.size();
+        local_x_data.size() / this->non_deformation_component_ids_.size();
 
-    auto const vds = local_assembler.getVectorDeformationSegment();
+    auto const nved = local_assembler.getNumberOfVectorElementsForDeformation();
 
     // Residual  res := M xdot + K x - b
     // Computing Jac := dres/dx
@@ -67,19 +58,17 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     //                  (Note: dM/dx and dK/dx actually have the second and
     //                  third index transposed.)
     // The loop computes the dM/dx, dK/dx and db/dx terms, the rest is computed
-    // afterwards.
-    for (Eigen::MatrixXd::Index i = 0; i < num_r_c; ++i)
+    // afterwards. The loop skips the entries corresponding to the deformation
+    // part of the solution vector if a vector segment size is given by nved.
+    // This is to avoid recomputing the analytic block of the deformation
+    // process.
+    auto const num_purterbated_colums = num_r_c - nved;
+    auto const perturbations = this->getVariableComponentEpsilonsView();
+    for (Eigen::MatrixXd::Index i = 0; i < num_purterbated_colums; ++i)
     {
-        if ((vds != std::nullopt) && i >= vds->start_index &&
-            (i < (vds->start_index + vds->size)))
-        {
-            // Avoid to compute the analytic block
-            continue;
-        }
-
         // assume that local_x_data is ordered by component.
         auto const component = i / num_dofs_per_component;
-        auto const eps = absolute_epsilons_[component];
+        auto const eps = perturbations[component];
 
         _local_x_perturbed_data[i] += eps;
         local_assembler.assemble(t, dt, _local_x_perturbed_data,
@@ -174,10 +163,11 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
         // Note: The deformation segment of \c b is already computed as
         // int{B^T sigma}dA, which is identical to K_uu * u. Therefore the
         // corresponding K block is set to zero.
-        if (vds != std::nullopt)
+        if (nved != 0)
         {
-            K.block(vds->start_index, vds->start_index, vds->size, vds->size)
-                .setZero();
+            auto const dm_start_index = num_purterbated_colums;
+            auto const dm_size = nved;
+            K.block(dm_start_index, dm_start_index, dm_size, dm_size).setZero();
         }
 
         b -= K * local_x;
