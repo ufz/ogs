@@ -23,6 +23,21 @@ class LocalAssemblerInterface;
 class AbstractJacobianAssembler
 {
 public:
+    //! Constructs a new instance.
+    //! \param absolute_epsilons perturbations of the components of the local
+    //! solution vector used    for evaluating the finite differences.
+    explicit AbstractJacobianAssembler(
+        std::vector<double> const&& absolute_epsilons)
+        : absolute_epsilons_(std::move(absolute_epsilons))
+    {
+        if (absolute_epsilons_.empty())
+        {
+            OGS_FATAL("No values for the absolute epsilons have been given.");
+        }
+    }
+
+    explicit AbstractJacobianAssembler() : absolute_epsilons_({}) {}
+
     //! Assembles the Jacobian, the matrices \f$M\f$ and \f$K\f$, and the vector
     //! \f$b\f$.
     virtual void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
@@ -48,6 +63,9 @@ public:
     virtual std::unique_ptr<AbstractJacobianAssembler> copy() const = 0;
 
     virtual ~AbstractJacobianAssembler() = default;
+
+protected:
+    std::vector<double> const absolute_epsilons_;
 };
 
 }  // namespace ProcessLib

@@ -19,12 +19,8 @@ namespace ProcessLib
 {
 CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
     std::vector<double>&& absolute_epsilons)
-    : _absolute_epsilons(std::move(absolute_epsilons))
+    : AbstractJacobianAssembler(std::move(absolute_epsilons))
 {
-    if (_absolute_epsilons.empty())
-    {
-        OGS_FATAL("No values for the absolute epsilons have been given.");
-    }
 }
 
 void CentralDifferencesJacobianAssembler::assembleWithJacobian(
@@ -37,13 +33,13 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     std::vector<double> local_K_data(local_Jac_data.size());
 
     // TODO do not check in every call.
-    if (local_x_data.size() % _absolute_epsilons.size() != 0)
+    if (local_x_data.size() % absolute_epsilons_.size() != 0)
     {
         OGS_FATAL(
             "The number of specified epsilons ({:d}) and the number of local "
             "d.o.f.s ({:d}) do not match, i.e., the latter is not divisible by "
             "the former.",
-            _absolute_epsilons.size(), local_x_data.size());
+            absolute_epsilons_.size(), local_x_data.size());
     }
 
     auto const num_r_c =
@@ -60,7 +56,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
     _local_x_perturbed_data = local_x_data;
 
     auto const num_dofs_per_component =
-        local_x_data.size() / _absolute_epsilons.size();
+        local_x_data.size() / absolute_epsilons_.size();
 
     auto const vds = local_assembler.getVectorDeformationSegment();
 
@@ -83,7 +79,7 @@ void CentralDifferencesJacobianAssembler::assembleWithJacobian(
 
         // assume that local_x_data is ordered by component.
         auto const component = i / num_dofs_per_component;
-        auto const eps = _absolute_epsilons[component];
+        auto const eps = absolute_epsilons_[component];
 
         _local_x_perturbed_data[i] += eps;
         local_assembler.assemble(t, dt, _local_x_perturbed_data,
