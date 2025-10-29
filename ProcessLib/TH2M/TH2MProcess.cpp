@@ -53,6 +53,13 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
         DisplacementDim>(
         LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
         _integration_point_writer, integration_order, local_assemblers_);
+
+    // For numerical Jacobian
+    // If the staggered scheme is to be supported in TH2M, please see the
+    // comment inside the setNonDeformationComponentIDs() function for the
+    // necessary modification.
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0, 1, 2} /* P_g, P_c, T */);
 }
 
 template <int DisplacementDim>
