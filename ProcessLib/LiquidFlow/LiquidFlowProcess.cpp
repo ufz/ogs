@@ -46,6 +46,10 @@ LiquidFlowProcess::LiquidFlowProcess(
 {
     DBUG("Create Liquid flow process.");
 
+    // For numerical Jacobian assembler
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0} /* only one variable: pressure */);
+
     std::string const residuum_name =
         _process_data.equation_balance_type == EquationBalanceType::volume
             ? "VolumetricFlowRate"
