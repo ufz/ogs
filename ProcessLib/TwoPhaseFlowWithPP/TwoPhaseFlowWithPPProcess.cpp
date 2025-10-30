@@ -33,6 +33,10 @@ TwoPhaseFlowWithPPProcess::TwoPhaseFlowWithPPProcess(
       _process_data(std::move(process_data))
 {
     DBUG("Create TwoPhaseFlowProcess with PP model.");
+
+    // For numerical Jacobian
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0, 1} /* P_g, P_c */);
 }
 
 void TwoPhaseFlowWithPPProcess::setInitialConditionsConcreteProcess(
