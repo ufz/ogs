@@ -9,6 +9,8 @@ deploy web site:
       optional: true
   rules:
     - if: $CI_COMMIT_TAG
+      variables:
+        HUGO_PARAMS_CURRENTVERSION: $CI_COMMIT_TAG
     - if: '$CI_COMMIT_BRANCH == "master"'
   script:
     # FeatureMatrix
@@ -31,7 +33,28 @@ deploy web site:
     - cp -rl ../build/*/web/content ./
     - yarn
     - yarn build
-    - netlify deploy --prod --dir=public --site=$OGS_NETLIFY_SITE_ID
+  pages:
+    publish: web/public
   cache:
     paths:
       - web/node_modules
+
+deploy web site tag:
+  stage: package
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs: [deploy web site]
+  tags: [envinf, shell]
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - rm -rf ogs-web
+    - git config --global user.name "GitLab CI"
+    - git config --global user.email "gitlab-ci-no-reply@opengeosys.org"
+    - git clone https://${CI_SERVER_HOST}/ogs/ogs-web.git
+    - cd ogs-web
+    - mv ../web/public $CI_COMMIT_TAG
+    - git add $CI_COMMIT_TAG
+    - rm stable && ln -s $CI_COMMIT_TAG stable && git add stable
+    - git commit -m "Release $CI_COMMIT_TAG"
+    - git push "https://${CI_COMMITTER_USER_AND_TOKEN}@${CI_SERVER_HOST}/ogs/ogs-web.git" HEAD:main
