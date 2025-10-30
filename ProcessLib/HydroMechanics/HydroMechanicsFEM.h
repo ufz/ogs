@@ -321,6 +321,11 @@ public:
             _ip_data, &IpData::eps, cache);
     }
 
+    int getNumberOfVectorElementsForDeformation() const override
+    {
+        return displacement_size;
+    }
+
 private:
     /**
      * Assemble local matrices and vectors arise from the linearized discretized
