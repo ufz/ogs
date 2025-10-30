@@ -704,10 +704,17 @@ void RichardsMechanicsLocalAssembler<
                                        MechanicalStrainData<DisplacementDim>>>(
                     SD_prev);
 
-            ip_data_[ip].updateConstitutiveRelation(
+            auto const C = ip_data_[ip].updateConstitutiveRelation(
                 variables, t, x_position, dt, temperature, sigma_eff,
                 sigma_eff_prev, eps_m, eps_m_prev, this->solid_material_,
                 this->material_states_[ip].material_state_variables);
+
+            if (this->process_data_.use_numerical_jacobian)
+            {
+                K.template block<displacement_size, displacement_size>(
+                     displacement_index, displacement_index)
+                    .noalias() += B.transpose() * C * B * w;
+            }
         }
 
         // p_SR

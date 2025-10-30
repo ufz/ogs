@@ -194,6 +194,9 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         config.getConfigParameter<bool>(
             "explicit_hm_coupling_in_unsaturated_zone", false);
 
+    bool const use_numerical_jacobian =
+        jacobian_assembler->isPerturbationEnabled();
+
     RichardsMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
@@ -202,7 +205,8 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         specific_body_force,
         micro_porosity_parameters,
         mass_lumping,
-        explicit_hm_coupling_in_unsaturated_zone};
+        explicit_hm_coupling_in_unsaturated_zone,
+        use_numerical_jacobian};
 
     SecondaryVariableCollection secondary_variables;
 
