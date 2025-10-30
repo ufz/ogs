@@ -1,5 +1,5 @@
-<!-- https://staging.opengeosys.org/_static/versions.json -->
-<div x-data="versionSwitcher('{{ site.Params.currentVersion }}', 'https://ogs.ogs.xyz/ogs-web/_static/versions.json')"
+<div
+  x-data="versionSwitcher('{{ site.Params.currentVersion }}', 'https://staging.opengeosys.org/_static/versions.json')"
   x-init="loadVersions()" class="relative inline-block text-left">
   <!-- Button -->
   <button @click="open = !open" type="button"
@@ -16,7 +16,7 @@
     <ul class="py-1 text-sm text-gray-700">
       <template x-for="v in versions" :key="v.version">
         <li>
-          <a :href="buildTargetURL(v.url)" class="block px-3 py-1.5 hover:bg-gray-100"
+          <a :href="v.url" class="block px-3 py-1.5 hover:bg-gray-100"
             :class="v.version === currentVersion ? 'font-semibold text-blue-600' : ''" x-text="v.version"></a>
         </li>
       </template>
@@ -43,14 +43,6 @@
         } catch (e) {
           console.error(e);
         }
-      },
-      buildTargetURL(baseUrl) {
-        const relPath = window.location.pathname
-          .replace(/^\/+/, '')
-          .split('/')
-          .slice(1) // remove current version segment
-          .join('/');
-        return baseUrl + relPath;
       }
     };
   }
