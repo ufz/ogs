@@ -39,6 +39,14 @@ HMPhaseFieldProcess<DisplacementDim>::HMPhaseFieldProcess(
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian assembler
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "The numericial Jacobian assembler is not supported for the "
+            "HMPhaseField process.");
+    }
+
     if (use_monolithic_scheme)
     {
         OGS_FATAL(
