@@ -56,6 +56,14 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
         DisplacementDim>(LocalAssemblerIF::getReflectionDataForOutput(),
                          _integration_point_writer, integration_order,
                          local_assemblers_);
+
+    // For numerical Jacobian
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "Numerical Jacobian is not implemented for "
+            "ThermoRichardsMechanicsProcess.");
+    }
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

@@ -41,6 +41,9 @@ ThermoRichardsFlowProcess::ThermoRichardsFlowProcess(
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian
+    this->_jacobian_assembler->setNonDeformationComponentIDs({0, 1} /*T, p */);
+
     _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 
