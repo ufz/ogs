@@ -1,0 +1,79 @@
+<!-- https://staging.opengeosys.org/_static/versions.json -->
+<div x-data="versionSwitcher('{{ site.Params.currentVersion }}', 'https://ogs.ogs.xyz/ogs-web/_static/versions.json')"
+  x-init="loadVersions()" class="relative inline-block text-left">
+  <!-- Button -->
+  <button @click="open = !open" type="button"
+    class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+    <span x-text="'Version: ' + currentVersion"></span>
+    <svg class="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 20 20" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7l3-3 3 3m0 6l-3 3-3-3" />
+    </svg>
+  </button>
+
+  <!-- Dropdown -->
+  <div x-show="open" @click.away="open = false"
+    class="absolute right-0 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+    <ul class="py-1 text-sm text-gray-700">
+      <template x-for="v in versions" :key="v.version">
+        <li>
+          <a :href="buildTargetURL(v.url)" class="block px-3 py-1.5 hover:bg-gray-100"
+            :class="v.version === currentVersion ? 'font-semibold text-blue-600' : ''" x-text="v.version"></a>
+        </li>
+      </template>
+    </ul>
+  </div>
+</div>
+
+<script>
+  function versionSwitcher(currentVersion, versionsUrl) {
+    return {
+      open: false,
+      currentVersion,
+      versions: [],
+      async loadVersions() {
+        try {
+          const response = await fetch(versionsUrl);
+          if (!response.ok) throw new Error('Failed to fetch versions.json');
+          let data = await response.json();
+
+          // Sort descending (dev → newest → older)
+          data.sort((a, b) => semverCompareDesc(a.version, b.version));
+
+          this.versions = data;
+        } catch (e) {
+          console.error(e);
+        }
+      },
+      buildTargetURL(baseUrl) {
+        const relPath = window.location.pathname
+          .replace(/^\/+/, '')
+          .split('/')
+          .slice(1) // remove current version segment
+          .join('/');
+        return baseUrl + relPath;
+      }
+    };
+  }
+
+  // Semantic version compare: descending, with "dev" (or "latest") first
+  function semverCompareDesc(a, b) {
+    const special = ["dev", "latest", "main", "master"];
+    const aIsSpecial = special.includes(a);
+    const bIsSpecial = special.includes(b);
+
+    // Special versions first
+    if (aIsSpecial && !bIsSpecial) return -1;
+    if (!aIsSpecial && bIsSpecial) return 1;
+    if (aIsSpecial && bIsSpecial) return a.localeCompare(b);
+
+    // Compare numeric versions
+    const pa = a.split('.').map(Number);
+    const pb = b.split('.').map(Number);
+
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+      const diff = (pb[i] || 0) - (pa[i] || 0); // note pb - pa for descending
+      if (diff !== 0) return diff;
+    }
+    return 0;
+  }
+</script>
