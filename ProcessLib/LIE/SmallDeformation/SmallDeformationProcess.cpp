@@ -44,6 +44,14 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
               std::move(secondary_variables)),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian assembler
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "The numericial Jacobian assembler is not supported for the "
+            "LIE SmallDeformationProcess.");
+    }
+
     INFO("[LIE/M] looking for fracture elements in the given mesh");
     std::vector<std::pair<std::size_t, std::vector<int>>>
         vec_branch_nodeID_matIDs;
@@ -60,7 +68,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     {
         OGS_FATAL(
             "The number of the given fracture properties ({:d}) are not "
-            "consistent with the number of fracture groups in a mesh ({:d}).",
+            "consistent with the number of fracture groups in a mesh "
+            "({:d}).",
             _process_data.fracture_properties.size(),
             _vec_fracture_mat_IDs.size());
     }
@@ -90,7 +99,8 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     // set fracture property
     for (auto& fracture_prop : _process_data.fracture_properties)
     {
-        // based on the 1st element assuming a fracture forms a straight line
+        // based on the 1st element assuming a fracture forms a straight
+        // line
         setFractureProperty(
             DisplacementDim,
             *_vec_fracture_elements[fracture_prop.fracture_id][0],
@@ -166,10 +176,11 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
     }
 
     //
-    // If Neumann BCs for the displacement_jump variable are required they need
-    // special treatment because of the levelset function. The implementation
-    // exists in the version 6.1.0 (e54815cc07ee89c81f953a4955b1c788595dd725)
-    // and was removed due to lack of applications.
+    // If Neumann BCs for the displacement_jump variable are required they
+    // need special treatment because of the levelset function. The
+    // implementation exists in the version 6.1.0
+    // (e54815cc07ee89c81f953a4955b1c788595dd725) and was removed due to
+    // lack of applications.
     //
 
     MeshLib::PropertyVector<int> const* material_ids(

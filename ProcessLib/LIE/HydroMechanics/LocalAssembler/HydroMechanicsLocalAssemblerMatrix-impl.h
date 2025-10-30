@@ -290,7 +290,7 @@ void HydroMechanicsLocalAssemblerMatrix<
         MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
         std::tie(sigma_eff, state, C) = std::move(*solution);
 
-        J_uu.noalias() += B.transpose() * C * B * ip_w;
+        J_uu.noalias() += (B.transpose() * C * B) * ip_w;
 
         rhs_u.noalias() -= B.transpose() * sigma_eff * ip_w;
         rhs_u.noalias() -= -H_u.transpose() * rho * gravity_vec * ip_w;

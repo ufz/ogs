@@ -53,6 +53,14 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian assembler
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "The numericial Jacobian assembler is not supported for the "
+            "LIE HydroMechanics process.");
+    }
+
     INFO("[LIE/HM] looking for fracture elements in the given mesh");
     std::vector<std::pair<std::size_t, std::vector<int>>>
         vec_branch_nodeID_matIDs;
@@ -545,8 +553,7 @@ void HydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
         const int monolithic_process_id = 0;
         auto const& pvs = getProcessVariables(monolithic_process_id);
         auto const it =
-            std::find_if(pvs.begin(), pvs.end(),
-                         [](ProcessVariable const& pv)
+            std::find_if(pvs.begin(), pvs.end(), [](ProcessVariable const& pv)
                          { return pv.getName() == "displacement_jump1"; });
         if (it == pvs.end())
         {
