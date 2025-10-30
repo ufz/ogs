@@ -1,6 +1,37 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
+/**
+ * \file
+ * \brief PHREEQC-backed ChemicalSolverInterface implementation.
+ *
+ * PhreeqcIO is the concrete coupling layer between OpenGeoSys and PHREEQC.
+ * For each \c chemical_system_id (one reactive control volume / local
+ * chemical system), it:
+ *
+ *  - prepares PHREEQC input blocks (SOLUTION, EQUILIBRIUM_PHASES, KINETICS,
+ *    EXCHANGE, SURFACE, etc.) from the transported component totals
+ *    \f$c_{T\alpha}\f$, the porous-medium state (porosity, mineral fractions,
+ *    reactive surface area), and the process variables (e.g. temperature,
+ *    pressure);
+ *
+ *  - calls PHREEQC through the IPhreeqc API, advancing each
+ *    \c chemical_system_id as a closed, well-mixed batch reactor over the
+ *    current timestep \f$\Delta t\f$ (i.e. no mass exchange between different
+ *    \c chemical_system_id inside PHREEQC during that solve);
+ *
+ *  - reads PHREEQC output (updated totals \f$c_{T\alpha}\f$, pH, pe/redox,
+ *    mineral amounts, etc.) and writes these reacted values back into
+ *    OpenGeoSys;
+ *
+ *  - updates porosity and solid volume fractions to reflect precipitation
+ *    and dissolution, so that flow / transport / mechanics in the next
+ *    timestep see the chemically modified medium.
+ *
+ * Temperature and pressure:
+ *  The interface allows passing temperature \f$T\f$ [K] and pressure \f$p\f$
+ *  [Pa] for each \c chemical_system_id via setChemicalSystemConcrete().
+ */
 #pragma once
 
 #include <memory>
@@ -23,6 +54,59 @@ struct Output;
 struct Dump;
 struct UserPunch;
 
+/**
+ * \class PhreeqcIO
+ * \brief Drives the chemistry step in the operator-split reactive transport
+ *        loop.
+ *
+ * Per timestep:
+ *
+ *  1. initializeChemicalSystemConcrete(...) /
+ *     setChemicalSystemConcrete(...):
+ *        For each \c chemical_system_id, store the transported totals
+ *        \f$c_{T\alpha}\f$, the current porous-medium state (porosity,
+ *        mineral fractions, reactive surface area), and the process
+ *        variables (e.g. temperature \f$T\f$, pressure \f$p\f$, time \f$t\f$,
+ *        and timestep \f$\Delta t\f$) in the corresponding ChemicalSystem.
+ *        Each \c chemical_system_id is treated as one local batch reactor.
+ *
+ *  2. executeSpeciationCalculation(dt):
+ *        Build PHREEQC input for all \c chemical_system_id, run PHREEQC via
+ *        IPhreeqc, and obtain the reacted state after advancing chemistry
+ *        over \f$\Delta t\f$:
+ *          - updated aqueous composition,
+ *          - reaction/source terms \f$R_{\alpha}\f$ for each transported
+ *            component,
+ *          - updated mineral amounts.
+ *
+ *  3. updateVolumeFractionPostReaction(...),
+ *     updatePorosityPostReaction(...):
+ *        Apply precipitation / dissolution back into OpenGeoSys by updating
+ *        mineral / solid volume fractions and porosity for each local system.
+ *        These updates feed into flow / transport / mechanics in the next
+ *        global step.
+ *
+ *  4. computeSecondaryVariable(...):
+ *        Optionally expose derived quantities (e.g. pH fields, mineral
+ *        fractions, surface loading) for output.
+ *
+ * Accessors:
+ *  - getConcentration(component_id, chemical_system_id):
+ *      Reacted total \f$c_{T\alpha}\f$ of a transported component for that
+ *      local system after the last chemistry step. Used as the starting
+ *      composition for the next transport solve.
+ *
+ *  - getComponentList():
+ *      List of transported components in the order expected by the transport
+ *      process.
+ *
+ * Internal data:
+ *  - _chemical_system holds the per-\c chemical_system_id definition
+ *    (aqueous solution, kinetic and equilibrium reactants, exchangers,
+ *    surface sites).
+ *  - writeInputsToFile(), callPhreeqc(), readOutputsFromFile() implement
+ *    PHREEQC I/O.
+ */
 class PhreeqcIO final : public ChemicalSolverInterface
 {
 public:

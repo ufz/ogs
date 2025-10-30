@@ -1,6 +1,41 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
+/**
+ * \file
+ * \brief Per-system aqueous state exchanged with PHREEQC.
+ *
+ * OpenGeoSys maps each reactive control volume to a local chemical system
+ * identified externally by \c chemical_system_id. Each local chemical system
+ * is treated as a closed, well-mixed batch reactor during the chemistry step:
+ * no mass is exchanged with any other system while PHREEQC is running.
+ *
+ * This file defines two core data structures:
+ *
+ *  - Component:
+ *    Represents one transported component (e.g. Na, Cl, Ca). For each
+ *    \c chemical_system_id, \c Component::amount holds the total inventory
+ *    of that component in that local chemical system. These totals
+ *    \f$c_{T\alpha}\f$ are passed to PHREEQC as input and are updated after
+ *    the chemistry step.
+ *
+ *  - AqueousSolution:
+ *    Collects the input state needed to build the PHREEQC SOLUTION block
+ *    for one local chemical system:
+ *      - temperature \f$T\f$ [K],
+ *      - pressure \f$p\f$ [Pa],
+ *      - redox control (pe, \c fixing_pe, \c pe0),
+ *      - charge-balance mode,
+ *      - the per-component totals \f$c_{T\alpha}\f$.
+ *
+ *    After PHREEQC runs, AqueousSolution is also used to store the reacted
+ *    output for that same \c chemical_system_id (updated pH, pe, etc.).
+ *
+ * Notes:
+ *  - \c Component::amount, pH, and pe are stored per \c chemical_system_id.
+ *    After each PHREEQC call, these per-system values are updated and then
+ *    written back into OpenGeoSys for the next transport step.
+ */
 #pragma once
 
 #include <iosfwd>
