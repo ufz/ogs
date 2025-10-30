@@ -1,2 +1,2 @@
-baseURL = "https://www.opengeosys.org"
-canonifyURLs = true
+baseURL = ""
+# canonifyURLs = true
