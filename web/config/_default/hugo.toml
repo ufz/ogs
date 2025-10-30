@@ -4,7 +4,7 @@ theme = "ogs"
 buildDrafts = false
 buildFuture = true
 enableGitInfo = true
-relativeurls = true
+baseURL = ""
 
 [module]
 [[module.mounts]]

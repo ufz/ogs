@@ -6,8 +6,6 @@ check web links:
     - .rules-master-manual
   needs: [meta, "build linux arch", "build linux petsc"]
   image: $WEB_IMAGE
-  variables:
-    HUGO_ENVIRONMENT: "staging"
   script:
     # Copy notebook pages
     - cp -rl build/*/web/content web/
