@@ -74,6 +74,11 @@ public:
     /// Get, if the solver can handle rectangular equation systems
     bool canSolveRectangular() const { return can_solve_rectangular_; }
 
+    /// Tells if the solver will perform the compute step the next time it is
+    /// called or if it can reuse the results from the preceding call.
+    bool willCompute(
+        MathLib::LinearSolverBehaviour const linear_solver_behaviour) const;
+
 protected:
     EigenOption option_;
     std::unique_ptr<EigenLinearSolverBase> solver_;
