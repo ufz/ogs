@@ -528,6 +528,15 @@ PropertyDataType Function::value(VariableArray const& variable_array,
     return std::visit(
         [&](auto&& impl_ptr)
         {
+            if (thread_id >=
+                static_cast<int>(impl_ptr->value_expressions.size()))
+            {
+                OGS_FATAL(
+                    "In Function-type property '{:s}' evaluation the "
+                    "OMP-thread with id {:d} exceeds the number of allocated "
+                    "threads {:d}.",
+                    name_, thread_id, impl_ptr->value_expressions.size());
+            }
             return evaluateExpressions(variables_, variable_array, pos, t,
                                        impl_ptr->value_expressions[thread_id],
                                        impl_ptr->variable_arrays[thread_id],
@@ -549,6 +558,15 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
     return std::visit(
         [&](auto&& impl_ptr)
         {
+            if (thread_id >=
+                static_cast<int>(impl_ptr->dvalue_expressions.size()))
+            {
+                OGS_FATAL(
+                    "In Function-type property '{:s}' evaluation the "
+                    "OMP-thread with id {:d} exceeds the number of allocated "
+                    "threads {:d}.",
+                    name_, thread_id, impl_ptr->value_expressions.size());
+            }
             auto const it = std::find_if(
                 begin(impl_ptr->dvalue_expressions[thread_id]),
                 end(impl_ptr->dvalue_expressions[thread_id]),
