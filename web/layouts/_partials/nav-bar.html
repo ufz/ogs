@@ -30,7 +30,8 @@
           {{ end }}
 
         </nav>
-        <div class="md:flex items-center justify-end space-x-8 md:flex-1 lg:w-0">
+        <div class="flex items-center justify-end space-x-4 md:space-x-8 flex-1 lg:w-0">
+          {{ partial "version-switcher.html" . }}
           <a href="#" id="nav-link-search">
             <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd"

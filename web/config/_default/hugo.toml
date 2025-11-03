@@ -4,6 +4,7 @@ theme = "ogs"
 buildDrafts = false
 buildFuture = true
 enableGitInfo = true
+baseURL = ""
 
 [module]
 [[module.mounts]]
@@ -36,6 +37,7 @@ style = "monokailight"
 
 [params]
 alert = ""
+currentVersion = "dev"
 
 [[menu.main]]
 name = "Discourse"

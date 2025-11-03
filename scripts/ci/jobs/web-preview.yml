@@ -8,7 +8,7 @@ preview web site:
     - job: "build linux petsc"
       optional: true
   variables:
-    HUGO_ENVIRONMENT: "staging"
+    HUGO_PARAMS_CURRENTVERSION: mr-$CI_MERGE_REQUEST_IID
   script:
     # Symlinks in content not allowed
     - ! find web/content -type l -print -quit | grep -q . || echo "Symlink(s) in web/content now allowed:" && find web/content -type l
