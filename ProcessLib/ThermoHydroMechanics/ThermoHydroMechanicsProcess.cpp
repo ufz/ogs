@@ -477,12 +477,12 @@ ThermoHydroMechanicsProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
     if (_process_variables.size() == 1)  // monolithic
     {
         per_process_residuum_names = {
-            {"HeatFlowRate", "MassFlowRate", "NodalForces"}};
+            {"HeatFlowRate", "VolumetricFlowRate", "NodalForces"}};
     }
     else  // staggered
     {
         per_process_residuum_names = {
-            {"HeatFlowRate"}, {"MassFlowRate"}, {"NodalForces"}};
+            {"HeatFlowRate"}, {"VolumetricFlowRate"}, {"NodalForces"}};
     }
 
     AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>::
