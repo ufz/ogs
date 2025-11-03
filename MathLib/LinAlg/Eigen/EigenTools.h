@@ -26,10 +26,13 @@ class EigenVector;
  * \param b                 RHS vector
  * \param vec_knownX_id    a vector of known solution entry IDs
  * \param vec_knownX_x     a vector of known solutions
+ * \param complete_for_A   determines if the modification of matrix A should be
+ * "complete", incomplete is faster but leaves A in a garbage state and only
+ * modifies b properly
  */
 void applyKnownSolution(
     EigenMatrix& A, EigenVector& b, EigenVector& /*x*/,
     const std::vector<EigenMatrix::IndexType>& vec_knownX_id,
-    const std::vector<double>& vec_knownX_x);
+    const std::vector<double>& vec_knownX_x, bool const complete_for_A);
 
 }  // namespace MathLib
