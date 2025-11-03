@@ -22,6 +22,7 @@
 #include <unordered_set>
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/OgsAsmThreads.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/VectorizedTensor.h"
@@ -484,11 +485,17 @@ Function::Function(
                               { return convertStringToVariable(s); }) |
         ranges::to<std::vector>;
 
+    auto const get_number_omp_threads = []()
+    {
 #ifdef _OPENMP
-    int const num_threads = omp_get_max_threads();
+        return omp_get_max_threads();
 #else
-    int const num_threads = 1;
+        return 1;
 #endif
+    };
+
+    int const num_threads = std::max(BaseLib::getNumberOfAssemblyThreads(),
+                                     get_number_omp_threads());
 
     impl2_ = std::make_unique<Implementation<2>>(
         num_threads, variables, value_string_expressions,
