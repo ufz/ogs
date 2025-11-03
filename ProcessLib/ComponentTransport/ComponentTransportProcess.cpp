@@ -11,6 +11,7 @@
 #include "ComponentTransportProcess.h"
 
 #include <cassert>
+#include <numeric>
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/view/drop.hpp>
 
@@ -63,6 +64,8 @@ ComponentTransportProcess::ComponentTransportProcess(
       _ls_compute_only_upon_timestep_change{
           ls_compute_only_upon_timestep_change}
 {
+    this->_jacobian_assembler->checkPerturbationSize(_process_variables.size());
+
     if (ls_compute_only_upon_timestep_change)
     {
         // TODO move this feature to some common location for all processes.
@@ -106,6 +109,14 @@ ComponentTransportProcess::ComponentTransportProcess(
 
     if (_use_monolithic_scheme)
     {
+        // For numerical Jacobian:
+        std::vector<int> non_deformation_component_ids(
+            _process_variables.size());
+        std::iota(non_deformation_component_ids.begin(),
+                  non_deformation_component_ids.end(), 0);
+        this->_jacobian_assembler->setNonDeformationComponentIDsNoSizeCheck(
+            non_deformation_component_ids);
+
         int const process_id = 0;
         for (auto const& pv : _process_variables[process_id])
         {
@@ -189,12 +200,14 @@ void ComponentTransportProcess::initializeConcreteProcess(
     {
         auto const& pv = transport_process_variables[component_id].get();
 
-        auto integration_point_values_accessor = [component_id](
-            ComponentTransportLocalAssemblerInterface const& loc_asm,
-            const double t,
-            std::vector<GlobalVector*> const& x,
-            std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-            std::vector<double>& cache) -> auto const&
+        auto integration_point_values_accessor =
+            [component_id](
+                ComponentTransportLocalAssemblerInterface const& loc_asm,
+                const double t,
+                std::vector<GlobalVector*> const& x,
+                std::vector<NumLib::LocalToGlobalIndexMap const*> const&
+                    dof_tables,
+                std::vector<double>& cache) -> auto const&
         {
             return loc_asm.getIntPtMolarFlux(t, x, dof_tables, cache,
                                              component_id);
@@ -222,8 +235,7 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
     }
 
     std::for_each(
-        x.begin(), x.end(),
-        [](auto const process_solution)
+        x.begin(), x.end(), [](auto const process_solution)
         { MathLib::LinAlg::setLocalAccessibleVector(*process_solution); });
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -251,6 +263,9 @@ void ComponentTransportProcess::assembleConcreteProcess(
     }
     else
     {
+        this->_jacobian_assembler->setNonDeformationComponentIDsNoSizeCheck(
+            {process_id});
+
         std::generate_n(std::back_inserter(dof_tables),
                         _process_variables.size(),
                         [&]() { return _local_to_global_index_map.get(); });

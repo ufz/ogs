@@ -44,6 +44,10 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
       _bheMeshData(std::move(bhe_mesh_data)),
       _asm_mat_cache{_process_data._is_linear, true /*use_monolithic_scheme*/}
 {
+    // For numerical Jacobian assembler
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0, 1} /* for two temperature variables */);
+
     if (_bheMeshData.BHE_mat_IDs.size() !=
         _process_data._vec_BHE_property.size())
     {
@@ -225,7 +229,7 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
         if (!getActiveElementIDs().empty())
         {
             OGS_FATAL(
-                "Domain Deactivation is currently not implemnted with "
+                "Domain Deactivation is currently not implemented with "
                 "linear optimization.");
         }
 
@@ -694,7 +698,8 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                                     bhe.getBHEInflowDirichletBCNodesAndComponents(
                                         bc_top_node_id, bc_bottom_node_id,
                                         in_out_component_id.first)),
-                                [&bhe](double const T, double const t) {
+                                [&bhe](double const T, double const t)
+                                {
                                     return bhe.updateFlowRateAndTemperature(T,
                                                                             t);
                                 }));

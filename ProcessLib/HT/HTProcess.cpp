@@ -42,6 +42,12 @@ HTProcess::HTProcess(
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux))
 {
+    this->_jacobian_assembler->checkPerturbationSize(2);
+    if (_use_monolithic_scheme)
+    {
+        this->_jacobian_assembler->setNonDeformationComponentIDsNoSizeCheck(
+            {0, 1} /* two variables: pressure and temperature */);
+    }
 }
 
 void HTProcess::initializeConcreteProcess(
@@ -100,6 +106,11 @@ void HTProcess::assembleConcreteProcess(
         }
         dof_tables.emplace_back(_local_to_global_index_map.get());
         dof_tables.emplace_back(_local_to_global_index_map.get());
+
+        // For numerical Jacobian assembler
+        // (only one variable per process in staggered scheme);
+        this->_jacobian_assembler->setNonDeformationComponentIDsNoSizeCheck(
+            {process_id});
     }
 
     // Call global assembler for each local assembly item.
