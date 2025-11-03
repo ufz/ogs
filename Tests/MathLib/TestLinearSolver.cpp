@@ -206,7 +206,7 @@ void checkLinearSolverInterface(T_MATRIX& A,
 
     // apply BC
     MathLib::applyKnownSolution(A, rhs, x, ex1.vec_dirichlet_bc_id,
-                                ex1.vec_dirichlet_bc_value);
+                                ex1.vec_dirichlet_bc_value, true);
 
     MathLib::finalizeMatrixAssembly(A);
 
