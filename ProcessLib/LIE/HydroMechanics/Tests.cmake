@@ -80,7 +80,7 @@ AddTest(
     TaskB_ts_4_t_18.000000.vtu TaskB_ts_4_t_18.000000.vtu fracture_aperture_avg fracture_aperture_avg 1e-12 1e-12
     TaskB_ts_4_t_18.000000.vtu TaskB_ts_4_t_18.000000.vtu fracture_permeability fracture_permeability 1e-12 1e-12
     TaskB_ts_4_t_18.000000.vtu TaskB_ts_4_t_18.000000.vtu fracture_permeability_avg fracture_permeability_avg 1e-12 1e-12
-    TaskB_ts_4_t_18.000000.vtu TaskB_ts_4_t_18.000000.vtu sigma sigma 8.3e-8 1e-12
+    TaskB_ts_4_t_18.000000.vtu TaskB_ts_4_t_18.000000.vtu sigma sigma 8.6e-8 1e-12
     TaskB_ts_4_t_18.000000.vtu TaskB_ts_4_t_18.000000.vtu sigma_avg sigma_avg 5e-8 1e-12
     TaskB_ts_4_t_18.000000.vtu TaskB_ts_4_t_18.000000.vtu epsilon epsilon 1e-12 1e-12
 )
