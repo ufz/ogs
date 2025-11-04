@@ -47,7 +47,7 @@ public:
 
 private:
     //// read point data in Supermesh
-    static void readPoints(xmlNodePtr nodesEle, const std::string& tag, int dim,
+    static void readPoints(xmlNodePtr nodesEle, const xmlChar* tag, int dim,
                            std::vector<GeoLib::Point*>& points);
 };
 }  // namespace FileIO

@@ -22,13 +22,13 @@
 namespace
 {
 
-inline std::string getProp(xmlNodePtr node, const char* name)
+inline std::string getProp(xmlNodePtr node, const xmlChar* name)
 {
     if (!node)
     {
         return {};
     }
-    xmlChar* v = xmlGetProp(node, reinterpret_cast<const xmlChar*>(name));
+    xmlChar* v = xmlGetProp(node, name);
     if (!v)
     {
         return {};
@@ -54,7 +54,7 @@ inline std::string getText(xmlNodePtr node)
     return s;
 }
 
-inline xmlNodePtr firstChild(xmlNodePtr parent, const char* name)
+inline xmlNodePtr firstChild(xmlNodePtr parent, const xmlChar* name)
 {
     if (!parent)
     {
@@ -62,8 +62,7 @@ inline xmlNodePtr firstChild(xmlNodePtr parent, const char* name)
     }
     for (xmlNodePtr n = parent->children; n; n = n->next)
     {
-        if (n->type == XML_ELEMENT_NODE &&
-            xmlStrcmp(n->name, reinterpret_cast<const xmlChar*>(name)) == 0)
+        if (n->type == XML_ELEMENT_NODE && xmlStrcmp(n->name, name) == 0)
         {
             return n;
         }
@@ -150,11 +149,11 @@ void FEFLOWGeoInterface::readFEFLOWFile(const std::string& filename,
 }
 
 void FEFLOWGeoInterface::readPoints(xmlNodePtr nodesEle,
-                                    const std::string& tag,
+                                    const xmlChar* tag,
                                     int dim,
                                     std::vector<GeoLib::Point*>& points)
 {
-    xmlNodePtr xmlEle = firstChild(nodesEle, tag.c_str());
+    xmlNodePtr xmlEle = firstChild(nodesEle, tag);
     if (xmlEle == nullptr)
     {
         return;
@@ -220,7 +219,8 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
         return;
     }
 
-    xmlNodePtr nodesEle = firstChild(docElem, "nodes");
+    static constexpr xmlChar nodes_name[] = "nodes";
+    xmlNodePtr nodesEle = firstChild(docElem, nodes_name);
     if (nodesEle == nullptr)
     {
         xmlFreeDoc(doc);
@@ -228,7 +228,8 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
         return;
     }
 
-    const std::string cnt = getProp(nodesEle, "count");
+    static constexpr xmlChar count_name[] = "count";
+    const std::string cnt = getProp(nodesEle, count_name);
     const long n_points = cnt.empty() ? 0L : std::stol(cnt);
 
     // Use unique_ptr for RAII-based cleanup
@@ -239,9 +240,13 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     std::vector<GeoLib::Point*> raw_points(static_cast<std::size_t>(n_points),
                                            nullptr);
 
-    readPoints(nodesEle, "fixed", static_cast<int>(dimension), raw_points);
-    readPoints(nodesEle, "linear", static_cast<int>(dimension), raw_points);
-    readPoints(nodesEle, "parabolic", static_cast<int>(dimension), raw_points);
+    static constexpr xmlChar fixed_name[] = "fixed";
+    readPoints(nodesEle, fixed_name, static_cast<int>(dimension), raw_points);
+    static constexpr xmlChar linear_name[] = "linear";
+    readPoints(nodesEle, linear_name, static_cast<int>(dimension), raw_points);
+    static constexpr xmlChar parabolic_name[] = "parabolic";
+    readPoints(nodesEle, parabolic_name, static_cast<int>(dimension),
+               raw_points);
 
     // Transfer ownership to unique_ptrs
     for (std::size_t i = 0; i < raw_points.size(); ++i)
@@ -249,7 +254,8 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
         temp_points[i].reset(raw_points[i]);
     }
 
-    xmlNodePtr polygonsEle = firstChild(docElem, "polygons");
+    static constexpr xmlChar polygons_name[] = "polygons";
+    xmlNodePtr polygonsEle = firstChild(docElem, polygons_name);
     if (polygonsEle == nullptr)
     {
         // unique_ptrs will automatically clean up
@@ -262,20 +268,20 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
 
     for (xmlNodePtr child = polygonsEle->children; child; child = child->next)
     {
+        static constexpr xmlChar polygon_name[] = "polygon";
         if (child->type != XML_ELEMENT_NODE ||
-            xmlStrcmp(child->name,
-                      reinterpret_cast<const xmlChar*>("polygon")) != 0)
+            xmlStrcmp(child->name, polygon_name) != 0)
         {
             continue;
         }
 
-        xmlNodePtr nodes = firstChild(child, "nodes");
+        xmlNodePtr nodes = firstChild(child, nodes_name);
         if (nodes == nullptr)
         {
             continue;
         }
 
-        const std::string cnt_nodes = getProp(nodes, "count");
+        const std::string cnt_nodes = getProp(nodes, count_name);
         const std::size_t n_pts =
             cnt_nodes.empty() ? 0u
                               : static_cast<std::size_t>(std::stol(cnt_nodes));
