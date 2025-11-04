@@ -281,7 +281,7 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
         bc_value[0] = mrank + 1;
     }
 
-    MathLib::applyKnownSolution(A, b, x, bc_id, bc_value);
+    MathLib::applyKnownSolution(A, b, x, bc_id, bc_value, true);
 
     MathLib::finalizeMatrixAssembly(A);
 

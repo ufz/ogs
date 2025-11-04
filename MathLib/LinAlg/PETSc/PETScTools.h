@@ -31,8 +31,10 @@ namespace MathLib
    \param x              Solution vector
    \param vec_knownX_id  A vector of known solution entry IDs
    \param vec_knownX_x   A vector of known solutions
+   \param complete_for_A Provided for compatibility with Eigen, unused
 */
 void applyKnownSolution(PETScMatrix& A, PETScVector& b, PETScVector& x,
                         const std::vector<PetscInt>& vec_knownX_id,
-                        const std::vector<PetscScalar>& vec_knownX_x);
+                        const std::vector<PetscScalar>& vec_knownX_x,
+                        bool const complete_for_A);
 }  // end of namespace MathLib
