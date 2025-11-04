@@ -22,34 +22,14 @@
 namespace
 {
 
-inline std::string getProp(xmlNodePtr node, const xmlChar* name)
+inline std::string xmlCharToString(xmlChar* v)
 {
-    if (!node)
-    {
-        return {};
-    }
-    xmlChar* v = xmlGetProp(node, name);
     if (!v)
     {
         return {};
     }
     std::string s(reinterpret_cast<const char*>(v));
-    xmlFree(v);
-    return s;
-}
-
-inline std::string getText(xmlNodePtr node)
-{
-    if (!node)
-    {
-        return {};
-    }
-    xmlChar* v = xmlNodeGetContent(node);
-    if (!v)
-    {
-        return {};
-    }
-    std::string s(reinterpret_cast<const char*>(v));
+    BaseLib::trim(s);
     xmlFree(v);
     return s;
 }
@@ -159,7 +139,7 @@ void FEFLOWGeoInterface::readPoints(xmlNodePtr nodesEle,
         return;
     }
 
-    std::istringstream ss(getText(xmlEle));
+    std::istringstream ss(xmlCharToString(xmlNodeGetContent(xmlEle)));
     std::string line_str;
     while (std::getline(ss, line_str))
     {
@@ -229,16 +209,11 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     }
 
     static constexpr xmlChar count_name[] = "count";
-    const std::string cnt = getProp(nodesEle, count_name);
-    const long n_points = cnt.empty() ? 0L : std::stol(cnt);
-
-    // Use unique_ptr for RAII-based cleanup
-    std::vector<std::unique_ptr<GeoLib::Point>> temp_points;
-    temp_points.resize(static_cast<std::size_t>(n_points));
+    const std::string cnt = xmlCharToString(xmlGetProp(nodesEle, count_name));
+    const std::size_t n_points = cnt.empty() ? 0u : std::stoul(cnt);
 
     // Convert to raw pointer vector for readPoints compatibility
-    std::vector<GeoLib::Point*> raw_points(static_cast<std::size_t>(n_points),
-                                           nullptr);
+    std::vector<GeoLib::Point*> raw_points(n_points, nullptr);
 
     static constexpr xmlChar fixed_name[] = "fixed";
     readPoints(nodesEle, fixed_name, static_cast<int>(dimension), raw_points);
@@ -249,6 +224,7 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
                raw_points);
 
     // Transfer ownership to unique_ptrs
+    std::vector<std::unique_ptr<GeoLib::Point>> temp_points(n_points);
     for (std::size_t i = 0; i < raw_points.size(); ++i)
     {
         temp_points[i].reset(raw_points[i]);
@@ -281,16 +257,15 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
             continue;
         }
 
-        const std::string cnt_nodes = getProp(nodes, count_name);
+        const std::string cnt_nodes =
+            xmlCharToString(xmlGetProp(nodes, count_name));
         const std::size_t n_pts =
             cnt_nodes.empty() ? 0u
-                              : static_cast<std::size_t>(std::stol(cnt_nodes));
-        std::string pt_ids = getText(nodes);
-        BaseLib::trim(pt_ids);
+                              : static_cast<std::size_t>(std::stoul(cnt_nodes));
+        std::istringstream ss(xmlCharToString(xmlNodeGetContent(nodes)));
 
         auto line = std::make_unique<GeoLib::Polyline>(raw_points);
 
-        std::istringstream ss(pt_ids);
         for (std::size_t i = 0; i < n_pts; ++i)
         {
             int pt_id = 0;
