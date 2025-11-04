@@ -15,6 +15,7 @@
 #include <range/v3/view/iota.hpp>
 #include <vector>
 
+#include "BaseLib/OgsAsmThreads.h"
 #include "BaseLib/StringTools.h"
 #include "BaseLib/ThreadException.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -169,55 +170,6 @@ void runAssembly(
     }
 }
 
-int getNumberOfThreads()
-{
-    char const* const num_threads_env = std::getenv("OGS_ASM_THREADS");
-
-    if (!num_threads_env)
-    {
-        INFO(
-            "Threads used for ParallelVectorMatrixAssembler: 1. This is the "
-            "default when OGS_ASM_THREADS environment variable is not set.");
-        return 1;
-    }
-
-    if (std::strlen(num_threads_env) == 0)
-    {
-        OGS_FATAL("The environment variable OGS_ASM_THREADS is set but empty.");
-    }
-
-    std::string num_threads_str{num_threads_env};
-    BaseLib::trim(num_threads_str);
-
-    std::istringstream num_threads_iss{num_threads_str};
-    int num_threads = -1;
-
-    num_threads_iss >> num_threads;
-
-    if (!num_threads_iss)
-    {
-        OGS_FATAL("Error parsing OGS_ASM_THREADS (= \"{}\").", num_threads_env);
-    }
-
-    if (!num_threads_iss.eof())
-    {
-        OGS_FATAL(
-            "Error parsing OGS_ASM_THREADS (= \"{}\"): not read entirely, the "
-            "remainder is \"{}\"",
-            num_threads_env,
-            num_threads_iss.str().substr(num_threads_iss.tellg()));
-    }
-
-    if (num_threads < 1)
-    {
-        OGS_FATAL(
-            "You asked (via OGS_ASM_THREADS) to assemble with {} < 1 thread.",
-            num_threads);
-    }
-
-    INFO("Threads used for ParallelVectorMatrixAssembler: {}.", num_threads);
-    return num_threads;
-}
 }  // namespace
 
 namespace ProcessLib::Assembly
@@ -225,8 +177,9 @@ namespace ProcessLib::Assembly
 ParallelVectorMatrixAssembler::ParallelVectorMatrixAssembler(
     AbstractJacobianAssembler& jacobian_assembler)
     : jacobian_assembler_{jacobian_assembler},
-      num_threads_(getNumberOfThreads())
+      num_threads_(BaseLib::getNumberOfAssemblyThreads())
 {
+    INFO("Threads used for ParallelVectorMatrixAssembler: {}.", num_threads_);
 }
 
 void ParallelVectorMatrixAssembler::assembleWithJacobian(

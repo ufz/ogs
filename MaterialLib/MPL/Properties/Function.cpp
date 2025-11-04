@@ -9,6 +9,10 @@
 
 #include "MaterialLib/MPL/Properties/Function.h"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 #include <exprtk.hpp>
 #include <numeric>
 #include <range/v3/range/conversion.hpp>
@@ -18,6 +22,7 @@
 #include <unordered_set>
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/OgsAsmThreads.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/VectorizedTensor.h"
@@ -68,6 +73,7 @@ public:
 
 public:
     Implementation(
+        int num_threads,
         std::vector<std::string> const& variables,
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
@@ -83,21 +89,30 @@ private:
         std::vector<std::string> const& variables,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves,
+        VariableArray& variable_array);
+
+    /// Create symbol tables for all threads.
+    std::vector<exprtk::symbol_table<double>> createSymbolTables(
+        int num_threads,
+        std::vector<std::string> const& variables,
+        std::map<std::string,
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);
 
 public:
-    /// Value expressions.
+    /// Value expressions per thread.
     /// Multiple expressions are representing vector-valued functions.
-    std::vector<Expression> value_expressions;
+    std::vector<std::vector<Expression>> value_expressions;
 
-    /// Derivative expressions with respect to the variable.
+    /// Derivative expressions with respect to the variable per thread.
     /// Multiple expressions are representing vector-valued functions.
-    std::vector<std::pair<Variable, std::vector<Expression>>>
+    std::vector<std::vector<std::pair<Variable, std::vector<Expression>>>>
         dvalue_expressions;
 
-    /// Stores values for evaluation of vectorial quantities. Needed for
-    /// constant pointers for exprtk.
-    mutable VariableArray variable_array;
+    /// Stores values for evaluation of vectorial quantities per thread. Needed
+    /// for constant pointers for exprtk.
+    std::vector<VariableArray> variable_arrays;
 
     std::map<std::string, CurveWrapper> _curve_wrappers;
 
@@ -109,7 +124,8 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
     std::vector<std::string> const& variables,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    VariableArray& variable_array)
 {
     exprtk::symbol_table<double> symbol_table;
     symbol_table.add_constants();
@@ -185,9 +201,29 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
     }
     return symbol_table;
 }
+template <int D>
+std::vector<exprtk::symbol_table<double>>
+Function::Implementation<D>::createSymbolTables(
+    int num_threads,
+    std::vector<std::string> const& variables,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves)
+{
+    std::vector<exprtk::symbol_table<double>> symbol_tables(num_threads);
+
+    for (int thread_id = 0; thread_id < num_threads; ++thread_id)
+    {
+        symbol_tables[thread_id] =
+            createSymbolTable(variables, curves, variable_arrays[thread_id]);
+    }
+
+    return symbol_tables;
+}
 
 template <int D>
 Function::Implementation<D>::Implementation(
+    int num_threads,
     std::vector<std::string> const& variables,
     std::vector<std::string> const& value_string_expressions,
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
@@ -196,19 +232,30 @@ Function::Implementation<D>::Implementation(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    auto symbol_table = createSymbolTable(variables, curves);
+    variable_arrays.resize(num_threads);
+    value_expressions.resize(num_threads);
+    dvalue_expressions.resize(num_threads);
 
-    // value expressions.
-    value_expressions =
-        compileExpressions(symbol_table, value_string_expressions);
+    auto symbol_tables = createSymbolTables(num_threads, variables, curves);
 
-    // dValue expressions.
-    for (auto const& [variable_name, string_expressions] :
-         dvalue_string_expressions)
+    // value expressions per thread.
+    for (int thread_id = 0; thread_id < num_threads; ++thread_id)
     {
-        dvalue_expressions.emplace_back(
-            convertStringToVariable(variable_name),
-            compileExpressions(symbol_table, string_expressions));
+        value_expressions[thread_id] = compileExpressions(
+            symbol_tables[thread_id], value_string_expressions);
+    }
+
+    // dValue expressions per thread.
+    for (int thread_id = 0; thread_id < num_threads; ++thread_id)
+    {
+        for (auto const& [variable_name, string_expressions] :
+             dvalue_string_expressions)
+        {
+            dvalue_expressions[thread_id].emplace_back(
+                convertStringToVariable(variable_name),
+                compileExpressions(symbol_tables[thread_id],
+                                   string_expressions));
+        }
     }
 }
 
@@ -315,41 +362,35 @@ static PropertyDataType evaluateExpressions(
     VariableArray const& new_variable_array,
     ParameterLib::SpatialPosition const& pos, double const t,
     std::vector<exprtk::expression<double>> const& expressions,
-    VariableArray& variable_array, std::mutex& mutex,
-    bool const spatial_position_is_required)
+    VariableArray& variable_array, bool const spatial_position_is_required)
 {
     std::vector<double> result(expressions.size());
 
-    {
-        std::lock_guard lock_guard(mutex);
-        updateVariableArrayValues(variables, new_variable_array,
-                                  variable_array);
+    updateVariableArrayValues(variables, new_variable_array, variable_array);
 
-        std::transform(
-            begin(expressions), end(expressions), begin(result),
-            [t, &pos, spatial_position_is_required](auto const& e)
-            {
-                auto& symbol_table = e.get_symbol_table();
-                symbol_table.get_variable("t")->ref() = t;
+    std::transform(begin(expressions), end(expressions), begin(result),
+                   [t, &pos, spatial_position_is_required](auto const& e)
+                   {
+                       auto& symbol_table = e.get_symbol_table();
+                       symbol_table.get_variable("t")->ref() = t;
 
-                if (spatial_position_is_required)
-                {
-                    if (!pos.getCoordinates())
-                    {
-                        OGS_FATAL(
-                            "FunctionParameter: The spatial position "
-                            "has to be set by "
-                            "coordinates.");
-                    }
-                    auto const coords = pos.getCoordinates().value();
-                    symbol_table.get_variable("x")->ref() = coords[0];
-                    symbol_table.get_variable("y")->ref() = coords[1];
-                    symbol_table.get_variable("z")->ref() = coords[2];
-                }
+                       if (spatial_position_is_required)
+                       {
+                           if (!pos.getCoordinates())
+                           {
+                               OGS_FATAL(
+                                   "FunctionParameter: The spatial position "
+                                   "has to be set by "
+                                   "coordinates.");
+                           }
+                           auto const coords = pos.getCoordinates().value();
+                           symbol_table.get_variable("x")->ref() = coords[0];
+                           symbol_table.get_variable("y")->ref() = coords[1];
+                           symbol_table.get_variable("z")->ref() = coords[2];
+                       }
 
-                return e.value();
-            });
-    }
+                       return e.value();
+                   });
 
     switch (result.size())
     {
@@ -444,10 +485,24 @@ Function::Function(
                               { return convertStringToVariable(s); }) |
         ranges::to<std::vector>;
 
+    auto const get_number_omp_threads = []()
+    {
+#ifdef _OPENMP
+        return omp_get_max_threads();
+#else
+        return 1;
+#endif
+    };
+
+    int const num_threads = std::max(BaseLib::getNumberOfAssemblyThreads(),
+                                     get_number_omp_threads());
+
     impl2_ = std::make_unique<Implementation<2>>(
-        variables, value_string_expressions, dvalue_string_expressions, curves);
+        num_threads, variables, value_string_expressions,
+        dvalue_string_expressions, curves);
     impl3_ = std::make_unique<Implementation<3>>(
-        variables, value_string_expressions, dvalue_string_expressions, curves);
+        num_threads, variables, value_string_expressions,
+        dvalue_string_expressions, curves);
 }
 
 std::variant<Function::Implementation<2>*, Function::Implementation<3>*>
@@ -472,12 +527,26 @@ PropertyDataType Function::value(VariableArray const& variable_array,
                                  ParameterLib::SpatialPosition const& pos,
                                  double const t, double const /*dt*/) const
 {
+#ifdef _OPENMP
+    int const thread_id = omp_get_thread_num();
+#else
+    int const thread_id = 0;
+#endif
     return std::visit(
         [&](auto&& impl_ptr)
         {
+            if (thread_id >=
+                static_cast<int>(impl_ptr->value_expressions.size()))
+            {
+                OGS_FATAL(
+                    "In Function-type property '{:s}' evaluation the "
+                    "OMP-thread with id {:d} exceeds the number of allocated "
+                    "threads {:d}.",
+                    name_, thread_id, impl_ptr->value_expressions.size());
+            }
             return evaluateExpressions(variables_, variable_array, pos, t,
-                                       impl_ptr->value_expressions,
-                                       impl_ptr->variable_array, mutex_,
+                                       impl_ptr->value_expressions[thread_id],
+                                       impl_ptr->variable_arrays[thread_id],
                                        impl_ptr->spatial_position_is_required);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
@@ -488,15 +557,29 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                                   ParameterLib::SpatialPosition const& pos,
                                   double const t, double const /*dt*/) const
 {
+#ifdef _OPENMP
+    int const thread_id = omp_get_thread_num();
+#else
+    int const thread_id = 0;
+#endif
     return std::visit(
         [&](auto&& impl_ptr)
         {
-            auto const it = std::find_if(begin(impl_ptr->dvalue_expressions),
-                                         end(impl_ptr->dvalue_expressions),
-                                         [&variable](auto const& v)
-                                         { return v.first == variable; });
+            if (thread_id >=
+                static_cast<int>(impl_ptr->dvalue_expressions.size()))
+            {
+                OGS_FATAL(
+                    "In Function-type property '{:s}' evaluation the "
+                    "OMP-thread with id {:d} exceeds the number of allocated "
+                    "threads {:d}.",
+                    name_, thread_id, impl_ptr->value_expressions.size());
+            }
+            auto const it = std::find_if(
+                begin(impl_ptr->dvalue_expressions[thread_id]),
+                end(impl_ptr->dvalue_expressions[thread_id]),
+                [&variable](auto const& v) { return v.first == variable; });
 
-            if (it == end(impl_ptr->dvalue_expressions))
+            if (it == end(impl_ptr->dvalue_expressions[thread_id]))
             {
                 OGS_FATAL(
                     "Requested derivative with respect to the variable {:s} "
@@ -506,8 +589,8 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
             }
 
             return evaluateExpressions(variables_, variable_array, pos, t,
-                                       it->second, impl_ptr->variable_array,
-                                       mutex_,
+                                       it->second,
+                                       impl_ptr->variable_arrays[thread_id],
                                        impl_ptr->spatial_position_is_required);
         },
         getImplementationForDimensionOfVariableArray(variable_array));

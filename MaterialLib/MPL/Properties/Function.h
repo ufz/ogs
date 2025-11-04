@@ -25,8 +25,7 @@ namespace MaterialPropertyLib
 /// `<curves>` section can be called using their names. A curve is a single
 /// argument function and can be used in an expression like `curveA(sin(t))`.
 ///
-/// \warning The evaluation calls are not to be used in parallel (openMP),
-/// because the values' updates are using the same space.
+/// The evaluation is thread-safe for OpenMP by using per-thread storage.
 class Function final : public Property
 {
 public:
@@ -65,7 +64,5 @@ private:
 
     /// Variables used in the exprtk expressions.
     std::vector<Variable> variables_;
-
-    mutable std::mutex mutex_;
 };
 }  // namespace MaterialPropertyLib
