@@ -22,7 +22,6 @@ Checks: >
 
 WarningsAsErrors: ""
 HeaderFilterRegex: ".*"
-AnalyzeTemporaryDtors: false
 FormatStyle: file
 CheckOptions:
   - key: google-readability-braces-around-statements.ShortStatementLines
