@@ -87,7 +87,10 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
         {
             current_timestep = previous_timestep;
         }
-        vec_t.push_back(current_timestep.current()());
+        if (timestepper_dt > 0)
+        {
+            vec_t.push_back(current_timestep.current()());
+        }
     }
 
     return vec_t;
