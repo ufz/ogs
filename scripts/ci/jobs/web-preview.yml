@@ -9,6 +9,7 @@ preview web site:
       optional: true
   variables:
     HUGO_PARAMS_CURRENTVERSION: mr-$CI_MERGE_REQUEST_IID
+    HUGO_BASEURL: $CI_PAGES_URL
   script:
     # Symlinks in content not allowed
     - ! find web/content -type l -print -quit | grep -q . || echo "Symlink(s) in web/content now allowed:" && find web/content -type l

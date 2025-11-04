@@ -11,7 +11,10 @@ deploy web site:
     - if: $CI_COMMIT_TAG
       variables:
         HUGO_PARAMS_CURRENTVERSION: $CI_COMMIT_TAG
+        HUGO_BASEURL: https://www.opengeosys.org/$CI_COMMIT_TAG
     - if: '$CI_COMMIT_BRANCH == "master"'
+      variables:
+        HUGO_BASEURL: $CI_PAGES_URL
   script:
     # FeatureMatrix
     - curl -fSL -O https://gitlab.opengeosys.org/ogs/inf/featurematrix/-/archive/main/featurematrix-main.tar.gz
