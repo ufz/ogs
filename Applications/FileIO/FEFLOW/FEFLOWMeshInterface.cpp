@@ -81,8 +81,7 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             vec_nodes.resize(fem_dim.n_nodes);
             std::size_t count = 0;
             double dummy_coords[3] = {};
-            std::generate(vec_nodes.begin(), vec_nodes.end(),
-                          [&]()
+            std::generate(vec_nodes.begin(), vec_nodes.end(), [&]()
                           { return new MeshLib::Node(dummy_coords, count++); });
             line_stream.clear();
         }
@@ -284,7 +283,14 @@ MeshLib::Mesh* FEFLOWMeshInterface::readFEFLOWFile(const std::string& filename)
             }
         }
     }
-
+    for (auto* pt : points)
+    {
+        delete pt;
+    }
+    for (auto* line : lines)
+    {
+        delete line;
+    }
     return mesh.release();
 }
 
