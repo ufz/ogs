@@ -59,9 +59,11 @@ private:
     NumLib::IndexValueVector<GlobalIndexType> _bc_values;
 };
 
+void parsePhaseFieldIrreversibleDamageOracleBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<PhaseFieldIrreversibleDamageOracleBoundaryCondition>
 createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
-    BaseLib::ConfigTree const& config,
     NumLib::LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh,
     int const variable_id, int const component_id);
 
