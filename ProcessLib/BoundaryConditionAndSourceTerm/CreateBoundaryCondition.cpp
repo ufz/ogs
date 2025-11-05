@@ -176,15 +176,7 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         }
         return conditions;
     }
-    //     //
-    //     // Special boundary conditions
-    //     //
-    //     if (type == "ConstraintDirichlet")
-    //     {
-    //         return createConstraintDirichletBoundaryCondition(
-    //             config.config, i, dof_table, variable_id, integration_order,
-    //             *config.component_id, parameters, process);
-    //     }
+
     //     if (type == "PrimaryVariableConstraintDirichlet")
     //     {
     //         return createPrimaryVariableConstraintDirichletBoundaryCondition(
@@ -255,6 +247,24 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
     //             bulk_mesh.getDimension(), variable_id, config, i, dof_table,
     //             parameters);
     //     }
+    //
+    // Special boundary conditions
+    //
+    if (type == "ConstraintDirichlet")
+    {
+        auto const [type, process_variable, threshold, direction_string, name] =
+            parseConstraintDirichletBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createConstraintDirichletBoundaryCondition(
+                    type, process_variable, threshold, direction_string, name,
+                    bc_mesh, dof_table, variable_id, integration_order,
+                    *config.component_id, parameters, process));
+        }
+        return conditions;
+    }
     OGS_FATAL("Unknown boundary condition type: `{:s}'.", type);
 }
 
