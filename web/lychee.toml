@@ -10,5 +10,6 @@ exclude = [
   "www\\.ufz\\.de/vislab",
   "mont_terri_experimente.html",
   "coolprop\\.org",
+  "www\\.gpdn\\.de",
 ]
 exclude_path = ["public/releases/", "public/docs/featurematrix/bundle/"]

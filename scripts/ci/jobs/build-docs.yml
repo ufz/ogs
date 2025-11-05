@@ -124,6 +124,7 @@ check docs links:
       --exclude stackoverflow.com
       --exclude-path build/docs/d0/de3/citelist.html
       --exclude-path build/docs/doxygen_crawl.html
+      --exclude gitlab.io
       build/docs
     # - lychee --cache --max-cache-age 14d
     #   --max-concurrency 2
