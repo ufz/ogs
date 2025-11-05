@@ -101,12 +101,20 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         }
         return conditions;
     }
-    //     if (type == "TimeDecayDirichlet")
-    //     {
-    //         return ProcessLib::createTimeDecayDirichletBoundaryCondition(
-    //             variable_id, *config.component_id, config.config, i,
-    //             dof_table, parameters);
-    //     }
+    if (type == "TimeDecayDirichlet")
+    {
+        auto const [parameter_name, lower_limit] =
+            parseTimeDecayDirichletBoundaryConditionConfig(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createTimeDecayDirichletBoundaryCondition(
+                    variable_id, *config.component_id, parameter_name,
+                    lower_limit, bc_mesh, dof_table, parameters));
+        }
+        return conditions;
+    }
     //     if (type == "Neumann")
     //     {
     //         return ProcessLib::createNeumannBoundaryCondition(
