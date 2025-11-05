@@ -14,16 +14,40 @@
 
 namespace ProcessLib
 {
+std::tuple<std::string, std::string, std::optional<std::string>>
+parseRobinBoundaryCondition(BaseLib::ConfigTree const& config)
+{
+    DBUG("parsing RobinBoundaryConditionConfig.");
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
+    config.checkConfigParameter("type", "Robin");
+
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__alpha}
+    auto const alpha_name = config.getConfigParameter<std::string>("alpha");
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__u_0}
+    auto const u_0_name = config.getConfigParameter<std::string>("u_0");
+
+    auto const area_parameter_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__area_parameter}
+        config.getConfigParameterOptional<std::string>("area_parameter");
+    if (area_parameter_name.has_value())
+    {
+        DBUG("area parameter name '{:s}'", __FUNCTION__,
+             area_parameter_name.value());
+    }
+
+    return {alpha_name, u_0_name, area_parameter_name};
+}
+
 std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& alpha_name, std::string const& u_0_name,
+    std::optional<std::string> const& area_parameter_name,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
-    DBUG("Constructing RobinBcConfig from config.");
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "Robin");
+    DBUG("Constructing RobinBcConfig.");
 
     if (bc_mesh.getDimension() >= global_dim)
     {
@@ -33,11 +57,6 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
             bc_mesh.getDimension(), bc_mesh.getName(), global_dim);
     }
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__alpha}
-    auto const alpha_name = config.getConfigParameter<std::string>("alpha");
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__u_0}
-    auto const u_0_name = config.getConfigParameter<std::string>("u_0");
-
     auto const& alpha = ParameterLib::findParameter<double>(
         alpha_name, parameters, 1, &bc_mesh);
     auto const& u_0 =
@@ -46,12 +65,13 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     ParameterLib::Parameter<double> const* integral_measure(nullptr);
     if (global_dim - bc_mesh.getDimension() != 1)
     {
-        auto const area_parameter_name =
-            //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Robin__area_parameter}
-            config.getConfigParameter<std::string>("area_parameter");
-        DBUG("area parameter name '{:s}'", area_parameter_name);
+        if (!area_parameter_name)
+        {
+            OGS_FATAL("{}: tag <area_parameter> required in Robin BC.",
+                      __FUNCTION__);
+        }
         integral_measure = &ParameterLib::findParameter<double>(
-            area_parameter_name, parameters, 1, &bc_mesh);
+            area_parameter_name.value(), parameters, 1, &bc_mesh);
     }
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no

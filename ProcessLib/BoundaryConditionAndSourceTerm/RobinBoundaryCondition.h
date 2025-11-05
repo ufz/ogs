@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <tuple>
+
 #include "GenericNaturalBoundaryCondition.h"
 #include "RobinBoundaryConditionLocalAssembler.h"
 
@@ -18,6 +20,9 @@ namespace ProcessLib
 using RobinBoundaryCondition =
     GenericNaturalBoundaryCondition<RobinBoundaryConditionData,
                                     RobinBoundaryConditionLocalAssembler>;
+
+std::tuple<std::string, std::string, std::optional<std::string>>
+parseRobinBoundaryCondition(BaseLib::ConfigTree const& config);
 
 /*! Creates a new uniform Robin boundary condition from the given data.
  *
@@ -31,7 +36,9 @@ using RobinBoundaryCondition =
  * integrand in the boundary integral for the variable \f$ u \f$.
  */
 std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& alpha_name, std::string const& u_0_name,
+    std::optional<std::string> const& area_parameter_name,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
