@@ -25,11 +25,17 @@
 
 namespace ProcessLib
 {
+
+struct WellboreCompensateCoefficients
+{
+    double pressure;
+    double velocity;
+    double enthalpy;
+};
+
 struct WellboreCompensateNeumannBoundaryConditionData
 {
-    double const pressure_coefficient;
-    double const velocity_coefficient;
-    double const enthalpy_coefficient;
+    WellboreCompensateCoefficients coefficients;
 
     // Used for mapping boundary nodes to bulk nodes.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap> dof_table_boundary_pressure;
@@ -280,10 +286,10 @@ public:
                 std::pow((C_0 - 1) * velocity_int_pt + u_gu, 2);
 
             double const neumann_ip_values =
-                _data.pressure_coefficient * mix_density * velocity_int_pt +
-                _data.velocity_coefficient *
+                _data.coefficients.pressure * mix_density * velocity_int_pt +
+                _data.coefficients.velocity *
                     (mix_density * velocity_int_pt * velocity_int_pt + gamma) +
-                _data.enthalpy_coefficient * mix_density * velocity_int_pt *
+                _data.coefficients.enthalpy * mix_density * velocity_int_pt *
                     velocity_int_pt * velocity_int_pt * 0.5;
             _local_rhs.noalias() += N.transpose() * neumann_ip_values * w;
         }

@@ -269,16 +269,14 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
     }
     if (type == "WellboreCompensateNeumann")
     {
-        auto const [pressure_coefficient, velocity_coefficient,
-                    enthalpy_coefficient] =
+        auto const coefficients =
             parseWellboreCompensateNeumannBoundaryCondition(config.config);
         std::vector<std::unique_ptr<BoundaryCondition>> conditions;
         for (auto const& bc_mesh : config.boundary_meshes)
         {
             conditions.push_back(
                 ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
-                    pressure_coefficient, velocity_coefficient,
-                    enthalpy_coefficient, bc_mesh, dof_table, variable_id,
+                    coefficients, bc_mesh, dof_table, variable_id,
                     *config.component_id, integration_order,
                     shapefunction_order, bulk_mesh.getDimension(), media));
         }

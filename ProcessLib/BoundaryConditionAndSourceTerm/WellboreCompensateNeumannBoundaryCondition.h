@@ -22,9 +22,13 @@ using WellboreCompensateNeumannBoundaryCondition =
         WellboreCompensateNeumannBoundaryConditionData,
         WellboreCompensateNeumannBoundaryConditionLocalAssembler>;
 
+WellboreCompensateCoefficients parseWellboreCompensateNeumannBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<WellboreCompensateNeumannBoundaryCondition>
 createWellboreCompensateNeumannBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    WellboreCompensateCoefficients const& coefficients,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
