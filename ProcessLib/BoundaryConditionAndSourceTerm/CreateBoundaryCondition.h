@@ -34,7 +34,7 @@ struct BoundaryConditionConfig;
 class Process;
 class ProcessVariable;
 
-std::unique_ptr<BoundaryCondition> createBoundaryCondition(
+std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
     const BoundaryConditionConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const MeshLib::Mesh& bulk_mesh, const int variable_id,

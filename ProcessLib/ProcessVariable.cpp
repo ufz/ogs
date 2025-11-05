@@ -257,17 +257,19 @@ ProcessVariable::createBoundaryConditions(
 
     for (auto const& config : _bc_configs)
     {
-        auto bc = createBoundaryCondition(
+        auto bc_vec = createBoundaryCondition(
             config, dof_table, _mesh, variable_id, integration_order,
             _shapefunction_order, parameters, process,
             all_process_variables_for_this_process, media);
-#ifdef USE_PETSC
-        if (bc == nullptr)
+        for (auto& bc : bc_vec)
         {
-            continue;
+            // bc can be a nullptr if in parallel execution the bc isn't
+            // associated to the particular subdomain
+            if (bc != nullptr)
+            {
+                bcs.push_back(std::move(bc));
+            }
         }
-#endif  // USE_PETSC
-        bcs.push_back(std::move(bc));
     }
 
     createBoundaryConditionsForDeactivatedSubDomains(dof_table, variable_id,

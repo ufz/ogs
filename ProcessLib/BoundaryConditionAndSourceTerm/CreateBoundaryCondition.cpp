@@ -33,7 +33,7 @@
 
 namespace ProcessLib
 {
-std::unique_ptr<BoundaryCondition> createBoundaryCondition(
+std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
     const BoundaryConditionConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const MeshLib::Mesh& bulk_mesh, const int variable_id,
@@ -58,145 +58,157 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
         }
     }
 
+    std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions;
+
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
 
-    for (auto const& i : config.boundary_meshes)
+    if (bool const component_id_required =
+            !(type == "NormalTraction" || type == "ReleaseNodalForce");
+        component_id_required && !config.component_id.has_value())
     {
-        if (bool const component_id_required =
-                !(type == "NormalTraction" || type == "ReleaseNodalForce");
-            component_id_required && !config.component_id.has_value())
-        {
-            OGS_FATAL(
-                "Specifying the component id (<component>) for a boundary "
-                "condition of type {} is mandatory.",
-                type);
-        }
-
-        if (type == "Dirichlet")
-        {
-            return ProcessLib::createDirichletBoundaryCondition(
-                config.config, i, dof_table, variable_id, *config.component_id,
-                parameters);
-        }
-        if (type == "DirichletWithinTimeInterval")
-        {
-            return ProcessLib::
-                createDirichletBoundaryConditionWithinTimeInterval(
-                    config.config, i, dof_table, variable_id,
-                    *config.component_id, parameters);
-        }
-        if (type == "TimeDecayDirichlet")
-        {
-            return ProcessLib::createTimeDecayDirichletBoundaryCondition(
-                variable_id, *config.component_id, config.config, i, dof_table,
-                parameters);
-        }
-        if (type == "Neumann")
-        {
-            return ProcessLib::createNeumannBoundaryCondition(
-                config.config, i, dof_table, variable_id, *config.component_id,
-                integration_order, shapefunction_order,
-                bulk_mesh.getDimension(), parameters);
-        }
-        if (type == "Robin")
-        {
-            return ProcessLib::createRobinBoundaryCondition(
-                config.config, i, dof_table, variable_id, *config.component_id,
-                integration_order, shapefunction_order,
-                bulk_mesh.getDimension(), parameters);
-        }
-        if (type == "VariableDependentNeumann")
-        {
-            return ProcessLib::createVariableDependentNeumannBoundaryCondition(
-                config.config, i, dof_table, variable_id, *config.component_id,
-                integration_order, shapefunction_order,
-                bulk_mesh.getDimension(), parameters);
-        }
-
-        if (type == "Python")
-        {
-            return ProcessLib::createPythonBoundaryCondition(
-                config.config, i, dof_table, bulk_mesh, variable_id,
-                *config.component_id, integration_order, shapefunction_order,
-                all_process_variables_for_this_process);
-        }
-
-        //
-        // Special boundary conditions
-        //
-        if (type == "ConstraintDirichlet")
-        {
-            return createConstraintDirichletBoundaryCondition(
-                config.config, i, dof_table, variable_id, integration_order,
-                *config.component_id, parameters, process);
-        }
-        if (type == "PrimaryVariableConstraintDirichlet")
-        {
-            return createPrimaryVariableConstraintDirichletBoundaryCondition(
-                config.config, i, dof_table, variable_id, *config.component_id,
-                parameters);
-        }
-        if (type == "WellboreCompensateNeumann")
-        {
-            return ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
-                config.config, i, dof_table, variable_id, *config.component_id,
-                integration_order, shapefunction_order,
-                bulk_mesh.getDimension(), media);
-        }
-        if (type == "SolutionDependentDirichlet")
-        {
-            return ProcessLib::
-                createSolutionDependentDirichletBoundaryCondition(
-                    config.config, i, dof_table, variable_id,
-                    *config.component_id, parameters);
-        }
-        if (type == "HCNonAdvectiveFreeComponentFlowBoundary")
-        {
-            return createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
-                config.config, i, dof_table, variable_id, *config.component_id,
-                integration_order, parameters, bulk_mesh.getDimension(),
-                process, shapefunction_order);
-        }
-        if (type == "NormalTraction")
-        {
-            switch (bulk_mesh.getDimension())
-            {
-                case 2:
-                    return ProcessLib::NormalTractionBoundaryCondition::
-                        createNormalTractionBoundaryCondition<2>(
-                            config.config, i, bulk_mesh, dof_table, variable_id,
-                            integration_order, shapefunction_order, parameters);
-                case 3:
-                    return ProcessLib::NormalTractionBoundaryCondition::
-                        createNormalTractionBoundaryCondition<3>(
-                            config.config, i, bulk_mesh, dof_table, variable_id,
-                            integration_order, shapefunction_order, parameters);
-                default:
-                    OGS_FATAL(
-                        "NormalTractionBoundaryCondition can not be "
-                        "instantiated "
-                        "for mesh dimensions other than two or three. "
-                        "{}-dimensional mesh was given.",
-                        bulk_mesh.getDimension());
-            }
-        }
-        if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
-        {
-            return ProcessLib::
-                createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
-                    //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PhaseFieldIrreversibleDamageOracleBoundaryCondition}
-                    config.config, dof_table, bulk_mesh, variable_id,
-                    *config.component_id);
-        }
-        if (type == "ReleaseNodalForce")
-        {
-            return ProcessLib::createReleaseNodalForce(
-                //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce}
-                bulk_mesh.getDimension(), variable_id, config, i, dof_table,
-                parameters);
-        }
+        OGS_FATAL(
+            "Specifying the component id (<component>) for a boundary "
+            "condition of type {} is mandatory.",
+            type);
     }
+
+    if (type == "Dirichlet")
+    {
+        auto const args = parseDirichletBCConfig(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> dirichlet_conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            dirichlet_conditions.push_back(
+                ProcessLib::createDirichletBoundaryCondition(
+                    args, bc_mesh, dof_table, variable_id, *config.component_id,
+                    parameters));
+        }
+        return dirichlet_conditions;
+    }
+    //     if (type == "DirichletWithinTimeInterval")
+    //     {
+    //         return
+    //         ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, parameters);
+    //     }
+    //     if (type == "TimeDecayDirichlet")
+    //     {
+    //         return ProcessLib::createTimeDecayDirichletBoundaryCondition(
+    //             variable_id, *config.component_id, config.config, i,
+    //             dof_table, parameters);
+    //     }
+    //     if (type == "Neumann")
+    //     {
+    //         return ProcessLib::createNeumannBoundaryCondition(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, integration_order, shapefunction_order,
+    //             bulk_mesh.getDimension(), parameters);
+    //     }
+    //     if (type == "Robin")
+    //     {
+    //         return ProcessLib::createRobinBoundaryCondition(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, integration_order, shapefunction_order,
+    //             bulk_mesh.getDimension(), parameters);
+    //     }
+    //     if (type == "VariableDependentNeumann")
+    //     {
+    //         return
+    //         ProcessLib::createVariableDependentNeumannBoundaryCondition(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, integration_order, shapefunction_order,
+    //             bulk_mesh.getDimension(), parameters);
+    //     }
+    //
+    //     if (type == "Python")
+    //     {
+    //         return ProcessLib::createPythonBoundaryCondition(
+    //             config.config, i, dof_table, bulk_mesh, variable_id,
+    //             *config.component_id, integration_order, shapefunction_order,
+    //             all_process_variables_for_this_process);
+    //     }
+    //
+    //     //
+    //     // Special boundary conditions
+    //     //
+    //     if (type == "ConstraintDirichlet")
+    //     {
+    //         return createConstraintDirichletBoundaryCondition(
+    //             config.config, i, dof_table, variable_id, integration_order,
+    //             *config.component_id, parameters, process);
+    //     }
+    //     if (type == "PrimaryVariableConstraintDirichlet")
+    //     {
+    //         return createPrimaryVariableConstraintDirichletBoundaryCondition(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, parameters);
+    //     }
+    //     if (type == "WellboreCompensateNeumann")
+    //     {
+    //         return
+    //         ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, integration_order, shapefunction_order,
+    //             bulk_mesh.getDimension(), media);
+    //     }
+    //     if (type == "SolutionDependentDirichlet")
+    //     {
+    //         return
+    //         ProcessLib::createSolutionDependentDirichletBoundaryCondition(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, parameters);
+    //     }
+    //     if (type == "HCNonAdvectiveFreeComponentFlowBoundary")
+    //     {
+    //         return createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
+    //             config.config, i, dof_table, variable_id,
+    //             *config.component_id, integration_order, parameters,
+    //             bulk_mesh.getDimension(), process, shapefunction_order);
+    //     }
+    //     if (type == "NormalTraction")
+    //     {
+    //         switch (bulk_mesh.getDimension())
+    //         {
+    //             case 2:
+    //                 return ProcessLib::NormalTractionBoundaryCondition::
+    //                     createNormalTractionBoundaryCondition<2>(
+    //                         config.config, i, bulk_mesh, dof_table,
+    //                         variable_id, integration_order,
+    //                         shapefunction_order, parameters);
+    //             case 3:
+    //                 return ProcessLib::NormalTractionBoundaryCondition::
+    //                     createNormalTractionBoundaryCondition<3>(
+    //                         config.config, i, bulk_mesh, dof_table,
+    //                         variable_id, integration_order,
+    //                         shapefunction_order, parameters);
+    //             default:
+    //                 OGS_FATAL(
+    //                     "NormalTractionBoundaryCondition can not be "
+    //                     "instantiated "
+    //                     "for mesh dimensions other than two or three. "
+    //                     "{}-dimensional mesh was given.",
+    //                     bulk_mesh.getDimension());
+    //         }
+    //     }
+    //     if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
+    //     {
+    //         return ProcessLib::
+    //             createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
+    //                 //!
+    //                 \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PhaseFieldIrreversibleDamageOracleBoundaryCondition}
+    //                 config.config, dof_table, bulk_mesh, variable_id,
+    //                 *config.component_id);
+    //     }
+    //     if (type == "ReleaseNodalForce")
+    //     {
+    //         return ProcessLib::createReleaseNodalForce(
+    //             //!
+    //             \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce}
+    //             bulk_mesh.getDimension(), variable_id, config, i, dof_table,
+    //             parameters);
+    //     }
     OGS_FATAL("Unknown boundary condition type: `{:s}'.", type);
 }
 
