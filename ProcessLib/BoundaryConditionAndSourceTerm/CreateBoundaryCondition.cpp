@@ -162,14 +162,20 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         }
         return conditions;
     }
-    //     if (type == "Python")
-    //     {
-    //         return ProcessLib::createPythonBoundaryCondition(
-    //             config.config, i, dof_table, bulk_mesh, variable_id,
-    //             *config.component_id, integration_order, shapefunction_order,
-    //             all_process_variables_for_this_process);
-    //     }
-    //
+    if (type == "Python")
+    {
+        auto const [bc_object, flush_stdout] =
+            parsePythonBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(ProcessLib::createPythonBoundaryCondition(
+                bc_object, flush_stdout, bc_mesh, dof_table, bulk_mesh,
+                variable_id, *config.component_id, integration_order,
+                shapefunction_order, all_process_variables_for_this_process));
+        }
+        return conditions;
+    }
     //     //
     //     // Special boundary conditions
     //     //
