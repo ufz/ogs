@@ -115,13 +115,20 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         }
         return conditions;
     }
-    //     if (type == "Neumann")
-    //     {
-    //         return ProcessLib::createNeumannBoundaryCondition(
-    //             config.config, i, dof_table, variable_id,
-    //             *config.component_id, integration_order, shapefunction_order,
-    //             bulk_mesh.getDimension(), parameters);
-    //     }
+    if (type == "Neumann")
+    {
+        auto const [parameter_name, area_parameter_name] =
+            parseNeumannBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(ProcessLib::createNeumannBoundaryCondition(
+                parameter_name, area_parameter_name, bc_mesh, dof_table,
+                variable_id, *config.component_id, integration_order,
+                shapefunction_order, bulk_mesh.getDimension(), parameters));
+        }
+        return conditions;
+    }
     //     if (type == "Robin")
     //     {
     //         return ProcessLib::createRobinBoundaryCondition(
