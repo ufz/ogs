@@ -53,22 +53,27 @@ void DirichletBoundaryCondition::getEssentialBCValues(
                               _variable_id, _component_id, t, x, bc_values);
 }
 
-std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
-    int const component_id,
-    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
+std::string parseDirichletBCConfig(BaseLib::ConfigTree const& config)
 {
-    DBUG("Constructing DirichletBoundaryCondition from config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "Dirichlet");
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet__parameter}
-    auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", param_name);
+    auto const name = config.getConfigParameter<std::string>("parameter");
+    DBUG("{}: parameter name {:s}", __FUNCTION__, name);
+    return name;
+}
+
+std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
+    std::string const& parameter_name, MeshLib::Mesh const& bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
+    int const component_id,
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
+{
+    DBUG("Constructing DirichletBoundaryCondition.");
 
     auto& parameter = ParameterLib::findParameter<double>(
-        param_name, parameters, 1, &bc_mesh);
+        parameter_name, parameters, 1, &bc_mesh);
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.
