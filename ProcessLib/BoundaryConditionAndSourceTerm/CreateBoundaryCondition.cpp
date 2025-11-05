@@ -86,13 +86,21 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         }
         return dirichlet_conditions;
     }
-    //     if (type == "DirichletWithinTimeInterval")
-    //     {
-    //         return
-    //         ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
-    //             config.config, i, dof_table, variable_id,
-    //             *config.component_id, parameters);
-    //     }
+    if (type == "DirichletWithinTimeInterval")
+    {
+        auto const args =
+            parseDirichletBoundaryConditionWithinTimeIntervalConfig(
+                config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
+                    args.first, args.second, bc_mesh, dof_table, variable_id,
+                    *config.component_id, parameters));
+        }
+        return conditions;
+    }
     //     if (type == "TimeDecayDirichlet")
     //     {
     //         return ProcessLib::createTimeDecayDirichletBoundaryCondition(
