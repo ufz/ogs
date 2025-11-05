@@ -11,7 +11,7 @@ image = "heat_transport_in_stationary_flow_domain.png"
 
 We consider one dimensional heat transport in stationary flow in a porous medium.
  This benchmark was first introduced as an exercise of
- [Geoenergy Modeling I – Geothermal Processes in Fractured Porous Media](https://www.opengeosys.org/books/geoenergy-modeling-i/)
+ [Geoenergy Modeling I – Geothermal Processes in Fractured Porous Media](https://www.opengeosys.org/stable/books/geoenergy-modeling-i/)
  for [OGS 5](https://github.com/ufz/ogs5).
 
 ## Numerical setting

@@ -13,7 +13,7 @@ This is one of the benchmark examples with analytical solutions presented
 
 A detailed description about this benchmark can be found in section 10.1 of
  the book
-[Thermo-Hydro-Mechanical-Chemical Processes in Fractured Porous Media: Modelling and Benchmarking From Benchmarking to Tutoring](https://www.opengeosys.org/books/bmb-4/),
+[Thermo-Hydro-Mechanical-Chemical Processes in Fractured Porous Media: Modelling and Benchmarking From Benchmarking to Tutoring](https://www.opengeosys.org/stable/books/bmb-4/),
  one of the OGS Benchmark books (see the reference list below).
 
 <!--
