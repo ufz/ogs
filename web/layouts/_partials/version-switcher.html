@@ -1,6 +1,6 @@
-<div x-data="versionSwitcher('{{ site.Params.currentVersion }}', 'https://www.opengeosys.org/_static/versions.json')"
-  x-init="loadVersions()" class="relative inline-block text-left">
-  <!-- Button -->
+<div x-data="useDocsVersioning('{{ site.Params.currentVersion }}', 'https://www.opengeosys.org/_static/versions.json')"
+  x-init="init()" class="relative inline-block text-left">
+
   <button @click="open = !open" type="button"
     class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
     <span x-text="'Version: ' + currentVersion"></span>
@@ -9,14 +9,14 @@
     </svg>
   </button>
 
-  <!-- Dropdown -->
   <div x-show="open" @click.away="open = false"
-    class="absolute right-0 z-10 mt-1 w-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+    class="absolute right-0 z-10 mt-1 w-44 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
     <ul class="py-1 text-sm text-gray-700">
       <template x-for="v in versions" :key="v.version">
         <li>
           <a :href="buildTargetURL(v.version)" class="block px-3 py-1.5 hover:bg-gray-100"
-            :class="v.version === currentVersion ? 'font-semibold text-blue-600' : ''" x-text="v.version"></a>
+            :class="v.version === currentVersion ? 'font-semibold text-blue-600' : ''" x-text="v.version">
+          </a>
         </li>
       </template>
     </ul>
@@ -24,55 +24,6 @@
 </div>
 
 <script>
-  function versionSwitcher(currentVersion, versionsUrl) {
-    return {
-      open: false,
-      currentVersion,
-      versions: [],
-      async loadVersions() {
-        try {
-          const response = await fetch(versionsUrl);
-          if (!response.ok) throw new Error('Failed to fetch versions.json');
-          let data = await response.json();
-
-          // Sort descending (master → newest → older)
-          data.sort((a, b) => semverCompareDesc(a.version, b.version));
-
-          this.versions = data;
-        } catch (e) {
-          console.error(e);
-        }
-      },
-
-      buildTargetURL(targetVersion) {
-        const currentFull = window.location.href;
-        const currentPath = window.location.pathname + window.location.search + window.location.hash;
-
-        const targetEntry = this.versions.find(v => v.version === targetVersion);
-        if (!targetEntry) return currentFull;
-
-        const toBase = normalizeURL(targetEntry.url);
-
-        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-          // Use current path directly under target base
-          const relative = currentPath.replace(/^\/+/, "");
-          return toBase + relative;
-        }
-
-        const currentEntry = this.versions.find(v => currentFull.startsWith(normalizeURL(v.url)));
-
-        if (currentEntry) {
-          const fromBase = normalizeURL(currentEntry.url);
-          const relative = currentFull.slice(fromBase.length);
-          return toBase + relative;
-        }
-
-        // Cannot detect, fallback to version root
-        return toBase;
-      }
-    };
-  }
-
   function normalizeURL(url) {
     return url.endsWith("/") ? url : url + "/";
   }
@@ -88,11 +39,86 @@
 
     const pa = a.split('.').map(Number);
     const pb = b.split('.').map(Number);
-
     for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
       const diff = (pb[i] || 0) - (pa[i] || 0);
       if (diff !== 0) return diff;
     }
     return 0;
+  }
+
+  function useDocsVersioning(currentVersion, versionsUrl) {
+    return {
+      open: false,
+      currentVersion,
+      versions: [],
+      preferred: null,
+      isMRPreview: false,
+      mrBase: null,
+
+      async init() {
+        try {
+          const response = await fetch(versionsUrl);
+          if (!response.ok) throw new Error("Failed to fetch versions.json");
+
+          const data = await response.json();
+          data.sort((a, b) => semverCompareDesc(a.version, b.version));
+
+          this.versions = data;
+          this.preferred = data.find(v => v.preferred);
+
+          // Detect MR preview: https://ogs.ogs.xyz/ogs/mr-XXXX/
+          const mrMatch = location.hostname === "ogs.ogs.xyz"
+            && /^\/ogs\/mr-\d+\//.test(location.pathname);
+
+          if (mrMatch) {
+            this.isMRPreview = true;
+            // Base URL: origin + /ogs/mr-XXXX/
+            const prefix = location.pathname.match(/^\/ogs\/mr-\d+\//)[0];
+            this.mrBase = normalizeURL(location.origin + prefix);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      },
+
+      isOutdated() {
+        if (this.isMRPreview) return true;
+        return this.preferred && this.currentVersion !== this.preferred.version;
+      },
+
+      buildTargetURL(targetVersion) {
+        const currentFull = window.location.href;
+        const currentPath = window.location.pathname + window.location.search + window.location.hash;
+
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+          const targetEntry = this.versions.find(v => v.version === targetVersion);
+          if (!targetEntry) return currentFull;
+          return normalizeURL(targetEntry.url) + currentPath.replace(/^\/+/, "");
+        }
+
+        if (this.isMRPreview) {
+          const targetEntry = this.versions.find(v => v.version === targetVersion);
+          if (!targetEntry) return currentFull;
+          const toBase = normalizeURL(targetEntry.url);
+          const relative = currentFull.slice(this.mrBase.length);
+          return toBase + relative;
+        }
+
+        const targetEntry = this.versions.find(v => v.version === targetVersion);
+        if (!targetEntry) return currentFull;
+        const toBase = normalizeURL(targetEntry.url);
+
+        // Detect current version base by prefix match
+        const currentEntry = this.versions.find(v => currentFull.startsWith(normalizeURL(v.url)));
+        if (currentEntry) {
+          const fromBase = normalizeURL(currentEntry.url);
+          const relative = currentFull.slice(fromBase.length);
+          return toBase + relative;
+        }
+
+        // Cannot detect, fallback to version root
+        return toBase;
+      }
+    };
   }
 </script>
