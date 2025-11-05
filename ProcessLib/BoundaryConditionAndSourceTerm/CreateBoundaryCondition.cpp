@@ -177,13 +177,6 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         return conditions;
     }
 
-    //     if (type == "HCNonAdvectiveFreeComponentFlowBoundary")
-    //     {
-    //         return createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
-    //             config.config, i, dof_table, variable_id,
-    //             *config.component_id, integration_order, parameters,
-    //             bulk_mesh.getDimension(), process, shapefunction_order);
-    //     }
     //     if (type == "NormalTraction")
     //     {
     //         switch (bulk_mesh.getDimension())
@@ -286,6 +279,22 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
                 ProcessLib::createSolutionDependentDirichletBoundaryCondition(
                     property_name, initial_value_parameter_string, bc_mesh,
                     dof_table, variable_id, *config.component_id, parameters));
+        }
+        return conditions;
+    }
+    if (type == "HCNonAdvectiveFreeComponentFlowBoundary")
+    {
+        auto const boundary_permeability_name =
+            parseHCNonAdvectiveFreeComponentFlowBoundaryCondition(
+                config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
+                    boundary_permeability_name, bc_mesh, dof_table, variable_id,
+                    *config.component_id, integration_order, parameters,
+                    bulk_mesh.getDimension(), process, shapefunction_order));
         }
         return conditions;
     }
