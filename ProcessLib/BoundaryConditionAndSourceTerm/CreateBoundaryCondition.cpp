@@ -177,12 +177,6 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         return conditions;
     }
 
-    //     if (type == "PrimaryVariableConstraintDirichlet")
-    //     {
-    //         return createPrimaryVariableConstraintDirichletBoundaryCondition(
-    //             config.config, i, dof_table, variable_id,
-    //             *config.component_id, parameters);
-    //     }
     //     if (type == "WellboreCompensateNeumann")
     //     {
     //         return
@@ -262,6 +256,22 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
                     type, process_variable, threshold, direction_string, name,
                     bc_mesh, dof_table, variable_id, integration_order,
                     *config.component_id, parameters, process));
+        }
+        return conditions;
+    }
+    if (type == "PrimaryVariableConstraintDirichlet")
+    {
+        auto const [name, threshold_parameter_name, comparison_operator] =
+            parsePrimaryVariableConstraintDirichletBoundaryCondition(
+                config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                createPrimaryVariableConstraintDirichletBoundaryCondition(
+                    name, threshold_parameter_name, comparison_operator,
+                    bc_mesh, dof_table, variable_id, *config.component_id,
+                    parameters));
         }
         return conditions;
     }
