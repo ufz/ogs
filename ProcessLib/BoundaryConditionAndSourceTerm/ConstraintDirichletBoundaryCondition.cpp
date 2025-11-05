@@ -220,32 +220,57 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
          bc_values.ids.size());
 }
 
+std::tuple<std::string, std::string, double, std::string, std::string>
+parseConstraintDirichletBoundaryCondition(BaseLib::ConfigTree const& config)
+{
+    DBUG("Parsing ConstraintDirichletBoundaryCondition from config.");
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
+    config.checkConfigParameter("type", "ConstraintDirichlet");
+
+    auto const type =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraint_type}
+        config.getConfigParameter<std::string>("constraint_type");
+
+    // Todo (TF) Open question: How to specify which getFlux function should be
+    // used for the constraint calculation?
+    auto const process_variable =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraining_process_variable}
+        config.getConfigParameter<std::string>("constraining_process_variable");
+
+    auto const threshold =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraint_threshold}
+        config.getConfigParameter<double>("constraint_threshold");
+
+    auto const direction_string =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraint_direction}
+        config.getConfigParameter<std::string>("constraint_direction");
+
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__parameter}
+    auto const name = config.getConfigParameter<std::string>("parameter");
+    DBUG("parameter name {:s}", name);
+
+    return {type, process_variable, threshold, direction_string, name};
+}
+
 std::unique_ptr<ConstraintDirichletBoundaryCondition>
 createConstraintDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& constraint_type,
+    std::string const& constraining_process_variable,
+    double const constraint_threshold,
+    std::string const& constraint_direction_string,
+    std::string const& parameter_name, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     unsigned const integration_order, int const component_id,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     Process const& constraining_process)
 {
-    DBUG("Constructing ConstraintDirichletBoundaryCondition from config.");
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "ConstraintDirichlet");
+    DBUG("Constructing ConstraintDirichletBoundaryCondition");
 
-    auto const constraint_type =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraint_type}
-        config.getConfigParameter<std::string>("constraint_type");
     if (constraint_type != "Flux")
     {
         OGS_FATAL("The constraint type is '{:s}', but has to be 'Flux'.",
                   constraint_type);
     }
-
-    // Todo (TF) Open question: How to specify which getFlux function should be
-    // used for the constraint calculation?
-    auto const constraining_process_variable =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraining_process_variable}
-        config.getConfigParameter<std::string>("constraining_process_variable");
 
     if (!constraining_process.isMonolithicSchemeUsed())
     {
@@ -272,13 +297,6 @@ createConstraintDirichletBoundaryCondition(
             constraining_process_variable);
     }
 
-    auto const constraint_threshold =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraint_threshold}
-        config.getConfigParameter<double>("constraint_threshold");
-
-    auto const constraint_direction_string =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__constraint_direction}
-        config.getConfigParameter<std::string>("constraint_direction");
     if (constraint_direction_string != "greater" &&
         constraint_direction_string != "lower")
     {
@@ -289,12 +307,8 @@ createConstraintDirichletBoundaryCondition(
     }
     bool const lower = constraint_direction_string == "lower";
 
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ConstraintDirichlet__parameter}
-    auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", param_name);
-
-    auto& param = ParameterLib::findParameter<double>(param_name, parameters, 1,
-                                                      &bc_mesh);
+    auto& param = ParameterLib::findParameter<double>(parameter_name,
+                                                      parameters, 1, &bc_mesh);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
     // boundary condition.
