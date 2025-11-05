@@ -143,15 +143,25 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         }
         return conditions;
     }
-    //     if (type == "VariableDependentNeumann")
-    //     {
-    //         return
-    //         ProcessLib::createVariableDependentNeumannBoundaryCondition(
-    //             config.config, i, dof_table, variable_id,
-    //             *config.component_id, integration_order, shapefunction_order,
-    //             bulk_mesh.getDimension(), parameters);
-    //     }
-    //
+    if (type == "VariableDependentNeumann")
+    {
+        auto const [constant_name, coefficient_current_variable_name,
+                    coefficient_other_variable_name,
+                    coefficient_mixed_variables_name] =
+            parseVariableDependentNeumannBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createVariableDependentNeumannBoundaryCondition(
+                    constant_name, coefficient_current_variable_name,
+                    coefficient_other_variable_name,
+                    coefficient_mixed_variables_name, bc_mesh, dof_table,
+                    variable_id, *config.component_id, integration_order,
+                    shapefunction_order, bulk_mesh.getDimension(), parameters));
+        }
+        return conditions;
+    }
     //     if (type == "Python")
     //     {
     //         return ProcessLib::createPythonBoundaryCondition(
