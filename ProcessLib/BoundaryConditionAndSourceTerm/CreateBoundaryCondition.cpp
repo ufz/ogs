@@ -177,14 +177,6 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         return conditions;
     }
 
-    //     if (type == "ReleaseNodalForce")
-    //     {
-    //         return ProcessLib::createReleaseNodalForce(
-    //             //!
-    //             \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce}
-    //             bulk_mesh.getDimension(), variable_id, config, i, dof_table,
-    //             parameters);
-    //     }
     //
     // Special boundary conditions
     //
@@ -309,6 +301,17 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
                 dof_table, bulk_mesh, variable_id, *config.component_id));
         return conditions;
     }
+    if (type == "ReleaseNodalForce")
+    {
+        auto const decay_parameter_name = parseReleaseNodalForce(config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(ProcessLib::createReleaseNodalForce(
+                //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce}
+                bulk_mesh.getDimension(), variable_id, decay_parameter_name,
+                config, bc_mesh, dof_table, parameters));
+        }
         return conditions;
     }
     OGS_FATAL("Unknown boundary condition type: `{:s}'.", type);
