@@ -14,17 +14,49 @@
 
 namespace ProcessLib
 {
+std::tuple<std::string, std::string, std::string, std::string>
+parseVariableDependentNeumannBoundaryCondition(
+    BaseLib::ConfigTree const& config)
+{
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
+    config.checkConfigParameter("type", "VariableDependentNeumann");
+
+    auto const constant_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__constant_name}
+        config.getConfigParameter<std::string>("constant_name");
+
+    auto const coefficient_current_variable_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_current_variable_name}
+        config.getConfigParameter<std::string>(
+            "coefficient_current_variable_name");
+
+    auto const coefficient_other_variable_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_other_variable_name}
+        config.getConfigParameter<std::string>(
+            "coefficient_other_variable_name");
+
+    auto const coefficient_mixed_variables_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_mixed_variables_name}
+        config.getConfigParameter<std::string>(
+            "coefficient_mixed_variables_name");
+
+    return {constant_name, coefficient_current_variable_name,
+            coefficient_other_variable_name, coefficient_mixed_variables_name};
+}
+
 std::unique_ptr<VariableDependentNeumannBoundaryCondition>
 createVariableDependentNeumannBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& constant_name,
+    std::string const& coefficient_current_variable_name,
+    std::string const& coefficient_other_variable_name,
+    std::string const& coefficient_mixed_variables_name,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
-    DBUG("Constructing VariableDependentNeumann BC from config.");
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "VariableDependentNeumann");
+    DBUG("Constructing VariableDependentNeumann BC.");
     if (dof_table.getNumberOfVariables() != 2)
     {
         OGS_FATAL(
@@ -37,37 +69,21 @@ createVariableDependentNeumannBoundaryCondition(
     {
         OGS_FATAL(
             "The dimension ({:d}) of the given boundary mesh '{:s}' is not by "
-            "one "
-            "lower than the bulk dimension ({:d}).",
+            "one lower than the bulk dimension ({:d}).",
             bc_mesh.getDimension(), bc_mesh.getName(), global_dim);
     }
 
-    auto const constant_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__constant_name}
-        config.getConfigParameter<std::string>("constant_name");
     auto const& constant = ParameterLib::findParameter<double>(
         constant_name, parameters, 1, &bc_mesh);
 
-    auto const coefficient_current_variable_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_current_variable_name}
-        config.getConfigParameter<std::string>(
-            "coefficient_current_variable_name");
     auto const& coefficient_current_variable =
         ParameterLib::findParameter<double>(coefficient_current_variable_name,
                                             parameters, 1, &bc_mesh);
 
-    auto const coefficient_other_variable_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_other_variable_name}
-        config.getConfigParameter<std::string>(
-            "coefficient_other_variable_name");
     auto const& coefficient_other_variable =
         ParameterLib::findParameter<double>(coefficient_other_variable_name,
                                             parameters, 1, &bc_mesh);
 
-    auto const coefficient_mixed_variables_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__VariableDependentNeumann__coefficient_mixed_variables_name}
-        config.getConfigParameter<std::string>(
-            "coefficient_mixed_variables_name");
     auto const& coefficient_mixed_variables =
         ParameterLib::findParameter<double>(coefficient_mixed_variables_name,
                                             parameters, 1, &bc_mesh);
