@@ -177,13 +177,6 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         return conditions;
     }
 
-    //     if (type == "SolutionDependentDirichlet")
-    //     {
-    //         return
-    //         ProcessLib::createSolutionDependentDirichletBoundaryCondition(
-    //             config.config, i, dof_table, variable_id,
-    //             *config.component_id, parameters);
-    //     }
     //     if (type == "HCNonAdvectiveFreeComponentFlowBoundary")
     //     {
     //         return createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
@@ -279,6 +272,20 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
                     coefficients, bc_mesh, dof_table, variable_id,
                     *config.component_id, integration_order,
                     shapefunction_order, bulk_mesh.getDimension(), media));
+        }
+        return conditions;
+    }
+    if (type == "SolutionDependentDirichlet")
+    {
+        auto const [property_name, initial_value_parameter_string] =
+            parseSolutionDependentDirichletBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createSolutionDependentDirichletBoundaryCondition(
+                    property_name, initial_value_parameter_string, bc_mesh,
+                    dof_table, variable_id, *config.component_id, parameters));
         }
         return conditions;
     }
