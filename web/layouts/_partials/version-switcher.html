@@ -15,7 +15,7 @@
     <ul class="py-1 text-sm text-gray-700">
       <template x-for="v in versions" :key="v.version">
         <li>
-          <a :href="v.url" class="block px-3 py-1.5 hover:bg-gray-100"
+          <a :href="buildTargetURL(v.version)" class="block px-3 py-1.5 hover:bg-gray-100"
             :class="v.version === currentVersion ? 'font-semibold text-blue-600' : ''" x-text="v.version"></a>
         </li>
       </template>
@@ -35,34 +35,62 @@
           if (!response.ok) throw new Error('Failed to fetch versions.json');
           let data = await response.json();
 
-          // Sort descending (dev → newest → older)
+          // Sort descending (master → newest → older)
           data.sort((a, b) => semverCompareDesc(a.version, b.version));
 
           this.versions = data;
         } catch (e) {
           console.error(e);
         }
+      },
+
+      buildTargetURL(targetVersion) {
+        const currentFull = window.location.href;
+        const currentPath = window.location.pathname + window.location.search + window.location.hash;
+
+        const targetEntry = this.versions.find(v => v.version === targetVersion);
+        if (!targetEntry) return currentFull;
+
+        const toBase = normalizeURL(targetEntry.url);
+
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+          // Use current path directly under target base
+          const relative = currentPath.replace(/^\/+/, "");
+          return toBase + relative;
+        }
+
+        const currentEntry = this.versions.find(v => currentFull.startsWith(normalizeURL(v.url)));
+
+        if (currentEntry) {
+          const fromBase = normalizeURL(currentEntry.url);
+          const relative = currentFull.slice(fromBase.length);
+          return toBase + relative;
+        }
+
+        // Cannot detect, fallback to version root
+        return toBase;
       }
     };
   }
 
-  // Semantic version compare: descending, with "dev" (or "latest") first
+  function normalizeURL(url) {
+    return url.endsWith("/") ? url : url + "/";
+  }
+
   function semverCompareDesc(a, b) {
     const special = ["dev", "latest", "main", "master"];
     const aIsSpecial = special.includes(a);
     const bIsSpecial = special.includes(b);
 
-    // Special versions first
     if (aIsSpecial && !bIsSpecial) return -1;
     if (!aIsSpecial && bIsSpecial) return 1;
     if (aIsSpecial && bIsSpecial) return a.localeCompare(b);
 
-    // Compare numeric versions
     const pa = a.split('.').map(Number);
     const pb = b.split('.').map(Number);
 
     for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-      const diff = (pb[i] || 0) - (pa[i] || 0); // note pb - pa for descending
+      const diff = (pb[i] || 0) - (pa[i] || 0);
       if (diff !== 0) return diff;
     }
     return 0;
