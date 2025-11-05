@@ -74,9 +74,15 @@ private:
     bool const _less;
 };
 
+std::tuple<std::string, std::string, std::string>
+parsePrimaryVariableConstraintDirichletBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<PrimaryVariableConstraintDirichletBoundaryCondition>
 createPrimaryVariableConstraintDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& parameter_name,
+    std::string const& threshold_parameter_name,
+    std::string const& comparison_operator_string, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&
