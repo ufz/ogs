@@ -177,14 +177,6 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         return conditions;
     }
 
-    //     if (type == "WellboreCompensateNeumann")
-    //     {
-    //         return
-    //         ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
-    //             config.config, i, dof_table, variable_id,
-    //             *config.component_id, integration_order, shapefunction_order,
-    //             bulk_mesh.getDimension(), media);
-    //     }
     //     if (type == "SolutionDependentDirichlet")
     //     {
     //         return
@@ -272,6 +264,23 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
                     name, threshold_parameter_name, comparison_operator,
                     bc_mesh, dof_table, variable_id, *config.component_id,
                     parameters));
+        }
+        return conditions;
+    }
+    if (type == "WellboreCompensateNeumann")
+    {
+        auto const [pressure_coefficient, velocity_coefficient,
+                    enthalpy_coefficient] =
+            parseWellboreCompensateNeumannBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
+                    pressure_coefficient, velocity_coefficient,
+                    enthalpy_coefficient, bc_mesh, dof_table, variable_id,
+                    *config.component_id, integration_order,
+                    shapefunction_order, bulk_mesh.getDimension(), media));
         }
         return conditions;
     }
