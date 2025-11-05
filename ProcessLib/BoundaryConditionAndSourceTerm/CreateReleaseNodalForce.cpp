@@ -28,8 +28,32 @@
 
 namespace ProcessLib
 {
+std::string parseReleaseNodalForce(BoundaryConditionConfig const& bc_config)
+{
+    DBUG("Parse ReleaseNodalForce boundary condition.");
+
+    if (!bc_config.compensate_non_equilibrium_initial_residuum)
+    {
+        OGS_FATAL(
+            "The compensate_non_equilibrium_initial_residuum must be set for "
+            "the ReleaseNodalForce boundary condition.");
+    }
+
+    auto const& config = bc_config.config;
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
+    config.checkConfigParameter("type", "ReleaseNodalForce");
+
+    auto const decay_parameter_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce__time_decay_parameter}
+        config.getConfigParameter<std::string>("time_decay_parameter");
+    DBUG("decay parameter {:s}", decay_parameter_name);
+
+    return decay_parameter_name;
+}
+
 std::unique_ptr<BoundaryCondition> createReleaseNodalForce(
     unsigned const global_dim, int const variable_id,
+    std::string const& decay_parameter_name,
     BoundaryConditionConfig const& bc_config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
@@ -43,17 +67,8 @@ std::unique_ptr<BoundaryCondition> createReleaseNodalForce(
             "the ReleaseNodalForce boundary condition.");
     }
 
-    auto const& config = bc_config.config;
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "ReleaseNodalForce");
-
-    auto const parameter_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce__time_decay_parameter}
-        config.getConfigParameter<std::string>("time_decay_parameter");
-    DBUG("Using parameter {:s}", parameter_name);
-
     auto const& time_decay_parameter = ParameterLib::findParameter<double>(
-        parameter_name, parameters, 1, &bc_mesh);
+        decay_parameter_name, parameters, 1, &bc_mesh);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there
     // is no boundary condition.
@@ -104,7 +119,7 @@ std::unique_ptr<BoundaryCondition> createReleaseNodalForce(
         OGS_FATAL(
             "The time_decay_parameter '{:s}' must be equal to 1.0 at t=0.0. "
             "and decrease over time to 0. ",
-            parameter_name);
+            decay_parameter_name);
     }
 
     return std::make_unique<ReleaseNodalForce>(
