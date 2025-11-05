@@ -177,15 +177,6 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         return conditions;
     }
 
-    //     if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
-    //     {
-    //         return ProcessLib::
-    //             createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
-    //                 //!
-    //                 \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PhaseFieldIrreversibleDamageOracleBoundaryCondition}
-    //                 config.config, dof_table, bulk_mesh, variable_id,
-    //                 *config.component_id);
-    //     }
     //     if (type == "ReleaseNodalForce")
     //     {
     //         return ProcessLib::createReleaseNodalForce(
@@ -306,6 +297,18 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
                         bulk_mesh.getDimension());
             }
         }
+        return conditions;
+    }
+    if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
+    {
+        parsePhaseFieldIrreversibleDamageOracleBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        conditions.push_back(
+            createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
+                //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PhaseFieldIrreversibleDamageOracleBoundaryCondition}
+                dof_table, bulk_mesh, variable_id, *config.component_id));
+        return conditions;
+    }
         return conditions;
     }
     OGS_FATAL("Unknown boundary condition type: `{:s}'.", type);
