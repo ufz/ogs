@@ -16,9 +16,9 @@
 namespace MeshLib
 {
 /// \page BulkMappingDocuPage
-/// [Documentation](https://www.opengeosys.org/pdf/BulkElementMappings.pdf) for
-/// the mapping of a point given in local coordinates of a boundary face/element
-/// to the corresponding bulk element point.
+/// [Documentation](https://www.opengeosys.org/stable/pdf/BulkElementMappings.pdf)
+/// for the mapping of a point given in local coordinates of a boundary
+/// face/element to the corresponding bulk element point.
 
 /// Maps the given \c point_on_face on the face a bulk element of type \c
 /// bulk_element_cell_type to the given point in the bulk element.

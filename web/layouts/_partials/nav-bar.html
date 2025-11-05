@@ -6,6 +6,25 @@
 <div class="py-2 px-2 md:px-4">
   <div x-data="{ mobileMenuOpen: false }" class="relative bg-white">
     <div class="max-w-7xl mx-auto">
+      <div
+        x-data="useDocsVersioning('{{ site.Params.currentVersion }}', 'https://www.opengeosys.org/_static/versions.json')"
+        x-init="init()">
+
+        <template x-if="preferred && isOutdated()">
+          <div class="w-full bg-yellow-50 border-b border-300 px-4 py-2 text-sm flex justify-between items-center">
+            <div>
+              You are viewing documentation for version
+              <strong x-text="currentVersion"></strong>.
+              The latest stable version is
+              <strong x-text="preferred.version"></strong>.
+            </div>
+            <a :href="buildTargetURL(preferred.version)"
+              class="ml-4 inline-flex items-center rounded-md bg-yellow-300 hover:bg-yellow-400 px-3 py-1 font-medium">
+              Switch to latest release
+            </a>
+          </div>
+        </template>
+      </div>
       <div class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
         <div class="lg:w-0 lg:flex-1 text-lg lg:text-xl xl:text-2xl">
           <a href="/" class="flex {{ if .IsHome }} hidden{{ end }}">

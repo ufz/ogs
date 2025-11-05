@@ -77,7 +77,7 @@ We are happy to announce the release of **OpenGeoSys {version}**!
 
 ## Links
 
-- [Release page on www.opengeosys.org](https://www.opengeosys.org/releases/{version}/)
+- [Release page on www.opengeosys.org](https://www.opengeosys.org/stable/releases/{version}/)
 - [GitLab Release](https://gitlab.opengeosys.org/ogs/ogs/-/releases/{version})
 - [Zenodo Release](https://zenodo.org/record/{zenodo_record})
 - [PyPI Release](https://pypi.org/project/ogs/{version}/)
