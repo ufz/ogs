@@ -1,5 +1,4 @@
-<div
-  x-data="versionSwitcher('{{ site.Params.currentVersion }}', 'https://staging.opengeosys.org/_static/versions.json')"
+<div x-data="versionSwitcher('{{ site.Params.currentVersion }}', 'https://www.opengeosys.org/_static/versions.json')"
   x-init="loadVersions()" class="relative inline-block text-left">
   <!-- Button -->
   <button @click="open = !open" type="button"
