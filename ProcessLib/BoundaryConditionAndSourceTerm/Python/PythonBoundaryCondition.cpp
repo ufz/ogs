@@ -266,14 +266,8 @@ void PythonBoundaryCondition::applyNaturalBC(
     }
 }
 
-std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
-    MeshLib::Mesh const& bulk_mesh, int const variable_id,
-    int const component_id, unsigned const integration_order,
-    unsigned const shapefunction_order,
-    std::vector<std::reference_wrapper<ProcessVariable>> const&
-        all_process_variables_for_this_process)
+std::tuple<std::string, bool> parsePythonBoundaryCondition(
+    BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "Python");
@@ -283,6 +277,19 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Python__flush_stdout}
     auto const flush_stdout = config.getConfigParameter("flush_stdout", false);
 
+    return {bc_object, flush_stdout};
+}
+
+std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
+    std::string const& bc_object, bool const flush_stdout,
+    MeshLib::Mesh const& boundary_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
+    MeshLib::Mesh const& bulk_mesh, int const variable_id,
+    int const component_id, unsigned const integration_order,
+    unsigned const shapefunction_order,
+    std::vector<std::reference_wrapper<ProcessVariable>> const&
+        all_process_variables_for_this_process)
+{
     // Evaluate Python code in scope of main module
     pybind11::object scope =
         pybind11::module::import("__main__").attr("__dict__");

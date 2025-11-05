@@ -116,9 +116,13 @@ private:
     bool const _flush_stdout;
 };
 
+std::tuple<std::string, bool> parsePythonBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 //! Creates a new PythonBoundaryCondition object.
 std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
+    std::string const& bc_object, bool const flush_stdout,
+    MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
     MeshLib::Mesh const& bulk_mesh, int const variable_id,
     int const component_id, unsigned const integration_order,
