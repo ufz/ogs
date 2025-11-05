@@ -26,10 +26,10 @@ conversion tools (e.g., `OGSFileConverter`):
 <i class="far fa-exclamation-triangle"></i> Error message:
 
 ```bash
-Error XSDError in http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd, at line 1, column 1: Start tag expected.
+Error XSDError in http://www.opengeosys.org/stable/images/xsd/OpenGeoSysCND.xsd, at line 1, column 1: Start tag expected.
 Error XSDError in file:///../bc/well.cnd, at line 5, column 195: Loaded schema file is invalid.
 XMLInterface::isValid() - XML File is invalid (in reference to schema ./OpenGeoSysCND.xsd).
-Error XSDError in http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd, at line 1, column 1: Start tag expected.
+Error XSDError in http://www.opengeosys.org/stable/images/xsd/OpenGeoSysCND.xsd, at line 1, column 1: Start tag expected.
 ```
 
 <i class="far fa-arrow-right"></i> Solution:
@@ -37,7 +37,7 @@ Error XSDError in http://www.opengeosys.org/images/xsd/OpenGeoSysCND.xsd, at lin
 Open the affected file (e.g. `well.cnd` in this case) in a text editor and remove the following parameter of the XML root element (the first element in `< >`-brackets in the element, e.g. `<OpenGeoSysCND>`):
 
 ```xml
-xsi:noNamespaceSchemaLocation="http://www.opengeosys.org/images/xsd/OpenGeoSysXXX.xsd"
+xsi:noNamespaceSchemaLocation="http://www.opengeosys.org/stable/images/xsd/OpenGeoSysXXX.xsd"
 ```
 
 where `XXX` can be `CND`, `GLI`, `PRJ` or `STN` depending on the file type.
