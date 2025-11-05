@@ -16,30 +16,36 @@
 
 namespace ProcessLib
 {
-std::unique_ptr<BoundaryCondition>
-createDirichletBoundaryConditionWithinTimeInterval(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
-    int const component_id,
-    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
+std::pair<std::string, BaseLib::TimeInterval>
+parseDirichletBoundaryConditionWithinTimeIntervalConfig(
+    BaseLib::ConfigTree const& config)
 {
-    DBUG(
-        "Constructing DirichletBoundaryConditionWithinTimeInterval from "
-        "config.");
-
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "DirichletWithinTimeInterval");
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__parameter}
-    auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", param_name);
-
-    auto& param = ParameterLib::findParameter<double>(param_name, parameters, 1,
-                                                      &bc_mesh);
+    auto const name = config.getConfigParameter<std::string>("parameter");
+    DBUG("{}: parameter name {:s}", __FUNCTION__, name);
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__time_interval}
     config.peekConfigParameter<std::string>("time_interval");
     auto time_interval = BaseLib::createTimeInterval(config);
+
+    return {name, time_interval};
+}
+
+std::unique_ptr<BoundaryCondition>
+createDirichletBoundaryConditionWithinTimeInterval(
+    std::string const& parameter_name,
+    BaseLib::TimeInterval const& time_interval, MeshLib::Mesh const& bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
+    int const component_id,
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
+{
+    DBUG("Constructing DirichletBoundaryConditionWithinTimeInterval.");
+
+    auto& param = ParameterLib::findParameter<double>(parameter_name,
+                                                      parameters, 1, &bc_mesh);
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.
