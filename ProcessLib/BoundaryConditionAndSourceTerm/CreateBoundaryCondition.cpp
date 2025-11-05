@@ -177,31 +177,6 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
         return conditions;
     }
 
-    //     if (type == "NormalTraction")
-    //     {
-    //         switch (bulk_mesh.getDimension())
-    //         {
-    //             case 2:
-    //                 return ProcessLib::NormalTractionBoundaryCondition::
-    //                     createNormalTractionBoundaryCondition<2>(
-    //                         config.config, i, bulk_mesh, dof_table,
-    //                         variable_id, integration_order,
-    //                         shapefunction_order, parameters);
-    //             case 3:
-    //                 return ProcessLib::NormalTractionBoundaryCondition::
-    //                     createNormalTractionBoundaryCondition<3>(
-    //                         config.config, i, bulk_mesh, dof_table,
-    //                         variable_id, integration_order,
-    //                         shapefunction_order, parameters);
-    //             default:
-    //                 OGS_FATAL(
-    //                     "NormalTractionBoundaryCondition can not be "
-    //                     "instantiated "
-    //                     "for mesh dimensions other than two or three. "
-    //                     "{}-dimensional mesh was given.",
-    //                     bulk_mesh.getDimension());
-    //         }
-    //     }
     //     if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
     //     {
     //         return ProcessLib::
@@ -295,6 +270,41 @@ std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
                     boundary_permeability_name, bc_mesh, dof_table, variable_id,
                     *config.component_id, integration_order, parameters,
                     bulk_mesh.getDimension(), process, shapefunction_order));
+        }
+        return conditions;
+    }
+    if (type == "NormalTraction")
+    {
+        auto const parameter_name = NormalTractionBoundaryCondition::
+            parseNormalTractionBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            switch (bulk_mesh.getDimension())
+            {
+                case 2:
+                    conditions.push_back(
+                        ProcessLib::NormalTractionBoundaryCondition::
+                            createNormalTractionBoundaryCondition<2>(
+                                parameter_name, bc_mesh, bulk_mesh, dof_table,
+                                variable_id, integration_order,
+                                shapefunction_order, parameters));
+                    break;
+                case 3:
+                    conditions.push_back(
+                        ProcessLib::NormalTractionBoundaryCondition::
+                            createNormalTractionBoundaryCondition<3>(
+                                parameter_name, bc_mesh, bulk_mesh, dof_table,
+                                variable_id, integration_order,
+                                shapefunction_order, parameters));
+                    break;
+                default:
+                    OGS_FATAL(
+                        "NormalTractionBoundaryCondition can not be "
+                        "instantiated for mesh dimensions other than two or "
+                        "three. {}-dimensional mesh was given.",
+                        bulk_mesh.getDimension());
+            }
         }
         return conditions;
     }
