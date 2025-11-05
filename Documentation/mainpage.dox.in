@@ -37,8 +37,8 @@
  *
  * \section useful_links Useful links
  * - OGS home page: https://opengeosys.org/
- * - Selected benchmarks: https://opengeosys.org/docs/benchmarks
- * - Developer guide: https://opengeosys.org/docs/devguide
+ * - Selected benchmarks: https://opengeosys.org/stable/docs/benchmarks
+ * - Developer guide: https://opengeosys.org/stable/docs/devguide
  * - Data Explorer (GUI) manual:
  * https://gitlab.opengeosys.org/ogs/documentation/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build
  * - Discussion forum: https://discourse.opengeosys.org

@@ -7,12 +7,14 @@ components, OGS will deduce the type of the quantity (scalar/vector/tensor,
 
 The elements of `<values>` are in row-major order. I.e., if you write the
 following into your project file
-```
+
+```xml
 <value>
 1 2
 3 4
 </value>
 ```
+
 OGS will read the proper 2x2 matrix.
 
-For the order of symmetric tensor components please refer to [the user guide](https://www.opengeosys.org/docs/userguide/basics/conventions/#symmetric-tensors).
+For the order of symmetric tensor components please refer to [the user guide](https://www.opengeosys.org/stable/docs/userguide/basics/conventions/#symmetric-tensors).
