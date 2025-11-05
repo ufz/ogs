@@ -65,9 +65,15 @@ private:
     MeshLib::PropertyVector<double>* _solution_dependent_bc;
 };
 
+std::tuple<std::string, std::string>
+parseSolutionDependentDirichletBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<SolutionDependentDirichletBoundaryCondition>
 createSolutionDependentDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& property_name,
+    std::string const& initial_value_parameter_string,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&

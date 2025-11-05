@@ -96,16 +96,12 @@ void SolutionDependentDirichletBoundaryCondition::postTimestep(
     }
 }
 
-std::unique_ptr<SolutionDependentDirichletBoundaryCondition>
-createSolutionDependentDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
-    int const component_id,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+std::tuple<std::string, std::string>
+parseSolutionDependentDirichletBoundaryCondition(
+    BaseLib::ConfigTree const& config)
 {
-    DBUG(
-        "Constructing SolutionDependentDirichletBoundaryCondition from "
-        "config.");
+    DBUG("Parsing SolutionDependentDirichletBoundaryCondition.");
+
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "SolutionDependentDirichlet");
 
@@ -113,10 +109,26 @@ createSolutionDependentDirichletBoundaryCondition(
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__SolutionDependentDirichlet__property_name}
         config.getConfigParameter<std::string>("property_name");
 
-    auto& initial_value_parameter = ParameterLib::findParameter<double>(
+    auto const initial_value_parameter_string =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__SolutionDependentDirichlet__initial_value_parameter}
-        config.getConfigParameter<std::string>("initial_value_parameter"),
-        parameters, 1, &bc_mesh);
+        config.getConfigParameter<std::string>("initial_value_parameter");
+
+    return {property_name, initial_value_parameter_string};
+}
+
+std::unique_ptr<SolutionDependentDirichletBoundaryCondition>
+createSolutionDependentDirichletBoundaryCondition(
+    std::string const& property_name,
+    std::string const& initial_value_parameter_string,
+    MeshLib::Mesh const& bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
+    int const component_id,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+{
+    DBUG("Constructing SolutionDependentDirichletBoundaryCondition.");
+
+    auto& initial_value_parameter = ParameterLib::findParameter<double>(
+        initial_value_parameter_string, parameters, 1, &bc_mesh);
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.
