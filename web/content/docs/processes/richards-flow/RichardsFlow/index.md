@@ -51,6 +51,8 @@ $$
 \mathbf{v}^l = -\frac{\mathbf{k} k_{rel}}{\mu} (\nabla p - \rho^l \mathbf{g}).
 $$
 
+Note, that a part of the Laplace term is neglected, see [Note on the Laplace term with non-constant density](#note-on-the-laplace-term-with-non-constant-density).
+
 ### Finite Element Discretization
 
 The Richards equation is discretized using the finite element method, resulting in a system of nonlinear equations.
@@ -156,6 +158,32 @@ The diagonal lumping of the mass matrix can be enabled by adding the following t
 ```xml
 <mass_lumping>true</mass_lumping>
 ```
+
+## Note on the Laplace term with non-constant density
+
+If $\rho^l$ is not constant, the Laplace term for the density scaled volume balance equation is
+
+$$
+\frac{1}{\rho^l}\nabla\left(\rho^l\frac{{\mathbf k}k_{rel}}{\mu}(\nabla p-\rho^l\mathbf g)\right)
+$$
+
+and its corresponding weak form is
+
+$$
+\int\frac{1}{\rho^l}\nabla\left(\rho^l\frac{{\mathbf k}k_{rel}}{\mu}(\nabla p-\rho^l\mathbf g)\right)\psi\mathrm{d}\Omega,
+$$
+
+where $\psi$ the test function.
+Denoting $-\left(\frac{{\mathbf k}k_{rel}}{\mu}(\nabla p-\rho^l\mathbf g)\right)$ as $\mathbf v$, that weak term can be expanded as
+
+$$
+\int\nabla(\mathbf{v}\psi)-\nabla(\frac{\psi}{\rho^l})\mathbf{v}\mathrm{d}\Omega =
+\int(\mathbf{v}\cdot\mathbf{n}\psi)\mathrm{d}\Gamma-\int\nabla\psi\cdot\mathbf{v}\mathrm{d}\Omega
+-\int\psi\nabla(\frac{1}{\rho^l})\mathbf{v}\mathrm{d}\Omega.
+$$
+
+We see that the third term above is an extra one to be computed if the volume balance equation and non constant density are considered.
+The quantity of the extra term is usually tiny $\nabla(\frac{1}{\rho^l})=-\frac{1}{(\rho^l)^2}\frac{\partial \rho^l}{\partial p}\nabla p$ and it is neglected in the implementation.
 
 ## Available benchmarks
 
