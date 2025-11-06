@@ -114,11 +114,9 @@ double findMultiplier(
             auto const& pwli = MathLib::PiecewiseLinearInterpolation(
                 nonlinear_iteration_numbers, multipliers, false);
             multiplier = pwli.getValue(number_iterations);
-            DBUG("Using piecewise linear iteration-based time stepping.");
             break;
         }
         case MultiplyerInterpolationType::PiecewiseConstant:
-            DBUG("Using piecewise constant iteration-based time stepping.");
             auto const& piecewise_constant_interpolation =
                 MathLib::PiecewiseConstantInterpolation(
                     nonlinear_iteration_numbers, multipliers);
