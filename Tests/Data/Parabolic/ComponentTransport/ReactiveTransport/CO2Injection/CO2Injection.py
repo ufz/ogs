@@ -59,228 +59,84 @@
 
 # %%
 import os
-import time
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
+import ogstools as ot
 import pandas as pd
-import vtuIO
 
 # %%
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
-# simple
-prj_name = "calcite_simple.prj"
+_ = os.system(
+    f"ogs calcite_simple.prj -o {out_dir} 2>&1 > {out_dir / 'out_simple.txt'}"
+)
+_ = os.system(f"ogs calcite_pwp.prj -o {out_dir} 2>&1 > {out_dir / 'out_pwp.txt'}")
 
-t0 = time.time()
-print(">>> OGS started execution ... <<<")
+# %% [markdown]
+### Comparsion of OGS-6 simulation and PHREEQC results
 
-# !ogs {prj_name} -o {out_dir} > {out_dir}/out_simple.txt
-
-tf = time.time()
-print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
-
-# check if the simulation runs successfully
-check_file = Path(f"{out_dir}/calcite_simple_ts_43_t_30000.000000.vtu").is_file()
-if check_file:
-    print("OGS simulation for the scenario simple case runs successfully")
-else:
-    msg = "OGS simulation failed."
-    raise Exception(msg)
-
-# pwp
-prj_name = "calcite_pwp.prj"
-
-t0 = time.time()
-print(">>> OGS started execution ... <<<")
-
-# !ogs {prj_name} -o {out_dir} > {out_dir}/out_pwp.txt
-
-tf = time.time()
-print(">>> OGS terminated execution  <<< Elapsed time: ", round(tf - t0, 2), " s.")
-
-# check if the simulation runs successfully
-check_file = Path(f"{out_dir}/calcite_pwp_ts_43_t_30000.000000.vtu").is_file()
-if check_file:
-    print("OGS simulation for the scenario PWP case runs successfully")
-else:
-    msg = "OGS simulation failed."
-    raise Exception(msg)
 
 # %%
-### Read OGS-6 simulation results
+ot.variables.u_reg.define("kgw = kg")
+ca = ot.variables.Scalar("Ca", "mol/kgw", "mmol/kgw", "Ca+")
+h = ot.variables.Scalar("H", output_name="H+")
+ph = ot.variables.Scalar("H", output_name="pH", func=lambda x: -np.log10(x))
 
-# simple
-pvdfile_simple = vtuIO.PVDIO(f"{out_dir}/calcite_simple.pvd", dim=1)
+ogs_results: dict[str, ot.MeshSeries] = {}
+phreeqc_results: dict[str, pd.DataFrame] = {}
+for kind in ["simple", "pwp"]:
+    ogs_results[kind] = ot.MeshSeries(f"{out_dir}/calcite_{kind}.pvd").extract(0)
+    phreeqc_results[kind] = pd.read_csv(
+        f"./PHREEQC_results_{kind}.txt", sep=r"\s+", header=0, skipinitialspace=True
+    )
 
-# pwp
-pvdfile_pwp = vtuIO.PVDIO(f"{out_dir}/calcite_pwp.pvd", dim=1)
-
-# Read PHREEQC results
-
-# simple
-phreeqc_result_df_simple = pd.read_csv(
-    "./PHREEQC_results_simple.txt", sep=r"\s+", header=0, skipinitialspace=True
-)
-
-# pwp
-phreeqc_result_df_pwp = pd.read_csv(
-    "./PHREEQC_results_PWP.txt", sep=r"\s+", header=0, skipinitialspace=True
-)
-
-### visulalization
-# results at point [0, 0, 0] are selected for display
-point = {"pt0": (0.0, 0.0, 0.0)}
-
-# plot
-fig1 = plt.figure(figsize=(8, 6))
-ax = plt.subplot(111)
-
-## results of 'Ca'
-# OGS-6
-ax.plot(
-    pvdfile_simple.timesteps,
-    pvdfile_simple.read_time_series("Ca", point)["pt0"] * 1e3,
-    c="k",
-    linestyle="--",
-    label="Simple " + "OGS-6",
-)
-ax.plot(
-    pvdfile_pwp.timesteps,
-    pvdfile_pwp.read_time_series("Ca", point)["pt0"] * 1e3,
-    c="k",
-    label="PWP " + "OGS-6",
-)
-# PHREEQC
-ax.scatter(
-    phreeqc_result_df_simple.loc[:, "x"] * 1e3,
-    phreeqc_result_df_simple.loc[:, "Ca"],
-    c="r",
-    s=80,
-    marker="x",
-    label="Simple " + "PHREEQC",
-)
-ax.scatter(
-    phreeqc_result_df_pwp.loc[:, "x"] * 1e3,
-    phreeqc_result_df_pwp.loc[:, "Ca"],
-    c="b",
-    s=80,
-    marker="x",
-    label="PWP " + "PHREEQC",
-)
-ax.set_xlim([0, 3e4])
-ax.set_ylim([0, 4])
-ax.set_ylabel("Ca+ [mmol/kgw]")
-ax.set_xlabel("Time [s]")
-ann = ax.annotate(
-    "Ca+",
-    xy=(5000, 0.7),
-    xycoords="data",
-    va="center",
-    ha="center",
-    bbox={"boxstyle": "round", "fc": "w"},
-    fontsize=16,
-)
-ax.legend(loc="upper left", fontsize=10)
-
-## results of 'pH'
-ax2 = ax.twinx()
-# OGS-6
-ax2.plot(
-    pvdfile_simple.timesteps,
-    -np.log10(pvdfile_simple.read_time_series("H", point)["pt0"]),
-    c="k",
-    linestyle="--",
-    label="Simple " + "OGS-6",
-)
-ax2.plot(
-    pvdfile_pwp.timesteps,
-    -np.log10(pvdfile_pwp.read_time_series("H", point)["pt0"]),
-    c="k",
-    label="PWP " + "OGS-6",
-)
-# PHREEQC
-ax2.scatter(
-    phreeqc_result_df_simple.loc[:, "x"] * 1e3,
-    phreeqc_result_df_simple.loc[:, "pH"],
-    c="r",
-    s=80,
-    marker="x",
-    label="simple " + "PHREEQC",
-)
-ax2.scatter(
-    phreeqc_result_df_pwp.loc[:, "x"] * 1e3,
-    phreeqc_result_df_pwp.loc[:, "pH"],
-    c="b",
-    s=80,
-    marker="x",
-    label="PWP " + "PHREEQC",
-)
-ax2.set_xlim([0, 3e4])
-ax2.set_ylim([4, 7.5])
-ax2.set_ylabel("pH")
-ax2.set_xlabel("Time [s]")
-ann1 = ax2.annotate(
-    "pH",
-    xy=(5000, 6.4),
-    xycoords="data",
-    va="center",
-    ha="center",
-    bbox={"boxstyle": "round", "fc": "w"},
-    fontsize=16,
-)
+fig, axs = plt.subplots(1, 2, figsize=(10, 4), sharex=True)
+axs[0].plot([], [], "-k", label="OGS6")
+axs[0].plot([], [], "xk", label="PHREEQC")
+for i, kind in enumerate(["simple", "pwp"]):
+    ms_pt = ogs_results[kind]
+    phreeqc = phreeqc_results[kind]
+    c = f"C{i}"
+    for j, var in enumerate([ca, ph]):
+        ot.plot.line(ms_pt, "time", var, ax=axs[j], fontsize=10, c=c, label=kind)
+        axs[j].scatter(
+            phreeqc["x"] * 1e3, phreeqc[var.output_name[:2]], marker="x", c=c
+        )
+    assert np.all(ms_pt.timevalues >= 0.0)
+    assert np.all(ca.transform(ms_pt) >= 0.0)
+axs[0].set(xlim=(0, None), ylim=(0, None))
+_ = axs[1].legend(*fig.axes[0].get_legend_handles_labels())
 
 # %% [markdown]
 # Fig. 1: pH and calcium increase with kinetic dissolution of Calcite.
 
-# %%
 ## L2 difference
 
-# OGS-6 results for comparision
-OGS6_pwp_ca = (
-    np.delete((pvdfile_pwp.read_time_series("Ca", point)["pt0"]), np.arange(0, 24, 1))
-    * 1e3
-)
-OGS6_pwp_H = np.delete(
-    pvdfile_pwp.read_time_series("H", point)["pt0"], np.arange(0, 24, 1)
-)
+# %%
+phreeqc_results["pwp"]["H"] = 10 ** (-phreeqc_results["pwp"]["pH"])
+t = phreeqc_results["pwp"]["x"][1:] * 1e3
 
-# plot
-fig1 = plt.figure(figsize=(8, 6))
-ax = plt.subplot(111)
-ax.plot(
-    phreeqc_result_df_pwp.loc[:, "x"] * 1e3,
-    np.log10(
-        ((OGS6_pwp_ca - phreeqc_result_df_pwp.loc[1:, "Ca"]) ** 2) ** 0.5
-        / phreeqc_result_df_pwp.loc[:, "Ca"]
-    ),
-    c="g",
-    marker="o",
-    markersize=4,
-    label="Ca+ ",
-)
-ax.plot(
-    phreeqc_result_df_pwp.loc[:, "x"] * 1e3,
-    np.log10(
-        ((OGS6_pwp_H - 10 ** (-phreeqc_result_df_pwp.loc[1:, "pH"])) ** 2) ** 0.5
-        / 10 ** (-phreeqc_result_df_pwp.loc[:, "pH"])
-    ),
-    c="k",
-    marker="o",
-    markersize=4,
-    label="H+ ",
-)
-ax.set_xlim([1500, 3e4])
-ax.set_xticks(np.arange(0, 30001, 5000))
-ax.set_ylim([-5, 0])
-ax.set_xlabel("Time [s]")
+fig, ax = plt.subplots(figsize=(6, 4), sharex=True)
+for color, var in zip(["g", "k"], [ca, h], strict=True):
+    OGS_data = var.transform(ogs_results["pwp"][24:])[:, 0]
+    phreeqc_data = phreeqc_results["pwp"][var.output_name[:-1]][1:]
+    error = np.log10(((OGS_data - phreeqc_data) ** 2) ** 0.5 / phreeqc_data)
+    np.testing.assert_array_less(error, -1.8)
+    ax.plot(t, error, c=color, marker="o", markersize=4, label=var.output_name)
+
+    assert np.all((t >= 1500) & (t <= 3.0e4))
+    assert np.all((error >= -5) & (error <= 0.0))
+
+ax.set(xlim=(1500.0, 3.0e4), ylim=(-5, 0.0), xticks=np.arange(0, 30001, 5000))
+ax.set_xlabel("time / s")
 ax.set_ylabel(
     r"Log($\frac{|| \mathbf{c}^\mathrm{OGS-6} - \mathbf{c}^{\mathrm{PHREEQC}}||_{2}}{\mathbf{c}^{\mathrm{PHREEQC}}}$)"
 )
 ax.grid(color="gray", linestyle="dashed")
-ax.legend(loc="best", fontsize=11)
+_ = ax.legend(loc="best", fontsize=11)
 
 # %% [markdown]
 # Fig. 2:  L2 relative difference norm between the obtained results from OGS-6 and PHREEQC for the scenario with the PWP rate.
