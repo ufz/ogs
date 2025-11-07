@@ -247,6 +247,7 @@ struct IntegrationPointDataForOutput
 
     double fluid_density = std::numeric_limits<double>::quiet_NaN();
     double viscosity = std::numeric_limits<double>::quiet_NaN();
+    double rho_fr = std::numeric_limits<double>::quiet_NaN();
 };
 
 template <int DisplacementDim>

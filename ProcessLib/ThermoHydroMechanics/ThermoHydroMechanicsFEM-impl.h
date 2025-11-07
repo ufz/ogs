@@ -458,6 +458,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         double const rho_fr =
             frozen_liquid_value(MaterialPropertyLib::PropertyType::density);
+        ip_data_output.rho_fr = rho_fr;
 
         double const c_fr = frozen_liquid_value(
             MaterialPropertyLib::PropertyType::specific_heat_capacity);
