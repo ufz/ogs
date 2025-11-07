@@ -205,6 +205,11 @@ public:
                         vars, MaterialPropertyLib::Variable::capillary_pressure,
                         pos, t, dt);
 
+            auto const rho_w =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template value<double>(vars, pos, t, dt);
+
             auto const drhow_dp =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
@@ -215,8 +220,9 @@ public:
             auto const storage =
                 medium.property(MaterialPropertyLib::PropertyType::storage)
                     .template value<double>(vars, pos, t, dt);
-            double const mass_mat_coeff =
-                storage * Sw + porosity * Sw * drhow_dp - porosity * dSw_dpc;
+            double const mass_mat_coeff = storage * Sw +
+                                          porosity * Sw / rho_w * drhow_dp -
+                                          porosity * dSw_dpc;
 
             local_M.noalias() += mass_mat_coeff * _ip_data[ip].mass_operator;
 
@@ -235,10 +241,6 @@ public:
 
             if (_process_data.has_gravity)
             {
-                auto const rho_w =
-                    liquid_phase
-                        .property(MaterialPropertyLib::PropertyType::density)
-                        .template value<double>(vars, pos, t, dt);
                 auto const& body_force = _process_data.specific_body_force;
                 assert(body_force.size() == GlobalDim);
                 NodalVectorType gravity_operator =
