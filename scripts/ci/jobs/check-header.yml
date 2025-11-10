@@ -11,6 +11,7 @@ check header:
       -DOGS_CHECK_HEADER_COMPILATION=ON
       -DOGS_BUILD_GUI=ON
       -DBUILD_SHARED_LIBS=OFF
+      -DOGS_BUILD_VTK=ON
   script:
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
