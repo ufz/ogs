@@ -11,6 +11,7 @@
 #pragma once
 
 #include "EquationSystem.h"
+#include "MathLib/LinAlg/LinAlgEnums.h"
 #include "MathLib/LinAlg/LinearSolverBehaviour.h"
 #include "Types.h"
 
@@ -144,9 +145,9 @@ public:
     //! Apply known solutions to the linearized equation system
     //! \f$ A \cdot x = \mathit{rhs} \f$.
     //! \pre computeKnownSolutions() must have been called before.
-    virtual void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs,
-                                           GlobalVector& x,
-                                           bool const complete_for_A) const = 0;
+    virtual void applyKnownSolutionsPicard(
+        GlobalMatrix& A, GlobalVector& rhs, GlobalVector& x,
+        MathLib::DirichletBCApplicationMode const mode) const = 0;
 
     //! Returns whether the assembled matrix \f$A\f$ has changed and the linear
     //! solver must perform the MathLib::EigenLinearSolver::compute() step.

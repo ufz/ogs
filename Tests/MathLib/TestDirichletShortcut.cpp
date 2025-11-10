@@ -68,15 +68,17 @@ TEST(MathLib, DirichletShortcut)
     MathLib::EigenVector x{nrows};
 
     // reference
-    MathLib::applyKnownSolution(A_copy1, rhs_copy1, x, known_x_ids,
-                                known_x_values, true);
+    MathLib::applyKnownSolution(
+        A_copy1, rhs_copy1, x, known_x_ids, known_x_values,
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 
     auto A_copy2 = A;
     auto rhs_copy2 = rhs;
 
     // testee
-    MathLib::applyKnownSolution(A_copy2, rhs_copy2, x, known_x_ids,
-                                known_x_values, false);
+    MathLib::applyKnownSolution(
+        A_copy2, rhs_copy2, x, known_x_ids, known_x_values,
+        MathLib::DirichletBCApplicationMode::FAST_INCOMPLETE_MATRIX_UPDATE);
 
     EXPECT_THAT(
         rhs_copy2.getRawVector(),

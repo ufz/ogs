@@ -112,8 +112,9 @@ TEST(NumLibSerialLinearSolver, Steady2DdiffusionQuadElem)
     // rhs->write(std::cout);
 
     // apply Dirichlet BC
-    MathLib::applyKnownSolution(*A, *rhs, *x, ex1.vec_DirichletBC_id,
-                                ex1.vec_DirichletBC_value, true);
+    MathLib::applyKnownSolution(
+        *A, *rhs, *x, ex1.vec_DirichletBC_id, ex1.vec_DirichletBC_value,
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
     // std::cout << "A=\n";
     // A->write(std::cout);
     // std::cout << "rhs=\n";

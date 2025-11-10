@@ -21,7 +21,7 @@ namespace MathLib
 void applyKnownSolution(PETScMatrix& A, PETScVector& b, PETScVector& x,
                         const std::vector<PetscInt>& vec_knownX_id,
                         const std::vector<PetscScalar>& vec_knownX_x,
-                        bool const /*complete_for_A*/)
+                        DirichletBCApplicationMode const /*mode*/)
 {
     A.finalizeAssembly();
 

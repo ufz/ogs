@@ -421,7 +421,9 @@ void ComponentTransportProcess::solveReactionEquation(
     using Tag = NumLib::NonlinearSolverTag;
     using EqSys = NumLib::NonlinearSystem<Tag::Picard>;
     auto& equation_system = static_cast<EqSys&>(ode_sys);
-    equation_system.applyKnownSolutionsPicard(A, rhs, *x[process_id], true);
+    equation_system.applyKnownSolutionsPicard(
+        A, rhs, *x[process_id],
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 
     auto& linear_solver =
         _process_data.chemical_solver_interface->linear_solver;

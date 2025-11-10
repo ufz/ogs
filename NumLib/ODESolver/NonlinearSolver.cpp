@@ -199,8 +199,12 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             _linear_solver.willCompute(solver_needs_to_compute);
 
         timer_dirichlet.start();
-        sys.applyKnownSolutionsPicard(A, rhs, x_new_process,
-                                      solver_will_compute);
+        sys.applyKnownSolutionsPicard(
+            A, rhs, x_new_process,
+            solver_will_compute
+                ? MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE
+                : MathLib::DirichletBCApplicationMode::
+                      FAST_INCOMPLETE_MATRIX_UPDATE);
         time_dirichlet += timer_dirichlet.elapsed();
         INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 

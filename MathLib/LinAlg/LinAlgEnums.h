@@ -33,4 +33,15 @@ std::string convertVecNormTypeToString(VecNormType normType);
 /// convert string to VecNormType
 VecNormType convertStringToVecNormType(const std::string& str);
 
+/// Determines if Dirichlet BCs will be applied properly to both the global
+/// matrix A and the global rhs vector.
+///
+/// If the linear solver can reuse A from an earlier call, the Dirichlet BC
+/// application to A can be incomplete, thereby faster.
+enum class DirichletBCApplicationMode
+{
+    COMPLETE_MATRIX_UPDATE,        ///< Both A and b fully updated
+    FAST_INCOMPLETE_MATRIX_UPDATE  ///< A partially updated, b fully updated
+};
+
 }  // end namespace MathLib

@@ -130,7 +130,8 @@ namespace MathLib
 void applyKnownSolution(
     EigenMatrix& A, EigenVector& b, EigenVector& /*x*/,
     const std::vector<EigenMatrix::IndexType>& vec_knownX_id,
-    const std::vector<double>& vec_knownX_x, bool const complete_for_A)
+    const std::vector<double>& vec_knownX_x,
+    DirichletBCApplicationMode const mode)
 {
     using SpMat = EigenMatrix::RawMatrixType;
     static_assert(SpMat::IsRowMajor, "matrix is assumed to be row major!");
@@ -138,15 +139,21 @@ void applyKnownSolution(
     auto& A_eigen = A.getRawMatrix();
     auto& b_eigen = b.getRawVector();
 
-    if (complete_for_A)
+    using enum DirichletBCApplicationMode;
+    switch (mode)
     {
-        ::applyKnownSolutionComplete(A_eigen, b_eigen, vec_knownX_id,
-                                     vec_knownX_x);
-        return;
+        case COMPLETE_MATRIX_UPDATE:
+            ::applyKnownSolutionComplete(A_eigen, b_eigen, vec_knownX_id,
+                                         vec_knownX_x);
+            return;
+        case FAST_INCOMPLETE_MATRIX_UPDATE:
+            ::applyKnownSolutionIncomplete(A_eigen, b_eigen, vec_knownX_id,
+                                           vec_knownX_x);
+            return;
     }
 
-    ::applyKnownSolutionIncomplete(A_eigen, b_eigen, vec_knownX_id,
-                                   vec_knownX_x);
+    OGS_FATAL("Unhandled DirichletBCApplicationMode with integer value {}.",
+              std::to_underlying(mode));
 }
 
 }  // namespace MathLib
