@@ -7,6 +7,7 @@ import json
 import os.path
 import re
 import sys
+import traceback
 
 from print23 import print_
 
@@ -74,7 +75,9 @@ def run():
                 method = inline[6]
                 # ignored parameters need not be documented
                 if not method.startswith("ignore"):
-                    undocumented.append(inline[1:])
+                    # after the method field there might be info about
+                    # optional/default values, we ignore those
+                    undocumented.append(inline[1:7])
             elif status == "UNNEEDED":
                 unneeded_comments.append(inline[1:])
             elif status == "SPECIAL":
@@ -137,16 +140,15 @@ def run():
         print_("| File | Line | Parameter | Type | Method | Link |")
         print_("| ---- | ---: | --------- | ---- | ------ | ---- |")
         for u in sorted(undocumented):
-            u2 = list(u)
-            u2.append(github_src_url)
+            assert len(u) == 6
             print_(
                 (
                     "| {0} | {1} | {3} | <tt>{4}</tt> | <tt>{5}</tt> "
                     + "| [&rarr; ogs/ogs/master]({6}/{0}#L{1})"
-                ).format(*u2)
+                ).format(*u, github_src_url)
             )
             print(
-                "warning: undocumented parameter in {0}, line {1}: {3}".format(*u2),
+                "warning: undocumented parameter in {0}, line {1}: {3}".format(*u),
                 file=sys.stderr,
             )
 
