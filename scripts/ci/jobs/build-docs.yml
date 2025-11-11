@@ -31,7 +31,8 @@ build docs:
     - lizard -EWordCount -x "./Tests/*" || true # word-cloud
     # build
     - cd build
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
+    - DOXYGEN_PATH=`guix shell doxygen -- which doxygen`
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion -DDOXYGEN_EXECUTABLE=$DOXYGEN_PATH
     - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot -o cmake-dependencies.svg
     - cmake .
     - cmake --build . --target doc 2>&1 | tee make-docs.output
