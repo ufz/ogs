@@ -100,6 +100,8 @@ public:
         return computeImpl(A, opt, linear_solver_behaviour);
     }
 
+    bool didComputeAtLeastOnce() const { return !is_first_compute_call_; }
+
 protected:
     virtual bool solveImpl(Vector const& b, Vector& x, EigenOption& opt) = 0;
 
@@ -579,6 +581,13 @@ bool EigenLinearSolver::solve(
     return solver_->compute(A.getRawMatrix(), option_,
                             linear_solver_behaviour) &&
            solver_->solve(b.getRawVector(), x.getRawVector(), option_);
+}
+
+bool EigenLinearSolver::willCompute(
+    MathLib::LinearSolverBehaviour const linear_solver_behaviour) const
+{
+    return linear_solver_behaviour != MathLib::LinearSolverBehaviour::REUSE ||
+           !solver_->didComputeAtLeastOnce();
 }
 
 }  // namespace MathLib

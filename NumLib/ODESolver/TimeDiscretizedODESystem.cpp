@@ -161,7 +161,9 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         }
     }
 
-    MathLib::applyKnownSolution(Jac, res, minus_delta_x, ids, values);
+    MathLib::applyKnownSolution(
+        Jac, res, minus_delta_x, ids, values,
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -183,7 +185,9 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 
     // For the Newton method the values must be zero
     std::vector<double> values(ids.size(), 0);
-    MathLib::applyKnownSolution(Jac, res, x, ids, values);
+    MathLib::applyKnownSolution(
+        Jac, res, x, ids, values,
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 }
 
 TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -253,9 +257,9 @@ void TimeDiscretizedODESystem<
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Picard>::
-    applyKnownSolutionsPicard(GlobalMatrix& A,
-                              GlobalVector& rhs,
-                              GlobalVector& x) const
+    applyKnownSolutionsPicard(
+        GlobalMatrix& A, GlobalVector& rhs, GlobalVector& x,
+        MathLib::DirichletBCApplicationMode const mode) const
 {
     if (!_known_solutions)
     {
@@ -270,7 +274,7 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         ids.insert(end(ids), begin(bc.ids), end(bc.ids));
         values.insert(end(values), begin(bc.values), end(bc.values));
     }
-    MathLib::applyKnownSolution(A, rhs, x, ids, values);
+    MathLib::applyKnownSolution(A, rhs, x, ids, values, mode);
 }
 
 }  // namespace NumLib

@@ -1,12 +1,20 @@
 This flag enables an optimization for the ComponentTransport process:
 
-the linear solver will only do the `compute()`<sup>\*</sup> step if the timestep size
+the linear solver will only do the `compute()`<sup>\*</sup> step if the time step size
 changes.
+That affects the application of Dirichlet Boundary conditions, too:
+They will be applied to both the global matrix and the RHS vector only if the
+time step size changes. Otherwise only the global RHS vector is modified
+properly, since the linear solver will reuse its internally stored copy of the
+global matrix from the previous time step.
+
+At the moment this optimization is implemented only for the combination of Eigen
+linear solvers and the Picard non-linear solver.
 
 This flag is a further optimization on top of the
 [\<linear\>](@ref ogs_file_param__prj__processes__process__ComponentTransport__linear)
 flag.
-So the requirements of `<linear>` apply to this flag, too!
+Hence, the requirements of `<linear>` apply to this flag, too!
 
 \attention
 This is an expert option. It comes with a number of further **requirements above
@@ -15,7 +23,7 @@ those of `<linear>`**. These are:
 - The linear solver used to solve the process equations must be exclusively used
   for a single process (or for a single `process_id` in the case of staggered
   coupling). Otherwise the equation system the linear solver has to solve would
-  not only change upon timestep size change, but also when switching processes.
+  not only change upon time step size change, but also when switching processes.
 - Both, the process equations and the contributions from source terms and
   boundary conditions must be **solution and time independent**!
   In particular, the matrices presented to the linear solver must only change

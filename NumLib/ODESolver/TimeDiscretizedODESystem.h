@@ -234,8 +234,9 @@ public:
 
     void applyKnownSolutions(GlobalVector& x) const override;
 
-    void applyKnownSolutionsPicard(GlobalMatrix& A, GlobalVector& rhs,
-                                   GlobalVector& x) const override;
+    void applyKnownSolutionsPicard(
+        GlobalMatrix& A, GlobalVector& rhs, GlobalVector& x,
+        MathLib::DirichletBCApplicationMode const mode) const override;
 
     bool isLinear() const override { return _ode.isLinear(); }
 

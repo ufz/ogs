@@ -499,7 +499,7 @@ def compare_optimizations_to_base_case(cases):
 
         assert np.allclose(base_ts, var_ts, atol=1e-15, rtol=0)
 
-        for bm, vm in zip(base_meshes, var_meshes, strict=True):
+        for mesh_no, (bm, vm) in enumerate(zip(base_meshes, var_meshes, strict=True)):
             # point coordinates
             assert np.allclose(bm.points, vm.points, atol=1e-15, rtol=0)
 
@@ -507,10 +507,19 @@ def compare_optimizations_to_base_case(cases):
                 checked_point_data.add(n)
                 try:
                     assert np.allclose(
-                        bm.point_data[n], vm.point_data[n], atol=1e-15, rtol=0
+                        bm.point_data[n], vm.point_data[n], atol=1e-15, rtol=4e-14
                     )
                 except:
-                    print(f"error in nodal field '{n}'")
+                    diff = np.abs(bm.point_data[n] - vm.point_data[n])
+                    max_diff_idx = np.argmax(diff)
+                    max_diff = diff[max_diff_idx]
+
+                    print(
+                        f"error in nodal field '{n}' – difference at point #{max_diff_idx} is {max_diff} in mesh #{mesh_no} of {len(base_meshes)}"
+                    )
+                    print(
+                        f"  rel diff there is {(diff/bm.point_data[n])[max_diff_idx]}"
+                    )
                     raise
 
             for n in bm.cell_data:

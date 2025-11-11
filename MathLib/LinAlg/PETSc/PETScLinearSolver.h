@@ -22,6 +22,7 @@
 #include <array>
 #include <string>
 
+#include "MathLib/LinAlg/LinearSolverBehaviour.h"
 #include "PETScMatrix.h"
 #include "PETScVector.h"
 
@@ -66,6 +67,13 @@ public:
 
     /// Get, if the solver can handle rectangular equation systems
     bool canSolveRectangular() const { return can_solve_rectangular_; }
+
+    /// Provided for compatibility with Eigen linear solvers.
+    bool willCompute(
+        MathLib::LinearSolverBehaviour const /*linear_solver_behaviour*/) const
+    {
+        return true;
+    }
 
 private:
     bool canSolverHandleRectangular(std::string_view ksp_type)

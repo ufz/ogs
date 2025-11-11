@@ -205,8 +205,9 @@ void checkLinearSolverInterface(T_MATRIX& A,
     x.setZero();
 
     // apply BC
-    MathLib::applyKnownSolution(A, rhs, x, ex1.vec_dirichlet_bc_id,
-                                ex1.vec_dirichlet_bc_value);
+    MathLib::applyKnownSolution(
+        A, rhs, x, ex1.vec_dirichlet_bc_id, ex1.vec_dirichlet_bc_value,
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 
     MathLib::finalizeMatrixAssembly(A);
 
@@ -281,7 +282,9 @@ void checkLinearSolverInterface(T_MATRIX& A, T_VECTOR& b,
         bc_value[0] = mrank + 1;
     }
 
-    MathLib::applyKnownSolution(A, b, x, bc_id, bc_value);
+    MathLib::applyKnownSolution(
+        A, b, x, bc_id, bc_value,
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 
     MathLib::finalizeMatrixAssembly(A);
 
