@@ -50,8 +50,6 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
          "FrozenLiquid",
          //! \ogs_file_param_special{prj__media__medium__phases__phase__AqueousLiquid}
          "AqueousLiquid",
-         //! \ogs_file_param_special{prj__media__medium__phases__phase__NonAqueousLiquid}
-         "NonAqueousLiquid",
          //! \ogs_file_param_special{prj__media__medium__phases__phase__Gas}
          "Gas"}};
 
