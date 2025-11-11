@@ -44,8 +44,8 @@ void createSecondaryVariables(BaseLib::ConfigTree const& config,
         auto const [internal_name, output_name] =
             [&sec_var_config]() -> std::pair<std::string, std::string>
         {
-            //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__name}
             auto const name =
+                //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__name}
                 sec_var_config.getConfigAttributeOptional<std::string>("name");
             if (name)
             {
