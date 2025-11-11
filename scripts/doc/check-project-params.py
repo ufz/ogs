@@ -142,7 +142,7 @@ def run():
             print_(
                 (
                     "| {0} | {1} | {3} | <tt>{4}</tt> | <tt>{5}</tt> "
-                    + "| [&rarr; ufz/ogs/master]({6}/{0}#L{1})"
+                    + "| [&rarr; ogs/ogs/master]({6}/{0}#L{1})"
                 ).format(*u2)
             )
             print(
@@ -162,7 +162,7 @@ def run():
             u2[2] = re.sub(r'([\\@&$#<>%".|])', r"\\\1", u2[2])
             print_(
                 (
-                    "| {0} | {1} | {2} " + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |"
+                    "| {0} | {1} | {2} " + "| [&rarr; ogs/ogs/master]({3}/{0}#L{1}) |"
                 ).format(*u2)
             )
 
@@ -178,7 +178,7 @@ def run():
             w2[2] = re.sub(r'([\\@&$#<>%".|])', r"\\\1", w2[2])
             print_(
                 (
-                    "| {0} | {1} | {2} " + "| [&rarr; ufz/ogs/master]({3}/{0}#L{1}) |"
+                    "| {0} | {1} | {2} " + "| [&rarr; ogs/ogs/master]({3}/{0}#L{1}) |"
                 ).format(*w2)
             )
 
@@ -193,7 +193,7 @@ def run():
             n2.append(github_src_url)
             print_(
                 (
-                    "| {0} | {1} | {2} " + "| [&rarr; ufz/ogs/master]({3}/{1}#L{2}) |"
+                    "| {0} | {1} | {2} " + "| [&rarr; ogs/ogs/master]({3}/{1}#L{2}) |"
                 ).format(*n2)
             )
 
@@ -207,7 +207,7 @@ def run():
             print_(
                 (
                     r"| \ref ogs_file_{0}__{1} | Documentation/ProjectFile/{2} "
-                    + "| [&rarr; ufz/ogs/master]({3}/Documentation/ProjectFile/{2}#) |"
+                    + "| [&rarr; ogs/ogs/master]({3}/Documentation/ProjectFile/{2}#) |"
                 ).format(
                     tag_or_attr, tagpath.replace(".", "__"), filepath, github_src_url
                 )
