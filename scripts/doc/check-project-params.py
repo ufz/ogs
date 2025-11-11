@@ -135,7 +135,7 @@ if undocumented:
         print_(
             (
                 "| {0} | {1} | {3} | <tt>{4}</tt> | <tt>{5}</tt> "
-                + "| [&rarr; ufz/ogs/master]({9}/{0}#L{1})"
+                + "| [&rarr; ufz/ogs/master]({6}/{0}#L{1})"
             ).format(*u2)
         )
         print(
