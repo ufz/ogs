@@ -48,7 +48,18 @@ If it is empty, there are no issues detected.
 
 EOF
 
-"$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile" || true
+if "$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile"; then
+    :
+else
+    stat="$?"
+    if [ 1 -ne "$stat" ]; then
+        # status neither 0 nor 1 => error
+        echo "status was $stat" >&2
+        false
+    fi
+
+    echo "warning: documentation quality check failed" >&2
+fi
 
 cat <<EOF >>"$qafile"
 
