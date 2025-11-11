@@ -128,6 +128,7 @@ Parameter<double>& getNamedOrCreateInlineParameter(
     std::string const& tag_name,
     std::string const& inline_suffix)
 {
+    //! \ogs_file_special
     std::string const raw = config.getConfigParameter<std::string>(tag_name);
 
     // try to parse number(s) (if empty - no inline-values)
