@@ -9,7 +9,11 @@ set(DOXYGEN_EXCLUDE
 )
 set(DOXYGEN_FILE_PATTERNS *.h *.cpp *.tpp *.dox)
 set(DOXYGEN_PROJECT_NAME "OGS")
-set(DOXYGEN_PROJECT_NUMBER "${OGS_GIT_BRANCH}")
+if(DEFINED ENV{CI_MERGE_REQUEST_IID})
+    set(DOXYGEN_PROJECT_NUMBER "mr-$ENV{CI_MERGE_REQUEST_IID}")
+else()
+    set(DOXYGEN_PROJECT_NUMBER "${OGS_GIT_BRANCH}")
+endif()
 set(DOXYGEN_PROJECT_VERSION ${GIT_SHA1_SHORT})
 set(DOXYGEN_PROJECT_LOGO
     ${PROJECT_SOURCE_DIR}/Documentation/OpenGeoSys-Logo.png
@@ -102,6 +106,10 @@ configure_file(
     ${PROJECT_SOURCE_DIR}/Documentation/mainpage.dox.in
     ${PROJECT_BINARY_DIR}/DocAux/dox/mainpage.dox
 )
+
+set(DOXYGEN_FULL_PATH_NAMES NO) # relative links
+set(DOXYGEN_HTML_HEADER ${PROJECT_SOURCE_DIR}/Documentation/doxygen-header.html)
+set(DOXYGEN_HTML_EXTRA_STYLESHEET ${PROJECT_SOURCE_DIR}/Documentation/doxygen-stylesheet.css)
 
 doxygen_add_docs(doc ${PROJECT_SOURCE_DIR}/ ${PROJECT_BINARY_DIR}/DocAux/dox)
 
