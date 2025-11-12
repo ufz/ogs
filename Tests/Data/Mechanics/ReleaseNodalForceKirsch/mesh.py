@@ -10,8 +10,17 @@ import pyvista as pv
 class MeshGenerator:
     """Mesh generator for the Kirsch problem"""
 
-    def __init__(self, gmsh_model):
+    def __init__(
+        self,
+        gmsh_model,
+        min_edge_length=1.0,
+        max_edge_length=5.0,
+        quad_zone_factor=0.5,
+        n_side=50,
+    ):
         self.gmsh_model = gmsh_model
+        self.min_edge_length = min_edge_length
+        self.max_edge_length = max_edge_length
 
         if not gmsh.isInitialized():
             gmsh.initialize()
@@ -22,8 +31,8 @@ class MeshGenerator:
         L = 70  # Square size
         r = 6.5  # Radius of quarter circle
         y0 = -857
-        lc = 1.0  # Mesh size (used for transfinite divisions)
-        lc_o = 5.0
+        lc = min_edge_length  # Mesh size (used for transfinite divisions)
+        lc_o = max_edge_length
 
         # --- Define points ---
         # Quarter circle points
@@ -33,11 +42,11 @@ class MeshGenerator:
 
         # Square points
         p3 = gmsh.model.geo.addPoint(L, y0, 0, lc_o)
-        p3a = gmsh.model.geo.addPoint(0.5 * L, y0, 0, lc)
+        p3a = gmsh.model.geo.addPoint(quad_zone_factor * L, y0, 0, lc)
 
         p4 = gmsh.model.geo.addPoint(L, L + y0, 0, lc_o)
         p5 = gmsh.model.geo.addPoint(0, L + y0, 0, lc_o)
-        p5a = gmsh.model.geo.addPoint(0, 0.5 * L + y0, 0, lc)
+        p5a = gmsh.model.geo.addPoint(0, quad_zone_factor * L + y0, 0, lc)
 
         # --- Define curves ---
         arc1 = gmsh.model.geo.addCircleArc(p1, p0, p2)
@@ -75,7 +84,6 @@ class MeshGenerator:
         # --- Transfinite setup ---
         # Define transfinite curves (divisions based on geometry and smoothness)
         n_arc = 20  # number of divisions on arc
-        n_side = 50  # for square edges
 
         gmsh.model.geo.mesh.setTransfiniteCurve(arc1, n_arc)
         gmsh.model.geo.mesh.setTransfiniteCurve(arc2, n_arc)
@@ -97,8 +105,8 @@ class MeshGenerator:
             self.out_dir.mkdir(parents=True)
 
         gmsh.option.setNumber("Mesh.Algorithm", 5)
-        gmsh.option.setNumber("Mesh.CharacteristicLengthMin", 0.5)
-        gmsh.option.setNumber("Mesh.CharacteristicLengthMax", 10)
+        gmsh.option.setNumber("Mesh.CharacteristicLengthMin", self.min_edge_length)
+        gmsh.option.setNumber("Mesh.CharacteristicLengthMax", self.max_edge_length)
         gmsh.option.setNumber("Mesh.CharacteristicLengthFromCurvature", 1)
         gmsh.option.setNumber("Mesh.Format", 1)
 
