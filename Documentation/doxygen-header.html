@@ -124,7 +124,7 @@
                           this.versions = data;
                           this.preferred = data.find(v => v.preferred);
 
-                          // Detect MR preview: https://ogs.ogs.xyz/ogs/mr-XXXX/
+                          // Detect MR preview: https://ogs.ogs.xyz/ogs/doxygen-mr-XXXX/
                           const mrMatch = location.hostname === "ogs.ogs.xyz"
                             && /^\/ogs\/doxygen-mr-\d+\//.test(location.pathname);
 
