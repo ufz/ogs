@@ -4,8 +4,19 @@ build docs:
   tags: [shell, envinf]
   timeout: 30 minutes
   variables:
-    DOX_WARNINGS_THRESHOLD: 18
+    DOX_WARNINGS_THRESHOLD: 10
+  rules:
+    - if: $CI_COMMIT_TAG
+      variables:
+        PAGES_PREFIX: doxygen
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      variables:
+        PAGES_PREFIX: doxygen
+    - if: $CI_MERGE_REQUEST_IID
+      variables:
+        PAGES_PREFIX: doxygen-mr-$CI_MERGE_REQUEST_IID
   script:
+    - rm -rf build
     - mkdir -p build
     # cpp-dependencies
     - NUM_CYCLES=`cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
@@ -20,9 +31,10 @@ build docs:
     - lizard -EWordCount -x "./Tests/*" || true # word-cloud
     # build
     - cd build
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
+    - DOXYGEN_PATH=`guix shell doxygen -- which doxygen`
+    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion -DDOXYGEN_EXECUTABLE=$DOXYGEN_PATH
     - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot -o cmake-dependencies.svg
-    - cmake . -DOGS_BUILD_PROCESSES=SteadyStateDiffusion
+    - cmake .
     - cmake --build . --target doc 2>&1 | tee make-docs.output
     - npx -y pagefind --site docs # pagefind index
     - cat make-docs.output DoxygenWarnings.log | grep 'warning:' | grep -v 'too many nodes\|perl:' > DoxygenWarnings-filtered.log
@@ -36,11 +48,8 @@ build docs:
         exit 1
       fi
     - echo "Number of Doxygen warnings is $NUM_DOX_WARNINGS (threshold is $DOX_WARNINGS_THRESHOLD)."
-    - BRANCH_REGEX="^v[0-9]\.[0-9]\.[0-9]"
   artifacts:
     paths:
-      - Doxygen.html
-      - build/docs
       - build/cpp-dependencies.svg
       - build/cmake-dependencies.svg
       - Lizard.html
@@ -48,44 +57,45 @@ build docs:
       - codecloud.html
       - build/DoxygenWarnings.log
       - build/DoxygenWarnings-filtered.log
-      - build/searchdata.xml
-      - scripts/doc/_headers
-      - script/doc/_redirects
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
     when: always
+  pages:
+    publish: build/docs
+    path_prefix: '$PAGES_PREFIX'
   environment:
     name: doxygen preview $CI_MERGE_REQUEST_IID
-    url: ${ARTIFACTS_PAGES_URL}/build/docs/index.html
+    url: $CI_PAGES_URL
 
 deploy docs:
   stage: package
-  image: node:slim
-  needs: ["build docs"]
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_COMMIT_TAG
+  needs: ["build docs"]
+  tags: [envinf, shell]
   variables:
     GIT_STRATEGY: none # no checkout
   before_script:
     - npm install -g netlify-cli
   script:
-    - |
-      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        cp scripts/doc/{_redirects,_headers} build/docs
-        netlify deploy --prod --dir=build/docs --site $DOXYGEN_NETLIFY_SITE_ID
-      else
-        netlify link --name ogs-doxygen-${CI_COMMIT_TAG//./-}
-        netlify deploy --prod --dir=build/docs
-      fi
+    - rm -rf ogs-doxygen-web
+    - git config --global user.name "GitLab CI"
+    - git config --global user.email "gitlab-ci-no-reply@opengeosys.org"
+    - git clone https://${CI_SERVER_HOST}/ogs/ogs-doxygen-web.git
+    - cd ogs-doxygen-web
+    - mv ../build/docs $CI_COMMIT_TAG
+    - git add $CI_COMMIT_TAG
+    - rm stable && ln -s $CI_COMMIT_TAG stable && git add stable
+    - git commit -m "Release $CI_COMMIT_TAG"
+    - git push "https://${DOXYGEN_CI_COMMITER_USER_AND_TOKEN}@${CI_SERVER_HOST}/ogs/ogs-doxygen-web.git" HEAD:main
   artifacts:
     paths:
       - build/searchdata.xml
 
 deploy doxysearch:
   stage: package
-  needs: [ "deploy docs" ]
+  needs: [ "build docs" ]
   tags: [ doxysearch ]
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

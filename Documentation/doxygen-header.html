@@ -1,0 +1,205 @@
+<!-- HTML header for doxygen 1.14.0-->
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="$langISO">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=11" />
+  <meta name="generator" content="Doxygen $doxygenversion" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!--BEGIN PROJECT_NAME-->
+  <title>$projectname: $title</title><!--END PROJECT_NAME-->
+  <!--BEGIN !PROJECT_NAME-->
+  <title>$title</title><!--END !PROJECT_NAME-->
+  <!--BEGIN PROJECT_ICON-->
+  <link rel="icon" href="$relpath^$projecticon" type="image/x-icon" />
+  <!--END PROJECT_ICON-->
+  <link href="$relpath^tabs.css" rel="stylesheet" type="text/css" />
+  <!--BEGIN FULL_SIDEBAR-->
+  <script type="text/javascript">var page_layout = 1;</script>
+  <!--END FULL_SIDEBAR-->
+  <script type="text/javascript" src="$relpath^jquery.js"></script>
+  <script type="text/javascript" src="$relpath^dynsections.js"></script>
+  <!--BEGIN COPY_CLIPBOARD-->
+  <script type="text/javascript" src="$relpath^clipboard.js"></script>
+  <!--END COPY_CLIPBOARD-->
+  $treeview
+  $search
+  $mathjax
+  $darkmode
+  <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
+  $extrastylesheet
+  <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+</head>
+
+<body>
+  <!--BEGIN FULL_SIDEBAR-->
+  <div id="side-nav" class="ui-resizable side-nav-resizable"><!-- do not remove this div, it is closed by doxygen! -->
+    <!--END FULL_SIDEBAR-->
+
+    <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+
+      <!--BEGIN TITLEAREA-->
+      <div id="titlearea">
+        <table cellspacing="0" cellpadding="0">
+          <tbody>
+            <tr id="projectrow">
+              <!--BEGIN PROJECT_LOGO-->
+              <td id="projectlogo"><img alt="Logo" src="$relpath^$projectlogo" $logosize /></td>
+              <!--END PROJECT_LOGO-->
+              <!--BEGIN PROJECT_NAME-->
+              <td id="projectalign">
+                <div style="margin-left: 1em;" id="projectname">$projectname</div>
+                <!--BEGIN PROJECT_BRIEF-->
+                <div id="projectbrief">$projectbrief</div>
+                <!--END PROJECT_BRIEF-->
+              </td>
+
+              <td>
+                <div
+                  x-data="useDocsVersioning('$projectnumber', 'https://ogs.ogs.xyz/ogs-doxygen-web/_static/versions.json')"
+                  x-init="init()" class="dropdown">
+                  <button @click="open = !open" type="button" class="dropdown-toggle">
+                    <span x-text="'Version: ' + currentVersion"></span>
+                    <svg style="width:14px; height:14px; margin-left:4px;" fill="none" viewBox="0 0 20 20"
+                      stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 7l3-3 3 3m0 6l-3 3-3-3" />
+                    </svg>
+                  </button>
+
+                  <div x-show="open" @click.away="open = false" class="dropdown-menu" style="min-width: 6rem;">
+                    <ul style="list-style: none; margin: 0; padding: 0;">
+                      <template x-for="v in versions" :key="v.version">
+                        <li>
+                          <a :href="buildTargetURL(v.version)" class="dropdown-item"
+                            :class="v.version === currentVersion ? 'active' : ''" x-text="v.version"></a>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </div>
+
+                <script>
+                  function normalizeURL(url) {
+                    return url.endsWith("/") ? url : url + "/";
+                  }
+
+                  function semverCompareDesc(a, b) {
+                    const special = ["dev", "latest", "main", "master"];
+                    const aIsSpecial = special.includes(a);
+                    const bIsSpecial = special.includes(b);
+
+                    if (aIsSpecial && !bIsSpecial) return -1;
+                    if (!aIsSpecial && bIsSpecial) return 1;
+                    if (aIsSpecial && bIsSpecial) return a.localeCompare(b);
+
+                    const pa = a.split('.').map(Number);
+                    const pb = b.split('.').map(Number);
+                    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+                      const diff = (pb[i] || 0) - (pa[i] || 0);
+                      if (diff !== 0) return diff;
+                    }
+                    return 0;
+                  }
+
+                  function useDocsVersioning(currentVersion, versionsUrl) {
+                    return {
+                      open: false,
+                      currentVersion,
+                      versions: [],
+                      preferred: null,
+                      isMRPreview: false,
+                      mrBase: null,
+
+                      async init() {
+                        try {
+                          const response = await fetch(versionsUrl);
+                          if (!response.ok) throw new Error("Failed to fetch versions.json");
+
+                          const data = await response.json();
+                          data.sort((a, b) => semverCompareDesc(a.version, b.version));
+
+                          this.versions = data;
+                          this.preferred = data.find(v => v.preferred);
+
+                          // Detect MR preview: https://ogs.ogs.xyz/ogs/mr-XXXX/
+                          const mrMatch = location.hostname === "ogs.ogs.xyz"
+                            && /^\/ogs\/doxygen-mr-\d+\//.test(location.pathname);
+
+                          if (mrMatch) {
+                            this.isMRPreview = true;
+                            // Base URL: origin + /ogs/mr-XXXX/
+                            const prefix = location.pathname.match(/^\/ogs\/doxygen-mr-\d+\//)[0];
+                            this.mrBase = normalizeURL(location.origin + prefix);
+                          }
+                        } catch (e) {
+                          console.error(e);
+                        }
+                      },
+
+                      isOutdated() {
+                        if (this.isMRPreview) return true;
+                        return this.preferred && this.currentVersion !== this.preferred.version;
+                      },
+
+                      buildTargetURL(targetVersion) {
+                        const currentFull = window.location.href;
+                        const currentPath = window.location.pathname + window.location.search + window.location.hash;
+
+                        if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+                          const targetEntry = this.versions.find(v => v.version === targetVersion);
+                          if (!targetEntry) return currentFull;
+                          return normalizeURL(targetEntry.url) + currentPath.replace(/^\/+/, "");
+                        }
+
+                        if (this.isMRPreview) {
+                          const targetEntry = this.versions.find(v => v.version === targetVersion);
+                          if (!targetEntry) return currentFull;
+                          const toBase = normalizeURL(targetEntry.url);
+                          const relative = currentFull.slice(this.mrBase.length);
+                          return toBase + relative;
+                        }
+
+                        const targetEntry = this.versions.find(v => v.version === targetVersion);
+                        if (!targetEntry) return currentFull;
+                        const toBase = normalizeURL(targetEntry.url);
+
+                        // Detect current version base by prefix match
+                        const currentEntry = this.versions.find(v => currentFull.startsWith(normalizeURL(v.url)));
+                        if (currentEntry) {
+                          const fromBase = normalizeURL(currentEntry.url);
+                          const relative = currentFull.slice(fromBase.length);
+                          return toBase + relative;
+                        }
+
+                        // Cannot detect, fallback to version root
+                        return toBase;
+                      }
+                    };
+                  }
+                </script>
+              </td>
+              <!--END PROJECT_NAME-->
+
+              <!--BEGIN DISABLE_INDEX-->
+              <!--BEGIN SEARCHENGINE-->
+              <!--BEGIN !FULL_SIDEBAR-->
+              <td>$searchbox</td>
+              <!--END !FULL_SIDEBAR-->
+              <!--END SEARCHENGINE-->
+              <!--END DISABLE_INDEX-->
+            </tr>
+            <!--BEGIN SEARCHENGINE-->
+            <!--BEGIN FULL_SIDEBAR-->
+            <tr>
+              <td colspan="2">$searchbox</td>
+            </tr>
+            <!--END FULL_SIDEBAR-->
+            <!--END SEARCHENGINE-->
+          </tbody>
+        </table>
+      </div>
+      <!--END TITLEAREA-->
+      <!-- end header part -->
