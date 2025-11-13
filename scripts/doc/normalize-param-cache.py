@@ -68,7 +68,7 @@ def merge_lines(it):
 
             # remove non-doxygen comments
             line = re.sub(r"/\*[^!*].*\*/|/\*\*/", "", line)
-            line = re.sub("//[^!*].*|//$", "", line, 1)
+            line = re.sub("//[^!*].*|//$", "", line, count=1)
 
             if buf_fn:
                 if m.group(2) == ":":

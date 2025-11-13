@@ -44,7 +44,14 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     }
 
     std::array<std::string, 5> const allowed_phase_types = {
-        {"Solid", "FrozenLiquid", "AqueousLiquid", "NonAqueousLiquid", "Gas"}};
+        {//! \ogs_file_param_special{prj__media__medium__phases__phase__Solid}
+         "Solid",
+         //! \ogs_file_param_special{prj__media__medium__phases__phase__FrozenLiquid}
+         "FrozenLiquid",
+         //! \ogs_file_param_special{prj__media__medium__phases__phase__AqueousLiquid}
+         "AqueousLiquid",
+         //! \ogs_file_param_special{prj__media__medium__phases__phase__Gas}
+         "Gas"}};
 
     if (std::none_of(allowed_phase_types.begin(),
                      allowed_phase_types.end(),

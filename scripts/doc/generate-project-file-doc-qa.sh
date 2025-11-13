@@ -32,7 +32,7 @@ mkdir -p "$doxdir"
 
 # Gather information about documented parameters.
 "$toolsdir/get-project-params.sh" "$srcdir" \
-    | "$toolsdir/normalize-param-cache.py" >"$param_cache" 2>/dev/null
+    | "$toolsdir/normalize-param-cache.py" >"$param_cache"
 
 # Document ctest project files
 # and find out which tags and attributes are tested in which prj file and what
@@ -48,7 +48,18 @@ If it is empty, there are no issues detected.
 
 EOF
 
-"$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile" || true
+if "$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile"; then
+    :
+else
+    stat="$?"
+    if [ 1 -ne "$stat" ]; then
+        # status neither 0 nor 1 => error
+        echo "status was $stat" >&2
+        false
+    fi
+
+    echo "warning: documentation quality check failed" >&2
+fi
 
 cat <<EOF >>"$qafile"
 

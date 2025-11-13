@@ -25,6 +25,10 @@ std::unique_ptr<SourceTermBase> createEmbeddedAnchor(
     std::size_t const source_term_mesh_id, const int variable_id)
 {
     DBUG("Constructing EmbeddedAnchor from config.");
+    // ...special is necessary, because EmbeddedAnchor has no configuration via
+    // child tags, hence it wouldn't be handled properly by the documentation
+    // scripts otherwise.
+    //! \ogs_file_param_special{prj__process_variables__process_variable__source_terms__source_term__EmbeddedAnchor}
     //! \ogs_file_param{prj__process_variables__process_variable__source_terms__source_term__type}
     config.checkConfigParameter("type", "EmbeddedAnchor");
 
