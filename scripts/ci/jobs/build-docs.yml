@@ -65,7 +65,7 @@ build docs:
     publish: build/docs
     path_prefix: '$PAGES_PREFIX'
   environment:
-    name: doxygen preview $CI_MERGE_REQUEST_IID
+    name: doxygen preview $PAGES_PREFIX
     url: $CI_PAGES_URL
 
 deploy docs:
