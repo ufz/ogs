@@ -36,6 +36,8 @@ deploy web site:
     # Copy notebook pages
     - cp -rl ../build/*/web/content ./
     - yarn
+    - |
+      [ -n "$CI_COMMIT_TAG" ] && sed -i 's|https://ogs.ogs.xyz/ogs/doxygen/|https://doxygen.opengeosys.org/'"$CI_COMMIT_TAG"/'|g' config/_default/hugo.toml
     - yarn build
   pages:
     publish: web/public

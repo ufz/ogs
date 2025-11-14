@@ -144,7 +144,7 @@ category = "User"
 
 [[menu.docs]]
 name = "Source code documentation"
-url = "https://doxygen.opengeosys.org/"
+url = "https://ogs.ogs.xyz/ogs/doxygen/"
 post = "The OGS source code documentation is automatically generated right from the code itself via Doxygen and is a nice reference while coding."
 [menu.docs.params]
 category = "Developer"
