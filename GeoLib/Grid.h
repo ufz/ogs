@@ -59,7 +59,7 @@ public:
      * This is the destructor of the class. It deletes the internal data
      * structures *not* including the pointers to the points.
      */
-    virtual ~Grid() { delete[] _grid_cell_nodes_map; }
+    ~Grid() { delete[] _grid_cell_nodes_map; }
 
     /**
      * The method calculates the grid cell the given point is belonging to,
