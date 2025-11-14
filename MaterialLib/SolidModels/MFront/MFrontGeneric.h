@@ -9,7 +9,13 @@
 
 #pragma once
 
+// clang-format off
+// The exception include is needed as in MGIS-rliv-2.2 branch it is missing.
+// TODO(naumov): remove after TFEL-5 update.
+#include <exception>
 #include <MGIS/Behaviour/Behaviour.hxx>
+// clang-format on
+
 #include <MGIS/Behaviour/BehaviourData.hxx>
 #include <MGIS/Behaviour/Integrate.hxx>
 #include <boost/mp11.hpp>
