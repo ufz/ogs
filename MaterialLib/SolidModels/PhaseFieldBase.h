@@ -86,6 +86,7 @@ enum class EnergySplitModel
 {
     Isotropic,
     VolDev,
+    Spectral,
     EffectiveStress,
     OrthoVolDev,
     OrthoMasonry
@@ -102,6 +103,10 @@ EnergySplitModel convertStringToEnergySplitModel(
     if (energy_split_model == "VolumetricDeviatoric")
     {
         return EnergySplitModel::VolDev;
+    }
+    if (energy_split_model == "Spectral")
+    {
+        return EnergySplitModel::Spectral;
     }
     if (energy_split_model == "EffectiveStress")
     {
@@ -353,6 +358,7 @@ void calculateStress(
             DisplacementDim> const&>(solid_material)
             .getMaterialProperties();
 
+    auto const lambda = linear_elastic_mp.lambda(t, x);
     auto const bulk_modulus = linear_elastic_mp.bulk_modulus(t, x);
     auto const mu = linear_elastic_mp.mu(t, x);
     switch (energy_split_model)
@@ -372,6 +378,15 @@ void calculateStress(
                      elastic_energy, C_tensile, C_compressive) =
                 MaterialLib::Solids::Phasefield::calculateVolDevDegradedStress<
                     DisplacementDim>(degradation, bulk_modulus, mu, eps);
+            break;
+        }
+        case EnergySplitModel::Spectral:
+        {
+            std::tie(sigma, sigma_tensile, D, strain_energy_tensile,
+                     elastic_energy, C_tensile, C_compressive) =
+                MaterialLib::Solids::Phasefield::
+                    calculateSpectralDegradedStress<DisplacementDim>(
+                        degradation, lambda, mu, eps);
             break;
         }
         case EnergySplitModel::EffectiveStress:
