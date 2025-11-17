@@ -28,7 +28,7 @@ It has to contain 'name' and 'type' tags:
 <type>THERMO_HYDRO_MECHANICS</type>
 ```
 
-Name can be defined freely, type has to contain one of following strings [list of available processes](https://doxygen.opengeosys.org/d5/d98/ogs_file_param__prj__processes__process.html). More details about some of them can be found in
+Name can be defined freely, type has to contain one of following strings [list of available processes](https://doxygen.opengeosys.org/stable/d5/d98/ogs_file_param__prj__processes__process.html). More details about some of them can be found in
 the [Process information](/docs/processes/heat-transport/heat_transport_bhe/) section.
 
 ## Integration order

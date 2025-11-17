@@ -395,7 +395,7 @@ with open(
 untested_tags = sorted([tag for tag, is_tag in documented_tags_attrs if is_tag])
 untested_attrs = sorted([attr for attr, is_tag in documented_tags_attrs if not is_tag])
 
-# This goes to the QA page (https://doxygen.opengeosys.org/d1/d49/project_file_doc_qa.html) :-)
+# This goes to the QA page (https://doxygen.opengeosys.org/stable/d1/d49/project_file_doc_qa.html) :-)
 with open(
     os.path.join(docauxdir, "untested-parameters-cache.json"),
     "w",

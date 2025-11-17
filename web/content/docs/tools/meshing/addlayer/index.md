@@ -18,7 +18,7 @@ the switch `--copy-material-ids` the material group IDs of the extruded layer wi
 kept. With the switch `--set-material-id` the material group id of the new layer can be set
 to a different value than the default value of 'highest material group number plus one'.
 
-The tool requires the [OGS-6 node ordering](http://doxygen.opengeosys.org/index.html) in the elements. A different node ordering may lead to unexpected results. In case one might try to change the ordering using the tool `NodeReordering`.
+The tool requires the [OGS-6 node ordering](https://doxygen.opengeosys.org) in the elements. A different node ordering may lead to unexpected results. In case one might try to change the ordering using the tool `NodeReordering`.
 
 ## Usage
 

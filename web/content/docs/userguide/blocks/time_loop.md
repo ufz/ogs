@@ -129,7 +129,7 @@ As fixed time stepping is one of the simplest available, it is a good starting p
 
 #### Iteration number based time stepping
 
-[See Doxygen](https://doxygen.opengeosys.org/df/df4/ogs_file_param__prj__time_loop__processes__process__time_stepping__iterationnumberbasedtimestepping)
+[See Doxygen](https://doxygen.opengeosys.org/stable/df/df4/ogs_file_param__prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping)
 The examples discussed above, would be defined in the project file as follows:
 
 ```xml
@@ -150,7 +150,7 @@ especially for the solution of non-linear problems.
 
 #### Evolutionary PID controller
 
-[See Doxygen](https://doxygen.opengeosys.org/d3/d86/ogs_file_param__prj__time_loop__processes__process__time_stepping__evolutionarypidcontroller)
+[See Doxygen](https://doxygen.opengeosys.org/stable/d3/d86/ogs_file_param__prj__time_loop__processes__process__time_stepping__EvolutionaryPIDcontroller)
 
 ### Error tolerances
 
@@ -246,7 +246,7 @@ In following section $x$ denotes solution vector.
 
 #### Absolute-value norm
 
-`NORM1` is defined as the absolute-value norm in the [LinAlg library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#ac7415e1254b70c4015ccd3b6f2873338).
+`NORM1` is defined as the absolute-value norm in the [LinAlg library](https://doxygen.opengeosys.org/stable/d6/dcd/namespaceMathLib_1_1LinAlg#ac7415e1254b70c4015ccd3b6f2873338).
 
 It is defined by the following equation:
 $$
@@ -255,7 +255,7 @@ $$
 
 #### Euclidean norm
 
-`NORM2` in the OpenGeoSys implementation is as well in the [LinAlg library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#af298d1ddc92d7ce52046adc669e9904f).
+`NORM2` in the OpenGeoSys implementation is as well in the [LinAlg library](https://doxygen.opengeosys.org/stable/d6/dcd/namespaceMathLib_1_1LinAlg#af298d1ddc92d7ce52046adc669e9904f).
 
 It is defined by the following equation:
 $$
@@ -264,7 +264,7 @@ $$
 
 #### Infinity norm
 
-Moreover, `INFINITY_N` is the infinity norm (sometimes also called maximum norm), which can be found as well in the [LinAlg Library](https://doxygen.opengeosys.org/d6/dcd/namespacemathlib_1_1linalg#a49abd74780cb8a1a7135a722ca762394) and which reads as follows:
+Moreover, `INFINITY_N` is the infinity norm (sometimes also called maximum norm), which can be found as well in the [LinAlg Library](https://doxygen.opengeosys.org/stable/d6/dcd/namespaceMathLib_1_1LinAlg#a49abd74780cb8a1a7135a722ca762394) and which reads as follows:
 
 $$
 x_{norm} = \mathrm{max} ((|x_i|)_{i = 1,...,n})

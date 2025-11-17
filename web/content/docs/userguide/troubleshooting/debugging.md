@@ -34,18 +34,18 @@ Local matrix output is available for all processes in OGS, as of now
 
 ## Generating more output
 
-When the [`<time_loop/output/variables>`](https://doxygen.opengeosys.org/d2/d5b/ogs_file_param__prj__time_loop__output__variables)
+When the [`<time_loop/output/variables>`](https://doxygen.opengeosys.org/stable/d2/d5b/ogs_file_param__prj__time_loop__output__variables)
 list in the OGS project file is empty, OGS will write all available data to its
 output files.
 
 Furthermore, you can set
-[`<time_loop/output/output_iteration_results>`](https://doxygen.opengeosys.org/dc/d50/ogs_file_param__prj__time_loop__output__output_iteration_results.html)
+[`<time_loop/output/output_iteration_results>`](https://doxygen.opengeosys.org/stable/dc/d50/ogs_file_param__prj__time_loop__output__output_iteration_results.html)
 to true. Then OGS will generate output files after each non-linear iteration,
 which might help to find the cause of a non-linear solver divergence.
 This option is available for VTK output only (as of Sep. 2024).
 
 When interpreting secondary variables it makes sense to enable
-[`<time_loop/output/output_extrapolation_residuals>`](https://doxygen.opengeosys.org/d1/d30/ogs_file_param__prj__time_loop__output__output_extrapolation_residuals.html).
+[`<time_loop/output/output_extrapolation_residuals>`](https://doxygen.opengeosys.org/stable/d1/d30/ogs_file_param__prj__time_loop__output__output_extrapolation_residuals.html).
 The generated extrapolation residuals provide a measure of the extrapolation
 errors of secondary variables.
 
