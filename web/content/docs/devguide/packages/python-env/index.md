@@ -14,53 +14,40 @@ aliases = ["/docs/devguide/advanced/python-env"]
 In OGS we make use of Python packages at different stages, e.g.:
 
 - [TESPy]({{< ref "3d_3bhes_array.md#tespy" >}}) for simulating thermal engineering plants in a benchmark
-- [pvpython](https://www.paraview.org/paraview-docs/latest/python/) for pre- and post-processing
+- [pytest](https://docs.pytest.org/en/stable/ ) for testing Python functionality in OGS
 - [nbconvert](https://nbconvert.readthedocs.io/en/latest/) for testing Jupyter Notebooks
 - ...
 
 Python packages are usually installed via `pip` inside an isolated environment (a virtual environment).
 
-## Pip
+## `OGS_USE_PIP`
 
-When configuring OGS with `OGS_USE_PIP=ON` Python creates a new virtual environment in the `.venv`-directory inside your build directory. It will also install required Python packages into this environment. You can see the current environment definition in the file `requirements.txt` inside your build-directory.
+Make sure that you installed the [uv](https://docs.astral.sh/uv/getting-started/installation/)-tool.
 
-Make sure, that you did
+When configuring OGS with `OGS_USE_PIP=ON` `uv` creates a new virtual environment in the `.venv`-directory inside your build directory. It will also install required Python packages into this environment. For example, ogstools or Jupyter will this way be available ready-made in a consistent configuration.
 
-```bash
-sudo apt-get install python3 python3-pip
-sudo apt-get install python3-venv
-```
-
-then you can use the `-DOGS_USE_PIP=ON` option:
+Example usage:
 
 ```bash
 cmake ../ogs -DOGS_USE_PIP=ON -DCMAKE_BUILD_TYPE="Release" -G Ninja
 ```
 
-When configuring OGS with `OGS_USE_PIP=ON`, Python creates a new virtual
-environment in the .venv-directory inside your build directory.
-It will also install required Python packages into this environment.
-For example, ogstools or Jupyter will this way be available ready-made in a
-consistent configuration.
-You can see the current environment definition with all the included packages in
-the file requirements.txt inside your build-directory.
-
 When you want to use the python packages in this virtual environment, you need
-to activate it by
+to activate it by running
 
 ```bash
-source <your-build-dir>/.envrc
+cd <your-build-dir>
+source .envrc                # Linux, Mac
+Invoke-Expression .envrc.ps1 # Windows (PowerShell)
 ```
 
-where `.envrc` is a little script including `source .venv/bin/activate` as well as some path settings.
+where `.envrc` is a script including `source .venv/bin/activate` for activating the virtual environment as well as setting some paths. If you have the [`direnv`](https://direnv.net)-tool installed and setup the virtual environment will be activated automatically upon changing into the build directory.
 
 To manually add Python packages run the following inside your build-directory:
 
 ```bash
-.venv/bin/pip install python-package-name
+uv pip install python-package-name
 ```
-
-To activate the environment run `source .envrc` inside your build directory. If you have the [`direnv`](https://direnv.net)-tool installed and setup the virtual environment will be activated automatically upon changing into the build directory.
 
 ### Pip & Benchmarks
 
