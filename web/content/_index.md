@@ -41,7 +41,7 @@ features:
   textline: |
     A coupled system of equations can be either solved in a fully coupled way of the monolithic method, or in the sequential manner of the staggered scheme. The monolithic scheme is applied for all coupled processes, while the staggered scheme are available for the coupled processes of thermo-hydraulic, hydro-mechanical, and phase field mechanical problems.
   visual:
-    permalink: /features/StaggeredCouplingScheme.png
+    permalink: features/StaggeredCouplingScheme.png
     alt: Staggered coupling scheme
   layout: right
 
@@ -51,29 +51,29 @@ features:
   layout: left
   carousel:
     slides:
-      - permalink: /features/vis/chaohu_paper_mesh.png
+      - permalink: features/vis/chaohu_paper_mesh.png
         caption: Foo
-      - permalink: /features/vis/ogsgui.png
+      - permalink: features/vis/ogsgui.png
         caption: Bar
-      - permalink: /features/vis/DEMSelke3D.png
+      - permalink: features/vis/DEMSelke3D.png
     play: false
 #  links:
 #    - text: "Learn More: Data Explorer"
-#      url: "/features/data-explorer"
+#      url: "features/data-explorer"
 
 - headline: Visualize results
   textline: |
-    By using VTK data formats visualizing simulation result data sets becomes an easy task. The de-facto standard software for scientific visualtions [ParaView](https://www.paraview.org) can be used to explore and analyze complex data in a visual way.
+    By using VTK data formats visualizing simulation result data sets becomes an easy task. The de-facto standard software for scientific visualizations [ParaView](https://www.paraview.org) can be used to explore and analyze complex data in a visual way.
 
     [Virtual reality enabled visualization](https://www.ufz.de/vislab) brings your data onto the large screen for intuitive exploration and assessment.
   layout: right
   carousel:
     slides:
-      - permalink: /features/vis/layeredview2.png
+      - permalink: features/vis/layeredview2.png
         caption: Bar
-      - permalink: /features/vis/vislab.png
+      - permalink: features/vis/vislab.png
         caption: Interactive exploration of river flow phenomenae at the TESSIN VISLab of the Helmholtz Centre for Environmental Research – UFZ
-      - permalink: /features/vis/contours2-bw.png
+      - permalink: features/vis/contours2-bw.png
     play: true
   anchor: vis
 
@@ -81,16 +81,16 @@ features:
   textline: |
     High performance computing (HPC) has became a necessity in the modelling of environmental and geotechnical problems for better characterization of the complexity of geo-systems as well as predicting their evolution in time. Parallel computing is the most efficient method in the high performance computing. In OGS, the parallalization of the finite element (FE) computation is based on the domain decomposition method (DDC).
 
-    Decomposed global matricies and vectors are handled by PETSc and the system of linear equations are solved by the performant PETSc solver. PETSc builds upon the Message Passing Interface (MPI) suitable for a wide variety of parallel computing architectures.
+    Decomposed global matrices and vectors are handled by PETSc and the system of linear equations are solved by the performant PETSc solver. PETSc builds upon the Message Passing Interface (MPI) suitable for a wide variety of parallel computing architectures.
 
     Parallelization is implemented for single processes as well problems with coupled processes which are using the same order of element for each process.
   visual:
-    permalink: "/features/HPC-DDC.png"
+    permalink: "features/HPC-DDC.png"
     alt: Domain decomposition for parallel processing
     rounded: true
 # links:
 #    - text: Learn more
-#      url: "/features/hpc"
+#      url: "features/hpc"
   anchor: hpc
 
 - headline: Transparent development workflows
@@ -110,7 +110,7 @@ features:
       textline: |
         Once your feature is ready the [code review process](/docs/devguide/development-workflows/code-reviews/) starts. A helpful [core developer](https://gitlab.opengeosys.org/ogs/ogs/-/graphs/master) checks the proposed change for general acceptance and may give hints for improvement (of e.g. the computational performance or the code structure). Once the iterative feedback loop between you, code reviewer(s) and the automated test system satisfies all aspects the proposed change is merged into the main development line.
   visual:
-    permalink: "/features/OGS-Software-Engineering-Small.png"
+    permalink: "features/OGS-Software-Engineering-Small.png"
     alt: Dev workflow
   layout: right
 #   class: inverse
