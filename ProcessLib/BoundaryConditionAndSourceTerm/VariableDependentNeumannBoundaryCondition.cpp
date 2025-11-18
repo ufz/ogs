@@ -14,8 +14,7 @@
 
 namespace ProcessLib
 {
-std::tuple<std::string, std::string, std::string, std::string>
-parseVariableDependentNeumannBoundaryCondition(
+VariableDependentNeumannConfig parseVariableDependentNeumannBoundaryCondition(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
@@ -46,10 +45,7 @@ parseVariableDependentNeumannBoundaryCondition(
 
 std::unique_ptr<VariableDependentNeumannBoundaryCondition>
 createVariableDependentNeumannBoundaryCondition(
-    std::string const& constant_name,
-    std::string const& coefficient_current_variable_name,
-    std::string const& coefficient_other_variable_name,
-    std::string const& coefficient_mixed_variables_name,
+    VariableDependentNeumannConfig const& coefficients,
     MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
@@ -74,18 +70,18 @@ createVariableDependentNeumannBoundaryCondition(
     }
 
     auto const& constant = ParameterLib::findParameter<double>(
-        constant_name, parameters, 1, &bc_mesh);
+        coefficients.constant_name, parameters, 1, &bc_mesh);
 
     auto const& coefficient_current_variable =
-        ParameterLib::findParameter<double>(coefficient_current_variable_name,
+        ParameterLib::findParameter<double>(coefficients.current_variable_name,
                                             parameters, 1, &bc_mesh);
 
     auto const& coefficient_other_variable =
-        ParameterLib::findParameter<double>(coefficient_other_variable_name,
+        ParameterLib::findParameter<double>(coefficients.other_variable_name,
                                             parameters, 1, &bc_mesh);
 
     auto const& coefficient_mixed_variables =
-        ParameterLib::findParameter<double>(coefficient_mixed_variables_name,
+        ParameterLib::findParameter<double>(coefficients.mixed_variables_name,
                                             parameters, 1, &bc_mesh);
 
     std::vector<MeshLib::Node*> const& bc_nodes = bc_mesh.getNodes();

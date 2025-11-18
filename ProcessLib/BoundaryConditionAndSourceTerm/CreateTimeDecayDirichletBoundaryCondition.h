@@ -39,13 +39,19 @@ namespace ProcessLib
 {
 class BoundaryCondition;
 
-std::pair<std::string, double> parseTimeDecayDirichletBoundaryConditionConfig(
+struct TimeDecayDirichletBoundaryConditionConfig
+{
+    std::string parameter_name;
+    double lower_limit;
+};
+
+TimeDecayDirichletBoundaryConditionConfig
+parseTimeDecayDirichletBoundaryConditionConfig(
     BaseLib::ConfigTree const& config);
 
 std::unique_ptr<BoundaryCondition> createTimeDecayDirichletBoundaryCondition(
-    int const variable_id, int const component_id,
-    std::string const& parameter_name, double const lower_limit,
-    MeshLib::Mesh const& bc_mesh,
+    TimeDecayDirichletBoundaryConditionConfig const& config,
+    int const variable_id, int const component_id, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
         parameters);

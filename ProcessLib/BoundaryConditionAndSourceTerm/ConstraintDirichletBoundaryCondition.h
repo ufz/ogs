@@ -118,18 +118,24 @@ private:
         _getFlux;
 };
 
-std::tuple<std::string, std::string, double, std::string, std::string>
+struct ConstraintDirichletBoundaryConditionConfig
+{
+    std::string constraint_type;
+    std::string constraining_process_variable;
+    double constraint_threshold;
+    std::string constraint_direction;
+    std::string parameter_name;
+};
+
+ConstraintDirichletBoundaryConditionConfig
 parseConstraintDirichletBoundaryCondition(BaseLib::ConfigTree const& config);
 
 /// The function parses the config tree and creates a
 /// ConstraintDirichletBoundaryCondition.
 std::unique_ptr<ConstraintDirichletBoundaryCondition>
 createConstraintDirichletBoundaryCondition(
-    std::string const& constraint_type,
-    std::string const& constraining_process_variable,
-    double const constraint_threshold,
-    std::string const& constraint_direction_string,
-    std::string const& parameter_name, MeshLib::Mesh const& bc_mesh,
+    ConstraintDirichletBoundaryConditionConfig const& config,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     unsigned const integration_order, int const component_id,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,

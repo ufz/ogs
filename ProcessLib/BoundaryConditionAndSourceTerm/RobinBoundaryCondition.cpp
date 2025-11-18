@@ -14,8 +14,8 @@
 
 namespace ProcessLib
 {
-std::tuple<std::string, std::string, std::optional<std::string>>
-parseRobinBoundaryCondition(BaseLib::ConfigTree const& config)
+RobinBoundaryConditionConfig parseRobinBoundaryCondition(
+    BaseLib::ConfigTree const& config)
 {
     DBUG("parsing RobinBoundaryConditionConfig.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
@@ -39,9 +39,7 @@ parseRobinBoundaryCondition(BaseLib::ConfigTree const& config)
 }
 
 std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
-    std::string const& alpha_name, std::string const& u_0_name,
-    std::optional<std::string> const& area_parameter_name,
-    MeshLib::Mesh const& bc_mesh,
+    RobinBoundaryConditionConfig const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
@@ -58,20 +56,20 @@ std::unique_ptr<RobinBoundaryCondition> createRobinBoundaryCondition(
     }
 
     auto const& alpha = ParameterLib::findParameter<double>(
-        alpha_name, parameters, 1, &bc_mesh);
-    auto const& u_0 =
-        ParameterLib::findParameter<double>(u_0_name, parameters, 1, &bc_mesh);
+        config.alpha_name, parameters, 1, &bc_mesh);
+    auto const& u_0 = ParameterLib::findParameter<double>(
+        config.u_0_name, parameters, 1, &bc_mesh);
 
     ParameterLib::Parameter<double> const* integral_measure(nullptr);
     if (global_dim - bc_mesh.getDimension() != 1)
     {
-        if (!area_parameter_name)
+        if (!config.area_parameter_name)
         {
             OGS_FATAL("{}: tag <area_parameter> required in Robin BC.",
                       __FUNCTION__);
         }
         integral_measure = &ParameterLib::findParameter<double>(
-            area_parameter_name.value(), parameters, 1, &bc_mesh);
+            config.area_parameter_name.value(), parameters, 1, &bc_mesh);
     }
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no

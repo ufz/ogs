@@ -7,8 +7,9 @@
  *              http://www.opengeosys.org/project/license
  */
 
+#include "CreateDirichletBoundaryConditionWithinTimeInterval.h"
+
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/TimeInterval.h"
 #include "DirichletBoundaryConditionWithinTimeInterval.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ParameterLib/Parameter.h"
@@ -16,7 +17,7 @@
 
 namespace ProcessLib
 {
-std::pair<std::string, BaseLib::TimeInterval>
+DirichletBoundaryConditionConfig
 parseDirichletBoundaryConditionWithinTimeIntervalConfig(
     BaseLib::ConfigTree const& config)
 {
@@ -36,16 +37,16 @@ parseDirichletBoundaryConditionWithinTimeIntervalConfig(
 
 std::unique_ptr<BoundaryCondition>
 createDirichletBoundaryConditionWithinTimeInterval(
-    std::string const& parameter_name,
-    BaseLib::TimeInterval const& time_interval, MeshLib::Mesh const& bc_mesh,
+    DirichletBoundaryConditionConfig const& config_args,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
 {
     DBUG("Constructing DirichletBoundaryConditionWithinTimeInterval.");
 
-    auto& param = ParameterLib::findParameter<double>(parameter_name,
-                                                      parameters, 1, &bc_mesh);
+    auto& param = ParameterLib::findParameter<double>(
+        config_args.parameter_name, parameters, 1, &bc_mesh);
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.
@@ -62,7 +63,7 @@ createDirichletBoundaryConditionWithinTimeInterval(
 #endif  // USE_PETSC
 
     return std::make_unique<DirichletBoundaryConditionWithinTimeInterval>(
-        std::move(time_interval), param, bc_mesh, dof_table_bulk, variable_id,
-        component_id);
+        std::move(config_args.time_interval), param, bc_mesh, dof_table_bulk,
+        variable_id, component_id);
 }
 }  // namespace ProcessLib

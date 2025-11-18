@@ -96,7 +96,7 @@ void SolutionDependentDirichletBoundaryCondition::postTimestep(
     }
 }
 
-std::tuple<std::string, std::string>
+SolutionDependentDirichletBoundaryConditionConfig
 parseSolutionDependentDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config)
 {
@@ -118,8 +118,7 @@ parseSolutionDependentDirichletBoundaryCondition(
 
 std::unique_ptr<SolutionDependentDirichletBoundaryCondition>
 createSolutionDependentDirichletBoundaryCondition(
-    std::string const& property_name,
-    std::string const& initial_value_parameter_string,
+    SolutionDependentDirichletBoundaryConditionConfig const& config,
     MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
@@ -128,7 +127,7 @@ createSolutionDependentDirichletBoundaryCondition(
     DBUG("Constructing SolutionDependentDirichletBoundaryCondition.");
 
     auto& initial_value_parameter = ParameterLib::findParameter<double>(
-        initial_value_parameter_string, parameters, 1, &bc_mesh);
+        config.initial_value_parameter_string, parameters, 1, &bc_mesh);
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.
@@ -145,8 +144,8 @@ createSolutionDependentDirichletBoundaryCondition(
 #endif  // USE_PETSC
 
     return std::make_unique<SolutionDependentDirichletBoundaryCondition>(
-        std::move(property_name), initial_value_parameter, bc_mesh,
-        dof_table_bulk, variable_id, component_id);
+        config.property_name, initial_value_parameter, bc_mesh, dof_table_bulk,
+        variable_id, component_id);
 }
 
 }  // namespace ProcessLib

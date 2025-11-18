@@ -103,7 +103,7 @@ void PrimaryVariableConstraintDirichletBoundaryCondition::getEssentialBCValues(
     }
 }
 
-std::tuple<std::string, std::string, std::string>
+PrimaryVariableConstraintDirichletBoundaryConditionConfig
 parsePrimaryVariableConstraintDirichletBoundaryCondition(
     BaseLib::ConfigTree const& config)
 {
@@ -129,9 +129,8 @@ parsePrimaryVariableConstraintDirichletBoundaryCondition(
 
 std::unique_ptr<PrimaryVariableConstraintDirichletBoundaryCondition>
 createPrimaryVariableConstraintDirichletBoundaryCondition(
-    std::string const& parameter_name,
-    std::string const& threshold_parameter_name,
-    std::string const& comparison_operator_string, MeshLib::Mesh const& bc_mesh,
+    PrimaryVariableConstraintDirichletBoundaryConditionConfig const& config,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
@@ -139,20 +138,20 @@ createPrimaryVariableConstraintDirichletBoundaryCondition(
     DBUG("Constructing PrimaryVariableConstraintDirichletBoundaryCondition.");
 
     auto& parameter = ParameterLib::findParameter<double>(
-        parameter_name, parameters, 1, &bc_mesh);
+        config.parameter_name, parameters, 1, &bc_mesh);
 
     auto& threshold_parameter = ParameterLib::findParameter<double>(
-        threshold_parameter_name, parameters, 1, &bc_mesh);
+        config.threshold_parameter_name, parameters, 1, &bc_mesh);
 
-    if (comparison_operator_string != "greater" &&
-        comparison_operator_string != "less")
+    if (config.comparison_operator_string != "greater" &&
+        config.comparison_operator_string != "less")
     {
         OGS_FATAL(
             "The comparison operator is '{:s}', but has to be either "
             "'greater' or 'less'.",
-            comparison_operator_string);
+            config.comparison_operator_string);
     }
-    bool const less = comparison_operator_string == "less";
+    bool const less = config.comparison_operator_string == "less";
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.

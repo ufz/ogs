@@ -220,7 +220,7 @@ void ConstraintDirichletBoundaryCondition::getEssentialBCValues(
          bc_values.ids.size());
 }
 
-std::tuple<std::string, std::string, double, std::string, std::string>
+ConstraintDirichletBoundaryConditionConfig
 parseConstraintDirichletBoundaryCondition(BaseLib::ConfigTree const& config)
 {
     DBUG("Parsing ConstraintDirichletBoundaryCondition from config.");
@@ -254,11 +254,8 @@ parseConstraintDirichletBoundaryCondition(BaseLib::ConfigTree const& config)
 
 std::unique_ptr<ConstraintDirichletBoundaryCondition>
 createConstraintDirichletBoundaryCondition(
-    std::string const& constraint_type,
-    std::string const& constraining_process_variable,
-    double const constraint_threshold,
-    std::string const& constraint_direction_string,
-    std::string const& parameter_name, MeshLib::Mesh const& bc_mesh,
+    ConstraintDirichletBoundaryConditionConfig const& config,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     unsigned const integration_order, int const component_id,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
@@ -266,10 +263,10 @@ createConstraintDirichletBoundaryCondition(
 {
     DBUG("Constructing ConstraintDirichletBoundaryCondition");
 
-    if (constraint_type != "Flux")
+    if (config.constraint_type != "Flux")
     {
         OGS_FATAL("The constraint type is '{:s}', but has to be 'Flux'.",
-                  constraint_type);
+                  config.constraint_type);
     }
 
     if (!constraining_process.isMonolithicSchemeUsed())
@@ -281,10 +278,10 @@ createConstraintDirichletBoundaryCondition(
     const int process_id = 0;
     auto process_variables =
         constraining_process.getProcessVariables(process_id);
-    auto constraining_pv =
-        std::find_if(process_variables.cbegin(), process_variables.cend(),
-                     [&constraining_process_variable](ProcessVariable const& pv)
-                     { return pv.getName() == constraining_process_variable; });
+    auto constraining_pv = std::find_if(
+        process_variables.cbegin(), process_variables.cend(),
+        [&config](ProcessVariable const& pv)
+        { return pv.getName() == config.constraining_process_variable; });
     if (constraining_pv == std::end(process_variables))
     {
         auto const& constraining_process_variable_name =
@@ -294,20 +291,20 @@ createConstraintDirichletBoundaryCondition(
             "at geometry 'TODO' : The constraining process variable is set as "
             "'{:s}', but this is not specified in the project file.",
             constraining_process_variable_name,
-            constraining_process_variable);
+            config.constraining_process_variable);
     }
 
-    if (constraint_direction_string != "greater" &&
-        constraint_direction_string != "lower")
+    if (config.constraint_direction != "greater" &&
+        config.constraint_direction != "lower")
     {
         OGS_FATAL(
             "The constraint direction is '{:s}', but has to be either "
             "'greater' or 'lower'.",
-            constraint_direction_string);
+            config.constraint_direction);
     }
-    bool const lower = constraint_direction_string == "lower";
+    bool const lower = config.constraint_direction == "lower";
 
-    auto& param = ParameterLib::findParameter<double>(parameter_name,
+    auto& param = ParameterLib::findParameter<double>(config.parameter_name,
                                                       parameters, 1, &bc_mesh);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there is no
@@ -326,8 +323,8 @@ createConstraintDirichletBoundaryCondition(
 
     return std::make_unique<ConstraintDirichletBoundaryCondition>(
         param, dof_table_bulk, variable_id, component_id, bc_mesh,
-        integration_order, constraining_process.getMesh(), constraint_threshold,
-        lower,
+        integration_order, constraining_process.getMesh(),
+        config.constraint_threshold, lower,
         [&constraining_process](std::size_t const element_id,
                                 MathLib::Point3d const& pnt, double const t,
                                 std::vector<GlobalVector*> const& x)

@@ -266,7 +266,7 @@ void PythonBoundaryCondition::applyNaturalBC(
     }
 }
 
-std::tuple<std::string, bool> parsePythonBoundaryCondition(
+PythonBoundaryConditionConfig parsePythonBoundaryCondition(
     BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
@@ -281,7 +281,7 @@ std::tuple<std::string, bool> parsePythonBoundaryCondition(
 }
 
 std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
-    std::string const& bc_object, bool const flush_stdout,
+    PythonBoundaryConditionConfig const& config,
     MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
     MeshLib::Mesh const& bulk_mesh, int const variable_id,
@@ -294,15 +294,15 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
     pybind11::object scope =
         pybind11::module::import("__main__").attr("__dict__");
 
-    if (!scope.contains(bc_object))
+    if (!scope.contains(config.bc_object))
     {
         OGS_FATAL(
             "Function `{:s}' is not defined in the python script file, or "
             "there was no python script file specified.",
-            bc_object);
+            config.bc_object);
     }
 
-    auto* bc = scope[bc_object.c_str()]
+    auto* bc = scope[config.bc_object.c_str()]
                    .cast<PythonBoundaryConditionPythonSideInterface*>();
 
     if (variable_id >=
@@ -337,7 +337,7 @@ std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
             {bc, dof_table_bulk.getGlobalComponent(variable_id, component_id),
              boundary_mesh, all_process_variables_for_this_process,
              shapefunction_order}},
-        integration_order, flush_stdout, bulk_mesh.getDimension(),
+        integration_order, config.flush_stdout, bulk_mesh.getDimension(),
         dof_table_bulk);
 }
 
