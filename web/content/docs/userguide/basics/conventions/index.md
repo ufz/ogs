@@ -141,7 +141,7 @@ This order is used, e.g., to display the per component convergence of the non-li
 ## <a name="symmetric-tensors"></a>  Symmetric tensors and Kelvin mapping
 
 To map the elasticity/stiffness tensor OpenGeoSys internally uses a Kelvin mapping with an adapted component ordering for
-computational reasons \[[1](https://arxiv.org/abs/1605.09606)\].
+computational reasons [[1]](#1).
 For 2D, the Kelvin-Vector of the stress tensor looks like $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy})$
 whereas the 3D version reads as $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy}, \sqrt{2}\sigma_{yz},\sqrt{2}\sigma_{xz})$.
 
@@ -161,10 +161,10 @@ enable a finer tuning of the specific solvers.
 
 ### Fixed-stress Split for Hydro-mechanical Processes
 
-For hydro-mechanical processes the fixed-stress split has been implemented, since it turned out advantageous [[1]](#1).
+For hydro-mechanical processes the fixed-stress split has been implemented, since it turned out advantageous [[2]](#2).
 For the sake of brevity, we do not describe the scheme itself, but intend to provide guidance for its stabilization parameter.
 On this parameter depends how many coupling iterations are needed and thus how long it takes to obtain a solution.
-The optimal value of this parameter is not a-priori known, only that it lies within a certain interval is known (see [[2]](#2)):
+The optimal value of this parameter is not a-priori known, only that it lies within a certain interval is known (see [[3]](#3)):
 
 $$
 \frac{1}{2}\frac{\alpha^2}{K_\mathrm{1D}} \le \beta_\mathrm{FS} \le \frac{\alpha^2}{K_\mathrm{ph}},
@@ -189,7 +189,7 @@ $$
 $$
 
 by default to $p_\mathrm{FS}=\frac{1}{2}$.
-For isotropic, linear elasticity we provide the interval [[2]](#2) and the recommended value [[3]](#3) in dependence on
+For isotropic, linear elasticity we provide the interval [[2]](#2) and the recommended value [[4]](#4) in dependence on
 Poisson's ratio $\nu$ (note $\frac{\lambda}{\mu}=\frac{2\nu}{1-2\nu}$).
 
 | | 2D  | 3D |
@@ -206,10 +206,13 @@ For more information about the algorithms of the fixed stress splitting, please
 ## References
 
 <a id="1">[1]</a>
-{{< bib "kimtchjua2009" >}}
+{{< bib "nagel2016" >}}
 
 <a id="2">[2]</a>
-{{< bib "stonor2019" >}}
+{{< bib "kimtchjua2009" >}}
 
 <a id="3">[3]</a>
+{{< bib "stonor2019" >}}
+
+<a id="4">[4]</a>
 {{< bib "mikwhe2013" >}}
