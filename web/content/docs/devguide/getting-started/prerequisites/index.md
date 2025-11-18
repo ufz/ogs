@@ -293,9 +293,14 @@ brew install python
 
 </div>
 
-## Optional: Install uv
+## Recommendation for Jupyter notebooks: `OGS_USE_PIP=ON`, `uv`
 
-If you want to execute or develop Jupyter notebooks for more interactive benchmarks (by using the [`OGS_USE_PIP=ON`]({{< ref "python-env.md" >}}) CMake-option) please install [`uv`](https://docs.astral.sh/uv/getting-started/installation/), a tool which handles Python dependencies and virtual environments. See the [Jupyter page]({{< ref "jupyter-docs.md" >}}) for more info.
+If you want to execute or develop Jupyter notebooks for more interactive benchmarks we recommend using the [`OGS_USE_PIP=ON`]({{< ref "python-env.md" >}}) CMake-option.
+Thereby all Python prerequisites will be installed for you.
+`OGS_USE_PIP=ON` requires [`uv`](https://docs.astral.sh/uv/getting-started/installation/),
+a tool that handles Python dependencies and virtual environments.
+I.e., please install `uv` if you want to set `OGS_USE_PIP=ON`.
+See the [Jupyter page]({{< ref "jupyter-docs.md" >}}) for more info.
 
 ## Optional: Install Qt, NetCDF and other dependencies for the Data Explorer
 

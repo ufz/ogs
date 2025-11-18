@@ -18,30 +18,30 @@ In OGS we make use of Python packages at different stages, e.g.:
 - [nbconvert](https://nbconvert.readthedocs.io/en/latest/) for testing Jupyter Notebooks
 - ...
 
-Python packages are usually installed via `pip` inside an isolated environment (a virtual environment).
+Python packages are usually installed via `pip` inside an isolated environment (a virtual environment). We use a modern alternative to `pip`: [`uv`](https://docs.astral.sh/uv).
 
-## `OGS_USE_PIP`
+## Recommendation: Use the `OGS_USE_PIP=ON` CMake option when configuring OGS
 
 Make sure that you installed the [uv](https://docs.astral.sh/uv/getting-started/installation/)-tool.
 
-When configuring OGS with `OGS_USE_PIP=ON` `uv` creates a new virtual environment in the `.venv`-directory inside your build directory. It will also install required Python packages into this environment. For example, ogstools or Jupyter will this way be available ready-made in a consistent configuration.
+When configuring OGS with `OGS_USE_PIP=ON` `uv` creates a new virtual environment in the `.venv`-directory inside your build directory. It will also install required Python packages into this environment. For example, OGSTools or Jupyter will this way be available ready-made in a consistent configuration.
 
 Example usage:
 
 ```bash
-cmake ../ogs -DOGS_USE_PIP=ON -DCMAKE_BUILD_TYPE="Release" -G Ninja
+cmake --preset release -DOGS_USE_PIP=ON
 ```
 
 When you want to use the python packages in this virtual environment, you need
 to activate it by running
 
 ```bash
-cd <your-build-dir>
-source .envrc                # Linux, Mac
+cd ../build/release          # the build directory
+source .envrc                # Linux, Mac OR
 Invoke-Expression .envrc.ps1 # Windows (PowerShell)
 ```
 
-where `.envrc` is a script including `source .venv/bin/activate` for activating the virtual environment as well as setting some paths. If you have the [`direnv`](https://direnv.net)-tool installed and setup the virtual environment will be activated automatically upon changing into the build directory.
+where `.envrc` is a script including `source .venv/bin/activate` for activating the virtual environment as well as setting some paths. If you have the [`direnv`](https://direnv.net)-tool installed and set up the virtual environment will be activated automatically upon changing into the build directory.
 
 To manually add Python packages run the following inside your build-directory:
 
