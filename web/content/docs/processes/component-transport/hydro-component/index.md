@@ -74,9 +74,9 @@ The following table shows an overview of all input parameters available in the C
 | Fluid density              | $\rho$      |[kg/m$^{3}$] | |
 | Intrinsic permeability     |$\textbf{k}$|[m$^{2}$]   | [Example](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj)  |
 | Dynamic viscosity          | $\mu$  |[Pa$\cdot$s]||
-| Gravity vector (specific body force) | $\textbf{g}$|[m/s$^{2}$] | [Link](https://doxygen.opengeosys.org/db/d19/ogs_file_param__prj__processes__process__componenttransport__specific_body_force) |
-| Retardation factor         | $R$         |[-]         | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
-| First-order decay constant | $\lambda$   |[1/s]       | [Example](https://doxygen.opengeosys.org/d0/d40/ogs_ctest_prj__parabolic__componenttransport__advectiondiffusionsorptiondecay__1d_advectiondiffusionsorptiondecay__prj) |
+| Gravity vector (specific body force) | $\textbf{g}$|[m/s$^{2}$] | [Link](https://doxygen.opengeosys.org/stable/db/d19/ogs_file_param__prj__processes__process__ComponentTransport__specific_body_force) |
+| Retardation factor         | $R$         |[-]         | [Example](https://doxygen.opengeosys.org/stable/d0/d40/ogs_ctest_prj__Parabolic__ComponentTransport__AdvectionDiffusionSorptionDecay__1D_AdvectionDiffusionSorptionDecay__prj) |
+| First-order decay constant | $\lambda$   |[1/s]       | [Example](https://doxygen.opengeosys.org/stable/d0/d40/ogs_ctest_prj__Parabolic__ComponentTransport__AdvectionDiffusionSorptionDecay__1D_AdvectionDiffusionSorptionDecay__prj) |
 
 ## Input file definition
 

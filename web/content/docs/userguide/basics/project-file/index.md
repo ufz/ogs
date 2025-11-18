@@ -7,7 +7,7 @@ weight = 41
 
 <!-- TODO: This section already contains a more advanced topic. Consider moving it to a more advanced section outside of **Basics** -->
 
-Project files `.prj` have to be valid XML documents. For information of specific tags see our [Doxygen-documentation](https://doxygen.opengeosys.org/d1/d91/ogs_file_param__projectfile).
+Project files `.prj` have to be valid XML documents. For information of specific tags see our [Doxygen-documentation](https://doxygen.opengeosys.org/stable/d1/d91/ogs_file_param__ProjectFile).
 
 Two methods allow you to modularize your project files and avoid repetition:
 

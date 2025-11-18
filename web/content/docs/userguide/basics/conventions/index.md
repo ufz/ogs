@@ -62,25 +62,25 @@ That applies to all of OpenGeoSys's processes; currently there are no processes 
 
 **Temperature:**
 
-* [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed temperature (Units: $\mathrm{\Theta}$, SI: $\mathrm{K}$).
-* [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to impose a heat flux through a boundary domain (Units: $\mathrm{M \cdot T^{-3}}$, SI: $\mathrm{W}\cdot \mathrm{m}^{-2}$).
-* [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): Representing a volumetric heat source in the model domain (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-3}}$, SI: $\mathrm{W} \cdot \mathrm{m}^{-3}$).
-* [Nodal ST](https://doxygen.opengeosys.org/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__nodal): Representing a heat source in the model domain (Units: $\mathrm{M \cdot L^{d-1} \cdot T^{-3}}$, SI: $\mathrm{W} \cdot \mathrm{m}^{d-3}$).
-* [Line ST](https://doxygen.opengeosys.org/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__line): Representing a heat source on a line shaped subdomain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-2} \cdot \mathrm{T}^{-3}$, SI: $\mathrm{W} \cdot \mathrm{m}^{d-4}$).
+* [Dirichlet BC](https://doxygen.opengeosys.org/stable/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet): Boundaries held at a fixed temperature (Units: $\mathrm{\Theta}$, SI: $\mathrm{K}$).
+* [Neumann BC](https://doxygen.opengeosys.org/stable/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann): Used to impose a heat flux through a boundary domain (Units: $\mathrm{M \cdot T^{-3}}$, SI: $\mathrm{W}\cdot \mathrm{m}^{-2}$).
+* [Volumetric ST](https://doxygen.opengeosys.org/stable/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Volumetric): Representing a volumetric heat source in the model domain (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-3}}$, SI: $\mathrm{W} \cdot \mathrm{m}^{-3}$).
+* [Nodal ST](https://doxygen.opengeosys.org/stable/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Nodal): Representing a heat source in the model domain (Units: $\mathrm{M \cdot L^{d-1} \cdot T^{-3}}$, SI: $\mathrm{W} \cdot \mathrm{m}^{d-3}$).
+* [Line ST](https://doxygen.opengeosys.org/stable/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Line): Representing a heat source on a line shaped subdomain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-2} \cdot \mathrm{T}^{-3}$, SI: $\mathrm{W} \cdot \mathrm{m}^{d-4}$).
 
 **Displacement:**
 
-* [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed displacement (Units: $\mathrm{L}$, SI: $\mathrm{m}$).
-* [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to apply an external traction at a boundary (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-2}$).
-* [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): A body force density acting in the model domain. One example is gravity, but gravity can be modeled by other means in OpenGeoSys (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-3}$).
+* [Dirichlet BC](https://doxygen.opengeosys.org/stable/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet): Boundaries held at a fixed displacement (Units: $\mathrm{L}$, SI: $\mathrm{m}$).
+* [Neumann BC](https://doxygen.opengeosys.org/stable/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann): Used to apply an external traction at a boundary (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-2}$).
+* [Volumetric ST](https://doxygen.opengeosys.org/stable/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Volumetric): A body force density acting in the model domain. One example is gravity, but gravity can be modeled by other means in OpenGeoSys (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-3}$).
 
 **Pressure:**
 
-* [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
-* [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to impose a mass flux through a domain boundary (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-1}}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
-* [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): Representing a volumetric mass source in the model domain (Units: $\mathrm{ M \cdot L^{-3} \cdot T^{-1}}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{-3} \cdot \mathrm{s}^{-1}$).
-* [Nodal ST](https://doxygen.opengeosys.org/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__nodal): Representing a mass production rate in the model domain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-3} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{d-3} \cdot \mathrm{s}^{-1}$).
-* [Line ST](https://doxygen.opengeosys.org/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__line): Representing a mass source on a line shaped subdomain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-4} \cdot \mathrm{T}^{-1}$, SI:  $\mathrm{kg} \cdot \mathrm{m}^{d-4} \cdot \mathrm{s}^{-1}$).
+* [Dirichlet BC](https://doxygen.opengeosys.org/stable/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
+* [Neumann BC](https://doxygen.opengeosys.org/stable/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann): Used to impose a mass flux through a domain boundary (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-1}}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
+* [Volumetric ST](https://doxygen.opengeosys.org/stable/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Volumetric): Representing a volumetric mass source in the model domain (Units: $\mathrm{ M \cdot L^{-3} \cdot T^{-1}}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{-3} \cdot \mathrm{s}^{-1}$).
+* [Nodal ST](https://doxygen.opengeosys.org/stable/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Nodal): Representing a mass production rate in the model domain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-3} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{d-3} \cdot \mathrm{s}^{-1}$).
+* [Line ST](https://doxygen.opengeosys.org/stable/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Line): Representing a mass source on a line shaped subdomain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-4} \cdot \mathrm{T}^{-1}$, SI:  $\mathrm{kg} \cdot \mathrm{m}^{d-4} \cdot \mathrm{s}^{-1}$).
 
 **Pressure (Liquid Flow Process):**
 
@@ -92,11 +92,11 @@ The liquid flow process uses either a volume-based or a mass-based PDE, which
  constant, and have to divide all units of natural boundary conditions and
  source terms by density. This leads to the following list:
 
-* [Dirichlet BC](https://doxygen.opengeosys.org/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
-* [Neumann BC](https://doxygen.opengeosys.org/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__neumann): Used to impose a volume flux through a domain boundary (Units: $\mathrm{L} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{m} \cdot \mathrm{s}^{-1} = \mathrm{m}^3 \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
-* [Volumetric ST](https://doxygen.opengeosys.org/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__volumetric): Representing a volumetric volume source in the model domain (Units: $\mathrm{T}^{-1}$, SI: $\mathrm{s}^{-1} = \mathrm{m}^{3} \cdot \mathrm{m}^{-3} \cdot \mathrm{s}^{-1}$).
-* [Nodal ST](https://doxygen.opengeosys.org/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__nodal): Representing a volume production rate in the model domain (Units: $\mathrm{L}^{d} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{m}^{d} \cdot \mathrm{s}^{-1}$).
-* [Line ST](https://doxygen.opengeosys.org/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__line): Representing a volume source on a one-dimensional subdomain (Units: $\mathrm{L}^{d-1} \cdot \mathrm{T}^{-1}$, SI:  $\mathrm{m}^{d-1} \cdot \mathrm{s}^{-1}$).
+* [Dirichlet BC](https://doxygen.opengeosys.org/stable/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
+* [Neumann BC](https://doxygen.opengeosys.org/stable/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann): Used to impose a volume flux through a domain boundary (Units: $\mathrm{L} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{m} \cdot \mathrm{s}^{-1} = \mathrm{m}^3 \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
+* [Volumetric ST](https://doxygen.opengeosys.org/stable/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Volumetric): Representing a volumetric volume source in the model domain (Units: $\mathrm{T}^{-1}$, SI: $\mathrm{s}^{-1} = \mathrm{m}^{3} \cdot \mathrm{m}^{-3} \cdot \mathrm{s}^{-1}$).
+* [Nodal ST](https://doxygen.opengeosys.org/stable/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Nodal): Representing a volume production rate in the model domain (Units: $\mathrm{L}^{d} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{m}^{d} \cdot \mathrm{s}^{-1}$).
+* [Line ST](https://doxygen.opengeosys.org/stable/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Line): Representing a volume source on a one-dimensional subdomain (Units: $\mathrm{L}^{d-1} \cdot \mathrm{T}^{-1}$, SI:  $\mathrm{m}^{d-1} \cdot \mathrm{s}^{-1}$).
 
 ## Stress sign
 
@@ -117,35 +117,35 @@ This order is used, e.g., to display the per component convergence of the non-li
 
 <!-- TODO: The considered processes beneath need a more detailed explanation on which physical processes are exactly considered how. -->
 
-* [ComponentTransport](https://doxygen.opengeosys.org/de/d0d/namespaceProcessLib_1_1ComponentTransport.html#processvariablescomponenttransport)
-* [HeatConduction](https://doxygen.opengeosys.org/df/d77/namespaceProcessLib_1_1HeatConduction.html#processvariablesheatconduction)
-* [HeatTransportBHE](https://doxygen.opengeosys.org/d9/d4d/namespaceProcessLib_1_1HeatTransportBHE.html#processvariablesbhe)
-* [HydroThermal](https://doxygen.opengeosys.org/dd/d60/namespaceProcessLib_1_1HT.html#processvariablesht)
-* [HydroMechanics](https://doxygen.opengeosys.org/d3/da3/namespaceProcessLib_1_1HydroMechanics.html#processvariableshm)
-* [LIE HM](https://doxygen.opengeosys.org/de/d36/namespaceProcessLib_1_1LIE_1_1HydroMechanics.html#processvariablesliehm)
-* [LIE SmallDeformation](https://doxygen.opengeosys.org/de/df3/namespaceProcessLib_1_1LIE_1_1SmallDeformation.html#processvariablesliesd)
-* [LiquidFlow](https://doxygen.opengeosys.org/dc/dd7/namespaceProcessLib_1_1LiquidFlow.html#processvariableslf)
-* [PhaseField](https://doxygen.opengeosys.org/d2/dc2/namespaceProcessLib_1_1PhaseField.html#processvariablespf)
-* [RichardsComponentTransport](https://doxygen.opengeosys.org/d6/d3b/namespaceProcessLib_1_1RichardsComponentTransport.html#processvariablesrct)
-* [RichardsMechanics](https://doxygen.opengeosys.org/d6/d4a/namespaceProcessLib_1_1RichardsMechanics.html#processvariablesrm)
-* [SmallDeformation](https://doxygen.opengeosys.org/da/d84/namespaceProcessLib_1_1SmallDeformation.html#processvariablessd)
-* [SteadyStateDiffusion](https://doxygen.opengeosys.org/d8/d59/namespaceProcessLib_1_1SteadyStateDiffusion.html#processvariablesssd)
-* [TH2M](https://doxygen.opengeosys.org/d6/de7/namespaceProcessLib_1_1TH2M.html#processvariablesth2m)
-* [ThermalTwoPhaseFlowWithPP](https://doxygen.opengeosys.org/dd/d48/namespaceProcessLib_1_1ThermalTwoPhaseFlowWithPP.html#processvariables)
-* [ThermoMechanics](https://doxygen.opengeosys.org/d5/dd4/namespaceProcessLib_1_1ThermoMechanics.html#processvariablestm)
-* [ThermoHydroMechanics](https://doxygen.opengeosys.org/db/d5f/namespaceProcessLib_1_1ThermoHydroMechanics.html#processvariablesthm)
-* [ThermoRichardsFlow](https://doxygen.opengeosys.org/d8/dd2/namespaceProcessLib_1_1ThermoRichardsFlow.html#processvariablestrf)
-* [ThermoRichardsMechanics](https://doxygen.opengeosys.org/d9/de9/namespaceProcessLib_1_1ThermoRichardsMechanics.html#processvariablestrm)
-* [TwoPhaseFlow with PP](https://doxygen.opengeosys.org/d0/d3f/namespaceProcessLib_1_1TwoPhaseFlowWithPP.html#processvariablestpfwpp)
+* [ComponentTransport](https://doxygen.opengeosys.org/stable/de/d0d/namespaceProcessLib_1_1ComponentTransport.html#processvariablescomponenttransport)
+* [HeatConduction](https://doxygen.opengeosys.org/stable/df/d77/namespaceProcessLib_1_1HeatConduction.html#processvariablesheatconduction)
+* [HeatTransportBHE](https://doxygen.opengeosys.org/stable/d9/d4d/namespaceProcessLib_1_1HeatTransportBHE.html#processvariablesbhe)
+* [HydroThermal](https://doxygen.opengeosys.org/stable/dd/d60/namespaceProcessLib_1_1HT.html#processvariablesht)
+* [HydroMechanics](https://doxygen.opengeosys.org/stable/d3/da3/namespaceProcessLib_1_1HydroMechanics.html#processvariableshm)
+* [LIE HM](https://doxygen.opengeosys.org/stable/de/d36/namespaceProcessLib_1_1LIE_1_1HydroMechanics.html#processvariablesliehm)
+* [LIE SmallDeformation](https://doxygen.opengeosys.org/stable/de/df3/namespaceProcessLib_1_1LIE_1_1SmallDeformation.html#processvariablesliesd)
+* [LiquidFlow](https://doxygen.opengeosys.org/stable/dc/dd7/namespaceProcessLib_1_1LiquidFlow.html#processvariableslf)
+* [PhaseField](https://doxygen.opengeosys.org/stable/d2/dc2/namespaceProcessLib_1_1PhaseField.html#processvariablespf)
+* [RichardsComponentTransport](https://doxygen.opengeosys.org/stable/d6/d3b/namespaceProcessLib_1_1RichardsComponentTransport.html#processvariablesrct)
+* [RichardsMechanics](https://doxygen.opengeosys.org/stable/d6/d4a/namespaceProcessLib_1_1RichardsMechanics.html#processvariablesrm)
+* [SmallDeformation](https://doxygen.opengeosys.org/stable/da/d84/namespaceProcessLib_1_1SmallDeformation.html#processvariablessd)
+* [SteadyStateDiffusion](https://doxygen.opengeosys.org/stable/d8/d59/namespaceProcessLib_1_1SteadyStateDiffusion.html#processvariablesssd)
+* [TH2M](https://doxygen.opengeosys.org/stable/d6/de7/namespaceProcessLib_1_1TH2M.html#processvariablesth2m)
+* [ThermalTwoPhaseFlowWithPP](https://doxygen.opengeosys.org/stable/dd/d48/namespaceProcessLib_1_1ThermalTwoPhaseFlowWithPP.html#processvariables)
+* [ThermoMechanics](https://doxygen.opengeosys.org/stable/d5/dd4/namespaceProcessLib_1_1ThermoMechanics.html#processvariablestm)
+* [ThermoHydroMechanics](https://doxygen.opengeosys.org/stable/db/d5f/namespaceProcessLib_1_1ThermoHydroMechanics.html#processvariablesthm)
+* [ThermoRichardsFlow](https://doxygen.opengeosys.org/stable/d8/dd2/namespaceProcessLib_1_1ThermoRichardsFlow.html#processvariablestrf)
+* [ThermoRichardsMechanics](https://doxygen.opengeosys.org/stable/d9/de9/namespaceProcessLib_1_1ThermoRichardsMechanics.html#processvariablestrm)
+* [TwoPhaseFlow with PP](https://doxygen.opengeosys.org/stable/d0/d3f/namespaceProcessLib_1_1TwoPhaseFlowWithPP.html#processvariablestpfwpp)
 
 ## <a name="symmetric-tensors"></a>  Symmetric tensors and Kelvin mapping
 
 To map the elasticity/stiffness tensor OpenGeoSys internally uses a Kelvin mapping with an adapted component ordering for
-computational reasons \[[1](https://arxiv.org/abs/1605.09606)\].
+computational reasons [[1]](#1).
 For 2D, the Kelvin-Vector of the stress tensor looks like $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy})$
 whereas the 3D version reads as $\sigma=(\sigma_{xx},\sigma_{yy},\sigma_{zz},\sqrt{2}\sigma_{xy}, \sqrt{2}\sigma_{yz},\sqrt{2}\sigma_{xz})$.
 
-For Kelvin mapping also see the [conversion function documentation](https://doxygen.opengeosys.org/d6/dce/namespacemathlib_1_1kelvinvector#ad78b122c10e91732e95181b6c9a92486).
+For Kelvin mapping also see the [conversion function documentation](https://doxygen.opengeosys.org/stable/d6/dce/namespaceMathLib_1_1KelvinVector.html#acde7e98b219865b65aa816792421b984).
 
 The input and output of symmetric tensors consists of the full (symmetric) tensor elements (without the factor $\sqrt{2}$),
 retaining the same order.
@@ -161,10 +161,10 @@ enable a finer tuning of the specific solvers.
 
 ### Fixed-stress Split for Hydro-mechanical Processes
 
-For hydro-mechanical processes the fixed-stress split has been implemented, since it turned out advantageous [[1]](#1).
+For hydro-mechanical processes the fixed-stress split has been implemented, since it turned out advantageous [[2]](#2).
 For the sake of brevity, we do not describe the scheme itself, but intend to provide guidance for its stabilization parameter.
 On this parameter depends how many coupling iterations are needed and thus how long it takes to obtain a solution.
-The optimal value of this parameter is not a-priori known, only that it lies within a certain interval is known (see [[2]](#2)):
+The optimal value of this parameter is not a-priori known, only that it lies within a certain interval is known (see [[3]](#3)):
 
 $$
 \frac{1}{2}\frac{\alpha^2}{K_\mathrm{1D}} \le \beta_\mathrm{FS} \le \frac{\alpha^2}{K_\mathrm{ph}},
@@ -189,7 +189,7 @@ $$
 $$
 
 by default to $p_\mathrm{FS}=\frac{1}{2}$.
-For isotropic, linear elasticity we provide the interval [[2]](#2) and the recommended value [[3]](#3) in dependence on
+For isotropic, linear elasticity we provide the interval [[2]](#2) and the recommended value [[4]](#4) in dependence on
 Poisson's ratio $\nu$ (note $\frac{\lambda}{\mu}=\frac{2\nu}{1-2\nu}$).
 
 | | 2D  | 3D |
@@ -206,10 +206,13 @@ For more information about the algorithms of the fixed stress splitting, please
 ## References
 
 <a id="1">[1]</a>
-{{< bib "kimtchjua2009" >}}
+{{< bib "nagel2016" >}}
 
 <a id="2">[2]</a>
-{{< bib "stonor2019" >}}
+{{< bib "kimtchjua2009" >}}
 
 <a id="3">[3]</a>
+{{< bib "stonor2019" >}}
+
+<a id="4">[4]</a>
 {{< bib "mikwhe2013" >}}
