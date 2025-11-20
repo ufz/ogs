@@ -5,6 +5,7 @@ if (NOT OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.py
                  RUNTIME 25)
     NotebookTest(NOTEBOOKFILE HydroMechanics/NodalSourceTerm/Nodal-source-test.py RUNTIME 5)
+    NotebookTest(NOTEBOOKFILE HydroMechanics/FailureIndexDependentPermeability/permeability-in-EDZ.py RUNTIME 5)
     OgsTest(PROJECTFILE HydroMechanics/A2/A2.prj RUNTIME 10)
     OgsTest(PROJECTFILE HydroMechanics/AnchorSourceTerm/one_anchor.prj RUNTIME 5)
     OgsTest(PROJECTFILE HydroMechanics/EmbeddedAnchorSourceTerm/one_anchor.xml RUNTIME 5)
