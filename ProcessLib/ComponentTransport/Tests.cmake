@@ -976,6 +976,7 @@ if(NOT OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.py RUNTIME 16)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/elder_jupyter/elder_jupyter.py RUNTIME 25)
     NotebookTest(NOTEBOOKFILE Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/heatpipe.py RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ThermalDiffusion/ThermalDiffusion.py RUNTIME 10)
 
 endif()
 
