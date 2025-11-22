@@ -120,9 +120,12 @@ private:
     {
         auto const num_r_c = indices.size();
 
+        std::size_t local_count = 0;
+        std::size_t local_count_nonzero = 0;
+
         for (std::size_t r_local = 0; r_local < num_r_c; ++r_local)
         {
-            ++stats_.count;
+            ++local_count;
             auto const value = values[r_local];
 
             if (value == 0)
@@ -131,12 +134,15 @@ private:
             }
             else
             {
-                ++stats_.count_nonzero;
+                ++local_count_nonzero;
             }
 
             auto const r_global = indices[r_local];
             cache_.emplace_back(std::array{r_global}, value);
         }
+
+        stats_.count += local_count;
+        stats_.count_nonzero += local_count_nonzero;
     }
 
     // Overload for matrices.
@@ -155,7 +161,6 @@ private:
 
             for (std::size_t c_local = 0; c_local < num_r_c; ++c_local)
             {
-                ++stats_.count;
                 auto const value = local_mat(r_local, c_local);
 
                 // TODO skipping zero values sometimes does not work
@@ -167,12 +172,13 @@ private:
                     continue;
                 }
 #endif
-                ++stats_.count_nonzero;
-
                 auto const c_global = indices[c_local];
                 cache_.emplace_back(std::array{r_global, c_global}, value);
             }
         }
+        auto const total_entries = num_r_c * num_r_c;
+        stats_.count += total_entries;
+        stats_.count_nonzero += total_entries;
     }
 
     void ensureEnoughSpace(std::size_t const space_needed)
