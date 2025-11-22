@@ -3,14 +3,10 @@
 
 #pragma once
 
-#include <range/v3/action/push_back.hpp>
 #include <range/v3/algorithm/count_if.hpp>
-#include <range/v3/range/conversion.hpp>
-#include <range/v3/view/cartesian_product.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/transform.hpp>
-#include <range/v3/view/zip.hpp>
 
 #include "BaseLib/Macros.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
@@ -161,29 +157,27 @@ private:
                         std::integral_constant<std::size_t, 2>)
     {
         auto const num_r_c = indices.size();
+        auto const total_entries = num_r_c * num_r_c;
 
-        // Note: There is an implicit storage order assumption, here!
-        auto const local_mat = MathLib::toMatrix(values, num_r_c, num_r_c);
-
-        // Store pointer to avoid repeated dereferencing.
-        auto const* __restrict const idx = indices.data();
-
-        auto entries = ranges::views::cartesian_product(
-                           ranges::views::iota(0ul, num_r_c),
-                           ranges::views::iota(0ul, num_r_c)) |
-                       ranges::views::transform(
-                           [&](auto rc)
-                           {
-                               auto const [r_local, c_local] = rc;
-                               return MatrixElementCacheEntry<2>{
-                                   {idx[r_local], idx[c_local]},
-                                   local_mat(r_local, c_local)};
-                           });
+        // Store pointers to avoid repeated dereferencing.
+        auto const* __restrict__ const idx = indices.data();
+        auto const* __restrict__ const val = values.data();
 
         auto const old_size = cache_.size();
-        auto const total_entries = num_r_c * num_r_c;
         cache_.resize(old_size + total_entries);
-        ranges::copy(entries, cache_.begin() + old_size);
+        auto* __restrict__ dest = cache_.data() + old_size;
+
+        for (std::size_t r = 0; r < num_r_c; ++r)
+        {
+            auto const r_global = idx[r];
+            for (std::size_t c = 0; c < num_r_c; ++c)
+            {
+                dest->indices[0] = r_global;
+                dest->indices[1] = idx[c];
+                dest->value = val[r * num_r_c + c];  // Row-major indexing
+                ++dest;
+            }
+        }
 
         stats_.count += total_entries;
         stats_.count_nonzero += total_entries;
