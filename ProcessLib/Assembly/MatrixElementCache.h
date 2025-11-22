@@ -3,6 +3,11 @@
 
 #pragma once
 
+#include <range/v3/action/push_back.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/cartesian_product.hpp>
+#include <range/v3/view/iota.hpp>
+#include <range/v3/view/transform.hpp>
 #include <range/v3/view/zip.hpp>
 
 #include "BaseLib/Macros.h"
@@ -155,28 +160,26 @@ private:
         // Note: There is an implicit storage order assumption, here!
         auto const local_mat = MathLib::toMatrix(values, num_r_c, num_r_c);
 
-        for (std::size_t r_local = 0; r_local < num_r_c; ++r_local)
-        {
-            auto const r_global = indices[r_local];
+        // Store pointer to avoid repeated dereferencing.
+        auto const* __restrict const idx = indices.data();
 
-            for (std::size_t c_local = 0; c_local < num_r_c; ++c_local)
-            {
-                auto const value = local_mat(r_local, c_local);
+        auto entries = ranges::views::cartesian_product(
+                           ranges::views::iota(0ul, num_r_c),
+                           ranges::views::iota(0ul, num_r_c)) |
+                       ranges::views::transform(
+                           [&](auto rc)
+                           {
+                               auto const [r_local, c_local] = rc;
+                               return MatrixElementCacheEntry<2>{
+                                   {idx[r_local], idx[c_local]},
+                                   local_mat(r_local, c_local)};
+                           });
 
-                // TODO skipping zero values sometimes does not work
-                // together with the Eigen SparseLU linear solver. See also
-                // https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/4556#note_125561
-#if 0
-                if (value == 0)
-                {
-                    continue;
-                }
-#endif
-                auto const c_global = indices[c_local];
-                cache_.emplace_back(std::array{r_global, c_global}, value);
-            }
-        }
+        auto const old_size = cache_.size();
         auto const total_entries = num_r_c * num_r_c;
+        cache_.resize(old_size + total_entries);
+        ranges::copy(entries, cache_.begin() + old_size);
+
         stats_.count += total_entries;
         stats_.count_nonzero += total_entries;
     }
