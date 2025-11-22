@@ -5,6 +5,7 @@
 
 #include <range/v3/view/zip.hpp>
 
+#include "BaseLib/Macros.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "ProcessLib/Assembly/MatrixAssemblyStats.h"
@@ -69,6 +70,7 @@ public:
                        const int num_threads)
         : mat_or_vec_(mat_or_vec), stats_(stats), num_threads_(num_threads)
     {
+        cache_.reserve(cache_capacity);
     }
 
     void add(std::vector<double> const& local_data,
@@ -174,6 +176,18 @@ private:
     }
 
     void ensureEnoughSpace(std::size_t const space_needed)
+    {
+        // Fast path - inline this check
+        if (cache_.size() + space_needed <= cache_.capacity()) [[likely]]
+        {
+            return;
+        }
+
+        // Slow path - keep in separate function to avoid code bloat
+        ensureEnoughSpaceSlow(space_needed);
+    }
+
+    OGS_NO_INLINE void ensureEnoughSpaceSlow(std::size_t const space_needed)
     {
         if (cache_.capacity() < cache_capacity)
         {
