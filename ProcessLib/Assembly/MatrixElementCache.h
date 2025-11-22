@@ -4,8 +4,10 @@
 #pragma once
 
 #include <range/v3/action/push_back.hpp>
+#include <range/v3/algorithm/count_if.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/cartesian_product.hpp>
+#include <range/v3/view/filter.hpp>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/zip.hpp>
@@ -124,30 +126,33 @@ private:
                         std::integral_constant<std::size_t, 1>)
     {
         auto const num_r_c = indices.size();
+        auto const* const __restrict val = values.data();
+        auto const* const __restrict idx = indices.data();
 
-        std::size_t local_count = 0;
-        std::size_t local_count_nonzero = 0;
+        // Count non-zeros first
+        auto const nonzero_count = ranges::count_if(
+            val, val + num_r_c, [](double v) { return v != 0.0; });
 
-        for (std::size_t r_local = 0; r_local < num_r_c; ++r_local)
+        if (nonzero_count == 0)
         {
-            ++local_count;
-            auto const value = values[r_local];
-
-            if (value == 0)
-            {
-                continue;
-            }
-            else
-            {
-                ++local_count_nonzero;
-            }
-
-            auto const r_global = indices[r_local];
-            cache_.emplace_back(std::array{r_global}, value);
+            stats_.count += num_r_c;
+            return;
         }
 
-        stats_.count += local_count;
-        stats_.count_nonzero += local_count_nonzero;
+        auto entries =
+            ranges::views::iota(0ul, num_r_c) |
+            ranges::views::filter([val](std::size_t i)
+                                  { return val[i] != 0.0; }) |
+            ranges::views::transform(
+                [val, idx](std::size_t i)
+                { return MatrixElementCacheEntry<1>{{idx[i]}, val[i]}; });
+
+        auto const old_size = cache_.size();
+        cache_.resize(old_size + nonzero_count);
+        ranges::copy(entries, cache_.begin() + old_size);
+
+        stats_.count += num_r_c;
+        stats_.count_nonzero += nonzero_count;
     }
 
     // Overload for matrices.
