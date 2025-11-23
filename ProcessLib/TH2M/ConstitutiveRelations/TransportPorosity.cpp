@@ -57,11 +57,10 @@ void TransportPorosityModel<DisplacementDim>::eval(
 
     variables_prev.transport_porosity = transport_porosity_prev_data->phi;
     variables.porosity = poro_data.phi;
+    assert(media_data.transport_porosity_prop != nullptr);
     transport_porosity_data.phi =
-        media_data.medium
-            .property(MaterialPropertyLib::PropertyType::transport_porosity)
-            .template value<double>(variables, variables_prev, x_t.x, x_t.t,
-                                    x_t.dt);
+        media_data.transport_porosity_prop->template value<double>(
+            variables, variables_prev, x_t.x, x_t.t, x_t.dt);
 }
 
 template <int DisplacementDim>
@@ -108,17 +107,13 @@ void TransportPorosityModel<DisplacementDim>::dEval(
     variables_prev.transport_porosity = transport_porosity_prev_data->phi;
     variables.porosity = poro_data.phi;
 
-    auto const& mpl_transport_porosity =
-        media_data
-            .medium[MaterialPropertyLib::PropertyType::transport_porosity];
-
     transport_porosity_d_data.dphi_dT =
-        mpl_transport_porosity.template dValue<double>(
+        media_data.transport_porosity_prop->template dValue<double>(
             variables, variables_prev,
             MaterialPropertyLib::Variable::temperature, x_t.x, x_t.t, x_t.dt);
 
     transport_porosity_d_data.dphi_L_dp_cap =
-        mpl_transport_porosity.template dValue<double>(
+        media_data.transport_porosity_prop->template dValue<double>(
             variables, variables_prev,
             MaterialPropertyLib::Variable::capillary_pressure, x_t.x, x_t.t,
             x_t.dt);

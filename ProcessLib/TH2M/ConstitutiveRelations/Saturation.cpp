@@ -22,10 +22,8 @@ void SaturationModel::eval(SpaceTimeData const& x_t,
     MPL::VariableArray variables;
     variables.capillary_pressure = p_cap.pCap;
 
-    auto const& medium = media_data.medium;
-
-    S_L_data.S_L = medium.property(MPL::PropertyType::saturation)
-                       .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    S_L_data.S_L = media_data.saturation_prop.template value<double>(
+        variables, x_t.x, x_t.t, x_t.dt);
 }
 
 void SaturationModel::dEval(SpaceTimeData const& x_t,
@@ -37,12 +35,8 @@ void SaturationModel::dEval(SpaceTimeData const& x_t,
     MPL::VariableArray variables;
     variables.capillary_pressure = p_cap.pCap;
 
-    auto const& medium = media_data.medium;
-
-    dS_L_data() = medium.property(MPL::PropertyType::saturation)
-                      .template dValue<double>(
-                          variables, MPL::Variable::capillary_pressure, x_t.x,
-                          x_t.t, x_t.dt);
+    dS_L_data() = media_data.saturation_prop.template dValue<double>(
+        variables, MPL::Variable::capillary_pressure, x_t.x, x_t.t, x_t.dt);
 }
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

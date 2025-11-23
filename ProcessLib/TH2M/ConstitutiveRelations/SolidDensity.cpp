@@ -41,8 +41,7 @@ void SolidDensityModel<DisplacementDim>::eval(
         p_FR -
         sigma_eff_data.sigma_eff.dot(identity2) / (3 * (1 - poro_data.phi));
 
-    auto const& mpl_solid_density =
-        media_data.solid[MaterialPropertyLib::PropertyType::density];
+    auto const& mpl_solid_density = media_data.density_solid;
 
     solid_density_data.rho_SR = mpl_solid_density.template value<double>(
         variables, x_t.x, x_t.t, x_t.dt);
@@ -75,8 +74,7 @@ void SolidDensityModel<DisplacementDim>::dEval(
         p_FR -
         sigma_eff_data.sigma_eff.dot(identity2) / (3 * (1 - poro_data.phi));
 
-    auto const& mpl_solid_density =
-        media_data.solid[MaterialPropertyLib::PropertyType::density];
+    auto const& mpl_solid_density = media_data.density_solid;
 
     solid_density_d_data.drho_SR_dT = mpl_solid_density.template dValue<double>(
         variables, MaterialPropertyLib::Variable::temperature, x_t.x, x_t.t,

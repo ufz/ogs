@@ -93,6 +93,11 @@ PhaseTransition::PhaseTransition(
     auto const& gas_phase = medium->phase("Gas");
     auto const& liquid_phase = medium->phase("AqueousLiquid");
 
+    // check for required medium properties
+    std::array const required_medium_properties = {
+        MaterialPropertyLib::tortuosity};
+    checkRequiredProperties(*medium, required_medium_properties);
+
     // check for minimum requirement definitions in media object
     std::array const required_vapour_component_properties = {
         MaterialPropertyLib::vapour_pressure, MaterialPropertyLib::molar_mass,
@@ -343,10 +348,9 @@ void PhaseTransition::eval(SpaceTimeData const& x_t,
     cv.du_G_dp_GR = 0;
 
     // diffusion
-    auto const tortuosity =
-        media_data.medium
-            .property(MaterialPropertyLib::PropertyType::tortuosity)
-            .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    assert(media_data.tortuosity_prop != nullptr);
+    auto const tortuosity = media_data.tortuosity_prop->template value<double>(
+        variables, x_t.x, x_t.t, x_t.dt);
 
     auto const D_W_G_m =
         vapour_component.property(MaterialPropertyLib::PropertyType::diffusion)

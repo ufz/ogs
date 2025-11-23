@@ -25,8 +25,7 @@ void SolidHeatCapacityModel::eval(
     MPL::VariableArray variables;
     variables.temperature = T_data.T;
 
-    auto const& mpl_cpS =
-        media_data.solid[MPL::PropertyType::specific_heat_capacity];
+    auto const& mpl_cpS = media_data.specific_heat_capacity_solid;
 
     *solid_heat_capacity =
         mpl_cpS.template value<double>(variables, x_t.x, x_t.t, x_t.dt);

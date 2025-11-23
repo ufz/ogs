@@ -27,8 +27,8 @@ void SolidThermalExpansionModel<DisplacementDim>::eval(
     // Consider also anisotropic thermal expansion.
     out.solid_linear_thermal_expansivity_vector =
         MPL::formKelvinVector<DisplacementDim>(
-            media_data.solid.property(MPL::PropertyType::thermal_expansivity)
-                .value(variables, x_t.x, x_t.t, x_t.dt));
+            media_data.thermal_expansivity_solid.value(variables, x_t.x, x_t.t,
+                                                       x_t.dt));
 
     static int const KelvinVectorSize =
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
