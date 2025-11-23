@@ -1100,7 +1100,6 @@ void TH2MLocalAssembler<
         auto const& prev_state = this->prev_states_[int_point];
 
         auto const& Np = ip.N_p;
-        auto const& NT = Np;
         auto const& Nu = ip.N_u;
         ParameterLib::SpatialPosition const pos{
             std::nullopt, this->element_.getID(),
@@ -1110,14 +1109,14 @@ void TH2MLocalAssembler<
                     this->element_, Nu))};
 
         auto const& NpT = Np.transpose().eval();
-        auto const& NTT = NT.transpose().eval();
+        auto const& NTT = NpT;
 
         auto const& gradNp = ip.dNdx_p;
         auto const& gradNT = gradNp;
         auto const& gradNu = ip.dNdx_u;
 
         auto const& gradNpT = gradNp.transpose().eval();
-        auto const& gradNTT = gradNT.transpose().eval();
+        auto const& gradNTT = gradNpT;
 
         auto const& w = ip.integration_weight;
 
@@ -1418,14 +1417,14 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                     this->element_, Nu))};
 
         auto const& NpT = Np.transpose().eval();
-        auto const& NTT = NT.transpose().eval();
+        auto const& NTT = NpT;
 
         auto const& gradNp = ip.dNdx_p;
         auto const& gradNT = gradNp;
         auto const& gradNu = ip.dNdx_u;
 
         auto const& gradNpT = gradNp.transpose().eval();
-        auto const& gradNTT = gradNT.transpose().eval();
+        auto const& gradNTT = gradNpT;
 
         auto const& w = ip.integration_weight;
 
