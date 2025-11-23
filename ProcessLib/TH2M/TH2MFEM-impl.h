@@ -1237,8 +1237,9 @@ void TH2MLocalAssembler<
 
         KUpC.noalias() += BTI2N * (ip_cv.fu_2_KupC.m * w);
 
-        KUU.noalias() +=
-            Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
+        auto const BuTC =
+            (Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor).eval();
+        KUU.noalias() += BuTC * Bu * w;
 
         fU.noalias() -=
             (Bu.transpose() * current_state.eff_stress_data.sigma_eff -
@@ -1816,11 +1817,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                                                        W_index)
             .noalias() += BTI2N * (ip_dd.dfu_2_KupC.dp_cap * w);
 
+        auto const BuTC =
+            (Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor).eval();
         local_Jac
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)
-            .noalias() +=
-            Bu.transpose() * ip_cd.s_mech_data.stiffness_tensor * Bu * w;
+            .noalias() += BuTC * Bu * w;
 
         // fU_1
         fU.noalias() -=
