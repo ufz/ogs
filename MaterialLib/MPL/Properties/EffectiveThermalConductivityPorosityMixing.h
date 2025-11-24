@@ -47,6 +47,7 @@ private:
     ParameterLib::CoordinateSystem const* const local_coordinate_system_;
 };
 
+extern template class EffectiveThermalConductivityPorosityMixing<1>;
 extern template class EffectiveThermalConductivityPorosityMixing<2>;
 extern template class EffectiveThermalConductivityPorosityMixing<3>;
 
