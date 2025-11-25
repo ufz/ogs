@@ -1200,6 +1200,17 @@ AddTest(
     DIFF_DATA gmsh_quad_tri_linear_corrected.vtu gmsh_quad_tri_linear_corrected.vtu 1.e-16
 )
 
+AddTest(
+    NAME NodeOrdering_ElementsWithLargeVolumes
+    PATH Utils/NodeReordering/
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Utils/NodeReordering
+    EXECUTABLE NodeReordering
+    EXECUTABLE_ARGS -i NodeReorderingTest_ElementsWithLargeVolumes.vtu -o ${Data_BINARY_DIR}/Utils/NodeReordering/NodeReorderingTest_ElementsWithLargeVolumes_corrected.vtu
+    REQUIREMENTS NOT (OGS_USE_MPI)
+    TESTER vtkdiff-mesh
+    DIFF_DATA NodeReorderingTest_ElementsWithLargeVolumes_corrected.vtu NodeReorderingTest_ElementsWithLargeVolumes_corrected.vtu 1.e-16
+)
+
 # The following test uses a mesh that contains only one line element, one triangle element,
 # one quadrilateral element, one tetrahedron element, one hexahedron element, one prism element,
 # and one pyramid element, all in linear order. All 3D elements have incorrect node ordering,
