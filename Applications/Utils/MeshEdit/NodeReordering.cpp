@@ -339,7 +339,9 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
         double const element_volume = element->computeVolume();
         //  We use a fixed tolerance here because for very small elements the
         //  machine epsilon might be too small.
-        if (std::fabs(element_volume - element_volume_origin) > 1e-14)
+        if (std::fabs(element_volume - element_volume_origin) /
+                element_volume_origin >
+            10 * std::numeric_limits<double>::epsilon())
         {
             OGS_FATAL(
                 "Reordering the nodes of element {:d} failed as its volume "
