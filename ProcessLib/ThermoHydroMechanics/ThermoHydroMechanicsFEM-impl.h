@@ -413,7 +413,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     GlobalDimVectorType const velocity =
         -crv.k_rel * crv.K_over_mu * dNdx * p -
         crv.K_pT_thermal_osmosis * dNdx * T +
-        crv.k_rel * crv.K_over_mu * fluid_density * b;
+        (fluid_density * crv.k_rel) * crv.K_over_mu * b;
     ip_data_output.velocity = velocity;
     crv.dvelocity_dT =
         -crv.dk_rel_dT * crv.K_over_mu * dNdx * p +
@@ -807,33 +807,34 @@ void ThermoHydroMechanicsLocalAssembler<
         // displacement equation, pressure part (K_up)
         //
         Kup.noalias() +=
-            B.transpose() * crv.alpha_biot * Invariants::identity2 * N * w;
+            B.transpose() * Invariants::identity2 * N * (crv.alpha_biot * w);
 
         double const fluid_density = _ip_data_output[ip].fluid_density;
         if (has_frozen_liquid_phase)
         {
-            Kup.noalias() += B.transpose() * crv.alpha_biot *
-                             _ip_data[ip].phi_fr / _ip_data[ip].porosity *
-                             (_ip_data_output[ip].rho_fr / fluid_density - 1) *
-                             Invariants::identity2 * N * w;
+            Kup.noalias() +=
+                B.transpose() * Invariants::identity2 * N *
+                (crv.alpha_biot * _ip_data[ip].phi_fr / _ip_data[ip].porosity *
+                 (_ip_data_output[ip].rho_fr / fluid_density - 1)) *
+                w;
         }
 
         //
         // pressure equation, pressure part (K_pp and M_pp).
         //
         laplace_p.noalias() +=
-            dNdx.transpose() * crv.k_rel * crv.K_over_mu * dNdx * w;
+            dNdx.transpose() * crv.K_over_mu * dNdx * (crv.k_rel * w);
         local_Jac
             .template block<pressure_size, temperature_size>(pressure_index,
                                                              temperature_index)
-            .noalias() += dNdx.transpose() * crv.dk_rel_dT * crv.K_over_mu *
-                          (dNdx * p) * N * w;
+            .noalias() += dNdx.transpose() * crv.K_over_mu * (dNdx * p) * N *
+                          (crv.dk_rel_dT * w);
 
         storage_p.noalias() +=
-            N.transpose() *
-            (_ip_data[ip].porosity * crv.fluid_compressibility +
-             (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
-            N * w;
+            N.transpose() * N *
+            ((_ip_data[ip].porosity * crv.fluid_compressibility +
+              (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
+             w);
 
         if (has_frozen_liquid_phase)
         {
@@ -851,15 +852,14 @@ void ThermoHydroMechanicsLocalAssembler<
         //  RHS, pressure part
         //
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
-            dNdx.transpose() * fluid_density * crv.k_rel * crv.K_over_mu * b *
-            w;
+            dNdx.transpose() * crv.K_over_mu * b *
+            (fluid_density * crv.k_rel * w);
         local_Jac
             .template block<pressure_size, temperature_size>(pressure_index,
                                                              temperature_index)
             .noalias() -=
-            dNdx.transpose() *
-            (fluid_density * crv.dk_rel_dT + crv.drho_LR_dT * crv.k_rel) *
-            crv.K_over_mu * b * N * w;
+            dNdx.transpose() * crv.K_over_mu * b * N *
+            ((fluid_density * crv.dk_rel_dT + crv.drho_LR_dT * crv.k_rel) * w);
         //
         // pressure equation, temperature part (M_pT)
         //
@@ -905,12 +905,12 @@ void ThermoHydroMechanicsLocalAssembler<
         // temperature equation, pressure part
         //
         KTp.noalias() +=
-            dNdx.transpose() * T_int_pt * crv.K_pT_thermal_osmosis * dNdx * w;
+            dNdx.transpose() * crv.K_pT_thermal_osmosis * dNdx * (T_int_pt * w);
 
         // linearized darcy
-        dKTT_dp_T.noalias() -= fluid_density * crv.c_f * crv.k_rel *
-                               N.transpose() * (dNdx * T).transpose() *
-                               crv.K_over_mu * dNdx * w;
+        dKTT_dp_T.noalias() -= N.transpose() * (dNdx * T).transpose() *
+                               crv.K_over_mu * dNdx *
+                               (fluid_density * crv.c_f * crv.k_rel * w);
 
         /* TODO (Joerg) Temperature changes due to thermal dilatation of the
          * fluid, which are usually discarded as being very small.
