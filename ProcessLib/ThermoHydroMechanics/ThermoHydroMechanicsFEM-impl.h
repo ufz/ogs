@@ -197,8 +197,9 @@ void ThermoHydroMechanicsLocalAssembler<
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& N = _ip_data[ip].N;
-        auto const& N_u = _ip_data[ip].N_u;
+        auto& ip_data = _ip_data[ip];
+        auto const& N = ip_data.N;
+        auto const& N_u = ip_data.N_u;
         ParameterLib::SpatialPosition const x_position{
             std::nullopt, _element.getID(),
             MathLib::Point3d(
@@ -206,7 +207,7 @@ void ThermoHydroMechanicsLocalAssembler<
                                                ShapeMatricesTypeDisplacement>(
                     _element, N_u))};
 
-        auto& sigma_eff = _ip_data[ip].sigma_eff;
+        auto& sigma_eff = ip_data.sigma_eff;
         if (_process_data.initial_stress.isTotalStress())
         {
             auto const alpha_b =
@@ -215,12 +216,12 @@ void ThermoHydroMechanicsLocalAssembler<
 
             sigma_eff.noalias() += alpha_b * N.dot(p) * Invariants::identity2;
         }
-        _ip_data[ip].sigma_eff_prev.noalias() = sigma_eff;
+        ip_data.sigma_eff_prev.noalias() = sigma_eff;
 
         vars.temperature = N.dot(T);
         if (frozen_liquid_phase)
         {
-            _ip_data[ip].phi_fr =
+            ip_data.phi_fr =
                 (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
                     .template value<double>(vars, x_position, t, dt);
         }
@@ -735,7 +736,8 @@ void ThermoHydroMechanicsLocalAssembler<
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& N_u = _ip_data[ip].N_u;
+        auto& ip_data = _ip_data[ip];
+        auto const& N_u = ip_data.N_u;
         ParameterLib::SpatialPosition const x_position{
             std::nullopt, _element.getID(),
             MathLib::Point3d(
@@ -744,14 +746,14 @@ void ThermoHydroMechanicsLocalAssembler<
                     _element, N_u))};
 
         auto const crv = updateConstitutiveRelations(
-            x, x_prev, x_position, t, dt, _ip_data[ip], _ip_data_output[ip]);
+            x, x_prev, x_position, t, dt, ip_data, _ip_data_output[ip]);
 
-        auto const& w = _ip_data[ip].integration_weight;
+        auto const& w = ip_data.integration_weight;
 
-        auto const& dNdx_u = _ip_data[ip].dNdx_u;
+        auto const& dNdx_u = ip_data.dNdx_u;
 
-        auto const& N = _ip_data[ip].N;
-        auto const& dNdx = _ip_data[ip].dNdx;
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
 
         auto const T_int_pt = N.dot(T);
 
@@ -799,7 +801,7 @@ void ThermoHydroMechanicsLocalAssembler<
                           w;
 
         local_rhs.template segment<displacement_size>(displacement_index)
-            .noalias() -= (B.transpose() * _ip_data[ip].sigma_eff -
+            .noalias() -= (B.transpose() * ip_data.sigma_eff -
                            N_u_op(N_u).transpose() * crv.rho * b) *
                           w;
 
@@ -814,7 +816,7 @@ void ThermoHydroMechanicsLocalAssembler<
         {
             Kup.noalias() +=
                 B.transpose() * Invariants::identity2 * N *
-                (crv.alpha_biot * _ip_data[ip].phi_fr / _ip_data[ip].porosity *
+                (crv.alpha_biot * ip_data.phi_fr / ip_data.porosity *
                  (_ip_data_output[ip].rho_fr / fluid_density - 1)) *
                 w;
         }
@@ -832,8 +834,8 @@ void ThermoHydroMechanicsLocalAssembler<
 
         storage_p.noalias() +=
             N.transpose() * N *
-            ((_ip_data[ip].porosity * crv.fluid_compressibility +
-              (crv.alpha_biot - _ip_data[ip].porosity) * crv.beta_SR) *
+            ((ip_data.porosity * crv.fluid_compressibility +
+              (crv.alpha_biot - ip_data.porosity) * crv.beta_SR) *
              w);
 
         if (has_frozen_liquid_phase)
@@ -921,7 +923,7 @@ void ThermoHydroMechanicsLocalAssembler<
          * effects in the future.
         if (fluid_compressibility != 0)
         {
-            auto const C_el = _ip_data[ip].computeElasticTangentStiffness(
+            auto const C_el = ip_data.computeElasticTangentStiffness(
                 t, x_position, dt, static_cast<double>(T_int_pt));
             auto const solid_skeleton_compressibility =
                 1 / solid_material.getBulkModulus(t, x_position, &C_el);
@@ -1094,7 +1096,7 @@ void ThermoHydroMechanicsLocalAssembler<
     {
         auto& ip_data = _ip_data[ip];
 
-        phi_fr_avg += _ip_data[ip].phi_fr;
+        phi_fr_avg += ip_data.phi_fr;
         fluid_density_avg += _ip_data_output[ip].fluid_density;
         viscosity_avg += _ip_data_output[ip].viscosity;
         sigma_avg += ip_data.sigma_eff;
