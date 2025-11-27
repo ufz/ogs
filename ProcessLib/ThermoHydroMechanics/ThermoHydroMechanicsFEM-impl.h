@@ -436,14 +436,6 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                                                T_prev_int_pt);
 
     crv.rho = solid_density * (1 - porosity) + porosity * fluid_density;
-    if (frozen_liquid_phase)
-    {
-        double const rho_fr =
-            (*frozen_liquid_phase)[MaterialPropertyLib::PropertyType::density]
-                .template value<double>(vars, x_position, t, dt);
-        ip_data_output.rho_fr = rho_fr;
-        crv.rho += ip_data.phi_fr * rho_fr - ip_data.phi_fr * fluid_density;
-    }
 
     crv.beta =
         porosity * fluid_volumetric_thermal_expansion_coefficient +
@@ -537,12 +529,16 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         }();
         ip_data.phi_fr_prev = phi_fr_prev;
 
-        crv.mass_exchange = -dphi_fr_dT * porosity *
-                            (1. - ip_data_output.rho_fr / fluid_density);
+        double const rho_fr =
+            frozen_liquid_value(MaterialPropertyLib::PropertyType::density);
+        ip_data_output.rho_fr = rho_fr;
+
+        crv.rho += ip_data.phi_fr * rho_fr - ip_data.phi_fr * fluid_density;
+        crv.mass_exchange =
+            -dphi_fr_dT * porosity * (1. - rho_fr / fluid_density);
         double const dmass_exchange_dT =
-            -d2phi_fr_dT2 * porosity *
-                (1. - ip_data_output.rho_fr / fluid_density) +
-            dphi_fr_dT * porosity * ip_data_output.rho_fr * crv.drho_LR_dT /
+            -d2phi_fr_dT2 * porosity * (1. - rho_fr / fluid_density) +
+            dphi_fr_dT * porosity * rho_fr * crv.drho_LR_dT /
                 (fluid_density * fluid_density);
 
         // alpha_T^I
@@ -607,9 +603,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                      t, x_position, &C_el_ice);
 
         crv.effective_volumetric_heat_capacity +=
-            -phi_fr * fluid_density * crv.c_f +
-            phi_fr * ip_data_output.rho_fr * c_fr -
-            l_fr * ip_data_output.rho_fr * dphi_fr_dT;
+            -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr -
+            l_fr * rho_fr * dphi_fr_dT;
 
         crv.J_uu_fr = phi_fr * C_IR;
 
@@ -621,11 +616,10 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         // part of dMTT_dT derivative for freezing
         dC_eff_dT += -dphi_fr_dT * fluid_density * crv.c_f -
                      phi_fr * crv.drho_LR_dT * crv.c_f +
-                     dphi_fr_dT * ip_data_output.rho_fr * c_fr -
-                     l_fr * ip_data_output.rho_fr * d2phi_fr_dT2;
+                     dphi_fr_dT * rho_fr * c_fr - l_fr * rho_fr * d2phi_fr_dT2;
         double const storage_p_fr_coeff =
             (porosity * crv.beta_IR + (alpha - porosity) * crv.beta_SR) *
-                ip_data_output.rho_fr / fluid_density -
+                rho_fr / fluid_density -
             (porosity * crv.fluid_compressibility +
              (alpha - porosity) * crv.beta_SR);
         crv.storage_p_fr = phi_fr / porosity * storage_p_fr_coeff;
@@ -640,15 +634,13 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         crv.storage_T_fr =
             phi_fr / porosity *
-                (crv.beta_T_SI * ip_data_output.rho_fr / fluid_density -
-                 crv.beta) -
+                (crv.beta_T_SI * rho_fr / fluid_density - crv.beta) -
             crv.mass_exchange;
         double const dstorage_T_fr_dT =
             dphi_fr_dT / porosity *
-                (crv.beta_T_SI * ip_data_output.rho_fr / fluid_density -
-                 crv.beta) +
-            phi_fr / porosity * crv.beta_T_SI * ip_data_output.rho_fr *
-                crv.drho_LR_dT / (fluid_density * fluid_density) -
+                (crv.beta_T_SI * rho_fr / fluid_density - crv.beta) +
+            phi_fr / porosity * crv.beta_T_SI * rho_fr * crv.drho_LR_dT /
+                (fluid_density * fluid_density) -
             dmass_exchange_dT;
         crv.J_pT_fr += dstorage_T_fr_dT * dT_int_pt / dt;
     }
