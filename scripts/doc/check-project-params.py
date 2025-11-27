@@ -3,6 +3,7 @@
 # This script actually generates the QA page.
 # For its usage see generate-project-file-doc-qa.sh
 
+import enum
 import json
 import os.path
 import re
@@ -12,6 +13,13 @@ import traceback
 from print23 import print_
 
 github_src_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master"
+
+
+class Status(enum.IntEnum):
+    SUCCESS = 0
+    WARN = 1
+    FAIL = 2  # QA failure
+    ERROR = 3  # exceptions, logic errors
 
 
 def debug(msg):
@@ -116,11 +124,11 @@ def run():
             if (tagpath, tag_or_attr) not in good_tagpaths:
                 unneeded_md_files[(tagpath, tag_or_attr)] = filepath
 
-    qa_status_succeeded = True
+    qa_status = Status.SUCCESS
 
     # remove false positives from unneeded_md_files
     if unneeded_md_files:
-        qa_status_succeeded = False
+        qa_status = False
         for tagpath, _ in good_tagpaths:
             tagpath = tagpath.split(".")
             while tagpath:
@@ -134,7 +142,7 @@ def run():
                 break
 
     if undocumented:
-        qa_status_succeeded = False
+        qa_status = Status.FAIL
         print_()
         print_("# Undocumented parameters")
         print_("| File | Line | Parameter | Type | Method | Link |")
@@ -153,7 +161,7 @@ def run():
             )
 
     if unneeded_comments:
-        qa_status_succeeded = False
+        qa_status = Status.FAIL
         print_()
         print_("# Comments not documenting anything")
         print_("| File | Line | Comment | Link |")
@@ -169,7 +177,7 @@ def run():
             )
 
     if wrong_input:
-        qa_status_succeeded = False
+        qa_status = Status.FAIL
         print_()
         print_("# Lines of input to that script that have not been recognized")
         print_("| File | Line | Content | Link |")
@@ -185,7 +193,7 @@ def run():
             )
 
     if no_doc_page:
-        qa_status_succeeded = False
+        qa_status = Status.FAIL
         print_()
         print_("# No documentation page")
         print_("| Parameter | File | Line | Link |")
@@ -200,7 +208,7 @@ def run():
             )
 
     if unneeded_md_files:
-        qa_status_succeeded = False
+        qa_status = Status.FAIL
         print_()
         print_("# Documentation pages that are not referenced in the source code")
         print_("| Page | *.md file | Link |")
@@ -223,7 +231,7 @@ def run():
             if ut != "gml" and not ut.startswith("gml.")
         ]
         if utags:
-            qa_status_succeeded = False
+            qa_status = max(qa_status, Status.WARN)
             print_()
             print_("# Tags that do not occur in any CTest project file")
             for utag in sorted(utags):
@@ -236,22 +244,22 @@ def run():
             if ua != "gml" and not ua.startswith("gml.")
         ]
         if uattrs:
-            qa_status_succeeded = False
+            qa_status = max(qa_status, Status.WARN)
             print_()
             print_("# Attributes that do not occur in any CTest project file")
             for uattr in sorted(uattrs):
                 pagename = "ogs_file_attr__" + uattr.replace(".", "__")
                 print_(rf'- \ref {pagename} "{uattr}"')
 
-    return qa_status_succeeded
+    return qa_status
 
 
 if __name__ == "__main__":
     success = False
     try:
-        success = run()
+        qa_status = run()
     except:
         print(traceback.format_exc(), file=sys.stderr)
-        sys.exit(2)
+        sys.exit(Status.ERROR)
 
-    sys.exit(0 if success else 1)
+    sys.exit(qa_status)

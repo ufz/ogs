@@ -48,17 +48,23 @@ If it is empty, there are no issues detected.
 
 EOF
 
+qa_status=0
+
 if "$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile"; then
     :
 else
     stat="$?"
     if [ 1 -ne "$stat" ]; then
         # status neither 0 nor 1 => error
-        echo "status was $stat" >&2
-        false
+        # 0 ... success
+        # 1 ... warn
+        # 2 ... fail
+        # 3 ... logic error
+        echo "error: documentation quality check failed (status $stat)" >&2
+        qa_status=1
+    else
+        echo "warning: documentation quality check failed (status $stat)" >&2
     fi
-
-    echo "warning: documentation quality check failed" >&2
 fi
 
 cat <<EOF >>"$qafile"
@@ -71,3 +77,5 @@ EOF
 # Finish parameter documentation dox files by appending auxiliary information,
 # e.g., associated ctests, data type, etc.
 "$toolsdir/append-xml-tags.py" prj "$datadir" "$docauxdir"
+
+exit "$qa_status"
