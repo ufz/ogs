@@ -275,7 +275,7 @@ def runBenchmark(
     out_dir,
     output_prefix,
     mesh_dir,
-    use_talyor_hood=True,
+    use_taylor_hood=True,
     plastic_model=None,
     ogs_path=None,
 ):
@@ -286,7 +286,7 @@ def runBenchmark(
         OGS_ASM_THREADS=4,
     )
 
-    if use_talyor_hood:
+    if use_taylor_hood:
         xpath_var = './process_variables/process_variable[name="displacement"]/'
         prj.replace_text(
             2,
