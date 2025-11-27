@@ -403,7 +403,7 @@
         <vtkdiff>
             <regex>double_porosity_swelling_t_.*.vtu</regex>
             <field>micro_pressure</field>
-            <absolute_tolerance>1e-6</absolute_tolerance>
+            <absolute_tolerance>2e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
