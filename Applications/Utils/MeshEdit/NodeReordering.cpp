@@ -351,7 +351,7 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
                 std::fabs(element_volume_origin - element_volume),
                 10 * std::numeric_limits<double>::epsilon());
         }
-        // Element::computeVolume() uses the element vertecies to compute
+        // Element::computeVolume() uses the element vertices to compute
         // the element volume, so the change of edge nodes are not
         // considered. Therefore, we need to additionally check the Jacobian
         // determinant here if forced is true.
