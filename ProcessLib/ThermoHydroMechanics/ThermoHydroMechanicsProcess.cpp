@@ -274,6 +274,13 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime);
 
+    _process_data.element_ice_stresses =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "sigma_ice_avg",
+            MeshLib::MeshItemType::Cell,
+            MathLib::KelvinVector::KelvinVectorType<
+                DisplacementDim>::RowsAtCompileTime);
+
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
