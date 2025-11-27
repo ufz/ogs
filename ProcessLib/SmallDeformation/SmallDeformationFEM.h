@@ -183,9 +183,7 @@ public:
                         this->element_, N))};
 
             auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunction,
-                                               ShapeMatricesType>(
-                    this->element_, N);
+                x_position.getCoordinates().value()[0];  // r for axisymetric
             auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(
@@ -299,9 +297,7 @@ public:
                         this->element_, N))};
 
             auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunction,
-                                               ShapeMatricesType>(
-                    this->element_, N);
+                x_position.getCoordinates().value()[0];  // r for axisymetric
             auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(
@@ -343,11 +339,6 @@ public:
             auto const& N = ip_data_[ip].N_u;
             auto const& dNdx = ip_data_[ip].dNdx_u;
 
-            auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunction,
-                                               ShapeMatricesType>(
-                    this->element_, N);
-
             ParameterLib::SpatialPosition const x_position{
                 std::nullopt, this->element_.getID(),
                 MathLib::Point3d(
@@ -355,6 +346,8 @@ public:
                                                    ShapeMatricesType>(
                         this->element_, N))};
 
+            auto const x_coord =
+                x_position.getCoordinates().value()[0];  // r for axisymetric
             auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
                 DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
                 typename BMatricesType::BMatrixType>(

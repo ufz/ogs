@@ -328,9 +328,7 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const& N_u = ip_data_[ip].N_u;
         auto const& dNdx_u = ip_data_[ip].dNdx_u;
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, N_u);
+            x_position.getCoordinates().value()[0];  // r for axisymetric
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,

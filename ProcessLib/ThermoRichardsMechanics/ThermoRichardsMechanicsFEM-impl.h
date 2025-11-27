@@ -577,10 +577,9 @@ void ThermoRichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
                     this->element_, N_u))};
+
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, N_u);
+            x_position.getCoordinates().value()[0];  // r for axisymmetry
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,

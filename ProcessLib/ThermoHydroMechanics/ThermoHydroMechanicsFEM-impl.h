@@ -268,9 +268,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     double const dT_int_pt = T_int_pt - T_prev_int_pt;
 
     auto const x_coord =
-        NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                       ShapeMatricesTypeDisplacement>(_element,
-                                                                      N_u);
+        x_position.getCoordinates().value()[0];  // r for axisymmetry
     auto const B =
         LinearBMatrix::computeBMatrix<DisplacementDim,
                                       ShapeFunctionDisplacement::NPOINTS,
@@ -652,9 +650,7 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const T_int_pt = N.dot(T);
 
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                _element, N_u);
+            x_position.getCoordinates().value()[0];  // r for axisymmetry
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,

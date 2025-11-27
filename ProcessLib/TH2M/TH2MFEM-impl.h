@@ -150,10 +150,9 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
                     this->element_, Nu))};
+
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, Nu);
+            pos.getCoordinates().value()[0];  // r for axisymmetry
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
@@ -576,10 +575,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& Np = ip_data.N_p;
         auto const& NT = Np;
         auto const& gradNu = ip_data.dNdx_u;
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, Nu);
 
         ParameterLib::SpatialPosition const pos{
             std::nullopt, this->element_.getID(),
@@ -587,6 +582,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
                     this->element_, Nu))};
+
+        auto const x_coord = pos.getCoordinates().value()[0];
 
         double const T = NT.dot(temperature);
         double const T_prev = NT.dot(temperature_prev);
@@ -894,16 +891,15 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& NT = Np;
         auto const& Nu = ip_data.N_u;
         auto const& gradNu = ip_data.dNdx_u;
-        auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, Nu);
+
         ParameterLib::SpatialPosition const pos{
             std::nullopt, this->element_.getID(),
             MathLib::Point3d(
                 NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
                                                ShapeMatricesTypeDisplacement>(
                     this->element_, ip_data.N_u))};
+
+        auto const x_coord = pos.getCoordinates().value()[0];
 
         double const pCap = Np.dot(capillary_pressure);
         vars.capillary_pressure = pCap;
@@ -1126,10 +1122,7 @@ void TH2MLocalAssembler<
         auto const& w = ip.integration_weight;
 
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, Nu);
-
+            pos.getCoordinates().value()[0];  // r for axisymetric
         auto const Bu =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
@@ -1437,10 +1430,7 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         auto const& w = ip.integration_weight;
 
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                           ShapeMatricesTypeDisplacement>(
-                this->element_, Nu);
-
+            pos.getCoordinates().value()[0];  // r for axisymetric
         auto const Bu =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunctionDisplacement::NPOINTS,
