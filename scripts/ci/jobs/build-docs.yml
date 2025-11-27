@@ -50,6 +50,11 @@ build docs:
         exit 1
       fi
     - echo "Number of Doxygen warnings is $NUM_DOX_WARNINGS (threshold is $DOX_WARNINGS_THRESHOLD)."
+    - |
+      if grep '^error: documentation quality check failed' make-docs.output; then
+        echo "Error: Doxygen quality assurance check failed"
+        exit 1
+      fi
   artifacts:
     paths:
       - build/cpp-dependencies.svg
