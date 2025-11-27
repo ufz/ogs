@@ -30,12 +30,15 @@ BuildingPowerCurves createBuildingPowerCurvesStruct(
 {
     auto const& power_curve = *BaseLib::getOrError(
         curves,
+        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__hot_water__power_curve}
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__heating__power_curve}
         config->getConfigParameter<std::string>("power_curve"),
         "Required power curve not found.");
 
     auto const& cop_curve = *BaseLib::getOrError(
         curves,
+        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__cooling__cop_curve}
+        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__hot_water__cop_curve}
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__heating__cop_curve}
         config->getConfigParameter<std::string>("cop_curve"),
         "Required cop curve not found.");
