@@ -100,8 +100,7 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
         // Local coordinate transformation is only applied for the case that the
         // initial solid thermal conductivity is given with orthotropic
         // assumption.
-        if (local_coordinate_system_ &&
-            (solid_thermal_conductivity.cols() == GlobalDim))
+        if (local_coordinate_system_)
         {
             solid_thermal_conductivity =
                 local_coordinate_system_->rotateTensor<GlobalDim>(
@@ -246,8 +245,7 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::dValue(
         // Local coordinate transformation is only applied for the case that the
         // initial solid thermal conductivity is given with orthotropic
         // assumption.
-        if (local_coordinate_system_ &&
-            (solid_thermal_conductivity.cols() == GlobalDim))
+        if (local_coordinate_system_)
         {
             solid_thermal_conductivity =
                 local_coordinate_system_->rotateTensor<GlobalDim>(
