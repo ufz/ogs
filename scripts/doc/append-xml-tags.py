@@ -218,13 +218,13 @@ with open(os.path.join(docauxdir, "ctest-media-info.json")) as fh:
 # traverse dox file hierarchy
 for dirpath, _, filenames in os.walk(docdir):
     reldirpath = dirpath[len(docdir) + 1 :]
-    istag = True
 
     for f in filenames:
         if not f.endswith(".dox"):
             continue
 
         if f.startswith(("i_", "c_")):
+            istag = True
             tagpath = reldirpath
         elif f.startswith("t_"):
             tagpath = os.path.join(reldirpath, f[2 : -len(".dox")])
