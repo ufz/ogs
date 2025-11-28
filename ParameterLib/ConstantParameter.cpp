@@ -22,36 +22,26 @@ std::unique_ptr<ParameterBase> createConstantParameter(
     //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "Constant");
 
-    // Optional case for single-component variables where the value can be used.
-    // If the 'value' tag is found, use it and return. Otherwise continue with
-    // then required tag 'values'.
-    {
-        auto const value =
-            //! \ogs_file_param{prj__parameters__parameter__Constant__value}
-            config.getConfigParameterOptional<std::vector<double>>("value");
+    auto const value_data =
+        //! \ogs_file_param{prj__parameters__parameter__Constant__value}
+        config.getConfigParameterOptional<std::vector<double>>("value");
 
-        if (value)
-        {
-            if (value->size() != 1)
-            {
-                OGS_FATAL(
-                    "Expected to read exactly one value, but {:d} were given.",
-                    value->size());
-            }
-            DBUG("Using value {:g} for constant parameter.", (*value)[0]);
-            return std::make_unique<ConstantParameter<double>>(name,
-                                                               (*value)[0]);
-        }
+    auto const values_data =
+        //! \ogs_file_param{prj__parameters__parameter__Constant__values}
+        config.getConfigParameterOptional<std::vector<double>>("values");
+
+    if ((value_data) && (values_data))
+    {
+        OGS_FATAL(
+            "Both value and values tags were given.\n\
+             Please give only one of them.");
     }
 
-    // Value tag not available; continue with required values tag.
-    std::vector<double> const values =
-        //! \ogs_file_param{prj__parameters__parameter__Constant__values}
-        config.getConfigParameter<std::vector<double>>("values");
+    std::vector<double> values = value_data.value_or(*values_data);
 
     if (values.empty())
     {
-        OGS_FATAL("No value available for constant parameter.");
+        OGS_FATAL("No value(s) was(were) provided.");
     }
 
     DBUG("Using following values for the constant parameter:");
@@ -61,7 +51,7 @@ std::unique_ptr<ParameterBase> createConstantParameter(
         DBUG("\t{:g}", v);
     }
 
-    return std::make_unique<ConstantParameter<double>>(name, values);
+    return std::make_unique<ConstantParameter<double>>(name, std::move(values));
 }
 
 }  // namespace ParameterLib
