@@ -198,7 +198,7 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     typename ShapeMatricesType::NodalMatrixType laplace =
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
-    typename ShapeMatricesType::NodalMatrixType stablizing =
+    typename ShapeMatricesType::NodalMatrixType stabilizing =
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
     ParameterLib::SpatialPosition x_position;
@@ -293,7 +293,7 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         double const stablization_spatial =
             spatial_stabilization_parameter * 0.25 * he * he /
             (degraded_bulk_modulus + 4. / 3. * degraded_shear_modulus);
-        stablizing.noalias() +=
+        stabilizing.noalias() +=
             dNdx.transpose() * stablization_spatial * dNdx * w;
 
         mass.noalias() +=
@@ -325,10 +325,10 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
             laplace.noalias() += dNdx.transpose() * Kf / mu * dNdx * w;
         }
     }
-    local_Jac.noalias() = laplace + mass / dt + stablizing / dt;
+    local_Jac.noalias() = laplace + mass / dt + stabilizing / dt;
 
-    local_rhs.noalias() -=
-        laplace * p + mass * (p - p_prev) / dt + stablizing * (p - p_prev) / dt;
+    local_rhs.noalias() -= laplace * p + mass * (p - p_prev) / dt +
+                           stabilizing * (p - p_prev) / dt;
 }
 
 template <typename ShapeFunction, int DisplacementDim>
