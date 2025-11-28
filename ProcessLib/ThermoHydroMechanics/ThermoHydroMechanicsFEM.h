@@ -193,9 +193,7 @@ public:
                                         dt, _ip_data[ip], _ip_data_output[ip]);
 
             auto const x_coord =
-                NumLib::interpolateXCoordinate<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u);
+                x_position.getCoordinates().value()[0];  // r for axisymmetry
             auto const B = LinearBMatrix::computeBMatrix<
                 DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
                 typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,

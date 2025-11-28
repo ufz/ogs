@@ -58,9 +58,6 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     auto local_rhs = MathLib::createZeroedVector<DeformationVector>(
         local_b_data, displacement_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     auto local_pressure = 0.0;
     if (_process_data.pressurized_crack)
     {
@@ -74,9 +71,14 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->_element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                this->_element, N))};
+
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+            x_position.getCoordinates().value()[0];  // r for axisymmetry
 
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
@@ -138,9 +140,6 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     auto local_rhs = MathLib::createZeroedVector<PhaseFieldVector>(
         local_b_data, phasefield_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     auto local_pressure = 0.0;
     if (_process_data.static_pressurized_crack)
     {
@@ -151,10 +150,6 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         local_pressure = _process_data.pressure;
     }
 
-    double const k = _process_data.residual_stiffness(t, x_position)[0];
-    double const ls = _process_data.crack_length_scale(t, x_position)[0];
-    double const gc = _process_data.crack_resistance(t, x_position)[0];
-
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -163,15 +158,25 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         auto const& dNdx = _ip_data[ip].dNdx;
 
         double const d_ip = N.dot(d);
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->_element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                this->_element, N))};
+
+        double const k = _process_data.residual_stiffness(t, x_position)[0];
+        double const ls = _process_data.crack_length_scale(t, x_position)[0];
+        double const gc = _process_data.crack_resistance(t, x_position)[0];
         double const degradation =
             _process_data.degradation_derivative->degradation(d_ip, k, ls);
         double const degradation_df1 =
             _process_data.degradation_derivative->degradationDf1(d_ip, k, ls);
         double const degradation_df2 =
             _process_data.degradation_derivative->degradationDf2(d_ip, k, ls);
+
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+            x_position.getCoordinates().value()[0];  // r for axisymmetry
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
                                           ShapeFunction::NPOINTS,
@@ -241,9 +246,6 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     auto const u = Eigen::Map<DeformationVector const>(
         &local_coupled_xs[displacement_index], displacement_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -291,15 +293,10 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
     auto const u = Eigen::Map<DeformationVector const>(
         &local_coupled_xs[displacement_index], displacement_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     double element_elastic_energy = 0.0;
     double element_surface_energy = 0.0;
     double element_pressure_work = 0.0;
 
-    double const gc = _process_data.crack_resistance(t, x_position)[0];
-    double const ls = _process_data.crack_length_scale(t, x_position)[0];
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -307,6 +304,12 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
         auto const& N = _ip_data[ip].N;
         auto const& dNdx = _ip_data[ip].dNdx;
         auto pressure_ip = _process_data.pressure;
+
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->_element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                this->_element, N))};
 
         typename ShapeMatricesType::template MatrixType<DisplacementDim,
                                                         displacement_size>
@@ -323,6 +326,8 @@ void PhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::computeEnergy(
 
         element_elastic_energy += _ip_data[ip].elastic_energy * w;
 
+        double const gc = _process_data.crack_resistance(t, x_position)[0];
+        double const ls = _process_data.crack_length_scale(t, x_position)[0];
         double const d_ip = N.dot(d);
         switch (_process_data.phasefield_model)
         {
