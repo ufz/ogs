@@ -16,6 +16,7 @@
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/CoordinateSystem.h"
 #include "TestMPL.h"
+#include "Tests/TestTools.h"
 
 std::string phase(std::string name, double thermal_conductivity)
 {
@@ -105,6 +106,17 @@ TEST(MaterialPropertyLib,
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.827 * 2, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<Eigen::Matrix<double, 2, 2>>(
+                variable_array, MaterialPropertyLib::Variable::temperature, pos,
+                time, dt);
+    EXPECT_PRED_FORMAT2(Tests::EigenIsNear{},
+                        decltype(d_eff_th_cond_dT)::Zero(), d_eff_th_cond_dT);
 }
 TEST(MaterialPropertyLib,
      EffectiveThermalConductivityPorosityMixingLiquidSolid3D)
@@ -124,6 +136,17 @@ TEST(MaterialPropertyLib,
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.827 * 3, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<Eigen::Matrix<double, 3, 3>>(
+                variable_array, MaterialPropertyLib::Variable::temperature, pos,
+                time, dt);
+    EXPECT_PRED_FORMAT2(Tests::EigenIsNear{},
+                        decltype(d_eff_th_cond_dT)::Zero(), d_eff_th_cond_dT);
 }
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid1D)
@@ -142,6 +165,16 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid1D)
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.827 * 1, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<double>(variable_array,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     pos, time, dt);
+    ASSERT_NEAR(d_eff_th_cond_dT, 0.0, 1.e-10);
 }
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid2D)
@@ -160,6 +193,17 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid2D)
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.827 * 2, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<Eigen::Matrix<double, 2, 2>>(
+                variable_array, MaterialPropertyLib::Variable::temperature, pos,
+                time, dt);
+    EXPECT_PRED_FORMAT2(Tests::EigenIsNear{},
+                        decltype(d_eff_th_cond_dT)::Zero(), d_eff_th_cond_dT);
 }
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid3D)
@@ -178,6 +222,17 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingGasSolid3D)
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.827 * 3, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<Eigen::Matrix<double, 3, 3>>(
+                variable_array, MaterialPropertyLib::Variable::temperature, pos,
+                time, dt);
+    EXPECT_PRED_FORMAT2(Tests::EigenIsNear{},
+                        decltype(d_eff_th_cond_dT)::Zero(), d_eff_th_cond_dT);
 }
 
 TEST(MaterialPropertyLib,
@@ -198,6 +253,16 @@ TEST(MaterialPropertyLib,
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.721068 * 1, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<double>(variable_array,
+                                     MaterialPropertyLib::Variable::temperature,
+                                     pos, time, dt);
+    ASSERT_NEAR(d_eff_th_cond_dT, 0.0, 1.e-10);
 }
 
 TEST(MaterialPropertyLib,
@@ -218,6 +283,17 @@ TEST(MaterialPropertyLib,
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.721068 * 2, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<Eigen::Matrix<double, 2, 2>>(
+                variable_array, MaterialPropertyLib::Variable::temperature, pos,
+                time, dt);
+    EXPECT_PRED_FORMAT2(Tests::EigenIsNear{},
+                        decltype(d_eff_th_cond_dT)::Zero(), d_eff_th_cond_dT);
 }
 
 TEST(MaterialPropertyLib,
@@ -238,6 +314,17 @@ TEST(MaterialPropertyLib,
             ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
             .value(variable_array, pos, time, dt));
     ASSERT_NEAR(eff_th_cond.trace(), 0.721068 * 3, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<Eigen::Matrix<double, 3, 3>>(
+                variable_array, MaterialPropertyLib::Variable::temperature, pos,
+                time, dt);
+    EXPECT_PRED_FORMAT2(Tests::EigenIsNear{},
+                        decltype(d_eff_th_cond_dT)::Zero(), d_eff_th_cond_dT);
 }
 
 TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingRot90deg)
@@ -297,4 +384,15 @@ TEST(MaterialPropertyLib, EffectiveThermalConductivityPorosityMixingRot90deg)
     ASSERT_NEAR(eff_th_cond(0, 0), 0.7832, 1.e-10);
     ASSERT_NEAR(eff_th_cond(1, 1), 0.81224, 1.e-10);
     ASSERT_NEAR(eff_th_cond(2, 2), 0.467280, 1.e-10);
+
+    // Test derivative w.r.t. temperature - should be zero for constant
+    // properties
+    auto const d_eff_th_cond_dT =
+        medium
+            ->property(MaterialPropertyLib::PropertyType::thermal_conductivity)
+            .template dValue<Eigen::Matrix<double, 3, 3>>(
+                variable_array, MaterialPropertyLib::Variable::temperature, pos,
+                time, dt);
+    EXPECT_PRED_FORMAT2(Tests::EigenIsNear{},
+                        decltype(d_eff_th_cond_dT)::Zero(), d_eff_th_cond_dT);
 }

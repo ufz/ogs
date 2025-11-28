@@ -14,6 +14,8 @@
 #include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 #include "ThermoHydroMechanicsProcessData.h"
+#include "processlib_export.h"
+#include "thermohydromechanics_export.h"
 
 namespace ProcessLib
 {
@@ -32,7 +34,7 @@ class ThermoHydroMechanicsProcess final
     friend class AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>;
 
 public:
-    ThermoHydroMechanicsProcess(
+    THERMOHYDROMECHANICS_EXPORT ThermoHydroMechanicsProcess(
         std::string name,
         MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
@@ -49,7 +51,7 @@ public:
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override;
+    THERMOHYDROMECHANICS_EXPORT bool isLinear() const override;
     //! @}
 
     /**
@@ -64,8 +66,8 @@ public:
      *                               represents the mechanical (M) process.
      * @return Matrix specifications including size and sparse pattern.
      */
-    MathLib::MatrixSpecifications getMatrixSpecifications(
-        const int process_id) const override;
+    THERMOHYDROMECHANICS_EXPORT MathLib::MatrixSpecifications
+    getMatrixSpecifications(const int process_id) const override;
 
 private:
     void constructDofTable() override;
@@ -107,8 +109,8 @@ private:
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
         override;
 
-    NumLib::LocalToGlobalIndexMap const& getDOFTable(
-        const int process_id) const override;
+    THERMOHYDROMECHANICS_EXPORT NumLib::LocalToGlobalIndexMap const&
+    getDOFTable(const int process_id) const override;
 
 private:
     std::vector<MeshLib::Node*> _base_nodes;

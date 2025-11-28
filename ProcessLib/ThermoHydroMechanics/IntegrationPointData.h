@@ -152,6 +152,50 @@ struct IntegrationPointData final
         return C;
     }
 
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
+    computeElasticTangentStiffnessIce(
+        MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
+            ice_constitutive_relation,
+        double const t,
+        ParameterLib::SpatialPosition const& x_position,
+        double const dt,
+        double const temperature)
+    {
+        namespace MPL = MaterialPropertyLib;
+
+        MPL::VariableArray variable_array;
+        MPL::VariableArray variable_array_prev;
+
+        auto const null_state =
+            ice_constitutive_relation.createMaterialStateVariables();
+        ice_constitutive_relation.initializeInternalStateVariables(
+            t, x_position, *null_state);
+
+        using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
+
+        variable_array.stress.emplace<KV>(KV::Zero());
+        variable_array.mechanical_strain.emplace<KV>(KV::Zero());
+        variable_array.temperature = temperature;
+
+        variable_array_prev.stress.emplace<KV>(KV::Zero());
+        variable_array_prev.mechanical_strain.emplace<KV>(KV::Zero());
+        variable_array_prev.temperature = temperature;
+
+        auto&& solution =
+            solid_material.integrateStress(variable_array_prev, variable_array,
+                                           t, x_position, dt, *null_state);
+
+        if (!solution)
+        {
+            OGS_FATAL("Computation of elastic tangent stiffness failed.");
+        }
+
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C =
+            std::move(std::get<2>(*solution));
+
+        return C;
+    }
+
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelationIce(
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             ice_constitutive_relation,
@@ -203,6 +247,7 @@ struct IntegrationPointDataForOutput
 
     double fluid_density = std::numeric_limits<double>::quiet_NaN();
     double viscosity = std::numeric_limits<double>::quiet_NaN();
+    double rho_fr = std::numeric_limits<double>::quiet_NaN();
 };
 
 template <int DisplacementDim>
@@ -210,6 +255,7 @@ struct ConstitutiveRelationsValues
 {
     using DimMatrix =
         typename MatrixPolicyType::MatrixType<DisplacementDim, DisplacementDim>;
+    using DimVector = MatrixPolicyType::VectorType<DisplacementDim>;
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim>
@@ -217,6 +263,9 @@ struct ConstitutiveRelationsValues
     DimMatrix K_over_mu;
     DimMatrix K_pT_thermal_osmosis;
     DimMatrix effective_thermal_conductivity;
+    DimMatrix dlambda_eff_dT;
+    DimVector dvelocity_dT = DimVector::Constant(
+        DisplacementDim, std::numeric_limits<double>::quiet_NaN());
     double alpha_biot;
     double beta;
     double beta_SR;
@@ -224,9 +273,18 @@ struct ConstitutiveRelationsValues
     double effective_volumetric_heat_capacity;
     double fluid_compressibility;
     double rho;
+    double drho_LR_dT;
+    double J_TT;
 
     // Freezing related values.
-    double J_TT_fr;
+    double beta_IR;
+    double beta_T_SI;
+    double mass_exchange;
+    double k_rel;
+    double dk_rel_dT;
+    double storage_p_fr;
+    double storage_T_fr;
+    double J_pT_fr;
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;

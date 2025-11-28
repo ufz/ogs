@@ -16,6 +16,8 @@
 #include <string>
 #include <vector>
 
+#include "thermohydromechanics_export.h"
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -48,7 +50,8 @@ namespace ProcessLib
 namespace ThermoHydroMechanics
 {
 template <int DisplacementDim>
-std::unique_ptr<Process> createThermoHydroMechanicsProcess(
+THERMOHYDROMECHANICS_EXPORT std::unique_ptr<Process>
+createThermoHydroMechanicsProcess(
     std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
@@ -60,7 +63,8 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     BaseLib::ConfigTree const& config,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
-extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
+extern template THERMOHYDROMECHANICS_EXPORT std::unique_ptr<Process>
+createThermoHydroMechanicsProcess<2>(
     std::string const& name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
@@ -70,7 +74,8 @@ extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(
     unsigned const integration_order, BaseLib::ConfigTree const& config,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 
-extern template std::unique_ptr<Process> createThermoHydroMechanicsProcess<3>(
+extern template THERMOHYDROMECHANICS_EXPORT std::unique_ptr<Process>
+createThermoHydroMechanicsProcess<3>(
     std::string const& name,
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
