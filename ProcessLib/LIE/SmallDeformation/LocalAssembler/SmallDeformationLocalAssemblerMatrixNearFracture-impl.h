@@ -198,8 +198,6 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
 
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
 
     auto const B_dil_bar = getDilatationalBBarMatrix();
 
@@ -226,9 +224,14 @@ void SmallDeformationLocalAssemblerMatrixNearFracture<
             nodal_total_u += levelsets[i] * vec_nodal_g[i];
         }
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->_element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                this->_element, N))};
+
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+            x_position.getCoordinates().value()[0];  // r for axisymmetry
         auto const B = LinearBMatrix::computeBMatrixPossiblyWithBbar<
             DisplacementDim, ShapeFunction::NPOINTS, BBarMatrixType,
             typename BMatricesType::BMatrixType>(dNdx, N, B_dil_bar, x_coord,
