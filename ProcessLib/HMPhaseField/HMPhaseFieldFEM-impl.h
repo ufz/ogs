@@ -74,16 +74,10 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
     auto local_rhs = MathLib::createZeroedVector<DeformationVector>(
         local_b_data, displacement_size);
 
-    ParameterLib::SpatialPosition x_position;
-    x_position.setElementID(_element.getID());
-
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& solid = medium->phase("Solid");
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
-
-    double const k = _process_data.residual_stiffness(t, x_position)[0];
-    double const ls = _process_data.crack_length_scale(t, x_position)[0];
 
     auto const& identity2 = Invariants::identity2;
 
@@ -96,9 +90,14 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         double const d_ip = N.dot(d);
         double const p_ip = N.dot(p);
 
+        ParameterLib::SpatialPosition const x_position{
+            std::nullopt, this->_element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                this->_element, N))};
+
         auto const x_coord =
-            NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
-                _element, N);
+            x_position.getCoordinates().value()[0];  // r for axisymmetry
 
         auto const& B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
@@ -108,6 +107,9 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 
         auto& eps = _ip_data[ip].eps;
         eps.noalias() = B * u;
+
+        double const k = _process_data.residual_stiffness(t, x_position)[0];
+        double const ls = _process_data.crack_length_scale(t, x_position)[0];
 
         double const degradation =
             _process_data.degradation_derivative->degradation(d_ip, k, ls);
