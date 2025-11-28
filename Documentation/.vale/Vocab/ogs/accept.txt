@@ -98,6 +98,7 @@ Kharaka
 Kinzelbach
 Kitware
 Kolditz
+Kuzmin
 Laloui
 Langergraber
 Langevin
@@ -161,6 +162,7 @@ Ramey
 recondensation
 Reiche
 relref
+Resour
 Revista
 Roboto
 Rocscience
