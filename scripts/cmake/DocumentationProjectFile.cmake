@@ -17,13 +17,18 @@ function(documentationProjectFilePutIntoPlace dir)
 
         file(MAKE_DIRECTORY "${DOCUMENTATION_PROJECTFILE_BUILDDIR}/${dir_name}")
 
-        set(postfix "# Child parameters, attributes and cases\n\n")
-
         # gather other parameter files the loop below will effects a page
         # hierarchy to be built
         file(GLOB param_files
              ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/${dir_name}/*
         )
+
+        if (param_files)
+            set(postfix "# Child parameters, attributes and cases\n\n")
+        else()
+            set(postfix "")
+        endif()
+
         set(subpagelist "")
         foreach(pf ${param_files})
             # ignore hidden files
@@ -82,10 +87,14 @@ function(documentationProjectFilePutIntoPlace dir)
             endif()
         endforeach()
 
-        list(SORT subpagelist)
-        foreach(subpage ${subpagelist})
-            set(postfix "${postfix} - \\subpage ${subpage}\n")
-        endforeach()
+        if (subpagelist)
+            list(SORT subpagelist)
+            foreach(subpage ${subpagelist})
+                set(postfix "${postfix} - \\subpage ${subpage}\n")
+            endforeach()
+        else()
+            set(postfix "")
+        endif()
     else()
         set(postfix "")
     endif()
