@@ -17,6 +17,7 @@ include:
   - local: "/scripts/ci/jobs/web-deploy.yml"
   - local: "/scripts/ci/jobs/release.yml"
   - local: "/scripts/ci/jobs/package.yml"
+  - local: "/scripts/ci/jobs/test-dev-perf.yml"
 
 # child pipelines
 wheels:
