@@ -466,6 +466,35 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
                                    power_min};
     }
 
+    if (type == "BuildingPowerCurveConstantFlow")
+    {
+        auto const& power_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__power_curve}
+            config.getConfigParameter<std::string>("power_curve"),
+            "Required power curve not found.");
+
+        auto const& cop_heating_curve = *BaseLib::getOrError(
+            curves,
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__cop_heating_curve}
+            config.getConfigParameter<std::string>("cop_heating_curve"),
+            "Required power curve not found.");
+
+        BuildingPowerCurves const building_power_curves{power_curve,
+                                                        cop_heating_curve};
+
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__flow_rate}
+        auto const flow_rate = config.getConfigParameter<double>("flow_rate");
+
+        return BuildingPowerCurveConstantFlow{
+            building_power_curves,
+            flow_rate,
+            refrigerant.specific_heat_capacity,
+            refrigerant.density,
+            flow_rate_min,
+            power_min};
+    }
+
     if (type == "AdvancedBuildingPowerCurvesFlowCurve")
     {
         // add a heating, hot water and cooling config as optional to handle
