@@ -12,12 +12,14 @@ pre commit:
 
 clang-format:
   stage: check
-  image: $PRECOMMIT_IMAGE
+  image: silkeh/clang:18
   rules:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only \(fast.*/
       when: never
     - if: $CI_MERGE_REQUEST_IID
-  needs: [meta]
+  before_script:
+    - apt update
+    - apt install -y git
   script:
     - git clang-format --extensions "h,cpp" ${CI_MERGE_REQUEST_DIFF_BASE_SHA}
     - if [[ $(git diff) ]]; then exit 1; fi
