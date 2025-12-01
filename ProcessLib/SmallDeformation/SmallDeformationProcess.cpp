@@ -46,6 +46,14 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
           *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
+    // If numerical Jacobian assembler is used.
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "Numerical Jacobian assembly is not supported for the "
+            "SmallDeformationProcess.");
+    }
+
     nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 

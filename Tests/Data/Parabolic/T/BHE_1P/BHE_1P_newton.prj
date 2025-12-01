@@ -13,6 +13,8 @@
             </process_variables>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
+                <component_magnitudes>1 1</component_magnitudes>
+                <relative_epsilons>1e-8 1e-8</relative_epsilons>
             </jacobian_assembler>
             <borehole_heat_exchangers>
                 <borehole_heat_exchanger>

@@ -44,6 +44,14 @@ LargeDeformationProcess<DisplacementDim>::LargeDeformationProcess(
               std::move(secondary_variables)),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian assembler
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "The numericial Jacobian assembler is not supported for the "
+            "LargeDeformationProcess.");
+    }
+
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 

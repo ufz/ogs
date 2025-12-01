@@ -45,6 +45,15 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
           *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
+    // For numerical Jacobian
+    if (this->_jacobian_assembler->isPerturbationEnabled() &&
+        _use_monolithic_scheme)
+    {
+        OGS_FATAL(
+            "Numerical Jacobian is not supported for the "
+            "HydroMechanicsProcess using the monolithic scheme yet.");
+    }
+
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "sigma_ip",
@@ -292,6 +301,22 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
 
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
         _local_to_global_index_map.get()};
+
+    if (this->_jacobian_assembler->isPerturbationEnabled() &&
+        (!_use_monolithic_scheme))
+    {
+        if (process_id == process_data_.hydraulic_process_id)
+        {
+            this->_jacobian_assembler->setNonDeformationComponentIDs(
+                {process_id} /* pressure variable id */);
+        }
+        else
+        {
+            OGS_FATAL(
+                "Numerical Jacobian is only supported for the "
+                "liquid fluid process in the staggered HydroMechanicsProcess.");
+        }
+    }
 
     GlobalExecutor::executeSelectedMemberDereferenced(
         _global_assembler, &VectorMatrixAssembler::assemble, local_assemblers_,

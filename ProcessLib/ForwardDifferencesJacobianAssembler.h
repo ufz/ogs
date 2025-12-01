@@ -53,8 +53,6 @@ public:
     std::unique_ptr<AbstractJacobianAssembler> copy() const override;
 
 private:
-    std::vector<double> const _absolute_epsilons;
-
     // temporary data only stored here in order to avoid frequent memory
     // reallocations.
     std::vector<double> _local_M_data;

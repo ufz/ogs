@@ -34,6 +34,8 @@ RichardsComponentTransportProcess::RichardsComponentTransportProcess(
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian assembler.
+    this->_jacobian_assembler->setNonDeformationComponentIDs({0, 1});
 }
 
 void RichardsComponentTransportProcess::initializeConcreteProcess(

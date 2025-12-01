@@ -37,6 +37,10 @@ ThermalTwoPhaseFlowWithPPProcess::ThermalTwoPhaseFlowWithPPProcess(
       _process_data(std::move(process_data))
 {
     DBUG("Create Nonisothermal TwoPhase Flow Process model.");
+
+    // For numerical Jacobian
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0, 1, 2, 3} /* P_g, P_c, X, T */);
 }
 
 void ThermalTwoPhaseFlowWithPPProcess::initializeConcreteProcess(

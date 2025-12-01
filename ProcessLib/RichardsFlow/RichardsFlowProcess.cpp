@@ -33,6 +33,8 @@ RichardsFlowProcess::RichardsFlowProcess(
               std::move(secondary_variables)),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian
+    this->_jacobian_assembler->setNonDeformationComponentIDs({0});
 }
 
 void RichardsFlowProcess::initializeConcreteProcess(

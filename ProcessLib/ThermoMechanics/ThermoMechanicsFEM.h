@@ -252,6 +252,11 @@ public:
         return Eigen::Map<const Eigen::RowVectorXd>(N.data(), N.size());
     }
 
+    int getNumberOfVectorElementsForDeformation() const override
+    {
+        return displacement_size;
+    }
+
 private:
     /**
      * Assemble local matrices and vectors arise from the linearized discretized

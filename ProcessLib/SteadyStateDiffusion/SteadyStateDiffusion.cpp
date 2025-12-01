@@ -35,6 +35,8 @@ SteadyStateDiffusion::SteadyStateDiffusion(
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux))
 {
+    // For numerical Jacobian
+    this->_jacobian_assembler->setNonDeformationComponentIDs({0});
 }
 
 void SteadyStateDiffusion::initializeConcreteProcess(

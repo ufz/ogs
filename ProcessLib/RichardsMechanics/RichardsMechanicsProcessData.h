@@ -58,6 +58,8 @@ struct RichardsMechanicsProcessData
     /// regime.
     bool const explicit_hm_coupling_in_unsaturated_zone;
 
+    bool const use_numerical_jacobian = false;
+
     MeshLib::PropertyVector<double>* element_saturation = nullptr;
     MeshLib::PropertyVector<double>* element_porosity = nullptr;
     MeshLib::PropertyVector<double>* element_stresses = nullptr;

@@ -46,6 +46,10 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
           *_jacobian_assembler},
       process_data_(std::move(process_data))
 {
+    // For numerical Jacobian assembler
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0} /* pressure variable */);
+
     nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 

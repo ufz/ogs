@@ -53,6 +53,13 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
         DisplacementDim>(
         LocalAssemblerInterface<DisplacementDim>::getReflectionDataForOutput(),
         _integration_point_writer, integration_order, local_assemblers_);
+
+    // For numerical Jacobian
+    // If the staggered scheme is to be supported in TH2M, please see the
+    // comment inside the setNonDeformationComponentIDs() function for the
+    // necessary modification.
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0, 1, 2} /* P_g, P_c, T */);
 }
 
 template <int DisplacementDim>
@@ -243,6 +250,13 @@ void TH2MProcess<DisplacementDim>::assembleConcreteProcess(
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble the equations for TH2M");
+
+    if (t == 0.0 && !(this->_jacobian_assembler->isPerturbationEnabled()))
+    {
+        OGS_FATAL(
+            "The Picard method is not supported for TH2M; use the Newton "
+            "method with either an analytical or a numerical Jacobian.");
+    }
 
     AssemblyMixin<TH2MProcess<DisplacementDim>>::assemble(t, dt, x, x_prev,
                                                           process_id, M, K, b);

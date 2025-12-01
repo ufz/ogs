@@ -46,6 +46,14 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
       _process_data(std::move(process_data))
 
 {
+    // For numerical Jacobian
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "Numerical Jacobian is not supported for the "
+            "ThermoHydroMechanicsProcess yet.");
+    }
+
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 

@@ -43,6 +43,10 @@ HeatConductionProcess::HeatConductionProcess(
       _ls_compute_only_upon_timestep_change{
           ls_compute_only_upon_timestep_change}
 {
+    // For numerical Jacobian assembler
+    this->_jacobian_assembler->setNonDeformationComponentIDs(
+        {0} /* only one variable: temperature */);
+
     if (ls_compute_only_upon_timestep_change)
     {
         // TODO move this feature to some common location for all processes.

@@ -379,7 +379,10 @@ private:
                           double const dt)
     {
         ProcessLib::AnalyticalJacobianAssembler jac_asm_ana;
+
         ProcessLib::ForwardDifferencesJacobianAssembler jac_asm_cd({1e-8});
+        jac_asm_cd.setNonDeformationComponentIDs(
+            {0} /* Assume that there is only one variable */);
         LocAsm loc_asm;
 
         double const eps = std::numeric_limits<double>::epsilon();
@@ -439,7 +442,11 @@ private:
                           double const dt)
     {
         ProcessLib::AnalyticalJacobianAssembler jac_asm_ana;
+
         ProcessLib::CentralDifferencesJacobianAssembler jac_asm_cd({1e-8});
+        jac_asm_cd.setNonDeformationComponentIDs(
+            {0} /* Assume that there is only one variable */);
+
         LocAsm loc_asm;
 
         double const eps = std::numeric_limits<double>::epsilon();

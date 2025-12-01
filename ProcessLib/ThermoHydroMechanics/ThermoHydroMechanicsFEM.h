@@ -256,6 +256,11 @@ public:
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override;
 
+    int getNumberOfVectorElementsForDeformation() const override
+    {
+        return displacement_size;
+    }
+
 private:
     using BMatricesType =
         BMatrixPolicyType<ShapeFunctionDisplacement, DisplacementDim>;

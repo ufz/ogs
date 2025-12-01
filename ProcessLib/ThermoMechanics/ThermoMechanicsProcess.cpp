@@ -41,6 +41,13 @@ ThermoMechanicsProcess<DisplacementDim>::ThermoMechanicsProcess(
               std::move(secondary_variables), use_monolithic_scheme),
       _process_data(std::move(process_data))
 {
+    // For numerical Jacobian
+    if (this->_jacobian_assembler->isPerturbationEnabled())
+    {
+        OGS_FATAL(
+            "Numerical Jacobian is not supported in ThermoMechanicsProcess.");
+    }
+
     _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 

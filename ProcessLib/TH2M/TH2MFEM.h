@@ -239,11 +239,9 @@ private:
         ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const&
             models);
 
-    virtual std::optional<VectorSegment> getVectorDeformationSegment()
-        const override
+    int getNumberOfVectorElementsForDeformation() const override
     {
-        return std::optional<VectorSegment>{
-            {displacement_index, displacement_size}};
+        return displacement_size;
     }
 
 private:

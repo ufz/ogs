@@ -247,6 +247,11 @@ public:
                               std::vector<double>& local_rhs_data,
                               std::vector<double>& local_Jac_data) override;
 
+    int getNumberOfVectorElementsForDeformation() const override
+    {
+        return displacement_size;
+    }
+
 private:
     void assembleWithJacobianSingleIP(
         double const t, double const dt,
