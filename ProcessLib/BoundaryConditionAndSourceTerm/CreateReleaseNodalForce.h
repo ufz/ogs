@@ -36,8 +36,11 @@ namespace ProcessLib
 class BoundaryCondition;
 struct BoundaryConditionConfig;
 
+std::string parseReleaseNodalForce(BoundaryConditionConfig const& bc_config);
+
 std::unique_ptr<BoundaryCondition> createReleaseNodalForce(
     unsigned const global_dim, int const variable_id,
+    std::string const& decay_parameter_name,
     BoundaryConditionConfig const& bc_config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&

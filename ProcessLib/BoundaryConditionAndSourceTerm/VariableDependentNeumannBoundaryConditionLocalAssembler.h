@@ -18,12 +18,20 @@
 
 namespace ProcessLib
 {
+struct VariableDependentNeumannConfig
+{
+    std::string constant_name;
+    std::string current_variable_name;
+    std::string other_variable_name;
+    std::string mixed_variables_name;
+};
+
 struct VariableDependentNeumannBoundaryConditionData
 {
     ParameterLib::Parameter<double> const& constant;
-    ParameterLib::Parameter<double> const& coefficient_current_variable;
-    ParameterLib::Parameter<double> const& coefficient_other_variable;
-    ParameterLib::Parameter<double> const& coefficient_mixed_variables;
+    ParameterLib::Parameter<double> const& current_variable;
+    ParameterLib::Parameter<double> const& other_variable;
+    ParameterLib::Parameter<double> const& mixed_variables;
     // Used for mapping boundary nodes to bulk nodes.
     std::unique_ptr<NumLib::LocalToGlobalIndexMap>
         dof_table_boundary_other_variable;
@@ -68,16 +76,13 @@ public:
             _data.constant.getNodalValuesOnElement(Base::_element, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_current_variable_node_values =
-            _data.coefficient_current_variable
-                .getNodalValuesOnElement(Base::_element, t)
+            _data.current_variable.getNodalValuesOnElement(Base::_element, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_other_variable_node_values =
-            _data.coefficient_other_variable
-                .getNodalValuesOnElement(Base::_element, t)
+            _data.other_variable.getNodalValuesOnElement(Base::_element, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         NodalVectorType const coefficient_mixed_variables_node_values =
-            _data.coefficient_mixed_variables
-                .getNodalValuesOnElement(Base::_element, t)
+            _data.mixed_variables.getNodalValuesOnElement(Base::_element, t)
                 .template topRows<ShapeFunction::MeshElement::n_all_nodes>();
         unsigned const n_integration_points =
             Base::_integration_method.getNumberOfPoints();

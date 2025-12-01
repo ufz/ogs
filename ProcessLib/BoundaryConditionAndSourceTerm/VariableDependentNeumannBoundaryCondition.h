@@ -21,9 +21,13 @@ using VariableDependentNeumannBoundaryCondition =
         VariableDependentNeumannBoundaryConditionData,
         VariableDependentNeumannBoundaryConditionLocalAssembler>;
 
+VariableDependentNeumannConfig parseVariableDependentNeumannBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<VariableDependentNeumannBoundaryCondition>
 createVariableDependentNeumannBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    VariableDependentNeumannConfig const& coefficients,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,

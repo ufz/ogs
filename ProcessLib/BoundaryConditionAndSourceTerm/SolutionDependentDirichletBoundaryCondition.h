@@ -10,12 +10,20 @@
 
 #pragma once
 
+#include <string>
+
 #include "BoundaryCondition.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ParameterLib/MeshNodeParameter.h"
 
 namespace ProcessLib
 {
+struct SolutionDependentDirichletBoundaryConditionConfig
+{
+    std::string property_name;
+    std::string initial_value_parameter_string;
+};
+
 /// The SolutionDependentDirichletBoundaryCondition belongs to the
 /// Dirichlet-type boundary condition.
 ///
@@ -65,9 +73,14 @@ private:
     MeshLib::PropertyVector<double>* _solution_dependent_bc;
 };
 
+SolutionDependentDirichletBoundaryConditionConfig
+parseSolutionDependentDirichletBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<SolutionDependentDirichletBoundaryCondition>
 createSolutionDependentDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    SolutionDependentDirichletBoundaryConditionConfig const& config,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&

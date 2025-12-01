@@ -12,6 +12,8 @@
 #include <memory>
 #include <vector>
 
+#include "BaseLib/TimeInterval.h"
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -39,9 +41,20 @@ class BoundaryCondition;
 
 namespace ProcessLib
 {
+struct DirichletBoundaryConditionConfig
+{
+    std::string parameter_name;
+    BaseLib::TimeInterval time_interval;
+};
+
+DirichletBoundaryConditionConfig
+parseDirichletBoundaryConditionWithinTimeIntervalConfig(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<BoundaryCondition>
 createDirichletBoundaryConditionWithinTimeInterval(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    DirichletBoundaryConditionConfig const& config_args,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&

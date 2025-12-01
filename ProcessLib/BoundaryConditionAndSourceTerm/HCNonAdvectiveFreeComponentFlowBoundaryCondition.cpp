@@ -15,21 +15,32 @@
 
 namespace ProcessLib
 {
+std::string parseHCNonAdvectiveFreeComponentFlowBoundaryCondition(
+    BaseLib::ConfigTree const& config)
+{
+    DBUG("Parsing open boundary for Component Transport process.");
+
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
+    config.checkConfigParameter("type",
+                                "HCNonAdvectiveFreeComponentFlowBoundary");
+
+    auto const boundary_permeability_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__HCNonAdvectiveFreeComponentFlowBoundary__parameter}
+        config.getConfigParameter<std::string>("parameter");
+
+    return boundary_permeability_name;
+}
+
 std::unique_ptr<HCNonAdvectiveFreeComponentFlowBoundaryCondition>
 createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& boundary_permeability_name, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const global_dim, Process const& process,
     unsigned const shapefunction_order)
 {
-    DBUG(
-        "Constructing open boundary for Component Transport process from "
-        "config.");
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type",
-                                "HCNonAdvectiveFreeComponentFlowBoundary");
+    DBUG("Constructing open boundary for Component Transport process.");
 
     if (bc_mesh.getDimension() + 1 != global_dim)
     {
@@ -39,9 +50,6 @@ createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
             bc_mesh.getDimension(), bc_mesh.getName(), global_dim);
     }
 
-    auto const boundary_permeability_name =
-        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__HCNonAdvectiveFreeComponentFlowBoundary__parameter}
-        config.getConfigParameter<std::string>("parameter");
     auto const& boundary_permeability = ParameterLib::findParameter<double>(
         boundary_permeability_name, parameters, 1, &bc_mesh);
 

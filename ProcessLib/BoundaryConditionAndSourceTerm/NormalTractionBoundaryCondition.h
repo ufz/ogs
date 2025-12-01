@@ -77,11 +77,14 @@ private:
     std::vector<Eigen::Vector3d> _element_normals;
 };
 
+std::string parseNormalTractionBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 template <int GlobalDim>
 std::unique_ptr<NormalTractionBoundaryCondition<
     GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>
 createNormalTractionBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& parameter_name, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     unsigned const integration_order, unsigned const shapefunction_order,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&

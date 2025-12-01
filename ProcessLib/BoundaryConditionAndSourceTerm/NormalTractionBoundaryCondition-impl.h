@@ -127,27 +127,37 @@ void NormalTractionBoundaryCondition<GlobalDim, LocalAssemblerImplementation>::
         _local_assemblers, *_dof_table_boundary, t, x, K, b, Jac);
 }
 
-template <int GlobalDim>
-std::unique_ptr<NormalTractionBoundaryCondition<
-    GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>
-createNormalTractionBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    MeshLib::Mesh const& bulk_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
-    unsigned const integration_order, unsigned const shapefunction_order,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+std::string parseNormalTractionBoundaryCondition(
+    BaseLib::ConfigTree const& config)
 {
-    DBUG("Constructing NormalTractionBoundaryCondition from config.");
+    DBUG("Parsing NormalTractionBoundaryCondition.");
+
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "NormalTraction");
 
     auto const parameter_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__NormalTraction__parameter}
         config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", parameter_name);
+    DBUG("parameter {:s}", parameter_name);
+
+    return parameter_name;
+}
+
+template <int GlobalDim>
+std::unique_ptr<NormalTractionBoundaryCondition<
+    GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>
+createNormalTractionBoundaryCondition(
+    std::string const& parameter_name, MeshLib::Mesh const& bc_mesh,
+    MeshLib::Mesh const& bulk_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
+    unsigned const integration_order, unsigned const shapefunction_order,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+{
+    DBUG("Constructing NormalTractionBoundaryCondition.");
 
     auto const& pressure = ParameterLib::findParameter<double>(
         parameter_name, parameters, 1, &bc_mesh);
+
     return std::make_unique<NormalTractionBoundaryCondition<
         GlobalDim, NormalTractionBoundaryConditionLocalAssembler>>(
         integration_order, shapefunction_order, bulk_mesh, dof_table,

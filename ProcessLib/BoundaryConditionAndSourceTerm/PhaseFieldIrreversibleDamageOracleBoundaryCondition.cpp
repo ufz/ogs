@@ -67,18 +67,22 @@ void PhaseFieldIrreversibleDamageOracleBoundaryCondition::preTimestep(
     }
 }
 
-std::unique_ptr<PhaseFieldIrreversibleDamageOracleBoundaryCondition>
-createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
-    BaseLib::ConfigTree const& config,
-    NumLib::LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh,
-    int const variable_id, int const component_id)
+void parsePhaseFieldIrreversibleDamageOracleBoundaryCondition(
+    BaseLib::ConfigTree const& config)
 {
-    DBUG(
-        "Constructing PhaseFieldIrreversibleDamageOracleBoundaryCondition from "
-        "config.");
+    DBUG("Parsing PhaseFieldIrreversibleDamageOracleBoundaryCondition.");
+
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter(
         "type", "PhaseFieldIrreversibleDamageOracleBoundaryCondition");
+}
+
+std::unique_ptr<PhaseFieldIrreversibleDamageOracleBoundaryCondition>
+createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
+    NumLib::LocalToGlobalIndexMap const& dof_table, MeshLib::Mesh const& mesh,
+    int const variable_id, int const component_id)
+{
+    DBUG("Constructing PhaseFieldIrreversibleDamageOracleBoundaryCondition.");
 
     return std::make_unique<
         PhaseFieldIrreversibleDamageOracleBoundaryCondition>(

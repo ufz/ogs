@@ -11,6 +11,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 #include "BoundaryCondition.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
@@ -27,6 +28,13 @@ struct Parameter;
 
 namespace ProcessLib
 {
+struct PrimaryVariableConstraintDirichletBoundaryConditionConfig
+{
+    std::string parameter_name;
+    std::string threshold_parameter_name;
+    std::string comparison_operator_string;
+};
+
 /// The PrimaryVariableConstraintDirichletBoundaryCondition is a Dirichlet-type
 /// boundary condition.
 ///
@@ -74,9 +82,14 @@ private:
     bool const _less;
 };
 
+PrimaryVariableConstraintDirichletBoundaryConditionConfig
+parsePrimaryVariableConstraintDirichletBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 std::unique_ptr<PrimaryVariableConstraintDirichletBoundaryCondition>
 createPrimaryVariableConstraintDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    PrimaryVariableConstraintDirichletBoundaryConditionConfig const& config,
+    MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&

@@ -23,13 +23,10 @@
 
 namespace ProcessLib
 {
-std::unique_ptr<BoundaryCondition> createTimeDecayDirichletBoundaryCondition(
-    int const variable_id, int const component_id,
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+TimeDecayDirichletBoundaryConditionConfig
+parseTimeDecayDirichletBoundaryConditionConfig(
+    BaseLib::ConfigTree const& config)
 {
-    DBUG("Create TimeDecayDirichlet.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "TimeDecayDirichlet");
 
@@ -38,12 +35,22 @@ std::unique_ptr<BoundaryCondition> createTimeDecayDirichletBoundaryCondition(
         config.getConfigParameter<std::string>("time_decay_parameter");
     DBUG("Using parameter {:s}", parameter_name);
 
-    auto const& time_decay_parameter = ParameterLib::findParameter<double>(
-        parameter_name, parameters, 1, &bc_mesh);
-
     auto const lower_limit =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__TimeDecayDirichlet__lower_limit}
         config.getConfigParameter<double>("lower_limit");
+
+    return {parameter_name, lower_limit};
+}
+
+std::unique_ptr<BoundaryCondition> createTimeDecayDirichletBoundaryCondition(
+    TimeDecayDirichletBoundaryConditionConfig const& config,
+    int const variable_id, int const component_id, MeshLib::Mesh const& bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+{
+    DBUG("Create TimeDecayDirichlet.");
+    auto const& time_decay_parameter = ParameterLib::findParameter<double>(
+        config.parameter_name, parameters, 1, &bc_mesh);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there
     // is no boundary condition.
@@ -61,7 +68,7 @@ std::unique_ptr<BoundaryCondition> createTimeDecayDirichletBoundaryCondition(
 
     return std::make_unique<TimeDecayDirichletBoundaryCondition>(
         variable_id, component_id, bc_mesh, dof_table_bulk,
-        time_decay_parameter, lower_limit);
+        time_decay_parameter, config.lower_limit);
 }
 
 }  // namespace ProcessLib

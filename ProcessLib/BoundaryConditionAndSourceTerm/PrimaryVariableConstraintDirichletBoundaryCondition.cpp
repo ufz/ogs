@@ -103,47 +103,55 @@ void PrimaryVariableConstraintDirichletBoundaryCondition::getEssentialBCValues(
     }
 }
 
-std::unique_ptr<PrimaryVariableConstraintDirichletBoundaryCondition>
-createPrimaryVariableConstraintDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
-    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
-    int const component_id,
-    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
+PrimaryVariableConstraintDirichletBoundaryConditionConfig
+parsePrimaryVariableConstraintDirichletBoundaryCondition(
+    BaseLib::ConfigTree const& config)
 {
-    DBUG(
-        "Constructing PrimaryVariableConstraintDirichletBoundaryCondition from "
-        "config.");
+    DBUG("Parsing PrimaryVariableConstraintDirichletBoundaryCondition config.");
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     config.checkConfigParameter("type", "PrimaryVariableConstraintDirichlet");
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichlet__parameter}
-    auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", param_name);
-
-    auto& parameter = ParameterLib::findParameter<double>(
-        param_name, parameters, 1, &bc_mesh);
+    auto const name = config.getConfigParameter<std::string>("parameter");
+    DBUG("parameter {:s}", name);
 
     auto const threshold_parameter_name =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichlet__threshold_parameter}
         config.getConfigParameter<std::string>("threshold_parameter");
-    DBUG("Using parameter {:s} as threshold_parameter",
-         threshold_parameter_name);
-
-    auto& threshold_parameter = ParameterLib::findParameter<double>(
-        threshold_parameter_name, parameters, 1, &bc_mesh);
+    DBUG("parameter {:s} as threshold_parameter", threshold_parameter_name);
 
     auto const comparison_operator_string =
         //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PrimaryVariableConstraintDirichlet__comparison_operator}
         config.getConfigParameter<std::string>("comparison_operator");
-    if (comparison_operator_string != "greater" &&
-        comparison_operator_string != "less")
+
+    return {name, threshold_parameter_name, comparison_operator_string};
+}
+
+std::unique_ptr<PrimaryVariableConstraintDirichletBoundaryCondition>
+createPrimaryVariableConstraintDirichletBoundaryCondition(
+    PrimaryVariableConstraintDirichletBoundaryConditionConfig const& config,
+    MeshLib::Mesh const& bc_mesh,
+    NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
+    int const component_id,
+    const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters)
+{
+    DBUG("Constructing PrimaryVariableConstraintDirichletBoundaryCondition.");
+
+    auto& parameter = ParameterLib::findParameter<double>(
+        config.parameter_name, parameters, 1, &bc_mesh);
+
+    auto& threshold_parameter = ParameterLib::findParameter<double>(
+        config.threshold_parameter_name, parameters, 1, &bc_mesh);
+
+    if (config.comparison_operator_string != "greater" &&
+        config.comparison_operator_string != "less")
     {
         OGS_FATAL(
             "The comparison operator is '{:s}', but has to be either "
             "'greater' or 'less'.",
-            comparison_operator_string);
+            config.comparison_operator_string);
     }
-    bool const less = comparison_operator_string == "less";
+    bool const less = config.comparison_operator_string == "less";
 
 // In case of partitioned mesh the boundary could be empty, i.e. there is no
 // boundary condition.

@@ -14,23 +14,39 @@
 
 namespace ProcessLib
 {
+NeumannBoundaryConditionConfig parseNeumannBoundaryCondition(
+    BaseLib::ConfigTree const& config)
+{
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
+    config.checkConfigParameter("type", "Neumann");
+
+    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__parameter}
+    auto const name = config.getConfigParameter<std::string>("parameter");
+    DBUG("{}: parameter {:s}", __FUNCTION__, name);
+
+    auto const area_parameter_name =
+        //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__area_parameter}
+        config.getConfigParameterOptional<std::string>("area_parameter");
+    if (area_parameter_name.has_value())
+    {
+        DBUG("{}: area parameter name '{:s}'", __FUNCTION__,
+             area_parameter_name.value());
+    }
+
+    return {name, area_parameter_name};
+}
+
 std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    NeumannBoundaryConditionConfig const& config, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table, int const variable_id,
     int const component_id, unsigned const integration_order,
     unsigned const shapefunction_order, unsigned const global_dim,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
 {
-    DBUG("Constructing Neumann BC from config.");
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
-    config.checkConfigParameter("type", "Neumann");
-
-    //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__parameter}
-    auto const param_name = config.getConfigParameter<std::string>("parameter");
-    DBUG("Using parameter {:s}", param_name);
+    DBUG("Constructing Neumann BC.");
 
     auto const& param = ParameterLib::findParameter<double>(
-        param_name, parameters, 1, &bc_mesh);
+        config.parameter_name, parameters, 1, &bc_mesh);
 
     // In case of partitioned mesh the boundary could be empty, i.e. there
     // is no boundary condition.
@@ -49,12 +65,13 @@ std::unique_ptr<NeumannBoundaryCondition> createNeumannBoundaryCondition(
     ParameterLib::Parameter<double> const* integral_measure(nullptr);
     if (global_dim - bc_mesh.getDimension() != 1)
     {
-        auto const area_parameter_name =
-            //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann__area_parameter}
-            config.getConfigParameter<std::string>("area_parameter");
-        DBUG("area parameter name '{:s}'", area_parameter_name);
+        if (!config.area_parameter_name)
+        {
+            OGS_FATAL("{}: tag <area_parameter> required in Neumann BC.",
+                      __FUNCTION__);
+        }
         integral_measure = &ParameterLib::findParameter<double>(
-            area_parameter_name, parameters, 1, &bc_mesh);
+            config.area_parameter_name.value(), parameters, 1, &bc_mesh);
     }
 
     if (bc_mesh.getDimension() >= global_dim)

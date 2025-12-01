@@ -54,8 +54,10 @@ private:
     int const _component_id;
 };
 
+std::string parseDirichletBCConfig(BaseLib::ConfigTree const& config);
+
 std::unique_ptr<DirichletBoundaryCondition> createDirichletBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& bc_mesh,
+    std::string const& parameter_name, MeshLib::Mesh const& bc_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk, int const variable_id,
     int const component_id,
     const std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&

@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "NumLib/IndexValueVector.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
@@ -25,6 +27,12 @@ class ProcessVariable;
 //! derived class (in particular, if a Python class inherits from a C++ class).
 struct MethodNotOverriddenInDerivedClassException
 {
+};
+
+struct PythonBoundaryConditionConfig
+{
+    std::string bc_object;
+    bool flush_stdout;
 };
 
 struct PythonBcData final
@@ -116,9 +124,13 @@ private:
     bool const _flush_stdout;
 };
 
+PythonBoundaryConditionConfig parsePythonBoundaryCondition(
+    BaseLib::ConfigTree const& config);
+
 //! Creates a new PythonBoundaryCondition object.
 std::unique_ptr<PythonBoundaryCondition> createPythonBoundaryCondition(
-    BaseLib::ConfigTree const& config, MeshLib::Mesh const& boundary_mesh,
+    PythonBoundaryConditionConfig const& config,
+    MeshLib::Mesh const& boundary_mesh,
     NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
     MeshLib::Mesh const& bulk_mesh, int const variable_id,
     int const component_id, unsigned const integration_order,

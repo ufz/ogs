@@ -30,10 +30,11 @@
 #include "SolutionDependentDirichletBoundaryCondition.h"
 #include "VariableDependentNeumannBoundaryCondition.h"
 #include "WellboreCompensateNeumannBoundaryCondition.h"
+#include "WellboreCompensateNeumannBoundaryConditionLocalAssembler.h"
 
 namespace ProcessLib
 {
-std::unique_ptr<BoundaryCondition> createBoundaryCondition(
+std::vector<std::unique_ptr<BoundaryCondition>> createBoundaryCondition(
     const BoundaryConditionConfig& config,
     const NumLib::LocalToGlobalIndexMap& dof_table,
     const MeshLib::Mesh& bulk_mesh, const int variable_id,
@@ -45,15 +46,20 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     // Surface mesh and bulk mesh must have equal axial symmetry flags!
-    if (config.boundary_mesh.isAxiallySymmetric() !=
-        bulk_mesh.isAxiallySymmetric())
+    for (auto const& i : config.boundary_meshes)
     {
-        OGS_FATAL(
-            "The boundary mesh {:s} axially symmetric but the bulk mesh {:s}. "
-            "Both must have an equal axial symmetry property.",
-            config.boundary_mesh.isAxiallySymmetric() ? "is" : "is not",
-            bulk_mesh.isAxiallySymmetric() ? "is" : "is not");
+        if (i.get().isAxiallySymmetric() != bulk_mesh.isAxiallySymmetric())
+        {
+            OGS_FATAL(
+                "The boundary mesh {:s} axially symmetric but the bulk mesh "
+                "{:s}. "
+                "Both must have an equal axial symmetry property.",
+                i.get().isAxiallySymmetric() ? "is" : "is not",
+                bulk_mesh.isAxiallySymmetric() ? "is" : "is not");
+        }
     }
+
+    std::vector<std::unique_ptr<BoundaryCondition>> boundary_conditions;
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__type}
     auto const type = config.config.peekConfigParameter<std::string>("type");
@@ -70,50 +76,99 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
 
     if (type == "Dirichlet")
     {
-        return ProcessLib::createDirichletBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, parameters);
+        auto const parameter_name = parseDirichletBCConfig(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> dirichlet_conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            dirichlet_conditions.push_back(
+                ProcessLib::createDirichletBoundaryCondition(
+                    parameter_name, bc_mesh, dof_table, variable_id,
+                    *config.component_id, parameters));
+        }
+        return dirichlet_conditions;
     }
     if (type == "DirichletWithinTimeInterval")
     {
-        return ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, parameters);
+        auto const config_args =
+            parseDirichletBoundaryConditionWithinTimeIntervalConfig(
+                config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createDirichletBoundaryConditionWithinTimeInterval(
+                    config_args, bc_mesh, dof_table, variable_id,
+                    *config.component_id, parameters));
+        }
+        return conditions;
     }
     if (type == "TimeDecayDirichlet")
     {
-        return ProcessLib::createTimeDecayDirichletBoundaryCondition(
-            variable_id, *config.component_id, config.config,
-            config.boundary_mesh, dof_table, parameters);
+        auto const config_args =
+            parseTimeDecayDirichletBoundaryConditionConfig(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createTimeDecayDirichletBoundaryCondition(
+                    config_args, variable_id, *config.component_id, bc_mesh,
+                    dof_table, parameters));
+        }
+        return conditions;
     }
     if (type == "Neumann")
     {
-        return ProcessLib::createNeumannBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, integration_order, shapefunction_order,
-            bulk_mesh.getDimension(), parameters);
+        auto const config_args = parseNeumannBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(ProcessLib::createNeumannBoundaryCondition(
+                config_args, bc_mesh, dof_table, variable_id,
+                *config.component_id, integration_order, shapefunction_order,
+                bulk_mesh.getDimension(), parameters));
+        }
+        return conditions;
     }
     if (type == "Robin")
     {
-        return ProcessLib::createRobinBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, integration_order, shapefunction_order,
-            bulk_mesh.getDimension(), parameters);
+        auto const config_args = parseRobinBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(ProcessLib::createRobinBoundaryCondition(
+                config_args, bc_mesh, dof_table, variable_id,
+                *config.component_id, integration_order, shapefunction_order,
+                bulk_mesh.getDimension(), parameters));
+        }
+        return conditions;
     }
     if (type == "VariableDependentNeumann")
     {
-        return ProcessLib::createVariableDependentNeumannBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, integration_order, shapefunction_order,
-            bulk_mesh.getDimension(), parameters);
+        auto const config_args =
+            parseVariableDependentNeumannBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createVariableDependentNeumannBoundaryCondition(
+                    config_args, bc_mesh, dof_table, variable_id,
+                    *config.component_id, integration_order,
+                    shapefunction_order, bulk_mesh.getDimension(), parameters));
+        }
+        return conditions;
     }
-
     if (type == "Python")
     {
-        return ProcessLib::createPythonBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, bulk_mesh,
-            variable_id, *config.component_id, integration_order,
-            shapefunction_order, all_process_variables_for_this_process);
+        auto const config_args = parsePythonBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(ProcessLib::createPythonBoundaryCondition(
+                config_args, bc_mesh, dof_table, bulk_mesh, variable_id,
+                *config.component_id, integration_order, shapefunction_order,
+                all_process_variables_for_this_process));
+        }
+        return conditions;
     }
 
     //
@@ -121,74 +176,136 @@ std::unique_ptr<BoundaryCondition> createBoundaryCondition(
     //
     if (type == "ConstraintDirichlet")
     {
-        return createConstraintDirichletBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            integration_order, *config.component_id, parameters, process);
+        auto const config_args =
+            parseConstraintDirichletBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createConstraintDirichletBoundaryCondition(
+                    config_args, bc_mesh, dof_table, variable_id,
+                    integration_order, *config.component_id, parameters,
+                    process));
+        }
+        return conditions;
     }
     if (type == "PrimaryVariableConstraintDirichlet")
     {
-        return createPrimaryVariableConstraintDirichletBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, parameters);
+        auto const config_args =
+            parsePrimaryVariableConstraintDirichletBoundaryCondition(
+                config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                createPrimaryVariableConstraintDirichletBoundaryCondition(
+                    config_args, bc_mesh, dof_table, variable_id,
+                    *config.component_id, parameters));
+        }
+        return conditions;
     }
     if (type == "WellboreCompensateNeumann")
     {
-        return ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, integration_order, shapefunction_order,
-            bulk_mesh.getDimension(), media);
+        auto const config_args =
+            parseWellboreCompensateNeumannBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createWellboreCompensateNeumannBoundaryCondition(
+                    config_args, bc_mesh, dof_table, variable_id,
+                    *config.component_id, integration_order,
+                    shapefunction_order, bulk_mesh.getDimension(), media));
+        }
+        return conditions;
     }
     if (type == "SolutionDependentDirichlet")
     {
-        return ProcessLib::createSolutionDependentDirichletBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, parameters);
+        auto const config_args =
+            parseSolutionDependentDirichletBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                ProcessLib::createSolutionDependentDirichletBoundaryCondition(
+                    config_args, bc_mesh, dof_table, variable_id,
+                    *config.component_id, parameters));
+        }
+        return conditions;
     }
     if (type == "HCNonAdvectiveFreeComponentFlowBoundary")
     {
-        return createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
-            config.config, config.boundary_mesh, dof_table, variable_id,
-            *config.component_id, integration_order, parameters,
-            bulk_mesh.getDimension(), process, shapefunction_order);
+        auto const boundary_permeability_name =
+            parseHCNonAdvectiveFreeComponentFlowBoundaryCondition(
+                config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(
+                createHCNonAdvectiveFreeComponentFlowBoundaryCondition(
+                    boundary_permeability_name, bc_mesh, dof_table, variable_id,
+                    *config.component_id, integration_order, parameters,
+                    bulk_mesh.getDimension(), process, shapefunction_order));
+        }
+        return conditions;
     }
     if (type == "NormalTraction")
     {
-        switch (bulk_mesh.getDimension())
+        auto const parameter_name = NormalTractionBoundaryCondition::
+            parseNormalTractionBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
         {
-            case 2:
-                return ProcessLib::NormalTractionBoundaryCondition::
-                    createNormalTractionBoundaryCondition<2>(
-                        config.config, config.boundary_mesh, bulk_mesh,
-                        dof_table, variable_id, integration_order,
-                        shapefunction_order, parameters);
-            case 3:
-                return ProcessLib::NormalTractionBoundaryCondition::
-                    createNormalTractionBoundaryCondition<3>(
-                        config.config, config.boundary_mesh, bulk_mesh,
-                        dof_table, variable_id, integration_order,
-                        shapefunction_order, parameters);
-            default:
-                OGS_FATAL(
-                    "NormalTractionBoundaryCondition can not be instantiated "
-                    "for mesh dimensions other than two or three. "
-                    "{}-dimensional mesh was given.",
-                    bulk_mesh.getDimension());
+            switch (bulk_mesh.getDimension())
+            {
+                case 2:
+                    conditions.push_back(
+                        ProcessLib::NormalTractionBoundaryCondition::
+                            createNormalTractionBoundaryCondition<2>(
+                                parameter_name, bc_mesh, bulk_mesh, dof_table,
+                                variable_id, integration_order,
+                                shapefunction_order, parameters));
+                    break;
+                case 3:
+                    conditions.push_back(
+                        ProcessLib::NormalTractionBoundaryCondition::
+                            createNormalTractionBoundaryCondition<3>(
+                                parameter_name, bc_mesh, bulk_mesh, dof_table,
+                                variable_id, integration_order,
+                                shapefunction_order, parameters));
+                    break;
+                default:
+                    OGS_FATAL(
+                        "NormalTractionBoundaryCondition can not be "
+                        "instantiated for mesh dimensions other than two or "
+                        "three. {}-dimensional mesh was given.",
+                        bulk_mesh.getDimension());
+            }
         }
+        return conditions;
     }
     if (type == "PhaseFieldIrreversibleDamageOracleBoundaryCondition")
     {
-        return ProcessLib::
+        parsePhaseFieldIrreversibleDamageOracleBoundaryCondition(config.config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        conditions.push_back(
             createPhaseFieldIrreversibleDamageOracleBoundaryCondition(
                 //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__PhaseFieldIrreversibleDamageOracleBoundaryCondition}
-                config.config, dof_table, bulk_mesh, variable_id,
-                *config.component_id);
+                dof_table, bulk_mesh, variable_id, *config.component_id));
+        return conditions;
     }
     if (type == "ReleaseNodalForce")
     {
-        return ProcessLib::createReleaseNodalForce(
-            //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce}
-            bulk_mesh.getDimension(), variable_id, config, config.boundary_mesh,
-            dof_table, parameters);
+        auto const decay_parameter_name = parseReleaseNodalForce(config);
+        std::vector<std::unique_ptr<BoundaryCondition>> conditions;
+        for (auto const& bc_mesh : config.boundary_meshes)
+        {
+            conditions.push_back(ProcessLib::createReleaseNodalForce(
+                //! \ogs_file_param_special{prj__process_variables__process_variable__boundary_conditions__boundary_condition__ReleaseNodalForce}
+                bulk_mesh.getDimension(), variable_id, decay_parameter_name,
+                config, bc_mesh, dof_table, parameters));
+        }
+        return conditions;
     }
     OGS_FATAL("Unknown boundary condition type: `{:s}'.", type);
 }
