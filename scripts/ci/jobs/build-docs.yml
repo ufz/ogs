@@ -23,12 +23,12 @@ build docs:
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
     - cpp-dependencies --graph cpp-dependencies.dot && dot -Tsvg cpp-dependencies.dot -o build/cpp-dependencies.svg
     # lizard, default code complexity number (15), function line length 100, max arguments 10
-    - lizard -l cpp -w -t 1 --length 100 --arguments 10 > lizard.txt || true
+    - uvx --with jinja2 lizard==1.19.0 -l cpp -w -t 1 --length 100 --arguments 10 > lizard.txt || true
     - cat lizard.txt
     - NUM_LIZARD_ISSUES=`cat lizard.txt | wc -l`
     - echo "lizard_issues $NUM_LIZARD_ISSUES" >> metrics.txt
-    - lizard -l cpp -t 8 --html -o Lizard.html
-    - lizard -EWordCount -x "./Tests/*" || true # word-cloud
+    - uvx --with jinja2 lizard==1.19.0 -l cpp -t 8 --html -o Lizard.html
+    - uvx --with jinja2 lizard==1.19.0 -EWordCount -x "./Tests/*" || true # word-cloud
     # build
     - cd build
     - DOXYGEN_PATH=`guix shell doxygen -- which doxygen`
