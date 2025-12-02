@@ -40,7 +40,16 @@ std::unique_ptr<Constant> createConstant(BaseLib::ConfigTree const& config)
              Please give only one of them.");
     }
 
-    std::vector<double> const values = value_data.value_or(*values_data);
+    std::vector<double> values;
+
+    if (value_data)
+    {
+        values = *value_data;
+    }
+    else if (values_data)
+    {
+        values = *values_data;
+    }
 
     if (values.empty())
     {
