@@ -1,23 +1,25 @@
 pre commit:
   stage: preparation
-  image: $PRECOMMIT_IMAGE
+  tags: [envinf, shell]
   rules:
     - if: $CI_MERGE_REQUEST_IID
-  needs: [meta]
   variables:
     SKIP: git-clang-format,git-diff-check
   script:
-    - pre-commit install
-    - pre-commit run --from-ref ${CI_MERGE_REQUEST_DIFF_BASE_SHA} --to-ref HEAD
+    - uvx pre-commit==4.5.0 install
+    - uvx pre-commit==4.5.0 run --from-ref ${CI_MERGE_REQUEST_DIFF_BASE_SHA} --to-ref HEAD
 
 clang-format:
   stage: check
-  image: $PRECOMMIT_IMAGE
+  image: silkeh/clang:18
+  needs: []
   rules:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only \(fast.*/
       when: never
     - if: $CI_MERGE_REQUEST_IID
-  needs: [meta]
+  before_script:
+    - apt update
+    - apt install -y git
   script:
     - git clang-format --extensions "h,cpp" ${CI_MERGE_REQUEST_DIFF_BASE_SHA}
     - if [[ $(git diff) ]]; then exit 1; fi

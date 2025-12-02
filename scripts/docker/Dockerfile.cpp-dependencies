@@ -1,0 +1,22 @@
+# Build with
+#   docker build -t registry.opengeosys.org/ogs/ogs/cpp-dependencies \
+#     -f scripts/docker/Dockerfile.cpp-dependencies scripts/docker
+#   docker push registry.opengeosys.org/ogs/ogs/cpp-dependencies
+FROM gcc:13
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        cmake \
+        libboost-filesystem-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+
+RUN git clone https://github.com/tomtom-international/cpp-dependencies.git && \
+    cmake -S cpp-dependencies -B cpp-dependencies/build -DCMAKE_BUILD_TYPE=Release && \
+    cmake --build cpp-dependencies/build --target all -- -j"$(nproc)" && \
+    cmake --install cpp-dependencies/build && \
+    rm -rf
+
+WORKDIR /work
