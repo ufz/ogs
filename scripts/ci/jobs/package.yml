@@ -31,3 +31,16 @@ aggregate ctest logs:
       - "build/**/*.txt"
       - "build/log_summary/**"
     expire_in: 12 hrs
+
+cleanup_packages:
+  image: python:3.12
+  stage: package
+  needs: []
+  script:
+    - pip install requests
+    - python3 scripts/ci/helper/cleanup_packages.py
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  variables:
+    GITLAB_TOKEN: $REPO_WRITE_KEY
+    KEEP_PACKAGE_VERSIONS: "5"   # keep newest 5 versions
