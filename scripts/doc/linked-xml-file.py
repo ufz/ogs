@@ -319,6 +319,9 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
                     rf"""/*! \page {pagename} {fn}
 
 \parblock
+\htmlonly
+<div class="prjfile">
+\endhtmlonly
 <tt>
 """
                 )
@@ -333,6 +336,9 @@ for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
 
                 fh.write(
                     r"""</tt>
+\htmlonly
+</div>
+\endhtmlonly
 \endparblock
 */
 """
