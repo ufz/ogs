@@ -52,13 +52,18 @@ if "$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile"; then
     :
 else
     stat="$?"
-    if [ 1 -ne "$stat" ]; then
-        # status neither 0 nor 1 => error
-        echo "status was $stat" >&2
-        false
-    fi
-
-    echo "warning: documentation quality check failed" >&2
+    case "$stat" in
+        1)
+            echo "warning: documentation quality check failed (status $stat)" >&2
+            ;;
+        2)
+            echo "error: documentation quality check failed (status $stat)" >&2
+            ;;
+        *)
+            echo "error: logic/program error during documentation quality check (status $stat)" >&2
+            false
+            ;;
+    esac
 fi
 
 cat <<EOF >>"$qafile"

@@ -58,6 +58,7 @@ NumericalStabilization createNumericalStabilization(
     }
     if (type == "FluxCorrectedTransport")
     {
+        //! \ogs_file_param_special{prj__processes__process__numerical_stabilization__FluxCorrectedTransport}
         return FluxCorrectedTransport();
     }
 
