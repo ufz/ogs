@@ -133,9 +133,9 @@ The small deformation process requires properties for the solid phase for each m
 
 Required solid property
 
-| Property name | Units | Notes |
-|---|---|---|
-| `density` | M·L⁻³ | Mass density of the solid material |
+| Property name | Units | SI | Notes |
+|---|---|---|---|
+| `density` | M·L⁻³ | kg·m⁻³ | Mass density of the solid material |
 
 See [solid properties]({{< ref "media#solids" >}}) for more details on defining them.
 

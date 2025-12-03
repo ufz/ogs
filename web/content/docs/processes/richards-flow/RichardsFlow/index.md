@@ -127,23 +127,23 @@ Richards Flow requires properties for the aqueous liquid phase and for the mediu
 
 Required medium properties for each medium. See [medium properties]({{< ref "media#properties" >}}) for more details on defining them.
 
-| Property name | Units | Notes |
-|---|---|---|
-| `permeability` | L² | - |
-| `porosity` | - | - |
-| `reference_temperature` | Θ | - |
-| `relative_permeability` | - | RelPermBrooksCorey, RelativePermeabilityVanGenuchten *etc.*|
-| `saturation` | - | SaturationBrooksCorey, SaturationVanGenuchten, *etc.* |
-| `storage` | L T²/M | - |
+| Property name | Units | SI | Notes |
+|---|---|---|---|
+| `permeability` | L² | m² | - |
+| `porosity` | - | - | - |
+| `reference_temperature` | Θ | K | - |
+| `relative_permeability` | - | - | RelPermBrooksCorey, RelativePermeabilityVanGenuchten *etc.*|
+| `saturation` | - | - | SaturationBrooksCorey, SaturationVanGenuchten, *etc.* |
+| `storage` | L T²/M | m·s²·kg⁻¹ | - |
 
 ### Liquid properties
 
 Required liquid properties for each medium. See [phase properties]({{< ref "media#phases" >}}) for more details on defining them.
 
-| Property name | Units | Notes |
-|---|---|---|
-| `density` | M·L⁻³ | $\frac{\partial \rho^l}{\partial p}$ is part of storage term. |
-| `viscosity` | M·L⁻¹·T⁻¹ | - |
+| Property name | Units | SI | Notes |
+|---|---|---|---|
+| `density` | M·L⁻³ | kg·m⁻³ | $\frac{\partial \rho^l}{\partial p}$ is part of storage term. |
+| `viscosity` | M·L⁻¹·T⁻¹ | Pa·s | - |
 
 ## Features
 
