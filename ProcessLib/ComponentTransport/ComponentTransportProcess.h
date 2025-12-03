@@ -27,21 +27,21 @@ namespace ComponentTransport
  *
  * The flow process is described by
  * \f[
- * \phi \frac{\partial \rho}{\partial p} \frac{\partial p}{\partial t}
+ * \left(\rho \beta_s + \phi \frac{\partial \rho}{\partial p}
+ * \right)\frac{\partial p}{\partial t}
  *     + \phi \frac{\partial \rho}{\partial C} \frac{\partial C}{\partial t}
  *     - \nabla \cdot \left[\frac{\kappa}{\mu(C)} \rho \nabla \left( p + \rho g
  * z \right)\right]
  *     + Q_p = 0,
  * \f]
- * where the storage \f$S\f$ has been substituted by
- *      \f$\phi \frac{\partial \rho}{\partial p}\f$,
  * \f$\phi\f$ is the porosity,
  * \f$C\f$ is the concentration,
  * \f$p\f$ is the pressure,
  * \f$\kappa\f$ is permeability,
  * \f$\mu\f$ is viscosity of the fluid,
- * \f$\rho\f$ is the density of the fluid, and
- * \f$g\f$ is the gravitational acceleration.
+ * \f$\rho\f$ is the density of the fluid,
+ * \f$g\f$ is the gravitational acceleration, and
+ * \f$\beta_s = \frac{\partial \phi}{\partial p}\f$.
  *
  * The mass transport process is described by
  * \f[

@@ -674,6 +674,13 @@ public:
             auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
                                 .template value<double>(vars, pos, t, dt);
 
+            double storage = 0;
+            if (medium.hasProperty(MaterialPropertyLib::PropertyType::storage))
+            {
+                storage = medium[MaterialPropertyLib::PropertyType::storage]
+                              .template value<double>(vars, pos, t, dt);
+            }
+
             GlobalDimMatrixType const K_over_mu = K / mu;
             GlobalDimVectorType const velocity =
                 _process_data.has_gravity
@@ -726,7 +733,8 @@ public:
             // Calculate Mpp, Kpp, and bp in the first loop over components
             if (component_id == 0)
             {
-                Mpp.noalias() += N_t_N * (porosity * drho_dp * w);
+                Mpp.noalias() +=
+                    N_t_N * (porosity * drho_dp * w + density * storage * w);
                 Kpp.noalias() +=
                     dNdx.transpose() * K_over_mu * dNdx * (density * w);
 
@@ -919,6 +927,13 @@ public:
                 phase[MaterialPropertyLib::PropertyType::density]
                     .template value<double>(vars, pos, t, dt);
 
+            double storage = 0;
+            if (medium.hasProperty(MaterialPropertyLib::PropertyType::storage))
+            {
+                storage = medium[MaterialPropertyLib::PropertyType::storage]
+                              .template value<double>(vars, pos, t, dt);
+            }
+
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium[MaterialPropertyLib::PropertyType::permeability].value(
                     vars, pos, t, dt));
@@ -942,7 +957,8 @@ public:
                         t, dt);
 
             // matrix assembly
-            local_M.noalias() += w * N.transpose() * porosity * drho_dp * N;
+            local_M.noalias() += w * N.transpose() * porosity * drho_dp * N +
+                                 w * N.transpose() * density * storage * N;
             local_K.noalias() +=
                 w * dNdx.transpose() * density * K_over_mu * dNdx;
 
