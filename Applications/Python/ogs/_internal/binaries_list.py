@@ -1,5 +1,7 @@
 import sys
 
+from ogs import OGS_USE_PETSC
+
 binaries_list = [
     "addDataToRaster",
     "AddElementQuality",
@@ -73,6 +75,9 @@ binaries_list = [
     "Vtu2Grid",
     "xdmfdiff",
 ]
+
+if OGS_USE_PETSC == "ON":
+    binaries_list.append("binaryToPVTU")
 
 if sys.platform != "win32":
     binaries_list.append("apply_xmlpatch")
