@@ -14,6 +14,7 @@
 #include "CreateCreepBGRa.h"
 #include "CreateEhlers.h"
 #include "CreateLinearElasticIsotropic.h"
+#include "CreateLinearElasticIsotropicSoftening.h"
 #include "CreateLinearElasticOrthotropic.h"
 #include "CreateLinearElasticTransverseIsotropic.h"
 #include "CreateLubby2.h"
@@ -64,6 +65,12 @@ createConstitutiveRelation(
         return MaterialLib::Solids::createLinearElasticTransverseIsotropic<
             DisplacementDim>(
             parameters, local_coordinate_system, config, skip_type_checking);
+    }
+    if (type == "LinearElasticIsotropicSoftening")
+    {
+        const bool skip_type_checking = false;
+        return MaterialLib::Solids::createLinearElasticIsotropicSoftening<
+            DisplacementDim>(parameters, config, skip_type_checking);
     }
     if (type == "Lubby2")
     {

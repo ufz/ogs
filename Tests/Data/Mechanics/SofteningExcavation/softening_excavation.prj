@@ -1,0 +1,292 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>domain.vtu</mesh>
+        <mesh>top.vtu</mesh>
+        <mesh>bottom.vtu</mesh>
+        <mesh>left.vtu</mesh>
+        <mesh>right.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>SD</name>
+            <type>SMALL_DEFORMATION</type>
+            <integration_order>2</integration_order>
+            <reference_temperature>T0</reference_temperature>
+            <process_variables>
+                <process_variable>displacement</process_variable>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="sigma" output_name="sigma"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+            </secondary_variables>
+            <specific_body_force>0. -9.81</specific_body_force>
+            <initial_stress> sigma0 </initial_stress>
+            <constitutive_relation id="0">
+                <type>MFront</type>
+                <behaviour>MohrCoulombAbboSloan</behaviour>
+                <material_properties>
+                    <material_property name="YoungModulus" parameter="E"/>
+                    <material_property name="PoissonRatio" parameter="nu"/>
+                    <material_property name="Cohesion" parameter="Cohesion"/>
+                    <material_property name="FrictionAngle" parameter="FrictionAngle"/>
+                    <material_property name="DilatancyAngle" parameter="DilatancyAngle"/>
+                    <material_property name="TransitionAngle" parameter="TransitionAngle"/>
+                    <material_property name="TensionCutOffParameter" parameter="TensionCutOffParameter"/>
+                </material_properties>
+            </constitutive_relation>
+            <constitutive_relation id="1">
+                <type>LinearElasticIsotropicSoftening</type>
+                <youngs_modulus>E</youngs_modulus>
+                <poissons_ratio>nu</poissons_ratio>
+                <strength>strength</strength>
+            </constitutive_relation>
+        </process>
+    </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>density</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+    </properties>
+        </medium>
+        <medium id="1">
+            <phases>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Parameter</type>
+                            <parameter_name>density_relaxing</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+    </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="SD">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>PerComponentDeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstols>1.e-5 1.e-5</abstols>
+                    <reltols>1.e-5 1.e-5</reltols>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>IterationNumberBasedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>8640000</t_end>
+                    <initial_dt>86400</initial_dt>
+                    <minimum_dt>86400</minimum_dt>
+                    <maximum_dt>432000</maximum_dt>
+                    <number_iterations>1 4 10 15 20 25 31</number_iterations>
+                    <multiplier>1.5 1.3 1.2 1.1 0.8 0.7 0.6</multiplier>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>SD_softening_excavation</prefix>
+            <suffix>_ts_{:gtime}</suffix>
+            <timesteps>
+                <pair>
+                    <repeat>1</repeat>
+                    <each_steps>1</each_steps>
+                </pair>
+            </timesteps>
+            <variables>
+            </variables>
+            <fixed_output_times>
+            </fixed_output_times>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>one</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>T0</name>
+            <type>Constant</type>
+            <value>300</value>
+        </parameter>
+        <parameter>
+            <name>density</name>
+            <type>Constant</type>
+            <value>2600</value>
+        </parameter>
+        <parameter>
+            <name>sigma0</name>
+            <type>MeshElement</type>
+            <field_name>sigma0</field_name>
+        </parameter>
+        <parameter>
+            <name>geo_stress</name>
+            <type>Function</type>
+            <expression>2600*9.81*y</expression>
+        </parameter>
+        <parameter>
+            <name>density_relaxing</name>
+            <type>CurveScaled</type>
+            <curve>strength_curve</curve>
+            <parameter>density</parameter>
+        </parameter>
+        <parameter>
+            <name>strength</name>
+            <type>CurveScaled</type>
+            <curve>strength_curve</curve>
+            <parameter>one</parameter>
+        </parameter>
+        <parameter>
+            <name>E</name>
+            <type>Constant</type>
+            <value>1500000000.0</value>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <value>0.25</value>
+        </parameter>
+        <parameter>
+            <name>Cohesion</name>
+            <type>Constant</type>
+            <value>3000000.0</value>
+        </parameter>
+        <parameter>
+            <name>FrictionAngle</name>
+            <type>Constant</type>
+            <value>25</value>
+        </parameter>
+        <parameter>
+            <name>DilatancyAngle</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>TransitionAngle</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>TensionCutOffParameter</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>strength_curve</name>
+            <coords>0.0 8640000</coords>
+            <values>1.0 1e-12</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>left</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>bottom</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>right</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>top</mesh>
+                    <type>Neumann</type>
+                    <component>1</component>
+                    <parameter>geo_stress</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>30</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+            <petsc>
+                <parameters>
+                    -ksp_type bcgs
+                    -pc_type ilu
+                    -ksp_rtol 1.e-20 -ksp_atol 1.e-18
+                    -ksp_max_it 4000
+                </parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+
+    <test_definition>
+        <vtkdiff>
+            <regex>SD_softening_excavation_ts_.*.vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1.0e-10</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>SD_softening_excavation_ts_.*.vtu</regex>
+            <field>sigma</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1.0e-5</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>SD_softening_excavation_ts_.*.vtu</regex>
+            <field>epsilon</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1.0e-5</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
