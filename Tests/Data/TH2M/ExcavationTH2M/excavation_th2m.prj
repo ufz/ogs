@@ -28,12 +28,7 @@
             </constitutive_relation>
             <jacobian_assembler>
                 <type>ForwardDifferences</type>
-                <component_magnitudes>
-                   1.0 1.0 1.0
-                </component_magnitudes>
-                <relative_epsilons>
-                   1.e-2 1.e-2 1.0
-                </relative_epsilons>
+                <epsilons>0.01 0.01 1.0</epsilons>
             </jacobian_assembler>
             <reference_temperature>T0</reference_temperature>
             <process_variables>

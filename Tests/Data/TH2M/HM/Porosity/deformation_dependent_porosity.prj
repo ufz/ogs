@@ -9,20 +9,7 @@
             <integration_order>3</integration_order>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-                </component_magnitudes>
-                <relative_epsilons>
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-06 1e-06 1e-06 1e-06
-                   1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08
-                   1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08
-                </relative_epsilons>
+                <epsilons>0.001 0.001 0.001</epsilons>
             </jacobian_assembler>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
