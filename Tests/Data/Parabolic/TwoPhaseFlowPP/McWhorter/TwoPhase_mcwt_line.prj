@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>mcwt.vtu</mesh>
     <geometry>mcwt.gml</geometry>
@@ -9,8 +9,7 @@
             <integration_order>2</integration_order>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>1e4 1e+5</component_magnitudes>
-                <relative_epsilons>1e-7 1e-7</relative_epsilons>
+                <epsilons>0.001 0.01</epsilons>
             </jacobian_assembler>
             <process_variables>
                 <capillary_pressure>capillary_pressure</capillary_pressure>
