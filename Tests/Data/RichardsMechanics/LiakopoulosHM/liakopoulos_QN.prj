@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">liakopoulos.vtu</mesh>
@@ -29,8 +29,7 @@
                 <log_file>/tmp/test.py</log_file>
                 -->
                 <type>CentralDifferences</type>
-                <component_magnitudes>1</component_magnitudes>
-                <relative_epsilons>1e-8</relative_epsilons>
+                <epsilons>1e-08</epsilons>
             </jacobian_assembler>
             <mass_lumping>true</mass_lumping>
             <constitutive_relation>
