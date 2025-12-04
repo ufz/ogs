@@ -9,8 +9,7 @@
             <integration_order>2</integration_order>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>1e4</component_magnitudes>
-                <relative_epsilons>1e-6</relative_epsilons>
+                <epsilons>0.01</epsilons>
             </jacobian_assembler>
             <process_variables>
                 <process_variable>pressure</process_variable>
