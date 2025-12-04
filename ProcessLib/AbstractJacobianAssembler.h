@@ -81,20 +81,11 @@ public:
         }
 
         int const num_abs_eps = static_cast<int>(absolute_epsilons_.size());
-        // TODO: restrict to equal for future?
-        if (num_abs_eps < max_non_deformation_dofs_per_node)
+        if (num_abs_eps != max_non_deformation_dofs_per_node)
         {
             OGS_FATAL(
-                "The number of specified epsilons ({:d}) is smaller than the "
-                "maximum number of non-deformation d.o.f.s per node ({:d}).",
-                num_abs_eps, max_non_deformation_dofs_per_node);
-        }
-        if (num_abs_eps > max_non_deformation_dofs_per_node)
-        {
-            WARN(
-                "The number of specified epsilons ({:d}) is larger than the "
-                "maximum number of non-deformation d.o.f.s per node ({:d}). "
-                "The extra epsilons will be ignored.",
+                "The number of specified epsilons ({:d}) is not equal to the "
+                "number of non-deformation variable components ({:d}).",
                 num_abs_eps, max_non_deformation_dofs_per_node);
         }
     }
@@ -148,6 +139,14 @@ protected:
     /// the numerical Jacobian assembler. Therefore, it is thread-safe.
     std::vector<int> non_deformation_component_ids_;
 
+    /// Perturbations of the variable components used for evaluating finite
+    /// differences (excluding deformation).
+    /// \note The perturbations must be specified component-wise for each
+    /// non-deformation variable. If the number of perturbations is not equal
+    /// to the number of non-deformation variable components, a fatal error is
+    /// issued. The deformation block of the local Jacobian matrix is calculated
+    /// analytically; therefore, perturbations for deformation components are
+    /// not required.
     std::vector<double> const absolute_epsilons_;
 };
 
