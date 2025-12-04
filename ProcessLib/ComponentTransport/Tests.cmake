@@ -982,6 +982,7 @@ endif()
 
 if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/DecayChain.py RUNTIME 160)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/Acidification/PorosityIncrease.py RUNTIME 250)
 endif()
 
 OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_c.prj RUNTIME 1)
