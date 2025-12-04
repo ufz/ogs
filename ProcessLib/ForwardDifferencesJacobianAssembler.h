@@ -20,8 +20,8 @@ class ForwardDifferencesJacobianAssembler final
 public:
     //! Constructs a new instance.
     //!
-    //! \param absolute_epsilons perturbations of the components of the local
-    //! solution vector used for evaluating the finite differences.
+    //! \param absolute_epsilons perturbations of the variable components used
+    //! for evaluating the finite differences.
     //!
     //! \note The size of \c absolute_epsilons defines the "number of
     //! components" of the local solution vector (This is not the number of
