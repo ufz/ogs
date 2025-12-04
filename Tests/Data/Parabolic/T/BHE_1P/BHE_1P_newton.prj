@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>BHE_1P.vtu</mesh>
     <geometry>BHE_1P.gml</geometry>
@@ -13,8 +13,7 @@
             </process_variables>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>1 1</component_magnitudes>
-                <relative_epsilons>1e-8 1e-8</relative_epsilons>
+                <epsilons>1e-08 1e-08</epsilons>
             </jacobian_assembler>
             <borehole_heat_exchangers>
                 <borehole_heat_exchanger>
