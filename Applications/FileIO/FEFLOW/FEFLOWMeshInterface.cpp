@@ -10,6 +10,7 @@
 #include "FEFLOWMeshInterface.h"
 
 #include <boost/algorithm/string/trim.hpp>
+#include <boost/tokenizer.hpp>
 #include <cctype>
 #include <fstream>
 #include <memory>
@@ -822,17 +823,13 @@ void FEFLOWMeshInterface::readMAT_I_FLOW(
 
     auto get_material_property_name = [](const std::string& line_string)
     {
-        auto split_quoted_string = [](const std::string& str)
-        {
-            std::vector<std::string> vec_str;
-            std::string s;
-            std::istringstream ss(str);
-            while (ss >> std::quoted(s))
-                vec_str.push_back(s);
-            return vec_str;
-        };
+        using Tok = boost::tokenizer<boost::escaped_list_separator<char>>;
+        Tok tok(line_string,
+                boost::escaped_list_separator<char>('\\', ' ', '"'));
+        std::vector<std::string> vec_str;
+        for (auto const& t : tok)
+            vec_str.push_back(t);
 
-        std::vector<std::string> vec_str(split_quoted_string(line_string));
         if (vec_str.size() < 3)
             return std::string("");
         return vec_str[2];
