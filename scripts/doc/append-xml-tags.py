@@ -18,8 +18,12 @@ import sys
 import pandas as pd
 from print23 import print_
 
-github_src_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master"
-github_data_url = "https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data"
+# Use CI_COMMIT_TAG if available, otherwise default to master
+commit_ref = os.environ.get("CI_COMMIT_TAG", "master")
+github_src_url = f"https://gitlab.opengeosys.org/ogs/ogs/-/tree/{commit_ref}"
+github_data_url = (
+    f"https://gitlab.opengeosys.org/ogs/ogs/-/tree/{commit_ref}/Tests/Data"
+)
 
 if len(sys.argv) != 4:
     print_("Usage:")
@@ -91,8 +95,8 @@ def write_parameter_type_info(fh, tagpath, tagpath_expanded, dict_tag_info):
                 fh.write(f"- Expanded tag path: {tagpath_expanded}\n")
 
                 fh.write(
-                    "- Go to source code: [&rarr; ogs/ogs/master]({}/{}#L{})\n".format(
-                        github_src_url, path, line
+                    "- Go to source code: [&rarr; ogs/ogs/{}]({}/{}#L{})\n".format(
+                        commit_ref, github_src_url, path, line
                     )
                 )
         else:
