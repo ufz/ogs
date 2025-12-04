@@ -736,9 +736,11 @@ void FEFLOWMeshInterface::readELEMENTALSETS(
     }
 }
 
-void FEFLOWMeshInterface::read_material_property_values(
-    std::ifstream& in, std::vector<double>& vec_element_values)
+std::vector<double> FEFLOWMeshInterface::readMaterialPropertyValues(
+    std::ifstream& in, std::size_t n_elements)
 {
+    std::vector<double> vec_element_values(n_elements);
+
     double property_value = 0;
     std::string str_elementList;
     std::string line_string;
@@ -796,6 +798,7 @@ void FEFLOWMeshInterface::read_material_property_values(
             str_elementList += " " + line_string;
         }
     }
+    return vec_element_values;
 }
 
 void FEFLOWMeshInterface::readMAT_I_FLOW(
@@ -858,12 +861,8 @@ void FEFLOWMeshInterface::readMAT_I_FLOW(
             {
                 INFO("read element property {:s}", property_name);
                 vec_element_property_names.push_back(property_name);
-                vec_element_property_values.resize(
-                    vec_element_property_values.size() + 1);
-                std::vector<double>& vec_values =
-                    vec_element_property_values.back();
-                vec_values.resize(fem_dim.n_elements);
-                read_material_property_values(in, vec_values);
+                vec_element_property_values.push_back(
+                    readMaterialPropertyValues(in, fem_dim.n_elements));
             }
         }
     }

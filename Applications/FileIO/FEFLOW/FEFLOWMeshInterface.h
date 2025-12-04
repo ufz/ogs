@@ -126,8 +126,8 @@ private:
         std::vector<std::vector<double>>& vec_element_property_values);
 
     /// read element values of a material property in MAT_I_FLOW data
-    void read_material_property_values(std::ifstream& in,
-                                       std::vector<double>& vec_element_values);
+    std::vector<double> readMaterialPropertyValues(std::ifstream& in,
+                                                   std::size_t n_elements);
 
     void setMaterialIDs(
         FEM_CLASS const& fem_class,
