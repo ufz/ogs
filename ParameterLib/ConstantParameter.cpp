@@ -37,7 +37,16 @@ std::unique_ptr<ParameterBase> createConstantParameter(
              Please give only one of them.");
     }
 
-    std::vector<double> values = value_data.value_or(*values_data);
+    std::vector<double> values;
+
+    if (value_data)
+    {
+        values = *value_data;
+    }
+    else if (values_data)
+    {
+        values = *values_data;
+    }
 
     if (values.empty())
     {
