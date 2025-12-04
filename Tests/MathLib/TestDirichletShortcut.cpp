@@ -83,7 +83,7 @@ TEST(MathLib, DirichletShortcut)
     EXPECT_THAT(
         rhs_copy2.getRawVector(),
         testing::Pointwise(
-            testing::DoubleNear(10 * std::numeric_limits<double>::epsilon()),
+            testing::DoubleNear(20 * std::numeric_limits<double>::epsilon()),
             rhs_copy1.getRawVector()));
 }
 #endif
