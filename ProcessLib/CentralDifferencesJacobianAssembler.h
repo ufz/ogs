@@ -69,7 +69,4 @@ private:
     std::vector<double> _local_x_perturbed_data;
 };
 
-std::unique_ptr<CentralDifferencesJacobianAssembler>
-createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config);
-
 }  // namespace ProcessLib
