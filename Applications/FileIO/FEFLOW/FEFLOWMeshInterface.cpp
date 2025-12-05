@@ -754,18 +754,26 @@ std::vector<double> FEFLOWMeshInterface::readMaterialPropertyValues(
         std::getline(in, line_string);
         boost::trim_right(line_string);
         if (line_string.empty())
+        {
             continue;
+        }
 
         // check mode
         unsigned mode = 0;  // 0: exit, 1: value + corresponding element
                             // numbers, 2: continued line of mode 1
         if ((!in || (line_string[0] != ' ' && line_string[0] != '\t')) &&
             prev_mode != 0)
+        {
             mode = 0;
+        }
         else if (line_string[0] != '\t')
+        {
             mode = 1;
+        }
         else if (line_string[0] == '\t')
+        {
             mode = 2;
+        }
         prev_mode = mode;
 
         // process stocked data
@@ -774,7 +782,9 @@ std::vector<double> FEFLOWMeshInterface::readMaterialPropertyValues(
             // process previous lines
             auto vec_elementIDs = getIndexList(str_elementList);
             for (auto elementID : vec_elementIDs)
+            {
                 vec_element_values[elementID - 1] = property_value;
+            }
             str_elementList.clear();
         }
 
@@ -784,7 +794,7 @@ std::vector<double> FEFLOWMeshInterface::readMaterialPropertyValues(
             in.seekg(pos_prev_line);
             break;
         }
-        else if (mode == 1)
+        if (mode == 1)
         {
             line_stream.str(line_string);
             line_stream >> property_value;
@@ -814,7 +824,9 @@ void FEFLOWMeshInterface::readMAT_I_FLOW(
     auto is_header_of_material_property = [](const std::string& line_string)
     {
         if (line_string.empty())
+        {
             return false;
+        }
         return static_cast<bool>(isdigit(line_string.at(0)));
     };
 
@@ -828,10 +840,14 @@ void FEFLOWMeshInterface::readMAT_I_FLOW(
                 boost::escaped_list_separator<char>('\\', ' ', '"'));
         std::vector<std::string> vec_str;
         for (auto const& t : tok)
+        {
             vec_str.push_back(t);
+        }
 
         if (vec_str.size() < 3)
+        {
             return std::string("");
+        }
         return vec_str[2];
     };
 
@@ -842,7 +858,9 @@ void FEFLOWMeshInterface::readMAT_I_FLOW(
         std::getline(in, line_string);
         boost::trim_right(line_string);
         if (line_string.empty())
+        {
             continue;
+        }
         if (is_end_of_MAT_I_FLOW(line_string))
         {
             // move stream position to previous line
