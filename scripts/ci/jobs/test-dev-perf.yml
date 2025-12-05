@@ -6,8 +6,7 @@ test perf scripts:
     - scripts/dev/perf/test/test_run_ctest.sh
   needs: []
   rules:
-    - when: always
-    # TODO - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
 
 # test perf scripts 5:
 #   stage: test
@@ -25,8 +24,7 @@ test perf scripts ccache:
     - scripts/dev/perf/test/test_ccache.sh
   needs: []
   rules:
-    - when: always
-    # TODO - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "master"'
 
 # test perf scripts 7:
 #   stage: test
