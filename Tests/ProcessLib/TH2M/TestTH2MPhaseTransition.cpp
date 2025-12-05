@@ -51,6 +51,8 @@ std::string MediumDefinition(const bool density_is_constant)
     m << "<type>Solid</type>\n";
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("density", 2e3);
+    m << Tests::makeConstantPropertyElement("specific_heat_capacity", 0);
+    m << Tests::makeConstantPropertyElement("thermal_expansivity", 0);
     m << "</properties>\n";
     m << "</phase>\n";
 
@@ -100,6 +102,7 @@ std::string MediumDefinition(const bool density_is_constant)
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("thermal_conductivity",
                                             thermal_conductivity_air);
+    m << Tests::makeConstantPropertyElement("viscosity", 0);
 
     if (density_is_constant)
     {
@@ -148,6 +151,7 @@ std::string MediumDefinition(const bool density_is_constant)
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("specific_heat_capacity",
                                             specific_heat_capacity_water);
+    m << Tests::makeConstantPropertyElement("viscosity", 0);
 
     m << "  <property>\n";
     m << "      <name>density</name>\n";
@@ -180,6 +184,15 @@ std::string MediumDefinition(const bool density_is_constant)
     m << "      <type>Constant</type>\n";
     m << "      <value>1</value>\n";
     m << "  </property>\n";
+    m << Tests::makeConstantPropertyElement("saturation", 0);
+    m << Tests::makeConstantPropertyElement("permeability", 0);
+    m << Tests::makeConstantPropertyElement("relative_permeability", 0);
+    m << Tests::makeConstantPropertyElement(
+        "relative_permeability_nonwetting_phase", 0);
+    m << Tests::makeConstantPropertyElement("bishops_effective_stress", 0);
+    m << Tests::makeConstantPropertyElement("porosity", 0);
+    m << Tests::makeConstantPropertyElement("biot_coefficient", 0);
+    m << Tests::makeConstantPropertyElement("thermal_conductivity", 0);
     m << "</properties> </medium>\n";
 
     return m.str();

@@ -42,6 +42,8 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     m << "<type>Solid</type>\n";
     m << "<properties>\n";
     m << Tests::makeConstantPropertyElement("density", 2e3);
+    m << Tests::makeConstantPropertyElement("specific_heat_capacity", 0);
+    m << Tests::makeConstantPropertyElement("thermal_expansivity", 0);
     m << "</properties>\n";
     m << "</phase>\n";
 
@@ -55,6 +57,7 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     m << Tests::makeConstantPropertyElement("specific_heat_capacity",
                                             specific_heat_capacity_air);
     m << Tests::makeConstantPropertyElement("molar_mass", molar_mass_air);
+    m << Tests::makeConstantPropertyElement("viscosity", 0);
 
     m << "</properties>\n";
     m << "</phase>\n";
@@ -68,6 +71,7 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     m << Tests::makeConstantPropertyElement("density", density_water);
     m << Tests::makeConstantPropertyElement("specific_heat_capacity",
                                             specific_heat_capacity_water);
+    m << Tests::makeConstantPropertyElement("viscosity", 0);
     m << "</properties>\n";
     m << "</phase>\n";
     m << "</phases>\n";
@@ -77,6 +81,15 @@ TEST(ProcessLib, TH2MNoPhaseTransition)
     m << "      <type>Constant</type>\n";
     m << "      <value>1</value>\n";
     m << "  </property>\n";
+    m << Tests::makeConstantPropertyElement("saturation", 0);
+    m << Tests::makeConstantPropertyElement("permeability", 0);
+    m << Tests::makeConstantPropertyElement("relative_permeability", 0);
+    m << Tests::makeConstantPropertyElement(
+        "relative_permeability_nonwetting_phase", 0);
+    m << Tests::makeConstantPropertyElement("bishops_effective_stress", 0);
+    m << Tests::makeConstantPropertyElement("porosity", 0);
+    m << Tests::makeConstantPropertyElement("biot_coefficient", 0);
+    m << Tests::makeConstantPropertyElement("thermal_conductivity", 0);
     m << "</properties> </medium>\n";
 
     std::shared_ptr<MaterialPropertyLib::Medium> const& medium =
