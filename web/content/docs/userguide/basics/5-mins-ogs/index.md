@@ -51,6 +51,13 @@ Otherwise, maybe [Option 2](#binaries) might work for you.
    After installing OGSTools, you will have a Python environment ready for the
    whole simulation workflow, from setting up simulation and mesh files to data
    analysis and creating publication-ready plots.
+
+   If you want to install the latest development versions of both OGS and
+   OGSTools you can install them via the following commands:
+
+   `pip install git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@main`
+
+   `pip install git+https://gitlab.opengeosys.org/ogs/ogs.git@master`
 3. [Download](https://gitlab.opengeosys.org/ogs/ogs/-/archive/master/ogs-master.zip?path=Tests/Data/Mechanics/Linear/DiscWithHole)
    the disc with hole example zip file from our GitLab server and unzip it.  
    The zip file contains (in the subdirectory
