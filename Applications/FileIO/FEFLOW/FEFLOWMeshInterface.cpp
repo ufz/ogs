@@ -841,7 +841,10 @@ void FEFLOWMeshInterface::readMAT_I_FLOW(
         std::vector<std::string> vec_str;
         for (auto const& t : tok)
         {
-            vec_str.push_back(t);
+            if (!t.empty())
+            {
+                vec_str.push_back(t);
+            }
         }
 
         if (vec_str.size() < 3)
