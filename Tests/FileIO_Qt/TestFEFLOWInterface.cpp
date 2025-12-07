@@ -130,3 +130,40 @@ TEST(FileIO, TestFEFLOWReadPrismTetMesh)
                   mesh->getElement(k)->getGeomType());
     }
 }
+
+TEST(FileIO, TestFEFLOWReadMeshWithMaterialProperties)
+{
+    std::string const fname(
+        TestInfoLib::TestInfo::data_path +
+        "/FileIO/FEFLOW/prism_with_material_properties.fem");
+    FileIO::FEFLOWMeshInterface feflowIO;
+    std::unique_ptr<MeshLib::Mesh const> mesh(feflowIO.readFEFLOWFile(fname));
+
+    EXPECT_EQ(294u, mesh->getNumberOfNodes());
+    EXPECT_EQ(380u, mesh->getNumberOfElements());
+    EXPECT_EQ(MeshLib::MeshElemType::PRISM, mesh->getElement(0)->getGeomType());
+    EXPECT_TRUE(
+        mesh->getProperties().hasPropertyVector("Conductivity in x-direction"));
+    EXPECT_TRUE(
+        mesh->getProperties().hasPropertyVector("Conductivity in y-direction"));
+    EXPECT_TRUE(
+        mesh->getProperties().hasPropertyVector("Conductivity in z-direction"));
+    EXPECT_TRUE(mesh->getProperties().hasPropertyVector(
+        "Storativity (drain- or fillable) or density ratio"));
+    EXPECT_TRUE(mesh->getProperties().hasPropertyVector(
+        "Specific Storage due to compressibility effects"));
+
+    auto opt_Kx(mesh->getProperties().getPropertyVector<double>(
+        "Conductivity in x-direction"));
+    ASSERT_EQ(380u, opt_Kx->size());
+    ASSERT_EQ(1e-6, (*opt_Kx)[0]);
+    ASSERT_EQ(1e-5, (*opt_Kx)[8]);
+    ASSERT_EQ(1e-7, (*opt_Kx)[76]);
+
+    auto opt_Ky(mesh->getProperties().getPropertyVector<double>(
+        "Conductivity in y-direction"));
+    ASSERT_EQ(380u, opt_Ky->size());
+    ASSERT_EQ(2e-6, (*opt_Ky)[0]);
+    ASSERT_EQ(2e-5, (*opt_Ky)[8]);
+    ASSERT_EQ(2e-7, (*opt_Ky)[76]);
+}
