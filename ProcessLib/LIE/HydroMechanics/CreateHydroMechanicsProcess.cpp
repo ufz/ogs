@@ -19,7 +19,6 @@
 #include "MaterialLib/FractureModels/CreateCohesiveZoneModeI.h"
 #include "MaterialLib/FractureModels/CreateCoulomb.h"
 #include "MaterialLib/FractureModels/CreateLinearElasticIsotropic.h"
-#include "MaterialLib/FractureModels/Permeability/CreatePermeabilityModel.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/PropertyType.h"

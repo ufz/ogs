@@ -15,7 +15,6 @@
 
 #include "BranchProperty.h"
 #include "JunctionProperty.h"
-#include "MaterialLib/FractureModels/Permeability/Permeability.h"
 #include "MeshLib/ElementCoordinatesMappingLocal.h"
 #include "MeshLib/Elements/Element.h"
 
