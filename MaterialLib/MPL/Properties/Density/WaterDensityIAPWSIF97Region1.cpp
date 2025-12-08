@@ -55,6 +55,9 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
                    (MaterialLib::PhysicalConstant::SpecificGasConstant::
                         WaterVapour *
                     T * dgamma_dpi * dgamma_dpi);
+        case Variable::concentration:
+            return 0.0;
+
         default:
             OGS_FATAL(
                 "WaterDensityIAPWSIF97Region1::dValue is implemented for "
