@@ -170,6 +170,12 @@ public:
     virtual void computeReactionRelatedSecondaryVariable(
         std::size_t const ele_id) = 0;
 
+    virtual std::vector<double> const& getIntPtLiquidDensity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const = 0;
+
     virtual std::vector<double> const& getIntPtDarcyVelocity(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -1648,6 +1654,136 @@ public:
             local_b.noalias() +=
                 w * N.transpose() * porosity * (C_post_int_pt - C_int_pt) / dt;
         }
+    }
+
+    std::vector<double> const& getIntPtLiquidDensity(
+        const double t,
+        std::vector<GlobalVector*> const& x,
+        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
+        std::vector<double>& cache) const override
+    {
+        assert(x.size() == dof_table.size());
+
+        auto const n_processes = x.size();
+        std::vector<std::vector<double>> local_x;
+        local_x.reserve(n_processes);
+
+        for (std::size_t process_id = 0; process_id < n_processes; ++process_id)
+        {
+            auto const indices =
+                NumLib::getIndices(_element.getID(), *dof_table[process_id]);
+            assert(!indices.empty());
+            local_x.push_back(x[process_id]->get(indices));
+        }
+
+        // only one process, must be monolithic.
+        if (n_processes == 1)
+        {
+            auto const local_p = Eigen::Map<const NodalVectorType>(
+                &local_x[0][pressure_index], pressure_size);
+            auto const local_C = Eigen::Map<const NodalVectorType>(
+                &local_x[0][first_concentration_index], concentration_size);
+            NodalVectorType local_T;
+            local_T.setConstant(ShapeFunction::NPOINTS,
+                                std::numeric_limits<double>::quiet_NaN());
+            int const temperature_index =
+                _process_data.isothermal ? -1 : ShapeFunction::NPOINTS;
+            if (temperature_index != -1)
+            {
+                local_T = Eigen::Map<const NodalVectorType>(
+                    &local_x[0][temperature_index], temperature_size);
+            }
+            return calculateIntPtLiquidDensity(t, local_p, local_C, local_T,
+                                               cache);
+        }
+
+        // multiple processes, must be staggered.
+        {
+            constexpr int pressure_process_id = 0;
+            int concentration_process_id = 1;
+            // Normally temperature process is not there,
+            // hence set the default temperature index to -1
+            int temperature_process_id = -1;
+
+            // check whether temperature process exists
+            if (!_process_data.isothermal)
+            {
+                // if temperature process exists, its id is 1
+                temperature_process_id = 1;
+                // then the concentration index shifts to 2
+                concentration_process_id = 2;
+            }
+
+            auto const local_p = Eigen::Map<const NodalVectorType>(
+                &local_x[pressure_process_id][0], pressure_size);
+            auto const local_C = Eigen::Map<const NodalVectorType>(
+                &local_x[concentration_process_id][0], concentration_size);
+            NodalVectorType local_T;
+            local_T.setConstant(ShapeFunction::NPOINTS,
+                                std::numeric_limits<double>::quiet_NaN());
+            if (temperature_process_id != -1)
+            {
+                local_T = Eigen::Map<const NodalVectorType>(
+                    &local_x[temperature_process_id][0], temperature_size);
+            }
+            return calculateIntPtLiquidDensity(t, local_p, local_C, local_T,
+                                               cache);
+        }
+    }
+
+    std::vector<double> const& calculateIntPtLiquidDensity(
+        const double t,
+        Eigen::Ref<const NodalVectorType> const& p_nodal_values,
+        Eigen::Ref<const NodalVectorType> const& C_nodal_values,
+        Eigen::Ref<const NodalVectorType> const& T_nodal_values,
+        std::vector<double>& cache) const
+    {
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
+
+        cache.clear();
+        auto cache_vec = MathLib::createZeroedVector<Eigen::VectorXd>(
+            cache, n_integration_points);
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(_element.getID());
+
+        MaterialPropertyLib::VariableArray vars;
+
+        auto const& medium =
+            *_process_data.media_map.getMedium(_element.getID());
+        auto const& phase = medium.phase("AqueousLiquid");
+
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& N = Ns[ip];
+
+            double C_int_pt = 0.0;
+            double p_int_pt = 0.0;
+            double T_int_pt = 0.0;
+
+            NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
+            NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
+            NumLib::shapeFunctionInterpolate(T_nodal_values, N, T_int_pt);
+
+            vars.concentration = C_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
+            vars.temperature = T_int_pt;
+
+            // TODO (naumov) Temporary value not used by current material
+            // models. Need extension of secondary variables interface.
+            double const dt = std::numeric_limits<double>::quiet_NaN();
+
+            auto const rho_w = phase[MaterialPropertyLib::PropertyType::density]
+                                   .template value<double>(vars, pos, t, dt);
+            cache_vec[ip] = rho_w;
+        }
+
+        return cache;
     }
 
     std::vector<double> const& getIntPtDarcyVelocity(
