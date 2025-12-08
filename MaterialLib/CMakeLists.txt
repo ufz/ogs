@@ -20,10 +20,6 @@ append_source_files(SOURCES MPL/Components)
 append_source_files(SOURCES MPL/Utils)
 
 append_source_files(SOURCES PorousMedium/Permeability)
-append_source_files(SOURCES PorousMedium/UnsaturatedProperty/CapillaryPressure)
-append_source_files(
-    SOURCES PorousMedium/UnsaturatedProperty/RelativePermeability
-)
 
 ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
 

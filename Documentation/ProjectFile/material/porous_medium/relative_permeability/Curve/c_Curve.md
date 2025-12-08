@@ -1,1 +1,0 @@
-Relative permeability model: Curve
