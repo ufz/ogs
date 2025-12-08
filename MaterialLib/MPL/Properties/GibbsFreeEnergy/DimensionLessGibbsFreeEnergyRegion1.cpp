@@ -2,8 +2,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include "DimensionLessGibbsFreeEnergyRegion1.h"
+using namespace boost::math::differentiation;
 
 #include <cmath>
+using std::pow;
 
 namespace MaterialLib
 {
@@ -31,82 +33,125 @@ static const double ji[34] = {
     -2, -1, 0,  1, 2, 3,  4,  5,  -9, -7,  -1, 0,   1,   3,   -3,  0,   1,
     3,  17, -4, 0, 6, -5, -2, 10, -8, -11, -6, -29, -31, -38, -39, -40, -41};
 
-double DimensionLessGibbsFreeEnergyRegion1::get_gamma(const double tau,
-                                                      const double pi)
+template <typename S, typename T>
+promote<S, T> DimensionLessGibbsFreeEnergyRegion1::get_gamma(const S tau,
+                                                             const T pi)
 {
-    double val = 0.;
+    promote<S, T> val = 0.;
     for (int i = 0; i < 34; i++)
     {
-        val += ni[i] * std::pow(7.1 - pi, li[i]) * std::pow(tau - 1.222, ji[i]);
+        val += ni[i] * pow(7.1 - pi, li[i]) * pow(tau - 1.222, ji[i]);
     }
 
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau(const double tau,
-                                                            const double pi)
+template <typename S, typename T>
+promote<S, T> DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau(const S tau,
+                                                                   const T pi)
 {
-    double val = 0.;
+    promote<S, T> val = 0.;
     for (int i = 0; i < 34; i++)
     {
-        val += ni[i] * ji[i] * std::pow(7.1 - pi, li[i]) *
-               std::pow(tau - 1.222, ji[i] - 1.0);
+        val += ni[i] * ji[i] * pow(7.1 - pi, li[i]) *
+               pow(tau - 1.222, ji[i] - 1.0);
     }
 
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dtau(
-    const double tau, const double pi)
+template <typename S, typename T>
+promote<S, T> DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dtau(
+    const S tau, const T pi)
 {
-    double val = 0.;
+    promote<S, T> val = 0.;
     for (int i = 0; i < 34; i++)
     {
-        val += ni[i] * ji[i] * (ji[i] - 1.0) * std::pow(7.1 - pi, li[i]) *
-               std::pow(tau - 1.222, ji[i] - 2.0);
+        val += ni[i] * ji[i] * (ji[i] - 1.0) * pow(7.1 - pi, li[i]) *
+               pow(tau - 1.222, ji[i] - 2.0);
     }
 
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const double tau,
-                                                           const double pi)
+template <typename S, typename T>
+promote<S, T> DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const S tau,
+                                                                  const T pi)
 {
-    double val = 0.;
+    promote<S, T> val = 0.;
     for (int i = 0; i < 34; i++)
     {
-        val -= ni[i] * li[i] * std::pow(7.1 - pi, li[i] - 1.0) *
-               std::pow(tau - 1.222, ji[i]);
+        val = val - ni[i] * li[i] * pow(7.1 - pi, li[i] - 1.0) *
+                        pow(tau - 1.222, ji[i]);
     }
 
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi_dpi(const double tau,
-                                                               const double pi)
+template <typename S, typename T>
+promote<S, T> DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi_dpi(
+    const S tau, const T pi)
 {
-    double val = 0.;
+    promote<S, T> val = 0.;
     for (int i = 0; i < 34; i++)
     {
-        val += ni[i] * li[i] * (li[i] - 1.0) * std::pow(7.1 - pi, li[i] - 2.0) *
-               std::pow(tau - 1.222, ji[i]);
+        val += ni[i] * li[i] * (li[i] - 1.0) * pow(7.1 - pi, li[i] - 2.0) *
+               pow(tau - 1.222, ji[i]);
     }
 
     return val;
 }
 
-double DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(
-    const double tau, const double pi)
+template <typename S, typename T>
+promote<S, T> DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(
+    const S tau, const T pi)
 {
-    double val = 0.;
+    promote<S, T> val = 0.;
     for (int i = 0; i < 34; i++)
     {
-        val -= ni[i] * ji[i] * li[i] * std::pow(7.1 - pi, li[i] - 1.0) *
-               std::pow(tau - 1.222, ji[i] - 1.0);
+        val = val - ni[i] * ji[i] * li[i] * pow(7.1 - pi, li[i] - 1.0) *
+                        pow(tau - 1.222, ji[i] - 1.0);
     }
 
     return val;
 }
+
+// Explicit template instantiations for double, double
+template boost::math::differentiation::autodiff_v1::promote<double, double>
+DimensionLessGibbsFreeEnergyRegion1::get_gamma(const double, const double);
+
+template boost::math::differentiation::autodiff_v1::promote<double, double>
+DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const double, const double);
+
+template boost::math::differentiation::autodiff_v1::promote<double, double>
+DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau(const double,
+                                                     const double);
+
+template boost::math::differentiation::autodiff_v1::promote<double, double>
+DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi_dpi(const double,
+                                                        const double);
+
+template boost::math::differentiation::autodiff_v1::promote<double, double>
+DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dtau(const double,
+                                                          const double);
+
+template boost::math::differentiation::autodiff_v1::promote<double, double>
+DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(const double,
+                                                         const double);
+
+// For autodiff types
+using fvar1 = boost::math::differentiation::autodiff_v1::detail::fvar<
+    boost::math::differentiation::autodiff_v1::detail::fvar<double, 1ul>,
+    0ul>;
+using fvar2 = boost::math::differentiation::autodiff_v1::detail::fvar<
+    boost::math::differentiation::autodiff_v1::detail::fvar<double, 2ul>,
+    0ul>;
+
+template boost::math::differentiation::autodiff_v1::promote<fvar1, double>
+DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const fvar1, const double);
+
+template boost::math::differentiation::autodiff_v1::promote<fvar2, double>
+DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const fvar2, const double);
 
 }  // namespace Fluid
 }  // namespace MaterialLib

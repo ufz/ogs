@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
+#include <boost/math/differentiation/autodiff.hpp>
 
 namespace MaterialLib
 {
@@ -27,7 +28,9 @@ struct DimensionLessGibbsFreeEnergyRegion1
      * @param tau Dimension less pressure
      * @return    The value
      */
-    static double get_gamma(const double tau, const double pi);
+    template <typename S, typename T>
+    static boost::math::differentiation::promote<S, T> get_gamma(const S tau,
+                                                                 const T pi);
 
     /**
      * Get the 1st order partial derivative of the dimension less Gibbs free
@@ -37,7 +40,9 @@ struct DimensionLessGibbsFreeEnergyRegion1
      * @param tau Dimension less pressure
      * @return    The value
      */
-    static double get_dgamma_dtau(const double tau, const double pi);
+    template <typename S, typename T>
+    static boost::math::differentiation::promote<S, T> get_dgamma_dtau(
+        const S tau, const T pi);
 
     /**
      * Get the 2nd order partial derivative of the dimension less Gibbs free
@@ -47,7 +52,9 @@ struct DimensionLessGibbsFreeEnergyRegion1
      * @param tau Dimension less pressure
      * @return    The value
      */
-    static double get_dgamma_dtau_dtau(const double tau, const double pi);
+    template <typename S, typename T>
+    static boost::math::differentiation::promote<S, T> get_dgamma_dtau_dtau(
+        const S tau, const T pi);
 
     /**
      * Get the 1st order partial derivative of the dimension less Gibbs free
@@ -57,7 +64,9 @@ struct DimensionLessGibbsFreeEnergyRegion1
      * @param tau Dimension less pressure
      * @return    The value
      */
-    static double get_dgamma_dpi(const double tau, const double pi);
+    template <typename S, typename T>
+    static boost::math::differentiation::promote<S, T> get_dgamma_dpi(
+        const S tau, const T pi);
 
     /**
      * Get the 2nd order partial derivative of the dimension less Gibbs free
@@ -67,7 +76,9 @@ struct DimensionLessGibbsFreeEnergyRegion1
      * @param tau Dimension less pressure
      * @return    The value
      */
-    static double get_dgamma_dpi_dpi(const double tau, const double pi);
+    template <typename S, typename T>
+    static boost::math::differentiation::promote<S, T> get_dgamma_dpi_dpi(
+        const S tau, const T pi);
 
     /**
      * Get the 2nd order partial derivative of the dimension less Gibbs free
@@ -77,7 +88,9 @@ struct DimensionLessGibbsFreeEnergyRegion1
      * @param tau Dimension less pressure
      * @return    The value
      */
-    static double get_dgamma_dtau_dpi(const double tau, const double pi);
+    template <typename S, typename T>
+    static boost::math::differentiation::promote<S, T> get_dgamma_dtau_dpi(
+        const S tau, const T pi);
 };
 
 }  // namespace Fluid
