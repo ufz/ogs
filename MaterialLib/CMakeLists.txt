@@ -19,8 +19,6 @@ append_source_files(SOURCES MPL/Properties/Viscosity)
 append_source_files(SOURCES MPL/Components)
 append_source_files(SOURCES MPL/Utils)
 
-append_source_files(SOURCES PorousMedium/Permeability)
-
 ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 target_link_libraries(
