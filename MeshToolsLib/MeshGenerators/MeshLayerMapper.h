@@ -48,15 +48,18 @@ public:
      * Based on a 2D triangle mesh this method creates a 3D mesh with a given
      * number of prism-layers. Note: While this method would technically also
      * work with quad meshes, this is discouraged as quad elements will most
-     * likely not be coplanar after the mapping process which result in invaled
-     * mesh elements. \param mesh                    The 2D triangle mesh that
-     * is the basis for the new 3D prism mesh \param rasters Containing all the
-     * raster-data for the subsurface layers from bottom to top (starting with
-     * the bottom of the oldest layer and ending with the DEM) \param
-     * minimum_thickness       Minimum thickness of each of the newly created
-     * layers (i.e. nodes with a vertical distance smaller than this will be
-     * collapsed) \param noDataReplacementValue  Default z-coordinate if there
-     * are mesh nodes not located on the DEM raster (i.e. raster_paths[0])
+     * likely not be coplanar after the mapping process which result in invalid
+     * mesh elements.
+     * \param mesh                    The 2D triangle mesh that is the basis for
+     * the new 3D prism mesh
+     * \param rasters Containing all the raster-data for the subsurface layers
+     * from bottom to top (starting with the bottom of the oldest layer and
+     * ending with the DEM)
+     * \param minimum_thickness       Minimum thickness of each of the newly
+     * created layers (i.e. nodes with a vertical distance smaller than this
+     * will be collapsed)
+     * \param noDataReplacementValue  Default z-coordinate if there are mesh
+     * nodes not located on the DEM raster (i.e. raster_paths[0])
      * \return A mesh with the requested number of layers of prism elements
      * (also including Tet- & Pyramid-elements in case of degenerated prisms)
      */
