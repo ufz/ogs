@@ -1,3 +1,0 @@
-# Hugo pages
-- source: /web/content/(.+?)/index\.md/
-  public: '../\1.html'
