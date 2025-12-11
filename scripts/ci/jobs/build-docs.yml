@@ -21,6 +21,7 @@ build docs:
     # cpp-dependencies
     - NUM_CYCLES=`cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
     - docker run --rm -v $PWD:/work registry.opengeosys.org/ogs/ogs/cpp-dependencies cpp-dependencies --graph build/cpp-dependencies.dot
     - dot -Tsvg build/cpp-dependencies.dot -o build/cpp-dependencies.svg
     # lizard, default code complexity number (15), function line length 100, max arguments 10
