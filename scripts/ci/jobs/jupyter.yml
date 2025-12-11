@@ -48,6 +48,10 @@ test linux wheel via notebooks:
     # Run on master
     - if: '$CI_COMMIT_BRANCH == "master"'
   script:
+    - |
+      if [[ "$OGS_GROUP" == "ogs-pypi" ]]; then
+        git checkout $OGS_LAST_TAG
+      fi
     - cd Tests/Data
     - uv run --group ${OGS_GROUP} ${UV_ARGS} pytest
     # https://github.com/matplotlib/matplotlib/issues/25306:
