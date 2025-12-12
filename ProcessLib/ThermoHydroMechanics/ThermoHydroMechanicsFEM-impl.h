@@ -382,9 +382,27 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     vars, MaterialPropertyLib::Variable::temperature,
                     x_position, t, dt);
 
-        // TODO (naumov) Extract this as a property.
-        crv.k_rel = 1. - (1. - 1e-5) * ip_data.phi_fr / porosity;
-        crv.dk_rel_dT = -(1. - 1e-5) / porosity * dphi_fr_dT;
+        // Set ice_volume_fraction variable for relative permeability
+        // calculation ice_volume_fraction = fraction of pore space occupied by
+        // ice
+        vars.ice_volume_fraction = ip_data.phi_fr / porosity;
+
+        crv.k_rel =
+            liquid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::relative_permeability)
+                .template value<double>(vars, x_position, t, dt);
+
+        // dk_rel/dT = (dk_rel/dphi_ice) * (dphi_ice/dT)
+        // where dphi_ice/dT = dphi_fr_dT / porosity
+        auto const dk_rel_dphi_ice =
+            liquid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::relative_permeability)
+                .template dValue<double>(
+                    vars, MaterialPropertyLib::Variable::ice_volume_fraction,
+                    x_position, t, dt);
+        crv.dk_rel_dT = dk_rel_dphi_ice * dphi_fr_dT / porosity;
     }
 
     auto const& b = _process_data.specific_body_force;

@@ -38,6 +38,7 @@ enum class Variable : int
     equivalent_plastic_strain,
     fracture_aperture,
     grain_compressibility,
+    ice_volume_fraction,
     liquid_phase_pressure,
     liquid_saturation,
     mechanical_strain,
@@ -70,6 +71,7 @@ static const std::array<std::string,
                              "equivalent_plastic_strain",
                              "fracture_aperture",
                              "grain_compressibility",
+                             "ice_volume_fraction",
                              "liquid_phase_pressure",
                              "liquid_saturation",
                              "mechanical_strain",
@@ -180,6 +182,7 @@ public:
     double equivalent_plastic_strain = nan_;
     double fracture_aperture = nan_;
     double grain_compressibility = nan_;
+    double ice_volume_fraction = nan_;
     double liquid_phase_pressure = nan_;
     double liquid_saturation = nan_;
     KelvinVector mechanical_strain;
