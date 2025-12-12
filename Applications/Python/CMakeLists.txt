@@ -22,10 +22,13 @@ add_subdirectory(ogs.OGSMesh)
 add_subdirectory(ogs.mpl)
 if(OGS_BUILD_WHEEL)
     add_subdirectory(ogs.callbacks)
+    set_target_properties(callbacks PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
 set_target_properties(
-    OGSSimulator OGSMesh mpl PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_py_build_location}
+    OGSSimulator OGSMesh mpl PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${_py_build_location}
+        INTERPROCEDURAL_OPTIMIZATION TRUE
 )
 file(
     COPY ogs/.
