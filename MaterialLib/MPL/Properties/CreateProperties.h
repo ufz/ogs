@@ -40,7 +40,6 @@
 #include "CreateSpecificHeatCapacityWithLatentHeat.h"
 #include "CreateStrainDependentPermeability.h"
 #include "CreateTemperatureDependentDiffusion.h"
-#include "CreateTemperatureDependentFraction.h"
 #include "CreateTransportPorosityFromMassBalance.h"
 #include "CreateVermaPruessModel.h"
 #include "CreateVolumeFractionAverage.h"

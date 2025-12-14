@@ -256,11 +256,6 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
         return createSigmoid(config);
     }
 
-    if (boost::iequals(property_type, "TemperatureDependentFraction"))
-    {
-        return createTemperatureDependentFraction(config);
-    }
-
     if (boost::iequals(property_type, "SpecificHeatCapacityWithLatentHeat"))
     {
         return createSpecificHeatCapacityWithLatentHeat(config);

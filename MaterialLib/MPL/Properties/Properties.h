@@ -44,7 +44,6 @@
 #include "Sigmoid.h"
 #include "SpecificHeatCapacityWithLatentHeat.h"
 #include "TemperatureDependentDiffusion.h"
-#include "TemperatureDependentFraction.h"
 #include "ThermalConductivity/SaturationWeightedThermalConductivity.h"
 #include "TransportPorosityFromMassBalance.h"
 #include "VapourDiffusion/VapourDiffusionDeVries.h"
