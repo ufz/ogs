@@ -136,7 +136,7 @@ double Raster::interpolateValueAtPoint(MathLib::Point3d const& pnt) const
     // adjust weights if necessary
     if (no_data_count > 0)
     {
-        if (no_data_count == 4)
+        if (no_data_count == 4 || weight.sum() == 0)
         {  // if there is absolutely no data just use the default value
             return _header.no_data;
         }
