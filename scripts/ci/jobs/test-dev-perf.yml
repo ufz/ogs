@@ -1,0 +1,36 @@
+test perf scripts:
+  stage: test
+  tags: [envinf, shell]
+  script:
+    - scripts/dev/perf/test/test_util.sh
+    - scripts/dev/perf/test/test_run_ctest.sh
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+# test perf scripts 5:
+#   stage: test
+#   tags: [envinf5, shell]  # fails, ccache too new (bug in ccache?)
+#   script:
+#     - scripts/dev/perf/test/test_ccache.sh
+#   needs: []
+#   rules:
+#     - when: always
+
+test perf scripts ccache:
+  stage: test
+  tags: [envinf6, shell]  # envinf6 has older ccache
+  script:
+    - scripts/dev/perf/test/test_ccache.sh
+  needs: []
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+# test perf scripts 7:
+#   stage: test
+#   tags: [envinf7, shell]  # fails, ccache too new (bug in ccache?)
+#   script:
+#     - scripts/dev/perf/test/test_ccache.sh
+#   needs: []
+#   rules:
+#     - when: always
