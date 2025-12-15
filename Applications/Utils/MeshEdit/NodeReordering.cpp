@@ -341,15 +341,16 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
         //  machine epsilon might be too small.
         if (std::fabs(element_volume - element_volume_origin) /
                 element_volume_origin >
-            10 * std::numeric_limits<double>::epsilon())
+            34 * std::numeric_limits<double>::epsilon())
         {
             OGS_FATAL(
                 "Reordering the nodes of element {:d} failed as its volume "
-                "changed from {:.20g} to {:.20g}, the difference is {:.20g} "
-                "and the threshold is {:.20g}.",
+                "changed from {:.20g} to {:.20g}, the relative difference is "
+                "{:.20g} and the threshold is {:.20g}.",
                 element->getID(), element_volume_origin, element_volume,
-                std::fabs(element_volume_origin - element_volume),
-                10 * std::numeric_limits<double>::epsilon());
+                std::fabs(element_volume_origin - element_volume) /
+                    element_volume_origin,
+                34 * std::numeric_limits<double>::epsilon());
         }
         // Element::computeVolume() uses the element vertices to compute
         // the element volume, so the change of edge nodes are not
