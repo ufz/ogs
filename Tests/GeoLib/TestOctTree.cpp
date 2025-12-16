@@ -514,6 +514,8 @@ TEST_F(GeoLibOctTree, TestRangeQueryEmptyRange)
     double const eps = std::numeric_limits<double>::epsilon() * 0.5;
     auto [min, max, oct_tree] = generateOctTreeFromPointSet(eps);
 
+    auto const old_level = BaseLib::console->level();
+    BaseLib::console->set_level(spdlog::level::off);
     for (auto const* point : ps_ptr)
     {
         std::vector<GeoLib::Point*> query_points;
@@ -522,6 +524,7 @@ TEST_F(GeoLibOctTree, TestRangeQueryEmptyRange)
         oct_tree->getPointsInRange(min_p, max_p, query_points);
         ASSERT_EQ(0u, query_points.size());
     }
+    BaseLib::console->set_level(old_level);
 }
 
 TEST_F(GeoLibOctTree, TestRangeQueryWithOutsideRange)
