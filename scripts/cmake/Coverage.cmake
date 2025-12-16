@@ -28,10 +28,8 @@ else() # Assuming gcc for this example
 endif()
 configure_file(scripts/cmake/gcovr.cfg.in gcovr.cfg @ONLY)
 
-find_program(GCOVR_EXECUTABLE NAMES gcovr)
-if(NOT GCOVR_EXECUTABLE AND OGS_USE_PIP)
-    set(GCOVR_EXECUTABLE uvx gcovr==6.0 CACHE PATH "" FORCE)
-endif()
+# Update to 8.5 once released
+set(GCOVR_EXECUTABLE uvx gcovr==8.3 CACHE PATH "" FORCE)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/coverage/html)
 
