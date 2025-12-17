@@ -271,13 +271,15 @@ TEST_F(ParameterLibParameter,
 
     std::vector<std::unique_ptr<ParameterBase>> parameters;
 
-    EXPECT_THROW((void)getNamedOrCreateInlineParameter(
-                     config_tree.getConfigSubtree("property"),
-                     parameters,
-                     "SaturationWeightedThermalConductivity",
-                     "dry_thermal_conductivity",
-                     "dry_inline"),
-                 std::runtime_error);
+    EXPECT_THROW(
+        (void)getNamedOrCreateInlineParameter(
+            config_tree.getConfigSubtree("property")
+                .getConfigParameter<std::string>("dry_thermal_conductivity"),
+            parameters,
+            "SaturationWeightedThermalConductivity",
+            "dry_thermal_conductivity",
+            "dry_inline"),
+        std::runtime_error);
 }
 
 TEST_F(ParameterLibParameter,
@@ -296,7 +298,8 @@ TEST_F(ParameterLibParameter,
     std::vector<std::unique_ptr<ParameterBase>> parameters;
 
     auto& p = getNamedOrCreateInlineParameter(
-        config_tree.getConfigSubtree("property"),
+        config_tree.getConfigSubtree("property")
+            .getConfigParameter<std::string>("dry_thermal_conductivity"),
         parameters,
         "SaturationWeightedThermalConductivity",
         "dry_thermal_conductivity",
@@ -339,7 +342,8 @@ TEST_F(ParameterLibParameter,
             pname, std::move(lambda_dry)));
 
     auto& p = getNamedOrCreateInlineParameter(
-        config_tree.getConfigSubtree("property"),
+        config_tree.getConfigSubtree("property")
+            .getConfigParameter<std::string>("dry_thermal_conductivity"),
         parameters,
         "SaturationWeightedThermalConductivity",
         "dry_thermal_conductivity",
