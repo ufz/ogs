@@ -79,6 +79,12 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overread>
             )
         endif()
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 15.2.1)
+            add_compile_options(
+                $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
+                $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
+            )
+        endif()
     endif()
 
     if(COMPILER_IS_CLANG)
