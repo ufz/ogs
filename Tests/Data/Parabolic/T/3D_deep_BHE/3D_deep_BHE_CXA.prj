@@ -15,9 +15,9 @@
                 <borehole_heat_exchanger>
                     <type>CXA</type>
                     <flow_and_temperature_control>
-                        <type>PowerCurveConstantFlow</type>
+                        <type>Power</type>
                         <flow_rate>0.00833</flow_rate>
-                        <power_curve>power_curve</power_curve>
+                        <power>BHE_power</power>
                     </flow_and_temperature_control>
                     <borehole>
                         <length>50.0</length>
@@ -189,6 +189,17 @@
             <name>T0_BHE1</name>
             <type>Constant</type>
             <values>25 25 25</values>
+        </parameter>
+        <parameter>
+            <name>Curve_Scale</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>BHE_power</name>
+            <type>CurveScaled</type>
+            <curve>power_curve</curve>
+            <parameter>Curve_Scale</parameter>
         </parameter>
     </parameters>
     <process_variables>

@@ -30,7 +30,7 @@ flow_curve = np.array([[0, 300, 600], [2e-4, 2e-4, 2e-4]])
 srcdir = Path(__file__).parent.parent.parent
 testsrcdir = srcdir / "Tests/Data/Parabolic/T/3D_Beier_sandbox"
 
-prj = "beier_sandbox_advanced_building_power_curves.prj"
+prj = "beier_sandbox_advanced_building_power.prj"
 base_prj_path = (
     testsrcdir / prj
 )  # case buildingPowerCurveHotWaterCurveActiveCoolingCurveFlowCurve

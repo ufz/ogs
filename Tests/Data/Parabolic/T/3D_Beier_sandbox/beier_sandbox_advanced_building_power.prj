@@ -18,21 +18,21 @@
                 <borehole_heat_exchanger>
                     <type>1U</type>
                     <flow_and_temperature_control>
-                        <type>AdvancedBuildingPowerCurvesFlowCurve</type>
+                        <type>AdvancedBuildingPower</type>
                         <heating>
-                            <power_curve>heat_power</power_curve>
+                            <power>heating_power</power>
                             <cop_curve>cop_heating</cop_curve>
                         </heating>
                         <hot_water>
-                            <power_curve>dhw_power</power_curve>
+                            <power>dhw_power</power>
                             <cop_curve>cop_dhw</cop_curve>
                         </hot_water>
                         <cooling>
                             <active>true</active>
-                            <power_curve>cool_power</power_curve>
+                            <power>cooling_power</power>
                             <cop_curve>cop_cool</cop_curve>
                         </cooling>
-                        <flow_rate_curve>flow_curve</flow_rate_curve>
+                        <flow_rate>flow_rate</flow_rate>
                     </flow_and_temperature_control>
                     <borehole>
                         <length>18.0</length>
@@ -208,6 +208,35 @@
             <name>T0_BHE1</name>
             <type>Constant</type>
             <values>285.36 285.13 285.23 285.115</values>
+        </parameter>
+        <parameter>
+            <name>Curve_Scale</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>heating_power</name>
+            <type>CurveScaled</type>
+            <curve>heat_power</curve>
+            <parameter>Curve_Scale</parameter>
+        </parameter>
+        <parameter>
+            <name>dhw_power</name>
+            <type>CurveScaled</type>
+            <curve>dhw_power</curve>
+            <parameter>Curve_Scale</parameter>
+        </parameter>
+        <parameter>
+            <name>cooling_power</name>
+            <type>CurveScaled</type>
+            <curve>cool_power</curve>
+            <parameter>Curve_Scale</parameter>
+        </parameter>
+        <parameter>
+            <name>flow_rate</name>
+            <type>CurveScaled</type>
+            <curve>flow_curve</curve>
+            <parameter>Curve_Scale</parameter>
         </parameter>
     </parameters>
     <process_variables>
