@@ -22,8 +22,8 @@ PowerWithCOP createPowerWithCOPStruct(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__hot_water__power}
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__heating__power}
+    //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__hot_water__power}
+    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__heating__power}
     auto const raw_power = config->getConfigParameter<std::string>("power");
 
     auto const& power_param = ParameterLib::getNamedOrCreateInlineParameter(
@@ -31,9 +31,9 @@ PowerWithCOP createPowerWithCOPStruct(
 
     auto const& cop_curve = *BaseLib::getOrError(
         curves,
-        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__cooling__cop_curve}
-        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__hot_water__cop_curve}
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__heating__cop_curve}
+        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling__cop_curve}
+        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__hot_water__cop_curve}
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__heating__cop_curve}
         config->getConfigParameter<std::string>("cop_curve"),
         "Required cop curve not found.");
 
@@ -47,7 +47,7 @@ CoolingVariant createCoolingVariant(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    if (  //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__cooling__active}
+    if (  //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling__active}
         cooling_config->getConfigParameter<bool>("active", false))
     {
         return createPowerWithCOPStruct(cooling_config, parameters, curves);
@@ -55,6 +55,7 @@ CoolingVariant createCoolingVariant(
     else
     {
         auto const raw_power =
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling__power}
             cooling_config->getConfigParameter<std::string>("power");
 
         return ParameterLib::getNamedOrCreateInlineParameter(
@@ -351,16 +352,16 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
     auto const power_min = config.getConfigParameter<double>("power_min", 1e-3);
     if (type == "InflowTemperature")
     {
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveConstantFlow__temperature_curve}
         auto const raw_temperature =
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__InflowTemperature__temperature}
             config.getConfigParameter<std::string>("temperature");
 
         auto const& temperature_param =
             ParameterLib::getNamedOrCreateInlineParameter(
                 raw_temperature, parameters, "temperature", "inline");
 
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveConstantFlow__flow_rate}
         auto const raw_flow_rate =
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__InflowTemperature__flow_rate}
             config.getConfigParameter<std::string>("flow_rate");
 
         auto const& flow_rate_param =
@@ -372,14 +373,14 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
     }
     if (type == "Power")
     {
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerConstantFlow__power}
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__Power__power}
         auto const raw_power = config.getConfigParameter<std::string>("power");
 
         auto const& power_param = ParameterLib::getNamedOrCreateInlineParameter(
             raw_power, parameters, "power", "inline");
 
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerConstantFlow__flow_rate}
         auto const raw_flow_rate =
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__Power__flow_rate}
             config.getConfigParameter<std::string>("flow_rate");
 
         auto const& flow_rate_param =
@@ -396,7 +397,7 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
 
     if (type == "BuildingPower")
     {
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__power_curve}
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPower__power}
         auto const raw_power = config.getConfigParameter<std::string>("power");
 
         auto const& power_param = ParameterLib::getNamedOrCreateInlineParameter(
@@ -404,14 +405,14 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
 
         auto const& cop_curve = *BaseLib::getOrError(
             curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__cop_heating_curve}
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPower__cop_curve}
             config.getConfigParameter<std::string>("cop_curve"),
             "Required cop curve not found.");
 
         PowerWithCOP const building_power{power_param, cop_curve};
 
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__flow_rate}
         auto const raw_flow_rate =
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPower__flow_rate}
             config.getConfigParameter<std::string>("flow_rate");
 
         auto const& flow_rate_param =
@@ -431,24 +432,24 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         // add a heating, hot water and cooling config as optional to handle
         // different combinations later
         auto const& heating_config =
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__heating}
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__heating}
             config.getConfigSubtreeOptional(
                 "heating");  // Optional, take care if it is not present
 
         // add a heating config to differ between different types
         auto const& hot_water_config =
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__hot_water}
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__hot_water}
             config.getConfigSubtreeOptional(
                 "hot_water");  // Optional, take care if it is not present
 
         // add a heating config to differ between different types
         auto const& cooling_config =
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__cooling}
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling}
             config.getConfigSubtreeOptional(
                 "cooling");  // Optional, take care if it is not present
 
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__flow_rate_curve}
         auto const raw_flow_rate =
+            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__flow_rate}
             config.getConfigParameter<std::string>("flow_rate");
 
         auto const& flow_rate_param =
