@@ -114,25 +114,14 @@ The units of these parameters are all in $\mathrm{m}$. Here is an example of a 2
 
 Four type of flow and temperature control patterns are provided in OGS.
 
-* `FixedPowerConstantFlow`:\
-  It means the BHE has a fixed thermal load and the refrigerant flow rate in the borehole is kept as a constant.
-  The fixed heating load value was defined by the keyword `<power>` , and the flow rate is given by `<flow_rate>`.
-* `FixedPowerFlowCurve`:\
-  It means the BHE has a fixed thermal load and the flow rate is following a time dependent curve.
-  The keyword `<power>` is kept the same, while the flow rate is defined by a curve in the `<curves>`.
-* `PowerCurveConstantFlow`:\
-  It means BHE has a constant flow rate while the power is various following a curve.
-  The keyword `<flow_rate>` applies here, along with the curve defined in the `<curves>`.
-* `TemperatureCurveConstantFlow`:\
-  It means BHE has a constant `<flow_rate>` while the inflow temperature following the values defined in the `<curves>`.
-* `TemperatureCurveFlowCurve`:\
-  It means both the BHE inflow rate and temperature values are following the corresponding curves.
-* `PowerCurveFlowCurve`:\
-  It means both the BHE thermal load and flow rate values are following the corresponding curves.
-* `BuildingPowerCurveConstantFlow`:\
-  It means the BHE thermal load is following a building heat load depending on a COP curve while the flow rate is kept as a constant.
-* `AdvancedBuildingPowerCurvesFlowCurve`:\
-  It means the BHE thermal load is following a building heat load, which is determined by both the value defined in the `<power_curve>`, as well as the value in the `<cop_curve>`.
+* `Power`:\
+  It means the borehole heat exchanger has a heat load `<power>` along with the `<flow_rate>` in the pipes.
+* `InflowTemperature`:\
+  It means the BHE inflow temperature is controlled and a flow rate needs to be provided.
+* `BuildingPower`:\
+  It means the BHE thermal load is following a building heat load depending on a COP curve while the flow rate needs to be provided.
+* `AdvancedBuildingPower`:\
+  It means the BHE thermal load is following a building heat load, which is determined by both the value defined in the `<power>`, as well as the value in the `<cop_curve>`.
   This configuration is designed to consider the effect of source temperature on the heat pump efficiency.
   To define the space heating load from the building, the heating power value is defined in the group <heating>.
   For thermal load for the drinking hot water, the keyword  `<hot_water>` is used.
@@ -140,24 +129,24 @@ Four type of flow and temperature control patterns are provided in OGS.
   Cooling can also be taken into account within the keyword `<cooling>`.
   With the keyword `<active>`, passive cooling (false) or active cooling (true) can be specified.
   Default is passive cooling.
-  The cooling load is defined in the `<power_curve>`.
+  The cooling load is defined in the `<power>`.
   For active cooling, a `<cop_curve>` is needed.
-  Under the setting of `AdvancedBuildingPowerCurvesFlowCurve`, every combination is possible.
-  The flow rate values are following the corresponding curve `<flow_rate_curve>`.
+  Under the setting of `AdvancedBuildingPower`, every combination is possible.
+  The flow rate values are following the corresponding parameter `<flow_rate>`.
 
-The unit of `<power>` is in $\mathrm{W}$ and `<flow_rate>` is in $\mathrm{m^{3}/s}$. For heating applications, thermal energy is extracted from the subsurface, then a negative power value should be given. It is vice versa for cooling applications.
+The unit of `<power>` is in $\mathrm{W}$ and `<flow_rate>` is in $\mathrm{m^{3}/s}$. For heating applications, thermal energy is extracted from the subsurface, then a negative power value should be given. It is vice versa for cooling applications. `<flow_rate>`, `<power>` or `<temperature>` are parameters, conversion of inline constant values is possible.
 
 <i class="far fa-arrow-right"></i> Further info:
 
 For all the flow and temperature control options, OpenGeoSys calculates the inlet temperature of each BHE internally. For each BHE, temperature on its inlet pipe is always set as a Dirichlet type boundary condition. Depending on the choice of `<flow_and_temperature_control>`, the inflow temperature will be calculated dynamically in each time step and iteration to satisfy the given constrains.
 
-Here is an example using `TemperatureCurveConstantFlow`.
+Here is an example using `InflowTemperature`.
 
 ```xml
 <flow_and_temperature_control>
-    <type>TemperatureCurveConstantFlow</type>
+    <type>InflowTemperature</type>
     <flow_rate>2.0e-4</flow_rate>
-    <temperature_curve>inflow_temperature</temperature_curve>
+    <temperature>inflow_temperature</temperature>
 </flow_and_temperature_control>
 ```
 
