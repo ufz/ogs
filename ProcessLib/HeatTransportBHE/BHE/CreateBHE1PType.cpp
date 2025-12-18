@@ -20,6 +20,7 @@ static std::tuple<BoreholeGeometry,
                   bool>
 parseBHE1PTypeConfig(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
@@ -60,6 +61,7 @@ parseBHE1PTypeConfig(
     auto const flowAndTemperatureControl = createFlowAndTemperatureControl(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control}
         config.getConfigSubtree("flow_and_temperature_control"),
+        parameters,
         curves,
         refrigerant);
 
@@ -70,11 +72,12 @@ parseBHE1PTypeConfig(
 template <typename T_BHE>
 T_BHE createBHE1PType(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    auto SinglePipeType = parseBHE1PTypeConfig(config, curves);
+    auto SinglePipeType = parseBHE1PTypeConfig(config, parameters, curves);
     return {std::get<0>(SinglePipeType), std::get<1>(SinglePipeType),
             std::get<2>(SinglePipeType), std::get<3>(SinglePipeType),
             std::get<4>(SinglePipeType), std::get<5>(SinglePipeType)};
@@ -82,6 +85,7 @@ T_BHE createBHE1PType(
 
 template BHE_1P createBHE1PType<BHE_1P>(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);

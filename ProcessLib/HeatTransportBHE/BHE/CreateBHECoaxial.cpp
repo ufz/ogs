@@ -21,6 +21,7 @@ static std::tuple<BoreholeGeometry,
                   bool>
 parseBHECoaxialConfig(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
@@ -60,6 +61,7 @@ parseBHECoaxialConfig(
     auto const flowAndTemperatureControl = createFlowAndTemperatureControl(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control}
         config.getConfigSubtree("flow_and_temperature_control"),
+        parameters,
         curves,
         refrigerant);
 
@@ -70,23 +72,26 @@ parseBHECoaxialConfig(
 template <typename T_BHE>
 T_BHE createBHECoaxial(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    auto coaxial = parseBHECoaxialConfig(config, curves);
+    auto coaxial = parseBHECoaxialConfig(config, parameters, curves);
     return {std::get<0>(coaxial), std::get<1>(coaxial), std::get<2>(coaxial),
             std::get<3>(coaxial), std::get<4>(coaxial), std::get<5>(coaxial)};
 }
 
 template BHE_CXA createBHECoaxial<BHE_CXA>(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);
 
 template BHE_CXC createBHECoaxial<BHE_CXC>(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);

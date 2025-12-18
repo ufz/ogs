@@ -28,37 +28,44 @@ namespace HeatTransportBHE
 std::map<std::string_view,
          std::function<BHE::BHETypes(
              BaseLib::ConfigTree const&,
+             std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&,
              std::map<std::string,
                       std::unique_ptr<
                           MathLib::PiecewiseLinearInterpolation>> const&)>>
     bheCreators = {{"1U",
-                    [](auto& config, auto& curves) {
-                        return BHE::BHE_1U(
-                            BHE::createBHEUType<BHE::BHE_1U>(config, curves));
+                    [](auto& config, auto& parameters, auto& curves)
+                    {
+                        return BHE::BHE_1U(BHE::createBHEUType<BHE::BHE_1U>(
+                            config, parameters, curves));
                     }},
                    {"2U",
-                    [](auto& config, auto& curves) {
-                        return BHE::BHE_2U(
-                            BHE::createBHEUType<BHE::BHE_2U>(config, curves));
+                    [](auto& config, auto& parameters, auto& curves)
+                    {
+                        return BHE::BHE_2U(BHE::createBHEUType<BHE::BHE_2U>(
+                            config, parameters, curves));
                     }},
                    {"CXA",
-                    [](auto& config, auto& curves) {
+                    [](auto& config, auto& parameters, auto& curves)
+                    {
                         return BHE::BHE_CXA(BHE::createBHECoaxial<BHE::BHE_CXA>(
-                            config, curves));
+                            config, parameters, curves));
                     }},
                    {"CXC",
-                    [](auto& config, auto& curves) {
+                    [](auto& config, auto& parameters, auto& curves)
+                    {
                         return BHE::BHE_CXC(BHE::createBHECoaxial<BHE::BHE_CXC>(
-                            config, curves));
+                            config, parameters, curves));
                     }},
-                   {"1P", [](auto& config, auto& curves) {
-                        return BHE::BHE_1P(
-                            BHE::createBHE1PType<BHE::BHE_1P>(config, curves));
+                   {"1P", [](auto& config, auto& parameters, auto& curves)
+                    {
+                        return BHE::BHE_1P(BHE::createBHE1PType<BHE::BHE_1P>(
+                            config, parameters, curves));
                     }}};
 
 void createAndInsertBHE(
     const std::string& bhe_type, const std::vector<int>& bhe_ids_of_this_bhe,
     const BaseLib::ConfigTree& bhe_config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves,
@@ -75,7 +82,7 @@ void createAndInsertBHE(
         if (id == bhe_ids_of_this_bhe[0])
         {
             result = bhes_map.try_emplace(
-                id, bhe_creator_it->second(bhe_config, curves));
+                id, bhe_creator_it->second(bhe_config, parameters, curves));
         }
         else
         {
@@ -97,7 +104,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<ProcessVariable> const& variables,
-    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
     std::map<std::string,
@@ -245,8 +252,8 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
             //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__type}
             bhe_config.getConfigParameter<std::string>("type");
 
-        createAndInsertBHE(bhe_type, bhe_ids_of_this_bhe, bhe_config, curves,
-                           bhes_map);
+        createAndInsertBHE(bhe_type, bhe_ids_of_this_bhe, bhe_config,
+                           parameters, curves, bhes_map);
         bhe_iterator++;
     }
 

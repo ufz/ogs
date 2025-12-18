@@ -5,8 +5,8 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-#include "BuildingPowerCurves.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "PowerWithCOP.h"
 #include "RefrigerantProperties.h"
 
 namespace ProcessLib
@@ -15,18 +15,19 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-BuildingPowerCurves createBuildingPowerCurvesStruct(
+PowerWithCOP createPowerWithCOPStruct(
     std::optional<BaseLib::ConfigTree> const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    auto const& power_curve = *BaseLib::getOrError(
-        curves,
-        //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__hot_water__power_curve}
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__heating__power_curve}
-        config->getConfigParameter<std::string>("power_curve"),
-        "Required power curve not found.");
+    //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__hot_water__power}
+    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__heating__power}
+    auto const raw_power = config->getConfigParameter<std::string>("power");
+
+    auto const& power_param = ParameterLib::getNamedOrCreateInlineParameter(
+        raw_power, parameters, "power", "inline");
 
     auto const& cop_curve = *BaseLib::getOrError(
         curves,
@@ -36,11 +37,12 @@ BuildingPowerCurves createBuildingPowerCurvesStruct(
         config->getConfigParameter<std::string>("cop_curve"),
         "Required cop curve not found.");
 
-    return BuildingPowerCurves{power_curve, cop_curve};
+    return PowerWithCOP{power_param, cop_curve};
 };
 
 CoolingVariant createCoolingVariant(
     std::optional<BaseLib::ConfigTree> const& cooling_config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
@@ -48,36 +50,35 @@ CoolingVariant createCoolingVariant(
     if (  //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__cooling__active}
         cooling_config->getConfigParameter<bool>("active", false))
     {
-        return createBuildingPowerCurvesStruct(cooling_config, curves);
+        return createPowerWithCOPStruct(cooling_config, parameters, curves);
     }
     else
     {
-        return std::ref(*BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__cooling__power_curve}
-            cooling_config->getConfigParameter<std::string>("power_curve"),
-            "Required cooling power curve not found."));
+        auto const raw_power =
+            cooling_config->getConfigParameter<std::string>("power");
+
+        return ParameterLib::getNamedOrCreateInlineParameter(
+            raw_power, parameters, "power", "inline");
     }
 };
 
 FlowAndTemperatureControl createHeatingHotWaterCooling(
-    std::optional<BuildingPowerCurves> const& heating,
-    std::optional<BuildingPowerCurves> const& hot_water,
+    std::optional<PowerWithCOP> const& heating,
+    std::optional<PowerWithCOP> const& hot_water,
     std::optional<CoolingVariant> const& cooling,
-    MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
+    ParameterLib::Parameter<double> const& flow_rate_param,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
+    if (std::holds_alternative<PowerWithCOP>(*cooling))
     {
         return FlowAndTemperatureControl{
-            std::in_place_type<
-                BuildingPowerCurveHotWaterCurveActiveCoolingCurveFlowCurve>,
+            std::in_place_type<BuildingPowerHotWaterActiveCooling>,
             *heating,
             *hot_water,
-            std::get<BuildingPowerCurves>(*cooling),
-            flow_rate_curve,
+            std::get<PowerWithCOP>(*cooling),
+            flow_rate_param,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
             flow_rate_min,
@@ -86,15 +87,13 @@ FlowAndTemperatureControl createHeatingHotWaterCooling(
     else
     {
         return FlowAndTemperatureControl{
-            std::in_place_type<
-                BuildingPowerCurveHotWaterCurvePassiveCoolingCurveFlowCurve>,
+            std::in_place_type<BuildingPowerHotWaterPassiveCooling>,
             *heating,
             *hot_water,
-            std::get<
-                std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
+            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
                 *cooling)
                 .get(),
-            flow_rate_curve,
+            flow_rate_param,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
             flow_rate_min,
@@ -103,21 +102,21 @@ FlowAndTemperatureControl createHeatingHotWaterCooling(
 };
 
 FlowAndTemperatureControl createHeatingCooling(
-    std::optional<BuildingPowerCurves> const& heating,
-    std::optional<BuildingPowerCurves> const& /*hot_water*/,
+    std::optional<PowerWithCOP> const& heating,
+    std::optional<PowerWithCOP> const& /*hot_water*/,
     std::optional<CoolingVariant> const& cooling,
-    MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
+    ParameterLib::Parameter<double> const& flow_rate_param,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
+    if (std::holds_alternative<PowerWithCOP>(*cooling))
     {
         return FlowAndTemperatureControl{
-            std::in_place_type<BuildingPowerCurveActiveCoolingCurveFlowCurve>,
+            std::in_place_type<BuildingPowerActiveCooling>,
             *heating,
-            std::get<BuildingPowerCurves>(*cooling),
-            flow_rate_curve,
+            std::get<PowerWithCOP>(*cooling),
+            flow_rate_param,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
             flow_rate_min,
@@ -126,13 +125,12 @@ FlowAndTemperatureControl createHeatingCooling(
     else
     {
         return FlowAndTemperatureControl{
-            std::in_place_type<BuildingPowerCurvePassiveCoolingCurveFlowCurve>,
+            std::in_place_type<BuildingPowerPassiveCooling>,
             *heating,
-            std::get<
-                std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
+            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
                 *cooling)
                 .get(),
-            flow_rate_curve,
+            flow_rate_param,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
             flow_rate_min,
@@ -141,21 +139,21 @@ FlowAndTemperatureControl createHeatingCooling(
 };
 
 FlowAndTemperatureControl createHotWaterCooling(
-    std::optional<BuildingPowerCurves> const& /*heating*/,
-    std::optional<BuildingPowerCurves> const& hot_water,
+    std::optional<PowerWithCOP> const& /*heating*/,
+    std::optional<PowerWithCOP> const& hot_water,
     std::optional<CoolingVariant> const& cooling,
-    MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
+    ParameterLib::Parameter<double> const& flow_rate_param,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
+    if (std::holds_alternative<PowerWithCOP>(*cooling))
     {
         return FlowAndTemperatureControl{
-            std::in_place_type<BuildingPowerCurveActiveCoolingCurveFlowCurve>,
+            std::in_place_type<BuildingPowerActiveCooling>,
             *hot_water,
-            std::get<BuildingPowerCurves>(*cooling),
-            flow_rate_curve,
+            std::get<PowerWithCOP>(*cooling),
+            flow_rate_param,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
             flow_rate_min,
@@ -164,13 +162,12 @@ FlowAndTemperatureControl createHotWaterCooling(
     else
     {
         return FlowAndTemperatureControl{
-            std::in_place_type<BuildingPowerCurvePassiveCoolingCurveFlowCurve>,
+            std::in_place_type<BuildingPowerPassiveCooling>,
             *hot_water,
-            std::get<
-                std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
+            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
                 *cooling)
                 .get(),
-            flow_rate_curve,
+            flow_rate_param,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
             flow_rate_min,
@@ -179,34 +176,32 @@ FlowAndTemperatureControl createHotWaterCooling(
 };
 
 FlowAndTemperatureControl createCooling(
-    std::optional<BuildingPowerCurves> const& /*heating*/,
-    std::optional<BuildingPowerCurves> const& /*hot_water*/,
+    std::optional<PowerWithCOP> const& /*heating*/,
+    std::optional<PowerWithCOP> const& /*hot_water*/,
     std::optional<CoolingVariant> const& cooling,
-    MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
+    ParameterLib::Parameter<double> const& flow_rate_param,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    if (std::holds_alternative<BuildingPowerCurves>(*cooling))
+    if (std::holds_alternative<PowerWithCOP>(*cooling))
     {
-        return FlowAndTemperatureControl{
-            std::in_place_type<ActiveCoolingCurveFlowCurve>,
-            std::get<BuildingPowerCurves>(*cooling),
-            flow_rate_curve,
-            refrigerant.specific_heat_capacity,
-            refrigerant.density,
-            flow_rate_min,
-            power_min};
+        return FlowAndTemperatureControl{std::in_place_type<ActiveCooling>,
+                                         std::get<PowerWithCOP>(*cooling),
+                                         flow_rate_param,
+                                         refrigerant.specific_heat_capacity,
+                                         refrigerant.density,
+                                         flow_rate_min,
+                                         power_min};
     }
     else
     {
         return FlowAndTemperatureControl{
-            std::in_place_type<PowerCurveFlowCurve>,
-            std::get<
-                std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>(
+            std::in_place_type<Power>,
+            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
                 *cooling)
                 .get(),
-            flow_rate_curve,
+            flow_rate_param,
             refrigerant.specific_heat_capacity,
             refrigerant.density,
             flow_rate_min,
@@ -216,10 +211,10 @@ FlowAndTemperatureControl createCooling(
 
 using FactoryAdvancedBuildingCurvesFlowCurve =
     std::function<FlowAndTemperatureControl(
-        std::optional<BuildingPowerCurves>,            // heating
-        std::optional<BuildingPowerCurves>,            // hot water
-        std::optional<CoolingVariant>,                 // cooling
-        MathLib::PiecewiseLinearInterpolation const&,  // flow rate curve
+        std::optional<PowerWithCOP>,             // heating
+        std::optional<PowerWithCOP>,             // hot water
+        std::optional<CoolingVariant>,           // cooling
+        ParameterLib::Parameter<double> const&,  // flow rate param
         RefrigerantProperties const&,
         double const,    // flow rate min
         double const)>;  // power min
@@ -227,20 +222,20 @@ using FactoryAdvancedBuildingCurvesFlowCurve =
 const std::map<std::tuple<bool, bool, bool>,  // heating, hot_water,
                                               // cooling
                FactoryAdvancedBuildingCurvesFlowCurve>
-    advancedBuildingPowerCurvesFlowCurve = {
+    advancedBuildingPower = {
         {{true, true, true}, &createHeatingHotWaterCooling},
         {{true, true, false},
-         [](std::optional<BuildingPowerCurves> const& heating,
-            std::optional<BuildingPowerCurves> const& hot_water,
+         [](std::optional<PowerWithCOP> const& heating,
+            std::optional<PowerWithCOP> const& hot_water,
             std::optional<CoolingVariant> const& /*cooling*/,
-            auto const& flow_rate_curve, auto const& refrigerant,
+            auto const& flow_rate_param, auto const& refrigerant,
             auto const flow_rate_min, auto const power_min)
          {
              return FlowAndTemperatureControl{
-                 std::in_place_type<BuildingPowerCurveHotWaterCurveFlowCurve>,
+                 std::in_place_type<BuildingPowerHotWater>,
                  *heating,
                  *hot_water,
-                 flow_rate_curve,
+                 flow_rate_param,
                  refrigerant.specific_heat_capacity,
                  refrigerant.density,
                  flow_rate_min,
@@ -249,32 +244,32 @@ const std::map<std::tuple<bool, bool, bool>,  // heating, hot_water,
         {{true, false, true}, &createHeatingCooling},
         {{false, true, true}, &createHotWaterCooling},
         {{true, false, false},
-         [](std::optional<BuildingPowerCurves> const& heating,
-            std::optional<BuildingPowerCurves> const& /*hot_water*/,
+         [](std::optional<PowerWithCOP> const& heating,
+            std::optional<PowerWithCOP> const& /*hot_water*/,
             std::optional<CoolingVariant> const& /*cooling*/,
-            auto const& flow_rate_curve, auto const& refrigerant,
+            auto const& flow_rate_param, auto const& refrigerant,
             auto const flow_rate_min, auto const power_min)
          {
              return FlowAndTemperatureControl{
-                 std::in_place_type<BuildingPowerCurveFlowCurve>,
+                 std::in_place_type<BuildingPower>,
                  *heating,
-                 flow_rate_curve,
+                 flow_rate_param,
                  refrigerant.specific_heat_capacity,
                  refrigerant.density,
                  flow_rate_min,
                  power_min};
          }},
         {{false, true, false},
-         [](std::optional<BuildingPowerCurves> const& /*heating*/,
-            std::optional<BuildingPowerCurves> const& hot_water,
+         [](std::optional<PowerWithCOP> const& /*heating*/,
+            std::optional<PowerWithCOP> const& hot_water,
             std::optional<CoolingVariant> const& /*cooling*/,
-            auto const& flow_rate_curve, auto const& refrigerant,
+            auto const& flow_rate_param, auto const& refrigerant,
             auto const flow_rate_min, auto const power_min)
          {
              return FlowAndTemperatureControl{
-                 std::in_place_type<BuildingPowerCurveFlowCurve>,
+                 std::in_place_type<BuildingPower>,
                  *hot_water,
-                 flow_rate_curve,
+                 flow_rate_param,
                  refrigerant.specific_heat_capacity,
                  refrigerant.density,
                  flow_rate_min,
@@ -282,20 +277,21 @@ const std::map<std::tuple<bool, bool, bool>,  // heating, hot_water,
          }},
         {{false, false, true}, &createCooling}};
 
-FlowAndTemperatureControl createAdvancedBuildingPowerCurvesFlowCurve(
+FlowAndTemperatureControl createAdvancedBuildingPower(
     std::optional<BaseLib::ConfigTree> const& heating_config,
     std::optional<BaseLib::ConfigTree> const& hot_water_config,
     std::optional<BaseLib::ConfigTree> const& cooling_config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves,
-    MathLib::PiecewiseLinearInterpolation const& flow_rate_curve,
+    ParameterLib::Parameter<double> const& flow_rate_param,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
     double const power_min)
 {
-    std::optional<BuildingPowerCurves> building_heating_curves;
-    std::optional<BuildingPowerCurves> building_hot_water_curves;
+    std::optional<PowerWithCOP> building_heating_curves;
+    std::optional<PowerWithCOP> building_hot_water_curves;
     std::optional<CoolingVariant> building_cooling_curves;
 
     bool heating = false;
@@ -305,40 +301,41 @@ FlowAndTemperatureControl createAdvancedBuildingPowerCurvesFlowCurve(
     if (heating_config)
     {
         building_heating_curves.emplace(
-            createBuildingPowerCurvesStruct(heating_config, curves));
+            createPowerWithCOPStruct(heating_config, parameters, curves));
         heating = true;
     }
     if (hot_water_config)
     {
         building_hot_water_curves.emplace(
-            createBuildingPowerCurvesStruct(hot_water_config, curves));
+            createPowerWithCOPStruct(hot_water_config, parameters, curves));
         hot_water = true;
     }
     if (cooling_config)
     {
         building_cooling_curves.emplace(
-            createCoolingVariant(cooling_config, curves));
+            createCoolingVariant(cooling_config, parameters, curves));
         cooling = true;
     }
     auto key = std::make_tuple(heating, hot_water, cooling);
 
-    auto it = advancedBuildingPowerCurvesFlowCurve.find(key);
-    if (it == advancedBuildingPowerCurvesFlowCurve.end())
+    auto it = advancedBuildingPower.find(key);
+    if (it == advancedBuildingPower.end())
         OGS_FATAL(
-            "AdvancedBuildingPowerCurvesFlowCurve combination is not "
+            "AdvancedBuildingPower combination is not "
             "implemented.");
     auto factory = it->second;
 
     return factory(building_heating_curves,
                    building_hot_water_curves,
                    building_cooling_curves,
-                   flow_rate_curve,
+                   flow_rate_param,
                    refrigerant,
                    flow_rate_min,
                    power_min);
 }
 FlowAndTemperatureControl createFlowAndTemperatureControl(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves,
@@ -352,143 +349,84 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
         config.getConfigParameter<double>("flow_rate_min", 1e-6);
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__power_min}
     auto const power_min = config.getConfigParameter<double>("power_min", 1e-3);
-    if (type == "TemperatureCurveConstantFlow")
+    if (type == "InflowTemperature")
     {
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveConstantFlow__temperature_curve}
+        auto const raw_temperature =
+            config.getConfigParameter<std::string>("temperature");
+
+        auto const& temperature_param =
+            ParameterLib::getNamedOrCreateInlineParameter(
+                raw_temperature, parameters, "temperature", "inline");
+
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveConstantFlow__flow_rate}
-        auto const flow_rate = config.getConfigParameter<double>("flow_rate");
+        auto const raw_flow_rate =
+            config.getConfigParameter<std::string>("flow_rate");
 
-        auto const& temperature_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveConstantFlow__temperature_curve}
-            config.getConfigParameter<std::string>("temperature_curve"),
-            "Required temperature curve not found.");
+        auto const& flow_rate_param =
+            ParameterLib::getNamedOrCreateInlineParameter(
+                raw_flow_rate, parameters, "flow_rate", "inline");
 
-        return TemperatureCurveConstantFlow{flow_rate, temperature_curve,
-                                            flow_rate_min};
+        return InflowTemperature{temperature_param, flow_rate_param,
+                                 flow_rate_min};
     }
-    if (type == "TemperatureCurveFlowCurve")
-    {
-        auto const& flow_rate_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveFlowCurve__flow_rate_curve}
-            config.getConfigParameter<std::string>("flow_rate_curve"),
-            "Required flow curve not found.");
-
-        auto const& temperature_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__TemperatureCurveFlowCurve__temperature_curve}
-            config.getConfigParameter<std::string>("temperature_curve"),
-            "Required temperature curve not found.");
-
-        return TemperatureCurveFlowCurve{flow_rate_curve, temperature_curve,
-                                         flow_rate_min};
-    }
-    if (type == "FixedPowerConstantFlow")
+    if (type == "Power")
     {
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerConstantFlow__power}
-        auto const power = config.getConfigParameter<double>("power");
+        auto const raw_power = config.getConfigParameter<std::string>("power");
+
+        auto const& power_param = ParameterLib::getNamedOrCreateInlineParameter(
+            raw_power, parameters, "power", "inline");
 
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerConstantFlow__flow_rate}
-        auto const flow_rate = config.getConfigParameter<double>("flow_rate");
+        auto const raw_flow_rate =
+            config.getConfigParameter<std::string>("flow_rate");
 
-        return FixedPowerConstantFlow{flow_rate,
-                                      power,
-                                      refrigerant.specific_heat_capacity,
-                                      refrigerant.density,
-                                      flow_rate_min,
-                                      power_min};
+        auto const& flow_rate_param =
+            ParameterLib::getNamedOrCreateInlineParameter(
+                raw_flow_rate, parameters, "flow_rate", "inline");
+
+        return Power{power_param,
+                     flow_rate_param,
+                     refrigerant.specific_heat_capacity,
+                     refrigerant.density,
+                     flow_rate_min,
+                     power_min};
     }
 
-    if (type == "FixedPowerFlowCurve")
+    if (type == "BuildingPower")
     {
-        auto const& flow_rate_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerFlowCurve__flow_rate_curve}
-            config.getConfigParameter<std::string>("flow_rate_curve"),
-            "Required flow rate curve not found.");
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__power_curve}
+        auto const raw_power = config.getConfigParameter<std::string>("power");
 
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__FixedPowerFlowCurve__power}
-        auto const power = config.getConfigParameter<double>("power");
+        auto const& power_param = ParameterLib::getNamedOrCreateInlineParameter(
+            raw_power, parameters, "power", "inline");
 
-        return FixedPowerFlowCurve{flow_rate_curve,
-                                   power,
-                                   refrigerant.specific_heat_capacity,
-                                   refrigerant.density,
-                                   flow_rate_min,
-                                   power_min};
-    }
-
-    if (type == "PowerCurveConstantFlow")
-    {
-        auto const& power_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__power_curve}
-            config.getConfigParameter<std::string>("power_curve"),
-            "Required power curve not found.");
-
-        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveConstantFlow__flow_rate}
-        auto const flow_rate = config.getConfigParameter<double>("flow_rate");
-
-        return PowerCurveConstantFlow{power_curve,
-                                      flow_rate,
-                                      refrigerant.specific_heat_capacity,
-                                      refrigerant.density,
-                                      flow_rate_min,
-                                      power_min};
-    }
-
-    if (type == "PowerCurveFlowCurve")
-    {
-        auto const& power_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveFlowCurve__power_curve}
-            config.getConfigParameter<std::string>("power_curve"),
-            "Required power curve not found.");
-
-        auto const& flow_rate_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__PowerCurveFlowCurve__flow_rate_curve}
-            config.getConfigParameter<std::string>("flow_rate_curve"),
-            "Required flow rate curve not found.");
-
-        return PowerCurveFlowCurve{power_curve,
-                                   flow_rate_curve,
-                                   refrigerant.specific_heat_capacity,
-                                   refrigerant.density,
-                                   flow_rate_min,
-                                   power_min};
-    }
-
-    if (type == "BuildingPowerCurveConstantFlow")
-    {
-        auto const& power_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__power_curve}
-            config.getConfigParameter<std::string>("power_curve"),
-            "Required power curve not found.");
-
-        auto const& cop_heating_curve = *BaseLib::getOrError(
+        auto const& cop_curve = *BaseLib::getOrError(
             curves,
             //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__cop_heating_curve}
-            config.getConfigParameter<std::string>("cop_heating_curve"),
-            "Required power curve not found.");
+            config.getConfigParameter<std::string>("cop_curve"),
+            "Required cop curve not found.");
 
-        BuildingPowerCurves const building_power_curves{power_curve,
-                                                        cop_heating_curve};
+        PowerWithCOP const building_power{power_param, cop_curve};
 
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__BuildingPowerCurveConstantFlow__flow_rate}
-        auto const flow_rate = config.getConfigParameter<double>("flow_rate");
+        auto const raw_flow_rate =
+            config.getConfigParameter<std::string>("flow_rate");
 
-        return BuildingPowerCurveConstantFlow{
-            building_power_curves,
-            flow_rate,
-            refrigerant.specific_heat_capacity,
-            refrigerant.density,
-            flow_rate_min,
-            power_min};
+        auto const& flow_rate_param =
+            ParameterLib::getNamedOrCreateInlineParameter(
+                raw_flow_rate, parameters, "flow_rate", "inline");
+
+        return BuildingPower{building_power,
+                             flow_rate_param,
+                             refrigerant.specific_heat_capacity,
+                             refrigerant.density,
+                             flow_rate_min,
+                             power_min};
     }
 
-    if (type == "AdvancedBuildingPowerCurvesFlowCurve")
+    if (type == "AdvancedBuildingPower")
     {
         // add a heating, hot water and cooling config as optional to handle
         // different combinations later
@@ -509,20 +447,17 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
             config.getConfigSubtreeOptional(
                 "cooling");  // Optional, take care if it is not present
 
-        auto const& flow_rate_curve = *BaseLib::getOrError(
-            curves,
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__flow_rate_curve}
-            config.getConfigParameter<std::string>("flow_rate_curve"),
-            "Required flow rate curve not found.");
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPowerCurvesFlowCurve__flow_rate_curve}
+        auto const raw_flow_rate =
+            config.getConfigParameter<std::string>("flow_rate");
 
-        return createAdvancedBuildingPowerCurvesFlowCurve(heating_config,
-                                                          hot_water_config,
-                                                          cooling_config,
-                                                          curves,
-                                                          flow_rate_curve,
-                                                          refrigerant,
-                                                          flow_rate_min,
-                                                          power_min);
+        auto const& flow_rate_param =
+            ParameterLib::getNamedOrCreateInlineParameter(
+                raw_flow_rate, parameters, "flow_rate", "inline");
+
+        return createAdvancedBuildingPower(
+            heating_config, hot_water_config, cooling_config, parameters,
+            curves, flow_rate_param, refrigerant, flow_rate_min, power_min);
     }
     OGS_FATAL("FlowAndTemperatureControl type '{:s}' is not implemented.",
               type);
