@@ -4,7 +4,7 @@ export CTEST_PARALLEL_LEVEL="${CTEST_PARALLEL_LEVEL:-4}"
 module use /global/apps/modulefiles
 
 module load foss/2024a
-module load CMake/3.29.3
+module load CMake/3.31.8
 module load Ninja/1.12.1
 
 # Tools

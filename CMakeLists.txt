@@ -1,12 +1,5 @@
 # ---- OGS-6 Project ----
-cmake_minimum_required(VERSION 3.26)
-
-if(CMAKE_VERSION GREATER_EQUAL 3.29)
-    cmake_policy(SET CMP0156 NEW)
-endif()
-if(CMAKE_VERSION GREATER_EQUAL 3.30)
-    cmake_policy(SET CMP0167 NEW)
-endif()
+cmake_minimum_required(VERSION 3.31)
 
 if(APPLE AND NOT (DEFINED CMAKE_OSX_DEPLOYMENT_TARGET
                   OR DEFINED ENV{MACOSX_DEPLOYMENT_TARGET})

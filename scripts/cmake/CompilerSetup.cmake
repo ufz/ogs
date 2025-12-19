@@ -98,10 +98,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                     is required! Found version ${CMAKE_CXX_COMPILER_VERSION}. Update Xcode!"
                 )
             endif()
-            # https://gitlab.kitware.com/cmake/cmake/-/issues/25297
-            if(CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 15 AND CMAKE_VERSION LESS 3.29)
-                add_link_options(LINKER:-no_warn_duplicate_libraries)
-            endif()
         else()
             if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS
                ${ogs.minimum_version.clang}
