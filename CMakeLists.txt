@@ -97,7 +97,6 @@ include(DocumentationSetup)
 include(test/Test)
 include(Coverage)
 include(CppCheck)
-include(ClangTidy)
 
 # ---- More Options ----
 set(CMAKE_LINK_LIBRARIES_ONLY_TARGETS ON)

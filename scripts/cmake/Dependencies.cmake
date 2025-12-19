@@ -7,6 +7,11 @@ if(NOT CPM_SOURCE_CACHE)
                     "see https://www.opengeosys.org/docs/devguide/packages/cpm/.")
 endif()
 
+# Disable clang-tidy for cpm directories
+file(WRITE ${PROJECT_BINARY_DIR}/_deps/.clang-tidy
+    "---\nChecks: '-*,boost-use-to-string'"
+)
+
 if(OGS_BUILD_TESTING)
     if(GUIX_BUILD)
         find_package(GTest REQUIRED)
