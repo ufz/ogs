@@ -284,11 +284,6 @@ function(AddTest)
         _set_omp_test_properties()
     endif()
 
-    if(NOT OGS_BUILD_WHEEL)
-        add_dependencies(ctest ${AddTest_EXECUTABLE})
-        add_dependencies(ctest-large ${AddTest_EXECUTABLE})
-    endif()
-
     if(NOT AddTest_TESTER OR OGS_COVERAGE)
         return()
     endif()

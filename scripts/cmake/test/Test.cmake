@@ -74,9 +74,10 @@ add_custom_target(ctest-cleanup ${CMAKE_COMMAND} -E remove -f Tests/ctest.log)
 
 add_custom_target(
     ctest
+    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}
     COMMAND ${CMAKE_CTEST_COMMAND} ${_ctest_parameter} --output-log
             Tests/ctest.log -L default ${_test_label_exclude_argument}
-    DEPENDS ${test_dependencies} ctest-cleanup
+    DEPENDS ctest-cleanup
     USES_TERMINAL
 )
 
@@ -86,9 +87,10 @@ add_custom_target(
 
 add_custom_target(
     ctest-large
+    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}
     COMMAND ${CMAKE_CTEST_COMMAND} ${_ctest_parameter} --output-log
             Tests/ctest-large.log -L default -L large
-    DEPENDS ${test_dependencies} ctest-large-cleanup
+    DEPENDS ctest-large-cleanup
     USES_TERMINAL
 )
 

@@ -16,7 +16,6 @@ build win:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
-      -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_PIP=ON
 
 # Default config which is packaged on release
@@ -36,7 +35,6 @@ build win mkl:
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release
     CMAKE_ARGS: >-
-      -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_USE_MKL=ON
       -DOGS_USE_PIP=ON
 
@@ -55,5 +53,4 @@ build win msvc:
     BUILD_TESTS: "false"
     BUILD_CTEST: "false"
     CMAKE_ARGS: >-
-      -DOGS_CI_TESTRUNNER_REPEAT=1
       -DOGS_BUILD_PROCESSES=SteadyStateDiffusion

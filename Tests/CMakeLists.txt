@@ -1,21 +1,6 @@
 set(CMAKE_FOLDER "Testing")
-# ctest dependencies
-foreach(
-    tool
-    vtkdiff
-    xdmfdiff
-    GMSH2OGS
-    Layers2Grid
-    AddFaultToVoxelGrid
-    ExtractBoundary
-    generateStructuredMesh
-)
-    if(TARGET ${tool})
-        list(APPEND test_dependencies ${tool})
-    endif()
-endforeach()
-add_dependencies(ctest ${test_dependencies})
-add_dependencies(ctest-large ${test_dependencies})
+# `make test` depends on ALL
+set(CMAKE_SKIP_TEST_ALL_DEPENDENCY OFF)
 
 # testrunner ###
 get_source_files(TEST_SOURCES)
@@ -166,10 +151,8 @@ target_precompile_headers(
 # cmake-format: off
 # Add make-target tests which runs the testrunner
 if(DEFINED ENV{CI} AND NOT OGS_COVERAGE)
-    set(OGS_CI_TESTRUNNER_REPEAT 3 CACHE STRING
-        "The number of testrunner repeats for the tests target")
     set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
-        --gtest_shuffle --gtest_repeat=${OGS_CI_TESTRUNNER_REPEAT})
+        --gtest_shuffle --gtest_repeat=3)
 endif()
 set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
     -l warn

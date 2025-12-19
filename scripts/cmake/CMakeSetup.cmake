@@ -19,7 +19,6 @@ endif()
 # Set additional CMake modules path
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake"
-    "${PROJECT_SOURCE_DIR}/scripts/cmake/vector-of-bool"
 )
 
 list(
