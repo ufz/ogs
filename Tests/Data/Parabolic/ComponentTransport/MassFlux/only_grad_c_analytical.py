@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 
 # This script computes the reference solution of the "only_grad_c" test case.
 # Only a concentration gradient is applied over a quasi-one-dimensional domain.

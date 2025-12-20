@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 # Python boundary condition for a Dirichlet Jump with subsequent freeing of the boundary
 try:
     import ogs.callbacks as OpenGeoSys

@@ -1,13 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- * Created on February 17, 2021, 4:22 PM
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
 

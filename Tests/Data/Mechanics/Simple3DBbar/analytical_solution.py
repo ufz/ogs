@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 import pyvista as pv
 
 mesh = pv.read("simple_3d_bbar_ts_1_t_1.000000.vtu")

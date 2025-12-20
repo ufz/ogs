@@ -1,15 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- * The code of this file is used to decouple the evaluation of matrix elements
- * from the rest of OGS6, not all of OGS6 has to be recompiled every time a
- * small change is done.
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 

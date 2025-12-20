@@ -1,13 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- *  Created on November 29, 2017, 2:03 PM
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 

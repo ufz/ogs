@@ -1,18 +1,5 @@
-/*!
-   \file
-   \brief Definition of a function related to PETSc solver interface to assign
-         the Dirichlet boundary conditions.
-
-   \author Wenqing Wang
-   \version
-   \date Nov 2011 - Sep 2013
-
-   \copyright
-    Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
-               Distributed under a Modified BSD License.
-               See accompanying file LICENSE.txt or
-               http://www.opengeosys.org/project/license
-*/
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include "PETScTools.h"
 

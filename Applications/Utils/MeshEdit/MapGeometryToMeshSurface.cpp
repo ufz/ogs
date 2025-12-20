@@ -1,13 +1,5 @@
-/*
- * \file
- * \date 2015-04-20
- * \brief Map geometric objects to the surface of the given mesh.
- *
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include <tclap/CmdLine.h>
 

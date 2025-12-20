@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 import ogs._internal.provide_ogs_cli_tools_via_wheel as ogs_cli_wheel
 import pytest
 from ogs._internal.binaries_list import binaries_list

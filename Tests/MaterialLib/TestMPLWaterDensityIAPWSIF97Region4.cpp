@@ -1,16 +1,6 @@
-/*!
-   \file
-   \brief Test classes for water saturated density models.
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
-   \author Chaofan Chen
-   \date March 2023
-
-   \copyright
-    Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
-               Distributed under a Modified BSD License.
-               See accompanying file LICENSE.txt or
-               http://www.opengeosys.org/project/license
-*/
 #include <gtest/gtest.h>
 
 #include <memory>

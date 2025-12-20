@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 # Collection of python boundary condition (BC) classes for OpenGeoSys
 
 try:

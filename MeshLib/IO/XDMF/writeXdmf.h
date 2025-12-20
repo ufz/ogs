@@ -1,16 +1,5 @@
-/**
- * \file
- * \author Tobias Meisel
- * \date   2021-07-13
- * \brief  write_xdmf generates a function based on spatial mesh data. The
- * generated function finally generates an XDMF string when temporal data is
- * known
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 

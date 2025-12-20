@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 
 # invoke with
 # LD_LIBRARY_PATH="<OGS_BUILD_DIR>/lib:$LD_LIBRARY_PATH" ./generate-reference-solution.py

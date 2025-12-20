@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 @Behaviour<generic> 'libOgsMFrontBehaviour' 'BDT';
 @MaterialProperty<constant> 'YoungModulus' 4.4619E+04;
 @MaterialProperty<constant> 'PoissonRatio' 3.0000E-01;

@@ -1,15 +1,6 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- * File:   DirichletBoundaryConditionWithinTimeInterval.cpp
- *
- * Created on November 26, 2018, 4:59 PM
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include "DirichletBoundaryConditionWithinTimeInterval.h"
 
 #include "DirichletBoundaryCondition.h"

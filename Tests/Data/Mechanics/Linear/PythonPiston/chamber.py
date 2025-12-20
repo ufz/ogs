@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 # model of the ideal gas inside the chamber
 
 from math import pi

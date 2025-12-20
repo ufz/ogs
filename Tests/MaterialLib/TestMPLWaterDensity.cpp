@@ -1,16 +1,6 @@
-/*!
-   \file
-   \brief Test classes for fluid density models.
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
-   \author Wenqing Wang
-   \date Jan 2015
-
-   \copyright
-    Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
-               Distributed under a Modified BSD License.
-               See accompanying file LICENSE.txt or
-               http://www.opengeosys.org/project/license
-*/
 #include <gtest/gtest.h>
 
 #include <memory>

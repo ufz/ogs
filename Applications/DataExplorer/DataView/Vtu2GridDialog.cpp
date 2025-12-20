@@ -1,15 +1,5 @@
-/**
- * \file
- * \date   2023-05-11
- * \brief  Implementation of the Vtu2GridDialog class.
- *
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include "Vtu2GridDialog.h"
 

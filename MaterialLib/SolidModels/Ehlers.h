@@ -1,12 +1,8 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 /**
  * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- *
  * Implementation of Ehler's single-surface model.
  * see Ehler's paper "A single-surface yield function for geomaterials" for more
  * details. \cite Ehlers1995

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 # model of the evolving glacier extensions (length and height)
 # parameterized, independent of concrete geometry
 
