@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>2Phase_wellbore_vertical_qua.vtu</mesh>
     <geometry>2Phase_wellbore_small.gml</geometry>
@@ -14,8 +14,7 @@
             </process_variables>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>1e6 0.1 4e5</component_magnitudes>
-                <relative_epsilons>1e-8 1e-7 1e-13</relative_epsilons>
+                <epsilons>0.01 1e-08 4e-08</epsilons>
             </jacobian_assembler>
             <specific_body_force> -9.81 </specific_body_force>
             <secondary_variables>

@@ -34,7 +34,14 @@ public:
     {
         if (absolute_epsilons_.empty())
         {
-            OGS_FATAL("No values for the absolute epsilons have been given.");
+            OGS_FATAL(
+                "Numerical Jacobian assembler requires perturbation values "
+                "(epsilons) for finite difference approximation, but none were "
+                "provided.\n"
+                "Please specify <epsilons> in the <jacobian_assembler> section "
+                "of your project file.\n"
+                "Example: <epsilons>1e-8 1e-8</epsilons> for a process with 2 "
+                "non-deformation variables.");
         }
     }
 
@@ -81,20 +88,19 @@ public:
         }
 
         int const num_abs_eps = static_cast<int>(absolute_epsilons_.size());
-        // TODO: restrict to equal for future?
-        if (num_abs_eps < max_non_deformation_dofs_per_node)
+        if (num_abs_eps != max_non_deformation_dofs_per_node)
         {
             OGS_FATAL(
-                "The number of specified epsilons ({:d}) is smaller than the "
-                "maximum number of non-deformation d.o.f.s per node ({:d}).",
-                num_abs_eps, max_non_deformation_dofs_per_node);
-        }
-        if (num_abs_eps > max_non_deformation_dofs_per_node)
-        {
-            WARN(
-                "The number of specified epsilons ({:d}) is larger than the "
-                "maximum number of non-deformation d.o.f.s per node ({:d}). "
-                "The extra epsilons will be ignored.",
+                "Mismatch in numerical Jacobian perturbation configuration:\n"
+                "  Provided epsilons:  {:d}\n"
+                "  Required epsilons:  {:d} (one per non-deformation variable "
+                "component)\n\n"
+                "Each non-deformation variable needs exactly one epsilon value "
+                "for numerical differentiation.\n"
+                "Deformation variables use analytical Jacobian and do not "
+                "require epsilons.\n"
+                "Please adjust the <epsilons> array in your project file to "
+                "match the number of required components.",
                 num_abs_eps, max_non_deformation_dofs_per_node);
         }
     }
@@ -148,6 +154,14 @@ protected:
     /// the numerical Jacobian assembler. Therefore, it is thread-safe.
     std::vector<int> non_deformation_component_ids_;
 
+    /// Perturbations of the variable components used for evaluating finite
+    /// differences (excluding deformation).
+    /// \note The perturbations must be specified component-wise for each
+    /// non-deformation variable. If the number of perturbations is not equal
+    /// to the number of non-deformation variable components, a fatal error is
+    /// issued. The deformation block of the local Jacobian matrix is calculated
+    /// analytically; therefore, perturbations for deformation components are
+    /// not required.
     std::vector<double> const absolute_epsilons_;
 };
 

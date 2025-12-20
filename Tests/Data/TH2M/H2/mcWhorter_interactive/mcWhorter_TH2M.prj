@@ -101,20 +101,7 @@
             </constitutive_relation>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                </component_magnitudes>
-                <relative_epsilons>
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-06 1e-06 1e-06 1e-06
-                   1e-08 1e-08 1e-08 1e-08
-                   1e-08 1e-08 1e-08 1e-08
-                </relative_epsilons>
+                <epsilons>0.001 0.001 1e-06</epsilons>
             </jacobian_assembler>
             <reference_temperature>temperature_ic</reference_temperature>
             <process_variables>
@@ -124,14 +111,14 @@
                 <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
-                <secondary_variable name="velocity_gas" />
-                <secondary_variable name="velocity_liquid" />
-                <secondary_variable name="sigma" />
-                <secondary_variable name="epsilon" />
-                <secondary_variable name="liquid_density" />
-                <secondary_variable name="gas_density" />
-                <secondary_variable name="porosity" />
-                <secondary_variable name="saturation" />
+                <secondary_variable name="velocity_gas"/>
+                <secondary_variable name="velocity_liquid"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="liquid_density"/>
+                <secondary_variable name="gas_density"/>
+                <secondary_variable name="porosity"/>
+                <secondary_variable name="saturation"/>
                 <secondary_variable internal_name="mole_fraction_gas" output_name="xnCG"/>
                 <secondary_variable internal_name="mass_fraction_gas" output_name="xmCG"/>
                 <secondary_variable internal_name="mass_fraction_liquid" output_name="xmWL"/>

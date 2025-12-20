@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>square_1x1_quad_1e3.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
@@ -33,6 +33,7 @@
             </secondary_variables>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
+                <epsilons>1e-08</epsilons>
             </jacobian_assembler>
         </process>
     </processes>

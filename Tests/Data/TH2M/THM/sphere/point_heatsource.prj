@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">domain.vtu</mesh>
@@ -18,24 +18,10 @@
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
             </constitutive_relation>
-
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-                </component_magnitudes>
-                <relative_epsilons>
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-03 1e-03 1e-03 1e-03
-                   1e-06 1e-06 1e-06 1e-06
-                   1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08
-                   1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08</relative_epsilons>
+                <epsilons>0.001 0.001 0.001</epsilons>
             </jacobian_assembler>
-
             <reference_temperature>T0</reference_temperature>
             <process_variables>
                 <gas_pressure>gas_pressure</gas_pressure>
@@ -112,13 +98,11 @@
                                 <slope>-4.e-4</slope>
                             </independent_variable>
                         </property>
-
                         <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1.e-3</value>
                         </property>
-
                     </properties>
                 </phase>
                 <phase>
@@ -139,7 +123,6 @@
                             <type>Constant</type>
                             <value>917.654</value>
                         </property>
-
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
@@ -149,54 +132,45 @@
                 </phase>
             </phases>
             <properties>
-
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
                     <value>2.e-20</value>
                 </property>
-
                 <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
                     <value>1.0</value>
                 </property>
-
                 <property>
                     <name>saturation</name>
                     <type>Constant</type>
                     <value>0</value>
                 </property>
-
                 <property>
                     <name>relative_permeability</name>
                     <type>Constant</type>
                     <value>0</value>
                 </property>
-
                 <property>
                     <name>relative_permeability_nonwetting_phase</name>
                     <type>Constant</type>
                     <value>1</value>
                 </property>
-
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
                     <value>0.16</value>
                 </property>
-
                 <property>
                     <name>thermal_conductivity</name>
                     <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
-
                 <property>
                     <name>bishops_effective_stress</name>
                     <type>BishopsPowerLaw</type>
                     <exponent>1</exponent>
                 </property>
-
             </properties>
         </medium>
     </media>
@@ -234,7 +208,6 @@
                     <each_steps>5</each_steps>
                 </pair>
             </timesteps>
-
             <variables>
                 <variable>gas_pressure</variable>
                 <variable>gas_pressure_interpolated</variable>
@@ -302,7 +275,6 @@
             <value>1</value>
         </parameter>
     </parameters>
-
     <!-- ## Displacement equation ###########################-->
     <process_variables>
         <process_variable>
@@ -311,25 +283,20 @@
             <order>2</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
-
                 <boundary_condition>
                     <mesh>geometry_bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
-
                 <boundary_condition>
                     <mesh>geometry_left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
-
-
             </boundary_conditions>
         </process_variable>
-
         <!-- ## Gas pressure equation #############################################-->
         <process_variable>
             <name>gas_pressure</name>
@@ -337,17 +304,14 @@
             <order>1</order>
             <initial_condition>pressure_ic</initial_condition>
             <boundary_conditions>
-
                 <boundary_condition>
                     <mesh>geometry_out</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>pressure_bc_left</parameter>
                 </boundary_condition>
-
             </boundary_conditions>
         </process_variable>
-
         <!-- ## Capillary pressure equation #######################################-->
         <process_variable>
             <name>capillary_pressure</name>
@@ -355,17 +319,14 @@
             <order>1</order>
             <initial_condition>dirichlet0</initial_condition>
             <boundary_conditions>
-
                 <boundary_condition>
                     <mesh>domain_bc</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
-
             </boundary_conditions>
         </process_variable>
-
         <!-- ## Temperature equation ##############################################-->
         <process_variable>
             <name>temperature</name>
@@ -373,27 +334,22 @@
             <order>1</order>
             <initial_condition>temperature_ic</initial_condition>
             <boundary_conditions>
-
                 <boundary_condition>
                     <mesh>geometry_out</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>temperature_ic</parameter>
                 </boundary_condition>
-
             </boundary_conditions>
             <source_terms>
-
                 <source_term>
                     <mesh>geometry_center</mesh>
                     <type>Nodal</type>
                     <parameter>temperature_source_term</parameter>
                 </source_term>
-
             </source_terms>
         </process_variable>
     </process_variables>
-
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>basic_newton</name>

@@ -5,21 +5,24 @@
  *            Distributed under a Modified BSD License.
  *              See accompanying file LICENSE.txt or
  *              http://www.opengeosys.org/project/license
+ *
+ * Created on 2025-12-04 14:04:52
  */
 
-#include "CreateForwardDifferencesJacobianAssembler.h"
+#include "CreateCentralDifferencesJacobianAssembler.h"
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "ForwardDifferencesJacobianAssembler.h"
+#include "CentralDifferencesJacobianAssembler.h"
 
 namespace ProcessLib
 {
+
 std::unique_ptr<AbstractJacobianAssembler>
-createForwardDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
+createCentralDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__processes__process__jacobian_assembler__type}
-    config.checkConfigParameter("type", "ForwardDifferences");
+    config.checkConfigParameter("type", "CentralDifferences");
 
     // TODO: to be removed
     {
@@ -30,13 +33,13 @@ createForwardDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
             auto const deprecated_parameter =
                 //! \ogs_file_special
                 config.getConfigParameterOptional<std::vector<double>>(key);
-
             if ((deprecated_parameter.has_value() &&
                  !deprecated_parameter->empty()))
             {
                 OGS_FATAL(
                     "Configuration parameter <{:s}> is deprecated and no "
-                    "longer supported.\n"
+                    "longer "
+                    "supported.\n"
                     "(Removed in OGS version 6.5.6)\n\n"
                     "The numerical Jacobian assembler now uses absolute "
                     "perturbation values instead of relative scaling.\n\n"
@@ -53,10 +56,10 @@ createForwardDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
         }
     }
 
-    //! \ogs_file_param{prj__processes__process__jacobian_assembler__ForwardDifferences__epsilons}
+    //! \ogs_file_param{prj__processes__process__jacobian_assembler__CentralDifferences__epsilons}
     auto epsilons = config.getConfigParameter<std::vector<double>>("epsilons");
 
-    return std::make_unique<ForwardDifferencesJacobianAssembler>(
+    return std::make_unique<CentralDifferencesJacobianAssembler>(
         std::move(epsilons));
 }
 

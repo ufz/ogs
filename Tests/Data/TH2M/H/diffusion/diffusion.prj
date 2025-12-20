@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="false">domain.vtu</mesh>
@@ -19,20 +19,7 @@
             </constitutive_relation>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                   1.0 1.0 1.0 1.0
-                </component_magnitudes>
-                <relative_epsilons>
-                   1e-02 1e-02 1e-02 1e-02
-                   1e-02 1e-02 1e-02 1e-02
-                   1e-06 1e-06 1e-06 1e-06
-                   1e-08 1e-08 1e-08 1e-08
-                   1e-08 1e-08 1e-08 1e-08
-                </relative_epsilons>
+                <epsilons>0.01 0.01 1e-06</epsilons>
             </jacobian_assembler>
             <reference_temperature>temperature_ic</reference_temperature>
             <process_variables>
@@ -42,22 +29,22 @@
                 <displacement>displacement</displacement>
             </process_variables>
             <secondary_variables>
-                <secondary_variable name="velocity_gas" />
-                <secondary_variable name="velocity_liquid" />
-                <secondary_variable internal_name="diffusion_velocity_vapour_gas" output_name="d_WG" />
-                <secondary_variable internal_name="diffusion_velocity_gas_gas" output_name="d_CG" />
-                <secondary_variable internal_name="diffusion_velocity_solute_liquid" output_name="d_CL" />
-                <secondary_variable internal_name="diffusion_velocity_liquid_liquid" output_name="d_WL" />
-                <secondary_variable name="sigma" />
-                <secondary_variable name="epsilon" />
-                <secondary_variable name="liquid_density" />
-                <secondary_variable name="gas_density" />
-                <secondary_variable name="porosity" />
-                <secondary_variable name="saturation" />
-                <secondary_variable name="vapour_pressure" />
-                <secondary_variable internal_name="mole_fraction_gas" output_name="xnCG" />
-                <secondary_variable internal_name="mass_fraction_gas" output_name="xmCG" />
-                <secondary_variable internal_name="mass_fraction_liquid" output_name="xmWL" />
+                <secondary_variable name="velocity_gas"/>
+                <secondary_variable name="velocity_liquid"/>
+                <secondary_variable internal_name="diffusion_velocity_vapour_gas" output_name="d_WG"/>
+                <secondary_variable internal_name="diffusion_velocity_gas_gas" output_name="d_CG"/>
+                <secondary_variable internal_name="diffusion_velocity_solute_liquid" output_name="d_CL"/>
+                <secondary_variable internal_name="diffusion_velocity_liquid_liquid" output_name="d_WL"/>
+                <secondary_variable name="sigma"/>
+                <secondary_variable name="epsilon"/>
+                <secondary_variable name="liquid_density"/>
+                <secondary_variable name="gas_density"/>
+                <secondary_variable name="porosity"/>
+                <secondary_variable name="saturation"/>
+                <secondary_variable name="vapour_pressure"/>
+                <secondary_variable internal_name="mole_fraction_gas" output_name="xnCG"/>
+                <secondary_variable internal_name="mass_fraction_gas" output_name="xmCG"/>
+                <secondary_variable internal_name="mass_fraction_liquid" output_name="xmWL"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
             <mass_lumping>false</mass_lumping>
@@ -406,7 +393,6 @@
             <type>Constant</type>
             <value>100000</value>
         </parameter>
-
         <parameter>
             <name>capillary_pressure_ic</name>
             <type>Constant</type>
@@ -428,7 +414,6 @@
             <value>1.0</value>
         </parameter>
     </parameters>
-
     <!-- ## Displacement equation #########################################-->
     <process_variables>
         <process_variable>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <mesh>cube_1x1x1_hex_1e1.vtu</mesh>
     <geometry>cube_1x1x1.gml</geometry>
@@ -9,6 +9,7 @@
             <integration_order>2</integration_order>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
+                <epsilons>1e-08</epsilons>
             </jacobian_assembler>
             <process_variables>
                 <process_variable>pressure</process_variable>

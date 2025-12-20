@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="false">domain.vtu</mesh>
@@ -17,20 +17,7 @@
             </constitutive_relation>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>
-                1e6 1e6 1e6 1e6
-                1e6 1e6 1e6 1e6
-                300 300 300 300
-                0.01 0.01 0.01 0.01
-                0.01 0.01 0.01 0.01
-                </component_magnitudes>
-                <relative_epsilons>
-                1e-8 1e-8 1e-8 1e-8
-                1e-8 1e-8 1e-8 1e-8
-                1e-8 1e-8 1e-8 1e-8
-                1e-5 1e-5 1e-5 1e-5
-                1e-5 1e-5 1e-5 1e-5
-                </relative_epsilons>
+                <epsilons>0.01 0.01 3e-06</epsilons>
             </jacobian_assembler>
             <reference_temperature>T0</reference_temperature>
             <process_variables>
@@ -650,13 +637,13 @@
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
             <field>capillary_pressure</field>
             <absolute_tolerance>1e-6</absolute_tolerance>
-            <relative_tolerance>1.e-6</relative_tolerance>
+            <relative_tolerance>6.5e-5</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
             <field>temperature</field>
             <absolute_tolerance>1e-6</absolute_tolerance>
-            <relative_tolerance>1.e-8</relative_tolerance>
+            <relative_tolerance>4.0e-7</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
@@ -667,13 +654,13 @@
         <vtkdiff>
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
             <field>saturation</field>
-            <absolute_tolerance>1e-6</absolute_tolerance>
+            <absolute_tolerance>6.5e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>results_heatpipe_rough_ts_.*.vtu</regex>
             <field>xnCG</field>
-            <absolute_tolerance>1e-6</absolute_tolerance>
+            <absolute_tolerance>3.0e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>

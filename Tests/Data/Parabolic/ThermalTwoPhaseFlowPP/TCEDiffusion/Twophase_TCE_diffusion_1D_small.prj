@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh>domain.vtu</mesh>
@@ -19,8 +19,7 @@
             </process_variables>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>1e5 5e3 1e-9 300</component_magnitudes>
-                <relative_epsilons>1e-6 1e-6 1e-6 1e-6</relative_epsilons>
+                <epsilons>0.09999999999999999 0.005 1e-15 0.0003</epsilons>
             </jacobian_assembler>
             <secondary_variables>
                 <secondary_variable name="saturation"/>

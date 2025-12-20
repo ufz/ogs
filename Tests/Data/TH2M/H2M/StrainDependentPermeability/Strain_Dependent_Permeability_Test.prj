@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
     <meshes>
         <mesh axially_symmetric="true">domain.vtu</mesh>
@@ -19,19 +19,7 @@
             </constitutive_relation>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>
-                    1.0 1.0 1.0 1.0
-                    1.0 1.0 1.0 1.0
-                    1.0 1.0 1.0 1.0
-                    1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-                    1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0
-                </component_magnitudes>
-                <relative_epsilons>
-                    1e-03 1e-03 1e-03 1e-03
-                    1e-03 1e-03 1e-03 1e-03
-                    1e-06 1e-06 1e-06 1e-06
-                    1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08
-                    1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08 1e-08</relative_epsilons>
+                <epsilons>0.001 0.001 0.001</epsilons>
             </jacobian_assembler>
             <reference_temperature>T0</reference_temperature>
             <process_variables>
@@ -339,7 +327,8 @@
         <parameter>
             <name>T0</name>
             <type>Constant</type>
-            <value>293.15</value> <!-- 20 deg C -->
+            <value>293.15</value>
+            <!-- 20 deg C -->
         </parameter>
         <parameter>
             <name>one</name>
@@ -360,12 +349,14 @@
         <parameter>
             <name>pCap_ic</name>
             <type>Constant</type>
-            <value>206166.80631</value> <!-- S_L = 0.7 -->
+            <value>206166.80631</value>
+            <!-- S_L = 0.7 -->
         </parameter>
         <parameter>
             <name>T_ic</name>
             <type>Constant</type>
-            <value>293.15</value> <!-- 20 deg C -->
+            <value>293.15</value>
+            <!-- 20 deg C -->
         </parameter>
         <parameter>
             <name>displacement0</name>
