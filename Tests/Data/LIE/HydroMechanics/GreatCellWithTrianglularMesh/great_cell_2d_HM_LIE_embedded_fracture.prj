@@ -114,6 +114,7 @@
         <output>
             <type>VTK</type>
             <prefix>great_cell_2D_embedded_fracture</prefix>
+            <suffix>_t_{:time}</suffix>
             <variables>
                 <variable>MaterialIDs</variable>
                 <variable>pressure</variable>
