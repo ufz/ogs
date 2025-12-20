@@ -10,8 +10,7 @@
             <!--
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <component_magnitudes>1e5 1e5 1e5 1e5 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6 1e-6</component_magnitudes>
-                <relative_epsilons>1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8 1e-8</relative_epsilons>
+                <epsilons>1e-3</epsilons>
             </jacobian_assembler>
             -->
             <constitutive_relation>

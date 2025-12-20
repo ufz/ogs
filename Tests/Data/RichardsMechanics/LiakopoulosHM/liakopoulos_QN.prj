@@ -20,8 +20,7 @@
                 </jacobian_assembler>
                 <reference_jacobian_assembler>
                     <type>CentralDifferences</type>
-                    <component_magnitudes>1</component_magnitudes>
-                    <relative_epsilons>1e-8</relative_epsilons>
+                    <epsilons>1e-8</epsilons>
                 </reference_jacobian_assembler>
                 <abs_tol>1e-5</abs_tol>
                 <rel_tol>1e-7</rel_tol>
