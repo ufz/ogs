@@ -35,10 +35,19 @@ createForwardDifferencesJacobianAssembler(BaseLib::ConfigTree const& config)
                  !deprecated_parameter->empty()))
             {
                 OGS_FATAL(
-                    "Using {:s} is not allowed anymore as of r6.5.6. Please "
-                    "replace <relative_epsilons> and <component_magnitudes> "
-                    "with <epsilons> to specify variable component "
-                    "perturbations (excluding deformation).",
+                    "Configuration parameter <{:s}> is deprecated and no "
+                    "longer supported.\n"
+                    "(Removed in OGS version 6.5.6)\n\n"
+                    "The numerical Jacobian assembler now uses absolute "
+                    "perturbation values instead of relative scaling.\n\n"
+                    "Migration required:\n"
+                    "  Old approach:\n"
+                    "    <relative_epsilons>1e-6 1e-6</relative_epsilons>\n"
+                    "    <component_magnitudes>1e2 1e2</component_magnitudes>\n"
+                    "  New approach:\n"
+                    "    <epsilons>1e-4 1e-4</epsilons>\n"
+                    " where the epsilons are equal component-wise to "
+                    "relative_epsilons * component_magnitudes",
                     key);
             }
         }

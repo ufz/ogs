@@ -34,7 +34,14 @@ public:
     {
         if (absolute_epsilons_.empty())
         {
-            OGS_FATAL("No values for the absolute epsilons have been given.");
+            OGS_FATAL(
+                "Numerical Jacobian assembler requires perturbation values "
+                "(epsilons) for finite difference approximation, but none were "
+                "provided.\n"
+                "Please specify <epsilons> in the <jacobian_assembler> section "
+                "of your project file.\n"
+                "Example: <epsilons>1e-8 1e-8</epsilons> for a process with 2 "
+                "non-deformation variables.");
         }
     }
 
@@ -84,8 +91,16 @@ public:
         if (num_abs_eps != max_non_deformation_dofs_per_node)
         {
             OGS_FATAL(
-                "The number of specified epsilons ({:d}) is not equal to the "
-                "number of non-deformation variable components ({:d}).",
+                "Mismatch in numerical Jacobian perturbation configuration:\n"
+                "  Provided epsilons:  {:d}\n"
+                "  Required epsilons:  {:d} (one per non-deformation variable "
+                "component)\n\n"
+                "Each non-deformation variable needs exactly one epsilon value "
+                "for numerical differentiation.\n"
+                "Deformation variables use analytical Jacobian and do not "
+                "require epsilons.\n"
+                "Please adjust the <epsilons> array in your project file to "
+                "match the number of required components.",
                 num_abs_eps, max_non_deformation_dofs_per_node);
         }
     }
