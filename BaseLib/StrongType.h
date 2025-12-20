@@ -27,7 +27,7 @@ struct StrongType
         !std::is_reference_v<T>,
         "The underlying type must not be a reference. This struct is not "
         "designed for references. If its design should be extended to also "
-        "cover references make sure to unit test it throroughly. In this case "
+        "cover references make sure to unit test it thoroughly. In this case "
         "also consider the implications for the overall usage of StrongType in "
         "the code, e.g., StrongType<int, struct Tag> and StrongType<int&, "
         "struct Tag> are not related to each other by any inheritance "

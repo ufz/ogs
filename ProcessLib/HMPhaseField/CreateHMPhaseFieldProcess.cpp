@@ -275,7 +275,7 @@ std::unique_ptr<Process> createHMPhaseFieldProcess(
         spatial_stabilization_parameter_optional
             ? spatial_stabilization_parameter_optional.value()
             : 0.0;
-    DBUG("Using value {} for spatial stablization coupling parameter.",
+    DBUG("Using value {} for spatial stabilization coupling parameter.",
          spatial_stabilization_parameter);
 
     // Initial width

@@ -190,19 +190,19 @@ void VtkColorLookupTable::setColor(double pos,
     _dict.insert(std::pair<double, unsigned char*>(pos, dict_rgba));
 }
 
-void VtkColorLookupTable::getColor(vtkIdType indx, unsigned char rgba[4]) const
+void VtkColorLookupTable::getColor(vtkIdType index, unsigned char rgba[4]) const
 {
-    indx = ((indx < this->TableRange[0])
-                ? static_cast<vtkIdType>(this->TableRange[0])
-                : (indx >= this->TableRange[1]
-                       ? static_cast<vtkIdType>(this->TableRange[1]) - 1
-                       : indx));
-    indx = static_cast<std::size_t>(std::floor(
-        (indx - this->TableRange[0]) *
+    index = ((index < this->TableRange[0])
+                 ? static_cast<vtkIdType>(this->TableRange[0])
+                 : (index >= this->TableRange[1]
+                        ? static_cast<vtkIdType>(this->TableRange[1]) - 1
+                        : index));
+    index = static_cast<std::size_t>(std::floor(
+        (index - this->TableRange[0]) *
         (this->NumberOfColors / (this->TableRange[1] - this->TableRange[0]))));
 
     unsigned char* _rgba;
-    _rgba = this->Table->GetPointer(indx * 4);
+    _rgba = this->Table->GetPointer(index * 4);
     for (std::size_t i = 0; i < 4; i++)
     {
         rgba[i] = _rgba[i];

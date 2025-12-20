@@ -55,7 +55,7 @@ void IntegrationGaussLegendrePrism::setIntegrationOrder(unsigned const order)
 MathLib::WeightedPoint IntegrationGaussLegendrePrism::getWeightedPoint(
     unsigned const order, unsigned const igp)
 {
-    // Note: These cases must correspod strictly to the logic in
+    // Note: These cases must correspond strictly to the logic in
     // getNumberOfPoints()!
     switch (order)
     {
@@ -79,7 +79,7 @@ MathLib::WeightedPoint IntegrationGaussLegendrePrism::getWeightedPoint(
 
 unsigned IntegrationGaussLegendrePrism::getNumberOfPoints(unsigned const order)
 {
-    // Note: These cases must correspod strictly to the logic in
+    // Note: These cases must correspond strictly to the logic in
     // getWeightedPoint()!
     switch (order)
     {

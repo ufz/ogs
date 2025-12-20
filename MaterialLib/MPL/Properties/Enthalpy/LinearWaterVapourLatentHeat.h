@@ -24,7 +24,7 @@ class Phase;
  *     L_w(T)=2.501 \cdot 10^6 - 2369.2  (T - 273.15),\,\text{[J/kg]}.
  *  \f]
  *
- *  A quite simular formula is present on page 81 of \cite bittelli2015soil.
+ *  A quite similar formula is present on page 81 of \cite bittelli2015soil.
  *
  *  The linear expressions of the latent heat of vaporization of liquid water
  *  can be found in some very early references, which are mentioned in

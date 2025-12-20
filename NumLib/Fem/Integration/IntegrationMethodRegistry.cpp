@@ -139,7 +139,7 @@ static void putIntegrationMethodsForDim3(
 
     /* Note: Currently (July 22) OGS has pyramid integration schemes only up to
      * order 3 (see MathLib/Integration/GaussLegendrePyramid.h), and for order 4
-     * the third order is re-used (see
+     * the third order is reused (see
      * NumLib/Fem/Integration/IntegrationGaussLegendrePyramid.h).
      * I.e., a user can request 4th order integration on pyramids and OGS will
      * just run fine, albeit with a lower integration order.

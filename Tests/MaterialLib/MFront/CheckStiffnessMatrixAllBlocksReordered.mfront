@@ -8,7 +8,7 @@
   Check passing the stiffness matrix between OGS and MFront.
   In this behaviour all usual tangent operator blocks are computed
   (except derivatives w.r.t. T).
-  The blocks have been reodered compared to the base case.
+  The blocks have been reordered compared to the base case.
 }
 
 @Gradient StrainStensor eps_total;

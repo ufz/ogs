@@ -56,7 +56,7 @@ TEST(MaterialLib_SplitIntegerList, SingleIntFail)
     // another integer is not accepted
     EXPECT_THROW(splitMaterialIdString("1 2"), std::runtime_error);
 
-    // range exceeeded
+    // range exceeded
     EXPECT_THROW(
         splitMaterialIdString("1234567890123456789012345678901234567890"),
         std::runtime_error);

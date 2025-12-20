@@ -83,7 +83,7 @@ TEST_F(CsvInterfaceTest, SimpleReadPoints)
     }
 }
 
-/// Dealing with unconvertable data types
+/// Dealing with unconvertible data types
 TEST_F(CsvInterfaceTest, StringInPointColumn)
 {
     std::vector<GeoLib::Point*> points;

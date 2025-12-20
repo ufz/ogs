@@ -138,6 +138,7 @@ opengeosys
 OpenGeoSys
 pacman
 Palandri
+Paly
 parameteri[zs]ation
 ParaView
 Pardiso
