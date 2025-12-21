@@ -29,9 +29,7 @@ void SwellingModel<DisplacementDim>::eval(
 {
     namespace MPL = MaterialPropertyLib;
 
-    auto const& solid_phase = media_data.solid;
-
-    if (!solid_phase.hasProperty(MPL::PropertyType::swelling_stress_rate))
+    if (media_data.swelling_stress_rate_solid == nullptr)
     {
         out.eps_m.setZero();
         state.sigma_sw.setZero();
@@ -53,7 +51,7 @@ void SwellingModel<DisplacementDim>::eval(
     auto const sigma_sw_dot =
         MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(
             MPL::formEigenTensor<3>(
-                solid_phase[MPL::PropertyType::swelling_stress_rate].value(
+                media_data.swelling_stress_rate_solid->value(
                     variables, variables_prev, x_t.x, x_t.t, x_t.dt)));
     state.sigma_sw += sigma_sw_dot * x_t.dt;
 

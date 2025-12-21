@@ -22,15 +22,13 @@ static void bishopsModelEvalImpl(SpaceTimeData const& x_t,
     MPL::VariableArray variables;
     variables.liquid_saturation = S_L_data.S_L;
 
-    auto const& medium = media_data.medium;
+    out.chi_S_L =
+        media_data.bishops_effective_stress_prop.template value<double>(
+            variables, x_t.x, x_t.t, x_t.dt);
 
-    out.chi_S_L = medium.property(MPL::PropertyType::bishops_effective_stress)
-                      .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
-
-    out.dchi_dS_L = medium.property(MPL::PropertyType::bishops_effective_stress)
-                        .template dValue<double>(
-                            variables, MPL::Variable::liquid_saturation, x_t.x,
-                            x_t.t, x_t.dt);
+    out.dchi_dS_L =
+        media_data.bishops_effective_stress_prop.template dValue<double>(
+            variables, MPL::Variable::liquid_saturation, x_t.x, x_t.t, x_t.dt);
 }
 
 void BishopsModel::eval(SpaceTimeData const& x_t, MediaData const& media_data,

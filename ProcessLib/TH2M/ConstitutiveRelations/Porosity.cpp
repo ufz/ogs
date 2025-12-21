@@ -53,10 +53,8 @@ void PorosityModel<DisplacementDim>::eval(
     variables_prev.volumetric_strain = Invariants::trace(eps_prev);
 
     variables_prev.porosity = porosity_prev_data->phi;
-    porosity_data.phi =
-        media_data.medium.property(MaterialPropertyLib::PropertyType::porosity)
-            .template value<double>(variables, variables_prev, x_t.x, x_t.t,
-                                    x_t.dt);
+    porosity_data.phi = media_data.porosity_prop.template value<double>(
+        variables, variables_prev, x_t.x, x_t.t, x_t.dt);
 }
 
 template <int DisplacementDim>
@@ -99,8 +97,7 @@ void PorosityModel<DisplacementDim>::dEval(
 
     variables_prev.porosity = porosity_prev_data->phi;
 
-    auto const& mpl_porosity =
-        media_data.medium[MaterialPropertyLib::PropertyType::porosity];
+    auto const& mpl_porosity = media_data.porosity_prop;
 
     porosity_d_data.dphi_dT = mpl_porosity.template dValue<double>(
         variables, variables_prev, MaterialPropertyLib::Variable::temperature,

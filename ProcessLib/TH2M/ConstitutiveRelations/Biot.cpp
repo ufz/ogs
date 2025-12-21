@@ -19,8 +19,8 @@ void BiotModel::eval(SpaceTimeData const& x_t, MediaData const& media_data,
     namespace MPL = MaterialPropertyLib;
     MPL::VariableArray variables;
 
-    *out = media_data.medium.property(MPL::PropertyType::biot_coefficient)
-               .template value<double>(variables, x_t.x, x_t.t, x_t.dt);
+    *out = media_data.biot_coefficient_prop.template value<double>(
+        variables, x_t.x, x_t.t, x_t.dt);
 }
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

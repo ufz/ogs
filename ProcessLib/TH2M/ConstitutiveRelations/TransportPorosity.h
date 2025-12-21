@@ -23,12 +23,6 @@ namespace ProcessLib::TH2M
 {
 namespace ConstitutiveRelations
 {
-struct TransportPorosityDerivativeData
-{
-    double dphi_dT = nan;
-    double dphi_L_dp_cap = nan;
-};
-
 struct TransportPorosityData
 {
     double phi = nan;
@@ -58,19 +52,6 @@ struct TransportPorosityModel
         PrevState<TransportPorosityData> const& transport_porosity_prev_data,
         PorosityData const& poro_data,
         TransportPorosityData& transport_porosity_data) const;
-
-    void dEval(
-        SpaceTimeData const& x_t, MediaData const& media_data,
-        SaturationData const& S_L_data,
-        PrevState<SaturationData> const& S_L_prev_data,
-        CapillaryPressureData const& p_cap, GasPressureData const& p_GR,
-        BishopsData const& chi_S_L, PrevState<BishopsData> const& chi_S_L_prev,
-        SolidCompressibilityData const& solid_compressibility,
-        MechanicalStrainData<DisplacementDim> const& eps_m_data,
-        PrevState<MechanicalStrainData<DisplacementDim>> const& eps_m_prev_data,
-        PrevState<TransportPorosityData> const& transport_porosity_prev_data,
-        PorosityData const& poro_data,
-        TransportPorosityDerivativeData& transport_porosity_d_data) const;
 };
 
 extern template struct TransportPorosityModel<2>;
