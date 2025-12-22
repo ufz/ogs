@@ -63,6 +63,16 @@
                             <type>Constant</type>
                             <value>1.0e-3</value>
                         </property>
+                        <property>
+                            <name>relative_permeability</name>
+                            <type>Linear</type>
+                            <reference_value>1.0</reference_value>
+                            <independent_variable>
+                                <variable_name>ice_volume_fraction</variable_name>
+                                <reference_condition>0.0</reference_condition>
+                                <slope>-0.99999</slope>
+                            </independent_variable>
+                        </property>
                     </properties>
                 </phase>
                 <phase>
