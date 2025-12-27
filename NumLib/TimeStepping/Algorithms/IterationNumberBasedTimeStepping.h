@@ -64,6 +64,8 @@ public:
      * @param min_dt                the minimum allowed time step size
      * @param max_dt                the maximum allowed time step size
      * @param initial_dt            initial time step size
+     * @param multiplier_interpolation_type interpolation type for the
+     * multiplier coefficients (linear or constant)
      * @param iter_times_vector     a vector of iteration numbers
      * (\f$i_1\f$, \f$i_2\f$, ..., \f$i_n\f$) which defines intervals as
      * \f$[i_1,i_2)\f$, \f$[i_2,i_3)\f$, ..., \f$[i_n,\infty)\f$.

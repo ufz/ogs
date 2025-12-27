@@ -277,6 +277,7 @@ static const std::array<ElementReorderConfigBase,
  * (Gmsh or OGS5) and OGS6 meshes.
  *
  * \param elements  Mesh elements whose nodes should be reordered
+ * \param mesh_space_dimension Dimension of the embedding space
  * \param forced    If true, nodes are reordered for all
  * elements, if false it is first checked if the node order is correct
  * according to OGS6 element definitions.
