@@ -4,8 +4,10 @@
 #pragma once
 
 #include <cassert>
+#include <tuple>
 #include <vector>
 
+#include "ConstitutiveRelations/ConstitutiveData.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
@@ -46,12 +48,15 @@ std::vector<double> const& getMaterialForces(
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
-        auto const& sigma = stress_data[ip].stress_data.sigma;
+        auto const& sigma =
+            std::get<::ProcessLib::ConstitutiveRelations::StressData<
+                DisplacementDim>>(stress_data[ip])
+                .sigma;
         auto const& N = ip_data[ip].N_u;
         auto const& dNdx = ip_data[ip].dNdx_u;
 
-        auto const& psi =
-            output_data[ip].free_energy_density_data.free_energy_density;
+        auto const& psi = std::get<FreeEnergyDensityData>(output_data[ip])
+                              .free_energy_density;
 
         auto const x_coord =
             NumLib::interpolateXCoordinate<ShapeFunction, ShapeMatricesType>(
