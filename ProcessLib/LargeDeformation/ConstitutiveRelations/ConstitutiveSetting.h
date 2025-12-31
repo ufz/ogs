@@ -5,6 +5,7 @@
 
 #include "ConstitutiveData.h"
 #include "ConstitutiveModels.h"
+#include "MaterialState.h"
 
 namespace ProcessLib::LargeDeformation
 {
@@ -16,6 +17,9 @@ struct ConstitutiveSetting
     using GradientVectorType = Eigen::Matrix<
         double,
         DisplacementDim * DisplacementDim + (DisplacementDim == 2 ? 1 : 0), 1>;
+
+    /// Initialize the constitutive setting and check evaluation order.
+    void init();
 
     /// Evaluate the constitutive setting.
     void eval(ConstitutiveModels<DisplacementDim>& models, double const t,

@@ -5,6 +5,7 @@
 
 #include "BaseLib/StrongType.h"
 #include "SolidDensity.h"
+#include "SpecificBodyForceData.h"
 
 namespace ProcessLib::LargeDeformation
 {
@@ -23,6 +24,12 @@ struct GravityModel
 
     void eval(SolidDensity const& rho_SR,
               VolumetricBodyForce<DisplacementDim>& out) const;
+
+    static GravityModel create(
+        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+    {
+        return GravityModel{specific_body_force_data.specific_body_force};
+    }
 
 private:
     // TODO (naumov) Do we need to store this for each integration point?

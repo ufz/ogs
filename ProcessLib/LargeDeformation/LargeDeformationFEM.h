@@ -159,7 +159,8 @@ public:
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress != nullptr)
             {
-                this->current_states_[ip].stress_data.sigma.noalias() =
+                std::get<StressData<DisplacementDim>>(this->current_states_[ip])
+                    .sigma.noalias() =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
@@ -171,6 +172,10 @@ public:
             auto& material_state = this->material_states_[ip];
             this->solid_material_.initializeInternalStateVariables(
                 t, x_position, *material_state.material_state_variables);
+
+            typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>
+                constitutive_setting;
+            constitutive_setting.init();
 
             material_state.pushBackState();
             this->prev_states_[ip] = this->current_states_[ip];
@@ -187,12 +192,16 @@ public:
             output_data) const
     {
         // Note: Here B=B_{linear}+B_{nonlinear}/2  For Green-Lagrange strain.
-        output_data.eps_data.eps = B * u;
-        output_data.deformation_gradient_data.deformation_gradient =
+        auto& eps_data = std::get<StrainData<DisplacementDim>>(output_data);
+        auto& deformation_gradient_data =
+            std::get<DeformationGradientData<DisplacementDim>>(output_data);
+
+        eps_data.eps = B * u;
+        deformation_gradient_data.deformation_gradient =
             grad_u + MathLib::VectorizedTensor::identity<DisplacementDim>();
-        output_data.deformation_gradient_data.volume_ratio =
+        deformation_gradient_data.volume_ratio =
             MathLib::VectorizedTensor::determinant(
-                output_data.deformation_gradient_data.deformation_gradient);
+                deformation_gradient_data.deformation_gradient);
 
         if (this->process_data_.bar_det_f_type ==
             NonLinearFbar::BarDetFType::NONE)
@@ -200,7 +209,7 @@ public:
             return 1.0;
         }
 
-        double const detF = output_data.deformation_gradient_data.volume_ratio;
+        double const detF = deformation_gradient_data.volume_ratio;
         double const J_ratio = detF0 / detF;
 
         if (J_ratio < .0)
@@ -214,17 +223,16 @@ public:
         double const alpha =
             DisplacementDim == 3 ? std::cbrt(J_ratio) : std::sqrt(J_ratio);
 
-        output_data.deformation_gradient_data.deformation_gradient
+        deformation_gradient_data.deformation_gradient
             .template segment<DisplacementDim * DisplacementDim>(0) *= alpha;
-        output_data.deformation_gradient_data.volume_ratio *=
+        deformation_gradient_data.volume_ratio *=
             std::pow(alpha, DisplacementDim);
 
         double const alpha_p2 = alpha * alpha;
-        output_data.eps_data.eps =
-            alpha_p2 * output_data.eps_data.eps +
-            0.5 * (alpha_p2 - 1) *
-                NonLinearFbar::identityForF<DisplacementDim>(
-                    this->is_axially_symmetric_);
+        eps_data.eps = alpha_p2 * eps_data.eps +
+                       0.5 * (alpha_p2 - 1) *
+                           NonLinearFbar::identityForF<DisplacementDim>(
+                               this->is_axially_symmetric_);
         return alpha;
     }
 
@@ -250,17 +258,18 @@ public:
                 ? (*this->process_data_.reference_temperature)(t, x_position)[0]
                 : std::numeric_limits<double>::quiet_NaN();
 
-        typename ConstitutiveRelations::ConstitutiveModels<DisplacementDim>
-            models(this->process_data_, this->solid_material_);
+        auto models =
+            ConstitutiveRelations::createConstitutiveModels<DisplacementDim>(
+                this->process_data_, this->solid_material_);
         typename ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>
             tmp;
         typename ConstitutiveRelations::ConstitutiveData<DisplacementDim> CD;
 
         CS.eval(
-            models, t, dt, x_position,              //
-            medium,                                 //
-            T_ref,                                  //
-            output_data.deformation_gradient_data,  //
+            models, t, dt, x_position,  //
+            medium,                     //
+            T_ref,                      //
+            std::get<DeformationGradientData<DisplacementDim>>(output_data),
             alpha * (G * u_prev +
                      MathLib::VectorizedTensor::identity<DisplacementDim>()),
             current_state, prev_state, material_state, tmp, CD);
@@ -383,9 +392,14 @@ public:
 
             BMatrixType B = B_0 + B_N;
 
-            auto const& sigma = this->current_states_[ip].stress_data.sigma;
-            auto const& b = *CD.volumetric_body_force;
-            auto const& C = CD.s_mech_data.stiffness_tensor;
+            auto const& sigma =
+                std::get<StressData<DisplacementDim>>(this->current_states_[ip])
+                    .sigma;
+            auto const& b = *std::get<VolumetricBodyForce<DisplacementDim>>(CD);
+            auto const& C =
+                std::get<ConstitutiveRelations::SolidMechanicsDataStateless<
+                    DisplacementDim>>(CD)
+                    .stiffness_tensor;
 
             auto const sigma_geom =
                 computeSigmaGeom<DisplacementDim, ShapeMatricesType>(
@@ -409,8 +423,9 @@ public:
                 auto const q0 = std::get<VectorTypeForFbar>(*f_bar_variables);
 
                 auto const& F =
-                    this->output_data_[ip]
-                        .deformation_gradient_data.deformation_gradient;
+                    std::get<DeformationGradientData<DisplacementDim>>(
+                        this->output_data_[ip])
+                        .deformation_gradient;
                 VectorTypeForFbar q = NonLinearFbar::computeQVector<
                     DisplacementDim, ShapeFunction::NPOINTS, VectorTypeForFbar,
                     GradientVectorType,
@@ -426,7 +441,10 @@ public:
 
                 auto const twoEplsI =
                     NonLinearFbar::compute2EPlusI<DisplacementDim>(
-                        alpha_p2, this->output_data_[ip].eps_data.eps,
+                        alpha_p2,
+                        std::get<StrainData<DisplacementDim>>(
+                            this->output_data_[ip])
+                            .eps,
                         this->is_axially_symmetric_);
 
                 // B bar:

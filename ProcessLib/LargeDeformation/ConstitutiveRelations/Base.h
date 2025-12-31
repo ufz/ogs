@@ -7,7 +7,6 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/Tensor.h"
 #include "MathLib/KelvinVector.h"
-#include "ParameterLib/SpatialPosition.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/Reflection/ReflectionData.h"
 

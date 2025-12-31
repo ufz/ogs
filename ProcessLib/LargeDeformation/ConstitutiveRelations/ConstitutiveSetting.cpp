@@ -3,12 +3,50 @@
 
 #include "ConstitutiveSetting.h"
 
-#include "Invoke.h"
+#include "BaseLib/Error.h"
+#include "ProcessLib/Graph/Apply.h"
+#include "ProcessLib/Graph/CheckEvalOrderRT.h"
 
 namespace ProcessLib::LargeDeformation
 {
 namespace ConstitutiveRelations
 {
+template <int DisplacementDim>
+static bool checkCorrectModelEvalOrder()
+{
+    INFO(
+        "Checking correct model evaluation order in the constitutive setting.");
+
+    using namespace boost::mp11;
+
+    constexpr auto D = DisplacementDim;
+
+    using Inputs = mp_list<SpaceTimeData, MediaData, Temperature,
+                           DeformationGradientData<D>,
+                           PrevState<DeformationGradientData<D>>>;
+
+    using InputsAndPrevState = mp_append<Inputs, StatefulDataPrev<D>>;
+
+    bool const is_correct = ProcessLib::Graph::isEvalOrderCorrectRT<
+        ConstitutiveModels<DisplacementDim>, InputsAndPrevState>();
+
+    if (!is_correct)
+    {
+        OGS_FATAL("The constitutive setting has a wrong evaluation order.");
+    }
+
+    INFO("Model evaluation order is correct.");
+
+    return is_correct;
+}
+
+template <int DisplacementDim>
+void ConstitutiveSetting<DisplacementDim>::init()
+{
+    [[maybe_unused]] static const bool model_order_correct =
+        checkCorrectModelEvalOrder<DisplacementDim>();
+}
+
 template <int DisplacementDim>
 void ConstitutiveSetting<DisplacementDim>::eval(
     ConstitutiveModels<DisplacementDim>& models, double const t,
@@ -22,30 +60,18 @@ void ConstitutiveSetting<DisplacementDim>::eval(
     ConstitutiveTempData<DisplacementDim>& tmp,
     ConstitutiveData<DisplacementDim>& cd) const
 {
-    namespace MPL = MaterialPropertyLib;
-
-    auto& deformation_gradient_data_prev = tmp.deformation_gradient_data_prev;
+    auto& deformation_gradient_data_prev =
+        std::get<PrevState<DeformationGradientData<DisplacementDim>>>(tmp);
     deformation_gradient_data_prev->deformation_gradient =
         deformation_gradient_prev;
-    auto& rho_SR = tmp.rho_SR;
 
-    auto& s_mech_data = cd.s_mech_data;
-    auto& volumetric_body_force = cd.volumetric_body_force;
+    auto const aux_data =
+        std::tuple{SpaceTimeData{x_position, t, dt}, MediaData{medium},
+                   Temperature{T_ref}, deformation_gradient_data};
+    auto const mat_state_tuple = std::tie(mat_state);
 
-    Temperature const T{T_ref};
-    SpaceTimeData const x_t{x_position, t, dt};
-    MediaData const media_data{medium};
-
-    assertEvalArgsUnique(models.s_mech_model);
-    models.s_mech_model.eval(
-        x_t, T, deformation_gradient_data, deformation_gradient_data_prev,
-        mat_state, prev_state.stress_data, state.stress_data, s_mech_data);
-
-    assertEvalArgsUnique(models.rho_S_model);
-    models.rho_S_model.eval(x_t, media_data, T, rho_SR);
-
-    assertEvalArgsUnique(models.gravity_model);
-    models.gravity_model.eval(rho_SR, volumetric_body_force);
+    ProcessLib::Graph::evalAllInOrder(models, aux_data, cd, mat_state_tuple,
+                                      prev_state, state, tmp);
 }
 
 template struct ConstitutiveSetting<2>;
