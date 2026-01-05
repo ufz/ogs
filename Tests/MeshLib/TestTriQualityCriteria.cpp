@@ -1,11 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include <gtest/gtest.h>
 
@@ -108,11 +102,11 @@ TEST_F(TriElementQuality, EquiAngleSkew)
     auto const element_quality_vector =
         getElementQualityVectorFromRegularTriMesh(type);
     // all triangles are right-angled triangles
-    auto const hypothenuse = std::sqrt(std::pow(1.0 / n_subdivisions[0], 2) +
-                                       std::pow(1.0 / n_subdivisions[1], 2));
+    auto const hypotenuse = std::sqrt(std::pow(1.0 / n_subdivisions[0], 2) +
+                                      std::pow(1.0 / n_subdivisions[1], 2));
     std::array const angles = {
-        std::asin((1.0 / n_subdivisions[0]) / hypothenuse),
-        std::asin((1.0 / n_subdivisions[1]) / hypothenuse), pi / 2};
+        std::asin((1.0 / n_subdivisions[0]) / hypotenuse),
+        std::asin((1.0 / n_subdivisions[1]) / hypotenuse), pi / 2};
     auto const& min_max = std::minmax_element(angles.begin(), angles.end());
     auto const expected_value =
         std::max((*min_max.second - pi / 3) * 3 / (2 * pi),

@@ -1,13 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- * Created on March 16, 2021, 10:03 AM
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 
@@ -24,7 +16,7 @@ class Phase;
  *     L_w(T)=2.501 \cdot 10^6 - 2369.2  (T - 273.15),\,\text{[J/kg]}.
  *  \f]
  *
- *  A quite simular formula is present on page 81 of \cite bittelli2015soil.
+ *  A quite similar formula is present on page 81 of \cite bittelli2015soil.
  *
  *  The linear expressions of the latent heat of vaporization of liquid water
  *  can be found in some very early references, which are mentioned in

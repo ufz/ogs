@@ -1,12 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 
@@ -70,7 +63,7 @@ namespace ThermoRichardsFlow
  * \f$\alpha_T^s\f$ is the linear thermal  expansivity of solid, \f$Q_H\f$
  * is the point source or sink term,  \f$H(S-1)\f$ is the Heaviside function,
  * and \f$ \mathbf u\f$ is the displacement. While this process does not contain
- * a fully mechanical coupling, simplfied expressions can be given to
+ * a fully mechanical coupling, simplified expressions can be given to
  * approximate the latter term under certain stress conditions. The liquid
  * velocity \f$\mathbf{v}^l\f$ is described by the Darcy's law as \f[
  * \mathbf{v}^l=-\frac{{\mathbf k} k_{ref}}{\mu} (\nabla p - \rho^l \mathbf g)

@@ -1,22 +1,5 @@
-/**
- * \file
- * \author Lars Bilke
- * \date   2014-08-12
- * \brief  VtkMappedMeshSource is a source class to transform OGS meshes into
- * complete vtkUnstructuredGrids. Usage: \code
- * vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
- * vtkSource->SetMesh(mesh);
- * vtkSource->Update();
- * vtkUnstructuredGrid* output = vtkSource->GetOutput();
- * \endcode
- *
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 
@@ -39,6 +22,13 @@ namespace MeshLib {
 
 class Mesh;
 
+/// \brief  VtkMappedMeshSource is a source class to transform OGS meshes into
+/// complete vtkUnstructuredGrids. Usage: \code
+/// vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
+/// vtkSource->SetMesh(mesh);
+/// vtkSource->Update();
+/// vtkUnstructuredGrid* output = vtkSource->GetOutput();
+/// \endcode
 /// Adapter which maps a MeshLib::Mesh to a vtkUnstructuredGridAlgorithm.
 /// Allows for zero-copy access of the mesh from the visualization side.
 class VtkMappedMeshSource final : public vtkUnstructuredGridAlgorithm

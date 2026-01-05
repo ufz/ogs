@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+# SPDX-License-Identifier: BSD-3-Clause
+
 # mesh quarter of rectangle with circular hole
 # meshing strategy as FEM example in "Hoehere TM" by Kreissig and Benedix
 # Dominik Kern

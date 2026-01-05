@@ -1,15 +1,6 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- * File:   DirichletBoundaryConditionAuxiliaryFunctions.cpp
- *
- * Created on November 28, 2018, 11:26 AM
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include "DirichletBoundaryConditionAuxiliaryFunctions.h"
 
 #include <range/v3/range/conversion.hpp>

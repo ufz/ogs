@@ -1,14 +1,6 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- *  Created on Oct 29, 2021, 12:08 AM
- *
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 #include "IntegrationGaussLegendrePrism.h"
 
 #include <cassert>
@@ -55,7 +47,7 @@ void IntegrationGaussLegendrePrism::setIntegrationOrder(unsigned const order)
 MathLib::WeightedPoint IntegrationGaussLegendrePrism::getWeightedPoint(
     unsigned const order, unsigned const igp)
 {
-    // Note: These cases must correspod strictly to the logic in
+    // Note: These cases must correspond strictly to the logic in
     // getNumberOfPoints()!
     switch (order)
     {
@@ -79,7 +71,7 @@ MathLib::WeightedPoint IntegrationGaussLegendrePrism::getWeightedPoint(
 
 unsigned IntegrationGaussLegendrePrism::getNumberOfPoints(unsigned const order)
 {
-    // Note: These cases must correspod strictly to the logic in
+    // Note: These cases must correspond strictly to the logic in
     // getWeightedPoint()!
     switch (order)
     {

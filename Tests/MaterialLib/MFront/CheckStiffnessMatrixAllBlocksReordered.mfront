@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 // vim: ft=cpp sw=2 ts=2 sts=2 et
 
 @DSL DefaultGenericBehaviour;
@@ -8,7 +11,7 @@
   Check passing the stiffness matrix between OGS and MFront.
   In this behaviour all usual tangent operator blocks are computed
   (except derivatives w.r.t. T).
-  The blocks have been reodered compared to the base case.
+  The blocks have been reordered compared to the base case.
 }
 
 @Gradient StrainStensor eps_total;

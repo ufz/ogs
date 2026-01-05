@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 @DSL Implicit;
 @Behaviour ModCamClay_semiExpl;
 @Author Christian Silbermann, Eric Simo, Miguel Mánica, Thomas Helfer, Thomas Nagel;

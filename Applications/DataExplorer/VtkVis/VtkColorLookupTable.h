@@ -1,16 +1,5 @@
-/**
- * \file
- * \author Karsten Rink
- * \date   2010-04-23
- * \brief  Definition of the VtkColorLookupTable class.
- *
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 
@@ -57,7 +46,7 @@ public:
      * The colour will be interpolated from the colour-dictionary entries before and after this index.
      * Make sure that Build() has been called before using this method.
      */
-    void getColor(vtkIdType indx, unsigned char rgba[4]) const;
+    void getColor(vtkIdType index, unsigned char rgba[4]) const;
 
     /// Returns the type of interpolation used.
     DataHolderLib::LUTType getInterpolationType() const { return _type; }

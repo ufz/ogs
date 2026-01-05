@@ -1,8 +1,8 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 /**
  * \file
- *
- * 2014/06/04 HS initial implementation
- * borehole heat exchanger abstract class
  *
  * 1) Diersch_2011_CG
  * Two very important references to understand this class implementations are:
@@ -15,12 +15,6 @@
  * 2) FEFLOW_2014_Springer
  * FEFLOW: Finite Element Modeling of Flow, Mass and Heat Transport in Porous
  * and Fractured Media Diersch, Hans-Joerg, 2014, XXXV, 996 p, Springer.
- *
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
  */
 
 #pragma once

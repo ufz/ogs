@@ -1,11 +1,6 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
 #pragma once
 
 #include "MaterialLib/MPL/Property.h"
@@ -24,7 +19,7 @@ namespace MaterialPropertyLib
  * \f]
  * where
  * \f$\mathbf{D_0}\f$ is the molecular diffusion at the reference temperature,
- * \f$E_{\mathrm{a}}\f$ is the activition energy for diffusion,
+ * \f$E_{\mathrm{a}}\f$ is the activation energy for diffusion,
  * \f$R\f$ is the ideal gas constant,
  * \f$T\f$ is the absolute temperature,
  * \f$T_0\f$ is the reference temperature.
@@ -50,7 +45,7 @@ public:
 private:
     /// the molecular diffusion at the reference temperature
     ParameterLib::Parameter<double> const& D0_;
-    /// the activition energy for diffusion
+    /// the activation energy for diffusion
     double const Ea_;
     /// the reference temperature
     double const T0_;

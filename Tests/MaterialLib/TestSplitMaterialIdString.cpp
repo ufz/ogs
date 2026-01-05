@@ -1,12 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -56,7 +49,7 @@ TEST(MaterialLib_SplitIntegerList, SingleIntFail)
     // another integer is not accepted
     EXPECT_THROW(splitMaterialIdString("1 2"), std::runtime_error);
 
-    // range exceeeded
+    // range exceeded
     EXPECT_THROW(
         splitMaterialIdString("1234567890123456789012345678901234567890"),
         std::runtime_error);

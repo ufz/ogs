@@ -1,12 +1,5 @@
-/**
- * \file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- *
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #include "CreateHMPhaseFieldProcess.h"
 
@@ -275,7 +268,7 @@ std::unique_ptr<Process> createHMPhaseFieldProcess(
         spatial_stabilization_parameter_optional
             ? spatial_stabilization_parameter_optional.value()
             : 0.0;
-    DBUG("Using value {} for spatial stablization coupling parameter.",
+    DBUG("Using value {} for spatial stabilization coupling parameter.",
          spatial_stabilization_parameter);
 
     // Initial width

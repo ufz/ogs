@@ -1,15 +1,5 @@
-/**
- * \file
- * \author Tobias Meisel
- * \date   2020-11-13
- * \brief  XdmfWriter which create contiguous data for geometry and topology
- * and writes this and all attributes to 1 xdmf + 1 hdf file
- * \copyright
- * Copyright (c) 2012-2025, OpenGeoSys Community (http://www.opengeosys.org)
- *            Distributed under a Modified BSD License.
- *              See accompanying file LICENSE.txt or
- *              http://www.opengeosys.org/project/license
- */
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
 
