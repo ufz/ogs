@@ -14,4 +14,8 @@ namespace ApplicationsLib
 /// Python module is not removed by the linker.
 OGS_EXPORT_SYMBOL pybind11::scoped_interpreter setupEmbeddedPython();
 
+/// Checks for activated and matching virtual environment and adds it to
+/// sys.path.
+OGS_EXPORT_SYMBOL void setupEmbeddedPythonVenvPaths();
+
 }  // namespace ApplicationsLib
