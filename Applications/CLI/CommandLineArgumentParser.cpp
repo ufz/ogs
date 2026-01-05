@@ -18,7 +18,7 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     TCLAP::CmdLine cmd(
         "OpenGeoSys-6 software."
         "\n"
-        "Copyright (c) 2012-2025, OpenGeoSys Community "
+        "Copyright (c) 2012-2026, OpenGeoSys Community "
         "(https://www.opengeosys.org) "
         "\n"
         "Distributed under a Modified BSD License. "

@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
-            "Copyright (c) 2012-2025, OpenGeoSys Community "
+            "Copyright (c) 2012-2026, OpenGeoSys Community "
             "(https://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
     TCLAP::ValueArg<std::string> mesh_arg("i", "input-mesh-file",

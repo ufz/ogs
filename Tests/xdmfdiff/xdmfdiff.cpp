@@ -42,7 +42,7 @@ auto parseCommandLine(int argc, char* argv[]) -> Args
         "OpenGeoSys-6 software, version " +
             GitInfoLib::GitInfo::ogs_version +
             ".\n"
-            "Copyright (c) 2012-2025, OpenGeoSys Community "
+            "Copyright (c) 2012-2026, OpenGeoSys Community "
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 

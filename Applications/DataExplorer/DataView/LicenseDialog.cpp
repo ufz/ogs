@@ -17,7 +17,7 @@ void LicenseDialog::setText()
     QString text;
     QTextStream stream(&text);
     stream
-        << "<p>Copyright (c) 2012-2025, OpenGeoSys Community "
+        << "<p>Copyright (c) 2012-2026, OpenGeoSys Community "
         << "(<a "
            "href='http://www.opengeosys.org'>http://www.opengeosys.org</a>)<br "
            "/>"
