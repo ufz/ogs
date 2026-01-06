@@ -11,12 +11,14 @@ There are various ways to obtain a (pre-built) running version of OpenGeoSys (OG
 operating systems including Windows, Linux, and macOS. The basic modelling platform is available for all operating systems.
 The different operating systems and installation methods give you the feature matrix:
 
-| Operating system / Installation method                                                                                       | [Processes](/docs/userguide/blocks/processes/)                                    | [MFront](/docs/userguide/features/mfront/) | [PETSc]({{< ref "parallel_computing_mpi" >}})
-| ---------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------: | :----------------------------------------: | :-------------------------------------------:
-| <i class="fab fa-windows"></i> Windows / [pip](#install-via-pip) & [binary download](#alternative-install-via-binary-downloads) | All |                     ❌                      |                       ❌
-| <i class="fab fa-apple"></i> macOS / [pip](#install-via-pip)                                                                    |                                        All                                        |                     ✅                      |                       ❌
-| <i class="fab fa-linux"></i> Linux / [pip](#install-via-pip) & [Serial Container]({{< ref "container.md" >}})                   |                                        All                                        |                     ✅                      |                       ❌
-| <i class="fab fa-linux"></i> Linux / [PETSc Container]({{< ref "container.md" >}})                                              |                                        All                                        |                     ✅                      |                       ✅
+| Operating system / Installation method                                                                | [MFront](/docs/userguide/features/mfront/) | [PETSc]({{< ref "parallel_computing_mpi" >}}) | MKL
+| ----------------------------------------------------------------------------------------------------- | :----------------------------------------: | :-------------------------------------------: | :-:
+| <i class="fab fa-windows"></i> Windows / [binary download](#alternative-install-via-binary-downloads) |                     ❌                      |                       ❌                       |  ✅
+| <i class="fab fa-windows"></i> Windows / [pip](#install-via-pip)                                      |                     ❌                      |                       ❌                       |  ❌
+| <i class="fab fa-apple"></i> macOS / [pip](#install-via-pip) & [conda](#alternative-install-via-conda)            |                     ✅                      |                       ❌                       |  ❌
+| <i class="fab fa-linux"></i> Linux / [pip](#install-via-pip) & [conda](#alternative-install-via-conda)            |                     ✅                      |                       ❌                       |  ❌
+| <i class="fab fa-linux"></i> Linux / [Serial Container]({{< ref "container.md" >}})                   |                     ✅                      |                       ❌                       |  ✅
+| <i class="fab fa-linux"></i> Linux / [PETSc Container]({{< ref "container.md" >}})                    |                     ✅                      |                       ✅                       |  ✅
 
 <div class="note">
 
@@ -130,6 +132,19 @@ specifying its full file path. Then just calling `ogs` from the terminal is suff
 <div class='mac'>
 
 </div>
+
+### Alternative: Install via conda
+
+You can use the Conda package manager to install OGS:
+
+```bash
+conda config --add channels conda-forge
+conda create -n my-ogs-env
+conda activate my-ogs-env
+conda install ogs
+```
+
+When the environment is activated then just calling `ogs` from the terminal is sufficient.
 
 ## Download benchmarks
 
