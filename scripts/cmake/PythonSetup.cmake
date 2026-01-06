@@ -34,11 +34,14 @@ if(OGS_USE_PIP)
     # Prefer unix location over frameworks (Apple-only)
     set(Python_FIND_FRAMEWORK LAST)
 
+    # vtk is missing wheels for 3.14
+    set(_python_version_range ${ogs.minimum_version.python}...<3.14)
+
     if(NOT EXISTS ${LOCAL_VIRTUALENV_DIR})
         # Don't use venv
         set(Python_FIND_VIRTUALENV STANDARD)
 
-        find_package(Python ${ogs.minimum_version.python}...<3.14
+        find_package(Python ${_python_version_range}
             COMPONENTS ${_python_componets} REQUIRED)
 
         set(ENV{UV_PYTHON} ${Python_EXECUTABLE})
@@ -59,7 +62,7 @@ if(OGS_USE_PIP)
             )
         endif()
     else()
-        find_package(Python ${ogs.minimum_version.python}...<3.14
+        find_package(Python ${_python_version_range}
             COMPONENTS ${_python_componets} REQUIRED)
         set(ENV{UV_PYTHON} ${Python_EXECUTABLE})
     endif()
@@ -81,7 +84,7 @@ if(OGS_USE_PIP)
 ]=]
     )
 else()
-    find_package(Python ${ogs.minimum_version.python}...<3.14
+    find_package(Python ${ogs.minimum_version.python}
         COMPONENTS ${_python_componets} REQUIRED)
 endif()
 
