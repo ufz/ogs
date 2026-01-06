@@ -17,6 +17,11 @@ if(CCACHE_EXECUTABLE)
     )
 endif()
 
+if(CMAKE_GENERATOR MATCHES "Ninja Multi-Config")
+    message(FATAL_ERROR "${CMAKE_GENERATOR} generator is not supported for "
+        "building external dependencies.")
+endif()
+
 if(MSVC)
     find_program(NINJA_CMD ninja)
     if(NINJA_CMD)

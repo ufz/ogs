@@ -122,6 +122,8 @@ option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 # to take a look at https://gitlab.opengeosys.org/ogs/ogs/-/issues/1881.
 option(EIGEN_DONT_VECTORIZE "Disables explicit vectorization when defined." ON)
 
+# When left as "Default":
+#  Build type Release or RelWithDebInfo: OFF, otherwise ON, see MathLib/CMakeLists.txt.
 set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Default"
     CACHE STRING "Use dynamically allocated shape matrices"
 )
@@ -129,20 +131,6 @@ set_property(
     CACHE OGS_EIGEN_DYNAMIC_SHAPE_MATRICES PROPERTY STRINGS "Default" "ON"
                                                     "OFF"
 )
-
-if(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES STREQUAL "Default")
-    if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL
-                                              "RelWithDebInfo"
-    )
-        set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL OFF)
-    else()
-        set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL ON)
-    endif()
-else()
-    set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES_INTERNAL
-        ${OGS_EIGEN_DYNAMIC_SHAPE_MATRICES}
-    )
-endif()
 # Eigen End
 
 # Debug

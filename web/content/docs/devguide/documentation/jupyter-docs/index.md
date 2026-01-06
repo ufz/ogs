@@ -195,13 +195,27 @@ ctest -R nb -j 4 --output-on-failure
 
 ### Advanced topics
 
-#### Jupytext usage
+#### Useful tools
 
-If you use the [execution environment](#execution-environment) [Jupytext](https://jupytext.readthedocs.io/en/latest) is already configured and its usage is transparent:
+Make sure to have [uv](https://github.com/astral-sh/uv) installed.
 
-- Double-click on a markdown file will open it as a Notebook
-- Upon saving or executing a linked `.ipynb`-file is created in the background which stores outputs
-- You still edit the Markdown file but don't notice the difference to regular notebooks in the Lab UI
+Convert .ipynb to .py with [`jupytext`](https://jupytext.readthedocs.io/en/latest/):
+
+```bash
+uvx jupytext --to py NOTEBOOKFILE.ipynb
+```
+
+Automatically fix code style issues with [`ruff`](https://docs.astral.sh/ruff/):
+
+```bash
+uvx ruff check --fix [--unsafe-fixes] NOTEBOOKFILE.py
+```
+
+Format the notebook with [`black`](https://black.readthedocs.io/en/stable/):
+
+```bash
+uvx black NOTEBOOKFILE.py
+```
 
 #### Run a notebook in BinderHub
 
