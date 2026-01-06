@@ -87,10 +87,17 @@ if(OGS_USE_MKL)
             OR (NOT "$ENV{${_mac_ld_prefix}LD_LIBRARY_PATH}" MATCHES "intel"
                 AND NOT WIN32))
     )
+        if(WIN32)
+            set(_source_msg
+                "  Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\compiler\\latest\\env\\vars.bat\""
+                "  Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\env\\vars.bat\"")
+        else()
+            set(_source_msg "  source /opt/intel/oneapi/setvars.sh")
+        endif()
         message(
             FATAL_ERROR
                 "OGS_USE_MKL was used but it seems that you did not source the MKL environment. "
-                "Typically you can run `source /opt/intel/oneapi/setvars.sh` before running CMake."
+                "Typically you can run \n\n${_source_msg}\n before running CMake."
         )
     endif()
     set(MKL_INTERFACE
