@@ -5,10 +5,29 @@
 
 #include <boost/mp11.hpp>
 
+#include "BaseLib/StrongType.h"
+#include "MathLib/KelvinVector.h"
 #include "ParameterLib/SpatialPosition.h"
 
 namespace ProcessLib::ConstitutiveRelations
 {
+namespace KV = MathLib::KelvinVector;
+
+template <int DisplacementDim>
+using KelvinVector = KV::KelvinVectorType<DisplacementDim>;
+
+template <int DisplacementDim>
+using KelvinMatrix = KV::KelvinMatrixType<DisplacementDim>;
+
+template <int DisplacementDim>
+using GlobalDimVector = Eigen::Vector<double, DisplacementDim>;
+
+template <int DisplacementDim>
+using GlobalDimMatrix =
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>;
+
+using Temperature = BaseLib::StrongType<double, struct TemperatureTag>;
+
 /// Represents a previous state of type T.
 template <typename T>
 struct PrevState
