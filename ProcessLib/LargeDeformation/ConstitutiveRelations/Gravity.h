@@ -4,8 +4,8 @@
 #pragma once
 
 #include "BaseLib/StrongType.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "SolidDensity.h"
-#include "SpecificBodyForceData.h"
 
 namespace ProcessLib::LargeDeformation
 {
@@ -16,8 +16,8 @@ using VolumetricBodyForce =
 template <int DisplacementDim>
 struct GravityModel
 {
-    explicit GravityModel(
-        Eigen::Vector<double, DisplacementDim> const& specific_body_force)
+    explicit GravityModel(ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+                          DisplacementDim> const& specific_body_force)
         : specific_body_force_(specific_body_force)
     {
     }
@@ -26,14 +26,16 @@ struct GravityModel
               VolumetricBodyForce<DisplacementDim>& out) const;
 
     static GravityModel create(
-        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+        ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+            DisplacementDim> const& specific_body_force)
     {
-        return GravityModel{specific_body_force_data.specific_body_force};
+        return GravityModel{specific_body_force};
     }
 
 private:
     // TODO (naumov) Do we need to store this for each integration point?
-    Eigen::Vector<double, DisplacementDim> const specific_body_force_;
+    ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim> const
+        specific_body_force_;
 };
 
 extern template struct GravityModel<2>;

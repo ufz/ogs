@@ -59,8 +59,8 @@ ConstitutiveModels<DisplacementDim> createConstitutiveModels(
 {
     return ProcessLib::Graph::constructModels<
         ConstitutiveModels<DisplacementDim>>(
-        SpecificBodyForceData<DisplacementDim>{
-            process_data.specific_body_force},
+        ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+            process_data.specific_body_force),
         solid_material);
 }
 

@@ -4,10 +4,10 @@
 #pragma once
 
 #include "Gravity.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/Graph/ConstructModels.h"
 #include "SolidDensity.h"
 #include "SolidMechanics.h"
-#include "SpecificBodyForceData.h"
 
 namespace ProcessLib::LargeDeformation
 {
@@ -26,8 +26,8 @@ ConstitutiveModels<DisplacementDim> createConstitutiveModels(
 {
     return ProcessLib::Graph::constructModels<
         ConstitutiveModels<DisplacementDim>>(
-        SpecificBodyForceData<DisplacementDim>{
-            process_data.specific_body_force},
+        ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+            process_data.specific_body_force),
         solid_material);
 }
 }  // namespace ConstitutiveRelations

@@ -9,7 +9,7 @@ template <int DisplacementDim>
 void GravityModel<DisplacementDim>::eval(
     SolidDensity const& rho_SR, VolumetricBodyForce<DisplacementDim>& out) const
 {
-    *out = *rho_SR * specific_body_force_;
+    *out = *rho_SR * specific_body_force_();
 }
 
 template struct GravityModel<2>;

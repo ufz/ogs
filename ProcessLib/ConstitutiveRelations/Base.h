@@ -28,6 +28,10 @@ using GlobalDimMatrix =
 
 using Temperature = BaseLib::StrongType<double, struct TemperatureTag>;
 
+template <int DisplacementDim>
+using SpecificBodyForce = BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
+                                              struct SpecificBodyForceTag>;
+
 /// Represents a previous state of type T.
 template <typename T>
 struct PrevState

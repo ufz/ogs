@@ -288,8 +288,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.porosity_data,
             current_state.S_L_data,
             ip_out.solid_density_data,
-            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
-                this->process_data_.specific_body_force},
+            ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+                this->process_data_.specific_body_force),
             ip_cv.volumetric_body_force);
 
         models.diffusion_velocity_model.eval(grad_p_cap,
@@ -476,8 +476,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.fluid_density_data,
             grad_p_GR,
             ip_out.permeability_data,
-            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
-                this->process_data_.specific_body_force},
+            ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+                this->process_data_.specific_body_force),
             ip_cv.viscosity_data,
             ip_out.darcy_velocity_data);
 
@@ -492,8 +492,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.diffusion_velocity_data,
             ip_out.fluid_density_data,
             ip_cv.phase_transition_data,
-            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
-                this->process_data_.specific_body_force},
+            ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+                this->process_data_.specific_body_force),
             ip_cv.fT_3);
 
         models.fu_2_KupC_model.eval(ip_cv.biot_data, current_state.chi_S_L,
@@ -756,8 +756,8 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             ip_out.fluid_enthalpy_data,
             ip_out.permeability_data,
             ip_cv.phase_transition_data,
-            ConstitutiveRelations::SpecificBodyForceData<DisplacementDim>{
-                this->process_data_.specific_body_force},
+            ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+                this->process_data_.specific_body_force),
             ip_cv.viscosity_data,
             ip_dd.dfT_2);
 

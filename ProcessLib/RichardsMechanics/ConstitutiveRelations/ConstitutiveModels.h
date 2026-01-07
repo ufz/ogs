@@ -4,8 +4,8 @@
 #pragma once
 
 #include "MaterialLib/SolidModels/MechanicsBase.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/Graph/ConstructModels.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SpecificBodyForceData.h"
 
 namespace ProcessLib::RichardsMechanics
 {
@@ -20,8 +20,8 @@ ConstitutiveModels<DisplacementDim> createConstitutiveModels(
 {
     return ProcessLib::Graph::constructModels<
         ConstitutiveModels<DisplacementDim>>(
-        ProcessLib::ThermoRichardsMechanics::SpecificBodyForceData<
-            DisplacementDim>{process_data.specific_body_force},
+        ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+            process_data.specific_body_force),
         solid_material);
 }
 }  // namespace ProcessLib::RichardsMechanics

@@ -108,10 +108,5 @@ using TemperatureGradientData =
     BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
                         struct TemperatureGradientTag>;
 
-template <int DisplacementDim>
-using SpecificBodyForceData =
-    BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
-                        struct SpecificBodyForceTag>;
-
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M
