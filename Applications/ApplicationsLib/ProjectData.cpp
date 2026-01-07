@@ -362,6 +362,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
 #ifdef OGS_EMBED_PYTHON_INTERPRETER
         _py_scoped_interpreter.emplace(ApplicationsLib::setupEmbeddedPython());
+        ApplicationsLib::setupEmbeddedPythonVenvPaths();
 #endif
 
         // Append to python's module search path
