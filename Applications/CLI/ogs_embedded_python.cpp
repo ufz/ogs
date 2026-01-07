@@ -5,6 +5,7 @@
 
 #include <pybind11/embed.h>
 
+#include <charconv>
 #include <cstdio>
 #include <filesystem>
 #include <optional>
@@ -95,7 +96,7 @@ std::optional<std::pair<int, int>> getPythonVersionFromVenv(
         return std::nullopt;
     }
 
-    std::string const command = python_exe.string() + " --version";
+    std::string const command = "\"" + python_exe.string() + "\" --version";
     auto const output = executeCommand(command);
 
     if (!output.has_value())
@@ -107,18 +108,27 @@ std::optional<std::pair<int, int>> getPythonVersionFromVenv(
     // Parse output like "Python 3.11.5"
     std::string_view const out_view(output.value());
     constexpr std::string_view prefix = "Python ";
-    if (!out_view.starts_with(prefix))
-    {
-        DBUG("Unexpected Python version output: {}", output.value());
-        return std::nullopt;
-    }
-
     std::string_view version_part = out_view.substr(prefix.size());
     int major = 0, minor = 0;
 
-    if (std::sscanf(version_part.data(), "%d.%d", &major, &minor) != 2)
+    auto dot = version_part.find('.');
+    if (dot == std::string_view::npos)
     {
-        DBUG("Failed to parse Python version from: {}", output.value());
+        DBUG("Failed to parse Python version from: {}", out_view);
+        return std::nullopt;
+    }
+
+    auto parse = [](std::string_view sv, int& value)
+    {
+        auto [ptr, ec] =
+            std::from_chars(sv.data(), sv.data() + sv.size(), value);
+        return ec == std::errc{} && ptr != sv.data();
+    };
+
+    if (!parse(version_part.substr(0, dot), major) ||
+        !parse(version_part.substr(dot + 1), minor))
+    {
+        DBUG("Failed to parse Python version from: {}", out_view);
         return std::nullopt;
     }
 
