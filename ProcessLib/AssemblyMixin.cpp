@@ -3,11 +3,11 @@
 
 #include "AssemblyMixin.h"
 
+#include <range/v3/algorithm/sort.hpp>
 #include <range/v3/view/enumerate.hpp>
 #include <range/v3/view/for_each.hpp>
 #include <range/v3/view/transform.hpp>
 #include <range/v3/view/zip.hpp>
-#include <unordered_set>
 
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
 #include "NumLib/DOF/DOFTableUtil.h"
@@ -93,15 +93,37 @@ createResiduumVectors(
 
 namespace ProcessLib
 {
-SubmeshAssemblyData::SubmeshAssemblyData(
-    MeshLib::Mesh const& mesh,
-    std::vector<
-        std::vector<std::reference_wrapper<MeshLib::PropertyVector<double>>>>&&
-        residuum_vectors)
-    : bulk_element_ids{*MeshLib::bulkElementIDs(mesh)},
-      bulk_node_ids{*MeshLib::bulkNodeIDs(mesh)},
-      residuum_vectors{std::move(residuum_vectors)}
+
+AssemblyMixinBase::AssemblyMixinBase(
+    AbstractJacobianAssembler& jacobian_assembler,
+    bool const is_linear,
+    bool const use_monolithic_scheme)
+    : pvma_{jacobian_assembler}, is_linear_{is_linear}
 {
+    if (is_linear && !use_monolithic_scheme)
+    {
+        OGS_FATAL(
+            "You requested to assemble only once in combination with staggered "
+            "coupling. This use case is not yet implemented.");
+    }
+
+    if (is_linear_)
+    {
+        WARN(
+            "You specified that the process simulated by OGS is linear. With "
+            "this optimization, the system is assembled only once, and the "
+            "non-linear solver performs a single iteration per time step. No "
+            "non-linearities will be resolved, and OGS will not detect whether "
+            "any exist. It is your responsibility to ensure that the assembled "
+            "systems are indeed linear; there is no safety net.\n"
+            "\n"
+            "Be aware that non-linearities may arise in subtle ways. For "
+            "example, in an HT problem with a steady-state velocity field, if "
+            "the initial pressure field does not match the steady-state "
+            "condition (e.g., initialized to zero), then the steady-state "
+            "velocity field only emerges during the first iteration—making the "
+            "system effectively non-linear under this optimization.");
+    }
 }
 
 void AssemblyMixinBase::initializeAssemblyOnSubmeshes(
@@ -113,17 +135,25 @@ void AssemblyMixinBase::initializeAssemblyOnSubmeshes(
 {
     DBUG("AssemblyMixinBase initializeSubmeshOutput().");
 
-    submesh_assembly_data_.reserve(submeshes.size());
-    for (auto& mesh_ref : submeshes)
-    {
-        auto& mesh = mesh_ref.get();
+    auto const num_submeshes = submeshes.size();
 
-        submesh_assembly_data_.emplace_back(
-            mesh, createResiduumVectors(mesh, residuum_names, pvs));
+    if (num_submeshes == 0)
+    {
+        bulk_mesh_assembly_data_.emplace(
+            createResiduumVectors(bulk_mesh, residuum_names, pvs));
+        return;
     }
 
-    residuum_vectors_bulk_ =
-        createResiduumVectors(bulk_mesh, residuum_names, pvs);
+    submesh_assembly_data_.reserve(num_submeshes);
+    for (auto& submesh_ref : submeshes)
+    {
+        auto& submesh = submesh_ref.get();
+
+        submesh_assembly_data_.emplace_back(
+            submesh, createResiduumVectors(submesh, residuum_names, pvs));
+    }
+
+    submesh_matrix_cache_.resize(num_submeshes);
 }
 
 void AssemblyMixinBase::updateActiveElements(Process const& process)
@@ -174,31 +204,28 @@ void AssemblyMixinBase::updateActiveElementsImpl(Process const& process)
         // in the bulk_element_ids of the submeshes
         for (auto& sad : submesh_assembly_data_)
         {
-            sad.active_element_ids.assign(sad.bulk_element_ids.begin(),
-                                          sad.bulk_element_ids.end());
+            sad.setAllElementsActive();
+        }
+        if (bulk_mesh_assembly_data_)
+        {
+            bulk_mesh_assembly_data_->setAllElementsActive();
         }
     }
     else
     {
+        auto active_element_ids_copy{active_element_ids};
         // assemble each submesh on the intersection of the "global" active
         // elements and the submesh
-        std::unordered_set<std::size_t> active_element_ids_set(
-            active_element_ids.begin(), active_element_ids.end());
+        ranges::sort(active_element_ids_copy);
 
         for (auto& sad : submesh_assembly_data_)
         {
-            auto& aeis = sad.active_element_ids;
-            auto& beis = sad.bulk_element_ids;
-            aeis.clear();
-            aeis.reserve(beis.getNumberOfTuples());
-
-            for (auto bei : beis)
-            {
-                if (active_element_ids_set.contains(bei))
-                {
-                    aeis.push_back(bei);
-                }
-            }
+            sad.setElementSelectionActive(active_element_ids_copy);
+        }
+        if (bulk_mesh_assembly_data_)
+        {
+            bulk_mesh_assembly_data_->setElementSelectionActive(
+                active_element_ids_copy);
         }
     }
 
@@ -224,7 +251,7 @@ void AssemblyMixinBase::copyResiduumVectorsToSubmesh(
     int const process_id,
     GlobalVector const& rhs,
     NumLib::LocalToGlobalIndexMap const& local_to_global_index_map,
-    SubmeshAssemblyData const& sad)
+    ProcessLib::Assembly::SubmeshAssemblyData const& sad)
 {
     auto const& residuum_vectors = sad.residuum_vectors[process_id];
     for (std::size_t variable_id = 0; variable_id < residuum_vectors.size();
