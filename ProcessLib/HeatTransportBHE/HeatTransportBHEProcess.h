@@ -4,7 +4,7 @@
 #pragma once
 
 #include "HeatTransportBHEProcessData.h"
-#include "ProcessLib/Assembly/AssembledMatrixCache.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/LocalAssemblers/HeatTransportBHEProcessAssemblerInterface.h"
 #include "ProcessLib/Process.h"
@@ -15,8 +15,12 @@ namespace HeatTransportBHE
 {
 struct BHEMeshData;
 
-class HeatTransportBHEProcess final : public Process
+class HeatTransportBHEProcess final
+    : public Process,
+      private AssemblyMixin<HeatTransportBHEProcess>
 {
+    friend class AssemblyMixin<HeatTransportBHEProcess>;
+
 public:
     HeatTransportBHEProcess(
         std::string name,
@@ -63,6 +67,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
+    std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
+
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
                                  std::vector<GlobalVector*> const& x_prev,
@@ -97,7 +105,7 @@ private:
     HeatTransportBHEProcessData _process_data;
 
     std::vector<std::unique_ptr<HeatTransportBHELocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
         _mesh_subset_BHE_nodes;
@@ -120,8 +128,6 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_soil_nodes;
 
     const BHEMeshData _bheMeshData;
-
-    AssembledMatrixCache _asm_mat_cache;
 
     std::vector<std::size_t> _bhes_element_ids;
 

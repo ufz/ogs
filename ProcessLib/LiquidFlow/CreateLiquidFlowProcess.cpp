@@ -151,7 +151,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
     auto const is_linear =
-        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__linear}
+        //! \ogs_file_param{prj__processes__process__linear}
         config.getConfigParameter<bool>("linear", false);
     if (is_linear)
     {

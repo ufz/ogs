@@ -187,6 +187,10 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         config.getConfigParameter<bool>(
             "explicit_hm_coupling_in_unsaturated_zone", false);
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__linear}
+        config.getConfigParameter("linear", false);
+
     bool const use_numerical_jacobian =
         jacobian_assembler->isPerturbationEnabled();
 
@@ -209,7 +213,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        use_monolithic_scheme);
+        use_monolithic_scheme, is_linear);
 }
 
 template std::unique_ptr<Process> createRichardsMechanicsProcess<2>(

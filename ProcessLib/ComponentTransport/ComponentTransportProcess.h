@@ -6,7 +6,7 @@
 #include "ComponentTransportFEM.h"
 #include "ComponentTransportProcessData.h"
 #include "NumLib/Extrapolation/LocalLinearLeastSquaresExtrapolator.h"
-#include "ProcessLib/Assembly/AssembledMatrixCache.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 
 namespace ChemistryLib
@@ -85,8 +85,12 @@ namespace ComponentTransport
  * concentration changes as well as by the temporal derivatives of each
  * variable.
  * */
-class ComponentTransportProcess final : public Process
+class ComponentTransportProcess final
+    : public Process,
+      private AssemblyMixin<ComponentTransportProcess>
 {
+    friend class AssemblyMixin<ComponentTransportProcess>;
+
 public:
     ComponentTransportProcess(
         std::string name,
@@ -110,7 +114,10 @@ public:
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override { return _asm_mat_cache.isLinear(); }
+    bool isLinear() const override
+    {
+        return AssemblyMixin<ComponentTransportProcess>::isLinear();
+    }
     //! @}
 
     Eigen::Vector3d getFlux(std::size_t const element_id,
@@ -129,6 +136,15 @@ public:
                                           GlobalVector const& /*x_prev*/,
                                           int const /*process_id*/) override;
 
+    std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
+
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& /*x*/,
+                                    const double /*t*/,
+                                    const double /*dt*/,
+                                    const int /*process_id*/) override;
+
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      std::vector<GlobalVector*> const& x_prev,
                                      const double t,
@@ -137,6 +153,7 @@ public:
 
     bool shouldLinearSolverComputeOnlyUponTimestepChange() const override
     {
+        // TODO unify for all processes?
         return _ls_compute_only_upon_timestep_change;
     }
 
@@ -169,16 +186,12 @@ private:
     ComponentTransportProcessData _process_data;
 
     std::vector<std::unique_ptr<ComponentTransportLocalAssemblerInterface>>
-        _local_assemblers;
+        local_assemblers_;
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> _surfaceflux;
 
     std::unique_ptr<ChemistryLib::ChemicalSolverInterface>
         _chemical_solver_interface;
-
-    std::vector<MeshLib::PropertyVector<double>*> _residua;
-
-    AssembledMatrixCache _asm_mat_cache;
 
     bool const _ls_compute_only_upon_timestep_change;
 };

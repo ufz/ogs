@@ -21,8 +21,7 @@ namespace ThermoHydroMechanics
 {
 template <int DisplacementDim>
 ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
@@ -30,12 +29,12 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
         process_variables,
     ThermoHydroMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme, bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>{
-          *_jacobian_assembler},
+          *_jacobian_assembler, is_linear, use_monolithic_scheme},
       _process_data(std::move(process_data))
 
 {
@@ -46,15 +45,6 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
             "Numerical Jacobian is not supported for the "
             "ThermoHydroMechanicsProcess yet.");
     }
-
-    _nodal_forces = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
-
-    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "VolumetricFlowRate", MeshLib::MeshItemType::Node, 1);
-
-    _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
@@ -81,7 +71,8 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
 template <int DisplacementDim>
 bool ThermoHydroMechanicsProcess<DisplacementDim>::isLinear() const
 {
-    return false;
+    return AssemblyMixin<
+        ThermoHydroMechanicsProcess<DisplacementDim>>::isLinear();
 }
 
 template <int DisplacementDim>
@@ -396,38 +387,8 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
         }
     }
 
-    auto const dof_tables = getDOFTables(x.size());
-
     AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>::
         assembleWithJacobian(t, dt, x, x_prev, process_id, b, Jac);
-
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
-    {
-        if (_use_monolithic_scheme)
-        {
-            transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
-                                              output_vector,
-                                              std::negate<double>());
-        }
-        else
-        {
-            transformVariableFromGlobalVector(b, 0, *dof_tables[process_id],
-                                              output_vector,
-                                              std::negate<double>());
-        }
-    };
-    if (_use_monolithic_scheme || process_id == 0)
-    {
-        copyRhs(0, *_heat_flux);
-    }
-    if (_use_monolithic_scheme || process_id == 1)
-    {
-        copyRhs(1, *_hydraulic_flow);
-    }
-    if (_use_monolithic_scheme || process_id == 2)
-    {
-        copyRhs(2, *_nodal_forces);
-    }
 }
 
 template <int DisplacementDim>

@@ -205,6 +205,9 @@ std::unique_ptr<Process> createTH2MProcess(
     auto const mass_lumping =
         //! \ogs_file_param{prj__processes__process__TH2M__mass_lumping}
         config.getConfigParameter<bool>("mass_lumping", false);
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__linear}
+        config.getConfigParameter("linear", false);
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
@@ -242,7 +245,7 @@ std::unique_ptr<Process> createTH2MProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        use_monolithic_scheme);
+        use_monolithic_scheme, is_linear);
 }
 
 template std::unique_ptr<Process> createTH2MProcess<2>(

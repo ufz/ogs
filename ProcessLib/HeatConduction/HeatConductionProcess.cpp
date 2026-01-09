@@ -31,8 +31,9 @@ HeatConductionProcess::HeatConductionProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
+      AssemblyMixin<HeatConductionProcess>{*_jacobian_assembler, is_linear,
+                                           true /*use_monolithic_scheme*/},
       _process_data(std::move(process_data)),
-      _asm_mat_cache{is_linear, true /*use_monolithic_scheme*/},
       _ls_compute_only_upon_timestep_change{
           ls_compute_only_upon_timestep_change}
 {
@@ -66,9 +67,6 @@ HeatConductionProcess::HeatConductionProcess(
             "won't do any harm, there, but you won't observe the speedup you "
             "probably expect.");
     }
-
-    _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
 }
 
 void HeatConductionProcess::initializeConcreteProcess(
@@ -79,15 +77,29 @@ void HeatConductionProcess::initializeConcreteProcess(
     int const mesh_space_dimension = _process_data.mesh_space_dimension;
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh_space_dimension, mesh.getElements(), dof_table, _local_assemblers,
+        mesh_space_dimension, mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
     _secondary_variables.addSecondaryVariable(
         "heat_flux",
         makeExtrapolator(
-            mesh_space_dimension, getExtrapolator(), _local_assemblers,
+            mesh_space_dimension, getExtrapolator(), local_assemblers_,
             &HeatConductionLocalAssemblerInterface::getIntPtHeatFlux));
+}
+
+std::vector<std::vector<std::string>>
+HeatConductionProcess::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    DBUG("HeatConductionProcess initializeSubmeshOutput().");
+
+    std::vector<std::vector<std::string>> residuum_names{{"HeatFlowRate"}};
+
+    AssemblyMixin<HeatConductionProcess>::initializeAssemblyOnSubmeshes(
+        meshes, residuum_names);
+
+    return residuum_names;
 }
 
 void HeatConductionProcess::assembleConcreteProcess(
@@ -97,12 +109,8 @@ void HeatConductionProcess::assembleConcreteProcess(
 {
     DBUG("Assemble HeatConductionProcess.");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
-
-    _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, &M, &K, &b, dof_table,
-                            _global_assembler, _local_assemblers,
-                            getActiveElementIDs());
+    AssemblyMixin<HeatConductionProcess>::assemble(t, dt, x, x_prev, process_id,
+                                                   M, K, b);
 }
 
 void HeatConductionProcess::assembleWithJacobianConcreteProcess(
@@ -112,17 +120,8 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HeatConductionProcess.");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
-        process_id, &b, &Jac);
-
-    transformVariableFromGlobalVector(b, 0 /*variable id*/,
-                                      *_local_to_global_index_map, *_heat_flux,
-                                      std::negate<double>());
+    AssemblyMixin<HeatConductionProcess>::assembleWithJacobian(
+        t, dt, x, x_prev, process_id, b, Jac);
 }
 
 void HeatConductionProcess::computeSecondaryVariableConcrete(
@@ -138,8 +137,17 @@ void HeatConductionProcess::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
         process_id);
+}
+
+void HeatConductionProcess::preTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& /*x*/,
+    const double /*t*/,
+    const double /*dt*/,
+    const int /*process_id*/)
+{
+    AssemblyMixin<HeatConductionProcess>::updateActiveElements();
 }
 
 void HeatConductionProcess::preOutputConcreteProcess(
@@ -149,31 +157,8 @@ void HeatConductionProcess::preOutputConcreteProcess(
     std::vector<GlobalVector*> const& x_prev,
     int const process_id)
 {
-    auto const matrix_specification = getMatrixSpecifications(process_id);
-
-    auto M = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
-        matrix_specification);
-    auto K = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
-        matrix_specification);
-    auto b = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-        matrix_specification);
-
-    M->setZero();
-    K->setZero();
-    b->setZero();
-
-    assembleConcreteProcess(t, dt, x, x_prev, process_id, *M, *K, *b);
-
-    BaseLib::RunTime time_residuum;
-    time_residuum.start();
-
-    auto const residuum = computeResiduum(dt, *x[0], *x_prev[0], *M, *K, *b);
-
-    transformVariableFromGlobalVector(residuum, 0, *_local_to_global_index_map,
-                                      *_heat_flux, std::negate<double>());
-
-    INFO("[time] Computing residuum flow rates took {:g} s",
-         time_residuum.elapsed());
+    AssemblyMixin<HeatConductionProcess>::preOutput(t, dt, x, x_prev,
+                                                    process_id);
 }
 }  // namespace HeatConduction
 }  // namespace ProcessLib

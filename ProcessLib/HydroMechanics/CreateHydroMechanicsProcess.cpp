@@ -199,6 +199,10 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping", false);
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__linear}
+        config.getConfigParameter("linear", false);
+
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
@@ -255,7 +259,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        std::holds_alternative<Monolithic>(coupling_scheme));
+        std::holds_alternative<Monolithic>(coupling_scheme), is_linear);
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(

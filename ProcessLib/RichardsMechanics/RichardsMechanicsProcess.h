@@ -26,8 +26,7 @@ class RichardsMechanicsProcess final
 
 public:
     RichardsMechanicsProcess(
-        std::string name,
-        MeshLib::Mesh& mesh,
+        std::string name, MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
@@ -37,7 +36,7 @@ public:
             process_variables,
         RichardsMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme, bool const is_linear);
 
     //! \name ODESystem interface
     //! @{
@@ -141,9 +140,6 @@ private:
     {
         return _use_monolithic_scheme || process_id == 1;
     }
-
-    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
-    MeshLib::PropertyVector<double>* hydraulic_flow_ = nullptr;
 };
 
 extern template class RichardsMechanicsProcess<2>;

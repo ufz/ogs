@@ -36,7 +36,8 @@ public:
             process_variables,
         HydroMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme,
+        bool const is_linear);
 
     //! \name ODESystem interface
     //! @{

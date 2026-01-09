@@ -50,10 +50,11 @@ ComponentTransportProcess::ComponentTransportProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
+      AssemblyMixin<ComponentTransportProcess>{*_jacobian_assembler, is_linear,
+                                               use_monolithic_scheme},
       _process_data(std::move(process_data)),
       _surfaceflux(std::move(surfaceflux)),
       _chemical_solver_interface(std::move(chemical_solver_interface)),
-      _asm_mat_cache{is_linear, use_monolithic_scheme},
       _ls_compute_only_upon_timestep_change{
           ls_compute_only_upon_timestep_change}
 {
@@ -86,20 +87,6 @@ ComponentTransportProcess::ComponentTransportProcess(
             "probably expect.");
     }
 
-    auto residuum_name = [&](auto const& pv) -> std::string
-    {
-        std::string const& pv_name = pv.getName();
-        if (pv_name == "pressure")
-        {
-            return "LiquidMassFlowRate";
-        }
-        if (pv_name == "temperature")
-        {
-            return "HeatFlowRate";
-        }
-        return pv_name + "FlowRate";
-    };
-
     if (_use_monolithic_scheme)
     {
         // For numerical Jacobian:
@@ -109,22 +96,6 @@ ComponentTransportProcess::ComponentTransportProcess(
                   non_deformation_component_ids.end(), 0);
         this->_jacobian_assembler->setNonDeformationComponentIDsNoSizeCheck(
             non_deformation_component_ids);
-
-        int const process_id = 0;
-        for (auto const& pv : _process_variables[process_id])
-        {
-            _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-                mesh, residuum_name(pv.get()), MeshLib::MeshItemType::Node, 1));
-        }
-    }
-    else
-    {
-        for (auto const& pv : _process_variables)
-        {
-            _residua.push_back(MeshLib::getOrCreateMeshProperty<double>(
-                mesh, residuum_name(pv[0].get()), MeshLib::MeshItemType::Node,
-                1));
-        }
     }
 }
 
@@ -168,7 +139,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
     }
 
     ProcessLib::createLocalAssemblers<LocalAssemblerData>(
-        mesh_space_dimension, mesh.getElements(), dof_table, _local_assemblers,
+        mesh_space_dimension, mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data, transport_process_variables);
 
@@ -176,7 +147,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystemID,
-            _local_assemblers, _chemical_solver_interface->activeElementIDs());
+            local_assemblers_, _chemical_solver_interface->activeElementIDs());
 
         _chemical_solver_interface->initialize();
     }
@@ -184,13 +155,13 @@ void ComponentTransportProcess::initializeConcreteProcess(
     _secondary_variables.addSecondaryVariable(
         "liquid_density",
         makeExtrapolator(
-            1, getExtrapolator(), _local_assemblers,
+            1, getExtrapolator(), local_assemblers_,
             &ComponentTransportLocalAssemblerInterface::getIntPtLiquidDensity));
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(
-            mesh_space_dimension, getExtrapolator(), _local_assemblers,
+            mesh_space_dimension, getExtrapolator(), local_assemblers_,
             &ComponentTransportLocalAssemblerInterface::getIntPtDarcyVelocity));
 
     for (std::size_t component_id = 0;
@@ -215,7 +186,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
         _secondary_variables.addSecondaryVariable(
             pv.getName() + "Flux",
             makeExtrapolator(mesh_space_dimension, getExtrapolator(),
-                             _local_assemblers,
+                             local_assemblers_,
                              integration_point_values_accessor));
     }
 }
@@ -244,7 +215,7 @@ void ComponentTransportProcess::setInitialConditionsConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::initializeChemicalSystem,
-        _local_assemblers, _chemical_solver_interface->activeElementIDs(),
+        local_assemblers_, _chemical_solver_interface->activeElementIDs(),
         dof_tables, x, t);
 }
 
@@ -255,24 +226,14 @@ void ComponentTransportProcess::assembleConcreteProcess(
 {
     DBUG("Assemble ComponentTransportProcess.");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    if (_use_monolithic_scheme)
-    {
-        dof_tables.push_back(_local_to_global_index_map.get());
-    }
-    else
+    if (!_use_monolithic_scheme)
     {
         this->_jacobian_assembler->setNonDeformationComponentIDsNoSizeCheck(
             {process_id});
-
-        std::generate_n(std::back_inserter(dof_tables),
-                        _process_variables.size(),
-                        [&]() { return _local_to_global_index_map.get(); });
     }
 
-    _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, &M, &K, &b,
-                            dof_tables, _global_assembler, _local_assemblers,
-                            getActiveElementIDs());
+    AssemblyMixin<ComponentTransportProcess>::assemble(t, dt, x, x_prev,
+                                                       process_id, M, K, b);
 
     // TODO (naumov) What about temperature? A test with FCT would reveal any
     // problems.
@@ -301,22 +262,8 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
             "implemented only for staggered scheme.");
     }
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-
-    std::generate_n(std::back_inserter(dof_tables), _process_variables.size(),
-                    [&]() { return _local_to_global_index_map.get(); });
-
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id, &b, &Jac);
-
-    // b is the negated residumm used in the Newton's method.
-    // Here negating b is to recover the primitive residuum.
-    transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
-                                      *_residua[process_id],
-                                      std::negate<double>());
+    AssemblyMixin<ComponentTransportProcess>::assembleWithJacobian(
+        t, dt, x, x_prev, process_id, b, Jac);
 }
 
 Eigen::Vector3d ComponentTransportProcess::getFlux(
@@ -334,7 +281,7 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(
     auto const local_xs =
         getCoupledLocalSolutions(x, indices_of_all_coupled_processes);
 
-    return _local_assemblers[element_id]->getFlux(p, t, local_xs);
+    return local_assemblers_[element_id]->getFlux(p, t, local_xs);
 }
 
 void ComponentTransportProcess::solveReactionEquation(
@@ -368,7 +315,7 @@ void ComponentTransportProcess::solveReactionEquation(
     {
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
-            _local_assemblers, _chemical_solver_interface->activeElementIDs(),
+            local_assemblers_, _chemical_solver_interface->activeElementIDs(),
             dof_tables, x, t, dt);
 
         BaseLib::RunTime time_phreeqc;
@@ -383,7 +330,7 @@ void ComponentTransportProcess::solveReactionEquation(
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::
                 postSpeciationCalculation,
-            _local_assemblers, _chemical_solver_interface->activeElementIDs(),
+            local_assemblers_, _chemical_solver_interface->activeElementIDs(),
             t, dt);
 
         return;
@@ -405,7 +352,7 @@ void ComponentTransportProcess::solveReactionEquation(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::assembleReactionEquation,
-        _local_assemblers, getActiveElementIDs(), dof_tables, x, t, dt, M, K, b,
+        local_assemblers_, getActiveElementIDs(), dof_tables, x, t, dt, M, K, b,
         process_id);
 
     // todo (renchao): incorporate Neumann boundary condition
@@ -470,7 +417,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
         process_id);
 
     if (!_chemical_solver_interface)
@@ -481,7 +428,56 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::
             computeReactionRelatedSecondaryVariable,
-        _local_assemblers, _chemical_solver_interface->activeElementIDs());
+        local_assemblers_, _chemical_solver_interface->activeElementIDs());
+}
+
+std::vector<std::vector<std::string>>
+ComponentTransportProcess::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    DBUG("CT process initializeSubmeshOutput().");
+
+    namespace R = ranges;
+    namespace RV = ranges::views;
+
+    auto get_residuum_name =
+        [](ProcessLib::ProcessVariable const& pv) -> std::string
+    {
+        std::string const& pv_name = pv.getName();
+        if (pv_name == "pressure")
+        {
+            return "LiquidMassFlowRate";
+        }
+        if (pv_name == "temperature")
+        {
+            return "HeatFlowRate";
+        }
+        return pv_name + "FlowRate";
+    };
+
+    auto get_residuum_names = [get_residuum_name](auto const& pvs)
+    { return pvs | RV::transform(get_residuum_name); };
+
+    auto residuum_names = _process_variables |
+                          RV::transform(get_residuum_names) |
+                          R::to<std::vector<std::vector<std::string>>>();
+
+    AssemblyMixin<ComponentTransportProcess>::initializeAssemblyOnSubmeshes(
+        meshes, residuum_names);
+
+    return residuum_names;
+}
+
+void ComponentTransportProcess::preTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& /*x*/,
+    const double /*t*/,
+    const double /*dt*/,
+    const int process_id)
+{
+    if (process_id == 0)
+    {
+        AssemblyMixin<ComponentTransportProcess>::updateActiveElements();
+    }
 }
 
 void ComponentTransportProcess::postTimestepConcreteProcess(
@@ -503,7 +499,7 @@ void ComponentTransportProcess::postTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::postTimestep,
-        _local_assemblers, getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
+        local_assemblers_, getActiveElementIDs(), dof_tables, x, x_prev, t, dt,
         process_id);
 
     if (!_surfaceflux)  // computing the surfaceflux is optional
@@ -521,59 +517,8 @@ void ComponentTransportProcess::preOutputConcreteProcess(
     std::vector<GlobalVector*> const& x_prev,
     int const process_id)
 {
-    auto const matrix_specification = getMatrixSpecifications(process_id);
-
-    auto M = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
-        matrix_specification);
-    auto K = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
-        matrix_specification);
-    auto b = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-        matrix_specification);
-
-    M->setZero();
-    K->setZero();
-    b->setZero();
-
-    assembleConcreteProcess(t, dt, x, x_prev, process_id, *M, *K, *b);
-
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-    if (_use_monolithic_scheme)
-    {
-        dof_tables.push_back(_local_to_global_index_map.get());
-    }
-    else
-    {
-        std::generate_n(std::back_inserter(dof_tables),
-                        _process_variables.size(),
-                        [&]() { return _local_to_global_index_map.get(); });
-    }
-
-    BaseLib::RunTime time_residuum;
-    time_residuum.start();
-
-    if (_use_monolithic_scheme)
-    {
-        auto const residuum =
-            computeResiduum(dt, *x[0], *x_prev[0], *M, *K, *b);
-        for (std::size_t variable_id = 0; variable_id < _residua.size();
-             ++variable_id)
-        {
-            transformVariableFromGlobalVector(
-                residuum, variable_id, *dof_tables[0], *_residua[variable_id],
-                std::negate<double>());
-        }
-    }
-    else
-    {
-        auto const residuum = computeResiduum(dt, *x[process_id],
-                                              *x_prev[process_id], *M, *K, *b);
-        transformVariableFromGlobalVector(residuum, 0, *dof_tables[process_id],
-                                          *_residua[process_id],
-                                          std::negate<double>());
-    }
-
-    INFO("[time] Computing residuum flow rates took {:g} s",
-         time_residuum.elapsed());
+    AssemblyMixin<ComponentTransportProcess>::preOutput(t, dt, x, x_prev,
+                                                        process_id);
 }
 }  // namespace ComponentTransport
 }  // namespace ProcessLib

@@ -179,6 +179,10 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
         config.getConfigParameter("initialize_porosity_from_medium_property",
                                   true);
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__linear}
+        config.getConfigParameter("linear", false);
+
     const bool use_TaylorHood_elements =
         variable_p->getShapeFunctionOrder() !=
                 variable_u->getShapeFunctionOrder()
@@ -206,7 +210,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
         name, mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
         std::move(process_data), std::move(secondary_variables),
-        use_monolithic_scheme);
+        use_monolithic_scheme, is_linear);
 }
 
 template <int DisplacementDim>
