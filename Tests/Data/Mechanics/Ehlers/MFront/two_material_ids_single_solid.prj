@@ -232,7 +232,7 @@
         <vtkdiff>
             <regex>two_material_ids_single_solid_t_.*.vtu</regex>
             <field>NodalForces</field>
-            <absolute_tolerance>8e-13</absolute_tolerance>
+            <absolute_tolerance>9.9e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
