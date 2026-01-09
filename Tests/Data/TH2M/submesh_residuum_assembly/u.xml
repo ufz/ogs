@@ -62,7 +62,7 @@
     <add sel="/*/time_loop/submesh_residuum_output">
         <prefix>u_{:meshname}</prefix>
     </add>
-    
+
     <add sel="/*/time_loop/output/variables">
         <variable>HeatFlowRate</variable>
         <variable>GasMassFlowRate</variable>
@@ -85,7 +85,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>u_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>HeatFlowRate</field>
                 <absolute_tolerance>5e-7</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
@@ -98,7 +98,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>u_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>GasMassFlowRate</field>
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
@@ -111,7 +111,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>u_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>LiquidMassFlowRate</field>
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
@@ -130,7 +130,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>u.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>u_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>NodalForces</field>
                 <absolute_tolerance>2.0e-8</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
