@@ -33,6 +33,20 @@ endif()
 
 enable_testing() # Enable CTest
 
+# processes supporting OpenMP parallel assembly
+set(OGS_OPENMP_PARALLEL_ASM_PROCESSES
+    ComponentTransport
+    HeatConduction
+    HeatTransportBHE
+    HydroMechanics
+    RichardsMechanics
+    SmallDeformation
+    TH2M
+    ThermoHydroMechanics
+    ThermoRichardsFlow
+    ThermoRichardsMechanics
+)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/NotebookTest.cmake)
