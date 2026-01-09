@@ -17,7 +17,7 @@ are located inside the elements, not at its faces, edges, or corners.
 
 The table below gives an overview over the implemented schemes and which
 polynomials can be integrated exactly with the respective schemes. The data are
-[unit tested](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/MathLib/TestGaussLegendreIntegration.cpp).
+[unit tested](https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{% repo-ref %}}/Tests/MathLib/TestGaussLegendreIntegration.cpp).
 
 Integration methods are implemented up to *integration order* 4.
 For each integration order *n* there is a maximum polynomial degree *P* that can be

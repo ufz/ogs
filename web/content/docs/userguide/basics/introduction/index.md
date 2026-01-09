@@ -150,9 +150,9 @@ When the environment is activated then just calling `ogs` from the terminal is s
 
 You can download the latest benchmark files from GitLab:
 
-- On our OGS repository on GitLab browse to the [Tests/Data](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data)
+- On our OGS repository on GitLab browse to the [Tests/Data](https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{% repo-ref %}}/Tests/Data)
 -folder
-- Browse to the process subfolder you are interested in, e.g. [Elliptic](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic) (1.)
+- Browse to the process subfolder you are interested in, e.g. [Elliptic]({{% data-url "Elliptic) (1." %}})
 - Find the Downloads-dropdown (2.)
 - Choose an appropriate format under **Download this directory** (3.)
 - Uncompress the downloaded file

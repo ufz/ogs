@@ -13,7 +13,7 @@ mesh.
 
 ## Example
 
-Invoking the tool on a [mixed element test mesh](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad/quad_tri_THM_t_864000_000000.vtu)
+Invoking the tool on a [mixed element test mesh]({{% data-url "NodePartitionedMesh/WithIntegrationPointStress/MixedElements/TriQuad/quad_tri_THM_t_864000_000000.vtu" %}})
 we can create the following visualization in ParaView:
 
 ![visualization of a mixed mesh and point cloud](triquad.png)

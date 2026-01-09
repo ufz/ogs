@@ -105,7 +105,7 @@ OGS.
    the [project file](/docs/userguide/basics/project_file_intro/),
    the simulation mesh,
    and a file defining the geometries on which boundary conditions are applied.
-   Its contents can be viewed online [here](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Mechanics/Linear/DiscWithHole).
+   Its contents can be viewed online [here]({{% data-url "Mechanics/Linear/DiscWithHole" %}}).
 3. Run OGS:  
    ![Run OGS in the terminal on Windows](windows-run-ogs.svg)
 4. View the written output files (`*.pvd`, `*.vtu`), e.g., with [ParaView](https://www.paraview.org/).

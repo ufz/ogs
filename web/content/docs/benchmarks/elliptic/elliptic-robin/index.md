@@ -43,7 +43,7 @@ h(x) = g_D &\quad \text{for } x=1,
 }
 $$
 see
-[`line_1e1_robin_left_picard.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_left_picard.prj).
+[`line_1e1_robin_left_picard.prj`]({{% data-url "Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_left_picard.prj" %}}).
 
 ### Analytical solution
 
@@ -116,7 +116,7 @@ h(x) = g_D &\quad \text{for } x=0,\cr
 {\partial h \over \partial n} = \alpha (h_0 - h(x)) &\quad \text{for } x=1,
 }$$
 see
-[`line_1e1_robin_right_picard.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_right_picard.prj).
+[`line_1e1_robin_right_picard.prj`]({{% data-url "Elliptic/line_1_SteadyStateDiffusion/line_1e1_robin_right_picard.prj" %}}).
 
 One particular solution is
 $$

@@ -47,7 +47,7 @@ where $T_\textrm{b}$ is the boundary temperature, $\textrm{erfc}$ is the complem
 
 ## Input files
 
-The main project file is [line_60_heat.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/1D_dirichlet/line_60_heat.prj). It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
+The main project file is [line_60_heat.prj]({{% data-url "Parabolic/T/1D_dirichlet/line_60_heat.prj" %}}). It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
 
 As of now a small portion of possible inputs is implemented; one can change:
 

@@ -52,7 +52,7 @@ The time duration is 5.e+4 s. A fixed time step size of 250 s is used
  for the temporal discretization.
 
 This example is also set as one of the benchmarks of
- [ThermoHydroMechanics (THM)](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj)
+ [ThermoHydroMechanics (THM)]({{% data-url "ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj" %}})
  and ThermoRichardsMechanics (TRM), respectively.
  In order to provide a reference result for the same benchmark of
  THM and TRM, a 2D domain of 1 m $\times$ 0.1 m is used, which

@@ -185,7 +185,7 @@ $$
 
 as there is only one dependent variable.
 
-A more realistic example can be found in benchmark [A2](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/HydroMechanics/A2/A2.prj), where the fluid density linearly but independently depends on pressure and temperature:
+A more realistic example can be found in benchmark [A2]({{% data-url "HydroMechanics/A2/A2.prj" %}}), where the fluid density linearly but independently depends on pressure and temperature:
 
 ```xml
 <property>

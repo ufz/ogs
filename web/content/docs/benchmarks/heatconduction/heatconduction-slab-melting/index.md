@@ -32,4 +32,4 @@ In these plots, the temperature is given in kelvins as well.
 
 ## *Remark*
 
-In the corresponding OGS project file [`Two-phase_Stefan_problem.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_Stefan_problem.prj) the time discretization is different for the "real case study" whose results are presented in the documentation and for the `ctest` case, and must be altered manually.
+In the corresponding OGS project file [`Two-phase_Stefan_problem.prj`]({{% data-url "Parabolic/T/1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_Stefan_problem.prj" %}}) the time discretization is different for the "real case study" whose results are presented in the documentation and for the `ctest` case, and must be altered manually.
