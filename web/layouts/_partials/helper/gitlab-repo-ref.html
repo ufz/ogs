@@ -1,0 +1,2 @@
+{{- $ref := getenv "CI_COMMIT_TAG" | default "master" -}}
+{{- return $ref -}}

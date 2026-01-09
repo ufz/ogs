@@ -1,0 +1,2 @@
+{{ $ref := partial "helper/gitlab-repo-ref.html" }}{{ if eq $ref "master" }}--pre --index-url
+https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple ogs{{ else }}ogs=={{ $ref }}{{ end }}
