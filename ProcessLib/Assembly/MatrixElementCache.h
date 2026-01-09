@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <algorithm>
+#include <range/v3/view/zip.hpp>
 
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
@@ -57,91 +57,54 @@ struct MatrixElementCacheEntry
 };
 
 template <std::size_t Dim>
-class ConcurrentMatrixView
-{
-    static_assert(Dim == 1 || Dim == 2);
-    using GlobalMatOrVec =
-        std::conditional_t<Dim == 1, GlobalVector, GlobalMatrix>;
-
-public:
-    explicit ConcurrentMatrixView(GlobalMatOrVec& mat_or_vec)
-        : mat_or_vec_{mat_or_vec}
-    {
-    }
-
-    void add(std::vector<MatrixElementCacheEntry<Dim>> const& entries)
-    {
-#pragma omp critical
-        {
-            if constexpr (Dim == 2)
-            {
-                auto const n_cols = mat_or_vec_.getNumberOfColumns();
-
-                // TODO would be more efficient if our global matrix and vector
-                // implementations supported batch addition of matrix elements
-                // with arbitrary indices (not restricted to (n x m) shaped
-                // submatrices).
-                for (auto const [rc, value] : entries)
-                {
-                    auto const [r, c] = rc;
-
-                    auto const c_no_ghost =
-                        detail::transformToNonGhostIndex(c, n_cols);
-
-                    mat_or_vec_.add(r, c_no_ghost, value);
-                }
-            }
-            else
-            {
-                // TODO batch addition would be more efficient. That needs the
-                // refactoring of the matrix element cache.
-                for (auto const [r, value] : entries)
-                {
-                    mat_or_vec_.add(r.front(), value);
-                }
-            }
-        }
-    }
-
-private:
-    GlobalMatOrVec& mat_or_vec_;
-};
-
-explicit ConcurrentMatrixView(GlobalVector&) -> ConcurrentMatrixView<1>;
-explicit ConcurrentMatrixView(GlobalMatrix&) -> ConcurrentMatrixView<2>;
-
-template <std::size_t Dim>
 class MatrixElementCache final
 {
     static_assert(Dim == 1 || Dim == 2);
-    using GlobalMatView = ConcurrentMatrixView<Dim>;
+    using MatOrVec = std::conditional_t<Dim == 1, GlobalVector, GlobalMatrix>;
 
     static constexpr std::size_t cache_capacity = 1'000'000;
 
 public:
-    MatrixElementCache(GlobalMatView& mat_or_vec, Stats& stats)
-        : mat_or_vec_(mat_or_vec), stats_(stats)
+    MatrixElementCache(MatOrVec& mat_or_vec, Stats& stats,
+                       const int num_threads)
+        : mat_or_vec_(mat_or_vec), stats_(stats), num_threads_(num_threads)
     {
-        cache_.reserve(cache_capacity);
     }
 
     void add(std::vector<double> const& local_data,
              std::vector<GlobalIndexType> const& indices)
     {
+        if (local_data.empty())
+        {
+            return;
+        }
+
+        if (num_threads_ == 1)
+        {
+            if constexpr (Dim == 2)
+            {
+                auto const num_r_c = indices.size();
+                mat_or_vec_.add(
+                    MathLib::RowColumnIndices<GlobalIndexType>{indices,
+                                                               indices},
+                    MathLib::toMatrix(local_data, num_r_c, num_r_c));
+            }
+            else
+            {
+                mat_or_vec_.add(indices, local_data);
+            }
+            return;
+        }
+
         addToCache(local_data, indices);
     }
 
-    ~MatrixElementCache() { addToGlobal(); }
+    ~MatrixElementCache() { addCacheToGlobal(); }
 
 private:
     void addToCache(std::vector<double> const& values,
                     std::vector<GlobalIndexType> const& indices)
     {
-        if (values.empty())
-        {
-            return;
-        }
-
         ensureEnoughSpace(values.size());
 
         addToCacheImpl(values, indices,
@@ -193,8 +156,8 @@ private:
                 ++stats_.count;
                 auto const value = local_mat(r_local, c_local);
 
-                // TODO skipping zero values sometimes does not work together
-                // with the Eigen SparseLU linear solver. See also
+                // TODO skipping zero values sometimes does not work
+                // together with the Eigen SparseLU linear solver. See also
                 // https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/4556#note_125561
 #if 0
                 if (value == 0)
@@ -212,6 +175,11 @@ private:
 
     void ensureEnoughSpace(std::size_t const space_needed)
     {
+        if (cache_.capacity() < cache_capacity)
+        {
+            cache_.reserve(cache_capacity);
+        }
+
         auto const size_initial = cache_.size();
         auto const cap_initial = cache_.capacity();
 
@@ -220,7 +188,7 @@ private:
             return;
         }
 
-        addToGlobal();
+        addCacheToGlobal();
 
         // ensure again that there is enough capacity (corner case, if initial
         // capacity is too small because of whatever arcane reason)
@@ -233,27 +201,66 @@ private:
         }
     }
 
-    void addToGlobal()
+    void addCacheToGlobal()
     {
-        mat_or_vec_.add(cache_);
+        if (cache_.empty())
+        {
+            return;
+        }
+
+#pragma omp critical
+        {
+            if constexpr (Dim == 2)
+            {
+                auto const n_cols = mat_or_vec_.getNumberOfColumns();
+
+                // TODO would be more efficient if our global matrix and vector
+                // implementations supported batch addition of matrix elements
+                // with arbitrary indices (not restricted to (n x m) shaped
+                // submatrices).
+                for (auto const [rc, value] : cache_)
+                {
+                    auto const [r, c] = rc;
+
+                    auto const c_no_ghost =
+                        detail::transformToNonGhostIndex(c, n_cols);
+
+                    mat_or_vec_.add(r, c_no_ghost, value);
+                }
+            }
+            else
+            {
+                // TODO batch addition would be more efficient. That needs the
+                // refactoring of the matrix element cache.
+                for (auto const [r, value] : cache_)
+                {
+                    mat_or_vec_.add(r.front(), value);
+                }
+            }
+        }
+
         stats_.count_global += cache_.size();
         cache_.clear();
     }
 
     std::vector<MatrixElementCacheEntry<Dim>> cache_;
-    GlobalMatView& mat_or_vec_;
+    MatOrVec& mat_or_vec_;
     Stats& stats_;
+    int num_threads_;
 };
 
-class MultiMatrixElementCache final
-{
-    using GlobalMatrixView = ConcurrentMatrixView<2>;
-    using GlobalVectorView = ConcurrentMatrixView<1>;
+template <int NumMatrices>
+class MultiMatrixElementCache;
 
+// Specialization with 1 matrix ("Jac")
+template <>
+class MultiMatrixElementCache<1> final
+{
 public:
-    MultiMatrixElementCache(GlobalVectorView& b, GlobalMatrixView& Jac,
-                            MultiStats& stats)
-        : cache_b_(b, stats.b), cache_Jac_(Jac, stats.Jac)
+    MultiMatrixElementCache(GlobalVector& b, GlobalMatrix& Jac,
+                            MultiStats<1>& stats, const int num_threads)
+        : cache_b_(b, stats.b, num_threads),
+          cache_Jac_(Jac, stats.Jac, num_threads)
     {
     }
 
@@ -268,5 +275,34 @@ public:
 private:
     MatrixElementCache<1> cache_b_;
     MatrixElementCache<2> cache_Jac_;
+};
+
+// Specialization with 2 matrices ("M", "K")
+template <>
+class MultiMatrixElementCache<2> final
+{
+public:
+    MultiMatrixElementCache(GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b,
+                            MultiStats<2>& stats, const int num_threads)
+        : cache_M_(M, stats.M, num_threads),
+          cache_K_(K, stats.K, num_threads),
+          cache_b_(b, stats.b, num_threads)
+    {
+    }
+
+    void add(std::vector<double> const& local_M_data,
+             std::vector<double> const& local_K_data,
+             std::vector<double> const& local_b_data,
+             std::vector<GlobalIndexType> const& indices)
+    {
+        cache_M_.add(local_M_data, indices);
+        cache_K_.add(local_K_data, indices);
+        cache_b_.add(local_b_data, indices);
+    }
+
+private:
+    MatrixElementCache<2> cache_M_;
+    MatrixElementCache<2> cache_K_;
+    MatrixElementCache<1> cache_b_;
 };
 }  // namespace ProcessLib::Assembly
