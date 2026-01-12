@@ -436,7 +436,7 @@
             </eigen>
             <petsc>
                 <prefix>hc</prefix>
-                <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-8 -hc_ksp_max_it 20000</parameters>
+                <parameters>-hc_ksp_type bcgs -hc_pc_type bjacobi -hc_ksp_rtol 1e-12 -hc_ksp_max_it 20000</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
