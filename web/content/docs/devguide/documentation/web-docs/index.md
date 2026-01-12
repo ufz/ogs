@@ -121,9 +121,9 @@ Or for two images side-by-side:
 
 Equations can be set with typical LaTeX syntax by using [MathJax](https://www.mathjax.org/). Blocks are defined by `$$` at the beginning and `$$` at the end of the block or by simply using a LaTex environment like `\begin{equation}...\end{equation}`. Inline math uses one `$` as the delimiter. For more usage instructions see the [MathJax LaTeX help](https://docs.mathjax.org/en/latest/input/tex/index.html).
 
-#### Files and Downloads
+#### Files and downloads
 
-Files belonging directly to a page (e.g. images shown on that same page) should be added directly. Other stuff such as linked PDF files, book chapter input files should be uploaded elsewhere and linked to. You can ask @bilke to host these files for you (on Azure cloud storage).
+Files belonging directly to a page (e.g. images shown on that same page) should be added directly. Other stuff such as linked PDF files, book chapter input files should be uploaded elsewhere and linked to. You can ask @bilke to host these files for you (on S3 storage).
 
 #### Bibliography references
 
@@ -141,6 +141,75 @@ uvx --from pybtex pybtex-convert Documentation/bibliography/other.bib web/data/b
 ```
 
 This yaml-file is then used by the shortcode.
+
+#### Other shortcodes
+
+```bash
+# Creates a link to the project-parameter on a benchmark page
+{{</* data-link */>}}
+```
+
+produces
+
+{{< data-link "Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj" >}}
+
+---
+
+```bash
+# Creates a URL to the given file in Tests/Data
+{{</* data-url "Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj" */>}}
+```
+
+```bash
+{{< data-url "Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj" >}}
+```
+
+---
+
+```bash
+# Reads the versions.json file outputs values
+{{</* dataFile "versions.minimum_version.git" */>}}
+```
+
+```bash
+{{< dataFile "versions.minimum_version.git" >}}
+```
+
+---
+
+```bash
+# Outputs the pip package. Use this to have consistent package
+# version on the versioned web pages.
+{{</* ogs-pip-package */>}}
+```
+
+```bash
+{{< ogs-pip-package >}}
+```
+
+---
+
+```bash
+# Outputs the pip package of ogstools. Use this to have consistent package
+# version on the versioned web pages.
+{{</* ogstools-pip-package */>}}
+```
+
+```bash
+{{< ogstools-pip-package >}}
+```
+
+---
+
+```bash
+# Produces 'master' or current tag for releases.
+# Use this to construct consistent links to links to files.
+{{</* repo-ref */>}}
+```
+
+```bash
+{{< repo-ref >}}
+```
 
 ### Used components
 
