@@ -12,7 +12,7 @@ At the moment this optimization is implemented only for the combination of Eigen
 linear solvers and the Picard non-linear solver.
 
 This flag is a further optimization on top of the
-[\<linear\>](@ref ogs_file_param__prj__processes__process__ComponentTransport__linear)
+[\<linear\>](@ref ogs_file_param__prj__processes__process__linear)
 flag.
 Hence, the requirements of `<linear>` apply to this flag, too!
 
