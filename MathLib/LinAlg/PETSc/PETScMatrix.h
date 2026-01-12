@@ -255,7 +255,7 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
     const PetscInt nrows = static_cast<PetscInt>(row_pos.size());
     const PetscInt ncols = static_cast<PetscInt>(col_pos.size());
 
-    MatSetValues(A_, nrows, &row_pos[0], ncols, &col_pos[0], &sub_mat(0, 0),
+    MatSetValues(A_, nrows, &row_pos[0], ncols, &col_pos[0], sub_mat.data(),
                  ADD_VALUES);
 };
 
