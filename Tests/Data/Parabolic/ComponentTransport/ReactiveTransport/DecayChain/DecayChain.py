@@ -332,8 +332,7 @@ for rn, color in zip(radionuclides, colors, strict=True):
     delta_GIA = np.abs(mesh_GIA[rn] - np.interp(GIA_x, x, c[rn]))
     delta_OS = np.abs(mesh_OS[rn] - np.interp(OS_x, x, c[rn]))
 
-    # TODO: re-enable assert
-    # np.testing.assert_array_less(delta_GIA, 3.6e-4)
+    np.testing.assert_array_less(delta_GIA, 3.6e-4)
 
     axs[0].plot(GIA_x, delta_GIA, "-", color=color, label=f"OGS GIA {rn}")
     if rn == "[Ac-227]":
@@ -371,8 +370,7 @@ axs[1].set_yscale("asinh", linear_width=1e-4)
 for rn, color in zip(radionuclides, colors, strict=True):
     flux_err = np.interp(x, GIA_x, mesh_GIA[rn + "Flux"]) - molar_flux_ana[rn]
     flux_err_normalized = flux_err / np.ptp(molar_flux_ana[rn])
-    # TODO re-enable assert
-    # np.testing.assert_array_less(np.abs(flux_err_normalized)[x > GIA_x[1]], 8e-4)
+    np.testing.assert_array_less(np.abs(flux_err_normalized)[x > GIA_x[1]], 8e-4)
 
     axs[0].plot(x, flux_err, label=rn, color=color)
     axs[1].plot(x, flux_err_normalized, label=rn, color=color)
@@ -430,9 +428,8 @@ axs[1].set_title(r"Normalized extrapolation residual")
 for rn, color in zip(radionuclides, colors, strict=True):
     flux_res = mesh_GIA[rn + "Flux_residual"]
     flux_res_normalized = flux_res / np.ptp(molar_flux_ana_ex[rn])
-    # TODO: re-enable assert
-    # if rn != "[Ac-227]":
-    #     np.testing.assert_array_less(np.abs(flux_res_normalized), 0.0023)
+    if rn != "[Ac-227]":
+        np.testing.assert_array_less(np.abs(flux_res_normalized), 0.0023)
     np.testing.assert_array_less(np.abs(flux_res_normalized), 1.5e-2)
 
     axs[0].loglog(GIA_center_x, flux_res, label=rn, color=color)
