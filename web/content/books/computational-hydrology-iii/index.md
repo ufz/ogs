@@ -5,7 +5,7 @@ date = 2018-06-18T08:20:04+01:00
 author = "Eunseon Jang"
 
 categories = ["Tutorials"]
-image = "/books/Computational-Hydrology-III-Cover.jpg"
+image = "Computational-Hydrology-III-Cover.jpg"
 +++
 
 [<i class="far fa-file-pdf"></i> Download this book as PDF](https://vip.s3.ufz.de/ogs/public/web/Books/Computational-Hydrology-III/Computational-Hydrology-III.pdf)
