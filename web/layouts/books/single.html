@@ -3,7 +3,14 @@
   <h1>{{ .Title }} {{ if .Params.subtitle }}<span class="text-regular text-gray-600">–
       {{ .Params.subtitle }}</span>{{ end }}</h1>
 
+  {{ if .Params.image }}
+  {{ if .Resources.GetMatch .Params.image }}
+  <img class="w-1/4 lg:w-1/6 float-left mr-4 shadow-mg" style="margin-top: 0;"
+    src="{{ (.Resources.GetMatch .Params.image).RelPermalink }}" alt="">
+  {{ else }}
   <img class="w-1/4 lg:w-1/6 float-left mr-4 shadow-mg" style="margin-top: 0;" src="{{ .Params.image }}" alt="">
+  {{ end }}
+  {{ end }}
   {{ .Content }}
 </div>
 {{ end }}

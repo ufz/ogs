@@ -5,7 +5,7 @@ date = 2018-03-07T15:27:05+01:00
 author = "Lars Bilke"
 
 categories = ["Tutorials"]
-image = "/books/computational-geotechnics-i.png"
+image = "computational-geotechnics-i.png"
 +++
 
 [<i class="far fa-file-pdf"></i> Download this book as PDF](https://vip.s3.ufz.de/ogs/public/web/Books/Comp-Geotechnics-I/Computational_Geotechnics_I.pdf)

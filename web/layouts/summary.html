@@ -1,26 +1,35 @@
 <article class="mb-8 border-b">
+  {{ $image := "" }}
   {{ if .Params.image }}
-    <div class="w-1/6 float-left mr-4 mb-2">
-      <img class="shadow-md" src="{{ .Params.image }}" alt="">
-    </div>
+  {{ if .Resources.GetMatch .Params.image }}
+  {{ $image = .Resources.GetMatch .Params.image }}
+  {{ else }}
+  {{ $image = .Params.image }}
+  {{ end }}
+  {{ if $image }}
+  <div class="w-1/6 float-left mr-4 mb-2">
+    <img class="shadow-md" src="{{ $image }}" alt="">
+  </div>
+  {{ end }}
   {{ end }}
 
-  <p><a class="text-black font-bold text-xl mb-2" href="{{ .Permalink }}">{{ .Title }}</a> {{ if .Params.subtitle }}<span class="text-sm">– {{ .Params.subtitle }}</span>{{ end }}</p>
+  <p><a class="text-black font-bold text-xl mb-2" href="{{ .Permalink }}">{{ .Title }}</a> {{ if .Params.subtitle
+    }}<span class="text-sm">– {{ .Params.subtitle }}</span>{{ end }}</p>
   {{ if in .Params.tags "news" }}
-    <b><time>{{ .Date.Format "02.01.2006 15:04" }}</time></b>
+  <b><time>{{ .Date.Format "02.01.2006 15:04" }}</time></b>
   {{ end }}
   {{ range .Params.tags }}
-    <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
+  <a href="{{ "/tags/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
   {{ end }}
 
   <div>
     <p class="text-gray-700 text-sm">{{ .Summary }}</p>
     {{ if .Truncated }}
-      {{ if in .Params.tags "news" }}
-        <a href="{{ .Permalink }}">Read more...</a>
-      {{ else }}
-        <a href="{{.Permalink}}">Show details <i class="far fa-arrow-right"></i></a>
-      {{ end }}
+    {{ if in .Params.tags "news" }}
+    <a href="{{ .Permalink }}">Read more...</a>
+    {{ else }}
+    <a href="{{.Permalink}}">Show details <i class="far fa-arrow-right"></i></a>
+    {{ end }}
     {{ end }}
   </div>
 
