@@ -17,7 +17,7 @@ waste deposition. OGS is comprised of the THMC-simulator (simply referred to as
 ## Software development
 
 - Good starting point for users as well as for developers is the [documentation][documentation]
-- Check your code against our [style guide](http://ufz.github.io/styleguide/cppguide.xml)
+- Check your code against our [style guide](https://ufz.github.io/styleguide/cppguide.xml)
 - Have a look at the [source code documentation for the current master-branch build][docs-master] or [for the latest release][docs-release]
 
 ## License
