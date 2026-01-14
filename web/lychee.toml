@@ -1,3 +1,5 @@
+accept = ["100..=103", "200..=299", "403"]
+
 exclude = [
   "gitlab\\.opengeosys\\.org",
   "discourse\\.opengeosys\\.org",
@@ -13,5 +15,6 @@ exclude = [
   "www\\.gpdn\\.de",
   "gitlab\\.io",
   "overleaf\\.com",
+  "web\\.archive\\.org/",
 ]
 exclude_path = ["public/releases/", "public/docs/featurematrix/bundle/"]
