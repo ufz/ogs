@@ -13,7 +13,7 @@ check web links:
     - yarn
     - yarn index
     - hugo
-    - lychee --config ./lychee.toml --cache --max-cache-age 2d --threads ${CTEST_PARALLEL_LEVEL:-4} public
+    - lychee --config ./lychee.toml --cache --max-cache-age 2d --threads ${CTEST_PARALLEL_LEVEL:-4} --root-dir public public
     # - lychee --config ./lychee-gitlab.toml --cache --max-cache-age 14d --max-concurrency 2 public
   cache:
     paths:
