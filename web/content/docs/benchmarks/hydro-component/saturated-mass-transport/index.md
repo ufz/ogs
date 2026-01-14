@@ -10,7 +10,7 @@ image = "DiffusionAndStorageAndGravityAndDispersionHalf.gif"
 
 These benchmark compile a number of simple, synthetic setups to test different processes of saturated component transport of a solute.
 
-The development of the equation system is given in [this PDF](HC-Process.pdf). In the following, we present the different setups. The benchmark source files can be found in [Parabolic/ComponentTransport/SimpleSynthetics](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Parabolic/ComponentTransport/SimpleSynthetics).
+The development of the equation system is given in [this PDF](HC-Process.pdf). In the following, we present the different setups. The benchmark source files can be found in [Parabolic/ComponentTransport/SimpleSynthetics]({{% data-url "Parabolic/ComponentTransport/SimpleSynthetics" %}}).
 
 ## Problem description
 

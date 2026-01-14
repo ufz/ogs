@@ -1,0 +1,3 @@
+{{- $url := partial "helper/gitlab-repo-file-ref.html" -}}
+{{- $data_url := printf "%s/Tests/Data/%s" $url . -}}
+{{- return $data_url -}}

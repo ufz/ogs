@@ -16,33 +16,35 @@
 {{ end }}
 {{ end }}
 
-<a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ $prj_file }}">
-    <i class="far fa-arrow-right"></i>
-    {{ $link_text | markdownify }}
+{{ $url := partial "helper/data-url.html" $prj_file }}
+<a href="{{ $url }}">
+  <i class="far fa-arrow-right"></i>
+  {{ $link_text | markdownify }}
 </a>
 
 {{ else }}
 
 <ul>
-    {{ with .Page.Params.project }}
-    {{ range . }}
+  {{ with .Page.Params.project }}
+  {{ range . }}
 
-    {{ if os.FileExists "Tests" }}
-    {{ $filePath := print "Tests/Data/" .}}
-    {{ if os.FileExists $filePath }}
-    {{ else }}
-    {{ errorf "%q: Project file does not exist: %q" $.Page.File.Path . }}
-    {{ end }}
-    {{ end }}
+  {{ if os.FileExists "Tests" }}
+  {{ $filePath := print "Tests/Data/" .}}
+  {{ if os.FileExists $filePath }}
+  {{ else }}
+  {{ errorf "%q: Project file does not exist: %q" $.Page.File.Path . }}
+  {{ end }}
+  {{ end }}
 
-    <li>
-        <a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/{{ . }}">
-            <i class="far fa-arrow-right"></i>
-            {{ . }}
-        </a>
-    </li>
-    {{ end }}
-    {{ end }}
+  {{ $url := partial "helper/data-url.html" . }}
+  <li>
+    <a href="{{ $url }}">
+      <i class="far fa-arrow-right"></i>
+      {{ . }}
+    </a>
+  </li>
+  {{ end }}
+  {{ end }}
 </ul>
 
 {{ end }}

@@ -54,7 +54,7 @@ $$
 
 ## Input files
 
-The main project file is [square_1e2_neumann.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.prj). It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
+The main project file is [square_1e2_neumann.prj]({{% data-url "Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.prj" %}}). It describes the processes to be solved and the related process variables together with their initial and boundary conditions. It also references the mesh and geometrical objects defined on the mesh.
 
 As of now a small portion of possible inputs is implemented; one can change:
 
@@ -63,7 +63,7 @@ As of now a small portion of possible inputs is implemented; one can change:
 - introduce more/different Dirichlet boundary conditions (different geometry or other constant values)
 - introduce more/different Neumann boundary conditions (different geometry or other constant values)
 
-The geometries used to specify the boundary conditions are given in the [square_1x1.gml](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Elliptic/square_1x1_SteadyStateDiffusion/square_1x1.gml) file.
+The geometries used to specify the boundary conditions are given in the [square_1x1.gml]({{% data-url "Elliptic/square_1x1_SteadyStateDiffusion/square_1x1.gml" %}}) file.
 
 The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and can be directly visualized in ParaView for example.
 

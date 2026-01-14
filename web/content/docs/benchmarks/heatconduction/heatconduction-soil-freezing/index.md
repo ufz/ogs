@@ -44,4 +44,4 @@ Here, origin of the horizontal axis on the right plot corresponds to line's orig
 
 ### *Remark*
 
-In the corresponding OGS project file [`m16m15projectB.prj`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/T/2D_Soil_freezing_round_BHE/m16m15projectB.prj) the time discretization is different for the "real case study" whose results are presented in the documentation and for the `ctest` case, and must be altered manually.
+In the corresponding OGS project file [`m16m15projectB.prj`]({{% data-url "Parabolic/T/2D_Soil_freezing_round_BHE/m16m15projectB.prj" %}}) the time discretization is different for the "real case study" whose results are presented in the documentation and for the `ctest` case, and must be altered manually.

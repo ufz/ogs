@@ -39,10 +39,15 @@ Otherwise, maybe [Option 2](#binaries) might work for you.
 
 1. Create a Python virtual environment and activate it (for more details see
    [here](/docs/userguide/basics/introduction/)).
-2. Install the python package [OGSTools](https://ogstools.opengeosys.org):
-   `pip install ogstools[ogs]`.
-   It installs the [OpenGeoSys package](https://pypi.org/project/ogs/)
-   for you and comes with our collection of Python pre- and post-processing
+2. Install the ogs python package:
+
+   `pip install {{% ogs-pip-package %}}`
+
+3. Install the python package [OGSTools](https://ogstools.opengeosys.org) package:
+
+   `pip install {{% ogstools-pip-package %}}`
+
+   This is our collection of Python pre- and post-processing
    tools and some selected packages that are commonly used together with OGS:
    [PyVista](https://pyvista.org/) for 3D visualization,
    [Matplotlib](https://matplotlib.org/),
@@ -52,21 +57,15 @@ Otherwise, maybe [Option 2](#binaries) might work for you.
    whole simulation workflow, from setting up simulation and mesh files to data
    analysis and creating publication-ready plots.
 
-   If you want to install the latest development versions of both OGS and
-   OGSTools you can install them via the following commands:
-
-   `pip install git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@main`
-
-   `pip install git+https://gitlab.opengeosys.org/ogs/ogs.git@master`
-3. [Download](https://gitlab.opengeosys.org/ogs/ogs/-/archive/master/ogs-master.zip?path=Tests/Data/Mechanics/Linear/DiscWithHole)
+4. [Download](https://gitlab.opengeosys.org/ogs/ogs/-/archive/{{< repo-ref >}}/ogs-{{< repo-ref >}}.zip?path=Tests/Data/Mechanics/Linear/DiscWithHole)
    the disc with hole example zip file from our GitLab server and unzip it.  
    The zip file contains (in the subdirectory
    `Tests/Data/Mechanics/Linear/DiscWithHole`)
    the [project file](/docs/userguide/basics/project_file_intro/),
    the simulation mesh,
    and a file defining the geometries on which boundary conditions are applied.
-   Its contents can be viewed online [here](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Mechanics/Linear/DiscWithHole).
-4. [Download](/docs/benchmarks/small-deformations/linear_disc_with_hole/Linear_Disc_with_hole.ipynb)
+   Its contents can be viewed online [here]({{< data-url "Mechanics/Linear/DiscWithHole" >}}).
+5. [Download](/docs/benchmarks/small-deformations/linear_disc_with_hole/Linear_Disc_with_hole.ipynb)
    the Jupyter notebook underlying the
    [benchmark gallery page](/docs/benchmarks/small-deformations/linear_disc_with_hole)
    of this benchmark case.  
@@ -77,10 +76,10 @@ Otherwise, maybe [Option 2](#binaries) might work for you.
    * `disc_with_hole.vtu`
    * `Linear_Disc_with_hole.ipynb`
    * `Linear_Disc_with_hole.py`
-5. Install [JupyterLab](https://jupyter.org/) to run the notebook later on: `pip install jupyterlab`.  
+6. Install [JupyterLab](https://jupyter.org/) to run the notebook later on: `pip install jupyterlab`.  
    Remember: the Python virtual environment from step 1 must still be
    activated.
-6. Open the notebook from step 4 in JupyterLab.  
+7. Open the notebook from step 4 in JupyterLab.  
    The notebook already contains plots of the analytical solution to the
    problem and of OGS simulation results.
    You can play around with it, now.
@@ -106,7 +105,7 @@ OGS.
    the [project file](/docs/userguide/basics/project_file_intro/),
    the simulation mesh,
    and a file defining the geometries on which boundary conditions are applied.
-   Its contents can be viewed online [here](https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/Tests/Data/Mechanics/Linear/DiscWithHole).
+   Its contents can be viewed online [here]({{% data-url "Mechanics/Linear/DiscWithHole" %}}).
 3. Run OGS:  
    ![Run OGS in the terminal on Windows](windows-run-ogs.svg)
 4. View the written output files (`*.pvd`, `*.vtu`), e.g., with [ParaView](https://www.paraview.org/).

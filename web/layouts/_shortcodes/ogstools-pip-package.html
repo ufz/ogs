@@ -1,0 +1,1 @@
+{{ $ref := partial "helper/gitlab-repo-ref.html" }}{{ if eq $ref "master" }}git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@main{{ else }}ogstools{{ end }}
