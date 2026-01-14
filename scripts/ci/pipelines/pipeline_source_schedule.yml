@@ -1,2 +1,0 @@
-include:
-  - local: "/scripts/ci/pipelines/scheduled.yml"
