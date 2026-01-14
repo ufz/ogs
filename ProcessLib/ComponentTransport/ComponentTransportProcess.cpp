@@ -182,6 +182,12 @@ void ComponentTransportProcess::initializeConcreteProcess(
     }
 
     _secondary_variables.addSecondaryVariable(
+        "liquid_density",
+        makeExtrapolator(
+            1, getExtrapolator(), _local_assemblers,
+            &ComponentTransportLocalAssemblerInterface::getIntPtLiquidDensity));
+
+    _secondary_variables.addSecondaryVariable(
         "darcy_velocity",
         makeExtrapolator(
             mesh_space_dimension, getExtrapolator(), _local_assemblers,

@@ -14,6 +14,7 @@
             <specific_body_force>0 0</specific_body_force>
             <secondary_variables>
                 <secondary_variable name="darcy_velocity"/>
+                <secondary_variable name="liquid_density"/>
             </secondary_variables>
         </process>
     </processes>
@@ -162,6 +163,7 @@
                 <variable>Si</variable>
                 <variable>pressure</variable>
                 <variable>darcy_velocity</variable>
+                <variable>liquid_density</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>

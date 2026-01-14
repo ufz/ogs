@@ -329,6 +329,13 @@ AddTest(
     DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
+    DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000.vtu liquid_density liquid_density 1e-9 1e-12
+    DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000.vtu liquid_density liquid_density 1e-9 1e-12
+    DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000.vtu liquid_density liquid_density 1e-9 1e-12
+    DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000.vtu liquid_density liquid_density 1e-9 1e-12
+    DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000.vtu liquid_density liquid_density 1e-9 1e-12
+    DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000.vtu liquid_density liquid_density 1e-9 1e-12
+    DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu liquid_density liquid_density 1e-9 1e-12
 )
 
 AddTest(
