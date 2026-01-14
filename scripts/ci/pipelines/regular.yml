@@ -18,19 +18,7 @@ include:
   - local: "/scripts/ci/jobs/release.yml"
   - local: "/scripts/ci/jobs/package.yml"
   - local: "/scripts/ci/jobs/test-dev-perf.yml"
-
-# child pipelines
-wheels:
-  stage: build
-  needs: [meta]
-  trigger:
-    include: /scripts/ci/jobs/build-wheels.yml
-  rules:
-    - changes:
-        - Applications/Python/**/*
-        - Tests/Python/**/*
-    - if: $CI_COMMIT_TAG
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  - local: "/scripts/ci/jobs/build-wheels.yml"
 
 # disabled, downstream pipeline does not work currently
 .ufz-bgr/hpc/tutorial:

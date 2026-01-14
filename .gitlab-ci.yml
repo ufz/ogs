@@ -52,6 +52,7 @@ workflow:
     - if: $CI_MERGE_REQUEST_IID # merge requests
       variables:
         PIPELINE_NAME: "MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+        CIBW_BUILD: cp310*
     - if: $CI_COMMIT_TAG # tags, ogs/ogs repo only
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_PROJECT_PATH == "ogs/ogs"' # master, ogs/ogs repo only
       variables:
@@ -62,10 +63,7 @@ include:
   - local: "/scripts/ci/jobs/meta.yml"
   - local: "/scripts/ci/pipelines/pipeline_source_regular.yml"
     rules:
-      - if: '$CI_PIPELINE_SOURCE != "schedule" && $CI_PIPELINE_SOURCE != "pipeline"'
+      - if: '$CI_PIPELINE_SOURCE != "pipeline"'
   - local: "/scripts/ci/pipelines/pipeline_source_pipeline.yml"
     rules:
       - if: '$CI_PIPELINE_SOURCE == "pipeline"'
-  - local: "/scripts/ci/pipelines/pipeline_source_schedule.yml"
-    rules:
-      - if: '$CI_PIPELINE_SOURCE == "schedule"'

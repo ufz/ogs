@@ -1,4 +1,0 @@
-wheels:
-  stage: build
-  trigger:
-    include: /scripts/ci/jobs/build-wheels.yml
