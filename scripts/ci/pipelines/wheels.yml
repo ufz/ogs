@@ -1,6 +1,3 @@
-wheels:
-  stage: build
-  needs: []
-  trigger:
-    include: /scripts/ci/jobs/build-wheels.yml
-    strategy: depend
+include:
+  # jobs, can be individually disabled for testing
+  - local: "/scripts/ci/jobs/build-wheels.yml"
