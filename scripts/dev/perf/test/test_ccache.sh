@@ -88,6 +88,10 @@ do
 
     for MARCH in x86-64 native
     do
+        # Skip clang++ with native, Remove when ccache is released with
+        # https://github.com/ccache/ccache/issues/1658.
+        [ "$CXX" = "clang++" ] && [ "$MARCH" = "native" ] && continue
+
         MARCH="-march=$MARCH"
 
         for debug in "" -g
