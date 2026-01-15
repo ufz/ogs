@@ -772,7 +772,7 @@ name = "flexcache"
 version = "0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/55/b0/8a21e330561c65653d010ef112bf38f60890051d244ede197ddaa08e50c1/flexcache-0.3.tar.gz", hash = "sha256:18743bd5a0621bfe2cf8d519e4c3bfdf57a269c15d1ced3fb4b64e0ff4600656", size = 15816, upload-time = "2024-03-09T03:21:07.555Z" }
 wheels = [
@@ -784,7 +784,7 @@ name = "flexparser"
 version = "0.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/82/99/b4de7e39e8eaf8207ba1a8fa2241dd98b2ba72ae6e16960d8351736d8702/flexparser-0.4.tar.gz", hash = "sha256:266d98905595be2ccc5da964fe0a2c3526fbbffdc45b65b3146d75db992ef6b2", size = 31799, upload-time = "2024-11-07T02:00:56.249Z" }
 wheels = [
@@ -2333,7 +2333,7 @@ wheels = [
 
 [[package]]
 name = "ogs"
-version = "6.5.6.dev205"
+version = "6.5.7.dev539"
 source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" }
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
@@ -2348,20 +2348,19 @@ resolution-markers = [
 dependencies = [
     { name = "pandas" },
 ]
-sdist = { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/37793c7da67446c5e94552022b8c44a4413c5d1e53d93d1a879a005a61b4b25a/ogs-6.5.6.dev205.tar.gz", hash = "sha256:37793c7da67446c5e94552022b8c44a4413c5d1e53d93d1a879a005a61b4b25a" }
 wheels = [
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/8d4a2a4efa17919842694d3c432c6e80dc6cca219c76c2a96d4ae0b5645f308e/ogs-6.5.6.dev205-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:8d4a2a4efa17919842694d3c432c6e80dc6cca219c76c2a96d4ae0b5645f308e" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/50f384c3783a7947b2b26d13097bca4dd2b8b393c217f71cd4bf7f84270d8409/ogs-6.5.6.dev205-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:50f384c3783a7947b2b26d13097bca4dd2b8b393c217f71cd4bf7f84270d8409" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/d710486f4c9aaff5aff3c9f2f43f918b6e5728a37ac1079753e9731b39968e19/ogs-6.5.6.dev205-cp310-cp310-win_amd64.whl", hash = "sha256:d710486f4c9aaff5aff3c9f2f43f918b6e5728a37ac1079753e9731b39968e19" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/b7748033669504c915e88bc449f76002486dc092aa37589ec6d4235fc67fed87/ogs-6.5.6.dev205-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:b7748033669504c915e88bc449f76002486dc092aa37589ec6d4235fc67fed87" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/e7a397b7e9b12f3a9304a2fd1d751f251ed28ab5974509bdcdf965661d2280b9/ogs-6.5.6.dev205-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:e7a397b7e9b12f3a9304a2fd1d751f251ed28ab5974509bdcdf965661d2280b9" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/16e97cf784f3eb74dad2dbc8cacae76280019617662db98b870f7e2dbeab152c/ogs-6.5.6.dev205-cp311-cp311-win_amd64.whl", hash = "sha256:16e97cf784f3eb74dad2dbc8cacae76280019617662db98b870f7e2dbeab152c" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/f8fcdb1556da8393d0aea52d04bf607820bf2c0ae8626f7e8861c1f0cf41e6f5/ogs-6.5.6.dev205-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:f8fcdb1556da8393d0aea52d04bf607820bf2c0ae8626f7e8861c1f0cf41e6f5" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/894e760641fe0cf10c3b338f8a66569a673c3d6a91624ed360f484ad337f8f2e/ogs-6.5.6.dev205-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:894e760641fe0cf10c3b338f8a66569a673c3d6a91624ed360f484ad337f8f2e" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/36d27545a0a1c2faaf4c7a63aa175b5548df6aa52f1087345b6c72ecf86e893e/ogs-6.5.6.dev205-cp312-cp312-win_amd64.whl", hash = "sha256:36d27545a0a1c2faaf4c7a63aa175b5548df6aa52f1087345b6c72ecf86e893e" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/07fe042937ae7c05e47bddbe46389f20158f2b4e2fcdd2b9df302d972d88781f/ogs-6.5.6.dev205-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:07fe042937ae7c05e47bddbe46389f20158f2b4e2fcdd2b9df302d972d88781f" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/67ee4f74e7282292c0604283d66348eeb8695bfc697698daf31c8b55a7a04e67/ogs-6.5.6.dev205-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:67ee4f74e7282292c0604283d66348eeb8695bfc697698daf31c8b55a7a04e67" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/55a7f20ddf0ff4a2027d5b34705f259a8eab84481a67a5310aef0bd702f23a86/ogs-6.5.6.dev205-cp313-cp313-win_amd64.whl", hash = "sha256:55a7f20ddf0ff4a2027d5b34705f259a8eab84481a67a5310aef0bd702f23a86" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/3ddb814262ffbf8490a6310cff6a47caeb769de442f7f58689bad0b847e93210/ogs-6.5.7.dev539-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:3ddb814262ffbf8490a6310cff6a47caeb769de442f7f58689bad0b847e93210" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c68778405eeb11e8c6b1b814f8b54be7a52eb745c39adaa9fec3afeeee516377/ogs-6.5.7.dev539-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:c68778405eeb11e8c6b1b814f8b54be7a52eb745c39adaa9fec3afeeee516377" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/af1341ca0b21ca8261bb7b3d979cf4a73202a26c787eae57821500458a5bcbe6/ogs-6.5.7.dev539-cp310-cp310-win_amd64.whl", hash = "sha256:af1341ca0b21ca8261bb7b3d979cf4a73202a26c787eae57821500458a5bcbe6" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/8f80fa96ae55c0ba742ddf24ce35d14dd4c1f89adcd7589c8a079ec2b294ff94/ogs-6.5.7.dev539-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:8f80fa96ae55c0ba742ddf24ce35d14dd4c1f89adcd7589c8a079ec2b294ff94" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/283b86a1be6be09d641ea27e564ce284b4d4ac9fbbba4b9f73e11df7f47e76fc/ogs-6.5.7.dev539-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:283b86a1be6be09d641ea27e564ce284b4d4ac9fbbba4b9f73e11df7f47e76fc" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/1f6b93edb114e74ef157dc6906f00ae5b43c7449e7bdf70d76d4f9001838ebd2/ogs-6.5.7.dev539-cp311-cp311-win_amd64.whl", hash = "sha256:1f6b93edb114e74ef157dc6906f00ae5b43c7449e7bdf70d76d4f9001838ebd2" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/a7f211d552e235d854322f803e4835910675f3048b39e0cc5df47e371d618888/ogs-6.5.7.dev539-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:a7f211d552e235d854322f803e4835910675f3048b39e0cc5df47e371d618888" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/9b20a5af4a212b21b89eaf39137b12fee5383b19764dc34eecf3233eb3e07afb/ogs-6.5.7.dev539-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:9b20a5af4a212b21b89eaf39137b12fee5383b19764dc34eecf3233eb3e07afb" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/f4519e11f6ffaa90ff3187b561314749d22e9e0ae803e944db8a730f6174bdaf/ogs-6.5.7.dev539-cp312-cp312-win_amd64.whl", hash = "sha256:f4519e11f6ffaa90ff3187b561314749d22e9e0ae803e944db8a730f6174bdaf" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/4dad7b5f2f1150624e406a6babfa5e8b4709faa4660fb6a2baee1ec7a8135101/ogs-6.5.7.dev539-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:4dad7b5f2f1150624e406a6babfa5e8b4709faa4660fb6a2baee1ec7a8135101" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/4b7486b4f7c01278d25969f78a5ff5f4e46d941a80976c260f0ea1ccadf4b0a9/ogs-6.5.7.dev539-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:4b7486b4f7c01278d25969f78a5ff5f4e46d941a80976c260f0ea1ccadf4b0a9" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/82e4fe78f25bc5a93a7aa5d9e48b4a078ac6f725892aebd4a77f6d2719bd0bbb/ogs-6.5.7.dev539-cp313-cp313-win_amd64.whl", hash = "sha256:82e4fe78f25bc5a93a7aa5d9e48b4a078ac6f725892aebd4a77f6d2719bd0bbb" },
 ]
 
 [[package]]
@@ -2381,7 +2380,7 @@ dependencies = [
     { name = "nbformat" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "numpy", version = "2.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
-    { name = "ogstools" },
+    { name = "ogstools", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "pandas" },
     { name = "papermill" },
     { name = "pytest" },
@@ -2396,7 +2395,7 @@ ogs-local = [
     { name = "ogs", source = { directory = "../../" } },
 ]
 ogs-master = [
-    { name = "ogs", version = "6.5.6.dev205", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
+    { name = "ogs", version = "6.5.7.dev539", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
 ]
 ogs-pypi = [
     { name = "ogs", version = "6.5.5", source = { registry = "https://pypi.org/simple" } },
@@ -2415,7 +2414,7 @@ requires-dist = [
     { name = "nbconvert", specifier = ">=7.16.5" },
     { name = "nbformat", specifier = ">=5.7.3" },
     { name = "numpy" },
-    { name = "ogstools", specifier = "==0.7.0" },
+    { name = "ogstools", marker = "python_full_version < '3.14'", specifier = "==0.7.0" },
     { name = "pandas", specifier = ">=1.5" },
     { name = "papermill", specifier = ">=2.6.0" },
     { name = "pytest", specifier = ">=8.2.2" },
@@ -2435,24 +2434,24 @@ name = "ogstools"
 version = "0.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "gmsh", version = "4.13.1.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
-    { name = "gmsh", version = "4.14.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
-    { name = "h5py" },
-    { name = "jupytext" },
-    { name = "lxml" },
-    { name = "matplotlib" },
-    { name = "meshio" },
+    { name = "gmsh", version = "4.13.1.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "(python_full_version < '3.14' and sys_platform == 'linux') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (sys_platform != 'linux' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (sys_platform != 'linux' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (sys_platform != 'linux' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "gmsh", version = "4.14.0", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version < '3.14' and sys_platform != 'linux') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (sys_platform == 'linux' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (sys_platform == 'linux' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (sys_platform == 'linux' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "h5py", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "jupytext", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "lxml", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "matplotlib", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "meshio", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
-    { name = "numpy", version = "2.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
-    { name = "pandas" },
-    { name = "papermill" },
-    { name = "pint" },
-    { name = "psutil" },
-    { name = "pyvista", extra = ["all"] },
+    { name = "numpy", version = "2.3.2", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and python_full_version < '3.14') or (python_full_version < '3.11' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (python_full_version < '3.11' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version < '3.11' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "pandas", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "papermill", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "pint", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "psutil", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "pyvista", extra = ["all"], marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
-    { name = "scipy", version = "1.16.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
-    { name = "typeguard" },
-    { name = "watchdog" },
+    { name = "scipy", version = "1.16.1", source = { registry = "https://pypi.org/simple" }, marker = "(python_full_version >= '3.11' and python_full_version < '3.14') or (python_full_version < '3.11' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (python_full_version < '3.11' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version < '3.11' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version >= '3.14' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "typeguard", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "watchdog", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/7b/01/0fdba50f026587734def54360cae45cd91e0dc8afd9016abfe3c0870420c/ogstools-0.7.0.tar.gz", hash = "sha256:9beb1c242c1272f4d4eab87fa458e97c269000fdc5fb087fcdafbfa4c1f3745c", size = 15275548, upload-time = "2025-06-12T09:14:27.902Z" }
 wheels = [
@@ -2684,10 +2683,10 @@ name = "pint"
 version = "0.24.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "flexcache" },
-    { name = "flexparser" },
-    { name = "platformdirs" },
-    { name = "typing-extensions" },
+    { name = "flexcache", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "flexparser", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "platformdirs", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/20/bb/52b15ddf7b7706ed591134a895dbf6e41c8348171fb635e655e0a4bbb0ea/pint-0.24.4.tar.gz", hash = "sha256:35275439b574837a6cd3020a5a4a73645eb125ce4152a73a2f126bf164b91b80", size = 342225, upload-time = "2024-11-07T16:29:46.061Z" }
 wheels = [
@@ -3768,7 +3767,7 @@ name = "typeguard"
 version = "4.4.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.14' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c7/68/71c1a15b5f65f40e91b65da23b8224dad41349894535a97f63a52e462196/typeguard-4.4.4.tar.gz", hash = "sha256:3a7fd2dffb705d4d0efaed4306a704c89b9dee850b688f060a8b1615a79e5f74", size = 75203, upload-time = "2025-06-18T09:56:07.624Z" }
 wheels = [

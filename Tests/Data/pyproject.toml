@@ -15,7 +15,8 @@ dependencies = [
   "jupyterlab>=3.4.8",
   "matplotlib>=3.6",
   "numpy",
-  "ogstools==0.7.0",
+  # because ogstools depends on pyvista depends on vtk which is not available for 3.14 yet
+  "ogstools==0.7.0; python_version < '3.14'",
   "pandas>=1.5",
   # TODO: Implement fix for PyVista 0.46 in ogstools:
   "pyvista[all]==0.45",
