@@ -1,0 +1,755 @@
+#!/usr/bin/env python
+
+
+"""
+Script and functions to find features of ogs and create a matrix which maps the respective features to
+the Test project files.
+
+This script is designed to extract information on features of the ogs test .prj files. This information
+will also be written to the .json file, that is used to display the features on the html.
+
+To add a feature: Add an element to the feature_dict in the getFeatureMatrix function below.
+
+To identify new features, there are several tools you can use. First the code_coverage attribute (or the
+feature_matrix.getFilesWithLowestCodeCoverage function) of the Feature_matrix. It will show, what
+percentage of code is already containing features. Be aware, that this can be misleading, as some of the
+"unknown" features might already be part of a code block, that is connected to an existing feature.
+You can also check the feature_matrix.getFilesWithLeastUsedFeatures Function to get project files, with
+potential new features.
+To have a nice way of showing, what lines are already connected to features use the
+feature_matrix.getFileLines functions.
+The functions: feature_matrix.getUnimportantFeatures1 and feature_matrix.getUnimportantFeatures2 are
+useful to identify features that are tested sparsely.
+"""
+
+
+import argparse
+import itertools
+import json
+import operator
+import re
+import warnings
+import vtk
+import os
+from pathlib import Path
+import numpy as np
+import pandas as pd
+from lxml import etree
+from matplotlib import pyplot as plt
+
+from FeatureMatrixClasses import feature_matrix, feature_matrix_entry
+from utils import getXMLFiles
+
+
+def getFeatureMatrix(path: Path) -> feature_matrix:
+    """
+    First the project files are gathered. Afterwards the Feature Dictionaries are created. Eventually these dictionaries will be evaluated and
+    the results will be put together in a matrix.
+    The keys of the feature dict are the names of the features that will be displayed. The values should be functions that returns a
+    feature_matrix_entry object. These functions start with "check*".
+    """
+
+    xml_files = getXMLFiles(path)
+
+    # Create the feature dict
+    feature_dict = {
+        # Add Dummy features that are not "real" features but are needed to create the code coverage.
+        "!Dummy: First Lines": lambda xml: checkFirstLines(xml),
+        **{
+            "!Dummy: "
+            + case: lambda xml, case=case: checkTagIsPresent(
+                xml, "//" + case, line_type="open and close"
+            )
+            for case in [
+                "OpenGeoSysProject",
+                "media",
+                "processes",
+                "process",
+                "phases",
+                "medium",
+                "properties",
+                "time_loop",
+                "nonlinear_solver",
+                "parameters",
+            ]
+        },
+        # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
+        "!Dummy: Comment": lambda xml: checkComment(xml),
+        # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
+        "!Dummy: Media": lambda xml: checkTagIsPresent(
+            xml, "media", line_type="open and close"
+        ),
+        # Add Parameters. Checks whether there is a parameter type present. The possible types are extracted from the documentation.
+        **{
+            "Parameter: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, ".//parameters/parameter/type", case
+            )
+            for case in findTypesFromDocumentation(path, "parameters/parameter")
+        },
+        # Add Processes. Checks whether there is a process type present. The possible types are extracted from the documentation.
+        **{
+            "Process type: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, ".//processes/process/type", case
+            )
+            for case in findTypesFromDocumentation(path, "processes/process")
+        },
+        # Add Properties. Checks whether there is a process type present. The possible types are extracted from the documentation.
+        **{
+            "Property: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, ".//properties/property/type", case
+            )
+            for case in findTypesFromDocumentation(path, "../properties/property")
+        },
+        # Add Phases. Checks whether there are phase types present. The possible types are extracted from the documentation.
+        **{
+            "Phase: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, "./media/medium/phases/phase/type", case
+            )
+            for case in findTypesFromDocumentation(path, "./media/medium/phases/phase")
+        },
+        # Add source terms for process variables. Checks whether there are source term types present. The possible types are extracted from the documentation.
+        **{
+            "Source_term: "
+            + case: lambda xml, case=case: checkTagText(
+                xml,
+                "./process_variables/process_variable/source_terms/source_term/type",
+                case,
+            )
+            for case in findTypesFromDocumentation(
+                path,
+                "./process_variables/process_variable/source_terms/source_term",
+            )
+        },
+        # Add boundary conditions for process variables. Checks whether there are boundary condition types present. The possible types are extracted from the documentation.
+        **{
+            "Boundary_condition: "
+            + case: lambda xml, case=case: checkTagText(
+                xml,
+                ".//process_variables/process_variable/boundary_conditions/boundary_condition/type",
+                case,
+            )
+            for case in findTypesFromDocumentation(
+                path,
+                "./process_variables/process_variable/boundary_conditions/boundary_condition",
+            )
+        },
+        # Add Convergence Criterion type for time_loops. The possible types are extracted from the documentation.
+        **{
+            "Convergence Criterion: "
+            + case: lambda xml, case=case: checkTagText(
+                xml,
+                "./time_loop/processes/process/convergence_criterion/type",
+                case,
+            )
+            for case in findTypesFromDocumentation(
+                path, "./time_loop/processes/process/convergence_criterion"
+            )
+        },
+        # Add output type for time_stepping. The possible types are extracted from the documentation.
+        **{
+            "Time Stepping: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, "./time_loop/processes/process/time_stepping/type", case
+            )
+            for case in findTypesFromDocumentation(
+                path, "./time_loop/processes/process/time_stepping"
+            )
+        },
+        # Add output type for time_loops. The possible types are extracted from the documentation.
+        **{
+            "Output: "
+            + case: lambda xml, case=case: checkTagText(xml, "//output/type", case)
+            for case in ["VTK", "XDMF"]
+        },
+        # Add multiple outputs.
+        **{
+            "Output: multiple": lambda xml: checkTagChildrenCount(
+                xml, "//outputs", 1, ">"
+            )
+        },
+        # Add order for process variables. Checks whether there are orders present. The possible entries are 1 or 2. Each of these will be given an entry in the feature matrix.
+        **{
+            "Order: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, "./process_variables/process_variable/order", case
+            )
+            for case in ["1", "2"]
+        },
+        # Add Component for process variables. Checks whether there are components present. The possible entries are 1, 2 or 3. Each of these will be given an entry in the feature matrix.
+        **{
+            "Component: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, "..//process_variables/process_variable/components", case
+            )
+            for case in ["1", "2", "3"]
+        },
+        # Check if there are linear solver tags with a child named: "eigen", "lis" or "petsc". For each of these a different function will be formulated.
+        **{
+            "Linear_solver: "
+            + child: lambda xml, child_name=child: checkChildrenNames(
+                xml, ".//linear_solver", child_name
+            )
+            for child in ["eigen", "lis", "petsc"]
+        },
+        # Check whether there is a tag of the name given in the list. For each of the names a different Test-Function will be created.
+        **{
+            "Includes: "
+            + tag_name: lambda xml, tag_name=tag_name: checkTagIsPresent(
+                xml, ".//" + tag_name
+            )
+            for tag_name in [
+                "geometry",
+                "curves",
+                "local_coordinate_system",
+                "python_script",
+                "rasters",
+                "meshes",
+                "test_definition",
+                "time_discretization",
+                "global_process_coupling",
+                "secondary_variable",
+            ]
+        },
+        # Check for property names. For each possible name an feature dict entry will be created. The possible names are extracted by scanning all .prj files and look for said names.
+        **{
+            "Property name: "
+            + name.replace("\n", ""): lambda xml, name=name: checkTagText(
+                xml, ".//properties/property/name", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(".//properties/property/name/text()")
+                ]
+            )
+        },  # All found entries for the names in all xml files.
+        # Check for property names. For each possible name an feature dict entry will be created. The possible names are extracted by scanning all .prj files and look for said names.
+        **{
+            "Hdf n_files: "
+            + name.replace("\n", ""): lambda xml, name=name: checkTagText(
+                xml, "//*/output/hdf/number_of_files", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(".//*/output/hdf/number_of_files/text()")
+                ]
+            )
+        },  # All found entries for the names in all xml files.
+        # Check for Integration Order. For each possible name an feature dict entry will be created. The possible names are extracted by scanning all .prj files and look for said names.
+        **{
+            "Integration Order: "
+            + name.replace("\n", ""): lambda xml, name=name: checkTagText(
+                xml, ".//processes/process/integration_order", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//processes/process/integration_order/text()"
+                    )
+                ]
+            )
+        },  # All found entries for the names in all xml files.
+        # Check whether there is a tag of the name of deactivated subdomain in the process_variables.
+        "Includes: deactivated_subdomain ": lambda xml: checkTagIsPresent(
+            xml,
+            ".//process_variables/process_variable/deactivated_subdomains",
+        ),
+        # Will check the given Tag and determine whether it is a tuple or a singular value.
+        "Parameter Constant is Tuple:": lambda xml: checkTagTextIsTuple(
+            xml, './/parameters/parameter[type = "Constant"]/values'
+        ),
+        # Checks whether the Tag chemical System has an chemical solver attribute with the given values.
+        **{
+            "Chemical Solver:"
+            + case: lambda xml, case=case: checkAttributes(
+                xml, "./chemical_system", "chemical_solver", case
+            )
+            for case in ["Phreeqc", "SelfContained"]
+        },
+        # Checks for damping of nonlinear solver.
+        **{
+            "Nonlinear solver:"
+            + case: lambda xml, case=case: checkTagIsPresent(
+                xml, "//nonlinear_solvers/nonlinear_solver" + case
+            )
+            for case in ["damping", "damping_reduction", "recompute_jacobian"]
+        },
+        # Checks for type of nonlinear solver.
+        **{
+            "Nonlinear solver:"
+            + case: lambda xml, case=case: checkTagText(
+                xml, "//nonlinear_solvers/nonlinear_solver/type", case
+            )
+            for case in ["Newton", "Picard", "PETScSNES"]
+        },
+        # Checks how many children meshes has.
+        **{
+            "Mesh Count: "
+            + str(count): lambda xml, count=count: checkTagChildrenCount(
+                xml, "./meshes", count
+            )
+            for count in np.unique(
+                [
+                    child_count
+                    for xml in xml_files
+                    for child_count in countChildren(xml, "./meshes")
+                ]
+            )
+        },
+        # Check whether medium has an attribute id != 0
+        "Medium: id not 0": lambda xml: checkAttributes(
+            xml,
+            "./media/medium",
+            "id",
+            "0",
+            operator="!=",
+            line_type="open and close",
+        ),
+        # Check whether medium has an attribute id != 0
+        "Medium: has phases": lambda xml: checkTagIsPresent(
+            xml, "/media/medium/phases", line_type="open and close"
+        ),
+        # Check whether mesh attribute axially symmetric is set to "true"
+        "Mesh: axially_symmetric": lambda xml: checkAttributes(
+            xml, "mesh", "axially_symmetric", "true"
+        ),
+        # Check whether mesh attribute axially symmetric is set to "true"
+        "Mesh: without <meshes>": lambda xml: checkTagIsPresent(
+            xml, "//OpenGeoSysProject/mesh"
+        ),
+        # Check if properties are present as children of the following "
+        **{
+            "Properties: child of "
+            + case: lambda xml, case=case: checkTagIsPresent(
+                xml, "//" + case + "/properties"
+            )
+            for case in ["medium", "phase", "component"]
+        },
+        # Checks how many children meshes has.
+        **{
+            "Process Variables: "
+            + str(count): lambda xml, count=count: checkTagChildrenCount(
+                xml, "./process_variables", count
+            )
+            for count in np.unique(
+                [
+                    child_count
+                    for xml in xml_files
+                    for child_count in countChildren(xml, "./process_variables")
+                ]
+            )
+        },
+        # Add submesh residuum output type for time_loops. The possible types are extracted from the documentation.
+        **{
+            "Submesh Residuum Output: "
+            + case: lambda xml, case=case: checkTagText(
+                xml, "//submesh_residuum_output/type", case
+            )
+            for case in ["VTK", "XDMF"]
+        },
+        # check for Compensate Non Equilibrium Initial Residuum
+        **{
+            "Compensate Non Equilibrium Initial Residuum:"
+            + case: lambda xml, case=case: checkTagText(
+                xml, "//compensate_non_equilibrium_initial_residuum", case
+            )
+            for case in ["true", "false"]
+        },
+        **{
+            f"Number of Mesh Elements: {case.left}-{case.right}": lambda xml, case=case: checkMeshSize(
+                xml, case
+            )
+            for case in [
+                pd.Interval(left=0, right=10),
+                pd.Interval(left=11, right=100),
+                pd.Interval(left=101, right=1000),
+                pd.Interval(left=1001, right=1e20),
+            ]
+        },
+    }
+
+    return feature_matrix(feature_dict, xml_files)
+
+
+########################################################################################
+# Residual Functions                                               ####
+########################################################################################
+
+
+def createJSON(mat: feature_matrix, filename: Path) -> str:
+    """Creates JSON data from feature Matrix"""
+    string = "[\n"
+
+    for index, row in mat.has_feature.iterrows():
+        string = (
+            string
+            + '  {\n    "file": "'
+            + row.name.split("Tests/Data")[1].lstrip("/")
+            + '",\n    "features": ['
+        )
+        string += ",".join(f'"{feature}"' for feature in mat.has_feature.columns[row])
+        string += '],\n    "lines": ['
+        intervals = extract_intervals(mat.lines, index)
+        string += ",".join(f"{interval}" for interval in intervals if len(interval) > 0)
+
+        string += '],\n    "feature_coverage": ' + f"{mat.code_coverage[index]}"
+        string += "\n}"
+        if index != mat.has_feature.index[-1]:
+            string += ",\n"
+        else:
+            string += "\n"
+
+    string += "]\n"
+    with filename.open("w", encoding="utf-8") as text_file:
+        text_file.write(string)
+    return string
+
+
+def checkAttributes(
+    xml: etree.ElementTree,
+    xpath: str,
+    attribute_name: str,
+    case: str,
+    line_type="range",
+    operator: str = "==",
+) -> feature_matrix_entry:
+    """Checks whether the given Element has an attribute with the attribute_name given and will compare it using the operator given to the case attribute."""
+    elements = xml.xpath(xpath)
+    operator_func = translateOps(operator)
+    attributes = [
+        operator_func(element.attrib[attribute_name], case)
+        for element in elements
+        if attribute_name in list(element.attrib.keys())
+    ]
+    return feature_matrix_entry(
+        list(itertools.compress(elements, attributes)), line_type=line_type
+    )
+
+
+def checkChildrenNames(
+    xml: etree.ElementTree, xpath: str, case: str, line_type="range"
+) -> feature_matrix_entry:
+    """Will return a list of strings containing the children found in the xpath given along with the source lines of said child"""
+    children = list(xml.xpath(xpath + "/*"))
+    is_present = [case == child.tag for child in children]
+    return feature_matrix_entry(
+        list(itertools.compress(children, is_present)), line_type
+    )
+
+
+def checkComment(xml: etree.ElementTree) -> feature_matrix_entry:
+    """Will find the lines, that contain comments in the xml files."""
+    strings = etree.tostring(xml).split(b"\n")
+
+    sourceline = xml.xpath("../OpenGeoSysProject")[
+        0
+    ].sourceline  # Number of lines before element starts
+
+    from_lines = [
+        line + sourceline - 1 for line in findAllPatternLines(strings, b"<!--")
+    ]
+    to_lines = [line + sourceline - 1 for line in findAllPatternLines(strings, b"-->")]
+
+    if len(from_lines) > 0:
+        return feature_matrix_entry(
+            [xml],
+            lines=[
+                pd.Interval(left=from_lines[i], right=to_lines[i], closed="both")
+                for i in range(len(from_lines))
+            ],
+        )
+
+    return feature_matrix_entry([])
+
+
+def checkFirstLines(xml: etree.ElementTree) -> feature_matrix_entry:
+    """Used as dummy feature to identify the lines before the <OpenGeoSysProject> Tag (prerequisites)."""
+    xp = xml.xpath("../OpenGeoSysProject")
+
+    if len(xp) > 0:
+        if xp[0].sourceline - 1 < 1:
+            return feature_matrix_entry(
+                [xp[0]],
+                lines=[
+                    pd.Interval(
+                        left=1,
+                        right=1,
+                        closed="both",
+                    )
+                ],
+            )
+        else:
+            return feature_matrix_entry(
+                [xp[0]],
+                lines=[
+                    pd.Interval(
+                        left=1,
+                        right=xp[0].sourceline - 1,
+                        closed="both",
+                    )
+                ],
+            )
+    else:
+        return feature_matrix_entry([])
+
+
+def checkMeshSize(xml: etree.ElementTree, range: pd.Interval) -> feature_matrix_entry:
+    elements = xml.xpath("//mesh")
+    if len(elements) > 0:
+        if not Path(os.path.dirname(xml.docinfo.URL) + "/" + elements[0].text).exists():
+            warnings.warn(
+                f"File:{os.path.dirname(xml.docinfo.URL)+" / "+elements[0].text} "
+                + f"called from: {xml.docinfo.URL} does not exist."
+            )
+        else:
+            if (
+                getVtuMeshSize(
+                    os.path.dirname(xml.docinfo.URL) + "/" + elements[0].text
+                )
+                in range
+            ):
+                return feature_matrix_entry([elements[0]])
+    return feature_matrix_entry([])
+
+
+def checkTagChildrenCount(
+    xml: etree._ElementTree,
+    xpath: str,
+    count: int,
+    operator: str = "==",
+    line_type="range",
+) -> feature_matrix_entry:
+    """Will identify, how many children(Tags) this Tag has. Will compare the number using the operator to the count given. All Tags that match this comparison will be put in the feature_matrix_entry."""
+    elements = xml.xpath(xpath)
+    operator_func = translateOps(operator)
+    return feature_matrix_entry(
+        list(
+            itertools.compress(
+                elements,
+                [operator_func(len(el.getchildren()), count) for el in elements],
+            )
+        ),
+        line_type,
+    )
+
+
+def checkTagIsPresent(
+    xml: etree.ElementTree, xpath: str, line_type="range"
+) -> feature_matrix_entry:
+    """Checks whether a tag is present in the parsed xml file under the given xpath. If True it will return the sourceline along with the boolean value"""
+    return feature_matrix_entry(xml.xpath(xpath), line_type)
+
+
+def checkTagText(
+    xml: etree.ElementTree,
+    xpath: str,
+    case: str,
+    operator: str = "==",
+    line_type="range",
+) -> feature_matrix_entry:
+    """Checks whether the text of the element of the xml file in the location of the given xpath is equal to the text given as case argument. If True will return the sourceline along with the boolean."""
+    xpath_elements = xml.xpath(xpath)
+    operator_func = translateOps(operator)
+    texts = [operator_func(x.text, case) for x in xpath_elements]
+
+    if xpath.split("/")[-1] in ["name", "type"]:
+        return feature_matrix_entry(
+            [
+                child.getparent()
+                for child in list(itertools.compress(xpath_elements, texts))
+            ],
+            line_type,
+        )
+    return feature_matrix_entry(
+        list(itertools.compress(xpath_elements, texts)), line_type
+    )
+
+
+def checkTagTextIsTuple(
+    xml: etree.ElementTree, xpath: str, line_type="range"
+) -> feature_matrix_entry:
+    """Checks whether the text of the element of the xml file in the location of the given xpath is a tuple. If True will return the sourceline along with the boolean."""
+    elements = xml.xpath(xpath)
+    is_tuple = [isTupleFromText(element.text) for element in elements]
+    return feature_matrix_entry(list(itertools.compress(elements, is_tuple)), line_type)
+
+
+def countChildren(xml: etree._ElementTree, xpath: str) -> list[int]:
+    # Counts the number of Children the tags gathered by the xpath have.
+    return [len(element.getchildren()) for element in xml.xpath(xpath)]
+
+
+def extract_intervals(lines, index):
+    intervals = []
+    for f in range(len(lines.loc[index, :])):
+        col_name = lines.columns[f]
+        column_data = lines.loc[index, col_name]
+        interval_list = [
+            [int(interval.left), int(interval.right)] for interval in column_data
+        ]
+        intervals.append(interval_list)
+    return intervals
+
+
+def findAllPatternLines(xml_str: list[str], pattern: bytes) -> list[int]:
+    return [
+        j + 1
+        for i in range(len(xml_str))
+        if pattern in xml_str[i]
+        for j in np.repeat(i, len(re.findall(pattern, xml_str[i])))
+    ]
+
+
+def findTypesFromDocumentation(path: Path, subdir: str) -> list[str]:
+    # Will find all the possible types as defined in the documentation under the location "/Documentation/ProjectFile/prj/subdir/*"" and create a dictionary out of it
+    base = path / "Documentation/ProjectFile/prj" / subdir
+    return [
+        m.group(1)
+        for file in base.rglob("c_*.md")
+        if (m := re.search(r"c_(.*)\.md", file.name))
+    ]
+
+
+def getProjectFiles(path: Path) -> list[Path]:
+    """Function to extract all file paths from OGS Test files"""
+    return list((path / "Tests/Data").rglob("*.prj"))
+
+
+def getXMLFiles(path: Path):
+    files = getProjectFiles(path=path)
+    if not files:
+        msg = "No project files found"
+        raise ValueError(msg)
+
+    # Parse the XML Files
+    filenames = [file.name for file in files]
+    xml_files = [xmlParser(file) for file in files]
+    filenames = list(
+        itertools.compress(filenames, [xml is not None for xml in xml_files])
+    )
+    files = list(itertools.compress(files, [xml is not None for xml in xml_files]))
+    return [xml for xml in xml_files if xml is not None]
+
+
+def isTupleFromText(text: str) -> bool:
+    """Evaluates Regex expression for given Text. If the text starts with a digit (possibly includes . or e) followed by a space and then another digit the
+    function will return True else False."""
+    return bool(
+        re.compile(
+            r"^\\d+(\\.\\d*)?+(e[+-]?\\d+(\\.\\d*)?)?+\\s+\\d+(\\.\\d*)?+(e[+-]?\\d+(\\.\\d*)?)?"
+        ).match(text)
+    )
+
+
+def getVtuMeshSize(vtu_file_path):
+    """
+    Read a VTU mesh file and determine its size information.
+
+    Parameters:
+    vtu_file_path (str): Path to the VTU file
+
+    Returns:
+    dict: Dictionary containing mesh size information
+    """
+    # Read the mesh using vtk
+
+    try:
+        reader = vtk.vtkXMLUnstructuredGridReader()
+        reader.SetFileName(vtu_file_path)
+        reader.Update()
+        grid = reader.GetOutput()
+
+    except:
+        warnings.warn(f"file: {vtu_file_path} is not readable by pyvista.")
+        return -1
+
+    return grid.GetNumberOfCells()
+
+
+def translateOps(op: str) -> operator:
+    """ "Translates" operator strings into operator functions."""
+    ops = {
+        "!=": operator.__ne__,
+        "in": operator.__contains__,
+        ">": operator.gt,
+        "<": operator.lt,
+        ">=": operator.ge,
+        "<=": operator.le,
+        "==": operator.eq,
+    }
+    return ops[op]
+
+
+def xmlParser(filedir: Path) -> etree.ElementTree:
+    """wrapper for etree.parse, as there are files present, that could not be parsed."""
+    try:
+        return etree.parse(filedir)
+    except Exception:
+        warnings.warn(f"Not able to parse: {filedir}.", stacklevel=2)
+
+
+if __name__ == "__main__":
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Generate feature matrix from directory"
+    )
+    parser.add_argument("--json", type=Path, help="Output JSON file name")
+    parser.add_argument(
+        "path",
+        type=Path,
+        metavar="PATH",
+        nargs="?",
+        default=".",
+        help="Path to the directory containing feature files",
+    )
+    args = parser.parse_args()
+
+    mat = getFeatureMatrix(args.path)
+
+    if args.json:
+        createJSON(mat, args.json)
+        exit(0)
+    createJSON(mat, Path("./features.json"))
+    least_used_files = mat.getFilesWithLowestCodeCoverage(5)
+    print([*least_used_files][0])
+    print(mat.getFileLines([*least_used_files][0]))
+    print(mat.has_feature)
+
+    # Plot
+    plt.ion()
+    mat.plot()
+    plt.show(block=True)
+
+
+def load_json_features(json_path: Path) -> list[dict]:
+    """
+    Loads a JSON file containing feature information for project files.
+
+    The JSON file should have the following structure:
+    [
+      {
+        "file": "path/to/file.prj",
+        "features": ["feature1", "feature2", ...],
+        "lines": [[[start1, end1], [start2, end2], ...], ...],
+        "feature_coverage": 0.95
+      },
+      ...
+    ]
+
+    Args:
+        json_path: Path to the JSON file
+
+    Returns:
+        List of dictionaries containing the parsed feature data
+    """
+    with open(json_path, "r", encoding="utf-8") as f:
+        return json.load(f)

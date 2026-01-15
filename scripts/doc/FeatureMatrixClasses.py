@@ -1,0 +1,276 @@
+import numpy as np
+import pandas as pd
+from lxml import etree
+from matplotlib import pyplot as plt
+
+
+class feature_matrix:
+    """A feature matrix object will be created. The evaluate feature matrix will set all the elements in the right place on a matrix.
+    These are elements of the class "feature_matrix_element". All the attributes of these elements will also be attributes of the elements
+    of this class, but in matrix shape."""
+
+    def __init__(self, feature_dict, xml_files):
+        self.feature_dict = feature_dict
+        self.xml_files = {file.docinfo.URL: file for file in xml_files}
+        self.feature_matrix_elements = feature_matrix.evaluateFeatureDict(
+            self.xml_files, self.feature_dict
+        )
+
+        # Set all attributes of the feature_matrix_entry as attributes of this object and put them in matrix form.
+        attribute_names = vars(self.feature_matrix_elements.iloc[0, 0])
+        for attribute_name in list(attribute_names.keys()):
+            setattr(
+                self,
+                attribute_name,
+                self.feature_matrix_elements.map(
+                    lambda x, attr=attribute_name: getattr(x, attr)
+                ),
+            )
+
+        self.xml_length = {
+            index: feature_matrix.getXMLEndLine(
+                self.xml_files[index].xpath("../OpenGeoSysProject")[0]
+            )
+            for index in self.xml_files
+        }
+        (
+            self.code_coverage,
+            self.lines_without_features,
+        ) = feature_matrix.getCodeCoverage(self)
+
+    def getCodeCoverage(self) -> dict:
+        """returns dictionary of percentage of code that is covered by the detected features."""
+        lines = feature_matrix.getFeatureLines(self)
+
+        coverages = {
+            index: sum(line.right - line.left + 1 for line in lines[index])
+            / self.xml_length[index]
+            for index, _row in self.lines.iterrows()
+        }
+
+        lines_no_feature = {}
+        for file in lines:
+            lines_no_feature.update(
+                {
+                    file: feature_matrix.getLinesNotCoveredByInterval(
+                        lines[file], self.xml_length[file]
+                    )
+                }
+            )
+            # lines[mat.lines.index[0]].sort
+        return coverages, lines_no_feature
+
+    def getFeatureLines(self) -> list[pd.Interval]:
+        intervals_out = {}
+        for index, row in self.lines.iterrows():
+            lines = []
+            [lines.append(j) for i in row for j in i]
+            intervals = feature_matrix.mergeOverlappingIntervals(lines)
+            intervals_out.update({index: intervals})
+        return intervals_out
+
+    def evaluateFeatureDict(
+        xml_files: list[etree.ElementTree], featureDict: dict
+    ) -> pd.DataFrame:
+        """
+        Created a matrix with rows = len(featureDict) and cols = len(xml_files).
+        Each row represents a evaluation of the featureDict, while each column represents a xmlFile. Afterwards the values of the feature dict will be evaluated for each
+        xmlFile.
+        """
+
+        # Initialize matrix with files as index and features as columns
+        feature_matrix = pd.DataFrame(
+            np.empty([len(xml_files), len(featureDict)], dtype=feature_matrix_entry),
+            index=[xml_files[file].docinfo.URL for file in xml_files],
+            columns=featureDict.keys(),
+        )
+
+        # Fill the matrix by iterating over each file and feature
+        file_keys = list(xml_files.keys())
+        for file_idx in range(len(xml_files)):
+            features = [
+                featureDict[key](xml_files[file_keys[file_idx]]) for key in featureDict
+            ]
+            feature_matrix.iloc[file_idx] = features
+
+        return feature_matrix
+
+    def getUnimportantFeatures1(self, n: int) -> dict:
+        """
+        Selects unimportant features using singular value decomposition. From the feature correlation matrix (vt) 20% of the meta features with the lowest values in s will be selected.
+        From these the n real features that contribute most will be selected.
+        """
+        _u, s, vt = np.linalg.svd(self.has_feature)
+
+        sigmas_lower_lim = s < s[round(len(s) * 0.8)]
+        return abs(vt[sigmas_lower_lim, :]).sum(axis=0).argsort() < n
+
+    def getUnimportantFeatures2(self, n: int) -> dict:
+        """
+        Selects unimportant features using singular value decomposition. From the feature correlation matrix (vt) 20% of the meta features with the highest values in s will be selected.
+        From these the n real features that contribute fewest will be selected.
+        """
+        _u, s, vt = np.linalg.svd(self.has_feature)
+        sigmas_greater_lim = s > s[round(len(s) * 0.2)]
+        return (-abs(vt[sigmas_greater_lim, :]).sum(axis=0)).argsort() < n
+
+    def getFileLines(self, file: str) -> dict:
+        """Puts together the lines of the given file. This is especially useful when you want to have
+        an overview over the detected and not detected features in the file."""
+        return {
+            "Feature Lines": self.showLines(file),
+            "No Feature Lines": self.lines_without_features[file],
+        }
+
+    def getFilesWithLeastUsedFeatures(self, n: int) -> dict:
+        """Returns a dictionary with the n files with the least used features as keys and the number of
+        used keys as values."""
+        self.has_feature.sum()
+        sums = np.array(self.has_feature.T.sum())
+        return {
+            list(self.xml_files.keys())[i]: sums[i] for i in sums.argsort()[range(n)]
+        }
+
+    def getFilesWithLowestCodeCoverage(self, n: int) -> dict:
+        """Returns a dictionary with the n files with the lowest code coverage as keys and the respective
+        code coverage as values."""
+        unpacked = np.array([self.code_coverage[key] for key in self.code_coverage])
+        return {
+            list(self.code_coverage.keys())[i]: unpacked[i]
+            for i in unpacked.argsort()[range(n)]
+        }
+
+    def getLinesNotCoveredByInterval(
+        lines: list[pd.Interval], endpoint: int
+    ) -> list[pd.Interval]:
+        not_covered = []
+        if len(lines) == 1:
+            if lines[0].left != 1:
+                not_covered.append(pd.Interval(1, lines[0].left - 1))
+            if lines[0].right != endpoint:
+                not_covered.append(pd.Interval(lines[0].right + 1, endpoint))
+
+        for l in range(len(lines) - 1):
+            if lines[l].left != 1 and l == 0:
+                not_covered.append(pd.Interval(1, lines[l].left - 1, closed="both"))
+            not_covered.append(
+                pd.Interval(lines[l].right + 1, lines[l + 1].left - 1, closed="both")
+            )
+            if l == len(lines) - 2 and lines[l + 1].right < endpoint:
+                not_covered.append(
+                    pd.Interval(lines[l + 1].right + 1, endpoint, closed="both")
+                )
+        return not_covered
+
+    def getXMLEndLine(element: etree.ElementTree) -> int:
+        """Gets the sourceline where the tag is closed, by converting to string and checking the number of lines."""
+        return element.sourceline + (
+            len(etree.tostring(element).strip().split(b"\n")) - 1
+        )
+
+    def mergeOverlappingIntervals(
+        intervals: list[pd.Interval],
+    ) -> list[pd.Interval]:
+        """Will merge intervals from a list. All intervals that overlap or are 1 step apart from each other will be merged into a single larger interval. Will return a cleaned list of intervals."""
+        k = 0
+        while k < (len(intervals) - 1):
+            l = k + 1
+            while l < len(intervals):
+                if pd.Interval.overlaps(intervals[k], intervals[l]):
+                    intervals[k] = pd.Interval(
+                        min(intervals[k].left, intervals[l].left),
+                        max(intervals[k].right, intervals[l].right),
+                        closed="both",
+                    )
+                    del intervals[l]
+                else:
+                    l += 1
+            k += 1
+        m = 0
+        intervals.sort()
+        while m < (len(intervals) - 1):
+            if intervals[m + 1].left - intervals[m].right <= 1:
+                intervals[m] = pd.Interval(
+                    intervals[m].left, intervals[m + 1].right, closed="both"
+                )
+                del intervals[m + 1]
+            else:
+                m += 1
+
+        return intervals
+
+    def plot(self):
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        ax.matshow(self.has_feature)
+        ax.set_xticks(range(self.has_feature.shape[1]))
+        ax.set_yticks(range(self.has_feature.shape[0]))
+        # ax.set_xticklabels(mat.feature_matrix.columns, rotation=90)
+        # ax.set_yticklabels(mat.feature_matrix.index)
+        # ax.grid()
+
+    def showLines(self, file: str) -> dict:
+        """A pretty way to display the features and the respective lines for the given file."""
+        return self.lines.loc[
+            file,
+            [
+                a and b
+                for a, b in zip(
+                    [len(line) > 0 for line in self.lines.loc[file, :]],
+                    [
+                        not feature_name.startswith("!")
+                        for feature_name in self.lines.columns
+                    ],
+                    strict=True,
+                )
+            ],
+        ]
+
+
+class feature_matrix_entry:
+    """
+    A class for the entries of a feature matrix. All the attributes that this class contains will be attributes of the feature matrix.
+    One or several etree.ElemenTree objects can be put in one feature_class object. If none is given, this class will interpret it as
+    if the given feature is not present in the respective file.
+    """
+
+    def __init__(self, elements=list[etree.ElementTree], line_type="range", lines=None):
+        if len(elements) > 0:
+            if lines is not None:
+                self.lines = lines
+            else:
+                match line_type:
+                    case "range":
+                        # Add the complete range of the Element to the lines
+                        self.lines = [
+                            pd.Interval(
+                                el.sourceline,
+                                feature_matrix.getXMLEndLine(el),
+                                closed="both",
+                            )
+                            for el in elements
+                        ]
+                    case "open and close":
+                        # Only add the lines, where the tag is opened (eg. <parameter>) and closed (eg.</parameter>)
+                        self.lines = []
+                        [
+                            self.lines.extend(
+                                [
+                                    pd.Interval(
+                                        el.sourceline,
+                                        el.sourceline,
+                                        closed="both",
+                                    ),
+                                    pd.Interval(
+                                        feature_matrix.getXMLEndLine(el),
+                                        feature_matrix.getXMLEndLine(el),
+                                        closed="both",
+                                    ),
+                                ]
+                            )
+                            for el in elements
+                        ]
+            self.has_feature = True
+        else:
+            self.lines = []
+            self.has_feature = False

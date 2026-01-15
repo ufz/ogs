@@ -14,9 +14,8 @@ def getProjectFiles(path: Path) -> list[Path]:
     path_list = []
     for filepath in path_list_xml:
         with open(filepath, "r") as included_xml_file:
-            if "OpenGeoSysProjectDiff" not in included_xml_file.read():
-                continue
-        path_list.append(filepath)
+            if "OpenGeoSysProjectDiff" in included_xml_file.read():
+                path_list.append(filepath)
 
     path_list.extend(list((path).rglob("*.prj")))
     return path_list
