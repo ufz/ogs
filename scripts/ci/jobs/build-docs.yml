@@ -133,6 +133,7 @@ check docs links:
     - .rules-master-manual
   script:
     - lychee --cache --max-cache-age 2d
+      --config ./lychee.toml
       --threads ${CTEST_PARALLEL_LEVEL:-4}
       --exclude gitlab.opengeosys.org/ogs/ogs
       --exclude github.com/ufz/ogs/commit/\%1
@@ -141,9 +142,9 @@ check docs links:
       --exclude wiki.sei.cmu.edu
       --exclude www.opengeosys.org/project/license
       --exclude stackoverflow.com
+      --exclude gitlab.io
       --exclude-path build/docs/d0/de3/citelist.html
       --exclude-path build/docs/doxygen_crawl.html
-      --exclude gitlab.io
       build/docs
     # - lychee --cache --max-cache-age 14d
     #   --max-concurrency 2
