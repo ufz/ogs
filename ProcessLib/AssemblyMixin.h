@@ -343,7 +343,6 @@ private:
         BaseLib::RunTime time_restore;
         time_restore.start();
 
-        // restore bulk mesh matrices
         auto const [M_, K_, b_] = bulk_mesh_matrix_cache_.MKb();
         MathLib::LinAlg::copy(M_, M);
         MathLib::LinAlg::copy(K_, K);
@@ -364,19 +363,44 @@ private:
         bool const copy_residua_to_mesh)
     {
         auto const mat_spec = derived().getMatrixSpecifications(process_id);
-        MKbFromCacheOrFromThis cached_or_this;
+
+        // Temporary matrices for assembly (reused across submeshes).
+        // They will remain nullptr if no assembly is necessary (linear case &
+        // cache populated).
+        std::unique_ptr<GlobalMatrix> M_tmp;
+        std::unique_ptr<GlobalMatrix> K_tmp;
+        std::unique_ptr<GlobalVector> b_tmp;
+
+        auto getMKb = [&M_tmp, &K_tmp, &b_tmp,
+                       &mat_spec](AssembledMatrixCache const& cache)
+        {
+            if (cache.hasMKb())
+            {
+                return cache.MKb();
+            }
+
+            if (!(M_tmp && K_tmp && b_tmp))
+            {
+                M_tmp = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
+                    mat_spec);
+                K_tmp = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
+                    mat_spec);
+                b_tmp = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
+                    mat_spec);
+            }
+
+            return std::tie(*M_tmp, *K_tmp, *b_tmp);
+        };
 
         std::exception_ptr exception = nullptr;
         for (auto const& [sad, mat_cache] :
              ranges::zip_view(submesh_assembly_data_ | ranges::views::all,
                               submesh_matrix_cache_ | ranges::views::all))
         {
-            auto [from_where, M_submesh, K_submesh, b_submesh] =
-                cached_or_this.MKb(mat_cache, mat_spec);
+            auto [M_submesh, K_submesh, b_submesh] = getMKb(mat_cache);
 
-            if (from_where != MKbFromCacheOrFromThis::From::Cache)
+            if (!mat_cache.hasMKb())
             {
-                // nothing cached, assembly necessary
                 M_submesh.setZero();
                 K_submesh.setZero();
                 b_submesh.setZero();
