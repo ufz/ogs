@@ -21,8 +21,9 @@ import json
 from signal import SIG_DFL, SIGPIPE, signal
 import re
 
-signal(SIGPIPE, SIG_DFL)
+from utils import getXMLFiles
 
+signal(SIGPIPE, SIG_DFL)
 
 if len(sys.argv) != 3:
     sys.stderr.write("Usage:\n")
@@ -135,6 +136,9 @@ def print_tags(
 ) -> None:
     tag = node.tag
     rootpagename = page_name
+
+    if tag is etree.Comment:
+        return None
 
     # traverse down the included xml files
     if tag == "include":
@@ -289,96 +293,72 @@ dirs_with_prj_files = set()
 map_tag_to_prj_files = defaultdict(set)
 map_attr_to_prj_files = defaultdict(set)
 
+files = getXMLFiles(Path(datadir))
 
-for dirpath, dirnames, filenames in os.walk(datadir, topdown=False):
-    reldirpath = os.path.relpath(dirpath, datadir)
+subpages = defaultdict(set)
+
+for file in files:
+    reldirpath = os.path.relpath(os.path.dirname(file.docinfo.URL), datadir)
+    relfilepath = os.path.relpath(file.docinfo.URL, datadir)
     outdirpath = os.path.join(outdir, reldirpath)
+    fn = file.docinfo.URL.split("/")[-1]
+    outdoxfile = os.path.join(outdirpath, fn + ".dox")
+    dirs_with_prj_files.add(reldirpath)
+    pagename = "ogs_ctest_prj__" + relfilepath.replace("/", "__").replace(".", "__")
 
-    subpages = []
+    # Add Subpages, so the project file tree is reflected in the doxygen. The Subpages should only contain the direct subfolder/file and should only contain folders that lead to valid project files.
+    path_parts = relfilepath.split("/")
+    for i in range(len(path_parts) - 1, 0, -1):
+        subpages["/".join(path_parts[0:i])].update(
+            ["__".join(["ogs_ctest_prj", *path_parts[0 : i + 1]]).replace(".", "__")]
+        )
 
-    for fn in filenames:
-        filepath = os.path.join(dirpath, fn)
-        relfilepath = os.path.relpath(filepath, datadir)
-        pagename = "ogs_ctest_prj__" + relfilepath.replace("/", "__").replace(".", "__")
-
-        if fn.endswith((".prj", ".xml")):
-            if fn.endswith(".xml"):
-                with open(filepath, "r") as included_xml_file:
-                    if "OpenGeoSysProjectDiff" not in included_xml_file.read():
-                        continue
-            outdoxfile = os.path.join(outdirpath, fn + ".dox")
-            dirs_with_prj_files.add(reldirpath)
-
-            subpages.append(pagename)
-
-            os.makedirs(outdirpath, exist_ok=True)
-
-            # write linked prj file, cf. https://doxygen.opengeosys.org/d6/de3/ogs_ctest_prj__elliptic__circle_radius_1__circle_1e6_axi__prj
-            with open(outdoxfile, "w", encoding="UTF-8") as fh:
-                fh.write(
-                    rf"""/*! \page {pagename} {fn}
+    os.makedirs(outdirpath, exist_ok=True)
+    # write linked prj file, cf. https://doxygen.opengeosys.org/d6/de3/ogs_ctest_prj__elliptic__circle_radius_1__circle_1e6_axi__prj
+    with open(outdoxfile, "w", encoding="UTF-8") as fh:
+        fh.write(rf"""/*! \page {pagename} {fn}
 
 \parblock
 \htmlonly
 <div class="prjfile">
 \endhtmlonly
 <tt>
-"""
-                )
+""")
 
-                try:
-                    xmlroot = ET.parse(filepath).getroot()
-                except ET.ParseError as err:
-                    print("ParseError occurred in file :", filepath)
-                    print(err)
-                    raise
-                print_tags(xmlroot, 0, "prj", fh, None, 0, relfilepath)
+        xmlroot = file.getroot()
+        print_tags(xmlroot, 0, "prj", fh, None, 0, relfilepath)
 
-                fh.write(
-                    r"""</tt>
+        fh.write(r"""</tt>
 \htmlonly
 </div>
 \endhtmlonly
 \endparblock
 */
-"""
-                )
+""")
 
-    for fn in dirnames:
-        filepath = os.path.join(dirpath, fn)
-        relfilepath = os.path.relpath(filepath, datadir)
-        if has_prj_file_in_subdirs(relfilepath):
-            pagename = "ogs_ctest_prj__" + relfilepath.replace("/", "__").replace(
-                ".", "__"
-            )
-            subpages.append(pagename)
+for path in subpages.keys():
+    outdirpath = os.path.join(outdir, path)
 
-    if subpages:
-        os.makedirs(outdirpath, exist_ok=True)
+    os.makedirs(outdirpath, exist_ok=True)
 
-        pagename = "ogs_ctest_prj__" + reldirpath.replace("/", "__").replace(".", "__")
-        pagetitle = os.path.split(reldirpath)[1]
+    pagename = "ogs_ctest_prj__" + str(path).replace("/", "__").replace(".", "__")
+    pagetitle = os.path.split(str(path))[1]
 
-        if pagetitle == ".":
-            pagetitle = "OGS CTests&mdash;Project Files"
+    if pagetitle == ".":
+        pagetitle = "OGS CTests&mdash;Project Files"
 
-        # Write CTest directory listing, cf. https://doxygen.opengeosys.org/de/d2a/ogs_ctest_prj__elliptic__circle_radius_1
-        with open(os.path.join(outdirpath, "index.dox"), "w", encoding="UTF-8") as fh:
-            fh.write(
-                rf"""/*! \page {pagename} {pagetitle}
+    # Write CTest directory listing, cf. https://doxygen.opengeosys.org/de/d2a/ogs_ctest_prj__elliptic__circle_radius_1
+    with open(os.path.join(outdirpath, "index.dox"), "w", encoding="UTF-8") as fh:
+        fh.write(rf"""/*! \page {pagename} {pagetitle}
 
-"""
-            )
+""")
 
-            for sp in sorted(subpages):
-                fh.write(f"- \\subpage {sp}\n")
+        for sp in sorted(subpages[str(path)]):
+            fh.write(f"- \\subpage {sp}\n")
 
-            fh.write(
-                """
+        fh.write("""
 
-*/"""
-            )
-
+*/""")
 for k, v in map_tag_to_prj_files.items():
     map_tag_to_prj_files[k] = sorted(v)
     documented_tags_attrs.discard((k, True))
