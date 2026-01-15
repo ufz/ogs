@@ -148,9 +148,9 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
-    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf T T 1e-10 1e-10
-    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf p p 1e-10 1e-10
-    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf darcy_velocity darcy_velocity 1e-10 1e-10
+    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf T T 1e-10 1e-10 1 1
+    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf p p 1e-10 1e-10 2 2
+    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf darcy_velocity darcy_velocity 1e-10 1e-10 3 3
 )
 
 AddTest(
