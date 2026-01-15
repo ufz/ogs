@@ -16,7 +16,6 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
                    MeshPropertyDataType const mesh_property_data_type,
                    std::string const& name,
                    std::optional<MeshLib::MeshItemType> const attribute_center,
-                   unsigned int const index,
                    unsigned int const n_files,
                    std::optional<ParentDataType> const parent_data_type)
     : starts(
@@ -47,7 +46,6 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
       size_partitioned_dim(size_partitioned_dim),
       name(name),
       attribute_center(attribute_center),
-      index(index),
       parent_data_type(parent_data_type)
 {
     auto partition_info = getPartitionInfo(size_partitioned_dim, n_files);

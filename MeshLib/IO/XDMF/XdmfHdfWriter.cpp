@@ -194,13 +194,6 @@ XdmfHdfWriter::XdmfHdfWriter(
                        [](XdmfHdfData const& att) -> XdmfData
                        { return att.xdmf; });
 
-        for (std::size_t i = 0; i < metamesh.attributes.size(); ++i)
-        {
-            // index 1 time,  index 2 geo, index 3 topology, attributes start at
-            // index 4
-            xdmf_attributes[i].index = i + 4;
-        }
-
         std::vector<XdmfData> xdmf_variable_attributes;
         std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),
                      back_inserter(xdmf_variable_attributes),

@@ -33,9 +33,6 @@ struct XdmfData final
      * @param attribute_center XdmfData is used for topology, geometry and
      * attributes. Geometry and topology have never a attribute_center.
      * Attributes have always an  attribute_center
-     * @param index The position of the DataItem parents in a grid
-     * (representing a single step). Convention is: 1=Time, 2=
-     * Geometry, 3=Topology, 4>=Attribute
      * @param n_files specifies the number of files. If greater than 1 it groups
      * the data of each process to n_files
      * @param parent_data_type specifies the type of the parent structure
@@ -45,7 +42,7 @@ struct XdmfData final
              MeshPropertyDataType mesh_property_data_type,
              std::string const& name,
              std::optional<MeshLib::MeshItemType> attribute_center,
-             unsigned int const index, unsigned int n_files,
+             unsigned int n_files,
              std::optional<ParentDataType> parent_data_type);
     // a hyperslab is defined by starts and strides see
     // https://xdmf.org/index.php/XDMF_Model_and_Format#HyperSlab
@@ -56,7 +53,6 @@ struct XdmfData final
     std::size_t size_partitioned_dim;
     std::string name;
     std::optional<MeshLib::MeshItemType> attribute_center;
-    unsigned int index;
     std::optional<ParentDataType> parent_data_type;
 };
 
