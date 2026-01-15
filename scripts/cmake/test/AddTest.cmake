@@ -411,9 +411,7 @@ macro(_add_test_tester TEST_NAME)
                 ${_binary_path}/${FILE}"
             )
         endforeach()
-    elseif(AddTest_TESTER STREQUAL "vtkdiff" OR AddTest_TESTER STREQUAL
-                                                "xdmfdiff"
-    )
+    elseif(AddTest_TESTER STREQUAL "vtkdiff")
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         math(EXPR DiffDataLengthMod4 "${DiffDataLength} % 4")
         math(EXPR DiffDataLengthMod6 "${DiffDataLength} % 6")
@@ -497,6 +495,53 @@ Use six arguments version of AddTest with absolute and relative tolerances"
                     "For vtkdiff tester the number of diff data arguments must be a multiple of six."
             )
         endif()
+    elseif(AddTest_TESTER STREQUAL "xdmfdiff")
+        list(LENGTH AddTest_DIFF_DATA DiffDataLength)
+        math(EXPR DiffDataLengthMod8 "${DiffDataLength} % 8")
+        if(NOT ${DiffDataLengthMod8} EQUAL 0)
+            message(
+                FATAL_ERROR
+                    "For xdmfdiff tester the number of diff data arguments must be a multiple of eight."
+            )
+        endif()
+        if(${AddTest_ABSTOL} OR ${AddTest_RELTOL})
+            message(
+                FATAL_ERROR
+                    "ABSTOL or RELTOL arguments must not be present."
+            )
+        endif()
+        math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
+        foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 8)
+            list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
+                 REFERENCE_VTK_FILE
+            )
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_A)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+3")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" NAME_B)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+4")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" ABS_TOL)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+5")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+6")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" TIMESTEP_A)
+            math(EXPR DiffDataAuxIndex "${DiffDataIndex}+7")
+            list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" TIMESTEP_B)
+
+            list(
+                APPEND
+                TESTER_COMMAND
+                "${SELECTED_DIFF_TOOL_PATH} \
+                ${AddTest_SOURCE_PATH}/${REFERENCE_VTK_FILE} \
+                ${_binary_path}/${VTK_FILE} \
+                -a ${NAME_A} -b ${NAME_B} \
+                --abs ${ABS_TOL} --rel ${REL_TOL} \
+                --timestep-a ${TIMESTEP_A} --timestep-b ${TIMESTEP_B}\
+                ${TESTER_ARGS} ${AddTest_TESTER_ARGS}"
+            )
+        endforeach()
     elseif(AddTest_TESTER STREQUAL "vtkdiff-mesh")
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         math(EXPR DiffDataLengthMod3 "${DiffDataLength} % 3")
