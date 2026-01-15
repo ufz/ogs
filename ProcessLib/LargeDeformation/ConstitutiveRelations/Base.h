@@ -13,20 +13,6 @@ namespace ProcessLib::LargeDeformation
 
 using namespace ProcessLib::ConstitutiveRelations;
 
-/// Used to set a D dimensional vector to all not-a-number.
-template <int D>
-constexpr GlobalDimVector<D> DVnan()
-{
-    return GlobalDimVector<D>::Constant(nan);
-}
-
-/// Used to set a D x D matrix to all not-a-number.
-template <int D>
-constexpr GlobalDimMatrix<D> DMnan()
-{
-    return GlobalDimMatrix<D>::Constant(nan);
-}
-
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
