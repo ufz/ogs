@@ -14,10 +14,10 @@
 		<DataItem DataType="UInt" Dimensions="32 3" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/topology|0 0 0:1 1 1:1 32 3:8 32 3</DataItem>
 	</Topology>
 
-
 	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
 		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|0 0:1 1:1 32:8 32</DataItem>
 	</Attribute>
+
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|0 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
@@ -35,10 +35,8 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
+	<xi:include xpointer="element(/1/1/2/1/4)"/>
 
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|1 0:1 1:1 32:8 32</DataItem>
-	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|1 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
@@ -56,10 +54,8 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
+	<xi:include xpointer="element(/1/1/2/1/4)"/>
 
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|2 0:1 1:1 32:8 32</DataItem>
-	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|2 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
@@ -77,10 +73,8 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
+	<xi:include xpointer="element(/1/1/2/1/4)"/>
 
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|3 0:1 1:1 32:8 32</DataItem>
-	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|3 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
@@ -98,10 +92,8 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
+	<xi:include xpointer="element(/1/1/2/1/4)"/>
 
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|4 0:1 1:1 32:8 32</DataItem>
-	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|4 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
@@ -119,10 +111,8 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
+	<xi:include xpointer="element(/1/1/2/1/4)"/>
 
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|5 0:1 1:1 32:8 32</DataItem>
-	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|5 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
@@ -140,10 +130,8 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
+	<xi:include xpointer="element(/1/1/2/1/4)"/>
 
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|6 0:1 1:1 32:8 32</DataItem>
-	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|6 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
@@ -161,10 +149,8 @@
 
 	<xi:include xpointer="element(/1/1/2/1/3)"/>
 
+	<xi:include xpointer="element(/1/1/2/1/4)"/>
 
-	<Attribute Center="Cell" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="MaterialIDs" Type="None">
-		<DataItem DataType="Int" Dimensions="32" Format="HDF" Precision="4">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/MaterialIDs|7 0:1 1:1 32:8 32</DataItem>
-	</Attribute>
 	<Attribute Center="Node" ElementCell="" ElementDegree="0" ElementFamily="" ItemType="" Name="VolumetricFlowRate" Type="None">
 		<DataItem DataType="Float" Dimensions="25" Format="HDF" Precision="8">square_5x5_tris_32.h5:/meshes/square_5x5_tris_32/VolumetricFlowRate|7 0:1 1:1 25:8 25</DataItem>
 	</Attribute>
