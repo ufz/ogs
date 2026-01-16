@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
+    <!-- < DISCLAIMER:
+    This OGS-project-file does not represent an accurate representation of the Theis-benchmark-setup because numerically a different PDE is solved than analytically. Analytically, it is assumed that the fluid density is constant allowing that the divergence of fluxes is reduced to \nabla (q), which can be further used to derive the Theis-solution. Numerically, the hydraulic equation solved by OGS in the ComponentTransport does not assume this simplification, thus the divergence of liquid phase fluxes is \nabla (\rho q). 
+    This test emulates a hydrogeological storage coefficient via the partial derivative d \rho / d p, which is not consistent with the assumptions of Theis analytical solution considering the divergence of fluxes solved numerically. 
+    Thus, this test is kept to test the partial derivative of fluid density but should not be taken for a serious test against Theis-solution.
+    -->
     <meshes>
         <mesh>slice_reorder.vtu</mesh>
         <mesh>inflow_surf.vtu</mesh>
