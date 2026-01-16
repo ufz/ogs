@@ -1,6 +1,7 @@
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/InclinedElements/Inclined2DMesh/inclined_2D_mesh_HC.prj RUNTIME 10)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ClassicalTransportExample/classical_transport_example_full_upwind.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/Theis_Axisymmetric/axisym_theis_CT.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC.prj RUNTIME 60)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC_Monolithic.prj RUNTIME 1
         PROPERTIES WILL_FAIL true)

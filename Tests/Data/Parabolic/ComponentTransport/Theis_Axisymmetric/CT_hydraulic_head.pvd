@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="CT_hydraulic_head_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="8.6400000000000006" group="" part="0" file="CT_hydraulic_head_ts_10_t_8.640000.vtu"/>
+    <DataSet timestep="86.399999999999991" group="" part="0" file="CT_hydraulic_head_ts_20_t_86.400000.vtu"/>
+    <DataSet timestep="1728" group="" part="0" file="CT_hydraulic_head_ts_30_t_1728.000000.vtu"/>
+    <DataSet timestep="24192" group="" part="0" file="CT_hydraulic_head_ts_40_t_24192.000000.vtu"/>
+    <DataSet timestep="172800" group="" part="0" file="CT_hydraulic_head_ts_50_t_172800.000000.vtu"/>
+    <DataSet timestep="604800" group="" part="0" file="CT_hydraulic_head_ts_60_t_604800.000000.vtu"/>
+    <DataSet timestep="864000" group="" part="0" file="CT_hydraulic_head_ts_66_t_864000.000000.vtu"/>
+  </Collection>
+</VTKFile>
