@@ -563,7 +563,7 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 3 3
+    cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
     cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
 )
 
@@ -577,8 +577,8 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_np3_2files_0.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 2 2
-    cube_1e3_np3_2files_0.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 3 3
+    cube_1e3_np3_2files_0.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
+    cube_1e3_np3_2files_0.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
 )
 
 AddTest(
@@ -592,7 +592,7 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
     cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
-    cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 2 2
+    cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
 )
 
 AddTest(
@@ -605,7 +605,7 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    cube_1e3_np2.xdmf cube_1e3_np2_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 3 3
+    cube_1e3_np2.xdmf cube_1e3_np2_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
     cube_1e3_np2.xdmf cube_1e3_np2_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
 )
 

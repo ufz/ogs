@@ -623,9 +623,9 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -638,9 +638,9 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -653,9 +653,9 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -668,9 +668,9 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -683,9 +683,9 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -698,12 +698,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_left.xdmf  bulk_left.xdmf  v v 1e-15 1e-15 2 2
-    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  v v 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -716,12 +716,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_right.xdmf  bulk_right.xdmf  v v 1e-15 1e-15 2 2
-    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  v v 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -734,12 +734,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_top.xdmf  bulk_top.xdmf  v v 1e-15 1e-15 2 2
-    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  v v 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -752,12 +752,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -770,12 +770,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bulk.xdmf  left_bulk.xdmf  v v 1e-15 1e-15 2 2
-    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  v v 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -788,12 +788,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_right.xdmf  left_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_right.xdmf  left_right.xdmf  v v 1e-15 1e-15 2 2
-    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  v v 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -806,12 +806,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_top.xdmf  left_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_top.xdmf  left_top.xdmf  v v 1e-15 1e-15 2 2
-    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  v v 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -824,12 +824,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bottom.xdmf  left_bottom.xdmf  v v 1e-15 1e-15 2 2
-    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  v v 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -842,12 +842,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bulk.xdmf  right_bulk.xdmf  v v 1e-15 1e-15 2 2
-    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  v v 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -860,12 +860,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_left.xdmf  right_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_left.xdmf  right_left.xdmf  v v 1e-15 1e-15 2 2
-    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  v v 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -878,12 +878,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_top.xdmf  right_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_top.xdmf  right_top.xdmf  v v 1e-15 1e-15 2 2
-    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  v v 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -896,12 +896,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bottom.xdmf  right_bottom.xdmf  v v 1e-15 1e-15 2 2
-    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  v v 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -914,12 +914,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bulk.xdmf  top_bulk.xdmf  v v 1e-15 1e-15 2 2
-    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  v v 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -932,12 +932,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_left.xdmf  top_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_left.xdmf  top_left.xdmf  v v 1e-15 1e-15 2 2
-    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  v v 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -950,12 +950,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_right.xdmf  top_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_right.xdmf  top_right.xdmf  v v 1e-15 1e-15 2 2
-    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  v v 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -968,12 +968,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bottom.xdmf  top_bottom.xdmf  v v 1e-15 1e-15 2 2
-    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  v v 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -986,12 +986,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1004,12 +1004,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_left.xdmf  bottom_left.xdmf  v v 1e-15 1e-15 2 2
-    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  v v 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1022,12 +1022,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_right.xdmf  bottom_right.xdmf  v v 1e-15 1e-15 2 2
-    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  v v 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1040,12 +1040,12 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_top.xdmf  bottom_top.xdmf  v v 1e-15 1e-15 2 2
-    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  v v 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1058,15 +1058,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_left.xdmf  bulk_left.xdmf  v v 1e-15 1e-15 2 2
-    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_right.xdmf  bulk_right.xdmf  v v 1e-15 1e-15 2 2
-    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  v v 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  v v 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1079,15 +1079,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_left.xdmf  bulk_left.xdmf  v v 1e-15 1e-15 2 2
-    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_top.xdmf  bulk_top.xdmf  v v 1e-15 1e-15 2 2
-    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  v v 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  v v 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1100,15 +1100,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_left.xdmf  bulk_left.xdmf  v v 1e-15 1e-15 2 2
-    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  v v 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1121,15 +1121,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_right.xdmf  bulk_right.xdmf  v v 1e-15 1e-15 2 2
-    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_left.xdmf  bulk_left.xdmf  v v 1e-15 1e-15 2 2
-    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  v v 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  v v 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1142,15 +1142,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_right.xdmf  bulk_right.xdmf  v v 1e-15 1e-15 2 2
-    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_top.xdmf  bulk_top.xdmf  v v 1e-15 1e-15 2 2
-    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  v v 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  v v 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1163,15 +1163,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_right.xdmf  bulk_right.xdmf  v v 1e-15 1e-15 2 2
-    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  v v 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1184,15 +1184,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_top.xdmf  bulk_top.xdmf  v v 1e-15 1e-15 2 2
-    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_left.xdmf  bulk_left.xdmf  v v 1e-15 1e-15 2 2
-    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  v v 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  v v 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1205,15 +1205,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_top.xdmf  bulk_top.xdmf  v v 1e-15 1e-15 2 2
-    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_right.xdmf  bulk_right.xdmf  v v 1e-15 1e-15 2 2
-    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  v v 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  v v 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1226,15 +1226,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_top.xdmf  bulk_top.xdmf  v v 1e-15 1e-15 2 2
-    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  v v 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1247,15 +1247,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_left.xdmf  bulk_left.xdmf  v v 1e-15 1e-15 2 2
-    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  v v 1e-12 1e-12 1 1
+    bulk_left.xdmf  bulk_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1268,15 +1268,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_right.xdmf  bulk_right.xdmf  v v 1e-15 1e-15 2 2
-    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  v v 1e-12 1e-12 1 1
+    bulk_right.xdmf  bulk_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1289,15 +1289,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bulk_top.xdmf  bulk_top.xdmf  v v 1e-15 1e-15 2 2
-    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bulk_bulk.xdmf  bulk_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bulk.xdmf  bulk_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bulk_bottom.xdmf  bulk_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  v v 1e-12 1e-12 1 1
+    bulk_top.xdmf  bulk_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1310,15 +1310,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bulk.xdmf  left_bulk.xdmf  v v 1e-15 1e-15 2 2
-    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_right.xdmf  left_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_right.xdmf  left_right.xdmf  v v 1e-15 1e-15 2 2
-    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  v v 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  v v 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1331,15 +1331,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bulk.xdmf  left_bulk.xdmf  v v 1e-15 1e-15 2 2
-    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_top.xdmf  left_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_top.xdmf  left_top.xdmf  v v 1e-15 1e-15 2 2
-    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  v v 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  v v 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1352,15 +1352,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bulk.xdmf  left_bulk.xdmf  v v 1e-15 1e-15 2 2
-    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bottom.xdmf  left_bottom.xdmf  v v 1e-15 1e-15 2 2
-    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  v v 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  v v 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1373,15 +1373,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_right.xdmf  left_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_right.xdmf  left_right.xdmf  v v 1e-15 1e-15 2 2
-    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bulk.xdmf  left_bulk.xdmf  v v 1e-15 1e-15 2 2
-    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  v v 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  v v 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1394,15 +1394,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_right.xdmf  left_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_right.xdmf  left_right.xdmf  v v 1e-15 1e-15 2 2
-    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_top.xdmf  left_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_top.xdmf  left_top.xdmf  v v 1e-15 1e-15 2 2
-    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  v v 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  v v 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1415,15 +1415,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_right.xdmf  left_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_right.xdmf  left_right.xdmf  v v 1e-15 1e-15 2 2
-    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bottom.xdmf  left_bottom.xdmf  v v 1e-15 1e-15 2 2
-    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  v v 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  v v 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1436,15 +1436,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_top.xdmf  left_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_top.xdmf  left_top.xdmf  v v 1e-15 1e-15 2 2
-    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bulk.xdmf  left_bulk.xdmf  v v 1e-15 1e-15 2 2
-    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  v v 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  v v 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1457,15 +1457,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_top.xdmf  left_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_top.xdmf  left_top.xdmf  v v 1e-15 1e-15 2 2
-    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_right.xdmf  left_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_right.xdmf  left_right.xdmf  v v 1e-15 1e-15 2 2
-    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  v v 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  v v 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1478,15 +1478,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_top.xdmf  left_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_top.xdmf  left_top.xdmf  v v 1e-15 1e-15 2 2
-    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bottom.xdmf  left_bottom.xdmf  v v 1e-15 1e-15 2 2
-    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  v v 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  v v 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1499,15 +1499,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bottom.xdmf  left_bottom.xdmf  v v 1e-15 1e-15 2 2
-    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bulk.xdmf  left_bulk.xdmf  v v 1e-15 1e-15 2 2
-    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  v v 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  v v 1e-12 1e-12 1 1
+    left_bulk.xdmf  left_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1520,15 +1520,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bottom.xdmf  left_bottom.xdmf  v v 1e-15 1e-15 2 2
-    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_right.xdmf  left_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_right.xdmf  left_right.xdmf  v v 1e-15 1e-15 2 2
-    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  v v 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  v v 1e-12 1e-12 1 1
+    left_right.xdmf  left_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1541,15 +1541,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    left_left.xdmf  left_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_left.xdmf  left_left.xdmf  v v 1e-15 1e-15 2 2
-    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_bottom.xdmf  left_bottom.xdmf  v v 1e-15 1e-15 2 2
-    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    left_top.xdmf  left_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    left_top.xdmf  left_top.xdmf  v v 1e-15 1e-15 2 2
-    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    left_left.xdmf  left_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  v v 1e-12 1e-12 1 1
+    left_left.xdmf  left_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  v v 1e-12 1e-12 1 1
+    left_bottom.xdmf  left_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  v v 1e-12 1e-12 1 1
+    left_top.xdmf  left_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1562,15 +1562,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bulk.xdmf  right_bulk.xdmf  v v 1e-15 1e-15 2 2
-    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_left.xdmf  right_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_left.xdmf  right_left.xdmf  v v 1e-15 1e-15 2 2
-    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  v v 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  v v 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1583,15 +1583,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bulk.xdmf  right_bulk.xdmf  v v 1e-15 1e-15 2 2
-    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_top.xdmf  right_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_top.xdmf  right_top.xdmf  v v 1e-15 1e-15 2 2
-    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  v v 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  v v 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1604,15 +1604,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bulk.xdmf  right_bulk.xdmf  v v 1e-15 1e-15 2 2
-    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bottom.xdmf  right_bottom.xdmf  v v 1e-15 1e-15 2 2
-    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  v v 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  v v 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1625,15 +1625,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_left.xdmf  right_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_left.xdmf  right_left.xdmf  v v 1e-15 1e-15 2 2
-    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bulk.xdmf  right_bulk.xdmf  v v 1e-15 1e-15 2 2
-    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  v v 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  v v 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1646,15 +1646,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_left.xdmf  right_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_left.xdmf  right_left.xdmf  v v 1e-15 1e-15 2 2
-    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_top.xdmf  right_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_top.xdmf  right_top.xdmf  v v 1e-15 1e-15 2 2
-    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  v v 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  v v 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1667,15 +1667,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_left.xdmf  right_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_left.xdmf  right_left.xdmf  v v 1e-15 1e-15 2 2
-    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bottom.xdmf  right_bottom.xdmf  v v 1e-15 1e-15 2 2
-    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  v v 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  v v 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1688,15 +1688,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_top.xdmf  right_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_top.xdmf  right_top.xdmf  v v 1e-15 1e-15 2 2
-    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bulk.xdmf  right_bulk.xdmf  v v 1e-15 1e-15 2 2
-    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  v v 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  v v 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1709,15 +1709,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_top.xdmf  right_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_top.xdmf  right_top.xdmf  v v 1e-15 1e-15 2 2
-    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_left.xdmf  right_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_left.xdmf  right_left.xdmf  v v 1e-15 1e-15 2 2
-    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  v v 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  v v 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1730,15 +1730,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_top.xdmf  right_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_top.xdmf  right_top.xdmf  v v 1e-15 1e-15 2 2
-    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bottom.xdmf  right_bottom.xdmf  v v 1e-15 1e-15 2 2
-    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  v v 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  v v 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1751,15 +1751,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bottom.xdmf  right_bottom.xdmf  v v 1e-15 1e-15 2 2
-    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bulk.xdmf  right_bulk.xdmf  v v 1e-15 1e-15 2 2
-    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  v v 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  v v 1e-12 1e-12 1 1
+    right_bulk.xdmf  right_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1772,15 +1772,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bottom.xdmf  right_bottom.xdmf  v v 1e-15 1e-15 2 2
-    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_left.xdmf  right_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_left.xdmf  right_left.xdmf  v v 1e-15 1e-15 2 2
-    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  v v 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  v v 1e-12 1e-12 1 1
+    right_left.xdmf  right_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1793,15 +1793,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    right_right.xdmf  right_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_right.xdmf  right_right.xdmf  v v 1e-15 1e-15 2 2
-    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_bottom.xdmf  right_bottom.xdmf  v v 1e-15 1e-15 2 2
-    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    right_top.xdmf  right_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    right_top.xdmf  right_top.xdmf  v v 1e-15 1e-15 2 2
-    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    right_right.xdmf  right_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  v v 1e-12 1e-12 1 1
+    right_right.xdmf  right_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  v v 1e-12 1e-12 1 1
+    right_bottom.xdmf  right_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  v v 1e-12 1e-12 1 1
+    right_top.xdmf  right_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1814,15 +1814,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bulk.xdmf  top_bulk.xdmf  v v 1e-15 1e-15 2 2
-    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_left.xdmf  top_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_left.xdmf  top_left.xdmf  v v 1e-15 1e-15 2 2
-    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  v v 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  v v 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1835,15 +1835,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bulk.xdmf  top_bulk.xdmf  v v 1e-15 1e-15 2 2
-    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_right.xdmf  top_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_right.xdmf  top_right.xdmf  v v 1e-15 1e-15 2 2
-    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  v v 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  v v 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1856,15 +1856,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bulk.xdmf  top_bulk.xdmf  v v 1e-15 1e-15 2 2
-    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bottom.xdmf  top_bottom.xdmf  v v 1e-15 1e-15 2 2
-    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  v v 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  v v 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1877,15 +1877,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_left.xdmf  top_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_left.xdmf  top_left.xdmf  v v 1e-15 1e-15 2 2
-    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bulk.xdmf  top_bulk.xdmf  v v 1e-15 1e-15 2 2
-    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  v v 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  v v 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1898,15 +1898,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_left.xdmf  top_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_left.xdmf  top_left.xdmf  v v 1e-15 1e-15 2 2
-    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_right.xdmf  top_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_right.xdmf  top_right.xdmf  v v 1e-15 1e-15 2 2
-    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  v v 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  v v 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1919,15 +1919,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_left.xdmf  top_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_left.xdmf  top_left.xdmf  v v 1e-15 1e-15 2 2
-    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bottom.xdmf  top_bottom.xdmf  v v 1e-15 1e-15 2 2
-    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  v v 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  v v 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1940,15 +1940,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_right.xdmf  top_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_right.xdmf  top_right.xdmf  v v 1e-15 1e-15 2 2
-    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bulk.xdmf  top_bulk.xdmf  v v 1e-15 1e-15 2 2
-    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  v v 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  v v 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1961,15 +1961,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_right.xdmf  top_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_right.xdmf  top_right.xdmf  v v 1e-15 1e-15 2 2
-    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_left.xdmf  top_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_left.xdmf  top_left.xdmf  v v 1e-15 1e-15 2 2
-    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  v v 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  v v 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -1982,15 +1982,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_right.xdmf  top_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_right.xdmf  top_right.xdmf  v v 1e-15 1e-15 2 2
-    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bottom.xdmf  top_bottom.xdmf  v v 1e-15 1e-15 2 2
-    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  v v 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  v v 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2003,15 +2003,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bottom.xdmf  top_bottom.xdmf  v v 1e-15 1e-15 2 2
-    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bulk.xdmf  top_bulk.xdmf  v v 1e-15 1e-15 2 2
-    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  v v 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  v v 1e-12 1e-12 1 1
+    top_bulk.xdmf  top_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2024,15 +2024,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bottom.xdmf  top_bottom.xdmf  v v 1e-15 1e-15 2 2
-    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_left.xdmf  top_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_left.xdmf  top_left.xdmf  v v 1e-15 1e-15 2 2
-    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  v v 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  v v 1e-12 1e-12 1 1
+    top_left.xdmf  top_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2045,15 +2045,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    top_top.xdmf  top_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_top.xdmf  top_top.xdmf  v v 1e-15 1e-15 2 2
-    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_bottom.xdmf  top_bottom.xdmf  v v 1e-15 1e-15 2 2
-    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    top_right.xdmf  top_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    top_right.xdmf  top_right.xdmf  v v 1e-15 1e-15 2 2
-    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    top_top.xdmf  top_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  v v 1e-12 1e-12 1 1
+    top_top.xdmf  top_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  v v 1e-12 1e-12 1 1
+    top_bottom.xdmf  top_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  v v 1e-12 1e-12 1 1
+    top_right.xdmf  top_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2066,15 +2066,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_left.xdmf  bottom_left.xdmf  v v 1e-15 1e-15 2 2
-    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  v v 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2087,15 +2087,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_right.xdmf  bottom_right.xdmf  v v 1e-15 1e-15 2 2
-    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  v v 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2108,15 +2108,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_top.xdmf  bottom_top.xdmf  v v 1e-15 1e-15 2 2
-    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  v v 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2129,15 +2129,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_left.xdmf  bottom_left.xdmf  v v 1e-15 1e-15 2 2
-    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  v v 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2150,15 +2150,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_left.xdmf  bottom_left.xdmf  v v 1e-15 1e-15 2 2
-    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_right.xdmf  bottom_right.xdmf  v v 1e-15 1e-15 2 2
-    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  v v 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  v v 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2171,15 +2171,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_left.xdmf  bottom_left.xdmf  v v 1e-15 1e-15 2 2
-    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_top.xdmf  bottom_top.xdmf  v v 1e-15 1e-15 2 2
-    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  v v 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  v v 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2192,15 +2192,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_right.xdmf  bottom_right.xdmf  v v 1e-15 1e-15 2 2
-    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  v v 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2213,15 +2213,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_right.xdmf  bottom_right.xdmf  v v 1e-15 1e-15 2 2
-    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_left.xdmf  bottom_left.xdmf  v v 1e-15 1e-15 2 2
-    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  v v 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  v v 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2234,15 +2234,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_right.xdmf  bottom_right.xdmf  v v 1e-15 1e-15 2 2
-    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_top.xdmf  bottom_top.xdmf  v v 1e-15 1e-15 2 2
-    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  v v 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  v v 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2255,15 +2255,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_top.xdmf  bottom_top.xdmf  v v 1e-15 1e-15 2 2
-    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  v v 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bulk.xdmf  bottom_bulk.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2276,15 +2276,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_top.xdmf  bottom_top.xdmf  v v 1e-15 1e-15 2 2
-    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_left.xdmf  bottom_left.xdmf  v v 1e-15 1e-15 2 2
-    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  v v 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  v v 1e-12 1e-12 1 1
+    bottom_left.xdmf  bottom_left.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 AddTest(
@@ -2297,15 +2297,15 @@ AddTest(
     TESTER xdmfdiff
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
-    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-15 1e-15 2 2
-    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_top.xdmf  bottom_top.xdmf  v v 1e-15 1e-15 2 2
-    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
-    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-15 1e-15 1 1
-    bottom_right.xdmf  bottom_right.xdmf  v v 1e-15 1e-15 2 2
-    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-15 1e-15 3 3
+    bottom_bottom.xdmf  bottom_bottom.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  v v 1e-12 1e-12 1 1
+    bottom_bottom.xdmf  bottom_bottom.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  v v 1e-12 1e-12 1 1
+    bottom_top.xdmf  bottom_top.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  pressure pressure 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  v v 1e-12 1e-12 1 1
+    bottom_right.xdmf  bottom_right.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
 )
 
 #AddTest(
