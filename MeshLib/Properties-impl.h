@@ -3,6 +3,8 @@
 
 #include <typeinfo>
 
+namespace MeshLib
+{
 template <typename T>
 PropertyVector<T>* Properties::createNewPropertyVector(
     std::string_view name, MeshItemType mesh_item_type,
@@ -274,3 +276,4 @@ void applyToPropertyVectors(Properties const& properties, Function f)
         }
     }
 }
+}  // namespace MeshLib

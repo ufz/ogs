@@ -235,6 +235,6 @@ constexpr std::string_view globalIDString(
     }
 }
 
-#include "Properties-impl.h"
+}  // end namespace MeshLib
 
-} // end namespace MeshLib
+#include "Properties-impl.h"
