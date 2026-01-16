@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 
+#include "BaseLib/Error.h"
 #include "PropertyVector.h"
 
 namespace MeshLib

@@ -3,6 +3,7 @@
 
 #include "PostUtils.h"
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
@@ -276,7 +277,7 @@ PostProcessTool::PostProcessTool(
                 "\n\t unsigned long long,"
                 "\n\t char.",
                 property->getPropertyName(),
-                typeid(*property).name());
+                BaseLib::typeToString<decltype(*property)>());
         }
     }
     calculateTotalDisplacement(vec_vec_fracture_nodes.size(),

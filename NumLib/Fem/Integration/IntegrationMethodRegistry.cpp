@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "BaseLib/Error.h"
 #include "GaussLegendreIntegrationPolicy.h"
 #include "MeshLib/Elements/Elements.h"
@@ -33,7 +34,7 @@ static NumLib::GenericIntegrationMethod createGenericIntegrationMethod(
             throw std::runtime_error(
                 "createGenericIntegrationMethod mismatch for ip=" +
                 std::to_string(ip) + ", order=" + std::to_string(order) +
-                ", method=" + typeid(decltype(meth)).name());
+                ", method=" + BaseLib::typeToString<decltype(meth)>());
         }
     }
 

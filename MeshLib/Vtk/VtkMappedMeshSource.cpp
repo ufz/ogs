@@ -13,6 +13,7 @@
 
 #include <vector>
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -191,7 +192,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
                 "\n\t unsigned char,",
                 "\n\t uint8_t.",
                 property->getPropertyName(),
-                typeid(*property).name());
+                BaseLib::typeToString<decltype(*property)>());
         }
     }
 

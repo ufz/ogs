@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <typeinfo>
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "BaseLib/quicksort.h"
 #include "GeoLib/Polyline.h"
 #include "MeshGeoToolsLib/MeshNodeSearcher.h"
@@ -83,7 +84,8 @@ MeshLib::Element* modifyEdgeNodeOrdering(
                                 const_cast<MeshLib::Node*>(e->getNode(2))};
             return new MeshLib::Line3(nodes, e->getID());
         }
-        OGS_FATAL("Not implemented for element type {:s}", typeid(edge).name());
+        OGS_FATAL("Not implemented for element type {:s}",
+                  BaseLib::typeToString<decltype(edge)>());
     }
 
     // Return the original edge otherwise.

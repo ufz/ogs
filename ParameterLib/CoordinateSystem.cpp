@@ -9,6 +9,7 @@
 #include <limits>
 #include <typeinfo>
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "MathLib/FormattingUtils.h"
 #include "Parameter.h"
 
@@ -77,8 +78,8 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
         OGS_FATAL(
             "The parameter types for the basis must be equal but they are "
             "'{:s}' and '{:s}'.",
-            typeid(_base[0]).name(),
-            typeid(_base[1]).name());
+            BaseLib::typeToString<decltype(*_base[0])>(),
+            BaseLib::typeToString<decltype(*_base[1])>());
     }
     if (_base[0]->isTimeDependent() || _base[1]->isTimeDependent())
     {
@@ -103,9 +104,9 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
         OGS_FATAL(
             "The parameter types for the basis must be equal but they are "
             "'{:s}', '{:s}', and '{:s}'.",
-            typeid(_base[0]).name(),
-            typeid(_base[1]).name(),
-            typeid(_base[2]).name());
+            BaseLib::typeToString<decltype(*_base[0])>(),
+            BaseLib::typeToString<decltype(*_base[1])>(),
+            BaseLib::typeToString<decltype(*_base[2])>());
     }
     if (_base[0]->isTimeDependent() || _base[1]->isTimeDependent(),
         _base[2]->isTimeDependent())

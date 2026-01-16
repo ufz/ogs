@@ -9,6 +9,7 @@
 #include <range/v3/view/transform.hpp>
 #include <span>
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "BaseLib/Logging.h"
 #include "MeshLib/Elements/Line.h"
 #include "MeshLib/Elements/Point.h"
@@ -154,7 +155,7 @@ bool createSfcMeshProperties(MeshLib::Mesh& sfc_mesh,
             WARN(
                 "Skipping property vector '{:s}' - no matching data type "
                 "'{:s}' found.",
-                name, typeid(*property).name());
+                name, BaseLib::typeToString<decltype(*property)>());
             vectors_skipped++;
         }
     }
