@@ -10,6 +10,7 @@ ogs_add_library(BaseLib GENERATE_EXPORT_HEADER ${SOURCES})
 
 if(MSVC)
     find_library(WinMM_LIBRARY WinMM REQUIRED)
+    find_library(DbgHelp_LIBRARY DbgHelp REQUIRED)
 endif()
 
 target_link_libraries(
@@ -20,6 +21,7 @@ target_link_libraries(
            spdlog::spdlog
            tclap
            $<$<BOOL:${MSVC}>:${WinMM_LIBRARY}> # needed for timeGetTime
+           $<$<BOOL:${MSVC}>:${DbgHelp_LIBRARY}> # needed for UnDecorateSymbolName
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
            $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
