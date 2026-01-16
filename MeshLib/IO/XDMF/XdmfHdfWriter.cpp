@@ -33,6 +33,16 @@ struct XdmfHdfMesh final
     std::unique_ptr<TransformedMeshData> transformed_data;
 };
 
+constexpr std::array constant_output_names{
+    "MaterialIDs"sv,
+    "topology"sv,
+    "geometry"sv,
+    "OGS_VERSION"sv,
+    MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+    MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+    MeshLib::getBulkIDString(MeshLib::MeshItemType::Edge),
+    MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)};
+
 template <typename Data>
 std::function<bool(Data)> isVariableAttribute(
     std::set<std::string> const& variable_output_names)
@@ -40,21 +50,16 @@ std::function<bool(Data)> isVariableAttribute(
     if (variable_output_names.empty())
     {
         return [](Data const& data) -> bool
-        {
-            constexpr std::array constant_output_names{
-                "MaterialIDs"sv,
-                "topology"sv,
-                "geometry"sv,
-                "OGS_VERSION"sv,
-                MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
-                MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
-                MeshLib::getBulkIDString(MeshLib::MeshItemType::Edge),
-                MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)};
-            return !ranges::contains(constant_output_names, data.name);
-        };
+        { return !ranges::contains(constant_output_names, data.name); };
     }
     return [&variable_output_names](Data const& data) -> bool
-    { return variable_output_names.contains(data.name); };
+    {
+        if (ranges::contains(constant_output_names, data.name))
+        {
+            return false;
+        }
+        return variable_output_names.contains(data.name);
+    };
 }
 
 XdmfHdfWriter::XdmfHdfWriter(
@@ -188,13 +193,6 @@ XdmfHdfWriter::XdmfHdfWriter(
                        std::back_inserter(xdmf_attributes),
                        [](XdmfHdfData const& att) -> XdmfData
                        { return att.xdmf; });
-
-        for (std::size_t i = 0; i < metamesh.attributes.size(); ++i)
-        {
-            // index 1 time,  index 2 geo, index 3 topology, attributes start at
-            // index 4
-            xdmf_attributes[i].index = i + 4;
-        }
 
         std::vector<XdmfData> xdmf_variable_attributes;
         std::copy_if(xdmf_attributes.begin(), xdmf_attributes.end(),

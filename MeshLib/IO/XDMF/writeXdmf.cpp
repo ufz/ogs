@@ -147,14 +147,18 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     { return fmt::to_string(fmt::join(collection, "")); };
 
     // m_bind could be moved to ogs lib if used more
+    // Uses indexed transform - transform receives (element, index)
     auto const m_bind_fn = [](auto const& transform, auto const& join)
     {
         return [join, transform](auto const& collection)
         {
             std::vector<std::string> temp;
             temp.reserve(collection.size());
-            std::transform(collection.begin(), collection.end(),
-                           std::back_inserter(temp), transform);
+            for (std::size_t i = 0; i < collection.size(); ++i)
+            {
+                // 1 - TimeStep , 2 Geometry, 3 Topology, 4-x Attributes
+                temp.push_back(transform(collection[i], i + 4));
+            }
             return join(temp);
         };
     };
@@ -290,7 +294,7 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     {
         return [component_transform, time_dataitem_genfn, pointer_transfrom,
                 variable, time_step, max_step, h5filename,
-                mesh_name](XdmfData const& attr)
+                mesh_name](XdmfData const& attr, std::size_t const index)
         {
             // new data arrived
             bool const changed =
@@ -304,7 +308,9 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             }
             else
             {
-                std::array<unsigned int, 5> position = {1, 1, 2, 1, attr.index};
+                // index + 3  0 Time, 1 Geometry 2 Topology
+                std::array<unsigned int, 5> position = {
+                    1, 1, 2, 1, static_cast<unsigned int>(index)};
                 return pointer_transfrom(position);
             };
         };
@@ -338,8 +344,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
             m_bind_fn(time_step_const_attribute_fn, string_join_fn);
 
         return grid_transform(
-            time, time_step_geometry_transform(geometry),
-            time_step_topology_transform(topology),
+            time, time_step_geometry_transform(geometry, 2),
+            time_step_topology_transform(topology, 3),
             constant_attributes_transform(constant_attributes),
             variable_attributes_transform(variable_attributes));
     };

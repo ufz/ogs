@@ -1281,10 +1281,10 @@ AddTest(
     REQUIREMENTS NOT OGS_USE_MPI
     TESTER xdmfdiff
     DIFF_DATA
-    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf MaterialIDs MaterialIDs 0 0
-    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf HeatFlowRate HeatFlowRate 0 0
-    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf temperature temperature 1e-13 0
-    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf heat_flux heat_flux 1e-13 0
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf MaterialIDs MaterialIDs 0 0 1 1
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf HeatFlowRate HeatFlowRate 0 0 2 2
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf temperature temperature 1e-13 0 3 3
+    line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf heat_flux heat_flux 1e-13 0 1 1
 )
 
 AddTest(

@@ -232,8 +232,8 @@ std::optional<XdmfHdfData> transformAttribute(
                    data_type, n_files,       chunk_size_bytes};
 
     XdmfData xdmf{num_of_tuples, ui_global_components, data_type,
-                  name,          mesh_item_type,       0,
-                  n_files,       std::nullopt};
+                  name,          mesh_item_type,       n_files,
+                  std::nullopt};
 
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
@@ -310,8 +310,8 @@ XdmfHdfData transformGeometry(MeshLib::Mesh const& mesh, double const* data_ptr,
                          chunk_size_bytes};
     XdmfData const xdmf = {
         partition_dim, point_size,   MeshPropertyDataType::float64,
-        name,          std::nullopt, 2,
-        n_files,       std::nullopt};
+        name,          std::nullopt, n_files,
+        std::nullopt};
 
     return XdmfHdfData{std::move(hdf), std::move(xdmf)};
 }
@@ -424,7 +424,6 @@ XdmfHdfData transformTopology(std::vector<std::size_t> const& values,
                         MeshPropertyDataType::uint64,
                         name,
                         std::nullopt,
-                        3,
                         n_files,
                         parent_data_type};
 
