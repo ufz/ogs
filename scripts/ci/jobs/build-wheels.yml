@@ -58,11 +58,12 @@ publish wheels:
 
 publish wheels to pypi (dev):
   stage: release
-  needs: ["build wheels linux", "build wheels mac"] # , "build wheels win", # disabled temporarily due to runner hardware failure
+  needs: ["build wheels linux", "build wheels mac", "build wheels win"]
   tags: [envinf, shell]
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       when: manual
+      allow_failure: true
   script:
     - uvx --from build pyproject-build --sdist --outdir wheelhouse
     - >
