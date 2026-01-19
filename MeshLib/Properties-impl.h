@@ -195,7 +195,7 @@ PropertyVector<T> const* Properties::getPropertyVector(
         OGS_FATAL(
             "Could not cast the data type of the PropertyVector '{:s}' (type: "
             "'{:s}') to the requested data type '{:s}'.",
-            name, BaseLib::typeToString<decltype(*it->second)>(),
+            name, BaseLib::typeToString(*it->second),
             BaseLib::typeToString<PropertyVector<T>>());
     }
     if (property->getMeshItemType() != item_type)

@@ -192,7 +192,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
                 "\n\t unsigned char,",
                 "\n\t uint8_t.",
                 property->getPropertyName(),
-                BaseLib::typeToString<decltype(*property)>());
+                BaseLib::typeToString(*property));
         }
     }
 

@@ -85,7 +85,7 @@ MeshLib::Element* modifyEdgeNodeOrdering(
             return new MeshLib::Line3(nodes, e->getID());
         }
         OGS_FATAL("Not implemented for element type {:s}",
-                  BaseLib::typeToString<decltype(edge)>());
+                  BaseLib::typeToString(edge));
     }
 
     // Return the original edge otherwise.

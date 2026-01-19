@@ -34,7 +34,7 @@ static NumLib::GenericIntegrationMethod createGenericIntegrationMethod(
             throw std::runtime_error(
                 "createGenericIntegrationMethod mismatch for ip=" +
                 std::to_string(ip) + ", order=" + std::to_string(order) +
-                ", method=" + BaseLib::typeToString<decltype(meth)>());
+                ", method=" + BaseLib::typeToString(meth));
         }
     }
 

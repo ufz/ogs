@@ -277,7 +277,7 @@ PostProcessTool::PostProcessTool(
                 "\n\t unsigned long long,"
                 "\n\t char.",
                 property->getPropertyName(),
-                BaseLib::typeToString<decltype(*property)>());
+                BaseLib::typeToString(*property));
         }
     }
     calculateTotalDisplacement(vec_vec_fracture_nodes.size(),

@@ -4,6 +4,7 @@
 #pragma once
 
 #include <string>
+#include <type_traits>
 #include <typeinfo>
 
 namespace BaseLib
@@ -22,9 +23,21 @@ std::string demangle(const char* mangled_name);
 /// Uses C++ ABI demangling (GCC/Clang) or UnDecorateSymbolName (MSVC) to
 /// convert RTTI symbols into readable type names. Falls back to typeid().name()
 /// if demangling fails.
+///
+/// Template overload for explicit type specification:
+///   typeToString<SomeType>()
 template <typename T>
 std::string typeToString()
 {
     return demangle(typeid(T).name());
+}
+
+/// Template overload for type deduction from values:
+///   typeToString(some_value)
+/// This allows demangling without explicit decltype() in the call.
+template <typename T>
+std::string typeToString(T&& /* not needed */)
+{
+    return demangle(typeid(std::remove_cvref_t<T>).name());
 }
 }  // namespace BaseLib

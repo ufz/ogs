@@ -78,8 +78,8 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
         OGS_FATAL(
             "The parameter types for the basis must be equal but they are "
             "'{:s}' and '{:s}'.",
-            BaseLib::typeToString<decltype(*_base[0])>(),
-            BaseLib::typeToString<decltype(*_base[1])>());
+            BaseLib::typeToString(*_base[0]),
+            BaseLib::typeToString(*_base[1]));
     }
     if (_base[0]->isTimeDependent() || _base[1]->isTimeDependent())
     {
@@ -104,9 +104,9 @@ CoordinateSystem::CoordinateSystem(Parameter<double> const& e0,
         OGS_FATAL(
             "The parameter types for the basis must be equal but they are "
             "'{:s}', '{:s}', and '{:s}'.",
-            BaseLib::typeToString<decltype(*_base[0])>(),
-            BaseLib::typeToString<decltype(*_base[1])>(),
-            BaseLib::typeToString<decltype(*_base[2])>());
+            BaseLib::typeToString(*_base[0]),
+            BaseLib::typeToString(*_base[1]),
+            BaseLib::typeToString(*_base[2]));
     }
     if (_base[0]->isTimeDependent() || _base[1]->isTimeDependent(),
         _base[2]->isTimeDependent())

@@ -131,7 +131,7 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
             INFO(
                 "\t{:s}: Could not get value bounds for property vector of "
                 "type '{:s}'.",
-                name, BaseLib::typeToString<decltype(*p)>());
+                name, BaseLib::typeToString(*property));
         }
     }
 }
