@@ -14,7 +14,7 @@
 from collections import defaultdict
 from pathlib import Path
 from typing import TextIO
-import xml.etree.ElementTree as ET
+from lxml import etree
 import sys
 import os
 import json
@@ -125,7 +125,7 @@ def remove_xml_header(xml_string: str) -> str:
 
 
 def print_tags(
-    node: ET.Element,
+    node: etree.Element,
     level: int,
     page_name: str,
     filehandle: TextIO,
@@ -143,7 +143,7 @@ def print_tags(
         )
         with open(include_xml_path, "r") as included_xml_file:
             xml_string = remove_xml_header(included_xml_file.read())
-        included_xml = ET.fromstring("<dummy>" + xml_string + "</dummy>")
+        included_xml = etree.fromstring("<dummy>" + xml_string + "</dummy>")
         for included_child in included_xml:
             print_tags(
                 included_child, level, page_name, filehandle, typetag,
