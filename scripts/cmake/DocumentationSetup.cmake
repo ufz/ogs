@@ -146,3 +146,21 @@ if(_doc_use_external_tools)
     add_dependencies(doc internal_pre_doc_qa_page)
     add_dependencies(internal_pre_doc_qa_page internal_pre_doc)
 endif()
+
+# Add target to run FindFeatures.py script to generate feature matrix.
+if(Python_EXECUTABLE)
+    # Create output directory
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/doc)
+
+    add_custom_target(
+        feature_matrix
+        ${Python_EXECUTABLE}
+        ${PROJECT_SOURCE_DIR}/scripts/doc/FindFeatures.py
+        ${PROJECT_SOURCE_DIR}
+        --json
+        ${PROJECT_BINARY_DIR}/DocAux/features.json
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        COMMENT "Generating feature matrix."
+        VERBATIM
+    )
+endif()
