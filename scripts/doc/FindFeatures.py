@@ -29,8 +29,6 @@ import json
 import operator
 import re
 import warnings
-import vtk
-import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -364,17 +362,6 @@ def getFeatureMatrix(path: Path) -> feature_matrix:
             )
             for case in ["true", "false"]
         },
-        **{
-            f"Number of Mesh Elements: {case.left}-{case.right}": lambda xml, case=case: checkMeshSize(
-                xml, case
-            )
-            for case in [
-                pd.Interval(left=0, right=10),
-                pd.Interval(left=11, right=100),
-                pd.Interval(left=101, right=1000),
-                pd.Interval(left=1001, right=1e20),
-            ]
-        },
     }
 
     return feature_matrix(feature_dict, xml_files)
@@ -500,25 +487,6 @@ def checkFirstLines(xml: etree.ElementTree) -> feature_matrix_entry:
             )
     else:
         return feature_matrix_entry([])
-
-
-def checkMeshSize(xml: etree.ElementTree, range: pd.Interval) -> feature_matrix_entry:
-    elements = xml.xpath("//mesh")
-    if len(elements) > 0:
-        if not Path(os.path.dirname(xml.docinfo.URL) + "/" + elements[0].text).exists():
-            warnings.warn(
-                f"File:{os.path.dirname(xml.docinfo.URL)+" / "+elements[0].text} "
-                + f"called from: {xml.docinfo.URL} does not exist."
-            )
-        else:
-            if (
-                getVtuMeshSize(
-                    os.path.dirname(xml.docinfo.URL) + "/" + elements[0].text
-                )
-                in range
-            ):
-                return feature_matrix_entry([elements[0]])
-    return feature_matrix_entry([])
 
 
 def checkTagChildrenCount(
@@ -648,31 +616,6 @@ def isTupleFromText(text: str) -> bool:
             r"^\\d+(\\.\\d*)?+(e[+-]?\\d+(\\.\\d*)?)?+\\s+\\d+(\\.\\d*)?+(e[+-]?\\d+(\\.\\d*)?)?"
         ).match(text)
     )
-
-
-def getVtuMeshSize(vtu_file_path):
-    """
-    Read a VTU mesh file and determine its size information.
-
-    Parameters:
-    vtu_file_path (str): Path to the VTU file
-
-    Returns:
-    dict: Dictionary containing mesh size information
-    """
-    # Read the mesh using vtk
-
-    try:
-        reader = vtk.vtkXMLUnstructuredGridReader()
-        reader.SetFileName(vtu_file_path)
-        reader.Update()
-        grid = reader.GetOutput()
-
-    except:
-        warnings.warn(f"file: {vtu_file_path} is not readable by pyvista.")
-        return -1
-
-    return grid.GetNumberOfCells()
 
 
 def translateOps(op: str) -> operator:
