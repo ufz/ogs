@@ -133,7 +133,7 @@ check docs links:
     - .rules-master-manual
   script:
     - lychee --cache --max-cache-age 2d
-      --config ./lychee.toml
+      --config ./web/lychee.toml
       --threads ${CTEST_PARALLEL_LEVEL:-4}
       --exclude gitlab.opengeosys.org/ogs/ogs
       --exclude github.com/ufz/ogs/commit/\%1
