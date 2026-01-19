@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QStringListModel>
 
+#include "Base/OGSError.h"
 #include "Base/StrictDoubleValidator.h"
 #include "Base/Utils.h"
 #include "GeoLib/AABB.h"

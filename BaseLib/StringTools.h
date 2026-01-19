@@ -5,6 +5,7 @@
 
 #include <cstddef>
 #include <list>
+#include <optional>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/istream.hpp>
 #include <sstream>
