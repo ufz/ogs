@@ -25,6 +25,7 @@
 
 #include "Applications/ApplicationsLib/Simulation.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
@@ -178,6 +179,18 @@ int main(int argc, char* argv[])
         }
 
         ogs_status = solver_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
+    }
+    catch (std::exception& e)
+    {
+        ERR("{}", e.what());
+        ogs_status = EXIT_FAILURE;
+    }
+
+    // Check for swallowed ConfigTree errors after Simulation destructor runs.
+    // This catches configuration errors in objects destroyed at end of scope.
+    try
+    {
+        BaseLib::ConfigTree::assertNoSwallowedErrors();
     }
     catch (std::exception& e)
     {
