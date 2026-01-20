@@ -16,7 +16,7 @@ void GravityModel<DisplacementDim>::eval(
     auto const phi = poro_data.phi;
     auto const S_L = S_L_data.S_L;
     auto const rho_LR = rho_L_data.rho_LR;
-    auto const b = specific_body_force_;
+    auto const b = specific_body_force_();
 
     double const rho = rho_SR * (1 - phi) + S_L * phi * rho_LR;
     out.volumetric_body_force = rho * b;

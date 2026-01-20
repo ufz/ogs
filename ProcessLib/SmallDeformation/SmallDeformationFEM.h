@@ -134,7 +134,8 @@ public:
             /// Set initial stress from parameter.
             if (this->process_data_.initial_stress != nullptr)
             {
-                this->current_states_[ip].stress_data.sigma.noalias() =
+                std::get<StressData<DisplacementDim>>(this->current_states_[ip])
+                    .sigma.noalias() =
                     MathLib::KelvinVector::symmetricTensorToKelvinVector<
                         DisplacementDim>((*this->process_data_.initial_stress)(
                         std::numeric_limits<
@@ -146,6 +147,10 @@ public:
             auto& material_state = this->material_states_[ip];
             this->solid_material_.initializeInternalStateVariables(
                 t, x_position, *material_state.material_state_variables);
+
+            typename ConstitutiveRelations::ConstitutiveSetting<DisplacementDim>
+                constitutive_setting;
+            constitutive_setting.init();
 
             material_state.pushBackState();
         }
@@ -182,7 +187,8 @@ public:
                 typename BMatricesType::BMatrixType>(
                 dNdx, N, B_dil_bar, x_coord, this->is_axially_symmetric_);
 
-            this->output_data_[ip].eps_data.eps.noalias() = B * local_x;
+            std::get<StrainData<DisplacementDim>>(this->output_data_[ip])
+                .eps.noalias() = B * local_x;
         }
     }
 
@@ -208,8 +214,9 @@ public:
                 ? (*this->process_data_.reference_temperature)(t, x_position)[0]
                 : std::numeric_limits<double>::quiet_NaN();
 
-        typename ConstitutiveRelations::ConstitutiveModels<DisplacementDim>
-            models{this->process_data_, this->solid_material_};
+        auto models =
+            ConstitutiveRelations::createConstitutiveModels<DisplacementDim>(
+                this->process_data_, this->solid_material_);
         typename ConstitutiveRelations::ConstitutiveTempData<DisplacementDim>
             tmp;
         typename ConstitutiveRelations::ConstitutiveData<DisplacementDim> CD;
@@ -301,9 +308,14 @@ public:
                 this->current_states_[ip], this->prev_states_[ip],
                 this->material_states_[ip], this->output_data_[ip]);
 
-            auto const& sigma = this->current_states_[ip].stress_data.sigma;
-            auto const& b = *CD.volumetric_body_force;
-            auto const& C = CD.s_mech_data.stiffness_tensor;
+            auto const& sigma =
+                std::get<StressData<DisplacementDim>>(this->current_states_[ip])
+                    .sigma;
+            auto const& b = *std::get<VolumetricBodyForce<DisplacementDim>>(CD);
+            auto const& C =
+                std::get<ConstitutiveRelations::SolidMechanicsDataStateless<
+                    DisplacementDim>>(CD)
+                    .stiffness_tensor;
 
             local_b.noalias() -=
                 (B.transpose() * sigma - N_u_op(N).transpose() * b) * w;

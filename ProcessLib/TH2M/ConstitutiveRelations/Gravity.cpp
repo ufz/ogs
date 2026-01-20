@@ -13,7 +13,7 @@ void GravityModel<DisplacementDim>::eval(
     PorosityData const& porosity_data,
     SaturationData const& S_L_data,
     SolidDensityData const& solid_density_data,
-    SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+    SpecificBodyForce<DisplacementDim> const& specific_body_force,
     VolumetricBodyForce<DisplacementDim>& volumetric_body_force) const
 {
     auto const phi_G = (1. - S_L_data.S_L) * porosity_data.phi;

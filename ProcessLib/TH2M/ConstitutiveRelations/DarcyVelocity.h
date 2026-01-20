@@ -37,7 +37,7 @@ struct DarcyVelocityModel
               FluidDensityData const& fluid_density_data,
               GasPressureGradientData<DisplacementDim> const& grad_p_GR,
               PermeabilityData<DisplacementDim> const& permeability_data,
-              SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+              SpecificBodyForce<DisplacementDim> const& specific_body_force,
               ViscosityData const& viscosity_data,
               DarcyVelocityData<DisplacementDim>& darcy_velocity_data) const;
 };

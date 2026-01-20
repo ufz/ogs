@@ -31,7 +31,7 @@ void EqPModel<DisplacementDim>::eval(
     out.J_pp_dNT_V_N =
         perm_data.Ki / mu_L_data() *
         (rho_L_data.rho_LR * perm_data.dk_rel_dS_L * dS_L_data.dS_L_dp_cap *
-         (p_cap_data.grad_p_cap + rho_L_data.rho_LR * b_));
+         (p_cap_data.grad_p_cap + rho_L_data.rho_LR * specific_body_force_()));
 
     out.M_pT_X_NTN = -S_L_data.S_L * rho_L_data.rho_LR *
                          f_therm_exp_data.eff_thermal_expansion +
@@ -40,8 +40,9 @@ void EqPModel<DisplacementDim>::eval(
     out.storage_p_a_p_X_NTN = storage_data.storage_p_a_p +
                               vap_data.storage_coefficient_by_water_vapor;
 
-    out.rhs_p_dNT_V = -rho_L_data.rho_LR * (out.K_pp_Laplace * b_) +
-                      vap_data.J_pT_X_dNTdN * T_data.grad_T;
+    out.rhs_p_dNT_V =
+        -rho_L_data.rho_LR * (out.K_pp_Laplace * specific_body_force_()) +
+        vap_data.J_pT_X_dNTdN * T_data.grad_T;
 }
 
 template struct EqPModel<2>;

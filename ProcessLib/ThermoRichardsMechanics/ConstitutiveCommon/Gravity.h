@@ -3,10 +3,10 @@
 
 #pragma once
 
+#include "Base.h"
 #include "LiquidDensity.h"
 #include "Saturation.h"
 #include "SolidDensity.h"
-#include "SpecificBodyForceData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -20,8 +20,8 @@ struct GravityData
 template <int DisplacementDim>
 struct GravityModel
 {
-    explicit GravityModel(
-        Eigen::Vector<double, DisplacementDim> const& specific_body_force)
+    explicit GravityModel(ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+                          DisplacementDim> const& specific_body_force)
         : specific_body_force_(specific_body_force)
     {
     }
@@ -34,13 +34,15 @@ struct GravityModel
               GravityData<DisplacementDim>& out) const;
 
     static GravityModel create(
-        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+        ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+            DisplacementDim> const& specific_body_force)
     {
-        return GravityModel{specific_body_force_data.specific_body_force};
+        return GravityModel{specific_body_force};
     }
 
 private:
-    Eigen::Vector<double, DisplacementDim> const specific_body_force_;
+    ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim> const
+        specific_body_force_;
 };
 
 extern template struct GravityModel<2>;

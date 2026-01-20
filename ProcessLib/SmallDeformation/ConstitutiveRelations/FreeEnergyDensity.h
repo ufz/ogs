@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Base.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::SmallDeformation
 {

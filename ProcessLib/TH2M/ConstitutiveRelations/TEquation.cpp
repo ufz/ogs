@@ -66,7 +66,7 @@ void FT2Model<DisplacementDim>::dEval(
     FluidEnthalpyData const& fluid_enthalpy_data,
     PermeabilityData<DisplacementDim> const& permeability_data,
     PhaseTransitionData const& phase_transition_data,
-    SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+    SpecificBodyForce<DisplacementDim> const& specific_body_force,
     ViscosityData const& viscosity_data,
     FT2DerivativeData<DisplacementDim>& dfT_2) const
 {
@@ -119,7 +119,7 @@ void FT3Model<DisplacementDim>::eval(
     DiffusionVelocityData<DisplacementDim> const& diffusion_velocity_data,
     FluidDensityData const& fluid_density_data,
     PhaseTransitionData const& phase_transition_data,
-    SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+    SpecificBodyForce<DisplacementDim> const& specific_body_force,
     FT3Data<DisplacementDim>& fT_3) const
 {
     fT_3.N =

@@ -49,6 +49,12 @@ struct SolidMechanicsModel
         return solid_material_.getInternalVariables();
     }
 
+    static SolidMechanicsModel create(
+        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
+    {
+        return SolidMechanicsModel{solid_material};
+    }
+
 private:
     SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
 };

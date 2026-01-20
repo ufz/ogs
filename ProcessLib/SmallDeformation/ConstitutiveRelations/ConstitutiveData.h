@@ -5,7 +5,9 @@
 
 #include "FreeEnergyDensity.h"
 #include "Gravity.h"
-#include "ProcessLib/Reflection/ReflectionData.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ConstitutiveRelations/StressData.h"
 #include "SolidDensity.h"
 #include "SolidMechanics.h"
 
@@ -15,64 +17,27 @@ namespace ConstitutiveRelations
 {
 /// Data whose state must be tracked by the process.
 template <int DisplacementDim>
-struct StatefulData
-{
-    StressData<DisplacementDim> stress_data;
+using StatefulData = std::tuple<StressData<DisplacementDim>>;
 
-    static auto reflect()
-    {
-        using Self = StatefulData<DisplacementDim>;
-
-        return Reflection::reflectWithoutName(&Self::stress_data);
-    }
-};
-
-/// Data whose state must be tracked by the process.
 template <int DisplacementDim>
-struct StatefulDataPrev
-{
-    PrevState<StressData<DisplacementDim>> stress_data;
-
-    StatefulDataPrev<DisplacementDim>& operator=(
-        StatefulData<DisplacementDim> const& state)
-    {
-        stress_data = state.stress_data;
-
-        return *this;
-    }
-};
+using StatefulDataPrev = ProcessLib::ConstitutiveRelations::PrevStateOf<
+    StatefulData<DisplacementDim>>;
 
 /// Data that is needed for output purposes, but not directly for the assembly.
 template <int DisplacementDim>
-struct OutputData
-{
-    StrainData<DisplacementDim> eps_data;
-    FreeEnergyDensityData free_energy_density_data;
-
-    static auto reflect()
-    {
-        using Self = OutputData<DisplacementDim>;
-
-        return Reflection::reflectWithoutName(&Self::eps_data,
-                                              &Self::free_energy_density_data);
-    }
-};
+using OutputData =
+    std::tuple<StrainData<DisplacementDim>, FreeEnergyDensityData>;
 
 /// Data that is needed for the equation system assembly.
 template <int DisplacementDim>
-struct ConstitutiveData
-{
-    SolidMechanicsDataStateless<DisplacementDim> s_mech_data;
-    VolumetricBodyForce<DisplacementDim> volumetric_body_force;
-};
+using ConstitutiveData =
+    std::tuple<SolidMechanicsDataStateless<DisplacementDim>,
+               VolumetricBodyForce<DisplacementDim>>;
 
 /// Data that stores intermediate values, which are not needed outside the
 /// constitutive setting.
 template <int DisplacementDim>
-struct ConstitutiveTempData
-{
-    PrevState<StrainData<DisplacementDim>> eps_data_prev;
-    SolidDensity rho_SR;
-};
+using ConstitutiveTempData =
+    std::tuple<PrevState<StrainData<DisplacementDim>>, SolidDensity>;
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::SmallDeformation

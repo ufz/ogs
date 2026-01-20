@@ -7,8 +7,6 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/PropertyType.h"
-#include "MathLib/KelvinVector.h"
-#include "ParameterLib/SpatialPosition.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
 
 namespace ProcessLib::TH2M
@@ -16,20 +14,6 @@ namespace ProcessLib::TH2M
 namespace ConstitutiveRelations
 {
 using namespace ProcessLib::ConstitutiveRelations;
-namespace KV = MathLib::KelvinVector;
-
-template <int DisplacementDim>
-using KelvinVector = KV::KelvinVectorType<DisplacementDim>;
-
-template <int DisplacementDim>
-using KelvinMatrix = KV::KelvinMatrixType<DisplacementDim>;
-
-template <int DisplacementDim>
-using GlobalDimMatrix =
-    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>;
-
-template <int DisplacementDim>
-using GlobalDimVector = Eigen::Vector<double, DisplacementDim>;
 
 struct MediaData
 {
@@ -123,11 +107,6 @@ template <int DisplacementDim>
 using TemperatureGradientData =
     BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
                         struct TemperatureGradientTag>;
-
-template <int DisplacementDim>
-using SpecificBodyForceData =
-    BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
-                        struct SpecificBodyForceTag>;
 
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::TH2M

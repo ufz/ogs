@@ -4,6 +4,8 @@
 #pragma once
 
 #include "Gravity.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
+#include "ProcessLib/Graph/ConstructModels.h"
 #include "SolidDensity.h"
 #include "SolidMechanics.h"
 
@@ -13,20 +15,20 @@ namespace ConstitutiveRelations
 {
 /// Constitutive models used for assembly.
 template <int DisplacementDim>
-struct ConstitutiveModels
-{
-    template <typename TRMProcessData>
-    explicit ConstitutiveModels(
-        TRMProcessData const& process_data,
-        SolidConstitutiveRelation<DisplacementDim> const& solid_material)
-        : s_mech_model(solid_material),
-          gravity_model(process_data.specific_body_force)
-    {
-    }
+using ConstitutiveModels = std::tuple<SolidMechanicsModel<DisplacementDim>,
+                                      SolidDensityModel,
+                                      GravityModel<DisplacementDim>>;
 
-    SolidMechanicsModel<DisplacementDim> s_mech_model;
-    SolidDensityModel rho_S_model;
-    GravityModel<DisplacementDim> gravity_model;
-};
+template <int DisplacementDim, typename SDProcessData>
+ConstitutiveModels<DisplacementDim> createConstitutiveModels(
+    SDProcessData const& process_data,
+    SolidConstitutiveRelation<DisplacementDim> const& solid_material)
+{
+    return ProcessLib::Graph::constructModels<
+        ConstitutiveModels<DisplacementDim>>(
+        ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim>(
+            process_data.specific_body_force),
+        solid_material);
+}
 }  // namespace ConstitutiveRelations
 }  // namespace ProcessLib::SmallDeformation

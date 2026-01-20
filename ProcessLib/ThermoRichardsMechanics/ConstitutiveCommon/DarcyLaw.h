@@ -7,7 +7,7 @@
 #include "LiquidDensity.h"
 #include "LiquidViscosity.h"
 #include "PermeabilityData.h"
-#include "SpecificBodyForceData.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ThermoOsmosis.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
@@ -24,9 +24,9 @@ constexpr std::string_view ioName(struct DarcyLawDataTag*)
 template <int DisplacementDim>
 struct DarcyLawModel
 {
-    explicit DarcyLawModel(
-        Eigen::Vector<double, DisplacementDim> const& specific_body_force)
-        : b_(specific_body_force)
+    explicit DarcyLawModel(ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+                           DisplacementDim> const& specific_body_force)
+        : specific_body_force_(specific_body_force)
     {
     }
 
@@ -38,14 +38,16 @@ struct DarcyLawModel
               DarcyLawData<DisplacementDim>& out) const;
 
     static DarcyLawModel create(
-        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+        ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+            DisplacementDim> const& specific_body_force)
     {
-        return DarcyLawModel{specific_body_force_data.specific_body_force};
+        return DarcyLawModel{specific_body_force};
     }
 
 private:
     /// Gravity vector (specific body force).
-    Eigen::Vector<double, DisplacementDim> const b_;
+    ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim> const
+        specific_body_force_;
 };
 
 extern template struct DarcyLawModel<2>;

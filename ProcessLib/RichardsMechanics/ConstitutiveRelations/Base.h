@@ -14,20 +14,6 @@ namespace ProcessLib::RichardsMechanics
 {
 
 using namespace ProcessLib::ConstitutiveRelations;
-namespace KV = MathLib::KelvinVector;
-
-template <int DisplacementDim>
-using KelvinVector = KV::KelvinVectorType<DisplacementDim>;
-
-template <int DisplacementDim>
-using KelvinMatrix = KV::KelvinMatrixType<DisplacementDim>;
-
-template <int DisplacementDim>
-using GlobalDimVector = Eigen::Vector<double, DisplacementDim>;
-
-template <int DisplacementDim>
-using GlobalDimMatrix =
-    Eigen::Matrix<double, DisplacementDim, DisplacementDim, Eigen::RowMajor>;
 
 /// Used to set a D dimensional vector to all not-a-number.
 template <int D>

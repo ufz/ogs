@@ -5,6 +5,7 @@
 
 #include "ConstitutiveData.h"
 #include "ConstitutiveModels.h"
+#include "MaterialState.h"
 
 namespace ProcessLib::SmallDeformation
 {
@@ -13,6 +14,9 @@ namespace ConstitutiveRelations
 template <int DisplacementDim>
 struct ConstitutiveSetting
 {
+    /// Initialize the constitutive setting and check evaluation order.
+    void init();
+
     /// Evaluate the constitutive setting.
     void eval(ConstitutiveModels<DisplacementDim>& models, double const t,
               double const dt, ParameterLib::SpatialPosition const& x_position,

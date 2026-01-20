@@ -26,7 +26,7 @@ struct GravityModel
         PorosityData const& porosity_data,
         SaturationData const& S_L_data,
         SolidDensityData const& solid_density_data,
-        SpecificBodyForceData<DisplacementDim> const& specific_body_force,
+        SpecificBodyForce<DisplacementDim> const& specific_body_force,
         VolumetricBodyForce<DisplacementDim>& volumetric_body_force) const;
 };
 

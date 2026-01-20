@@ -57,9 +57,9 @@ struct SmallDeformationLocalAssemblerInterface
 
             // Set initial stress field to zero. Might be overwritten by
             // integration point data or initial stress.
-            this->current_states_[ip].stress_data.sigma.noalias() =
-                MathLib::KelvinVector::KelvinVectorType<
-                    DisplacementDim>::Zero();
+            std::get<StressData<DisplacementDim>>(this->current_states_[ip])
+                .sigma.noalias() = MathLib::KelvinVector::KelvinVectorType<
+                DisplacementDim>::Zero();
         }
     }
     /// Returns number of read integration points.
@@ -126,7 +126,9 @@ struct SmallDeformationLocalAssemblerInterface
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
-            auto const& sigma = current_states_[ip].stress_data.sigma;
+            auto const& sigma =
+                std::get<StressData<DisplacementDim>>(current_states_[ip])
+                    .sigma;
             sigma_sum += sigma;
         }
 

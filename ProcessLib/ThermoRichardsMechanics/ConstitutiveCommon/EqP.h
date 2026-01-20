@@ -8,8 +8,8 @@
 #include "LiquidDensity.h"
 #include "LiquidViscosity.h"
 #include "PermeabilityData.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "Saturation.h"
-#include "SpecificBodyForceData.h"
 #include "TRMStorage.h"
 #include "TRMVaporDiffusion.h"
 
@@ -34,9 +34,9 @@ struct EqPData
 template <int DisplacementDim>
 struct EqPModel
 {
-    explicit EqPModel(
-        Eigen::Vector<double, DisplacementDim> const& specific_body_force)
-        : b_(specific_body_force)
+    explicit EqPModel(ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+                      DisplacementDim> const& specific_body_force)
+        : specific_body_force_(specific_body_force)
     {
     }
 
@@ -53,15 +53,16 @@ struct EqPModel
               TRMStorageData const& storage_data,
               EqPData<DisplacementDim>& out) const;
 
-    static EqPModel create(
-        SpecificBodyForceData<DisplacementDim> const& specific_body_force_data)
+    static EqPModel create(ProcessLib::ConstitutiveRelations::SpecificBodyForce<
+                           DisplacementDim> const& specific_body_force)
     {
-        return EqPModel{specific_body_force_data.specific_body_force};
+        return EqPModel{specific_body_force};
     }
 
 private:
     /// Gravity vector (specific body force).
-    Eigen::Vector<double, DisplacementDim> const b_;
+    ProcessLib::ConstitutiveRelations::SpecificBodyForce<DisplacementDim> const
+        specific_body_force_;
 };
 
 extern template struct EqPModel<2>;
