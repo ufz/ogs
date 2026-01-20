@@ -6,6 +6,10 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/Richards/flow_fully_saturated.prj)
 endif()
 
+if (NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE Parabolic/Richards/richards-flow.py RUNTIME 5)
+endif()
+
 AddTest(
     NAME 2D_RichardsFlow_h_us_quad_ogs5
     PATH Parabolic/Richards
