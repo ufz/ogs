@@ -9,7 +9,4 @@
             <values>0 0</values>
         </parameter>
     </add>
-    <add sel="/*/process_variables/process_variable/source_terms/source_term">
-        <external_anchor_head_load>force0</external_anchor_head_load>
-    </add>
 </OpenGeoSysProjectDiff>
