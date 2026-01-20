@@ -268,6 +268,10 @@ ProcessVariable::createBoundaryConditions(
     createBoundaryConditionsForDeactivatedSubDomains(dof_table, variable_id,
                                                      parameters, bcs);
 
+    // Clear configs to trigger ConfigTree destruction and validation of
+    // unprocessed parameters before the simulation starts.
+    _bc_configs.clear();
+
     return bcs;
 }
 
@@ -386,6 +390,10 @@ std::vector<std::unique_ptr<SourceTermBase>> ProcessVariable::createSourceTerms(
                       integration_order, _shapefunction_order, parameters,
                       all_process_variables_for_this_process, bulk_mesh);
               });
+
+    // Clear configs to trigger ConfigTree destruction and validation of
+    // unprocessed parameters before the simulation starts.
+    _source_term_configs.clear();
 
     return source_terms;
 }
