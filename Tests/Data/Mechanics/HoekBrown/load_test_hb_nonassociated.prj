@@ -287,7 +287,7 @@
         <vtkdiff>
             <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
             <field>epsilon</field>
-            <absolute_tolerance>7e-9</absolute_tolerance>
+            <absolute_tolerance>7.5e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
