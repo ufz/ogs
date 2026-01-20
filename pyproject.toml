@@ -14,7 +14,7 @@ dependencies = ["pandas"]
 
 [project.urls]
 homepage = "https://opengeosys.org"
-documentation = "https://opengeosys.org/docs"
+documentation = "https://www.opengeosys.org/docs"
 repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
