@@ -25,8 +25,7 @@ class TH2MProcess final : public Process,
 
 public:
     TH2MProcess(
-        std::string name,
-        MeshLib::Mesh& mesh,
+        std::string name, MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
@@ -36,7 +35,7 @@ public:
             process_variables,
         TH2MProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme, bool const is_linear);
 
     //! \name ODESystem interface
     //! @{

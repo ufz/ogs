@@ -38,7 +38,11 @@ struct Stats
     }
 };
 
-struct MultiStats
+template <int NumMatrices>
+struct MultiStats;
+
+template <>
+struct MultiStats<1>
 {
     Stats b;
     Stats Jac;
@@ -58,6 +62,30 @@ struct MultiStats
     }
 };
 
+template <>
+struct MultiStats<2>
+{
+    Stats M;
+    Stats K;
+    Stats b;
+
+    MultiStats& operator+=(MultiStats const& other)
+    {
+        M += other.M;
+        K += other.K;
+        b += other.b;
+
+        return *this;
+    }
+
+    void print() const
+    {
+        M.print("M");
+        K.print("K");
+        b.print("b");
+    }
+};
+
 template <typename Data>
 class CumulativeStats
     : public std::enable_shared_from_this<CumulativeStats<Data>>
@@ -65,12 +93,12 @@ class CumulativeStats
     using Base = std::enable_shared_from_this<CumulativeStats<Data>>;
 
 public:
-    Data data;
+    Data data{};
 
-    static std::shared_ptr<CumulativeStats<Data>> create()
+    static std::shared_ptr<CumulativeStats<Data>> create(const int num_threads)
     {
         return std::shared_ptr<CumulativeStats<Data>>(
-            new CumulativeStats<Data>());
+            new CumulativeStats<Data>(num_threads));
     }
 
     // Could return unique_ptr, but shared_ptr is more consistent with the
@@ -84,15 +112,16 @@ public:
 
     CumulativeStats(CumulativeStats<Data>& other)
         : Base{other},
-          data{},
           parent_{other.parent_ ? other.parent_ : other.shared_from_this()},
-          parent_mutex_{other.parent_mutex_}
+          parent_mutex_{other.parent_mutex_},
+          num_threads_{other.num_threads_}
     {
     }
 
     CumulativeStats(CumulativeStats<Data>&& other)
         : parent_{std::move(other.parent_)},
-          parent_mutex_{std::move(other.parent_mutex_)}
+          parent_mutex_{std::move(other.parent_mutex_)},
+          num_threads_{other.num_threads_}
     {
         std::swap(data, other.data);
     }
@@ -101,6 +130,12 @@ public:
     {
         if (!parent_)
         {
+            return;
+        }
+
+        if (num_threads_ == 1)
+        {
+            parent_->data += data;
             return;
         }
 
@@ -114,9 +149,14 @@ public:
     void print() const { data.print(); }
 
 private:
-    CumulativeStats() : parent_mutex_{std::make_shared<std::mutex>()} {}
+    explicit CumulativeStats(const int num_threads)
+        : parent_mutex_{std::make_shared<std::mutex>()},
+          num_threads_{num_threads}
+    {
+    }
 
     std::shared_ptr<CumulativeStats<Data>> parent_;
     std::shared_ptr<std::mutex> parent_mutex_;
+    int num_threads_;
 };
 }  // namespace ProcessLib::Assembly

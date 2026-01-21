@@ -19,8 +19,7 @@ namespace ProcessLib
 namespace ThermoRichardsFlow
 {
 ThermoRichardsFlowProcess::ThermoRichardsFlowProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
@@ -28,20 +27,16 @@ ThermoRichardsFlowProcess::ThermoRichardsFlowProcess(
         process_variables,
     ThermoRichardsFlowProcessData&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme, bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
+      AssemblyMixin<ThermoRichardsFlowProcess>{*_jacobian_assembler, is_linear,
+                                               use_monolithic_scheme},
       _process_data(std::move(process_data))
 {
     // For numerical Jacobian
     this->_jacobian_assembler->setNonDeformationComponentIDs({0, 1} /*T, p */);
-
-    _heat_flux = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "HeatFlowRate", MeshLib::MeshItemType::Node, 1);
-
-    _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
     // TODO (naumov) remove ip suffix. Probably needs modification of the mesh
     // properties, s.t. there is no "overlapping" with cell/point data.
@@ -49,12 +44,12 @@ ThermoRichardsFlowProcess::ThermoRichardsFlowProcess(
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "saturation_ip", 1 /*n components*/, integration_order,
-            _local_assemblers, &LocalAssemblerIF::getSaturation));
+            local_assemblers_, &LocalAssemblerIF::getSaturation));
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
             "porosity_ip", 1 /*n components*/, integration_order,
-            _local_assemblers, &LocalAssemblerIF::getPorosity));
+            local_assemblers_, &LocalAssemblerIF::getPorosity));
 }
 
 void ThermoRichardsFlowProcess::initializeConcreteProcess(
@@ -63,7 +58,7 @@ void ThermoRichardsFlowProcess::initializeConcreteProcess(
     unsigned const integration_order)
 {
     ProcessLib::createLocalAssemblers<ThermoRichardsFlowLocalAssembler>(
-        mesh.getDimension(), mesh.getElements(), dof_table, _local_assemblers,
+        mesh.getDimension(), mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, mesh.isAxiallySymmetric(),
         _process_data);
 
@@ -74,7 +69,7 @@ void ThermoRichardsFlowProcess::initializeConcreteProcess(
         _secondary_variables.addSecondaryVariable(
             name,
             makeExtrapolator(num_components, getExtrapolator(),
-                             _local_assemblers,
+                             local_assemblers_,
                              std::move(get_ip_values_function)));
     };
 
@@ -98,11 +93,11 @@ void ThermoRichardsFlowProcess::initializeConcreteProcess(
         MeshLib::MeshItemType::Cell, 1);
 
     setIPDataInitialConditions(_integration_point_writer, mesh.getProperties(),
-                               _local_assemblers);
+                               local_assemblers_);
 
     // Initialize local assemblers after all variables have been set.
     GlobalExecutor::executeMemberOnDereferenced(&LocalAssemblerIF::initialize,
-                                                _local_assemblers,
+                                                local_assemblers_,
                                                 *_local_to_global_index_map);
 }
 
@@ -116,8 +111,31 @@ void ThermoRichardsFlowProcess::setInitialConditionsConcreteProcess(
     DBUG("SetInitialConditions ThermoRichardsFlowProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
-        &LocalAssemblerIF::setInitialConditions, _local_assemblers,
+        &LocalAssemblerIF::setInitialConditions, local_assemblers_,
         getDOFTables(x.size()), x, t, process_id);
+}
+
+std::vector<std::vector<std::string>>
+ThermoRichardsFlowProcess::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    DBUG("TRF process initializeSubmeshOutput().");
+
+    std::vector<std::vector<std::string>> per_process_residuum_names;
+
+    if (_process_variables.size() == 1)  // monolithic
+    {
+        per_process_residuum_names = {{"HeatFlowRate", "MassFlowRate"}};
+    }
+    else  // staggered
+    {
+        per_process_residuum_names = {{"HeatFlowRate"}, {"MassFlowRate"}};
+    }
+
+    AssemblyMixin<ThermoRichardsFlowProcess>::initializeAssemblyOnSubmeshes(
+        meshes, per_process_residuum_names);
+
+    return per_process_residuum_names;
 }
 
 void ThermoRichardsFlowProcess::assembleConcreteProcess(
@@ -127,14 +145,8 @@ void ThermoRichardsFlowProcess::assembleConcreteProcess(
 {
     DBUG("Assemble the equations for ThermoRichardsFlowProcess.");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
-
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, _local_assemblers,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
-        &b);
+    AssemblyMixin<ThermoRichardsFlowProcess>::assemble(t, dt, x, x_prev,
+                                                       process_id, M, K, b);
 }
 
 void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
@@ -142,25 +154,24 @@ void ThermoRichardsFlowProcess::assembleWithJacobianConcreteProcess(
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalVector& b, GlobalMatrix& Jac)
 {
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
-
     DBUG(
         "Assemble the Jacobian of ThermoRichardsFlow for the monolithic "
         "scheme.");
-    dof_tables.emplace_back(_local_to_global_index_map.get());
 
-    _pvma.assembleWithJacobian(_local_assemblers, getActiveElementIDs(),
-                               dof_tables, t, dt, x, x_prev, process_id, b,
-                               Jac);
+    AssemblyMixin<ThermoRichardsFlowProcess>::assembleWithJacobian(
+        t, dt, x, x_prev, process_id, b, Jac);
+}
 
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
+void ThermoRichardsFlowProcess::preTimestepConcreteProcess(
+    std::vector<GlobalVector*> const& /*x*/,
+    const double /*t*/,
+    const double /*dt*/,
+    const int process_id)
+{
+    if (process_id == 0)
     {
-        transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
-                                          output_vector, std::negate<double>());
-    };
-
-    copyRhs(0, *_heat_flux);
-    copyRhs(1, *_hydraulic_flow);
+        AssemblyMixin<ThermoRichardsFlowProcess>::updateActiveElements();
+    }
 }
 
 void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
@@ -176,7 +187,7 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
     DBUG("PostTimestep ThermoRichardsFlowProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerIF::postTimestep, _local_assemblers,
+        &LocalAssemblerIF::postTimestep, local_assemblers_,
         getActiveElementIDs(), getDOFTables(x.size()), x, x_prev, t, dt,
         process_id);
 }
@@ -192,7 +203,7 @@ void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
     DBUG("Compute the secondary variables for ThermoRichardsFlowProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &LocalAssemblerIF::computeSecondaryVariable, _local_assemblers,
+        &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
         getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
         process_id);
 }

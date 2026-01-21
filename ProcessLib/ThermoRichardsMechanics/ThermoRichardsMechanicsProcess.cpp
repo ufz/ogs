@@ -24,8 +24,7 @@ namespace ThermoRichardsMechanics
 template <int DisplacementDim, typename ConstitutiveTraits>
 ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     ThermoRichardsMechanicsProcess(
-        std::string name,
-        MeshLib::Mesh& mesh,
+        std::string name, MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
@@ -36,13 +35,13 @@ ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
         ThermoRichardsMechanicsProcessData<DisplacementDim,
                                            ConstitutiveTraits>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme)
+        bool const use_monolithic_scheme, bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       AssemblyMixin<
           ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>>{
-          *_jacobian_assembler},
+          *_jacobian_assembler, is_linear, use_monolithic_scheme},
       process_data_(std::move(process_data))
 {
     ProcessLib::Reflection::addReflectedIntegrationPointWriters<
@@ -63,7 +62,8 @@ template <int DisplacementDim, typename ConstitutiveTraits>
 bool ThermoRichardsMechanicsProcess<DisplacementDim,
                                     ConstitutiveTraits>::isLinear() const
 {
-    return false;
+    return AssemblyMixin<ThermoRichardsMechanicsProcess<
+        DisplacementDim, ConstitutiveTraits>>::isLinear();
 }
 
 template <int DisplacementDim, typename ConstitutiveTraits>

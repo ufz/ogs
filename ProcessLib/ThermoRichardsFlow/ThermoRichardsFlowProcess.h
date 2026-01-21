@@ -5,6 +5,7 @@
 
 #include "LocalAssemblerInterface.h"
 #include "ProcessLib/Assembly/ParallelVectorMatrixAssembler.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 #include "ThermoRichardsFlowProcessData.h"
 
@@ -71,8 +72,12 @@ namespace ThermoRichardsFlow
  * with \f${\mathbf k}\f$ the intrinsic permeability, \f$k_{ref}\f$ the relative
  * permeability, \f$\mathbf g\f$ the gravitational force.
  */
-class ThermoRichardsFlowProcess final : public Process
+class ThermoRichardsFlowProcess final
+    : public Process,
+      private AssemblyMixin<ThermoRichardsFlowProcess>
 {
+    friend class AssemblyMixin<ThermoRichardsFlowProcess>;
+
 public:
     ThermoRichardsFlowProcess(
         std::string name,
@@ -86,12 +91,16 @@ public:
             process_variables,
         ThermoRichardsFlowProcessData&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme,
+        bool const is_linear);
 
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override { return false; }
+    bool isLinear() const override
+    {
+        return AssemblyMixin<ThermoRichardsFlowProcess>::isLinear();
+    }
     //! @}
 
 private:
@@ -106,6 +115,10 @@ private:
                                              double const t,
                                              int const /*process_id*/) override;
 
+    std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
+
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,
                                  std::vector<GlobalVector*> const& x_prev,
@@ -117,6 +130,11 @@ private:
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalVector& b, GlobalMatrix& Jac) override;
 
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& /*x*/,
+                                    const double /*t*/,
+                                    const double /*dt*/,
+                                    const int process_id) override;
+
     void postTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                      std::vector<GlobalVector*> const& x_prev,
                                      double const t, double const dt,
@@ -127,9 +145,7 @@ private:
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_base_nodes;
     ThermoRichardsFlowProcessData _process_data;
 
-    Assembly::ParallelVectorMatrixAssembler _pvma{*_jacobian_assembler};
-
-    std::vector<std::unique_ptr<LocalAssemblerIF>> _local_assemblers;
+    std::vector<std::unique_ptr<LocalAssemblerIF>> local_assemblers_;
 
     /// Sparsity pattern for the flow equation, and it is initialized only if
     /// the staggered scheme is used.
@@ -139,9 +155,6 @@ private:
                                           std::vector<GlobalVector*> const& x,
                                           GlobalVector const& x_prev,
                                           int const process_id) override;
-
-    MeshLib::PropertyVector<double>* _heat_flux = nullptr;
-    MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
 };
 
 }  // namespace ThermoRichardsFlow

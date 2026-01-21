@@ -90,8 +90,15 @@ bool Properties::existsPropertyVector(std::string_view name) const
     {
         return false;
     }
-    // Check that the PropertyVector has the correct data type.
-    return dynamic_cast<PropertyVector<T> const*>(it->second) != nullptr;
+
+    if (dynamic_cast<PropertyVector<T> const*>(it->second) == nullptr)
+    {
+        WARN("Property '{}' exists but does not have the requested type {}.",
+             name, typeid(T).name());
+        return false;
+    }
+
+    return true;
 }
 
 template <typename T>

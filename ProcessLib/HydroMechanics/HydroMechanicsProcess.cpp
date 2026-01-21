@@ -30,12 +30,13 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         process_variables,
     HydroMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme,
+    bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>{
-          *_jacobian_assembler},
+          *_jacobian_assembler, is_linear, use_monolithic_scheme},
       process_data_(std::move(process_data))
 {
     // For numerical Jacobian
@@ -72,7 +73,7 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
 template <int DisplacementDim>
 bool HydroMechanicsProcess<DisplacementDim>::isLinear() const
 {
-    return false;
+    return AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>::isLinear();
 }
 
 template <int DisplacementDim>
@@ -292,9 +293,6 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // only the Newton-Raphson method is employed to simulate coupled HM
     // processes in this class, this function is actually not used so far.
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
-
     if (this->_jacobian_assembler->isPerturbationEnabled() &&
         (!_use_monolithic_scheme))
     {
@@ -311,10 +309,8 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
         }
     }
 
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assemble, local_assemblers_,
-        getActiveElementIDs(), dof_table, t, dt, x, x_prev, process_id, &M, &K,
-        &b);
+    AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>::assemble(
+        t, dt, x, x_prev, process_id, M, K, b);
 }
 
 template <int DisplacementDim>
@@ -366,6 +362,9 @@ void HydroMechanicsProcess<DisplacementDim>::preTimestepConcreteProcess(
             &LocalAssemblerIF::preTimestep, local_assemblers_,
             getActiveElementIDs(), *_local_to_global_index_map, *x[process_id],
             t, dt);
+
+        AssemblyMixin<
+            HydroMechanicsProcess<DisplacementDim>>::updateActiveElements();
     }
 }
 

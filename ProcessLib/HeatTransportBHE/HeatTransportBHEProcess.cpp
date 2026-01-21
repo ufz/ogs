@@ -33,9 +33,11 @@ HeatTransportBHEProcess::HeatTransportBHEProcess(
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
+      AssemblyMixin<HeatTransportBHEProcess>{*_jacobian_assembler,
+                                             process_data._is_linear,
+                                             true /*use_monolithic_scheme*/},
       _process_data(std::move(process_data)),
-      _bheMeshData(std::move(bhe_mesh_data)),
-      _asm_mat_cache{_process_data._is_linear, true /*use_monolithic_scheme*/}
+      _bheMeshData(std::move(bhe_mesh_data))
 {
     // For numerical Jacobian assembler
     this->_jacobian_assembler->setNonDeformationComponentIDs(
@@ -151,7 +153,7 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
     assert(mesh.getDimension() == 3);
     ProcessLib::HeatTransportBHE::createLocalAssemblers<
         HeatTransportBHELocalAssemblerSoil, HeatTransportBHELocalAssemblerBHE>(
-        mesh.getElements(), dof_table, _local_assemblers,
+        mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, element_to_bhe_map,
         mesh.isAxiallySymmetric(), _process_data);
 
@@ -207,15 +209,49 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
     }
 }
 
+std::vector<std::vector<std::string>>
+HeatTransportBHEProcess::initializeAssemblyOnSubmeshes(
+    std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+{
+    DBUG("T-BHE process initializeSubmeshOutput().");
+
+    namespace R = ranges;
+    namespace RV = ranges::views;
+
+    auto get_residuum_name =
+        [](ProcessLib::ProcessVariable const& pv) -> std::string
+    {
+        std::string const& pv_name = pv.getName();
+        if (pv_name.starts_with("temperature_"))
+        {
+            using namespace std::literals;
+            auto const len_temp = "temperature_"s.size();
+            // TODO is that the correct name?
+            return "HeatFlowRate_" + pv_name.substr(len_temp);
+        }
+
+        OGS_FATAL("Unexpected process variable name '{}'.", pv_name);
+    };
+
+    auto get_residuum_names = [get_residuum_name](auto const& pvs)
+    { return pvs | RV::transform(get_residuum_name); };
+
+    auto residuum_names = _process_variables |
+                          RV::transform(get_residuum_names) |
+                          R::to<std::vector<std::vector<std::string>>>();
+
+    AssemblyMixin<HeatTransportBHEProcess>::initializeAssemblyOnSubmeshes(
+        meshes, residuum_names);
+
+    return residuum_names;
+}
+
 void HeatTransportBHEProcess::assembleConcreteProcess(
     const double t, double const dt, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev, int const process_id,
     GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
 {
     DBUG("Assemble HeatTransportBHE process.");
-
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
 
     if (_process_data._is_linear)
     {
@@ -226,30 +262,29 @@ void HeatTransportBHEProcess::assembleConcreteProcess(
                 "linear optimization.");
         }
 
-        auto const& spec = getMatrixSpecifications(process_id);
-
-        // use matrix cache for soil elements
-        _asm_mat_cache.assemble(t, dt, x, x_prev, process_id, &M, &K, &b,
-                                dof_table, _global_assembler, _local_assemblers,
-                                _soil_element_ids);
+        // assemble only soil elements/use cache
+        // note: soil element ids are sorted!
+        AssemblyMixin<HeatTransportBHEProcess>::assemble(
+            t, dt, x, x_prev, process_id, M, K, b, &_soil_element_ids);
 
         // reset the sparsity pattern for better performance in the BHE assembly
+        auto const& spec = getMatrixSpecifications(process_id);
         MathLib::setMatrixSparsity(M, *spec.sparsity_pattern);
         MathLib::setMatrixSparsity(K, *spec.sparsity_pattern);
 
-        // Call global assembler for each local BHE assembly item.
+        // assemble BHE elements
+        std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
+            _local_to_global_index_map.get()};
         GlobalExecutor::executeSelectedMemberDereferenced(
             _global_assembler, &VectorMatrixAssembler::assemble,
-            _local_assemblers, _bhes_element_ids, dof_table, t, dt, x, x_prev,
+            local_assemblers_, _bhes_element_ids, dof_table, t, dt, x, x_prev,
             process_id, &M, &K, &b);
     }
     else
     {
-        // Call global assembler for each local assembly item.
-        GlobalExecutor::executeSelectedMemberDereferenced(
-            _global_assembler, &VectorMatrixAssembler::assemble,
-            _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x,
-            x_prev, process_id, &M, &K, &b);
+        // assemble all elements
+        AssemblyMixin<HeatTransportBHEProcess>::assemble(t, dt, x, x_prev,
+                                                         process_id, M, K, b);
     }
 
     // Algebraic BC procedure.
@@ -268,14 +303,8 @@ void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
 {
     DBUG("AssembleWithJacobian HeatTransportBHE process.");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
-
-    // Call global assembler for each local assembly item.
-    GlobalExecutor::executeSelectedMemberDereferenced(
-        _global_assembler, &VectorMatrixAssembler::assembleWithJacobian,
-        _local_assemblers, getActiveElementIDs(), dof_table, t, dt, x, x_prev,
-        process_id, &b, &Jac);
+    AssemblyMixin<HeatTransportBHEProcess>::assembleWithJacobian(
+        t, dt, x, x_prev, process_id, b, Jac);
 }
 
 void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
@@ -291,7 +320,7 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
+        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
         process_id);
 }
 
@@ -343,6 +372,8 @@ void HeatTransportBHEProcess::preTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x, const double t, const double dt,
     int const process_id)
 {
+    AssemblyMixin<HeatTransportBHEProcess>::updateActiveElements();
+
     if (_process_data.py_bc_object == nullptr ||
         !_process_data._use_server_communication)
     {

@@ -114,8 +114,7 @@ class ThermoRichardsMechanicsProcess final
 
 public:
     ThermoRichardsMechanicsProcess(
-        std::string name,
-        MeshLib::Mesh& mesh,
+        std::string name, MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
@@ -126,7 +125,7 @@ public:
         ThermoRichardsMechanicsProcessData<DisplacementDim,
                                            ConstitutiveTraits>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme, bool const is_linear);
 
     //! \name ODESystem interface
     //! @{

@@ -279,7 +279,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     }
 
     auto const is_linear =
-        //! \ogs_file_param{prj__processes__process__ComponentTransport__linear}
+        //! \ogs_file_param{prj__processes__process__linear}
         config.getConfigParameter("linear", false);
 
     auto const ls_compute_only_upon_timestep_change =

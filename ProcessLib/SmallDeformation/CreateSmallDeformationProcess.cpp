@@ -134,6 +134,10 @@ std::unique_ptr<Process> createSmallDeformationProcess(
         MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim),
         &mesh);
 
+    auto const is_linear =
+        //! \ogs_file_param{prj__processes__process__linear}
+        config.getConfigParameter("linear", false);
+
     SmallDeformationProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
@@ -150,7 +154,7 @@ std::unique_ptr<Process> createSmallDeformationProcess(
     return std::make_unique<SmallDeformationProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables));
+        std::move(process_data), std::move(secondary_variables), is_linear);
 }
 
 template std::unique_ptr<Process> createSmallDeformationProcess<2>(

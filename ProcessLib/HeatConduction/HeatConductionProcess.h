@@ -5,15 +5,18 @@
 
 #include "HeatConductionFEM.h"
 #include "HeatConductionProcessData.h"
-#include "ProcessLib/Assembly/AssembledMatrixCache.h"
+#include "ProcessLib/AssemblyMixin.h"
 #include "ProcessLib/Process.h"
 
 namespace ProcessLib
 {
 namespace HeatConduction
 {
-class HeatConductionProcess final : public Process
+class HeatConductionProcess final : public Process,
+                                    private AssemblyMixin<HeatConductionProcess>
 {
+    friend class AssemblyMixin<HeatConductionProcess>;
+
 public:
     HeatConductionProcess(
         std::string name,
@@ -33,7 +36,10 @@ public:
     //! \name ODESystem interface
     //! @{
 
-    bool isLinear() const override { return _asm_mat_cache.isLinear(); }
+    bool isLinear() const override
+    {
+        return AssemblyMixin<HeatConductionProcess>::isLinear();
+    }
     //! @}
 
     void computeSecondaryVariableConcrete(double const t, double const dt,
@@ -53,6 +59,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
+    std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
+        std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
+        override;
+
     void assembleConcreteProcess(const double t, double const /*dt*/,
                                  std::vector<GlobalVector*> const& x,
                                  std::vector<GlobalVector*> const& x_prev,
@@ -65,6 +75,11 @@ private:
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalVector& b, GlobalMatrix& Jac) override;
 
+    void preTimestepConcreteProcess(std::vector<GlobalVector*> const& /*x*/,
+                                    const double /*t*/,
+                                    const double /*dt*/,
+                                    const int /*process_id*/) override;
+
     void preOutputConcreteProcess(const double t, double const dt,
                                   std::vector<GlobalVector*> const& x,
                                   std::vector<GlobalVector*> const& x_prev,
@@ -73,11 +88,7 @@ private:
     HeatConductionProcessData _process_data;
 
     std::vector<std::unique_ptr<HeatConductionLocalAssemblerInterface>>
-        _local_assemblers;
-
-    MeshLib::PropertyVector<double>* _heat_flux = nullptr;
-
-    AssembledMatrixCache _asm_mat_cache;
+        local_assemblers_;
 
     bool const _ls_compute_only_upon_timestep_change;
 };

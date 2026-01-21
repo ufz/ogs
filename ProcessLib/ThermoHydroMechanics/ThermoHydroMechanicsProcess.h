@@ -28,8 +28,7 @@ class ThermoHydroMechanicsProcess final
 
 public:
     THERMOHYDROMECHANICS_EXPORT ThermoHydroMechanicsProcess(
-        std::string name,
-        MeshLib::Mesh& mesh,
+        std::string name, MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
@@ -39,7 +38,7 @@ public:
             process_variables,
         ThermoHydroMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme);
+        bool const use_monolithic_scheme, bool const is_linear);
 
     //! \name ODESystem interface
     //! @{
@@ -142,10 +141,6 @@ private:
     {
         return _use_monolithic_scheme || process_id == 2;
     }
-
-    MeshLib::PropertyVector<double>* _nodal_forces = nullptr;
-    MeshLib::PropertyVector<double>* _hydraulic_flow = nullptr;
-    MeshLib::PropertyVector<double>* _heat_flux = nullptr;
 };
 
 extern template class ThermoHydroMechanicsProcess<2>;

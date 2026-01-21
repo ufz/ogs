@@ -73,7 +73,7 @@ std::unique_ptr<Process> createHeatConductionProcess(
         config.getConfigParameter<bool>("mass_lumping", false);
 
     auto const is_linear =
-        //! \ogs_file_param{prj__processes__process__HEAT_CONDUCTION__linear}
+        //! \ogs_file_param{prj__processes__process__linear}
         config.getConfigParameter("linear", false);
 
     auto const ls_compute_only_upon_timestep_change =

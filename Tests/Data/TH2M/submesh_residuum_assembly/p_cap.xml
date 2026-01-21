@@ -83,7 +83,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>p_cap.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>p_cap_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>HeatFlowRate</field>
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
@@ -96,7 +96,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>p_cap.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>p_cap_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>GasMassFlowRate</field>
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
@@ -109,7 +109,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>p_cap.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>p_cap_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>LiquidMassFlowRate</field>
                 <absolute_tolerance>1e-15</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
@@ -122,7 +122,7 @@
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
-                <regex>p_cap.*_ts_[0-9]*_.*\.vtu</regex>
+                <regex>p_cap_submesh_.*_ts_[0-9]*_.*\.vtu</regex>
                 <field>NodalForces</field>
                 <absolute_tolerance>1.5e-11</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>

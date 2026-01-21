@@ -22,8 +22,7 @@ namespace RichardsMechanics
 {
 template <int DisplacementDim>
 RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
@@ -31,23 +30,17 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
         process_variables,
     RichardsMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme, bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
       AssemblyMixin<RichardsMechanicsProcess<DisplacementDim>>{
-          *_jacobian_assembler},
+          *_jacobian_assembler, is_linear, use_monolithic_scheme},
       process_data_(std::move(process_data))
 {
     // For numerical Jacobian assembler
     this->_jacobian_assembler->setNonDeformationComponentIDs(
         {0} /* pressure variable */);
-
-    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
-
-    hydraulic_flow_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "MassFlowRate", MeshLib::MeshItemType::Node, 1);
 
     ProcessLib::Reflection::addReflectedIntegrationPointWriters<
         DisplacementDim>(LocalAssemblerIF::getReflectionDataForOutput(),
@@ -58,7 +51,7 @@ RichardsMechanicsProcess<DisplacementDim>::RichardsMechanicsProcess(
 template <int DisplacementDim>
 bool RichardsMechanicsProcess<DisplacementDim>::isLinear() const
 {
-    return false;
+    return AssemblyMixin<RichardsMechanicsProcess<DisplacementDim>>::isLinear();
 }
 
 template <int DisplacementDim>
@@ -311,33 +304,8 @@ void RichardsMechanicsProcess<DisplacementDim>::
         }
     }
 
-    auto const dof_tables = getDOFTables(x.size());
     AssemblyMixin<RichardsMechanicsProcess<DisplacementDim>>::
         assembleWithJacobian(t, dt, x, x_prev, process_id, b, Jac);
-
-    auto copyRhs = [&](int const variable_id, auto& output_vector)
-    {
-        if (_use_monolithic_scheme)
-        {
-            transformVariableFromGlobalVector(b, variable_id, *dof_tables[0],
-                                              output_vector,
-                                              std::negate<double>());
-        }
-        else
-        {
-            transformVariableFromGlobalVector(b, 0, *dof_tables[process_id],
-                                              output_vector,
-                                              std::negate<double>());
-        }
-    };
-    if (_use_monolithic_scheme || process_id == 0)
-    {
-        copyRhs(0, *hydraulic_flow_);
-    }
-    if (_use_monolithic_scheme || process_id == 1)
-    {
-        copyRhs(1, *nodal_forces_);
-    }
 }
 
 template <int DisplacementDim>

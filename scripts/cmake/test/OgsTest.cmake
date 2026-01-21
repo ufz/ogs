@@ -82,9 +82,10 @@ function(OgsTest)
 
     _ogs_add_test(${TEST_NAME})
 
+    list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if("${labels}" MATCHES "TH2M|ThermoRichardsMechanics|^HydroMechanics|ThermoHydroMechanics")
+    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
         _ogs_add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
     endif()

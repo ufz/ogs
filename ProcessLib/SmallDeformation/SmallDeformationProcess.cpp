@@ -23,20 +23,19 @@ namespace SmallDeformation
 {
 template <int DisplacementDim>
 SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     SmallDeformationProcessData<DisplacementDim>&& process_data,
-    SecondaryVariableCollection&& secondary_variables)
+    SecondaryVariableCollection&& secondary_variables, bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables)),
       AssemblyMixin<SmallDeformationProcess<DisplacementDim>>{
-          *_jacobian_assembler},
+          *_jacobian_assembler, is_linear, true /* use_monolithic_scheme */},
       process_data_(std::move(process_data))
 {
     // If numerical Jacobian assembler is used.
@@ -46,9 +45,6 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
             "Numerical Jacobian assembly is not supported for the "
             "SmallDeformationProcess.");
     }
-
-    nodal_forces_ = MeshLib::getOrCreateMeshProperty<double>(
-        mesh, "NodalForces", MeshLib::MeshItemType::Node, DisplacementDim);
 
     material_forces_ = MeshLib::getOrCreateMeshProperty<double>(
         mesh, "MaterialForces", MeshLib::MeshItemType::Node, DisplacementDim);
@@ -83,7 +79,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
 template <int DisplacementDim>
 bool SmallDeformationProcess<DisplacementDim>::isLinear() const
 {
-    return false;
+    return AssemblyMixin<SmallDeformationProcess<DisplacementDim>>::isLinear();
 }
 
 template <int DisplacementDim>
@@ -168,23 +164,8 @@ void SmallDeformationProcess<DisplacementDim>::
 {
     DBUG("AssembleWithJacobian SmallDeformationProcess.");
 
-    std::vector<NumLib::LocalToGlobalIndexMap const*> dof_table = {
-        _local_to_global_index_map.get()};
-    // Call global assembler for each local assembly item.
-    try
-    {
-        AssemblyMixin<SmallDeformationProcess<DisplacementDim>>::
-            assembleWithJacobian(t, dt, x, x_prev, process_id, b, Jac);
-    }
-    catch (NumLib::AssemblyException const&)
-    {
-        transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
-                                          *nodal_forces_,
-                                          std::negate<double>());
-        throw;
-    }
-    transformVariableFromGlobalVector(b, 0, *_local_to_global_index_map,
-                                      *nodal_forces_, std::negate<double>());
+    AssemblyMixin<SmallDeformationProcess<DisplacementDim>>::
+        assembleWithJacobian(t, dt, x, x_prev, process_id, b, Jac);
 }
 
 template <int DisplacementDim>

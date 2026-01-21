@@ -26,8 +26,7 @@ namespace TH2M
 {
 template <int DisplacementDim>
 TH2MProcess<DisplacementDim>::TH2MProcess(
-    std::string name,
-    MeshLib::Mesh& mesh,
+    std::string name, MeshLib::Mesh& mesh,
     std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&& jacobian_assembler,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     unsigned const integration_order,
@@ -35,11 +34,12 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
         process_variables,
     TH2MProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme)
+    bool const use_monolithic_scheme, bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
               std::move(secondary_variables), use_monolithic_scheme),
-      AssemblyMixin<TH2MProcess<DisplacementDim>>{*_jacobian_assembler},
+      AssemblyMixin<TH2MProcess<DisplacementDim>>{
+          *_jacobian_assembler, is_linear, use_monolithic_scheme},
       _process_data(std::move(process_data))
 {
     ProcessLib::Reflection::addReflectedIntegrationPointWriters<
@@ -58,7 +58,7 @@ TH2MProcess<DisplacementDim>::TH2MProcess(
 template <int DisplacementDim>
 bool TH2MProcess<DisplacementDim>::isLinear() const
 {
-    return false;
+    return AssemblyMixin<TH2MProcess<DisplacementDim>>::isLinear();
 }
 
 template <int DisplacementDim>

@@ -1,4 +1,4 @@
-This flag enables two optimizations for the `HEAT_CONDUCTION` process:
+This flag enables two optimizations for the process:
 
 1. the global equation systems are assembled only once, in the first time step,
    and reused subsequently

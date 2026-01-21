@@ -5,98 +5,36 @@
 
 #include <memory>
 
-#include "BaseLib/RunTime.h"
-#include "MathLib/LinAlg/FinalizeMatrixAssembly.h"
-#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "MathLib/LinAlg/LinAlg.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "NumLib/DOF/LocalToGlobalIndexMap.h"
-#include "ProcessLib/VectorMatrixAssembler.h"
 
 namespace ProcessLib
 {
-
+//! Stores assembled global M, K, b matrices/vectors for later reuse.
 struct AssembledMatrixCache final
 {
-    AssembledMatrixCache(bool const is_linear,
-                         bool const use_monolithic_scheme);
+    //! Access the stored data.
+    std::tuple<GlobalMatrix&, GlobalMatrix&, GlobalVector&> MKb() const
+    {
+        return std::tie(*M_, *K_, *b_);
+    }
 
-    template <typename VectorOfLocalAssemblers>
-    void assemble(
-        const double t, double const dt, std::vector<GlobalVector*> const& x,
-        std::vector<GlobalVector*> const& x_prev, int const process_id,
-        GlobalMatrix* const M, GlobalMatrix* const K, GlobalVector* const b,
-        std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-        VectorMatrixAssembler& global_assembler,
-        VectorOfLocalAssemblers const& local_assemblers,
-        std::vector<std::size_t> const& active_element_ids);
+    //! Check if data has been stored.
+    bool hasMKb() const { return M_ && K_ && b_; }
 
-    bool isLinear() const { return is_linear_; }
+    //! Store data.
+    void storeMKb(GlobalMatrix const& M,
+                  GlobalMatrix const& K,
+                  GlobalVector const& b)
+    {
+        M_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(M);
+        K_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(K);
+        b_ = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(b);
+    }
 
 private:
-    bool const is_linear_;
-
-    std::unique_ptr<GlobalMatrix> M_{};
-    std::unique_ptr<GlobalMatrix> K_{};
-    std::unique_ptr<GlobalVector> b_{};
+    std::unique_ptr<GlobalMatrix> M_;
+    std::unique_ptr<GlobalMatrix> K_;
+    std::unique_ptr<GlobalVector> b_;
 };
-
-template <typename VectorOfLocalAssemblers>
-void AssembledMatrixCache::assemble(
-    const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix* const M, GlobalMatrix* const K, GlobalVector* const b,
-    std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
-    VectorMatrixAssembler& global_assembler,
-    VectorOfLocalAssemblers const& local_assemblers,
-    std::vector<std::size_t> const& active_element_ids)
-{
-    if (bool const cache_empty = K_ == nullptr; cache_empty)
-    {
-        BaseLib::RunTime time_asm;
-        time_asm.start();
-
-        // Call global assembler for each local assembly item.
-        GlobalExecutor::executeSelectedMemberDereferenced(
-            global_assembler, &VectorMatrixAssembler::assemble,
-            local_assemblers, active_element_ids, dof_tables, t, dt, x, x_prev,
-            process_id, M, K, b);
-
-        MathLib::finalizeMatrixAssembly(*M);
-        MathLib::finalizeMatrixAssembly(*K);
-        MathLib::finalizeVectorAssembly(*b);
-
-        INFO("[time] Calling local assemblers took {:g} s", time_asm.elapsed());
-
-        if (is_linear_)
-        {
-            DBUG("Saving global K, M, b for later reuse.");
-
-            BaseLib::RunTime time_save;
-            time_save.start();
-
-            K_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(*K);
-            M_ = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(*M);
-            b_ = MathLib::MatrixVectorTraits<GlobalVector>::newInstance(*b);
-
-            INFO("[time] Saving global K, M, b took {:g} s",
-                 time_save.elapsed());
-        }
-    }
-    else
-    {
-        DBUG("Reusing saved global K, M, b.");
-
-        BaseLib::RunTime time_restore;
-        time_restore.start();
-
-        MathLib::LinAlg::copy(*K_, *K);
-        MathLib::LinAlg::copy(*M_, *M);
-        MathLib::LinAlg::copy(*b_, *b);
-
-        INFO("[time] Restoring global K, M, b took {:g} s",
-             time_restore.elapsed());
-    }
-}
 }  // namespace ProcessLib

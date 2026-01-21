@@ -21,8 +21,7 @@ class SmallDeformationProcess final
 
 public:
     SmallDeformationProcess(
-        std::string name,
-        MeshLib::Mesh& mesh,
+        std::string name, MeshLib::Mesh& mesh,
         std::unique_ptr<ProcessLib::AbstractJacobianAssembler>&&
             jacobian_assembler,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
@@ -31,7 +30,8 @@ public:
         std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
             process_variables,
         SmallDeformationProcessData<DisplacementDim>&& process_data,
-        SecondaryVariableCollection&& secondary_variables);
+        SecondaryVariableCollection&& secondary_variables,
+        bool const is_linear);
 
     //! \name ODESystem interface
     //! @{
@@ -85,7 +85,6 @@ private:
 
     std::vector<std::unique_ptr<LocalAssemblerInterface>> local_assemblers_;
 
-    MeshLib::PropertyVector<double>* nodal_forces_ = nullptr;
     MeshLib::PropertyVector<double>* material_forces_ = nullptr;
 };
 
