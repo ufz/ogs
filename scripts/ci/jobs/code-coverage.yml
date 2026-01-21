@@ -4,11 +4,12 @@ code coverage:
   needs: [meta]
   variables:
     CMAKE_PRESET: coverage
-    TARGETS: "all tests ctest"
+    BUILD_CTEST: false
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
   script:
     - !reference [.template-build-linux, script]
+    - cmake --build --preset $CMAKE_PRESET -t ctest
     - cmake --build --preset $CMAKE_PRESET -t process_coverage
   after_script:
     - ln -s ../../build/coverage build/coverage
