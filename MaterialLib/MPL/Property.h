@@ -9,6 +9,7 @@
 #include <typeinfo>
 #include <variant>
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "BaseLib/Error.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "PropertyType.h"
@@ -127,7 +128,7 @@ public:
                 "The initial value of {:s} does not hold requested type '{:s}' "
                 "but a {:s}.",
                 description(),
-                typeid(T).name(),
+                BaseLib::typeToString<T>(),
                 property_data_type_names_[initialValue(pos, t).index()]);
         }
     }
@@ -148,7 +149,7 @@ public:
                 "The value of {:s} does not hold requested type '{:s}' but a "
                 "{:s}.",
                 description(),
-                typeid(T).name(),
+                BaseLib::typeToString<T>(),
                 property_data_type_names_[value().index()]);
         }
     }
@@ -173,7 +174,7 @@ public:
                 "The value of {:s} is not of the requested type '{:s}' but a "
                 "{:s}.",
                 description(),
-                typeid(T).name(),
+                BaseLib::typeToString<T>(),
                 property_data_type_names_[value(variable_array,
                                                 variable_array_prev, pos, t, dt)
                                               .index()]);
@@ -197,7 +198,7 @@ public:
                 "The value of {:s} is not of the requested type '{:s}' but a "
                 "{:s}.",
                 description(),
-                typeid(T).name(),
+                BaseLib::typeToString<T>(),
                 property_data_type_names_[value(variable_array, pos, t, dt)
                                               .index()]);
         }
@@ -223,7 +224,7 @@ public:
                 "The first derivative value of {:s} is not of the requested "
                 "type '{:s}' but a {:s}.",
                 description(),
-                typeid(T).name(),
+                BaseLib::typeToString<T>(),
                 property_data_type_names_
                     [dValue(variable_array, variable, pos, t, dt).index()]);
         }
@@ -246,7 +247,7 @@ public:
                 "The first derivative value of {:s} is not of the requested "
                 "type '{:s}' but a {:s}.",
                 description(),
-                typeid(T).name(),
+                BaseLib::typeToString<T>(),
                 property_data_type_names_
                     [dValue(variable_array, variable, pos, t, dt).index()]);
         }
@@ -271,7 +272,7 @@ public:
                 "The second derivative value of {:s} is not of the requested "
                 "type '{:s}' but a {:s}.",
                 description(),
-                typeid(T).name(),
+                BaseLib::typeToString<T>(),
                 property_data_type_names_[d2Value(variable_array, variable1,
                                                   variable2, pos, t, dt)
                                               .index()]);

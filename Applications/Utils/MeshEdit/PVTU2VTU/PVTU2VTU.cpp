@@ -19,6 +19,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "BaseLib/DemangleTypeInfo.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
@@ -449,7 +450,7 @@ bool transfer(MeshLib::Properties const& subdomain_properties,
     if (!subdomain_properties.existsPropertyVector<T>(property_name))
     {
         INFO("Skipping property '{}' since it is not from type '{}'.",
-             property_name, typeid(T).name());
+             property_name, BaseLib::typeToString<T>());
         return false;
     }
     auto const* subdomain_pv =
@@ -474,7 +475,7 @@ bool transfer(MeshLib::Properties const& subdomain_properties,
         }
     }
     INFO("Data array {} from data type '{}' transferred.", property_name,
-         typeid(T).name());
+         BaseLib::typeToString<T>());
     return true;
 }
 

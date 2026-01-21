@@ -8,6 +8,7 @@
 #include <unordered_set>
 
 #include "Apply.h"
+#include "BaseLib/DemangleTypeInfo.h"
 #include "BaseLib/Logging.h"
 
 namespace ProcessLib::Graph
@@ -56,7 +57,8 @@ bool isEvalOrderCorrectRT(std::unordered_set<std::type_index>& computed_data)
             {
                 ERR("Input {} of model {} has not been computed/set before the "
                     "model evaluation.",
-                    typeid(Input).name(), typeid(Model).name());
+                    BaseLib::typeToString<Input>(),
+                    BaseLib::typeToString<Model>());
                 all_inputs_computed = false;
             }
         });
@@ -78,8 +80,8 @@ bool isEvalOrderCorrectRT(std::unordered_set<std::type_index>& computed_data)
             if (!emplaced)
             {
                 ERR("Output {} of model {} is computed more than once.",
-                    typeid(Output).name(),
-                    typeid(Model).name());
+                    BaseLib::typeToString<Output>(),
+                    BaseLib::typeToString<Model>());
                 no_output_precomputed = false;
             }
         });

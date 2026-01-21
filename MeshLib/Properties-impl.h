@@ -1,8 +1,10 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include <typeinfo>
+#include "BaseLib/DemangleTypeInfo.h"
 
+namespace MeshLib
+{
 template <typename T>
 PropertyVector<T>* Properties::createNewPropertyVector(
     std::string_view name, MeshItemType mesh_item_type,
@@ -107,7 +109,7 @@ bool Properties::existsPropertyVector(std::string_view name,
     if (property == nullptr)
     {
         WARN("Property {} exists but does not have the requested type {}.",
-             name, typeid(T).name());
+             name, BaseLib::typeToString<T>());
         return false;
     }
     if (property->getMeshItemType() != mesh_item_type)
@@ -193,8 +195,8 @@ PropertyVector<T> const* Properties::getPropertyVector(
         OGS_FATAL(
             "Could not cast the data type of the PropertyVector '{:s}' (type: "
             "'{:s}') to the requested data type '{:s}'.",
-            name, typeid(decltype(*it->second)).name(),
-            typeid(PropertyVector<T>).name());
+            name, BaseLib::typeToString(*it->second),
+            BaseLib::typeToString<PropertyVector<T>>());
     }
     if (property->getMeshItemType() != item_type)
     {
@@ -274,3 +276,4 @@ void applyToPropertyVectors(Properties const& properties, Function f)
         }
     }
 }
+}  // namespace MeshLib
