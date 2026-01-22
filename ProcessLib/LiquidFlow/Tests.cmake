@@ -531,7 +531,7 @@ if(NOT OGS_USE_MPI)
         empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_10_t_86400.000000.vtu
     )
     set(DIR_TO_CHECK
-        ${PROJECT_BINARY_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections)
+        ${PROJECT_BINARY_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections_52a2ff3d)
     set(FILE_PREFIX empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_)
     add_test(
         NAME check_files-ogs-Parabolic/LiquidFlow/Flux/3D/Hex

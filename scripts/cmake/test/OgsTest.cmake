@@ -93,11 +93,14 @@ endfunction()
 
 # Adds a ctest and sets properties
 macro(_ogs_add_test TEST_NAME)
-    if("${TEST_NAME}" MATCHES "-omp")
-        set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}-omp")
-    else()
-        set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}")
-    endif()
+    # TEST_NAME is unique, shortened hash added to the working directory of
+    # the test to prevent race conditions.
+    set(_unique_string "${TEST_NAME}")
+    string(SHA1 _unique_hash "${_unique_string}")
+    string(SUBSTRING "${_unique_hash}" 0 8 _short_hash)
+
+    # Create unique directory name
+    set(OgsTest_BINARY_DIR "${Data_BINARY_DIR}/${OgsTest_DIR}_${_short_hash}")
     file(MAKE_DIRECTORY ${OgsTest_BINARY_DIR})
     file(TO_NATIVE_PATH "${OgsTest_BINARY_DIR}" OgsTest_BINARY_DIR_NATIVE)
     string(REPLACE "/" "_" TEST_NAME_UNDERSCORE ${TEST_NAME})
