@@ -3,6 +3,7 @@
     <replace sel="//source_term/type/text()">
         Python
     </replace>
+    <remove sel="//source_term/parameter" />
     <add sel="//source_term">
         <source_term_object>source_term</source_term_object>
     </add>
