@@ -7,6 +7,11 @@ if(NOT CPM_SOURCE_CACHE)
                     "see https://www.opengeosys.org/docs/devguide/packages/cpm/.")
 endif()
 
+# Disable clang-tidy for cpm directories
+file(WRITE ${PROJECT_BINARY_DIR}/_deps/.clang-tidy
+    "---\nChecks: '-*,boost-use-to-string'"
+)
+
 if(OGS_BUILD_TESTING)
     if(GUIX_BUILD)
         find_package(GTest REQUIRED)
@@ -38,6 +43,7 @@ if(OGS_BUILD_TESTING)
             GITHUB_REPOSITORY ufz/autocheck
             GIT_TAG e388ecbb31c49fc2724c8d0436da313b6edca7fd
             DOWNLOAD_ONLY YES
+            SYSTEM TRUE
         )
         if(autocheck_ADDED)
             add_library(autocheck INTERFACE IMPORTED)
@@ -73,6 +79,7 @@ else()
         GIT_TAG 81b3d2a0c47895c22e9bb8c577f5ab521f76e5d2
         VERSION 1.4.0
         DOWNLOAD_ONLY YES
+        SYSTEM TRUE
     )
     if(tclap_ADDED)
         add_library(tclap INTERFACE IMPORTED)
@@ -103,7 +110,7 @@ if(_build_chemistry_lib)
     else()
         CPMAddPackage(
             NAME iphreeqc GITHUB_REPOSITORY ufz/iphreeqc GIT_TAG 3.5.0-1
-            OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10"
+            OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10" SYSTEM TRUE
         )
         if(iphreeqc_ADDED)
             target_include_directories(
@@ -158,6 +165,7 @@ CPMFindPackage(
     URL ${_eigen_url}
     VERSION ${_eigen_version}
     DOWNLOAD_ONLY YES
+    SYSTEM TRUE
 )
 if(Eigen3_ADDED)
     add_library(Eigen3::Eigen INTERFACE IMPORTED)
@@ -237,6 +245,7 @@ else()
         OPTIONS "BOOST_ENABLE_CMAKE ON"
                 "CMAKE_POLICY_VERSION_MINIMUM 3.10"
                 ${_boost_options}
+        SYSTEM TRUE
     )
 endif()
 if(Boost_ADDED)
@@ -310,6 +319,7 @@ CPMFindPackage(
     # directory
     URL https://github.com/nlohmann/json/releases/download/v${ogs.minimum_version.json}/include.zip
     URL_HASH SHA256=${ogs.minimum_version.json_sha}
+    SYSTEM TRUE
 )
 if(nlohmann_json_ADDED)
     add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
@@ -372,6 +382,7 @@ else()
         VERSION 0.0.3
         GIT_TAG 0.0.3
         DOWNLOAD_ONLY YES
+        SYSTEM TRUE
     )
     if(exprtk_ADDED)
         add_library(exprtk INTERFACE IMPORTED)
@@ -397,6 +408,7 @@ if(NOT (GUIX_BUILD OR CONDA_BUILD))
         CPMAddPackage(
             NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
             GIT_TAG 628c4694783f865d7f0ab3ba9bdd5530ce4567e9
+            SYSTEM TRUE
         )
         if(vtkdiff_ADDED)
             install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)

@@ -5,13 +5,13 @@ clang tidy:
   tags: [shell, envinf]
   needs: []
   variables:
-    BUILD_DIR: "./build-tidy"
+    BUILD_DIR: "../build-tidy"
+    CC: clang
+    CXX: clang++
   script:
-    - rm -rf $BUILD_DIR
-    - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR
-    - >
-      cmake .. -G Ninja
-      -DBUILD_TESTING=OFF
-      -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-    - cmake --build . --target run-clang-tidy
+    # Can add  -DCMAKE_CXX_CLANG_TIDY="clang-tidy;-p;$BUILD_DIR" to configure and then
+    # run cmake --build $BUILD_DIR, but it's slower than just running clang-tidy
+    - cmake -B $BUILD_DIR -S . -G Ninja -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release
+    # Ignore CPM directories by replacing -I with -isystem
+    - sed -i 's|-I/cache/cpm|-isystem /cache/cpm|g' ${BUILD_DIR}/compile_commands.json
+    - run-clang-tidy -p $BUILD_DIR

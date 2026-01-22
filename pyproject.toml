@@ -14,7 +14,7 @@ dependencies = ["pandas"]
 
 [project.urls]
 homepage = "https://opengeosys.org"
-documentation = "https://opengeosys.org/docs"
+documentation = "https://www.opengeosys.org/docs"
 repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
@@ -101,6 +101,9 @@ environment-pass = [
 "cmake.define.OGS_CPU_ARCHITECTURE" = "sandybridge"
 # testrunner does not link in manylinux_x image, there is no python library
 "cmake.define.OGS_BUILD_TESTING" = "OFF"
+# To prevent
+# cc1plus: error: to generate dependencies you must specify either ‘-M’ or ‘-MM’
+"cmake.define.CMAKE_CXX_SCAN_FOR_MODULES" = "OFF"
 
 # maybe this should be moved to CMake logic, i.e. disabling both features on win
 [tool.cibuildwheel.windows.config-settings]

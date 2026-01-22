@@ -161,7 +161,7 @@ std::vector<CouplingNodeVariant> createCouplingNodes(
         std::accumulate(
             root_coupling_nodes.begin(),
             root_coupling_nodes.end(),
-            0,
+            std::size_t{0},
             [](std::size_t accumulated_sizes, const auto& coupling_node)
             {
                 return accumulated_sizes +

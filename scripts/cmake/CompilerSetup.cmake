@@ -83,6 +83,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
             add_compile_options(
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
+                $<$<COMPILE_LANGUAGE:CXX>:-Wmaybe-uninitialized>
             )
         endif()
     endif()
@@ -97,10 +98,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                         "Aborting: Apple Clang ${ogs.minimum_version.apple_clang} \
                     is required! Found version ${CMAKE_CXX_COMPILER_VERSION}. Update Xcode!"
                 )
-            endif()
-            # https://gitlab.kitware.com/cmake/cmake/-/issues/25297
-            if(CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 15 AND CMAKE_VERSION LESS 3.29)
-                add_link_options(LINKER:-no_warn_duplicate_libraries)
             endif()
         else()
             if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS
@@ -120,26 +117,47 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         add_compile_options(-xHOST)
     endif()
 
-    # Linker: prefer mold > lld > gold > regular
-    foreach(linker mold lld gold)
-        execute_process(
-            COMMAND ${CMAKE_CXX_COMPILER} -fuse-ld=${linker} -Wl,--version
-            ERROR_QUIET OUTPUT_VARIABLE _linker_version
-        )
-        if("${_linker_version}" MATCHES "LLD")
-            add_link_options(-fuse-ld=lld)
-            message(STATUS "Using lld linker. (${_linker_version})")
-            break()
-        elseif("${_linker_version}" MATCHES "GNU gold" AND NOT OGS_BUILD_WHEEL)
-            add_link_options(-fuse-ld=gold)
-            message(STATUS "Using GNU gold linker. (${_linker_version})")
-            break()
-        elseif("${_linker_version}" MATCHES "mold")
-            add_link_options(-fuse-ld=mold)
-            message(STATUS "Using mold linker. (${_linker_version})")
-            break()
+    # Linker detection: prefer mold > lld > gold > regular OR set manually
+    set(OGS_LINKER "" CACHE STRING "Preferred linker (mold|lld|gold|default)")
+    set_property(CACHE OGS_LINKER PROPERTY STRINGS mold lld gold default)
+
+    if(NOT OGS_LINKER)
+        foreach(linker mold lld gold)
+            execute_process(
+                COMMAND ${CMAKE_CXX_COMPILER} -fuse-ld=${linker} -Wl,--version
+                RESULT_VARIABLE _res
+                OUTPUT_VARIABLE _linker_version
+                ERROR_QUIET
+            )
+
+            if(_res EQUAL 0)
+                if(linker STREQUAL "lld" AND _linker_version MATCHES "LLD")
+                    set(OGS_LINKER lld CACHE STRING "" FORCE)
+                    break()
+                elseif(linker STREQUAL "gold"
+                       AND _linker_version MATCHES "GNU gold"
+                       AND NOT OGS_BUILD_WHEEL)
+                    set(OGS_LINKER gold CACHE STRING "" FORCE)
+                    break()
+                elseif(linker STREQUAL "mold"
+                       AND _linker_version MATCHES "mold")
+                    set(OGS_LINKER mold CACHE STRING "" FORCE)
+                    break()
+                endif()
+            endif()
+        endforeach()
+
+        if(NOT OGS_LINKER)
+            set(OGS_LINKER default CACHE STRING "" FORCE)
         endif()
-    endforeach()
+    endif()
+
+    if(OGS_LINKER AND NOT OGS_LINKER STREQUAL "default")
+        add_link_options(-fuse-ld=${OGS_LINKER})
+        message(STATUS "Using ${OGS_LINKER} linker")
+    else()
+        message(STATUS "Using default system linker")
+    endif()
 endif()
 
 if(MSVC)
