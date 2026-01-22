@@ -11,6 +11,7 @@
 #include "../ogs.OGSMesh/OGSMesh.h"
 #include "Applications/ApplicationsLib/Simulation.h"
 #include "Applications/ApplicationsLib/TestDefinition.h"
+#include "BaseLib/ConfigTree.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
@@ -236,6 +237,19 @@ public:
     {
         simulation->outputLastTimeStep();
         simulation.reset(nullptr);
+
+        // Check for swallowed ConfigTree errors after Simulation destructor
+        // runs. This catches configuration errors in objects destroyed at end
+        // of scope.
+        try
+        {
+            BaseLib::ConfigTree::assertNoSwallowedErrors();
+        }
+        catch (std::exception& e)
+        {
+            ERR("{}", e.what());
+            throw;
+        }
 
         // Unset project dir to make multiple OGS runs in one Python session
         // possible.
