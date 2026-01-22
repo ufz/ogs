@@ -10,16 +10,9 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/EmbeddedAnchorSourceTerm/beam_two_material.prj)
     if(OGS_USE_EIGEN_UNSUPPORTED)
-        # DEPENDS for preventing race condition
-        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRS.xml
-            PROPERTIES DEPENDS ogs-Mechanics/Linear/square_1e2
-        )
-        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRSTABL.xml
-            PROPERTIES DEPENDS ogs-Mechanics/Linear/square_1e2_IDRS
-        )
-        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_BiCGSTABL.xml
-            PROPERTIES DEPENDS ogs-Mechanics/Linear/square_1e2_IDRSTABL
-        )
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRS.xml)
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_IDRSTABL.xml)
+        OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_BiCGSTABL.xml)
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
     if(NOT ENABLE_ASAN)
