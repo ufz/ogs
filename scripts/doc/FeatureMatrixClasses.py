@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from lxml import etree
-from matplotlib import pyplot as plt
 
 
 class feature_matrix:
@@ -95,51 +94,6 @@ class feature_matrix:
 
         return feature_matrix
 
-    def getUnimportantFeatures1(self, n: int) -> dict:
-        """
-        Selects unimportant features using singular value decomposition. From the feature correlation matrix (vt) 20% of the meta features with the lowest values in s will be selected.
-        From these the n real features that contribute most will be selected.
-        """
-        _u, s, vt = np.linalg.svd(self.has_feature)
-
-        sigmas_lower_lim = s < s[round(len(s) * 0.8)]
-        return abs(vt[sigmas_lower_lim, :]).sum(axis=0).argsort() < n
-
-    def getUnimportantFeatures2(self, n: int) -> dict:
-        """
-        Selects unimportant features using singular value decomposition. From the feature correlation matrix (vt) 20% of the meta features with the highest values in s will be selected.
-        From these the n real features that contribute fewest will be selected.
-        """
-        _u, s, vt = np.linalg.svd(self.has_feature)
-        sigmas_greater_lim = s > s[round(len(s) * 0.2)]
-        return (-abs(vt[sigmas_greater_lim, :]).sum(axis=0)).argsort() < n
-
-    def getFileLines(self, file: str) -> dict:
-        """Puts together the lines of the given file. This is especially useful when you want to have
-        an overview over the detected and not detected features in the file."""
-        return {
-            "Feature Lines": self.showLines(file),
-            "No Feature Lines": self.lines_without_features[file],
-        }
-
-    def getFilesWithLeastUsedFeatures(self, n: int) -> dict:
-        """Returns a dictionary with the n files with the least used features as keys and the number of
-        used keys as values."""
-        self.has_feature.sum()
-        sums = np.array(self.has_feature.T.sum())
-        return {
-            list(self.xml_files.keys())[i]: sums[i] for i in sums.argsort()[range(n)]
-        }
-
-    def getFilesWithLowestCodeCoverage(self, n: int) -> dict:
-        """Returns a dictionary with the n files with the lowest code coverage as keys and the respective
-        code coverage as values."""
-        unpacked = np.array([self.code_coverage[key] for key in self.code_coverage])
-        return {
-            list(self.code_coverage.keys())[i]: unpacked[i]
-            for i in unpacked.argsort()[range(n)]
-        }
-
     def getLinesNotCoveredByInterval(
         lines: list[pd.Interval], endpoint: int
     ) -> list[pd.Interval]:
@@ -198,33 +152,6 @@ class feature_matrix:
                 m += 1
 
         return intervals
-
-    def plot(self):
-        fig = plt.figure()
-        ax = fig.add_subplot()
-        ax.matshow(self.has_feature)
-        ax.set_xticks(range(self.has_feature.shape[1]))
-        ax.set_yticks(range(self.has_feature.shape[0]))
-        # ax.set_xticklabels(mat.feature_matrix.columns, rotation=90)
-        # ax.set_yticklabels(mat.feature_matrix.index)
-        # ax.grid()
-
-    def showLines(self, file: str) -> dict:
-        """A pretty way to display the features and the respective lines for the given file."""
-        return self.lines.loc[
-            file,
-            [
-                a and b
-                for a, b in zip(
-                    [len(line) > 0 for line in self.lines.loc[file, :]],
-                    [
-                        not feature_name.startswith("!")
-                        for feature_name in self.lines.columns
-                    ],
-                    strict=True,
-                )
-            ],
-        ]
 
 
 class feature_matrix_entry:

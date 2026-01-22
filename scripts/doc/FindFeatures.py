@@ -33,7 +33,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from lxml import etree
-from matplotlib import pyplot as plt
 
 from FeatureMatrixClasses import feature_matrix, feature_matrix_entry
 from utils import getXMLFiles
@@ -662,15 +661,6 @@ if __name__ == "__main__":
         createJSON(mat, args.json)
         exit(0)
     createJSON(mat, Path("./features.json"))
-    least_used_files = mat.getFilesWithLowestCodeCoverage(5)
-    print([*least_used_files][0])
-    print(mat.getFileLines([*least_used_files][0]))
-    print(mat.has_feature)
-
-    # Plot
-    plt.ion()
-    mat.plot()
-    plt.show(block=True)
 
 
 def load_json_features(json_path: Path) -> list[dict]:
