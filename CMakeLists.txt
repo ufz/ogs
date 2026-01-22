@@ -1,5 +1,6 @@
 # ---- OGS-6 Project ----
 cmake_minimum_required(VERSION 3.31)
+cmake_policy(SET CMP0155 OLD) # Disable module import scanning.
 
 if(APPLE AND NOT (DEFINED CMAKE_OSX_DEPLOYMENT_TARGET
                   OR DEFINED ENV{MACOSX_DEPLOYMENT_TARGET})
