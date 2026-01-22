@@ -4,25 +4,17 @@
 #pragma once
 
 #include "Base.h"
+#include "BishopsData.h"
+#include "CapillaryPressureData.h"
+#include "MediaData.h"
 #include "Porosity.h"
 #include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
+#include "SolidDensityData.h"
+#include "TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct SolidDensityData
-{
-    double rho_SR;
-    double dry_density_solid;
-
-    static auto reflect()
-    {
-        return ProcessLib::Reflection::reflectWithName(
-            "dry_density_solid", &SolidDensityData::dry_density_solid);
-    }
-};
-
 template <int DisplacementDim>
 struct SolidDensityModel
 {

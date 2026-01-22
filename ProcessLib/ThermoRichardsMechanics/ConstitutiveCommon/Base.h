@@ -3,11 +3,7 @@
 
 #pragma once
 
-#include "MaterialLib/MPL/Medium.h"
-#include "MathLib/KelvinVector.h"
-#include "ParameterLib/SpatialPosition.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
-#include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -28,33 +24,4 @@ constexpr GlobalDimMatrix<D> DMnan()
     return GlobalDimMatrix<D>::Constant(nan);
 }
 
-struct MediaData
-{
-    explicit MediaData(MaterialPropertyLib::Medium const& medium)
-        : medium{medium},
-          liquid{medium.phase("AqueousLiquid")},
-          solid{medium.phase("Solid")}
-    {
-    }
-
-    MaterialPropertyLib::Medium const& medium;
-    MaterialPropertyLib::Phase const& liquid;
-    MaterialPropertyLib::Phase const& solid;
-};
-
-template <int DisplacementDim>
-struct TemperatureData
-{
-    double T;
-    double T_prev;
-    Eigen::Vector<double, DisplacementDim> grad_T;
-};
-
-template <int DisplacementDim>
-struct CapillaryPressureData
-{
-    double p_cap;
-    double p_cap_prev;
-    Eigen::Vector<double, DisplacementDim> grad_p_cap;
-};
 }  // namespace ProcessLib::ThermoRichardsMechanics

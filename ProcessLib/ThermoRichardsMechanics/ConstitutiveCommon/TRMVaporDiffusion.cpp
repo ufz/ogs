@@ -6,22 +6,6 @@
 namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
-void TRMVaporDiffusionData<DisplacementDim>::setZero()
-{
-    heat_capacity_vapor = 0;
-    vapor_flux = GlobalDimVector<DisplacementDim>::Zero(DisplacementDim);
-    storage_coefficient_by_water_vapor = 0;
-
-    J_pT_X_dNTdN = 0;
-    K_pp_X_dNTdN = 0;
-    K_TT_X_dNTdN = 0;
-    K_Tp_X_dNTdN = 0;
-    M_Tp_X_NTN = 0;
-    M_TT_X_NTN = 0;
-    M_pT_X_NTN = 0;
-}
-
-template <int DisplacementDim>
 void TRMVaporDiffusionModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     LiquidDensityData const& rho_L_data, SaturationData const& S_L_data,
@@ -125,8 +109,6 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
     }
 }
 
-template struct TRMVaporDiffusionData<2>;
-template struct TRMVaporDiffusionData<3>;
 template struct TRMVaporDiffusionModel<2>;
 template struct TRMVaporDiffusionModel<3>;
 }  // namespace ProcessLib::ThermoRichardsMechanics

@@ -4,16 +4,12 @@
 #pragma once
 
 #include "Base.h"
-#include "Saturation.h"
+#include "BishopsData.h"
+#include "MediaData.h"
+#include "SaturationData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct BishopsData
-{
-    double chi_S_L = nan;
-    double dchi_dS_L = nan;
-};
-
 struct BishopsModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,

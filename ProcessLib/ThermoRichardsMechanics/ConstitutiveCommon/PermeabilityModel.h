@@ -3,12 +3,16 @@
 
 #pragma once
 
+#include "Base.h"
+#include "CapillaryPressureData.h"
+#include "EquivalentPlasticStrainData.h"
+#include "MediaData.h"
+#include "PermeabilityData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/EquivalentPlasticStrainData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PermeabilityData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosityData.h"
+#include "SaturationData.h"
+#include "TemperatureData.h"
+#include "TotalStressData.h"
+#include "TransportPorosityData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

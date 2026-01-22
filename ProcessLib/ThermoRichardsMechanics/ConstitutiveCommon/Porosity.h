@@ -3,24 +3,18 @@
 
 #pragma once
 
-#include "Bishops.h"
+#include "Base.h"
+#include "BishopsData.h"
+#include "CapillaryPressureData.h"
+#include "MediaData.h"
+#include "PorosityData.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
-#include "Saturation.h"
+#include "SaturationData.h"
 #include "SolidCompressibilityData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct PorosityData
-{
-    double phi;
-
-    static auto reflect()
-    {
-        return ProcessLib::Reflection::reflectWithName("porosity",
-                                                       &PorosityData::phi);
-    }
-};
-
 template <int DisplacementDim>
 struct PorosityModel
 {

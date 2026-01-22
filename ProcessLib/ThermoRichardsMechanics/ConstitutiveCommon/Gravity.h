@@ -4,19 +4,14 @@
 #pragma once
 
 #include "Base.h"
-#include "LiquidDensity.h"
-#include "Saturation.h"
-#include "SolidDensity.h"
+#include "GravityData.h"
+#include "LiquidDensityData.h"
+#include "PorosityData.h"
+#include "SaturationData.h"
+#include "SolidDensityData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-struct GravityData
-{
-    GlobalDimVector<DisplacementDim> volumetric_body_force;
-    GlobalDimVector<DisplacementDim> J_up_HT_V_N;
-};
-
 template <int DisplacementDim>
 struct GravityModel
 {

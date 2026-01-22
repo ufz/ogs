@@ -4,25 +4,12 @@
 #pragma once
 
 #include "Base.h"
+#include "CapillaryPressureData.h"
+#include "MediaData.h"
+#include "SaturationData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct SaturationData
-{
-    double S_L;
-
-    static auto reflect()
-    {
-        return ProcessLib::Reflection::reflectWithName("saturation",
-                                                       &SaturationData::S_L);
-    }
-};
-
-struct SaturationDataDeriv
-{
-    double dS_L_dp_cap;
-};
-
 template <int DisplacementDim>
 struct SaturationModel
 {

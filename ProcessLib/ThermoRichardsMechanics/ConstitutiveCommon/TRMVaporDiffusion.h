@@ -3,29 +3,17 @@
 
 #pragma once
 
-#include "LiquidDensity.h"
-#include "Porosity.h"
+#include "Base.h"
+#include "CapillaryPressureData.h"
+#include "LiquidDensityData.h"
+#include "MediaData.h"
+#include "PorosityData.h"
+#include "SaturationData.h"
+#include "TRMVaporDiffusionData.h"
+#include "TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-struct TRMVaporDiffusionData
-{
-    double heat_capacity_vapor;
-    GlobalDimVector<DisplacementDim> vapor_flux;
-    double storage_coefficient_by_water_vapor;
-
-    double J_pT_X_dNTdN;
-    double K_pp_X_dNTdN;
-    double K_TT_X_dNTdN;
-    double K_Tp_X_dNTdN;
-    double M_Tp_X_NTN;
-    double M_TT_X_NTN;
-    double M_pT_X_NTN;
-
-    void setZero();
-};
-
 template <int DisplacementDim>
 struct TRMVaporDiffusionModel
 {
@@ -39,8 +27,6 @@ struct TRMVaporDiffusionModel
               TRMVaporDiffusionData<DisplacementDim>& out) const;
 };
 
-extern template struct TRMVaporDiffusionData<2>;
-extern template struct TRMVaporDiffusionData<3>;
 extern template struct TRMVaporDiffusionModel<2>;
 extern template struct TRMVaporDiffusionModel<3>;
 }  // namespace ProcessLib::ThermoRichardsMechanics

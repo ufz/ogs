@@ -3,25 +3,20 @@
 
 #pragma once
 
-#include "DarcyLaw.h"
-#include "LiquidDensity.h"
+#include "Base.h"
+#include "DarcyLawData.h"
+#include "LiquidDensityData.h"
+#include "LiquidViscosityData.h"
+#include "MediaData.h"
 #include "PermeabilityData.h"
-#include "Porosity.h"
-#include "SolidDensity.h"
+#include "PorosityData.h"
+#include "SaturationData.h"
+#include "SolidDensityData.h"
+#include "TRMHeatStorageAndFluxData.h"
+#include "TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-struct TRMHeatStorageAndFluxData
-{
-    double M_TT_X_NTN;
-    GlobalDimMatrix<DisplacementDim> K_TT_Laplace;
-    GlobalDimVector<DisplacementDim> K_Tp_NT_V_dN;
-    double K_Tp_X_NTN;
-    GlobalDimVector<DisplacementDim>
-        advective_heat_flux_contribution_to_K_liquid;
-};
-
 template <int DisplacementDim>
 struct TRMHeatStorageAndFluxModel
 {

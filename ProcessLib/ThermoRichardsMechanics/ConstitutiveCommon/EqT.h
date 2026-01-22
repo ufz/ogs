@@ -3,18 +3,12 @@
 
 #pragma once
 
-#include "TRMHeatStorageAndFlux.h"
-#include "TRMVaporDiffusion.h"
+#include "EqTData.h"
+#include "TRMHeatStorageAndFluxData.h"
+#include "TRMVaporDiffusionData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-struct EqTData
-{
-    GlobalDimVector<DisplacementDim> K_TT_NT_V_dN = DVnan<DisplacementDim>();
-    double M_TT_X_NTN = nan;
-};
-
 template <int DisplacementDim>
 struct EqTModel
 {

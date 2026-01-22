@@ -4,16 +4,14 @@
 #pragma once
 
 #include "Base.h"
-#include "BaseLib/StrongType.h"
-#include "MediaData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-using BiotData = BaseLib::StrongType<double, struct BiotTag>;
-
-struct BiotModel
+template <int DisplacementDim>
+struct GravityData
 {
-    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-              BiotData& out) const;
+    GlobalDimVector<DisplacementDim> volumetric_body_force;
+    GlobalDimVector<DisplacementDim> J_up_HT_V_N;
 };
+
 }  // namespace ProcessLib::ThermoRichardsMechanics

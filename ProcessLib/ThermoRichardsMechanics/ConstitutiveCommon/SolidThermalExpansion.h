@@ -4,19 +4,16 @@
 #pragma once
 
 #include "Base.h"
+#include "MediaData.h"
+#include "SolidThermalExpansionData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
 template <int DisplacementDim>
-struct SolidThermalExpansionData
-{
-    KelvinVector<DisplacementDim> solid_linear_thermal_expansivity_vector;
-};
-
-template <int DisplacementDim>
 struct SolidThermalExpansionModel
 {
-    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+    void eval(SpaceTimeData const& x_t,
+              MediaData const& media_data,
               SolidThermalExpansionData<DisplacementDim>& out) const;
 };
 

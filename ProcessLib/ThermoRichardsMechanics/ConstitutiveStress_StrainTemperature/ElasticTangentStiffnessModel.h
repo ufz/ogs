@@ -4,7 +4,9 @@
 #pragma once
 
 #include "ElasticTangentStiffnessData.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Base.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TemperatureData.h"
 #include "TraitsBase.h"
 
 namespace ProcessLib::ThermoRichardsMechanics

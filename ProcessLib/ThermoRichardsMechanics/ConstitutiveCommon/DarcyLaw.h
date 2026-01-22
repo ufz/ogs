@@ -3,23 +3,16 @@
 
 #pragma once
 
-#include "BaseLib/StrongType.h"
-#include "LiquidDensity.h"
-#include "LiquidViscosity.h"
+#include "CapillaryPressureData.h"
+#include "DarcyLawData.h"
+#include "LiquidDensityData.h"
+#include "LiquidViscosityData.h"
 #include "PermeabilityData.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
-#include "ThermoOsmosis.h"
+#include "ThermoOsmosisData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-using DarcyLawData = BaseLib::StrongType<Eigen::Vector<double, DisplacementDim>,
-                                         struct DarcyLawDataTag>;
-
-constexpr std::string_view ioName(struct DarcyLawDataTag*)
-{
-    return "velocity";
-}
 
 template <int DisplacementDim>
 struct DarcyLawModel

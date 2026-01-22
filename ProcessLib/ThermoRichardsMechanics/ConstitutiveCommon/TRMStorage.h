@@ -4,20 +4,16 @@
 #pragma once
 
 #include "Biot.h"
-#include "LiquidDensity.h"
-#include "Porosity.h"
+#include "CapillaryPressureData.h"
+#include "LiquidDensityData.h"
+#include "PorosityData.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "Saturation.h"
+#include "SolidCompressibilityData.h"
+#include "TRMStorageData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct TRMStorageData
-{
-    double storage_p_a_p;
-    double storage_p_a_S_X_NTN;
-    double J_pp_X_NTN;
-    double storage_p_a_S_Jpp_X_NTN;
-};
-
 template <int DisplacementDim>
 struct TRMStorageModel
 {

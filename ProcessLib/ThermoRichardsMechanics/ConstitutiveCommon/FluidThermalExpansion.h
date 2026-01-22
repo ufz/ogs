@@ -4,17 +4,16 @@
 #pragma once
 
 #include "Biot.h"
-#include "LiquidDensity.h"
-#include "Porosity.h"
+#include "CapillaryPressureData.h"
+#include "FluidThermalExpansionData.h"
+#include "LiquidDensityData.h"
+#include "MediaData.h"
+#include "PorosityData.h"
 #include "SolidThermalExpansion.h"
+#include "TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct FluidThermalExpansionData
-{
-    double eff_thermal_expansion;
-};
-
 template <int DisplacementDim>
 struct FluidThermalExpansionModel
 {

@@ -4,26 +4,18 @@
 #pragma once
 
 #include "Base.h"
+#include "CapillaryPressureData.h"
+#include "LiquidDensityData.h"
+#include "MediaData.h"
+#include "TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-struct LiquidDensityData
-{
-    double rho_LR;
-    double drho_LR_dp;
-    double drho_LR_dT;
-
-    static auto reflect()
-    {
-        return ProcessLib::Reflection::reflectWithName(
-            "liquid_density", &LiquidDensityData::rho_LR);
-    }
-};
-
 template <int DisplacementDim>
 struct LiquidDensityModel
 {
-    void eval(SpaceTimeData const& x_t, MediaData const& media_data,
+    void eval(SpaceTimeData const& x_t,
+              MediaData const& media_data,
               CapillaryPressureData<DisplacementDim> const& p_cap_data,
               TemperatureData<DisplacementDim> const& T_data,
               LiquidDensityData& out) const;

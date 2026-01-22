@@ -4,25 +4,19 @@
 #pragma once
 
 #include "Base.h"
-#include "BaseLib/StrongType.h"
-#include "LiquidDensity.h"
+#include "LiquidDensityData.h"
+#include "LiquidViscosityData.h"
+#include "MediaData.h"
+#include "TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-using LiquidViscosityData =
-    BaseLib::StrongType<double, struct LiquidViscosityDataTag>;
-
-constexpr std::string_view ioName(struct LiquidViscosityDataTag*)
-{
-    return "viscosity";
-}
-
 template <int DisplacementDim>
 struct LiquidViscosityModel
 {
     void eval(SpaceTimeData const& x_t, MediaData const& media_data,
-            LiquidDensityData const& rho_L_data,
-            TemperatureData<DisplacementDim> const& T_data,
+              LiquidDensityData const& rho_L_data,
+              TemperatureData<DisplacementDim> const& T_data,
               LiquidViscosityData& out) const;
 };
 

@@ -4,18 +4,13 @@
 #pragma once
 
 #include "Base.h"
-#include "LiquidDensity.h"
+#include "LiquidDensityData.h"
+#include "MediaData.h"
+#include "TemperatureData.h"
+#include "ThermoOsmosisData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-struct ThermoOsmosisData
-{
-    GlobalDimMatrix<DisplacementDim> K_pT_Laplace;
-    GlobalDimMatrix<DisplacementDim> K_Tp_Laplace;
-    GlobalDimVector<DisplacementDim> seepage_velocity_contribution;
-};
-
 template <int DisplacementDim>
 struct ThermoOsmosisModel
 {

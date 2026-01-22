@@ -4,33 +4,20 @@
 #pragma once
 
 #include "Biot.h"
-#include "FluidThermalExpansion.h"
-#include "LiquidDensity.h"
-#include "LiquidViscosity.h"
+#include "CapillaryPressureData.h"
+#include "EqPData.h"
+#include "FluidThermalExpansionData.h"
+#include "LiquidDensityData.h"
+#include "LiquidViscosityData.h"
 #include "PermeabilityData.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
-#include "Saturation.h"
-#include "TRMStorage.h"
-#include "TRMVaporDiffusion.h"
+#include "SaturationData.h"
+#include "TRMStorageData.h"
+#include "TRMVaporDiffusionData.h"
+#include "TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
-template <int DisplacementDim>
-struct EqPData
-{
-    GlobalDimVector<DisplacementDim> J_pp_dNT_V_N = DVnan<DisplacementDim>();
-    double J_pp_X_BTI2NT_u_dot_N = nan;
-
-    GlobalDimMatrix<DisplacementDim> K_pp_Laplace = DMnan<DisplacementDim>();
-
-    double M_pT_X_NTN = nan;
-    double M_pu_X_BTI2N = nan;
-
-    GlobalDimVector<DisplacementDim> rhs_p_dNT_V = DVnan<DisplacementDim>();
-
-    double storage_p_a_p_X_NTN = nan;
-};
-
 template <int DisplacementDim>
 struct EqPModel
 {
