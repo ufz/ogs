@@ -290,7 +290,7 @@ function(AddTest)
 
     # Run the tester
     _add_test_tester(${TEST_NAME})
-    if("${labels}" MATCHES "TH2M|ThermoRichardsMechanics|^HydroMechanics")
+    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
         _add_test_tester(${TEST_NAME}-omp)
     endif()
 
