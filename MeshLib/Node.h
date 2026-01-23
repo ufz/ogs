@@ -5,16 +5,7 @@
 
 #include <spdlog/fmt/ostr.h>
 
-#include <cstdlib>
-#include <limits>
-#include <vector>
-
 #include "MathLib/Point3dWithID.h"
-
-namespace ApplicationUtils
-{
-    class NodeWiseMeshPartitioner;
-}
 
 namespace MeshToolsLib
 {
@@ -42,10 +33,10 @@ public:
                   std::size_t id = std::numeric_limits<std::size_t>::max());
 
     /// Constructor using single coordinates
-    Node(double x, double y, double z, std::size_t id = std::numeric_limits<std::size_t>::max());
-
-    /// Copy constructor
-    Node(const Node &node);
+    Node(double x,
+         double y,
+         double z,
+         std::size_t id = std::numeric_limits<std::size_t>::max());
 
     friend std::ostream& operator<<(std::ostream& os, Node const& n);
 }; /* class */
