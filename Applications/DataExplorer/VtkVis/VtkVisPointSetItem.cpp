@@ -102,7 +102,17 @@ void VtkVisPointSetItem::Initialize(vtkRenderer* renderer)
     transform->Identity();
     _transformFilter->SetTransform(transform);
 
-    _transformFilter->SetInputConnection(_algorithm->GetOutputPort());
+    auto* parentItem = dynamic_cast<VtkVisPipelineItem*>(this->parentItem());
+    if (parentItem)
+    {
+        _transformFilter->SetInputConnection(_algorithm->GetOutputPort());
+    }
+    else
+    {
+        _algorithm->Update();
+        _transformFilter->SetInputDataObject(
+            _algorithm->GetOutputDataObject(0));
+    }
     _transformFilter->Update();
 
     _renderer = renderer;
