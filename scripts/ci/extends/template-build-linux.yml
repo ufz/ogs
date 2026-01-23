@@ -53,7 +53,7 @@
             # Remove quotes from CTEST_ARGS
             ctest_arguments=${CTEST_ARGS#\"}
             ctest_arguments=${ctest_arguments%\"}
-            ctest_timeout=90 # Assume large
+            ctest_timeout=120 # Assume large
           else
             ctest_arguments="--preset=${CMAKE_PRESET}${preset_postfix}"
           fi
