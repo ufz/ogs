@@ -290,7 +290,7 @@ function(AddTest)
 
     # Run the tester
     _add_test_tester(${TEST_NAME})
-    if("${labels}" MATCHES "TH2M|ThermoRichardsMechanics|^HydroMechanics")
+    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
         _add_test_tester(${TEST_NAME}-omp)
     endif()
 
@@ -368,7 +368,7 @@ macro(_add_test TEST_NAME)
                    "${labels}"
                    ${timeout}
                    ENVIRONMENT
-                   "CI=1;PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
+                   "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
     )
 endmacro()
 

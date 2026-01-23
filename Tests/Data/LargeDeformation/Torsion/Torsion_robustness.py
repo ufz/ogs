@@ -27,7 +27,7 @@ import pyvista as pv
 from ogstools import logparser
 
 # %% jupyter={"source_hidden": true}
-pv.set_jupyter_backend("static" if "CI" in os.environ else "client")
+pv.set_jupyter_backend("static" if "OGS_TESTRUNNER" in os.environ else "client")
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
