@@ -13,22 +13,27 @@
     - cmd /c mklink /D $artifacts_dir $env:CI_PROJECT_DIR\$build_directory_full
     - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
     - $cmake_cmd
-    - Invoke-Expression $cmake_cmd
-    # Activate .venv
     - |
+      echo "######################## $(Get-Date) ########################"
+      Invoke-Expression $cmake_cmd
+      # Activate .venv
       if (Test-Path  $build_directory_full\.venv\Scripts\Activate.ps1) {
         Invoke-Expression $build_directory_full\.venv\Scripts\Activate.ps1
       }
-    - Invoke-Expression $build_directory_full\.envrc.ps1
-    - $cmakeArgs = @("--build", "--preset=$env:CMAKE_PRESET")
-    - if ($env:BUILD_PACKAGE -eq "true") { $cmakeArgs += @("--target", "package") }
-    - if ($env:CMAKE_PRESET -match "msvc") { $cmakeArgs += @("--", "/m") }
-    - Write-Output "Running cmake $($cmakeArgs -join ' ')"
-    - cmake @cmakeArgs | Tee-Object -FilePath $log_file
-    - if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
-    - $ctest_group = "Experimental"
-    - if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
-    - |
+      Invoke-Expression $build_directory_full\.envrc.ps1
+      $cmakeArgs = @("--build", "--preset=$env:CMAKE_PRESET")
+      if ($env:BUILD_PACKAGE -eq "true") { $cmakeArgs += @("--target", "package") }
+      if ($env:CMAKE_PRESET -match "msvc") { $cmakeArgs += @("--", "/m") }
+
+      echo "######################## $(Get-Date) ########################"
+      Write-Output "Running cmake $($cmakeArgs -join ' ')"
+      cmake @cmakeArgs | Tee-Object -FilePath $log_file
+
+      echo "######################## $(Get-Date) ########################"
+      if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
+      $ctest_group = "Experimental"
+      if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
+
       $ctest_condition = $false
       if ($null -eq $env:CI_MERGE_REQUEST_LABELS) { $ctest_condition = $true }
       elseif (-Not ($env:CI_MERGE_REQUEST_LABELS -match "unit_tests")) { $ctest_condition = $true }
@@ -46,6 +51,7 @@
             $ctest_arguments += "large"
         }
 
+        echo "######################## $(Get-Date) ########################"
         ctest --preset=$env:CMAKE_PRESET --no-tests=error $ctest_arguments --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test
         $ctestExitCode = $LASTEXITCODE
         ctest --test-dir $build_directory_full -T submit; $null
@@ -53,6 +59,7 @@
          exit $ctestExitCode
         }
       }
+      echo "######################## $(Get-Date) ########################"
     - |
       if(($env:CHECK_WARNINGS -eq "true") -And (cat $log_file | Select-String -Pattern ': warning') )
       {
