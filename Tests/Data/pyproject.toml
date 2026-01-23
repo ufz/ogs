@@ -3,7 +3,8 @@ name = "OGS-Test-Environment"
 version = "0.1.0"
 description = "Test environment for Notebook-based tests"
 readme = "README.md"
-requires-python = ">=3.10"
+# pyvista depends on vtk which is not available for 3.14 yet
+requires-python = ">=3.10,<3.14"
 dependencies = [
   ### nb environment ###
   # Use no-X11 version on Linux:
