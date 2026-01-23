@@ -141,7 +141,7 @@ for _idx, row in parameter_table.iterrows():
 
 update_constraints(None)
 
-if "CI" in os.environ:  # static plot
+if "OGS_TESTRUNNER" in os.environ:  # static plot
     params = {k: v.value for k, v in sliders.items()}
     model = BrooksCorey(
         params["Pe"],

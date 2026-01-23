@@ -227,7 +227,7 @@ gmsh.write(f"{out_dir}/{bhe_mesh_file_name}.msh")
 Launch the GUI to see the results. Later `gmsh.finalize()` will be called when done using Gmsh Python API
 
 ```python
-if "CI" not in os.environ:
+if "OGS_TESTRUNNER" not in os.environ:
    gmsh.fltk.run()
 
 

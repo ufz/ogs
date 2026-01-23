@@ -173,6 +173,7 @@ for notebook_file in args.notebooks:
         notebook_output_path.mkdir(parents=True, exist_ok=True)
         os.environ["OGS_TESTRUNNER_OUT_DIR"] = str(notebook_output_path)
         os.environ["TQDM_DISABLE"] = "1"  # Disable progress bars
+        os.environ["OGS_TESTRUNNER"] = "1"
         notebook_filename = notebook_file_path.name
         convert_notebook_file = notebook_output_path
         if not is_jupytext:
