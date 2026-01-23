@@ -1,32 +1,20 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
-    <!-- < DISCLAIMER:
-    This OGS-project-file does not represent an accurate representation of the Theis-benchmark-setup because numerically a different PDE is solved than analytically. Analytically, it is assumed that the fluid density is constant allowing that the divergence of fluxes is reduced to \nabla (q), which can be further used to derive the Theis-solution. Numerically, the hydraulic equation solved by OGS in the ComponentTransport does not assume this simplification, thus the divergence of liquid phase fluxes is \nabla (\rho q). 
-    This test emulates a hydrogeological storage coefficient via the partial derivative d \rho / d p, which is not consistent with the assumptions of Theis analytical solution considering the divergence of fluxes solved numerically. 
-    Thus, this test is kept to test the partial derivative of fluid density but should not be taken for a serious test against Theis-solution.
-    -->
-    <meshes>
-        <mesh>slice_reorder.vtu</mesh>
-        <mesh>inflow_surf.vtu</mesh>
-        <mesh>abstraction_whole_surf.vtu</mesh>
-    </meshes>
+    <mesh axially_symmetric="true">axisym_theis.vtu</mesh>
+    <geometry>axisym_theis.gml</geometry>
     <processes>
         <process>
             <name>ComponentTransport</name>
             <type>ComponentTransport</type>
             <integration_order>2</integration_order>
             <process_variables>
-                <concentration>concentration</concentration>
                 <pressure>pressure</pressure>
+                <concentration>concentration</concentration>
             </process_variables>
             <secondary_variables>
                 <secondary_variable name="darcy_velocity"/>
             </secondary_variables>
-            <!-- <calculatesurfaceflux>
-                <mesh>abstraction_whole_surf</mesh>
-                <property_name>flux</property_name>
-            </calculatesurfaceflux> -->
-            <specific_body_force>0 0 -9.81</specific_body_force>
+            <specific_body_force>0.0 0.0</specific_body_force>
         </process>
     </processes>
     <media>
@@ -50,32 +38,22 @@
                                 </property>
                                 <property>
                                     <name>decay_rate</name>
-                                    <type>Parameter</type>
-                                    <parameter_name>decay</parameter_name>
+                                    <type>Constant</type>
+                                    <value>0</value>
                                 </property>
                             </properties>
                         </component>
                     </components>
                     <properties>
                         <property>
-                            <name>density</name>
-                            <type>Linear</type>
-                            <reference_value>1000</reference_value>
-                            <independent_variable>
-                                <variable_name>concentration</variable_name>
-                                <reference_condition>0</reference_condition>
-                                <slope>0</slope>
-                            </independent_variable>
-                            <independent_variable>
-                                <variable_name>liquid_phase_pressure</variable_name>
-                                <reference_condition>0</reference_condition>
-                                <slope>5.0968E-08</slope>
-                            </independent_variable>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
-                            <value>1e-3</value>
+                            <value> 1.0 </value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value> 1.0 </value>
                         </property>
                     </properties>
                 </phase>
@@ -83,23 +61,19 @@
             <properties>
                 <property>
                     <name>permeability</name>
-                    <type>Parameter</type>
-                    <parameter_name>kappa1</parameter_name>
+                    <type>Constant</type>
+                    <value>9.2903e-4</value>
                 </property>
                 <property>
                     <name>porosity</name>
-                    <type>Parameter</type>
-                    <parameter_name>porosity1</parameter_name>
+                    <type>Constant</type>
+                    <value>1.0</value>
                 </property>
-                <!-- The implementation of the ComponentTransport process
-                is without Boussinesq approximations, thus, 'storage' is not
-                used here, but should be set through S =thickness * gravity
-                * porosity * d\rho / dp / rho.  -->
-                <!--property>
+                <property>
                     <name>storage</name>
                     <type>Constant</type>
-                    <value>0</value>
-                </property-->
+                    <value>1.0e-3 </value>
+                </property>
                 <property>
                     <name>longitudinal_dispersivity</name>
                     <type>Constant</type>
@@ -120,63 +94,39 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>1e-5 5e-6</reltols>
+                    <reltols>1.e-10 1.e-10</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
-                    <t_initial>0.0</t_initial>
-                    <t_end>1e5</t_end>
+                    <t_initial> 0.0 </t_initial>
+                    <t_end> 864000 </t_end>
                     <timesteps>
                         <pair>
                             <repeat>10</repeat>
-                            <delta_t>10</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>5</repeat>
-                            <delta_t>20</delta_t>
+                            <delta_t>0.864</delta_t>
                         </pair>
                         <pair>
                             <repeat>10</repeat>
-                            <delta_t>40</delta_t>
+                            <delta_t>7.776</delta_t>
                         </pair>
                         <pair>
-                            <repeat>5</repeat>
-                            <delta_t>80</delta_t>
+                            <repeat>9</repeat>
+                            <delta_t>86.4</delta_t>
                         </pair>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>100</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>5</repeat>
-                            <delta_t>200</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>5</repeat>
-                            <delta_t>400</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>5</repeat>
-                            <delta_t>1000</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>5</repeat>
-                            <delta_t>2000</delta_t>
+                            <repeat>9</repeat>
+                            <delta_t>864.0</delta_t>
                         </pair>
                         <pair>
                             <repeat>10</repeat>
-                            <delta_t>5000</delta_t>
+                            <delta_t>7776.</delta_t>
                         </pair>
                         <pair>
-                            <repeat>5</repeat>
-                            <delta_t>10000</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>5</repeat>
-                            <delta_t>20000</delta_t>
+                            <repeat>18</repeat>
+                            <delta_t>43200.</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -184,48 +134,37 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>theis</prefix>
+            <prefix>CT_hydraulic_head</prefix>
             <timesteps>
                 <pair>
-                    <repeat> 1 </repeat>
+                    <repeat> 6 </repeat>
                     <each_steps> 10 </each_steps>
+                </pair>
+                <pair>
+                    <repeat> 1 </repeat>
+                    <each_steps> 6 </each_steps>
                 </pair>
             </timesteps>
             <variables>
-                <variable> pressure </variable>
-                <variable> concentration </variable>
-                <variable> darcy_velocity </variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
         <parameter>
-            <name>decay</name>
+            <name>p0</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>
         <parameter>
-            <name>porosity1</name>
+            <name>p_dbc</name>
             <type>Constant</type>
-            <value>0.2</value>
+            <value>0</value>
         </parameter>
         <parameter>
-            <name>kappa1</name>
+            <name>p_nbc</name>
             <type>Constant</type>
-            <values>7.6453E-13 0 0 0 7.6453E-13 0 0 0 7.6453E-13</values>
-        </parameter>
-        <parameter>
-            <name>c_ini</name>
-            <type>MeshNode</type>
-            <mesh>slice_reorder</mesh>
-            <field_name>c_ini</field_name>
-        </parameter>
-        <parameter>
-            <name>p_ini</name>
-            <type>MeshNode</type>
-            <mesh>slice_reorder</mesh>
-            <field_name>p_ini</field_name>
+            <value>0.008354590188550937</value>
         </parameter>
         <parameter>
             <name>c_0</name>
@@ -233,15 +172,14 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>p_BC_Dirichlet</name>
-            <type>MeshNode</type>
-            <mesh>inflow_surf</mesh>
-            <field_name>p_BC_Dirichlet</field_name>
+            <name>c_dbc</name>
+            <type>Constant</type>
+            <value>0</value>
         </parameter>
         <parameter>
-            <name>p_BC_Neumann_c</name>
+            <name>kappa1</name>
             <type>Constant</type>
-            <value>-2.83542E-03</value>
+            <values>9.2903e-4</values>
         </parameter>
     </parameters>
     <process_variables>
@@ -249,12 +187,13 @@
             <name>concentration</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>c_ini</initial_condition>
+            <initial_condition>c_0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
+                    <geometrical_set>theis_geo</geometrical_set>
+                    <geometry>well</geometry>
                     <type>Dirichlet</type>
-                    <mesh>inflow_surf</mesh>
-                    <parameter>c_0</parameter>
+                    <parameter>c_dbc</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -262,17 +201,19 @@
             <name>pressure</name>
             <components>1</components>
             <order>1</order>
-            <initial_condition>p_ini</initial_condition>
+            <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <type>Dirichlet</type>
-                    <mesh>inflow_surf</mesh>
-                    <parameter>p_BC_Dirichlet</parameter>
+                    <geometrical_set>theis_geo</geometrical_set>
+                    <geometry>well</geometry>
+                    <type>Neumann</type>
+                    <parameter>p_nbc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <type>Neumann</type>
-                    <mesh>abstraction_whole_surf</mesh>
-                    <parameter>p_BC_Neumann_c</parameter>
+                    <geometrical_set>theis_geo</geometrical_set>
+                    <geometry>infinite</geometry>
+                    <type>Dirichlet</type>
+                    <parameter>p_dbc</parameter>
                 </boundary_condition>
             </boundary_conditions>
         </process_variable>
@@ -288,12 +229,11 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i cg -p jacobi -tol 1e-10 -maxiter 10000</lis>
             <eigen>
                 <solver_type>CG</solver_type>
                 <precon_type>DIAGONAL</precon_type>
                 <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-10</error_tolerance>
+                <error_tolerance>1e-12</error_tolerance>
             </eigen>
             <petsc>
                 <prefix>lf</prefix>
@@ -301,4 +241,12 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>CT_hydraulic_head_ts_.*_t_.*.vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

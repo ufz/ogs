@@ -507,7 +507,7 @@ def compare_optimizations_to_base_case(cases):
                 checked_point_data.add(n)
                 try:
                     assert np.allclose(
-                        bm.point_data[n], vm.point_data[n], atol=1e-15, rtol=4e-14
+                        bm.point_data[n], vm.point_data[n], atol=1e-15, rtol=5e-14
                     )
                 except:
                     diff = np.abs(bm.point_data[n] - vm.point_data[n])

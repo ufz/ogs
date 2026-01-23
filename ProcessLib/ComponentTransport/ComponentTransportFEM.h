@@ -674,6 +674,13 @@ public:
             auto const mu = phase[MaterialPropertyLib::PropertyType::viscosity]
                                 .template value<double>(vars, pos, t, dt);
 
+            double storage = 0;
+            if (medium.hasProperty(MaterialPropertyLib::PropertyType::storage))
+            {
+                storage = medium[MaterialPropertyLib::PropertyType::storage]
+                              .template value<double>(vars, pos, t, dt);
+            }
+
             GlobalDimMatrixType const K_over_mu = K / mu;
             GlobalDimVectorType const velocity =
                 _process_data.has_gravity
@@ -726,7 +733,8 @@ public:
             // Calculate Mpp, Kpp, and bp in the first loop over components
             if (component_id == 0)
             {
-                Mpp.noalias() += N_t_N * (porosity * drho_dp * w);
+                Mpp.noalias() +=
+                    N_t_N * (porosity * drho_dp * w + density * storage * w);
                 Kpp.noalias() +=
                     dNdx.transpose() * K_over_mu * dNdx * (density * w);
 
@@ -802,9 +810,9 @@ public:
                 phase[MaterialPropertyLib::PropertyType::density]
                     .template value<double>(vars, pos, t, dt);
 
-            KCmCn.noalias() -= w * N.transpose() * stoichiometric_coefficient *
-                               kinetic_prefactor * retardation_factor *
-                               porosity * density * N;
+            KCmCn.noalias() -= N.transpose() * N *
+                               (stoichiometric_coefficient * kinetic_prefactor *
+                                retardation_factor * porosity * density * w);
         }
     }
 
@@ -919,6 +927,13 @@ public:
                 phase[MaterialPropertyLib::PropertyType::density]
                     .template value<double>(vars, pos, t, dt);
 
+            double storage = 0;
+            if (medium.hasProperty(MaterialPropertyLib::PropertyType::storage))
+            {
+                storage = medium[MaterialPropertyLib::PropertyType::storage]
+                              .template value<double>(vars, pos, t, dt);
+            }
+
             auto const& K = MaterialPropertyLib::formEigenTensor<GlobalDim>(
                 medium[MaterialPropertyLib::PropertyType::permeability].value(
                     vars, pos, t, dt));
@@ -942,7 +957,9 @@ public:
                         t, dt);
 
             // matrix assembly
-            local_M.noalias() += w * N.transpose() * porosity * drho_dp * N;
+            local_M.noalias() +=
+                N.transpose() * N *
+                (porosity * drho_dp * w + density * storage * w);
             local_K.noalias() +=
                 w * dNdx.transpose() * density * K_over_mu * dNdx;
 
@@ -957,7 +974,7 @@ public:
                 double const C_dot = (C_int_pt - N.dot(local_C_prev)) / dt;
 
                 local_b.noalias() -=
-                    w * N.transpose() * porosity * drho_dC * C_dot;
+                    N.transpose() * (porosity * drho_dC * C_dot * w);
             }
         }
     }
@@ -1050,11 +1067,12 @@ public:
                     .template value<double>(vars, pos, t, dt);
 
             // Assemble mass matrix
-            local_M.noalias() += w *
-                                 this->getHeatEnergyCoefficient(
-                                     vars, porosity, fluid_density,
-                                     specific_heat_capacity_fluid, pos, t, dt) *
-                                 N.transpose() * N;
+            local_M.noalias() +=
+                N.transpose() * N *
+                (this->getHeatEnergyCoefficient(vars, porosity, fluid_density,
+                                                specific_heat_capacity_fluid,
+                                                pos, t, dt) *
+                 w);
 
             // Assemble Laplace matrix
             auto const viscosity =
@@ -1412,13 +1430,14 @@ public:
                         t, dt);
 
             // matrix assembly
-            local_Jac.noalias() += w * N.transpose() * phi * drho_dp / dt * N +
-                                   w * dNdx.transpose() * rho * k / mu * dNdx;
+            local_Jac.noalias() +=
+                N.transpose() * N * (phi * drho_dp / dt * w) +
+                w * dNdx.transpose() * rho * k / mu * dNdx;
 
             local_rhs.noalias() -=
-                w * N.transpose() * phi *
-                    (drho_dp * N * p_prev + drho_dc * cdot_ip) +
-                w * rho * dNdx.transpose() * k / mu * dNdx * p;
+                N.transpose() * (drho_dp * N * p_prev + drho_dc * cdot_ip) *
+                    (phi * w) +
+                dNdx.transpose() * k / mu * dNdx * p * (rho * w);
 
             if (_process_data.has_gravity)
             {
@@ -1553,13 +1572,13 @@ public:
 
             // matrix assembly
             local_Jac.noalias() +=
-                w * rho * N.transpose() * phi * R * (alpha + 1 / dt) * N;
+                N.transpose() * N * (rho * phi * R * (alpha + 1 / dt) * w);
 
             KCC_Laplacian.noalias() += w * rho * dNdx.transpose() * D * dNdx;
 
             auto const cdot = (c - c_prev) / dt;
             local_rhs.noalias() -=
-                w * rho * N.transpose() * phi * R * N * (cdot + alpha * c);
+                N.transpose() * N * (cdot + alpha * c) * (rho * phi * R * w);
 
             ip_flux_vector.emplace_back(q * rho);
             average_velocity_norm += q.norm();
@@ -1651,8 +1670,8 @@ public:
                 _process_data.chemical_solver_interface->getConcentration(
                     component_id, chemical_system_id);
 
-            local_b.noalias() +=
-                w * N.transpose() * porosity * (C_post_int_pt - C_int_pt) / dt;
+            local_b.noalias() += N.transpose() * ((C_post_int_pt - C_int_pt) /
+                                                  dt * porosity * w);
         }
     }
 
