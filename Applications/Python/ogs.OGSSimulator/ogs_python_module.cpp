@@ -105,8 +105,19 @@ public:
             auto const start_time = std::chrono::system_clock::now();
             auto const time_str = BaseLib::formatDate(start_time);
             // todo ask Tobias: started vs starts
+#ifdef USE_PETSC
+            int size;
+            MPI_Comm_size(BaseLib::MPI::OGS_COMM_WORLD, &size);
+            int rank;
+            MPI_Comm_rank(BaseLib::MPI::OGS_COMM_WORLD, &rank);
+            INFO(
+                "OGS starts on {:s} in MPI mode [{}] of {} / Python embedded "
+                "mode.",
+                time_str, rank, size);
+#else
             INFO("OGS starts on {:s} in serial mode / Python embedded mode.",
                  time_str);
+#endif
         }
         try
         {
