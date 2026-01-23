@@ -7,7 +7,7 @@
             <name>SD</name>
             <type>SMALL_DEFORMATION</type>
             <integration_order>2</integration_order>
-            <constitutive_relation id="0,1">
+            <constitutive_relation id="*">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
                 <poissons_ratio>nu</poissons_ratio>
@@ -64,7 +64,7 @@
         </output>
     </time_loop>
     <media>
-        <medium>
+        <medium id="*">
             <phases>
                 <phase>
                     <type>Solid</type>
