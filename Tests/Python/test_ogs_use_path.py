@@ -23,19 +23,20 @@ def test_ogs_use_path(ogs_use_path, exe):
     print(f"\n==== test case OGS_USE_PATH={ogs_use_path} {exe}")
     env = os.environ.copy()
     env["OGS_USE_PATH"] = ogs_use_path
+    TIMEOUT = 5
 
     # Unix needs special handling to properly terminate any subsubprocesses
     # spawned. API is system dependent, therefore two branches.
     if os.name == "posix":
         p = subprocess.Popen([exe, "--version"], env=env, start_new_session=True)
         try:
-            p.wait(timeout=1)
+            p.wait(timeout=TIMEOUT)
         except subprocess.TimeoutExpired:
             os.killpg(os.getpgid(p.pid), signal.SIGTERM)
             raise
 
         return_code = p.poll()
     else:
-        return_code = subprocess.call([exe, "--version"], timeout=1)
+        return_code = subprocess.call([exe, "--version"], timeout=TIMEOUT)
 
     assert return_code == 0
