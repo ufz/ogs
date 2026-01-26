@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "FluidThermalExpansion.h"
+#include "FluidThermalExpansionModel.h"
 
 #include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 

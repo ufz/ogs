@@ -15,7 +15,7 @@
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PorosityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosityData.h"
 #include "ThermoRichardsMechanicsProcessData.h"
 

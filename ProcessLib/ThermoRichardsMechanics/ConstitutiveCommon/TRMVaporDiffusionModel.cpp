@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "TRMVaporDiffusion.h"
+#include "TRMVaporDiffusionModel.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

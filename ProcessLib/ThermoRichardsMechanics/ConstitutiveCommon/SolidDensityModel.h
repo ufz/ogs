@@ -7,7 +7,7 @@
 #include "BishopsData.h"
 #include "CapillaryPressureData.h"
 #include "MediaData.h"
-#include "Porosity.h"
+#include "PorosityModel.h"
 #include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/SolidMechanics.h"
 #include "SolidDensityData.h"

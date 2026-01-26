@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "Saturation.h"
+#include "SaturationModel.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

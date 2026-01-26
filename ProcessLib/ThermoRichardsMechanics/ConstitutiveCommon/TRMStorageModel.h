@@ -8,7 +8,7 @@
 #include "LiquidDensityData.h"
 #include "PorosityData.h"
 #include "ProcessLib/ConstitutiveRelations/Base.h"
-#include "Saturation.h"
+#include "SaturationData.h"
 #include "SolidCompressibilityData.h"
 #include "TRMStorageData.h"
 
