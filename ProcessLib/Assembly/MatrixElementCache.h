@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/count_if.hpp>
 #include <range/v3/view/filter.hpp>
 #include <range/v3/view/iota.hpp>
