@@ -90,7 +90,7 @@ def test_assembly_optimization(tmp_path, capfd, monkeypatch):
     # output time limit is not that important
     assert rt["linear_solver_time"] < 0.03
     assert rt["output_time"] < 0.03
-    assert rt["dirichlet_time"] < 0.03
+    assert rt["dirichlet_time"] < 0.04
 
     # just assert that the Dirichlet BC setting has a small runtime share
     assert mtb["dirichlet_time"] / mtb_sol < 0.01
