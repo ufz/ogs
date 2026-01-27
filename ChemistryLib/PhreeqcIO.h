@@ -177,19 +177,19 @@ private:
 
     std::stringstream writeInputsToStringStream(double const dt);
 
-    void setAqueousSolutionsPrevFromDumpString(std::string const& dump_content);
+    void setAqueousSolutionsPrevFromDumpString(std::string_view dump_content);
 
     void callPhreeqc() const;
 
     void callPhreeqcWithString(std::string const& input_content) const;
 
-    std::string retrieveSelectedOutputString() const;
+    std::string_view retrieveSelectedOutputString() const;
 
-    std::string retrieveDumpString() const;
+    std::string_view retrieveDumpString() const;
 
     void readOutputsFromFile();
 
-    void readOutputsFromString(std::string const& output_content);
+    void readOutputsFromStringView(std::string_view output_content);
 
     PhreeqcIO& operator<<(double const dt)
     {
@@ -208,9 +208,6 @@ private:
     const int phreeqc_instance_id = 0;
     std::size_t _num_chemical_systems = -1;
     bool _use_stream_mode = false;
-    mutable std::string _last_input_content;   // For diagnostics
-    mutable std::string _last_output_content;  // For diagnostics
-    mutable std::string _last_dump_content;    // For diagnostics
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

@@ -40,7 +40,7 @@ struct Dump
 
     void readDumpFile(std::istream& in, std::size_t const num_chemical_systems);
 
-    void readDumpFromString(std::string const& dump_content,
+    void readDumpFromString(std::string_view dump_content,
                             std::size_t const num_chemical_systems);
 
     std::string const dump_file;
