@@ -98,6 +98,11 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // exchange
     auto const& exchangers = chemical_system->exchangers;
 
+    // whether to use stream for data exchange
+    auto use_stream_for_data_exchange =
+        //! \ogs_file_param{prj__chemical_system__use_stream_for_data_exchange}
+        config.getConfigParameter<bool>("use_stream_for_data_exchange", false);
+
     // dump
     auto const project_file_name =
         BaseLib::joinPaths(output_directory,
@@ -125,11 +130,20 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto output = PhreeqcIOData::createOutput(
         *chemical_system, user_punch, use_high_precision, project_file_name);
 
+    if (use_stream_for_data_exchange)
+    {
+        INFO("PhreeqcIO will use stringstream for data exchange.");
+    }
+    else
+    {
+        INFO("PhreeqcIO will use file for data exchange.");
+    }
+
     return std::make_unique<PhreeqcIOData::PhreeqcIO>(
         mesh, *linear_solver, std::move(project_file_name),
         std::move(path_to_database), std::move(chemical_system),
         std::move(reaction_rates), std::move(user_punch), std::move(output),
-        std::move(dump), std::move(knobs));
+        std::move(dump), std::move(knobs), use_stream_for_data_exchange);
 }
 
 template <>
