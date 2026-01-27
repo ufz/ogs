@@ -44,7 +44,7 @@ In case of questions about the website or any of its contents, please contact us
 
 ## Impressum
 
-Verantwortlich für <https://opengeosys.org> im Sinne des Presserechts:
+Verantwortlich für <https://www.opengeosys.org> im Sinne des Presserechts:
 
 Prof. Dr. Olaf Kolditz, Helmholtz-Zentrum für Umweltforschung GmbH - UFZ, Permoserstr. 15, 04318 Leipzig.
 
