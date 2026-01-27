@@ -13,11 +13,6 @@
 namespace BaseLib
 {
 /**
- * \brief Returns true if the project directory is set.
- */
-bool isProjectDirectorySet();
-
-/**
  * \brief Returns true if given file exists.
  *
  * \param strFilename         the file name
@@ -129,15 +124,6 @@ std::string extractPath(std::string const& pathname);
  * Concat two paths. Does not check for validity.
  */
 std::string joinPaths(std::string const& pathA, std::string const& pathB);
-
-/// Returns the directory where the prj file resides.
-std::string const& getProjectDirectory();
-
-/// Sets the project directory.
-void setProjectDirectory(std::string const& dir);
-
-/// Unsets the project directory.
-void unsetProjectDirectory();
 
 /// Removes a file. If a file does not exist nothing will happen, other errors
 /// lead to OGS_FATAL call.

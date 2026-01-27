@@ -15,22 +15,8 @@
 #include "BaseLib/Logging.h"
 #include "Error.h"
 
-namespace
-{
-/// The directory where the prj file resides.
-std::string project_directory;
-
-/// Whether the project directory has already been set.
-bool project_directory_is_set = false;
-}  // anonymous namespace
-
 namespace BaseLib
 {
-bool isProjectDirectorySet()
-{
-    return project_directory_is_set;
-}
-
 /**
  * Returns true if given file exists.
  */
@@ -212,33 +198,6 @@ std::string joinPaths(std::string const& pathA, std::string const& pathB)
 {
     return (std::filesystem::path(pathA) /= std::filesystem::path(pathB))
         .string();
-}
-
-std::string const& getProjectDirectory()
-{
-    if (!project_directory_is_set)
-    {
-        OGS_FATAL("The project directory has not yet been set.");
-    }
-    return project_directory;
-}
-
-void setProjectDirectory(std::string const& dir)
-{
-    if (project_directory_is_set)
-    {
-        OGS_FATAL("The project directory has already been set.");
-    }
-    // TODO Remove these global vars. They are a possible source of errors when
-    // invoking OGS from Python multiple times within a single session.
-    project_directory = dir;
-    project_directory_is_set = true;
-}
-
-void unsetProjectDirectory()
-{
-    project_directory.clear();
-    project_directory_is_set = false;
 }
 
 void removeFile(std::string const& filename)
