@@ -4,6 +4,7 @@
 #pragma once
 
 #include <boost/property_tree/ptree.hpp>
+#include <filesystem>
 #include <functional>
 #include <iosfwd>
 #include <iterator>
@@ -293,7 +294,9 @@ public:
     ConfigTree& operator=(ConfigTree&& other);
 
     //! Used to get the project file name.
-    std::string const& getProjectFileName() const { return filename_; }
+    std::filesystem::path const& projectFilePath() const { return filepath_; }
+
+    std::filesystem::path projectDirectory() const;
 
     /*! \name Methods for directly accessing parameter values
      *
@@ -644,7 +647,7 @@ private:
     std::string path_;
 
     //! The path of the file from which this tree has been read.
-    std::string filename_;
+    std::filesystem::path filepath_;
 
     //! A pair (is attribute, tag/attribute name).
     using KeyType = std::pair<Attr, std::string>;
