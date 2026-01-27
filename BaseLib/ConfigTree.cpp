@@ -260,6 +260,9 @@ void ConfigTree::assertNoSwallowedErrors()
         ERR("{:s}", msg);
     }
 
+    // Clear the error messages to avoid duplicate printing
+    configtree_destructor_error_messages.clear();
+
     OGS_FATAL("There have been errors when parsing the configuration file(s).");
 }
 
