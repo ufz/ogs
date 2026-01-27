@@ -101,7 +101,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     // whether to use stream for data exchange
     auto use_stream_for_data_exchange =
         //! \ogs_file_param{prj__chemical_system__use_stream_for_data_exchange}
-        config.getConfigParameter<bool>("use_stream_for_data_exchange", false);
+        config.getConfigParameter<bool>("use_stream_for_data_exchange", true);
 
     // dump
     auto const project_file_name =
