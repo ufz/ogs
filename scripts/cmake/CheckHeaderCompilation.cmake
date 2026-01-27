@@ -1,211 +1,244 @@
 # cmake-lint: disable=R0912,R0915,C0103
 
-# Supply include directories and compiler flags
-get_directory_property(INCLUDE_DIRS INCLUDE_DIRECTORIES)
-set(CMAKE_REQUIRED_FLAGS "-c -fPIC")
+# Constants for header filtering patterns
+set(_HEADER_EXCLUDE_PATTERNS
+    ".*-impl\\.h$"
+    ".*Dialog\\.h$"
+    ".*Widget\\.h$"
+    ".*Window\\.h$"
+    "ui_.*\\.h$"
+)
 
-set(_logfile CMakeFiles/CMakeConfigureLog.yaml)
+set(_VTK_FILENAME_PATTERNS
+    "MeshItem"
+    "ModelTreeItem"
+)
 
-# Checks header for standalone compilation
-function(_check_header_compilation target)
-    # cmake-lint: disable=R0915
+# Determine if a header file should be included in standalone compilation checks
+function(_filter_header file_path out_var)
+    # Only check header files
+    if(NOT "${file_path}" MATCHES ".*\\.h$")
+        set(${out_var} FALSE PARENT_SCOPE)
+        return()
+    endif()
+
+    # Exclude implementation headers and Qt UI files
+    foreach(pattern ${_HEADER_EXCLUDE_PATTERNS})
+        if("${file_path}" MATCHES "${pattern}")
+            set(${out_var} FALSE PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+
+    # Exclude known VTK transitive includes by filename
+    foreach(pattern ${_VTK_FILENAME_PATTERNS})
+        if("${file_path}" MATCHES "${pattern}")
+            message(STATUS "Ignoring ${file_path} due to (transitive) vtk include.")
+            set(${out_var} FALSE PARENT_SCOPE)
+            return()
+        endif()
+    endforeach()
+
+    # Content-based exclusion: VTK includes
+    if(EXISTS "${file_path}")
+        file(READ "${file_path}" file_contents LIMIT 8000)
+        if("${file_contents}" MATCHES "#include <vtk")
+            message(STATUS "Ignoring ${file_path} due to vtk include.")
+            set(${out_var} FALSE PARENT_SCOPE)
+            return()
+        endif()
+    endif()
+
+    set(${out_var} TRUE PARENT_SCOPE)
+endfunction()
+
+# Collect header files from a library target that should be checked
+function(_collect_library_headers target out_var)
+    # Early return if target doesn't exist
     if(NOT TARGET ${target})
+        set(${out_var} "" PARENT_SCOPE)
         return()
     endif()
 
     get_target_property(SOURCE_FILES ${target} SOURCES)
-    get_target_property(SOURCE_DIR ${target} SOURCE_DIR)
-
-    get_directory_property(DEFS DIRECTORY ${SOURCE_DIR} COMPILE_DEFINITIONS)
-    foreach(def ${DEFS})
-        if(${def} MATCHES ".*[0-9]\\(.*")
-            continue()
-        endif()
-        list(APPEND DEFS_CLEANED "-D${def}")
-    endforeach()
-
-    get_target_property(INCLUDE_DIRS ${target} INCLUDE_DIRECTORIES)
-    get_target_property(
-        INTERFACE_INCLUDE_DIRS ${target} INTERFACE_INCLUDE_DIRECTORIES
-    )
-    if(INTERFACE_INCLUDE_DIRS)
-        list(APPEND INCLUDE_DIRS ${INTERFACE_INCLUDE_DIRS})
-    endif()
-    get_target_property(LINK_LIBS ${target} LINK_LIBRARIES)
-    # Transitive dependencies are not resolved
-    foreach(
-        lib
-        ${LINK_LIBS}
-        spdlog::spdlog
-        Boost::headers
-        Boost::core
-        Eigen3::Eigen
-        nlohmann_json::nlohmann_json
-        range-v3
-        PkgConfig::PETSC
-    )
-        # Ignore non-existing targets or interface libs
-        if(NOT TARGET ${lib})
-            continue()
-        endif()
-        get_target_property(LIB_TYPE ${lib} TYPE)
-        if(LIB_TYPE STREQUAL "INTERFACE_LIBRARY")
-            get_target_property(
-                TARGET_INCLUDE_DIRS ${lib} INTERFACE_INCLUDE_DIRECTORIES
-            )
-        else()
-            get_target_property(TARGET_INCLUDE_DIRS ${lib} INCLUDE_DIRECTORIES)
-        endif()
-        if(TARGET_INCLUDE_DIRS)
-            if("${TARGET_INCLUDE_DIRS}" MATCHES ".*<BUILD_INTERFACE:([^>]*)")
-                list(APPEND INCLUDE_DIRS ${CMAKE_MATCH_1})
-            else()
-                list(APPEND INCLUDE_DIRS ${TARGET_INCLUDE_DIRS})
-            endif()
-        endif()
-    endforeach()
-    list(REMOVE_DUPLICATES INCLUDE_DIRS)
-
-    string(REPLACE "${PROJECT_SOURCE_DIR}/" "" DIRECTORY ${SOURCE_DIR})
-    message(STATUS "Checking header compilation for ${DIRECTORY} ...")
-    include(CheckCXXSourceCompiles)
-
-    # cmake-lint: disable=C0103
-    set(CMAKE_REQUIRED_INCLUDES ${INCLUDE_DIRS} ${SOURCE_DIR})
-    # HACK, maybe add Gui Widgets Xml XmlPatterns as well
-    if(OGS_BUILD_GUI)
-        set(CMAKE_REQUIRED_INCLUDES
-            ${CMAKE_REQUIRED_INCLUDES} ${Qt5Core_INCLUDE_DIRS}
-            ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS}
-        )
+    if(NOT SOURCE_FILES)
+        set(${out_var} "" PARENT_SCOPE)
+        return()
     endif()
 
-    get_target_property(_target_defs ${target} COMPILE_DEFINITIONS)
-    if(OGS_USE_PETSC)
-        list(APPEND _target_defs USE_PETSC)
-    endif()
-    foreach(def ${_target_defs})
-        # strip generator expressions
-        if(${def} MATCHES "\\$<.*")
-            continue()
-        endif()
-        if(${def} MATCHES ".*[0-9]\\(.*")
-            continue()
-        endif()
-        list(APPEND DEFS_CLEANED "-D${def}")
-    endforeach()
-    set(CMAKE_REQUIRED_DEFINITIONS ${DEFS_CLEANED})
-
+    # Filter and collect headers
+    set(headers_to_check "")
     foreach(file ${SOURCE_FILES})
-
-        if(NOT "${file}" MATCHES ".*\\.h") # Check only header files
-            continue()
+        _filter_header("${file}" should_check)
+        if(should_check)
+            list(APPEND headers_to_check "${file}")
         endif()
-        if("${file}" MATCHES ".*-impl\\.h") # Ignore *-impl.h files
-            continue()
-        endif()
-        if("${file}" MATCHES ".*Dialog\\.h") # Ignore Qt Dialog files
-            continue()
-        endif()
-        if("${file}" MATCHES ".*Widget\\.h") # Ignore Qt Widget files
-            continue()
-        endif()
-        if("${file}" MATCHES ".*Window\\.h") # Ignore Qt Window files
-            continue()
-        endif()
-        if("${file}" MATCHES "ui_.*\\.h") # Ignore Qt-generated ui files
-            continue()
-        endif()
-        if("${file}" MATCHES "MeshItem|ModelTreeItem")
-            # These files have transitive vtk includes, see below.
-            message(STATUS "Ignoring ${file} due to (transitive) vtk include.")
-            continue()
-        endif()
-
-        file(READ "${file}" file_contents LIMIT 8000)
-        # Ignore files including vtk. There is no easy way to get all required
-        # VTK include directories with the vtk 9 module system.
-        if("${file_contents}" MATCHES "#include <vtk")
-            message(STATUS "Ignoring ${file} due to vtk include.")
-            continue()
-        endif()
-
-        string(REPLACE "${PROJECT_SOURCE_DIR}/" "" TEST_NAME ${file})
-        string(REPLACE "." "_" TEST_NAME ${TEST_NAME})
-        string(REPLACE "/" "_" TEST_NAME ${TEST_NAME})
-        check_cxx_source_compiles(
-            "
-            #include \"${file}\"
-            int main() { return 0; }
-            "
-            ${TEST_NAME}_COMPILES
-        )
-
-        if(NOT ${TEST_NAME}_COMPILES)
-            set(_HEADER_COMPILE_ERROR TRUE CACHE INTERNAL "")
-            message(STATUS "  Compilation failed for ${file}")
-        endif()
-        unset(${TEST_NAME}_COMPILES CACHE)
-
-        unset(TEST_NAME)
     endforeach()
+
+    set(${out_var} "${headers_to_check}" PARENT_SCOPE)
 endfunction()
 
-# Check header compilation in
+# Helper function to mangle header path into a valid target name
+function(_mangle_header_name header_file out_name)
+    string(REPLACE "${PROJECT_SOURCE_DIR}/" "" relative_path "${header_file}")
+    string(REPLACE "/" "-" mangled_name "${relative_path}")
+    string(REPLACE "." "_" mangled_name "${mangled_name}")
+    set(${out_name} "${mangled_name}" PARENT_SCOPE)
+endfunction()
+
+# Create a compile-only check target for a single header
+function(_create_header_check_target library_target header_file)
+    # Mangle header path to create target name
+    _mangle_header_name("${header_file}" mangled_name)
+    set(target_name "check-header-${mangled_name}")
+
+    # Create directory for generated sources and object files
+    set(gen_dir "${CMAKE_BINARY_DIR}/CheckHeaderCompilation/${library_target}")
+    file(MAKE_DIRECTORY "${gen_dir}")
+
+    # Generate .cpp file
+    set(gen_source "${gen_dir}/${mangled_name}.cpp")
+    file(WRITE "${gen_source}"
+        "// Auto-generated file to check standalone compilation\n"
+        "#include \"${header_file}\"\n"
+    )
+
+    # Create the check target as an object library (compile-only, no linking)
+    add_library(${target_name} OBJECT "${gen_source}")
+
+    # Apply compilation settings
+    target_include_directories(${target_name} PRIVATE
+        $<TARGET_PROPERTY:${library_target},INTERFACE_INCLUDE_DIRECTORIES>
+        ${PROJECT_SOURCE_DIR}
+        $<$<BOOL:${OGS_BUILD_GUI}>:${PROJECT_SOURCE_DIR}/Applications/DataExplorer>
+    )
+
+    target_compile_definitions(${target_name} PRIVATE
+        $<TARGET_PROPERTY:${library_target},INTERFACE_COMPILE_DEFINITIONS>
+    )
+
+    # Set target properties (C++ standard inherited globally)
+    set_target_properties(${target_name} PROPERTIES
+        EXCLUDE_FROM_ALL TRUE
+        FOLDER "HeaderChecks"
+    )
+
+    # Add dependency on library target (for generated headers)
+    if(TARGET ${library_target})
+        add_dependencies(${target_name} ${library_target})
+    endif()
+endfunction()
+
+# Create check targets for all headers in a library
+function(check_header_compilation_for_library library_target)
+    # Early return if target doesn't exist
+    if(NOT TARGET ${library_target})
+        message(STATUS "Target ${library_target} does not exist, skipping header checks.")
+        return()
+    endif()
+
+    # Collect headers to check
+    _collect_library_headers(${library_target} headers_to_check)
+
+    if(NOT headers_to_check)
+        message(STATUS "No headers to check for ${library_target}")
+        return()
+    endif()
+
+    # Get source directory for status message
+    get_target_property(SOURCE_DIR ${library_target} SOURCE_DIR)
+    string(REPLACE "${PROJECT_SOURCE_DIR}/" "" DIRECTORY ${SOURCE_DIR})
+
+    list(LENGTH headers_to_check num_headers)
+    message(STATUS "Setting up header compilation checks for ${DIRECTORY} (${num_headers} headers)...")
+
+    # Create check target for each header
+    set(all_header_targets "")
+    foreach(header ${headers_to_check})
+        _create_header_check_target(${library_target} "${header}")
+
+        # Calculate target name using the same mangling logic
+        _mangle_header_name("${header}" mangled_name)
+        set(target_name "check-header-${mangled_name}")
+
+        list(APPEND all_header_targets ${target_name})
+    endforeach()
+
+    # Create library-level phony target
+    set(library_check_target "check-headers-${library_target}")
+    add_custom_target(${library_check_target})
+
+    if(all_header_targets)
+        add_dependencies(${library_check_target} ${all_header_targets})
+    endif()
+endfunction()
+
+# Core libraries to check for header compilation
+set(_CORE_LIBS_TO_CHECK
+    BaseLib
+    ChemistryLib
+    GeoLib
+    GitInfoLib
+    CMakeInfoLib
+    TestInfoLib
+    MaterialLib
+    MathLib
+    MeshGeoToolsLib
+    MeshLib
+    NumLib
+    ParameterLib
+    ProcessLib
+    ApplicationsLib
+    ApplicationsFileIO
+    DataHolderLib
+)
+
+# GUI libraries to check (only when GUI is enabled)
+set(_GUI_LIBS_TO_CHECK
+    QtBase
+    QtDataView
+    QtDiagramView
+    VtkVis
+    QtStratView
+)
+
+# Main function: Create header compilation check targets for all libraries
 function(check_header_compilation)
     if(NOT OGS_CHECK_HEADER_COMPILATION)
         return()
     endif()
 
-    execute_process(COMMAND ${CMAKE_COMMAND} -E remove -f ${_logfile})
+    message(STATUS "")
+    message(STATUS "========================================")
+    message(STATUS "Setting up header compilation checks")
+    message(STATUS "========================================")
 
-    set(_HEADER_COMPILE_ERROR FALSE CACHE INTERNAL "")
-
-    _check_header_compilation(BaseLib)
-    _check_header_compilation(ChemistryLib)
-    _check_header_compilation(GeoLib)
-    foreach(lib Git CMake Test)
-        _check_header_compilation(${lib}InfoLib)
-    endforeach(lib)
-    _check_header_compilation(MaterialLib)
-    _check_header_compilation(MathLib)
-    _check_header_compilation(MeshGeoToolsLib)
-    _check_header_compilation(MeshLib)
-    _check_header_compilation(NumLib)
-    _check_header_compilation(ParameterLib)
-    _check_header_compilation(ProcessLib)
-    _check_header_compilation(ApplicationsLib)
-    _check_header_compilation(ApplicationsFileIO)
-    _check_header_compilation(DataHolderLib)
+    # Build list of libraries to check
+    set(LIBS_TO_CHECK ${_CORE_LIBS_TO_CHECK})
     if(OGS_BUILD_GUI)
-        _check_header_compilation(QtBase)
-        _check_header_compilation(QtDataView)
-        _check_header_compilation(QtDiagramView)
-        # _check_header_compilation(QtStratView) # all fail
-        _check_header_compilation(VtkVis)
+        list(APPEND LIBS_TO_CHECK ${_GUI_LIBS_TO_CHECK})
     endif()
 
-    if(_HEADER_COMPILE_ERROR)
-        find_program(YQ_TOOLPATH yq)
-        if(NOT YQ_TOOLPATH OR NOT EXISTS ${PROJECT_BINARY_DIR}/${_logfile})
-            message(
-                FATAL_ERROR
-                    "... header compilation check failed, see ${_logfile} for details!"
-            )
+    # Create check targets for each library
+    set(all_library_targets "")
+    foreach(lib ${LIBS_TO_CHECK})
+        check_header_compilation_for_library(${lib})
+        set(lib_target "check-headers-${lib}")
+        if(TARGET ${lib_target})
+            list(APPEND all_library_targets ${lib_target})
         endif()
-        execute_process(
-            COMMAND
-                ${YQ_TOOLPATH}
-                ".events[] | select(.kind == \"try_compile-v1\" and .buildResult.exitCode == 1 and .checks[] == \"*_COMPILES\")"
-                ${PROJECT_BINARY_DIR}/${_logfile}
-            COMMAND grep stdout
-            COMMAND sed "s/\\\\n/\\n/g"
-            OUTPUT_VARIABLE _checkheader_out
-        )
-        message(STATUS "There were header compilation errors:\n")
-        list(APPEND CMAKE_MESSAGE_INDENT "  >  ")
-        message(STATUS "${_checkheader_out}")
-        list(POP_BACK CMAKE_MESSAGE_INDENT)
-        message(FATAL_ERROR "Header compilation failed, aborting.")
+    endforeach()
+
+    # Create top-level target
+    add_custom_target(check-headers)
+    if(all_library_targets)
+        add_dependencies(check-headers ${all_library_targets})
     endif()
+
+    message(STATUS "")
+    message(STATUS "Header compilation check targets created.")
+    message(STATUS "Run 'ninja check-headers' to execute all checks.")
+    message(STATUS "Run 'ninja check-headers-<library>' to check a specific library.")
+    message(STATUS "========================================")
+    message(STATUS "")
 endfunction()
