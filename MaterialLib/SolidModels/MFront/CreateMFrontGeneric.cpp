@@ -341,7 +341,7 @@ MFrontConfig createMFrontConfig(
 
     auto const lib_path =
         library_path_is_relative_to_prj_file
-            ? BaseLib::joinPaths(BaseLib::getProjectDirectory(), library_name)
+            ? BaseLib::joinPaths(config.projectDirectory(), library_name)
             : library_name;
 
     mgis::behaviour::Hypothesis hypothesis;

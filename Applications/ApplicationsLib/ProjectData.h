@@ -64,7 +64,6 @@ public:
     /// \param script_directory  Directory where scripts (e.g. Python BCs) are
     ///                          read from.
     ProjectData(BaseLib::ConfigTree const& project_config,
-                std::string const& project_directory,
                 std::string const& output_directory,
                 std::string const& mesh_directory,
                 [[maybe_unused]] std::string const& script_directory);
@@ -113,7 +112,6 @@ private:
     /// process entry passing the corresponding subtree to the process
     /// constructor.
     void parseProcesses(BaseLib::ConfigTree const& processes_config,
-                        std::string const& project_directory,
                         std::string const& output_directory,
                         std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
                             chemical_solver_interface);
