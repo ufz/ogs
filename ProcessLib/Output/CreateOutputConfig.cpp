@@ -151,7 +151,8 @@ OutputConfig createOutputConfig(
         if (filename != "no_file")
         {
             output_config.fixed_output_times =
-                BaseLib::readDoublesFromBinaryFile(filename);
+                BaseLib::readDoublesFromBinaryFile(filename,
+                                                   config.projectDirectory());
         }
     }
     // Remove possible duplicated elements and sort.
