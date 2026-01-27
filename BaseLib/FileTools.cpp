@@ -239,10 +239,10 @@ bool createOutputDirectory(std::string const& dir)
     return true;
 }
 
-std::vector<double> readDoublesFromBinaryFile(const std::string& filename)
+std::vector<double> readDoublesFromBinaryFile(
+    const std::string& filename, const std::string& project_directory)
 {
-    auto prj_dir = BaseLib::getProjectDirectory();
-    std::string path_to_file = BaseLib::joinPaths(prj_dir, filename);
+    std::string path_to_file = BaseLib::joinPaths(project_directory, filename);
     std::string file_extension = BaseLib::getFileExtension(filename);
     if (file_extension != ".bin")
     {
