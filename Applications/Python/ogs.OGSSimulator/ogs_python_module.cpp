@@ -44,7 +44,6 @@ int checkCommandLineArguments(std::vector<std::string>& argv_str)
     catch (TCLAP::ArgException const& e)
     {
         ERR("Parsing the OGS commandline failed: {}", e.what());
-        BaseLib::unsetProjectDirectory();
 
         // "mangle" TCLAP's status
         return EXIT_ARGPARSE_FAILURE;
@@ -53,17 +52,14 @@ int checkCommandLineArguments(std::vector<std::string>& argv_str)
     {
         if (e.getExitStatus() == 0)
         {
-            BaseLib::unsetProjectDirectory();
             return EXIT_ARGPARSE_EXIT_OK;
         }
 
-        BaseLib::unsetProjectDirectory();
         // "mangle" TCLAP's status
         return EXIT_ARGPARSE_FAILURE;
     }
 
     INFO("Parsing the OGS commandline passed");
-    BaseLib::unsetProjectDirectory();
     return EXIT_SUCCESS;
 }
 
@@ -132,7 +128,6 @@ public:
         {
             ERR("{}", e.what());
             ogs_status = EXIT_FAILURE;
-            BaseLib::unsetProjectDirectory();
             throw(e);
         }
         INFO("OpenGeoSys is now initialized.");
@@ -250,10 +245,6 @@ public:
             ERR("{}", e.what());
             throw;
         }
-
-        // Unset project dir to make multiple OGS runs in one Python session
-        // possible.
-        BaseLib::unsetProjectDirectory();
     }
 
 private:
