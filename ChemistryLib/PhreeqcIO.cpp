@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iomanip>
 #include <numeric>
+#include <sstream>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
@@ -264,7 +265,8 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
-                     Knobs&& knobs)
+                     Knobs&& knobs,
+                     bool use_stream_mode)
     : ChemicalSolverInterface(mesh, linear_solver),
       _phreeqc_input_file(specifyFileName(project_file_name, ".inp")),
       _database(std::move(database)),
@@ -273,7 +275,8 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
-      _knobs(std::move(knobs))
+      _knobs(std::move(knobs)),
+      _use_stream_mode(use_stream_mode)
 {
     // initialize phreeqc instance
     if (CreateIPhreeqc() != phreeqc_instance_id)
@@ -291,20 +294,67 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
             _database);
     }
 
-    if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
+    if (_use_stream_mode)
     {
-        OGS_FATAL(
-            "Failed to fly the flag for the specified file {:s} where phreeqc "
-            "will write output.",
-            _output->basic_output_setups.output_file);
+        // In stream mode, disable file-based selected output
+        // Output will be retrieved via GetSelectedOutputString() from memory
+        // buffer
+        if (SetSelectedOutputFileOn(phreeqc_instance_id, 0) != IPQ_OK)
+        {
+            OGS_FATAL(
+                "Failed to disable file output for selected output in stream "
+                "mode.");
+        }
+
+        // Enable in-memory buffering of selected output
+        if (SetSelectedOutputStringOn(phreeqc_instance_id, 1) != IPQ_OK)
+        {
+            OGS_FATAL(
+                "Failed to enable string buffering for selected output in "
+                "stream mode.");
+        }
+
+        INFO(
+            "PhreeqcIO stream mode: selected output file disabled, using "
+            "internal memory buffer.");
+    }
+    else
+    {
+        // In file mode, enable file-based selected output (current behavior)
+        if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
+        {
+            OGS_FATAL(
+                "Failed to fly the flag for the specified file {:s} where "
+                "phreeqc will write output.",
+                _output->basic_output_setups.output_file);
+        }
     }
 
     if (_dump)
     {
-        // Chemical composition of the aqueous solution of last time step will
-        // be written into .dmp file once the second function argument is set to
-        // one.
-        SetDumpFileOn(phreeqc_instance_id, 1);
+        if (_use_stream_mode)
+        {
+            // In stream mode, disable file-based dump output
+            // Dump data will be retrieved via GetDumpString() instead
+            INFO(
+                "PhreeqcIO is configured for stream-based data exchange: dump "
+                "file output disabled.");
+            SetDumpFileOn(phreeqc_instance_id, 0);
+        }
+        else
+        {
+            // In file mode, enable file-based dump output (current behavior)
+            // Chemical composition of the aqueous solution of last time step
+            // will be written into .dmp file
+            SetDumpFileOn(phreeqc_instance_id, 1);
+        }
+    }
+
+    if (_use_stream_mode)
+    {
+        INFO(
+            "PhreeqcIO is configured for stream-based data exchange: input "
+            "and output will be exchanged via in-memory strings.");
     }
 }
 
@@ -395,11 +445,52 @@ void PhreeqcIO::setChemicalSystemConcrete(
 
 void PhreeqcIO::executeSpeciationCalculation(double const dt)
 {
-    writeInputsToFile(dt);
+    if (_use_stream_mode)
+    {
+        // Stream-based data exchange
+        DBUG("Executing speciation with stream-based data exchange.");
 
-    callPhreeqc();
+        // Serialize input to stringstream
+        std::stringstream input_ss = writeInputsToStringStream(dt);
+        std::string input_content = input_ss.str();
 
-    readOutputsFromFile();
+        // Cache input for diagnostics
+        _last_input_content = input_content;
+
+        // Execute PhreeqC with string input
+        callPhreeqcWithString(input_content);
+
+        // Retrieve output from memory buffer
+        std::string output_content = retrieveSelectedOutputString();
+
+        // Cache output for diagnostics
+        _last_output_content = output_content;
+
+        // Parse output from string
+        readOutputsFromString(output_content);
+
+        // Handle dump data if surfaces/exchangers exist
+        if (_dump)
+        {
+            std::string dump_content = retrieveDumpString();
+
+            // Cache dump for diagnostics
+            _last_dump_content = dump_content;
+
+            setAqueousSolutionsPrevFromDumpString(dump_content);
+        }
+    }
+    else
+    {
+        // File-based data exchange (original behavior)
+        DBUG("Executing speciation with file-based data exchange.");
+
+        writeInputsToFile(dt);
+
+        callPhreeqc();
+
+        readOutputsFromFile();
+    }
 }
 
 double PhreeqcIO::getConcentration(
@@ -447,6 +538,44 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
     }
 
     in.close();
+}
+
+void PhreeqcIO::setAqueousSolutionsPrevFromDumpString(
+    std::string const& dump_content)
+{
+    if (!_dump)
+    {
+        return;
+    }
+
+    if (dump_content.empty())
+    {
+        // return if dump content is empty. This happens in
+        // the first time step when no dump data is available.
+        DBUG(
+            "Dump content is empty, skipping aqueous solutions initialization "
+            "from dump.");
+        return;
+    }
+
+    _dump->readDumpFromString(dump_content, _num_chemical_systems);
+}
+
+std::stringstream PhreeqcIO::writeInputsToStringStream(double const dt)
+{
+    DBUG("Serializing phreeqc inputs to string stream.");
+    std::stringstream ss;
+
+    ss << std::scientific
+       << std::setprecision(std::numeric_limits<double>::max_digits10);
+    ss << (*this << dt);
+
+    if (!ss)
+    {
+        OGS_FATAL("Failed in serializing phreeqc inputs to string.");
+    }
+
+    return ss;
 }
 
 void PhreeqcIO::writeInputsToFile(double const dt)
@@ -654,6 +783,47 @@ void PhreeqcIO::callPhreeqc() const
     }
 }
 
+void PhreeqcIO::callPhreeqcWithString(std::string const& input_content) const
+{
+    INFO("Phreeqc: Executing chemical calculation from string stream.");
+
+    if (RunString(phreeqc_instance_id, input_content.c_str()) != IPQ_OK)
+    {
+        OutputErrorString(phreeqc_instance_id);
+        OGS_FATAL(
+            "Failed in performing speciation calculation with string input.");
+    }
+}
+
+std::string PhreeqcIO::retrieveSelectedOutputString() const
+{
+    DBUG("Retrieving phreeqc results from internal memory buffer.");
+
+    const char* output_ptr = GetSelectedOutputString(phreeqc_instance_id);
+    if (!output_ptr)
+    {
+        DBUG("Selected output string is empty or unavailable.");
+        return "";
+    }
+
+    return std::string(output_ptr);
+}
+
+std::string PhreeqcIO::retrieveDumpString() const
+{
+    DBUG("Retrieving phreeqc dump data from internal buffer.");
+
+    const char* dump_ptr = GetDumpString(phreeqc_instance_id);
+    if (!dump_ptr)
+    {
+        // Dump might be empty in first time step
+        DBUG("Dump string is empty or unavailable.");
+        return "";
+    }
+
+    return std::string(dump_ptr);
+}
+
 void PhreeqcIO::readOutputsFromFile()
 {
     auto const& basic_output_setups = _output->basic_output_setups;
@@ -676,6 +846,24 @@ void PhreeqcIO::readOutputsFromFile()
     }
 
     in.close();
+}
+
+void PhreeqcIO::readOutputsFromString(std::string const& output_content)
+{
+    DBUG("Reading phreeqc results from string stream.");
+    std::istringstream in(output_content);
+
+    if (!in)
+    {
+        OGS_FATAL("Could not create string stream for phreeqc results.");
+    }
+
+    in >> *this;
+
+    if (!in)
+    {
+        OGS_FATAL("Error when reading phreeqc results from string stream.");
+    }
 }
 
 std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
