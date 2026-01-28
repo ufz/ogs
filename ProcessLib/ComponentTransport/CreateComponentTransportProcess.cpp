@@ -258,6 +258,7 @@ std::unique_ptr<Process> createComponentTransportProcess(
     auto lookup_table = ComponentTransport::createLookupTable(
         //! \ogs_file_param{prj__processes__process__ComponentTransport__tabular_file}
         config.getConfigParameterOptional<std::string>("tabular_file"),
+        config.projectDirectory(),
         process_variables);
 
     DBUG("Check the media properties of ComponentTransport process ...");

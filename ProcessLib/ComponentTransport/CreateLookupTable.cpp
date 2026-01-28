@@ -47,6 +47,7 @@ namespace ComponentTransport
 {
 std::unique_ptr<LookupTable> createLookupTable(
     std::optional<std::string> const tabular_file,
+    std::filesystem::path const& project_directory,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>> const&
         process_variables)
 {
@@ -56,7 +57,7 @@ std::unique_ptr<LookupTable> createLookupTable(
     }
 
     auto const path_to_tabular_file =
-        BaseLib::joinPaths(BaseLib::getProjectDirectory(), *tabular_file);
+        BaseLib::joinPaths(project_directory, *tabular_file);
 
     if (!BaseLib::IsFileExisting(path_to_tabular_file))
     {

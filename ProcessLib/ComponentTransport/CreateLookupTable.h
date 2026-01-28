@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <filesystem>
 #include <memory>
 #include <optional>
 #include <string>
@@ -18,6 +19,7 @@ struct LookupTable;
 
 std::unique_ptr<LookupTable> createLookupTable(
     std::optional<std::string> const tabular_file,
+    std::filesystem::path const& project_directory,
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>> const&
         process_variables);
 
