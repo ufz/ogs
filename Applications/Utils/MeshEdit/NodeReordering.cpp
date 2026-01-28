@@ -283,7 +283,8 @@ static const std::array<ElementReorderConfigBase,
  * according to OGS6 element definitions.
  */
 void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
-                      int const mesh_space_dimension, bool const forced)
+                      int const mesh_space_dimension, bool const forced,
+                      bool const volume_check)
 {
     std::size_t n_corrected_elements = 0;
 
@@ -324,27 +325,35 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
         std::vector<MeshLib::Node*> nodes(element->getNodes(),
                                           element->getNodes() + nElemNodes);
 
-        double const element_volume_origin = element->computeVolume();
-
-        element_config.reorder_element_nodes(*element, nodes);
-
-        // Ensure that the element volume did not change.
-        double const element_volume = element->computeVolume();
-        //  We use a fixed tolerance here because for very small elements the
-        //  machine epsilon might be too small.
-        if (std::fabs(element_volume - element_volume_origin) /
-                element_volume_origin >
-            34 * std::numeric_limits<double>::epsilon())
+        if (volume_check)
         {
-            OGS_FATAL(
-                "Reordering the nodes of element {:d} failed as its volume "
-                "changed from {:.20g} to {:.20g}, the relative difference is "
-                "{:.20g} and the threshold is {:.20g}.",
-                element->getID(), element_volume_origin, element_volume,
-                std::fabs(element_volume_origin - element_volume) /
-                    element_volume_origin,
-                34 * std::numeric_limits<double>::epsilon());
+            double const element_volume_origin = element->computeVolume();
+
+            element_config.reorder_element_nodes(*element, nodes);
+
+            // Ensure that the element volume did not change.
+            double const element_volume = element->computeVolume();
+            //  We use a fixed tolerance here because for very small elements
+            //  the machine epsilon might be too small.
+            if (std::fabs(element_volume - element_volume_origin) /
+                    element_volume_origin >
+                100 * std::numeric_limits<double>::epsilon())
+            {
+                OGS_FATAL(
+                    "Reordering the nodes of element {:d} failed as its volume "
+                    "changed from {:.20g} to {:.20g}, the relative difference "
+                    "is {:.20g} and the threshold is {:.20g}.",
+                    element->getID(), element_volume_origin, element_volume,
+                    std::fabs(element_volume_origin - element_volume) /
+                        element_volume_origin,
+                    100 * std::numeric_limits<double>::epsilon());
+            }
         }
+        else
+        {
+            element_config.reorder_element_nodes(*element, nodes);
+        }
+
         // Element::computeVolume() uses the element vertices to compute
         // the element volume, so the change of edge nodes are not
         // considered. Therefore, we need to additionally check the Jacobian
@@ -519,6 +528,14 @@ int main(int argc, char* argv[])
             "(http://www.opengeosys.org)",
         ' ', GitInfoLib::GitInfo::ogs_version);
 
+    TCLAP::SwitchArg no_volume_check_arg(
+        "", "no_volume_check",
+        "By default the volumes of original and reordered elements are "
+        "compared if they are numerically equal, i.e., relative volume "
+        "difference is smaller than a threshold. This switch disables the "
+        "volume comparison.");
+    cmd.add(no_volume_check_arg);
+
     std::vector<int> method_ids{0, 1, 2, 3};
     TCLAP::ValuesConstraint<int> allowed_values(method_ids);
     TCLAP::ValueArg<int> method_arg("m", "method",
@@ -566,7 +583,7 @@ int main(int argc, char* argv[])
             MeshLib::getSpaceDimension(mesh->getNodes());
         reverseNodeOrder(
             const_cast<std::vector<MeshLib::Element*>&>(mesh->getElements()),
-            mesh_space_dimension, forced);
+            mesh_space_dimension, forced, !no_volume_check_arg.isSet());
     }
     else if (method_arg.getValue() == 2)
     {
