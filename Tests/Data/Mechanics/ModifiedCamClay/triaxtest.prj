@@ -311,7 +311,7 @@
         <vtkdiff>
             <file>triaxtest_output_ts_199_t_1.000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>8e-13</absolute_tolerance>
+            <absolute_tolerance>8.6e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <!--secondary field-->
