@@ -9,11 +9,6 @@ set(_HEADER_EXCLUDE_PATTERNS
     "ui_.*\\.h$"
 )
 
-set(_VTK_FILENAME_PATTERNS
-    "MeshItem"
-    "ModelTreeItem"
-)
-
 # Determine if a header file should be included in standalone compilation checks
 function(_filter_header file_path out_var)
     # Only check header files
@@ -29,25 +24,6 @@ function(_filter_header file_path out_var)
             return()
         endif()
     endforeach()
-
-    # Exclude known VTK transitive includes by filename
-    foreach(pattern ${_VTK_FILENAME_PATTERNS})
-        if("${file_path}" MATCHES "${pattern}")
-            message(STATUS "Ignoring ${file_path} due to (transitive) vtk include.")
-            set(${out_var} FALSE PARENT_SCOPE)
-            return()
-        endif()
-    endforeach()
-
-    # Content-based exclusion: VTK includes
-    if(EXISTS "${file_path}")
-        file(READ "${file_path}" file_contents LIMIT 8000)
-        if("${file_contents}" MATCHES "#include <vtk")
-            message(STATUS "Ignoring ${file_path} due to vtk include.")
-            set(${out_var} FALSE PARENT_SCOPE)
-            return()
-        endif()
-    endif()
 
     set(${out_var} TRUE PARENT_SCOPE)
 endfunction()
