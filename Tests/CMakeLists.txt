@@ -151,10 +151,14 @@ target_precompile_headers(
 # cmake-format: off
 # Add make-target tests which runs the testrunner
 if(DEFINED ENV{CI} AND NOT OGS_COVERAGE)
-    set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
-        --gtest_shuffle --gtest_repeat=3)
+    string(TIMESTAMP _ts "%s")
+    math(EXPR _seed "(${_ts} % 99999) + 1")
+    message(STATUS "testrunner seed: ${_seed}")
+
+    list(APPEND TESTRUNNER_ADDITIONAL_ARGUMENTS
+        --gtest_random_seed=${_seed} --gtest_shuffle --gtest_repeat=3)
 endif()
-set(TESTRUNNER_ADDITIONAL_ARGUMENTS ${TESTRUNNER_ADDITIONAL_ARGUMENTS}
+list(APPEND TESTRUNNER_ADDITIONAL_ARGUMENTS
     -l warn
     --gtest_output=xml:./testrunner.xml)
 
