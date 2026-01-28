@@ -67,6 +67,10 @@ PropertyDataType SaturationVanGenuchten::dValue(
     ParameterLib::SpatialPosition const& /*pos*/, double const /*t*/,
     double const /*dt*/) const
 {
+    if (variable == Variable::temperature)
+    {
+        return 0.;
+    }
     if (variable != Variable::capillary_pressure)
     {
         OGS_FATAL(
