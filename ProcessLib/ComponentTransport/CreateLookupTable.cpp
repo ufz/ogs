@@ -57,7 +57,7 @@ std::unique_ptr<LookupTable> createLookupTable(
     }
 
     auto const path_to_tabular_file =
-        BaseLib::joinPaths(project_directory, *tabular_file);
+        BaseLib::joinPaths(project_directory.string(), *tabular_file);
 
     if (!BaseLib::IsFileExisting(path_to_tabular_file))
     {

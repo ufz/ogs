@@ -247,7 +247,7 @@ std::filesystem::path ConfigTree::projectDirectory() const
 
 void ConfigTree::error(const std::string& message) const
 {
-    onerror_(filepath_, path_, message);
+    onerror_(filepath_.string(), path_, message);
     OGS_FATAL(
         "ConfigTree: The error handler does not break out of the normal "
         "control flow.");
@@ -255,7 +255,7 @@ void ConfigTree::error(const std::string& message) const
 
 void ConfigTree::warning(const std::string& message) const
 {
-    onwarning_(filepath_, path_, message);
+    onwarning_(filepath_.string(), path_, message);
 }
 
 void ConfigTree::onerror(const std::string& filename, const std::string& path,

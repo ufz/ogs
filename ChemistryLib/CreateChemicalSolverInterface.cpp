@@ -40,7 +40,7 @@ std::string parseDatabasePath(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__chemical_system__database}
     auto const database = config.getConfigParameter<std::string>("database");
     auto path_to_database =
-        BaseLib::joinPaths(config.projectDirectory(), database);
+        BaseLib::joinPaths(config.projectDirectory().string(), database);
 
     if (!BaseLib::IsFileExisting(path_to_database))
     {
@@ -99,9 +99,10 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
     auto const& exchangers = chemical_system->exchangers;
 
     // dump
-    auto const project_file_name = BaseLib::joinPaths(
-        output_directory,
-        BaseLib::extractBaseNameWithoutExtension(config.projectFilePath()));
+    auto const project_file_name =
+        BaseLib::joinPaths(output_directory,
+                           BaseLib::extractBaseNameWithoutExtension(
+                               config.projectFilePath().string()));
     // old dump file is deleted if it exists
     auto dump = surface.empty() && exchangers.empty()
                     ? nullptr

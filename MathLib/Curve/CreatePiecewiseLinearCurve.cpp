@@ -34,11 +34,11 @@ PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
             //! \ogs_file_param{curve__values}
             config.getConfigParameter<std::string>("values");
 
-        x = BaseLib::readDoublesFromBinaryFile(coords_file_name,
-                                               config.projectDirectory());
+        x = BaseLib::readDoublesFromBinaryFile(
+            coords_file_name, config.projectDirectory().string());
 
-        y = BaseLib::readDoublesFromBinaryFile(values_file_name,
-                                               config.projectDirectory());
+        y = BaseLib::readDoublesFromBinaryFile(
+            values_file_name, config.projectDirectory().string());
     }
     else
     {

@@ -226,7 +226,7 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
             config.getConfigParameterOptional<std::string>("geometry"))
         {
             readGeometry(*geometry_file_name, geoObjects, directory,
-                         config.projectDirectory());
+                         config.projectDirectory().string());
         }
     }
     else
@@ -239,7 +239,7 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
             //! \ogs_file_param{prj__geometry}
             config.getConfigParameter<std::string>("geometry");
         readGeometry(geometry_file_name, geoObjects, directory,
-                     config.projectDirectory());
+                     config.projectDirectory().string());
     }
 
     if (!geoObjects.getPoints().empty() || !geoObjects.getPolylines().empty() ||
@@ -372,7 +372,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         // add (global) variables
         auto globals = py::dict(scope);
         globals["ogs_prj_directory"] =
-            std::string{project_config.projectDirectory()};
+            project_config.projectDirectory().string();
         globals["ogs_mesh_directory"] = mesh_directory;
         globals["ogs_script_directory"] = script_directory;
         try
