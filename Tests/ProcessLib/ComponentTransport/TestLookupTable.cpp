@@ -78,7 +78,8 @@ std::unique_ptr<LookupTable> createTestLookupTable(const char xml[])
     std::optional<std::string> file_name(TestInfoLib::TestInfo::data_path +
                                          "/FileIO/sparse_table.txt");
 
-    return createLookupTable(file_name, process_variables);
+    return createLookupTable(file_name, BaseLib::extractPath(*file_name),
+                             process_variables);
 }
 
 }  // namespace
