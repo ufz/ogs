@@ -31,8 +31,9 @@ target_include_directories(
     QtDiagramView PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(
-    QtDiagramView PRIVATE BaseLib GeoLib QtBase DataHolderLib Qt5::Gui
+target_link_libraries(QtDiagramView
+    PUBLIC Qt5::Gui Qt5::Widgets
+    PRIVATE BaseLib GeoLib QtBase DataHolderLib
 )
 
 add_autogen_include(QtDiagramView)

@@ -2,7 +2,7 @@ get_source_files(SOURCES)
 ogs_add_library(ParameterLib ${SOURCES})
 
 target_link_libraries(
-    ParameterLib PUBLIC MathLib PRIVATE BaseLib exprtk MeshLib
+    ParameterLib PUBLIC MathLib exprtk PRIVATE BaseLib MeshLib
 )
 
 target_precompile_headers(ParameterLib PRIVATE [["BaseLib/Error.h"]]

@@ -14,8 +14,9 @@ target_include_directories(
     QtStratView PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
-target_link_libraries(
-    QtStratView PRIVATE BaseLib GeoLib DataHolderLib QtBase Qt5::Gui
+target_link_libraries(QtStratView
+    PUBLIC Qt5::Widgets GeoLib
+    PRIVATE BaseLib DataHolderLib QtBase Qt5::Gui
 )
 add_autogen_include(QtStratView)
 
