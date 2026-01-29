@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include "MeshLib/Elements/Pyramid.h"
 #include "NumLib/Fem/CoordinatesMapping/NaturalNodeCoordinates.h"
 
 namespace NumLib
@@ -17,7 +18,21 @@ class ReferenceElement
         constexpr auto natural_node_coordss =
             NumLib::NaturalCoordinates<MeshElementType>::coordinates;
 
-        return {natural_node_coordss.begin(), natural_node_coordss.end()};
+        // natural and real node coordinates coincide on most reference elements
+        std::vector<MeshLib::Node> real_node_coords{
+            natural_node_coordss.begin(), natural_node_coordss.end()};
+
+        if constexpr (std::is_same_v<MeshElementType, MeshLib::Pyramid13>)
+        {
+            // on pyramid reference elements some natural and real coordinates
+            // differ
+            real_node_coords[9] = {-0.5, -0.5, 0};
+            real_node_coords[10] = {0.5, -0.5, 0};
+            real_node_coords[11] = {0.5, 0.5, 0};
+            real_node_coords[12] = {-0.5, 0.5, 0};
+        }
+
+        return real_node_coords;
     }
 
     static MeshElementType createElement(

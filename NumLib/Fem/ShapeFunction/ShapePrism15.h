@@ -33,7 +33,8 @@ public:
     template <class T_X, class T_N>
     static void computeGradShapeFunction(const T_X& x, T_N& dN);
 
-    static constexpr std::array reference_element_centre = {0.5, 0.5, 0.0};
+    static constexpr std::array reference_element_centre = {1. / 3., 1. / 3.,
+                                                            0.0};
 
     using MeshElement = MeshLib::Prism15;
     static const unsigned DIM = MeshElement::dimension;
