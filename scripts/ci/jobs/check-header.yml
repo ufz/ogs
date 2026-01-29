@@ -1,8 +1,13 @@
 check header:
   stage: check
   allow_failure: true
-  extends:
-    - .rules-master-manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - "**/*.h"
+        - "**/CMakeLists.txt"
+    - when: manual
   needs: [meta]
   tags: [envinf]
   variables:
