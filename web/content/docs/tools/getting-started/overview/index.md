@@ -17,7 +17,7 @@ category = "User"
 Here is an overview of the currently available command line tools, that might help you to construct your OpenGeoSys model. GUI-based tools are available too:
 
 - OpenGeoSys Data Explorer -- [Manual](https://gitlab.opengeosys.org/ogs/documentation/data_explorer_manual/-/jobs/artifacts/master/raw/ogsde-man.pdf?job=build) / [Download](/releases)
-- [GINA by BGR](https://teambeam.bgr.de/my/drive/folder/68)
+- [GINA by BGR](https://teambeam.bgr.de/my/archive/folder/68)
 
 ----
 
