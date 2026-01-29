@@ -10,3 +10,4 @@ include:
   - local: "/scripts/ci/jobs/jupyter.yml"
   - local: "/scripts/ci/jobs/code-quality.yml"
   - local: "/scripts/ci/jobs/build-docs.yml"
+  - local: "/scripts/ci/jobs/check-header.yml"
