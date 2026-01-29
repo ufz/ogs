@@ -1,6 +1,8 @@
 {{ $src := .Get "src" }}
 {{ with .Page.Resources.GetMatch $src }}
   {{ $src = .Permalink }}
+{{ else }}
+  {{ $src = absURL (strings.TrimPrefix "/" $src) }}
 {{ end }}
 
 <figure{{ with .Get "class" }} class="{{ . }}"{{ end }}>
@@ -14,6 +16,7 @@
          {{- with .Get "width" }} width="{{ . }}"{{ end -}}
          {{- with .Get "height" }} height="{{ . }}"{{ end -}}
          {{- with .Get "loading" }} loading="{{ . }}"{{ end -}}
+         {{- with .Get "img-class" }} class="{{ . }}" {{ end -}}
     /><!-- Closing img tag -->
     {{- if .Get "link" }}</a>{{ end -}}
     {{- if or (or (.Get "title") (.Get "caption")) (.Get "attr") -}}
