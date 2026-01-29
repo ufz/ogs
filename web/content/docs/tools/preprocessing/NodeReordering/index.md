@@ -33,6 +33,16 @@ Where:
    -m <0|1|2|3>,  --method <0|1|2|3>
      reordering method selection
 
+   --no_volume_check
+     By default the volumes of original and reordered elements are
+     compared if they are numerically equal, i.e., relative volume
+     difference is smaller than a threshold. This switch disables the
+     volume comparison.
+
+   -l <none|error|warn|info|debug|all>,  --log-level <none|error|warn|info|
+      debug|all>
+     the verbosity of logging messages
+
    --,  --ignore_rest
      Ignores the rest of the labeled arguments following this flag.
 
