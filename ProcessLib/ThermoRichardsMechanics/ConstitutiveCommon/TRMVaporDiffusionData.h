@@ -37,5 +37,8 @@ struct TRMVaporDiffusionData
         M_pT_X_NTN = 0;
     }
 };
+// Explicit instantiation declarations to avoid multiple-definition issues.
+extern template struct TRMVaporDiffusionData<2>;
+extern template struct TRMVaporDiffusionData<3>;
 
 }  // namespace ProcessLib::ThermoRichardsMechanics

@@ -17,5 +17,8 @@ struct TRMHeatStorageAndFluxData
     GlobalDimVector<DisplacementDim>
         advective_heat_flux_contribution_to_K_liquid;
 };
+// Explicit instantiation declarations to avoid multiple-definition issues.
+extern template struct TRMHeatStorageAndFluxData<2>;
+extern template struct TRMHeatStorageAndFluxData<3>;
 
 }  // namespace ProcessLib::ThermoRichardsMechanics

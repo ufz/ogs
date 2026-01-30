@@ -14,5 +14,8 @@ struct ThermoOsmosisData
     GlobalDimMatrix<DisplacementDim> K_Tp_Laplace;
     GlobalDimVector<DisplacementDim> seepage_velocity_contribution;
 };
+// Explicit instantiation declarations to avoid multiple-definition issues.
+extern template struct ThermoOsmosisData<2>;
+extern template struct ThermoOsmosisData<3>;
 
 }  // namespace ProcessLib::ThermoRichardsMechanics

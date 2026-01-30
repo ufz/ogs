@@ -22,5 +22,8 @@ struct EqPData
 
     double storage_p_a_p_X_NTN = nan;
 };
+// Explicit instantiation declarations to avoid multiple-definition issues.
+extern template struct EqPData<2>;
+extern template struct EqPData<3>;
 
 }  // namespace ProcessLib::ThermoRichardsMechanics
