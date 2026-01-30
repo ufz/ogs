@@ -31,7 +31,6 @@ ConfigTree::ConfigTree(ConfigTree::PTree&& top_level_tree,
                        Callback warning_cb)
     : top_level_tree_(std::make_shared<PTree>(std::move(top_level_tree))),
       tree_(top_level_tree_.get()),
-      filename_(std::move(filename)),
       onerror_(std::move(error_cb)),
       onwarning_(std::move(warning_cb))
 {
@@ -43,6 +42,29 @@ ConfigTree::ConfigTree(ConfigTree::PTree&& top_level_tree,
     {
         OGS_FATAL("ConfigTree: No valid warning handler provided.");
     }
+
+    std::filesystem::path const filepath{filename};
+    std::error_code ec;
+    auto absolute_filepath = absolute(filepath, ec);
+    if (ec)
+    {
+        DBUG(
+            "ConfigTree: could not get the absolute path of '{}'. Using the "
+            "path unmodified. Error code = {}",
+            filepath.string(), ec.value());
+        absolute_filepath = filepath;
+    }
+
+    // store absolute path s.t. we are safe if somebody changes the working
+    // directory
+    filepath_ = absolute_filepath;
+    DBUG("ConfigTree: file path is {}.", filepath_.string());
+
+    if (!exists(projectDirectory()))
+    {
+        DBUG("ConfigTree: The project directory '{}' does not exist.",
+             projectDirectory().string());
+    }
 }
 
 ConfigTree::ConfigTree(PTree const& tree, ConfigTree const& parent,
@@ -50,7 +72,7 @@ ConfigTree::ConfigTree(PTree const& tree, ConfigTree const& parent,
     : top_level_tree_(parent.top_level_tree_),
       tree_(&tree),
       path_(joinPaths(parent.path_, root)),
-      filename_(parent.filename_),
+      filepath_(parent.filepath_),
       onerror_(parent.onerror_),
       onwarning_(parent.onwarning_)
 {
@@ -61,7 +83,7 @@ ConfigTree::ConfigTree(ConfigTree&& other)
     : top_level_tree_(std::move(other.top_level_tree_)),
       tree_(other.tree_),
       path_(std::move(other.path_)),
-      filename_(std::move(other.filename_)),
+      filepath_(std::move(other.filepath_)),
       visited_params_(std::move(other.visited_params_)),
       have_read_data_(other.have_read_data_),
       onerror_(std::move(other.onerror_)),
@@ -99,7 +121,7 @@ ConfigTree& ConfigTree::operator=(ConfigTree&& other)
     tree_ = other.tree_;
     other.tree_ = nullptr;
     path_ = std::move(other.path_);
-    filename_ = std::move(other.filename_);
+    filepath_ = std::move(other.filepath_);
     visited_params_ = std::move(other.visited_params_);
     have_read_data_ = other.have_read_data_;
     onerror_ = std::move(other.onerror_);
@@ -218,9 +240,14 @@ void ConfigTree::ignoreConfigParameterAll(const std::string& param) const
     }
 }
 
+std::filesystem::path ConfigTree::projectDirectory() const
+{
+    return filepath_.parent_path();
+}
+
 void ConfigTree::error(const std::string& message) const
 {
-    onerror_(filename_, path_, message);
+    onerror_(filepath_.string(), path_, message);
     OGS_FATAL(
         "ConfigTree: The error handler does not break out of the normal "
         "control flow.");
@@ -228,7 +255,7 @@ void ConfigTree::error(const std::string& message) const
 
 void ConfigTree::warning(const std::string& message) const
 {
-    onwarning_(filename_, path_, message);
+    onwarning_(filepath_.string(), path_, message);
 }
 
 void ConfigTree::onerror(const std::string& filename, const std::string& path,

@@ -17,7 +17,6 @@ struct MinMaxPoints;
 namespace IO
 {
 GeoLib::NamedRaster readRaster(BaseLib::ConfigTree const& raster_config,
-                               std::string const& raster_directory,
                                GeoLib::MinMaxPoints const& min_max_points);
 }  // namespace IO
 }  // namespace GeoLib

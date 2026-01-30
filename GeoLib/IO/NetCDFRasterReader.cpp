@@ -214,7 +214,6 @@ GeoLib::NamedRaster readRasterFromFile(
 namespace GeoLib::IO
 {
 GeoLib::NamedRaster readRaster(BaseLib::ConfigTree const& raster_config,
-                               std::string const& raster_directory,
                                GeoLib::MinMaxPoints const& min_max_points)
 {
     auto const file_name =
@@ -226,7 +225,7 @@ GeoLib::NamedRaster readRaster(BaseLib::ConfigTree const& raster_config,
     auto const dimension =
         //! \ogs_file_param{prj__rasters__raster__dimension}
         raster_config.getConfigParameter<std::size_t>("dimension", 1);
-    return readRasterFromFile(raster_directory, file_name, variable_name,
-                              dimension, min_max_points);
+    return readRasterFromFile(raster_config.projectDirectory(), file_name,
+                              variable_name, dimension, min_max_points);
 }
 }  // namespace GeoLib::IO

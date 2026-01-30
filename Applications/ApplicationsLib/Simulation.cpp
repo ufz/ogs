@@ -82,9 +82,8 @@ void Simulation::initializeDataStructures(
     project_config.ignoreConfigParameter("insitu");
 #endif
 
-    project_data = std::make_unique<ProjectData>(project_config,
-                                                 BaseLib::getProjectDirectory(),
-                                                 outdir, mesh_dir, script_dir);
+    project_data = std::make_unique<ProjectData>(project_config, outdir,
+                                                 mesh_dir, script_dir);
 
     INFO("Initialize processes.");
     for (auto& p : project_data->getProcesses())

@@ -46,7 +46,7 @@ public:
 
             // check that filename is passed around properly, especially with
             // move construction/assignment
-            EXPECT_EQ("FILENAME", filename);
+            EXPECT_EQ(std::filesystem::current_path() / "FILENAME", filename);
 
             DBUG("error <{:s}> : {:s}", path, message);
             _error = true;
@@ -64,7 +64,7 @@ public:
 
             // check that filename is passed around properly, especially with
             // move construction/assignment
-            EXPECT_EQ("FILENAME", filename);
+            EXPECT_EQ(std::filesystem::current_path() / "FILENAME", filename);
 
             DBUG("warning <{:s}> : {:s}", path, message);
             _warning = true;

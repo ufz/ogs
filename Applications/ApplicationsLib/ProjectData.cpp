@@ -204,8 +204,7 @@ std::unique_ptr<MeshLib::Mesh> readSingleMesh(
 }
 
 std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
-    BaseLib::ConfigTree const& config, std::string const& directory,
-    std::string const& project_directory)
+    BaseLib::ConfigTree const& config, std::string const& directory)
 {
     std::vector<std::unique_ptr<MeshLib::Mesh>> meshes;
 
@@ -227,7 +226,7 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
             config.getConfigParameterOptional<std::string>("geometry"))
         {
             readGeometry(*geometry_file_name, geoObjects, directory,
-                         project_directory);
+                         config.projectDirectory().string());
         }
     }
     else
@@ -240,7 +239,7 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
             //! \ogs_file_param{prj__geometry}
             config.getConfigParameter<std::string>("geometry");
         readGeometry(geometry_file_name, geoObjects, directory,
-                     project_directory);
+                     config.projectDirectory().string());
     }
 
     if (!geoObjects.getPoints().empty() || !geoObjects.getPolylines().empty() ||
@@ -293,7 +292,7 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 }
 
 std::vector<GeoLib::NamedRaster> readRasters(
-    BaseLib::ConfigTree const& config, std::string const& raster_directory,
+    BaseLib::ConfigTree const& config,
     GeoLib::MinMaxPoints const& min_max_points)
 {
     INFO("readRasters ...");
@@ -307,11 +306,8 @@ std::vector<GeoLib::NamedRaster> readRasters(
         auto const configs = optional_rasters->getConfigSubtreeList("raster");
         std::transform(
             configs.begin(), configs.end(), std::back_inserter(named_rasters),
-            [&raster_directory, &min_max_points](auto const& raster_config)
-            {
-                return GeoLib::IO::readRaster(raster_config, raster_directory,
-                                              min_max_points);
-            });
+            [&min_max_points](auto const& raster_config)
+            { return GeoLib::IO::readRaster(raster_config, min_max_points); });
     }
     INFO("readRasters done");
     return named_rasters;
@@ -342,12 +338,11 @@ std::vector<GeoLib::NamedRaster> readRasters(
 ProjectData::ProjectData() = default;
 
 ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
-                         std::string const& project_directory,
                          std::string const& output_directory,
                          std::string const& mesh_directory,
                          [[maybe_unused]] std::string const& script_directory)
-    : _mesh_vec(readMeshes(project_config, mesh_directory, project_directory)),
-      _named_rasters(readRasters(project_config, project_directory,
+    : _mesh_vec(readMeshes(project_config, mesh_directory)),
+      _named_rasters(readRasters(project_config,
                                  GeoLib::AABB(_mesh_vec[0]->getNodes().begin(),
                                               _mesh_vec[0]->getNodes().end())
                                      .getMinMaxPoints()))
@@ -376,7 +371,8 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
         py::object scope = py::module::import("__main__").attr("__dict__");
         // add (global) variables
         auto globals = py::dict(scope);
-        globals["ogs_prj_directory"] = project_directory;
+        globals["ogs_prj_directory"] =
+            project_config.projectDirectory().string();
         globals["ogs_mesh_directory"] = mesh_directory;
         globals["ogs_script_directory"] = script_directory;
         try
@@ -438,7 +434,7 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
     //! \ogs_file_param{prj__processes}
     parseProcesses(project_config.getConfigSubtree("processes"),
-                   project_directory, output_directory,
+                   output_directory,
                    std::move(chemical_solver_interface));
 
     //! \ogs_file_param{prj__nonlinear_solvers}
@@ -642,12 +638,10 @@ ProjectData::parseChemicalSolverInterface(
 
 void ProjectData::parseProcesses(
     BaseLib::ConfigTree const& processes_config,
-    std::string const& project_directory,
     std::string const& output_directory,
     [[maybe_unused]] std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
         chemical_solver_interface)
 {
-    (void)project_directory;  // to avoid compilation warning
     (void)output_directory;   // to avoid compilation warning
 
     DBUG("Reading processes:");

@@ -118,15 +118,13 @@ CommandLineArguments parseCommandLineArguments(int argc, char* argv[],
     cli_args.reference_path_is_set = reference_path_arg.isSet();
     cli_args.project = project_arg.getValue();
 
-    BaseLib::setProjectDirectory(BaseLib::extractPath(cli_args.project));
-
     cli_args.xml_patch_file_names = xml_patch_files_arg.getValue();
+    auto const project_dir = BaseLib::extractPath(cli_args.project);
     cli_args.outdir = outdir_arg.getValue();
-    cli_args.mesh_dir = mesh_dir_arg.getValue().empty()
-                            ? BaseLib::getProjectDirectory()
-                            : mesh_dir_arg.getValue();
+    cli_args.mesh_dir =
+        mesh_dir_arg.getValue().empty() ? project_dir : mesh_dir_arg.getValue();
     cli_args.script_dir = script_dir_arg.getValue().empty()
-                              ? BaseLib::getProjectDirectory()
+                              ? project_dir
                               : script_dir_arg.getValue();
     cli_args.nonfatal = nonfatal_arg.getValue();
     cli_args.log_parallel = log_parallel.getValue();
