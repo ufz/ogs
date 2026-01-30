@@ -109,9 +109,7 @@ environment-pass = [
 # maybe this should be moved to CMake logic, i.e. disabling both features on win
 [tool.cibuildwheel.windows.config-settings]
 "cmake.define.OGS_USE_MFRONT" = "OFF"
-# Generator needs to be set here, CMAKE_GENERATOR env var does not work.
-# Ninja generator does not select  the host64 compiler.
-"cmake.args" = "-G;Visual Studio 17 2022;--preset;wheel"
+"cmake.args" = "-G;Ninja;--preset;wheel"
 
 [tool.cibuildwheel.macos]
 # Passing MACOSX_DEPLOYMENT_TARGET with a regular environment variable
