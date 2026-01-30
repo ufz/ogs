@@ -12,13 +12,7 @@ weight = 1080
 ## Publication procedure
 
 - Update merge request template (settings / merge_requests) to point to a new changelog wiki page
-- Run `python scripts/python/do-release.py`
-- Create new netlify site (in an empty directory)
-  <!-- vale off -->
-  - `netlify init`
-  - `# [ENTER]`
-  - `# ogs-doxygen-[TAG (- separated instead of .)]`
-  <!-- vale on -->
+- Run `python scripts/python/do-release.py [NEW_VERSION]`
 - Update `CITATION.cff`, create a commit, tag and push (see script output)
 - A new release is automatically created on GitLab
   - Fill in the release notes from the Wiki
