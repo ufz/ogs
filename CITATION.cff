@@ -185,6 +185,9 @@ authors:
     - given-names: Eric
       family-names: Simo
       affiliation: BGE TECHNOLOGY GmbH
+    - given-names: Noor
+      family-names: Hasan
+      affiliation: Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Vanessa
       family-names: Montoya
       orcid: "https://orcid.org/0000-0002-4751-3597"
@@ -271,7 +274,16 @@ authors:
     - given-names: Devansh
       family-names: Shukla
       affiliation: >-
-          BHelmholtz Centre for Environmental Research -- UFZ
+          Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Linus
+      family-names: Walter
+      orcid: "https://orcid.org/0000-0002-6686-9556"
+      affiliation: >-
+          Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Kunqing
+      family-names: Jiang
+      affiliation: >-
+          Helmholtz Centre for Environmental Research -- UFZ
 identifiers:
     - type: doi
       value: 10.5281/zenodo.17162299

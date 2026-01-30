@@ -6,6 +6,10 @@
 
 ----
 
+## 6.5.7
+
+[Changelog for OpenGeoSys 6.5.7](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.7)
+
 ## 6.5.6
 
 [Changelog for OpenGeoSys 6.5.6](https://gitlab.opengeosys.org/ogs/ogs/-/wikis/Release-notes-6.5.6)
