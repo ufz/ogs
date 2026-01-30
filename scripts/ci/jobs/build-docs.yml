@@ -85,8 +85,6 @@ deploy docs:
   tags: [envinf, shell]
   variables:
     GIT_STRATEGY: none # no checkout
-  before_script:
-    - npm install -g netlify-cli
   script:
     - rm -rf ogs-doxygen-web
     - git config --global user.name "GitLab CI"
@@ -114,6 +112,7 @@ deploy doxysearch:
   script:
     - |
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+        mkdir -p /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH
         cp build/searchdata.xml /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
         doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
       else
