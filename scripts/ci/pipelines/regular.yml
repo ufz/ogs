@@ -8,7 +8,6 @@ include:
   - local: "/scripts/ci/jobs/jupyter.yml"
   - local: "/scripts/ci/jobs/code-quality.yml"
   - local: "/scripts/ci/jobs/code-coverage.yml"
-  - local: "/scripts/ci/jobs/check-header.yml"
   - local: "/scripts/ci/jobs/include-what-you-use.yml"
   - local: "/scripts/ci/jobs/clang-sanitizer.yml"
   - local: "/scripts/ci/jobs/clang-tidy.yml"

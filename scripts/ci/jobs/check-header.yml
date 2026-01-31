@@ -1,8 +1,13 @@
 check header:
   stage: check
   allow_failure: true
-  extends:
-    - .rules-master-manual
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      changes:
+        - "**/*.h"
+        - "**/CMakeLists.txt"
+    - when: manual
   needs: [meta]
   tags: [envinf]
   variables:
@@ -10,12 +15,11 @@ check header:
     CMAKE_ARGS: >-
       -DOGS_CHECK_HEADER_COMPILATION=ON
       -DOGS_BUILD_GUI=ON
-      -DBUILD_SHARED_LIBS=OFF
       -DOGS_BUILD_VTK=ON
   script:
     - rm -rf $BUILD_DIR
     - mkdir -p $BUILD_DIR
-    - cd $BUILD_DIR
     - set +e
-    - cmake ../../ogs --preset release-petsc $CMAKE_ARGS || STATUS=$?
+    - cmake -B $BUILD_DIR --preset release-petsc $CMAKE_ARGS
+    - ninja -C $BUILD_DIR -k0 check-headers || STATUS=$?
     - exit $STATUS
