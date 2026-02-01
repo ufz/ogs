@@ -105,8 +105,21 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
     // Set the values of the selected entries of _r_neq, which are associated
     // with the equations that do not need initial residual compensation, to
     // zero.
-    const auto selected_global_indices =
+    auto selected_global_indices =
         _equation_system->getIndicesOfResiduumWithoutInitialCompensation();
+
+#ifdef USE_PETSC
+    // Ghost entry with global index 0 is encoded as -global_size
+    // After abs(), it appears as global_size and must be converted back to 0
+    auto const global_size = _r_neq->size();
+    for (auto& idx : selected_global_indices)
+    {
+        if (idx == global_size)
+        {
+            idx = 0;
+        }
+    }
+#endif
 
     std::vector<double> zero_entries(selected_global_indices.size(), 0.0);
     _r_neq->set(selected_global_indices, zero_entries);
@@ -331,10 +344,23 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
     // Set the values of the selected entries of _r_neq, which are associated
     // with the equations that do not need initial residual compensation, to
     // zero.
-    const auto selected_global_indices =
+    auto selected_global_indices =
         _equation_system->getIndicesOfResiduumWithoutInitialCompensation();
-    std::vector<double> zero_entries(selected_global_indices.size(), 0.0);
 
+#ifdef USE_PETSC
+    // Ghost entry with global index 0 is encoded as -global_size
+    // After abs(), it appears as global_size and must be converted back to 0
+    auto const global_size = _r_neq->size();
+    for (auto& idx : selected_global_indices)
+    {
+        if (idx == global_size)
+        {
+            idx = 0;
+        }
+    }
+#endif
+
+    std::vector<double> zero_entries(selected_global_indices.size(), 0.0);
     _r_neq->set(selected_global_indices, zero_entries);
     _equation_system->setReleaseNodalForces(_r_neq, process_id);
 
