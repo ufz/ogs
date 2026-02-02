@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iomanip>
 #include <numeric>
+#include <sstream>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTreeUtil.h"
@@ -42,6 +43,108 @@ struct overloaded : Ts...
 };
 template <class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
+
+// Helper to iterate lines in a string_view without copying
+class StringViewLineIterator
+{
+public:
+    StringViewLineIterator(std::string_view text, std::size_t pos = 0)
+        : text_(text), pos_(pos)
+    {
+    }
+
+    bool getline(std::string_view& line)
+    {
+        if (pos_ >= text_.size())
+        {
+            return false;
+        }
+
+        if (const auto newline_pos = text_.find('\n', pos_);
+            newline_pos == std::string_view::npos)
+        {
+            line = text_.substr(pos_);
+            pos_ = text_.size();
+        }
+        else
+        {
+            line = text_.substr(pos_, newline_pos - pos_);
+            pos_ = newline_pos + 1;
+        }
+
+        // Remove trailing \r if present (Windows line endings)
+        if (!line.empty() && line.back() == '\r')
+        {
+            line.remove_suffix(1);
+        }
+
+        return true;
+    }
+
+    void skip(int num_lines)
+    {
+        for (int i = 0; i < num_lines && pos_ < text_.size(); ++i)
+        {
+            const auto newline_pos = text_.find('\n', pos_);
+            pos_ = (newline_pos == std::string_view::npos) ? text_.size()
+                                                           : newline_pos + 1;
+        }
+    }
+
+private:
+    std::string_view text_;
+    std::size_t pos_;
+};
+
+std::vector<std::string> extractItemsFromLine(std::string const& line)
+{
+    std::vector<std::string> items;
+    std::string line_str(line);
+    boost::trim_if(line_str, boost::is_any_of("\t "));
+    boost::algorithm::split(items, line_str, boost::is_any_of("\t "),
+                            boost::token_compress_on);
+    return items;
+}
+
+std::vector<double> parseAndFilterChemicalData(
+    std::string const& line,
+    std::vector<int> const& dropped_item_ids,
+    std::size_t chemical_system_id)
+{
+    std::vector<double> accepted_items;
+    std::vector<std::string> const items = extractItemsFromLine(line);
+    for (int item_id = 0; item_id < static_cast<int>(items.size()); ++item_id)
+    {
+        if (std::find(dropped_item_ids.begin(), dropped_item_ids.end(),
+                      item_id) != dropped_item_ids.end())
+        {
+            continue;
+        }
+        double value;
+        try
+        {
+            value = std::stod(items[item_id]);
+        }
+        catch (const std::invalid_argument& e)
+        {
+            OGS_FATAL(
+                "Invalid argument. Could not convert string '{:s}' to "
+                "double for chemical system {:d}, column {:d}. "
+                "Exception '{:s}' was thrown.",
+                items[item_id], chemical_system_id + 1, item_id, e.what());
+        }
+        catch (const std::out_of_range& e)
+        {
+            OGS_FATAL(
+                "Out of range error. Could not convert string "
+                "'{:s}' to double for chemical system {:d}, column "
+                "{:d}. Exception '{:s}' was thrown.",
+                items[item_id], chemical_system_id + 1, item_id, e.what());
+        }
+        accepted_items.push_back(value);
+    }
+    return accepted_items;
+}
 
 template <typename DataBlock>
 std::ostream& operator<<(std::ostream& os,
@@ -264,7 +367,8 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
                      std::unique_ptr<UserPunch>&& user_punch,
                      std::unique_ptr<Output>&& output,
                      std::unique_ptr<Dump>&& dump,
-                     Knobs&& knobs)
+                     Knobs&& knobs,
+                     bool use_stream_mode)
     : ChemicalSolverInterface(mesh, linear_solver),
       _phreeqc_input_file(specifyFileName(project_file_name, ".inp")),
       _database(std::move(database)),
@@ -273,7 +377,8 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
-      _knobs(std::move(knobs))
+      _knobs(std::move(knobs)),
+      _use_stream_mode(use_stream_mode)
 {
     // initialize phreeqc instance
     if (CreateIPhreeqc() != phreeqc_instance_id)
@@ -291,20 +396,75 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
             _database);
     }
 
-    if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
+    if (_use_stream_mode)
     {
-        OGS_FATAL(
-            "Failed to fly the flag for the specified file {:s} where phreeqc "
-            "will write output.",
-            _output->basic_output_setups.output_file);
+        // In stream mode, disable file-based selected output
+        // Output will be retrieved via GetSelectedOutputString() from memory
+        // buffer
+        if (SetSelectedOutputFileOn(phreeqc_instance_id, 0) != IPQ_OK)
+        {
+            OGS_FATAL(
+                "Failed to disable file output for selected output in stream "
+                "mode.");
+        }
+
+        // Enable in-memory buffering of selected output
+        if (SetSelectedOutputStringOn(phreeqc_instance_id, 1) != IPQ_OK)
+        {
+            OGS_FATAL(
+                "Failed to enable string buffering for selected output in "
+                "stream mode.");
+        }
+
+        INFO(
+            "PhreeqcIO stream mode: selected output file disabled, using "
+            "internal memory buffer.");
+    }
+    else
+    {
+        // In file mode, enable file-based selected output (current behavior)
+        if (SetSelectedOutputFileOn(phreeqc_instance_id, 1) != IPQ_OK)
+        {
+            OGS_FATAL(
+                "Failed to fly the flag for the specified file {:s} where "
+                "phreeqc will write output.",
+                _output->basic_output_setups.output_file);
+        }
     }
 
     if (_dump)
     {
-        // Chemical composition of the aqueous solution of last time step will
-        // be written into .dmp file once the second function argument is set to
-        // one.
-        SetDumpFileOn(phreeqc_instance_id, 1);
+        if (_use_stream_mode)
+        {
+            // In stream mode, disable file-based dump output
+            // Dump data will be retrieved via GetDumpString() instead
+            INFO(
+                "PhreeqcIO is configured for stream-based data exchange: dump "
+                "file output disabled.");
+            SetDumpFileOn(phreeqc_instance_id, 0);
+
+            // Enable in-memory buffering of dump output
+            if (SetDumpStringOn(phreeqc_instance_id, 1) != IPQ_OK)
+            {
+                OGS_FATAL(
+                    "Failed to enable string buffering for dump output in "
+                    "stream mode.");
+            }
+        }
+        else
+        {
+            // In file mode, enable file-based dump output (current behavior)
+            // Chemical composition of the aqueous solution of last time step
+            // will be written into .dmp file
+            SetDumpFileOn(phreeqc_instance_id, 1);
+        }
+    }
+
+    if (_use_stream_mode)
+    {
+        INFO(
+            "PhreeqcIO is configured for stream-based data exchange: input "
+            "and output will be exchanged via in-memory strings.");
     }
 }
 
@@ -395,11 +555,39 @@ void PhreeqcIO::setChemicalSystemConcrete(
 
 void PhreeqcIO::executeSpeciationCalculation(double const dt)
 {
-    writeInputsToFile(dt);
+    if (_use_stream_mode)
+    {
+        // Stream-based data exchange
+        DBUG("Executing speciation with stream-based data exchange.");
 
-    callPhreeqc();
+        // This gives us a null-terminated string required by RunString().
+        std::string input_content = writeInputsToStringStream(dt).str();
 
-    readOutputsFromFile();
+        // Execute PhreeqC with string input
+        callPhreeqcWithString(input_content);
+
+        // Retrieve output from memory buffer and parse
+        auto output_content = retrieveSelectedOutputString();
+        readOutputsFromStringView(output_content);
+
+        // Handle dump data if surfaces/exchangers exist
+        if (_dump)
+        {
+            auto dump_content = retrieveDumpString();
+            setAqueousSolutionsPrevFromDumpString(dump_content);
+        }
+    }
+    else
+    {
+        // File-based data exchange (original behavior)
+        DBUG("Executing speciation with file-based data exchange.");
+
+        writeInputsToFile(dt);
+
+        callPhreeqc();
+
+        readOutputsFromFile();
+    }
 }
 
 double PhreeqcIO::getConcentration(
@@ -449,6 +637,45 @@ void PhreeqcIO::setAqueousSolutionsPrevFromDumpFile()
     in.close();
 }
 
+void PhreeqcIO::setAqueousSolutionsPrevFromDumpString(
+    std::string_view dump_content)
+{
+    if (!_dump)
+    {
+        return;
+    }
+
+    if (dump_content.empty())
+    {
+        // return if dump content is empty. This happens in
+        // the first time step when no dump data is available.
+        DBUG(
+            "Dump content is empty, skipping aqueous solutions initialization "
+            "from dump.");
+        return;
+    }
+
+    _dump->readDumpFromString(dump_content, _num_chemical_systems);
+}
+
+std::stringstream PhreeqcIO::writeInputsToStringStream(double const dt)
+{
+    DBUG("Serializing phreeqc inputs to string stream.");
+    std::stringstream ss;
+
+    ss << std::scientific
+       << std::setprecision(std::numeric_limits<double>::max_digits10);
+    *this << dt;
+    ss << *this;
+
+    if (!ss)
+    {
+        OGS_FATAL("Failed in serializing phreeqc inputs to string.");
+    }
+
+    return ss;
+}
+
 void PhreeqcIO::writeInputsToFile(double const dt)
 {
     DBUG("Writing phreeqc inputs into file '{:s}'.", _phreeqc_input_file);
@@ -462,7 +689,8 @@ void PhreeqcIO::writeInputsToFile(double const dt)
 
     out << std::scientific
         << std::setprecision(std::numeric_limits<double>::max_digits10);
-    out << (*this << dt);
+    *this << dt;
+    out << *this;
 
     if (!out)
     {
@@ -654,6 +882,47 @@ void PhreeqcIO::callPhreeqc() const
     }
 }
 
+void PhreeqcIO::callPhreeqcWithString(std::string const& input_content) const
+{
+    INFO("Phreeqc: Executing chemical calculation from string stream.");
+
+    if (RunString(phreeqc_instance_id, input_content.c_str()) != IPQ_OK)
+    {
+        OutputErrorString(phreeqc_instance_id);
+        OGS_FATAL(
+            "Failed in performing speciation calculation with string input.");
+    }
+}
+
+std::string_view PhreeqcIO::retrieveSelectedOutputString() const
+{
+    DBUG("Retrieving phreeqc results from internal memory buffer.");
+
+    const char* output_ptr = GetSelectedOutputString(phreeqc_instance_id);
+    if (!output_ptr)
+    {
+        DBUG("Selected output string is empty or unavailable.");
+        return std::string_view();
+    }
+
+    return std::string_view(output_ptr);
+}
+
+std::string_view PhreeqcIO::retrieveDumpString() const
+{
+    DBUG("Retrieving phreeqc dump data from internal buffer.");
+
+    const char* dump_ptr = GetDumpString(phreeqc_instance_id);
+    if (!dump_ptr)
+    {
+        // Dump might be empty in first time step
+        DBUG("Dump string is empty or unavailable.");
+        return std::string_view();
+    }
+
+    return std::string_view(dump_ptr);
+}
+
 void PhreeqcIO::readOutputsFromFile()
 {
     auto const& basic_output_setups = _output->basic_output_setups;
@@ -676,6 +945,162 @@ void PhreeqcIO::readOutputsFromFile()
     }
 
     in.close();
+}
+
+void PhreeqcIO::readOutputsFromStringView(std::string_view output_content)
+{
+    DBUG("Reading phreeqc results from string buffer.");
+
+    if (output_content.empty())
+    {
+        OGS_FATAL("Output content is empty.");
+    }
+
+    StringViewLineIterator line_iter(output_content);
+    std::string_view line;
+
+    // Skip the headline
+    line_iter.getline(line);
+
+    if (!_output)
+    {
+        OGS_FATAL(
+            "No output configuration available when reading PhreeqC results "
+            "strings.");
+    }
+
+    auto const& output = *_output;
+    auto const& dropped_item_ids = output.dropped_item_ids;
+
+    auto const& surface = _chemical_system->surface;
+    auto const& exchangers = _chemical_system->exchangers;
+
+    int const num_skipped_lines =
+        1 + (!surface.empty() ? 1 : 0) + (!exchangers.empty() ? 1 : 0);
+
+    auto& equilibrium_reactants = _chemical_system->equilibrium_reactants;
+    auto& kinetic_reactants = _chemical_system->kinetic_reactants;
+
+    for (std::size_t chemical_system_id = 0;
+         chemical_system_id < _num_chemical_systems;
+         ++chemical_system_id)
+    {
+        // Skip equilibrium calculation result of initial solution
+        line_iter.skip(num_skipped_lines);
+
+        // Get calculation result of the solution after the reaction
+        if (!line_iter.getline(line))
+        {
+            OGS_FATAL(
+                "Error when reading calculation result of Solution {:d} "
+                "after the reaction.",
+                chemical_system_id);
+        }
+
+        auto accepted_items = parseAndFilterChemicalData(
+            std::string(line), dropped_item_ids, chemical_system_id);
+        assert(accepted_items.size() == output.accepted_items.size());
+
+        auto& aqueous_solution = _chemical_system->aqueous_solution;
+        auto& components = aqueous_solution->components;
+        auto& user_punch = _user_punch;
+
+        GlobalIndexType const offset = aqueous_solution->pH->getRangeBegin();
+        GlobalIndexType const global_index = offset + chemical_system_id;
+
+        for (int item_id = 0; item_id < static_cast<int>(accepted_items.size());
+             ++item_id)
+        {
+            auto const& accepted_item = output.accepted_items[item_id];
+            auto const& item_name = accepted_item.name;
+
+            auto compare_by_name = [&item_name](auto const& item)
+            { return item.name == item_name; };
+
+            switch (accepted_item.item_type)
+            {
+                case ItemType::pH:
+                {
+                    // Update pH value
+                    MathLib::LinAlg::setLocalAccessibleVector(
+                        *aqueous_solution->pH);
+                    aqueous_solution->pH->set(
+                        global_index, std::pow(10, -accepted_items[item_id]));
+                    break;
+                }
+                case ItemType::pe:
+                {
+                    // Update pe value
+                    (*aqueous_solution->pe)[chemical_system_id] =
+                        accepted_items[item_id];
+                    break;
+                }
+                case ItemType::Component:
+                {
+                    // Update component concentrations
+                    auto const& component = BaseLib::findElementOrError(
+                        components, compare_by_name,
+                        [&]() {
+                            OGS_FATAL("Could not find component '{:s}'.",
+                                      item_name);
+                        });
+                    MathLib::LinAlg::setLocalAccessibleVector(
+                        *component.amount);
+                    component.amount->set(global_index,
+                                          accepted_items[item_id]);
+                    break;
+                }
+                case ItemType::EquilibriumReactant:
+                {
+                    // Update amounts of equilibrium reactant
+                    auto const& equilibrium_reactant =
+                        BaseLib::findElementOrError(
+                            equilibrium_reactants, compare_by_name,
+                            [&]()
+                            {
+                                OGS_FATAL(
+                                    "Could not find equilibrium reactant "
+                                    "'{:s}'",
+                                    item_name);
+                            });
+                    (*equilibrium_reactant.molality)[chemical_system_id] =
+                        accepted_items[item_id];
+                    break;
+                }
+                case ItemType::KineticReactant:
+                {
+                    // Update amounts of kinetic reactants
+                    auto const& kinetic_reactant = BaseLib::findElementOrError(
+                        kinetic_reactants, compare_by_name,
+                        [&]() {
+                            OGS_FATAL("Could not find kinetic reactant '{:s}'.",
+                                      item_name);
+                        });
+                    (*kinetic_reactant.molality)[chemical_system_id] =
+                        accepted_items[item_id];
+                    break;
+                }
+                case ItemType::SecondaryVariable:
+                {
+                    assert(user_punch);
+                    auto const& secondary_variables =
+                        user_punch->secondary_variables;
+                    // Update values of secondary variables
+                    auto const& secondary_variable =
+                        BaseLib::findElementOrError(
+                            secondary_variables, compare_by_name,
+                            [&]() {
+                                OGS_FATAL(
+                                    "Could not find secondary variable '{:s}'.",
+                                    item_name);
+                            });
+                    (*secondary_variable.value)[chemical_system_id] =
+                        accepted_items[item_id];
+                    break;
+                }
+            }
+        }
+    }
 }
 
 std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
@@ -716,43 +1141,8 @@ std::istream& operator>>(std::istream& in, PhreeqcIO& phreeqc_io)
                 chemical_system_id);
         }
 
-        std::vector<double> accepted_items;
-        std::vector<std::string> items;
-        boost::trim_if(line, boost::is_any_of("\t "));
-        boost::algorithm::split(items, line, boost::is_any_of("\t "),
-                                boost::token_compress_on);
-        for (int item_id = 0; item_id < static_cast<int>(items.size());
-             ++item_id)
-        {
-            if (std::find(dropped_item_ids.begin(), dropped_item_ids.end(),
-                          item_id) == dropped_item_ids.end())
-            {
-                double value;
-                try
-                {
-                    value = std::stod(items[item_id]);
-                }
-                catch (const std::invalid_argument& e)
-                {
-                    OGS_FATAL(
-                        "Invalid argument. Could not convert string '{:s}' to "
-                        "double for chemical system {:d}, column {:d}. "
-                        "Exception '{:s}' was thrown.",
-                        items[item_id], chemical_system_id + 1, item_id,
-                        e.what());
-                }
-                catch (const std::out_of_range& e)
-                {
-                    OGS_FATAL(
-                        "Out of range error. Could not convert string "
-                        "'{:s}' to double for chemical system {:d}, column "
-                        "{:d}. Exception '{:s}' was thrown.",
-                        items[item_id], chemical_system_id + 1, item_id,
-                        e.what());
-                }
-                accepted_items.push_back(value);
-            }
-        }
+        auto accepted_items = parseAndFilterChemicalData(line, dropped_item_ids,
+                                                         chemical_system_id);
         assert(accepted_items.size() == output.accepted_items.size());
 
         auto& aqueous_solution = phreeqc_io._chemical_system->aqueous_solution;

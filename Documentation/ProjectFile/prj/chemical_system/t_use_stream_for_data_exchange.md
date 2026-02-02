@@ -1,0 +1,1 @@
+This is an optional tag. The default value is true, which means string stream will be used to handle the data exchange, and it accelerates the simulation. When set to false, the data exchange between OGS and PHREEQC will be transferred through files.

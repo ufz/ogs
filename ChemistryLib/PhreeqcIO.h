@@ -119,7 +119,8 @@ public:
               std::unique_ptr<UserPunch>&& user_punch,
               std::unique_ptr<Output>&& output,
               std::unique_ptr<Dump>&& dump,
-              Knobs&& knobs);
+              Knobs&& knobs,
+              bool use_stream_mode);
 
     ~PhreeqcIO();
 
@@ -174,9 +175,21 @@ public:
 private:
     void writeInputsToFile(double const dt);
 
+    std::stringstream writeInputsToStringStream(double const dt);
+
+    void setAqueousSolutionsPrevFromDumpString(std::string_view dump_content);
+
     void callPhreeqc() const;
 
+    void callPhreeqcWithString(std::string const& input_content) const;
+
+    std::string_view retrieveSelectedOutputString() const;
+
+    std::string_view retrieveDumpString() const;
+
     void readOutputsFromFile();
+
+    void readOutputsFromStringView(std::string_view output_content);
 
     PhreeqcIO& operator<<(double const dt)
     {
@@ -194,6 +207,7 @@ private:
     double _dt = std::numeric_limits<double>::quiet_NaN();
     const int phreeqc_instance_id = 0;
     std::size_t _num_chemical_systems = -1;
+    bool _use_stream_mode = false;
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
