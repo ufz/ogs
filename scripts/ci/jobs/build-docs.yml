@@ -66,6 +66,7 @@ build docs:
       - codecloud.html
       - build/DoxygenWarnings.log
       - build/DoxygenWarnings-filtered.log
+      - scripts/ci/helper/update-web-version.sh
     expire_in: 1 week
     reports:
       metrics: build/metrics.txt
@@ -95,6 +96,7 @@ deploy docs:
     - mv ../build/docs $CI_COMMIT_TAG
     - git add $CI_COMMIT_TAG
     - rm stable && ln -s $CI_COMMIT_TAG stable && git add stable
+    - ../scripts/ci/helper/update-web-version.sh $CI_COMMIT_TAG doxygen _static/versions.json
     - git commit -m "Release $CI_COMMIT_TAG"
     - git push "https://${DOXYGEN_CI_COMMITER_USER_AND_TOKEN}@${CI_SERVER_HOST}/ogs/ogs-doxygen-web.git" HEAD:main
   artifacts:
@@ -117,6 +119,7 @@ deploy doxysearch:
         cp build/searchdata.xml /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/
         doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH /var/www/doxysearch.opengeosys.org/$CI_COMMIT_BRANCH/searchdata.xml
       else
+        mkdir -p /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG
         cp build/searchdata.xml /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG/
         doxyindexer -o /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG /var/www/doxysearch.opengeosys.org/$CI_COMMIT_TAG/searchdata.xml
       fi

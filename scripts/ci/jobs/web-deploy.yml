@@ -20,6 +20,9 @@ deploy web site:
     - !reference [.web-setup, script]
   pages:
     publish: build/release/web/public
+  artifacts:
+    paths:
+      - scripts/ci/helper/update-web-version.sh
 
 deploy web site tag:
   stage: package
@@ -38,5 +41,6 @@ deploy web site tag:
     - mv ../build/release/web/public $CI_COMMIT_TAG
     - git add $CI_COMMIT_TAG
     - rm stable && ln -s $CI_COMMIT_TAG stable && git add stable
+    - ../scripts/ci/helper/update-web-version.sh $CI_COMMIT_TAG www _static/versions.json
     - git commit -m "Release $CI_COMMIT_TAG"
     - git push "https://${CI_COMMITTER_USER_AND_TOKEN}@${CI_SERVER_HOST}/ogs/ogs-web.git" HEAD:main
