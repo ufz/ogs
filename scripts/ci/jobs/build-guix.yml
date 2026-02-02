@@ -11,6 +11,8 @@ build guix:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: never
+    - if: $CI_COMMIT_TAG
+      when: never
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::guix only.*/
     - changes:
         - scripts/guix/*.scm
