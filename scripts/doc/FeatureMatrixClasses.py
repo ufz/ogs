@@ -35,39 +35,42 @@ class feature_matrix:
         (
             self.code_coverage,
             self.lines_without_features,
-        ) = feature_matrix.getCodeCoverage(self)
+        ) = feature_matrix.getCodeCoverage(self.lines, self.xml_length)
 
-    def getCodeCoverage(self) -> dict:
+    @staticmethod
+    def getCodeCoverage(lines, xml_lengths) -> dict:
         """returns dictionary of percentage of code that is covered by the detected features."""
-        lines = feature_matrix.getFeatureLines(self)
+        lines_new = feature_matrix.getFeatureLines(lines)
 
         coverages = {
-            index: sum(line.right - line.left + 1 for line in lines[index])
-            / self.xml_length[index]
-            for index, _row in self.lines.iterrows()
+            index: sum(line.right - line.left + 1 for line in lines_new[index])
+            / xml_lengths[index]
+            for index, _row in lines.iterrows()
         }
 
         lines_no_feature = {}
-        for file in lines:
+        for file in lines_new:
             lines_no_feature.update(
                 {
                     file: feature_matrix.getLinesNotCoveredByInterval(
-                        lines[file], self.xml_length[file]
+                        lines_new[file], xml_lengths[file]
                     )
                 }
             )
             # lines[mat.lines.index[0]].sort
         return coverages, lines_no_feature
 
-    def getFeatureLines(self) -> list[pd.Interval]:
+    @staticmethod
+    def getFeatureLines(lines) -> list[pd.Interval]:
         intervals_out = {}
-        for index, row in self.lines.iterrows():
-            lines = []
-            [lines.append(j) for i in row for j in i]
-            intervals = feature_matrix.mergeOverlappingIntervals(lines)
+        for index, row in lines.iterrows():
+            lines_new = []
+            [lines_new.append(j) for i in row for j in i]
+            intervals = feature_matrix.mergeOverlappingIntervals(lines_new)
             intervals_out.update({index: intervals})
         return intervals_out
 
+    @staticmethod
     def evaluateFeatureDict(
         xml_files: list[etree.ElementTree], featureDict: dict
     ) -> pd.DataFrame:
@@ -116,12 +119,14 @@ class feature_matrix:
                 )
         return not_covered
 
+    @staticmethod
     def getXMLEndLine(element: etree.ElementTree) -> int:
         """Gets the sourceline where the tag is closed, by converting to string and checking the number of lines."""
         return element.sourceline + (
             len(etree.tostring(element).strip().split(b"\n")) - 1
         )
 
+    @staticmethod
     def mergeOverlappingIntervals(
         intervals: list[pd.Interval],
     ) -> list[pd.Interval]:
