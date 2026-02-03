@@ -45,7 +45,7 @@ from scipy.special import exp1
 # - $h_0$ is the constant initial hydraulic head,
 # - $h$ is the hydraulic head at distance $r$ at time $t$
 # - $Q$ [$L^3T^{-1}$] is the constant pumping (discharge) rate
-# - $S$ [$L$] is the depth-integrated aquifer storage coefficient (volume of water released per unit decrease in $h$ per unit area)
+# - $S$ [$-$] is the depth-integrated aquifer storage coefficient (volume of water released per unit decrease in $h$ per unit area)
 # - $T$ [$L^2T^{-1}$] is the transmissivity (a measure of how much water is transported horizontally per unit time).
 #
 # The _Well Function_, $W(u)$ is the exponential integral, $E_1(u).$
