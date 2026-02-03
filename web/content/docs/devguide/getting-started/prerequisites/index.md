@@ -212,10 +212,15 @@ git config --global http.proxy http://yourproxy.example.com
 
 <div class='linux'>
 
-Install CMake using system package manager, *e.g.* on Ubuntu
+Install CMake using system package manager. Please note that at least version {{< dataFile "versions.minimum_version.cmake" >}} is required. On current tested Ubuntu version {{< dataFile "versions.tested_version.ubuntu" >}} you need to install CMake from [Kitware's APT repository](https://apt.kitware.com/) with:
 
 ```bash
-sudo apt install cmake
+sudo apt-get install ca-certificates gpg wget
+test -f /usr/share/doc/kitware-archive-keyring/copyright ||
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
+echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ noble main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
+sudo apt-get update
+sudo apt-get install cmake
 ```
 
 For other Linux distributions you want to use your distributions package manager, [pip](https://pypi.org/project/cmake/) or [snap](https://snapcraft.io/cmake).
