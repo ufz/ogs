@@ -229,6 +229,7 @@ authors:
     - given-names: Olaf
       family-names: Kolditz
       affiliation: Helmholtz Centre for Environmental Research -- UFZ
+      orcid: "https://orcid.org/0000-0002-8098-4905"
     - given-names: Reza
       family-names: Taher Dang Koo
       affiliation: TU Bergakademie Freiberg
@@ -285,6 +286,9 @@ authors:
       affiliation: >-
           Helmholtz Centre for Environmental Research -- UFZ
 identifiers:
+    - type: doi
+      value: 10.5281/zenodo.18468476
+      description: Zenodo DOI for 6.5.7
     - type: doi
       value: 10.5281/zenodo.17162299
       description: Zenodo DOI for 6.5.6

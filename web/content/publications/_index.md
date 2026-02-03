@@ -12,33 +12,39 @@ weight = 3
 ### Cite the software
 
 ```bibtex
-@software{ogs:6.5.6,
+@software{ogs:6.5.7,
   author       = {Bilke, Lars and
                   Naumov, Dmitri and
-                  Fischer, Thomas and
                   Wang, Wenqing and
-                  Mollaali, Mostafa and
-                  Buchwald, Jörg and
-                  Max, Jäschke and
                   Lehmann, Christoph and
-                  Berger, Florian and
-                  Grunwald, Norbert and
-                  Meisel, Tobias and
-                  Zill, Florian and
-                  Stehling, Thorben and
-                  Vehling, Falko and
-                  Nagel, Thomas and
-                  Silbermann, Christian and
-                  Shukla, Devansh and
+                  Fischer, Thomas and
                   Kiszkurno, Feliks K. and
-                  Tecklenburg, Jan},
+                  Meisel, Tobias and
+                  Buchwald, Jörg and
+                  Zill, Florian and
+                  Yoshioka, Keita and
+                  Hasan, Noor and
+                  Watanabe, Norihiro and
+                  Vehling, Falko and
+                  Mollaali, Mostafa and
+                  Selzer, Philipp and
+                  Chen, Chaofan and
+                  Shukla, Devansh and
+                  Max, Jäschke and
+                  Shao, Haibing and
+                  Rink, Karsten and
+                  Kessler, Kristof and
+                  Walter, Linus and
+                  Maximilian, Dörnbrack and
+                  Jiang, Kunqing and
+                  Kolditz, Olaf},
   title        = {OpenGeoSys},
-  month        = sep,
-  year         = 2025,
+  month        = feb,
+  year         = 2026,
   publisher    = {Zenodo},
-  version      = {6.5.6},
-  doi          = {10.5281/zenodo.17162299},
-  url          = {https://doi.org/10.5281/zenodo.17162299},
+  version      = {6.5.7},
+  doi          = {10.5281/zenodo.18468476},
+  url          = {https://doi.org/10.5281/zenodo.18468476},
 }
 ```
 
