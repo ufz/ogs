@@ -81,6 +81,7 @@ We are happy to announce the release of **OpenGeoSys {version}**!
 - [GitLab Release](https://gitlab.opengeosys.org/ogs/ogs/-/releases/{version})
 - [Zenodo Release](https://zenodo.org/record/{zenodo_record})
 - [PyPI Release](https://pypi.org/project/ogs/{version}/)
+- Also available on [Conda](https://anaconda.org/channels/conda-forge/packages/ogs/overview) and [Guix](https://hpc.guix.info/package/ogs-serial)
 
 ## Highlights
 

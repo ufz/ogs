@@ -31,7 +31,7 @@
     "json_sha": "b94997df68856753b72f0d7a3703b7d484d4745c567f3584ef97c96c25a5798e"
   },
   "tested_version": {
-    "ubuntu": "22.04",
+    "ubuntu": "24.04",
     "qt": "5.15.2",
     "cmake": "3.22.3",
     "hdf5": "1.14.3",
