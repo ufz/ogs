@@ -18,7 +18,7 @@
                 <secondary_variable internal_name="darcy_velocity" output_name="v"/>
             </secondary_variables>
             <specific_body_force>0.0 0.0</specific_body_force>
-            <linear>true</linear>
+            <linear>false</linear>
         </process>
     </processes>
     <time_loop>
