@@ -150,7 +150,8 @@ endif()
 # Add target to run FindFeatures.py script to generate feature matrix.
 if(Python_EXECUTABLE)
     # Create output directory
-    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/doc)
+    set(_featurematrix_bundle_dir ${PROJECT_BINARY_DIR}/web/content/docs/featurematrix/bundle)
+    file(MAKE_DIRECTORY ${_featurematrix_bundle_dir})
 
     add_custom_target(
         feature_matrix
@@ -158,9 +159,9 @@ if(Python_EXECUTABLE)
         ${PROJECT_SOURCE_DIR}/scripts/doc/FindFeatures.py
         ${PROJECT_SOURCE_DIR}
         --json
-        ${PROJECT_BINARY_DIR}/DocAux/features.json
+        ${_featurematrix_bundle_dir}/features.json
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-        COMMENT "Generating feature matrix."
+        COMMENT "Generating feature matrix in ${_featurematrix_bundle_dir}/features.json"
         VERBATIM
     )
 endif()
