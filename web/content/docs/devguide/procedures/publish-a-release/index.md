@@ -12,6 +12,7 @@ weight = 1080
 ## Publication procedure
 
 - Update merge request template (settings / merge_requests) to point to a new changelog wiki page
+- Check for corresponding ogstools release in `web/layouts/_partials/header.html` (`tools_url`).
 - Run `python scripts/python/do-release.py [NEW_VERSION]`
 - Update `CITATION.cff`, create a commit, tag and push (see script output)
 - A new release is automatically created on GitLab
