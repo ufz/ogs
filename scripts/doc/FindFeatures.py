@@ -8,7 +8,7 @@ the Test project files.
 This script is designed to extract information on features of the ogs test .prj files. This information
 will also be written to the .json file, that is used to display the features on the html.
 
-To add a feature: Add an element to the feature_dict in the getFeatureMatrix function below.
+To add a feature: Add an element to the feature_dict in the get_feature_matrix function below.
 
 To identify new features, there are several tools you can use. First the code_coverage attribute (or the
 feature_matrix.getFilesWithLowestCodeCoverage function) of the Feature_matrix. It will show, what
@@ -35,10 +35,10 @@ import numpy as np
 import pandas as pd
 
 from FeatureMatrixClasses import FeatureMatrix, FeatureMatrixEntry
-from utils import getXMLFiles
+from utils import get_xml_files
 
 
-def getFeatureMatrix(path: Path) -> FeatureMatrix:
+def get_feature_matrix(path: Path) -> FeatureMatrix:
     """
     First the project files are gathered. Afterwards the Feature Dictionaries are created. Eventually these dictionaries will be evaluated and
     the results will be put together in a matrix.
@@ -46,7 +46,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
     FeatureMatrixEntry object. These functions start with "check*".
     """
 
-    xml_files = getXMLFiles(path, False)
+    xml_files = get_xml_files(path, False)
 
     # Create the feature dict
     feature_dict = {
@@ -54,7 +54,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         "!Dummy: First Lines": lambda xml: checkFirstLines(xml),
         **{
             "!Dummy: "
-            + case: lambda xml, case=case: checkTagIsPresent(
+            + case: lambda xml, case=case: check_tag_is_present(
                 xml, "//" + case, line_type="open and close"
             )
             for case in [
@@ -71,52 +71,54 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
             ]
         },
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
-        "!Dummy: Comment": lambda xml: checkComment(xml),
+        "!Dummy: Comment": lambda xml: check_comment(xml),
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
-        "!Dummy: Media": lambda xml: checkTagIsPresent(
+        "!Dummy: Media": lambda xml: check_tag_is_present(
             xml, "media", line_type="open and close"
         ),
         # Add Parameters. Checks whether there is a parameter type present. The possible types are extracted from the documentation.
         **{
             "Parameter: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, ".//parameters/parameter/type", case
             )
-            for case in findTypesFromDocumentation(path, "parameters/parameter")
+            for case in find_types_from_documentation(path, "parameters/parameter")
         },
         # Add Processes. Checks whether there is a process type present. The possible types are extracted from the documentation.
         **{
             "Process type: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, ".//processes/process/type", case
             )
-            for case in findTypesFromDocumentation(path, "processes/process")
+            for case in find_types_from_documentation(path, "processes/process")
         },
         # Add Properties. Checks whether there is a process type present. The possible types are extracted from the documentation.
         **{
             "Property: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, ".//properties/property/type", case
             )
-            for case in findTypesFromDocumentation(path, "../properties/property")
+            for case in find_types_from_documentation(path, "../properties/property")
         },
         # Add Phases. Checks whether there are phase types present. The possible types are extracted from the documentation.
         **{
             "Phase: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, "./media/medium/phases/phase/type", case
             )
-            for case in findTypesFromDocumentation(path, "./media/medium/phases/phase")
+            for case in find_types_from_documentation(
+                path, "./media/medium/phases/phase"
+            )
         },
         # Add source terms for process variables. Checks whether there are source term types present. The possible types are extracted from the documentation.
         **{
             "Source_term: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml,
                 "./process_variables/process_variable/source_terms/source_term/type",
                 case,
             )
-            for case in findTypesFromDocumentation(
+            for case in find_types_from_documentation(
                 path,
                 "./process_variables/process_variable/source_terms/source_term",
             )
@@ -124,12 +126,12 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Add boundary conditions for process variables. Checks whether there are boundary condition types present. The possible types are extracted from the documentation.
         **{
             "Boundary_condition: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml,
                 ".//process_variables/process_variable/boundary_conditions/boundary_condition/type",
                 case,
             )
-            for case in findTypesFromDocumentation(
+            for case in find_types_from_documentation(
                 path,
                 "./process_variables/process_variable/boundary_conditions/boundary_condition",
             )
@@ -137,41 +139,41 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Add Convergence Criterion type for time_loops. The possible types are extracted from the documentation.
         **{
             "Convergence Criterion: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml,
                 "./time_loop/processes/process/convergence_criterion/type",
                 case,
             )
-            for case in findTypesFromDocumentation(
+            for case in find_types_from_documentation(
                 path, "./time_loop/processes/process/convergence_criterion"
             )
         },
         # Add output type for time_stepping. The possible types are extracted from the documentation.
         **{
             "Time Stepping: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, "./time_loop/processes/process/time_stepping/type", case
             )
-            for case in findTypesFromDocumentation(
+            for case in find_types_from_documentation(
                 path, "./time_loop/processes/process/time_stepping"
             )
         },
         # Add output type for time_loops. The possible types are extracted from the documentation.
         **{
             "Output: "
-            + case: lambda xml, case=case: checkTagText(xml, "//output/type", case)
+            + case: lambda xml, case=case: check_tag_text(xml, "//output/type", case)
             for case in ["VTK", "XDMF"]
         },
         # Add multiple outputs.
         **{
-            "Output: multiple": lambda xml: checkTagChildrenCount(
+            "Output: multiple": lambda xml: check_tag_children_count(
                 xml, "//outputs", 1, ">"
             )
         },
         # Add order for process variables. Checks whether there are orders present. The possible entries are 1 or 2. Each of these will be given an entry in the feature matrix.
         **{
             "Order: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, "./process_variables/process_variable/order", case
             )
             for case in ["1", "2"]
@@ -179,7 +181,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Add Component for process variables. Checks whether there are components present. The possible entries are 1, 2 or 3. Each of these will be given an entry in the feature matrix.
         **{
             "Component: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, "..//process_variables/process_variable/components", case
             )
             for case in ["1", "2", "3"]
@@ -187,7 +189,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Check if there are linear solver tags with a child named: "eigen", "lis" or "petsc". For each of these a different function will be formulated.
         **{
             "Linear_solver: "
-            + child: lambda xml, child_name=child: checkChildrenNames(
+            + child: lambda xml, child_name=child: check_children_names(
                 xml, ".//linear_solver", child_name
             )
             for child in ["eigen", "lis", "petsc"]
@@ -195,7 +197,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Check whether there is a tag of the name given in the list. For each of the names a different Test-Function will be created.
         **{
             "Includes: "
-            + tag_name: lambda xml, tag_name=tag_name: checkTagIsPresent(
+            + tag_name: lambda xml, tag_name=tag_name: check_tag_is_present(
                 xml, ".//" + tag_name
             )
             for tag_name in [
@@ -214,7 +216,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Check for property names. For each possible name an feature dict entry will be created. The possible names are extracted by scanning all .prj files and look for said names.
         **{
             "Property name: "
-            + name.replace("\n", ""): lambda xml, name=name: checkTagText(
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
                 xml, ".//properties/property/name", name
             )
             for name in np.unique(
@@ -228,7 +230,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Check for property names. For each possible name an feature dict entry will be created. The possible names are extracted by scanning all .prj files and look for said names.
         **{
             "Hdf n_files: "
-            + name.replace("\n", ""): lambda xml, name=name: checkTagText(
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
                 xml, "//*/output/hdf/number_of_files", name
             )
             for name in np.unique(
@@ -242,7 +244,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Check for Integration Order. For each possible name an feature dict entry will be created. The possible names are extracted by scanning all .prj files and look for said names.
         **{
             "Integration Order: "
-            + name.replace("\n", ""): lambda xml, name=name: checkTagText(
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
                 xml, ".//processes/process/integration_order", name
             )
             for name in np.unique(
@@ -256,18 +258,18 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
             )
         },  # All found entries for the names in all xml files.
         # Check whether there is a tag of the name of deactivated subdomain in the process_variables.
-        "Includes: deactivated_subdomain ": lambda xml: checkTagIsPresent(
+        "Includes: deactivated_subdomain ": lambda xml: check_tag_is_present(
             xml,
             ".//process_variables/process_variable/deactivated_subdomains",
         ),
         # Will check the given Tag and determine whether it is a tuple or a singular value.
-        "Parameter Constant is Tuple:": lambda xml: checkTagTextIsTuple(
+        "Parameter Constant is Tuple:": lambda xml: check_tag_text_is_tuple(
             xml, './/parameters/parameter[type = "Constant"]/values'
         ),
         # Checks whether the Tag chemical System has an chemical solver attribute with the given values.
         **{
             "Chemical Solver:"
-            + case: lambda xml, case=case: checkAttributes(
+            + case: lambda xml, case=case: check_attributes(
                 xml, "./chemical_system", "chemical_solver", case
             )
             for case in ["Phreeqc", "SelfContained"]
@@ -275,7 +277,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Checks for damping of nonlinear solver.
         **{
             "Nonlinear solver:"
-            + case: lambda xml, case=case: checkTagIsPresent(
+            + case: lambda xml, case=case: check_tag_is_present(
                 xml, "//nonlinear_solvers/nonlinear_solver" + case
             )
             for case in ["damping", "damping_reduction", "recompute_jacobian"]
@@ -283,7 +285,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Checks for type of nonlinear solver.
         **{
             "Nonlinear solver:"
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, "//nonlinear_solvers/nonlinear_solver/type", case
             )
             for case in ["Newton", "Picard", "PETScSNES"]
@@ -291,19 +293,19 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Checks how many children meshes has.
         **{
             "Mesh Count: "
-            + str(count): lambda xml, count=count: checkTagChildrenCount(
+            + str(count): lambda xml, count=count: check_tag_children_count(
                 xml, "./meshes", count
             )
             for count in np.unique(
                 [
                     child_count
                     for xml in xml_files
-                    for child_count in countChildren(xml, "./meshes")
+                    for child_count in count_children(xml, "./meshes")
                 ]
             )
         },
         # Check whether medium has an attribute id != 0
-        "Medium: id not 0": lambda xml: checkAttributes(
+        "Medium: id not 0": lambda xml: check_attributes(
             xml,
             "./media/medium",
             "id",
@@ -312,21 +314,21 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
             line_type="open and close",
         ),
         # Check whether medium has an attribute id != 0
-        "Medium: has phases": lambda xml: checkTagIsPresent(
+        "Medium: has phases": lambda xml: check_tag_is_present(
             xml, "/media/medium/phases", line_type="open and close"
         ),
         # Check whether mesh attribute axially symmetric is set to "true"
-        "Mesh: axially_symmetric": lambda xml: checkAttributes(
+        "Mesh: axially_symmetric": lambda xml: check_attributes(
             xml, "mesh", "axially_symmetric", "true"
         ),
         # Check whether mesh attribute axially symmetric is set to "true"
-        "Mesh: without <meshes>": lambda xml: checkTagIsPresent(
+        "Mesh: without <meshes>": lambda xml: check_tag_is_present(
             xml, "//OpenGeoSysProject/mesh"
         ),
         # Check if properties are present as children of the following "
         **{
             "Properties: child of "
-            + case: lambda xml, case=case: checkTagIsPresent(
+            + case: lambda xml, case=case: check_tag_is_present(
                 xml, "//" + case + "/properties"
             )
             for case in ["medium", "phase", "component"]
@@ -334,21 +336,21 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # Checks how many children meshes has.
         **{
             "Process Variables: "
-            + str(count): lambda xml, count=count: checkTagChildrenCount(
+            + str(count): lambda xml, count=count: check_tag_children_count(
                 xml, "./process_variables", count
             )
             for count in np.unique(
                 [
                     child_count
                     for xml in xml_files
-                    for child_count in countChildren(xml, "./process_variables")
+                    for child_count in count_children(xml, "./process_variables")
                 ]
             )
         },
         # Add submesh residuum output type for time_loops. The possible types are extracted from the documentation.
         **{
             "Submesh Residuum Output: "
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, "//submesh_residuum_output/type", case
             )
             for case in ["VTK", "XDMF"]
@@ -356,7 +358,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
         # check for Compensate Non Equilibrium Initial Residuum
         **{
             "Compensate Non Equilibrium Initial Residuum:"
-            + case: lambda xml, case=case: checkTagText(
+            + case: lambda xml, case=case: check_tag_text(
                 xml, "//compensate_non_equilibrium_initial_residuum", case
             )
             for case in ["true", "false"]
@@ -371,7 +373,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
 ########################################################################################
 
 
-def createJSON(mat: FeatureMatrix, filename: Path) -> str:
+def create_json(mat: FeatureMatrix, filename: Path) -> str:
     """Creates JSON data from feature Matrix"""
     string = "[\n"
 
@@ -400,7 +402,7 @@ def createJSON(mat: FeatureMatrix, filename: Path) -> str:
     return string
 
 
-def checkAttributes(
+def check_attributes(
     xml: etree.ElementTree,
     xpath: str,
     attribute_name: str,
@@ -410,7 +412,7 @@ def checkAttributes(
 ) -> FeatureMatrixEntry:
     """Checks whether the given Element has an attribute with the attribute_name given and will compare it using the operator given to the case attribute."""
     elements = xml.xpath(xpath)
-    operator_func = translateOps(operator)
+    operator_func = translate_ops(operator)
     attributes = [
         operator_func(element.attrib[attribute_name], case)
         for element in elements
@@ -421,7 +423,7 @@ def checkAttributes(
     )
 
 
-def checkChildrenNames(
+def check_children_names(
     xml: etree.ElementTree, xpath: str, case: str, line_type="range"
 ) -> FeatureMatrixEntry:
     """Will return a list of strings containing the children found in the xpath given along with the source lines of said child"""
@@ -430,7 +432,7 @@ def checkChildrenNames(
     return FeatureMatrixEntry(list(itertools.compress(children, is_present)), line_type)
 
 
-def checkComment(xml: etree.ElementTree) -> FeatureMatrixEntry:
+def check_comment(xml: etree.ElementTree) -> FeatureMatrixEntry:
     """Will find the lines, that contain comments in the xml files."""
     strings = etree.tostring(xml).split(b"\n")
 
@@ -439,9 +441,11 @@ def checkComment(xml: etree.ElementTree) -> FeatureMatrixEntry:
     ].sourceline  # Number of lines before element starts
 
     from_lines = [
-        line + sourceline - 1 for line in findAllPatternLines(strings, b"<!--")
+        line + sourceline - 1 for line in find_all_pattern_lines(strings, b"<!--")
     ]
-    to_lines = [line + sourceline - 1 for line in findAllPatternLines(strings, b"-->")]
+    to_lines = [
+        line + sourceline - 1 for line in find_all_pattern_lines(strings, b"-->")
+    ]
 
     if len(from_lines) > 0:
         return FeatureMatrixEntry(
@@ -484,7 +488,7 @@ def checkFirstLines(xml: etree.ElementTree) -> FeatureMatrixEntry:
     return FeatureMatrixEntry([])
 
 
-def checkTagChildrenCount(
+def check_tag_children_count(
     xml: etree._ElementTree,
     xpath: str,
     count: int,
@@ -493,7 +497,7 @@ def checkTagChildrenCount(
 ) -> FeatureMatrixEntry:
     """Will identify, how many children(Tags) this Tag has. Will compare the number using the operator to the count given. All Tags that match this comparison will be put in the FeatureMatrixEntry."""
     elements = xml.xpath(xpath)
-    operator_func = translateOps(operator)
+    operator_func = translate_ops(operator)
     return FeatureMatrixEntry(
         list(
             itertools.compress(
@@ -505,14 +509,14 @@ def checkTagChildrenCount(
     )
 
 
-def checkTagIsPresent(
+def check_tag_is_present(
     xml: etree.ElementTree, xpath: str, line_type="range"
 ) -> FeatureMatrixEntry:
     """Checks whether a tag is present in the parsed xml file under the given xpath. If True it will return the sourceline along with the boolean value"""
     return FeatureMatrixEntry(xml.xpath(xpath), line_type)
 
 
-def checkTagText(
+def check_tag_text(
     xml: etree.ElementTree,
     xpath: str,
     case: str,
@@ -521,7 +525,7 @@ def checkTagText(
 ) -> FeatureMatrixEntry:
     """Checks whether the text of the element of the xml file in the location of the given xpath is equal to the text given as case argument. If True will return the sourceline along with the boolean."""
     xpath_elements = xml.xpath(xpath)
-    operator_func = translateOps(operator)
+    operator_func = translate_ops(operator)
     texts = [operator_func(x.text, case) for x in xpath_elements]
 
     if xpath.split("/")[-1] in ["name", "type"]:
@@ -537,16 +541,16 @@ def checkTagText(
     )
 
 
-def checkTagTextIsTuple(
+def check_tag_text_is_tuple(
     xml: etree.ElementTree, xpath: str, line_type="range"
 ) -> FeatureMatrixEntry:
     """Checks whether the text of the element of the xml file in the location of the given xpath is a tuple. If True will return the sourceline along with the boolean."""
     elements = xml.xpath(xpath)
-    is_tuple = [isTupleFromText(element.text) for element in elements]
+    is_tuple = [is_tuple_from_text(element.text) for element in elements]
     return FeatureMatrixEntry(list(itertools.compress(elements, is_tuple)), line_type)
 
 
-def countChildren(xml: etree._ElementTree, xpath: str) -> list[int]:
+def count_children(xml: etree._ElementTree, xpath: str) -> list[int]:
     # Counts the number of Children the tags gathered by the xpath have.
     return [len(element.getchildren()) for element in xml.xpath(xpath)]
 
@@ -565,7 +569,7 @@ def extract_intervals(
     return intervals
 
 
-def findAllPatternLines(xml_str: list[str], pattern: bytes) -> list[int]:
+def find_all_pattern_lines(xml_str: list[str], pattern: bytes) -> list[int]:
     return [
         j + 1
         for i in range(len(xml_str))
@@ -574,7 +578,7 @@ def findAllPatternLines(xml_str: list[str], pattern: bytes) -> list[int]:
     ]
 
 
-def findTypesFromDocumentation(path: Path, subdir: str) -> list[str]:
+def find_types_from_documentation(path: Path, subdir: str) -> list[str]:
     # Will find all the possible types as defined in the documentation under the location "/Documentation/ProjectFile/prj/subdir/*"" and create a dictionary out of it
     base = path / "Documentation/ProjectFile/prj" / subdir
     return [
@@ -584,7 +588,7 @@ def findTypesFromDocumentation(path: Path, subdir: str) -> list[str]:
     ]
 
 
-def isTupleFromText(text: str) -> bool:
+def is_tuple_from_text(text: str) -> bool:
     """Evaluates Regex expression for given Text. If the text starts with a digit (possibly includes . or e) followed by a space and then another digit the
     function will return True else False."""
     return bool(
@@ -594,7 +598,7 @@ def isTupleFromText(text: str) -> bool:
     )
 
 
-def translateOps(op: str) -> operator:
+def translate_ops(op: str) -> operator:
     """ "Translates" operator strings into operator functions."""
     ops = {
         "!=": operator.__ne__,
@@ -624,12 +628,12 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    mat = getFeatureMatrix(args.path)
+    mat = get_feature_matrix(args.path)
 
     if args.json:
-        createJSON(mat, args.json)
+        create_json(mat, args.json)
         exit(0)
-    createJSON(mat, Path("./features.json"))
+    create_json(mat, Path("./features.json"))
 
 
 def load_json_features(json_path: Path) -> list[dict]:

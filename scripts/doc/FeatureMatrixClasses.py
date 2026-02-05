@@ -12,7 +12,7 @@ class FeatureMatrix:
     def __init__(self, feature_dict: dict, xml_files: list[etree.ElementTree]):
         self.feature_dict = feature_dict
         self.xml_files = {file.docinfo.URL: file for file in xml_files}
-        self.feature_matrix_elements = FeatureMatrix.evaluateFeatureDict(
+        self.feature_matrix_elements = FeatureMatrix.evaluate_feature_dict(
             self.xml_files, self.feature_dict
         )
 
@@ -28,7 +28,7 @@ class FeatureMatrix:
             )
 
         self.xml_length = {
-            index: FeatureMatrix.getXMLEndLine(
+            index: FeatureMatrix.get_xml_endline(
                 self.xml_files[index].xpath("../OpenGeoSysProject")[0]
             )
             for index in self.xml_files
@@ -36,14 +36,14 @@ class FeatureMatrix:
         (
             self.code_coverage,
             self.lines_without_features,
-        ) = FeatureMatrix.getCodeCoverage(self.lines, self.xml_length)
+        ) = FeatureMatrix.get_code_coverage(self.lines, self.xml_length)
 
     @staticmethod
-    def getCodeCoverage(
+    def get_code_coverage(
         lines: list[pd.Interval], xml_lengths: dict[str, int]
     ) -> tuple[dict, dict]:
         """returns dictionary of percentage of code that is covered by the detected features."""
-        lines_new = FeatureMatrix.getFeatureLines(lines)
+        lines_new = FeatureMatrix.get_feature_lines(lines)
 
         coverages = {
             index: sum(line.right - line.left + 1 for line in lines_new[index])
@@ -55,7 +55,7 @@ class FeatureMatrix:
         for file in lines_new:
             lines_no_feature.update(
                 {
-                    file: FeatureMatrix.getLinesNotCoveredByInterval(
+                    file: FeatureMatrix.get_lines_not_covered_by_intervals(
                         lines_new[file], xml_lengths[file]
                     )
                 }
@@ -64,17 +64,17 @@ class FeatureMatrix:
         return coverages, lines_no_feature
 
     @staticmethod
-    def getFeatureLines(lines: list[pd.Interval]) -> list[pd.Interval]:
+    def get_feature_lines(lines: list[pd.Interval]) -> list[pd.Interval]:
         intervals_out = {}
         for index, row in lines.iterrows():
             lines_new = []
             [lines_new.append(j) for i in row for j in i]
-            intervals = FeatureMatrix.mergeOverlappingIntervals(lines_new)
+            intervals = FeatureMatrix.merge_overlapping_intervals(lines_new)
             intervals_out.update({index: intervals})
         return intervals_out
 
     @staticmethod
-    def evaluateFeatureDict(
+    def evaluate_feature_dict(
         xml_files: dict[str, etree.ElementTree], featureDict: dict
     ) -> pd.DataFrame:
         """
@@ -101,7 +101,7 @@ class FeatureMatrix:
         return feature_matrix
 
     @staticmethod
-    def getLinesNotCoveredByInterval(
+    def get_lines_not_covered_by_intervals(
         lines: list[pd.Interval], endpoint: int
     ) -> list[pd.Interval]:
         not_covered = []
@@ -132,14 +132,14 @@ class FeatureMatrix:
         return not_covered
 
     @staticmethod
-    def getXMLEndLine(element: etree.ElementTree) -> int:
+    def get_xml_endline(element: etree.ElementTree) -> int:
         """Gets the sourceline where the tag is closed, by converting to string and checking the number of lines."""
         return element.sourceline + (
             len(etree.tostring(element).strip().split(b"\n")) - 1
         )
 
     @staticmethod
-    def mergeOverlappingIntervals(
+    def merge_overlapping_intervals(
         intervals: list[pd.Interval],
     ) -> list[pd.Interval]:
         """Will merge intervals from a list. All intervals that overlap or are 1 step apart from each other will be merged into a single larger interval. Will return a cleaned list of intervals."""
@@ -202,7 +202,7 @@ class FeatureMatrixEntry:
                         self.lines = [
                             pd.Interval(
                                 el.sourceline,
-                                FeatureMatrix.getXMLEndLine(el),
+                                FeatureMatrix.get_xml_endline(el),
                                 closed="both",
                             )
                             for el in elements
@@ -219,8 +219,8 @@ class FeatureMatrixEntry:
                                         closed="both",
                                     ),
                                     pd.Interval(
-                                        FeatureMatrix.getXMLEndLine(el),
-                                        FeatureMatrix.getXMLEndLine(el),
+                                        FeatureMatrix.get_xml_endline(el),
+                                        FeatureMatrix.get_xml_endline(el),
                                         closed="both",
                                     ),
                                 ]

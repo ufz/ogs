@@ -9,7 +9,7 @@ File that contains utility functions for the creation of the documentation and F
 """
 
 
-def getProjectFiles(path: Path, include_diff_files: bool = True) -> list[Path]:
+def get_project_files(path: Path, include_diff_files: bool = True) -> list[Path]:
     """Function to extract all file paths from OGS Test files"""
 
     path_list = []
@@ -24,15 +24,15 @@ def getProjectFiles(path: Path, include_diff_files: bool = True) -> list[Path]:
     return path_list
 
 
-def getXMLFiles(path: Path, include_diff_files: bool = True):
-    files = getProjectFiles(path=path, include_diff_files=include_diff_files)
+def get_xml_files(path: Path, include_diff_files: bool = True):
+    files = get_project_files(path=path, include_diff_files=include_diff_files)
     if not files:
         msg = "No project files found"
         raise ValueError(msg)
 
     # Parse the XML Files
     filenames = [file.name for file in files]
-    xml_files = [xmlParser(file) for file in files]
+    xml_files = [xml_parser(file) for file in files]
     filenames = list(
         itertools.compress(filenames, [xml is not None for xml in xml_files])
     )
@@ -40,7 +40,7 @@ def getXMLFiles(path: Path, include_diff_files: bool = True):
     return [xml for xml in xml_files if xml is not None]
 
 
-def xmlParser(filedir: Path) -> etree.ElementTree:
+def xml_parser(filedir: Path) -> etree.ElementTree:
     """wrapper for etree.parse, as there are files present, that could not be parsed."""
     try:
         return etree.parse(filedir)
