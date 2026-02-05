@@ -1356,6 +1356,28 @@ AddTest(
 )
 
 AddTest(
+    NAME m1_3Dsquare_no_metadata
+    PATH Mechanics/m1_3Dsquare
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/m1_3Dsquare
+    EXECUTABLE ipDataToPointCloud
+    EXECUTABLE_ARGS -i m1_3Dsquare.vtu -o ${Data_BINARY_DIR}/Mechanics/m1_3Dsquare/m1_3Dsquare_point_cloud.vtu --integration-order 3
+    TESTER vtkdiff-mesh
+    DIFF_DATA
+    m1_3Dsquare_ts_1_t_1.000000_point_cloud.vtu m1_3Dsquare_point_cloud.vtu 1e-12
+)
+
+AddTest(
+    NAME m1_3Dsquare_no_metadata_fail
+    PATH Mechanics/m1_3Dsquare
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/m1_3Dsquare
+    EXECUTABLE ipDataToPointCloud
+    EXECUTABLE_ARGS -i m1_3Dsquare.vtu -o ${Data_BINARY_DIR}/Mechanics/m1_3Dsquare/m1_3Dsquare_point_cloud.vtu --integration-order 9
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION
+        "Integration order 9 is not supported"
+)
+
+AddTest(
     NAME m1_3Dsquare
     PATH Mechanics/m1_3Dsquare
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/m1_3Dsquare

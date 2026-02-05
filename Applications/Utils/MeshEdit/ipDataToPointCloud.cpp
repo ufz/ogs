@@ -221,7 +221,6 @@ int main(int argc, char** argv)
     // -C --copy-cell-data
     // -N --interpolate-node-data
     // -I --add-cell-ids
-    // -O --integration-order
     // --natural-coords add natural coordinates of integration points, or better
     //     not?
     // --no-data
@@ -247,6 +246,10 @@ int main(int argc, char** argv)
                                              "Input (.vtu). The input mesh",
                                              true, "", "INPUT_FILE");
     cmd.add(arg_in_file);
+    TCLAP::ValueArg<unsigned> integration_order(
+        "O", "integration-order", "Integration order of the output", false, 0,
+        "INTEGRATION_ORDER");
+    cmd.add(integration_order);
 
     auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg);
@@ -258,8 +261,11 @@ int main(int argc, char** argv)
     std::unique_ptr<MeshLib::Mesh const> mesh_in(
         MeshLib::IO::readMeshFromFile(arg_in_file.getValue()));
 
-    auto const integration_order = determineIntegrationOrder(*mesh_in);
-    auto nodes = computePointCloudNodes(*mesh_in, integration_order);
+    unsigned const int_order = (integration_order.isSet())
+                                   ? integration_order.getValue()
+                                   : determineIntegrationOrder(*mesh_in);
+
+    auto nodes = computePointCloudNodes(*mesh_in, int_order);
 
     MeshLib::Mesh point_cloud("point_cloud", std::move(nodes), {});
 
