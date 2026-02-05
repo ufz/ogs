@@ -11,6 +11,7 @@ build linux arch:
     CMAKE_ARGS: >-
       -DOGS_USE_MKL=ON
       -DOGS_USE_NETCDF=ON
+    ADDITIONAL_TARGETS: "feature_matrix"
   before_script:
     - source /opt/intel/oneapi/setvars.sh
 
