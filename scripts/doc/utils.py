@@ -1,7 +1,8 @@
-from pathlib import Path
-from lxml import etree
 import itertools
 import warnings
+from pathlib import Path
+
+from lxml import etree
 
 """
 File that contains utility functions for the creation of the documentation and Feature Matrix generation.
@@ -12,6 +13,7 @@ def getProjectFiles(path: Path) -> list[Path]:
     """Function to extract all file paths from OGS Test files"""
     path_list_xml = list(path.rglob("*.xml"))
     path_list = []
+
     for filepath in path_list_xml:
         with open(filepath, "r") as included_xml_file:
             if "OpenGeoSysProjectDiff" in included_xml_file.read():

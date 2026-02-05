@@ -1,17 +1,18 @@
 import numpy as np
 import pandas as pd
+from typing_extensions import Literal
 from lxml import etree
 
 
-class feature_matrix:
+class FeatureMatrix:
     """A feature matrix object will be created. The evaluate feature matrix will set all the elements in the right place on a matrix.
-    These are elements of the class "feature_matrix_element". All the attributes of these elements will also be attributes of the elements
+    These are elements of the class "FeatureMatrixElement". All the attributes of these elements will also be attributes of the elements
     of this class, but in matrix shape."""
 
-    def __init__(self, feature_dict, xml_files):
+    def __init__(self, feature_dict: dict, xml_files: list[etree.ElementTree]):
         self.feature_dict = feature_dict
         self.xml_files = {file.docinfo.URL: file for file in xml_files}
-        self.feature_matrix_elements = feature_matrix.evaluateFeatureDict(
+        self.feature_matrix_elements = FeatureMatrix.evaluateFeatureDict(
             self.xml_files, self.feature_dict
         )
 
@@ -27,7 +28,7 @@ class feature_matrix:
             )
 
         self.xml_length = {
-            index: feature_matrix.getXMLEndLine(
+            index: FeatureMatrix.getXMLEndLine(
                 self.xml_files[index].xpath("../OpenGeoSysProject")[0]
             )
             for index in self.xml_files
@@ -35,12 +36,14 @@ class feature_matrix:
         (
             self.code_coverage,
             self.lines_without_features,
-        ) = feature_matrix.getCodeCoverage(self.lines, self.xml_length)
+        ) = FeatureMatrix.getCodeCoverage(self.lines, self.xml_length)
 
     @staticmethod
-    def getCodeCoverage(lines, xml_lengths) -> dict:
+    def getCodeCoverage(
+        lines: list[pd.Interval], xml_lengths: dict[str, int]
+    ) -> tuple[dict, dict]:
         """returns dictionary of percentage of code that is covered by the detected features."""
-        lines_new = feature_matrix.getFeatureLines(lines)
+        lines_new = FeatureMatrix.getFeatureLines(lines)
 
         coverages = {
             index: sum(line.right - line.left + 1 for line in lines_new[index])
@@ -52,7 +55,7 @@ class feature_matrix:
         for file in lines_new:
             lines_no_feature.update(
                 {
-                    file: feature_matrix.getLinesNotCoveredByInterval(
+                    file: FeatureMatrix.getLinesNotCoveredByInterval(
                         lines_new[file], xml_lengths[file]
                     )
                 }
@@ -61,18 +64,18 @@ class feature_matrix:
         return coverages, lines_no_feature
 
     @staticmethod
-    def getFeatureLines(lines) -> list[pd.Interval]:
+    def getFeatureLines(lines: list[pd.Interval]) -> list[pd.Interval]:
         intervals_out = {}
         for index, row in lines.iterrows():
             lines_new = []
             [lines_new.append(j) for i in row for j in i]
-            intervals = feature_matrix.mergeOverlappingIntervals(lines_new)
+            intervals = FeatureMatrix.mergeOverlappingIntervals(lines_new)
             intervals_out.update({index: intervals})
         return intervals_out
 
     @staticmethod
     def evaluateFeatureDict(
-        xml_files: list[etree.ElementTree], featureDict: dict
+        xml_files: dict[str, etree.ElementTree], featureDict: dict
     ) -> pd.DataFrame:
         """
         Created a matrix with rows = len(featureDict) and cols = len(xml_files).
@@ -82,7 +85,7 @@ class feature_matrix:
 
         # Initialize matrix with files as index and features as columns
         feature_matrix = pd.DataFrame(
-            np.empty([len(xml_files), len(featureDict)], dtype=feature_matrix_entry),
+            np.empty([len(xml_files), len(featureDict)], dtype=FeatureMatrixEntry),
             index=[xml_files[file].docinfo.URL for file in xml_files],
             columns=featureDict.keys(),
         )
@@ -97,6 +100,7 @@ class feature_matrix:
 
         return feature_matrix
 
+    @staticmethod
     def getLinesNotCoveredByInterval(
         lines: list[pd.Interval], endpoint: int
     ) -> list[pd.Interval]:
@@ -107,15 +111,23 @@ class feature_matrix:
             if lines[0].right != endpoint:
                 not_covered.append(pd.Interval(lines[0].right + 1, endpoint))
 
-        for l in range(len(lines) - 1):
-            if lines[l].left != 1 and l == 0:
-                not_covered.append(pd.Interval(1, lines[l].left - 1, closed="both"))
-            not_covered.append(
-                pd.Interval(lines[l].right + 1, lines[l + 1].left - 1, closed="both")
-            )
-            if l == len(lines) - 2 and lines[l + 1].right < endpoint:
+        for line_index in range(len(lines) - 1):
+            if lines[line_index].left != 1 and line_index == 0:
                 not_covered.append(
-                    pd.Interval(lines[l + 1].right + 1, endpoint, closed="both")
+                    pd.Interval(1, lines[line_index].left - 1, closed="both")
+                )
+            not_covered.append(
+                pd.Interval(
+                    lines[line_index].right + 1,
+                    lines[line_index + 1].left - 1,
+                    closed="both",
+                )
+            )
+            if line_index == len(lines) - 2 and lines[line_index + 1].right < endpoint:
+                not_covered.append(
+                    pd.Interval(
+                        lines[line_index + 1].right + 1, endpoint, closed="both"
+                    )
                 )
         return not_covered
 
@@ -131,20 +143,28 @@ class feature_matrix:
         intervals: list[pd.Interval],
     ) -> list[pd.Interval]:
         """Will merge intervals from a list. All intervals that overlap or are 1 step apart from each other will be merged into a single larger interval. Will return a cleaned list of intervals."""
-        k = 0
-        while k < (len(intervals) - 1):
-            l = k + 1
-            while l < len(intervals):
-                if pd.Interval.overlaps(intervals[k], intervals[l]):
-                    intervals[k] = pd.Interval(
-                        min(intervals[k].left, intervals[l].left),
-                        max(intervals[k].right, intervals[l].right),
+        interval_index_left = 0
+        while interval_index_left < (len(intervals) - 1):
+            interval_index_right = interval_index_left + 1
+            while interval_index_right < len(intervals):
+                if pd.Interval.overlaps(
+                    intervals[interval_index_left], intervals[interval_index_right]
+                ):
+                    intervals[interval_index_left] = pd.Interval(
+                        min(
+                            intervals[interval_index_left].left,
+                            intervals[interval_index_right].left,
+                        ),
+                        max(
+                            intervals[interval_index_left].right,
+                            intervals[interval_index_right].right,
+                        ),
                         closed="both",
                     )
-                    del intervals[l]
+                    del intervals[interval_index_right]
                 else:
-                    l += 1
-            k += 1
+                    interval_index_right += 1
+            interval_index_left += 1
         m = 0
         intervals.sort()
         while m < (len(intervals) - 1):
@@ -159,14 +179,19 @@ class feature_matrix:
         return intervals
 
 
-class feature_matrix_entry:
+class FeatureMatrixEntry:
     """
     A class for the entries of a feature matrix. All the attributes that this class contains will be attributes of the feature matrix.
     One or several etree.ElemenTree objects can be put in one feature_class object. If none is given, this class will interpret it as
     if the given feature is not present in the respective file.
     """
 
-    def __init__(self, elements=list[etree.ElementTree], line_type="range", lines=None):
+    def __init__(
+        self,
+        elements: list[etree.ElementTree],
+        line_type: Literal["range", "open and close"] = "range",
+        lines: list[pd.Interval] | None = None,
+    ):
         if len(elements) > 0:
             if lines is not None:
                 self.lines = lines
@@ -177,7 +202,7 @@ class feature_matrix_entry:
                         self.lines = [
                             pd.Interval(
                                 el.sourceline,
-                                feature_matrix.getXMLEndLine(el),
+                                FeatureMatrix.getXMLEndLine(el),
                                 closed="both",
                             )
                             for el in elements
@@ -194,8 +219,8 @@ class feature_matrix_entry:
                                         closed="both",
                                     ),
                                     pd.Interval(
-                                        feature_matrix.getXMLEndLine(el),
-                                        feature_matrix.getXMLEndLine(el),
+                                        FeatureMatrix.getXMLEndLine(el),
+                                        FeatureMatrix.getXMLEndLine(el),
                                         closed="both",
                                     ),
                                 ]

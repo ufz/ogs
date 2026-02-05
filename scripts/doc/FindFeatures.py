@@ -27,23 +27,23 @@ import argparse
 import itertools
 import json
 import operator
-import re
-import warnings
 from pathlib import Path
+import re
+
+from lxml import etree
 import numpy as np
 import pandas as pd
-from lxml import etree
 
-from FeatureMatrixClasses import feature_matrix, feature_matrix_entry
+from FeatureMatrixClasses import FeatureMatrix, FeatureMatrixEntry
 from utils import getXMLFiles
 
 
-def getFeatureMatrix(path: Path) -> feature_matrix:
+def getFeatureMatrix(path: Path) -> FeatureMatrix:
     """
     First the project files are gathered. Afterwards the Feature Dictionaries are created. Eventually these dictionaries will be evaluated and
     the results will be put together in a matrix.
     The keys of the feature dict are the names of the features that will be displayed. The values should be functions that returns a
-    feature_matrix_entry object. These functions start with "check*".
+    FeatureMatrixEntry object. These functions start with "check*".
     """
 
     xml_files = getXMLFiles(path)
@@ -363,7 +363,7 @@ def getFeatureMatrix(path: Path) -> feature_matrix:
         },
     }
 
-    return feature_matrix(feature_dict, xml_files)
+    return FeatureMatrix(feature_dict, xml_files)
 
 
 ########################################################################################
@@ -371,7 +371,7 @@ def getFeatureMatrix(path: Path) -> feature_matrix:
 ########################################################################################
 
 
-def createJSON(mat: feature_matrix, filename: Path) -> str:
+def createJSON(mat: FeatureMatrix, filename: Path) -> str:
     """Creates JSON data from feature Matrix"""
     string = "[\n"
 
@@ -407,7 +407,7 @@ def checkAttributes(
     case: str,
     line_type="range",
     operator: str = "==",
-) -> feature_matrix_entry:
+) -> FeatureMatrixEntry:
     """Checks whether the given Element has an attribute with the attribute_name given and will compare it using the operator given to the case attribute."""
     elements = xml.xpath(xpath)
     operator_func = translateOps(operator)
@@ -416,23 +416,21 @@ def checkAttributes(
         for element in elements
         if attribute_name in list(element.attrib.keys())
     ]
-    return feature_matrix_entry(
+    return FeatureMatrixEntry(
         list(itertools.compress(elements, attributes)), line_type=line_type
     )
 
 
 def checkChildrenNames(
     xml: etree.ElementTree, xpath: str, case: str, line_type="range"
-) -> feature_matrix_entry:
+) -> FeatureMatrixEntry:
     """Will return a list of strings containing the children found in the xpath given along with the source lines of said child"""
     children = list(xml.xpath(xpath + "/*"))
     is_present = [case == child.tag for child in children]
-    return feature_matrix_entry(
-        list(itertools.compress(children, is_present)), line_type
-    )
+    return FeatureMatrixEntry(list(itertools.compress(children, is_present)), line_type)
 
 
-def checkComment(xml: etree.ElementTree) -> feature_matrix_entry:
+def checkComment(xml: etree.ElementTree) -> FeatureMatrixEntry:
     """Will find the lines, that contain comments in the xml files."""
     strings = etree.tostring(xml).split(b"\n")
 
@@ -446,7 +444,7 @@ def checkComment(xml: etree.ElementTree) -> feature_matrix_entry:
     to_lines = [line + sourceline - 1 for line in findAllPatternLines(strings, b"-->")]
 
     if len(from_lines) > 0:
-        return feature_matrix_entry(
+        return FeatureMatrixEntry(
             [xml],
             lines=[
                 pd.Interval(left=from_lines[i], right=to_lines[i], closed="both")
@@ -454,16 +452,16 @@ def checkComment(xml: etree.ElementTree) -> feature_matrix_entry:
             ],
         )
 
-    return feature_matrix_entry([])
+    return FeatureMatrixEntry([])
 
 
-def checkFirstLines(xml: etree.ElementTree) -> feature_matrix_entry:
+def checkFirstLines(xml: etree.ElementTree) -> FeatureMatrixEntry:
     """Used as dummy feature to identify the lines before the <OpenGeoSysProject> Tag (prerequisites)."""
     xp = xml.xpath("../OpenGeoSysProject")
 
     if len(xp) > 0:
         if xp[0].sourceline - 1 < 1:
-            return feature_matrix_entry(
+            return FeatureMatrixEntry(
                 [xp[0]],
                 lines=[
                     pd.Interval(
@@ -473,19 +471,17 @@ def checkFirstLines(xml: etree.ElementTree) -> feature_matrix_entry:
                     )
                 ],
             )
-        else:
-            return feature_matrix_entry(
-                [xp[0]],
-                lines=[
-                    pd.Interval(
-                        left=1,
-                        right=xp[0].sourceline - 1,
-                        closed="both",
-                    )
-                ],
-            )
-    else:
-        return feature_matrix_entry([])
+        return FeatureMatrixEntry(
+            [xp[0]],
+            lines=[
+                pd.Interval(
+                    left=1,
+                    right=xp[0].sourceline - 1,
+                    closed="both",
+                )
+            ],
+        )
+    return FeatureMatrixEntry([])
 
 
 def checkTagChildrenCount(
@@ -494,11 +490,11 @@ def checkTagChildrenCount(
     count: int,
     operator: str = "==",
     line_type="range",
-) -> feature_matrix_entry:
-    """Will identify, how many children(Tags) this Tag has. Will compare the number using the operator to the count given. All Tags that match this comparison will be put in the feature_matrix_entry."""
+) -> FeatureMatrixEntry:
+    """Will identify, how many children(Tags) this Tag has. Will compare the number using the operator to the count given. All Tags that match this comparison will be put in the FeatureMatrixEntry."""
     elements = xml.xpath(xpath)
     operator_func = translateOps(operator)
-    return feature_matrix_entry(
+    return FeatureMatrixEntry(
         list(
             itertools.compress(
                 elements,
@@ -511,9 +507,9 @@ def checkTagChildrenCount(
 
 def checkTagIsPresent(
     xml: etree.ElementTree, xpath: str, line_type="range"
-) -> feature_matrix_entry:
+) -> FeatureMatrixEntry:
     """Checks whether a tag is present in the parsed xml file under the given xpath. If True it will return the sourceline along with the boolean value"""
-    return feature_matrix_entry(xml.xpath(xpath), line_type)
+    return FeatureMatrixEntry(xml.xpath(xpath), line_type)
 
 
 def checkTagText(
@@ -522,32 +518,32 @@ def checkTagText(
     case: str,
     operator: str = "==",
     line_type="range",
-) -> feature_matrix_entry:
+) -> FeatureMatrixEntry:
     """Checks whether the text of the element of the xml file in the location of the given xpath is equal to the text given as case argument. If True will return the sourceline along with the boolean."""
     xpath_elements = xml.xpath(xpath)
     operator_func = translateOps(operator)
     texts = [operator_func(x.text, case) for x in xpath_elements]
 
     if xpath.split("/")[-1] in ["name", "type"]:
-        return feature_matrix_entry(
+        return FeatureMatrixEntry(
             [
                 child.getparent()
                 for child in list(itertools.compress(xpath_elements, texts))
             ],
             line_type,
         )
-    return feature_matrix_entry(
+    return FeatureMatrixEntry(
         list(itertools.compress(xpath_elements, texts)), line_type
     )
 
 
 def checkTagTextIsTuple(
     xml: etree.ElementTree, xpath: str, line_type="range"
-) -> feature_matrix_entry:
+) -> FeatureMatrixEntry:
     """Checks whether the text of the element of the xml file in the location of the given xpath is a tuple. If True will return the sourceline along with the boolean."""
     elements = xml.xpath(xpath)
     is_tuple = [isTupleFromText(element.text) for element in elements]
-    return feature_matrix_entry(list(itertools.compress(elements, is_tuple)), line_type)
+    return FeatureMatrixEntry(list(itertools.compress(elements, is_tuple)), line_type)
 
 
 def countChildren(xml: etree._ElementTree, xpath: str) -> list[int]:
@@ -555,7 +551,9 @@ def countChildren(xml: etree._ElementTree, xpath: str) -> list[int]:
     return [len(element.getchildren()) for element in xml.xpath(xpath)]
 
 
-def extract_intervals(lines, index):
+def extract_intervals(
+    lines: pd.DataFrame, index: object
+) -> list[list[tuple[int, int]]]:
     intervals = []
     for f in range(len(lines.loc[index, :])):
         col_name = lines.columns[f]
@@ -586,27 +584,6 @@ def findTypesFromDocumentation(path: Path, subdir: str) -> list[str]:
     ]
 
 
-def getProjectFiles(path: Path) -> list[Path]:
-    """Function to extract all file paths from OGS Test files"""
-    return list((path / "Tests/Data").rglob("*.prj"))
-
-
-def getXMLFiles(path: Path):
-    files = getProjectFiles(path=path)
-    if not files:
-        msg = "No project files found"
-        raise ValueError(msg)
-
-    # Parse the XML Files
-    filenames = [file.name for file in files]
-    xml_files = [xmlParser(file) for file in files]
-    filenames = list(
-        itertools.compress(filenames, [xml is not None for xml in xml_files])
-    )
-    files = list(itertools.compress(files, [xml is not None for xml in xml_files]))
-    return [xml for xml in xml_files if xml is not None]
-
-
 def isTupleFromText(text: str) -> bool:
     """Evaluates Regex expression for given Text. If the text starts with a digit (possibly includes . or e) followed by a space and then another digit the
     function will return True else False."""
@@ -631,14 +608,6 @@ def translateOps(op: str) -> operator:
     return ops[op]
 
 
-def xmlParser(filedir: Path) -> etree.ElementTree:
-    """wrapper for etree.parse, as there are files present, that could not be parsed."""
-    try:
-        return etree.parse(filedir)
-    except Exception:
-        warnings.warn(f"Not able to parse: {filedir}.", stacklevel=2)
-
-
 if __name__ == "__main__":
     # Parse command line arguments
     parser = argparse.ArgumentParser(
@@ -650,7 +619,7 @@ if __name__ == "__main__":
         type=Path,
         metavar="PATH",
         nargs="?",
-        default=".",
+        default="./Tests/Data",
         help="Path to the directory containing feature files",
     )
     args = parser.parse_args()
@@ -684,5 +653,5 @@ def load_json_features(json_path: Path) -> list[dict]:
     Returns:
         List of dictionaries containing the parsed feature data
     """
-    with open(json_path, "r", encoding="utf-8") as f:
+    with Path.open(json_path, encoding="utf-8") as f:
         return json.load(f)
