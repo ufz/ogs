@@ -46,7 +46,7 @@ def getFeatureMatrix(path: Path) -> FeatureMatrix:
     FeatureMatrixEntry object. These functions start with "check*".
     """
 
-    xml_files = getXMLFiles(path)
+    xml_files = getXMLFiles(path, False)
 
     # Create the feature dict
     feature_dict = {

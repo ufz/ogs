@@ -9,22 +9,23 @@ File that contains utility functions for the creation of the documentation and F
 """
 
 
-def getProjectFiles(path: Path) -> list[Path]:
+def getProjectFiles(path: Path, include_diff_files: bool = True) -> list[Path]:
     """Function to extract all file paths from OGS Test files"""
-    path_list_xml = list(path.rglob("*.xml"))
-    path_list = []
 
-    for filepath in path_list_xml:
-        with open(filepath, "r") as included_xml_file:
-            if "OpenGeoSysProjectDiff" in included_xml_file.read():
-                path_list.append(filepath)
+    path_list = []
+    if include_diff_files:
+        path_list_xml = list(path.rglob("*.xml"))
+        for filepath in path_list_xml:
+            with open(filepath, "r") as included_xml_file:
+                if "OpenGeoSysProjectDiff" in included_xml_file.read():
+                    path_list.append(filepath)
 
     path_list.extend(list((path).rglob("*.prj")))
     return path_list
 
 
-def getXMLFiles(path: Path):
-    files = getProjectFiles(path=path)
+def getXMLFiles(path: Path, include_diff_files: bool = True):
+    files = getProjectFiles(path=path, include_diff_files=include_diff_files)
     if not files:
         msg = "No project files found"
         raise ValueError(msg)
