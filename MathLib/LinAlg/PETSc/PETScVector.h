@@ -91,7 +91,8 @@ public:
     */
     void set(const PetscInt i, const PetscScalar value)
     {
-        VecSetValue(v_, i, value, INSERT_VALUES);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       VecSetValue(v_, i, value, INSERT_VALUES));
     }
 
     /*!
@@ -101,7 +102,7 @@ public:
     */
     void add(const PetscInt i, const PetscScalar value)
     {
-        VecSetValue(v_, i, value, ADD_VALUES);
+        PetscCallAbort(PETSC_COMM_WORLD, VecSetValue(v_, i, value, ADD_VALUES));
     }
 
     /*!
@@ -116,12 +117,15 @@ public:
     {
         if constexpr (std::is_pointer_v<T_SUBVEC>)
         {
-            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec, ADD_VALUES);
+            PetscCallAbort(PETSC_COMM_WORLD,
+                           VecSetValues(v_, e_idxs.size(), &e_idxs[0],
+                                        &sub_vec[0], ADD_VALUES));
         }
         else
         {
-            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec.data(),
-                         ADD_VALUES);
+            PetscCallAbort(PETSC_COMM_WORLD,
+                           VecSetValues(v_, e_idxs.size(), e_idxs.data(),
+                                        sub_vec.data(), ADD_VALUES));
         }
     }
 
@@ -137,18 +141,20 @@ public:
     {
         if constexpr (std::is_pointer_v<T_SUBVEC>)
         {
-            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec,
-                         INSERT_VALUES);
+            PetscCallAbort(PETSC_COMM_WORLD,
+                           VecSetValues(v_, e_idxs.size(), e_idxs.data(),
+                                        sub_vec, INSERT_VALUES));
         }
         else
         {
-            VecSetValues(v_, e_idxs.size(), e_idxs.data(), sub_vec.data(),
-                         INSERT_VALUES);
+            PetscCallAbort(PETSC_COMM_WORLD,
+                           VecSetValues(v_, e_idxs.size(), e_idxs.data(),
+                                        sub_vec.data(), INSERT_VALUES));
         }
     }
 
     // TODO preliminary
-    void setZero() { VecSet(v_, 0.0); }
+    void setZero() { PetscCallAbort(PETSC_COMM_WORLD, VecSet(v_, 0.0)); }
     /// Disallow moving.
     /// \todo This operator should be implemented properly when doing a
     ///       general cleanup of all matrix and vector classes.
@@ -242,7 +248,7 @@ private:
     {
         if (v_ != nullptr)
         {
-            VecDestroy(&v_);
+            PetscCallAbort(PETSC_COMM_WORLD, VecDestroy(&v_));
         }
         v_ = nullptr;
     }

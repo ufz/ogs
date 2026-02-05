@@ -16,20 +16,23 @@ PETScLinearSolver::PETScLinearSolver(std::string const& prefix,
     PetscOptionsInsertString(nullptr, petsc_options.c_str());
 #endif
 
-    KSPCreate(PETSC_COMM_WORLD, &solver_);
+    PetscCallAbort(PETSC_COMM_WORLD, KSPCreate(PETSC_COMM_WORLD, &solver_));
 
-    KSPGetPC(solver_, &pc_);
+    PetscCallAbort(PETSC_COMM_WORLD, KSPGetPC(solver_, &pc_));
 
     if (!prefix.empty())
     {
-        KSPSetOptionsPrefix(solver_, prefix.c_str());
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       KSPSetOptionsPrefix(solver_, prefix.c_str()));
     }
 
-    KSPSetInitialGuessNonzero(solver_, PETSC_TRUE);
-    KSPSetFromOptions(solver_);  // set run-time options
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   KSPSetInitialGuessNonzero(solver_, PETSC_TRUE));
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   KSPSetFromOptions(solver_));  // set run-time options
 
     KSPType ksp_type;
-    KSPGetType(solver_, &ksp_type);
+    PetscCallAbort(PETSC_COMM_WORLD, KSPGetType(solver_, &ksp_type));
     can_solve_rectangular_ = canSolverHandleRectangular(ksp_type);
 }
 
@@ -45,11 +48,11 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
 #endif
 
     KSPNormType norm_type;
-    KSPGetNormType(solver_, &norm_type);
+    PetscCallAbort(PETSC_COMM_WORLD, KSPGetNormType(solver_, &norm_type));
     const char* ksp_type;
     const char* pc_type;
-    KSPGetType(solver_, &ksp_type);
-    PCGetType(pc_, &pc_type);
+    PetscCallAbort(PETSC_COMM_WORLD, KSPGetType(solver_, &ksp_type));
+    PetscCallAbort(PETSC_COMM_WORLD, PCGetType(pc_, &pc_type));
 
     PetscPrintf(PETSC_COMM_WORLD,
                 "\n================================================");
@@ -57,18 +60,20 @@ bool PETScLinearSolver::solve(PETScMatrix& A, PETScVector& b, PETScVector& x)
                 "\nLinear solver %s with %s preconditioner using %s", ksp_type,
                 pc_type, KSPNormTypes[norm_type]);
 
-    KSPSetOperators(solver_, A.getRawMatrix(), A.getRawMatrix());
+    PetscCallAbort(PETSC_COMM_WORLD, KSPSetOperators(solver_, A.getRawMatrix(),
+                                                     A.getRawMatrix()));
 
-    KSPSolve(solver_, b.getRawVector(), x.getRawVector());
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   KSPSolve(solver_, b.getRawVector(), x.getRawVector()));
 
     KSPConvergedReason reason;
-    KSPGetConvergedReason(solver_, &reason);
+    PetscCallAbort(PETSC_COMM_WORLD, KSPGetConvergedReason(solver_, &reason));
 
     bool converged = true;
     if (reason > 0)
     {
         PetscInt its;
-        KSPGetIterationNumber(solver_, &its);
+        PetscCallAbort(PETSC_COMM_WORLD, KSPGetIterationNumber(solver_, &its));
         PetscPrintf(PETSC_COMM_WORLD, "\nconverged in %d iterations", its);
         switch (reason)
         {

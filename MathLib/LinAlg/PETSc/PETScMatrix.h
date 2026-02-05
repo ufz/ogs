@@ -101,7 +101,8 @@ public:
     */
     void set(const PetscInt i, const PetscInt j, const PetscScalar value)
     {
-        MatSetValue(A_, i, j, value, INSERT_VALUES);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       MatSetValue(A_, i, j, value, INSERT_VALUES));
     }
 
     /*!
@@ -112,7 +113,8 @@ public:
     */
     void add(const PetscInt i, const PetscInt j, const PetscScalar value)
     {
-        MatSetValue(A_, i, j, value, ADD_VALUES);
+        PetscCallAbort(PETSC_COMM_WORLD,
+                       MatSetValue(A_, i, j, value, ADD_VALUES));
     }
 
     /*!
@@ -207,7 +209,7 @@ private:
     {
         if (A_ != nullptr)
         {
-            MatDestroy(&A_);
+            PetscCallAbort(PETSC_COMM_WORLD, MatDestroy(&A_));
         }
         A_ = nullptr;
     }
@@ -255,8 +257,9 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
     const PetscInt nrows = static_cast<PetscInt>(row_pos.size());
     const PetscInt ncols = static_cast<PetscInt>(col_pos.size());
 
-    MatSetValues(A_, nrows, &row_pos[0], ncols, &col_pos[0], sub_mat.data(),
-                 ADD_VALUES);
+    PetscCallAbort(PETSC_COMM_WORLD,
+                   MatSetValues(A_, nrows, &row_pos[0], ncols, &col_pos[0],
+                                sub_mat.data(), ADD_VALUES));
 };
 
 /*!
