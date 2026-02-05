@@ -38,16 +38,7 @@ from FeatureMatrixClasses import FeatureMatrix, FeatureMatrixEntry
 from utils import get_xml_files
 
 
-def get_feature_matrix(path: Path) -> FeatureMatrix:
-    """
-    First the project files are gathered. Afterwards the Feature Dictionaries are created. Eventually these dictionaries will be evaluated and
-    the results will be put together in a matrix.
-    The keys of the feature dict are the names of the features that will be displayed. The values should be functions that returns a
-    FeatureMatrixEntry object. These functions start with "check*".
-    """
-
-    xml_files = get_xml_files(path, False)
-
+def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
     # Create the feature dict
     feature_dict = {
         # Add Dummy features that are not "real" features but are needed to create the code coverage.
@@ -264,7 +255,7 @@ def get_feature_matrix(path: Path) -> FeatureMatrix:
         ),
         # Will check the given Tag and determine whether it is a tuple or a singular value.
         "Parameter Constant is Tuple:": lambda xml: check_tag_text_is_tuple(
-            xml, './/parameters/parameter[type = "Constant"]/values'
+            xml, '//parameters/parameter[type = "Constant"]/values'
         ),
         # Checks whether the Tag chemical System has an chemical solver attribute with the given values.
         **{
@@ -315,7 +306,7 @@ def get_feature_matrix(path: Path) -> FeatureMatrix:
         ),
         # Check whether medium has an attribute id != 0
         "Medium: has phases": lambda xml: check_tag_is_present(
-            xml, "/media/medium/phases", line_type="open and close"
+            xml, "./media/medium/phases", line_type="open and close"
         ),
         # Check whether mesh attribute axially symmetric is set to "true"
         "Mesh: axially_symmetric": lambda xml: check_attributes(
@@ -364,6 +355,19 @@ def get_feature_matrix(path: Path) -> FeatureMatrix:
             for case in ["true", "false"]
         },
     }
+    return feature_dict
+
+
+def get_feature_matrix(path: Path) -> FeatureMatrix:
+    """
+    First the project files are gathered. Afterwards the Feature Dictionaries are created. Eventually these dictionaries will be evaluated and
+    the results will be put together in a matrix.
+    The keys of the feature dict are the names of the features that will be displayed. The values should be functions that returns a
+    FeatureMatrixEntry object. These functions start with "check*".
+    """
+
+    xml_files = get_xml_files(path, False)
+    feature_dict = get_feature_dict(path, xml_files)
 
     return FeatureMatrix(feature_dict, xml_files)
 
@@ -547,6 +551,7 @@ def check_tag_text_is_tuple(
     """Checks whether the text of the element of the xml file in the location of the given xpath is a tuple. If True will return the sourceline along with the boolean."""
     elements = xml.xpath(xpath)
     is_tuple = [is_tuple_from_text(element.text) for element in elements]
+    [element.text for element in elements]
     return FeatureMatrixEntry(list(itertools.compress(elements, is_tuple)), line_type)
 
 
