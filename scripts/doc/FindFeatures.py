@@ -598,7 +598,7 @@ def is_tuple_from_text(text: str) -> bool:
     function will return True else False."""
     return bool(
         re.compile(
-            r"^\\d+(\\.\\d*)?+(e[+-]?\\d+(\\.\\d*)?)?+\\s+\\d+(\\.\\d*)?+(e[+-]?\\d+(\\.\\d*)?)?"
+            r"^\s*\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s+\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s*$"
         ).match(text)
     )
 
