@@ -259,7 +259,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         ),
         # Checks whether the Tag chemical System has an chemical solver attribute with the given values.
         **{
-            "Chemical Solver:"
+            "Chemical Solver: "
             + case: lambda xml, case=case: check_attributes(
                 xml, "./chemical_system", "chemical_solver", case
             )
@@ -267,7 +267,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         },
         # Checks for damping of nonlinear solver.
         **{
-            "Nonlinear solver:"
+            "Nonlinear solver: "
             + case: lambda xml, case=case: check_tag_is_present(
                 xml, "//nonlinear_solvers/nonlinear_solver" + case
             )
@@ -275,7 +275,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         },
         # Checks for type of nonlinear solver.
         **{
-            "Nonlinear solver:"
+            "Nonlinear solver: "
             + case: lambda xml, case=case: check_tag_text(
                 xml, "//nonlinear_solvers/nonlinear_solver/type", case
             )
@@ -348,7 +348,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         },
         # check for Compensate Non Equilibrium Initial Residuum
         **{
-            "Compensate Non Equilibrium Initial Residuum:"
+            "Compensate Non Equilibrium Initial Residuum: "
             + case: lambda xml, case=case: check_tag_text(
                 xml, "//compensate_non_equilibrium_initial_residuum", case
             )
