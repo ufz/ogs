@@ -261,6 +261,11 @@ int main(int argc, char** argv)
     std::unique_ptr<MeshLib::Mesh const> mesh_in(
         MeshLib::IO::readMeshFromFile(arg_in_file.getValue()));
 
+    if (!mesh_in)
+    {
+        OGS_FATAL("Input mesh could not be read.");
+    }
+
     unsigned const int_order = (integration_order.isSet())
                                    ? integration_order.getValue()
                                    : determineIntegrationOrder(*mesh_in);
