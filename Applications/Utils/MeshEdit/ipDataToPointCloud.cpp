@@ -216,6 +216,7 @@ void copyDoubleValuedFieldDataToPointCloud(MeshLib::Properties const& props_in,
 }
 
 int main(int argc, char** argv)
+try
 {
     // TODO future additions to this tool might include:
     // -C --copy-cell-data
@@ -283,4 +284,9 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
+}
+catch (std::exception const& e)
+{
+    ERR("{}", e.what());
+    return EXIT_FAILURE;
 }
