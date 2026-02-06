@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include "MathLib/LinAlg/LinearSolverBehaviour.h"
 #include "MathLib/LinAlg/LinearSolverOptions.h"
 #include "MathLib/LinAlg/LinearSolverOptionsParser.h"
 #include "MathLib/LinAlg/Lis/LisWrapper.h"
@@ -45,6 +46,13 @@ public:
 
     /// Get, if the solver can handle rectangular equation systems
     bool canSolveRectangular() const { return false; }
+
+    /// Provided for compatibility with Eigen linear solvers.
+    bool willCompute(
+        MathLib::LinearSolverBehaviour const /*linear_solver_behaviour*/) const
+    {
+        return true;
+    }
 
 private:
     bool solve(LisMatrix& A, LisVector& b, LisVector& x);
