@@ -1367,7 +1367,7 @@ AddTest(
 )
 
 AddTest(
-    NAME m1_3Dsquare_no_metadata_fail
+    NAME m1_3Dsquare_no_metadata_fail_invalid_order
     PATH Mechanics/m1_3Dsquare
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/m1_3Dsquare
     EXECUTABLE ipDataToPointCloud
@@ -1375,6 +1375,17 @@ AddTest(
     PROPERTIES
         PASS_REGULAR_EXPRESSION
         "Integration order 9 is not supported"
+)
+
+AddTest(
+    NAME m1_3Dsquare_no_metadata_fail_cannot_guess_order
+    PATH Mechanics/m1_3Dsquare
+    WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/m1_3Dsquare
+    EXECUTABLE ipDataToPointCloud
+    EXECUTABLE_ARGS -i m1_3Dsquare.vtu -o ${Data_BINARY_DIR}/Mechanics/m1_3Dsquare/m1_3Dsquare_point_cloud.vtu
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION
+        "Integration order could not be determined."
 )
 
 AddTest(
