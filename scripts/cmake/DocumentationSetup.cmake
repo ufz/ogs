@@ -155,11 +155,12 @@ if(Python_EXECUTABLE)
 
     add_custom_target(
         feature_matrix
-        ${Python_EXECUTABLE}
-        ${PROJECT_SOURCE_DIR}/scripts/doc/FindFeatures.py
-        ${PROJECT_SOURCE_DIR}
-        --json
-        ${_featurematrix_bundle_dir}/features.json
+        COMMAND uv run ${PROJECT_SOURCE_DIR}/scripts/doc/FindFeatures.py
+            ${PROJECT_SOURCE_DIR}/Tests/Data
+            --json ${_featurematrix_bundle_dir}/features.json
+        COMMAND uv run ${PROJECT_SOURCE_DIR}/scripts/doc/CheckFeatureMatrix.py
+            ${_featurematrix_bundle_dir}/features.json
+            --path_prj ${PROJECT_SOURCE_DIR}/Tests/Data
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
         COMMENT "Generating feature matrix in ${_featurematrix_bundle_dir}/features.json"
         VERBATIM
