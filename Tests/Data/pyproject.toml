@@ -30,6 +30,7 @@ dependencies = [
   "papermill>=2.6.0",
   "pytest>=8.2.2",
   "toml>=0.10.2",
+  "coverage>=7.13",
 ]
 
 # Usage:
@@ -68,3 +69,9 @@ explicit = true
 name = "ogs-gitlab"
 url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple"
 explicit = true
+
+[tool.coverage.run]
+branch = true
+# patch = ["subprocess"] # enable when subprocesses should be covered too
+parallel = true
+source = ["."]
