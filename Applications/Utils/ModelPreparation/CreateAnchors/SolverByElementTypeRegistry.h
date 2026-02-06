@@ -66,7 +66,7 @@ public:
             "You are trying to get a solver for an unknown mesh element "
             "type "
             "({:s}).",
-            type_idx.name());
+            BaseLib::demangle(type_idx.name()));
     }
 };
 
