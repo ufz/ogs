@@ -160,16 +160,7 @@ public:
                                       M, K, b, sorted_element_subset,
                                       copy_residua_to_mesh);
 
-        [[unlikely]] if (BaseLib::MPI::anyOf(exception != nullptr))
-        {
-            if (exception)  // Only the rank with the exception rethrows...
-            {
-                std::rethrow_exception(exception);
-            }
-            // TODO should other ranks rather throw a new exception?
-            // ... but all ranks quit.
-            return;
-        }
+        BaseLib::MPI::allRanksThrowOrNone<NumLib::AssemblyException>(exception);
 
         if (copy_residua_to_mesh && bulk_mesh_assembly_data_)
         {
@@ -224,15 +215,7 @@ public:
                       t, dt, x, x_prev, dof_tables, process_id, b, Jac,
                       sorted_element_subset, copy_residua_to_mesh);
 
-        [[unlikely]] if (BaseLib::MPI::anyOf(exception != nullptr))
-        {
-            if (exception)  // Only the rank with the exception rethrows...
-            {
-                std::rethrow_exception(exception);
-            }
-            // ... but all ranks quit.
-            return;
-        }
+        BaseLib::MPI::allRanksThrowOrNone<NumLib::AssemblyException>(exception);
 
         MathLib::LinAlg::finalizeAssembly(Jac);
 
