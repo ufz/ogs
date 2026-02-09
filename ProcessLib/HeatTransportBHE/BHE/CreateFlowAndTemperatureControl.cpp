@@ -210,19 +210,18 @@ FlowAndTemperatureControl createCooling(
     }
 };
 
-using FactoryAdvancedBuildingCurvesFlowCurve =
-    std::function<FlowAndTemperatureControl(
-        std::optional<PowerWithCOP>,             // heating
-        std::optional<PowerWithCOP>,             // hot water
-        std::optional<CoolingVariant>,           // cooling
-        ParameterLib::Parameter<double> const&,  // flow rate param
-        RefrigerantProperties const&,
-        double const,    // flow rate min
-        double const)>;  // power min
+using FactoryAdvancedBuildingPower = std::function<FlowAndTemperatureControl(
+    std::optional<PowerWithCOP>,             // heating
+    std::optional<PowerWithCOP>,             // hot water
+    std::optional<CoolingVariant>,           // cooling
+    ParameterLib::Parameter<double> const&,  // flow rate param
+    RefrigerantProperties const&,
+    double const,    // flow rate min
+    double const)>;  // power min
 
 const std::map<std::tuple<bool, bool, bool>,  // heating, hot_water,
                                               // cooling
-               FactoryAdvancedBuildingCurvesFlowCurve>
+               FactoryAdvancedBuildingPower>
     advancedBuildingPower = {
         {{true, true, true}, &createHeatingHotWaterCooling},
         {{true, true, false},
