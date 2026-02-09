@@ -216,14 +216,12 @@ std::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
  * if an inline constant is created).
  * @param property_name         Name of the property (used for auto-generated
  *                              parameter names in the inline case).
- * @param tag_name              XML/ConfigTree tag name to read.
  * @param inline_suffix         Suffix for auto-generated parameter names.
  */
 OGS_NO_DANGLING Parameter<double>& getNamedOrCreateInlineParameter(
     std::string const& parameter_or_value,
     std::vector<std::unique_ptr<ParameterBase>>& parameters,
     std::string const& property_name,
-    std::string const& tag_name,
     std::string const& inline_suffix);
 
 }  // namespace ParameterLib

@@ -118,7 +118,6 @@ Parameter<double>& getNamedOrCreateInlineParameter(
     std::string const& parameter_or_value,
     std::vector<std::unique_ptr<ParameterBase>>& parameters,
     std::string const& property_name,
-    std::string const& tag_name,
     std::string const& inline_suffix)
 {
     // try to parse number(s) (if empty - no inline-values)
@@ -130,11 +129,11 @@ Parameter<double>& getNamedOrCreateInlineParameter(
         if (values->empty())
         {
             OGS_FATAL(
-                "Empty inline value list in <{:s}> for property '{:s}'. "
+                "Empty inline value list for property '{:s}'. "
                 "Provide at least one numeric value (e.g., \"1.23 4.56\") or "
                 "specify the name of an existing parameter. "
                 "Raw input was: \"{:s}\".",
-                tag_name, property_name, parameter_or_value);
+                property_name, parameter_or_value);
         }
 
         // collect all existing parameter names for checks against uniqueness

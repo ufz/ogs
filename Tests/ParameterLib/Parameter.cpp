@@ -277,7 +277,6 @@ TEST_F(ParameterLibParameter,
                 .getConfigParameter<std::string>("dry_thermal_conductivity"),
             parameters,
             "SaturationWeightedThermalConductivity",
-            "dry_thermal_conductivity",
             "dry_inline"),
         std::runtime_error);
 }
@@ -302,7 +301,6 @@ TEST_F(ParameterLibParameter,
             .getConfigParameter<std::string>("dry_thermal_conductivity"),
         parameters,
         "SaturationWeightedThermalConductivity",
-        "dry_thermal_conductivity",
         "dry_inline");
 
     ASSERT_EQ(parameters.size(), 1u);
@@ -346,7 +344,6 @@ TEST_F(ParameterLibParameter,
             .getConfigParameter<std::string>("dry_thermal_conductivity"),
         parameters,
         "SaturationWeightedThermalConductivity",
-        "dry_thermal_conductivity",
         "dry_inline");
 
     ASSERT_EQ(parameters.size(), 1u);
