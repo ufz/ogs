@@ -24,11 +24,11 @@ struct FlowAndTemperature
 
 inline FlowAndTemperature check_power_and_flow_rate(double flow_rate,
                                                     double power,
-                                                    double heat_capacity,
-                                                    double density,
-                                                    double T_out,
-                                                    double flow_rate_min,
-                                                    double power_min)
+                                                    double const heat_capacity,
+                                                    double const density,
+                                                    double const T_out,
+                                                    double const flow_rate_min,
+                                                    double const power_min)
 {
     flow_rate = (std::abs(flow_rate) < flow_rate_min) ? 0.0 : flow_rate;
 
@@ -52,15 +52,15 @@ struct InflowTemperature
     FlowAndTemperature operator()(double const /*T_out*/,
                                   double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
-        double temperature = temperature_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
+        double const temperature = temperature_param(time, x)[0];
         return {(std::abs(flow_rate) < flow_rate_min) ? 0.0 : flow_rate,
                 temperature};
     }
     ParameterLib::Parameter<double> const& temperature_param;
     ParameterLib::Parameter<double> const& flow_rate_param;
-    double flow_rate_min;
+    double const flow_rate_min;
     static constexpr bool is_power_bc = false;
 };
 
@@ -68,9 +68,9 @@ struct Power
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
-        double power = power_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
+        double const power = power_param(time, x)[0];
         return check_power_and_flow_rate(flow_rate,
                                          power,
                                          heat_capacity,
@@ -83,10 +83,10 @@ struct Power
     // Value is expected to be in Watt.
     ParameterLib::Parameter<double> const& power_param;
     ParameterLib::Parameter<double> const& flow_rate_param;
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -94,8 +94,8 @@ struct BuildingPower
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
         double const power_building = building_power.power_param(time, x)[0];
         double const cop = building_power.cop_curve.getValue(T_out);
 
@@ -112,10 +112,10 @@ struct BuildingPower
 
     PowerWithCOP const building_power;
     ParameterLib::Parameter<double> const& flow_rate_param;
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -123,8 +123,8 @@ struct BuildingPowerHotWaterActiveCooling
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
         double const power_heating = building_heating.power_param(time, x)[0];
         double const cop_heating = building_heating.cop_curve.getValue(T_out);
 
@@ -156,10 +156,10 @@ struct BuildingPowerHotWaterActiveCooling
     PowerWithCOP const building_active_cooling;
     ParameterLib::Parameter<double> const& flow_rate_param;
 
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -167,8 +167,8 @@ struct BuildingPowerHotWaterPassiveCooling
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
         double const power_heating = building_heating.power_param(time, x)[0];
         double const cop_heating = building_heating.cop_curve.getValue(T_out);
 
@@ -197,10 +197,10 @@ struct BuildingPowerHotWaterPassiveCooling
     ParameterLib::Parameter<double> const& cooling_power_param;
     ParameterLib::Parameter<double> const& flow_rate_param;
 
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -208,8 +208,8 @@ struct BuildingPowerHotWater
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
         double const power_heating = building_heating.power_param(time, x)[0];
         double const cop_heating = building_heating.cop_curve.getValue(T_out);
 
@@ -234,10 +234,10 @@ struct BuildingPowerHotWater
     PowerWithCOP const building_hot_water;
     ParameterLib::Parameter<double> const& flow_rate_param;
 
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -245,8 +245,8 @@ struct BuildingPowerActiveCooling
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
         double const power_heating = building_heating.power_param(time, x)[0];
         double const cop_heating = building_heating.cop_curve.getValue(T_out);
 
@@ -271,10 +271,10 @@ struct BuildingPowerActiveCooling
     PowerWithCOP const building_active_cooling;
     ParameterLib::Parameter<double> const& flow_rate_param;
 
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -282,8 +282,8 @@ struct BuildingPowerPassiveCooling
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
-        double flow_rate = flow_rate_param(time, x)[0];
+        ParameterLib::SpatialPosition const x;
+        double const flow_rate = flow_rate_param(time, x)[0];
         double const power_heating = building_heating.power_param(time, x)[0];
         double const cop_heating = building_heating.cop_curve.getValue(T_out);
 
@@ -305,10 +305,10 @@ struct BuildingPowerPassiveCooling
     ParameterLib::Parameter<double> const& cooling_power_param;
     ParameterLib::Parameter<double> const& flow_rate_param;
 
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
@@ -316,7 +316,7 @@ struct ActiveCooling
 {
     FlowAndTemperature operator()(double const T_out, double const time) const
     {
-        ParameterLib::SpatialPosition x;
+        ParameterLib::SpatialPosition const x;
         double const flow_rate = flow_rate_param(time, x)[0];
 
         double const power_cooling =
@@ -338,10 +338,10 @@ struct ActiveCooling
     PowerWithCOP const building_active_cooling;
     ParameterLib::Parameter<double> const& flow_rate_param;
 
-    double heat_capacity;
-    double density;
-    double flow_rate_min;
-    double power_min;
+    double const heat_capacity;
+    double const density;
+    double const flow_rate_min;
+    double const power_min;
     static constexpr bool is_power_bc = true;
 };
 
