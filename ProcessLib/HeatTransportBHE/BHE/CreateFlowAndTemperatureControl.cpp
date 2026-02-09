@@ -456,8 +456,12 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
             heating_config, hot_water_config, cooling_config, parameters,
             curves, flow_rate_param, refrigerant, flow_rate_min, power_min);
     }
-    OGS_FATAL("FlowAndTemperatureControl type '{:s}' is not implemented.",
-              type);
+    OGS_FATAL(
+        "FlowAndTemperatureControl type '{:s}' is not implemented. "
+        "InflowTemperature, Power, BuildingPower, and AdvancedBuildingPower "
+        "are currently supported and require parameters as input. With the "
+        "support of parameters all former available types can be achieved.",
+        type);
 }
 }  // namespace BHE
 }  // namespace HeatTransportBHE
