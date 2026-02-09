@@ -38,7 +38,7 @@ PowerWithCOP createPowerWithCOPStruct(
         "Required cop curve not found.");
 
     return PowerWithCOP{power_param, cop_curve};
-};
+}
 
 CoolingVariant createCoolingVariant(
     std::optional<BaseLib::ConfigTree> const& cooling_config,
@@ -61,7 +61,7 @@ CoolingVariant createCoolingVariant(
         return ParameterLib::getNamedOrCreateInlineParameter(
             raw_power, parameters, "power", "inline");
     }
-};
+}
 
 FlowAndTemperatureControl createHeatingHotWaterCooling(
     std::optional<PowerWithCOP> const& heating,
@@ -100,7 +100,7 @@ FlowAndTemperatureControl createHeatingHotWaterCooling(
             flow_rate_min,
             power_min};
     }
-};
+}
 
 FlowAndTemperatureControl createHeatingCooling(
     std::optional<PowerWithCOP> const& heating,
@@ -137,7 +137,7 @@ FlowAndTemperatureControl createHeatingCooling(
             flow_rate_min,
             power_min};
     }
-};
+}
 
 FlowAndTemperatureControl createHotWaterCooling(
     std::optional<PowerWithCOP> const& /*heating*/,
@@ -174,7 +174,7 @@ FlowAndTemperatureControl createHotWaterCooling(
             flow_rate_min,
             power_min};
     }
-};
+}
 
 FlowAndTemperatureControl createCooling(
     std::optional<PowerWithCOP> const& /*heating*/,
@@ -208,7 +208,7 @@ FlowAndTemperatureControl createCooling(
             flow_rate_min,
             power_min};
     }
-};
+}
 
 using FactoryAdvancedBuildingPower = std::function<FlowAndTemperatureControl(
     std::optional<PowerWithCOP>,             // heating
