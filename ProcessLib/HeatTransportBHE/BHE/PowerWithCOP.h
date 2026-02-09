@@ -19,8 +19,7 @@ struct PowerWithCOP
 };
 using CoolingVariant =
     std::variant<PowerWithCOP,
-                 std::reference_wrapper<ParameterLib::Parameter<double>>,
-                 std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>;
+                 std::reference_wrapper<ParameterLib::Parameter<double>>>;
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
