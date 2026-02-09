@@ -430,19 +430,16 @@ FlowAndTemperatureControl createFlowAndTemperatureControl(
     if (type == "AdvancedBuildingPower")
     {
         // add a heating, hot water and cooling config as optional to handle
-        // different combinations later
         auto const& heating_config =
             //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__heating}
             config.getConfigSubtreeOptional(
                 "heating");  // Optional, take care if it is not present
 
-        // add a heating config to differ between different types
         auto const& hot_water_config =
             //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__hot_water}
             config.getConfigSubtreeOptional(
                 "hot_water");  // Optional, take care if it is not present
 
-        // add a heating config to differ between different types
         auto const& cooling_config =
             //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling}
             config.getConfigSubtreeOptional(
