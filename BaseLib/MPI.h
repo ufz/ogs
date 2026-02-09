@@ -196,4 +196,21 @@ static inline bool anyOf(bool const val
 #endif
 }
 
+/// The reduction is implemented transparently for with and without MPI. In the
+/// latter case the input value is returned.
+static inline bool allOf(bool const val
+#ifdef USE_PETSC
+                         ,
+                         Mpi const& mpi = Mpi{OGS_COMM_WORLD}
+#endif
+)
+{
+    return !anyOf(!val
+#ifdef USE_PETSC
+                  ,
+                  mpi
+#endif
+    );
+}
+
 }  // namespace BaseLib::MPI

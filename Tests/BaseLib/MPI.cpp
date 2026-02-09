@@ -123,4 +123,15 @@ TEST_F(MPI_BaseLib, AnyOf)
     // All ranks true and one false.
     EXPECT_TRUE(anyOf(mpi.rank == mpi.size - 1 ? false : true, mpi));
 }
+
+TEST_F(MPI_BaseLib, AllOf)
+{
+    EXPECT_FALSE(allOf(false, mpi));  // false for all ranks.
+    EXPECT_TRUE(allOf(true, mpi));    // true for all ranks.
+
+    // Single rank true and all other false.
+    EXPECT_FALSE(allOf(mpi.rank == 0 ? true : false, mpi));
+    // All ranks true and one false.
+    EXPECT_FALSE(allOf(mpi.rank == mpi.size - 1 ? false : true, mpi));
+}
 #endif
