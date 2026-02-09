@@ -269,7 +269,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         **{
             "Nonlinear solver: "
             + case: lambda xml, case=case: check_tag_is_present(
-                xml, "//nonlinear_solvers/nonlinear_solver" + case
+                xml, "//nonlinear_solvers/nonlinear_solver/" + case
             )
             for case in ["damping", "damping_reduction", "recompute_jacobian"]
         },
