@@ -94,7 +94,7 @@ bool Properties::existsPropertyVector(std::string_view name) const
     if (dynamic_cast<PropertyVector<T> const*>(it->second) == nullptr)
     {
         WARN("Property '{}' exists but does not have the requested type {}.",
-             name, typeid(T).name());
+             name, BaseLib::typeToString<T>());
         return false;
     }
 

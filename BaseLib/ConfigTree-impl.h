@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "ConfigTree.h"
+#include "DemangleTypeInfo.h"
 #include "StringTools.h"
 
 namespace BaseLib
@@ -224,8 +225,8 @@ ConfigTree::CountType& ConfigTree::markVisited(std::string const& key,
         else
         {
             error("There already was an attempt to obtain key <" + key +
-                  "> with type '" + v.type.name() + "' (now: '" + type.name() +
-                  "').");
+                  "> with type '" + BaseLib::demangle(v.type.name()) +
+                  "' (now: '" + type.name() + "').");
         }
     }
 

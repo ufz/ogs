@@ -107,7 +107,7 @@ public:
                 " Maybe you have disabled this mesh element type in your build "
                 "configuration, or a mesh element order does not match shape "
                 "function order given in the project file.",
-                type_idx.name());
+                BaseLib::demangle(type_idx.name()));
         }
 
         return it->second(mesh_item,

@@ -206,7 +206,7 @@ GenericIntegrationMethod const& getIntegrationMethod(
                 "Integration order {} is not supported for mesh elements of "
                 "type {}",
                 order.order,
-                mesh_element_type.name());
+                BaseLib::demangle(mesh_element_type.name()));
         }
 
         return integration_methods[order.order];
@@ -214,6 +214,6 @@ GenericIntegrationMethod const& getIntegrationMethod(
 
     OGS_FATAL(
         "No integration methods are available for mesh elements of type {}",
-        mesh_element_type.name());
+        BaseLib::demangle(mesh_element_type.name()));
 }
 }  // namespace NumLib::IntegrationMethodRegistry
