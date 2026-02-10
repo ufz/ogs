@@ -86,6 +86,21 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                 $<$<COMPILE_LANGUAGE:CXX>:-Wmaybe-uninitialized>
             )
         endif()
+        # Exclude Eigen, system headers, and CPM dependencies from code coverage
+        if(OGS_COVERAGE AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13)
+            set(_coverage_excludes
+                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=/usr/include/.*>
+                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=.*/_deps/.*>
+            )
+            # Exclude CPM_SOURCE_CACHE if set
+            if(CPM_SOURCE_CACHE)
+                string(REPLACE "/" "\\/" _cpm_cache_regex "${CPM_SOURCE_CACHE}")
+                list(APPEND _coverage_excludes
+                    $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=${_cpm_cache_regex}/.*>
+                )
+            endif()
+            add_compile_options(${_coverage_excludes})
+        endif()
     endif()
 
     if(COMPILER_IS_CLANG)
@@ -108,6 +123,21 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                     is required! Found version ${CMAKE_CXX_COMPILER_VERSION}"
                 )
             endif()
+        endif()
+        # Exclude Eigen, system headers, and CPM dependencies from code coverage
+        if(OGS_COVERAGE)
+            set(_coverage_excludes
+                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=/usr/include/.*>
+                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=.*/_deps/.*>
+            )
+            # Exclude CPM_SOURCE_CACHE if set
+            if(CPM_SOURCE_CACHE)
+                string(REPLACE "/" "\\/" _cpm_cache_regex "${CPM_SOURCE_CACHE}")
+                list(APPEND _coverage_excludes
+                    $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=${_cpm_cache_regex}/.*>
+                )
+            endif()
+            add_compile_options(${_coverage_excludes})
         endif()
     endif()
 
