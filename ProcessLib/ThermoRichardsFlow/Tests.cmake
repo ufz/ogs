@@ -28,6 +28,20 @@ AddTest(
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 5e-3 1e-8
 )
 AddTest(
+    NAME ThermoRichardsFlow_HeatTransportInStationaryFlow_compare
+    PATH ThermoRichardsFlow/HT/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS HeatTransportInStationaryFlow_compare.xml
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    LABELS NO_PARALLEL_ASSEMBLY
+    RUNTIME 17
+    DIFF_DATA
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5e-3 1e-8
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 5e-3 1e-8
+)
+AddTest(
     NAME ThermoRichardsFlow_RichardsFlow2DSmall
     PATH ThermoRichardsFlow/RichardsFlow2D
     EXECUTABLE ogs
