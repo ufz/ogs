@@ -37,6 +37,23 @@ public:
         std::vector<double>& local_Jac_data) override;
 
     std::unique_ptr<AbstractJacobianAssembler> copy() const override;
+
+    void checkPerturbationSize(
+        int const /*max_non_deformation_dofs_per_node*/) const override
+    {
+    }
+
+    void setNonDeformationComponentIDs(
+        std::vector<int> const& /*non_deformation_component_ids*/) override
+    {
+    }
+
+    void setNonDeformationComponentIDsNoSizeCheck(
+        std::vector<int> const& /*non_deformation_component_ids*/) override
+    {
+    }
+
+    bool isPerturbationEnabled() const override { return false; }
 };
 
 }  // namespace ProcessLib

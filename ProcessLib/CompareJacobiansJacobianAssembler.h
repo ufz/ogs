@@ -52,6 +52,17 @@ public:
 
     std::unique_ptr<AbstractJacobianAssembler> copy() const override;
 
+    void checkPerturbationSize(
+        int const max_non_deformation_dofs_per_node) const override;
+
+    void setNonDeformationComponentIDs(
+        std::vector<int> const& non_deformation_component_ids) override;
+
+    void setNonDeformationComponentIDsNoSizeCheck(
+        std::vector<int> const& non_deformation_component_ids) override;
+
+    bool isPerturbationEnabled() const override;
+
 private:
     // PIMPL idiom to enable copy()
     std::shared_ptr<detail::CompareJacobiansJacobianAssemblerImpl> impl_;

@@ -49,31 +49,15 @@ public:
      * than the maximum number of non-deformation degrees of freedom per node.
      */
     virtual void checkPerturbationSize(
-        int const /*max_non_deformation_dofs_per_node*/) const
-    {
-        // do nothing
-        // default: "analytical Jacobian"
-    }
+        int const max_non_deformation_dofs_per_node) const = 0;
 
     virtual void setNonDeformationComponentIDs(
-        std::vector<int> const& /*non_deformation_component_ids*/)
-    {
-        // do nothing
-        // default: "analytical Jacobian"
-    }
+        std::vector<int> const& non_deformation_component_ids) = 0;
 
     virtual void setNonDeformationComponentIDsNoSizeCheck(
-        std::vector<int> const& /*non_deformation_component_ids*/)
-    {
-        // do nothing
-        // default: "analytical Jacobian"
-    }
+        std::vector<int> const& non_deformation_component_ids) = 0;
 
-    virtual bool isPerturbationEnabled() const
-    {
-        // default: "analytical Jacobian"
-        return false;
-    }
+    virtual bool isPerturbationEnabled() const = 0;
 };
 
 }  // namespace ProcessLib

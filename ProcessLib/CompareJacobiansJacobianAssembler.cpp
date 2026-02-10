@@ -128,6 +128,8 @@ namespace detail
 //! Data shared among all copied CompareJacobiansJacobianAssembler instances
 struct CompareJacobiansJacobianAssemblerImpl
 {
+    friend class ProcessLib::CompareJacobiansJacobianAssembler;
+
     CompareJacobiansJacobianAssemblerImpl(
         std::unique_ptr<AbstractJacobianAssembler>&& asm1,
         std::unique_ptr<AbstractJacobianAssembler>&& asm2,
@@ -441,6 +443,36 @@ CompareJacobiansJacobianAssembler::copy() const
 #endif
 
     return std::make_unique<CompareJacobiansJacobianAssembler>(impl_, Key{});
+}
+
+void CompareJacobiansJacobianAssembler::checkPerturbationSize(
+    int const max_non_deformation_dofs_per_node) const
+{
+    impl_->_asm1->checkPerturbationSize(max_non_deformation_dofs_per_node);
+    impl_->_asm2->checkPerturbationSize(max_non_deformation_dofs_per_node);
+}
+
+void CompareJacobiansJacobianAssembler::setNonDeformationComponentIDs(
+    std::vector<int> const& non_deformation_component_ids)
+{
+    impl_->_asm1->setNonDeformationComponentIDs(non_deformation_component_ids);
+    impl_->_asm2->setNonDeformationComponentIDs(non_deformation_component_ids);
+}
+
+void CompareJacobiansJacobianAssembler::
+    setNonDeformationComponentIDsNoSizeCheck(
+        std::vector<int> const& non_deformation_component_ids)
+{
+    impl_->_asm1->setNonDeformationComponentIDsNoSizeCheck(
+        non_deformation_component_ids);
+    impl_->_asm2->setNonDeformationComponentIDsNoSizeCheck(
+        non_deformation_component_ids);
+}
+
+bool CompareJacobiansJacobianAssembler::isPerturbationEnabled() const
+{
+    // TODO not sure what to do.
+    return false;
 }
 
 std::unique_ptr<CompareJacobiansJacobianAssembler>
