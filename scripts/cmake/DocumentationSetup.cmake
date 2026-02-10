@@ -146,3 +146,23 @@ if(_doc_use_external_tools)
     add_dependencies(doc internal_pre_doc_qa_page)
     add_dependencies(internal_pre_doc_qa_page internal_pre_doc)
 endif()
+
+# Add target to run FindFeatures.py script to generate feature matrix.
+if(Python_EXECUTABLE)
+    # Create output directory
+    set(_featurematrix_bundle_dir ${PROJECT_BINARY_DIR}/web/content/docs/featurematrix/bundle)
+    file(MAKE_DIRECTORY ${_featurematrix_bundle_dir})
+
+    add_custom_target(
+        feature_matrix
+        COMMAND uv run ${PROJECT_SOURCE_DIR}/scripts/doc/FindFeatures.py
+            ${PROJECT_SOURCE_DIR}/Tests/Data
+            --json ${_featurematrix_bundle_dir}/features.json
+        COMMAND uv run ${PROJECT_SOURCE_DIR}/scripts/doc/CheckFeatureMatrix.py
+            ${_featurematrix_bundle_dir}/features.json
+            --path_prj ${PROJECT_SOURCE_DIR}/Tests/Data
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        COMMENT "Generating feature matrix in ${_featurematrix_bundle_dir}/features.json"
+        VERBATIM
+    )
+endif()
