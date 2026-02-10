@@ -3,7 +3,13 @@
 
 #include "CompareJacobiansJacobianAssembler.h"
 
+#include <fstream>
+#include <limits>
 #include <sstream>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "BaseLib/ConfigTree.h"
 #include "CreateJacobianAssembler.h"
@@ -117,7 +123,61 @@ const std::string msg_fatal =
 
 namespace ProcessLib
 {
-void CompareJacobiansJacobianAssembler::assembleWithJacobian(
+namespace detail
+{
+//! Data shared among all copied CompareJacobiansJacobianAssembler instances
+struct CompareJacobiansJacobianAssemblerImpl
+{
+    CompareJacobiansJacobianAssemblerImpl(
+        std::unique_ptr<AbstractJacobianAssembler>&& asm1,
+        std::unique_ptr<AbstractJacobianAssembler>&& asm2,
+        double abs_tol,
+        double rel_tol,
+        bool fail_on_error,
+        std::string const& log_file_path)
+        : _asm1{std::move(asm1)},
+          _asm2{std::move(asm2)},
+          _abs_tol{abs_tol},
+          _rel_tol{rel_tol},
+          _fail_on_error{fail_on_error},
+          _log_file{log_file_path}
+    {
+        _log_file.precision(std::numeric_limits<double>::max_digits10);
+        _log_file << "#!/usr/bin/env python\n"
+                     "import numpy as np\n"
+                     "from numpy import nan\n"
+                  << std::endl;
+    }
+
+    void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
+                              double const t, double const dt,
+                              std::vector<double> const& local_x,
+                              std::vector<double> const& local_x_prev,
+                              std::vector<double>& local_b_data,
+                              std::vector<double>& local_Jac_data);
+
+private:
+    std::unique_ptr<AbstractJacobianAssembler> _asm1;
+    std::unique_ptr<AbstractJacobianAssembler> _asm2;
+
+    double const _abs_tol;
+    double const _rel_tol;
+
+    //! Whether to abort if the tolerances are exceeded.
+    bool const _fail_on_error;
+
+    //! Path where a Python script will be placed, which contains
+    //! information about exceeded tolerances and assembled local
+    //! matrices.
+    std::ofstream _log_file;
+
+    //! Counter used for identifying blocks in the \c _log_file. It is
+    //! incremented upon each call of the assembly routine, i.e., for
+    //! each element in each iteration etc.
+    std::size_t _counter = 0;
+};
+
+void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     LocalAssemblerInterface& local_assembler, double const t, double const dt,
     std::vector<double> const& local_x, std::vector<double> const& local_x_prev,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
@@ -336,14 +396,51 @@ void CompareJacobiansJacobianAssembler::assembleWithJacobian(
             "different results.");
     }
 }
+}  // namespace detail
+
+CompareJacobiansJacobianAssembler::CompareJacobiansJacobianAssembler(
+    std::unique_ptr<AbstractJacobianAssembler>&& asm1,
+    std::unique_ptr<AbstractJacobianAssembler>&& asm2,
+    double abs_tol,
+    double rel_tol,
+    bool fail_on_error,
+    std::string const& log_file_path)
+    : impl_{std::make_shared<detail::CompareJacobiansJacobianAssemblerImpl>(
+          std::move(asm1), std::move(asm2), abs_tol, rel_tol, fail_on_error,
+          log_file_path)}
+{
+}
+
+CompareJacobiansJacobianAssembler::CompareJacobiansJacobianAssembler(
+    std::shared_ptr<detail::CompareJacobiansJacobianAssemblerImpl> impl,
+    CompareJacobiansJacobianAssembler::Key)
+    : impl_{std::move(impl)}
+{
+}
+
+void CompareJacobiansJacobianAssembler::assembleWithJacobian(
+    LocalAssemblerInterface& local_assembler, double const t, double const dt,
+    std::vector<double> const& local_x, std::vector<double> const& local_x_prev,
+    std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
+{
+    impl_->assembleWithJacobian(local_assembler, t, dt, local_x, local_x_prev,
+                                local_b_data, local_Jac_data);
+}
 
 std::unique_ptr<AbstractJacobianAssembler>
 CompareJacobiansJacobianAssembler::copy() const
 {
-    OGS_FATAL(
-        "CompareJacobiansJacobianAssembler should not be copied. This class "
-        "logs to a file, which would most certainly break after copying "
-        "(concurrent file access) with the current implementation.");
+#ifdef _OPENMP
+    if (omp_get_thread_num() != 0)
+    {
+        OGS_FATAL(
+            "CompareJacobiansJacobianAssembler cannot be used concurrently. "
+            "Please restrict yourself to one assembly thread "
+            "(OGS_ASM_THREADS=1).");
+    }
+#endif
+
+    return std::make_unique<CompareJacobiansJacobianAssembler>(impl_, Key{});
 }
 
 std::unique_ptr<CompareJacobiansJacobianAssembler>
