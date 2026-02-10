@@ -1,3 +1,12 @@
+# /// script
+# dependencies = [
+#   "lxml",
+#   "numpy",
+#   "pandas",
+#   "typing_extensions",
+# ]
+# ///
+
 import argparse
 import itertools
 from pathlib import Path

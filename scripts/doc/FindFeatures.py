@@ -22,6 +22,14 @@ The functions: feature_matrix.getUnimportantFeatures1 and feature_matrix.getUnim
 useful to identify features that are tested sparsely.
 """
 
+# /// script
+# dependencies = [
+#   "pandas",
+#   "lxml",
+#   "numpy",
+#   "typing_extensions",
+# ]
+# ///
 
 import argparse
 import itertools
