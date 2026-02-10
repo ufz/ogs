@@ -612,30 +612,6 @@ def translate_ops(op: str) -> operator:
     return ops[op]
 
 
-if __name__ == "__main__":
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(
-        description="Generate feature matrix from directory"
-    )
-    parser.add_argument("--json", type=Path, help="Output JSON file name")
-    parser.add_argument(
-        "path",
-        type=Path,
-        metavar="PATH",
-        nargs="?",
-        default="./Tests/Data",
-        help="Path to the directory containing feature files",
-    )
-    args = parser.parse_args()
-
-    mat = get_feature_matrix(args.path)
-
-    if args.json:
-        create_json(mat, args.json)
-        exit(0)
-    create_json(mat, Path("./features.json"))
-
-
 def load_json_features(json_path: Path) -> list[dict]:
     """
     Loads a JSON file containing feature information for project files.
@@ -659,3 +635,27 @@ def load_json_features(json_path: Path) -> list[dict]:
     """
     with Path.open(json_path, encoding="utf-8") as f:
         return json.load(f)
+
+
+if __name__ == "__main__":
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(
+        description="Generate feature matrix from directory"
+    )
+    parser.add_argument("--json", type=Path, help="Output JSON file name")
+    parser.add_argument(
+        "path",
+        type=Path,
+        metavar="PATH",
+        nargs="?",
+        default="./Tests/Data",
+        help="Path to the directory containing feature files",
+    )
+    args = parser.parse_args()
+
+    mat = get_feature_matrix(args.path)
+
+    if args.json:
+        create_json(mat, args.json)
+        exit(0)
+    create_json(mat, Path("./features.json"))
