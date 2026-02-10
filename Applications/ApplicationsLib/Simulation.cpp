@@ -19,7 +19,8 @@
 #include "ProcessLib/TimeLoop.h"
 
 Simulation::Simulation(int argc, char* argv[])
-    : linear_solver_library_setup(argc, argv),
+    : linear_solver_library_setup{ApplicationsLib::LinearSolverLibrarySetup::
+                                      create(argc, argv)},
 #if defined(USE_PETSC)
       controller(vtkSmartPointer<vtkMPIController>::New()),
 #endif
