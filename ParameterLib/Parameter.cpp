@@ -115,27 +115,25 @@ std::optional<std::string> isDefinedOnSameMesh(ParameterBase const& parameter,
 }
 
 Parameter<double>& getNamedOrCreateInlineParameter(
-    BaseLib::ConfigTree const& config,
+    std::string const& parameter_or_value,
     std::vector<std::unique_ptr<ParameterBase>>& parameters,
     std::string const& property_name,
-    std::string const& tag_name,
     std::string const& inline_suffix)
 {
-    //! \ogs_file_special
-    std::string const raw = config.getConfigParameter<std::string>(tag_name);
-
     // try to parse number(s) (if empty - no inline-values)
     std::size_t bad_idx = 0;
-    if (auto values = BaseLib::tryParseVector<double>(raw, &bad_idx); values)
+    if (auto values =
+            BaseLib::tryParseVector<double>(parameter_or_value, &bad_idx);
+        values)
     {
         if (values->empty())
         {
             OGS_FATAL(
-                "Empty inline value list in <{:s}> for property '{:s}'. "
+                "Empty inline value list for property '{:s}'. "
                 "Provide at least one numeric value (e.g., \"1.23 4.56\") or "
                 "specify the name of an existing parameter. "
                 "Raw input was: \"{:s}\".",
-                tag_name, property_name, raw);
+                property_name, parameter_or_value);
         }
 
         // collect all existing parameter names for checks against uniqueness
@@ -153,8 +151,8 @@ Parameter<double>& getNamedOrCreateInlineParameter(
         return static_cast<Parameter<double>&>(*parameters.back());
     }
 
-    // No inline values -> 'raw' is just a parameter name, now find that
-    // parameter.
-    return findParameter<double>(raw, parameters, 0, nullptr);
+    // No inline values -> 'parameter_or_value' is just a parameter name, now
+    // find that parameter.
+    return findParameter<double>(parameter_or_value, parameters, 0, nullptr);
 }
 }  // namespace ParameterLib

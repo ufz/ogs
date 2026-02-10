@@ -15,9 +15,9 @@
                 <borehole_heat_exchanger>
                     <type>1P</type>
                     <flow_and_temperature_control>
-                        <type>TemperatureCurveConstantFlow</type>
+                        <type>InflowTemperature</type>
                         <flow_rate>0.0002</flow_rate>
-                        <temperature_curve>inflow_temperature</temperature_curve>
+                        <temperature>BHE_inflow_temp</temperature>
                     </flow_and_temperature_control>
                     <borehole>
                         <length>30.0</length>
@@ -177,6 +177,17 @@
             <name>T0_BHE1</name>
             <type>Constant</type>
             <values>20 20</values>
+        </parameter>
+        <parameter>
+            <name>Curve_Scale</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>BHE_inflow_temp</name>
+            <type>CurveScaled</type>
+            <curve>inflow_temperature</curve>
+            <parameter>Curve_Scale</parameter>
         </parameter>
     </parameters>
     <process_variables>

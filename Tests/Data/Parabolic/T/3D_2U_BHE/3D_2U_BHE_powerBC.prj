@@ -17,8 +17,8 @@
                     <flow_and_temperature_control>
                         <!-- if power type boundary conditions are selected, the related
                         power value should be set with half of the presumed BHE power-->
-                        <type>PowerCurveConstantFlow</type>
-                        <power_curve>heating_load</power_curve>
+                        <type>Power</type>
+                        <power>heating_load</power>
                         <flow_rate>2.0e-4</flow_rate>
                     </flow_and_temperature_control>
                     <borehole>
@@ -179,6 +179,17 @@
             <name>T0_BHE1</name>
             <type>Constant</type>
             <values>22 22 22 22 22 22 22 22</values>
+        </parameter>
+        <parameter>
+            <name>Curve_Scale</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>BHE_power</name>
+            <type>CurveScaled</type>
+            <curve>heating_load</curve>
+            <parameter>Curve_Scale</parameter>
         </parameter>
     </parameters>
     <process_variables>

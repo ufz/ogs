@@ -45,17 +45,25 @@ std::unique_ptr<Property> createSaturationWeightedThermalConductivity(
 
     DBUG("Create SaturationWeightedThermalConductivity medium property");
 
+    std::string const& dry_thermal_conductivity_parameter_or_value =
+        //! \ogs_file_param{properties__property__SaturationWeightedThermalConductivity__dry_thermal_conductivity}
+        config.getConfigParameter<std::string>("dry_thermal_conductivity");
+
+    std::string const& wet_thermal_conductivity_parameter_or_value =
+        //! \ogs_file_param{properties__property__SaturationWeightedThermalConductivity__wet_thermal_conductivity}
+        config.getConfigParameter<std::string>("wet_thermal_conductivity");
+
     auto& dry_thermal_conductivity =
         ParameterLib::getNamedOrCreateInlineParameter(
             //! \ogs_file_param_special{properties__property__SaturationWeightedThermalConductivity__dry_thermal_conductivity}
-            config, parameters, property_name, "dry_thermal_conductivity",
-            "dry_inline");
+            dry_thermal_conductivity_parameter_or_value, parameters,
+            property_name, "dry_inline");
 
     auto& wet_thermal_conductivity =
         ParameterLib::getNamedOrCreateInlineParameter(
             //! \ogs_file_param_special{properties__property__SaturationWeightedThermalConductivity__wet_thermal_conductivity}
-            config, parameters, property_name, "wet_thermal_conductivity",
-            "wet_inline");
+            wet_thermal_conductivity_parameter_or_value, parameters,
+            property_name, "wet_inline");
 
     std::string const& mean_type_str =
         //! \ogs_file_param{properties__property__SaturationWeightedThermalConductivity__mean_type}

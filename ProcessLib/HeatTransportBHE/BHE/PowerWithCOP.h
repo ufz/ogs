@@ -3,10 +3,8 @@
 
 #pragma once
 
-namespace MathLib
-{
-class PiecewiseLinearInterpolation;
-}
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
 {
@@ -14,14 +12,14 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-struct BuildingPowerCurves
+struct PowerWithCOP
 {
-    MathLib::PiecewiseLinearInterpolation const& power_curve;
+    ParameterLib::Parameter<double> const& power_param;
     MathLib::PiecewiseLinearInterpolation const& cop_curve;
 };
 using CoolingVariant =
-    std::variant<BuildingPowerCurves,
-                 std::reference_wrapper<MathLib::PiecewiseLinearInterpolation>>;
+    std::variant<PowerWithCOP,
+                 std::reference_wrapper<ParameterLib::Parameter<double>>>;
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

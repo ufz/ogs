@@ -23,6 +23,7 @@ namespace BHE
 template <typename T_BHE>
 T_BHE createBHECoaxial(
     BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves);

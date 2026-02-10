@@ -30,7 +30,7 @@ flow_curve = np.array([[0, 300, 600], [2e-4, 2e-4, 2e-4]])
 srcdir = Path(__file__).parent.parent.parent
 testsrcdir = srcdir / "Tests/Data/Parabolic/T/3D_Beier_sandbox"
 
-prj = "beier_sandbox_advanced_building_power_curves.prj"
+prj = "beier_sandbox_advanced_building_power.prj"
 base_prj_path = (
     testsrcdir / prj
 )  # case buildingPowerCurveHotWaterCurveActiveCoolingCurveFlowCurve
@@ -353,6 +353,49 @@ def passiveCoolingCurveFlowCurve(test_dir):
     return prj_path, test
 
 
+def buildingPower(test_dir):
+    def test(outflow_temperature, time):
+        power_heating = np.interp(time, heat_power[0, :], heat_power[1, :])
+        cop_heat = np.interp(outflow_temperature, cop_heating[0, :], cop_heating[1, :])
+        flow_rate = np.interp(time, flow_curve[0, :], flow_curve[1, :])
+
+        power = power_heating - power_heating / cop_heat
+
+        return power / (flow_rate * refrigerant_density * refrigerant_heat_capacity)
+
+    prj_path = test_dir / "buildingPowerCurveFlowCurve.prj"
+
+    model = ot.Project(input_file=base_prj_path, output_file=prj_path)
+
+    model.remove_element(
+        xpath="./processes/process/borehole_heat_exchangers/borehole_heat_exchanger/flow_and_temperature_control/heating",
+    )
+
+    model.remove_element(
+        xpath="./processes/process/borehole_heat_exchangers/borehole_heat_exchanger/flow_and_temperature_control/hot_water",
+    )
+    model.remove_element(
+        xpath="./processes/process/borehole_heat_exchangers/borehole_heat_exchanger/flow_and_temperature_control/cooling",
+    )
+
+    model.replace_text(
+        value="BuildingPower",
+        xpath="./processes/process/borehole_heat_exchangers/borehole_heat_exchanger/flow_and_temperature_control/type",
+    )
+    model.add_element(
+        parent_xpath="./processes/process/borehole_heat_exchangers/borehole_heat_exchanger/flow_and_temperature_control",
+        tag="power",
+        text="heating_power",
+    )
+    model.add_element(
+        parent_xpath="./processes/process/borehole_heat_exchangers/borehole_heat_exchanger/flow_and_temperature_control",
+        tag="cop_curve",
+        text="cop_heating",
+    )
+    model.write_input()
+    return prj_path, test
+
+
 @pytest.fixture(scope="module")
 def temp_test_dir():
     with TemporaryDirectory() as tmp_dir:
@@ -375,6 +418,7 @@ def temp_test_dir():
         hotWaterCurveFlowCurve,
         activeCoolingCurveFlowCurve,
         passiveCoolingCurveFlowCurve,
+        buildingPower,
     ],
 )
 def test_bhe_advanced_building_power_curves(temp_test_dir, case_gen):
