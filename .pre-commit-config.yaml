@@ -24,7 +24,7 @@ repos:
       - id: mixed-line-ending
         exclude: ".*\\.vtu|.*@@"
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 26.1.0
     hooks:
       - id: black
         exclude: "LinearMFront/generate_ref.py"
@@ -33,7 +33,7 @@ repos:
     rev: 1.7.0
     hooks:
       - id: nbqa-black
-        additional_dependencies: [jupytext, black==23.1.0]
+        additional_dependencies: [jupytext, black==26.1.0]
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
