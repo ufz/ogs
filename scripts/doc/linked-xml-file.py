@@ -21,7 +21,7 @@ import json
 from signal import SIG_DFL, SIGPIPE, signal
 import re
 
-from utils import getXMLFiles
+from utils import get_xml_files
 
 signal(SIGPIPE, SIG_DFL)
 
@@ -293,7 +293,7 @@ dirs_with_prj_files = set()
 map_tag_to_prj_files = defaultdict(set)
 map_attr_to_prj_files = defaultdict(set)
 
-files = getXMLFiles(Path(datadir))
+files = get_xml_files(Path(datadir))
 
 subpages = defaultdict(set)
 
