@@ -30,13 +30,14 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         process_variables,
     HydroMechanicsProcessData<DisplacementDim>&& process_data,
     SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme,
     bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), use_monolithic_scheme),
+              std::move(secondary_variables),
+              process_data.isMonolithicSchemeUsed()),
       AssemblyMixin<HydroMechanicsProcess<DisplacementDim>>{
-          *_jacobian_assembler, is_linear, use_monolithic_scheme},
+          *_jacobian_assembler, is_linear,
+          process_data.isMonolithicSchemeUsed()},
       process_data_(std::move(process_data))
 {
     // For numerical Jacobian
