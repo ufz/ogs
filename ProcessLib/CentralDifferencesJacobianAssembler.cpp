@@ -12,7 +12,7 @@ namespace ProcessLib
 {
 CentralDifferencesJacobianAssembler::CentralDifferencesJacobianAssembler(
     std::vector<double>&& absolute_epsilons)
-    : AbstractJacobianAssembler(std::move(absolute_epsilons))
+    : NumericalJacobianAssembler(std::move(absolute_epsilons))
 {
 }
 

@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "AbstractJacobianAssembler.h"
+#include "NumericalJacobianAssembler.h"
 
 namespace ProcessLib
 {
 //! Assembles the Jacobian matrix using forward differences.
 class ForwardDifferencesJacobianAssembler final
-    : public AbstractJacobianAssembler
+    : public NumericalJacobianAssembler
 {
 public:
     //! Constructs a new instance.

@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "AbstractJacobianAssembler.h"
+#include "NumericalJacobianAssembler.h"
 
 namespace BaseLib
 {
@@ -16,7 +16,7 @@ namespace ProcessLib
 {
 //! Assembles the Jacobian matrix using central differences.
 class CentralDifferencesJacobianAssembler final
-    : public AbstractJacobianAssembler
+    : public NumericalJacobianAssembler
 {
 public:
     //! Constructs a new instance.
