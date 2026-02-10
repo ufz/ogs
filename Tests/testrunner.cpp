@@ -9,6 +9,7 @@
 #include "Applications/ApplicationsLib/LinearSolverLibrarySetup.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
 #ifdef OGS_BUILD_GUI
@@ -43,8 +44,8 @@ int main(int argc, char* argv[])
     BaseLib::MPI::Setup mpi_setup(argc, argv);
     BaseLib::initOGSLogger(logLevel);
 
-    ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup(argc,
-                                                                          argv);
+    auto const linear_solver_library_setup =
+        ApplicationsLib::LinearSolverLibrarySetup::create(argc, argv);
 
     try
     {
