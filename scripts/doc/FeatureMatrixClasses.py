@@ -186,6 +186,39 @@ class FeatureMatrixEntry:
     if the given feature is not present in the respective file.
     """
 
+    @staticmethod
+    def _create_range_intervals(
+        elements: list[etree.ElementTree],
+    ) -> list[pd.Interval]:
+        """Create intervals spanning the complete range of each element from opening to closing tag."""
+        return [
+            pd.Interval(
+                el.sourceline,
+                FeatureMatrix.get_xml_endline(el),
+                closed="both",
+            )
+            for el in elements
+        ]
+
+    @staticmethod
+    def _create_open_close_intervals(
+        elements: list[etree.ElementTree],
+    ) -> list[pd.Interval]:
+        """Create two single-line intervals for each element: one at opening tag line and one at closing tag line."""
+        intervals = []
+        for el in elements:
+            intervals.extend(
+                [
+                    pd.Interval(el.sourceline, el.sourceline, closed="both"),
+                    pd.Interval(
+                        FeatureMatrix.get_xml_endline(el),
+                        FeatureMatrix.get_xml_endline(el),
+                        closed="both",
+                    ),
+                ]
+            )
+        return intervals
+
     def __init__(
         self,
         elements: list[etree.ElementTree],
@@ -198,35 +231,13 @@ class FeatureMatrixEntry:
             else:
                 match line_type:
                     case "range":
-                        # Add the complete range of the Element to the lines
-                        self.lines = [
-                            pd.Interval(
-                                el.sourceline,
-                                FeatureMatrix.get_xml_endline(el),
-                                closed="both",
-                            )
-                            for el in elements
-                        ]
+                        self.lines = FeatureMatrixEntry._create_range_intervals(
+                            elements
+                        )
                     case "open and close":
-                        # Only add the lines, where the tag is opened (eg. <parameter>) and closed (eg.</parameter>)
-                        self.lines = []
-                        [
-                            self.lines.extend(
-                                [
-                                    pd.Interval(
-                                        el.sourceline,
-                                        el.sourceline,
-                                        closed="both",
-                                    ),
-                                    pd.Interval(
-                                        FeatureMatrix.get_xml_endline(el),
-                                        FeatureMatrix.get_xml_endline(el),
-                                        closed="both",
-                                    ),
-                                ]
-                            )
-                            for el in elements
-                        ]
+                        self.lines = FeatureMatrixEntry._create_open_close_intervals(
+                            elements
+                        )
             self.has_feature = True
         else:
             self.lines = []
