@@ -11,14 +11,17 @@ import argparse
 import itertools
 from pathlib import Path
 
-from FindFeatures import load_json_features
+from FindFeatures import DIFF_FILE_FALLBACK_BASES, get_feature_dict, load_json_features
 from utils import get_xml_files
-from FindFeatures import get_feature_dict
 
 
 def test_feature_matrix(path: Path, path_to_xml_files: Path) -> None:
     """Test the feature matrix."""
-    xmls = get_xml_files(path_to_xml_files, False)
+    xmls = get_xml_files(
+        path_to_xml_files,
+        process_diff_files=True,
+        fallback_bases=DIFF_FILE_FALLBACK_BASES,
+    )
 
     features = load_json_features(path)
     all_features = get_all_features(features)
@@ -37,7 +40,14 @@ def test_feature_matrix(path: Path, path_to_xml_files: Path) -> None:
 
     assert len(features) == len(
         xmls
-    ), "There seem to be parseable xml files missing in the feature matrix."  # Checks whether all parsed xml files appear in the feature martrix
+    ), "The following parseable xml files are missing in the feature matrix: " + str(
+        [
+            xml.docinfo.URL
+            for xml in xmls
+            if xml.docinfo.URL
+            not in ["Tests/Data/" + feat["file"] for feat in features]
+        ]
+    )  # Checks whether all parsed xml files appear in the feature martrix
 
     assert len(all_features) >= 132  # Checks minimum number of features
 
@@ -48,16 +58,8 @@ def test_feature_matrix(path: Path, path_to_xml_files: Path) -> None:
         assert len(feat["features"]) == len(
             feat["lines"]
         )  # Check whether there is a line for each feature
-        assert not any(
-            [
-                mandatory_key not in list(feat.keys())
-                for mandatory_key in [
-                    "file",
-                    "features",
-                    "lines",
-                    "feature_coverage",
-                ]
-            ]
+        assert all(
+            key in feat for key in ["file", "features", "lines", "feature_coverage"]
         )  # Check whether all keys are there
 
         # Check for feature coverage. If the feature coverage lies below that indicates problems with the feature detection and hence should raise an error.

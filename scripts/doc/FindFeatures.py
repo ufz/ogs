@@ -45,12 +45,16 @@ import pandas as pd
 from FeatureMatrixClasses import FeatureMatrix, FeatureMatrixEntry
 from utils import get_xml_files
 
+_IS_TUPLE_RE = re.compile(
+    r"^\s*\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s+\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s*$"
+)
+
 
 def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
     # Create the feature dict
     feature_dict = {
         # Add Dummy features that are not "real" features but are needed to create the code coverage.
-        "!Dummy: First Lines": lambda xml: checkFirstLines(xml),
+        "!Dummy: First Lines": checkFirstLines,
         **{
             "!Dummy: "
             + case: lambda xml, case=case: check_tag_is_present(
@@ -70,7 +74,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
             ]
         },
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
-        "!Dummy: Comment": lambda xml: check_comment(xml),
+        "!Dummy: Comment": check_comment,
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
         "!Dummy: Media": lambda xml: check_tag_is_present(
             xml, "media", line_type="open and close"
@@ -366,6 +370,21 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
     return feature_dict
 
 
+# Mapping for diff xml files that intentionally omit the base_file attribute because
+# they are generic patches applied to multiple base files via the OGS -p flag.
+# Keys are relative to Tests/Data; values are relative to the xml file's own directory.
+DIFF_FILE_FALLBACK_BASES = {
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e1.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e3.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e4.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e5.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e6.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_neumann.xml": "square_1e0.prj",
+}
+
+
 def get_feature_matrix(path: Path) -> FeatureMatrix:
     """
     First the project files are gathered. Afterwards the Feature Dictionaries are created. Eventually these dictionaries will be evaluated and
@@ -374,7 +393,9 @@ def get_feature_matrix(path: Path) -> FeatureMatrix:
     FeatureMatrixEntry object. These functions start with "check*".
     """
 
-    xml_files = get_xml_files(path, False)
+    xml_files = get_xml_files(
+        path, process_diff_files=True, fallback_bases=DIFF_FILE_FALLBACK_BASES
+    )
     feature_dict = get_feature_dict(path, xml_files)
 
     return FeatureMatrix(feature_dict, xml_files)
@@ -428,7 +449,7 @@ def check_attributes(
     attributes = [
         operator_func(element.attrib[attribute_name], case)
         for element in elements
-        if attribute_name in list(element.attrib.keys())
+        if attribute_name in element.attrib
     ]
     return FeatureMatrixEntry(
         list(itertools.compress(elements, attributes)), line_type=line_type
@@ -559,7 +580,6 @@ def check_tag_text_is_tuple(
     """Checks whether the text of the element of the xml file in the location of the given xpath is a tuple. If True will return the sourceline along with the boolean."""
     elements = xml.xpath(xpath)
     is_tuple = [is_tuple_from_text(element.text) for element in elements]
-    [element.text for element in elements]
     return FeatureMatrixEntry(list(itertools.compress(elements, is_tuple)), line_type)
 
 
@@ -583,12 +603,12 @@ def extract_intervals(
 
 
 def find_all_pattern_lines(xml_str: list[str], pattern: bytes) -> list[int]:
-    return [
-        j + 1
-        for i in range(len(xml_str))
-        if pattern in xml_str[i]
-        for j in np.repeat(i, len(re.findall(pattern, xml_str[i])))
-    ]
+    result = []
+    for i, line in enumerate(xml_str):
+        count = len(re.findall(pattern, line))
+        if count:
+            result.extend([i + 1] * count)
+    return result
 
 
 def find_types_from_documentation(path: Path, subdir: str) -> list[str]:
@@ -604,14 +624,10 @@ def find_types_from_documentation(path: Path, subdir: str) -> list[str]:
 def is_tuple_from_text(text: str) -> bool:
     """Evaluates Regex expression for given Text. If the text starts with a digit (possibly includes . or e) followed by a space and then another digit the
     function will return True else False."""
-    return bool(
-        re.compile(
-            r"^\s*\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s+\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s*$"
-        ).match(text)
-    )
+    return bool(_IS_TUPLE_RE.match(text))
 
 
-def translate_ops(op: str) -> operator:
+def translate_ops(op: str):
     """ "Translates" operator strings into operator functions."""
     ops = {
         "!=": operator.__ne__,
