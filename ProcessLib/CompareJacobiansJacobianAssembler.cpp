@@ -469,10 +469,10 @@ void CompareJacobiansJacobianAssembler::
         non_deformation_component_ids);
 }
 
-bool CompareJacobiansJacobianAssembler::isPerturbationEnabled() const
+bool CompareJacobiansJacobianAssembler::needsPicardAssembly() const
 {
-    // TODO not sure what to do.
-    return false;
+    return impl_->_asm1->needsPicardAssembly() ||
+           impl_->_asm2->needsPicardAssembly();
 }
 
 std::unique_ptr<CompareJacobiansJacobianAssembler>
