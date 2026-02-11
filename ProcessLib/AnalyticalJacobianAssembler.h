@@ -53,7 +53,7 @@ public:
     {
     }
 
-    bool isPerturbationEnabled() const override { return false; }
+    bool needsPicardAssembly() const override { return false; }
 };
 
 }  // namespace ProcessLib

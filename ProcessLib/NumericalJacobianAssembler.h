@@ -30,11 +30,7 @@ public:
         }
     }
 
-    bool isPerturbationEnabled() const override
-    {
-        return true;
-        // return !absolute_epsilons_.empty();
-    }
+    bool needsPicardAssembly() const override { return true; }
 
     void checkPerturbationSize(
         int const max_non_deformation_dofs_per_node) const override

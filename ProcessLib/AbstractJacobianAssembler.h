@@ -57,7 +57,7 @@ public:
     virtual void setNonDeformationComponentIDsNoSizeCheck(
         std::vector<int> const& non_deformation_component_ids) = 0;
 
-    virtual bool isPerturbationEnabled() const = 0;
+    virtual bool needsPicardAssembly() const = 0;
 };
 
 }  // namespace ProcessLib

@@ -40,7 +40,7 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
       process_data_(std::move(process_data))
 {
     // For numerical Jacobian
-    if (this->_jacobian_assembler->isPerturbationEnabled() &&
+    if (this->_jacobian_assembler->needsPicardAssembly() &&
         _use_monolithic_scheme)
     {
         OGS_FATAL(
@@ -293,7 +293,7 @@ void HydroMechanicsProcess<DisplacementDim>::assembleConcreteProcess(
     // only the Newton-Raphson method is employed to simulate coupled HM
     // processes in this class, this function is actually not used so far.
 
-    if (this->_jacobian_assembler->isPerturbationEnabled() &&
+    if (this->_jacobian_assembler->needsPicardAssembly() &&
         (!_use_monolithic_scheme))
     {
         if (process_id == process_data_.hydraulic_process_id)

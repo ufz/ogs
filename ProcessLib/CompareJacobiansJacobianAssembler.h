@@ -61,7 +61,7 @@ public:
     void setNonDeformationComponentIDsNoSizeCheck(
         std::vector<int> const& non_deformation_component_ids) override;
 
-    bool isPerturbationEnabled() const override;
+    bool needsPicardAssembly() const override;
 
 private:
     // PIMPL idiom to enable copy()
