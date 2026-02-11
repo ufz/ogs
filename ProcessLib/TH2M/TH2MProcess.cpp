@@ -238,21 +238,14 @@ void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
 
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::assembleConcreteProcess(
-    const double t, double const dt, std::vector<GlobalVector*> const& x,
-    std::vector<GlobalVector*> const& x_prev, int const process_id,
-    GlobalMatrix& M, GlobalMatrix& K, GlobalVector& b)
+    const double /*t*/, double const /*dt*/,
+    std::vector<GlobalVector*> const& /*x*/,
+    std::vector<GlobalVector*> const& /*x_prev*/, int const /*process_id*/,
+    GlobalMatrix& /*M*/, GlobalMatrix& /*K*/, GlobalVector& /*b*/)
 {
-    DBUG("Assemble the equations for TH2M");
-
-    if (t == 0.0 && !(this->_jacobian_assembler->isPerturbationEnabled()))
-    {
-        OGS_FATAL(
-            "The Picard method is not supported for TH2M; use the Newton "
-            "method with either an analytical or a numerical Jacobian.");
-    }
-
-    AssemblyMixin<TH2MProcess<DisplacementDim>>::assemble(t, dt, x, x_prev,
-                                                          process_id, M, K, b);
+    OGS_FATAL(
+        "The Picard method is not supported for TH2M; use the Newton "
+        "method with either an analytical or a numerical Jacobian.");
 }
 
 template <int DisplacementDim>
