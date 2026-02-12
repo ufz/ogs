@@ -4,8 +4,10 @@
 #pragma once
 
 #include <algorithm>
+#include <concepts>
 
 #include "Algorithm.h"
+#include "DemangleTypeInfo.h"
 #include "Error.h"
 
 #ifdef USE_PETSC
@@ -194,6 +196,110 @@ static inline bool anyOf(bool const val
 #else
     return val;
 #endif
+}
+
+/// The reduction is implemented transparently for with and without MPI. In the
+/// latter case the input value is returned.
+static inline bool allOf(bool const val
+#ifdef USE_PETSC
+                         ,
+                         Mpi const& mpi = Mpi{OGS_COMM_WORLD}
+#endif
+)
+{
+    return !anyOf(!val
+#ifdef USE_PETSC
+                  ,
+                  mpi
+#endif
+    );
+}
+
+/// Class indicating that another MPI rank threw an exception.
+///
+/// This class is derived from BaseException. Hence, it can be caught with \code
+/// catch(BaseException const&) \endcode. That makes it possible to handle both
+/// \code BaseException \endcode and \code AnotherMPIRankThrew<BaseException>
+/// \endcode in the same way.
+template <typename BaseException>
+    requires std::derived_from<BaseException, std::exception> &&
+             (  // The used ctor excludes std::exception itself
+                 !std::same_as<BaseException, std::exception>)
+class AnotherMPIRankThrew : public BaseException
+{
+public:
+    using BaseException::BaseException;
+
+    AnotherMPIRankThrew()
+        : BaseException{"Another MPI rank threw an exception."}
+    {
+    }
+};
+
+/// This function throws if and only if the passed exception is non-null on any
+/// MPI rank.
+///
+/// The thrown exception is:
+/// - the passed one on any MPI rank where the passed exception is non-null
+/// - AnotherMPIRankThrew<Exception> on all other MPI ranks
+///
+/// This function also checks if the thrown exception is derived from \c
+/// Exception.
+template <typename Exception>
+void allRanksThrowOrNone([[maybe_unused]] std::exception_ptr const& exception,
+                         auto&& warning_callback)
+{
+    // std::exception would lead to duplicate catch clauses below and would not
+    // work together with the current implementation of AnotherMPIRankThrew.
+    static_assert(!std::is_same_v<Exception, std::exception>);
+
+    bool const exception_was_thrown = anyOf(exception != nullptr);
+
+    [[unlikely]] if (exception_was_thrown)
+    {
+        if (exception)
+        {
+            try
+            {
+                std::rethrow_exception(exception);
+            }
+            catch (Exception const&)
+            {
+                // OK. Argument exception is derived from class Exception.
+                throw;
+            }
+            catch (std::exception const& e)
+            {
+                warning_callback(
+                    "An exception was thrown on this MPI rank, but it's not "
+                    "derived from {}, but rather of type {}",
+                    BaseLib::typeToString<Exception>(),
+                    BaseLib::demangle(
+                        typeid(e).name() /* demangle the runtime type of e */));
+                throw;
+            }
+            catch (...)
+            {
+                warning_callback(
+                    "An exception was thrown on this MPI rank, but it's not "
+                    "derived from std::exception.");
+                throw;
+            }
+        }
+
+        throw AnotherMPIRankThrew<Exception>{};
+    }
+}
+
+/// Same as above but using the standard WARN() function for warnings.
+template <typename Exception>
+void allRanksThrowOrNone([[maybe_unused]] std::exception_ptr const& exception)
+{
+    auto warning_callback =
+        []<typename... Args>(fmt::format_string<Args...> fmt, Args&&... args)
+    { WARN(fmt, std::forward<Args>(args)...); };
+
+    allRanksThrowOrNone<Exception>(exception, warning_callback);
 }
 
 }  // namespace BaseLib::MPI

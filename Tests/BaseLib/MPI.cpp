@@ -123,4 +123,147 @@ TEST_F(MPI_BaseLib, AnyOf)
     // All ranks true and one false.
     EXPECT_TRUE(anyOf(mpi.rank == mpi.size - 1 ? false : true, mpi));
 }
+
+TEST_F(MPI_BaseLib, AllOf)
+{
+    EXPECT_FALSE(allOf(false, mpi));  // false for all ranks.
+    EXPECT_TRUE(allOf(true, mpi));    // true for all ranks.
+
+    // Single rank true and all other false.
+    EXPECT_FALSE(allOf(mpi.rank == 0 ? true : false, mpi));
+    // All ranks true and one false.
+    EXPECT_FALSE(allOf(mpi.rank == mpi.size - 1 ? false : true, mpi));
+}
+#endif
+
+struct ExceptionRuntimeError : std::runtime_error
+{
+    using std::runtime_error::runtime_error;
+};
+
+struct CaptureWarnings
+{
+    template <typename... Args>
+    void operator()(fmt::format_string<Args...> fmt, Args&&... args)
+    {
+        caught_message = fmt::format(fmt, std::forward<Args>(args)...);
+    };
+
+    std::string caught_message;
+};
+
+TEST(MPI_BaseLib_Exceptions, NoThrow)
+{
+    CaptureWarnings warning_callback;
+    std::exception_ptr exc;
+
+    EXPECT_NO_THROW(BaseLib::MPI::allRanksThrowOrNone<ExceptionRuntimeError>(
+        exc, warning_callback));
+    EXPECT_TRUE(warning_callback.caught_message.empty());
+}
+
+TEST(MPI_BaseLib_Exceptions, OK)
+{
+    CaptureWarnings warning_callback;
+    std::exception_ptr exc =
+        std::make_exception_ptr(ExceptionRuntimeError{"test message"});
+
+    EXPECT_THROW(BaseLib::MPI::allRanksThrowOrNone<ExceptionRuntimeError>(
+                     exc, warning_callback),
+                 ExceptionRuntimeError);
+    EXPECT_TRUE(warning_callback.caught_message.empty());
+}
+
+TEST(MPI_BaseLib_Exceptions, OKBase)
+{
+    CaptureWarnings warning_callback;
+    std::exception_ptr exc =
+        std::make_exception_ptr(ExceptionRuntimeError{"test message"});
+
+    // Same as above, but with runtime_error as "expected" exception.
+    EXPECT_THROW(BaseLib::MPI::allRanksThrowOrNone<std::runtime_error>(
+                     exc, warning_callback),
+                 ExceptionRuntimeError);
+    EXPECT_TRUE(warning_callback.caught_message.empty());
+}
+
+TEST(MPI_BaseLib_Exceptions, WarnOtherException)
+{
+    CaptureWarnings warning_callback;
+
+    std::exception_ptr exc =
+        std::make_exception_ptr(ExceptionRuntimeError{"test message"});
+
+    EXPECT_THROW(BaseLib::MPI::allRanksThrowOrNone<std::logic_error>(
+                     exc, warning_callback),
+                 ExceptionRuntimeError);
+    auto const& caught_message = warning_callback.caught_message;
+    EXPECT_TRUE(
+        caught_message.contains("An exception was thrown on this MPI rank, but "
+                                "it's not derived from "))
+        << "caught message: " << caught_message;
+    EXPECT_TRUE(caught_message.contains(" but rather of type "))
+        << "caught message: " << caught_message;
+}
+
+TEST(MPI_BaseLib_Exceptions, WarnOtherType)
+{
+    struct NotAnException
+    {
+    };
+
+    CaptureWarnings warning_callback;
+
+    std::exception_ptr exc = std::make_exception_ptr(NotAnException{});
+
+    EXPECT_THROW(BaseLib::MPI::allRanksThrowOrNone<std::logic_error>(
+                     exc, warning_callback),
+                 NotAnException);
+    auto const& caught_message = warning_callback.caught_message;
+    EXPECT_TRUE(
+        caught_message.contains("An exception was thrown on this MPI rank, but "
+                                "it's not derived from std::exception."))
+        << "caught message: " << caught_message;
+}
+
+#ifdef USE_PETSC
+TEST(MPI_BaseLib_Exceptions, OnlyOneRankThrows)
+{
+    struct S : std::runtime_error
+    {
+        using std::runtime_error::runtime_error;
+    };
+
+    Mpi mpi{};
+    bool const i_throw = mpi.rank % 3 == 1;
+
+    std::exception_ptr exc =
+        i_throw ? std::make_exception_ptr(S{"test message"}) : nullptr;
+
+    bool success = false;
+    try
+    {
+        BaseLib::MPI::allRanksThrowOrNone<std::runtime_error>(exc);
+    }
+    catch (AnotherMPIRankThrew<std::runtime_error> const& e)
+    {
+        if (!i_throw)
+        {
+            success = true;
+        }
+    }
+    catch (std::runtime_error const& e)
+    {
+        if (i_throw)
+        {
+            success = true;
+        }
+    }
+    catch (...)
+    {
+        success = false;
+    }
+
+    EXPECT_TRUE(allOf(success));
+}
 #endif
