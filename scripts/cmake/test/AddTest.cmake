@@ -280,7 +280,8 @@ function(AddTest)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
     if(";${labels};" MATCHES ";${match_parallel_asm_processes};"
-        AND NOT "${labels}" MATCHES petsc-mumps)
+        AND NOT "${labels}" MATCHES petsc-mumps
+        AND NOT ";${labels};" MATCHES ";NO_PARALLEL_ASSEMBLY;")
         set(_has_omp_variant TRUE)
     endif()
 
