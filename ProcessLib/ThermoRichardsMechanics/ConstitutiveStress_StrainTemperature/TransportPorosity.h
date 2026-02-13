@@ -3,9 +3,13 @@
 
 #pragma once
 
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 #include "ProcessLib/ConstitutiveRelations/MechanicalStrainData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Porosity.h"
+#include "ProcessLib/ConstitutiveRelations/StrainData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/BishopsData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/CapillaryPressureData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MediaData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/PorosityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SolidCompressibilityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TransportPorosityData.h"
 
@@ -13,7 +17,6 @@ namespace ProcessLib::ThermoRichardsMechanics
 {
 namespace ConstitutiveStress_StrainTemperature
 {
-
 template <int DisplacementDim>
 struct TransportPorosityModel
 {

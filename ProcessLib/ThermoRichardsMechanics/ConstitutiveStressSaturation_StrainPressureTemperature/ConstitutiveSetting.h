@@ -5,6 +5,9 @@
 
 #include "ConstitutiveData.h"
 #include "ConstitutiveModels.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/CapillaryPressureData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MediaData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TemperatureData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

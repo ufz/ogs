@@ -5,6 +5,7 @@
 
 #include "Base.h"
 #include "BaseLib/StrongType.h"
+#include "MediaData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

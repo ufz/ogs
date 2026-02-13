@@ -5,7 +5,8 @@
 
 #include "ProcessLib/ConstitutiveRelations/EffectiveStressData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Biot.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Bishops.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/BishopsData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/CapillaryPressureData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
 #include "TraitsBase.h"
 

@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Base.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -24,4 +25,7 @@ struct PermeabilityData
             R::makeReflectionData("relative_permeability", &Self::k_rel)};
     }
 };
+// Explicit instantiation declarations to avoid multiple-definition issues.
+extern template struct PermeabilityData<2>;
+extern template struct PermeabilityData<3>;
 }  // namespace ProcessLib::ThermoRichardsMechanics

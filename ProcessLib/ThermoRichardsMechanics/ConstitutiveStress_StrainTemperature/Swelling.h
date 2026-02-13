@@ -5,7 +5,8 @@
 
 #include "ElasticTangentStiffnessData.h"
 #include "ProcessLib/ConstitutiveRelations/StrainData.h"
-#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/Saturation.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/MediaData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/SaturationData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {

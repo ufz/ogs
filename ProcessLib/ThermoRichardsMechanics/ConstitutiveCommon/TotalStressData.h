@@ -4,6 +4,7 @@
 #pragma once
 
 #include "Base.h"
+#include "ProcessLib/Reflection/ReflectionData.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -24,4 +25,8 @@ struct TotalStressData
                                                        &Self::sigma_total);
     }
 };
+// Explicit instantiation declarations to avoid multiple-definition issues.
+extern template struct TotalStressData<2>;
+extern template struct TotalStressData<3>;
+
 }  // namespace ProcessLib::ThermoRichardsMechanics
