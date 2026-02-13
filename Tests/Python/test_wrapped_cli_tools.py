@@ -19,12 +19,44 @@ def test_ogs_help():
 
 def test_generate_structured_mesh():
     with tempfile.TemporaryDirectory() as tmpdirname:
-        outfile = Path(tmpdirname) / "test.vtu"
-        assert not outfile.exists()
-
+        # 1D: domain + left/right point boundaries
+        outfile = Path(tmpdirname) / "line.vtu"
         assert ogs.cli.generateStructuredMesh(e="line", lx=1, nx=10, o=outfile) == 0
-
         assert outfile.exists()
+        assert (Path(tmpdirname) / "line_left.vtu").exists()
+        assert (Path(tmpdirname) / "line_right.vtu").exists()
+
+        # 2D: domain + left/right/bottom/top boundaries
+        outfile2d = Path(tmpdirname) / "quad.vtu"
+        assert (
+            ogs.cli.generateStructuredMesh(
+                e="quad", lx=1, ly=1, nx=5, ny=5, o=outfile2d
+            )
+            == 0
+        )
+        assert outfile2d.exists()
+        for side in ["left", "right", "bottom", "top"]:
+            assert (Path(tmpdirname) / f"quad_{side}.vtu").exists()
+
+        # --no-boundary-meshes: only domain mesh should be written
+        outfile_no_bdry = Path(tmpdirname) / "hex_no_bdry.vtu"
+        assert (
+            ogs.cli.generateStructuredMesh(
+                e="hex",
+                lx=1,
+                ly=1,
+                lz=1,
+                nx=2,
+                ny=2,
+                nz=2,
+                o=outfile_no_bdry,
+                no_boundary_meshes=True,
+            )
+            == 0
+        )
+        assert outfile_no_bdry.exists()
+        for side in ["left", "right", "bottom", "top", "front", "back"]:
+            assert not (Path(tmpdirname) / f"hex_no_bdry_{side}.vtu").exists()
 
 
 def test_parameter_with_underscore():
