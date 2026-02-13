@@ -33,29 +33,6 @@
 
 namespace
 {
-/// Get dimension of the mesh element type.
-/// @param eleType element type
-unsigned getDimension(MeshLib::MeshElemType eleType)
-{
-    switch (eleType)
-    {
-        case MeshLib::MeshElemType::LINE:
-            return 1;
-        case MeshLib::MeshElemType::QUAD:
-        case MeshLib::MeshElemType::TRIANGLE:
-            return 2;
-        case MeshLib::MeshElemType::HEXAHEDRON:
-        case MeshLib::MeshElemType::PRISM:
-        case MeshLib::MeshElemType::PYRAMID:
-        case MeshLib::MeshElemType::TETRAHEDRON:
-            return 3;
-        case MeshLib::MeshElemType::POINT:
-        case MeshLib::MeshElemType::INVALID:
-            return 0;
-    }
-    return 0;
-}
-
 struct BoundarySide
 {
     std::string name;
@@ -310,7 +287,7 @@ int main(int argc, char* argv[])
     const std::string eleTypeName(eleTypeArg.getValue());
     const MeshLib::MeshElemType eleType =
         MeshLib::String2MeshElemType(eleTypeName);
-    const unsigned dim = getDimension(eleType);
+    const unsigned dim = MeshLib::getDimension(eleType);
 
     bool dim_used[3] = {false};
     for (unsigned i = 0; i < dim; i++)
