@@ -10,11 +10,10 @@
                 <type>CentralDifferences</type>
                 <epsilons>1e-6 1e-6</epsilons>
             </reference_jacobian_assembler>
-            <!-- set large tolerances that are always met -->
-            <abs_tol>1e-6</abs_tol>
-            <rel_tol>0.02</rel_tol>
-            <fail_on_error>true</fail_on_error>
-            <log_file>jacobians_compare.log</log_file>
+            <abs_tol>5e-16</abs_tol>
+            <rel_tol>4e-15</rel_tol>
+            <fail_on_error>false</fail_on_error>
+            <log_file>jacobians_compare_strict_nofail.log</log_file>
         </jacobian_assembler>
     </add>
 </OpenGeoSysProjectDiff>
