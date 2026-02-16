@@ -432,7 +432,8 @@ static void updateVariableArrayValues(std::vector<Variable> const& variables,
     }
 }
 
-static PropertyDataType evaluateExpressions(
+template <std::size_t N>
+static PropertyDataType evaluateExpressionsImpl(
     std::vector<ScalarCopyOp> const& scalar_copy_ops,
     std::vector<Variable> const& non_scalar_variables,
     VariableArray const& new_variable_array,
@@ -441,8 +442,6 @@ static PropertyDataType evaluateExpressions(
     VariableArray& variable_array, bool const spatial_position_is_required,
     SymbolTableCache const& cache)
 {
-    std::vector<double> result(expressions.size());
-
     // Fast path: direct offset arithmetic, no switches, no variant visits.
     for (auto const& op : scalar_copy_ops)
     {
@@ -464,8 +463,11 @@ static PropertyDataType evaluateExpressions(
                                   variable_array);
     }
 
+    // Use std::array for stack allocation (no heap allocation).
+    std::array<double, N> result{};
+
     // Set symbol table variables using cached pointers (eliminates
-    // std::map lookups in get_variable()).
+    // std::map lookups).
     *cache.t_ptr = t;
 
     if (spatial_position_is_required)
@@ -483,40 +485,89 @@ static PropertyDataType evaluateExpressions(
         *cache.z_ptr = coords[2];
     }
 
-    std::transform(begin(expressions), end(expressions), begin(result),
-                   [](auto const& e) { return e.value(); });
+    for (std::size_t i = 0; i < N; ++i)
+    {
+        result[i] = expressions[i].value();
+    }
 
-    switch (result.size())
+    // Convert result to appropriate PropertyDataType based on size.
+    if constexpr (N == 1)
+    {
+        return result[0];
+    }
+    else if constexpr (N == 2)
+    {
+        return Eigen::Vector2d{result[0], result[1]};
+    }
+    else if constexpr (N == 3)
+    {
+        return Eigen::Vector3d{result[0], result[1], result[2]};
+    }
+    else if constexpr (N == 4)
+    {
+        Eigen::Matrix<double, 2, 2> m;
+        m = Eigen::Map<Eigen::Matrix<double, 2, 2> const>(result.data(), 2, 2);
+        return m;
+    }
+    else if constexpr (N == 6)
+    {
+        OGS_FATAL("Cannot convert a vector of size {} to a PropertyDataType",
+                  N);
+    }
+    else if constexpr (N == 9)
+    {
+        Eigen::Matrix<double, 3, 3> m;
+        m = Eigen::Map<Eigen::Matrix<double, 3, 3> const>(result.data(), 3, 3);
+        return m;
+    }
+}
+
+static PropertyDataType evaluateExpressions(
+    std::vector<ScalarCopyOp> const& scalar_copy_ops,
+    std::vector<Variable> const& non_scalar_variables,
+    VariableArray const& new_variable_array,
+    ParameterLib::SpatialPosition const& pos, double const t,
+    std::vector<exprtk::expression<double>> const& expressions,
+    VariableArray& variable_array, bool const spatial_position_is_required,
+    SymbolTableCache const& cache)
+{
+    switch (expressions.size())
     {
         case 1:
-        {
-            return result[0];
-        }
+            return evaluateExpressionsImpl<1>(
+                scalar_copy_ops, non_scalar_variables, new_variable_array, pos,
+                t, expressions, variable_array, spatial_position_is_required,
+                cache);
         case 2:
-        {
-            return Eigen::Vector2d{result[0], result[1]};
-        }
+            return evaluateExpressionsImpl<2>(
+                scalar_copy_ops, non_scalar_variables, new_variable_array, pos,
+                t, expressions, variable_array, spatial_position_is_required,
+                cache);
         case 3:
-        {
-            return Eigen::Vector3d{result[0], result[1], result[2]};
-        }
+            return evaluateExpressionsImpl<3>(
+                scalar_copy_ops, non_scalar_variables, new_variable_array, pos,
+                t, expressions, variable_array, spatial_position_is_required,
+                cache);
         case 4:
-        {
-            Eigen::Matrix<double, 2, 2> m;
-            m = Eigen::Map<Eigen::Matrix<double, 2, 2> const>(result.data(), 2,
-                                                              2);
-            return m;
-        }
+            return evaluateExpressionsImpl<4>(
+                scalar_copy_ops, non_scalar_variables, new_variable_array, pos,
+                t, expressions, variable_array, spatial_position_is_required,
+                cache);
+        case 6:
+            return evaluateExpressionsImpl<6>(
+                scalar_copy_ops, non_scalar_variables, new_variable_array, pos,
+                t, expressions, variable_array, spatial_position_is_required,
+                cache);
         case 9:
-        {
-            Eigen::Matrix<double, 3, 3> m;
-            m = Eigen::Map<Eigen::Matrix<double, 3, 3> const>(result.data(), 3,
-                                                              3);
-            return m;
-        }
+            return evaluateExpressionsImpl<9>(
+                scalar_copy_ops, non_scalar_variables, new_variable_array, pos,
+                t, expressions, variable_array, spatial_position_is_required,
+                cache);
+        default:
+            OGS_FATAL(
+                "Cannot convert a vector of size {} to a PropertyDataType",
+                expressions.size());
     }
-    OGS_FATAL("Cannot convert a vector of size {} to a PropertyDataType",
-              result.size());
 }
 
 static std::vector<std::string> collectVariables(
