@@ -232,11 +232,12 @@ static bool dimensionSelectionLoop(NcVar const& var,
     if (n_dims > 1)
     {
         std::string temp_str("");
-        cout << "Is the parameter time-dependent?\n";
+        std::cout << "Is the parameter time-dependent?\n";
         while (dim_idx_map[0] == std::numeric_limits<std::size_t>::max() &&
                is_time_dep == true)
         {
-            cout << "Enter ID for temporal dimension or \"c\" to continue: ";
+            std::cout
+                << "Enter ID for temporal dimension or \"c\" to continue: ";
             std::getline(std::cin, temp_str);
             std::stringstream str_stream(temp_str);
             if (str_stream.str() == "c" || str_stream.str() == "continue")
