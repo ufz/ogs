@@ -1,3 +1,5 @@
+file(MAKE_DIRECTORY ${WORKING_DIRECTORY})
+
 # IMPORTANT: multiple arguments in a single variable have to be in list notation (;)
 # and have to be quoted when passed
 # "-DEXECUTABLE_ARGS=${AddTest_EXECUTABLE_ARGS}"
