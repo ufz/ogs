@@ -42,6 +42,7 @@ void Simulation::initializeDataStructures(
     INFO("Reading project file {}.",
          std::filesystem::relative(project).string());
     DBUG("Project file: {}.", std::filesystem::absolute(project).string());
+    DBUG("Working directory: {}.", std::filesystem::current_path().string());
 
     std::stringstream prj_stream;
     BaseLib::prepareProjectFile(prj_stream, project, xml_patch_file_names,
