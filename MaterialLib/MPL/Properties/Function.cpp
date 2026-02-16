@@ -59,6 +59,14 @@ static std::vector<exprtk::expression<T>> compileExpressions(
     return expressions;
 }
 
+struct SymbolTableCache
+{
+    double* t_ptr = nullptr;
+    double* x_ptr = nullptr;
+    double* y_ptr = nullptr;
+    double* z_ptr = nullptr;
+};
+
 template <int D>
 struct Function::Implementation
 {
@@ -105,6 +113,10 @@ public:
     /// Stores values for evaluation of vectorial quantities per thread. Needed
     /// for constant pointers for exprtk.
     std::vector<VariableArray> variable_arrays;
+
+    /// Cached pointers to symbol table variables (t, x, y, z) per thread.
+    /// Eliminates string-based lookups in get_variable().
+    std::vector<SymbolTableCache> symbol_table_caches;
 
     std::map<std::string, CurveWrapper> _curve_wrappers;
 
@@ -203,11 +215,27 @@ Function::Implementation<D>::createSymbolTables(
         curves)
 {
     std::vector<exprtk::symbol_table<double>> symbol_tables(num_threads);
+    symbol_table_caches.resize(num_threads);
 
     for (int thread_id = 0; thread_id < num_threads; ++thread_id)
     {
         symbol_tables[thread_id] =
             createSymbolTable(variables, curves, variable_arrays[thread_id]);
+
+        // Cache pointers to frequently accessed variables to avoid
+        // std::map lookups in get_variable().
+        symbol_table_caches[thread_id].t_ptr =
+            &(symbol_tables[thread_id].get_variable("t")->ref());
+
+        if (spatial_position_is_required)
+        {
+            symbol_table_caches[thread_id].x_ptr =
+                &(symbol_tables[thread_id].get_variable("x")->ref());
+            symbol_table_caches[thread_id].y_ptr =
+                &(symbol_tables[thread_id].get_variable("y")->ref());
+            symbol_table_caches[thread_id].z_ptr =
+                &(symbol_tables[thread_id].get_variable("z")->ref());
+        }
     }
 
     return symbol_tables;
@@ -354,35 +382,34 @@ static PropertyDataType evaluateExpressions(
     VariableArray const& new_variable_array,
     ParameterLib::SpatialPosition const& pos, double const t,
     std::vector<exprtk::expression<double>> const& expressions,
-    VariableArray& variable_array, bool const spatial_position_is_required)
+    VariableArray& variable_array, bool const spatial_position_is_required,
+    SymbolTableCache const& cache)
 {
     std::vector<double> result(expressions.size());
 
     updateVariableArrayValues(variables, new_variable_array, variable_array);
 
+    // Set symbol table variables using cached pointers (eliminates
+    // std::map lookups in get_variable()).
+    *cache.t_ptr = t;
+
+    if (spatial_position_is_required)
+    {
+        if (!pos.getCoordinates())
+        {
+            OGS_FATAL(
+                "FunctionParameter: The spatial position "
+                "has to be set by "
+                "coordinates.");
+        }
+        auto const coords = pos.getCoordinates().value();
+        *cache.x_ptr = coords[0];
+        *cache.y_ptr = coords[1];
+        *cache.z_ptr = coords[2];
+    }
+
     std::transform(begin(expressions), end(expressions), begin(result),
-                   [t, &pos, spatial_position_is_required](auto const& e)
-                   {
-                       auto& symbol_table = e.get_symbol_table();
-                       symbol_table.get_variable("t")->ref() = t;
-
-                       if (spatial_position_is_required)
-                       {
-                           if (!pos.getCoordinates())
-                           {
-                               OGS_FATAL(
-                                   "FunctionParameter: The spatial position "
-                                   "has to be set by "
-                                   "coordinates.");
-                           }
-                           auto const coords = pos.getCoordinates().value();
-                           symbol_table.get_variable("x")->ref() = coords[0];
-                           symbol_table.get_variable("y")->ref() = coords[1];
-                           symbol_table.get_variable("z")->ref() = coords[2];
-                       }
-
-                       return e.value();
-                   });
+                   [](auto const& e) { return e.value(); });
 
     switch (result.size())
     {
@@ -536,11 +563,12 @@ PropertyDataType Function::value(VariableArray const& variable_array,
                     "threads {:d}.",
                     name_, thread_id, impl_ptr->value_expressions.size());
             }
-            return evaluateExpressions(required_variables_enum_, variable_array,
-                                       pos, t,
-                                       impl_ptr->value_expressions[thread_id],
-                                       impl_ptr->variable_arrays[thread_id],
-                                       impl_ptr->spatial_position_is_required);
+            return evaluateExpressions(
+                required_variables_enum_, variable_array, pos, t,
+                impl_ptr->value_expressions[thread_id],
+                impl_ptr->variable_arrays[thread_id],
+                impl_ptr->spatial_position_is_required,
+                impl_ptr->symbol_table_caches[thread_id]);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
 }
@@ -581,10 +609,11 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                     variable_enum_to_string[static_cast<int>(variable)], name_);
             }
 
-            return evaluateExpressions(required_variables_enum_, variable_array,
-                                       pos, t, it->second,
-                                       impl_ptr->variable_arrays[thread_id],
-                                       impl_ptr->spatial_position_is_required);
+            return evaluateExpressions(
+                required_variables_enum_, variable_array, pos, t, it->second,
+                impl_ptr->variable_arrays[thread_id],
+                impl_ptr->spatial_position_is_required,
+                impl_ptr->symbol_table_caches[thread_id]);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
 }
