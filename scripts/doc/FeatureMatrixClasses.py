@@ -1,6 +1,7 @@
+import uuid
 import numpy as np
 import pandas as pd
-from typing_extensions import Literal
+from typing import Literal
 from lxml import etree
 
 
@@ -18,7 +19,7 @@ class FeatureMatrix:
 
         # Set all attributes of the feature_matrix_entry as attributes of this object and put them in matrix form.
         attribute_names = vars(self.feature_matrix_elements.iloc[0, 0])
-        for attribute_name in list(attribute_names.keys()):
+        for attribute_name in attribute_names:
             setattr(
                 self,
                 attribute_name,
@@ -91,11 +92,8 @@ class FeatureMatrix:
         )
 
         # Fill the matrix by iterating over each file and feature
-        file_keys = list(xml_files.keys())
-        for file_idx in range(len(xml_files)):
-            features = [
-                featureDict[key](xml_files[file_keys[file_idx]]) for key in featureDict
-            ]
+        for file_idx, (file_key, xml_file) in enumerate(xml_files.items()):
+            features = [featureDict[key](xml_file) for key in featureDict]
             feature_matrix.iloc[file_idx] = features
 
         return feature_matrix
@@ -107,10 +105,14 @@ class FeatureMatrix:
         not_covered = []
         if len(lines) == 1:
             if lines[0].left != 1:
-                not_covered.append(pd.Interval(1, lines[0].left - 1))
+                not_covered.append(pd.Interval(1, lines[0].left - 1, closed="both"))
             if lines[0].right != endpoint:
-                not_covered.append(pd.Interval(lines[0].right + 1, endpoint))
-
+                not_covered.append(
+                    pd.Interval(lines[0].right + 1, endpoint, closed="both")
+                )
+            return not_covered
+        elif len(lines) == 0:
+            return [pd.Interval(1, endpoint, closed="both")]
         for line_index in range(len(lines) - 1):
             if lines[line_index].left != 1 and line_index == 0:
                 not_covered.append(
@@ -134,9 +136,31 @@ class FeatureMatrix:
     @staticmethod
     def get_xml_endline(element: etree.ElementTree) -> int:
         """Gets the sourceline where the tag is closed, by converting to string and checking the number of lines."""
-        return element.sourceline + (
-            len(etree.tostring(element).strip().split(b"\n")) - 1
+        #  etree.indent(element.getroottree(), space="  ")
+        return FeatureMatrix.get_element_opening_line(element) + (
+            len(etree.tostring(element, pretty_print=True).strip().split(b"\n")) - 1
         )
+
+    @staticmethod
+    def get_element_opening_line(element):
+        marker = str(uuid.uuid4())
+        element.set("__marker__", marker)
+        try:
+            root = element.getroottree()
+            # etree.indent(tree, space="  ")
+            s = etree.tostring(root, encoding="unicode")
+
+            idx = s.find(marker)
+            if idx == -1:
+                raise RuntimeError("marker not found")
+
+            line = s[:idx].count("\n") + 1
+            # To use the sourceline in this context makes the assumption, that the display of the xml is based on the xml file,
+            # that contains the root element of the tree. This is the case for normal .prj files. For diff files, the xml is built
+            # upon the base_xml, which contains the root element, so this is also a valid assumption.
+            return line + root.getroot().sourceline - 1
+        finally:
+            del element.attrib["__marker__"]
 
     @staticmethod
     def merge_overlapping_intervals(
@@ -193,7 +217,7 @@ class FeatureMatrixEntry:
         """Create intervals spanning the complete range of each element from opening to closing tag."""
         return [
             pd.Interval(
-                el.sourceline,
+                FeatureMatrix.get_element_opening_line(el),
                 FeatureMatrix.get_xml_endline(el),
                 closed="both",
             )
@@ -207,14 +231,12 @@ class FeatureMatrixEntry:
         """Create two single-line intervals for each element: one at opening tag line and one at closing tag line."""
         intervals = []
         for el in elements:
+            open_line = FeatureMatrix.get_element_opening_line(el)
+            close_line = FeatureMatrix.get_xml_endline(el)
             intervals.extend(
                 [
-                    pd.Interval(el.sourceline, el.sourceline, closed="both"),
-                    pd.Interval(
-                        FeatureMatrix.get_xml_endline(el),
-                        FeatureMatrix.get_xml_endline(el),
-                        closed="both",
-                    ),
+                    pd.Interval(open_line, open_line, closed="both"),
+                    pd.Interval(close_line, close_line, closed="both"),
                 ]
             )
         return intervals
