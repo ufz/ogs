@@ -28,8 +28,7 @@ else() # Assuming gcc for this example
 endif()
 configure_file(scripts/cmake/gcovr.cfg.in gcovr.cfg @ONLY)
 
-# Update to 8.5 once released
-set(GCOVR_EXECUTABLE uvx gcovr==8.3 CACHE PATH "" FORCE)
+set(GCOVR_EXECUTABLE uvx gcovr==8.6 CACHE PATH "" FORCE)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/coverage/html)
 
