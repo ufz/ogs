@@ -31,6 +31,7 @@ dependencies = [
   "pytest>=8.2.2",
   "toml>=0.10.2",
   "coverage>=7.13",
+  "pytest-cov",
 ]
 
 # Usage:

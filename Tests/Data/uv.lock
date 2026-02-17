@@ -668,6 +668,11 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/7d/fb/70af542d2d938c778c9373ce253aa4116dbe7c0a5672f78b2b2ae0e1b94b/coverage-7.13.3-py3-none-any.whl", hash = "sha256:90a8af9dba6429b2573199622d72e0ebf024d6276f16abce394ad4d181bb0910", size = 211237, upload-time = "2026-02-03T14:02:27.986Z" },
 ]
 
+[package.optional-dependencies]
+toml = [
+    { name = "tomli", marker = "python_full_version <= '3.11' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
+]
+
 [[package]]
 name = "cycler"
 version = "0.12.1"
@@ -2253,7 +2258,7 @@ wheels = [
 
 [[package]]
 name = "ogs"
-version = "6.5.8.dev24"
+version = "6.5.8.dev78"
 source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" }
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform == 'linux'",
@@ -2266,20 +2271,20 @@ resolution-markers = [
 dependencies = [
     { name = "pandas" },
 ]
-sdist = { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/e7d8ad2b1586aa42cc842dfd796ece3398e08f37ce547e650d34b6d9721b6ddb/ogs-6.5.8.dev24.tar.gz", hash = "sha256:e7d8ad2b1586aa42cc842dfd796ece3398e08f37ce547e650d34b6d9721b6ddb" }
+sdist = { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/21ea2fa321fa5930ecb8130fc661f5ba64687ba6e3edc36c9f894879c701f53e/ogs-6.5.8.dev78.tar.gz", hash = "sha256:21ea2fa321fa5930ecb8130fc661f5ba64687ba6e3edc36c9f894879c701f53e" }
 wheels = [
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/747062f5b47a09617599e4e54831b9678f6c62b2ae270cfd47c0c981ad5dce5c/ogs-6.5.8.dev24-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:747062f5b47a09617599e4e54831b9678f6c62b2ae270cfd47c0c981ad5dce5c" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/dc689f9e072a8fd3c33d602111d9125ef6555eb0b5b665f6615a42b5efd7034b/ogs-6.5.8.dev24-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:dc689f9e072a8fd3c33d602111d9125ef6555eb0b5b665f6615a42b5efd7034b" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/e8236a7b431c1f1ebfab658442955f9855098a5ad288ea7baab22f2025c74544/ogs-6.5.8.dev24-cp310-cp310-win_amd64.whl", hash = "sha256:e8236a7b431c1f1ebfab658442955f9855098a5ad288ea7baab22f2025c74544" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c699c1896e0e570efaa0302be450c673b082fa3421542ebd252e201f47199dc5/ogs-6.5.8.dev24-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:c699c1896e0e570efaa0302be450c673b082fa3421542ebd252e201f47199dc5" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/350f297df5104307b5e1df8a4a4fb45fdf11df524dcc1d0901f6ec71eaf68d74/ogs-6.5.8.dev24-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:350f297df5104307b5e1df8a4a4fb45fdf11df524dcc1d0901f6ec71eaf68d74" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c8040e97ed0e6260d14c237103d506afc62f5679181b5bd110879f0d21c003a7/ogs-6.5.8.dev24-cp311-cp311-win_amd64.whl", hash = "sha256:c8040e97ed0e6260d14c237103d506afc62f5679181b5bd110879f0d21c003a7" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/ddf3288030a8107977c89bd7ff8cfa9098cb8aee98c128597cead178acfa6771/ogs-6.5.8.dev24-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:ddf3288030a8107977c89bd7ff8cfa9098cb8aee98c128597cead178acfa6771" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/af49da453ccd54667e8deee37c4e696a7f09b381f1faa6220e1230341d558cba/ogs-6.5.8.dev24-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:af49da453ccd54667e8deee37c4e696a7f09b381f1faa6220e1230341d558cba" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/9a8e3d7d7d851c9f759eb76e10ef1bb8d43b936c8b8d3d3fd4602a56fae11ffd/ogs-6.5.8.dev24-cp312-cp312-win_amd64.whl", hash = "sha256:9a8e3d7d7d851c9f759eb76e10ef1bb8d43b936c8b8d3d3fd4602a56fae11ffd" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/8d9821f4642568da35a2ab93c2a84e04afc5066c584e6148b854e37e84df2a46/ogs-6.5.8.dev24-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:8d9821f4642568da35a2ab93c2a84e04afc5066c584e6148b854e37e84df2a46" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/fe10d18a6414a231113103c969468a5540a5e58ce4a1d486f3461f3b96ce0ec1/ogs-6.5.8.dev24-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:fe10d18a6414a231113103c969468a5540a5e58ce4a1d486f3461f3b96ce0ec1" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/407c63d5bc97ca1653c51a6f7e46b24644dbc62ef5c7bf8702fb2a49c79cf8fa/ogs-6.5.8.dev24-cp313-cp313-win_amd64.whl", hash = "sha256:407c63d5bc97ca1653c51a6f7e46b24644dbc62ef5c7bf8702fb2a49c79cf8fa" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/4fdc71c927edbe8ff792ef1e177f2328853264bb5b1ac41bea78475cb9c71fc8/ogs-6.5.8.dev78-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:4fdc71c927edbe8ff792ef1e177f2328853264bb5b1ac41bea78475cb9c71fc8" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/504748a3b07dd3aefc77b9e31e241774645d095f74d2c5ae1f53b3aaa7c4b928/ogs-6.5.8.dev78-cp310-cp310-manylinux_2_28_x86_64.whl", hash = "sha256:504748a3b07dd3aefc77b9e31e241774645d095f74d2c5ae1f53b3aaa7c4b928" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/d39a2f95f465798631660f87ab209c2e8beb86aad588b32e313b17dc4761a2e8/ogs-6.5.8.dev78-cp310-cp310-win_amd64.whl", hash = "sha256:d39a2f95f465798631660f87ab209c2e8beb86aad588b32e313b17dc4761a2e8" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/2df5502d5a0a0cbdd99a281767886f2654453003a0a979805813264c8a362900/ogs-6.5.8.dev78-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:2df5502d5a0a0cbdd99a281767886f2654453003a0a979805813264c8a362900" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/5f63b96bfbeaf5a6d13b3ca507a23683e405b4a3e036ab641628974bfa165ba5/ogs-6.5.8.dev78-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:5f63b96bfbeaf5a6d13b3ca507a23683e405b4a3e036ab641628974bfa165ba5" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/17dbf597b3be2c9e5d21f6b2a4729f67dd6e5d36f0a68a95d87b28ae6fd2d29b/ogs-6.5.8.dev78-cp311-cp311-win_amd64.whl", hash = "sha256:17dbf597b3be2c9e5d21f6b2a4729f67dd6e5d36f0a68a95d87b28ae6fd2d29b" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/e8115181ef89fe481d9eb916992f1d133e7b0364691fba0563cceb04bf9d0ec0/ogs-6.5.8.dev78-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:e8115181ef89fe481d9eb916992f1d133e7b0364691fba0563cceb04bf9d0ec0" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/ca9a897997d423228c465cb0b85b729f8232ab105948ecdf79f711e17a0df6eb/ogs-6.5.8.dev78-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:ca9a897997d423228c465cb0b85b729f8232ab105948ecdf79f711e17a0df6eb" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/0cce7493f35890c0d8da4a6a7bd2f4d08bf809082c694a8190cd7947b42284e6/ogs-6.5.8.dev78-cp312-cp312-win_amd64.whl", hash = "sha256:0cce7493f35890c0d8da4a6a7bd2f4d08bf809082c694a8190cd7947b42284e6" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/cf239e14200be95f14627df3dfbf0cfe28af70a36c758c604dbd8ce07d05905b/ogs-6.5.8.dev78-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:cf239e14200be95f14627df3dfbf0cfe28af70a36c758c604dbd8ce07d05905b" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/362b757f2f6505f4b91d17e8d4c05afb3f38702c7b902eca3c2b4c4ed9e0a1a8/ogs-6.5.8.dev78-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:362b757f2f6505f4b91d17e8d4c05afb3f38702c7b902eca3c2b4c4ed9e0a1a8" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/6709de1d661927eb9650ccfdc277dcc02e9b5dbbe564496fc49403931bf63203/ogs-6.5.8.dev78-cp313-cp313-win_amd64.whl", hash = "sha256:6709de1d661927eb9650ccfdc277dcc02e9b5dbbe564496fc49403931bf63203" },
 ]
 
 [[package]]
@@ -2304,6 +2309,7 @@ dependencies = [
     { name = "pandas" },
     { name = "papermill" },
     { name = "pytest" },
+    { name = "pytest-cov" },
     { name = "pyvista", extra = ["all"] },
     { name = "seaborn" },
     { name = "toml" },
@@ -2315,7 +2321,7 @@ ogs-local = [
     { name = "ogs", source = { directory = "../../" } },
 ]
 ogs-master = [
-    { name = "ogs", version = "6.5.8.dev24", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
+    { name = "ogs", version = "6.5.8.dev78", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
 ]
 ogs-pypi = [
     { name = "ogs", version = "6.5.5", source = { registry = "https://pypi.org/simple" } },
@@ -2339,6 +2345,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=1.5" },
     { name = "papermill", specifier = ">=2.6.0" },
     { name = "pytest", specifier = ">=8.2.2" },
+    { name = "pytest-cov" },
     { name = "pyvista", extras = ["all"], specifier = "==0.45" },
     { name = "seaborn", specifier = ">=0.12" },
     { name = "toml", specifier = ">=0.10.2" },
@@ -2810,6 +2817,20 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/08/ba/45911d754e8eba3d5a841a5ce61a65a685ff1798421ac054f85aa8747dfb/pytest-8.4.1.tar.gz", hash = "sha256:7c67fd69174877359ed9371ec3af8a3d2b04741818c51e5e99cc1742251fa93c", size = 1517714, upload-time = "2025-06-18T05:48:06.109Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/29/16/c8a903f4c4dffe7a12843191437d7cd8e32751d5de349d45d3fe69544e87/pytest-8.4.1-py3-none-any.whl", hash = "sha256:539c70ba6fcead8e78eebbf1115e8b589e7565830d7d006a8723f19ac8a0afb7", size = 365474, upload-time = "2025-06-18T05:48:03.955Z" },
+]
+
+[[package]]
+name = "pytest-cov"
+version = "7.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "coverage", extra = ["toml"] },
+    { name = "pluggy" },
+    { name = "pytest" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5e/f7/c933acc76f5208b3b00089573cf6a2bc26dc80a8aece8f52bb7d6b1855ca/pytest_cov-7.0.0.tar.gz", hash = "sha256:33c97eda2e049a0c5298e91f519302a1334c26ac65c1a483d6206fd458361af1", size = 54328, upload-time = "2025-09-09T10:57:02.113Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ee/49/1377b49de7d0c1ce41292161ea0f721913fa8722c19fb9c1e3aa0367eecb/pytest_cov-7.0.0-py3-none-any.whl", hash = "sha256:3b8e9558b16cc1479da72058bdecf8073661c7f57f7d3c5f22a1c23507f2d861", size = 22424, upload-time = "2025-09-09T10:57:00.695Z" },
 ]
 
 [[package]]
