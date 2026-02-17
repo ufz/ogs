@@ -149,7 +149,7 @@ def ogs_beam(
         prefix = prefix + "_compressive"
     # generate mesh
     run(
-        f"generateStructuredMesh -o {out_dir}/bar_.vtu -e hex --lx {beam_length} --nx {round(beam_length/h)} --ly {beam_height} --ny {round(beam_height/h)} --lz {beam_depth} --nz {round(beam_depth/h)} > {logfile}",
+        f"generateStructuredMesh --no-boundary-meshes -o {out_dir}/bar_.vtu -e hex --lx {beam_length} --nx {round(beam_length/h)} --ly {beam_height} --ny {round(beam_height/h)} --lz {beam_depth} --nz {round(beam_depth/h)} > {logfile}",
         check=True,
         shell=True,
     )

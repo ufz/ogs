@@ -342,7 +342,9 @@ plotter.show()
 
 The following was mainly taken from https://www.opengeosys.org/docs/tools/meshing-submeshes/submeshes/  
 
-For Finite Element simulations, we need to specify subdomains e.g. for boundary conditions.  
+For Finite Element simulations, we need to specify subdomains e.g. for boundary conditions.
+The `generateStructuredMesh` tool already creates the boundary meshes but if another mesh generation tool was used, then there are the following options.
+
 One possibility is to precompute the subdomains as meshes by extracting them from our domain.  
 This way the subdomains additionally contain information to identify the corresponding bulk mesh entities like nodes, elements, and faces of elements.
 
