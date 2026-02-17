@@ -67,6 +67,13 @@ struct SymbolTableCache
     double* z_ptr = nullptr;
 };
 
+struct ScalarCopyOp
+{
+    std::ptrdiff_t src_offset;  ///< byte offset from VariableArray start
+    double* dst_ptr;            ///< pointer into this thread's variable_array
+    Variable variable;          ///< for error messages
+};
+
 template <int D>
 struct Function::Implementation
 {
@@ -75,6 +82,7 @@ struct Function::Implementation
     Implementation(
         int num_threads,
         std::vector<std::string> const& variables,
+        std::vector<Variable> const& variables_enum,
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
             dvalue_string_expressions,
@@ -92,10 +100,11 @@ private:
             curves,
         VariableArray& variable_array);
 
-    /// Create symbol tables for all threads.
+    /// Create symbol tables for all threads and populate scalar_copy_ops.
     std::vector<exprtk::symbol_table<double>> createSymbolTables(
         int num_threads,
         std::vector<std::string> const& variables,
+        std::vector<Variable> const& variables_enum,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);
@@ -117,6 +126,14 @@ public:
     /// Cached pointers to symbol table variables (t, x, y, z) per thread.
     /// Eliminates string-based lookups in get_variable().
     std::vector<SymbolTableCache> symbol_table_caches;
+
+    /// Per-thread list of scalar copy operations (src offset → dst pointer).
+    /// Built once at construction; used instead of updateVariableArrayValues.
+    std::vector<std::vector<ScalarCopyOp>> scalar_copy_ops;
+
+    /// Non-scalar variables (KelvinVector / DeformationGradient) that still
+    /// go through the generic updateVariableArrayValues path.
+    std::vector<Variable> non_scalar_variables;
 
     std::map<std::string, CurveWrapper> _curve_wrappers;
 
@@ -210,6 +227,7 @@ std::vector<exprtk::symbol_table<double>>
 Function::Implementation<D>::createSymbolTables(
     int num_threads,
     std::vector<std::string> const& variables,
+    std::vector<Variable> const& variables_enum,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
@@ -238,6 +256,41 @@ Function::Implementation<D>::createSymbolTables(
         }
     }
 
+    // Build per-thread scalar copy ops (and shared non-scalar fallback list).
+    scalar_copy_ops.resize(num_threads);
+    for (int thread_id = 0; thread_id < num_threads; ++thread_id)
+    {
+        for (auto const variable : variables_enum)
+        {
+            variable_arrays[thread_id].visitVariable(
+                BaseLib::Overloaded{
+                    [&](VariableArray::Scalar* dst)
+                    {
+                        auto const src_offset =
+                            reinterpret_cast<char const*>(dst) -
+                            reinterpret_cast<char const*>(
+                                &variable_arrays[thread_id]);
+                        scalar_copy_ops[thread_id].push_back(
+                            {src_offset, dst, variable});
+                    },
+                    [&](VariableArray::KelvinVector*)
+                    {
+                        if (thread_id == 0)
+                        {
+                            non_scalar_variables.push_back(variable);
+                        }
+                    },
+                    [&](VariableArray::DeformationGradient*)
+                    {
+                        if (thread_id == 0)
+                        {
+                            non_scalar_variables.push_back(variable);
+                        }
+                    }},
+                variable);
+        }
+    }
+
     return symbol_tables;
 }
 
@@ -245,6 +298,7 @@ template <int D>
 Function::Implementation<D>::Implementation(
     int num_threads,
     std::vector<std::string> const& variables,
+    std::vector<Variable> const& variables_enum,
     std::vector<std::string> const& value_string_expressions,
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
         dvalue_string_expressions,
@@ -256,7 +310,8 @@ Function::Implementation<D>::Implementation(
     value_expressions.resize(num_threads);
     dvalue_expressions.resize(num_threads);
 
-    auto symbol_tables = createSymbolTables(num_threads, variables, curves);
+    auto symbol_tables =
+        createSymbolTables(num_threads, variables, variables_enum, curves);
 
     // value expressions per thread.
     for (int thread_id = 0; thread_id < num_threads; ++thread_id)
@@ -378,7 +433,8 @@ static void updateVariableArrayValues(std::vector<Variable> const& variables,
 }
 
 static PropertyDataType evaluateExpressions(
-    std::vector<Variable> const& variables,
+    std::vector<ScalarCopyOp> const& scalar_copy_ops,
+    std::vector<Variable> const& non_scalar_variables,
     VariableArray const& new_variable_array,
     ParameterLib::SpatialPosition const& pos, double const t,
     std::vector<exprtk::expression<double>> const& expressions,
@@ -387,7 +443,26 @@ static PropertyDataType evaluateExpressions(
 {
     std::vector<double> result(expressions.size());
 
-    updateVariableArrayValues(variables, new_variable_array, variable_array);
+    // Fast path: direct offset arithmetic, no switches, no variant visits.
+    for (auto const& op : scalar_copy_ops)
+    {
+        double const val = *reinterpret_cast<double const*>(
+            reinterpret_cast<char const*>(&new_variable_array) + op.src_offset);
+        if (std::isnan(val))
+        {
+            OGS_FATAL(
+                "Function property: Scalar variable '{:s}' is not "
+                "initialized.",
+                variable_enum_to_string[static_cast<int>(op.variable)]);
+        }
+        *op.dst_ptr = val;
+    }
+    // Fallback for KelvinVector / DeformationGradient variables.
+    if (!non_scalar_variables.empty())
+    {
+        updateVariableArrayValues(non_scalar_variables, new_variable_array,
+                                  variable_array);
+    }
 
     // Set symbol table variables using cached pointers (eliminates
     // std::map lookups in get_variable()).
@@ -517,11 +592,11 @@ Function::Function(
                                      get_number_omp_threads());
 
     impl2_ = std::make_unique<Implementation<2>>(
-        num_threads, variables, value_string_expressions,
-        dvalue_string_expressions, curves);
+        num_threads, variables, required_variables_enum_,
+        value_string_expressions, dvalue_string_expressions, curves);
     impl3_ = std::make_unique<Implementation<3>>(
-        num_threads, variables, value_string_expressions,
-        dvalue_string_expressions, curves);
+        num_threads, variables, required_variables_enum_,
+        value_string_expressions, dvalue_string_expressions, curves);
 }
 
 std::variant<Function::Implementation<2>*, Function::Implementation<3>*>
@@ -564,7 +639,8 @@ PropertyDataType Function::value(VariableArray const& variable_array,
                     name_, thread_id, impl_ptr->value_expressions.size());
             }
             return evaluateExpressions(
-                required_variables_enum_, variable_array, pos, t,
+                impl_ptr->scalar_copy_ops[thread_id],
+                impl_ptr->non_scalar_variables, variable_array, pos, t,
                 impl_ptr->value_expressions[thread_id],
                 impl_ptr->variable_arrays[thread_id],
                 impl_ptr->spatial_position_is_required,
@@ -610,8 +686,9 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
             }
 
             return evaluateExpressions(
-                required_variables_enum_, variable_array, pos, t, it->second,
-                impl_ptr->variable_arrays[thread_id],
+                impl_ptr->scalar_copy_ops[thread_id],
+                impl_ptr->non_scalar_variables, variable_array, pos, t,
+                it->second, impl_ptr->variable_arrays[thread_id],
                 impl_ptr->spatial_position_is_required,
                 impl_ptr->symbol_table_caches[thread_id]);
         },
