@@ -272,6 +272,27 @@ static const std::array<ElementReorderConfigBase,
     return arr;
 }();
 
+void checkElementVolume(int const element_id, double const v_old,
+                        double const v_new)
+{
+    //  We use a fixed tolerance here because for very small elements
+    //  the machine epsilon might be too small.
+    double const eps = 100.0 * std::numeric_limits<double>::epsilon();
+
+    double const diff = std::abs(v_new - v_old);
+
+    if (diff <= eps || diff / v_old <= eps)
+    {
+        return;
+    }
+    OGS_FATAL(
+        "Reordering the nodes of element {:d} failed as its volume "
+        "changed from {:.20g} to {:.20g} after node "
+        "reordering. The absolute difference is {:.20g} and the relative "
+        "difference is {:.20g} (thresholds are {:.20g} and {:.20g}).",
+        element_id, v_old, v_new, diff, diff / v_old, eps, eps);
+}
+
 /**
  * \brief Reverses order of nodes. In particular, this fixes issues between
  * (Gmsh or OGS5) and OGS6 meshes.
@@ -333,21 +354,9 @@ void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
 
             // Ensure that the element volume did not change.
             double const element_volume = element->computeVolume();
-            //  We use a fixed tolerance here because for very small elements
-            //  the machine epsilon might be too small.
-            if (std::fabs(element_volume - element_volume_origin) /
-                    element_volume_origin >
-                100 * std::numeric_limits<double>::epsilon())
-            {
-                OGS_FATAL(
-                    "Reordering the nodes of element {:d} failed as its volume "
-                    "changed from {:.20g} to {:.20g}, the relative difference "
-                    "is {:.20g} and the threshold is {:.20g}.",
-                    element->getID(), element_volume_origin, element_volume,
-                    std::fabs(element_volume_origin - element_volume) /
-                        element_volume_origin,
-                    100 * std::numeric_limits<double>::epsilon());
-            }
+
+            checkElementVolume(element->getID(), element_volume_origin,
+                               element_volume);
         }
         else
         {
