@@ -76,13 +76,6 @@ if(OGS_USE_PIP)
             COMMAND ${UV_TOOL_PATH} run coverage combine --rcfile=${PROJECT_SOURCE_DIR}/Tests/Data/pyproject.toml
             COMMAND ${UV_TOOL_PATH} run coverage xml -o notebook-coverage.xml --rcfile=${PROJECT_SOURCE_DIR}/Tests/Data/pyproject.toml
             COMMAND ${PROJECT_SOURCE_DIR}/scripts/ci/helper/fix_coverage.sh ${PROJECT_SOURCE_DIR}
-            COMMAND mkdir -p python-html
-            COMMAND uvx gcovr
-                --cobertura-add-tracefile notebook-coverage-rel.xml
-                --cobertura-add-tracefile pytest-coverage-rel.xml
-                --html-details python-html/coverage.html
-                --exclude '.*/ogs/config.py'
-                -r ${PROJECT_SOURCE_DIR} -s
         )
 
     endif()
