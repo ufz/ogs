@@ -26,7 +26,6 @@ public:
     MeshItemType getMeshItemType() const { return _mesh_item_type; }
     std::string const& getPropertyName() const { return _property_name; }
     int getNumberOfGlobalComponents() const { return _n_components; }
-    bool is_for_output = true;
 
 protected:
     PropertyVectorBase(std::string property_name,
