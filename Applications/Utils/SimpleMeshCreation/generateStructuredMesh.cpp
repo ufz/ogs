@@ -272,11 +272,6 @@ int main(int argc, char* argv[])
         "", "oz", "mesh origin (lower left corner) in z direction", false, 0,
         "ORIGIN_Z");
     cmd.add(originZArg);
-    TCLAP::SwitchArg noBoundaryMeshesArg(
-        "", "no-boundary-meshes", "disable generation of boundary meshes",
-        false);
-    cmd.add(noBoundaryMeshesArg);
-
     // parse arguments
     auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg);
@@ -418,13 +413,6 @@ int main(int argc, char* argv[])
 
     auto const out_path = std::filesystem::path(mesh_out.getValue());
     MeshLib::IO::writeMeshToFile(*mesh, out_path);
-
-    // Extract boundary meshes
-    if (noBoundaryMeshesArg.getValue())
-    {
-        INFO("Boundary mesh generation disabled.");
-        return EXIT_SUCCESS;
-    }
 
     auto const base = (out_path.parent_path() / out_path.stem()).string();
 

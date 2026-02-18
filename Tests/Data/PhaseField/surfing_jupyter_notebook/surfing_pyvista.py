@@ -184,7 +184,7 @@ out_dir.mkdir(parents=True, exist_ok=True)
 # %%
 # https://www.opengeosys.org/docs/tools/meshing/structured-mesh-generation/
 run(
-    f"generateStructuredMesh --no-boundary-meshes -o {out_dir}/surfing_quad_1x2.vtu -e quad --lx 2 --nx {round(2/h)+1} --ly 1 --ny {round(1/h)+1}",
+    f"generateStructuredMesh -o {out_dir}/surfing_quad_1x2.vtu -e quad --lx 2 --nx {round(2/h)+1} --ly 1 --ny {round(1/h)+1}",
     shell=True,
     check=True,
 )

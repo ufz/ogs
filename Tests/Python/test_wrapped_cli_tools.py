@@ -38,26 +38,6 @@ def test_generate_structured_mesh():
         for side in ["left", "right", "bottom", "top"]:
             assert (Path(tmpdirname) / f"quad_{side}.vtu").exists()
 
-        # --no-boundary-meshes: only domain mesh should be written
-        outfile_no_bdry = Path(tmpdirname) / "hex_no_bdry.vtu"
-        assert (
-            ogs.cli.generateStructuredMesh(
-                e="hex",
-                lx=1,
-                ly=1,
-                lz=1,
-                nx=2,
-                ny=2,
-                nz=2,
-                o=outfile_no_bdry,
-                no_boundary_meshes=True,
-            )
-            == 0
-        )
-        assert outfile_no_bdry.exists()
-        for side in ["left", "right", "bottom", "top", "front", "back"]:
-            assert not (Path(tmpdirname) / f"hex_no_bdry_{side}.vtu").exists()
-
 
 def test_parameter_with_underscore():
     tempdir = Path(tempfile.mkdtemp())
