@@ -122,7 +122,10 @@ mesh = ot.MeshSeries("axisym_theis.vtu")
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", ""))
 out_dir.mkdir(parents=True, exist_ok=True)
 
-model = ot.Project(input_file="axisym_theis_CT.prj", output_file="axisym_theis_CT.prj")
+# never run?
+model = ot.Project(
+    input_file="axisym_theis_CT.prj", output_file=out_dir / "axisym_theis_CT.prj"
+)
 
 
 # %%

@@ -161,9 +161,10 @@ def temperature(t):
 # %%
 # run OGS
 cube_compression = ot.Project(
-    input_file="compression_gas.prj", output_file="compression_gas.prj"
+    input_file="compression_gas.prj", output_file=out_dir / "compression_gas.prj"
 )
-cube_compression.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
+cube_compression.write_input()
+cube_compression.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
 # %%
 # read PVD file

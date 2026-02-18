@@ -75,18 +75,23 @@ out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
 model_lf = ot.Project(
-    input_file="block_conduct_frac.prj", output_file="block_conduct_frac.prj"
+    input_file="block_conduct_frac.prj", output_file=out_dir / "block_conduct_frac.prj"
 )
+model_lf.write_input()
 
 
 # %%
 # Run the analysis
-model_lf.run_model(logfile=(out_dir / "block_conduct_frac.txt"), args=f"-o {out_dir}")
+model_lf.run_model(
+    logfile=(out_dir / "block_conduct_frac.txt"), args=f"-o {out_dir} -m ."
+)
 
 
 # %%
 # Access VTU/PVD files, outputted by OpenGeoSys FEM Solver.
-vtufile = vtuIO.VTUIO("fracture_block_conduct_ts_1_t_1.000000.vtu", dim=2)
+vtufile = vtuIO.VTUIO(
+    str(out_dir / "fracture_block_conduct_ts_1_t_1.000000.vtu"), dim=2
+)
 
 
 # %% [markdown]

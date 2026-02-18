@@ -85,7 +85,7 @@ out_dir.mkdir(parents=True, exist_ok=True)
 # %%
 model = ot.Project(
     input_file="CreepAfterExcavation.prj",
-    output_file="CreepAfterExcavation_modified.prj",
+    output_file=out_dir / "CreepAfterExcavation_modified.prj",
 )
 # Update end time of simulation
 model.replace_text(
@@ -94,10 +94,10 @@ model.replace_text(
 model.write_input()
 
 # %%
-model.run_model(logfile=Path(out_dir) / "log.txt")
+model.run_model(logfile=out_dir / "log.txt", args=f"-o {out_dir} -m .")
 
 # %%
-ms = ot.MeshSeries("CreepAfterExcavation.pvd").scale(time=("s", "d"))
+ms = ot.MeshSeries(out_dir / "CreepAfterExcavation.pvd").scale(time=("s", "d"))
 
 ts_109d = np.where(np.round(ms.timevalues) == 109)[0].item()  # 109 days
 ts_409d = np.where(np.round(ms.timevalues) == 409)[0].item()  # 409 days

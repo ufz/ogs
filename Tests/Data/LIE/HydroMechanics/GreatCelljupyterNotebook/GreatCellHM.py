@@ -73,6 +73,7 @@ ot.plot.setup.show_region_bounds = False
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
+orig_dir = Path.cwd()
 
 # %% [markdown]
 # # Great cell
@@ -447,7 +448,7 @@ msh_file = mesh_GreatCell_intact(
 
 
 # %% vscode={"languageId": "python"}
-# %cd {mesh_path}
+os.chdir(mesh_path)
 run(
     "identifySubdomains -f -m domain.vtu -- "
     "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
@@ -472,8 +473,7 @@ run(
     shell=True,
     check=True,
 )
-
-# %cd -
+os.chdir(orig_dir)
 
 # %% [markdown]
 # ## Run the simulation
@@ -644,8 +644,7 @@ msh_file_volume_embedded = mesh_GreatCell_embeddedFracture(
 
 
 # %% vscode={"languageId": "python"}
-# %cd {mesh_path_embedded}
-# !pwd
+os.chdir(mesh_path_embedded)
 run(
     "identifySubdomains -f -m domain.vtu -- "
     "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
@@ -670,7 +669,7 @@ run(
     shell=True,
     check=True,
 )
-# %cd -
+os.chdir(orig_dir)
 
 # %% [markdown]
 # ## Run the simulation
@@ -866,7 +865,7 @@ msh_file_full = mesh_GreatCell_fullFracture(
 
 
 # %% vscode={"languageId": "python"}
-# %cd {mesh_path_full}
+os.chdir(mesh_path_full)
 run(
     "identifySubdomains -f -m domain.vtu -- "
     "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
@@ -892,8 +891,7 @@ run(
     shell=True,
     check=True,
 )
-
-# %cd -
+os.chdir(orig_dir)
 
 # %% [markdown]
 # ## Run the simulation

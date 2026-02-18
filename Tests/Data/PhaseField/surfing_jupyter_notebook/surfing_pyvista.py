@@ -518,9 +518,10 @@ plt.show()
 # ### Fracture propagation animation
 
 # %%
-plotter = pv.Plotter()
+plotter = pv.Plotter(off_screen=True)
 
-plotter.open_gif("figures/surfing.gif")
+(out_dir / "figures").mkdir(parents=True, exist_ok=True)
+plotter.open_gif(out_dir / "figures/surfing.gif")
 pv.set_plot_theme("document")
 for time_value in reader.time_values:
     reader.set_active_time_value(time_value)

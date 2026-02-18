@@ -85,9 +85,10 @@ out_dir.mkdir(parents=True, exist_ok=True)
 
 # %% jupyter={"source_hidden": true}
 model_s = ot.Project(
-    input_file="square_1e0.prj", output_file=f"{out_dir}/square_1e0_small.prj"
+    input_file="square_1e0.prj", output_file=out_dir / "square_1e0_small.prj"
 )
-model = ot.Project(input_file="square_1e0.prj", output_file="square_1e0.prj")
+model = ot.Project(input_file="square_1e0.prj", output_file=out_dir / "square_1e0.prj")
+model.write_input()
 
 # %% jupyter={"source_hidden": true}
 model_s.replace_text("SMALL_DEFORMATION", xpath="./processes/process/type")
@@ -107,8 +108,8 @@ model_s.remove_element(xpath=".//vtkdiff[field='volume_ratio']")
 model_s.write_input()
 
 # %% jupyter={"source_hidden": true}
-model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
-model_s.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
+model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
+model_s.run_model(logfile=f"{out_dir}/out_s.txt", args=f"-o {out_dir} -m .")
 
 # %% jupyter={"source_hidden": true}
 pv.set_plot_theme("document")

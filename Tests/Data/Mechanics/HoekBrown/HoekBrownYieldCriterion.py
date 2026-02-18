@@ -136,7 +136,10 @@ from tfel.material import projectOnPiPlane
 
 # %%
 # Specify the folder names
-calFolder_name = Path("calculatedData")
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+out_dir.mkdir(parents=True, exist_ok=True)
+
+calFolder_name = out_dir / "calculatedData"
 refFolder_name = Path("refData")
 
 # Attempt to remove the folder
@@ -848,18 +851,15 @@ ErrorAnalysis(
 # $$
 
 # %%
-out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
-out_dir.mkdir(parents=True, exist_ok=True)
-
-# %%
 model_hb = ot.Project(
     input_file="load_test_hb_nonassociated.prj",
-    output_file="load_test_hb_nonassociated.prj",
+    output_file=out_dir / "load_test_hb_nonassociated.prj",
 )
+model_hb.write_input()
 
 # %%
 model_hb.run_model(
-    logfile=str(out_dir / "out.txt"), args=f"-o {out_dir}", write_prj_to_pvd=False
+    logfile=str(out_dir / "out.txt"), write_prj_to_pvd=False, args=f"-o {out_dir} -m ."
 )
 
 # %%

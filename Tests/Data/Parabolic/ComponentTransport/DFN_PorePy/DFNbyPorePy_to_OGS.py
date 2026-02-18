@@ -41,6 +41,7 @@ ot.plot.setup.show_Region_bounds = False
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
+orig_dir = Path.cwd()
 
 
 # %% [markdown]
@@ -269,9 +270,11 @@ mesh_args = {
     "cell_size_min": mesh_size_min,
     "export": True,
     "filename": "mdg2d",
-    # "folder_name": out_dir,
 }
+
+os.chdir(out_dir)
 mdg = pp.create_mdg("simplex", mesh_args, network)
+os.chdir(orig_dir)
 
 # --- Remove the 3D matrix cells to keep only fractures + intersections ---
 mdg2d = mdg.copy()
@@ -334,8 +337,7 @@ for key in list(DFN_2D.point_data):
 DFN_2D.save(f"{out_dir}/mixed_dimensional_grid_2.vtu")
 
 # %%
-orig_dir = Path.cwd()
-# %cd {out_dir}
+os.chdir(out_dir)
 
 # remove duplicated nodes using PyVista
 mesh_c = pv.read("mixed_dimensional_grid_2.vtu")
@@ -402,7 +404,7 @@ ogs.cli.identifySubdomains(
 # ## Plot DFN and boundaries
 
 # %%
-# %cd $orig_dir
+os.chdir(orig_dir)
 try:
     pv.set_jupyter_backend("static")
 except Exception as e:

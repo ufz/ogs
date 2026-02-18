@@ -167,9 +167,16 @@ def plot_results(var: ot.variables.Scalar, x_max: float) -> plt.Figure:
 
 
 # %% Run model
-model = ot.Project(input_file="Cs.prj", output_file="Cs.prj")
+model = ot.Project(input_file="Cs.prj", output_file=out_dir / "Cs.prj")
 model.write_input()
-model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m .")
+
+# Database is expected to be in the prj directory, create a symlink
+source = Path("PSINagra2020v1-1_davies.dat").absolute()
+link = out_dir / "PSINagra2020v1-1_davies.dat"
+if not link.exists():
+    link.symlink_to(source)
+
+model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m . -s .")
 
 
 # %% [markdown]
@@ -206,9 +213,9 @@ cs_fig = plot_results(cs_var, x_max=5)
 # The model is solved for the first 50 time steps only to minimize the CPU time of this notebook. The time loop parameters in `U.prj` can be adapted accordingly to cover the full simulation time of 1 million years.
 
 # %%
-model = ot.Project(input_file="U.prj", output_file="U.prj")
+model = ot.Project(input_file="U.prj", output_file=out_dir / "U.prj")
 model.write_input()
-model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m .")
+model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m . -s .")
 
 
 # %% [markdown]

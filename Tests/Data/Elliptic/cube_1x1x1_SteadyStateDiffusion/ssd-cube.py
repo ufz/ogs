@@ -27,6 +27,7 @@
 
 # %%
 import os
+import subprocess
 from pathlib import Path
 
 import pyvista as pv
@@ -46,7 +47,11 @@ else:
 
 # %%
 resolution = "2e4"
-# ! ogs cube_{resolution}.prj -o {out_dir} > {out_dir}/log.txt
+subprocess.run(
+    f"ogs cube_{resolution}.prj -o {out_dir} > {out_dir}/log.txt",
+    shell=True,
+    check=True,
+)
 
 
 # %%

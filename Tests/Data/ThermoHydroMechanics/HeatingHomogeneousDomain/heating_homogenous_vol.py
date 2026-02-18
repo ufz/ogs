@@ -75,16 +75,18 @@ out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
 # %%
-model = ot.Project(input_file="hex_THM.prj", output_file="hex_THM_modified.prj")
+model = ot.Project(
+    input_file="hex_THM.prj", output_file=out_dir / "hex_THM_modified.prj"
+)
 
 
 model.write_input()
 
 # %%
-model.run_model(logfile=Path(out_dir) / "log.txt")
+model.run_model(logfile=Path(out_dir) / "log.txt", args=f"-o {out_dir} -m .")
 
 # %%
-ms = ot.MeshSeries("hex.pvd").scale(time=("s", "d"))
+ms = ot.MeshSeries(out_dir / "hex.pvd").scale(time=("s", "d"))
 obs_pts = np.array([0.5, 0.5, 0.5])
 ms_pts = ot.MeshSeries.extract_probe(ms, obs_pts)
 

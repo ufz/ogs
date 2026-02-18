@@ -270,13 +270,12 @@ for idx in STUDY_indices:
     for name, mesh in meshes.items():
         filename = f"disc_with_hole_idx_is_{idx}_{name}.vtu"
         pv.save_meshio(msh2vtu_out_dir / filename, mesh)
-    # %cd {out_dir}/disc_with_hole_idx_is_{idx}
     run(
         f"identifySubdomains -f -m disc_with_hole_idx_is_{idx}_domain.vtu -- disc_with_hole_idx_is_{idx}_physical_group_*.vtu",
         shell=True,
         check=True,
+        cwd=out_dir / f"disc_with_hole_idx_is_{idx}",
     )
-    # %cd -
 
 
 # %% [markdown]

@@ -286,13 +286,12 @@ def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
     meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
     for name, mesh in meshes.items():
         pv.save_meshio(f"{out_dir}/mesh_full_pf_{name}.vtu", mesh)
-    # %cd {out_dir}
     run(
         "identifySubdomains -f -m mesh_full_pf_domain.vtu -- mesh_full_pf_physical_group_*.vtu",
         shell=True,
         check=True,
+        cwd=out_dir,
     )
-    # %cd -
 
     # As a preprocessing step, define the initial phase-field (crack).
     pre_processing(h, a0)
@@ -501,7 +500,7 @@ plt.show()
 filename = f"results_h_{h:0.4f}_{phasefield_model}"
 reader = pv.get_reader(f"{out_dir}/" + filename + ".pvd")
 
-plotter = pv.Plotter(shape=(1, 2), border=False)
+plotter = pv.Plotter(shape=(1, 2), border=False, off_screen=True)
 plotter.open_gif(f"{out_dir}/Kregime_Propagating.gif")
 for time_value in reader.time_values:
     reader.set_active_time_value(time_value)

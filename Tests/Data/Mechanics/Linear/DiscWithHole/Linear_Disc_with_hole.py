@@ -253,10 +253,13 @@ out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
 # %%
-model = ot.Project(input_file="disc_with_hole.prj", output_file="disc_with_hole.prj")
+model = ot.Project(
+    input_file="disc_with_hole.prj", output_file=out_dir / "disc_with_hole.prj"
+)
+model.write_input()
 
 # %%
-model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
+model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
 # %%
 pv.set_plot_theme("document")
