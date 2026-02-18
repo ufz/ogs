@@ -373,3 +373,7 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     # Both tests above are executed in this notebook (without diff check). Maybe remove regular tests later?
     NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.py RUNTIME 15)
 endif()
+
+if(NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/moving_bc/notebook-moving_bc.py RUNTIME 13)
+endif()
