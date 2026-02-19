@@ -21,6 +21,10 @@ if (NOT OGS_USE_MPI)
     endif()
 endif()
 
+if (NOT OGS_USE_PETSC)
+    NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/HeatingHomogeneousDomain/heating_homogenous_vol.py RUNTIME 10)
+endif()
+
 AddTest(
     NAME ThermoHydroMechanics_square_1e0
     PATH ThermoHydroMechanics/Linear/Square_sealed_homogeneous
