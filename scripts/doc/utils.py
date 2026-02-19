@@ -613,7 +613,7 @@ def replace_tag(element: etree.Element, replacement_element: etree.Element) -> N
     # Insert fragment children at the include's position
     insert_at = parent.index(element)
     for child in list(replacement_element):
-        parent.insert(insert_at, child)
+        parent.insert(insert_at, etree.fromstring(etree.tostring(child)))
         insert_at += 1
 
     # Remove the original include tag
