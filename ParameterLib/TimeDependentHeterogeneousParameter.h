@@ -7,11 +7,11 @@
 
 #include "Parameter.h"
 
+namespace ParameterLib
+{
 /// The TimeDependentHeterogeneousParameter class implements a parameter that
 /// varies in time and space, i.e., it is a function \f$ (t, x) \mapsto f(t, x)
 /// \in T^n \f$.
-namespace ParameterLib
-{
 class TimeDependentHeterogeneousParameter final : public Parameter<double>
 {
 public:

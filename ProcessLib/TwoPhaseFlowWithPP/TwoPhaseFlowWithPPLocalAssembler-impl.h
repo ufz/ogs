@@ -1,6 +1,20 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
+#pragma once
+
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "NumLib/Fem/Interpolation.h"
+#include "TwoPhaseFlowWithPPProcessData.h"
+
+namespace ProcessLib
+{
+namespace TwoPhaseFlowWithPP
+{
+namespace MPL = MaterialPropertyLib;
+
 /**
  * common nomenclature
  * --------------primary variable----------------------
@@ -21,20 +35,6 @@
  * mu_wet                   viscosity of wetting phase
  * lambda_wet               mobility of wetting phase
  */
-#pragma once
-
-#include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "NumLib/Fem/Interpolation.h"
-#include "TwoPhaseFlowWithPPProcessData.h"
-
-namespace ProcessLib
-{
-namespace TwoPhaseFlowWithPP
-{
-namespace MPL = MaterialPropertyLib;
-
 template <typename ShapeFunction, int GlobalDim>
 void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
     setInitialConditionsConcrete(Eigen::VectorXd const local_x,
