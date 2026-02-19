@@ -22,19 +22,41 @@ To this end, the documentation above aims, among other things, to give conversio
 
 ## Theoretical background
 
-The `LiquidFlow` process can solve the fluid-flow equation in two variants. The more general formulation is the mass-balance version of the equation:
+The `LiquidFlow` process can solve the fluid-flow equation in two variants.
+
+### Mass balance formulation
+
+The more general formulation is the mass-balance version of the equation:
 
 $$
-\left( \rho_w \frac{\partial n_e}{\partial p_w} + n_e \frac{\partial \rho_w }{\partial p_w} \right) \frac{\partial p_w}{\partial t}  -\nabla \cdot \left( \rho_w \frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = \rho_w W_0.
+\left( \rho_w \frac{\partial n_e}{\partial p_w} + n_e \frac{\partial \rho_w }{\partial p_w} \right) \frac{\partial p_w}{\partial t}  -\nabla \cdot \left( \rho_w \frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = \rho_w W_0. \qquad \text{(mass)}
 $$
 
-Considering a constant water density in space, we arrive at the volume-balance of groundwater flow:
+This variant accounts for compressible (density-dependent) flow. It is selected by including the following tag in the project file:
+
+```xml
+<equation_balance_type>mass</equation_balance_type>
+```
+
+### Volume balance formulation
+
+Dividing the mass balance equation by $\rho_w$ and assuming density is constant in space (so that $\nabla \cdot (\rho_w \, \cdot) \approx \rho_w \, \nabla \cdot (\cdot)$) gives the volume-balance form. Substituting the OGS storage coefficient $\beta_s = \partial n_e / \partial p_w$:
 
 $$
-\left(\frac{\partial n_e}{ \partial p_w} + \frac{n_e}{\rho_w} \frac{\partial \rho_w }{\partial p_w} \right) \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0, \qquad (1)
+\left(\beta_s + \frac{n_e}{\rho_w} \frac{\partial \rho_w }{\partial p_w} \right) \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0.
 $$
 
-from which the groundwater flow equation known in hydrogeology is derived.
+In the code, the volume balance mode **enforces a constant (pressure-independent) fluid density**, i.e.\ $\partial \rho_w / \partial p_w \equiv 0$. The equation therefore simplifies to:
+
+$$
+\beta_s \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0. \qquad \text{(volume, default)} \quad (1)
+$$
+
+This is the **default** formulation. To explicitly select it, set the following tag in the project file:
+
+```xml
+<equation_balance_type>volume</equation_balance_type>
+```
 
 with the Darcy velocity as secondary variable:
 
@@ -65,22 +87,14 @@ where the subscript $w$ denotes "water" and in the following table all variables
 Please note that in OGS the gravitational acceleration vector is defined as $\mathbf{b} = - \mathbf{g}$. Thus, if you want to work with the pressure-based variant of groundwater flow, the input for the gravitational acceleration in 3D is:
 
 ```xml
-<specific_body_force> 0.0 0.0 -9.81</specific_body_force>
+<specific_body_force> 0 0 -9.81</specific_body_force>
 ```
 
-It is important to note that OGS also has a "storage" coefficient, which is defined as such: $\beta_s = \partial n_e / \partial p_w$. By default, the `LiquidFlow` process solves the volume-balance of groundwater flow (1), which is consistent with the formulation of the equation used in hydrogeology. One can switch to the mass-balance variant for compressible (i.e., density-dependent flow) by including the following tag:
+### Hydraulic head parameterisation
 
-```xml
-<equation_balance_type> mass </equation_balance_type>
-```
+It is important to note that OGS also has a "storage" coefficient, which is defined as such: $\beta_s = \partial n_e / \partial p_w$. One can show that for equation (1) under the assumption $\partial \rho_w / \partial p_w = 0$ the following relation holds: $\beta_s = S_0/(\rho_w g)$, relating the specific storage of hydrogeology to the storage implemented in OGS.
 
-With the storage defined in OGS $\beta_s$ the volume-balance of the fluid-flow equation reads:
-
-$$
-\left(\beta_s + \frac{n_e}{\rho_w} \frac{\partial \rho_w }{\partial p_w} \right) \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0. \qquad (2)
-$$
-
-One can use the equation above (2) to emulate the hydrogeological variant of the groundwater equation by applying the following measures:
+One can use equation (1) to emulate the hydrogeological variant of the groundwater equation by applying the following measures:
 
 - Ignore the partial derivative $\partial \rho_w / \partial p_w$, then OGS will set it to zero
 - Give $(0,0,0)^T$ as gravitational vector $g$ using the tag "specific\_body\_force"
@@ -96,10 +110,10 @@ Then:
 Thus, you effectively model the groundwater flow equation in the following form:
 
 $$
-S_0 \frac{\partial h}{\partial t} - \nabla \cdot (\mathbf{K} \nabla h) = W_0. \qquad (3)
+S_0 \frac{\partial h}{\partial t} - \nabla \cdot (\mathbf{K} \nabla h) = W_0. \qquad (2)
 $$
 
-More details how to use the liquid flow equation see the Appendix below and the detailed theory documentation in: https://gitlab.opengeosys.org/ogs/documentation/liquidflow/-/jobs/artifacts/main/raw/main.pdf?job=build
+More details how to use the liquid flow equation see the detailed theory documentation in: https://gitlab.opengeosys.org/ogs/documentation/liquidflow/-/jobs/artifacts/main/raw/main.pdf?job=build
 
 ### Finite Element Discretization
 
@@ -112,42 +126,25 @@ $$
 \end{equation}
 $$
 
-where the element matrices are defined as follows.
+where the element matrices depend on the chosen equation balance type as follows.
 
 #### Element mass matrix
 
-$$
-\begin{equation}
-\mathbf{M}_e =
-\int_{\Omega^e} \mathbf{N}^T
-\left(
-\frac{S_0}{\rho_w g}
-\right)
-\mathbf{N} \, d\Omega,
-\end{equation}
-$$
+|  | Volume balance (default) | Mass balance |
+|---|---|---|
+| $\mathbf{M}_e$ | $\displaystyle\int_{\Omega^e} \mathbf{N}^T \beta_s \mathbf{N} \, d\Omega$ | $\displaystyle\int_{\Omega^e} \mathbf{N}^T \!\left(\rho_w \beta_s + n_e \frac{\partial \rho_w}{\partial p_w}\right)\! \mathbf{N} \, d\Omega$ |
 
 #### Element conductance matrix
 
-$$
-\begin{equation}
-\mathbf{K}_e = -
-\int_{\Omega^e} (\nabla \mathbf{N})^T
-\left( \frac{\mathbf{K_0}}{\mu} \right)
-(\nabla \mathbf{N}) \, d\Omega.
-\end{equation}
-$$
+|  | Volume balance (default) | Mass balance |
+|---|---|---|
+| $\mathbf{K}_e$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\mathbf{K_0}}{\mu} (\nabla \mathbf{N}) \, d\Omega$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\rho_w \mathbf{K_0}}{\mu} (\nabla \mathbf{N}) \, d\Omega$ |
 
 #### Element load vector
 
-$$
-\begin{equation}
-\mathbf{b}_e =
-\int_{\Omega^e} (\nabla \mathbf{N})^T
-\left( \frac{\mathbf{K_0}}{\mu} \right)
-\rho_w \mathbf{g} \, d\Omega
-\end{equation}
-$$
+|  | Volume balance (default) | Mass balance |
+|---|---|---|
+| $\mathbf{b}_e$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\mathbf{K_0}}{\mu} \rho_w \mathbf{g} \, d\Omega$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\rho_w^2 \mathbf{K_0}}{\mu} \mathbf{g} \, d\Omega$ |
 
 ## OGS project `prj` file
 
@@ -195,21 +192,3 @@ Liquid-Flow examples from the OGS benchmark gallery you find here: https://www.o
 ## Workflows
 
 Shortly we will provide complete workflows (Jupyter Notebooks) to set up Liquid-Flow examples from the scratch including geometric description, meshing, project generation, simulation and displaying results. See also OGSTools: https://ogstools.opengeosys.org/stable/auto_examples/index.html
-
-### Appendix: Using the Liquid-Flow equation
-
-However, if you still want to model groundwater flow using the pressure-based variant of groundwater flow, you can still do this. If you assume, that the volume balance of flow is valid and you set $\partial \rho_w / \partial p_w$ to zero by ignoring it, then you effectively model this equation:
-
-$$
-\beta_s \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0. \qquad (4)
-$$
-
-If you still want to use a storage-coefficient measured in the field assuming the hydrogeological conventions, you can still use it for parameterization of the pressure-based variant of groundwater flow. One can show that for the equation above (4) under the named assumptions the following relation is valid: $\beta_s = S_0/(\rho_w g)$ relating the specific storage of hydrogeology to the storage implemented in OGS such that the equation (4) equals:
-
-$$
-\frac{S_0}{\rho_w g} \frac{\partial p_w}{\partial t} -  \nabla \cdot \left( \frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right) \right)= W_0.
-$$
-
-In any case, be aware that your boundary conditions match the formulation of the equation you want to model. E.g., if you go for the variant to model the hydrogeological variant of groundwater flow (3) all boundary conditions should be defined according to the standard conventions in hydrogeology.
-
-In the following pdf-document you find a description of the major governing equations of the Liquid-Flow-Process implemented in OpenGeoSys (OGS) as well as derivations and hints on how to set the parameterization of the process correctly: [documentation](https://gitlab.opengeosys.org/ogs/documentation/liquidflow/-/jobs/artifacts/main/raw/main.pdf?job=build).
