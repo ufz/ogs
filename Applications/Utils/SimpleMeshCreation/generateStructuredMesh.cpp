@@ -4,7 +4,12 @@
 #include <tclap/CmdLine.h>
 
 #include <algorithm>
+#include <filesystem>
 #include <memory>
+#include <range/v3/algorithm/all_of.hpp>
+#include <range/v3/algorithm/find_if.hpp>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
 #include <string>
 #include <vector>
 
@@ -16,35 +21,133 @@
 #include "InfoLib/GitInfo.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
+#include "MeshLib/Elements/Point.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
+#include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
+#include "MeshToolsLib/MeshSurfaceExtraction.h"
 
 namespace
 {
-/// Get dimension of the mesh element type.
-/// @param eleType element type
-unsigned getDimension(MeshLib::MeshElemType eleType)
+struct BoundarySide
 {
-    switch (eleType)
+    std::string name;
+    unsigned axis;
+    double value;
+};
+
+/// Extract and write 1D boundary point meshes (left and right endpoints).
+/// @param mesh The 1D line mesh
+/// @param origin The mesh origin point
+/// @param length The domain lengths
+/// @param base The base filename (without extension) for output
+void extract1DBoundaryMeshes(MeshLib::Mesh const& mesh,
+                             MathLib::Point3d const& origin,
+                             std::vector<double> const& length,
+                             std::string const& base)
+{
+    auto const eps = std::numeric_limits<double>::epsilon() *
+                     *std::max_element(length.begin(), length.end()) * 100;
+
+    std::array<BoundarySide, 2> const sides{
+        {{"left", 0, origin[0]}, {"right", 0, origin[0] + length[0]}}};
+
+    auto const& nodes = mesh.getNodes();
+    for (auto const& side : sides)
     {
-        case MeshLib::MeshElemType::LINE:
-            return 1;
-        case MeshLib::MeshElemType::QUAD:
-        case MeshLib::MeshElemType::TRIANGLE:
-            return 2;
-        case MeshLib::MeshElemType::HEXAHEDRON:
-        case MeshLib::MeshElemType::PRISM:
-        case MeshLib::MeshElemType::PYRAMID:
-        case MeshLib::MeshElemType::TETRAHEDRON:
-            return 3;
-        case MeshLib::MeshElemType::POINT:
-        case MeshLib::MeshElemType::INVALID:
-            return 0;
+        auto const it =
+            ranges::find_if(nodes, [&](auto const* n)
+                            { return std::abs((*n)[0] - side.value) <= eps; });
+
+        if (it == nodes.end())
+        {
+            continue;
+        }
+
+        auto* node = *it;
+        auto* new_node = new MeshLib::Node(*node);
+        std::vector<MeshLib::Node*> side_nodes{new_node};
+        std::vector<MeshLib::Element*> side_elements{
+            new MeshLib::Point({new_node})};
+
+        MeshLib::Mesh side_mesh(side.name, side_nodes, side_elements);
+
+        std::array<std::size_t, 1> const bulk_node_id{node->getID()};
+        MeshLib::addPropertyToMesh<std::size_t>(
+            side_mesh, MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::MeshItemType::Node, 1, std::span{bulk_node_id});
+
+        MeshLib::IO::writeMeshToFile(
+            side_mesh, std::filesystem::path(base + "_" + side.name + ".vtu"));
+        INFO("Boundary mesh '{}' written.", side.name);
     }
-    return 0;
+}
+
+/// Extract and write 2D/3D boundary meshes (left, right, bottom, top, and
+/// optionally front, back).
+/// @param mesh The 2D or 3D mesh
+/// @param dim The mesh dimension (2 or 3)
+/// @param origin The mesh origin point
+/// @param length The domain lengths
+/// @param base The base filename (without extension) for output
+void extract2D3DBoundaryMeshes(MeshLib::Mesh const& mesh,
+                               unsigned dim,
+                               MathLib::Point3d const& origin,
+                               std::vector<double> const& length,
+                               std::string const& base)
+{
+    auto const eps = std::numeric_limits<double>::epsilon() *
+                     *std::max_element(length.begin(), length.end()) * 100;
+
+    auto boundary_mesh =
+        MeshToolsLib::BoundaryExtraction::getBoundaryElementsAsMesh(
+            mesh, MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
+            MeshLib::getBulkIDString(MeshLib::MeshItemType::Face));
+
+    std::vector<BoundarySide> sides{{"left", 0, origin[0]},
+                                    {"right", 0, origin[0] + length[0]},
+                                    {"bottom", 1, origin[1]},
+                                    {"top", 1, origin[1] + length[1]}};
+
+    if (dim == 3)
+    {
+        sides.push_back({"front", 2, origin[2]});
+        sides.push_back({"back", 2, origin[2] + length[2]});
+    }
+
+    for (auto const& side : sides)
+    {
+        auto const node_on_side = [&](auto const node_id)
+        {
+            auto const* node = boundary_mesh->getNode(node_id);
+            return std::abs((*node)[side.axis] - side.value) <= eps;
+        };
+        auto const element_not_on_side = [&](auto const* elem) {
+            return !ranges::all_of(elem->nodes() | MeshLib::views::ids,
+                                   node_on_side);
+        };
+        auto const remove_ids = boundary_mesh->getElements() |
+                                ranges::views::filter(element_not_on_side) |
+                                MeshLib::views::ids | ranges::to<std::vector>;
+
+        std::unique_ptr<MeshLib::Mesh> side_mesh(MeshToolsLib::removeElements(
+            *boundary_mesh, remove_ids, side.name));
+
+        if (side_mesh && side_mesh->getNumberOfElements() > 0)
+        {
+            MeshLib::IO::writeMeshToFile(
+                *side_mesh,
+                std::filesystem::path(base + "_" + side.name + ".vtu"));
+            INFO("Boundary mesh '{}' written: {:d} nodes, {:d} elements.",
+                 side.name, side_mesh->getNumberOfNodes(),
+                 side_mesh->getNumberOfElements());
+        }
+    }
 }
 
 }  // end namespace
@@ -169,7 +272,6 @@ int main(int argc, char* argv[])
         "", "oz", "mesh origin (lower left corner) in z direction", false, 0,
         "ORIGIN_Z");
     cmd.add(originZArg);
-
     // parse arguments
     auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg);
@@ -180,7 +282,7 @@ int main(int argc, char* argv[])
     const std::string eleTypeName(eleTypeArg.getValue());
     const MeshLib::MeshElemType eleType =
         MeshLib::String2MeshElemType(eleTypeName);
-    const unsigned dim = getDimension(eleType);
+    const unsigned dim = MeshLib::getDimension(eleType);
 
     bool dim_used[3] = {false};
     for (unsigned i = 0; i < dim; i++)
@@ -301,14 +403,26 @@ int main(int argc, char* argv[])
             break;
     }
 
-    if (mesh)
+    if (!mesh)
     {
-        INFO("Mesh created: {:d} nodes, {:d} elements.",
-             mesh->getNumberOfNodes(), mesh->getNumberOfElements());
+        return EXIT_FAILURE;
+    }
 
-        // write into a file
-        MeshLib::IO::writeMeshToFile(
-            *(mesh.get()), std::filesystem::path(mesh_out.getValue()));
+    INFO("Mesh created: {:d} nodes, {:d} elements.", mesh->getNumberOfNodes(),
+         mesh->getNumberOfElements());
+
+    auto const out_path = std::filesystem::path(mesh_out.getValue());
+    MeshLib::IO::writeMeshToFile(*mesh, out_path);
+
+    auto const base = (out_path.parent_path() / out_path.stem()).string();
+
+    if (dim == 1)
+    {
+        extract1DBoundaryMeshes(*mesh, origin, length, base);
+    }
+    else if (dim >= 2)
+    {
+        extract2D3DBoundaryMeshes(*mesh, dim, origin, length, base);
     }
 
     return EXIT_SUCCESS;

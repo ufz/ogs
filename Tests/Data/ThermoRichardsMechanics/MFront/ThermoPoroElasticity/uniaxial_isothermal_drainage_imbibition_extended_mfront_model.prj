@@ -2,15 +2,15 @@
 <OpenGeoSysProject>
     <meshes>
         <!--
-            generateStructuredMesh -e hex -o cube_1e0_1x1x1_hex8.vtu - -nx 1 - -ny 1 - -nz 1
+            generateStructuredMesh -e hex -o cube_1e0_1x1x1_hex8.vtu \-\-nx 1 \-\-ny 1 \-\-nz 1
             createQuadraticMesh -i cube_1e0_1x1x1_hex8.vtu -o cube_1e0_1x1x1_hex20.vtu
             ExtractBoundary -i cube_1e0_1x1x1_hex20.vtu -o cube_1e0_1x1x1_hex20_whole_surface.vtu
-            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu  - -x-min 1e-8 -o cube_1e0_1x1x1_hex20_x0.vtu
-            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu  - -y-min 1e-8 -o cube_1e0_1x1x1_hex20_y0.vtu
-            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu  - -z-min 1e-8 -o cube_1e0_1x1x1_hex20_z0.vtu
-            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu  - -x-max 0.999999 -o cube_1e0_1x1x1_hex20_x1.vtu
-            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu  - -y-max 0.999999 -o cube_1e0_1x1x1_hex20_y1.vtu
-            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu  - -z-max 0.999999 -o cube_1e0_1x1x1_hex20_z1.vtu
+            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu \-\-x-min 1e-8 -o cube_1e0_1x1x1_hex20_x0.vtu
+            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu \-\-y-min 1e-8 -o cube_1e0_1x1x1_hex20_y0.vtu
+            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu \-\-z-min 1e-8 -o cube_1e0_1x1x1_hex20_z0.vtu
+            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu \-\-x-max 0.999999 -o cube_1e0_1x1x1_hex20_x1.vtu
+            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu \-\-y-max 0.999999 -o cube_1e0_1x1x1_hex20_y1.vtu
+            removeMeshElements -i cube_1e0_1x1x1_hex20_whole_surface.vtu \-\-z-max 0.999999 -o cube_1e0_1x1x1_hex20_z1.vtu
         -->
         <mesh axially_symmetric="false">cube_1e0_1x1x1_hex20.vtu</mesh>
         <mesh axially_symmetric="false">cube_1e0_1x1x1_hex20_whole_surface.vtu</mesh>

@@ -112,6 +112,28 @@ std::vector<MeshElemType> getMeshElemTypes();
 /// Returns a vector of strings of mesh element types
 std::vector<std::string> getMeshElemTypeStringsShort();
 
+/// Returns the dimension of the given MeshElemType.
+constexpr unsigned getDimension(MeshElemType t)
+{
+    switch (t)
+    {
+        case MeshElemType::LINE:
+            return 1;
+        case MeshElemType::QUAD:
+        case MeshElemType::TRIANGLE:
+            return 2;
+        case MeshElemType::HEXAHEDRON:
+        case MeshElemType::PRISM:
+        case MeshElemType::PYRAMID:
+        case MeshElemType::TETRAHEDRON:
+            return 3;
+        case MeshElemType::POINT:
+        case MeshElemType::INVALID:
+            return 0;
+    }
+    return 0;
+}
+
 /// Given a MeshElemType this returns the appropriate string.
 std::string CellType2String(const CellType t);
 

@@ -24,7 +24,7 @@ the parallel FEM scheme with PETSc.
 
 ## Create a structured mesh
 
-In order to discretize the domain of a unit cube do
+In order to discretize the domain of a unit cube with boundaries execute
 `bin/generateStructuredMesh -o cube_1x1x1_hex_axbxc.vtu -e hex --lx 1 --ly 1 --lz 1 --nx a --ny b --nz c`
 where `a`, `b`, and `c` should be chosen according to the needs.
 
@@ -41,10 +41,11 @@ where `a`, `b`, and `c` should be chosen according to the needs.
 |  422  |  422  |  422  | ~ 75.15 | 240 | yes |
 |  465  |  465  |  465  | ~ 100.54 | 320 | |
 
-For the boundary conditions, if they are simple (_i.e._ homogeneous), the
-simplest `.gml` file is sufficient for the serial case, but for heterogeneous
-boundary conditions and parallelization boundary mesh files are needed. There
-are two possibilities to create such files:
+For the boundary conditions the boundary meshes left, right, top, bottom, front, and back were already constructed by the `generateStructuredMesh` tool.
+Alternatively, if the boundaries are simple (_i.e._ homogeneous), a `.gml` file is sufficient for the serial case, but for heterogeneous
+boundary conditions or for the parallelization boundary mesh files are needed.
+
+There are two possibilities to create such files:
 
 - If there is a `.gml` file, use [`constructMeshesFromGeometry`
    tool]({{<relref "constructMeshesFromGeometry">}})  which

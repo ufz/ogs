@@ -19,12 +19,24 @@ def test_ogs_help():
 
 def test_generate_structured_mesh():
     with tempfile.TemporaryDirectory() as tmpdirname:
-        outfile = Path(tmpdirname) / "test.vtu"
-        assert not outfile.exists()
-
+        # 1D: domain + left/right point boundaries
+        outfile = Path(tmpdirname) / "line.vtu"
         assert ogs.cli.generateStructuredMesh(e="line", lx=1, nx=10, o=outfile) == 0
-
         assert outfile.exists()
+        assert (Path(tmpdirname) / "line_left.vtu").exists()
+        assert (Path(tmpdirname) / "line_right.vtu").exists()
+
+        # 2D: domain + left/right/bottom/top boundaries
+        outfile2d = Path(tmpdirname) / "quad.vtu"
+        assert (
+            ogs.cli.generateStructuredMesh(
+                e="quad", lx=1, ly=1, nx=5, ny=5, o=outfile2d
+            )
+            == 0
+        )
+        assert outfile2d.exists()
+        for side in ["left", "right", "bottom", "top"]:
+            assert (Path(tmpdirname) / f"quad_{side}.vtu").exists()
 
 
 def test_parameter_with_underscore():
