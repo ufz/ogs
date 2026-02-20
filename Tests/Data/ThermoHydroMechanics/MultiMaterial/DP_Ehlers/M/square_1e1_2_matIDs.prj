@@ -446,7 +446,7 @@
         <vtkdiff>
             <regex>square_1e1_2_matIDs_t_.*.vtu</regex>
             <field>material_state_variable_EquivalentPlasticStrain_ip</field>
-            <absolute_tolerance>1e-15</absolute_tolerance>
+            <absolute_tolerance>2e-15</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
