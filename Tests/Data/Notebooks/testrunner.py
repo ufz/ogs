@@ -20,7 +20,7 @@ from nbconvert.preprocessors import CellExecutionError
 
 
 def coverage_enabled():
-    value = os.getenv("ENABLE_PYTHON_COVERAGE", "").lower()
+    value = os.getenv("OGS_COVERAGE_PYTHON", "").lower()
     return value in {"1", "true", "yes", "on"}
 
 
@@ -185,9 +185,6 @@ for notebook_file in args.notebooks:
         print(f"[Start]  {notebook_file}")
         run = subprocess.run(
             [
-                "uv",
-                "run",
-                "--active",
                 "coverage",
                 "run",
                 f"--rcfile={ogs_source_path!s}/Tests/Data/pyproject.toml",

@@ -73,6 +73,6 @@ explicit = true
 
 [tool.coverage.run]
 branch = true
-# patch = ["subprocess"] # enable when subprocesses should be covered too
+patch = ["subprocess"]
 parallel = true
 source = ["."]

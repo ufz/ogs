@@ -49,14 +49,20 @@ aggregate coverage:
 
       args=()
       for f in "${tracefiles[@]}"; do
+        xmlstarlet ed -L \
+          -u '/coverage/sources/source' \
+          -v "$PWD" \
+          "$f"
         args+=(--cobertura-add-tracefile "$f")
       done
 
+      mkdir -p coverage/public
       uvx gcovr \
         "${args[@]}" \
-        --xml coverage/cpp-coverage.xml
-        --html-details public/index.html \
+        --xml coverage/cpp-coverage.xml \
+        --html-details coverage/public/index.html \
         --exclude '.*/ogs/config.py' \
+        --merge-lines \
         -r $PWD \
         -s
   rules:
@@ -74,14 +80,7 @@ aggregate coverage:
         path: coverage/cpp-coverage.xml
   environment:
     name: code coverage $CI_MERGE_REQUEST_IID
-    url: ${ARTIFACTS_PAGES_URL}/public/index.html
-
-  artifacts:
-    when: always
-    paths:
-      - build/coverage/coverage/html
-      - build/coverage/coverage/cpp-coverage.xml
-      - build/coverage/logs/*.txt
+    url: ${ARTIFACTS_PAGES_URL}/coverage/public/index.html
 
 cleanup_packages:
   image: python:3.12

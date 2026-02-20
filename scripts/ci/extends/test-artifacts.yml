@@ -15,7 +15,7 @@
       - build/**/*out.txt
       - build/**/web/content
       # coverage data
-      - build/*/coverage/*.xml
+      - build/*/coverage/*-rel.xml
     expire_in: 1 week
     reports:
       junit:

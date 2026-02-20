@@ -45,8 +45,9 @@ if(OGS_USE_PIP)
         if (OGS_USE_MPI)
             set(OGS_PYTEST_ARGS "-m;not ogs_needs_serial_build")
         endif()
-        if(DEFINED ENV{ENABLE_PYTHON_COVERAGE})
+        if(OGS_COVERAGE_PYTHON)
             set(_pytest_coverage_args "--cov=ogs;--cov-branch;--cov-report;xml:${PROJECT_BINARY_DIR}/coverage/pytest-coverage.xml")
+            file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/coverage)
         endif()
         add_test(
             NAME pytest
@@ -65,18 +66,20 @@ if(OGS_USE_PIP)
         )
         set_tests_properties(pytest PROPERTIES
             LABELS "default;python"
-            COST 10
+            COST 40
             ENVIRONMENT
-                "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}")
+                "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};COVERAGE_FILE=${PROJECT_BINARY_DIR}/coverage/.pytest-coverage")
 
-        add_custom_target(
-           process_coverage
-            WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/coverage
-            COMMENT "Generating HTML coverage report in ${PROJECT_BINARY_DIR}/coverage/python-html/coverage.html"
-            COMMAND ${UV_TOOL_PATH} run coverage combine --rcfile=${PROJECT_SOURCE_DIR}/Tests/Data/pyproject.toml
-            COMMAND ${UV_TOOL_PATH} run coverage xml -o notebook-coverage.xml --rcfile=${PROJECT_SOURCE_DIR}/Tests/Data/pyproject.toml
-            COMMAND ${PROJECT_SOURCE_DIR}/scripts/ci/helper/fix_coverage.sh ${PROJECT_SOURCE_DIR}
-        )
+        if(OGS_COVERAGE_PYTHON)
+            add_custom_target(
+                process_coverage_python
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/coverage
+                COMMENT "Generating HTML coverage report in ${PROJECT_BINARY_DIR}/coverage/python-html/coverage.html"
+                COMMAND ${UV_TOOL_PATH} run coverage combine
+                COMMAND ${UV_TOOL_PATH} run coverage xml -o notebook-coverage.xml
+                COMMAND ${PROJECT_SOURCE_DIR}/scripts/ci/helper/fix_coverage.sh ${PROJECT_SOURCE_DIR}
+            )
+        endif()
 
     endif()
 endif()
