@@ -63,8 +63,24 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
-    axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu OGS5_pressure pressure 1e-8 1e-8
+    axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu pressure pressure 1e-8 1e-8
+    axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu v v 1e-12 1e-12
 )
+
+AddTest(
+    NAME LiquidFlow_AxisymTheis
+    PATH Parabolic/LiquidFlow/AxiSymTheis
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS axisym_theis.prj
+    WRAPPER mpirun
+    WRAPPER_ARGS -np 1
+    TESTER vtkdiff
+    REQUIREMENTS OGS_USE_MPI
+    DIFF_DATA
+    axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu pressure pressure 1e-8 1e-8
+    axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu v v 1e-12 1e-12
+)
+
 AddTest(
     NAME LiquidFlow_BuildupTest
     PATH Parabolic/LiquidFlow/BuildupTest
@@ -218,18 +234,6 @@ AddTest(
     REQUIREMENTS OGS_USE_MPI
     DIFF_DATA
     mesh2D.vtu sat_2D_lflow_ts_1_t_1.000000.vtu OGS5_Results pressure 1e-8 1e-8
-)
-AddTest(
-    NAME LiquidFlow_AxisymTheis
-    PATH Parabolic/LiquidFlow/AxiSymTheis
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS axisym_theis.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu OGS5_pressure pressure 1e-8 1e-8
 )
 AddTest(
     NAME LiquidFlow_Anisotropic_GravityDriven3D
