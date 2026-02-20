@@ -1,1 +1,1 @@
-\copydoc ProcessLib::LiquidFlow::LiquidFlowData::equation_balance_type
+\copydoc ProcessLib::LiquidFlow::LiquidFlowData::is_volume_balance_equation_type

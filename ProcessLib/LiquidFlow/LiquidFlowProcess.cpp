@@ -42,9 +42,8 @@ LiquidFlowProcess::LiquidFlowProcess(
         {0} /* only one variable: pressure */);
 
     std::string const residuum_name =
-        _process_data.equation_balance_type == EquationBalanceType::volume
-            ? "VolumetricFlowRate"
-            : "MassFlowRate";
+        _process_data.is_volume_balance_equation_type ? "VolumetricFlowRate"
+                                                      : "MassFlowRate";
     _hydraulic_flow = MeshLib::getOrCreateMeshProperty<double>(
         mesh, residuum_name, MeshLib::MeshItemType::Node, 1);
 }

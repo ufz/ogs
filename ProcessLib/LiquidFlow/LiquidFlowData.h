@@ -14,14 +14,6 @@ namespace ProcessLib
 {
 namespace LiquidFlow
 {
-
-/// Governing equation balance type
-enum class EquationBalanceType
-{
-    volume,
-    mass
-};
-
 struct LiquidFlowData final
 {
     /// This indicates whether the governing equation is a volume balance or a
@@ -30,7 +22,7 @@ struct LiquidFlowData final
     /// the Neumann boundary condition is m/s. Otherwise, the unit of the
     /// Neumann boundary condition is kg/m³·m/s = kg/m²/s. By default, it is set
     /// to `volume`.
-    EquationBalanceType const equation_balance_type;
+    bool const is_volume_balance_equation_type;
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
