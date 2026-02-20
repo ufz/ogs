@@ -94,11 +94,9 @@ from ogstools.meshlib import MeshSeries
 
 # %%
 project_dir = Path()
-out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", project_dir / "_out"))
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 if not out_dir.exists():
     out_dir.mkdir(parents=True)
-
-project_file = project_dir / "Iodide129_main.prj"
 
 # %% [markdown]
 # ## How to run OpenGeoSys
@@ -115,12 +113,13 @@ project_file = project_dir / "Iodide129_main.prj"
 
 # %%
 model = ot.Project(
-    input_file=project_file,
-    output_file=project_file,
+    input_file="Iodide129_main.prj",
+    output_file=out_dir / "Iodide129_main.prj",
 )
 
 # %%
-model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir}")
+model.write_input()
+model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m .")
 
 # %% [markdown]
 # Now that the simulation has finished, let's take a look at the results.
@@ -306,7 +305,7 @@ pressure = ms.values("pressure")[0]
 c_I129 = ms.values("[I-129]")[0]
 f_I129_z = ms.values("[I-129]Flux")[0][:, 2]
 
-save_string = "output_dump.txt"
+save_string = out_dir / "output_dump.txt"
 
 all_NumInfo_to_write_concat = np.vstack(
     [x_points, y_points, z_points, pressure, c_I129, f_I129_z]
@@ -334,7 +333,7 @@ f.close()
 # In this section, we will make small modifications to the existing parameters in the `.prj` file and execute the simulation entirely within python.
 
 # %%
-project_dir_modified = project_dir / "modified/"
+project_dir_modified = out_dir / "modified/"
 project_file_modified = project_dir_modified / "Iodide129_main_altered.prj"
 
 if not project_dir_modified.exists():
@@ -345,7 +344,7 @@ if not out_dir_modified.exists():
     out_dir_modified.mkdir(parents=True)
 
 # Copy the original project file for parameter variation
-ot.Project(project_file).write_input(project_file_modified)
+ot.Project("Iodide129_main.prj").write_input(project_file_modified)
 
 # %% [markdown]
 # In the current model, the parameters that can be varied are `retardation_factor`, `pore_diffusion`, and `porosity`.
@@ -374,7 +373,9 @@ for _ in range(no_of_parameter_variations):
         # please be aware that as such the "includes" in the ".prj"-file are not kept, but everything is written
         # directly in the ".prj"-file only, which should be fine for surrogate modelling though, and maybe even easier.
 
-    model.run_model(args=f"-m {project_dir} -o {out_dir_modified}")
+    model.run_model(
+        logfile=out_dir / "out.txt", args=f"-m {project_dir} -o {out_dir_modified}"
+    )
 
 # %% [markdown]
 # ### Comparing the original model with the altered one

@@ -138,3 +138,6 @@
           exit 1
         fi
       fi
+
+      # Check for clean git status
+      [ -z "$(git status --porcelain)" ] || (echo "Repo is dirty!" && git status --short && exit 1)

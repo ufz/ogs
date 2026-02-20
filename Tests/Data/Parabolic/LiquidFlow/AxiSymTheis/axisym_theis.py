@@ -204,8 +204,11 @@ ot.plot.utils.update_font_sizes(fig.get_axes())
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
-model = ot.Project(input_file="axisym_theis.prj", output_file="axisym_theis.prj")
-model.run_model(logfile=out_dir / "out.log", args=f"-o {out_dir}")
+model = ot.Project(
+    input_file="axisym_theis.prj", output_file=out_dir / "axisym_theis.prj"
+)
+model.write_input()
+model.run_model(logfile=out_dir / "out.log", args=f"-o {out_dir} -m .")
 
 
 # %% [markdown]

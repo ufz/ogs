@@ -483,7 +483,7 @@ runtimes = {"OS - 1 Processor": 1980, "GIA - 1 Processor": runtime_GIA}
 for n in [4, 8]:
     prj_GIA_np = Path(f"./GlobalImplicitApproach/MPI/{n}Processors/{prj_name}_GIA.prj")
 
-    cmd = f"mpirun --bind-to none -np {n} ogs {prj_GIA_np} -o {out_dir} > out.txt"
+    cmd = f"mpirun --bind-to none -np {n} ogs {prj_GIA_np} -o {out_dir} > {out_dir}/out.txt"
     print(cmd)
     start_time = time.time()
     run(cmd, shell=True, check=True)

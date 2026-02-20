@@ -548,7 +548,6 @@ msh_file = mesh_GreatCell_intact(
 
 
 # %% vscode={"languageId": "python"}
-# %cd {mesh_path}
 run(
     "identifySubdomains -f -m domain.vtu -- "
     "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
@@ -571,9 +570,8 @@ run(
     "physical_group_p_right.vtu physical_group_p_top.vtu ",
     shell=True,
     check=True,
+    cwd=mesh_path,
 )
-
-# %cd -
 
 # %% [markdown]
 # ## Run the simulation
@@ -757,7 +755,6 @@ msh_file_volume_embedded = mesh_GreatCell_embeddedFracture(
 )
 
 # %% vscode={"languageId": "python"}
-# %cd {mesh_path_embedded}
 # !pwd
 run(
     "identifySubdomains -f -m domain.vtu -- "
@@ -781,8 +778,8 @@ run(
     "physical_group_p_right.vtu physical_group_p_top.vtu ",
     shell=True,
     check=True,
+    cwd=mesh_path_embedded,
 )
-# %cd -
 
 # %% [markdown]
 # ## Run the simulation
@@ -922,7 +919,6 @@ msh_file_full = mesh_GreatCell_fullFracture(
 
 
 # %% vscode={"languageId": "python"}
-# %cd {mesh_path_full}
 run(
     "identifySubdomains -f -m domain.vtu -- "
     "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
@@ -945,9 +941,8 @@ run(
     "physical_group_p_right.vtu physical_group_p_top.vtu ",
     shell=True,
     check=True,
+    cwd=mesh_path_full,
 )
-
-# %cd -
 
 # %% [markdown]
 # ## Run the simulation

@@ -97,20 +97,22 @@ out_dir.mkdir(parents=True, exist_ok=True)
 # Initiate the OGS
 
 model_temp = ot.Project(
-    input_file="TemperatureField.prj", output_file="TemperatureField.prj"
+    input_file="TemperatureField.prj", output_file=out_dir / "TemperatureField.prj"
 )
+model_temp.write_input()
 
 # %%
-model_temp.run_model(logfile=Path(out_dir) / "log.txt")
+model_temp.run_model(logfile=Path(out_dir) / "log.txt", args=f"-o {out_dir} -m .")
 
 # %%
 model_conc = ot.Project(
     input_file="TemperatureField_transport.prj",
-    output_file="TemperatureField_transport.prj",
+    output_file=out_dir / "TemperatureField_transport.prj",
 )
+model_conc.write_input()
 
 # %%
-model_conc.run_model(logfile=Path(out_dir) / "log2.txt")
+model_conc.run_model(logfile=Path(out_dir) / "log2.txt", args=f"-o {out_dir} -m .")
 
 # %% [markdown]
 # ## Result
@@ -124,8 +126,8 @@ model_conc.run_model(logfile=Path(out_dir) / "log2.txt")
 # Recall that isotropic diffusion is assumed in this example.
 
 # %%
-mesh = MeshSeries("TemperatureField.pvd").mesh(5)
-mesh2 = MeshSeries("TemperatureField_transport.pvd").mesh(5)
+mesh = MeshSeries(out_dir / "TemperatureField.pvd").mesh(5)
+mesh2 = MeshSeries(out_dir / "TemperatureField_transport.pvd").mesh(5)
 
 # %%
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))

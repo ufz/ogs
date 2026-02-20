@@ -120,14 +120,15 @@ out_dir.mkdir(parents=True, exist_ok=True)
 
 # %%
 model = ot.Project(
-    input_file="quad_with_half_hole.prj", output_file="quad_with_half_hole.prj"
+    input_file="quad_with_half_hole.prj",
+    output_file=out_dir / "quad_with_half_hole.prj",
 )
 
 # %%
 model.write_input()
 
 # %%
-model.run_model(logfile=Path(out_dir) / "log.txt")
+model.run_model(logfile=out_dir / "log.txt", args=f"-o {out_dir} -m .")
 
 # %% [markdown]
 # The computed permeability is shown in Fig. 1, in which one can
@@ -137,7 +138,7 @@ model.run_model(logfile=Path(out_dir) / "log.txt")
 # permeability change in EDZ.
 
 # %%
-ms = MeshSeries("quad_with_half_hole.pvd").mesh(1)
+ms = MeshSeries(out_dir / "quad_with_half_hole.pvd").mesh(1)
 
 fig_perm, ax = plt.subplots(figsize=(8, 6))
 ms.plot_contourf("permeability", fig=fig_perm, ax=ax, fontsize=15)

@@ -130,7 +130,7 @@ out_dir.mkdir(parents=True, exist_ok=True)
 # Initiating OGS object
 model = ot.Project(
     input_file="RichardsFlow_2d_small.prj",
-    output_file="RichardsFlow_2d_small_modified.prj",
+    output_file=out_dir / "RichardsFlow_2d_small_modified.prj",
 )
 # %%
 # Modifying convergence criterion
@@ -161,12 +161,12 @@ model.write_input()
 
 # %%
 # Run OGS
-model.run_model(logfile=Path(out_dir) / "log.txt")
+model.run_model(logfile=Path(out_dir) / "log.txt", args=f"-o {out_dir} -m .")
 
 # %%
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 7), sharey=True)
 
-ms = ot.MeshSeries("richards.pvd").scale(time=("s", "h"))
+ms = ot.MeshSeries(out_dir / "richards.pvd").scale(time=("s", "h"))
 ms_ogs5 = ot.MeshSeries("h_us_line_Warrick/h_us_line_Warrick_RICHARDS_FLOW.pvd").scale(
     time=("s", "h")
 )

@@ -107,49 +107,6 @@ git fetch upstream
 <!-- TODO: rerecord with GitLab -->
 <!-- {{< asciinema url="https://asciinema.org/a/249002" speed="3" rows="20" >}} -->
 
-## Optional: Enable git commit hooks
-
-[Git hooks](https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks) help to check for several issues before doing commits or pushes and it is highly recommended to enable these checks.
-
-Install [pre-commit](https://pre-commit.com/) (a git hook manager) via Pythons `pip`:
-
-```bash
-pip3 install --user pre-commit
-```
-
-This installed `pre-commit` to `.local/bin` in your home directory or to `C:\Users\[username]\AppData\Roaming\Python\Python37\Scripts` on Windows. Make sure to have this directory in your `PATH`!
-
-Enable the hooks in the source code with:
-
-```bash
-cd ogs
-pre-commit install
-```
-
-You will also need to install `clang-format`:
-
-<div class='win'>
-
-Install clang (which contains `clang-format`) with the [official installer](https://prereleases.llvm.org/win-snapshots/LLVM-12.0.0-6923b0a7-win64.exe)
-
-</div>
-
-<div class='linux'>
-
-```bash
-sudo apt-install clang-format
-```
-
-</div>
-
-<div class='mac'>
-
-```bash
-brew install clang-format
-```
-
-</div>
-
 ## Step: Working on a new feature
 
 You only have to follow the above steps once. From then on, whenever you want to work on a new feature, you can more easily interact with the remote repositories.

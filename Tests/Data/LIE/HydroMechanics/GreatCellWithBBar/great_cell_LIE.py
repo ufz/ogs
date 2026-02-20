@@ -222,7 +222,12 @@ ax_err.tick_params(which="major", length=5, width=0.8)
 ax_err.tick_params(axis="both", which="both", direction="in", top=True, right=True)
 
 plt.tight_layout()
-plt.savefig("hm_lie_bbar_comparison.pdf", dpi=600, bbox_inches="tight", pad_inches=0.05)
+plt.savefig(
+    out_dir / "hm_lie_bbar_comparison.pdf",
+    dpi=600,
+    bbox_inches="tight",
+    pad_inches=0.05,
+)
 plt.show()
 plt.close()
 

@@ -41,12 +41,12 @@ prj_file = f"{data_dir}/EllipticPETSc/{prj_name}.prj"
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
-command = f"mpirun --bind-to none -np 2 ogs {prj_file} > out.txt"
+command = f"mpirun --bind-to none -np 2 ogs {prj_file} -o {out_dir} > {out_dir}/out.txt"
 print(command)
 run(command, shell=True, check=True)
 
 # %%
-mesh_series = ot.MeshSeries(f"{prj_name}.pvd").scale(time=("s", "a"))
+mesh_series = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd").scale(time=("s", "a"))
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 labels = [f"{label} linear interpolated" for label in ["pt0", "pt1"]]
 

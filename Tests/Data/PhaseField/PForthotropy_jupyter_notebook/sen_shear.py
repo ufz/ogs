@@ -280,7 +280,7 @@ for b in ["OrthoMasonry", "OrthoVolDev"]:
 # %%
 reader = pv.get_reader(f"{out_dir}/AT2_OrthoMasonry.pvd")
 
-plotter = pv.Plotter()
+plotter = pv.Plotter(off_screen=True)
 
 plotter.open_gif(f"{out_dir}/AT2_OrthoMasonry.gif")
 pv.set_plot_theme("document")

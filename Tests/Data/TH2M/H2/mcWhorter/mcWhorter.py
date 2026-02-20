@@ -91,8 +91,11 @@ out_dir.mkdir(parents=True, exist_ok=True)
 
 # %%
 # run OGS
-model = ot.Project(input_file="mcWhorter_h2.prj", output_file="mcWhorter_h2.prj")
-model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir}")
+model = ot.Project(
+    input_file="mcWhorter_h2.prj", output_file=out_dir / "mcWhorter_h2.prj"
+)
+model.write_input()
+model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
 # %%
 # Read the OGS results and sample the last timestep on the same points as in

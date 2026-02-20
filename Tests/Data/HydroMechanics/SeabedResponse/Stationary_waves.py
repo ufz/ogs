@@ -166,9 +166,7 @@ def compute_pressure_and_stresses(t, x, z):
     S = n * Cf + (alpha - n) * Cs  # Gl. (1.28)
     theta = S * G / alpha**2  # Gl. (4.13)
     m = 1 / (1 - 2 * ny)  # = K+1/3*G/G                               # Gl. (4.5)
-    cv = (
-        k * G * (1 + m) / (alpha**2 * (1 + theta + m * theta) * gamma_w)
-    )  # Gl. (4.12)
+    cv = k * G * (1 + m) / (alpha**2 * (1 + theta + m * theta) * gamma_w)  # Gl. (4.12)
     xi_2 = complex(lam**2, (omega / cv))  # Gl. (4.19)
 
     B1 = (1 + m) * (xi_2 - lam**2) - 2 * lam * (np.sqrt(xi_2) - lam)
@@ -199,9 +197,7 @@ def compute_pressure_and_stresses(t, x, z):
             * B1
             * np.exp(-lam * z)
             - 2 * lam * B2 * np.exp(-lam * z)
-            + ((m - 1) * (xi_2 - lam**2) - 2 * lam**2)
-            * B3
-            * np.exp(-np.sqrt(xi_2) * z)
+            + ((m - 1) * (xi_2 - lam**2) - 2 * lam**2) * B3 * np.exp(-np.sqrt(xi_2) * z)
         )
         / D
         * np.exp((omega * t - np.pi * 0.5) * 1j)
@@ -630,8 +626,10 @@ def compute_abs_and_rel_stress_error(_sigmas, depth, t, x):
 
 # %%
 model = ot.Project(
-    input_file="seabed_response_200x100.prj", output_file="seabed_response_200x100.prj"
+    input_file="seabed_response_200x100.prj",
+    output_file=out_dir / "seabed_response_200x100.prj",
 )
+model.write_input()
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m {out_dir}")
 
 

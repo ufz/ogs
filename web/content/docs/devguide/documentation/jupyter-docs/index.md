@@ -138,8 +138,9 @@ web_subsection = "small-deformations" # required for notebooks in Tests/Data onl
   # OR with ogstools:
   # ... setup model ...
   import ogstools as ot
-  model = ogs.Project(input_file="input.prj", output_file="output.prj")
-  model.run_model(logfile=os.path.join(out_dir, "log.txt"), args=f"-o {out_dir}")
+  model = ogs.Project(input_file="input.prj", output_file=out_dir / "output.prj")
+  model.write_input()
+  model.run_model(logfile=out_dir / "log.txt", args=f"-o {out_dir} -m .")
 
   # Verify results; on failure assert with:
   assert False
@@ -149,6 +150,7 @@ web_subsection = "small-deformations" # required for notebooks in Tests/Data onl
 
 - Do not write anything into the source directories. Use an `out_dir` as above.
 - Assume that `ogs` and other tools are in the `PATH`.
+- Don't rely on Jupyter [magic commands](https://ipython.readthedocs.io/en/stable/interactive/magics.html) as the notebooks get executed as regular python scripts as well.
 
 ### Execution environment
 

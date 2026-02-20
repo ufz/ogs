@@ -54,12 +54,13 @@ out_dir.mkdir(parents=True, exist_ok=True)
 # %%
 # Initiate the OGS
 model = ot.Project(
-    input_file="nodal_source_test.prj", output_file="nodal_source_test.prj"
+    input_file="nodal_source_test.prj", output_file=out_dir / "nodal_source_test.prj"
 )
+model.write_input()
 
 # %%
 # Run the simulation
-model.run_model(logfile=Path(out_dir) / "log.txt")
+model.run_model(logfile=out_dir / "log.txt", args=f"-o {out_dir} -m .")
 
 # %% [markdown]
 # The distributions of pressure and displacement at the end time are
@@ -67,7 +68,7 @@ model.run_model(logfile=Path(out_dir) / "log.txt")
 
 # %%
 # Plotting
-mesh = MeshSeries("HM_NodalSourceTem.pvd").mesh(20)
+mesh = MeshSeries(out_dir / "HM_NodalSourceTem.pvd").mesh(20)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
 
@@ -82,5 +83,3 @@ mesh.plot_contourf(ot.variables.displacement, fig=fig, ax=ax2, fontsize=15)
 plt.subplots_adjust(wspace=0.3)  # increase horizontal space
 plt.tight_layout()
 plt.show()
-
-# %%

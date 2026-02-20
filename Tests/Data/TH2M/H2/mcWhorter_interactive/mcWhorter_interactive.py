@@ -41,7 +41,9 @@
 # %%
 import json
 import os
+import subprocess
 import threading
+from pathlib import Path
 
 import ipywidgets as widgets
 import matplotlib.image as mpimg
@@ -59,6 +61,9 @@ from helper import (
 from IPython.display import display
 from mcwhorter import BrooksCorey, McWhorter
 from template import file_from_template
+
+out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+out_dir.mkdir(parents=True, exist_ok=True)
 
 parameter_table = pd.read_csv("parameter.csv", quotechar="'")
 
@@ -219,10 +224,10 @@ mesh = create_1d_mesh(
     num_points=Nel + 1,
     mesh_type="line",
 )
-mesh.save(r"mesh_line.vtu")
+mesh.save(str(out_dir / "mesh_line.vtu"))
 
 coords = {"x1": mesh.GetBounds()[1], "x2": 0.5 * mesh.GetBounds()[1]}
-file_from_template(coords, "mcwt.template", "mcwt.gml")
+file_from_template(coords, "mcwt.template", out_dir / "mcwt.gml")
 
 # 1.2 Mesh for TH2M
 mesh = create_1d_mesh(
@@ -231,15 +236,20 @@ mesh = create_1d_mesh(
     num_points=Nel + 1,
     mesh_type="quad",
 )
-mesh.save(r"mesh_quad.vtu")
+mesh.save(str(out_dir / "mesh_quad.vtu"))
 
 boundary_left, boundary_right = create_boundary_line_meshes(
     point_a=(0.0, 0.0, 0.0), point_b=(depth * factor, 0.0, 0.0), num_points=Nel + 1
 )
-boundary_left.save("boundary_left_test.vtu")
+boundary_left.save(out_dir / "boundary_left_test.vtu")
 
 # #!checkMesh -v mesh_quad.vtu
-# !identifySubdomains -m mesh_quad.vtu -- boundary_left_test.vtu
+subprocess.run(
+    "identifySubdomains -m mesh_quad.vtu -- boundary_left_test.vtu",
+    shell=True,
+    check=True,
+    cwd=out_dir,
+)
 # #!checkMesh -v boundary_left_test.vtu
 
 # 2. Calculate capillary pressures
@@ -326,7 +336,7 @@ replace_info["pc0"] = "Parameter"
 prj_files = [r"mcWhorter_TwoPhasePP.prj", r"mcWhorter_TH2M.prj"]
 
 for prj_file in prj_files:
-    prj = ogs.Project(input_file=prj_file, output_file=prj_file)
+    prj = ogs.Project(input_file=prj_file, output_file=out_dir / prj_file)
     for key, paramvalue in params.items():
         try:
             if replace_info[key] == "Parameter":
@@ -343,7 +353,7 @@ for prj_file in prj_files:
         except RuntimeError:
             print(f"Parameter {key} not found...")
     prj.write_input()
-    prj.run_model()
+    prj.run_model(logfile=f"{out_dir}/out_{prj_file}.txt", args=f"-o {out_dir}")
 
 # %% [markdown]
 # ## Evaluation and Results
@@ -369,7 +379,7 @@ results = [
 
 i = 1
 for label, result in zip(labels, results, strict=True):
-    mesh = pv.read(result)
+    mesh = pv.read(out_dir / result)
     print(mesh.point_data.keys())
 
     Sw = mesh["saturation"]
