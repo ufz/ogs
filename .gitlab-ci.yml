@@ -33,7 +33,6 @@ workflow:
       variables:
         PIPELINE_NAME: "web only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
         BUILD_TESTS: "false"
-        CTEST_INCLUDE_REGEX: "nb-"
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::linux only.*/
       variables:
         PIPELINE_NAME: "linux only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
@@ -49,6 +48,10 @@ workflow:
     - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::gui only.*/
       variables:
         PIPELINE_NAME: "gui only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only.*/
+      variables:
+        PIPELINE_NAME: "coverage only MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"
+        BUILD_TESTS: "false"
     - if: $CI_MERGE_REQUEST_IID # merge requests
       variables:
         PIPELINE_NAME: "MR pipeline: $CI_MERGE_REQUEST_SOURCE_PROJECT_PATH $CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"

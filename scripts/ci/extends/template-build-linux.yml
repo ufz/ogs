@@ -68,6 +68,10 @@
             ctest_arguments="${ctest_arguments} -R nb-"
           fi
 
+          if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*coverage\ only.* ]]; then
+            ctest_arguments="${ctest_arguments} -R nb-|pytest"
+          fi
+
           if [[ ! -z "$CTEST_TIMEOUT" ]]; then
             ctest_timeout="$CTEST_TIMEOUT"
           fi

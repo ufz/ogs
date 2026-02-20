@@ -26,3 +26,6 @@ include:
   - local: "/scripts/ci/jobs/build-wheels.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::wheels only.*/
+  - local: "/scripts/ci/pipelines/coverage.yml"
+    rules:
+      - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/
