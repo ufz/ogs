@@ -12,6 +12,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "NumLib/NumericalStability/CreateNumericalStabilization.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydraulicProcess/checkVolumeBalanceEquationSetting.h"
 #include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -170,6 +171,16 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
 
+    auto const equation_balance_type_str =
+        //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__equation_balance_type}
+        config.getConfigParameter<std::string>("equation_balance_type",
+                                               "volume");
+    if (equation_balance_type_str == "volume")
+    {
+        ProcessLib::Common::HydraulicProcess::checkVolumeBalanceEquationSetting(
+            media_map);
+    }
+
     // Initial stress conditions
 
     auto initial_stress = ProcessLib::createInitialStress<DisplacementDim>(
@@ -177,11 +188,14 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
 
     auto stabilizer = NumLib::createNumericalStabilization(mesh, config);
 
+    bool const is_volume_balance_equation_type =
+        equation_balance_type_str == "volume";
     ThermoHydroMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),
         std::move(media_map),
         std::move(solid_constitutive_relations),
         std::move(ice_constitutive_relation),
+        is_volume_balance_equation_type,
         std::move(initial_stress),
         specific_body_force,
         std::move(stabilizer)};

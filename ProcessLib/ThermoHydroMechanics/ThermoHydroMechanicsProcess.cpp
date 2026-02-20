@@ -454,15 +454,20 @@ ThermoHydroMechanicsProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
 {
     INFO("ThermoHydroMechanicsProcess process initializeSubmeshOutput().");
     std::vector<std::vector<std::string>> per_process_residuum_names;
+
+    std::string const flow_rate_name =
+        _process_data.is_volume_balance_equation_type ? "VolumetricFlowRate"
+                                                      : "MassFlowRate";
+
     if (_process_variables.size() == 1)  // monolithic
     {
         per_process_residuum_names = {
-            {"HeatFlowRate", "VolumetricFlowRate", "NodalForces"}};
+            {"HeatFlowRate", flow_rate_name, "NodalForces"}};
     }
     else  // staggered
     {
         per_process_residuum_names = {
-            {"HeatFlowRate"}, {"VolumetricFlowRate"}, {"NodalForces"}};
+            {"HeatFlowRate"}, {flow_rate_name}, {"NodalForces"}};
     }
 
     AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>::
