@@ -17,6 +17,6 @@ code coverage:
   artifacts:
     when: always
     paths:
-      - build/coverage/coverage/cpp-coverage.xml
+      - build/coverage/coverage/cpp-coverage.json
       - build/coverage/logs/*.txt
     expire_in: 1 week

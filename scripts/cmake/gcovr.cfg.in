@@ -1,5 +1,5 @@
 root = @CMAKE_SOURCE_DIR@
-cobertura = @CMAKE_BINARY_DIR@/coverage/cpp-coverage.xml
+json = @CMAKE_BINARY_DIR@/coverage/cpp-coverage.json
 gcov-executable = @GCOV_EXECUTABLE@
 gcov-parallel = yes
 print-summary = yes

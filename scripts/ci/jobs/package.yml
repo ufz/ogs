@@ -42,7 +42,6 @@ aggregate coverage:
       shopt -s nullglob
 
       tracefiles=(
-        build/coverage/coverage/cpp-coverage.xml
         build/*/coverage/notebook-coverage-rel.xml
         build/*/coverage/pytest-coverage-rel.xml
       )
@@ -59,6 +58,7 @@ aggregate coverage:
       mkdir -p coverage/public
       uvx gcovr \
         "${args[@]}" \
+        --json-add-tracefile build/coverage/coverage/cpp-coverage.json \
         --xml coverage/cpp-coverage.xml \
         --html-details coverage/public/index.html \
         --exclude '.*/ogs/config.py' \
