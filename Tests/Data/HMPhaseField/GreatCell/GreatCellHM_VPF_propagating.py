@@ -705,7 +705,7 @@ def last_pvtu_from_series(pvd: Path, prefix: str) -> Path:
 
 
 ref_pvtu = expected_dir.joinpath(f"{ref_base}.pvtu")
-ref_vtu = expected_dir.joinpath(f"{ref_base}.vtu")
+ref_vtu = out_dir / f"{ref_base}.vtu"
 run(["pvtu2vtu", "-i", str(ref_pvtu), "-o", str(ref_vtu)], check=True)
 
 last_pvtu = last_pvtu_from_series(pvd_path, series_prefix)
