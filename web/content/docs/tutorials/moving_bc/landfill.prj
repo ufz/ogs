@@ -88,8 +88,8 @@
                     <!-- 2 years -->
                     <timesteps>
                         <pair>
-                            <repeat>292</repeat>
-                            <delta_t>216000</delta_t>
+                            <repeat>146</repeat>
+                            <delta_t>432000</delta_t>
                         </pair>
                     </timesteps>
                 </time_stepping>
@@ -97,7 +97,7 @@
         </processes>
         <outputs>
             <output>
-                <type>XDMF</type>
+                <type>VTK</type>
                 <prefix>Landfill_{:meshname}</prefix>
                 <meshes>
                     <mesh>domain</mesh>
@@ -120,7 +120,6 @@
             <name>T_amb</name>
             <type>Constant</type>
             <value>285.45</value>
-            <!-- 285.45 K = 12.3 &#194;&#176;C -->
         </parameter>
     </parameters>
     <process_variables>
@@ -169,4 +168,12 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>Landfill_domain_ts_146_t_63072000.000000.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
