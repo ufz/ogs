@@ -14,7 +14,7 @@
 #include "Polyline.h"
 #include "predicates.h"
 
-namespace ExactPredicates
+namespace
 {
 double getOrientation2d(MathLib::Point3d const& a, MathLib::Point3d const& b,
                         MathLib::Point3d const& c)
@@ -32,7 +32,7 @@ double getOrientation2dFast(MathLib::Point3d const& a,
                         const_cast<double*>(b.data()),
                         const_cast<double*>(c.data()));
 }
-}  // namespace ExactPredicates
+}  // namespace
 
 namespace GeoLib
 {
@@ -40,7 +40,7 @@ Orientation getOrientation(MathLib::Point3d const& p0,
                            MathLib::Point3d const& p1,
                            MathLib::Point3d const& p2)
 {
-    double const orientation = ExactPredicates::getOrientation2d(p0, p1, p2);
+    double const orientation = getOrientation2d(p0, p1, p2);
     if (orientation > 0)
     {
         return CCW;
@@ -56,8 +56,7 @@ Orientation getOrientationFast(MathLib::Point3d const& p0,
                                MathLib::Point3d const& p1,
                                MathLib::Point3d const& p2)
 {
-    double const orientation =
-        ExactPredicates::getOrientation2dFast(p0, p1, p2);
+    double const orientation = getOrientation2dFast(p0, p1, p2);
     if (orientation > 0)
     {
         return CCW;

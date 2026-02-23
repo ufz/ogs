@@ -7,7 +7,6 @@
 
 #include "MeshLib/Utils/IntegrationPointWriter.h"
 #include "MeshLib/Utils/getOrCreateMeshProperty.h"
-#include "NumLib/Exceptions.h"
 #include "ProcessLib/Deformation/SolidMaterialInternalToSecondaryVariables.h"
 #include "ProcessLib/Output/CellAverageAlgorithm.h"
 #include "ProcessLib/Process.h"

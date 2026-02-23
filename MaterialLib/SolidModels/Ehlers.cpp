@@ -13,6 +13,10 @@
 
 namespace MPL = MaterialPropertyLib;
 
+namespace MaterialLib
+{
+namespace Solids
+{
 /**
  * Common convenitions for naming:
  * x_D              - deviatoric part of tensor x
@@ -35,11 +39,6 @@ namespace MPL = MaterialPropertyLib;
  * flow_V           - volumetric part of flow
  * lambda_flow_D    - deviatoric increment of plastic strain
  */
-
-namespace MaterialLib
-{
-namespace Solids
-{
 namespace Ehlers
 {
 template <int DisplacementDim>
