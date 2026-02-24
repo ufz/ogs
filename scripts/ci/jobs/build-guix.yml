@@ -20,11 +20,11 @@ build guix:
       allow_failure: true
   parallel:
     matrix:
-      - GUIX_MANIFEST: ["manifest.scm", "manifest-petsc.scm", "manifest-mkl.scm", "manifest-petsc-mkl.scm"]
+      - GUIX_MANIFEST: ["manifest-serial.scm", "manifest-petsc.scm", "manifest-mkl.scm", "manifest-petsc-mkl.scm"]
   script:
-    - SCIENCE_CHANNELS_ARG=""
-    - LOAD_ARG=""
     - |
+      SCIENCE_CHANNELS_ARG=""
+      LOAD_ARG=""
       if [[ "$GUIX_MANIFEST" =~ .*-mkl\.scm ]]; then
         SCIENCE_CHANNELS_ARG="-science";
         LOAD_ARG="-L scripts/guix/packages"
@@ -43,31 +43,23 @@ deploy container:
     - if: $CI_COMMIT_TAG
   parallel:
     matrix:
-      - GUIX_PACKAGE: ["ogs-serial", "ogs-petsc", "ogs-mkl", "ogs-petsc-mkl"]
+      - GUIX_MANIFEST: ["manifest-serial.scm", "manifest-petsc.scm", "manifest-mkl.scm", "manifest-petsc-mkl.scm"]
   script:
     - which guix
     - guix describe
     - |
-      GUIX_OTHER_PACKAGES="bash coreutils vtkdiff which"
       SCIENCE_CHANNELS_ARG=""
-      GUIX_ARGS=""
-      if [[ "$GUIX_PACKAGE" =~ .*-mkl ]]; then
-        # keep vtk source parameter: default vtk 9.3.0 download misses
-        # ThirdParty/eigen/vtkeigen subdirectory. Use explicit download
-        # from GitHub-tag.
-        GUIX_ARGS="${GUIX_ARGS} -L scripts/guix/packages --with-commit=eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4 --without-tests=eigen --with-configure-flag=vtk=-DVTK_MODULE_USE_EXTERNAL_VTK_eigen=OFF --with-source=vtk=https://www.vtk.org/files/release/9.3/VTK-9.3.1.tar.gz"
+      LOAD_ARG=""
+      GUIX_PACKAGE=""
+      if [[ $GUIX_MANIFEST =~ ^manifest-([^.]+)\.scm$ ]]; then
+        GUIX_PACKAGE="ogs-${BASH_REMATCH[1]}"
+      fi
+      if [[ "$GUIX_MANIFEST" =~ .*-mkl\.scm ]]; then
         SCIENCE_CHANNELS_ARG="-science";
+        LOAD_ARG="-L scripts/guix/packages"
       fi
-      # Add openmpi package for mpirun
-      if [[ "$GUIX_PACKAGE" =~ .*petsc.* ]]; then
-        GUIX_ARGS="${GUIX_ARGS} openmpi --with-input=openmpi=openmpi@4.1.6"
-      fi
-    # Build phase, retry once if failed
-    - guix time-machine -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- build ${GUIX_PACKAGE} --with-source=${GUIX_PACKAGE}=$PWD ${GUIX_ARGS}
-    - if [ $? -ne 0 ]; then !!; fi
-    # Pack phase
     - mcli alias set s3-ufz https://vip.s3.ufz.de $S3_UFZ_PUBLIC_ACCESS_KEY $S3_UFZ_PUBLIC_SECRET_KEY
-    - image=$( guix time-machine -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- pack -RR --format=squashfs ${GUIX_OTHER_PACKAGES} ${GUIX_PACKAGE} --with-source=${GUIX_PACKAGE}=$PWD ${GUIX_ARGS} | tee | tail -1 )
+    - image=$( guix time-machine -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- pack -RR --format=squashfs -m scripts/guix/${GUIX_MANIFEST} ${LOAD_ARG} | tee | tail -1 )
     - echo "Image (${GUIX_PACKAGE}) $image"
     - mcli cp $image s3-ufz/ogs/public/container/ogs/master/${GUIX_PACKAGE}.squashfs
     # Copy petsc image to eve as well
