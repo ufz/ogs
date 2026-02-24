@@ -297,11 +297,14 @@ void checkElementVolume(int const element_id, double const v_old,
  * \brief Reverses order of nodes. In particular, this fixes issues between
  * (Gmsh or OGS5) and OGS6 meshes.
  *
- * \param elements  Mesh elements whose nodes should be reordered
+ * \param elements        Mesh elements whose nodes should be reordered
  * \param mesh_space_dimension Dimension of the embedding space
- * \param forced    If true, nodes are reordered for all
- * elements, if false it is first checked if the node order is correct
- * according to OGS6 element definitions.
+ * \param forced          If true, nodes are reordered for all
+ *                        elements, if false it is first checked if the node
+ *                        order is correct according to OGS6 element
+ *                        definitions.
+ * \param volume_check    If true, element volumes are checked to determine the
+ *                        correct node order.
  */
 void reverseNodeOrder(std::vector<MeshLib::Element*>& elements,
                       int const mesh_space_dimension, bool const forced,
