@@ -32,7 +32,7 @@ AddTest(
 AddTest(
     NAME 1D_TwoPhase_TCE_diffusion_small
     PATH Parabolic/ThermalTwoPhaseFlowPP/TCEDiffusion
-    RUNTIME 12
+    RUNTIME 2
     EXECUTABLE ogs
     EXECUTABLE_ARGS Twophase_TCE_diffusion_1D_small.prj
     TESTER vtkdiff

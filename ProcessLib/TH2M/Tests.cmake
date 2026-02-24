@@ -8,38 +8,38 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_newton.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_gas.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/flow_fully_saturated_gas_newton.xml RUNTIME 1)
-    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_gas.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_liquid.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/HM/Porosity/deformation_dependent_porosity.prj RUNTIME 25)
+    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_gas.prj RUNTIME 9)
+    OgsTest(PROJECTFILE TH2M/HM/Confined_Compression/HM_confined_compression_liquid.prj RUNTIME 9)
+    OgsTest(PROJECTFILE TH2M/HM/Porosity/deformation_dependent_porosity.prj RUNTIME 18)
     OgsTest(PROJECTFILE TH2M/HM/Porosity/deformation_dependent_porosity_swelling.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/HM/Porosity/deformation_temperature_dependent_porosity_swelling.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_gas.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_liquid.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/THM/sphere/point_heatsource_fd_jac.xml RUNTIME 7)
+    OgsTest(PROJECTFILE TH2M/HM/Porosity/deformation_temperature_dependent_porosity_swelling.prj RUNTIME 61)
+    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_gas.prj RUNTIME 10)
+    OgsTest(PROJECTFILE TH2M/THM/Confined_Compression/THM_confined_compression_liquid.prj RUNTIME 9)
+    OgsTest(PROJECTFILE TH2M/THM/sphere/point_heatsource_fd_jac.xml RUNTIME 4)
     OgsTest(PROJECTFILE TH2M/TH/idealGasLaw/compression_gas.prj RUNTIME 1)
-    OgsTest(PROJECTFILE TH2M/H2M/EmbeddedFracturePermeability/IfG.prj RUNTIME 15)
+    OgsTest(PROJECTFILE TH2M/H2M/EmbeddedFracturePermeability/IfG.prj RUNTIME 9)
     OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
     OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_fd_jac.xml RUNTIME 4)
-    NotebookTest(NOTEBOOKFILE TH2M/H2M/Liakopoulos/ogs-jupyter-lab-h2m-2d-liakopoulos.py RUNTIME 15)
+    NotebookTest(NOTEBOOKFILE TH2M/H2M/Liakopoulos/ogs-jupyter-lab-h2m-2d-liakopoulos.py RUNTIME 11)
     if(NOT ENABLE_ASAN)
-        OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_newton.xml RUNTIME 5)
+        OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_newton.xml RUNTIME 2)
     endif()
     OgsTest(PROJECTFILE TH2M/H2M/OrthotropicSwelling/square.prj RUNTIME 1)
-    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2_fd_jac.xml RUNTIME 15)
-    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2_newton.xml RUNTIME 20)
-    OgsTest(PROJECTFILE TH2M/TH2/unicube/unicube.prj RUNTIME 25)
-    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_rough.prj RUNTIME 85)
-    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_strict.prj RUNTIME 20)
-    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/continuous_injection.prj RUNTIME 30)
-    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/bourgeat.prj RUNTIME 18)
-    NotebookTest(NOTEBOOKFILE TH2M/H2/dissolution_diffusion/phase_appearance.py RUNTIME 60)
-    NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter/mcWhorter.py RUNTIME 55)
-    OgsTest(PROJECTFILE TH2M/H/diffusion/diffusion.prj RUNTIME 10)
-    NotebookTest(NOTEBOOKFILE TH2M/H/diffusion/diffusion.py RUNTIME 30)
+    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2.prj RUNTIME 12)
+    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2_fd_jac.xml RUNTIME 7)
+    OgsTest(PROJECTFILE TH2M/H2/mcWhorter/mcWhorter_h2_newton.xml RUNTIME 2)
+    OgsTest(PROJECTFILE TH2M/TH2/unicube/unicube.prj RUNTIME 8)
+    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_rough.prj RUNTIME 187)
+    OgsTest(PROJECTFILE TH2M/TH2/heatpipe/heat_pipe_strict.prj RUNTIME 11)
+    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/continuous_injection.prj RUNTIME 13)
+    OgsTest(PROJECTFILE TH2M/H2/dissolution_diffusion/bourgeat.prj RUNTIME 8)
+    NotebookTest(NOTEBOOKFILE TH2M/H2/dissolution_diffusion/phase_appearance.py RUNTIME 48)
+    NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter/mcWhorter.py RUNTIME 16)
+    OgsTest(PROJECTFILE TH2M/H/diffusion/diffusion.prj RUNTIME 2)
+    NotebookTest(NOTEBOOKFILE TH2M/H/diffusion/diffusion.py RUNTIME 18)
     OgsTest(PROJECTFILE TH2M/TH/Ogata-Banks/ogata-banks.prj RUNTIME 2)
-    NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.py RUNTIME 120)
-    NotebookTest(NOTEBOOKFILE TH2M/TH/idealGasLaw/confined_gas_compression.py RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE TH2M/TH/Ogata-Banks/Ogata-Banks.py RUNTIME 33)
+    NotebookTest(NOTEBOOKFILE TH2M/TH/idealGasLaw/confined_gas_compression.py RUNTIME 6)
     # submesh residuum output
     OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/T.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/p_G.xml RUNTIME 1)
@@ -190,7 +190,7 @@ AddTest(
 AddTest(
     NAME TH2M_THM_point_heatsource
     PATH TH2M/THM/sphere
-    RUNTIME 12
+    RUNTIME 7
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heatsource.prj
     WRAPPER time
@@ -230,7 +230,7 @@ AddTest(
 AddTest(
     NAME TH2M_THM_point_heatsource_newton
     PATH TH2M/THM/sphere
-    RUNTIME 40
+    RUNTIME 4
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heatsource_newton.xml
     WRAPPER time
@@ -256,7 +256,7 @@ AddTest(
 AddTest(
     NAME TH2M_THM_THM_1d_dirichlet
     PATH TH2M/THM/slab
-    RUNTIME 15
+    RUNTIME 2
     EXECUTABLE ogs
     EXECUTABLE_ARGS THM_1d_dirichlet.prj
     WRAPPER time
@@ -295,7 +295,7 @@ AddTest(
 AddTest(
     NAME TH2M_THM_THM_1d_dirichlet_newton
     PATH TH2M/THM/slab
-    RUNTIME 15
+    RUNTIME 1
     EXECUTABLE ogs
     EXECUTABLE_ARGS THM_1d_dirichlet_newton.xml
     WRAPPER time
@@ -320,7 +320,7 @@ AddTest(
 AddTest(
     NAME TH2M_H2M_StrainDependentPermeability
     PATH TH2M/H2M/StrainDependentPermeability
-    RUNTIME 12
+    RUNTIME 19
     EXECUTABLE ogs
     EXECUTABLE_ARGS Strain_Dependent_Permeability_Test.prj
     WRAPPER time
@@ -447,9 +447,9 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE TH2M/TH2/heatpipe/heatpipe.py RUNTIME 140)
-    NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter_interactive/mcWhorter_interactive.py RUNTIME 100)
+    NotebookTest(NOTEBOOKFILE TH2M/TH2/heatpipe/heatpipe.py RUNTIME 194)
+    NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter_interactive/mcWhorter_interactive.py RUNTIME 18)
     if (OGS_USE_MFRONT)
-        NotebookTest(NOTEBOOKFILE TH2M/ExcavationTH2M/excavation_th2m.py RUNTIME 100)
+        NotebookTest(NOTEBOOKFILE TH2M/ExcavationTH2M/excavation_th2m.py RUNTIME 117)
     endif()
 endif()

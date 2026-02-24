@@ -1,9 +1,9 @@
 if (NOT OGS_USE_MPI)
     if (OGS_USE_MFRONT)
         if(OGS_USE_MKL)
-            OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_reference.prj RUNTIME 30)
-            OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_anchors.xml RUNTIME 30)
-            OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_anchors_prestress.xml RUNTIME 30)
+            OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_reference.prj RUNTIME 25)
+            OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_anchors.xml RUNTIME 16)
+            OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_anchors_prestress.xml RUNTIME 12)
         endif()
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e0.prj)
@@ -45,7 +45,7 @@ if (NOT OGS_USE_MPI)
                 PASS_REGULAR_EXPRESSION "Multiple media were specified for the same material id '1'."
         )
     endif()
-    OgsTest(PROJECTFILE Mechanics/Linear/square_1e5.prj RUNTIME 200)
+    OgsTest(PROJECTFILE Mechanics/Linear/square_1e5.prj RUNTIME 41)
     OgsTest(PROJECTFILE Mechanics/Linear/square_1e2_quad8_traction_top.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0.prj)
     if(OGS_USE_MKL)
@@ -55,7 +55,7 @@ if (NOT OGS_USE_MPI)
     endif()
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_simple_shear.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/MaterialForces/bar.prj)
-    OgsTest(PROJECTFILE Mechanics/Linear/MaterialForces/bar_3D.prj RUNTIME 40)
+    OgsTest(PROJECTFILE Mechanics/Linear/MaterialForces/bar_3D.prj RUNTIME 7)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/cube_1e0_orthotropic_xyz.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/cube_1e0_orthotropic_yzx.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/cube_1e0_orthotropic_zxy.prj)
@@ -64,41 +64,41 @@ if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dshearz_rot.prj RUNTIME 2)
         OgsTest(PROJECTFILE Mechanics/Ehlers/cube_1e1.prj RUNTIME 4)
     endif()
-    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtopload.prj RUNTIME 8)
-    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj RUNTIME 8)
+    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtopload.prj RUNTIME 3)
+    OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/m3_3Dtoploadlc.prj RUNTIME 3)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_xyz.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_45xy_z.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/Orthotropy/square_1e0_orthotropic_y-xz.prj)
     OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e0.prj)
-    OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e3.prj RUNTIME 85)
+    OgsTest(PROJECTFILE Mechanics/Burgers/cube_1e3.prj RUNTIME 23)
     OgsTest(PROJECTFILE Mechanics/Ehlers/cube_1e0.prj)
-    OgsTest(PROJECTFILE Mechanics/Ehlers/cube_1e3.prj RUNTIME 760)
+    OgsTest(PROJECTFILE Mechanics/Ehlers/cube_1e3.prj RUNTIME 222)
     OgsTest(PROJECTFILE Mechanics/Ehlers/cube_1e0_dp.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/ring_plane_strain.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/plain_strain_pipe.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/two_material_gravity.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/two_material_gravity_Emodulus.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/axisymmetric_pipe.prj)
-    OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/hollow_sphere.prj RUNTIME 350)
+    OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/hollow_sphere.prj RUNTIME 99)
     OgsTest(PROJECTFILE Mechanics/Linear/PressureBC/axisymmetric_sphere.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/square_with_deactivated_hole.prj)
-    OgsTest(PROJECTFILE Mechanics/Ehlers/axisymmetric_sphere_pl.prj RUNTIME 365)
+    OgsTest(PROJECTFILE Mechanics/Ehlers/axisymmetric_sphere_pl.prj RUNTIME 42)
     OgsTest(PROJECTFILE Mechanics/InitialStates/into_initial_state.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/equilibrium_restart.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/non_equilibrium_initial_state.prj)
     OgsTest(PROJECTFILE Mechanics/InitialStates/soil_column_nonequilibrium_sigma_elementwise.prj)
-    OgsTest(PROJECTFILE Mechanics/Excavation/time_linear_excavation.prj RUNTIME 4)
-    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembrane.prj RUNTIME 4)
-    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh10.xml RUNTIME 4)
-    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh15.xml RUNTIME 4)
-    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh20.xml RUNTIME 4)
-    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh25.xml RUNTIME 4)
-    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh30.xml RUNTIME 4)
+    OgsTest(PROJECTFILE Mechanics/Excavation/time_linear_excavation.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembrane.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh10.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh15.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh20.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh25.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Mechanics/CooksMembrane/CooksMembraneSDRefinedMesh30.xml RUNTIME 1)
     OgsTest(PROJECTFILE Mechanics/CooksMembrane/3D/CooksMembrane_3D.prj RUNTIME 1)
 endif()
 
 OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
-OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 16)
+OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 18)
 
 if (OGS_USE_MPI)
     # OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
@@ -109,7 +109,7 @@ if (OGS_USE_MPI)
 endif()
 
 if (OGS_USE_MFRONT)
-    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 50
+    OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 15
         PROPERTIES PASS_REGULAR_EXPRESSION "The nonlinear solver failed in time step #.* at t = 5.37.* s for process #0"
     )
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/load_test_mc.prj)
@@ -120,7 +120,7 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_1e0_47.prj)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_ortho_1e0_47.prj)
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloanAnisotropic/triax_aniso_1e0_47.prj)
-    OgsTest(PROJECTFILE Mechanics/SofteningExcavation/softening_excavation.prj RUNTIME 10)
+    OgsTest(PROJECTFILE Mechanics/SofteningExcavation/softening_excavation.prj RUNTIME 2)
     #TODO (naumov) enable when output file format can be specified
     #OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/oedometer.prj RUNTIME 80)
     OgsTest(PROJECTFILE Mechanics/Linear/MFront/cube_1e0_orthotropic_xyz.prj)
@@ -136,10 +136,10 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/triaxtest.prj)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/triaxtest_original.prj)
     OgsTest(PROJECTFILE Mechanics/ModifiedCamClay/triaxtest_original_abs.prj)
-    OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs.prj RUNTIME 4)
-    OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs_restart.prj RUNTIME 4)
+    OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/two_material_ids_single_solid.prj RUNTIME 1)
-    OgsTest(PROJECTFILE Mechanics/HoekBrown/load_test_hb_nonassociated.prj RUNTIME 25)
+    OgsTest(PROJECTFILE Mechanics/HoekBrown/load_test_hb_nonassociated.prj RUNTIME 6)
     if(NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_uniaxial_test.prj)
         # OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxial_test.prj RUNTIME 100) TODO (tnagel) Disabled due to instability.
@@ -265,7 +265,7 @@ AddTest(
     EXECUTABLE_ARGS m1_3Dsquare.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 27
+    RUNTIME 9
     DIFF_DATA
     m1_3Dsquare_ts_1_t_1.000000.vtu m1_3Dsquare_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -277,7 +277,7 @@ AddTest(
     EXECUTABLE_ARGS m1_3Dtopload.prj
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 7
+    RUNTIME 3
     DIFF_DATA
     m1_3Dtopload_ts_1_t_1.000000.vtu m1_3Dtopload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -316,7 +316,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 130
+    RUNTIME 32
     DIFF_DATA
     arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu displacement displacement 1.e-10 1.e-10
     arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu sigma sigma 1.e-9 5.e-7
@@ -365,17 +365,17 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.py RUNTIME 1)
+    NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.py RUNTIME 10)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.py RUNTIME 5)
-    NotebookTest(NOTEBOOKFILE Mechanics/EvaluatingBbarWithSimpleExamples/evaluating_bbbar_with_simple_examples.py RUNTIME 5)
-    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.py RUNTIME 15)
+    NotebookTest(NOTEBOOKFILE Mechanics/EvaluatingBbarWithSimpleExamples/evaluating_bbbar_with_simple_examples.py RUNTIME 20)
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.py RUNTIME 8)
     NotebookTest(NOTEBOOKFILE Mechanics/ReleaseNodalForceKirsch/kirsch.py RUNTIME 20)
     if(NOT WIN32)
-        NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole_convergence_study/Linear_Disc_with_hole_convergence_analysis.py RUNTIME 40)
+        NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole_convergence_study/Linear_Disc_with_hole_convergence_analysis.py RUNTIME 35)
     endif()
     if (OGS_USE_MFRONT)
         NotebookTest(NOTEBOOKFILE Mechanics/PLLC/PLLC.py RUNTIME 7)
-        NotebookTest(NOTEBOOKFILE Mechanics/MohrCoulombAbboSloan/FOS_SlopeStability/FOS_SlopeStability.py RUNTIME 180)
+        NotebookTest(NOTEBOOKFILE Mechanics/MohrCoulombAbboSloan/FOS_SlopeStability/FOS_SlopeStability.py RUNTIME 265)
         if(TFEL_WITH_PYTHON)
             NotebookTest(NOTEBOOKFILE Mechanics/HoekBrown/HoekBrownYieldCriterion.py RUNTIME 20)
         endif()
@@ -384,7 +384,7 @@ endif()
 
 NotebookTest(
     NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.py
-    RUNTIME 10
+    RUNTIME 4
     SKIP_WEB
 )
 OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)

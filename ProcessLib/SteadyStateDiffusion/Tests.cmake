@@ -244,7 +244,7 @@ AddTest(
 AddTest(
     NAME SteadyStateDiffusion_square_1x1_1e6
     PATH Elliptic/square_1x1_SteadyStateDiffusion
-    RUNTIME 75
+    RUNTIME 15
     EXECUTABLE ogs
     EXECUTABLE_ARGS -p square_1e6.xml square_1e0.prj
     TESTER vtkdiff
@@ -904,7 +904,7 @@ AddTest(
 AddTest(
     NAME SteadyStateDiffusion_NodalSourceTerm_circle_1e6
     PATH Elliptic/circle_radius_1
-    RUNTIME 20
+    RUNTIME 4
     EXECUTABLE ogs
     EXECUTABLE_ARGS circle_1e6_axi.prj
     WRAPPER time
@@ -917,7 +917,7 @@ AddTest(
 AddTest(
     NAME SteadyStateDiffusion_NodalSourceTerm_square_1e6
     PATH Elliptic/square_1x1_SteadyStateDiffusion
-    RUNTIME 200
+    RUNTIME 30
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e6_with_nodal_sources.prj
     WRAPPER time

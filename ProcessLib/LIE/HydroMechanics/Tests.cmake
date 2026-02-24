@@ -1,10 +1,10 @@
 # LIE; HydroMechanics
 if (NOT (OGS_USE_LIS OR OGS_USE_MPI))
-    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_constK.prj RUNTIME 17)
-    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_const.prj RUNTIME 250)
-    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_cubic.prj RUNTIME 120)
-    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_LE_kf_const.prj RUNTIME 90)
-    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_LE_kf_cubic.prj RUNTIME 125)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_constK.prj RUNTIME 7)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_const.prj RUNTIME 191)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_CZ_kf_cubic.prj RUNTIME 86)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_LE_kf_const.prj RUNTIME 67)
+    OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_LE_kf_cubic.prj RUNTIME 43)
 endif()
 
 AddTest(
@@ -15,7 +15,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 20
+    RUNTIME 6
     DIFF_DATA
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu pressure pressure 1e-12 1e-12
     single_fracture_ts_10_t_100.000000.vtu single_fracture_ts_10_t_100.000000.vtu pressure_interpolated pressure_interpolated 1e-12 1e-12
@@ -35,7 +35,7 @@ AddTest(
 AddTest(
     NAME LIE_HM_single_fracture_3D
     PATH LIE/HydroMechanics
-    RUNTIME 320
+    RUNTIME 75
     EXECUTABLE ogs
     EXECUTABLE_ARGS single_fracture_3D.prj
     WRAPPER time
@@ -62,7 +62,7 @@ AddTest(
 AddTest(
     NAME LIE_HM_TaskB
     PATH LIE/HydroMechanics
-    RUNTIME 80
+    RUNTIME 19
     EXECUTABLE ogs
     EXECUTABLE_ARGS TaskB.prj
     WRAPPER time
@@ -174,7 +174,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 10
     DIFF_DATA
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu pressure pressure 1e-15 1e-15
     single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu single_fracture_3compartments_flow_CHZ_ts_356_t_500.000000.vtu pressure_interpolated pressure_interpolated 1e-15 1e-15
@@ -227,7 +227,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 10
+    RUNTIME 2
     DIFF_DATA
     great_cell_2D_embedded_fracture_t_2500.000000.vtu great_cell_2D_embedded_fracture_t_2500.000000.vtu pressure pressure 2.5e-9 1e-15
     great_cell_2D_embedded_fracture_t_2500.000000.vtu great_cell_2D_embedded_fracture_t_2500.000000.vtu pressure_interpolated pressure_interpolated 2.5e-9 1e-15
@@ -263,7 +263,7 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCellWithBBar/great_cell_LIE.py RUNTIME 80)
-    NotebookTest(NOTEBOOKFILE LIE/Mechanics/GreatCelljupyterNotebook/GreatCellM.py RUNTIME 350)
-    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCelljupyterNotebook/GreatCellHM.py RUNTIME 1050)
+    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCellWithBBar/great_cell_LIE.py RUNTIME 60)
+    NotebookTest(NOTEBOOKFILE LIE/Mechanics/GreatCelljupyterNotebook/GreatCellM.py RUNTIME 280)
+    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCelljupyterNotebook/GreatCellHM.py RUNTIME 851)
 endif()

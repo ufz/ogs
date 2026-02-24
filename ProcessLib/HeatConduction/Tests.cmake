@@ -4,9 +4,9 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/T/2D_freezing_disk/circle_disk.prj RUNTIME 2)
     OgsTest(PROJECTFILE Parabolic/T/2D_Robin/square_1e4_robin.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/T/2D_Robin/square_1e4_robin_newton.xml RUNTIME 1)
-    OgsTest(PROJECTFILE Parabolic/T/2D_Ice_melting-forming_manuf_solution/ManSol3_IceWaterMix_Scaled.prj RUNTIME 5)
-    OgsTest(PROJECTFILE Parabolic/T/1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_Stefan_problem.prj RUNTIME 5)
-    OgsTest(PROJECTFILE Parabolic/T/2D_Soil_freezing_round_BHE/m16m15projectB.prj RUNTIME 35)
+    OgsTest(PROJECTFILE Parabolic/T/2D_Ice_melting-forming_manuf_solution/ManSol3_IceWaterMix_Scaled.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/T/1D_Two-phase_Stefan_problem_for_ice_melting/Two-phase_Stefan_problem.prj RUNTIME 2)
+    OgsTest(PROJECTFILE Parabolic/T/2D_Soil_freezing_round_BHE/m16m15projectB.prj RUNTIME 10)
     OgsTest(PROJECTFILE Parabolic/T/TimeDecayBC/time_decay_bc.prj RUNTIME 1)
 endif()
 
@@ -401,7 +401,7 @@ AddTest(
 AddTest(
     NAME BHE_Array_2D
     PATH Parabolic/T/2D_BHE_array
-    RUNTIME 90
+    RUNTIME 47
     EXECUTABLE ogs
     EXECUTABLE_ARGS bhe2d.prj
     TESTER vtkdiff
@@ -625,7 +625,7 @@ AddTest(
         NAME HeatConduction_3D_LineSourceTermInMiddleOfCylinder_286k_prisms
         PATH
         Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/286k_prisms
-        RUNTIME 32
+        RUNTIME 10
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_source_term_in_cylinder.prj
         TESTER vtkdiff
@@ -636,5 +636,5 @@ AddTest(
 
 if(NOT OGS_USE_PETSC)
     # Both tests above are executed in this notebook (without diff check). Maybe remove regular tests later?
-    NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.py RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.py RUNTIME 15)
 endif()

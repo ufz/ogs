@@ -1,18 +1,18 @@
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/gravity.prj)
     OgsTest(PROJECTFILE RichardsMechanics/mechanics_linear.prj)
-    OgsTest(PROJECTFILE RichardsMechanics/confined_compression_fully_saturated.prj RUNTIME 7)
+    OgsTest(PROJECTFILE RichardsMechanics/confined_compression_fully_saturated.prj RUNTIME 4)
     OgsTest(PROJECTFILE RichardsMechanics/flow_fully_saturated.prj)
     OgsTest(PROJECTFILE RichardsMechanics/flow_fully_saturated_linear.prj)
     OgsTest(PROJECTFILE RichardsMechanics/flow_fully_saturated_anisotropic.prj)
     OgsTest(PROJECTFILE RichardsMechanics/flow_fully_saturated_coordinate_system.prj)
-    OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_small.prj RUNTIME 9)
-    OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_small_masslumping.prj RUNTIME 10)
-    OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_quasinewton.prj RUNTIME 80)
-    OgsTest(PROJECTFILE RichardsMechanics/double_porosity_swelling.prj RUNTIME 20)
-    OgsTest(PROJECTFILE RichardsMechanics/deformation_dependent_porosity.prj RUNTIME 8)
-    OgsTest(PROJECTFILE RichardsMechanics/deformation_dependent_porosity_swelling.prj RUNTIME 11)
-    OgsTest(PROJECTFILE RichardsMechanics/orthotropic_power_law_permeability_xyz.prj RUNTIME 80)
+    OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_small.prj RUNTIME 3)
+    OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_small_masslumping.prj RUNTIME 4)
+    OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_quasinewton.prj RUNTIME 7)
+    OgsTest(PROJECTFILE RichardsMechanics/double_porosity_swelling.prj RUNTIME 7)
+    OgsTest(PROJECTFILE RichardsMechanics/deformation_dependent_porosity.prj RUNTIME 3)
+    OgsTest(PROJECTFILE RichardsMechanics/deformation_dependent_porosity_swelling.prj RUNTIME 5)
+    OgsTest(PROJECTFILE RichardsMechanics/orthotropic_power_law_permeability_xyz.prj RUNTIME 5)
     OgsTest(PROJECTFILE RichardsMechanics/orthotropic_swelling_xyz.prj)
     OgsTest(PROJECTFILE RichardsMechanics/orthotropic_swelling_xy.prj)
     OgsTest(PROJECTFILE RichardsMechanics/bishops_effective_stress_power_law.prj)
@@ -21,11 +21,11 @@ if (NOT OGS_USE_MPI)
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE RichardsMechanics/rotated_consolidation.prj RUNTIME 2)
     endif()
-    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos.prj RUNTIME 17)
-    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_restart.xml RUNTIME 17)
-    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_QN.prj RUNTIME 50)
-    OgsTest(PROJECTFILE RichardsMechanics/A2.prj RUNTIME 20)
-    OgsTest(PROJECTFILE RichardsMechanics/restart_w_backfill.prj RUNTIME 20)
+    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos.prj RUNTIME 1)
+    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_restart.xml RUNTIME 1)
+    OgsTest(PROJECTFILE RichardsMechanics/LiakopoulosHM/liakopoulos_QN.prj RUNTIME 3)
+    OgsTest(PROJECTFILE RichardsMechanics/A2.prj RUNTIME 7)
+    OgsTest(PROJECTFILE RichardsMechanics/restart_w_backfill.prj RUNTIME 1)
 endif()
 
 if (NOT OGS_USE_MPI AND OGS_USE_MFRONT)
@@ -38,7 +38,7 @@ AddTest(
     NAME RichardsMechanics_square_1e2_confined_compression_restart
     PATH RichardsMechanics
     EXECUTABLE ogs
-    RUNTIME 8
+    RUNTIME 4
     EXECUTABLE_ARGS confined_compression_fully_saturated_restart.prj
     WRAPPER time
     TESTER vtkdiff
@@ -75,7 +75,7 @@ AddTest(
     NAME RichardsMechanics_A2_total_initial_stress
     PATH RichardsMechanics
     EXECUTABLE ogs
-    RUNTIME 15
+    RUNTIME 8
     EXECUTABLE_ARGS A2_total_stress0.xml
     WRAPPER time
     TESTER vtkdiff
