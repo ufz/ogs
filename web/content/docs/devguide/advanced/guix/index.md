@@ -27,7 +27,7 @@ The package definitions for OGS are defined in [this repo](https://gitlab.openge
 
 ```bash
 # builds ogs serial config and starts isolated shell (like in a container)
-guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest.scm
+guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-serial.scm
 # ogs petsc config
 guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-petsc.scm
 ```
@@ -35,7 +35,7 @@ guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manif
 To create an archivable Apptainer container:
 
 ```bash
-guix time-machine -C scripts/guix/channels.scm -- pack -m scripts/guix/manifest.scm \
+guix time-machine -C scripts/guix/channels.scm -- pack -m scripts/guix/manifest-serial.scm \
   -RR --format=squashfs
 ```
 

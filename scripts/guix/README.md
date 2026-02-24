@@ -3,11 +3,11 @@
 
 ```bash
 # builds ogs serial config and starts isolated shell (like in a container)
-guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest.scm
+guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-serial.scm
 # ogs petsc config
 guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-petsc.scm
 # To create an archivable Apptainer container:
-guix time-machine -C scripts/guix/channels.scm -- pack -m scripts/guix/manifest.scm \
+guix time-machine -C scripts/guix/channels.scm -- pack -m scripts/guix/manifest-serial.scm \
   -RR -f squashfs
 ```
 

@@ -2,7 +2,7 @@
                 (name 'guix-science-nonfree)
                 (url
                  "https://codeberg.org/guix-science/guix-science-nonfree.git")
-                (commit "7bf39ac5fbe36905b87a0632945a29c7c67e31de")
+                (commit "4afed2444866b85b44ba9b0dceb874917ca07df7")
                 (introduction
                  (make-channel-introduction
                   "58661b110325fd5d9b40e6f0177cc486a615817e"
@@ -11,7 +11,7 @@
               (channel
                 (name 'guix-science)
                 (url "https://codeberg.org/guix-science/guix-science.git")
-                (commit "4854c8992cdfeee4e537c8f36af04c110116a5c4")
+                (commit "a91b0e7c031e7da82d514bcba4b46fde070d78a5")
                 (introduction
                  (make-channel-introduction
                   "b1fe5aaff3ab48e798a4cce02f0212bc91f423dc"
