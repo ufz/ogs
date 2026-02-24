@@ -113,6 +113,10 @@ void ComponentTransportProcess::initializeConcreteProcess(
     _process_data.mesh_prop_porosity = MeshLib::getOrCreateMeshProperty<double>(
         const_cast<MeshLib::Mesh&>(mesh), "porosity_avg",
         MeshLib::MeshItemType::Cell, 1);
+    _process_data.mesh_prop_permeability =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "permeability_avg",
+            MeshLib::MeshItemType::Cell, 1);
 
     std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
         transport_process_variables;
@@ -436,20 +440,20 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     std::generate_n(std::back_inserter(dof_tables), x.size(),
                     [&]() { return _local_to_global_index_map.get(); });
 
+    // Refresh ip_data.porosity first: assembly pinned it to porosity_prev, and
+    // computeSecondaryVariable below averages it into the permeability output.
+    if (_chemical_solver_interface)
+    {
+        GlobalExecutor::executeSelectedMemberOnDereferenced(
+            &ComponentTransportLocalAssemblerInterface::
+                computeReactionRelatedSecondaryVariable,
+            local_assemblers_, _chemical_solver_interface->activeElementIDs());
+    }
+
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
         local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
         process_id);
-
-    if (!_chemical_solver_interface)
-    {
-        return;
-    }
-
-    GlobalExecutor::executeSelectedMemberOnDereferenced(
-        &ComponentTransportLocalAssemblerInterface::
-            computeReactionRelatedSecondaryVariable,
-        local_assemblers_, _chemical_solver_interface->activeElementIDs());
 }
 
 std::vector<std::vector<std::string>>
