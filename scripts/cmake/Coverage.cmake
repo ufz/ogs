@@ -3,7 +3,7 @@ if(NOT (OGS_COVERAGE AND PROJECT_IS_TOP_LEVEL))
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -Og --coverage -fprofile-update=atomic")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -Og --coverage -fprofile-update=atomic -U_GLIBCXX_DEBUG")
     set(EIGEN_NO_DEBUG ON CACHE BOOL "" FORCE)
     set(EIGEN_DONT_VECTORIZE OFF CACHE BOOL "" FORCE)
     set(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN OFF CACHE BOOL "" FORCE)
