@@ -328,7 +328,7 @@ set(_hdf5_options
 if("${ZLIB_INCLUDE_DIRS}" MATCHES "${build_dir_ZLIB}")
     list(APPEND _hdf5_options "-DZLIB_ROOT=${build_dir_ZLIB}")
     if(WIN32)
-        list(APPEND _hdf5_options "-DZLIB_USE_STATIC_LIBS=ON")
+        list(APPEND _hdf5_options "-DZLIB_USE_STATIC_LIBS=ON" "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}")
     endif()
 endif()
 if(OGS_USE_MPI)
