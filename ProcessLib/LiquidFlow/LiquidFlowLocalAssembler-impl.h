@@ -183,14 +183,12 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
                                          pos, t, dt);
         };
         auto const storage =
-            _process_data.equation_balance_type == EquationBalanceType::volume
+            _process_data.is_volume_balance_equation_type
                 ? specific_storage
                 : specific_storage + porosity * get_drho_dp() / fluid_density;
 
         double const scaling_factor =
-            _process_data.equation_balance_type == EquationBalanceType::volume
-                ? 1.0
-                : fluid_density;
+            _process_data.is_volume_balance_equation_type ? 1.0 : fluid_density;
         // Assemble mass matrix, M
         local_M.noalias() += scaling_factor * storage * N.transpose() * N *
                              ip_data.integration_weight;

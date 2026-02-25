@@ -14,6 +14,7 @@
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydraulicProcess/checkVolumeBalanceEquationSetting.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
@@ -41,20 +42,8 @@ void checkMPLProperties(
     // Check Constant-type density.
     if (is_equation_type_volume)
     {
-        for (auto const& medium : media_map.media())
-        {
-            // auto const& medium = *media_map.getMedium(element_id);
-            auto const& fluid_phase_density =
-                fluidPhase(*medium)[MaterialPropertyLib::PropertyType::density];
-            if (typeid(fluid_phase_density) !=
-                typeid(MaterialPropertyLib::Constant))
-            {
-                OGS_FATAL(
-                    "Since `equation_balance_type` is set to `volume`,the "
-                    "phase density type must be `Constant`. Note: by "
-                    "default, `equation_balance_type` is set to `volume`.");
-            }
-        }
+        ProcessLib::Common::HydraulicProcess::checkVolumeBalanceEquationSetting(
+            media_map);
     }
 
     for (auto const& medium : media_map.media())
@@ -65,22 +54,6 @@ void checkMPLProperties(
     }
     DBUG("Media properties verified.");
 }
-
-EquationBalanceType covertEquationBalanceTypeFromString(
-    std::string_view const type_in_string)
-{
-    if (type_in_string == "volume")
-    {
-        return EquationBalanceType::volume;
-    }
-    if (type_in_string == "mass")
-    {
-        return EquationBalanceType::mass;
-    }
-    OGS_FATAL(
-        "The value of `equation_balance_type` must be either `volume` or "
-        "`mass`");
-};
 
 std::unique_ptr<Process> createLiquidFlowProcess(
     std::string const& name,
@@ -188,7 +161,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
             : MaterialPropertyLib::Variable::liquid_phase_pressure;
 
     LiquidFlowData process_data{
-        covertEquationBalanceTypeFromString(equation_balance_type_str),
+        equation_balance_type_str ==
+            "volume",  // is_volume_balance_equation_type
         std::move(media_map),
         MeshLib::getElementRotationMatrices(
             mesh_space_dimension, mesh.getDimension(), mesh.getElements()),

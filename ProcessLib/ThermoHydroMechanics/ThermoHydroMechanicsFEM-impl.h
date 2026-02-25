@@ -775,33 +775,32 @@ void ThermoHydroMechanicsLocalAssembler<
         // displacement equation, displacement part
         //
 
-        if (has_frozen_liquid_phase)
-        {
-            local_Jac
-                .template block<displacement_size, displacement_size>(
-                    displacement_index, displacement_index)
-                .noalias() += B.transpose() * crv.J_uu_fr * B * w;
-
-            local_rhs.template segment<displacement_size>(displacement_index)
-                .noalias() -= B.transpose() * crv.r_u_fr * w;
-
-            local_Jac
-                .template block<displacement_size, temperature_size>(
-                    displacement_index, temperature_index)
-                .noalias() -= B.transpose() * crv.J_uT_fr * N * w;
-        }
-
+        auto const C_eff = has_frozen_liquid_phase
+                               ? (crv.C + crv.J_uu_fr).eval()
+                               : crv.C.eval();
         local_Jac
             .template block<displacement_size, displacement_size>(
                 displacement_index, displacement_index)
-            .noalias() += B.transpose() * crv.C * B * w;
+            .noalias() += B.transpose() * C_eff * B * w;
+
+        auto const uT_coeff =
+            has_frozen_liquid_phase
+                ? (crv.J_uT_fr +
+                   crv.C * crv.solid_linear_thermal_expansion_coefficient)
+                      .eval()
+                : (crv.C * crv.solid_linear_thermal_expansion_coefficient)
+                      .eval();
+
+        if (has_frozen_liquid_phase)
+        {
+            local_rhs.template segment<displacement_size>(displacement_index)
+                .noalias() -= B.transpose() * crv.r_u_fr * w;
+        }
 
         local_Jac
             .template block<displacement_size, temperature_size>(
                 displacement_index, temperature_index)
-            .noalias() -= B.transpose() * crv.C *
-                          crv.solid_linear_thermal_expansion_coefficient * N *
-                          w;
+            .noalias() -= B.transpose() * uT_coeff * N * w;
 
         local_rhs.template segment<displacement_size>(displacement_index)
             .noalias() -= (B.transpose() * ip_data.sigma_eff -
@@ -811,18 +810,15 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         // displacement equation, pressure part (K_up)
         //
-        Kup.noalias() +=
-            B.transpose() * Invariants::identity2 * N * (crv.alpha_biot * w);
-
         double const fluid_density = _ip_data_output[ip].fluid_density;
-        if (has_frozen_liquid_phase)
-        {
-            Kup.noalias() +=
-                B.transpose() * Invariants::identity2 * N *
-                (crv.alpha_biot * ip_data.phi_fr / ip_data.porosity *
-                 (_ip_data_output[ip].rho_fr / fluid_density - 1)) *
-                w;
-        }
+        double const up_coeff =
+            has_frozen_liquid_phase
+                ? crv.alpha_biot * ip_data.phi_fr / ip_data.porosity *
+                          (_ip_data_output[ip].rho_fr / fluid_density - 1) +
+                      crv.alpha_biot
+                : crv.alpha_biot;
+        Kup.noalias() +=
+            B.transpose() * Invariants::identity2 * N * (up_coeff * w);
 
         //
         // pressure equation, pressure part (K_pp and M_pp).
@@ -835,16 +831,17 @@ void ThermoHydroMechanicsLocalAssembler<
             .noalias() += dNdx.transpose() * crv.K_over_mu * (dNdx * p) * N *
                           (crv.dk_rel_dT * w);
 
-        storage_p.noalias() +=
-            N.transpose() * N *
-            ((ip_data.porosity * crv.fluid_compressibility +
-              (crv.alpha_biot - ip_data.porosity) * crv.beta_SR) *
-             w);
+        double const storage_p_coeff_no_fr =
+            ip_data.porosity * crv.fluid_compressibility +
+            (crv.alpha_biot - ip_data.porosity) * crv.beta_SR;
+        double const storage_p_coeff =
+            has_frozen_liquid_phase ? crv.storage_p_fr + storage_p_coeff_no_fr
+                                    : storage_p_coeff_no_fr;
+
+        storage_p.noalias() += N.transpose() * N * (storage_p_coeff * w);
 
         if (has_frozen_liquid_phase)
         {
-            storage_p.noalias() += N.transpose() * crv.storage_p_fr * N * w;
-
             local_Jac
                 .template block<pressure_size, temperature_size>(
                     pressure_index, temperature_index)
@@ -865,15 +862,15 @@ void ThermoHydroMechanicsLocalAssembler<
             .noalias() -=
             dNdx.transpose() * crv.K_over_mu * b * N *
             ((fluid_density * crv.dk_rel_dT + crv.drho_LR_dT * crv.k_rel) * w);
+
         //
         // pressure equation, temperature part (M_pT)
         //
-        storage_T.noalias() += N.transpose() * crv.beta * N * w;
 
-        if (has_frozen_liquid_phase)
-        {
-            storage_T.noalias() += N.transpose() * crv.storage_T_fr * N * w;
-        }
+        double const storage_T_coeff =
+            has_frozen_liquid_phase ? crv.storage_T_fr + crv.beta : crv.beta;
+
+        storage_T.noalias() += N.transpose() * storage_T_coeff * N * w;
 
         //
         // pressure equation, displacement part.

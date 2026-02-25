@@ -48,6 +48,15 @@ foreach(process ${_enabled_processes})
 endforeach()
 
 foreach(process ${_enabled_processes})
+    if(process STREQUAL "LiquidFlow"
+       OR process STREQUAL "ThermoHydroMechanics"
+    )
+        append_source_files(SOURCES Common/HydraulicProcess)
+        break()
+    endif()
+endforeach()
+
+foreach(process ${_enabled_processes})
     if (process STREQUAL "LargeDeformation")
         append_source_files(SOURCES Deformation)
         break()

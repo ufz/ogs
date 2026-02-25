@@ -192,8 +192,6 @@ public:
                 typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
                                                      _is_axially_symmetric);
 
-            ConstitutiveRelationsValues<DisplacementDim> crv;
-
             MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
                 eps_prev = B * u_prev;
 
