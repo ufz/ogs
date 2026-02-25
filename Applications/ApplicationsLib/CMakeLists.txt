@@ -61,7 +61,10 @@ foreach(process ${_enabled_processes})
     )
 endforeach()
 
-target_precompile_headers(
-    ApplicationsLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
-    [["BaseLib/Logging.h"]]
-)
+# On MSVC exports.def : error LNK2001: unresolved external symbol __
+if (NOT MSVC)
+    target_precompile_headers(
+        ApplicationsLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
+        [["BaseLib/Logging.h"]]
+    )
+endif()
