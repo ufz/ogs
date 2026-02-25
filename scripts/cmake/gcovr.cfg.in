@@ -6,3 +6,4 @@ gcov-executable = @GCOV_EXECUTABLE@
 gcov-parallel = yes
 print-summary = yes
 gcov-ignore-parse-errors = suspicious_hits.warn
+merge-lines = yes
