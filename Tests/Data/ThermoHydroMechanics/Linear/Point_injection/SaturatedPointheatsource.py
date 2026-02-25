@@ -226,7 +226,6 @@
 # %%
 import concurrent.futures
 import os
-import platform
 from pathlib import Path
 from subprocess import run
 from timeit import default_timer as timer
@@ -459,14 +458,9 @@ def run_ogs(model):
     return [f"Finished {model['prj']} in {runtime} s", runtime]
 
 
-if platform.system() == "Darwin":
-    import multiprocessing as mp
-
-    mp.set_start_method("fork")
-
 runtimes = []
 start = timer()
-with concurrent.futures.ProcessPoolExecutor() as executor:
+with concurrent.futures.ThreadPoolExecutor() as executor:
     outputs = executor.map(run_ogs, ogs_models)
     for output in outputs:
         print(output[0])
