@@ -19,8 +19,11 @@ set(CPACK_NSIS_MENU_LINKS
     "https://github.com/ufz/ogs" "Source code on GitHub"
 )
 
-cmake_path(CONVERT $ENV{VCToolsRedistDir} TO_CMAKE_PATH_LIST _vc_redist_dir)
+if(DEFINED ENV{VCToolsRedistDir})
+    cmake_path(CONVERT $ENV{VCToolsRedistDir} TO_CMAKE_PATH_LIST _vc_redist_dir)
+    set(_VC_REDIST_DIR ${_vc_redist_dir} CACHE INTERNAL "")
+endif()
 install(
-  FILES "${_vc_redist_dir}/x64/Microsoft.VC143.CRT/msvcp140.dll"
+  FILES "${_VC_REDIST_DIR}/x64/Microsoft.VC143.CRT/msvcp140.dll"
   DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
