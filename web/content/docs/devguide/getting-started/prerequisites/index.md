@@ -16,7 +16,7 @@ The minimum prerequisites to build OGS are:
 - An 64-bit operating system (Linux, Windows 7 and up, macOS)
 - Git (version control tool, at least version {{< dataFile "versions.minimum_version.git" >}})
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
-- A compiler with [C++20](http://en.wikipedia.org/wiki/C%2B%2B20)-support
+- A compiler with [C++23](http://en.wikipedia.org/wiki/C%2B%2B23)-support
 - Python interpreter and libraries (and optionally the `uv` virtual environment management tool)
 - *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
 
@@ -40,12 +40,28 @@ Please note that the following setup on Windows is the **native Windows developm
 
 </div>
 
-As we use lots of features of the C++20-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** with compiler version **{{< dataFile "versions.minimum_version.msvc.compiler" >}}** and up. Therefore you will need at least **Windows 7** (64-bit required). It is perfectly fine to use the free Community Edition of Visual Studio.
+### Setup required system settings
 
-- Download and install [Visual Studio Community](https://www.visualstudio.com)
-  - Select the *workload* `Desktop Development with C++`
-  - You can uncheck everything else
-- When installation finished please start Visual Studio once (when asked for credentials enter your Microsoft account or click on **Skip for now**)
+Open the Windows Settings app and navigate to *System / Advanced*. Enable the long paths option:
+
+![Enable long paths](./enable-long-paths.png)
+
+And also enable the *Developer Mode*:
+
+![Enable developer mode](./enable-developer-mode.png)
+
+These two features enable the file system (and also the `ogs`-executable) to handle long file names / paths and allow for symbolic link creation and PowerShell script execution.
+
+### Install Visual Studio
+
+As we use lots of features of the C++23-standard we support **Visual Studio {{< dataFile "versions.minimum_version.msvc.year" >}}** with compiler version **{{< dataFile "versions.minimum_version.msvc.compiler" >}}** and up. It is perfectly fine to use the free Community Edition of Visual Studio.
+
+- Download and install [Visual Studio Community 2022](https://aka.ms/vs/17/release/vs_community.exe).
+  - Select the *workload* `Desktop Development with C++`.
+  - See the following image for components which can be unchecked.
+- When installation finished please start Visual Studio once (when asked for credentials enter your Microsoft account or click on **Skip for now**).
+
+![Visual Studio Components](./vs-installer.png)
 
 </div>
 
