@@ -2,6 +2,8 @@
              (guix utils)
              (gnu packages base))
 
+(load "manifest-common.scm")
+
 (define current-dir (getcwd))
 
 (define transform1
@@ -12,7 +14,5 @@
       (with-input ."openmpi=openmpi@4.1.6"))))
 
 (packages->manifest
- (list
-  (transform1 (specification->package "ogs-petsc"))
-  (specification->package "coreutils")
-  (specification->package "bash"))) ; required for squashfs container image
+ (manifest-runtime-packages
+  (transform1 (specification->package "ogs-petsc"))))
