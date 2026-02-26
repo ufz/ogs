@@ -69,8 +69,8 @@ void SaveMeshDialog::accept()
     QFileInfo fi(file_name);
     if (fi.suffix().toLower() == "vtu")
     {
-        int dataMode = this->dataModeBox->currentIndex();
-        bool compress(this->compressionCheckBox->isChecked());
+        int const dataMode = dataModeBox->currentIndex();
+        bool const compress(compressionCheckBox->isChecked());
         MeshLib::IO::VtuInterface vtkIO(&_mesh, {}, dataMode, compress);
         vtkIO.writeToFile(file_name.toStdString());
     }
