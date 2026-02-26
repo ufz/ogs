@@ -71,7 +71,7 @@ void SaveMeshDialog::accept()
     {
         int dataMode = this->dataModeBox->currentIndex();
         bool compress(this->compressionCheckBox->isChecked());
-        MeshLib::IO::VtuInterface vtkIO(&_mesh, dataMode, compress);
+        MeshLib::IO::VtuInterface vtkIO(&_mesh, {}, dataMode, compress);
         vtkIO.writeToFile(file_name.toStdString());
     }
     if (fi.suffix().toLower() == "msh")

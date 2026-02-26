@@ -129,5 +129,6 @@ struct OutputXDMFHDF5Format final : public OutputFormat
 };
 
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
+                   std::set<std::string> const& output_variables,
                    bool const compress_output, int const data_mode);
 }  // namespace ProcessLib

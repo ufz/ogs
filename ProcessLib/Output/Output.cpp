@@ -404,7 +404,9 @@ void Output::doOutputNonlinearIteration(
     if (dynamic_cast<OutputVTKFormat*>(_output_format.get()))
     {
         outputMeshVtk(
-            output_file_path, process.getMesh(), _output_format->compression,
+            output_file_path, process.getMesh(),
+            _output_data_specification.output_variables,
+            _output_format->compression,
             dynamic_cast<OutputVTKFormat*>(_output_format.get())->data_mode);
     }
     else

@@ -40,14 +40,10 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     if (_mesh->getProperties().existsPropertyVector<unsigned char>(
             "vtkGhostType", MeshLib::MeshItemType::Cell, 1))
     {
-        auto* ghost_cell_property =
-            _mesh->getProperties().getPropertyVector<unsigned char>(
-                "vtkGhostType", MeshLib::MeshItemType::Cell, 1);
-        if (ghost_cell_property)
+        if (_output_variable_names.find("vtkGhostType") ==
+            _output_variable_names.cend())
         {
-            const_cast<MeshLib::PropertyVector<unsigned char>*>(
-                ghost_cell_property)
-                ->is_for_output = true;
+            _output_variable_names.insert("vtkGhostType");
         }
     }
     else
@@ -58,6 +54,7 @@ bool VtuInterface::writeVTU(std::string const& file_name,
 
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(_mesh);
+    vtkSource->setOutputVariableNames(_output_variable_names);
 
     vtkSmartPointer<UnstructuredGridWriter> vtuWriter =
         vtkSmartPointer<UnstructuredGridWriter>::New();

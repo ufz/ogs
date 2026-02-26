@@ -39,16 +39,19 @@ MeshLib::IO::PVDFile& OutputVTKFormat::findOrCreatePVDFile(
 }
 
 void outputMeshVtk(std::string const& file_name, MeshLib::Mesh const& mesh,
+                   std::set<std::string> const& output_variables,
                    bool const compress_output, int const data_mode)
 {
     DBUG("Writing output to '{:s}'.", file_name);
 
-    MeshLib::IO::VtuInterface vtu_interface(&mesh, data_mode, compress_output);
+    MeshLib::IO::VtuInterface vtu_interface(&mesh, output_variables, data_mode,
+                                            compress_output);
     vtu_interface.writeToFile(file_name);
 }
 
 void outputMeshVtk(OutputVTKFormat const& output_file,
                    MeshLib::IO::PVDFile& pvd_file, MeshLib::Mesh const& mesh,
+                   std::set<std::string> const& output_variables,
                    double const t, int const timestep, int const iteration,
                    bool const converged)
 {
@@ -62,7 +65,8 @@ void outputMeshVtk(OutputVTKFormat const& output_file,
     // exceptions are temporarily disabled and are restored at the end of the
     // function.
     [[maybe_unused]] DisableFPE disable_fpe;
-    outputMeshVtk(path, mesh, output_file.compression, output_file.data_mode);
+    outputMeshVtk(path, mesh, output_variables, output_file.compression,
+                  output_file.data_mode);
 }
 
 std::string OutputVTKFormat::constructPVDName(
@@ -131,12 +135,13 @@ void OutputVTKFormat::outputMeshes(
     const int timestep, const double t, const int iteration,
     bool const converged,
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
-    [[maybe_unused]] std::set<std::string> const& output_variables) const
+    std::set<std::string> const& output_variables) const
 {
     for (auto const& mesh : meshes)
     {
         auto& pvd_file = findOrCreatePVDFile(mesh.get().getName());
-        outputMeshVtk(*this, pvd_file, mesh, t, timestep, iteration, converged);
+        outputMeshVtk(*this, pvd_file, mesh, output_variables, t, timestep,
+                      iteration, converged);
     }
 }
 }  // namespace ProcessLib

@@ -65,7 +65,7 @@ int writeMeshOutput(std::string const& input_file,
     {
         if (no_output_file)
             INFO("No output file found.");
-        MeshLib::IO::VtuInterface vtkIO(&mesh, 0, false);
+        MeshLib::IO::VtuInterface vtkIO(&mesh, {}, 0, false);
         vtkIO.writeToFile(output_file);
         return 0;
     }
@@ -82,7 +82,7 @@ int writeMeshOutput(std::string const& input_file,
         if (link_args)
             addObjectsToMesh(*swmm, mesh, FileIO::SwmmObject::LINK, i);
 
-        MeshLib::IO::VtuInterface vtkio(&mesh, 0, false);
+        MeshLib::IO::VtuInterface vtkio(&mesh, {}, 0, false);
         std::string name(basename + std::to_string(i) + extension);
         vtkio.writeToFile(name);
     }
