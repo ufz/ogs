@@ -2,16 +2,16 @@
              (guix utils)
              (gnu packages base))
 
-(define current-dir (getcwd))
+(load "manifest-common.scm")
+
+(define current-dir
+  (getcwd))
 
 (define transform1
-  (options->transformation
-    `((with-source . ,(string-append "ogs-serial=" current-dir))
-      (with-commit . "eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4") ; or: (with-version . "eigen=5.0.1")
-      (without-tests . "eigen"))))
+  (options->transformation (append `((with-source unquote
+                                                  (string-append "ogs-serial="
+                                                   current-dir)))
+                                   (manifest-eigen-transform-options))))
 
-(packages->manifest
- (list
-  (transform1 (specification->package "ogs-serial"))
-  (specification->package "coreutils")
-  (specification->package "bash"))) ; required for squashfs container image
+(packages->manifest (manifest-runtime-packages (transform1 (specification->package
+                                                            "ogs-serial"))))
