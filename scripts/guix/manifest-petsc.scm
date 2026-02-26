@@ -8,10 +8,10 @@
 
 (define transform1
   (options->transformation
-    `((with-source . ,(string-append "ogs-petsc=" current-dir))
-      (with-commit . "eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4")
-      (without-tests . "eigen")
-      (with-input ."openmpi=openmpi@4.1.6"))))
+    (append
+     `((with-source . ,(string-append "ogs-petsc=" current-dir)))
+     (manifest-eigen-transform-options)
+     '((with-input . "openmpi=openmpi@4.1.6")))))
 
 (packages->manifest
  (manifest-runtime-packages

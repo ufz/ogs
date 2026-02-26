@@ -8,11 +8,10 @@
 (getcwd))
 
 (define transform1
-(options->transformation `((with-source unquote
-                             (string-append "ogs-petsc-mkl="
-                                            current-dir))
-                (with-commit . "eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4")
-                (without-tests . "eigen"))))
+  (options->transformation
+    (append
+     `((with-source . ,(string-append "ogs-petsc-mkl=" current-dir)))
+     (manifest-eigen-transform-options))))
 
 (packages->manifest
  (manifest-runtime-packages
