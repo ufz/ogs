@@ -7,6 +7,7 @@
             <name>THERMO_HYDRO_MECHANICS</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>4</integration_order>
+            <equation_balance_type>mass</equation_balance_type>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
