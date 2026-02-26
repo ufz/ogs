@@ -3,8 +3,8 @@
         (specification->package "vtkdiff")
         (specification->package "which")
         (specification->package "coreutils")
-        (specification->package "bash"))) ; required for squashfs container image
+        (specification->package "bash")))
 
 (define (manifest-eigen-transform-options)
-  '((with-commit . "eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4") ; or: (with-version . "eigen=5.0.1")
+  '((with-commit . "eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4")
     (without-tests . "eigen")))

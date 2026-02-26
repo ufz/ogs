@@ -8,11 +8,10 @@
   (getcwd))
 
 (define transform1
-  (options->transformation
-    (append
-     `((with-source . ,(string-append "ogs-mkl=" current-dir)))
-     (manifest-eigen-transform-options))))
+  (options->transformation (append `((with-source unquote
+                                                  (string-append "ogs-mkl="
+                                                                 current-dir)))
+                                   (manifest-eigen-transform-options))))
 
-(packages->manifest
- (manifest-runtime-packages
-  (transform1 (specification->package "ogs-mkl"))))
+(packages->manifest (manifest-runtime-packages (transform1 (specification->package
+                                                            "ogs-mkl"))))
