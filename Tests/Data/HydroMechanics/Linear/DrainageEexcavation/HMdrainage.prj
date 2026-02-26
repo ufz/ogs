@@ -37,8 +37,8 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Parameter</type>
-                            <parameter_name>load-water</parameter_name>
+                            <type>Constant</type>
+                            <value>1000</value>
                         </property>
                     </properties>
                 </phase>
@@ -188,17 +188,6 @@
             <type>CurveScaled</type>
             <curve>material_ramp</curve>
             <parameter>maximum_density</parameter>
-        </parameter>
-        <parameter>
-            <name>maximum_density_water</name>
-            <type>Constant</type>
-            <value>1000</value>
-        </parameter>
-        <parameter>
-            <name>load-water</name>
-            <type>CurveScaled</type>
-            <curve>material_ramp</curve>
-            <parameter>maximum_density_water</parameter>
         </parameter>
     </parameters>
     <curves>
