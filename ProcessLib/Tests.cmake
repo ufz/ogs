@@ -7,7 +7,7 @@ if(TARGET ThermoHydroMechanics
     NotebookTest(
         NOTEBOOKFILE
         ThermoHydroMechanics/Linear/Point_injection/SaturatedPointheatsource.py
-        RUNTIME 1800
+        RUNTIME 175
         PROPERTIES PROCESSORS 4
     )
 endif()

@@ -168,7 +168,7 @@
       ],
       "cacheVariables": {
         "OGS_COVERAGE": "ON",
-        "OGS_CTEST_MAX_RUNTIME": "5",
+        "OGS_CTEST_MAX_RUNTIME": "101",
         "OGS_USE_MFRONT": "ON",
         "OGS_CTEST_LABEL_EXCLUDE": "-LE omp"
       }

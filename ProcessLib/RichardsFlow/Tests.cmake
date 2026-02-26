@@ -27,7 +27,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_small.prj
     TESTER vtkdiff
-    RUNTIME 7
+    RUNTIME 4
     DIFF_DATA
     ref_t_1600.000000.vtu richards_ts_1100_t_1600.000000.vtu pressure pressure 1e-8 1e-8
     REQUIREMENTS NOT OGS_USE_MPI
@@ -36,7 +36,7 @@ AddTest(
 AddTest(
     NAME 2D_RichardsFlow_h_us_quad
     PATH Parabolic/Richards
-    RUNTIME 65
+    RUNTIME 18
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_large.prj
     TESTER vtkdiff
@@ -76,7 +76,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_small_iteration_adaptive_dt.prj
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 51
+    RUNTIME 8
     richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
     richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
 )
@@ -88,7 +88,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS iteration_adaptive_dt_PiecewiseLinear.xml
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 51
+    RUNTIME 8
     DEPENDS ogs-2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt
     richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
     richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9

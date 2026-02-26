@@ -1,10 +1,10 @@
 if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/LinearMechanics/mechanics_linear.prj)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/FullySaturatedFlowMechanics/flow_fully_saturated.prj)
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/RichardsFlow2D/RichardsFlow_2d_small.prj RUNTIME 10)
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/A2/A2.prj RUNTIME 18)
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/Porosity/deformation_dependent_porosity.prj RUNTIME 8)
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/Porosity/deformation_dependent_porosity_swelling.prj RUNTIME 11)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/RichardsFlow2D/RichardsFlow_2d_small.prj RUNTIME 3)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/A2/A2.prj RUNTIME 8)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/Porosity/deformation_dependent_porosity.prj RUNTIME 3)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/Porosity/deformation_dependent_porosity_swelling.prj RUNTIME 6)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/Porosity/deformation_temperature_dependent_porosity_swelling.prj RUNTIME 11)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/OrthotropicSwelling/orthotropic_swelling_xy.xml)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/OrthotropicSwelling/orthotropic_swelling_xyz.xml)
@@ -108,7 +108,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     GLOB liakopoulos_t_*.vtu sigma sigma 1e-9 1e-12
     GLOB liakopoulos_t_*.vtu displacement displacement 1e-10 1e-12
@@ -129,7 +129,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     liakopoulos_t_600.vtu liakopoulos_restart_liakopoulos_t_600_t_600.vtu sigma sigma 1e-9 1e-12
     liakopoulos_t_600.vtu liakopoulos_restart_liakopoulos_t_600_t_600.vtu displacement displacement 1e-10 1e-12
@@ -165,7 +165,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 5
     DIFF_DATA
     stress_analytical.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-5 1e-12
     expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu displacement displacement 1e-10 1e-12
@@ -182,7 +182,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 1e-6 1e-10
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 1e-10 1e-10
@@ -191,7 +191,7 @@ AddTest(
 AddTest(
     NAME ThermoRichardsMechanics_point_heat_injection
     PATH ThermoRichardsMechanics/PointHeatSource
-    RUNTIME 25
+    RUNTIME 4
     EXECUTABLE ogs
     EXECUTABLE_ARGS point_heat_source_2D.prj
     WRAPPER time
@@ -231,7 +231,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 15
     DIFF_DATA
     Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu sigma sigma 1e-9 1e-8
     Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-0_ts_10_t_864000.000000.vtu displacement displacement 1e-10 1e-12
@@ -249,7 +249,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 3
     DIFF_DATA
     CTF1_14.000000.vtu CTF1_14.000000.vtu sigma sigma 1e-9 1e-8
     CTF1_14.000000.vtu CTF1_14.000000.vtu displacement displacement 1e-10 1e-12
@@ -417,7 +417,7 @@ AddTest(
 AddTest(
     NAME ThermoRichardsMechanics_thermo_osmosis_filtration_effects_Column
     PATH ThermoRichardsMechanics/ThermoOsmosis
-    RUNTIME 15
+    RUNTIME 9
     EXECUTABLE ogs
     EXECUTABLE_ARGS Column.prj
     WRAPPER time
@@ -481,11 +481,11 @@ if(OGS_USE_MFRONT)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ctest.xml)
 
     if (NOT OGS_USE_MPI)
-        OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/A2/A2.xml RUNTIME 18)
+        OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/A2/A2.xml RUNTIME 8)
         AddTest(
             NAME ThermoRichardsMechanics_A2_effective_initial_stress
             PATH ThermoRichardsMechanics/MFront/A2
-            RUNTIME 1
+            RUNTIME 8
             EXECUTABLE ogs
             EXECUTABLE_ARGS A2_effective_stress0.xml
             REQUIREMENTS NOT OGS_COVERAGE
@@ -502,23 +502,23 @@ if(OGS_USE_MFRONT)
 
     add_subdirectory("${CMAKE_SOURCE_DIR}/Tests/Data/ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/MFrontBehaviour/" "${CMAKE_BINARY_DIR}/Tests/Data/ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/MFrontBehaviour/")
 
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_confined_compression/confined_compression.prj RUNTIME 60)
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_resaturation/resaturation.prj RUNTIME 10)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_confined_compression/confined_compression.prj RUNTIME 19)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_resaturation/resaturation.prj RUNTIME 4)
 
     if (NOT OGS_USE_MPI)
         # Disabled for PETSc, because large numerical errors are observed occasionally.
         # The model is tested sufficiently in other configurations, and other tests are run with PETSc, too.
-        OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_resaturation/bentonite_column.prj RUNTIME 800)
+        OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_resaturation/bentonite_column.prj RUNTIME 295)
     endif()
 
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_restart/bentonite_column_restart.xml RUNTIME 10)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_restart/bentonite_column_restart.xml RUNTIME 5)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_restart/bentonite_column_restart_fail.xml PROPERTIES PASS_REGULAR_EXPRESSION "Absolute and relative error [(]maximum norm[)] are larger than the corresponding thresholds 8[.]000000000000000e-03 and 2[.]000000000000000e-02[.]
 " RUNTIME 10)
 endif()
 
 if (NOT OGS_USE_MPI)
     if(NOT WIN32) # TODO: Remove after 6.5.5 release and fix benchmark on win
-        OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup.prj RUNTIME 20)
+        OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup.prj RUNTIME 15)
     endif()
-    OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup_restart.xml RUNTIME 20)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup_restart.xml RUNTIME 5)
 endif()

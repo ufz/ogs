@@ -2,7 +2,7 @@
 AddTest(
     NAME 2D_ThermalConvection_constviscosityMonolithic
     PATH Parabolic/HT/ConstViscosity
-    RUNTIME 66
+    RUNTIME 27
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_5500x5500.prj
     WRAPPER time
@@ -173,7 +173,7 @@ AddTest(
 AddTest(
     NAME HT_calculatesurfaceflux
     PATH Parabolic/HT/SimpleSynthetics
-    RUNTIME 190
+    RUNTIME 73
     EXECUTABLE ogs
     EXECUTABLE_ARGS calculatesurfaceflux_ht_cube_1e4.prj
     WRAPPER time
@@ -361,7 +361,7 @@ AddTest(
 
 if (NOT (OGS_USE_MPI))
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/deactivated_subdomain/HT_DeactivatedSubdomain.prj)
-    OgsTest(PROJECTFILE Parabolic/HT/LowerDimensionalFracture/2D_single_fracture_HT.prj RUNTIME 55)
+    OgsTest(PROJECTFILE Parabolic/HT/LowerDimensionalFracture/2D_single_fracture_HT.prj RUNTIME 11)
 endif()
 
 AddTest(
@@ -372,7 +372,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 1.e-6 1e-10
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 1e-10 1e-10
@@ -386,7 +386,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 29
+    RUNTIME 15
     DIFF_DATA
     TemperatureFieldts_0_t_0.000000_expected.vtu TemperatureField_ts_0_t_0.000000.vtu T T 1e-10 1e-10
     TemperatureFieldts_73_t_6307200.000000_expected.vtu TemperatureField_ts_73_t_6307200.000000.vtu T T 1e-10 1e-10
@@ -416,7 +416,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 4
+    RUNTIME 1
     DIFF_DATA
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5.e-5 1.0e-4
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5
@@ -430,7 +430,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 4
+    RUNTIME 1
     DIFF_DATA
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_via_sub-coupling_ts_50_t_50000.000000.vtu temperature  temperature 5.e-5 1.0e-4
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_via_sub-coupling_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5

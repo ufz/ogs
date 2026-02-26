@@ -2,22 +2,22 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D1bt/m2_1D1bt.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D2bt/m2_1D2bt.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dcreep/m2_1Dcreep.prj)
-    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dlozenge/m2_1Dlozenge.prj RUNTIME 23)
-    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dlozengebt/m2_1Dlozengebt.prj RUNTIME 82)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dlozenge/m2_1Dlozenge.prj RUNTIME 5)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dlozengebt/m2_1Dlozengebt.prj RUNTIME 29)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Drelax/m2_1Drelax.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload.prj)
-    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload_ym45.prj RUNTIME 70)
-    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dloadbt/m2_2Dloadbt.prj RUNTIME 64)
-    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dload/m2_3Dload.prj RUNTIME 24)
-    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dloadbt/m2_3Dloadbt.prj RUNTIME 67)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dload/m2_2Dload_ym45.prj RUNTIME 16)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_2Dloadbt/m2_2Dloadbt.prj RUNTIME 25)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dload/m2_3Dload.prj RUNTIME 9)
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_3Dloadbt/m2_3Dloadbt.prj RUNTIME 26)
     OgsTest(PROJECTFILE ThermoMechanics/InitialStates/into_initial_state.prj)
     OgsTest(PROJECTFILE ThermoMechanics/InitialStates/equilibrium_restart.prj)
     OgsTest(PROJECTFILE ThermoMechanics/InitialStates/non_equilibrium_initial_state.prj)
     OgsTest(PROJECTFILE ThermoMechanics/EmbeddedAnchorSourceTerm/prism_hex.prj)
-    NotebookTest(NOTEBOOKFILE ThermoMechanics/CreepBGRa/CreepAfterExcavation/creep-after-excavation.py RUNTIME 67)
+    NotebookTest(NOTEBOOKFILE ThermoMechanics/CreepBGRa/CreepAfterExcavation/creep-after-excavation.py RUNTIME 128)
     # Staggered Scheme
-    OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/TM_Quad/iglu_quarter_plane_strain_quad.prj RUNTIME 67)
-    OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/CreepAfterExcavation/CreepAfterExcavation.prj RUNTIME 67)
+    OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/TM_Quad/iglu_quarter_plane_strain_quad.prj RUNTIME 11)
+    OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/CreepAfterExcavation/CreepAfterExcavation.prj RUNTIME 7)
 endif()
 
 AddTest(
@@ -42,7 +42,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     tm1_1Dfixa_ts_1_t_1.000000.vtu tm1_1Dfixa_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
     tm1_1Dfixa_ts_1_t_1.000000.vtu tm1_1Dfixa_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
@@ -56,7 +56,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     tm1_1Dfixb_ts_1_t_1.000000.vtu tm1_1Dfixb_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
     tm1_1Dfixb_ts_1_t_1.000000.vtu tm1_1Dfixb_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
@@ -70,7 +70,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     tm1_2Dbeam_ts_1_t_1.000000.vtu tm1_2Dbeam_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
     tm1_2Dbeam_ts_1_t_1.000000.vtu tm1_2Dbeam_ts_1_t_1.000000.vtu displacement displacement 8e-11 0.0
@@ -84,7 +84,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     tm1_2Dsquare_ts_1_t_1.000000.vtu tm1_2Dsquare_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
     tm1_2Dsquare_ts_1_t_1.000000.vtu tm1_2Dsquare_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
@@ -98,7 +98,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu temperature temperature 7e-11 0.0
     tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
@@ -112,7 +112,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu temperature temperature 4e-11 0.0
     tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 1e-7 0.0
@@ -126,7 +126,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 2
     DIFF_DATA
     tm1_3Dorigin_ts_1_t_1.000000.vtu tm1_3Dorigin_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
     tm1_3Dorigin_ts_1_t_1.000000.vtu tm1_3Dorigin_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
@@ -135,7 +135,7 @@ AddTest(
 AddTest(
     NAME ThermoMechanics_tm1_3Dsquare
     PATH ThermoMechanics/tm1_3Dsquare
-    RUNTIME 200
+    RUNTIME 55
     EXECUTABLE ogs
     EXECUTABLE_ARGS tm1_3Dsquare.prj
     WRAPPER time
@@ -154,7 +154,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 10
     DIFF_DATA
     tm2_1D1bt_ts_50_t_5.000000.vtu tm2_1D1bt_ts_50_t_5.000000.vtu temperature temperature 5e-8 0.0
     tm2_1D1bt_ts_50_t_5.000000.vtu tm2_1D1bt_ts_50_t_5.000000.vtu displacement displacement 1e-10 0.0
@@ -170,7 +170,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 80
+    RUNTIME 25
     DIFF_DATA
     tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu temperature temperature 5e-08 0.0
     tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu displacement displacement 1e-11 0.0
@@ -187,7 +187,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 2
     DIFF_DATA
     stress_analytical.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-5 1e-12
     expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu displacement displacement 1e-10 1e-12
@@ -204,7 +204,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 39
+    RUNTIME 7
     DIFF_DATA
     expected_tm_q_ts_20_t_20000.000000.vtu tm_q_ts_20_t_20000.000000.vtu displacement displacement 1e-9 1e-15
     expected_tm_q_ts_20_t_20000.000000.vtu tm_q_ts_20_t_20000.000000.vtu temperature temperature 2e-6 1e-15
@@ -230,7 +230,7 @@ AddTest(
 AddTest(
     NAME ThermoMechanics_2D_ThermoElastic_IGLU_Plane_Strain_Quadratic_Mesh
     PATH ThermoMechanics
-    RUNTIME 270
+    RUNTIME 45
     EXECUTABLE ogs
     EXECUTABLE_ARGS iglu_quarter_plane_strain_quad.prj
     WRAPPER time
@@ -281,7 +281,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 22
+    RUNTIME 8
     DIFF_DATA
     SimpleAxisymmetricCreepWithAnalyticSolution.vtu SimpleAxisymmetricCreepWithAnalyticalSolution_ts_1000_t_100.000000.vtu analytic_strain epsilon 1e-7 0
 )
@@ -294,7 +294,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 22
+    RUNTIME 6
     DIFF_DATA
     SimpleAxisymmetricCreepWithAnalyticSolutionMFront.vtu SimpleAxisymmetricCreepWithAnalyticalSolutionMFront_ts_1000_t_100.000000.vtu analytic_strain epsilon 2e-6 0
 )
@@ -307,7 +307,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 24
+    RUNTIME 8
     DIFF_DATA
     CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu sigma sigma 5e-6 0
     CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu epsilon epsilon 1e-15 0

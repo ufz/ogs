@@ -1,8 +1,8 @@
 if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/InclinedElements/Inclined2DMesh/inclined_2D_mesh_HC.prj RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/InclinedElements/Inclined2DMesh/inclined_2D_mesh_HC.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ClassicalTransportExample/classical_transport_example_full_upwind.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/Theis_Axisymmetric/axisym_theis_CT.prj RUNTIME 1)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC.prj RUNTIME 60)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC.prj RUNTIME 29)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC_Monolithic.prj RUNTIME 1
         PROPERTIES WILL_FAIL true)
 endif()
@@ -72,7 +72,7 @@ AddTest(
     NAME 2D_ComponentTransport_StaggeredScheme_ConcentrationDiffusionAndStorage
     PATH Parabolic/ComponentTransport/StaggeredScheme
     EXECUTABLE ogs
-    RUNTIME 8
+    RUNTIME 3
     EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
     WRAPPER time
     TESTER vtkdiff
@@ -94,7 +94,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 23
+    RUNTIME 10
     DIFF_DATA
     DiffusionAndStorageAndAdvection_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
     DiffusionAndStorageAndAdvection_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
@@ -127,7 +127,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 23
+    RUNTIME 18
     DIFF_DATA
     mass_conservation_ogsOutput_ts_0_t_0.000000_expected.vtu mass_conservation_ogsOutput_ts_0_t_0.000000.vtu concentration concentration 1e-7 1e-10
     mass_conservation_ogsOutput_ts_300_t_34895.986246_expected.vtu mass_conservation_ogsOutput_ts_300_t_34895.986246.vtu concentration concentration 1e-7 1e-10
@@ -166,7 +166,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 7
+    RUNTIME 4
     DIFF_DATA
     box_ogsOutput_ts_0_t_0.000000_expected.vtu box_ogsOutput_ts_0_t_0.000000.vtu concentration concentration 5e-7 5e-10
     box_ogsOutput_ts_20_t_100000.000000_expected.vtu box_ogsOutput_ts_20_t_100000.000000.vtu concentration concentration 5e-7 5e-10
@@ -184,7 +184,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 46
+    RUNTIME 17
     DIFF_DATA
     DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000.vtu Si Si 1e-5 1e-10
     DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000.vtu Si Si 1e-5 1e-10
@@ -214,7 +214,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 26
+    RUNTIME 10
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
@@ -307,7 +307,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 23
+    RUNTIME 9
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
@@ -347,7 +347,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 25
+    RUNTIME 9
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
     DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
@@ -427,7 +427,7 @@ AddTest(
     NAME 2D_StaggeredScheme_ComponentTransport_TracerSimulation
     PATH Parabolic/ComponentTransport/TracerSimulation
     EXECUTABLE ogs
-    RUNTIME 11
+    RUNTIME 3
     EXECUTABLE_ARGS TracerSimulation.prj
     WRAPPER time
     TESTER vtkdiff
@@ -468,7 +468,7 @@ AddTest(
 AddTest(
     NAME 2D_ComponentTransport_Goswami
     PATH Parabolic/ComponentTransport/goswami
-    RUNTIME 900
+    RUNTIME 291
     EXECUTABLE ogs
     EXECUTABLE_ARGS goswami_input.prj
     WRAPPER time
@@ -504,7 +504,7 @@ AddTest(
 AddTest(
     NAME 2D_ComponentTransport_Elder
     PATH Parabolic/ComponentTransport/elder
-    RUNTIME 2700
+    RUNTIME 1068
     EXECUTABLE ogs
     EXECUTABLE_ARGS elder.prj
     WRAPPER time
@@ -568,7 +568,7 @@ AddTest(
 AddTest(
     NAME 2D_ComponentTransport_ElderPython
     PATH Parabolic/ComponentTransport/elder
-    RUNTIME 2700
+    RUNTIME 1094
     EXECUTABLE ogs
     EXECUTABLE_ARGS elder-python.prj
     WRAPPER time
@@ -663,7 +663,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 40
+    RUNTIME 20
     DIFF_DATA
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu pressure_ogs5 pressure 2.4e1 1.4e-2
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 1e-10 1.4e-2
@@ -703,7 +703,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 90
+    RUNTIME 45
     DIFF_DATA
     theis_ts_0_t_0.000000.vtu
     theis_ts_0_t_0.000000.vtu pressure pressure 1e-3 1e-6
@@ -747,7 +747,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 40
+    RUNTIME 12
     DIFF_DATA
     ConTracer_2d_ts_30_t_108000.000000_expected.vtu ConTracer_2d_ts_30_t_108000.000000.vtu pressure pressure 1e-6 1e-10
     ConTracer_2d_ts_60_t_216000.000000_expected.vtu ConTracer_2d_ts_60_t_216000.000000.vtu pressure pressure 1e-6 1e-10
@@ -774,10 +774,10 @@ AddTest(
 )
 
 if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj RUNTIME 10)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/1D_DiffusionSorptionDecay.prj RUNTIME 5)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/AdvectionDiffusionSorptionDecay/1D_AdvectionDiffusionSorptionDecay.prj RUNTIME 15)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/MultiLayerDiffusion/1D_MultiLayerDiffusion.prj RUNTIME 30)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/1D_DiffusionSorptionDecay.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/AdvectionDiffusionSorptionDecay/1D_AdvectionDiffusionSorptionDecay.prj RUNTIME 6)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/MultiLayerDiffusion/1D_MultiLayerDiffusion.prj RUNTIME 21)
 
     # variation that will fail because material ids are missing in the input
     # mesh
@@ -826,50 +826,50 @@ if (NOT OGS_USE_MPI)
         RUNTIME 1
     )
 
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvection.prj RUNTIME 23)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDecay.prj RUNTIME 23)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDispersionHalf.prj RUNTIME 25)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDispersion.prj RUNTIME 26)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDispersion_3Components.prj RUNTIME 48)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndGravityAndDispersionHalf.prj RUNTIME 46)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj RUNTIME 25)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac.prj RUNTIME 20)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac_small_domain.prj RUNTIME 5)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac_flag_formula.prj RUNTIME 20)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2.prj RUNTIME 60)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/Cs.prj RUNTIME 33)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/U.prj RUNTIME 43)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption.prj RUNTIME 60)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption_fixed_pe.prj RUNTIME 60)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption_SitesMoles.prj RUNTIME 33)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/LookupTable/RadionuclideSorption.prj RUNTIME 10)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calciteDissolvePrecipitateOnly.prj RUNTIME 25)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchange.prj RUNTIME 60)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchangeAndSurface.prj RUNTIME 33)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/1d_decay_chain_OS.prj RUNTIME 2000)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvection.prj RUNTIME 11)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDecay.prj RUNTIME 9)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDispersionHalf.prj RUNTIME 12)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDispersion.prj RUNTIME 13)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndAdvectionAndDispersion_3Components.prj RUNTIME 24)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/DiffusionAndStorageAndGravityAndDispersionHalf.prj RUNTIME 37)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite.prj RUNTIME 6)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac.prj RUNTIME 9)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac_small_domain.prj RUNTIME 2)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant/1d_isofrac_flag_formula.prj RUNTIME 8)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2.prj RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/Cs.prj RUNTIME 9)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/U.prj RUNTIME 17)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption.prj RUNTIME 11)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption_fixed_pe.prj RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/RadionuclideSorption_SitesMoles.prj RUNTIME 9)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/LookupTable/RadionuclideSorption.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calciteDissolvePrecipitateOnly.prj RUNTIME 5)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchange.prj RUNTIME 7)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CationExchange/exchangeAndSurface.prj RUNTIME 9)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/1d_decay_chain_OS.prj RUNTIME 808)
 
     # several variations of 1d_decay_chain_GIA
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA.prj RUNTIME 40)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/linear/1d_decay_chain_GIA.xml RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/1d_decay_chain_GIA.prj RUNTIME 12)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/linear/1d_decay_chain_GIA.xml RUNTIME 3)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/linear_compute_only_on_dt_change/1d_decay_chain_GIA.xml RUNTIME 4)
 
     # further variations of 1d_decay_chain_GIA with Eigen's SparseLU solver
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU/1d_decay_chain_GIA.xml RUNTIME 40)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU_linear/1d_decay_chain_GIA.xml RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU/1d_decay_chain_GIA.xml RUNTIME 12)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU_linear/1d_decay_chain_GIA.xml RUNTIME 4)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/SparseLU_linear_compute_only_on_dt_change/1d_decay_chain_GIA.xml RUNTIME 4)
 
     # variation with changing timestep size
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt/1d_decay_chain_GIA.xml RUNTIME 40)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt_linear/1d_decay_chain_GIA.xml RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt/1d_decay_chain_GIA.xml RUNTIME 12)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt_linear/1d_decay_chain_GIA.xml RUNTIME 3)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt_linear_compute_only_on_dt_change/1d_decay_chain_GIA.xml RUNTIME 4)
 
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SolidPhasePositionTest/1d_vertical_test.prj RUNTIME 1)
 
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 27)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 15)
 endif()
 
 if(NOT OGS_USE_PETSC)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/FCT_test/1d_step_func.prj RUNTIME 5)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/FCT_test/1d_step_func.prj RUNTIME 2)
 endif()
 if(OGS_USE_PETSC)
     OgsTest(WRAPPER mpirun -np 1 PROJECTFILE Parabolic/ComponentTransport/FCT_test/1d_step_func.prj RUNTIME 16)
@@ -879,7 +879,7 @@ endif()
 if(NOT OGS_USE_PETSC AND NOT WIN32)
     NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.py
-        RUNTIME 200
+        RUNTIME 60
         SKIP_WEB
     )
 endif()
@@ -892,7 +892,7 @@ if(NOT OGS_USE_PETSC AND
    NOT "${HOSTNAME}" MATCHES "mac-bilke-623")
     NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy_to_OGS.py
-        RUNTIME 200
+        RUNTIME 66
         # numpy and scipy from Tests/Data env are newer, version requirements taken from porepy pyproject.toml
         PYTHON_PACKAGES porepy@git+https://github.com/pmgbergen/porepy.git@v1.11 numpy<2.2 scipy<1.16
     )
@@ -949,7 +949,7 @@ AddTest(
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sno Sno 1e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sso Sso 1e-10 1e-16
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sulphide Sulphide 1e-10 1e-16
-    RUNTIME 40
+    RUNTIME 15
 )
 
 if (OGS_USE_MPI)
@@ -977,14 +977,14 @@ AddTest(
 )
 
 if(NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.py RUNTIME 10)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/RadionuclidesMigration.py RUNTIME 55)
+    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.py RUNTIME 7)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/RadionuclidesMigration.py RUNTIME 31)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/CO2Injection/CO2Injection.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/MultiLayerDiffusion/MultiLayerDiffusion.py RUNTIME 25)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.py RUNTIME 16)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/elder_jupyter/elder_jupyter.py RUNTIME 25)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.py RUNTIME 12)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/elder_jupyter/elder_jupyter.py RUNTIME 11)
     NotebookTest(NOTEBOOKFILE Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/heatpipe.py RUNTIME 10)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ThermalDiffusion/ThermalDiffusion.py RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ThermalDiffusion/ThermalDiffusion.py RUNTIME 33)
 
 endif()
 

@@ -3,7 +3,11 @@ if(NOT (OGS_COVERAGE AND PROJECT_IS_TOP_LEVEL))
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    set(CMAKE_CXX_FLAGS_DEBUG "-g -Og -DEIGEN_NO_DEBUG --coverage")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -Og --coverage -fprofile-update=atomic -U_GLIBCXX_DEBUG")
+    set(EIGEN_NO_DEBUG ON CACHE BOOL "" FORCE)
+    set(EIGEN_DONT_VECTORIZE OFF CACHE BOOL "" FORCE)
+    set(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN OFF CACHE BOOL "" FORCE)
+    set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "OFF" CACHE STRING "" FORCE)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         string(APPEND CMAKE_CXX_FLAGS_DEBUG " -fprofile-abs-path")
     endif()
@@ -28,8 +32,7 @@ else() # Assuming gcc for this example
 endif()
 configure_file(scripts/cmake/gcovr.cfg.in gcovr.cfg @ONLY)
 
-# Update to 8.5 once released
-set(GCOVR_EXECUTABLE uvx gcovr==8.3 CACHE PATH "" FORCE)
+set(GCOVR_EXECUTABLE uvx gcovr==8.6 CACHE PATH "" FORCE)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/coverage/html)
 

@@ -1,11 +1,11 @@
 # ThermoHydroMechanics; Small deformation, linear poroelastic, homogeneous
 if (NOT OGS_USE_MPI)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj RUNTIME 60)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2.prj RUNTIME 23)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2_heating.prj RUNTIME 23)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 15)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj RUNTIME 17)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2.prj RUNTIME 7)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2_heating.prj RUNTIME 6)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 5)
     OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 30)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 15)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
 
@@ -22,7 +22,7 @@ if (NOT OGS_USE_MPI)
 endif()
 
 if (NOT OGS_USE_PETSC)
-    NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/HeatingHomogeneousDomain/heating_homogenous_vol.py RUNTIME 10)
+    NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/HeatingHomogeneousDomain/heating_homogenous_vol.py RUNTIME 20)
 endif()
 
 AddTest(
@@ -81,7 +81,7 @@ expected_square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.00000
 AddTest(
     NAME ThermoHydroMechanics_square_1e2_unsealed_bimaterial
     PATH ThermoHydroMechanics/Linear/Beam_unsealed_bimaterial
-    RUNTIME 5
+    RUNTIME 2
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e2.prj
     WRAPPER time
@@ -99,7 +99,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_point_heat_injection
     PATH ThermoHydroMechanics/Linear/Point_injection
-    RUNTIME 45
+    RUNTIME 6
     EXECUTABLE ogs
     EXECUTABLE_ARGS pointheatsource_quadratic-mesh.prj
     WRAPPER time
@@ -116,7 +116,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_point_heat_injection_lin
     PATH ThermoHydroMechanics/Linear/Point_injection
-    RUNTIME 15
+    RUNTIME 3
     EXECUTABLE ogs
     EXECUTABLE_ARGS pointheatsource_linear-mesh.prj
     WRAPPER time
@@ -133,7 +133,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_point_heat_injection_vol_st
     PATH ThermoHydroMechanics/Linear/Point_injection/with-volumetric-source-term
-    RUNTIME 45
+    RUNTIME 6
     EXECUTABLE ogs
     EXECUTABLE_ARGS pointheatsource_quadratic-mesh.xml
     WRAPPER time
@@ -150,7 +150,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_point_heat_injection_py_st
     PATH ThermoHydroMechanics/Linear/Point_injection/with-python-source-term
-    RUNTIME 45
+    RUNTIME 6
     EXECUTABLE ogs
     EXECUTABLE_ARGS pointheatsource_quadratic-mesh.xml
     WRAPPER time
@@ -167,7 +167,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_cube_ortho-thermal-expansion-phi0
     PATH ThermoHydroMechanics/Linear/anisotropic_thermal_expansivity
-    RUNTIME 5
+    RUNTIME 1
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_ortho_phi0.0.prj
     WRAPPER time
@@ -184,7 +184,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_cube_ortho-thermal-expansion
     PATH ThermoHydroMechanics/Linear/anisotropic_thermal_expansivity
-    RUNTIME 5
+    RUNTIME 1
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_ortho_phi0.183.prj
     WRAPPER time
@@ -216,7 +216,7 @@ AddTest(
 AddTest(
      NAME ThermoHydroMechanics_square_ortho-thermal-expansion-phi0
      PATH ThermoHydroMechanics/Linear/anisotropic_thermal_expansivity
-     RUNTIME 5
+     RUNTIME 1
      EXECUTABLE ogs
      EXECUTABLE_ARGS square_ortho_phi0.0.prj
      WRAPPER time
@@ -232,7 +232,7 @@ AddTest(
 AddTest(
      NAME ThermoHydroMechanics_square_ortho-thermal-expansion
      PATH ThermoHydroMechanics/Linear/anisotropic_thermal_expansivity
-     RUNTIME 5
+     RUNTIME 1
      EXECUTABLE ogs
      EXECUTABLE_ARGS square_ortho_phi0.183.prj
      WRAPPER time
@@ -248,7 +248,7 @@ AddTest(
 AddTest(
      NAME ThermoHydroMechanics_cube_storage_incompressible_fluid
      PATH ThermoHydroMechanics/Linear/Storage
-     RUNTIME 5
+     RUNTIME 1
      EXECUTABLE ogs
      EXECUTABLE_ARGS cube_incompressible_fluid.prj
      WRAPPER time
@@ -264,7 +264,7 @@ AddTest(
 AddTest(
      NAME ThermoHydroMechanics_cube_storage_isochoric_heat-up
      PATH ThermoHydroMechanics/Linear/Storage
-     RUNTIME 5
+     RUNTIME 1
      EXECUTABLE ogs
      EXECUTABLE_ARGS cube_isochoric_heat-up.prj
      WRAPPER time
@@ -285,7 +285,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature_interpolated 5e-3 1e-10
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure_interpolated 1e-10 1e-10
@@ -293,7 +293,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_BGRaCreepAndInitialStressAtIP_AREHS
     PATH ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS
-    RUNTIME 60
+    RUNTIME 29
     EXECUTABLE ogs
     EXECUTABLE_ARGS arehs-salt-THM01_0.prj
     WRAPPER time
@@ -310,7 +310,7 @@ AddTest(
 AddTest(
     NAME ThermoHydroMechanics_thermo_osmosis_filtration_effects_Column
     PATH ThermoHydroMechanics/Linear/ThermoOsmosis
-    RUNTIME 15
+    RUNTIME 9
     EXECUTABLE ogs
     EXECUTABLE_ARGS Column.prj
     WRAPPER time

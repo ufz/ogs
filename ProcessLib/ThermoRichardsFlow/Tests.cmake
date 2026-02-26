@@ -22,7 +22,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 2
     DIFF_DATA
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5e-3 1e-8
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 5e-3 1e-8
@@ -35,7 +35,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 9
     DIFF_DATA
     expected_Richards_2D_small_pcs_ts_1100_t_1600.000000.vtu Richards_2D_small_pcs_ts_1100_t_1600.000000.vtu pressure pressure 5e-3 1e-8
     expected_Richards_2D_small_pcs_ts_1100_t_1600.000000.vtu Richards_2D_small_pcs_ts_1100_t_1600.000000.vtu saturation saturation 5e-3 1e-8
@@ -48,7 +48,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 6
     DIFF_DATA
     expected_Richards_2D_small_pcs_ts_1100_t_1600.000000.vtu Richards_2D_small_Picard_pcs_ts_1100_t_1600.000000.vtu pressure pressure 5e-3 1e-8
     expected_Richards_2D_small_pcs_ts_1100_t_1600.000000.vtu Richards_2D_small_Picard_pcs_ts_1100_t_1600.000000.vtu saturation saturation 5e-3 1e-8
@@ -61,7 +61,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 1
     DIFF_DATA
     h_us_quad_1000.vtu richards_ogs5_pcs_ts_100_t_100.000000.vtu PRESSURE1 pressure 1e-1 1e-1
 )
@@ -174,7 +174,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 7
     DIFF_DATA
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu pressure pressure 3e5 15
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu saturation saturation 2e-3 2e-3
@@ -189,7 +189,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 7
     DIFF_DATA
     expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu pressure pressure 5e-2 1e-6
     expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu saturation saturation 5e-5 1e-10
@@ -204,7 +204,7 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 17
+    RUNTIME 9
     DIFF_DATA
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu pressure pressure 3e5 15
     expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu saturation saturation 1e-2 2e-3
@@ -271,7 +271,7 @@ AddTest(
 AddTest(
     NAME ThermoRichardsFlow_thermo_osmosis_filtration_effects_Column
     PATH ThermoRichardsFlow/ThermoOsmosis
-    RUNTIME 15
+    RUNTIME 6
     EXECUTABLE ogs
     EXECUTABLE_ARGS Column.prj
     WRAPPER time

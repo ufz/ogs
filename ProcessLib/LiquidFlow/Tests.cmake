@@ -81,7 +81,7 @@ AddTest(
 AddTest(
     NAME LiquidFlow_Anisotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
-    RUNTIME 115
+    RUNTIME 53
     EXECUTABLE ogs
     EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
     WRAPPER time
@@ -94,7 +94,7 @@ AddTest(
 AddTest(
     NAME LiquidFlow_Isotropic_GravityDriven3D
     PATH Parabolic/LiquidFlow/GravityDriven3D
-    RUNTIME 130
+    RUNTIME 51
     EXECUTABLE ogs
     EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
     WRAPPER time
@@ -703,7 +703,7 @@ if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_3.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/FunctionParameterTest.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/BlockingConductingFracture/block_conduct_frac.prj)
-    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/BlockingConductingFracture.py RUNTIME 6)
+    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/BlockingConductingFracture.py RUNTIME 9)
 endif()
 
 # inclined mesh
@@ -738,7 +738,7 @@ AddTest(
     PATH Parabolic/LiquidFlow/InclinedMeshElements/FractureIn3D
     EXECUTABLE ogs
     EXECUTABLE_ARGS fractures_in_3D.prj
-    RUNTIME 10
+    RUNTIME 3
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
@@ -752,7 +752,7 @@ AddTest(
     PATH Parabolic/LiquidFlow/InclinedMeshElements/1Din3D
     EXECUTABLE ogs
     EXECUTABLE_ARGS line_fractures_in_3D.prj
-    RUNTIME 4
+    RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT OGS_USE_MPI
