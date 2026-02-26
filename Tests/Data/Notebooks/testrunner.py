@@ -19,6 +19,11 @@ from nbconvert import HTMLExporter
 from nbconvert.preprocessors import CellExecutionError
 
 
+def coverage_enabled():
+    value = os.getenv("OGS_COVERAGE_PYTHON", "").lower()
+    return value in {"1", "true", "yes", "on"}
+
+
 def save_to_website(exec_notebook_file):
     output_path_arg = ""
     output_path = ""
@@ -164,16 +169,40 @@ for notebook_file in args.notebooks:
         ogs_source_path
     )
 
-    if "run-skip" not in str(notebook_file_path):
-        notebook_basename = (
-            notebook_file_path.parent.resolve() / notebook_file_path.stem
+    notebook_basename = notebook_file_path.parent.resolve() / notebook_file_path.stem
+    _relpath = os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"])
+    notebook_output_path = (Path(args.out) / _relpath).resolve()
+    notebook_output_path.mkdir(parents=True, exist_ok=True)
+    os.environ["OGS_TESTRUNNER_OUT_DIR"] = str(notebook_output_path)
+    os.environ["TQDM_DISABLE"] = "1"  # Disable progress bars
+    os.environ["OGS_TESTRUNNER"] = "1"
+
+    if coverage_enabled() and notebook_file_path.suffix != ".md":
+        os.environ["MPLBACKEND"] = "AGG"
+        os.environ["PYVISTA_OFF_SCREEN"] = "1"
+        coverage_path = Path(build_dir / "coverage")
+        coverage_path.mkdir(exist_ok=True)
+        print(f"[Start]  {notebook_file}")
+        run = subprocess.run(
+            [
+                "coverage",
+                "run",
+                f"--rcfile={ogs_source_path!s}/Tests/Data/pyproject.toml",
+                f"--data-file={coverage_path.absolute().as_posix()}/.coverage",
+                notebook_file,
+            ],
+            capture_output=True,
+            cwd=notebook_file_path.parent,
+            check=False,
         )
-        _relpath = os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"])
-        notebook_output_path = (Path(args.out) / _relpath).resolve()
-        notebook_output_path.mkdir(parents=True, exist_ok=True)
-        os.environ["OGS_TESTRUNNER_OUT_DIR"] = str(notebook_output_path)
-        os.environ["TQDM_DISABLE"] = "1"  # Disable progress bars
-        os.environ["OGS_TESTRUNNER"] = "1"
+
+        if run.returncode == 0:
+            print(f"[Passed]  {notebook_file}")
+        else:
+            print(f"[Failed] {notebook_file}.\n\n{run.stdout}\n\n{run.stderr}")
+            sys.exit(1)
+
+    elif "run-skip" not in str(notebook_file_path):
         notebook_filename = notebook_file_path.name
         convert_notebook_file = notebook_output_path
         if not is_jupytext:
@@ -225,30 +254,31 @@ for notebook_file in args.notebooks:
                 success = check_and_modify_frontmatter()
             nbformat.write(nb, f)
 
-    status_string = ""
-    if notebook_success:
-        status_string += "[Passed] "
-        if args.hugo:
-            save_to_website(convert_notebook_file)
-    else:
-        status_string += "[Failed] "
+        status_string = ""
+        if notebook_success:
+            status_string += "[Passed] "
+            if args.hugo:
+                save_to_website(convert_notebook_file)
+        else:
+            status_string += "[Failed] "
 
-        # Create and write HTML file
-        html_exporter = HTMLExporter()
-        html_exporter.template_name = "classic"
-        (body, resources) = html_exporter.from_notebook_node(nb)
+            # Create and write HTML file
+            html_exporter = HTMLExporter()
+            html_exporter.template_name = "classic"
+            body, resources = html_exporter.from_notebook_node(nb)
 
-        html_file = convert_notebook_file.with_suffix(
-            convert_notebook_file.suffix + ".html"
-        )
-        with html_file.open(mode="w", encoding="utf-8") as fh:
-            fh.write(body)
+            html_file = convert_notebook_file.with_suffix(
+                convert_notebook_file.suffix + ".html"
+            )
+            with html_file.open(mode="w", encoding="utf-8") as fh:
+                fh.write(body)
 
-    status_string += f"{notebook_filename} in "
-    status_string += f"{timedelta(seconds=end-start).total_seconds()} seconds."
-    if not notebook_success:
-        status_string += f" --> {html_file} <--"
-    print(status_string)
+        status_string += f"{notebook_filename} in "
+        status_string += f"{timedelta(seconds=end-start).total_seconds()} seconds."
+        if not notebook_success:
+            status_string += f" --> {html_file} <--"
+        print(status_string)
+
 
 if not (success and notebook_success):
     sys.exit(1)

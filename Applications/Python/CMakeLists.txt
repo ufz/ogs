@@ -45,13 +45,16 @@ if(OGS_USE_PIP)
         if (OGS_USE_MPI)
             set(OGS_PYTEST_ARGS "-m;not ogs_needs_serial_build")
         endif()
+        if(OGS_COVERAGE_PYTHON)
+            set(_pytest_coverage_args "--cov=ogs;--cov-branch;--cov-report;xml:${PROJECT_BINARY_DIR}/coverage/pytest-coverage.xml")
+            file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/coverage)
+        endif()
         add_test(
             NAME pytest
             COMMAND
                 ${CMAKE_COMMAND} -DEXECUTABLE=${UV_TOOL_PATH}
-                "-DEXECUTABLE_ARGS=run;pytest;-ra;${OGS_PYTEST_ARGS};-c;${PROJECT_SOURCE_DIR}/pyproject.toml" # Quoted
-                                                                            # because
-                # passed as list see https://stackoverflow.com/a/33248574/80480
+                # Quoted because passed as list see https://stackoverflow.com/a/33248574/80480
+                "-DEXECUTABLE_ARGS=run;pytest;${_pytest_coverage_args};-ra;${OGS_PYTEST_ARGS};-c;${PROJECT_SOURCE_DIR}/pyproject.toml"
                 -DBINARY_PATH=${_binary_path}
                 -DWORKING_DIRECTORY=${PROJECT_SOURCE_DIR}
                 "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
@@ -63,8 +66,20 @@ if(OGS_USE_PIP)
         )
         set_tests_properties(pytest PROPERTIES
             LABELS "default;python"
-            COST 10
+            COST 40
             ENVIRONMENT
-                "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}")
+                "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};COVERAGE_FILE=${PROJECT_BINARY_DIR}/coverage/.pytest-coverage")
+
+        if(OGS_COVERAGE_PYTHON)
+            add_custom_target(
+                process_coverage_python
+                WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/coverage
+                COMMENT "Generating HTML coverage report in ${PROJECT_BINARY_DIR}/coverage/python-html/coverage.html"
+                COMMAND ${UV_TOOL_PATH} run coverage combine
+                COMMAND ${UV_TOOL_PATH} run coverage xml -o notebook-coverage.xml
+                COMMAND ${PROJECT_SOURCE_DIR}/scripts/ci/helper/fix_coverage.sh ${PROJECT_SOURCE_DIR}
+            )
+        endif()
+
     endif()
 endif()

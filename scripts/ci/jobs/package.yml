@@ -32,6 +32,56 @@ aggregate ctest logs:
       - "build/log_summary/**"
     expire_in: 12 hrs
 
+aggregate coverage:
+  stage: package
+  tags: [envinf, shell]
+  script:
+    - |
+      set -euo pipefail
+
+      shopt -s nullglob
+
+      tracefiles=(
+        build/*/coverage/notebook-coverage-rel.xml
+        build/*/coverage/pytest-coverage-rel.xml
+      )
+
+      args=()
+      for f in "${tracefiles[@]}"; do
+        xmlstarlet ed -L \
+          -u '/coverage/sources/source' \
+          -v "$PWD" \
+          "$f"
+        args+=(--cobertura-add-tracefile "$f")
+      done
+
+      mkdir -p coverage/public
+      uvx gcovr \
+        "${args[@]}" \
+        --json-add-tracefile build/coverage/coverage/cpp-coverage.json \
+        --xml coverage/cpp-coverage.xml \
+        --html-details coverage/public/index.html \
+        --exclude '.*/ogs/config.py' \
+        --merge-lines \
+        -r $PWD \
+        -s
+  rules:
+    - when: always
+  coverage: '/lines: \d+\.\d+/'
+  artifacts:
+    name: coverage-artifacts
+    paths:
+      - "build/**/*.xml"
+      - "coverage/**"
+    expire_in: 12 hrs
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cpp-coverage.xml
+  environment:
+    name: code coverage $CI_MERGE_REQUEST_IID
+    url: ${ARTIFACTS_PAGES_URL}/coverage/public/index.html
+
 cleanup_packages:
   image: python:3.12
   stage: package

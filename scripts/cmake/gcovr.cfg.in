@@ -1,7 +1,5 @@
 root = @CMAKE_SOURCE_DIR@
-cobertura = @CMAKE_BINARY_DIR@/coverage/cobertura.xml
-# html-nested shows wrong paths: build/coverage/[DIR]
-html-details = @CMAKE_BINARY_DIR@/coverage/html/index.html
+json = @CMAKE_BINARY_DIR@/coverage/cpp-coverage.json
 gcov-executable = @GCOV_EXECUTABLE@
 gcov-parallel = yes
 print-summary = yes
