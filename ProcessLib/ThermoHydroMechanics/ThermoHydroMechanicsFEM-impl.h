@@ -439,6 +439,9 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     auto& eps_m = ip_data.eps_m;
     auto& eps_m_prev = ip_data.eps_m_prev;
     eps_m.noalias() = eps_m_prev + eps - eps_prev - dthermal_strain;
+
+    crv.eps_v_dot = (vars.volumetric_strain - Invariants::trace(eps_prev)) / dt;
+
     vars.mechanical_strain
         .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
             eps_m);
@@ -853,9 +856,13 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         //  RHS, pressure part
         //
+        local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
+            N * (up_coeff * crv.eps_v_dot * w);
+
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx.transpose() * crv.K_over_mu * b *
             (fluid_density * crv.k_rel * w);
+
         local_Jac
             .template block<pressure_size, temperature_size>(pressure_index,
                                                              temperature_index)
@@ -1000,7 +1007,7 @@ void ThermoHydroMechanicsLocalAssembler<
     // pressure equation (f_p)
     local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
         laplace_p * p + laplace_T * T + storage_p * (p - p_prev) / dt -
-        storage_T * (T - T_prev) / dt + Kup.transpose() * (u - u_prev) / dt;
+        storage_T * (T - T_prev) / dt;
 
     // displacement equation (f_u)
     local_rhs.template segment<displacement_size>(displacement_index)
