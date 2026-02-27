@@ -131,9 +131,6 @@ public:
     }
 
 protected:
-    /// Set the minimum and maximum length over the edges of the mesh.
-    void calcEdgeLengthRange();
-
     /// Sets the dimension of the mesh.
     void setDimension();
 
