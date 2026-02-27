@@ -63,11 +63,12 @@ bool MeshValidation::allNodesUsed(MeshLib::Mesh const& mesh)
     return true;
 }
 
-bool MeshValidation::existCollapsibleNodes(MeshLib::Mesh& mesh)
+bool MeshValidation::existCollapsibleNodes(MeshLib::Mesh& mesh,
+                                           double const eps)
 {
     MeshRevision const rev(mesh);
     INFO("Found {:d} potentially collapsible nodes.",
-         rev.getNumberOfCollapsibleNodes());
+         rev.getNumberOfCollapsibleNodes(eps));
     return (rev.getNumberOfCollapsibleNodes() > 0);
 }
 

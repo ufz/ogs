@@ -62,8 +62,10 @@ public:
     static void writePropertyVectorInformation(const MeshLib::Mesh& mesh);
 
     /// writes out mesh validation results
+    ///
     /// Remark: MeshValidation can modify the original mesh
-    static void writeMeshValidationResults(MeshLib::Mesh& mesh);
+    static void writeMeshValidationResults(MeshLib::Mesh& mesh,
+                                           double const eps);
 
     /// writes out a list of all material IDs that occur in the mesh.
     static std::vector<int> getMaterialIDs(const MeshLib::Mesh& mesh);

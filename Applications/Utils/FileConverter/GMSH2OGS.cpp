@@ -257,7 +257,8 @@ int main(int argc, char* argv[])
 
     if (valid_arg.isSet())
     {
-        MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh);
+        MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh,
+                                                                  min * 1e-6);
     }
 
     // *** write mesh in new format

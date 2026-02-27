@@ -92,9 +92,11 @@ int main(int argc, char* argv[])
 
     if (valid_arg.isSet())
     {
+        auto const min_max = MeshLib::minMaxEdgeLength(mesh->getElements());
+        double const eps = min_max.first * 1e-6;
         // MeshValidation outputs error messages
         // Remark: MeshValidation can modify the original mesh
-        MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh);
+        MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh, eps);
     }
     return EXIT_SUCCESS;
 }

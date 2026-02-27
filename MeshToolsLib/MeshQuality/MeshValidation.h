@@ -33,9 +33,11 @@ struct MeshValidation final
     /**
      * Tests if nodes of the mesh can be collapsed.
      * @param mesh The mesh that is tested
+     * @param eps Distance threshold, if distance of two nodes is less than the
+     * eps then they are considered as collapsible.
      * @return true, if nodes can be collapsed, else false
      */
-    static bool existCollapsibleNodes(MeshLib::Mesh& mesh);
+    static bool existCollapsibleNodes(MeshLib::Mesh& mesh, double const eps);
 
     /**
      * Prints evaluation data computed by testElementGeometry.

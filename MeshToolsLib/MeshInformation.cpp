@@ -136,11 +136,12 @@ void MeshInformation::writePropertyVectorInformation(const MeshLib::Mesh& mesh)
     }
 }
 
-void MeshInformation::writeMeshValidationResults(MeshLib::Mesh& mesh)
+void MeshInformation::writeMeshValidationResults(MeshLib::Mesh& mesh,
+                                                 double const eps)
 {
     INFO("Mesh Quality Control:");
     MeshToolsLib::MeshValidation::allNodesUsed(mesh);
-    MeshToolsLib::MeshValidation::existCollapsibleNodes(mesh);
+    MeshToolsLib::MeshValidation::existCollapsibleNodes(mesh, eps);
     MeshToolsLib::MeshValidation::evaluateElementGeometry(mesh);
 
     unsigned const n_holes(MeshToolsLib::MeshValidation::detectHoles(mesh));
