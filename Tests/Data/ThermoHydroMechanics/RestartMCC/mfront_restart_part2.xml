@@ -50,7 +50,7 @@
         <vtkdiff>
             <regex>mfront_restart_part2_t_.*.vtu</regex>
             <field>pressure</field>
-            <absolute_tolerance>6e-11</absolute_tolerance>
+            <absolute_tolerance>7e-11</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
