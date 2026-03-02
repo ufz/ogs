@@ -16,6 +16,9 @@
 
 namespace MeshLib
 {
+
+inline constexpr std::string vtkGhostTypeString = "vtkGhostType";
+
 class PropertyVectorBase
 {
 public:

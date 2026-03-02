@@ -404,11 +404,12 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
 {
     auto* vtk_ghost_type =
         partitioned_properties.createNewPropertyVector<unsigned char>(
-            "vtkGhostType", MeshLib::MeshItemType::Cell, total_number_of_cells,
-            1);
+            MeshLib::vtkGhostTypeString, MeshLib::MeshItemType::Cell,
+            total_number_of_cells, 1);
     if (vtk_ghost_type == nullptr)
     {
-        OGS_FATAL("Could not create vtkGhostType cell data array.");
+        OGS_FATAL("Could not create '{}' cell data array.",
+                  MeshLib::vtkGhostTypeString);
     }
 
     assert(vtk_ghost_type->size() == total_number_of_cells);

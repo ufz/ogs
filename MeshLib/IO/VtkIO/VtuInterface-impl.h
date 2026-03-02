@@ -38,17 +38,18 @@ bool VtuInterface::writeVTU(std::string const& file_name,
 
 #ifdef USE_PETSC
     if (_mesh->getProperties().existsPropertyVector<unsigned char>(
-            "vtkGhostType", MeshLib::MeshItemType::Cell, 1))
+            vtkGhostTypeString, MeshLib::MeshItemType::Cell, 1))
     {
-        if (_output_variable_names.find("vtkGhostType") ==
+        if (_output_variable_names.find(vtkGhostTypeString) ==
             _output_variable_names.cend())
         {
-            _output_variable_names.insert("vtkGhostType");
+            _output_variable_names.insert(vtkGhostTypeString);
         }
     }
     else
     {
-        DBUG("No vtkGhostType data in mesh '{}'.", _mesh->getName());
+        DBUG(
+            "No '{}' data in mesh '{}'.", vtkGhostTypeString, _mesh->getName());
     }
 #endif
 

@@ -58,7 +58,7 @@ bool createPropertyVector(
         return false;
     }
 
-    if (pv->getPropertyName() == "vtkGhostType")
+    if (pv->getPropertyName() == MeshLib::vtkGhostTypeString)
     {
         // Do nothing
         return true;
@@ -252,7 +252,8 @@ getRegularElements(std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes)
         MeshLib::Properties const& properties = mesh->getProperties();
 
         auto const* const ghost_id_vector =
-            properties.getPropertyVector<unsigned char>("vtkGhostType");
+            properties.getPropertyVector<unsigned char>(
+                MeshLib::vtkGhostTypeString);
         assert(ghost_id_vector);
 
         auto const& mesh_elements = mesh->getElements();
@@ -519,11 +520,12 @@ void transferPropertiesFromPartitionedMeshToUnpartitionedMesh(
                 MeshLib::getBulkIDString(mesh_item_type));
             continue;
         }
-        if (property_name == "vtkGhostType")
+        if (property_name == MeshLib::vtkGhostTypeString)
         {
             INFO(
-                "Skipping property 'vtkGhostType' since it is only required "
-                "for parallel execution.");
+                "Skipping property '{}' since it is only required for parallel "
+                "execution.",
+                MeshLib::vtkGhostTypeString);
             continue;
         }
         if (transfer<double>(subdomain_properties, original_mesh, *global_ids,
@@ -619,11 +621,11 @@ int main(int argc, char* argv[])
 
         MeshLib::Properties const& properties = mesh->getProperties();
 
-        if (!properties.existsPropertyVector<unsigned char>("vtkGhostType"))
+        if (!properties.existsPropertyVector<unsigned char>(
+                MeshLib::vtkGhostTypeString))
         {
-            OGS_FATAL(
-                "Property vector vtkGhostType does not exist in mesh {:s}.",
-                file_name);
+            OGS_FATAL("Property vector '{}' does not exist in mesh {:s}.",
+                      MeshLib::vtkGhostTypeString, file_name);
         }
 
         meshes.emplace_back(std::move(mesh));
