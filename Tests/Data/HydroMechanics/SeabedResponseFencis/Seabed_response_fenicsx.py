@@ -5,7 +5,7 @@
 # FEniCS modules
 import os
 
-import basix as basix
+import basix
 import dolfinx as dolx
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
@@ -14,7 +14,7 @@ import meshio
 # Python modules
 import numpy as np
 import pyvista as pv
-import ufl as ufl
+import ufl
 from dolfinx import fem, mesh
 from dolfinx.fem.petsc import NonlinearProblem
 from dolfinx.io import XDMFFile
@@ -178,7 +178,7 @@ for t in [0, 2, 4, 6, 8, 10]:
         compute_pressure_and_stresses(t, 0, y_2D)[0],
         -y_rel,
         color=colors[t],
-        label="t = %.1f s" % t,
+        label=f"t = {t:.1f} s",
     )
 
 t = 2.5
@@ -518,12 +518,8 @@ def neumann_condition(dimension, nc, n_reference_fa, p_fa):
     else:
         print("nc not defnined")
 
-    if dimension == "2D":
-        T = ufl.as_vector((T_fa[0], T_fa[1]))
-    else:
-        T = T_fa
+    return ufl.as_vector((T_fa[0], T_fa[1])) if dimension == "2D" else T_fa
 
-    return T
 
 
 # %%
@@ -552,7 +548,7 @@ p_derivative = (p - pold) / dt
 
 # %%
 def porosity_development(u, n_f_ini):
-    d, I, F_s, J_s, cof_F_s, b_s, b_inv, C_s, C_s_inv = kinematics(u)
+    _d, _I, _F_s, J_s, _cof_F_s, _b_s, _b_inv, _C_s, _C_s_inv = kinematics(u)
     n_f = 1 - ((1 - n_f_ini) / J_s)  # volume fraction fluid
     e = n_f / (1 - n_f)
     n_s = 1 - n_f  # saturation condition
@@ -560,37 +556,33 @@ def porosity_development(u, n_f_ini):
 
 
 def density_development(u, n_f_ini, rho_sr, rho_fr):
-    n_f, e, n_s = porosity_development(u, n_f_ini)
+    n_f, _e, n_s = porosity_development(u, n_f_ini)
     rho_s = n_s * rho_sr
     rho_f = n_f * rho_fr
-    density = rho_s + rho_f
-    return density
+    return rho_s + rho_f
 
 
 # %%
 def Second_piola_kirchhff(u, mu, lmbda):
-    d, I, F, J, cof_F, b_s, b_inv, C, C_inv = kinematics(u)
-    S = (
+    _d, I, _F, J, _cof_F, _b_s, _b_inv, _C, C_inv = kinematics(u)
+    return (
         mu * (I - C_inv) + lmbda * ufl.ln(J) * C_inv
     )  # derived from the energy_function for compressible Neo-Hooke
-    return S
 
 
 def cauchy(u, mu, lmbda):
-    d, I, F, J, cof_F, b_s, b_inv, C, C_inv = kinematics(u)
+    _d, _I, F, J, _cof_F, _b_s, _b_inv, _C, _C_inv = kinematics(u)
     S = Second_piola_kirchhff(u, mu, lmbda)
-    sigma = ufl.inv(J) * ufl.dot(ufl.dot(F, S), F.T)
-    return sigma
+    return ufl.inv(J) * ufl.dot(ufl.dot(F, S), F.T)
 
 
 # %%
 def d_green_lagrange(u, v):
     grad_v = ufl.grad(v)
     grad_u = ufl.grad(u)
-    dEgl = (1 / 2) * (
+    return (1 / 2) * (
         grad_v + grad_v.T + ufl.dot(grad_u.T, grad_v) + ufl.dot(grad_v.T, grad_u)
     )
-    return dEgl
 
 
 # %%
@@ -611,7 +603,7 @@ def variational_form_hm_mech(
     dx,
     ds,
 ):
-    d, I, F_s, J_s, cof_F_s, b_s, b_inv, C_s, C_s_inv = kinematics(u)
+    _d, _I, _F_s, J_s, _cof_F_s, _b_s, _b_inv, _C_s, C_s_inv = kinematics(u)
     rho_fr = rho_fr_ref * ufl.exp(beta_m * (p - p_ref))
     rho = density_development(u, n_f_ini, rho_sr, rho_fr)
     rho_0 = J_s * rho
@@ -619,13 +611,12 @@ def variational_form_hm_mech(
     T_fa3 = neumann_condition(dimension, nc, n_reference_fa3, p_fa3)
     dEgl_term = d_green_lagrange(u, vu)
     vol_body_force = rho_0 * b  # volumetric body force
-    mech_form = (
+    return (
         ufl.inner(S_eff, dEgl_term) * dx
         - p * ufl.inner(J_s * C_s_inv, dEgl_term) * dx
         - ufl.inner(vol_body_force, vu) * dx
         - ufl.inner(T_fa3, vu) * ds(3)
     )
-    return mech_form
 
 
 def variational_form_hm_hydro(
@@ -645,8 +636,8 @@ def variational_form_hm_hydro(
     dx,
     ds,
 ):
-    d, I, F_s, J_s, cof_F_s, b_s, b_inv, C_s, C_s_inv = kinematics(u)
-    n_f, e, n_s = porosity_development(
+    _d, _I, F_s, J_s, _cof_F_s, _b_s, _b_inv, _C_s, C_s_inv = kinematics(u)
+    n_f, _e, _n_s = porosity_development(
         u, n_f_ini
     )  # n_f and n_s as current volume fractions
     rho_fr = rho_fr_ref * ufl.exp(beta_m * (p - p_ref))  # pressure-dependent density
@@ -655,14 +646,13 @@ def variational_form_hm_hydro(
     grad_p = ufl.grad(p)
     grad_vp = ufl.grad(vp)
     dEgl = d_green_lagrange(u, u_derivative)
-    hydro_form = (
+    return (
         rho_fr * ufl.inner(J_s * C_s_inv, dEgl) * vp * dx
         + rho_fr * ufl.dot(ufl.dot(grad_vp, K), grad_p) * dx
         - (rho_fr**2) * ufl.dot(grad_vp, ufl.dot(K, (ufl.dot(b, F_s)))) * dx
         + rho_fr * J_s * n_f * beta_m * p_derivative * vp * dx
         - rho_fr * ufl.inner(Q, vp) * ds(3)
     )
-    return hydro_form
 
 
 # %%
@@ -996,7 +986,7 @@ for t in [2, 4, 6, 8, 10]:
 i_steps = [2, 4, 6, 8, 10]
 meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 
-for step, mesh in zip(i_steps, meshes):
+for step, mesh in zip(i_steps, meshes, strict=False):
     mask, line_points = nodes_along_line(mesh)
     pressure = get_pressure_sorted(mesh, mask, line_points)
     depth = get_depth_sorted_nodes(line_points)
@@ -1076,7 +1066,7 @@ meshes_stress = [
     mesh_t10_stress,
 ]
 
-for step, mesh in zip(i_steps, meshes_stress):
+for step, mesh in zip(i_steps, meshes_stress, strict=False):
     mask, line_points = nodes_along_line(mesh)
     sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted(mesh, mask, line_points)
     depth = get_depth_sorted_nodes(line_points)
@@ -1123,7 +1113,7 @@ def compute_abs_and_rel_pressure_error(pressures, depth, t, x):
     analytical_index = np.arange(num_points)
     numerical_index = np.arange(num_points - 1, -1, -1)
 
-    for ana_idx, num_idx in zip(analytical_index, numerical_index):
+    for ana_idx, num_idx in zip(analytical_index, numerical_index, strict=False):
         y = depth[ana_idx]
         pressure_ana = compute_pressure_and_stresses(t, x, y)[
             0
@@ -1147,7 +1137,7 @@ def compute_abs_and_rel_stress_error(sigma_yy, sigma_xx, sigma_xy, depth, t, x):
     analytical_index = np.arange(num_points)
     numerical_index = np.arange(num_points - 1, -1, -1)
 
-    for ana_idx, num_idx in zip(analytical_index, numerical_index):
+    for ana_idx, num_idx in zip(analytical_index, numerical_index, strict=False):
         y = depth[ana_idx]
         sigma_ana_yy = compute_pressure_and_stresses(t, x, y)[
             2
@@ -1220,7 +1210,7 @@ i_steps = [2, 4, 6, 8, 10]
 meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 meshes_stress = [mesh_t2_stress]
 
-for step, mesh in zip(i_steps, meshes):
+for step, mesh in zip(i_steps, meshes, strict=False):
     mask, line_points = nodes_along_line(mesh)
     pressure = get_pressure_sorted(mesh, mask, line_points)
     depth = get_depth_sorted_nodes(line_points)
@@ -1267,7 +1257,7 @@ first_legend = ax[0][0].legend(
 ax[0][0].add_artist(first_legend)
 ax[0][0].legend(bbox_to_anchor=(0.6, 0.15))
 
-for step, mesh_stress in zip(i_steps, meshes_stress):
+for step, mesh_stress in zip(i_steps, meshes_stress, strict=False):
 
     mask, line_points = nodes_along_line(mesh_stress)
     sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted(mesh_stress, mask, line_points)
@@ -1307,12 +1297,12 @@ for step, mesh_stress in zip(i_steps, meshes_stress):
             0.05,
             "$t = 2.0$ s",
             transform=ax[1][0].transAxes,
-            bbox=dict(
-                facecolor="white",
-                edgecolor="black",
-                boxstyle="round,pad=0.5",
-                alpha=0.9,
-            ),
+            bbox={
+                "facecolor": "white",
+                "edgecolor": "black",
+                "boxstyle": "round,pad=0.5",
+                "alpha": 0.9,
+            },
         )
         ax[1][0].legend()
 

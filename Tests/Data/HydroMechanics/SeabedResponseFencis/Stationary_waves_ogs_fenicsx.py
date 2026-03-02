@@ -990,7 +990,7 @@ def compute_abs_and_rel_pressure_error_FEniCSx(pressures, depth, t, x):
     analytical_index = np.arange(num_points)
     numerical_index = np.arange(num_points - 1, -1, -1)
 
-    for ana_idx, num_idx in zip(analytical_index, numerical_index):
+    for ana_idx, num_idx in zip(analytical_index, numerical_index, strict=False):
         y = depth[ana_idx]
         pressure_ana = compute_pressure_and_stresses(t, x, y)[
             0
@@ -1014,7 +1014,7 @@ def compute_abs_and_rel_stress_error_FEniCSx(sigma_yy, sigma_xx, sigma_xy, depth
     analytical_index = np.arange(num_points)
     numerical_index = np.arange(num_points - 1, -1, -1)
 
-    for ana_idx, num_idx in zip(analytical_index, numerical_index):
+    for ana_idx, num_idx in zip(analytical_index, numerical_index, strict=False):
         y = depth[ana_idx]
         sigma_ana_yy = compute_pressure_and_stresses(t, x, y)[
             2
@@ -1087,7 +1087,7 @@ i_steps = [2, 4, 6, 8, 10]
 meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 meshes_stress = [mesh_t2_stress]
 
-for step, mesh in zip(i_steps, meshes):
+for step, mesh in zip(i_steps, meshes, strict=False):
     mask, line_points = nodes_along_line_FEniCSx(mesh)
     pressure = get_pressure_sorted_FEniCSx(mesh, mask, line_points)
     depth = get_depth_sorted_nodes_FEniCSx(line_points)
@@ -1138,7 +1138,7 @@ first_legend = ax[0][0].legend(
 ax[0][0].add_artist(first_legend)
 ax[0][0].legend(bbox_to_anchor=(0.52, 0.15))
 
-for step, mesh_stress in zip(i_steps, meshes_stress):
+for step, mesh_stress in zip(i_steps, meshes_stress, strict=False):
 
     mask, line_points = nodes_along_line_FEniCSx(mesh_stress)
     sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted_FEniCSx(
@@ -1183,12 +1183,12 @@ for step, mesh_stress in zip(i_steps, meshes_stress):
             0.05,
             "$t = 2.0$ s",
             transform=ax[1][0].transAxes,
-            bbox=dict(
-                facecolor="white",
-                edgecolor="black",
-                boxstyle="round,pad=0.5",
-                alpha=0.9,
-            ),
+            bbox={
+                "facecolor": "white",
+                "edgecolor": "black",
+                "boxstyle": "round,pad=0.5",
+                "alpha": 0.9,
+            },
         )
         ax[1][0].legend()
 
@@ -1296,7 +1296,7 @@ for t_num in (2, 4, 6, 8, 10):
 i_steps = [2, 4, 6, 8, 10]
 meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 
-for step, mesh in zip(i_steps, meshes):
+for step, mesh in zip(i_steps, meshes, strict=False):
     mask, line_points = nodes_along_line_FEniCSx(mesh)
     pressure = get_pressure_sorted_FEniCSx(mesh, mask, line_points)
     depth = get_depth_sorted_nodes_FEniCSx(line_points)
@@ -1408,7 +1408,7 @@ meshes_stress = [
     mesh_t10_stress,
 ]
 
-for step, mesh in zip(i_steps, meshes_stress):
+for step, mesh in zip(i_steps, meshes_stress, strict=False):
     mask, line_points = nodes_along_line_FEniCSx(mesh)
     sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted_FEniCSx(mesh, mask, line_points)
     depth = get_depth_sorted_nodes_FEniCSx(line_points)
