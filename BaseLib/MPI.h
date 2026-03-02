@@ -23,22 +23,9 @@ extern MPI_Comm OGS_COMM_WORLD;
 
 struct Setup
 {
-    Setup(int argc, char* argv[])
-    {
-#ifdef USE_PETSC
-        MPI_Init(&argc, &argv);
-#else
-        (void)argc;
-        (void)argv;
-#endif  // USE_PETSC
-    }
+    Setup(int argc, char* argv[]);
 
-    ~Setup()
-    {
-#ifdef USE_PETSC
-        MPI_Finalize();
-#endif  // USE_PETSC
-    }
+    ~Setup();
 };
 
 #ifdef USE_PETSC
