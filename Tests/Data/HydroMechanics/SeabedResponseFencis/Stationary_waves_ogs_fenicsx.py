@@ -155,13 +155,13 @@ import pyvista as pv
 import meshio
 
 # %%
-plt.rcParams.update({'font.size': 12})
-plt.rcParams['lines.linestyle'] = '-'
-plt.rcParams['lines.markersize'] = 10
-plt.rcParams['xtick.labelsize'] = 12
-plt.rcParams['ytick.labelsize'] = 12
-plt.rcParams['axes.titlesize'] = 12
-plt.rcParams['axes.labelsize'] = 12
+plt.rcParams.update({"font.size": 12})
+plt.rcParams["lines.linestyle"] = "-"
+plt.rcParams["lines.markersize"] = 10
+plt.rcParams["xtick.labelsize"] = 12
+plt.rcParams["ytick.labelsize"] = 12
+plt.rcParams["axes.titlesize"] = 12
+plt.rcParams["axes.labelsize"] = 12
 
 # %% papermill={"duration": 0.206862, "end_time": "2025-10-05T10:24:51.852125", "exception": false, "start_time": "2025-10-05T10:24:51.645263", "status": "completed"}
 pv.set_plot_theme("document")
@@ -172,10 +172,10 @@ pv.set_jupyter_backend("static")
 def compute_pressure_and_stresses(t, x, z):
     n = 0.4
     ny = 0  # E = 3K(1-2ny) = 2G(1+ny)
-    E = 1e7             # [Pa]
-    G=E/(2*(1+ny))      #100e3    # [Pa]
-    K=2/3*G             # [Pa](with ny=0)
-    Cf = 0.001/K
+    E = 1e7  # [Pa]
+    G = E / (2 * (1 + ny))  # 100e3    # [Pa]
+    K = 2 / 3 * G  # [Pa](with ny=0)
+    Cf = 0.001 / K
     Cs = 0
     Cm = 1 / K
     my = 1.3e-3  # [Pa*s]
@@ -189,9 +189,7 @@ def compute_pressure_and_stresses(t, x, z):
     S = n * Cf + (alpha - n) * Cs  # Gl. (1.28)
     theta = S * G / alpha**2  # Gl. (4.13)
     m = 1 / (1 - 2 * ny)  # = K+1/3*G/G                               # Gl. (4.5)
-    cv = (
-        k * G * (1 + m) / (alpha**2 * (1 + theta + m * theta) * gamma_w)
-    )  # Gl. (4.12)
+    cv = k * G * (1 + m) / (alpha**2 * (1 + theta + m * theta) * gamma_w)  # Gl. (4.12)
     xi_2 = complex(lam**2, (omega / cv))  # Gl. (4.19)
 
     B1 = (1 + m) * (xi_2 - lam**2) - 2 * lam * (np.sqrt(xi_2) - lam)
@@ -222,9 +220,7 @@ def compute_pressure_and_stresses(t, x, z):
             * B1
             * np.exp(-lam * z)
             - 2 * lam * B2 * np.exp(-lam * z)
-            + ((m - 1) * (xi_2 - lam**2) - 2 * lam**2)
-            * B3
-            * np.exp(-np.sqrt(xi_2) * z)
+            + ((m - 1) * (xi_2 - lam**2) - 2 * lam**2) * B3 * np.exp(-np.sqrt(xi_2) * z)
         )
         / D
         * np.exp((omega * t - np.pi * 0.5) * 1j)
@@ -573,6 +569,7 @@ plotter.show()
 # %% [markdown]
 # The underlying equations for the hydro-mechanical model in OpenGeoSys can be found in [2] and a more general introduction to Poroelasticity in [3].
 
+
 # %% papermill={"duration": 0.011947, "end_time": "2025-10-05T10:24:55.829733", "exception": false, "start_time": "2025-10-05T10:24:55.817786", "status": "completed"}
 ## Helper Functions
 def read_timestep_mesh(a, time):
@@ -837,60 +834,70 @@ for idx_1 in (0, 1):
 # The FEniCSx script used for the numerical simulation is based on the hydro-mechanical model described in [4] and provided as the attached Python script (Seabed_response_fenicsx.py). The model is applicable for finite deformations due to the chosen kinematic approach and is formulated within a total Lagrangian framework. In contrast to [4], a simplified permeability approach was chosen, while still a compressible fluid and the same stress-strain approach were used (hyperelastic compressible Neo-Hookean approach), but without a tension cut-off. Apart from that, the simulations in [4] were performed using FEniCS (version 2019.2.0.13.dev0), whereas this benchmark uses FEniCSx (version 0.10.0).
 
 # %%
-#python3 Seabed_response_fenicsx.py
+# python3 Seabed_response_fenicsx.py
 
 # %%
-name_result_folder = 'hm_seabed_response_standing_waves_fenicsx'
+name_result_folder = "hm_seabed_response_standing_waves_fenicsx"
 
 
 # %% [markdown]
 # ### Post-processing
 
+
 # %%
-def xdmf_to_vtu(xdmf_path,step):   
-    with meshio.xdmf.TimeSeriesReader(xdmf_path+".xdmf") as reader:
-    
+def xdmf_to_vtu(xdmf_path, step):
+    with meshio.xdmf.TimeSeriesReader(xdmf_path + ".xdmf") as reader:
+
         points, cells = reader.read_points_cells()
-    
+
         if points.shape[1] == 2:
             points = np.column_stack([points, np.zeros(points.shape[0])])
 
-    
-        for k in range(0,reader.num_steps,step):
+        for k in range(0, reader.num_steps, step):
 
             t, point_data, cell_data = reader.read_data(k)
 
             mesh = meshio.Mesh(
-                points=points,
-                cells=cells,
-                point_data=point_data,
-                cell_data=cell_data
+                points=points, cells=cells, point_data=point_data, cell_data=cell_data
             )
 
             outname = f"{xdmf_path}_step_{k:04d}_t_{t:.3f}.vtu"
             meshio.write(outname, mesh)
 
-# %%
-xdmf_to_vtu('./'+name_result_folder+'/seabed_constant_p',20)
-xdmf_to_vtu('./'+name_result_folder+'/seabed_constant_stress',20)
 
 # %%
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_p_step_0000_t_0.000.vtu')
+xdmf_to_vtu("./" + name_result_folder + "/seabed_constant_p", 20)
+xdmf_to_vtu("./" + name_result_folder + "/seabed_constant_stress", 20)
+
+# %%
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_p_step_0000_t_0.000.vtu"
+)
 mesh_t0 = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_p_step_0020_t_2.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_p_step_0020_t_2.000.vtu"
+)
 mesh_t2 = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_p_step_0040_t_4.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_p_step_0040_t_4.000.vtu"
+)
 mesh_t4 = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_p_step_0060_t_6.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_p_step_0060_t_6.000.vtu"
+)
 mesh_t6 = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_p_step_0080_t_8.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_p_step_0080_t_8.000.vtu"
+)
 mesh_t8 = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_p_step_0100_t_10.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_p_step_0100_t_10.000.vtu"
+)
 mesh_t10 = reader.read()
 
 # %%
@@ -910,96 +917,126 @@ plotter.view_xy()
 plotter.show()
 
 # %%
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_stress_step_0000_t_0.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_stress_step_0000_t_0.000.vtu"
+)
 mesh_t0_stress = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_stress_step_0020_t_2.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_stress_step_0020_t_2.000.vtu"
+)
 mesh_t2_stress = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_stress_step_0040_t_4.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_stress_step_0040_t_4.000.vtu"
+)
 mesh_t4_stress = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_stress_step_0060_t_6.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_stress_step_0060_t_6.000.vtu"
+)
 mesh_t6_stress = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_stress_step_0080_t_8.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_stress_step_0080_t_8.000.vtu"
+)
 mesh_t8_stress = reader.read()
 
-reader = pv.get_reader('./'+name_result_folder+'/seabed_constant_stress_step_0100_t_10.000.vtu')
+reader = pv.get_reader(
+    "./" + name_result_folder + "/seabed_constant_stress_step_0100_t_10.000.vtu"
+)
 mesh_t10_stress = reader.read()
 
 
 # %%
 def nodes_along_line_FEniCSx(mesh):
     tolerance = 1e-8
-    mask = np.abs(mesh.points[:,0]) < tolerance     #boolean whether node lays at x=0
+    mask = np.abs(mesh.points[:, 0]) < tolerance  # boolean whether node lays at x=0
     line_points = mesh.points[mask]
-    order = np.argsort(line_points[:,1])
-    line_points = line_points[order]                #node points along x=0
-    
+    order = np.argsort(line_points[:, 1])
+    line_points = line_points[order]  # node points along x=0
+
     return mask, line_points
 
-def get_pressure_sorted_FEniCSx(mesh,mask,line_points):
+
+def get_pressure_sorted_FEniCSx(mesh, mask, line_points):
     pressure = mesh.point_data["Porewater pressure"][mask]
     depth = line_points[:, 1]
     indices_sorted = np.argsort(depth)
     return pressure[indices_sorted]
+
 
 def get_depth_sorted_nodes_FEniCSx(line_points):
     depth = line_points[:, 1]
     indices_sorted = np.argsort(depth)
     return depth[indices_sorted]
 
+
 def get_stresses_sorted_FEniCSx(mesh, mask, line_points):
     sigma = mesh.point_data["Cauchy"][mask]
-    depth = line_points[:,1]
+    depth = line_points[:, 1]
     indices_sorted = np.argsort(depth)
-    sigma_xx = -sigma[indices_sorted,0]
-    sigma_yy = -sigma[indices_sorted,3]
-    sigma_xy = -sigma[indices_sorted,1]
-    return sigma_xx,sigma_yy,sigma_xy
+    sigma_xx = -sigma[indices_sorted, 0]
+    sigma_yy = -sigma[indices_sorted, 3]
+    sigma_xy = -sigma[indices_sorted, 1]
+    return sigma_xx, sigma_yy, sigma_xy
 
 
 # %%
 def compute_abs_and_rel_pressure_error_FEniCSx(pressures, depth, t, x):
     num_points = pressures.shape[0]
     f_abs = np.zeros(num_points)
-    
-    analytical_index = np.arange(num_points)
-    numerical_index  = np.arange(num_points-1,-1,-1)
 
-    for ana_idx,num_idx in zip(analytical_index, numerical_index):
+    analytical_index = np.arange(num_points)
+    numerical_index = np.arange(num_points - 1, -1, -1)
+
+    for ana_idx, num_idx in zip(analytical_index, numerical_index):
         y = depth[ana_idx]
-        pressure_ana = compute_pressure_and_stresses(t, x, y)[0]  # returns pressure normalised to the pressure amplitude #calculated from top to bottom
-        pressure_num = (pressures[num_idx]/0.1e5)                 # absolute pressure divided by pressure amplitude       #calculated originally from bottom to top - num idx guarantees that parameters from top to bottom are called
-        
-        f_abs[num_idx] = pressure_num - pressure_ana              #saving with num_idx guarantees a saving from bottom to top (later it is plotted from bottom to top)
+        pressure_ana = compute_pressure_and_stresses(t, x, y)[
+            0
+        ]  # returns pressure normalised to the pressure amplitude #calculated from top to bottom
+        pressure_num = (
+            pressures[num_idx] / 0.1e5
+        )  # absolute pressure divided by pressure amplitude       #calculated originally from bottom to top - num idx guarantees that parameters from top to bottom are called
+
+        f_abs[num_idx] = (
+            pressure_num - pressure_ana
+        )  # saving with num_idx guarantees a saving from bottom to top (later it is plotted from bottom to top)
 
     return f_abs
 
-def compute_abs_and_rel_stress_error_FEniCSx(sigma_yy,sigma_xx,sigma_xy, depth, t, x):
+
+def compute_abs_and_rel_stress_error_FEniCSx(sigma_yy, sigma_xx, sigma_xy, depth, t, x):
     num_points = depth.shape[0]
     f_abs_sigma_yy = np.zeros((num_points))
     f_abs_sigma_xx = np.zeros((num_points))
     f_abs_sigma_xy = np.zeros((num_points))
     analytical_index = np.arange(num_points)
-    numerical_index  = np.arange(num_points-1,-1,-1)
+    numerical_index = np.arange(num_points - 1, -1, -1)
 
-    for ana_idx,num_idx in zip(analytical_index, numerical_index):
+    for ana_idx, num_idx in zip(analytical_index, numerical_index):
         y = depth[ana_idx]
-        sigma_ana_yy = compute_pressure_and_stresses(t, x, y)[2]  # returns stresses normalised to the pressure amplitude #calculated from top to bottom
-        sigma_ana_xx = compute_pressure_and_stresses(t, x, y)[1]  # returns stresses normalised to the pressure amplitude 
+        sigma_ana_yy = compute_pressure_and_stresses(t, x, y)[
+            2
+        ]  # returns stresses normalised to the pressure amplitude #calculated from top to bottom
+        sigma_ana_xx = compute_pressure_and_stresses(t, x, y)[
+            1
+        ]  # returns stresses normalised to the pressure amplitude
         sigma_ana_xy = compute_pressure_and_stresses(t, x, y)[3]
-        
-        sigma_num_yy = (sigma_yy[num_idx]/ 0.1e5)  # absolute stresses divided by pressure amplitude     #calculated originally from bottom to top - num idx guarantees that parameters from top to bottom are called
-        sigma_num_xx = (sigma_xx[num_idx]/ 0.1e5)
-        sigma_num_xy = (sigma_xy[num_idx]/ 0.1e5)
 
-        f_abs_sigma_yy[num_idx] = sigma_num_yy - sigma_ana_yy                                            #saving with num_idx guarantees a saving from bottom to top (later it is plotted from bottom to top)
+        sigma_num_yy = (
+            sigma_yy[num_idx] / 0.1e5
+        )  # absolute stresses divided by pressure amplitude     #calculated originally from bottom to top - num idx guarantees that parameters from top to bottom are called
+        sigma_num_xx = sigma_xx[num_idx] / 0.1e5
+        sigma_num_xy = sigma_xy[num_idx] / 0.1e5
+
+        f_abs_sigma_yy[num_idx] = (
+            sigma_num_yy - sigma_ana_yy
+        )  # saving with num_idx guarantees a saving from bottom to top (later it is plotted from bottom to top)
         f_abs_sigma_xx[num_idx] = sigma_num_xx - sigma_ana_xx
         f_abs_sigma_xy[num_idx] = sigma_num_xy - sigma_ana_xy
 
-    return f_abs_sigma_yy,f_abs_sigma_xx, f_abs_sigma_xy
+    return f_abs_sigma_yy, f_abs_sigma_xx, f_abs_sigma_xy
 
 
 # %%
@@ -1011,19 +1048,19 @@ fig, ax = plt.subplots(ncols=2, nrows=2, figsize=(15, 15))
 
 ## Plotting analytical solution
 for t in [2, 4, 6, 8, 10]:
-    if t !=10:
+    if t != 10:
         ax[0][0].plot(
             compute_pressure_and_stresses(t, x, y)[0],
             -y_rel,
             color=colors[t],
-            alpha = 0.6,
+            alpha=0.6,
         )
     else:
-        ANALYTICAL, = ax[0][0].plot(
+        (ANALYTICAL,) = ax[0][0].plot(
             compute_pressure_and_stresses(t, x, y)[0],
             -y_rel,
             color=colors[t],
-            alpha = 0.6,
+            alpha=0.6,
             label=f"analytical",
         )
 
@@ -1046,31 +1083,28 @@ ax[1][0].plot(
     label="analytical, $\\sigma'_{xy}$ / $\\alpha\\tilde{p}$",
 )
 
-i_steps=[2,4,6,8,10]
-meshes = [mesh_t2,mesh_t4,mesh_t6,mesh_t8,mesh_t10]
+i_steps = [2, 4, 6, 8, 10]
+meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 meshes_stress = [mesh_t2_stress]
 
 for step, mesh in zip(i_steps, meshes):
     mask, line_points = nodes_along_line_FEniCSx(mesh)
-    pressure = get_pressure_sorted_FEniCSx(mesh,mask,line_points)
+    pressure = get_pressure_sorted_FEniCSx(mesh, mask, line_points)
     depth = get_depth_sorted_nodes_FEniCSx(line_points)
-    f_abs_pressure = compute_abs_and_rel_pressure_error_FEniCSx(pressure, depth, step, x)
+    f_abs_pressure = compute_abs_and_rel_pressure_error_FEniCSx(
+        pressure, depth, step, x
+    )
 
     if step != 10:
-        ax[0][0].plot(
-            pressure/0.1e5,
-            (depth/100)-1,
-            'o',
-            color=colors[step]
-            )
+        ax[0][0].plot(pressure / 0.1e5, (depth / 100) - 1, "o", color=colors[step])
     else:
         ax[0][0].plot(
-            pressure/0.1e5,
-            (depth/100)-1,
-            'o',
+            pressure / 0.1e5,
+            (depth / 100) - 1,
+            "o",
             color=colors[step],
-            label=f"numerical - FEniCSx"
-            )
+            label=f"numerical - FEniCSx",
+        )
 
     ax[0][0].set_xlabel("$p$ / $\\tilde{p}$")
     ax[0][0].set_ylabel("$y$ / L")
@@ -1078,55 +1112,64 @@ for step, mesh in zip(i_steps, meshes):
     ax[0][0].grid(True)
 
     ax[0][1].plot(
-        f_abs_pressure, 
-        (depth / 100)-1, 
-        'o',
-        color=colors[step], 
-        label=f"t = {step:.1f} s"
-        )
+        f_abs_pressure,
+        (depth / 100) - 1,
+        "o",
+        color=colors[step],
+        label=f"t = {step:.1f} s",
+    )
     ax[0][1].set_xlabel("$\\Delta p$ / $\\tilde{p}$")
     ax[0][1].grid(True)
     ax[0][0].set_ylabel("$y$ / L")
 
 # Add the first legend
-first_patch = mpatches.Patch(color=colors[2], label='$t = 2.0$ s')
-second_patch = mpatches.Patch(color=colors[4], label='$t = 4.0$ s')
-third_patch = mpatches.Patch(color=colors[6], label='$t = 6.0$ s')
-forth_patch = mpatches.Patch(color=colors[8], label='$t = 8.0$ s')
-fifth_patch = mpatches.Patch(color=colors[10], label='$t = 10.0$ s')
+first_patch = mpatches.Patch(color=colors[2], label="$t = 2.0$ s")
+second_patch = mpatches.Patch(color=colors[4], label="$t = 4.0$ s")
+third_patch = mpatches.Patch(color=colors[6], label="$t = 6.0$ s")
+forth_patch = mpatches.Patch(color=colors[8], label="$t = 8.0$ s")
+fifth_patch = mpatches.Patch(color=colors[10], label="$t = 10.0$ s")
 
-first_legend = ax[0][0].legend(handles=[first_patch, second_patch, third_patch,forth_patch,fifth_patch], loc='lower left')
+first_legend = ax[0][0].legend(
+    handles=[first_patch, second_patch, third_patch, forth_patch, fifth_patch],
+    loc="lower left",
+)
 
 # Manually add the first legend back to the plot
 ax[0][0].add_artist(first_legend)
-ax[0][0].legend(bbox_to_anchor=(.52, 0.15))
+ax[0][0].legend(bbox_to_anchor=(0.52, 0.15))
 
-for step, mesh_stress in zip(i_steps,meshes_stress):
-    
-    mask,line_points = nodes_along_line_FEniCSx(mesh_stress)
-    sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted_FEniCSx(mesh_stress,mask,line_points)
-    depth =  get_depth_sorted_nodes_FEniCSx(line_points)
+for step, mesh_stress in zip(i_steps, meshes_stress):
 
-    f_abs_sigma_yy,f_abs_sigma_xx,f_abs_sigma_xy= compute_abs_and_rel_stress_error_FEniCSx(sigma_yy,sigma_xx,sigma_xy, depth, step, x)
+    mask, line_points = nodes_along_line_FEniCSx(mesh_stress)
+    sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted_FEniCSx(
+        mesh_stress, mask, line_points
+    )
+    depth = get_depth_sorted_nodes_FEniCSx(line_points)
+
+    f_abs_sigma_yy, f_abs_sigma_xx, f_abs_sigma_xy = (
+        compute_abs_and_rel_stress_error_FEniCSx(
+            sigma_yy, sigma_xx, sigma_xy, depth, step, x
+        )
+    )
 
     if step == 2:
         ax[1][0].plot(
             sigma_xx / 0.1e5,
-            (depth / 100)-1,
+            (depth / 100) - 1,
             "o",
             color=colors[6],
             label="numerical, $\\sigma'_{xx}$ / $\\alpha\\tilde{p}$",
         )
         ax[1][0].plot(
             sigma_yy / 0.1e5,
-            (depth / 100)-1,
+            (depth / 100) - 1,
             "o",
             color=colors[2],
             label="numercal, $\\sigma'_{yy}$ / $\\alpha\\tilde{p}$",
         )
         ax[1][0].plot(
-            sigma_xy/0.1e5,
-            (depth / 100)-1,
+            sigma_xy / 0.1e5,
+            (depth / 100) - 1,
             "o",
             color=colors[4],
             label="numerical, $\\sigma'_{xy}$ / $\\alpha\\tilde{p}$",
@@ -1135,40 +1178,47 @@ for step, mesh_stress in zip(i_steps,meshes_stress):
         ax[1][0].set_ylabel("$y$ / L")
         ax[1][0].set_xlim(-1.1, 1.1)
         ax[1][0].grid(True)
-        ax[1][0].text(.8, 0.05,"$t = 2.0$ s",
+        ax[1][0].text(
+            0.8,
+            0.05,
+            "$t = 2.0$ s",
             transform=ax[1][0].transAxes,
             bbox=dict(
-                facecolor='white', 
-                edgecolor='black', 
-                boxstyle='round,pad=0.5', 
-                alpha=0.9))
+                facecolor="white",
+                edgecolor="black",
+                boxstyle="round,pad=0.5",
+                alpha=0.9,
+            ),
+        )
         ax[1][0].legend()
 
         ax[1][1].plot(
             f_abs_sigma_yy,
-            (depth / 100)-1,
-            'o',
+            (depth / 100) - 1,
+            "o",
             color=colors[2],
             label="$\\Delta\\sigma'_{yy}$ / $\\alpha\\tilde{p}$",
         )
         ax[1][1].plot(
             f_abs_sigma_xx,
-            (depth / 100)-1,
-            'o',
+            (depth / 100) - 1,
+            "o",
             color=colors[6],
             label="$\\Delta\\sigma'_{xx}$ / $\\alpha\\tilde{p}$",
         )
         ax[1][1].plot(
             f_abs_sigma_xy,
-            (depth / 100)-1,
-            'o',
+            (depth / 100) - 1,
+            "o",
             color=colors[4],
             label="$\\Delta\\sigma'_{xy}$ / $\\alpha\\tilde{p}$",
         )
         ax[1][1].set_xlabel("$\\Delta\\sigma'$ / $\\alpha\\tilde{p}$")
         ax[1][1].grid(True)
 
-plt.savefig('./'+name_result_folder+'/comparison_analytical_fenicsx_p_sigma_error.pdf')
+plt.savefig(
+    "./" + name_result_folder + "/comparison_analytical_fenicsx_p_sigma_error.pdf"
+)
 
 # %% [markdown]
 # ## Comparison between FEniCSx, OpenGeoSys and the analytical solution
@@ -1185,24 +1235,28 @@ y = np.linspace(0, 100, 1000)
 y_rel = y / 100
 
 fig, ax = plt.subplots(figsize=(9, 6))
-ax.spines['right'].set_color('none') #https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
-ax.spines['top'].set_color('none') #https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
+ax.spines["right"].set_color(
+    "none"
+)  # https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
+ax.spines["top"].set_color(
+    "none"
+)  # https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
 
 ## Plotting analytical solution
 for t in [2, 4, 6, 8, 10]:
-    if t !=10:
+    if t != 10:
         ax.plot(
             compute_pressure_and_stresses(t, x, y)[0],
             -y_rel,
             color=colors[t],
-            alpha = 0.6,
+            alpha=0.6,
         )
     else:
-        ANALYTICAL, = ax.plot(
+        (ANALYTICAL,) = ax.plot(
             compute_pressure_and_stresses(t, x, y)[0],
             -y_rel,
             color=colors[t],
-            alpha = 0.6,
+            alpha=0.6,
             label=f"analytical",
         )
 
@@ -1217,72 +1271,69 @@ for t_num in (2, 4, 6, 8, 10):
     pressure_ogs = get_pressure_sorted(line_mesh_ogs)
     depth_ogs = get_depth_sorted(line_mesh_ogs)
 
-    
-    if t_num !=10:
+    if t_num != 10:
         ax.plot(
-            pressure_ogs / 0.1e5,
-            depth_ogs / 100,
-            "o",
-            markevery=15,
-            color=colors[t_num]
-        )
-        ax.set_xlabel("$p$ / $\\tilde{p}$")
-
-    else:
-        OGS, = ax.plot(
             pressure_ogs / 0.1e5,
             depth_ogs / 100,
             "o",
             markevery=15,
             color=colors[t_num],
-            label=f"numerical - OGS"
+        )
+        ax.set_xlabel("$p$ / $\\tilde{p}$")
+
+    else:
+        (OGS,) = ax.plot(
+            pressure_ogs / 0.1e5,
+            depth_ogs / 100,
+            "o",
+            markevery=15,
+            color=colors[t_num],
+            label=f"numerical - OGS",
         )
         ax.set_xlabel("$p$ / $\\tilde{p}$")
 
 ## Plotting numerical solution FEniCSx
-i_steps=[2,4,6,8,10]
-meshes = [mesh_t2,mesh_t4,mesh_t6,mesh_t8,mesh_t10]
+i_steps = [2, 4, 6, 8, 10]
+meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 
 for step, mesh in zip(i_steps, meshes):
     mask, line_points = nodes_along_line_FEniCSx(mesh)
-    pressure = get_pressure_sorted_FEniCSx(mesh,mask,line_points)
+    pressure = get_pressure_sorted_FEniCSx(mesh, mask, line_points)
     depth = get_depth_sorted_nodes_FEniCSx(line_points)
     if step != 10:
-        ax.plot(
-            pressure/0.1e5,
-            (depth/100)-1,
-            'X',
-            color=colors[step]
-            )
+        ax.plot(pressure / 0.1e5, (depth / 100) - 1, "X", color=colors[step])
         ax.set_xlabel("$p$ / $\\tilde{p}$")
     else:
         ax.plot(
-            pressure/0.1e5,
-            (depth/100)-1,
-            'X',
+            pressure / 0.1e5,
+            (depth / 100) - 1,
+            "X",
             color=colors[step],
-            label=f"numerical - FEniCSx"
-            )
+            label=f"numerical - FEniCSx",
+        )
         ax.set_xlabel("$p$ / $\\tilde{p}$")
 
 # Add the first legend
-first_patch = mpatches.Patch(color=colors[2], label='$t = 2.0$ s')
-second_patch = mpatches.Patch(color=colors[4], label='$t = 4.0$ s')
-third_patch = mpatches.Patch(color=colors[6], label='$t = 6.0$ s')
-forth_patch = mpatches.Patch(color=colors[8], label='$t = 8.0$ s')
-fifth_patch = mpatches.Patch(color=colors[10], label='$t = 10.0$ s')
+first_patch = mpatches.Patch(color=colors[2], label="$t = 2.0$ s")
+second_patch = mpatches.Patch(color=colors[4], label="$t = 4.0$ s")
+third_patch = mpatches.Patch(color=colors[6], label="$t = 6.0$ s")
+forth_patch = mpatches.Patch(color=colors[8], label="$t = 8.0$ s")
+fifth_patch = mpatches.Patch(color=colors[10], label="$t = 10.0$ s")
 
-first_legend = ax.legend(handles=[first_patch, second_patch, third_patch,forth_patch,fifth_patch], loc='lower left')
+first_legend = ax.legend(
+    handles=[first_patch, second_patch, third_patch, forth_patch, fifth_patch],
+    loc="lower left",
+)
 
 # Manually add the first legend back to the plot
 ax.add_artist(first_legend)
-ax.legend(bbox_to_anchor=(.55, 0.25))
+ax.legend(bbox_to_anchor=(0.55, 0.25))
 
-#ax.grid(True)
+# ax.grid(True)
 ax.set_ylabel("$y$ / $L$")
 ax.set_xlim(-1.1, 1.1)
-#ax.legend(bbox_to_anchor=(.55, 0.4))
-plt.savefig('./comparison_analytical_ogs_fenicsx_p.pdf')
+# ax.legend(bbox_to_anchor=(.55, 0.4))
+plt.savefig("./comparison_analytical_ogs_fenicsx_p.pdf")
 
 # %%
 x = 0
@@ -1290,24 +1341,28 @@ y = np.linspace(0, 100, 1000)
 y_rel = y / 100
 
 fig, ax = plt.subplots(figsize=(9, 6))
-ax.spines['right'].set_color('none') #https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
-ax.spines['top'].set_color('none') #https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
+ax.spines["right"].set_color(
+    "none"
+)  # https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
+ax.spines["top"].set_color(
+    "none"
+)  # https://www.grund-wissen.de/informatik/python/scipy/matplotlib.html
 
 ## Plotting analytical solution
 for t in [2, 4, 6, 8, 10]:
-    if t !=10:
+    if t != 10:
         ax.plot(
             compute_pressure_and_stresses(t, x, y)[2],
             -y_rel,
             color=colors[t],
-            alpha = 0.6,
+            alpha=0.6,
         )
     else:
-        ANALYTICAL, = ax.plot(
+        (ANALYTICAL,) = ax.plot(
             compute_pressure_and_stresses(t, x, y)[2],
             -y_rel,
             color=colors[t],
-            alpha = 0.6,
+            alpha=0.6,
             label=f"analytical",
         )
 
@@ -1322,7 +1377,7 @@ for t_num in (2, 4, 6, 8, 10):
     sigma_ogs = get_stresses_sorted(line_mesh_ogs)
     depth_ogs = get_depth_sorted(line_mesh_ogs)
 
-    if t_num !=10:
+    if t_num != 10:
         ax.plot(
             sigma_ogs[1] / 0.1e5,
             depth_ogs / 100,
@@ -1333,69 +1388,74 @@ for t_num in (2, 4, 6, 8, 10):
         ax.set_xlabel("$\\sigma'_{yy,\\text{ogs}}/\\alpha\\tilde{p}$")
 
     else:
-        OGS, = ax.plot(
+        (OGS,) = ax.plot(
             sigma_ogs[1] / 0.1e5,
             depth_ogs / 100,
             "o",
             markevery=15,
             color=colors[t_num],
-            label=f"numerical - OGS"
+            label=f"numerical - OGS",
         )
         ax.set_xlabel("$\\sigma'_{yy,\\text{ogs}}/\\alpha\\tilde{p}$")
 
 ## Plotting numerical solution FEniCSx
-i_steps=[2,4,6,8,10]
-meshes_stress = [mesh_t2_stress,mesh_t4_stress,mesh_t6_stress,mesh_t8_stress,mesh_t10_stress]
+i_steps = [2, 4, 6, 8, 10]
+meshes_stress = [
+    mesh_t2_stress,
+    mesh_t4_stress,
+    mesh_t6_stress,
+    mesh_t8_stress,
+    mesh_t10_stress,
+]
 
 for step, mesh in zip(i_steps, meshes_stress):
-    mask,line_points = nodes_along_line_FEniCSx(mesh)
-    sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted_FEniCSx(mesh,mask,line_points)
-    depth =  get_depth_sorted_nodes_FEniCSx(line_points)
+    mask, line_points = nodes_along_line_FEniCSx(mesh)
+    sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted_FEniCSx(mesh, mask, line_points)
+    depth = get_depth_sorted_nodes_FEniCSx(line_points)
 
     if step != 10:
-        ax.plot(
-            sigma_yy/0.1e5,
-            (depth / 100)-1,
-            'X',
-            color=colors[step]
-            )
+        ax.plot(sigma_yy / 0.1e5, (depth / 100) - 1, "X", color=colors[step])
         ax.set_xlabel("$\\sigma'_{yy}$ / $\\alpha\\tilde{p}$")
     else:
         ax.plot(
-            sigma_yy/0.1e5,
-            (depth / 100)-1,
-            'X',
+            sigma_yy / 0.1e5,
+            (depth / 100) - 1,
+            "X",
             color=colors[step],
-            label=f"numerical - FEniCSx"
-            )
+            label=f"numerical - FEniCSx",
+        )
         ax.set_xlabel("$\\sigma'_{yy}$ / $\\alpha\\tilde{p}$")
 
 # Add the first legend
-first_patch = mpatches.Patch(color=colors[2], label='$t = 2.0$ s')
-second_patch = mpatches.Patch(color=colors[4], label='$t = 4.0$ s')
-third_patch = mpatches.Patch(color=colors[6], label='$t = 6.0$ s')
-forth_patch = mpatches.Patch(color=colors[8], label='$t = 8.0$ s')
-fifth_patch = mpatches.Patch(color=colors[10], label='$t = 10.0$ s')
+first_patch = mpatches.Patch(color=colors[2], label="$t = 2.0$ s")
+second_patch = mpatches.Patch(color=colors[4], label="$t = 4.0$ s")
+third_patch = mpatches.Patch(color=colors[6], label="$t = 6.0$ s")
+forth_patch = mpatches.Patch(color=colors[8], label="$t = 8.0$ s")
+fifth_patch = mpatches.Patch(color=colors[10], label="$t = 10.0$ s")
 
-first_legend = ax.legend(handles=[first_patch, second_patch, third_patch,forth_patch,fifth_patch], loc='lower left',fontsize = '14')
+first_legend = ax.legend(
+    handles=[first_patch, second_patch, third_patch, forth_patch, fifth_patch],
+    loc="lower left",
+    fontsize="14",
+)
 
 # Manually add the first legend back to the plot
 ax.add_artist(first_legend)
-ax.legend(bbox_to_anchor=(.6, 0.3),fontsize = '14')
+ax.legend(bbox_to_anchor=(0.6, 0.3), fontsize="14")
 
-#ax.grid(True)
+# ax.grid(True)
 ax.set_ylabel("$y$ / $L$")
-#ax.set_xlim(-1.1, 1.1)
-#ax.legend(bbox_to_anchor=(.55, 0.4))
-plt.savefig('./comparison_analytical_ogs_fenicsx_sigma.pdf')
+# ax.set_xlim(-1.1, 1.1)
+# ax.legend(bbox_to_anchor=(.55, 0.4))
+plt.savefig("./comparison_analytical_ogs_fenicsx_sigma.pdf")
 
 # %% [markdown] papermill={"duration": 0.000105, "end_time": "2025-10-05T10:25:51.624768", "exception": false, "start_time": "2025-10-05T10:25:51.624663", "status": "completed"}
 # ### References
-# [1] Verruijt, A. (2016). *Theory and problems of poroelasticity.* Available online at https://geo.verruijt.net/. 
+# [1] Verruijt, A. (2016). *Theory and problems of poroelasticity.* Available online at https://geo.verruijt.net/.
 #
 # [2] Zill, F., Lüdeling, C., Kolditz, O., & Nagel, T. (2021). Hydro-mechanical continuum modelling of fluid percolation through rock salt. *International Journal of Rock Mechanics and Mining Sciences*, 147(August), 104879. https://doi.org/10.1016/j.ijrmms.2021.104879
 #
-# [3] Cheng, A. H.-D. (2016). Poroelasticity (Vol. 27). Springer International Publishing. https://doi.org/10.1007/978-3-319-25202-5 
+# [3] Cheng, A. H.-D. (2016). Poroelasticity (Vol. 27). Springer International Publishing. https://doi.org/10.1007/978-3-319-25202-5
 #
 # [4] Keese, H., Rothschink, J., Stelzer, O. and Nagel, T. (2025). Transient hydro-mechanical analyses of column
 # experiments on wave-induced soil liquefaction.*Computers and Geotechnics*, 185. https://doi.org/10.1016/j.compgeo.2025.107321
