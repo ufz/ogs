@@ -109,6 +109,7 @@ target_link_libraries(
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
         $<$<TARGET_EXISTS:petsc>:petsc>
         tclap
+        ogs_embedded_python
 )
 
 # ---- Tests ----

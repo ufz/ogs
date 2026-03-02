@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
+#include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
@@ -11,6 +12,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "Applications/CLI/ogs_embedded_python.h"
 #include "CommandLineArgumentParser.h"
 
 #ifndef _WIN32
@@ -144,6 +146,10 @@ int main(int argc, char* argv[])
 
     try
     {
+        pybind11::scoped_interpreter py_interpreter{
+            ApplicationsLib::setupEmbeddedPython()};
+        ApplicationsLib::setupEmbeddedPythonVenvPaths();
+
         Simulation simulation(argc, argv);
 
         BaseLib::RunTime run_time;

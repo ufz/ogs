@@ -17,10 +17,6 @@
 #include "ProcessLib/Process.h"
 #include "ProcessLib/ProcessVariable.h"
 
-#ifdef OGS_EMBED_PYTHON_INTERPRETER
-#include <pybind11/embed.h>
-#endif
-
 namespace GeoLib
 {
 struct NamedRaster;
@@ -150,8 +146,4 @@ private:
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
         _curves;
-
-#ifdef OGS_EMBED_PYTHON_INTERPRETER
-    std::optional<pybind11::scoped_interpreter> _py_scoped_interpreter;
-#endif
 };

@@ -11,7 +11,6 @@ target_link_libraries(
         GeoLib
         NumLib
         $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::ParallelMPI>>:VTK::ParallelMPI>
-        $<$<AND:$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>,$<BOOL:${OGS_BUILD_CLI}>>:ogs_embedded_python>
     PRIVATE CMakeInfoLib
             MathLib
             MeshLib
@@ -45,6 +44,7 @@ target_compile_definitions(
 # warning: ‘ProjectData’ declared with greater visibility than the type of its field ‘ProjectData::_py_scoped_interpreter’
 # see https://pybind11.readthedocs.io/en/stable/faq.html#someclass-declared-with-greater-visibility-than-the-type-of-its-field-someclass-member-wattributes
 # ~~~
+# TODO always set to hidden?
 if(NOT OGS_BUILD_WHEEL AND OGS_BUILD_CLI)
     set_target_properties(
         ApplicationsLib PROPERTIES CXX_VISIBILITY_PRESET hidden

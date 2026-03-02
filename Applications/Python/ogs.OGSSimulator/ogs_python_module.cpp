@@ -19,7 +19,6 @@
 #include "BaseLib/RunTime.h"
 #include "CommandLineArgumentParser.h"
 #include "InfoLib/GitInfo.h"
-#include "ogs_embedded_python.h"
 
 static constexpr int EXIT_ARGPARSE_FAILURE = 3;  // "mangled" TCLAP status
 static constexpr int EXIT_ARGPARSE_EXIT_OK = 2;  // "mangled" TCLAP status
