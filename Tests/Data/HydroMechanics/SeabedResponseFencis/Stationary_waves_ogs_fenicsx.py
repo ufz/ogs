@@ -147,12 +147,12 @@ import os
 from pathlib import Path
 
 import gmsh
-import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import meshio
 import numpy as np
 import ogstools as ot
 import pyvista as pv
-import meshio
 
 # %%
 plt.rcParams.update({"font.size": 12})
@@ -1008,9 +1008,9 @@ def compute_abs_and_rel_pressure_error_FEniCSx(pressures, depth, t, x):
 
 def compute_abs_and_rel_stress_error_FEniCSx(sigma_yy, sigma_xx, sigma_xy, depth, t, x):
     num_points = depth.shape[0]
-    f_abs_sigma_yy = np.zeros((num_points))
-    f_abs_sigma_xx = np.zeros((num_points))
-    f_abs_sigma_xy = np.zeros((num_points))
+    f_abs_sigma_yy = np.zeros(num_points)
+    f_abs_sigma_xx = np.zeros(num_points)
+    f_abs_sigma_xy = np.zeros(num_points)
     analytical_index = np.arange(num_points)
     numerical_index = np.arange(num_points - 1, -1, -1)
 
@@ -1061,7 +1061,7 @@ for t in [2, 4, 6, 8, 10]:
             -y_rel,
             color=colors[t],
             alpha=0.6,
-            label=f"analytical",
+            label="analytical",
         )
 
 ax[1][0].plot(
@@ -1103,7 +1103,7 @@ for step, mesh in zip(i_steps, meshes):
             (depth / 100) - 1,
             "o",
             color=colors[step],
-            label=f"numerical - FEniCSx",
+            label="numerical - FEniCSx",
         )
 
     ax[0][0].set_xlabel("$p$ / $\\tilde{p}$")
@@ -1257,7 +1257,7 @@ for t in [2, 4, 6, 8, 10]:
             -y_rel,
             color=colors[t],
             alpha=0.6,
-            label=f"analytical",
+            label="analytical",
         )
 
 ## Plotting numerical solution OGS
@@ -1288,7 +1288,7 @@ for t_num in (2, 4, 6, 8, 10):
             "o",
             markevery=15,
             color=colors[t_num],
-            label=f"numerical - OGS",
+            label="numerical - OGS",
         )
         ax.set_xlabel("$p$ / $\\tilde{p}$")
 
@@ -1309,7 +1309,7 @@ for step, mesh in zip(i_steps, meshes):
             (depth / 100) - 1,
             "X",
             color=colors[step],
-            label=f"numerical - FEniCSx",
+            label="numerical - FEniCSx",
         )
         ax.set_xlabel("$p$ / $\\tilde{p}$")
 
@@ -1363,7 +1363,7 @@ for t in [2, 4, 6, 8, 10]:
             -y_rel,
             color=colors[t],
             alpha=0.6,
-            label=f"analytical",
+            label="analytical",
         )
 
 ## Plotting numerical solution OGS
@@ -1394,7 +1394,7 @@ for t_num in (2, 4, 6, 8, 10):
             "o",
             markevery=15,
             color=colors[t_num],
-            label=f"numerical - OGS",
+            label="numerical - OGS",
         )
         ax.set_xlabel("$\\sigma'_{yy,\\text{ogs}}/\\alpha\\tilde{p}$")
 
@@ -1422,7 +1422,7 @@ for step, mesh in zip(i_steps, meshes_stress):
             (depth / 100) - 1,
             "X",
             color=colors[step],
-            label=f"numerical - FEniCSx",
+            label="numerical - FEniCSx",
         )
         ax.set_xlabel("$\\sigma'_{yy}$ / $\\alpha\\tilde{p}$")
 

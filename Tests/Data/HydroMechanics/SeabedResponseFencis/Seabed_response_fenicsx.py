@@ -3,21 +3,22 @@
 
 # %%
 # FEniCS modules
-import dolfinx as dolx
-from dolfinx import mesh, fem
-from dolfinx.io import XDMFFile
+import os
+
 import basix as basix
-from dolfinx.fem.petsc import NonlinearProblem
-import ufl as ufl
+import dolfinx as dolx
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import meshio
 
 # Python modules
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-from mpi4py import MPI
 import pyvista as pv
-import meshio
-import os
+import ufl as ufl
+from dolfinx import fem, mesh
+from dolfinx.fem.petsc import NonlinearProblem
+from dolfinx.io import XDMFFile
+from mpi4py import MPI
 
 # %%
 dolx.log.set_log_level(dolx.log.LogLevel.INFO)
@@ -988,7 +989,7 @@ for t in [2, 4, 6, 8, 10]:
             -y_rel,
             color=colors[t],
             alpha=0.6,
-            label=f"analytical",
+            label="analytical",
         )
 
 ## Plotting numerical solution
@@ -1008,7 +1009,7 @@ for step, mesh in zip(i_steps, meshes):
             (depth / 100) - 1,
             "o",
             color=colors[step],
-            label=f"numerical - FEniCSx",
+            label="numerical - FEniCSx",
         )
         ax.set_xlabel("$p$ / $\\tilde{p}$")
 
@@ -1061,7 +1062,7 @@ for t in [2, 4, 6, 8, 10]:
             -y_rel,
             color=colors[t],
             alpha=0.6,
-            label=f"analytical",
+            label="analytical",
         )
 
 
@@ -1089,7 +1090,7 @@ for step, mesh in zip(i_steps, meshes_stress):
             (depth / 100) - 1,
             "o",
             color=colors[step],
-            label=f"numerical - FEniCSx",
+            label="numerical - FEniCSx",
         )
         ax.set_xlabel("$\\sigma'_{yy,\\text{FEniCSx}}$ / $\\alpha\\tilde{p}$")
 
@@ -1140,9 +1141,9 @@ def compute_abs_and_rel_pressure_error(pressures, depth, t, x):
 
 def compute_abs_and_rel_stress_error(sigma_yy, sigma_xx, sigma_xy, depth, t, x):
     num_points = depth.shape[0]
-    f_abs_sigma_yy = np.zeros((num_points))
-    f_abs_sigma_xx = np.zeros((num_points))
-    f_abs_sigma_xy = np.zeros((num_points))
+    f_abs_sigma_yy = np.zeros(num_points)
+    f_abs_sigma_xx = np.zeros(num_points)
+    f_abs_sigma_xy = np.zeros(num_points)
     analytical_index = np.arange(num_points)
     numerical_index = np.arange(num_points - 1, -1, -1)
 
@@ -1193,7 +1194,7 @@ for t in [2, 4, 6, 8, 10]:
             -y_rel,
             color=colors[t],
             alpha=0.6,
-            label=f"analytical",
+            label="analytical",
         )
 
 ax[1][0].plot(
@@ -1233,7 +1234,7 @@ for step, mesh in zip(i_steps, meshes):
             (depth / 100) - 1,
             "o",
             color=colors[step],
-            label=f"numerical - FEniCSx",
+            label="numerical - FEniCSx",
         )
 
     ax[0][0].set_xlabel("$p$ / $\\tilde{p}$")
