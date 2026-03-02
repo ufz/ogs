@@ -45,6 +45,9 @@ aggregate coverage:
         build/*/coverage/notebook-coverage-rel.xml
         build/*/coverage/pytest-coverage-rel.xml
       )
+      cpp_tracefiles=(
+        build/*/coverage/cpp-coverage.json
+      )
 
       args=()
       for f in "${tracefiles[@]}"; do
@@ -55,14 +58,18 @@ aggregate coverage:
         args+=(--cobertura-add-tracefile "$f")
       done
 
+      for f in "${cpp_tracefiles[@]}"; do
+        args+=(--json-add-tracefile "$f")
+      done
+
       mkdir -p coverage/public
       uvx gcovr \
         "${args[@]}" \
-        --json-add-tracefile build/coverage/coverage/cpp-coverage.json \
         --xml coverage/cpp-coverage.xml \
         --html-details coverage/public/index.html \
         --exclude '.*/ogs/config.py' \
         --merge-lines \
+        --merge-mode-functions separate \
         -r $PWD \
         -s
   rules:

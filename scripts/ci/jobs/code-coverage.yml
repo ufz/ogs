@@ -1,9 +1,7 @@
-code coverage:
+.code coverage:
   stage: check
-  tags: [shell, envinf]
   needs: [meta]
   variables:
-    CMAKE_PRESET: coverage
     BUILD_TESTS: true
     BUILD_CTEST: false
     CMAKE_ARGS: >-
@@ -13,10 +11,22 @@ code coverage:
     - cmake --build --preset $CMAKE_PRESET -t ctest
     - cmake --build --preset $CMAKE_PRESET -t process_coverage
   after_script:
-    - ln -s ../../build/coverage build/coverage
+    - ln -s ../../build/$CMAKE_PRESET build/$CMAKE_PRESET
   artifacts:
     when: always
     paths:
-      - build/coverage/coverage/cpp-coverage.json
-      - build/coverage/logs/*.txt
+      - build/$CMAKE_PRESET/coverage/cpp-coverage.json
+      - build/$CMAKE_PRESET/logs/*.txt
     expire_in: 1 week
+
+code coverage:
+  extends: .code coverage
+  tags: [shell, envinf]
+  variables:
+    CMAKE_PRESET: coverage
+
+code coverage petsc:
+  extends: .code coverage
+  tags: [shell, envinf, petsc]
+  variables:
+    CMAKE_PRESET: coverage-petsc
