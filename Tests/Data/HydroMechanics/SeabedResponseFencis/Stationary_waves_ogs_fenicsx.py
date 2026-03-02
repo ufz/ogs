@@ -1464,4 +1464,4 @@ plt.savefig("./comparison_analytical_ogs_fenicsx_sigma.pdf")
 #
 # [6] Pitz, M., Grunwald, N., Graupner, B., Kurgyis, K., Radeisen, E., Maßmann, J., Ziefle, G., Thiedau, J., & Nagel, T. (2023). Benchmarking a new TH2M implementation in OGS-6 with regard to processes relevant for nuclear waste disposal. *Environmental Earth Sciences*, 82(13), 319. https://doi.org/10.1007/s12665-023-10971-7
 #
-# [7] Nagel, T., Buchwald, J., Kiszkurno, F., Pitz, M., & Helfer, T. (2024). Hierarchical modelling in benchmarking, analysis and code development for coupled geo‐processes. PAMM, (April), 1–9. https://doi.org/10.1002/pamm.202400025
+# [7] Nagel, T., Buchwald, J., Kiszkurno, F., Pitz, M., & Helfer, T. (2024). Hierarchical modelling in benchmarking, analysis and code development for coupled geo-processes. PAMM, (April), 1–9. https://doi.org/10.1002/pamm.202400025

@@ -4,6 +4,7 @@
 # %%
 # FEniCS modules
 import os
+from pathlib import Path
 
 import basix
 import dolfinx as dolx
@@ -30,19 +31,8 @@ print(
 
 
 # %%
-# create a result folder, where all the output is saved
-def result_folder(name):
-    folder = "./" + name
-
-    try:  # Checks whether a result folder already exists
-        os.mkdir(folder)
-
-    except:
-        pass
-
-
-name_result_folder = "hm_seabed_response_standing_waves_fenicsx"
-result_folder(name_result_folder)  # creates a folder for all the results
+name_result_folder = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
+name_result_folder.mkdir(parents=True, exist_ok=True)
 
 # %% [markdown]
 # ### Analytical solution 2D
@@ -499,15 +489,15 @@ bc_m3 = fem.dirichletbc(
 # %%
 def kinematics(u):
     d = len(u)
-    I = ufl.Identity(d)  # Identity tensor
-    F = I + ufl.grad(u)  # Deformation gradient
+    i = ufl.Identity(d)  # Identity tensor
+    F = i + ufl.grad(u)  # Deformation gradient
     J = ufl.det(F)  # Jacobian of the deformation gradient
     cof_F = J * ufl.inv(F.T)
     b_s = ufl.dot(F, F.T)
     b_inv = ufl.inv(b_s)
     C = ufl.dot(F.T, F)  # Right Cauchy Green tensor
     C_inv = ufl.inv(C)
-    return d, I, F, J, cof_F, b_s, b_inv, C, C_inv
+    return d, i, F, J, cof_F, b_s, b_inv, C, C_inv
 
 
 # %%
@@ -519,7 +509,6 @@ def neumann_condition(dimension, nc, n_reference_fa, p_fa):
         print("nc not defnined")
 
     return ufl.as_vector((T_fa[0], T_fa[1])) if dimension == "2D" else T_fa
-
 
 
 # %%
@@ -564,9 +553,9 @@ def density_development(u, n_f_ini, rho_sr, rho_fr):
 
 # %%
 def Second_piola_kirchhff(u, mu, lmbda):
-    _d, I, _F, J, _cof_F, _b_s, _b_inv, _C, C_inv = kinematics(u)
+    _d, i, _F, J, _cof_F, _b_s, _b_inv, _C, C_inv = kinematics(u)
     return (
-        mu * (I - C_inv) + lmbda * ufl.ln(J) * C_inv
+        mu * (i - C_inv) + lmbda * ufl.ln(J) * C_inv
     )  # derived from the energy_function for compressible Neo-Hooke
 
 
@@ -986,9 +975,9 @@ for t in [2, 4, 6, 8, 10]:
 i_steps = [2, 4, 6, 8, 10]
 meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 
-for step, mesh in zip(i_steps, meshes, strict=False):
-    mask, line_points = nodes_along_line(mesh)
-    pressure = get_pressure_sorted(mesh, mask, line_points)
+for step, step_mesh in zip(i_steps, meshes, strict=False):
+    mask, line_points = nodes_along_line(step_mesh)
+    pressure = get_pressure_sorted(step_mesh, mask, line_points)
     depth = get_depth_sorted_nodes(line_points)
     if step != 10:
         ax.plot(pressure / 0.1e5, (depth / 100) - 1, "o", color=colors[step])
@@ -1066,9 +1055,9 @@ meshes_stress = [
     mesh_t10_stress,
 ]
 
-for step, mesh in zip(i_steps, meshes_stress, strict=False):
-    mask, line_points = nodes_along_line(mesh)
-    sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted(mesh, mask, line_points)
+for step, step_mesh in zip(i_steps, meshes_stress, strict=False):
+    mask, line_points = nodes_along_line(step_mesh)
+    sigma_xx, sigma_yy, sigma_xy = get_stresses_sorted(step_mesh, mask, line_points)
     depth = get_depth_sorted_nodes(line_points)
 
     if step != 10:
@@ -1210,9 +1199,9 @@ i_steps = [2, 4, 6, 8, 10]
 meshes = [mesh_t2, mesh_t4, mesh_t6, mesh_t8, mesh_t10]
 meshes_stress = [mesh_t2_stress]
 
-for step, mesh in zip(i_steps, meshes, strict=False):
-    mask, line_points = nodes_along_line(mesh)
-    pressure = get_pressure_sorted(mesh, mask, line_points)
+for step, step_mesh in zip(i_steps, meshes, strict=False):
+    mask, line_points = nodes_along_line(step_mesh)
+    pressure = get_pressure_sorted(step_mesh, mask, line_points)
     depth = get_depth_sorted_nodes(line_points)
     f_abs_pressure = compute_abs_and_rel_pressure_error(pressure, depth, step, x)
 
