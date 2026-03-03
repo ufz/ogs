@@ -181,7 +181,7 @@
             <variables>
                 <variable>temperature</variable>
                 <variable>pressure</variable>
-                <variable>velocity</variable>
+                <variable>darcy_velocity</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
             <fixed_output_times>
