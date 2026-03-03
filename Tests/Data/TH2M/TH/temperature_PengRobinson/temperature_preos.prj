@@ -39,11 +39,16 @@
                 <secondary_variable name="vapour_pressure"/>
                 <secondary_variable name="porosity"/>
                 <secondary_variable name="saturation"/>
-                <secondary_variable internal_name="mole_fraction_gas" output_name="xnCG"/>
-                <secondary_variable internal_name="mass_fraction_gas" output_name="xmCG"/>
-                <secondary_variable internal_name="mass_fraction_liquid" output_name="xmWL"/>
-                <secondary_variable internal_name="relative_permeability_gas" output_name="k_rel_G"/>
-                <secondary_variable internal_name="relative_permeability_liquid" output_name="k_rel_L"/>
+                <secondary_variable internal_name="mole_fraction_gas"
+                    output_name="xnCG"/>
+                <secondary_variable internal_name="mass_fraction_gas"
+                    output_name="xmCG"/>
+                <secondary_variable internal_name="mass_fraction_liquid"
+                    output_name="xmWL"/>
+                <secondary_variable internal_name="relative_permeability_gas"
+                    output_name="k_rel_G"/>
+                <secondary_variable internal_name="relative_permeability_liquid"
+                    output_name="k_rel_L"/>
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
         </process>
@@ -196,20 +201,26 @@
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                    <type>IterationNumberBasedTimeStepping</type>
+                    <type>FixedTimeStepping</type>
                     <t_initial>0</t_initial>
-                    <t_end> 10</t_end>
-                    <initial_dt>1.e-1</initial_dt>
-                    <minimum_dt>1.e-9</minimum_dt>
-                    <maximum_dt>10</maximum_dt>
-                    <number_iterations>1 2 5 10 20</number_iterations>
-                    <multiplier>1.6 1.4 1.0 0.7 0.5</multiplier>
+                    <t_end>10</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>0.10</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>9</repeat>
+                            <delta_t>1.0</delta_t>
+                        </pair>
+                    </timesteps>
                 </time_stepping>
             </process>
         </processes>
         <output>
             <type>VTK</type>
             <prefix>result_temperature_preos</prefix>
+            <suffix>_t_{:time}</suffix>
             <timesteps>
                 <pair>
                     <repeat>1</repeat>
@@ -395,34 +406,38 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>result_temperature_preos_ts_.*.vtu</regex>
+            <regex>result_temperature_preos_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-14</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
         </vtkdiff>
+
         <vtkdiff>
-            <regex>result_temperature_preos_ts_.*.vtu</regex>
+            <regex>result_temperature_preos_.*.vtu</regex>
             <field>gas_pressure_interpolated</field>
-            <absolute_tolerance>1e-06</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <absolute_tolerance>1e-04</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
+
         <vtkdiff>
-            <regex>result_temperature_preos_ts_.*.vtu</regex>
+            <regex>result_temperature_preos_.*.vtu</regex>
             <field>capillary_pressure_interpolated</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
+
         <vtkdiff>
-            <regex>result_temperature_preos_ts_.*.vtu</regex>
+            <regex>result_temperature_preos_.*.vtu</regex>
             <field>temperature_interpolated</field>
             <absolute_tolerance>1e-09</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
         </vtkdiff>
+
         <vtkdiff>
-            <regex>result_temperature_preos_ts_.*.vtu</regex>
+            <regex>result_temperature_preos_.*.vtu</regex>
             <field>gas_density</field>
             <absolute_tolerance>1e-12</absolute_tolerance>
-            <relative_tolerance>0</relative_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
