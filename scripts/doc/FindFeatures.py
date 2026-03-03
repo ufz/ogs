@@ -593,7 +593,7 @@ def find_all_pattern_lines(xml_str: list[str], pattern: bytes) -> list[int]:
 
 def find_types_from_documentation(path: Path, subdir: str) -> list[str]:
     # Will find all the possible types as defined in the documentation under the location "/Documentation/ProjectFile/prj/subdir/*"" and create a dictionary out of it
-    base = path / "Documentation/ProjectFile/prj" / subdir
+    base = path / "../../Documentation/ProjectFile/prj" / subdir
     return [
         m.group(1)
         for file in base.rglob("c_*.md")
