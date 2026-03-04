@@ -167,7 +167,10 @@ bool VtuInterface::writeToFile(std::filesystem::path const& file_path)
 int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
              int const data_mode)
 {
-    MeshLib::IO::VtuInterface writer(&mesh, {}, data_mode);
+    std::set<std::string> variable_output_names;
+    variable_output_names.insert_range(
+        mesh.getProperties().getPropertyVectorNames());
+    MeshLib::IO::VtuInterface writer(&mesh, variable_output_names, data_mode);
     auto const result = writer.writeToFile(file_name);
     if (!result)
     {
