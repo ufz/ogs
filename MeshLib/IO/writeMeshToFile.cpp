@@ -29,7 +29,12 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     }
     if (file_path.extension().string() == ".vtu")
     {
-        MeshLib::IO::VtuInterface writer(&mesh);
+        if (variable_output_names.empty())
+        {
+            variable_output_names.insert_range(
+                mesh.getProperties().getPropertyVectorNames());
+        }
+        MeshLib::IO::VtuInterface writer(&mesh, variable_output_names);
         auto const result = writer.writeToFile(file_path);
         if (!result)
         {
