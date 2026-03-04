@@ -17,8 +17,8 @@
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/Line.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
@@ -230,7 +230,6 @@ int main(int argc, char* argv[])
 
     MeshLib::Mesh const result("result", new_nodes, new_elems,
                                true /* compute_element_neighbors */, props);
-    MeshLib::IO::VtuInterface vtu(&result);
-    vtu.writeToFile(output_name);
+    MeshLib::IO::writeMeshToFile(result, output_name);
     return EXIT_SUCCESS;
 }

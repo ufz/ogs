@@ -12,8 +12,8 @@
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshToolsLib/MeshEditing/RasterDataToMesh.h"
 
@@ -118,7 +118,6 @@ int main(int argc, char* argv[])
         INFO("Created cell array {:s}", array_name_arg.getValue());
     }
 
-    MeshLib::IO::VtuInterface vtu(mesh.get());
-    vtu.writeToFile(output_name);
+    MeshLib::IO::writeMeshToFile(*mesh.get(), output_name);
     return EXIT_SUCCESS;
 }

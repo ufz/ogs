@@ -31,6 +31,7 @@
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
@@ -655,16 +656,9 @@ int main(int argc, char* argv[])
         }
     }
 
-    MeshLib::IO::VtuInterface writer(merged_mesh.get());
-
     BaseLib::RunTime writing_timer;
     writing_timer.start();
-    auto const result = writer.writeToFile(output_arg.getValue());
-    if (!result)
-    {
-        ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
-        return EXIT_FAILURE;
-    }
+    MeshLib::IO::writeMeshToFile(*merged_mesh.get(), output_arg.getValue());
     INFO("writing mesh took {} s", writing_timer.elapsed());
 
     // Since the Node pointers of 'merged_nodes' and Element pointers of
