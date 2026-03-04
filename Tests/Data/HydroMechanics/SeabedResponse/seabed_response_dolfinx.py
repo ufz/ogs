@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import subprocess
-import sys
 from pathlib import Path
 
 import basix
@@ -18,26 +16,6 @@ dolx.log.set_log_level(dolx.log.LogLevel.INFO)
 print(
     f"DOLFINx version: {dolx.__version__} based on GIT commit: {dolx.git_commit_hash} of https://github.com/FEniCS/dolfinx/"
 )
-
-subprocess.run([sys.executable, "-m", "pip", "install", "pyvista"], check=True)
-
-
-def plot_dolfinx_mesh(domain, result_folder: Path) -> None:
-    import pyvista as pv
-
-    pv.set_plot_theme("document")
-    pv.set_jupyter_backend("static")
-
-    topology, cell_types, geometry = dolx.plot.vtk_mesh(domain, domain.geometry.dim)
-    grid = pv.UnstructuredGrid(topology, cell_types, geometry)
-
-    plotter = pv.Plotter()
-    plotter.add_mesh(grid, show_edges=True)
-    plotter.view_xy()
-    if pv.OFF_SCREEN:
-        plotter.screenshot(str(result_folder / "mesh.png"))
-    else:
-        plotter.show()
 
 
 def run_dolfinx_simulation(result_folder: Path) -> None:
@@ -64,8 +42,6 @@ def run_dolfinx_simulation(result_folder: Path) -> None:
 
     n_reference_fa3 = ufl.as_vector((0, 1))
     dimension = "2D"
-
-    plot_dolfinx_mesh(domain, result_folder)
 
     def bottom(x):
         return np.isclose(x[1], 0)
