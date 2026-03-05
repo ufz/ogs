@@ -164,21 +164,5 @@ bool VtuInterface::writeToFile(std::filesystem::path const& file_path)
     return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
 }
 
-int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
-             int const data_mode)
-{
-    std::set<std::string> variable_output_names;
-    variable_output_names.insert_range(
-        mesh.getProperties().getPropertyVectorNames());
-    MeshLib::IO::VtuInterface writer(&mesh, variable_output_names, data_mode);
-    auto const result = writer.writeToFile(file_name);
-    if (!result)
-    {
-        ERR("writeMeshToFile(): Could not write mesh to '{:s}'.", file_name);
-        return -1;
-    }
-    return 0;
-}
-
 }  // end namespace IO
 }  // end namespace MeshLib

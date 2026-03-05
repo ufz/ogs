@@ -73,10 +73,7 @@ private:
     bool _use_compressor;
 };
 
-int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
-             int const data_mode = vtkXMLWriter::Appended);
-
-} // end namespace IO
-} // end namespace MeshLib
+}  // end namespace IO
+}  // end namespace MeshLib
 
 #include "VtuInterface-impl.h"
