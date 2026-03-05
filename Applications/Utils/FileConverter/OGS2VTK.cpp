@@ -10,8 +10,8 @@
 #include "BaseLib/MPI.h"
 #include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
 int main(int argc, char* argv[])
@@ -57,8 +57,9 @@ int main(int argc, char* argv[])
 
     auto const data_mode =
         use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
-
-    MeshLib::IO::writeVtu(*mesh, mesh_out.getValue(), data_mode);
+    auto const use_compression = true;
+    MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue(), {},
+                                 use_compression, data_mode);
 
     return EXIT_SUCCESS;
 }
