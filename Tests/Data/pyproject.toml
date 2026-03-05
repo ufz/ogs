@@ -76,3 +76,4 @@ branch = true
 patch = ["subprocess"]
 parallel = true
 source = ["."]
+omit = ["**/seabed_response_dolfinx.py"]
