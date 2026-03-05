@@ -91,7 +91,7 @@ mkdir my-working-directory && cd my-working-directory
 apptainer shell my-container.squashfs
 
 # Now in the container
-virtualenv .venv
+python -m venv .venv
 source .venv/bin/activate
 pip install numpy # or whatever you need
 # run ogs

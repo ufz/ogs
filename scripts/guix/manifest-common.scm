@@ -1,5 +1,6 @@
 (define (manifest-runtime-packages package)
   (list package
+        (specification->package "python-wrapper")
         (specification->package "vtkdiff")
         (specification->package "which")
         (specification->package "coreutils")
