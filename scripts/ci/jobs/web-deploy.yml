@@ -4,7 +4,17 @@ deploy web site:
   needs:
     - job: meta
     - job: "build linux arch"
+      parallel:
+        matrix:
+          - OGS_COVERAGE_PYTHON: "OFF"
+            ADDITIONAL_TARGETS: "feature_matrix"
+            CTEST_ARGS: ""
     - job: "build linux petsc"
+      parallel:
+        matrix:
+          - OGS_COVERAGE_PYTHON: "OFF"
+            ADDITIONAL_TARGETS: ""
+            CTEST_ARGS: -L default|petsc-mumps
     - job: release
       optional: true
   rules:

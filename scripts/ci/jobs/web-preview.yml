@@ -4,9 +4,19 @@ preview web site:
   needs:
     - job: meta
     - job: "build linux arch"
-      optional: true
+      artifacts: true
+      parallel:
+        matrix:
+          - OGS_COVERAGE_PYTHON: "OFF"
+            ADDITIONAL_TARGETS: "feature_matrix"
+            CTEST_ARGS: ""
     - job: "build linux petsc"
-      optional: true
+      artifacts: true
+      parallel:
+        matrix:
+          - OGS_COVERAGE_PYTHON: "OFF"
+            ADDITIONAL_TARGETS: ""
+            CTEST_ARGS: -L default|petsc-mumps
   variables:
     HUGO_PARAMS_CURRENTVERSION: mr-$CI_MERGE_REQUEST_IID
     HUGO_BASEURL: $CI_PAGES_URL

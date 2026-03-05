@@ -1,3 +1,15 @@
+.common-linux-arch-rules: &common-linux-arch-rules
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/ && $OGS_COVERAGE_PYTHON == "OFF"'
+    when: never
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/ && $OGS_COVERAGE_PYTHON == "ON"'
+    when: never
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/ && $OGS_COVERAGE_PYTHON == "OFF"'
+  - if: '$OGS_COVERAGE_PYTHON == "ON"'
+  - if: '$OGS_COVERAGE_PYTHON == "OFF"'
+
+.common-linux-arch-variables: &common-linux-arch-variables
+  BUILD_CTEST_LARGE_ON_MASTER: "true"
+
 build linux arch:
   extends:
     - .template-build-linux
@@ -5,14 +17,22 @@ build linux arch:
   tags: [shell, envinf]
   needs: [meta]
   timeout: 3h
+  parallel:
+    matrix:
+      - OGS_COVERAGE_PYTHON: "ON"
+        ADDITIONAL_TARGETS: "feature_matrix process_coverage_python"
+        CTEST_ARGS: -R nb-|pytest
+      - OGS_COVERAGE_PYTHON: "OFF"
+        ADDITIONAL_TARGETS: "feature_matrix"
+        CTEST_ARGS: ""
+  rules: *common-linux-arch-rules
   variables:
-    BUILD_CTEST_LARGE_ON_MASTER: "true"
+    <<: *common-linux-arch-variables
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DOGS_USE_MKL=ON
       -DOGS_USE_NETCDF=ON
-      -DOGS_COVERAGE_PYTHON=ON
-    ADDITIONAL_TARGETS: "feature_matrix process_coverage_python"
+      -DOGS_COVERAGE_PYTHON=${OGS_COVERAGE_PYTHON}
   before_script:
     - source /opt/intel/oneapi/setvars.sh
 
@@ -23,12 +43,19 @@ build linux petsc:
   tags: [envinf, shell, petsc]
   needs: [meta]
   timeout: 3h
+  parallel:
+    matrix:
+      - OGS_COVERAGE_PYTHON: "ON"
+        ADDITIONAL_TARGETS: "process_coverage_python"
+        CTEST_ARGS: -R nb-|pytest
+      - OGS_COVERAGE_PYTHON: "OFF"
+        ADDITIONAL_TARGETS: ""
+        CTEST_ARGS: -L default|petsc-mumps
+  rules: *common-linux-arch-rules
   variables:
-    BUILD_CTEST_LARGE_ON_MASTER: "true"
+    <<: *common-linux-arch-variables
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
       -DOGS_USE_MFRONT=ON
-      -DOGS_COVERAGE_PYTHON=ON
-    CTEST_ARGS: -L default|petsc-mumps
-    ADDITIONAL_TARGETS: "process_coverage_python"
+      -DOGS_COVERAGE_PYTHON=${OGS_COVERAGE_PYTHON}
