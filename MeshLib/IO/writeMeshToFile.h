@@ -16,9 +16,10 @@ class Mesh;
 
 namespace MeshLib::IO
 {
-int writeMeshToFile(MeshLib::Mesh const& mesh,
-                    std::filesystem::path const& file_path,
-                    std::set<std::string> output_variable_names = {},
-                    bool const use_compression = false,
-                    int const data_mode = vtkXMLWriter::Appended);
+[[nodiscard]] int writeMeshToFile(
+    MeshLib::Mesh const& mesh,
+    std::filesystem::path const& file_path,
+    std::set<std::string> output_variable_names = {},
+    bool const use_compression = false,
+    int const data_mode = vtkXMLWriter::Appended);
 }  // namespace MeshLib::IO
