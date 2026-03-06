@@ -18,7 +18,7 @@ namespace MeshLib::IO
 int writeMeshToFile(const MeshLib::Mesh& mesh,
                     std::filesystem::path const& file_path,
                     [[maybe_unused]] std::set<std::string>
-                        variable_output_names,
+                        output_variable_names,
                     bool const use_compression,
                     int const data_mode)
 {
@@ -31,12 +31,12 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     }
     if (file_path.extension().string() == ".vtu")
     {
-        if (variable_output_names.empty())
+        if (output_variable_names.empty())
         {
-            variable_output_names.insert_range(
+            output_variable_names.insert_range(
                 mesh.getProperties().getPropertyVectorNames());
         }
-        MeshLib::IO::VtuInterface writer(&mesh, variable_output_names,
+        MeshLib::IO::VtuInterface writer(&mesh, output_variable_names,
                                          data_mode, use_compression);
         auto const result = writer.writeToFile(file_path);
         if (!result)
@@ -53,7 +53,7 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         const std::reference_wrapper<const MeshLib::Mesh> mr = mesh;
         meshes.push_back(mr);
         MeshLib::IO::XdmfHdfWriter(std::move(meshes), file_path, 0, 0.0,
-                                   variable_output_names, use_compression, 1,
+                                   output_variable_names, use_compression, 1,
                                    1048576);
         return 0;
     }
