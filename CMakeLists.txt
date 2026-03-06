@@ -139,6 +139,7 @@ endif()
 
 # Code coverage
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
+option(OGS_COVERAGE_PYTHON "Enables code coverage measurements in Python code." OFF)
 
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM 3

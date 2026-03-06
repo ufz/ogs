@@ -1,34 +1,76 @@
-build linux arch:
+.common-linux-arch-base: &common-linux-arch-base
   extends:
     - .template-build-linux
     - .test-artifacts
-  tags: [shell, envinf]
   needs: [meta]
   timeout: 3h
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
+
+# Rules for OGS_COVERAGE_PYTHON=OFF
+.common-arch-cpp-rules: &common-arch-cpp-rules
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/'
+    when: never
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
+    when: never
+  - when: on_success
+
+# Rules for OGS_COVERAGE_PYTHON=ON
+.common-arch-python-rules: &common-arch-python-rules
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
+    when: never
+  - when: on_success
+
+.common-linux-arch-before-script: &common-linux-arch-before-script
+  - source /opt/intel/oneapi/setvars.sh
+
+# ============================================================
+# Serial, separate job for python coverage necessary
+# ============================================================
+
+build linux arch:
+  <<: *common-linux-arch-base
+  tags: [shell, envinf]
+  rules: *common-arch-cpp-rules
+  variables:
     CMAKE_PRESET: release-all
-    CMAKE_ARGS: >-
-      -DOGS_USE_MKL=ON
-      -DOGS_USE_NETCDF=ON
-      -DOGS_COVERAGE_PYTHON=ON
+    CMAKE_ARGS: "-DOGS_USE_MKL=ON -DOGS_USE_NETCDF=ON"
+    ADDITIONAL_TARGETS: "feature_matrix"
+  before_script: *common-linux-arch-before-script
+
+build linux arch (py-cov):
+  <<: *common-linux-arch-base
+  tags: [shell, envinf]
+  rules: *common-arch-python-rules
+  variables:
+    CMAKE_PRESET: release-all
+    CMAKE_ARGS: "-DOGS_USE_MKL=ON -DOGS_USE_NETCDF=ON -DOGS_COVERAGE_PYTHON=ON"
     ADDITIONAL_TARGETS: "feature_matrix process_coverage_python"
-  before_script:
-    - source /opt/intel/oneapi/setvars.sh
+    CTEST_ARGS: "-R nb-|pytest"
+  before_script: *common-linux-arch-before-script
+
+# ============================================================
+# PETSc, separate job for python coverage necessary
+# ============================================================
 
 build linux petsc:
-  extends:
-    - .template-build-linux
-    - .test-artifacts
+  <<: *common-linux-arch-base
   tags: [envinf, shell, petsc]
-  needs: [meta]
-  timeout: 3h
+  rules: *common-arch-cpp-rules
   variables:
-    BUILD_CTEST_LARGE_ON_MASTER: "true"
     CMAKE_PRESET: release-petsc
-    CMAKE_ARGS: >-
-      -DOGS_USE_PIP=ON
-      -DOGS_USE_MFRONT=ON
-      -DOGS_COVERAGE_PYTHON=ON
-    CTEST_ARGS: -L default|petsc-mumps
+    CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON"
+    ADDITIONAL_TARGETS: ""
+    CTEST_ARGS: "-L default|petsc-mumps"
+  before_script: *common-linux-arch-before-script
+
+build linux petsc (py-cov):
+  <<: *common-linux-arch-base
+  tags: [envinf, shell, petsc]
+  rules: *common-arch-python-rules
+  variables:
+    CMAKE_PRESET: release-petsc
+    CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON -DOGS_COVERAGE_PYTHON=ON"
     ADDITIONAL_TARGETS: "process_coverage_python"
+    CTEST_ARGS: "-R nb-|pytest"
+  before_script: *common-linux-arch-before-script
