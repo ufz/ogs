@@ -91,7 +91,7 @@ The basic scenario for the two-dimensional unconfined aquifer:
 ### Scenario D
 
 - like scenario A but transient and
-- with a Specific Yield $S_y_ = 0.25$.
+- with a Specific Yield $S_y = 0.25$.
 - Simulation time = 100 days.
 {{< figure src="Dupuit_Scenario_D.jpg" >}}
 
