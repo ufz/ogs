@@ -8,6 +8,12 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/StaggeredSchemeClonedFromHydroMechanics/ConsolidationBenchmark/consolidation_benchmark_THM_staggered.xml
+        EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/HydroMechanics/StaggeredScheme/ConsolidationBenchmark
+        RUNTIME 2
+    )
 
     if (OGS_USE_MFRONT)
         OgsTest(PROJECTFILE ThermoHydroMechanics/MultiMaterial/DP_Ehlers/M/square_1e1_2_matIDs.prj RUNTIME 1)
