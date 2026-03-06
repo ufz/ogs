@@ -12,7 +12,7 @@
 #include "GeoLib/GEOObjects.h"
 #include "GeoLib/IO/XmlIO/Boost/BoostXmlGmlInterface.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Properties.h"
 
@@ -65,8 +65,11 @@ int writeMeshOutput(std::string const& input_file,
     {
         if (no_output_file)
             INFO("No output file found.");
-        MeshLib::IO::VtuInterface vtkIO(&mesh, {}, 0, false);
-        vtkIO.writeToFile(output_file);
+        if (MeshLib::IO::writeMeshToFile(mesh, output_file, {}, false,
+                                         vtkXMLWriter::Ascii) != 0)
+        {
+            return -1;
+        }
         return 0;
     }
 
@@ -82,9 +85,12 @@ int writeMeshOutput(std::string const& input_file,
         if (link_args)
             addObjectsToMesh(*swmm, mesh, FileIO::SwmmObject::LINK, i);
 
-        MeshLib::IO::VtuInterface vtkio(&mesh, {}, 0, false);
         std::string name(basename + std::to_string(i) + extension);
-        vtkio.writeToFile(name);
+        if (MeshLib::IO::writeMeshToFile(mesh, name, {}, false,
+                                         vtkXMLWriter::Ascii) != 0)
+        {
+            return -1;
+        }
     }
     return 0;
 }
