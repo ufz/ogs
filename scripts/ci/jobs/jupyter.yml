@@ -1,5 +1,5 @@
 test linux wheel via notebooks:
-  stage: test
+  stage: check
   tags: [envinf, shell]
   needs: [meta]
   variables:

@@ -1,7 +1,6 @@
 stages:
   - preparation
   - build
-  - test
   - check
   - release
   - package
