@@ -1130,6 +1130,7 @@ std::vector<std::size_t> MeshRevision::collapseNodeIndices(
                 // calc distance
                 if (MathLib::sqrDist(*node, *test_node) < sqr_eps)
                 {
+                    WARN("nodes {} and {} can be collapsed", *node, *test_node);
                     id_map[test_node->getID()] = node->getID();
                 }
             }
