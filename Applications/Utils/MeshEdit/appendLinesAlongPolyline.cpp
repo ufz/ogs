@@ -94,7 +94,9 @@ int main(int argc, char* argv[])
     INFO("Mesh created: {:d} nodes, {:d} elements.",
          new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
 
-    MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(*new_mesh, mesh_out.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

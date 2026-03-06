@@ -126,7 +126,10 @@ int main(int argc, char* argv[])
         }
         std::string const file_name(base_name + "_Layer" + std::to_string(i) +
                                     ext);
-        MeshLib::IO::writeMeshToFile(*mat_group.get(), file_name);
+        if (MeshLib::IO::writeMeshToFile(*mat_group.get(), file_name) != 0)
+        {
+            return EXIT_FAILURE;
+        }
         if (ostream.is_open())
         {
             ostream << file_name << "\n";

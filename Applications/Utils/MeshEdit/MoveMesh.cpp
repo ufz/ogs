@@ -96,7 +96,9 @@ int main(int argc, char* argv[])
         out_fname += "_displaced.vtu";
     }
 
-    MeshLib::IO::writeMeshToFile(*mesh, out_fname);
-
+    if (MeshLib::IO::writeMeshToFile(*mesh, out_fname) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

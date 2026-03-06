@@ -58,7 +58,11 @@ void postVTU(std::string const& int_vtu_filename,
 
     // create a new VTU file
     INFO("create {:s}", out_vtu_filename);
-    MeshLib::IO::writeMeshToFile(post.getOutputMesh(), out_vtu_filename);
+    if (MeshLib::IO::writeMeshToFile(post.getOutputMesh(), out_vtu_filename) !=
+        0)
+    {
+        return;
+    }
 }
 
 void postPVD(std::string const& in_pvd_filename,

@@ -71,8 +71,11 @@ void SaveMeshDialog::accept()
     {
         int const dataMode = dataModeBox->currentIndex();
         bool const compress(compressionCheckBox->isChecked());
-        MeshLib::IO::writeMeshToFile(_mesh, file_name.toStdString(), {},
-                                     compress, dataMode);
+        if (MeshLib::IO::writeMeshToFile(_mesh, file_name.toStdString(), {},
+                                         compress, dataMode) != 0)
+        {
+            return;
+        }
     }
     if (fi.suffix().toLower() == "msh")
     {

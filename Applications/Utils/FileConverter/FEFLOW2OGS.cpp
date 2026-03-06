@@ -86,7 +86,10 @@ int main(int argc, char* argv[])
 
     std::string ogs_mesh_fname(ogs_mesh_arg.getValue());
     INFO("Writing {:s}.", ogs_mesh_fname);
-    MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname);
+    if (MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_fname) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     INFO("\tDone.");
     return EXIT_SUCCESS;
 }

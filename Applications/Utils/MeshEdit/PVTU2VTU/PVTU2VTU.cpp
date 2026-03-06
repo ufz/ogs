@@ -658,7 +658,12 @@ int main(int argc, char* argv[])
 
     BaseLib::RunTime writing_timer;
     writing_timer.start();
-    MeshLib::IO::writeMeshToFile(*merged_mesh.get(), output_arg.getValue());
+    if (MeshLib::IO::writeMeshToFile(*merged_mesh.get(),
+                                     output_arg.getValue()) != 0)
+    {
+        ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
+        return EXIT_FAILURE;
+    }
     INFO("writing mesh took {} s", writing_timer.elapsed());
 
     // Since the Node pointers of 'merged_nodes' and Element pointers of

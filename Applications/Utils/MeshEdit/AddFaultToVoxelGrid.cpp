@@ -95,7 +95,10 @@ int main(int argc, char* argv[])
     }
     if (addFaultToVoxelGrid(mesh.get(), fault.get(), fault_id))
     {
-        MeshLib::IO::writeMeshToFile(*mesh.get(), output_name);
+        if (MeshLib::IO::writeMeshToFile(*mesh.get(), output_name) != 0)
+        {
+            return EXIT_FAILURE;
+        }
         INFO("The fault was successfully added.");
         return EXIT_SUCCESS;
     }

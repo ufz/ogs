@@ -134,7 +134,12 @@ int main(int argc, char* argv[])
     auto merged_mesh = MeshToolsLib::mergeMeshToBulkMesh(
         *bulk_mesh, *mesh_to_be_merged, initial_value_dict);
 
-    MeshLib::IO::writeMeshToFile(*merged_mesh.get(), mesh_out.getValue());
+    if (MeshLib::IO::writeMeshToFile(*merged_mesh.get(), mesh_out.getValue()) !=
+        0)
+    {
+        ERR("Could not write mesh to '{:s}'.", mesh_out.getValue());
+        return EXIT_FAILURE;
+    }
     INFO("It took {} s", timer.elapsed());
 
     // The merged nodes are moved to the new mesh, and the duplicated nodes on

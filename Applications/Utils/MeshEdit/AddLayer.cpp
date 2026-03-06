@@ -107,7 +107,10 @@ int main(int argc, char* argv[])
     }
 
     INFO("Writing mesh '{:s}' ... ", mesh_out_arg.getValue());
-    MeshLib::IO::writeMeshToFile(*result, mesh_out_arg.getValue());
+    if (MeshLib::IO::writeMeshToFile(*result, mesh_out_arg.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     INFO("done.");
 
     return EXIT_SUCCESS;

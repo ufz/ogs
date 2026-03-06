@@ -604,8 +604,10 @@ int main(int argc, char* argv[])
         reorderNonlinearNodes(*mesh);
     }
 
-    MeshLib::IO::writeMeshToFile(*mesh, output_mesh_arg.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(*mesh, output_mesh_arg.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     INFO("VTU file written.");
 
     return EXIT_SUCCESS;

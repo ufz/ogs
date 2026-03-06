@@ -88,7 +88,9 @@ int main(int argc, char* argv[])
 
     MeshLib::scaleMeshPropertyVector(*mesh, property_arg.getValue(), scale);
 
-    MeshLib::IO::writeMeshToFile(*mesh, out_mesh_arg.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(*mesh, out_mesh_arg.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

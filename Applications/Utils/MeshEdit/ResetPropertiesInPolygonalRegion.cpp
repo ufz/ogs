@@ -154,7 +154,9 @@ int main(int argc, char* argv[])
 
     MeshToolsLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
-    MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

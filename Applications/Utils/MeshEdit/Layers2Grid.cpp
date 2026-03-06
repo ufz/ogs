@@ -135,6 +135,9 @@ int main(int argc, char* argv[])
         ERR("The VoxelGrid could not be created.");
         return EXIT_FAILURE;
     }
-    MeshLib::IO::writeMeshToFile(*mesh.get(), output_name);
+    if (MeshLib::IO::writeMeshToFile(*mesh.get(), output_name) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

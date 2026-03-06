@@ -230,6 +230,9 @@ int main(int argc, char* argv[])
 
     MeshLib::Mesh const result("result", new_nodes, new_elems,
                                true /* compute_element_neighbors */, props);
-    MeshLib::IO::writeMeshToFile(result, output_name);
+    if (MeshLib::IO::writeMeshToFile(result, output_name) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

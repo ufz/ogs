@@ -81,8 +81,13 @@ void extract1DBoundaryMeshes(MeshLib::Mesh const& mesh,
             side_mesh, MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
             MeshLib::MeshItemType::Node, 1, std::span{bulk_node_id});
 
-        MeshLib::IO::writeMeshToFile(
-            side_mesh, std::filesystem::path(base + "_" + side.name + ".vtu"));
+        if (MeshLib::IO::writeMeshToFile(
+                side_mesh,
+                std::filesystem::path(base + "_" + side.name + ".vtu")) != 0)
+        {
+            ERR("Could not write boundary mesh '{:s}'.", side.name);
+            continue;
+        }
         INFO("Boundary mesh '{}' written.", side.name);
     }
 }
@@ -140,9 +145,14 @@ void extract2D3DBoundaryMeshes(MeshLib::Mesh const& mesh,
 
         if (side_mesh && side_mesh->getNumberOfElements() > 0)
         {
-            MeshLib::IO::writeMeshToFile(
-                *side_mesh,
-                std::filesystem::path(base + "_" + side.name + ".vtu"));
+            if (MeshLib::IO::writeMeshToFile(
+                    *side_mesh,
+                    std::filesystem::path(base + "_" + side.name + ".vtu")) !=
+                0)
+            {
+                ERR("Could not write boundary mesh '{:s}'.", side.name);
+                continue;
+            }
             INFO("Boundary mesh '{}' written: {:d} nodes, {:d} elements.",
                  side.name, side_mesh->getNumberOfNodes(),
                  side_mesh->getNumberOfElements());
@@ -412,7 +422,10 @@ int main(int argc, char* argv[])
          mesh->getNumberOfElements());
 
     auto const out_path = std::filesystem::path(mesh_out.getValue());
-    MeshLib::IO::writeMeshToFile(*mesh, out_path);
+    if (MeshLib::IO::writeMeshToFile(*mesh, out_path) != 0)
+    {
+        return EXIT_FAILURE;
+    }
 
     auto const base = (out_path.parent_path() / out_path.stem()).string();
 

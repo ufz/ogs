@@ -86,7 +86,10 @@ int main(int argc, char* argv[])
 
     std::string const new_mshname(name + "_new.vtu");
     INFO("Writing mesh to file '{:s}'.", new_mshname);
-    MeshLib::IO::writeMeshToFile(*mesh, new_mshname);
+    if (MeshLib::IO::writeMeshToFile(*mesh, new_mshname) != 0)
+    {
+        return EXIT_FAILURE;
+    }
 
     INFO("New files '{:s}' and '{:s}' written.", new_mshname, new_matname);
 

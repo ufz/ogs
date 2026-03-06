@@ -91,8 +91,10 @@ int main(int argc, char* argv[])
     auto const data_mode =
         use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
     auto const use_compression = true;
-    MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname, {}, use_compression,
-                                 data_mode);
-
+    if (MeshLib::IO::writeMeshToFile(*surface_mesh, out_fname, {},
+                                     use_compression, data_mode) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

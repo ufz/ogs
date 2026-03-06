@@ -99,12 +99,15 @@ int main(int argc, char* argv[])
             continue;
         }
         INFO("Writing mesh \"{:s}\"", mesh->getName());
-        // ToDo TF: adjust writeMeshToFile to take data_mode and compressed flag
-        [[maybe_unused]] int data_mode = (write_binary) ? 2 : 0;
-        [[maybe_unused]] bool compressed = (write_binary);
-        MeshLib::IO::writeMeshToFile(*mesh.get(),
-                                     dir + delim + mesh->getName() + ".vtu");
-        // , {}, data_mode, compressed);
+        int const data_mode = write_binary ? 2 : 0;
+        bool const compressed = write_binary;
+        if (MeshLib::IO::writeMeshToFile(*mesh.get(),
+                                         dir + delim + mesh->getName() + ".vtu",
+                                         {}, compressed, data_mode) != 0)
+        {
+            ERR("Could not write mesh '{:s}'.", mesh->getName());
+            return EXIT_FAILURE;
+        }
     }
     return 0;
 }

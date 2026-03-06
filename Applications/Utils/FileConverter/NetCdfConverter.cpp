@@ -587,7 +587,11 @@ static bool convert(NcFile const& dataset, NcVar const& var,
             std::string const output_file_name(
                 BaseLib::dropFileExtension(output_name) +
                 getIterationString(i, time_bounds.second) + ".vtu");
-            MeshLib::IO::writeMeshToFile(*mesh.get(), output_file_name);
+            if (MeshLib::IO::writeMeshToFile(*mesh.get(), output_file_name) !=
+                0)
+            {
+                return false;
+            }
         }
         else if (output == OutputType::SINGLEMESH)
         {
@@ -619,7 +623,11 @@ static bool convert(NcFile const& dataset, NcVar const& var,
                     (BaseLib::getFileExtension(output_name) == ".vtu")
                         ? output_name
                         : output_name + ".vtu";
-                MeshLib::IO::writeMeshToFile(*mesh.get(), output_file_name);
+                if (MeshLib::IO::writeMeshToFile(*mesh.get(),
+                                                 output_file_name) != 0)
+                {
+                    return false;
+                }
             }
         }
         else  // OutputType::IMAGES

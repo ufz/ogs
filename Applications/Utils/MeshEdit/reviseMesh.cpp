@@ -82,7 +82,10 @@ int main(int argc, char* argv[])
     {
         INFO("Revised mesh: {:d} nodes, {:d} elements.",
              new_mesh->getNumberOfNodes(), new_mesh->getNumberOfElements());
-        MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
+        if (MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue()) != 0)
+        {
+            return EXIT_FAILURE;
+        }
     }
 
     return EXIT_SUCCESS;

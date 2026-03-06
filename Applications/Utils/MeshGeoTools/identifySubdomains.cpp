@@ -154,9 +154,12 @@ int main(int argc, char* argv[])
     writing_time.start();
     for (auto const& mesh_ptr : subdomain_meshes)
     {
-        MeshLib::IO::writeMeshToFile(
-            *mesh_ptr,
-            output_prefix_arg.getValue() + mesh_ptr->getName() + ".vtu");
+        if (MeshLib::IO::writeMeshToFile(*mesh_ptr,
+                                         output_prefix_arg.getValue() +
+                                             mesh_ptr->getName() + ".vtu") != 0)
+        {
+            return EXIT_FAILURE;
+        }
     }
     INFO("writing time: {:g} s", writing_time.elapsed());
 
