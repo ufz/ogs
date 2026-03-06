@@ -4,20 +4,7 @@ check web links:
   tags: [envinf, shell]
   extends:
     - .rules-master-manual
-  needs:
-    - job: meta
-    - job: "build linux arch"
-      parallel:
-        matrix:
-          - OGS_COVERAGE_PYTHON: "OFF"
-            ADDITIONAL_TARGETS: "feature_matrix"
-            CTEST_ARGS: ""
-    - job: "build linux petsc"
-      parallel:
-        matrix:
-          - OGS_COVERAGE_PYTHON: "OFF"
-            ADDITIONAL_TARGETS: ""
-            CTEST_ARGS: -L default|petsc-mumps
+  needs: [meta, "build linux arch", "build linux petsc"]
   image: $WEB_IMAGE
   script:
     # Copy notebook pages
