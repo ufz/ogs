@@ -259,6 +259,10 @@ int main(int argc, char* argv[])
     {
         MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh,
                                                                   min * 1e-6);
+        INFO(
+            "Remark: Nodes n0 and n1 are considered to be 'collapsible' if the "
+            "dist(n0, n1) is less than minimal edge length of elements in the "
+            "mesh times 1e-6");
     }
 
     // *** write mesh in new format

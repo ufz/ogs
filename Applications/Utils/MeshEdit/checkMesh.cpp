@@ -97,6 +97,10 @@ int main(int argc, char* argv[])
         // MeshValidation outputs error messages
         // Remark: MeshValidation can modify the original mesh
         MeshToolsLib::MeshInformation::writeMeshValidationResults(*mesh, eps);
+        INFO(
+            "Remark: Nodes n0 and n1 are considered to be 'collapsible' if the "
+            "dist(n0, n1) is less than minimal edge length of elements in the "
+            "mesh times 1e-6");
     }
     return EXIT_SUCCESS;
 }
