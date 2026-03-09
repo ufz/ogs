@@ -1098,6 +1098,7 @@ void ThermoHydroMechanicsLocalAssembler<
 
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
     KV sigma_avg = KV::Zero();
+    KV sigma_ice_avg = KV::Zero();
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -1107,12 +1108,14 @@ void ThermoHydroMechanicsLocalAssembler<
         fluid_density_avg += _ip_data_output[ip].fluid_density;
         viscosity_avg += _ip_data_output[ip].viscosity;
         sigma_avg += ip_data.sigma_eff;
+        sigma_ice_avg += ip_data.sigma_eff_ice;
     }
 
     phi_fr_avg /= n_integration_points;
     fluid_density_avg /= n_integration_points;
     viscosity_avg /= n_integration_points;
     sigma_avg /= n_integration_points;
+    sigma_ice_avg /= n_integration_points;
 
     (*_process_data.element_phi_fr)[_element.getID()] = phi_fr_avg;
     (*_process_data.element_fluid_density)[_element.getID()] =
@@ -1122,6 +1125,11 @@ void ThermoHydroMechanicsLocalAssembler<
     Eigen::Map<KV>(&(*_process_data.element_stresses)[_element.getID() *
                                                       KV::RowsAtCompileTime]) =
         MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_avg);
+
+    Eigen::Map<KV>(&(
+        *_process_data
+             .element_ice_stresses)[_element.getID() * KV::RowsAtCompileTime]) =
+        MathLib::KelvinVector::kelvinVectorToSymmetricTensor(sigma_ice_avg);
 
     NumLib::interpolateToHigherOrderNodes<
         ShapeFunctionPressure, typename ShapeFunctionDisplacement::MeshElement,

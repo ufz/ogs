@@ -55,6 +55,17 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
 
     _integration_point_writer.emplace_back(
         std::make_unique<MeshLib::IntegrationPointWriter>(
+            "sigma_ice_ip",
+            static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
+            integration_order, local_assemblers_,
+            &LocalAssemblerInterface<DisplacementDim>::getSigmaIce));
+
+    _integration_point_writer.emplace_back(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
+            "ice_volume_fraction_ip", 1, integration_order, local_assemblers_,
+            &LocalAssemblerInterface<DisplacementDim>::getIceVolumeFraction));
+    _integration_point_writer.emplace_back(
+        std::make_unique<MeshLib::IntegrationPointWriter>(
             "epsilon_m_ip",
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, local_assemblers_,
@@ -262,6 +273,13 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
         MeshLib::MeshItemType::Cell,
         MathLib::KelvinVector::KelvinVectorType<
             DisplacementDim>::RowsAtCompileTime);
+
+    _process_data.element_ice_stresses =
+        MeshLib::getOrCreateMeshProperty<double>(
+            const_cast<MeshLib::Mesh&>(mesh), "sigma_ice_avg",
+            MeshLib::MeshItemType::Cell,
+            MathLib::KelvinVector::KelvinVectorType<
+                DisplacementDim>::RowsAtCompileTime);
 
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(

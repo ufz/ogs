@@ -27,6 +27,8 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
 
+    virtual std::vector<double> getSigmaIce() const = 0;
+
     virtual std::vector<double> const& getIntPtSigmaIce(
         const double t,
         std::vector<GlobalVector*> const& x,
@@ -56,6 +58,8 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const = 0;
+
+    virtual std::vector<double> getIceVolumeFraction() const = 0;
 
     virtual std::vector<double> const& getIntPtIceVolume(
         const double t,

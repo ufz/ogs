@@ -54,6 +54,7 @@ struct ThermoHydroMechanicsProcessData
     MeshLib::PropertyVector<double>* element_fluid_density = nullptr;
     MeshLib::PropertyVector<double>* element_viscosity = nullptr;
     MeshLib::PropertyVector<double>* element_stresses = nullptr;
+    MeshLib::PropertyVector<double>* element_ice_stresses = nullptr;
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     MeshLib::PropertyVector<double>* temperature_interpolated = nullptr;
 
