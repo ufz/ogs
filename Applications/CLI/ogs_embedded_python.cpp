@@ -5,8 +5,13 @@
 
 #include <pybind11/embed.h>
 
+#include <array>
+#include <cstdio>
 #include <filesystem>
+#include <memory>
+#include <optional>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "BaseLib/Error.h"
@@ -38,7 +43,79 @@ pybind11::scoped_interpreter setupEmbeddedPython()
 
 namespace
 {
-#ifndef _WIN32
+#ifdef _WIN32
+/// Custom deleter for FILE handles from popen
+struct PipeCloser
+{
+    void operator()(FILE* f) const { _pclose(f); }
+};
+
+/// Executes a command and captures its stdout output using popen
+std::optional<std::string> executeCommand(std::string_view command)
+{
+    std::array<char, 256> buffer;
+    std::string result;
+    std::unique_ptr<FILE, PipeCloser> pipe(_popen(command.data(), "r"));
+
+    if (!pipe)
+    {
+        DBUG("Failed to execute command: {}", command);
+        return std::nullopt;
+    }
+
+    while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+    {
+        result += buffer.data();
+    }
+
+    return result;
+}
+
+/// Gets Python version by executing the venv's python executable
+std::optional<std::pair<int, int>> getPythonVersionFromVenv(
+    std::filesystem::path const& venv_path)
+{
+    namespace fs = std::filesystem;
+
+    auto const python_exe = venv_path / "Scripts" / "python.exe";
+
+    if (!fs::exists(python_exe))
+    {
+        DBUG("Python executable not found at: {}", python_exe.string());
+        return std::nullopt;
+    }
+
+    std::string const command = "\"" + python_exe.string() + "\" --version";
+    auto const output = executeCommand(command);
+
+    if (!output.has_value())
+    {
+        DBUG("Failed to get Python version from: {}", python_exe.string());
+        return std::nullopt;
+    }
+
+    // Parse output like "Python 3.11.5"
+    std::string_view const out_view(output.value());
+    constexpr std::string_view prefix = "Python ";
+    if (!out_view.starts_with(prefix))
+    {
+        DBUG("Unexpected Python version output: {}", output.value());
+        return std::nullopt;
+    }
+
+    std::string_view const version_part = out_view.substr(prefix.size());
+    int major = 0;
+    int minor = 0;
+    if (std::sscanf(version_part.data(), "%d.%d", &major, &minor) != 2)
+    {
+        DBUG("Failed to parse Python version from: {}", output.value());
+        return std::nullopt;
+    }
+
+    return std::pair{major, minor};
+}
+#endif  // _WIN32
+
 std::vector<std::filesystem::path> findAlternativeSitePackagesPaths(
     std::filesystem::path const& venv_path)
 {
@@ -75,7 +152,6 @@ std::vector<std::filesystem::path> findAlternativeSitePackagesPaths(
 
     return alternatives;
 }
-#endif  // _WIN32
 
 /// Finds site-packages path in the virtual environment
 std::filesystem::path findSitePackagesPath(
@@ -87,6 +163,24 @@ std::filesystem::path findSitePackagesPath(
     // Construct path to site-packages directory, on *nix Python version is
     // embedded in the path. This is later used to check for compatibility.
 #ifdef _WIN32
+    auto const venv_version = getPythonVersionFromVenv(venv_path);
+    if (!venv_version.has_value())
+    {
+        OGS_FATAL(
+            "Failed to determine Python version from virtual environment at "
+            "'{}'.",
+            venv_path.string());
+    }
+
+    if (venv_version->first != emb_major || venv_version->second != emb_minor)
+    {
+        OGS_FATAL(
+            "Python version mismatch: embedded interpreter is {}.{}, but "
+            "virtual environment at '{}' uses {}.{}.",
+            emb_major, emb_minor, venv_path.string(), venv_version->first,
+            venv_version->second);
+    }
+
     // On Windows: venv/Lib/site-packages
     fs::path const site_packages = venv_path / "Lib" / "site-packages";
 #else
@@ -157,8 +251,7 @@ void setupEmbeddedPythonVenvPaths()
     DBUG("Virtual environment detected at: {}", venv_path.string());
 
     // Find and validate site-packages path for the embedded interpreter
-    // version. We do not execute the venv python binary because it might not
-    // be runnable in all deployment setups.
+    // version.
     fs::path const site_packages =
         findSitePackagesPath(venv_path, emb_major, emb_minor);
     INFO("Using virtual environment site-packages: {}", site_packages.string());
