@@ -19,7 +19,7 @@ repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
 [dependency-groups]
-dev = ["pytest", "numpy"]
+dev = ["pytest", "numpy", "lxml", "typing_extensions"]
 dev-all = [
   { include-group = "dev" },
   # Use no-X11 version on Linux:
