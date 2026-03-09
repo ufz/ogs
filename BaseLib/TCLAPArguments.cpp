@@ -7,6 +7,14 @@
 
 namespace BaseLib
 {
+std::string defaultLogLevel()
+{
+#ifdef NDEBUG
+    return "info";
+#else
+    return "all";
+#endif
+}
 
 TCLAP::ValueArg<std::string> makeLogLevelArg()
 {
@@ -17,12 +25,7 @@ TCLAP::ValueArg<std::string> makeLogLevelArg()
 
     return TCLAP::ValueArg<std::string>(
         "l", "log-level", "the verbosity of logging messages", false,
-#ifdef NDEBUG
-        "info",
-#else
-        "all",
-#endif
-        allowed_log_levels_vals);
+        defaultLogLevel(), allowed_log_levels_vals);
 }
 
 }  // namespace BaseLib

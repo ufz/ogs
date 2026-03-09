@@ -9,6 +9,7 @@
 
 namespace BaseLib
 {
+std::string defaultLogLevel();
 
 TCLAP::ValueArg<std::string> makeLogLevelArg();
 
