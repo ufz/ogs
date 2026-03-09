@@ -471,7 +471,7 @@ Function::Function(
         filter_not_variables.insert(curve.first);
     }
 
-    variables_ =
+    required_variables_enum_ =
         variables |
         std::views::filter([](const std::string& s)
                            { return !filter_not_variables.contains(s); }) |
@@ -538,7 +538,8 @@ PropertyDataType Function::value(VariableArray const& variable_array,
                     "threads {:d}.",
                     name_, thread_id, impl_ptr->value_expressions.size());
             }
-            return evaluateExpressions(variables_, variable_array, pos, t,
+            return evaluateExpressions(required_variables_enum_, variable_array,
+                                       pos, t,
                                        impl_ptr->value_expressions[thread_id],
                                        impl_ptr->variable_arrays[thread_id],
                                        impl_ptr->spatial_position_is_required);
@@ -582,8 +583,8 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                     variable_enum_to_string[static_cast<int>(variable)], name_);
             }
 
-            return evaluateExpressions(variables_, variable_array, pos, t,
-                                       it->second,
+            return evaluateExpressions(required_variables_enum_, variable_array,
+                                       pos, t, it->second,
                                        impl_ptr->variable_arrays[thread_id],
                                        impl_ptr->spatial_position_is_required);
         },

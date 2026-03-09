@@ -58,6 +58,6 @@ private:
         VariableArray const& variable_array) const;
 
     /// Variables used in the exprtk expressions.
-    std::vector<Variable> variables_;
+    std::vector<Variable> required_variables_enum_;
 };
 }  // namespace MaterialPropertyLib
