@@ -33,8 +33,11 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     {
         if (output_variable_names.empty())
         {
-            output_variable_names.insert_range(
-                mesh.getProperties().getPropertyVectorNames());
+            for (auto const& name :
+                 mesh.getProperties().getPropertyVectorNames())
+            {
+                output_variable_names.insert(name);
+            }
         }
         MeshLib::IO::VtuInterface writer(&mesh, output_variable_names,
                                          data_mode, use_compression);
