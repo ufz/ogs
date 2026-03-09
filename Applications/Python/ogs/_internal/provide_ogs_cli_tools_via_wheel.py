@@ -18,29 +18,19 @@ def ogs():
 
 
 def ogs_with_args(argv):
-    from ogs.OGSSimulator import (  # noqa: PLC0415
-        OGSSimulation,
-        check_command_line_arguments,
-    )
-
-    return_code = check_command_line_arguments(argv)
-    # map mangled TCLAP status to usual exit status
-    if return_code == 3:  # EXIT_ARGPARSE_FAILURE
-        return 1  # EXIT_FAILURE
-    if return_code == 2:  # EXIT_ARGPARSE_EXIT_OK
-        return 0  # EXIT_SUCCESS
-
-    if return_code != 0:
-        return return_code
+    from ogs.OGSSimulator import OGSSimulation  # noqa: PLC0415
 
     try:
         sim = OGSSimulation(argv)
     except RuntimeError:
         print("Could not construct OGSSimulation object")
-        return_code = 1  # EXIT_FAILURE
-    else:
-        return_code = sim.execute_simulation()
-        sim.close()
+        return 1  # EXIT_FAILURE
+
+    if not sim.initialized:
+        return 0  # EXIT_SUCCESS, --help/--version
+
+    return_code = sim.execute_simulation()
+    sim.close()
     return return_code
 
 
