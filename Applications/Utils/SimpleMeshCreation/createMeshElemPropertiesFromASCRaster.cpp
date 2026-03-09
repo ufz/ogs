@@ -129,7 +129,11 @@ int main(int argc, char* argv[])
 
     if (!out_mesh_arg.getValue().empty())
     {
-        MeshLib::IO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue());
+        if (MeshLib::IO::writeMeshToFile(*dest_mesh, out_mesh_arg.getValue()) !=
+            0)
+        {
+            return EXIT_FAILURE;
+        }
     }
 
     return EXIT_SUCCESS;

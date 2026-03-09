@@ -108,7 +108,11 @@ int main(int argc, char* argv[])
                 m_ptr->getName());
             continue;
         }
-        MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu");
+        if (MeshLib::IO::writeMeshToFile(*m_ptr, m_ptr->getName() + ".vtu") !=
+            0)
+        {
+            return EXIT_FAILURE;
+        }
     }
 
     return EXIT_SUCCESS;

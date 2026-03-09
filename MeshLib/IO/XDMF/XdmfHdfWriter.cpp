@@ -45,20 +45,20 @@ constexpr std::array constant_output_names{
 
 template <typename Data>
 std::function<bool(Data)> isVariableAttribute(
-    std::set<std::string> const& variable_output_names)
+    std::set<std::string> const& output_variable_names)
 {
-    if (variable_output_names.empty())
+    if (output_variable_names.empty())
     {
         return [](Data const& data) -> bool
         { return !ranges::contains(constant_output_names, data.name); };
     }
-    return [&variable_output_names](Data const& data) -> bool
+    return [&output_variable_names](Data const& data) -> bool
     {
         if (ranges::contains(constant_output_names, data.name))
         {
             return false;
         }
-        return variable_output_names.contains(data.name);
+        return output_variable_names.contains(data.name);
     };
 }
 
@@ -66,7 +66,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
     std::filesystem::path const& filepath, unsigned long long const time_step,
     double const initial_time,
-    std::set<std::string> const& variable_output_names,
+    std::set<std::string> const& output_variable_names,
     bool const use_compression, unsigned int const n_files,
     unsigned int const chunk_size_bytes)
 {
@@ -97,7 +97,8 @@ XdmfHdfWriter::XdmfHdfWriter(
 
     // create metadata for transformed data and original ogs mesh data
     auto const transform_to_meta_data =
-        [&transform_ogs_mesh_data_to_xdmf_conforming_data, &n_files,
+        [&output_variable_names,
+         &transform_ogs_mesh_data_to_xdmf_conforming_data, &n_files,
          &chunk_size_bytes](auto const& mesh)
     {
         // important: transformed data must survive and be unique, raw pointer
@@ -110,14 +111,14 @@ XdmfHdfWriter::XdmfHdfWriter(
         auto const topology = transformTopology(
             xdmf_conforming_data->flattened_topology_values,
             xdmf_conforming_data->parent_data_type, n_files, chunk_size_bytes);
-        auto const attributes =
-            transformAttributes(mesh, n_files, chunk_size_bytes);
+        auto const attributes = transformAttributes(mesh, output_variable_names,
+                                                    n_files, chunk_size_bytes);
         return XdmfHdfMesh{std::move(geometry), std::move(topology),
                            std::move(attributes), mesh.get().getName(),
                            std::move(xdmf_conforming_data)};
     };
     auto isVariableHdfAttribute =
-        isVariableAttribute<HdfData>(variable_output_names);
+        isVariableAttribute<HdfData>(output_variable_names);
 
     // extract meta data relevant for HDFWriter
     auto const transform_metamesh_to_hdf =
@@ -176,7 +177,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     }
 
     auto isVariableXdmfAttribute =
-        isVariableAttribute<XdmfData>(variable_output_names);
+        isVariableAttribute<XdmfData>(output_variable_names);
     // xdmf section
     // extract meta data relevant for XDMFWriter
     auto const transform_metamesh_to_xdmf =

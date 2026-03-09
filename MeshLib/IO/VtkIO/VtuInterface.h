@@ -8,6 +8,7 @@
 #include <vtkXMLWriter.h>
 
 #include <filesystem>
+#include <set>
 #include <string>
 
 namespace MeshLib {
@@ -30,9 +31,11 @@ class VtuInterface final
 {
 public:
     /// Provide the mesh to write and set if compression should be used.
-    explicit VtuInterface(const MeshLib::Mesh* mesh,
-                          int dataMode = vtkXMLWriter::Appended,
-                          bool compress = false);
+    explicit VtuInterface(
+        const MeshLib::Mesh* mesh,
+        std::set<std::string> const& output_variable_names = {},
+        int dataMode = vtkXMLWriter::Appended,
+        bool compress = false);
 
     /// Read an unstructured grid from a VTU file.
     /// \return The converted mesh or a nullptr if reading failed
@@ -65,14 +68,12 @@ public:
 
 private:
     const MeshLib::Mesh* _mesh;
+    std::set<std::string> _output_variable_names;
     int _data_mode;
     bool _use_compressor;
 };
 
-int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
-             int const data_mode = vtkXMLWriter::Appended);
-
-} // end namespace IO
-} // end namespace MeshLib
+}  // end namespace IO
+}  // end namespace MeshLib
 
 #include "VtuInterface-impl.h"

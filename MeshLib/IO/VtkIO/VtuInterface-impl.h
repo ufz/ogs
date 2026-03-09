@@ -38,26 +38,24 @@ bool VtuInterface::writeVTU(std::string const& file_name,
 
 #ifdef USE_PETSC
     if (_mesh->getProperties().existsPropertyVector<unsigned char>(
-            "vtkGhostType", MeshLib::MeshItemType::Cell, 1))
+            vtkGhostTypeString, MeshLib::MeshItemType::Cell, 1))
     {
-        auto* ghost_cell_property =
-            _mesh->getProperties().getPropertyVector<unsigned char>(
-                "vtkGhostType", MeshLib::MeshItemType::Cell, 1);
-        if (ghost_cell_property)
+        if (_output_variable_names.find(vtkGhostTypeString) ==
+            _output_variable_names.cend())
         {
-            const_cast<MeshLib::PropertyVector<unsigned char>*>(
-                ghost_cell_property)
-                ->is_for_output = true;
+            _output_variable_names.insert(vtkGhostTypeString);
         }
     }
     else
     {
-        DBUG("No vtkGhostType data in mesh '{}'.", _mesh->getName());
+        DBUG(
+            "No '{}' data in mesh '{}'.", vtkGhostTypeString, _mesh->getName());
     }
 #endif
 
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(_mesh);
+    vtkSource->setOutputVariableNames(_output_variable_names);
 
     vtkSmartPointer<UnstructuredGridWriter> vtuWriter =
         vtkSmartPointer<UnstructuredGridWriter>::New();

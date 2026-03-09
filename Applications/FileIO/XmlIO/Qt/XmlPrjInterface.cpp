@@ -349,7 +349,11 @@ bool XmlPrjInterface::write()
     for (auto const& mesh : mesh_vector)
     {
         // write mesh file
-        MeshLib::IO::writeMeshToFile(*mesh, path + mesh->getName() + ".vtu");
+        if (MeshLib::IO::writeMeshToFile(*mesh,
+                                         path + mesh->getName() + ".vtu") != 0)
+        {
+            return false;
+        }
 
         // write entry in project file
         QDomElement mesh_tag = doc.createElement("mesh");

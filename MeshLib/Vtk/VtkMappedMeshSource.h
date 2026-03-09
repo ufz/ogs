@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <string>
-
 #include <vtkAOSDataArrayTemplate.h>
 #include <vtkCellData.h>
 #include <vtkFieldData.h>
@@ -13,10 +11,11 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkUnstructuredGridAlgorithm.h>
 
+#include <set>
+#include <string>
+
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
-
-
 
 namespace MeshLib {
 
@@ -48,6 +47,8 @@ public:
         this->Modified();
     }
 
+    void setOutputVariableNames(std::set<std::string> const& output_variables);
+
     /// Returns the mesh.
     const MeshLib::Mesh* GetMesh() const { return _mesh; }
 
@@ -70,6 +71,7 @@ private:
     void addProperty(MeshLib::PropertyVector<T> const& property) const;
 
     const MeshLib::Mesh* _mesh{};
+    std::set<std::string> _output_variable_names;
 
     int NumberOfDimensions{0};
     int NumberOfNodes{0};

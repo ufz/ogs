@@ -151,6 +151,10 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     // -- Test VtkMappedMeshSource, i.e. OGS mesh to VTK mesh
     vtkNew<MeshLib::VtkMappedMeshSource> vtkSource;
     vtkSource->SetMesh(mesh);
+    vtkSource->setOutputVariableNames(
+        {"CellDoubleProperty", "CellIntProperty", "CellUnsignedProperty",
+         "FieldDoubleProperty", "FieldIntProperty", "FieldUnsignedProperty",
+         "PointDoubleProperty", "PointIntProperty", "PointUnsignedProperty"});
     vtkSource->Update();
     vtkUnstructuredGrid* output = vtkSource->GetOutput();
 
@@ -246,7 +250,14 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
             {
                 continue;
             }
-            MeshLib::IO::VtuInterface vtuInterface(mesh, dataMode, compressed);
+            std::set<std::string> output_variable_names{
+                {"CellDoubleProperty", "CellIntProperty",
+                 "CellUnsignedProperty", "FieldDoubleProperty",
+                 "FieldIntProperty", "FieldUnsignedProperty", "MaterialIDs",
+                 "PointDoubleProperty", "PointIntProperty",
+                 "PointUnsignedProperty"}};
+            MeshLib::IO::VtuInterface vtuInterface(mesh, output_variable_names,
+                                                   dataMode, compressed);
             ASSERT_TRUE(vtuInterface.writeToFile(test_data_file));
 
             // -- Read back VTK mesh

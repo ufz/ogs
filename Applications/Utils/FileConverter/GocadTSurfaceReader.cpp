@@ -8,7 +8,7 @@
 #include "BaseLib/MPI.h"
 #include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
 std::string getDelim(std::string const& str)
@@ -99,10 +99,15 @@ int main(int argc, char* argv[])
             continue;
         }
         INFO("Writing mesh \"{:s}\"", mesh->getName());
-        int data_mode = (write_binary) ? 2 : 0;
-        bool compressed = (write_binary);
-        MeshLib::IO::VtuInterface vtu(mesh.get(), data_mode, compressed);
-        vtu.writeToFile(dir + delim + mesh->getName() + ".vtu");
+        int const data_mode = write_binary ? 2 : 0;
+        bool const compressed = write_binary;
+        if (MeshLib::IO::writeMeshToFile(*mesh.get(),
+                                         dir + delim + mesh->getName() + ".vtu",
+                                         {}, compressed, data_mode) != 0)
+        {
+            ERR("Could not write mesh '{:s}'.", mesh->getName());
+            return EXIT_FAILURE;
+        }
     }
     return 0;
 }

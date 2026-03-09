@@ -73,7 +73,10 @@ int main(int argc, char* argv[])
                                        MeshLib::MeshItemType::Cell, 1,
                                        {element_quality_vector});
     INFO("Writing mesh '{:s}' ... ", mesh_out_arg.getValue());
-    MeshLib::IO::writeMeshToFile(*mesh, mesh_out_arg.getValue());
+    if (MeshLib::IO::writeMeshToFile(*mesh, mesh_out_arg.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     INFO("done.");
     return EXIT_SUCCESS;
 }

@@ -26,7 +26,10 @@ void generateFaceSets(GocadSGridReader const& reader, std::string const& path)
 
         std::string const mesh_out_fname(path + face_set->getName() + ".vtu");
         INFO("Writing face set mesh to '{:s}'.", mesh_out_fname);
-        MeshLib::IO::writeMeshToFile(*face_set, mesh_out_fname);
+        if (MeshLib::IO::writeMeshToFile(*face_set, mesh_out_fname) != 0)
+        {
+            continue;
+        }
     }
 }
 

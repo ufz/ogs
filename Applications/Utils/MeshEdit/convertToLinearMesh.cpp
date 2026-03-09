@@ -59,7 +59,9 @@ int main(int argc, char* argv[])
         MeshToolsLib::convertToLinearMesh(*mesh, mesh->getName() + "_linear"));
 
     INFO("Save the new mesh into a file");
-    MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(*new_mesh, output_arg.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

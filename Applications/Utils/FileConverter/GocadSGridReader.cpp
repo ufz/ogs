@@ -75,6 +75,9 @@ int main(int argc, char* argv[])
     MeshToolsLib::MeshInformation::writePropertyVectorInformation(*mesh);
 
     INFO("Writing mesh to '{:s}'.", mesh_output_arg.getValue());
-    MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue());
+    if (MeshLib::IO::writeMeshToFile(*mesh, mesh_output_arg.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

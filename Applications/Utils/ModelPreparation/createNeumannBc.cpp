@@ -173,7 +173,11 @@ int main(int argc, char* argv[])
         (*pv)[k] = direct_values[k].second;
     }
 
-    MeshLib::IO::writeMeshToFile(*surface_mesh, result_file.getValue());
+    if (MeshLib::IO::writeMeshToFile(*surface_mesh, result_file.getValue()) !=
+        0)
+    {
+        return EXIT_FAILURE;
+    }
 
     std::ofstream result_out(result_file.getValue() + ".txt");
     result_out.precision(std::numeric_limits<double>::max_digits10);

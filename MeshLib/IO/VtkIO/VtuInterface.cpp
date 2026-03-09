@@ -27,9 +27,14 @@ namespace MeshLib
 {
 namespace IO
 {
-VtuInterface::VtuInterface(MeshLib::Mesh const* const mesh, int const dataMode,
+VtuInterface::VtuInterface(MeshLib::Mesh const* const mesh,
+                           std::set<std::string> const& output_variable_names,
+                           int const dataMode,
                            bool const compress)
-    : _mesh(mesh), _data_mode(dataMode), _use_compressor(compress)
+    : _mesh(mesh),
+      _output_variable_names(output_variable_names),
+      _data_mode(dataMode),
+      _use_compressor(compress)
 {
     if (_data_mode == vtkXMLWriter::Ascii && compress)
     {
@@ -157,19 +162,6 @@ bool VtuInterface::writeToFile(std::filesystem::path const& file_path)
                                                    mpi.size, mpi.rank);
 #endif
     return writeVTU<vtkXMLUnstructuredGridWriter>(file_path.string());
-}
-
-int writeVtu(MeshLib::Mesh const& mesh, std::string const& file_name,
-             int const data_mode)
-{
-    MeshLib::IO::VtuInterface writer(&mesh, data_mode);
-    auto const result = writer.writeToFile(file_name);
-    if (!result)
-    {
-        ERR("writeMeshToFile(): Could not write mesh to '{:s}'.", file_name);
-        return -1;
-    }
-    return 0;
 }
 
 }  // end namespace IO

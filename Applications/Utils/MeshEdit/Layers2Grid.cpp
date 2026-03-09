@@ -16,8 +16,8 @@
 #include "InfoLib/GitInfo.h"
 #include "MathLib/Point3d.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshToolsLib/MeshGenerators/VoxelGridFromLayeredMeshes.h"
 
 int main(int argc, char* argv[])
@@ -135,7 +135,9 @@ int main(int argc, char* argv[])
         ERR("The VoxelGrid could not be created.");
         return EXIT_FAILURE;
     }
-    MeshLib::IO::VtuInterface vtu(mesh.get());
-    vtu.writeToFile(output_name);
+    if (MeshLib::IO::writeMeshToFile(*mesh.get(), output_name) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

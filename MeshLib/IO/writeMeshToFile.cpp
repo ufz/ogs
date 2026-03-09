@@ -18,7 +18,9 @@ namespace MeshLib::IO
 int writeMeshToFile(const MeshLib::Mesh& mesh,
                     std::filesystem::path const& file_path,
                     [[maybe_unused]] std::set<std::string>
-                        variable_output_names)
+                        output_variable_names,
+                    bool const use_compression,
+                    int const data_mode)
 {
     if (file_path.extension().string() == ".msh")
     {
@@ -29,7 +31,13 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
     }
     if (file_path.extension().string() == ".vtu")
     {
-        MeshLib::IO::VtuInterface writer(&mesh);
+        if (output_variable_names.empty())
+        {
+            output_variable_names.insert_range(
+                mesh.getProperties().getPropertyVectorNames());
+        }
+        MeshLib::IO::VtuInterface writer(&mesh, output_variable_names,
+                                         data_mode, use_compression);
         auto const result = writer.writeToFile(file_path);
         if (!result)
         {
@@ -45,12 +53,13 @@ int writeMeshToFile(const MeshLib::Mesh& mesh,
         const std::reference_wrapper<const MeshLib::Mesh> mr = mesh;
         meshes.push_back(mr);
         MeshLib::IO::XdmfHdfWriter(std::move(meshes), file_path, 0, 0.0,
-                                   variable_output_names, true, 1, 1048576);
+                                   output_variable_names, use_compression, 1,
+                                   1048576);
         return 0;
     }
     ERR("writeMeshToFile(): Unknown file extension '{:s}'. Can not write file "
         "'{:s}'.",
         file_path.extension().string(), file_path.string());
-    return 0;
+    return -1;
 }
 }  // namespace MeshLib::IO

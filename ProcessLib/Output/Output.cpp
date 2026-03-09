@@ -173,14 +173,16 @@ void Output::outputMeshes(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes)
     const
 {
-    if (_output_data_specification.output_variables.empty())
+    // copy
+    auto output_variable_names = _output_data_specification.output_variables;
+    if (output_variable_names.empty())
     {
         // special case: no output properties specified => output all properties
         for (auto const& mesh : meshes)
         {
             for (auto [name, property] : mesh.get().getProperties())
             {
-                property->is_for_output = true;
+                output_variable_names.insert(name);
             }
         }
     }
@@ -193,17 +195,14 @@ void Output::outputMeshes(
                 // special case: always output OGS_VERSION
                 if (name == "OGS_VERSION")
                 {
-                    property->is_for_output = true;
+                    output_variable_names.insert(name);
                     continue;
                 }
-
-                property->is_for_output =
-                    _output_data_specification.output_variables.contains(name);
             }
         }
     }
     _output_format->outputMeshes(timestep, t, iteration, converged, meshes,
-                                 _output_data_specification.output_variables);
+                                 output_variable_names);
 }
 
 MeshLib::Mesh const& Output::prepareSubmesh(
@@ -404,7 +403,9 @@ void Output::doOutputNonlinearIteration(
     if (dynamic_cast<OutputVTKFormat*>(_output_format.get()))
     {
         outputMeshVtk(
-            output_file_path, process.getMesh(), _output_format->compression,
+            output_file_path, process.getMesh(),
+            _output_data_specification.output_variables,
+            _output_format->compression,
             dynamic_cast<OutputVTKFormat*>(_output_format.get())->data_mode);
     }
     else

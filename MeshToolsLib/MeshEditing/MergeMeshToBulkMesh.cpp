@@ -160,7 +160,7 @@ bool createMergedPropertyVector(
         return false;
     }
 
-    if (pv_bulk_mesh->getPropertyName() == "vtkGhostType")
+    if (pv_bulk_mesh->getPropertyName() == MeshLib::vtkGhostTypeString)
     {
         // Do nothing
         return true;

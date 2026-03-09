@@ -115,7 +115,7 @@ int VtkMappedMeshSource::RequestData(vtkInformation* /*request*/,
     // Arrays
     for (auto [name, property] : _mesh->getProperties())
     {
-        if (!property->is_for_output)
+        if (!_output_variable_names.contains(name))
         {
             continue;
         }
@@ -211,6 +211,12 @@ int VtkMappedMeshSource::RequestInformation(
     this->NumberOfNodes = _mesh->getNumberOfNodes();
 
     return 1;
+}
+
+void VtkMappedMeshSource::setOutputVariableNames(
+    std::set<std::string> const& output_variables)
+{
+    _output_variable_names = output_variables;
 }
 
 template <typename T>

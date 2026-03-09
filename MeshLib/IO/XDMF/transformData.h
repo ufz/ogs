@@ -18,15 +18,19 @@ namespace MeshLib::IO
 /**
  * \brief Create meta data for attributes used for hdf5 and xdmf
  * \param mesh OGS mesh can be mesh or partitionedMesh
+ * \param output_variable_names names of all variables (attributes)
+ * that change over time
  * \param n_files specifies the number of files. If greater than 1 it groups the
  * data of each process to n_files
  * @param chunk_size_bytes Data will be split into chunks. The parameter
  * specifies the size (in bytes) of the largest chunk.
  * @return vector of meta data
  */
-std::vector<XdmfHdfData> transformAttributes(MeshLib::Mesh const& mesh,
-                                             unsigned int n_files,
-                                             unsigned int chunk_size_bytes);
+std::vector<XdmfHdfData> transformAttributes(
+    MeshLib::Mesh const& mesh,
+    std::set<std::string> const& output_variable_names,
+    unsigned int n_files,
+    unsigned int chunk_size_bytes);
 /**
  * \brief Create meta data for geometry used for hdf5 and xdmf
  * \param mesh OGS mesh can be mesh or partitionedMesh

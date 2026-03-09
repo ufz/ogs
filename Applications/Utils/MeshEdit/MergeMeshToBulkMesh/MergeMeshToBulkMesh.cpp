@@ -19,7 +19,6 @@
 #include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
 #include "MeshLib/Elements/Element.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
@@ -135,10 +134,8 @@ int main(int argc, char* argv[])
     auto merged_mesh = MeshToolsLib::mergeMeshToBulkMesh(
         *bulk_mesh, *mesh_to_be_merged, initial_value_dict);
 
-    MeshLib::IO::VtuInterface writer(merged_mesh.get());
-
-    auto const result = writer.writeToFile(mesh_out.getValue());
-    if (!result)
+    if (MeshLib::IO::writeMeshToFile(*merged_mesh.get(), mesh_out.getValue()) !=
+        0)
     {
         ERR("Could not write mesh to '{:s}'.", mesh_out.getValue());
         return EXIT_FAILURE;

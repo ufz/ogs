@@ -14,8 +14,8 @@
 #include "BaseLib/MPI.h"
 #include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshToolsLib/MeshEditing/RemoveMeshComponents.h"
 
@@ -124,10 +124,12 @@ int main(int argc, char* argv[])
             WARN("No elements with material group {:d} found.", i);
             continue;
         }
-        MeshLib::IO::VtuInterface vtu(mat_group.get());
         std::string const file_name(base_name + "_Layer" + std::to_string(i) +
                                     ext);
-        vtu.writeToFile(file_name);
+        if (MeshLib::IO::writeMeshToFile(*mat_group.get(), file_name) != 0)
+        {
+            return EXIT_FAILURE;
+        }
         if (ostream.is_open())
         {
             ostream << file_name << "\n";

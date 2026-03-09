@@ -231,7 +231,11 @@ int main(int argc, char* argv[])
             MeshLib::MeshItemType::Cell);
     reorderProperties(original_properties, bulk_element_ids,
                       element_property_names, properties);
-    MeshLib::IO::writeMeshToFile(reordered_mesh, mesh_out_arg.getValue());
+    if (MeshLib::IO::writeMeshToFile(reordered_mesh, mesh_out_arg.getValue()) !=
+        0)
+    {
+        return EXIT_FAILURE;
+    }
 
     auto const number_of_properties =
         mesh->getProperties().getPropertyVectorNames().size();

@@ -14,8 +14,8 @@
 #include "BaseLib/MPI.h"
 #include "BaseLib/TCLAPArguments.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
 int main(int argc, char* argv[])
@@ -95,8 +95,10 @@ int main(int argc, char* argv[])
     }
     if (addFaultToVoxelGrid(mesh.get(), fault.get(), fault_id))
     {
-        MeshLib::IO::VtuInterface vtu(mesh.get());
-        vtu.writeToFile(output_name);
+        if (MeshLib::IO::writeMeshToFile(*mesh.get(), output_name) != 0)
+        {
+            return EXIT_FAILURE;
+        }
         INFO("The fault was successfully added.");
         return EXIT_SUCCESS;
     }

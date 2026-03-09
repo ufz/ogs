@@ -9,7 +9,7 @@
 #include "Base/LastSavedFileDirectory.h"
 #include "Base/OGSError.h"
 #include "MeshLib/IO/Legacy/MeshIO.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 
 SaveMeshDialog::SaveMeshDialog(MeshLib::Mesh const& mesh, QDialog* parent)
@@ -69,10 +69,13 @@ void SaveMeshDialog::accept()
     QFileInfo fi(file_name);
     if (fi.suffix().toLower() == "vtu")
     {
-        int dataMode = this->dataModeBox->currentIndex();
-        bool compress(this->compressionCheckBox->isChecked());
-        MeshLib::IO::VtuInterface vtkIO(&_mesh, dataMode, compress);
-        vtkIO.writeToFile(file_name.toStdString());
+        int const dataMode = dataModeBox->currentIndex();
+        bool const compress(compressionCheckBox->isChecked());
+        if (MeshLib::IO::writeMeshToFile(_mesh, file_name.toStdString(), {},
+                                         compress, dataMode) != 0)
+        {
+            return;
+        }
     }
     if (fi.suffix().toLower() == "msh")
     {

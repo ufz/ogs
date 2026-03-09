@@ -239,7 +239,9 @@ std::optional<XdmfHdfData> transformAttribute(
 }
 
 std::vector<XdmfHdfData> transformAttributes(
-    MeshLib::Mesh const& mesh, unsigned int const n_files,
+    MeshLib::Mesh const& mesh,
+    std::set<std::string> const& output_variable_names,
+    unsigned int const n_files,
     unsigned int const chunk_size_bytes)
 {
     MeshLib::Properties const& properties = mesh.getProperties();
@@ -254,7 +256,7 @@ std::vector<XdmfHdfData> transformAttributes(
             continue;
         }
 
-        if (!property_base->is_for_output)
+        if (!output_variable_names.contains(name))
         {
             continue;
         }

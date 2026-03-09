@@ -12,7 +12,7 @@
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
 #include "MeshToolsLib/MeshGenerators/RasterToMesh.h"
@@ -103,7 +103,9 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    MeshLib::IO::VtuInterface vtu(mesh.get());
-    vtu.writeToFile(output_name);
+    if (MeshLib::IO::writeMeshToFile(*mesh.get(), output_name) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

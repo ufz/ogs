@@ -158,7 +158,9 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    MeshLib::IO::writeMeshToFile(*mesh, out_mesh_arg.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(*mesh, out_mesh_arg.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

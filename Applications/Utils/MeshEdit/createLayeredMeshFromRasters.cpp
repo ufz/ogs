@@ -19,8 +19,8 @@
 #include "BaseLib/TCLAPArguments.h"
 #include "GeoLib/IO/AsciiRasterInterface.h"
 #include "InfoLib/GitInfo.h"
-#include "MeshLib/IO/VtkIO/VtuInterface.h"
 #include "MeshLib/IO/readMeshFromFile.h"
+#include "MeshLib/IO/writeMeshToFile.h"
 #include "MeshLib/Mesh.h"
 #include "MeshToolsLib/MeshGenerators/MeshLayerMapper.h"
 
@@ -188,8 +188,12 @@ int main(int argc, char* argv[])
     INFO("Writing mesh '{:s}' ... ", output_name);
     auto const data_mode =
         use_ascii_arg.getValue() ? vtkXMLWriter::Ascii : vtkXMLWriter::Binary;
-
-    MeshLib::IO::writeVtu(*result_mesh, output_name, data_mode);
+    auto const use_compression = true;
+    if (MeshLib::IO::writeMeshToFile(*result_mesh, output_name, {},
+                                     use_compression, data_mode) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     INFO("done.");
 
     return EXIT_SUCCESS;

@@ -20,7 +20,7 @@ public:
      * @param filepath absolute or relative filepath to the hdf5 file
      * @param time_step number of the step (temporal collection)
      * @param initial_time time in seconds of the first time step
-     * @param variable_output_names names of all process variables (attributes)
+     * @param output_variable_names names of all process variables (attributes)
      * that change over time
      * @param use_compression if true, zlib compression in HDFWriter component
      * is used
@@ -31,7 +31,7 @@ public:
     XdmfHdfWriter(
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::filesystem::path const& filepath, unsigned long long time_step,
-        double initial_time, std::set<std::string> const& variable_output_names,
+        double initial_time, std::set<std::string> const& output_variable_names,
         bool use_compression, unsigned int n_files,
         unsigned int chunk_size_bytes);
 

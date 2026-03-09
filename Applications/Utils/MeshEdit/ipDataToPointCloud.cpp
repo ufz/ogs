@@ -267,7 +267,9 @@ int main(int argc, char** argv)
                                           point_cloud.getProperties(),
                                           point_cloud.getNumberOfNodes());
 
-    MeshLib::IO::writeMeshToFile(point_cloud, arg_out_file.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(point_cloud, arg_out_file.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

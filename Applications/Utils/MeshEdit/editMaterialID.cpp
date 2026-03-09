@@ -157,7 +157,9 @@ int main(int argc, char* argv[])
              fmt::join(MeshToolsLib::MeshInformation::getMaterialIDs(*mesh),
                        ", "));
     }
-    MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue());
-
+    if (MeshLib::IO::writeMeshToFile(*mesh, mesh_out.getValue()) != 0)
+    {
+        return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }

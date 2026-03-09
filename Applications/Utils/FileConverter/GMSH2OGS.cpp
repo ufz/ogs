@@ -108,7 +108,11 @@ static void identifyAndWriteBoundaryMeshes(
                                        '_' + boundary_mesh->getName() +
                                        BaseLib::getFileExtension(file_name);
 
-        MeshLib::IO::writeMeshToFile(*boundary_mesh, boundary_mesh_file_name);
+        if (MeshLib::IO::writeMeshToFile(*boundary_mesh,
+                                         boundary_mesh_file_name) != 0)
+        {
+            continue;
+        }
     }
 }
 
@@ -266,8 +270,9 @@ int main(int argc, char* argv[])
     }
 
     // *** write mesh in new format
-    MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_arg.getValue());
+    int const write_result =
+        MeshLib::IO::writeMeshToFile(*mesh, ogs_mesh_arg.getValue());
 
     delete mesh;
-    return EXIT_SUCCESS;
+    return write_result == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
