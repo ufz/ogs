@@ -133,34 +133,106 @@ class FeatureMatrix:
                 )
         return not_covered
 
+    # Class-level offset cache to track XML declaration offsets per file
+    _xml_offset_cache: dict[str, int] = {}
+
+    @staticmethod
+    def _get_xml_offset(root: etree.ElementTree) -> int:
+        """Calculate the line offset due to XML declaration and trailing newline being stripped by lxml.
+
+        lxml's etree.parse() strips:
+        1. The XML declaration (<?xml ...?>)
+        2. Any trailing newline
+
+        We need to add an offset to match line numbers with the original file.
+        """
+        # Use file URL as cache key (not id(root)) because getroottree() returns
+        # a new _ElementTree wrapper on each call, so id() values are ephemeral
+        # and can be reused after garbage collection, poisoning the cache.
+        cache_key = root.docinfo.URL or ""
+        if cache_key in FeatureMatrix._xml_offset_cache:
+            return FeatureMatrix._xml_offset_cache[cache_key]
+
+        # Check if the original file had an XML declaration
+        # docinfo.xml_version is not None if the original file had <?xml ...?>
+        offset = 1 if root.docinfo.xml_version is not None else 0
+
+        # Check if the original file had a trailing newline
+        # by comparing the serialized length to the original file length
+        original_file = root.docinfo.URL
+        if original_file:
+            try:
+                with open(original_file, "rb") as f:
+                    original_content = f.read()
+                serialized_content = etree.tostring(root)
+                # If original ends with newline but serialized doesn't, add 1
+                if original_content.endswith(b"\n") and not serialized_content.endswith(
+                    b"\n"
+                ):
+                    offset += 1
+            except (OSError, IOError):
+                pass  # If we can't read the file, just use the XML declaration offset
+
+        FeatureMatrix._xml_offset_cache[cache_key] = offset
+        return offset
+
+    @staticmethod
+    def _get_element_line(element: etree.ElementTree, is_closing: bool) -> int:
+        """Find the line number of an element's opening or closing tag in the original file.
+
+        Uses a UUID marker to uniquely identify the element since multiple elements
+        can have the same tag name. The tree should already be formatted with
+        etree.indent() before this is called.
+        """
+        # Get the root tree (already formatted by utils.add_includes)
+        root = element.getroottree()
+
+        # Calculate offset for XML declaration
+        xml_offset = FeatureMatrix._get_xml_offset(root)
+
+        # Create a unique marker to identify this specific element
+        marker_id = str(uuid.uuid4())
+        element.set("data-uuid", marker_id)
+
+        try:
+            # Serialize the tree
+            s = etree.tostring(root, encoding="unicode")
+            lines = s.split("\n")
+
+            if is_closing:
+                # For closing tag, find </tag> after the opening tag with our UUID
+                found_opening = False
+                for i, line in enumerate(lines):
+                    if f'data-uuid="{marker_id}"' in line:
+                        found_opening = True
+                    if found_opening and f"</{element.tag}>" in line:
+                        return i + 1 + xml_offset  # Convert to 1-indexed and add offset
+                # Self-closing element - closing is same as opening
+                if found_opening:
+                    for i, line in enumerate(lines):
+                        if f'data-uuid="{marker_id}"' in line:
+                            return i + 1 + xml_offset
+                return -1
+            else:
+                # For opening tag, find the line with our unique marker
+                for i, line in enumerate(lines):
+                    if f'data-uuid="{marker_id}"' in line:
+                        return i + 1 + xml_offset  # Convert to 1-indexed and add offset
+                return -1
+        finally:
+            # Remove the marker from the element
+            if "data-uuid" in element.attrib:
+                del element.attrib["data-uuid"]
+
     @staticmethod
     def get_xml_endline(element: etree.ElementTree) -> int:
-        """Gets the sourceline where the tag is closed, by converting to string and checking the number of lines."""
-        #  etree.indent(element.getroottree(), space="  ")
-        return FeatureMatrix.get_element_opening_line(element) + (
-            len(etree.tostring(element, pretty_print=True).strip().split(b"\n")) - 1
-        )
+        """Gets the line where the closing tag is located."""
+        return FeatureMatrix._get_element_line(element, is_closing=True)
 
     @staticmethod
     def get_element_opening_line(element):
-        marker = str(uuid.uuid4())
-        element.set("__marker__", marker)
-        try:
-            root = element.getroottree()
-            # etree.indent(tree, space="  ")
-            s = etree.tostring(root, encoding="unicode")
-
-            idx = s.find(marker)
-            if idx == -1:
-                raise RuntimeError("marker not found")
-
-            line = s[:idx].count("\n") + 1
-            # To use the sourceline in this context makes the assumption, that the display of the xml is based on the xml file,
-            # that contains the root element of the tree. This is the case for normal .prj files. For diff files, the xml is built
-            # upon the base_xml, which contains the root element, so this is also a valid assumption.
-            return line + root.getroot().sourceline - 1
-        finally:
-            del element.attrib["__marker__"]
+        """Gets the line where the opening tag is located."""
+        return FeatureMatrix._get_element_line(element, is_closing=False)
 
     @staticmethod
     def merge_overlapping_intervals(
