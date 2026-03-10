@@ -95,6 +95,18 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
             )
             for case in find_types_from_documentation(path, "processes/process")
         },
+        # Add Constitutive relation types. Checks whether there is a constitutive relation type present.
+        # The possible types are extracted from the documentation using a regex pattern to find
+        # all constitutive_relation directories under processes/process/*/.
+        **{
+            "Constitutive relation: "
+            + case: lambda xml, case=case: check_tag_text(
+                xml, ".//constitutive_relation/type", case
+            )
+            for case in find_types_from_documentation(
+                path, "processes/process/*/constitutive_relation"
+            )
+        },
         # Add Properties. Checks whether there is a process type present. The possible types are extracted from the documentation.
         **{
             "Property: "
@@ -615,13 +627,15 @@ def find_all_pattern_lines(xml_str: list[str], pattern: bytes) -> list[int]:
 
 
 def find_types_from_documentation(path: Path, subdir: str) -> list[str]:
-    # Will find all the possible types as defined in the documentation under the location "/Documentation/ProjectFile/prj/subdir/*"" and create a dictionary out of it
-    base = path / "../../Documentation/ProjectFile/prj" / subdir
-    return [
-        m.group(1)
-        for file in base.rglob("c_*.md")
-        if (m := re.search(r"c_(.*)\.md", file.name))
-    ]
+    # Will find all the possible types as defined in the documentation under the location
+    # "/Documentation/ProjectFile/prj/subdir/*" and create a dictionary out of it.
+    # The subdir parameter can be a regex pattern to match multiple directories (e.g., "processes/process/*/constitutive_relation").
+    base = path / "../../Documentation/ProjectFile/prj"
+    dirs = list(base.rglob(subdir))
+    files = [f for d in dirs for f in d.rglob("c_*.md")]
+    return list(
+        set(m.group(1) for f in files if (m := re.search(r"c_(.*)\.md", f.name)))
+    )
 
 
 def is_tuple_from_text(text: str) -> bool:
