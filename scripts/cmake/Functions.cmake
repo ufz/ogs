@@ -91,9 +91,14 @@ function(ogs_add_library targetName)
     if(ogs_add_library_GENERATE_EXPORT_HEADER)
         include(GenerateExportHeader)
         generate_export_header(${targetName})
-        target_include_directories(
-            ${targetName} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
-        )
+        string(TOLOWER "${targetName}" _targetName_lower)
+        target_sources(${targetName}
+            PUBLIC
+                FILE_SET HEADERS
+                BASE_DIRS
+                    ${CMAKE_CURRENT_SOURCE_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR}
+                FILES ${CMAKE_CURRENT_BINARY_DIR}/${_targetName_lower}_export.h)
     endif()
 
     set_target_properties(
