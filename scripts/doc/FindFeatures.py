@@ -481,13 +481,19 @@ def check_comment(xml: etree.ElementTree) -> FeatureMatrixEntry:
     ]
 
     if len(from_lines) > 0:
-        return FeatureMatrixEntry(
-            [xml],
-            lines=[
-                pd.Interval(left=from_lines[i], right=to_lines[i], closed="both")
-                for i in range(len(from_lines))
-            ],
-        )
+        intervals = []
+        for i in range(len(from_lines)):
+            # Ensure left <= right to avoid ValueError in pd.Interval
+            if from_lines[i] <= to_lines[i]:
+                intervals.append(
+                    pd.Interval(left=from_lines[i], right=to_lines[i], closed="both")
+                )
+            else:
+                # Handle malformed comment (start > end) - use single point interval
+                intervals.append(
+                    pd.Interval(left=from_lines[i], right=from_lines[i], closed="both")
+                )
+        return FeatureMatrixEntry([xml], lines=intervals)
 
     return FeatureMatrixEntry([])
 

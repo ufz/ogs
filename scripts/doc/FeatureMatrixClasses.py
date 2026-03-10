@@ -287,14 +287,18 @@ class FeatureMatrixEntry:
         elements: list[etree.ElementTree],
     ) -> list[pd.Interval]:
         """Create intervals spanning the complete range of each element from opening to closing tag."""
-        return [
-            pd.Interval(
-                FeatureMatrix.get_element_opening_line(el),
-                FeatureMatrix.get_xml_endline(el),
-                closed="both",
-            )
-            for el in elements
-        ]
+        intervals = []
+        for el in elements:
+            open_line = FeatureMatrix.get_element_opening_line(el)
+            close_line = FeatureMatrix.get_xml_endline(el)
+            # Ensure left <= right to avoid ValueError in pd.Interval
+            if open_line <= close_line:
+                intervals.append(pd.Interval(open_line, close_line, closed="both"))
+            else:
+                # If opening line > closing line, use a single-point interval at the opening line
+                # This handles edge cases where line detection fails
+                intervals.append(pd.Interval(open_line, open_line, closed="both"))
+        return intervals
 
     @staticmethod
     def _create_open_close_intervals(
