@@ -213,7 +213,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         **{
             "Linear_solver: "
             + child: lambda xml, child_name=child: check_children_names(
-                xml, ".//linear_solver", child_name
+                xml, ".//linear_solver", child_name, line_type="open and close"
             )
             for child in ["eigen", "lis", "petsc"]
         },
