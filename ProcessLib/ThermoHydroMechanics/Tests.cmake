@@ -16,6 +16,12 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     )
     OgsTest(PROJECTFILE ThermoHydroMechanics/StaggeredSchemeClonedFromHydroMechanics/InjectionProduction1D/InjectionProduction1D_THM_staggered.xml RUNTIME 1)
     OgsTest(PROJECTFILE ThermoHydroMechanics/StaggeredSchemeClonedFromHydroMechanics/MandelCryer/MandelCryerStaggered_THM_staggered.xml RUNTIME 18)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/StaggeredSchemeClonedFromHT/ADecovalexTHMCBasedHTExample/th_decovalex_THM.xml
+        EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
+        RUNTIME 5
+    )
 
     if (OGS_USE_MFRONT)
         OgsTest(PROJECTFILE ThermoHydroMechanics/MultiMaterial/DP_Ehlers/M/square_1e1_2_matIDs.prj RUNTIME 1)
