@@ -22,6 +22,12 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
         EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
         RUNTIME 5
     )
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/StaggeredSchemeClonedFromHT/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow_THM.xml
+        EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
+        RUNTIME 1
+    )
 
     if (OGS_USE_MFRONT)
         OgsTest(PROJECTFILE ThermoHydroMechanics/MultiMaterial/DP_Ehlers/M/square_1e1_2_matIDs.prj RUNTIME 1)
