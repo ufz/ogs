@@ -141,6 +141,11 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROPERTIES PASS_REGULAR_EXPRESSION "Unknown coupling scheme type"
     )
     OgsTest(PROJECTFILE ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS/arehs-salt-THM01_0.prj RUNTIME 29)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS/arehs-salt-THM01_0_staggered.xml
+        RUNTIME 95
+    )
     # ThermoHydroMechanics; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/ThermoOsmosis/Column.prj RUNTIME 9)
     OgsTest(
