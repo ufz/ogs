@@ -340,6 +340,14 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         "Medium: has phases": lambda xml: check_tag_is_present(
             xml, "./media/medium/phases", line_type="open and close"
         ),
+        # Check whether process has specific_body_force
+        "Process: specific_body_force": lambda xml: check_tag_is_present(
+            xml, ".//processes/process/specific_body_force", line_type="range"
+        ),
+        # Check whether process has initial_stress
+        "Process: initial_stress": lambda xml: check_tag_is_present(
+            xml, ".//processes/process/initial_stress", line_type="range"
+        ),
         # Check whether mesh attribute axially symmetric is set to "true"
         "Mesh: axially_symmetric": lambda xml: check_attributes(
             xml, "mesh", "axially_symmetric", "true"
