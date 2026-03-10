@@ -73,6 +73,14 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 "parameters",
             ]
         },
+        # Add Dummy features for linear_solvers containers to cover the container lines
+        # (the children eigen/lis/petsc are already covered by check_children_names)
+        "!Dummy: linear_solvers": lambda xml: check_tag_is_present(
+            xml, ".//linear_solvers", line_type="open and close"
+        ),
+        "!Dummy: linear_solver": lambda xml: check_tag_is_present(
+            xml, ".//linear_solver", line_type="range"  # covers <name> child too
+        ),
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
         "!Dummy: Comment": check_comment,
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
