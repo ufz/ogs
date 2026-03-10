@@ -1,3 +1,54 @@
+# Returns source files (*.cpp) and header files (*.h) from a directory.
+# Header files matching *-impl.h are excluded.
+# A (relative) subdirectory can be passed as third parameter (optional).
+macro(GET_SOURCE_AND_HEADER_FILES source_files header_files)
+    if(${ARGC} EQUAL 3)
+        set(DIR "${ARGV2}")
+    else()
+        set(DIR ".")
+    endif()
+
+    file(
+        GLOB GET_SOURCE_AND_HEADER_FILES_SOURCES
+        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        CONFIGURE_DEPENDS ${DIR}/*.cpp
+    )
+    file(
+        GLOB GET_SOURCE_AND_HEADER_FILES_HEADERS
+        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        CONFIGURE_DEPENDS ${DIR}/*.h
+    )
+    list(
+        FILTER GET_SOURCE_AND_HEADER_FILES_HEADERS EXCLUDE REGEX
+            ".*-impl\\.h$"
+    )
+
+    set(${source_files} ${GET_SOURCE_AND_HEADER_FILES_SOURCES})
+    set(${header_files} ${GET_SOURCE_AND_HEADER_FILES_HEADERS})
+
+    list(LENGTH ${source_files} NUM_SOURCE_FILES)
+    list(LENGTH ${header_files} NUM_HEADER_FILES)
+    math(EXPR NUM_FILES "${NUM_SOURCE_FILES}+${NUM_HEADER_FILES}")
+    if(${NUM_FILES} EQUAL 0)
+        message(FATAL_ERROR "No source or header files found in ${DIR}")
+    endif()
+endmacro()
+
+# Appends source files (*.cpp) and header files (*.h) from a directory.
+# Header files matching *-impl.h are excluded.
+# A (relative) subdirectory can be passed as third parameter (optional).
+macro(APPEND_SOURCE_AND_HEADER_FILES source_files header_files)
+    if(${ARGC} EQUAL 3)
+        set(DIR "${ARGV2}")
+    else()
+        set(DIR ".")
+    endif()
+
+    GET_SOURCE_AND_HEADER_FILES(TMP_SOURCES TMP_HEADERS "${DIR}")
+    set(${source_files} ${${source_files}} ${TMP_SOURCES})
+    set(${header_files} ${${header_files}} ${TMP_HEADERS})
+endmacro()
+
 # Returns a list of source files (*.h and *.cpp) in source_files and creates a
 # Visual Studio folder. A (relative) subdirectory can be passed as second
 # parameter (optional).
