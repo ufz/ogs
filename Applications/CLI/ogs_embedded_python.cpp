@@ -41,6 +41,7 @@ pybind11::scoped_interpreter setupEmbeddedPython()
     return pybind11::scoped_interpreter{init_signal_handlers};
 }
 
+// Rest of the file handles venv compatibility checks and sys.path handling.
 namespace
 {
 #ifdef _WIN32
@@ -160,9 +161,9 @@ std::filesystem::path findSitePackagesPath(
 {
     namespace fs = std::filesystem;
 
-    // Construct path to site-packages directory, on *nix Python version is
-    // embedded in the path. This is later used to check for compatibility.
 #ifdef _WIN32
+    // On Windows only: compare embedded python interpreter version with the
+    // version of the python executable in the virtual environment.
     auto const venv_version = getPythonVersionFromVenv(venv_path);
     if (!venv_version.has_value())
     {
@@ -181,10 +182,14 @@ std::filesystem::path findSitePackagesPath(
             venv_version->second);
     }
 
-    // On Windows: venv/Lib/site-packages
     fs::path const site_packages = venv_path / "Lib" / "site-packages";
 #else
-    // On Unix: venv/lib/pythonX.Y/site-packages
+    // On Linux / macOS: Construct path to site-packages directory where the
+    // Python version is embedded in the path. Then check for compatibility.
+    // E.g.: .venv/lib/python3.14/site-packages.
+    // Executing the virtual environment's Python interpreter may not possible
+    // when executing Python BCs from within a container environment, i.e.
+    // this would execute Python from the host inside the container.
     fs::path const site_packages = venv_path / "lib" /
                                    ("python" + std::to_string(emb_major) + "." +
                                     std::to_string(emb_minor)) /
@@ -196,7 +201,7 @@ std::filesystem::path findSitePackagesPath(
 #ifndef _WIN32
         // If correct site-packages directory is not found, check for
         // directories for other Python versions, indicating a Python version
-        // mismatch.
+        // mismatch. Possible on Linux / macOS only.
         auto const alternatives = findAlternativeSitePackagesPaths(venv_path);
         if (!alternatives.empty())
         {
@@ -223,7 +228,6 @@ std::filesystem::path findSitePackagesPath(
                   site_packages.string());
     }
 
-    // Compatible venv directory found
     return site_packages;
 }
 }  // anonymous namespace
