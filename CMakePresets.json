@@ -70,6 +70,14 @@
       }
     },
     {
+      "name": "_clang",
+      "hidden": true,
+      "environment": {
+        "CC": "clang",
+        "CXX": "clang++"
+      }
+    },
+    {
       "name": "release",
       "inherits": [
         "_ninja",
@@ -192,14 +200,13 @@
     },
     {
       "name": "ci-iwyu",
-      "inherits": "release-all",
+      "inherits": [
+        "_clang",
+        "release-all"
+      ],
       "cacheVariables": {
         "OGS_INCLUDE_WHAT_YOU_USE": "ON",
         "OGS_USE_UNITY_BUILDS": "OFF"
-      },
-      "environment": {
-        "CC": "clang",
-        "CXX": "clang++"
       }
     },
     {
@@ -216,7 +223,10 @@
     },
     {
       "name": "sanitizer",
-      "inherits": "debug-all",
+      "inherits": [
+        "_clang",
+        "debug-all"
+      ],
       "cacheVariables": {
         "OGS_CXX_FLAGS": "-O3;-fno-var-tracking",
         "OGS_EIGEN_DYNAMIC_SHAPE_MATRICES": "OFF",
@@ -228,8 +238,6 @@
         "OGS_BUILD_HDF5": "ON"
       },
       "environment": {
-        "CC": "clang",
-        "CXX": "clang++",
         "UBSAN_OPTIONS": "print_stacktrace=1",
         "LSAN_OPTIONS": "suppressions=${sourceDir}/scripts/test/leak_sanitizer.suppressions"
       }
