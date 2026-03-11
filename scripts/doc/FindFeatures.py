@@ -528,7 +528,8 @@ def checkFirstLines(xml: etree.ElementTree) -> FeatureMatrixEntry:
     xp = xml.xpath("../OpenGeoSysProject")
 
     if len(xp) > 0:
-        if xp[0].sourceline - 1 < 1:
+        opening_line = FeatureMatrix.get_element_opening_line(xp[0])
+        if opening_line - 1 < 1:
             return FeatureMatrixEntry(
                 [xp[0]],
                 lines=[
@@ -544,7 +545,7 @@ def checkFirstLines(xml: etree.ElementTree) -> FeatureMatrixEntry:
             lines=[
                 pd.Interval(
                     left=1,
-                    right=xp[0].sourceline - 1,
+                    right=opening_line - 1,
                     closed="both",
                 )
             ],
