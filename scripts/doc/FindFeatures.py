@@ -86,6 +86,10 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         "!Dummy: linear_solver": lambda xml: check_tag_is_present(
             xml, ".//linear_solver", line_type="range"  # covers <name> child too
         ),
+        # Add Dummy feature for chemical_system container to cover the container lines
+        "!Dummy: chemical_system": lambda xml: check_tag_is_present(
+            xml, ".//chemical_system", line_type="open and close"
+        ),
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
         "!Dummy: Comment": check_comment,
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
@@ -300,7 +304,68 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
             + case: lambda xml, case=case: check_attributes(
                 xml, "./chemical_system", "chemical_solver", case
             )
-            for case in ["Phreeqc", "SelfContained"]
+            for case in ["Phreeqc", "PhreeqcKernel", "SelfContained"]
+        },
+        # Check for chemical_system child elements
+        **{
+            "Chemical: "
+            + tag_name: lambda xml, tag_name=tag_name: check_tag_is_present(
+                xml, ".//chemical_system/" + tag_name
+            )
+            for tag_name in [
+                "database",
+                "solution",
+                "kinetic_reactants",
+                "rates",
+            ]
+        },
+        # Check for kinetic_reactant names
+        **{
+            "Kinetic Reactant: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, ".//chemical_system/kinetic_reactants/kinetic_reactant/name", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//chemical_system/kinetic_reactants/kinetic_reactant/name/text()"
+                    )
+                ]
+            )
+        },
+        # Check for rate elements
+        **{
+            "Chemical Rate: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, ".//chemical_system/rates/rate/kinetic_reactant", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//chemical_system/rates/rate/kinetic_reactant/text()"
+                    )
+                ]
+            )
+        },
+        # Check for solution components
+        **{
+            "Solution Component: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, ".//chemical_system/solution/components/component", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//chemical_system/solution/components/component/text()"
+                    )
+                ]
+            )
         },
         # Checks for damping of nonlinear solver.
         **{
