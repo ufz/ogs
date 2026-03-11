@@ -3,7 +3,14 @@
 
 #pragma once
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 #include <boost/math/differentiation/autodiff.hpp>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 #include "MaterialLib/MPL/Properties/GibbsFreeEnergy/DimensionLessGibbsFreeEnergyRegion1.h"
 #include "MaterialLib/MPL/Property.h"

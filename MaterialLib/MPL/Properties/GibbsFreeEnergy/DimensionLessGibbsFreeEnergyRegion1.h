@@ -2,7 +2,15 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
 #include <boost/math/differentiation/autodiff.hpp>
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
 
 namespace MaterialLib
 {
