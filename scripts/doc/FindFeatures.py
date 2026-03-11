@@ -73,6 +73,11 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 "parameters",
             ]
         },
+        # Add Dummy features for nonlinear_solvers containers to cover the container lines
+        # (the children Newton/Picard/PETScSNES are already covered by check_tag_text)
+        "!Dummy: nonlinear_solvers": lambda xml: check_tag_is_present(
+            xml, ".//nonlinear_solvers", line_type="open and close"
+        ),
         # Add Dummy features for linear_solvers containers to cover the container lines
         # (the children eigen/lis/petsc are already covered by check_children_names)
         "!Dummy: linear_solvers": lambda xml: check_tag_is_present(
