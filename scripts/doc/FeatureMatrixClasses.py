@@ -102,35 +102,20 @@ class FeatureMatrix:
     def get_lines_not_covered_by_intervals(
         lines: list[pd.Interval], endpoint: int
     ) -> list[pd.Interval]:
-        not_covered = []
-        if len(lines) == 1:
-            if lines[0].left != 1:
-                not_covered.append(pd.Interval(1, lines[0].left - 1, closed="both"))
-            if lines[0].right != endpoint:
-                not_covered.append(
-                    pd.Interval(lines[0].right + 1, endpoint, closed="both")
-                )
-            return not_covered
-        elif len(lines) == 0:
+        if len(lines) == 0:
             return [pd.Interval(1, endpoint, closed="both")]
-        for line_index in range(len(lines) - 1):
-            if lines[line_index].left != 1 and line_index == 0:
-                not_covered.append(
-                    pd.Interval(1, lines[line_index].left - 1, closed="both")
-                )
+        not_covered = []
+        if lines[0].left > 1:
+            not_covered.append(pd.Interval(1, lines[0].left - 1, closed="both"))
+        for i in range(len(lines) - 1):
+            gap_left = lines[i].right + 1
+            gap_right = lines[i + 1].left - 1
+            if gap_left <= gap_right:
+                not_covered.append(pd.Interval(gap_left, gap_right, closed="both"))
+        if lines[-1].right < endpoint:
             not_covered.append(
-                pd.Interval(
-                    lines[line_index].right + 1,
-                    lines[line_index + 1].left - 1,
-                    closed="both",
-                )
+                pd.Interval(lines[-1].right + 1, endpoint, closed="both")
             )
-            if line_index == len(lines) - 2 and lines[line_index + 1].right < endpoint:
-                not_covered.append(
-                    pd.Interval(
-                        lines[line_index + 1].right + 1, endpoint, closed="both"
-                    )
-                )
         return not_covered
 
     # Class-level offset cache to track XML declaration offsets per file

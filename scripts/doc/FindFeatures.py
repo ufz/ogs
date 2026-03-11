@@ -469,16 +469,13 @@ def check_comment(xml: etree.ElementTree) -> FeatureMatrixEntry:
     """Will find the lines, that contain comments in the xml files."""
     strings = etree.tostring(xml).split(b"\n")
 
-    sourceline = xml.xpath("../OpenGeoSysProject")[
-        0
-    ].sourceline  # Number of lines before element starts
+    # Use the same offset as _get_element_line: serialized line 1 is the
+    # OpenGeoSysProject opening tag, so offset = its canonical line - 1.
+    ogs_element = xml.xpath("../OpenGeoSysProject")[0]
+    offset = FeatureMatrix.get_element_opening_line(ogs_element) - 1
 
-    from_lines = [
-        line + sourceline - 1 for line in find_all_pattern_lines(strings, b"<!--")
-    ]
-    to_lines = [
-        line + sourceline - 1 for line in find_all_pattern_lines(strings, b"-->")
-    ]
+    from_lines = [line + offset for line in find_all_pattern_lines(strings, b"<!--")]
+    to_lines = [line + offset for line in find_all_pattern_lines(strings, b"-->")]
 
     if len(from_lines) > 0:
         intervals = []
