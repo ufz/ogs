@@ -10,6 +10,12 @@ target_link_libraries(
             $<$<TARGET_EXISTS:OpenMP::OpenMP_CXX>:OpenMP::OpenMP_CXX>
 )
 
-target_precompile_headers(MeshGeoToolsLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] [["MeshLib/Mesh.h"]]
-    [["MeshLib/Elements/Element.h"]])
+target_precompile_headers(
+    MeshGeoToolsLib
+    PRIVATE
+    [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]]
+    [["MeshLib/Mesh.h"]]
+    [["MeshLib/Elements/Element.h"]]
+)

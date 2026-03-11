@@ -4,11 +4,11 @@ append_source_and_header_files(
     _headers
     _private
     DIRECTORIES
-        .
-        PhreeqcIOData
-        PhreeqcKernelData
-        SelfContainedSolverData
-        Common
+    .
+    PhreeqcIOData
+    PhreeqcKernelData
+    SelfContainedSolverData
+    Common
 )
 
 # Create the library
@@ -16,7 +16,7 @@ ogs_add_library(ChemistryLib ${_sources} PUBLIC_HEADERS ${_headers})
 
 target_link_libraries(
     ChemistryLib PUBLIC Eigen3::Eigen IPhreeqc MaterialLib
-                 PRIVATE BaseLib MathLib MeshLib NumLib
+    PRIVATE BaseLib MathLib MeshLib NumLib
 )
 
 target_precompile_headers(

@@ -4,13 +4,13 @@ append_source_and_header_files(
     _headers
     _private
     DIRECTORIES
-        .
-        Curve
-        InterpolationAlgorithms
-        Integration
-        LinAlg
-        Nonlinear
-        LinAlg/Eigen
+    .
+    Curve
+    InterpolationAlgorithms
+    Integration
+    LinAlg
+    Nonlinear
+    LinAlg/Eigen
 )
 
 if(OGS_USE_LIS)

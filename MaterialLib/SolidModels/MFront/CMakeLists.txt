@@ -48,7 +48,7 @@ set(_mfront_behaviours
 # Build behaviours lib with mfront executable
 foreach(behaviour ${_mfront_behaviours})
     list(APPEND _mfront_behaviour_files
-            "${CMAKE_CURRENT_SOURCE_DIR}/${behaviour}.mfront"
+         "${CMAKE_CURRENT_SOURCE_DIR}/${behaviour}.mfront"
     )
 endforeach()
 set(_generated_mfront_lib
@@ -61,10 +61,7 @@ add_custom_command(
     OUTPUT ${_copied_mfront_lib}
     COMMAND
         ${CMAKE_COMMAND} -E env PATH="${TFELHOME}/bin:$ENV{PATH}"
-                                CMAKE_POLICY_VERSION_MINIMUM="3.10"
-                                --
-        mfront
-        --interface=generic
+        CMAKE_POLICY_VERSION_MINIMUM="3.10" -- mfront --interface=generic
         --obuild=level0 ${_mfront_behaviour_files} # TODO: check for debug?
         --generator=cmake
     COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_generated_mfront_lib}
@@ -75,7 +72,16 @@ add_custom_command(
 )
 add_custom_target(build_mfront ALL DEPENDS ${_copied_mfront_lib})
 add_dependencies(MaterialLib_SolidModels_MFront build_mfront)
-install(FILES ${_copied_mfront_lib} TYPE LIB PERMISSIONS
-    OWNER_READ GROUP_READ WORLD_READ
-    OWNER_WRITE GROUP_WRITE
-    OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
+install(
+    FILES ${_copied_mfront_lib}
+    TYPE LIB
+    PERMISSIONS
+        OWNER_READ
+        GROUP_READ
+        WORLD_READ
+        OWNER_WRITE
+        GROUP_WRITE
+        OWNER_EXECUTE
+        GROUP_EXECUTE
+        WORLD_EXECUTE
+)

@@ -34,10 +34,7 @@ target_link_libraries(
 )
 
 if(OGS_USE_NETCDF)
-    target_link_libraries(
-        GeoLib
-        PRIVATE netcdf-cxx4
-    )
+    target_link_libraries(GeoLib PRIVATE netcdf-cxx4)
     target_compile_definitions(GeoLib PRIVATE OGS_USE_NETCDF)
 endif()
 
@@ -48,5 +45,7 @@ foreach(xsd OpenGeoSysGLI.xsd OpenGeoSysSTN.xsd)
     install(FILES IO/XmlIO/${xsd} DESTINATION bin)
 endforeach()
 
-target_precompile_headers(GeoLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)
+target_precompile_headers(
+    GeoLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]] <Eigen/Core>
+)

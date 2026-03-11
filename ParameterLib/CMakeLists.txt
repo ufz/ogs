@@ -5,6 +5,12 @@ target_link_libraries(
     ParameterLib PUBLIC MathLib exprtk PRIVATE BaseLib MeshLib
 )
 
-target_precompile_headers(ParameterLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]]
-    [["ParameterLib/Parameter.h"]] <Eigen/Core>)
+target_precompile_headers(
+    ParameterLib
+    PRIVATE
+    [["BaseLib/Error.h"]]
+    [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]]
+    [["ParameterLib/Parameter.h"]]
+    <Eigen/Core>
+)

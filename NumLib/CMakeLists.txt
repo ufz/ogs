@@ -3,20 +3,20 @@ append_source_and_header_files(
     _headers
     _private
     DIRECTORIES
-        .
-        Assembler
-        DOF
-        Fem
-        Fem/CoordinatesMapping
-        Fem/FiniteElement
-        Fem/Integration
-        Fem/ShapeFunction
-        NumericalStability
-        TimeStepping
-        TimeStepping/Algorithms
-        StaggeredCoupling
-        ODESolver
-        Extrapolation
+    .
+    Assembler
+    DOF
+    Fem
+    Fem/CoordinatesMapping
+    Fem/FiniteElement
+    Fem/Integration
+    Fem/ShapeFunction
+    NumericalStability
+    TimeStepping
+    TimeStepping/Algorithms
+    StaggeredCoupling
+    ODESolver
+    Extrapolation
 )
 
 # Create the library

@@ -40,8 +40,10 @@ target_link_libraries(
     PRIVATE MeshLib MeshToolsLib GitInfoLib
 )
 
-target_precompile_headers(ApplicationsFileIO PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] [["MeshLib/Mesh.h"]])
+target_precompile_headers(
+    ApplicationsFileIO PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]] [["MeshLib/Mesh.h"]]
+)
 
 foreach(xsd OpenGeoSysCND.xsd OpenGeoSysNum.xsd OpenGeoSysProject.xsd)
     file(COPY_FILE XmlIO/${xsd} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${xsd}

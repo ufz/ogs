@@ -8,20 +8,20 @@ append_source_and_header_files(
     _headers
     _private
     DIRECTORIES
-        .
-        MPL
-        MPL/Properties
-        MPL/Properties/CapillaryPressureSaturation
-        MPL/Properties/GibbsFreeEnergy
-        MPL/Properties/Density
-        MPL/Properties/Enthalpy
-        MPL/Properties/RelativePermeability
-        MPL/Properties/SwellingStress
-        MPL/Properties/ThermalConductivity
-        MPL/Properties/VapourDiffusion
-        MPL/Properties/Viscosity
-        MPL/Components
-        MPL/Utils
+    .
+    MPL
+    MPL/Properties
+    MPL/Properties/CapillaryPressureSaturation
+    MPL/Properties/GibbsFreeEnergy
+    MPL/Properties/Density
+    MPL/Properties/Enthalpy
+    MPL/Properties/RelativePermeability
+    MPL/Properties/SwellingStress
+    MPL/Properties/ThermalConductivity
+    MPL/Properties/VapourDiffusion
+    MPL/Properties/Viscosity
+    MPL/Components
+    MPL/Utils
 )
 
 ogs_add_library(
@@ -29,9 +29,14 @@ ogs_add_library(
 )
 
 target_link_libraries(
-    MaterialLib PUBLIC BaseLib Eigen3::Eigen MaterialLib_SolidModels
-                       MaterialLib_FractureModels MaterialLib_Utils
-                       MathLib MeshLib
+    MaterialLib
+    PUBLIC BaseLib
+           Eigen3::Eigen
+           MaterialLib_SolidModels
+           MaterialLib_FractureModels
+           MaterialLib_Utils
+           MathLib
+           MeshLib
     PRIVATE ParameterLib exprtk Boost::math
 )
 
