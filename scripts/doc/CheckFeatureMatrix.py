@@ -63,7 +63,7 @@ def test_feature_matrix(path: Path, path_to_xml_files: Path) -> None:
         )  # Check whether all keys are there
 
         # Check for feature coverage. If the feature coverage lies below that indicates problems with the feature detection and hence should raise an error.
-        assert feat["feature_coverage"] > 0.6, (
+        assert feat["feature_coverage"] > 0.94, (
             "The following file has a critically low feature coverage: " + feat["file"]
         )
 
