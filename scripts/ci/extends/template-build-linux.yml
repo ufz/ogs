@@ -107,10 +107,10 @@
           fi
         fi
 
-        if [[ ! -z "$ADDITIONAL_TARGETS" ]]; then
+        if [[ ! -z "$ADDITIONAL_TARGETS_POST" ]]; then
 
           echo "########################" + `date` + "########################"
-          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS} > >(tee $log_file)
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_POST} > >(tee $log_file)
 
         fi
 

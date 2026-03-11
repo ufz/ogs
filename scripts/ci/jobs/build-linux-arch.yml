@@ -36,7 +36,7 @@ build linux arch:
   variables:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: "-DOGS_USE_MKL=ON -DOGS_USE_NETCDF=ON"
-    ADDITIONAL_TARGETS: "feature_matrix"
+    ADDITIONAL_TARGETS_POST: "feature_matrix"
   before_script: *common-linux-arch-before-script
 
 build linux arch (py-cov):
@@ -46,7 +46,7 @@ build linux arch (py-cov):
   variables:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: "-DOGS_USE_MKL=ON -DOGS_USE_NETCDF=ON -DOGS_COVERAGE_PYTHON=ON"
-    ADDITIONAL_TARGETS: "feature_matrix process_coverage_python"
+    ADDITIONAL_TARGETS_POST: "feature_matrix process_coverage_python"
     CTEST_ARGS: "-R nb-|pytest"
   before_script: *common-linux-arch-before-script
 
@@ -61,7 +61,7 @@ build linux petsc:
   variables:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON"
-    ADDITIONAL_TARGETS: ""
+    ADDITIONAL_TARGETS_POST: ""
     CTEST_ARGS: "-L default|petsc-mumps"
   before_script: *common-linux-arch-before-script
 
@@ -72,6 +72,6 @@ build linux petsc (py-cov):
   variables:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON -DOGS_COVERAGE_PYTHON=ON"
-    ADDITIONAL_TARGETS: "process_coverage_python"
+    ADDITIONAL_TARGETS_POST: "process_coverage_python"
     CTEST_ARGS: "-R nb-|pytest"
   before_script: *common-linux-arch-before-script
