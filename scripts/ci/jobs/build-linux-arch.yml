@@ -12,7 +12,8 @@
   - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/'
     when: never
   - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
-    when: never
+    variables:
+      CTEST_ARGS: "-R nb-"
   - when: on_success
 
 # Rules for OGS_COVERAGE_PYTHON=ON
