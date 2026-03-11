@@ -112,7 +112,14 @@ endfunction()
 # Replacement for add_library() for ogs libraries
 function(ogs_add_library targetName)
     set(options STATIC SHARED GENERATE_EXPORT_HEADER)
-    cmake_parse_arguments(ogs_add_library "${options}" "" "" ${ARGN})
+    set(multiValueArgs SOURCES PUBLIC_HEADERS PRIVATE_HEADERS)
+    cmake_parse_arguments(
+        ogs_add_library
+        "${options}"
+        ""
+        "${multiValueArgs}"
+        ${ARGN}
+    )
 
     foreach(file ${ogs_add_library_UNPARSED_ARGUMENTS})
         get_filename_component(file_path ${file} REALPATH)
@@ -126,6 +133,27 @@ function(ogs_add_library targetName)
         set(type SHARED)
     endif()
     add_library(${targetName} ${type} ${files})
+
+    if(ogs_add_library_PUBLIC_HEADERS)
+        target_sources(
+            ${targetName}
+            PUBLIC
+                FILE_SET HEADERS
+                BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+                FILES ${ogs_add_library_PUBLIC_HEADERS}
+        )
+    endif()
+    if(ogs_add_library_PRIVATE_HEADERS)
+        target_sources(
+            ${targetName}
+            PRIVATE
+                FILE_SET private_headers
+                TYPE HEADERS
+                BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+                FILES ${ogs_add_library_PRIVATE_HEADERS}
+        )
+    endif()
+
     target_compile_options(
         ${targetName}
         PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
@@ -153,7 +181,9 @@ function(ogs_add_library targetName)
     endif()
 
     set_target_properties(
-        ${targetName} PROPERTIES UNITY_BUILD ${OGS_USE_UNITY_BUILDS}
+        ${targetName} PROPERTIES
+            UNITY_BUILD ${OGS_USE_UNITY_BUILDS}
+            VERIFY_INTERFACE_HEADER_SETS ON
     )
 
     if(OGS_INCLUDE_WHAT_YOU_USE)
@@ -171,7 +201,7 @@ function(ogs_add_library targetName)
     endif()
 
     # Add project root to include directories for cross-library includes
-    target_include_directories(${targetName} PRIVATE ${PROJECT_SOURCE_DIR})
+    target_include_directories(${targetName} PUBLIC ${PROJECT_SOURCE_DIR})
 
     if(MSVC)
         GroupSourcesByFolder(${targetName})
