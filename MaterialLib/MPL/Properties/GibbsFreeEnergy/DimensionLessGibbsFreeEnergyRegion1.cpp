@@ -140,12 +140,8 @@ DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(const double,
                                                          const double);
 
 // For autodiff types
-using fvar1 = boost::math::differentiation::autodiff_v1::detail::fvar<
-    boost::math::differentiation::autodiff_v1::detail::fvar<double, 1ul>,
-    0ul>;
-using fvar2 = boost::math::differentiation::autodiff_v1::detail::fvar<
-    boost::math::differentiation::autodiff_v1::detail::fvar<double, 2ul>,
-    0ul>;
+using fvar1 = boost::math::differentiation::autodiff_fvar<double, 0ul, 1ul>;
+using fvar2 = boost::math::differentiation::autodiff_fvar<double, 0ul, 2ul>;
 
 template boost::math::differentiation::autodiff_v1::promote<fvar1, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const fvar1, const double);

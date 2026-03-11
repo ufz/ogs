@@ -6,7 +6,7 @@
 #include <array>
 #include <cmath>
 #include <map>
-#include <ranges>
+#include <range/v3/view/enumerate.hpp>
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Properties/CapillaryPressureSaturation/SaturationLuMcCartney.h"
@@ -128,10 +128,10 @@ TEST(MaterialPropertyLib, SaturationLuMcCartney)
     // Test reference values
     for (auto const& entry : test_temperatures)
     {
-        for (auto const& [i, p] : std::views::enumerate(test_pressures))
+        for (auto const& [i, p] : ranges::views::enumerate(test_pressures))
         {
             for (auto const& [j, T] :
-                 std::views::enumerate(test_temperatures[entry.first]))
+                 ranges::views::enumerate(test_temperatures[entry.first]))
             {
                 medium = Tests::createTestMaterial(m[entry.first].str());
                 double const S_L = S(-p, T + 273.15);
