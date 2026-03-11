@@ -1,8 +1,8 @@
 # Source files
-get_source_files(SOURCES)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
 # Create the library
-ogs_add_library(MeshGeoToolsLib ${SOURCES})
+ogs_add_library(MeshGeoToolsLib ${_sources} PUBLIC_HEADERS ${_headers})
 
 target_link_libraries(
     MeshGeoToolsLib PUBLIC GeoLib MathLib

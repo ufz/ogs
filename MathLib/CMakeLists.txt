@@ -1,24 +1,40 @@
 # Source files grouped by a directory
-get_source_files(SOURCES)
-
-append_source_files(SOURCES Curve)
-append_source_files(SOURCES InterpolationAlgorithms)
-append_source_files(SOURCES Integration)
-append_source_files(SOURCES LinAlg)
-append_source_files(SOURCES Nonlinear)
-append_source_files(SOURCES LinAlg/Eigen)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+        .
+        Curve
+        InterpolationAlgorithms
+        Integration
+        LinAlg
+        Nonlinear
+        LinAlg/Eigen
+)
 
 if(OGS_USE_LIS)
-    append_source_files(SOURCES LinAlg/Lis)
-    append_source_files(SOURCES LinAlg/EigenLis)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES LinAlg/Lis LinAlg/EigenLis
+    )
 endif()
 
 if(OGS_USE_PETSC)
-    append_source_files(SOURCES LinAlg/PETSc)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES LinAlg/PETSc
+    )
 endif()
 
 # Create the library
-ogs_add_library(MathLib GENERATE_EXPORT_HEADER ${SOURCES})
+ogs_add_library(
+    MathLib
+    GENERATE_EXPORT_HEADER
+    ${_sources}
+    PUBLIC_HEADERS
+    ${_headers}
+    PRIVATE_HEADERS
+    KelvinVector-impl.h
+)
 
 set_target_properties(MathLib PROPERTIES LINKER_LANGUAGE CXX)
 

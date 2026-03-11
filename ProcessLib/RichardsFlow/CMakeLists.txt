@@ -1,6 +1,6 @@
-get_source_files(SOURCES)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
-ogs_add_library(RichardsFlow ${SOURCES})
+ogs_add_library(RichardsFlow ${_sources} PUBLIC_HEADERS ${_headers})
 target_link_libraries(RichardsFlow PUBLIC ProcessLib PRIVATE ParameterLib)
 
 target_precompile_headers(RichardsFlow PRIVATE [["BaseLib/Error.h"]]

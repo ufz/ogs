@@ -3,23 +3,30 @@ add_subdirectory(FractureModels)
 add_subdirectory(Utils)
 
 # Source files
-get_source_files(SOURCES)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+        .
+        MPL
+        MPL/Properties
+        MPL/Properties/CapillaryPressureSaturation
+        MPL/Properties/GibbsFreeEnergy
+        MPL/Properties/Density
+        MPL/Properties/Enthalpy
+        MPL/Properties/RelativePermeability
+        MPL/Properties/SwellingStress
+        MPL/Properties/ThermalConductivity
+        MPL/Properties/VapourDiffusion
+        MPL/Properties/Viscosity
+        MPL/Components
+        MPL/Utils
+)
 
-append_source_files(SOURCES MPL)
-append_source_files(SOURCES MPL/Properties)
-append_source_files(SOURCES MPL/Properties/CapillaryPressureSaturation)
-append_source_files(SOURCES MPL/Properties/GibbsFreeEnergy)
-append_source_files(SOURCES MPL/Properties/Density)
-append_source_files(SOURCES MPL/Properties/Enthalpy)
-append_source_files(SOURCES MPL/Properties/RelativePermeability)
-append_source_files(SOURCES MPL/Properties/SwellingStress)
-append_source_files(SOURCES MPL/Properties/ThermalConductivity)
-append_source_files(SOURCES MPL/Properties/VapourDiffusion)
-append_source_files(SOURCES MPL/Properties/Viscosity)
-append_source_files(SOURCES MPL/Components)
-append_source_files(SOURCES MPL/Utils)
-
-ogs_add_library(MaterialLib GENERATE_EXPORT_HEADER ${SOURCES})
+ogs_add_library(
+    MaterialLib GENERATE_EXPORT_HEADER ${_sources} PUBLIC_HEADERS ${_headers}
+)
 
 target_link_libraries(
     MaterialLib PUBLIC BaseLib Eigen3::Eigen MaterialLib_SolidModels

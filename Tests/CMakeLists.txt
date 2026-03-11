@@ -3,18 +3,28 @@ set(CMAKE_FOLDER "Testing")
 set(CMAKE_SKIP_TEST_ALL_DEPENDENCY OFF)
 
 # testrunner ###
-get_source_files(TEST_SOURCES)
-append_source_files(TEST_SOURCES BaseLib)
-append_source_files(TEST_SOURCES FileIO)
-append_source_files(TEST_SOURCES GeoLib)
-append_source_files(TEST_SOURCES GeoLib/IO)
-append_source_files(TEST_SOURCES MaterialLib)
-append_source_files(TEST_SOURCES MaterialLib/SolidModels)
-append_source_files(TEST_SOURCES MathLib)
-append_source_files(TEST_SOURCES MeshLib)
-append_source_files(TEST_SOURCES MeshToolsLib)
-append_source_files(TEST_SOURCES MeshGeoToolsLib)
-append_source_files(TEST_SOURCES_NUMLIB NumLib)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+    .
+    BaseLib
+    FileIO
+    GeoLib
+    GeoLib/IO
+    MaterialLib
+    MaterialLib/SolidModels
+    MathLib
+    MeshLib
+    MeshToolsLib
+    MeshGeoToolsLib
+    NumLib # Preserve order?
+    ParameterLib
+    ProcessLib
+    ProcessLib/Graph
+)
+
 # Disable Unity build for some files
 if("$ENV{HOSTNAME}" MATCHES "frontend.*")
     execute_process(
@@ -36,39 +46,43 @@ set(_unity_disabled
 set_source_files_properties(
     ${_unity_disabled} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
 )
-# Keep order of source files, otherwise PETSc non-MPI tests fail
-set(TEST_SOURCES ${TEST_SOURCES} ${TEST_SOURCES_NUMLIB})
-append_source_files(TEST_SOURCES ParameterLib)
 
-append_source_files(TEST_SOURCES ProcessLib)
 if(OGS_BUILD_PROCESS_TH2M)
-    append_source_files(TEST_SOURCES ProcessLib/TH2M)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES ProcessLib/TH2M
+    )
 endif()
 
-append_source_files(TEST_SOURCES ProcessLib/Graph)
-
 if(OGS_BUILD_GUI)
-    append_source_files(TEST_SOURCES FileIO_Qt)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES FileIO_Qt
+    )
 endif()
 
 if(TARGET ComponentTransport)
-    append_source_files(TEST_SOURCES ProcessLib/ComponentTransport)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES ProcessLib/ComponentTransport
+    )
 endif()
 
 if(OGS_BUILD_PROCESS_RichardsMechanics)
-    append_source_files(TEST_SOURCES ProcessLib/RichardsMechanics)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES ProcessLib/RichardsMechanics
+    )
 endif()
 
 if(OGS_USE_PETSC)
-    list(REMOVE_ITEM TEST_SOURCES NumLib/TestSerialLinearSolver.cpp)
+    list(REMOVE_ITEM _sources NumLib/TestSerialLinearSolver.cpp)
 endif()
 
 if(OGS_USE_MFRONT)
     add_subdirectory(MaterialLib/MFront)
-    append_source_files(TEST_SOURCES MaterialLib/MFront)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES MaterialLib/MFront
+    )
 endif()
 
-ogs_add_executable(testrunner ${TEST_SOURCES})
+ogs_add_executable(testrunner ${_sources})
 
 target_sources(
     testrunner

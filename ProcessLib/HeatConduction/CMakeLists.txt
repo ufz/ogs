@@ -1,6 +1,6 @@
-get_source_files(SOURCES)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
-ogs_add_library(HeatConduction ${SOURCES})
+ogs_add_library(HeatConduction ${_sources} PUBLIC_HEADERS ${_headers})
 target_link_libraries(HeatConduction PUBLIC ProcessLib PRIVATE ParameterLib)
 
 target_precompile_headers(HeatConduction PRIVATE [["BaseLib/Error.h"]]

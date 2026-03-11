@@ -1,7 +1,9 @@
-get_source_files(SOURCES)
-append_source_files(SOURCES ConstitutiveRelations)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
+append_source_and_header_files(
+    _sources _headers _private DIRECTORIES ConstitutiveRelations
+)
 
-ogs_add_library(SmallDeformation ${SOURCES})
+ogs_add_library(SmallDeformation ${_sources} PUBLIC_HEADERS ${_headers})
 target_link_libraries(SmallDeformation PUBLIC ProcessLib PRIVATE ParameterLib)
 
 target_precompile_headers(SmallDeformation PRIVATE [["BaseLib/Error.h"]]

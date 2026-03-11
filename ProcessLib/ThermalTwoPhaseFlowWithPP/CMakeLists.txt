@@ -1,6 +1,8 @@
-get_source_files(SOURCES)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
-ogs_add_library(ThermalTwoPhaseFlowWithPP ${SOURCES})
+ogs_add_library(
+    ThermalTwoPhaseFlowWithPP ${_sources} PUBLIC_HEADERS ${_headers}
+)
 if(BUILD_SHARED_LIBS)
     install(TARGETS ThermalTwoPhaseFlowWithPP
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

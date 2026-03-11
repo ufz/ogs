@@ -1,6 +1,9 @@
-get_source_files(SOURCES)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
-ogs_add_library(ThermoHydroMechanics ${SOURCES} GENERATE_EXPORT_HEADER)
+ogs_add_library(
+    ThermoHydroMechanics ${_sources} GENERATE_EXPORT_HEADER PUBLIC_HEADERS
+    ${_headers}
+)
 
 # Disable Windows DLL export all symbols for this target to reduce symbol count
 # and avoid LNK1189 error (65535 object limit exceeded)

@@ -1,21 +1,34 @@
-get_source_files(SOURCES)
-
-append_source_files(SOURCES Assembler)
-append_source_files(SOURCES DOF)
-append_source_files(SOURCES Fem)
-append_source_files(SOURCES Fem/CoordinatesMapping)
-append_source_files(SOURCES Fem/FiniteElement)
-append_source_files(SOURCES Fem/Integration)
-append_source_files(SOURCES Fem/ShapeFunction)
-append_source_files(SOURCES NumericalStability)
-append_source_files(SOURCES TimeStepping)
-append_source_files(SOURCES TimeStepping/Algorithms)
-append_source_files(SOURCES StaggeredCoupling)
-append_source_files(SOURCES ODESolver)
-append_source_files(SOURCES Extrapolation)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+        .
+        Assembler
+        DOF
+        Fem
+        Fem/CoordinatesMapping
+        Fem/FiniteElement
+        Fem/Integration
+        Fem/ShapeFunction
+        NumericalStability
+        TimeStepping
+        TimeStepping/Algorithms
+        StaggeredCoupling
+        ODESolver
+        Extrapolation
+)
 
 # Create the library
-ogs_add_library(NumLib GENERATE_EXPORT_HEADER ${SOURCES})
+ogs_add_library(
+    NumLib
+    GENERATE_EXPORT_HEADER
+    ${_sources}
+    PUBLIC_HEADERS
+    ${_headers}
+    PRIVATE_HEADERS
+    ${_private}
+)
 set_target_properties(NumLib PROPERTIES LINKER_LANGUAGE CXX)
 
 target_link_libraries(

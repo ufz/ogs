@@ -1,11 +1,13 @@
-get_source_files(SOURCES)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
 if(WIN32)
     # Exceeds library limit of 65535 objects
     set(_static STATIC)
 endif()
 
-ogs_add_library(ComponentTransport ${_static} ${SOURCES})
+ogs_add_library(
+    ComponentTransport ${_static} ${_sources} PUBLIC_HEADERS ${_headers}
+)
 
 target_link_libraries(
     ComponentTransport PUBLIC ProcessLib ChemistryLib PRIVATE ParameterLib

@@ -1,9 +1,8 @@
 # Source files
-get_source_files(SOURCES_APPLICATIONSLIB)
-set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
 # Library
-ogs_add_library(ApplicationsLib ${LIB_SOURCES})
+ogs_add_library(ApplicationsLib ${_sources} PUBLIC_HEADERS ${_headers})
 
 target_link_libraries(
     ApplicationsLib

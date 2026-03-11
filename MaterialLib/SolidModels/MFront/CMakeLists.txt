@@ -1,15 +1,8 @@
-set(SOURCES
-    CreateMFront.cpp
-    CreateMFront.h
-    MFront.cpp
-    MFront.h
-    MFrontGeneric.cpp
-    MFrontGeneric.h
-    CreateMFrontGeneric.cpp
-    CreateMFrontGeneric.h
-)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
-ogs_add_library(MaterialLib_SolidModels_MFront ${SOURCES})
+ogs_add_library(
+    MaterialLib_SolidModels_MFront ${_sources} PUBLIC_HEADERS ${_headers}
+)
 
 target_link_libraries(
     MaterialLib_SolidModels_MFront PUBLIC BaseLib NumLib MFrontGenericInterface

@@ -1,8 +1,8 @@
 # Source files
-get_source_files(SOURCES)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
 # Library
-ogs_add_library(InSituLib ${SOURCES})
+ogs_add_library(InSituLib ${_sources} PUBLIC_HEADERS ${_headers})
 if(BUILD_SHARED_LIBS)
     install(TARGETS InSituLib LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 endif()

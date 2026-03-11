@@ -22,16 +22,22 @@ foreach(process ${_enabled_processes})
 endforeach()
 include(Tests.cmake)
 
-get_source_files(SOURCES)
-append_source_files(SOURCES Assembly)
-append_source_files(SOURCES BoundaryConditionAndSourceTerm)
-append_source_files(SOURCES BoundaryConditionAndSourceTerm/Utils)
-append_source_files(SOURCES ConstitutiveRelations)
-append_source_files(SOURCES SurfaceFlux)
-append_source_files(SOURCES Output)
-append_source_files(SOURCES Utils)
-append_source_files(SOURCES Reflection)
-append_source_files(SOURCES Graph)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+    .
+    Assembly
+    BoundaryConditionAndSourceTerm
+    BoundaryConditionAndSourceTerm/Utils
+    ConstitutiveRelations
+    SurfaceFlux
+    Output
+    Utils
+    Reflection
+    Graph
+)
 # For processes that contains both hydraulical process and mechanical process
 foreach(process ${_enabled_processes})
     if(process STREQUAL "LIE_HM"
@@ -42,28 +48,34 @@ foreach(process ${_enabled_processes})
        OR process STREQUAL "ThermoRichardsMechanics"
        OR process STREQUAL "PhaseField"
     )
-        append_source_files(SOURCES Common/HydroMechanics)
+        append_source_and_header_files(
+            _sources _headers _private DIRECTORIES Common/HydroMechanics
+        )
         break()
     endif()
 endforeach()
 
 foreach(process ${_enabled_processes})
-    if(process STREQUAL "LiquidFlow"
-       OR process STREQUAL "ThermoHydroMechanics"
-    )
-        append_source_files(SOURCES Common/HydraulicProcess)
+    if(process STREQUAL "LiquidFlow" OR process STREQUAL "ThermoHydroMechanics")
+        append_source_and_header_files(
+            _sources _headers _private DIRECTORIES Common/HydraulicProcess
+        )
         break()
     endif()
 endforeach()
 
 foreach(process ${_enabled_processes})
-    if (process STREQUAL "LargeDeformation")
-        append_source_files(SOURCES Deformation)
+    if(process STREQUAL "LargeDeformation")
+        append_source_and_header_files(
+            _sources _headers _private DIRECTORIES Deformation
+        )
         break()
     endif()
 endforeach()
 
-ogs_add_library(ProcessLib GENERATE_EXPORT_HEADER ${SOURCES})
+ogs_add_library(
+    ProcessLib GENERATE_EXPORT_HEADER ${_sources} PUBLIC_HEADERS ${_headers}
+)
 
 add_subdirectory(BoundaryConditionAndSourceTerm/Python)
 

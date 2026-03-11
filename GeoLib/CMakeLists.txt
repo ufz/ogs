@@ -1,16 +1,21 @@
-# Source files
-get_source_files(SOURCES)
-
-append_source_files(SOURCES IO)
-
-append_source_files(SOURCES IO/XmlIO/Boost)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+    .
+    IO
+    IO/XmlIO/Boost
+)
 
 if(OGS_BUILD_GUI)
-    append_source_files(SOURCES IO/XmlIO/Qt)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES IO/XmlIO/Qt
+    )
 endif()
 
 # Create the library
-ogs_add_library(GeoLib ${SOURCES})
+ogs_add_library(GeoLib ${_sources} PUBLIC_HEADERS ${_headers})
 ogs_add_library(GeoLibPredicates predicates.c)
 set_source_files_properties(
     predicates.c
