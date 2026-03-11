@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <Eigen/Eigenvalues>
+
+#include "LinearElasticIsotropicPhaseField.h"
 #include "MathLib/KelvinVector.h"
 
 namespace MaterialLib

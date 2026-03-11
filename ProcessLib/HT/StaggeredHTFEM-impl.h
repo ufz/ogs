@@ -7,6 +7,7 @@
 
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "StaggeredHTFEM.h"
 

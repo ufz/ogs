@@ -7,6 +7,7 @@
 
 #include "HydroMechanicsLocalAssemblerFracture.h"
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
+#include "MaterialLib/MPL/PropertyType.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Interpolation.h"

@@ -8,6 +8,7 @@
 
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
+#include "MaterialLib/MPL/Medium.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/DOF/LocalDOF.h"

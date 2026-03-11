@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <Eigen/Core>
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE

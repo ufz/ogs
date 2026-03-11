@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <limits>
+
 namespace ProcessLib
 {
 namespace TH2M

@@ -3,6 +3,10 @@
 
 #pragma once
 
+#include <array>
+#include <map>
+#include <memory>
+
 #include "Base.h"
 #include "ConstitutiveDensity.h"
 #include "Enthalpy.h"

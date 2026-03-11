@@ -10,6 +10,7 @@
 
 #include "IntegrationPointDataMatrix.h"
 #include "MaterialLib/PhysicalConstant.h"
+#include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MathLib/Point3d.h"

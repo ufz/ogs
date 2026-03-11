@@ -19,6 +19,7 @@
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidDensityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/LiquidViscosityData.h"
 #include "ProcessLib/ThermoRichardsMechanics/ConstitutiveCommon/TotalStressData.h"
+#include "ProcessLib/ThermoRichardsMechanics/ConstitutiveStress_StrainTemperature/Traits.h"
 #include "ThermoRichardsMechanicsFEM.h"
 
 namespace ProcessLib
