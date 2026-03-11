@@ -266,7 +266,9 @@ class FeatureMatrix:
         while m < (len(intervals) - 1):
             if intervals[m + 1].left - intervals[m].right <= 1:
                 intervals[m] = pd.Interval(
-                    intervals[m].left, intervals[m + 1].right, closed="both"
+                    intervals[m].left,
+                    max(intervals[m].right, intervals[m + 1].right),
+                    closed="both",
                 )
                 del intervals[m + 1]
             else:
