@@ -630,17 +630,7 @@ Function::Function(
                               { return convertStringToVariable(s); }) |
         ranges::to<std::vector>;
 
-    auto const get_number_omp_threads = []()
-    {
-#ifdef _OPENMP
-        return omp_get_max_threads();
-#else
-        return 1;
-#endif
-    };
-
-    int const num_threads = std::max(BaseLib::getNumberOfAssemblyThreads(),
-                                     get_number_omp_threads());
+    int const num_threads = BaseLib::getNumberOfThreads();
 
     impl2_ = std::make_unique<Implementation<2>>(
         num_threads, variables, required_variables_enum_,

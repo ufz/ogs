@@ -9,4 +9,8 @@ namespace BaseLib
 /// @return The number of threads set in OGS_ASM_THREADS environment variable or
 /// 1 if nothing is set.
 int getNumberOfAssemblyThreads();
+
+/// Returns the maximum of getNumberOfAssemblyThreads() and
+/// omp_get_max_threads().
+int getNumberOfThreads();
 }  // namespace BaseLib
