@@ -116,26 +116,27 @@ promote<S, T> DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(
     return val;
 }
 
+#ifndef DOXYGEN_DOCU_ONLY
 // Explicit template instantiations for double, double
-template boost::math::differentiation::autodiff_v1::promote<double, double>
+template boost::math::differentiation::promote<double, double>
 DimensionLessGibbsFreeEnergyRegion1::get_gamma(const double, const double);
 
-template boost::math::differentiation::autodiff_v1::promote<double, double>
+template boost::math::differentiation::promote<double, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const double, const double);
 
-template boost::math::differentiation::autodiff_v1::promote<double, double>
+template boost::math::differentiation::promote<double, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau(const double,
                                                      const double);
 
-template boost::math::differentiation::autodiff_v1::promote<double, double>
+template boost::math::differentiation::promote<double, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi_dpi(const double,
                                                         const double);
 
-template boost::math::differentiation::autodiff_v1::promote<double, double>
+template boost::math::differentiation::promote<double, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dtau(const double,
                                                           const double);
 
-template boost::math::differentiation::autodiff_v1::promote<double, double>
+template boost::math::differentiation::promote<double, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(const double,
                                                          const double);
 
@@ -143,11 +144,12 @@ DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dtau_dpi(const double,
 using fvar1 = boost::math::differentiation::autodiff_fvar<double, 0ul, 1ul>;
 using fvar2 = boost::math::differentiation::autodiff_fvar<double, 0ul, 2ul>;
 
-template boost::math::differentiation::autodiff_v1::promote<fvar1, double>
+template boost::math::differentiation::promote<fvar1, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const fvar1, const double);
 
-template boost::math::differentiation::autodiff_v1::promote<fvar2, double>
+template boost::math::differentiation::promote<fvar2, double>
 DimensionLessGibbsFreeEnergyRegion1::get_dgamma_dpi(const fvar2, const double);
+#endif  // DOXYGEN_DOCU_ONLY
 
 }  // namespace Fluid
 }  // namespace MaterialLib
