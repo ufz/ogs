@@ -1,95 +1,93 @@
-# Returns source files (*.cpp) and header files (*.h) from a directory.
-# Header files matching *-impl.h are excluded.
-# A (relative) subdirectory can be passed as third parameter (optional).
-macro(GET_SOURCE_AND_HEADER_FILES source_files header_files)
-    if(${ARGC} EQUAL 3)
-        set(DIR "${ARGV2}")
+# cmake-lint: disable=C0103
+
+# Appends source files (*.cpp), public header files (*.h) and private header
+# files (*-impl.h).
+# Signature:
+#   append_source_and_header_files(source_files header_files
+#                                  private_header_files
+#                                  DIRECTORIES dir1 [dir2 ...])
+function(append_source_and_header_files
+         source_files
+         header_files
+         private_header_files
+)
+    cmake_parse_arguments(_ashf "" "" "DIRECTORIES" ${ARGN})
+
+    if(_ashf_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR
+            "append_source_and_header_files: unexpected arguments: "
+            "${_ashf_UNPARSED_ARGUMENTS}"
+        )
+    endif()
+    if(NOT _ashf_DIRECTORIES)
+        message(FATAL_ERROR
+            "append_source_and_header_files: DIRECTORIES requires at least "
+            "one directory."
+        )
+    endif()
+    set(_dirs ${_ashf_DIRECTORIES})
+
+    set(_init_property "_OGS_ASHF_INITIALISED_${source_files}_${header_files}")
+    get_property(_already_initialised DIRECTORY PROPERTY "${_init_property}")
+
+    if(NOT _already_initialised)
+        set_property(DIRECTORY PROPERTY "${_init_property}" TRUE)
+        set(_appended_sources)
+        set(_appended_headers)
+        set(_appended_private_headers)
     else()
-        set(DIR ".")
+        set(_appended_sources ${${source_files}})
+        set(_appended_headers ${${header_files}})
+        set(_appended_private_headers ${${private_header_files}})
     endif()
 
-    file(
-        GLOB GET_SOURCE_AND_HEADER_FILES_SOURCES
-        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        CONFIGURE_DEPENDS ${DIR}/*.cpp
+    foreach(_dir IN LISTS _dirs)
+        file(
+            GLOB _dir_sources
+            RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+            CONFIGURE_DEPENDS ${_dir}/*.cpp
+        )
+        file(
+            GLOB _dir_all_headers
+            RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+            CONFIGURE_DEPENDS ${_dir}/*.h
+        )
+
+        set(_dir_headers ${_dir_all_headers})
+        list(FILTER _dir_headers EXCLUDE REGEX ".*-impl\\.h$")
+
+        set(_dir_private_headers ${_dir_all_headers})
+        list(FILTER _dir_private_headers INCLUDE REGEX ".*-impl\\.h$")
+
+        list(LENGTH _dir_sources _num_source_files)
+        list(LENGTH _dir_headers _num_header_files)
+        list(LENGTH _dir_private_headers _num_private_header_files)
+        math(
+            EXPR _num_files
+            "${_num_source_files}+${_num_header_files}+${_num_private_header_files}"
+        )
+        if(_num_files EQUAL 0)
+            message(FATAL_ERROR
+                "No source or header files found in ${_dir}"
+            )
+        endif()
+
+        list(APPEND _appended_sources ${_dir_sources})
+        list(APPEND _appended_headers ${_dir_headers})
+        list(APPEND _appended_private_headers ${_dir_private_headers})
+    endforeach()
+
+    list(REMOVE_DUPLICATES _appended_sources)
+    list(REMOVE_DUPLICATES _appended_headers)
+    set(${source_files} ${_appended_sources} PARENT_SCOPE)
+    set(${header_files} ${_appended_headers} PARENT_SCOPE)
+
+    list(REMOVE_DUPLICATES _appended_private_headers)
+    set(${private_header_files}
+        ${_appended_private_headers}
+        PARENT_SCOPE
     )
-    file(
-        GLOB GET_SOURCE_AND_HEADER_FILES_HEADERS
-        RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        CONFIGURE_DEPENDS ${DIR}/*.h
-    )
-    list(
-        FILTER GET_SOURCE_AND_HEADER_FILES_HEADERS EXCLUDE REGEX
-            ".*-impl\\.h$"
-    )
-
-    set(${source_files} ${GET_SOURCE_AND_HEADER_FILES_SOURCES})
-    set(${header_files} ${GET_SOURCE_AND_HEADER_FILES_HEADERS})
-
-    list(LENGTH ${source_files} NUM_SOURCE_FILES)
-    list(LENGTH ${header_files} NUM_HEADER_FILES)
-    math(EXPR NUM_FILES "${NUM_SOURCE_FILES}+${NUM_HEADER_FILES}")
-    if(${NUM_FILES} EQUAL 0)
-        message(FATAL_ERROR "No source or header files found in ${DIR}")
-    endif()
-endmacro()
-
-# Appends source files (*.cpp) and header files (*.h) from a directory.
-# Header files matching *-impl.h are excluded.
-# A (relative) subdirectory can be passed as third parameter (optional).
-macro(APPEND_SOURCE_AND_HEADER_FILES source_files header_files)
-    if(${ARGC} EQUAL 3)
-        set(DIR "${ARGV2}")
-    else()
-        set(DIR ".")
-    endif()
-
-    GET_SOURCE_AND_HEADER_FILES(TMP_SOURCES TMP_HEADERS "${DIR}")
-    set(${source_files} ${${source_files}} ${TMP_SOURCES})
-    set(${header_files} ${${header_files}} ${TMP_HEADERS})
-endmacro()
-
-# Returns a list of source files (*.h and *.cpp) in source_files and creates a
-# Visual Studio folder. A (relative) subdirectory can be passed as second
-# parameter (optional).
-macro(GET_SOURCE_FILES source_files)
-    if(${ARGC} EQUAL 2)
-        set(DIR "${ARGV1}")
-    else()
-        set(DIR ".")
-    endif()
-
-    # Get all files in the directory
-    file(GLOB GET_SOURCE_FILES_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-         CONFIGURE_DEPENDS ${DIR}/*.h
-    )
-    file(GLOB GET_SOURCE_FILES_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-         CONFIGURE_DEPENDS ${DIR}/*.cpp
-    )
-
-    set(${source_files}
-        ${GET_SOURCE_FILES_HEADERS} ${GET_SOURCE_FILES_TEMPLATES}
-        ${GET_SOURCE_FILES_SOURCES}
-    )
-    list(LENGTH ${source_files} NUM_FILES)
-    if(${NUM_FILES} EQUAL 0)
-        message(FATAL_ERROR "No source files found in ${DIR}")
-    endif()
-endmacro()
-
-# Appends a list of source files (*.h and *.cpp) to source_files and creates a
-# Visual Studio folder. A (relative) subdirectory can be passed as second
-# parameter (optional).
-macro(APPEND_SOURCE_FILES source_files)
-    if(${ARGC} EQUAL 2)
-        set(DIR "${ARGV1}")
-    else()
-        set(DIR ".")
-    endif()
-
-    GET_SOURCE_FILES(TMP_SOURCES "${DIR}")
-    set(${source_files} ${${source_files}} ${TMP_SOURCES})
-endmacro()
+endfunction()
 
 # Adds the include dir containing the autogenerated files to the PUBLIC
 # interface of the given target
