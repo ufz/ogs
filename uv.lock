@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
@@ -2123,17 +2123,21 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "lxml" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "pytest" },
+    { name = "typing-extensions" },
 ]
 dev-all = [
     { name = "gmsh", version = "4.13.1.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux'" },
     { name = "gmsh", version = "4.14.0", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux'" },
+    { name = "lxml" },
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "numpy", version = "2.3.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "ogstools" },
     { name = "pytest" },
+    { name = "typing-extensions" },
 ]
 
 [package.metadata]
@@ -2141,15 +2145,19 @@ requires-dist = [{ name = "pandas" }]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "lxml" },
     { name = "numpy" },
     { name = "pytest" },
+    { name = "typing-extensions" },
 ]
 dev-all = [
     { name = "gmsh", marker = "sys_platform != 'linux'", specifier = ">=4.12.0" },
     { name = "gmsh", marker = "sys_platform == 'linux'", specifier = "==4.13.1.dev1", index = "https://gmsh.info/python-packages-dev-nox" },
+    { name = "lxml" },
     { name = "numpy" },
-    { name = "ogstools", specifier = "==0.7.0" },
+    { name = "ogstools" },
     { name = "pytest" },
+    { name = "typing-extensions" },
 ]
 
 [[package]]
