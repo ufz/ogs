@@ -137,7 +137,12 @@ function(ogs_add_library targetName)
             ${targetName}
             PUBLIC
                 FILE_SET HEADERS
-                BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+                # OGS convention is to include with path, e.g. BaseLib/MPI.h
+                # Therefore overriding the default CMAKE_CURRENT_SOURCE_DIR
+                # which may lead to e.g. #include <mpi.h> to be shadowed by
+                # BaseLib/MPI.h on macOS (case-insensitive), same with
+                # process.h on Windows.
+                BASE_DIRS ${PROJECT_SOURCE_DIR}
                 FILES ${ogs_add_library_PUBLIC_HEADERS}
         )
     endif()
@@ -147,7 +152,7 @@ function(ogs_add_library targetName)
             PRIVATE
                 FILE_SET private_headers
                 TYPE HEADERS
-                BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
+                BASE_DIRS ${PROJECT_SOURCE_DIR}
                 FILES ${ogs_add_library_PRIVATE_HEADERS}
         )
     endif()
@@ -173,7 +178,7 @@ function(ogs_add_library targetName)
             PUBLIC
                 FILE_SET HEADERS
                 BASE_DIRS
-                    ${CMAKE_CURRENT_SOURCE_DIR}
+                    ${PROJECT_SOURCE_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR}
                 FILES ${CMAKE_CURRENT_BINARY_DIR}/${_targetName_lower}_export.h)
     endif()
@@ -197,9 +202,6 @@ function(ogs_add_library targetName)
             )
         endif()
     endif()
-
-    # Add project root to include directories for cross-library includes
-    target_include_directories(${targetName} PUBLIC ${PROJECT_SOURCE_DIR})
 
     if(MSVC)
         GroupSourcesByFolder(${targetName})
