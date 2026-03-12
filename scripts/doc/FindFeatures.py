@@ -45,12 +45,16 @@ import pandas as pd
 from FeatureMatrixClasses import FeatureMatrix, FeatureMatrixEntry
 from utils import get_xml_files
 
+_IS_TUPLE_RE = re.compile(
+    r"^\s*\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s+\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s*$"
+)
+
 
 def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
     # Create the feature dict
     feature_dict = {
         # Add Dummy features that are not "real" features but are needed to create the code coverage.
-        "!Dummy: First Lines": lambda xml: checkFirstLines(xml),
+        "!Dummy: First Lines": checkFirstLines,
         **{
             "!Dummy: "
             + case: lambda xml, case=case: check_tag_is_present(
@@ -69,8 +73,25 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 "parameters",
             ]
         },
+        # Add Dummy features for nonlinear_solvers containers to cover the container lines
+        # (the children Newton/Picard/PETScSNES are already covered by check_tag_text)
+        "!Dummy: nonlinear_solvers": lambda xml: check_tag_is_present(
+            xml, ".//nonlinear_solvers", line_type="open and close"
+        ),
+        # Add Dummy features for linear_solvers containers to cover the container lines
+        # (the children eigen/lis/petsc are already covered by check_children_names)
+        "!Dummy: linear_solvers": lambda xml: check_tag_is_present(
+            xml, ".//linear_solvers", line_type="open and close"
+        ),
+        "!Dummy: linear_solver": lambda xml: check_tag_is_present(
+            xml, ".//linear_solver", line_type="range"  # covers <name> child too
+        ),
+        # Add Dummy feature for chemical_system container to cover the container lines
+        "!Dummy: chemical_system": lambda xml: check_tag_is_present(
+            xml, ".//chemical_system", line_type="open and close"
+        ),
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
-        "!Dummy: Comment": lambda xml: check_comment(xml),
+        "!Dummy: Comment": check_comment,
         # Add Dummy feature for the Tags that should not appear on the website but used to calculate the code_coverage, so that it won't be considered as line without feature.
         "!Dummy: Media": lambda xml: check_tag_is_present(
             xml, "media", line_type="open and close"
@@ -90,6 +111,18 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 xml, ".//processes/process/type", case
             )
             for case in find_types_from_documentation(path, "processes/process")
+        },
+        # Add Constitutive relation types. Checks whether there is a constitutive relation type present.
+        # The possible types are extracted from the documentation using a regex pattern to find
+        # all constitutive_relation directories under processes/process/*/.
+        **{
+            "Constitutive relation: "
+            + case: lambda xml, case=case: check_tag_text(
+                xml, ".//constitutive_relation/type", case
+            )
+            for case in find_types_from_documentation(
+                path, "processes/process/*/constitutive_relation"
+            )
         },
         # Add Properties. Checks whether there is a process type present. The possible types are extracted from the documentation.
         **{
@@ -189,7 +222,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         **{
             "Linear_solver: "
             + child: lambda xml, child_name=child: check_children_names(
-                xml, ".//linear_solver", child_name
+                xml, ".//linear_solver", child_name, line_type="open and close"
             )
             for child in ["eigen", "lis", "petsc"]
         },
@@ -271,7 +304,68 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
             + case: lambda xml, case=case: check_attributes(
                 xml, "./chemical_system", "chemical_solver", case
             )
-            for case in ["Phreeqc", "SelfContained"]
+            for case in ["Phreeqc", "PhreeqcKernel", "SelfContained"]
+        },
+        # Check for chemical_system child elements
+        **{
+            "Chemical: "
+            + tag_name: lambda xml, tag_name=tag_name: check_tag_is_present(
+                xml, ".//chemical_system/" + tag_name
+            )
+            for tag_name in [
+                "database",
+                "solution",
+                "kinetic_reactants",
+                "rates",
+            ]
+        },
+        # Check for kinetic_reactant names
+        **{
+            "Kinetic Reactant: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, ".//chemical_system/kinetic_reactants/kinetic_reactant/name", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//chemical_system/kinetic_reactants/kinetic_reactant/name/text()"
+                    )
+                ]
+            )
+        },
+        # Check for rate elements
+        **{
+            "Chemical Rate: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, ".//chemical_system/rates/rate/kinetic_reactant", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//chemical_system/rates/rate/kinetic_reactant/text()"
+                    )
+                ]
+            )
+        },
+        # Check for solution components
+        **{
+            "Solution Component: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, ".//chemical_system/solution/components/component", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//chemical_system/solution/components/component/text()"
+                    )
+                ]
+            )
         },
         # Checks for damping of nonlinear solver.
         **{
@@ -315,6 +409,14 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
         # Check whether medium has an attribute id != 0
         "Medium: has phases": lambda xml: check_tag_is_present(
             xml, "./media/medium/phases", line_type="open and close"
+        ),
+        # Check whether process has specific_body_force
+        "Process: specific_body_force": lambda xml: check_tag_is_present(
+            xml, ".//processes/process/specific_body_force", line_type="range"
+        ),
+        # Check whether process has initial_stress
+        "Process: initial_stress": lambda xml: check_tag_is_present(
+            xml, ".//processes/process/initial_stress", line_type="range"
         ),
         # Check whether mesh attribute axially symmetric is set to "true"
         "Mesh: axially_symmetric": lambda xml: check_attributes(
@@ -366,6 +468,21 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
     return feature_dict
 
 
+# Mapping for diff xml files that intentionally omit the base_file attribute because
+# they are generic patches applied to multiple base files via the OGS -p flag.
+# Keys are relative to Tests/Data; values are relative to the xml file's own directory.
+DIFF_FILE_FALLBACK_BASES = {
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e1.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e2.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e3.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e4.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e5.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_1e6.xml": "square_1e0.prj",
+    "Elliptic/square_1x1_SteadyStateDiffusion/square_neumann.xml": "square_1e0.prj",
+}
+
+
 def get_feature_matrix(path: Path) -> FeatureMatrix:
     """
     First the project files are gathered. Afterwards the Feature Dictionaries are created. Eventually these dictionaries will be evaluated and
@@ -374,7 +491,9 @@ def get_feature_matrix(path: Path) -> FeatureMatrix:
     FeatureMatrixEntry object. These functions start with "check*".
     """
 
-    xml_files = get_xml_files(path, False)
+    xml_files = get_xml_files(
+        path, process_diff_files=True, fallback_bases=DIFF_FILE_FALLBACK_BASES
+    )
     feature_dict = get_feature_dict(path, xml_files)
 
     return FeatureMatrix(feature_dict, xml_files)
@@ -428,7 +547,7 @@ def check_attributes(
     attributes = [
         operator_func(element.attrib[attribute_name], case)
         for element in elements
-        if attribute_name in list(element.attrib.keys())
+        if attribute_name in element.attrib
     ]
     return FeatureMatrixEntry(
         list(itertools.compress(elements, attributes)), line_type=line_type
@@ -448,25 +567,28 @@ def check_comment(xml: etree.ElementTree) -> FeatureMatrixEntry:
     """Will find the lines, that contain comments in the xml files."""
     strings = etree.tostring(xml).split(b"\n")
 
-    sourceline = xml.xpath("../OpenGeoSysProject")[
-        0
-    ].sourceline  # Number of lines before element starts
+    # Use the same offset as _get_element_line: serialized line 1 is the
+    # OpenGeoSysProject opening tag, so offset = its canonical line - 1.
+    ogs_element = xml.xpath("../OpenGeoSysProject")[0]
+    offset = FeatureMatrix.get_element_opening_line(ogs_element) - 1
 
-    from_lines = [
-        line + sourceline - 1 for line in find_all_pattern_lines(strings, b"<!--")
-    ]
-    to_lines = [
-        line + sourceline - 1 for line in find_all_pattern_lines(strings, b"-->")
-    ]
+    from_lines = [line + offset for line in find_all_pattern_lines(strings, b"<!--")]
+    to_lines = [line + offset for line in find_all_pattern_lines(strings, b"-->")]
 
     if len(from_lines) > 0:
-        return FeatureMatrixEntry(
-            [xml],
-            lines=[
-                pd.Interval(left=from_lines[i], right=to_lines[i], closed="both")
-                for i in range(len(from_lines))
-            ],
-        )
+        intervals = []
+        for i in range(len(from_lines)):
+            # Ensure left <= right to avoid ValueError in pd.Interval
+            if from_lines[i] <= to_lines[i]:
+                intervals.append(
+                    pd.Interval(left=from_lines[i], right=to_lines[i], closed="both")
+                )
+            else:
+                # Handle malformed comment (start > end) - use single point interval
+                intervals.append(
+                    pd.Interval(left=from_lines[i], right=from_lines[i], closed="both")
+                )
+        return FeatureMatrixEntry([xml], lines=intervals)
 
     return FeatureMatrixEntry([])
 
@@ -476,7 +598,8 @@ def checkFirstLines(xml: etree.ElementTree) -> FeatureMatrixEntry:
     xp = xml.xpath("../OpenGeoSysProject")
 
     if len(xp) > 0:
-        if xp[0].sourceline - 1 < 1:
+        opening_line = FeatureMatrix.get_element_opening_line(xp[0])
+        if opening_line - 1 < 1:
             return FeatureMatrixEntry(
                 [xp[0]],
                 lines=[
@@ -492,7 +615,7 @@ def checkFirstLines(xml: etree.ElementTree) -> FeatureMatrixEntry:
             lines=[
                 pd.Interval(
                     left=1,
-                    right=xp[0].sourceline - 1,
+                    right=opening_line - 1,
                     closed="both",
                 )
             ],
@@ -559,7 +682,6 @@ def check_tag_text_is_tuple(
     """Checks whether the text of the element of the xml file in the location of the given xpath is a tuple. If True will return the sourceline along with the boolean."""
     elements = xml.xpath(xpath)
     is_tuple = [is_tuple_from_text(element.text) for element in elements]
-    [element.text for element in elements]
     return FeatureMatrixEntry(list(itertools.compress(elements, is_tuple)), line_type)
 
 
@@ -583,35 +705,33 @@ def extract_intervals(
 
 
 def find_all_pattern_lines(xml_str: list[str], pattern: bytes) -> list[int]:
-    return [
-        j + 1
-        for i in range(len(xml_str))
-        if pattern in xml_str[i]
-        for j in np.repeat(i, len(re.findall(pattern, xml_str[i])))
-    ]
+    result = []
+    for i, line in enumerate(xml_str):
+        count = len(re.findall(pattern, line))
+        if count:
+            result.extend([i + 1] * count)
+    return result
 
 
 def find_types_from_documentation(path: Path, subdir: str) -> list[str]:
-    # Will find all the possible types as defined in the documentation under the location "/Documentation/ProjectFile/prj/subdir/*"" and create a dictionary out of it
-    base = path / "../../Documentation/ProjectFile/prj" / subdir
-    return [
-        m.group(1)
-        for file in base.rglob("c_*.md")
-        if (m := re.search(r"c_(.*)\.md", file.name))
-    ]
+    # Will find all the possible types as defined in the documentation under the location
+    # "/Documentation/ProjectFile/prj/subdir/*" and create a dictionary out of it.
+    # The subdir parameter can be a regex pattern to match multiple directories (e.g., "processes/process/*/constitutive_relation").
+    base = path / "../../Documentation/ProjectFile/prj"
+    dirs = list(base.rglob(subdir))
+    files = [f for d in dirs for f in d.rglob("c_*.md")]
+    return list(
+        set(m.group(1) for f in files if (m := re.search(r"c_(.*)\.md", f.name)))
+    )
 
 
 def is_tuple_from_text(text: str) -> bool:
     """Evaluates Regex expression for given Text. If the text starts with a digit (possibly includes . or e) followed by a space and then another digit the
     function will return True else False."""
-    return bool(
-        re.compile(
-            r"^\s*\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s+\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\s*$"
-        ).match(text)
-    )
+    return bool(_IS_TUPLE_RE.match(text))
 
 
-def translate_ops(op: str) -> operator:
+def translate_ops(op: str):
     """ "Translates" operator strings into operator functions."""
     ops = {
         "!=": operator.__ne__,

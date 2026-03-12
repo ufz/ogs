@@ -3,10 +3,14 @@
 
 import os
 import platform
+import sys
 from pathlib import Path
 
 import ogs
 import pytest
+
+# Make scripts/doc importable for unit tests (e.g. test_feature_matrix.py)
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "scripts/doc"))
 
 
 def pytest_runtest_setup(item):
