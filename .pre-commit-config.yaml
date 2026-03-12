@@ -113,5 +113,9 @@ repos:
     hooks:
       # Check lock file up-to-date
       - id: uv-lock
+        files: pyproject.toml
+        name: uv-lock (.)
+      - id: uv-lock
         files: Tests/Data/pyproject.toml
         args: [--project, Tests/Data]
+        name: uv-lock (Tests/Data)
