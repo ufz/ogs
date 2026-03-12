@@ -66,14 +66,14 @@ build with pip:
     - source .venv/bin/activate
     - pip install --upgrade pip
     - pip install -e . --group dev -v
-    - ln -s _skbuild build # .test-artifacts expects a directory "build"
+    - ln -s ../build/_skbuild build # .test-artifacts expects a directory "build"
     - |
       if [ "$BUILD_TESTS" = true ]; then
         pytest
       fi
     - |
       if [ "$BUILD_CTEST" = true ]; then
-        ctest --test-dir _skbuild/cp* -LE large ${CTEST_ARGS}
+        ctest --test-dir ../build/_skbuild/cp* -LE large ${CTEST_ARGS}
       fi
 
 # WIP: standalone ctest config with:
