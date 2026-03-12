@@ -1,3 +1,16 @@
+# Check for in-source build dir
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+    message(FATAL_ERROR
+      "In-source builds are not allowed.\n"
+      "Please create a separate build directory, e.g.:\n"
+      "  cmake -S . -B build\n"
+      "  cmake --build build\n"
+      "OR use presets\n"
+      "  cmake --preset release\n"
+      "  cmake --build --preset release"
+    )
+endif()
+
 # Set build directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY
     ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}
