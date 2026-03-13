@@ -184,7 +184,6 @@ public:
     {
         OGS_ALWAYS_ASSERT(initialized());
 
-        auto ogs_status = EXIT_SUCCESS;
         try
         {
             bool solver_succeeded = simulation->executeTimeStep();
