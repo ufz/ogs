@@ -32,10 +32,18 @@
     - |
       if [[ -z "$TARGETS" ]]; then
 
+        if [[ ! -z "$ADDITIONAL_TARGETS_PRE" ]]; then
+
+          echo "########################" + `date` + "########################"
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_PRE} > >(tee $log_file)
+
+        fi
+
         if [ "$BUILD_PACKAGE" = true ]; then
           build_package="--target package"
         fi
 
+        echo "########################" + `date` + "########################"
         $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET ${build_package} > >(tee $log_file)
 
         echo "########################" + `date` + "########################"
@@ -107,10 +115,10 @@
           fi
         fi
 
-        if [[ ! -z "$ADDITIONAL_TARGETS" ]]; then
+        if [[ ! -z "$ADDITIONAL_TARGETS_POST" ]]; then
 
           echo "########################" + `date` + "########################"
-          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS} > >(tee $log_file)
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_POST} > >(tee $log_file)
 
         fi
 

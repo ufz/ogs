@@ -3,11 +3,13 @@ cppcheck:
   needs: [meta]
   tags: [envinf, shell]
   before_script:
-    - mkdir -p build
-    - cd build
+    - rm -rf ../build/cppcheck
+    - mkdir -p ../build/cppcheck
+    - ln -s ../build/cppcheck build
+    - cd ../build/cppcheck
   script:
     - >
-      cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_UTILS=OFF
+      cmake ../../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_UTILS=OFF
       -DOGS_USE_UNITY_BUILDS=OFF
     - bash cppcheck.sh
   artifacts:

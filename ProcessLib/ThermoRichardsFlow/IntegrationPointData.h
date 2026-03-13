@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <Eigen/Core>
 #include <memory>
 
 namespace ProcessLib

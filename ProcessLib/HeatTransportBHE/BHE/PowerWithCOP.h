@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <variant>
+
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "ParameterLib/Parameter.h"
 

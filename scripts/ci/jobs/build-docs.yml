@@ -16,13 +16,14 @@ build docs:
       variables:
         PAGES_PREFIX: doxygen-mr-$CI_MERGE_REQUEST_IID
   script:
-    - rm -rf build
-    - mkdir -p build
+    - rm -rf ../build/docs
+    - mkdir -p ../build/docs
+    - ln -s ../build/docs build
     # cpp-dependencies
     - NUM_CYCLES=`cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
     - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker run --rm -v $PWD:/work registry.opengeosys.org/ogs/ogs/cpp-dependencies cpp-dependencies --graph build/cpp-dependencies.dot
+    - docker run --rm -v $PWD/..:/work registry.opengeosys.org/ogs/ogs/cpp-dependencies cpp-dependencies --dir ogs --graph build/docs/cpp-dependencies.dot
     - dot -Tsvg build/cpp-dependencies.dot -o build/cpp-dependencies.svg
     # lizard, default code complexity number (15), function line length 100, max arguments 10
     - uvx --with jinja2 lizard==1.19.0 -l cpp -w -t 1 --length 100 --arguments 10 > lizard.txt || true
@@ -33,9 +34,9 @@ build docs:
     # - uvx --with jinja2 lizard==1.19.0 -l cpp -t 8 --html -o Lizard.html
     # - uvx --with jinja2 lizard==1.19.0 -EWordCount -x "./Tests/*" || true # word-cloud
     # build
-    - cd build
+    - cd ../build/docs
     - DOXYGEN_PATH=`guix shell doxygen -- which doxygen`
-    - cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion -DDOXYGEN_EXECUTABLE=$DOXYGEN_PATH
+    - cmake ../../ogs -G Ninja -DCMAKE_BUILD_TYPE=Release -DOGS_BUILD_PROCESSES=SteadyStateDiffusion -DDOXYGEN_EXECUTABLE=$DOXYGEN_PATH
     - cmake . --graphviz=cmake-dependencies.dot && dot -Tsvg cmake-dependencies.dot -o cmake-dependencies.svg
     - cmake .
     - cmake --build . --target doc 2>&1 | tee make-docs.output

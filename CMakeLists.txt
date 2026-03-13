@@ -179,8 +179,6 @@ option(OGS_INCLUDE_WHAT_YOU_USE "Enable include-what-you-use checks." OFF)
 include(packaging/Pack)
 
 # ---- Subdirectories ----
-include(scripts/cmake/CheckHeaderCompilation.cmake)
-
 add_subdirectory(Applications)
 add_subdirectory(BaseLib)
 add_subdirectory(GeoLib)
@@ -209,7 +207,10 @@ endif()
 
 include(UnityBuildSettings)
 include(GenerateEnvrcFile)
-check_header_compilation()
+# Add an alias target to all_verify_interface_header_sets.
+# Individual libs can be checked, e.g.: MathLib_verify_interface_header_sets
+add_custom_target(check-headers)
+add_dependencies(check-headers all_verify_interface_header_sets)
 include(Features)
 printEnabledProcesses()
 printMKLUsage()

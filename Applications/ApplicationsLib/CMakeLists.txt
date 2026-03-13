@@ -1,9 +1,8 @@
 # Source files
-get_source_files(SOURCES_APPLICATIONSLIB)
-set(LIB_SOURCES ${SOURCES_APPLICATIONSLIB})
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
 
 # Library
-ogs_add_library(ApplicationsLib ${LIB_SOURCES})
+ogs_add_library(ApplicationsLib ${_sources} PUBLIC_HEADERS ${_headers})
 
 target_link_libraries(
     ApplicationsLib
@@ -62,9 +61,9 @@ foreach(process ${_enabled_processes})
 endforeach()
 
 # On MSVC exports.def : error LNK2001: unresolved external symbol __
-if (NOT MSVC)
+if(NOT MSVC)
     target_precompile_headers(
-        ApplicationsLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
-        [["BaseLib/Logging.h"]]
+        ApplicationsLib PRIVATE [["BaseLib/Error.h"]]
+        [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]]
     )
 endif()

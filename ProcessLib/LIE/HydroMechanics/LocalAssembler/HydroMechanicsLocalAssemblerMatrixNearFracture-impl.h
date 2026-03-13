@@ -5,6 +5,7 @@
 
 #include "HydroMechanicsLocalAssemblerMatrixNearFracture.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "ProcessLib/LIE/Common/LevelSetFunction.h"
 
 namespace ProcessLib
 {

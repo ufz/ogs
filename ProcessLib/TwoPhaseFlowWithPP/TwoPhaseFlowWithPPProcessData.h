@@ -2,7 +2,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #pragma once
+#include <Eigen/Core>
+
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
 {

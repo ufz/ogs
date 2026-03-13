@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <ProcessLib/Reflection/ReflectionData.h>
+
 namespace ProcessLib::ThermoRichardsMechanics
 {
 

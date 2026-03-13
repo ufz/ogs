@@ -37,7 +37,7 @@ url = "https://gmsh.info/python-packages-dev-nox"
 explicit = true
 
 [tool.scikit-build]
-build-dir = "_skbuild/{wheel_tag}"
+build-dir = "../build/_skbuild/{wheel_tag}"
 cmake.args = ["--preset", "wheel"]
 experimental = true
 metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"

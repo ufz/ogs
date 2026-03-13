@@ -13,10 +13,10 @@ weight = 4
 
 Before compiling the developer has to choose a configuration of the software. OGS comes in lots of different flavours (e.g. serial / parallelized), can be build with optional features or modules (e.g. MFront material models).
 
-To separate source code from generated files such as compiled libraries, executables, test outputs and IDE projects we create build-directories. They can be placed arbitrarily. You can have as many build-directories as you like for e.g. different configurations but they will all use one source code directory. A typically directory structure:
+To separate source code from generated files such as compiled libraries, executables, test outputs and IDE projects we create build-directories. They can be placed arbitrarily but not inside the source code directory (so called out-of-source builds). You can have as many build-directories as you like for e.g. different configurations but they will all use one source code directory. A typically directory structure:
 
 - `ogs-source-code` (or simply `ogs`)
-- `build` (should be placed outside the source directory)
+- `build` (has to be placed outside the source directory)
   - `release`
   - `debug`
 

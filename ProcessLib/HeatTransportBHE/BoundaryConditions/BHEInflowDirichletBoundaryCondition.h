@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 #include "NumLib/IndexValueVector.h"
 #include "ProcessLib/BoundaryConditionAndSourceTerm/BoundaryCondition.h"
 

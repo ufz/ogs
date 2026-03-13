@@ -1,36 +1,40 @@
-get_source_files(SOURCES)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+    .
+    MeshSearch
+    Elements
+    IO
+    IO/Legacy
+    IO/VtkIO
+    IO/XDMF
+    Utils
+    Vtk
+)
 
 # It should be removed too for other MPI based DDC approach in future.
 if(NOT OGS_USE_PETSC)
-    list(REMOVE_ITEM SOURCES NodePartitionedMesh.h)
+    list(REMOVE_ITEM _headers NodePartitionedMesh.h
+         Utils/transformMeshToNodePartitionedMesh.h
+    )
+    list(REMOVE_ITEM _sources Utils/transformMeshToNodePartitionedMesh.cpp)
 endif()
-
-append_source_files(SOURCES MeshSearch)
-append_source_files(SOURCES Elements)
-append_source_files(SOURCES IO)
-append_source_files(SOURCES IO/Legacy)
-append_source_files(SOURCES IO/VtkIO)
-append_source_files(SOURCES Utils)
-if(NOT OGS_USE_PETSC)
-    list(REMOVE_ITEM SOURCES Utils/transformMeshToNodePartitionedMesh.cpp)
-    list(REMOVE_ITEM SOURCES Utils/transformMeshToNodePartitionedMesh.h)
-endif()
-append_source_files(SOURCES IO/XDMF)
 if(OGS_USE_PETSC)
-    append_source_files(SOURCES IO/XDMF/mpi)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES IO/XDMF/mpi IO/MPI_IO
+    )
 else()
-    append_source_files(SOURCES IO/XDMF/posix)
-endif()
-
-append_source_files(SOURCES Vtk)
-
-# It could be used for other MPI based DDC approach in future.
-if(OGS_USE_PETSC)
-    append_source_files(SOURCES IO/MPI_IO)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES IO/XDMF/posix
+    )
 endif()
 
 # Create the library
-ogs_add_library(MeshLib ${SOURCES})
+ogs_add_library(
+    MeshLib ${_sources} PUBLIC_HEADERS ${_headers} PRIVATE_HEADERS ${_private}
+)
 
 target_link_libraries(
     MeshLib

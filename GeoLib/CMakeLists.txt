@@ -1,16 +1,21 @@
-# Source files
-get_source_files(SOURCES)
-
-append_source_files(SOURCES IO)
-
-append_source_files(SOURCES IO/XmlIO/Boost)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+    .
+    IO
+    IO/XmlIO/Boost
+)
 
 if(OGS_BUILD_GUI)
-    append_source_files(SOURCES IO/XmlIO/Qt)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES IO/XmlIO/Qt
+    )
 endif()
 
 # Create the library
-ogs_add_library(GeoLib ${SOURCES})
+ogs_add_library(GeoLib ${_sources} PUBLIC_HEADERS ${_headers})
 ogs_add_library(GeoLibPredicates predicates.c)
 set_source_files_properties(
     predicates.c
@@ -29,10 +34,7 @@ target_link_libraries(
 )
 
 if(OGS_USE_NETCDF)
-    target_link_libraries(
-        GeoLib
-        PRIVATE netcdf-cxx4
-    )
+    target_link_libraries(GeoLib PRIVATE netcdf-cxx4)
     target_compile_definitions(GeoLib PRIVATE OGS_USE_NETCDF)
 endif()
 
@@ -43,5 +45,7 @@ foreach(xsd OpenGeoSysGLI.xsd OpenGeoSysSTN.xsd)
     install(FILES IO/XmlIO/${xsd} DESTINATION bin)
 endforeach()
 
-target_precompile_headers(GeoLib PRIVATE [["BaseLib/Error.h"]]
-    [["BaseLib/ConfigTree.h"]] [["BaseLib/Logging.h"]] <Eigen/Core>)
+target_precompile_headers(
+    GeoLib PRIVATE [["BaseLib/Error.h"]] [["BaseLib/ConfigTree.h"]]
+    [["BaseLib/Logging.h"]] <Eigen/Core>
+)

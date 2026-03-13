@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <Eigen/Core>
+
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 
 namespace ProcessLib

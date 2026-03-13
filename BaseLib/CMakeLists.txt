@@ -1,12 +1,28 @@
-get_source_files(SOURCES)
-append_source_files(SOURCES IO)
-append_source_files(SOURCES IO/XmlIO)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+    .
+    IO
+    IO/XmlIO
+)
 if(OGS_BUILD_GUI)
-    append_source_files(SOURCES IO/XmlIO/Qt)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES IO/XmlIO/Qt
+    )
 endif()
 
 # Create the library
-ogs_add_library(BaseLib GENERATE_EXPORT_HEADER ${SOURCES})
+ogs_add_library(
+    BaseLib
+    ${_sources}
+    GENERATE_EXPORT_HEADER
+    PUBLIC_HEADERS
+    ${_headers}
+    PRIVATE_HEADERS
+    ${_private}
+)
 
 if(MSVC)
     find_library(WinMM_LIBRARY WinMM REQUIRED)

@@ -1,12 +1,17 @@
 # Source files
-get_source_files(SOURCES)
-
-append_source_files(SOURCES MeshEditing)
-append_source_files(SOURCES MeshGenerators)
-append_source_files(SOURCES MeshQuality)
+append_source_and_header_files(_sources _headers _private DIRECTORIES .)
+append_source_and_header_files(
+    _sources
+    _headers
+    _private
+    DIRECTORIES
+    MeshEditing
+    MeshGenerators
+    MeshQuality
+)
 
 # Create the library
-ogs_add_library(MeshToolsLib ${SOURCES})
+ogs_add_library(MeshToolsLib ${_sources} PUBLIC_HEADERS ${_headers})
 
 target_link_libraries(
     MeshToolsLib
