@@ -13,6 +13,8 @@
             <!-- set large tolerances that are always met -->
             <abs_tol>1e-6</abs_tol>
             <rel_tol>0.02</rel_tol>
+            <abs_tol_res>1e-10</abs_tol_res>
+            <rel_tol_res>1e-10</rel_tol_res>
             <fail_on_error>true</fail_on_error>
             <log_file>jacobians_compare.log</log_file>
         </jacobian_assembler>

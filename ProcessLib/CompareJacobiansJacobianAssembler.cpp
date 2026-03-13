@@ -119,6 +119,52 @@ const std::string msg_fatal =
     "The local matrices M or K or the local vectors b assembled with the two "
     "different Jacobian assemblers differ.";
 
+//! Absolute and (symmetric) relative difference as Eigen::Array
+auto absDiffRelDiff(auto const& mat_or_vec1, auto const& mat_or_vec2)
+{
+    auto abs_diff = (mat_or_vec2 - mat_or_vec1).array().eval();
+    auto const rel_diff =
+        (abs_diff == 0.0)
+            .select(
+                abs_diff,
+                2. * abs_diff /
+                    (mat_or_vec1.cwiseAbs() + mat_or_vec2.cwiseAbs()).array())
+            .eval();
+    return std::pair{std::move(abs_diff), std::move(rel_diff)};
+}
+
+template <typename MatOrVec>
+auto oneIfAboveThresholdElseZero(MatOrVec&& mat_or_vec, double const threshold)
+{
+    return (mat_or_vec <= threshold)
+        .select(MatOrVec::Zero(mat_or_vec.rows(), mat_or_vec.cols()),
+                MatOrVec::Ones(mat_or_vec.rows(), mat_or_vec.cols()))
+        .eval();
+}
+
+// basic consistency check if something went terribly wrong
+bool isSimilar(auto const& mat_or_vec1, auto const& mat_or_vec2,
+               double const abs_tol, double const rel_tol)
+{
+    if (mat_or_vec1.size() == 0 || mat_or_vec2.size() == 0)
+    {
+        // either size is 0, ignore
+        return true;
+    }
+    if (mat_or_vec1.rows() != mat_or_vec2.rows() ||
+        mat_or_vec1.cols() != mat_or_vec2.cols())
+    {
+        return false;
+    }
+
+    auto const [abs_diff, rel_diff] = absDiffRelDiff(mat_or_vec1, mat_or_vec2);
+    auto const abs_tol_exceeded = abs_diff > abs_tol;
+    auto const rel_tol_exceeded = rel_diff > rel_tol;
+
+    // similar if for no entry abs and rel tols are exceeded at the same time
+    return !(abs_tol_exceeded && rel_tol_exceeded).any();
+}
+
 }  // anonymous namespace
 
 namespace ProcessLib
@@ -133,14 +179,18 @@ struct CompareJacobiansJacobianAssemblerImpl
     CompareJacobiansJacobianAssemblerImpl(
         std::unique_ptr<AbstractJacobianAssembler>&& asm1,
         std::unique_ptr<AbstractJacobianAssembler>&& asm2,
-        double abs_tol,
-        double rel_tol,
+        double abs_tol_Jac,
+        double rel_tol_Jac,
+        double abs_tol_res,
+        double rel_tol_res,
         bool fail_on_error,
         std::string const& log_file_path)
         : _asm1{std::move(asm1)},
           _asm2{std::move(asm2)},
-          _abs_tol{abs_tol},
-          _rel_tol{rel_tol},
+          _abs_tol_Jac{abs_tol_Jac},
+          _rel_tol_Jac{rel_tol_Jac},
+          _abs_tol_res{abs_tol_res},
+          _rel_tol_res{rel_tol_res},
           _fail_on_error{fail_on_error},
           _log_file{log_file_path}
     {
@@ -162,8 +212,10 @@ private:
     std::unique_ptr<AbstractJacobianAssembler> _asm1;
     std::unique_ptr<AbstractJacobianAssembler> _asm2;
 
-    double const _abs_tol;
-    double const _rel_tol;
+    double const _abs_tol_Jac;
+    double const _rel_tol_Jac;
+    double const _abs_tol_res;
+    double const _rel_tol_res;
 
     //! Whether to abort if the tolerances are exceeded.
     bool const _fail_on_error;
@@ -208,24 +260,12 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     auto const local_Jac2 =
         MathLib::toMatrix(local_Jac_data2, num_dof, num_dof);
 
-    auto const abs_diff = (local_Jac2 - local_Jac1).array().eval();
-    auto const rel_diff =
-        (abs_diff == 0.0)
-            .select(abs_diff,
-                    2. * abs_diff /
-                        (local_Jac1.cwiseAbs() + local_Jac2.cwiseAbs()).array())
-            .eval();
+    auto const [abs_diff, rel_diff] = absDiffRelDiff(local_Jac1, local_Jac2);
 
     auto const abs_diff_mask =
-        (abs_diff.abs() <= _abs_tol)
-            .select(decltype(abs_diff)::Zero(abs_diff.rows(), abs_diff.cols()),
-                    decltype(abs_diff)::Ones(abs_diff.rows(), abs_diff.cols()))
-            .eval();
+        oneIfAboveThresholdElseZero(abs_diff.abs(), _abs_tol_Jac);
     auto const rel_diff_mask =
-        (rel_diff.abs() <= _rel_tol)
-            .select(decltype(rel_diff)::Zero(rel_diff.rows(), rel_diff.cols()),
-                    decltype(rel_diff)::Ones(rel_diff.rows(), rel_diff.cols()))
-            .eval();
+        oneIfAboveThresholdElseZero(rel_diff.abs(), _rel_tol_Jac);
 
     auto const abs_diff_OK = !abs_diff_mask.any();
     auto const rel_diff_OK = !rel_diff_mask.any();
@@ -240,7 +280,8 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     }
     else
     {
-        msg_tolerance << "absolute tolerance of " << _abs_tol << " exceeded";
+        msg_tolerance << "absolute tolerance of " << _abs_tol_Jac
+                      << " exceeded";
     }
 
     if (rel_diff_OK)
@@ -254,30 +295,11 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
             msg_tolerance << " and ";
         }
 
-        msg_tolerance << "relative tolerance of " << _rel_tol << " exceeded";
+        msg_tolerance << "relative tolerance of " << _rel_tol_Jac
+                      << " exceeded";
     }
 
-    // basic consistency check if something went terribly wrong
-    auto check_equality = [&fatal_error](auto mat_or_vec1, auto mat_or_vec2)
-    {
-        if (mat_or_vec1.size() == 0 || mat_or_vec2.size() == 0)
-        {
-            return;
-        }
-        if (mat_or_vec1.rows() != mat_or_vec2.rows() ||
-            mat_or_vec1.cols() != mat_or_vec2.cols())
-        {
-            fatal_error = true;
-        }
-        else if (((mat_or_vec1 - mat_or_vec2).array().cwiseAbs() >
-                  std::numeric_limits<double>::epsilon())
-                     .any())
-        {
-            fatal_error = true;
-        }
-    };
-
-    check_equality(local_b1, local_b2);
+    fatal_error |= !isSimilar(local_b1, local_b2, _abs_tol_res, _rel_tol_res);
 
     Eigen::VectorXd res1 = Eigen::VectorXd::Zero(num_dof);
     auto const x = MathLib::toVector(local_x);
@@ -293,7 +315,7 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
         res2.noalias() -= local_b2;
     }
 
-    check_equality(res1, res2);
+    fatal_error |= !isSimilar(res1, res2, _abs_tol_res, _rel_tol_res);
 
     if (tol_exceeded)
     {
@@ -334,8 +356,8 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     {
         dump_py(_log_file, "counter", _counter);
         dump_py(_log_file, "num_dof", num_dof);
-        dump_py(_log_file, "abs_tol", _abs_tol);
-        dump_py(_log_file, "rel_tol", _rel_tol);
+        dump_py(_log_file, "abs_tol", _abs_tol_Jac);
+        dump_py(_log_file, "rel_tol", _rel_tol_Jac);
 
         _log_file << '\n';
 
@@ -406,14 +428,12 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
 
 CompareJacobiansJacobianAssembler::CompareJacobiansJacobianAssembler(
     std::unique_ptr<AbstractJacobianAssembler>&& asm1,
-    std::unique_ptr<AbstractJacobianAssembler>&& asm2,
-    double abs_tol,
-    double rel_tol,
-    bool fail_on_error,
-    std::string const& log_file_path)
+    std::unique_ptr<AbstractJacobianAssembler>&& asm2, double abs_tol_Jac,
+    double rel_tol_Jac, double abs_tol_res, double rel_tol_res,
+    bool fail_on_error, std::string const& log_file_path)
     : impl_{std::make_shared<detail::CompareJacobiansJacobianAssemblerImpl>(
-          std::move(asm1), std::move(asm2), abs_tol, rel_tol, fail_on_error,
-          log_file_path)}
+          std::move(asm1), std::move(asm2), abs_tol_Jac, rel_tol_Jac,
+          abs_tol_res, rel_tol_res, fail_on_error, log_file_path)}
 {
 }
 
@@ -500,6 +520,11 @@ createCompareJacobiansJacobianAssembler(BaseLib::ConfigTree const& config)
     //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__rel_tol}
     auto const rel_tol = config.getConfigParameter<double>("rel_tol");
 
+    //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__abs_tol_res}
+    auto const abs_tol_res = config.getConfigParameter<double>("abs_tol_res");
+    //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__rel_tol_res}
+    auto const rel_tol_res = config.getConfigParameter<double>("rel_tol_res");
+
     //! \ogs_file_param{prj__processes__process__jacobian_assembler__CompareJacobians__fail_on_error}
     auto const fail_on_error = config.getConfigParameter<bool>("fail_on_error");
 
@@ -507,7 +532,7 @@ createCompareJacobiansJacobianAssembler(BaseLib::ConfigTree const& config)
     auto const log_file = config.getConfigParameter<std::string>("log_file");
 
     return std::make_unique<CompareJacobiansJacobianAssembler>(
-        std::move(asm1), std::move(asm2), abs_tol, rel_tol, fail_on_error,
-        log_file);
+        std::move(asm1), std::move(asm2), abs_tol, rel_tol, abs_tol_res,
+        rel_tol_res, fail_on_error, log_file);
 }
 }  // namespace ProcessLib

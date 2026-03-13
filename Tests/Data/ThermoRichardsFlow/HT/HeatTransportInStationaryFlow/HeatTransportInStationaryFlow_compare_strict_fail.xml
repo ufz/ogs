@@ -12,6 +12,8 @@
             </reference_jacobian_assembler>
             <abs_tol>5e-16</abs_tol>
             <rel_tol>4e-15</rel_tol>
+            <abs_tol_res>1e-10</abs_tol_res>
+            <rel_tol_res>1e-10</rel_tol_res>
             <fail_on_error>true</fail_on_error>
             <log_file>jacobians_compare_strict_fail.log</log_file>
         </jacobian_assembler>

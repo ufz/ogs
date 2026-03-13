@@ -34,8 +34,10 @@ public:
     CompareJacobiansJacobianAssembler(
         std::unique_ptr<AbstractJacobianAssembler>&& asm1,
         std::unique_ptr<AbstractJacobianAssembler>&& asm2,
-        double abs_tol,
-        double rel_tol,
+        double abs_tol_Jac,
+        double rel_tol_Jac,
+        double abs_tol_res,
+        double rel_tol_res,
         bool fail_on_error,
         std::string const& log_file_path);
 
