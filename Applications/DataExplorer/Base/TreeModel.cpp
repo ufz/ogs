@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "Base/TreeModel.h"
+#include "TreeModel.h"
 
 #include <QModelIndex>
 #include <QStringList>
 #include <QVariant>
 
-#include "Applications/DataExplorer/Base/TreeItem.h"
+#include "TreeItem.h"
 
 /**
  * A model for the QTreeView implementing the tree as a double-linked list.
