@@ -6,7 +6,8 @@
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
-#include <algorithm>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "../ogs.OGSMesh/OGSMesh.h"
 #include "Applications/ApplicationsLib/Simulation.h"
@@ -37,12 +38,9 @@ std::pair<int, std::vector<char*>> toArgcArgv(
     std::vector<std::string>& argv_str)
 {
     int argc = argv_str.size();
-    std::vector<char*> argv_vec;
-    argv_vec.reserve(argc + 1);
-    for (auto& arg : argv_str)
-    {
-        argv_vec.push_back(arg.data());
-    }
+    auto argv_vec = argv_str |
+                    ranges::views::transform([](auto& s) { return s.data(); }) |
+                    ranges::to<std::vector<char*>>();
     argv_vec.push_back(nullptr);  // last entry must be a nullptr!
 
     return {argc, std::move(argv_vec)};
