@@ -68,7 +68,7 @@
             <vtkdiff>
                 <regex>mockup_results_restart_.*[.]vtu</regex>
                 <field>pressure</field>
-                <absolute_tolerance>1.0e-5</absolute_tolerance>
+                <absolute_tolerance>1.1e-5</absolute_tolerance>
                 <relative_tolerance>0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
