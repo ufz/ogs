@@ -24,8 +24,6 @@ build wheels linux:
 
 build wheels mac:
   tags: [mac, arm64]
-  variables:
-    MACOSX_DEPLOYMENT_TARGET: "10.15"
   <<: *wheels_template
 
 build wheels win:

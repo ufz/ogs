@@ -113,6 +113,11 @@ environment-pass = [
 # Ninja generator does not select  the host64 compiler.
 "cmake.args" = "-G;Visual Studio 17 2022;--preset;wheel"
 
+[tool.cibuildwheel.macos]
+# Passing MACOSX_DEPLOYMENT_TARGET with a regular environment variable
+# via the calling environment did not work.
+environment = { MACOSX_DEPLOYMENT_TARGET="15.0" }
+
 [tool.ruff]
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
 exclude = ["scripts/doc", "*ci-skip*"]
