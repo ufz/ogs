@@ -77,7 +77,7 @@ std::string localMatrixOutputFilename(std::string const& filenamePrefix)
 
 Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic,
                                Eigen::RowMajor>>
-toSquareMatrixRowMajor(std::vector<double> entries)
+toSquareMatrixRowMajor(std::vector<double> const& entries)
 {
     auto const num_r_c =
         static_cast<Eigen::Index>(std::round(std::sqrt(entries.size())));
