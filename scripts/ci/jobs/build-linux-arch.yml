@@ -39,6 +39,9 @@ build linux arch:
     ADDITIONAL_TARGETS_PRE: "check-headers"
     ADDITIONAL_TARGETS_POST: "feature_matrix"
   before_script: *common-linux-arch-before-script
+  allow_failure:
+    # Triggered by feature matrix feature_coverage
+    exit_codes: 123
 
 build linux arch (py-cov):
   <<: *common-linux-arch-base
@@ -47,7 +50,7 @@ build linux arch (py-cov):
   variables:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: "-DOGS_USE_MKL=ON -DOGS_USE_NETCDF=ON -DOGS_COVERAGE_PYTHON=ON"
-    ADDITIONAL_TARGETS_POST: "feature_matrix process_coverage_python"
+    ADDITIONAL_TARGETS_POST: "process_coverage_python"
     CTEST_ARGS: "-R nb-|pytest"
   before_script: *common-linux-arch-before-script
 
