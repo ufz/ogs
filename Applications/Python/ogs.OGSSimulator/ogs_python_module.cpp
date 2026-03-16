@@ -6,7 +6,8 @@
 #include <spdlog/spdlog.h>
 #include <tclap/CmdLine.h>
 
-#include <algorithm>
+#include <range/v3/range/conversion.hpp>
+#include <range/v3/view/transform.hpp>
 
 #include "../ogs.OGSMesh/OGSMesh.h"
 #include "Applications/ApplicationsLib/Simulation.h"
@@ -16,51 +17,33 @@
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 #include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/RunTime.h"
+#include "BaseLib/TCLAPArguments.h"
 #include "CommandLineArgumentParser.h"
 #include "InfoLib/GitInfo.h"
-#include "ogs_embedded_python.h"
 
 static constexpr int EXIT_ARGPARSE_FAILURE = 3;  // "mangled" TCLAP status
 static constexpr int EXIT_ARGPARSE_EXIT_OK = 2;  // "mangled" TCLAP status
 static_assert(EXIT_FAILURE == 1);
 static_assert(EXIT_SUCCESS == 0);
 
-int checkCommandLineArguments(std::vector<std::string>& argv_str)
+#define OGS_ALWAYS_ASSERT(cond)                      \
+    if (!(cond))                                     \
+    {                                                \
+        OGS_FATAL("OGS assertion failed {}", #cond); \
+    }
+
+std::pair<int, std::vector<char*>> toArgcArgv(
+    std::vector<std::string>& argv_str)
 {
-    INFO("Parsing the OGS commandline ...");
     int argc = argv_str.size();
-    char** argv = new char*[argc];
-    for (int i = 0; i < argc; ++i)
-    {
-        argv[i] = argv_str[i].data();
-    }
+    auto argv_vec = argv_str |
+                    ranges::views::transform([](auto& s) { return s.data(); }) |
+                    ranges::to<std::vector<char*>>();
+    argv_vec.push_back(nullptr);  // last entry must be a nullptr!
 
-    CommandLineArguments cli_args;
-    try
-    {
-        cli_args = parseCommandLineArguments(argc, argv, false);
-    }
-    catch (TCLAP::ArgException const& e)
-    {
-        ERR("Parsing the OGS commandline failed: {}", e.what());
-
-        // "mangle" TCLAP's status
-        return EXIT_ARGPARSE_FAILURE;
-    }
-    catch (TCLAP::ExitException const& e)
-    {
-        if (e.getExitStatus() == 0)
-        {
-            return EXIT_ARGPARSE_EXIT_OK;
-        }
-
-        // "mangle" TCLAP's status
-        return EXIT_ARGPARSE_FAILURE;
-    }
-
-    INFO("Parsing the OGS commandline passed");
-    return EXIT_SUCCESS;
+    return {argc, std::move(argv_vec)};
 }
 
 // Needs to be exported, see
@@ -70,12 +53,10 @@ class PYBIND11_EXPORT OGSSimulation
 public:
     explicit OGSSimulation(std::vector<std::string>& argv_str)
     {
-        int argc = argv_str.size();
-        char** argv = new char*[argc];
-        for (int i = 0; i < argc; ++i)
-        {
-            argv[i] = argv_str[i].data();
-        }
+        auto [argc, argv_vec] = toArgcArgv(argv_str);
+        char** argv = argv_vec.data();
+
+        mpi_setup.emplace(argc, argv);
 
         CommandLineArguments cli_args;
         try
@@ -84,6 +65,10 @@ public:
         }
         catch (TCLAP::ArgException const& e)
         {
+            // TODO fragile interplay between (incomplete) simulation
+            // initialization and OGS logger initialization
+            BaseLib::initOGSLogger(BaseLib::defaultLogLevel());
+
             std::cerr << "Parsing the OGS commandline failed: " << e.what()
                       << '\n';
 
@@ -92,6 +77,16 @@ public:
         }
         catch (TCLAP::ExitException const& e)
         {
+            // TODO fragile interplay between (incomplete) simulation
+            // initialization and OGS logger initialization
+            BaseLib::initOGSLogger(BaseLib::defaultLogLevel());
+
+            if (e.getExitStatus() == 0)
+            {
+                // --version/--help
+                return;
+            }
+
             throw(e);
         }
 
@@ -128,6 +123,7 @@ public:
         {
             ERR("{}", e.what());
             ogs_status = EXIT_FAILURE;
+            simulation.reset();
             throw(e);
         }
         INFO("OpenGeoSys is now initialized.");
@@ -135,6 +131,8 @@ public:
 
     int executeSimulation()
     {
+        OGS_ALWAYS_ASSERT(initialized());
+
         BaseLib::RunTime run_time;
 
         {
@@ -184,7 +182,8 @@ public:
 
     int executeTimeStep()
     {
-        auto ogs_status = EXIT_SUCCESS;
+        OGS_ALWAYS_ASSERT(initialized());
+
         try
         {
             bool solver_succeeded = simulation->executeTimeStep();
@@ -198,12 +197,22 @@ public:
         return ogs_status;
     }
 
-    double currentTime() const { return simulation->currentTime(); }
+    double currentTime() const
+    {
+        OGS_ALWAYS_ASSERT(initialized());
+        return simulation->currentTime();
+    }
 
-    double endTime() const { return simulation->endTime(); }
+    double endTime() const
+    {
+        OGS_ALWAYS_ASSERT(initialized());
+        return simulation->endTime();
+    }
 
     OGSMesh& getMesh(std::string const& name)
     {
+        OGS_ALWAYS_ASSERT(initialized());
+
         auto const mesh_it = mesh_mapping.find(name);
         if (mesh_it != mesh_mapping.end())
         {
@@ -225,13 +234,19 @@ public:
 
     std::vector<std::string> getMeshNames() const
     {
+        OGS_ALWAYS_ASSERT(initialized());
+
         return simulation->getMeshNames();
     }
 
     void finalize()
     {
-        simulation->outputLastTimeStep();
-        simulation.reset(nullptr);
+        if (simulation)
+        {
+            simulation->outputLastTimeStep();
+            simulation.reset(nullptr);
+        }
+        mpi_setup.reset();
 
         // Check for swallowed ConfigTree errors after Simulation destructor
         // runs. This catches configuration errors in objects destroyed at end
@@ -247,11 +262,16 @@ public:
         }
     }
 
+    int status() const { return ogs_status; }
+
+    bool initialized() const { return simulation != nullptr; }
+
 private:
     int ogs_status = EXIT_SUCCESS;
 
     std::unique_ptr<Simulation> simulation;
     std::map<std::string, OGSMesh> mesh_mapping;
+    std::optional<BaseLib::MPI::Setup> mpi_setup;
 };
 
 /// To use this module import dependencies first:
@@ -262,12 +282,8 @@ private:
 /// https://github.com/pybind/pybind11/issues/1391#issuecomment-912642979
 PYBIND11_MODULE(OGSSimulator, m)
 {
-    BaseLib::initOGSLogger("info");
     m.attr("__name__") = "ogs.OGSSimulator";
     m.doc() = "pybind11 ogs plugin";
-
-    m.def("check_command_line_arguments", &checkCommandLineArguments,
-          "check the command line arguments");
 
     pybind11::class_<OGSSimulation>(m, "OGSSimulation")
         .def(pybind11::init<std::vector<std::string>&>())
@@ -283,5 +299,9 @@ PYBIND11_MODULE(OGSSimulator, m)
              pybind11::arg("name"), "get unstructured grid from ogs")
         .def("mesh_names", &OGSSimulation::getMeshNames,
              "get names of all meshes from ogs")
-        .def("close", &OGSSimulation::finalize, "finalize OGS simulation");
+        .def("close", &OGSSimulation::finalize, "finalize OGS simulation")
+        .def_property_readonly("status", &OGSSimulation::status)
+        .def_property_readonly(
+            "initialized", &OGSSimulation::initialized,
+            "Tells if the simulation object has been completely initialized.");
 }

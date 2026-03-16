@@ -46,7 +46,8 @@ public:
         std::optional<ApplicationsLib::TestDefinition>& test_definition);
 
 private:
-    ApplicationsLib::LinearSolverLibrarySetup linear_solver_library_setup;
+    std::shared_ptr<ApplicationsLib::LinearSolverLibrarySetup>
+        linear_solver_library_setup;
 #if defined(USE_PETSC)
     vtkSmartPointer<vtkMPIController> controller;
 #endif
