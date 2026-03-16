@@ -430,7 +430,12 @@ if(OGS_USE_PETSC)
     endif()
 endif()
 
-if(NOT GUIX_BUILD)
+if(GUIX_BUILD)
+    find_package(Xdmf REQUIRED)
+    add_library(OgsXdmf::OgsXdmf INTERFACE IMPORTED)
+    target_include_directories(OgsXdmf::OgsXdmf SYSTEM INTERFACE ${XDMF_INCLUDE_DIRS} ${XDMF_LIBXML2_INCLUDE_DIR})
+    target_link_libraries(OgsXdmf::OgsXdmf INTERFACE Xdmf XdmfCore ${XDMF_LIBXML2_LIBRARY} ${HDF5_LIBRARIES})
+else()
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
         NAME xdmf
@@ -473,6 +478,7 @@ if(NOT GUIX_BUILD)
                     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             )
         endif()
+        add_library(OgsXdmf::OgsXdmf ALIAS OgsXdmf)
     endif()
     list(APPEND DISABLE_WARNINGS_TARGETS OgsXdmf OgsXdmfCore)
 endif()
