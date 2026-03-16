@@ -6,6 +6,7 @@
   #:use-module (guix git-download)
   #:use-module (guix gexp)
   #:use-module (guix build-system cmake)
+  #:use-module (ogs-mkl)
   #:use-module (gnu packages geo)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages xml)
@@ -62,3 +63,21 @@
       (modify-inputs (package-inputs ogs-petsc)
         (prepend xdmf)))
     (synopsis "OpenGeoSys with PETSc and xdmfdiff")))
+
+(define-public ogs-mkl-xdmf
+  (package
+    (inherit ogs-serial)
+    (name "ogs-mkl-xdmf")
+    (inputs
+      (modify-inputs (package-inputs ogs-mkl)
+        (prepend xdmf)))
+    (synopsis "OpenGeoSys with MKL and xdmfdiff")))
+
+(define-public ogs-petsc-mkl-xdmf
+  (package
+    (inherit ogs-petsc)
+    (name "ogs-petsc-mkl-xdmf")
+    (inputs
+      (modify-inputs (package-inputs ogs-petsc-mkl)
+        (prepend xdmf)))
+    (synopsis "OpenGeoSys with PETSc, MKL, and xdmfdiff")))
