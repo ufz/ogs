@@ -194,7 +194,7 @@ if(_build_chemistry_lib)
 endif()
 
 if(OGS_BUILD_CLI OR OGS_BUILD_UTILS OR OGS_BUILD_TESTING)
-    if(TARGET OgsXdmf)
+    if(TARGET OgsXdmf OR Xdmf_FOUND)
         add_subdirectory(Tests/xdmfdiff)
     endif()
     add_subdirectory(ParameterLib)
