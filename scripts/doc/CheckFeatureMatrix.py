@@ -62,10 +62,15 @@ def test_feature_matrix(path: Path, path_to_xml_files: Path) -> None:
             key in feat for key in ["file", "features", "lines", "feature_coverage"]
         )  # Check whether all keys are there
 
-        # Check for feature coverage. If the feature coverage lies below that indicates problems with the feature detection and hence should raise an error.
-        assert feat["feature_coverage"] > 0.94, (
-            "The following file has a critically low feature coverage: " + feat["file"]
-        )
+        # Check for feature coverage. If the feature coverage lies below that
+        # indicates problems with the feature detection.
+        # Exit code 123 is handled by CI job.
+        if feat["feature_coverage"] <= 0.94:
+            print(
+                "The following file has a critically low feature coverage: "
+                + feat["file"]
+            )
+            raise SystemExit(123)
 
 
 def get_all_features(features: list[dict]) -> list[str]:
