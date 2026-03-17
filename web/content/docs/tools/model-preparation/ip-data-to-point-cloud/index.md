@@ -5,11 +5,12 @@ author = "Christoph Lehmann"
 
 The tool `ipDataToPointCloud` converts an input mesh with OGS's integration
 point data to a point cloud whose nodes are the integration points of the input
-mesh.
+mesh. If there is no integration point data present in the mesh, you have to
+provide a value for the integration order via the optional argument (`-O`).
 
 ## Usage
 
-`ipDataToPointCloud  -i <path> -o <path>`
+`ipDataToPointCloud  -i <path> -o <path> -O <integration_order>`
 
 ## Example
 

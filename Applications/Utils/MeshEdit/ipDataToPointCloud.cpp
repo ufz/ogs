@@ -216,12 +216,12 @@ void copyDoubleValuedFieldDataToPointCloud(MeshLib::Properties const& props_in,
 }
 
 int main(int argc, char** argv)
+try
 {
     // TODO future additions to this tool might include:
     // -C --copy-cell-data
     // -N --interpolate-node-data
     // -I --add-cell-ids
-    // -O --integration-order
     // --natural-coords add natural coordinates of integration points, or better
     //     not?
     // --no-data
@@ -247,6 +247,10 @@ int main(int argc, char** argv)
                                              "Input (.vtu). The input mesh",
                                              true, "", "INPUT_FILE");
     cmd.add(arg_in_file);
+    TCLAP::ValueArg<unsigned> integration_order(
+        "O", "integration-order", "Integration order of the output", false, 0,
+        "INTEGRATION_ORDER");
+    cmd.add(integration_order);
 
     auto log_level_arg = BaseLib::makeLogLevelArg();
     cmd.add(log_level_arg);
@@ -258,8 +262,16 @@ int main(int argc, char** argv)
     std::unique_ptr<MeshLib::Mesh const> mesh_in(
         MeshLib::IO::readMeshFromFile(arg_in_file.getValue()));
 
-    auto const integration_order = determineIntegrationOrder(*mesh_in);
-    auto nodes = computePointCloudNodes(*mesh_in, integration_order);
+    if (!mesh_in)
+    {
+        OGS_FATAL("Input mesh could not be read.");
+    }
+
+    unsigned const int_order = (integration_order.isSet())
+                                   ? integration_order.getValue()
+                                   : determineIntegrationOrder(*mesh_in);
+
+    auto nodes = computePointCloudNodes(*mesh_in, int_order);
 
     MeshLib::Mesh point_cloud("point_cloud", std::move(nodes), {});
 
@@ -272,4 +284,9 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
+}
+catch (std::exception const& e)
+{
+    ERR("{}", e.what());
+    return EXIT_FAILURE;
 }
