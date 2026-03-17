@@ -35,7 +35,13 @@ target_compile_definitions(
 
 target_link_libraries(
     ProcessLibBoundaryConditionAndSourceTermPython
-    PUBLIC BaseLib MathLib MeshLib NumLib pybind11::module
+    PUBLIC
+        BaseLib
+        MathLib
+        MeshLib
+        NumLib
+        pybind11::module
+        $<$<TARGET_EXISTS:Python::Python>:Python::Python>
 )
 
 if(BUILD_SHARED_LIBS AND MSVC)
