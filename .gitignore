@@ -40,3 +40,5 @@ nohup.out
 /wheelhouse
 .ipynb_checkpoints
 /Applications/Python/_version.py
+
+web/.hugo_build.lock
