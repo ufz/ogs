@@ -5,16 +5,10 @@ check web links:
   extends:
     - .rules-master-manual
   needs: [meta, "build linux arch", "build linux petsc"]
-  image: $WEB_IMAGE
   script:
-    # Copy notebook pages
-    - cp -rl build/*/web/content web/
-    - cd web
-    - yarn
-    - yarn index
-    - hugo
-    - lychee --config ./lychee.toml --cache --max-cache-age 2d --threads ${CTEST_PARALLEL_LEVEL:-4} --root-dir public public
+    - !reference [.web-setup, script]
+    - lychee --config web/lychee.toml --cache --max-cache-age 2d --threads ${CTEST_PARALLEL_LEVEL:-4} --root-dir $build_dir_full/web/public $build_dir_full/web/public
     # - lychee --config ./lychee-gitlab.toml --cache --max-cache-age 14d --max-concurrency 2 public
   cache:
     paths:
-      - web/.lycheecache
+      - build/release/web/.lycheecache
