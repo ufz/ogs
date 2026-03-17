@@ -5,3 +5,5 @@ gcov-parallel = yes
 print-summary = yes
 gcov-ignore-parse-errors = suspicious_hits.warn
 merge-lines = yes
+exclude-throw-branches = yes
+exclude-unreachable-branches = yes
