@@ -1,0 +1,23 @@
+{
+    "private": true,
+    "scripts": {
+        "hugo": "hugo --source @PROJECT_SOURCE_DIR@/web --config @OGS_WEB_WORKSPACE_DIR@/hugo.toml",
+        "css:build": "shx mkdir -p static/css && cross-env NODE_PATH=./node_modules npx tailwindcss -c @OGS_WEB_WORKSPACE_DIR@/tailwind.config.js -o static/css/all.css -i @PROJECT_SOURCE_DIR@/web/assets/css/main.css -m",
+        "css:watch": "shx mkdir -p static/css && cross-env NODE_PATH=./node_modules npx tailwindcss -c @OGS_WEB_WORKSPACE_DIR@/tailwind.config.js -o static/css/all.css -i @PROJECT_SOURCE_DIR@/web/assets/css/main.css --watch",
+        "site:build": "npm run hugo",
+        "site:serve": "hugo server --source @PROJECT_SOURCE_DIR@/web --config @OGS_WEB_WORKSPACE_DIR@/hugo.toml --baseURL http://localhost:1313/ --openBrowser",
+        "search:index": "cross-env npm_config_yes=true npx pagefind --site public",
+        "build": "npm-run-all css:build site:build search:index",
+        "server": "npm-run-all --parallel css:watch site:serve"
+    },
+    "devDependencies": {
+        "@tailwindcss/aspect-ratio": "0.4.2",
+        "@tailwindcss/line-clamp": "0.4.4",
+        "@tailwindcss/typography": "0.5.16",
+        "tailwindcss": "3.4.17",
+        "cross-env": "^7.0.3",
+        "shx": "^0.3.4",
+        "npm-run-all": "^4.1.5"
+    },
+    "dependencies": {}
+}

@@ -91,6 +91,7 @@ include(DocumentationSetup)
 include(test/Test)
 include(Coverage)
 include(CppCheck)
+include(WebSetup)
 
 # ---- More Options ----
 set(CMAKE_LINK_LIBRARIES_ONLY_TARGETS ON)

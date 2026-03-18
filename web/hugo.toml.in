@@ -4,24 +4,22 @@ theme = "ogs"
 buildDrafts = false
 buildFuture = true
 enableGitInfo = true
+publishDir = "@OGS_WEB_WORKSPACE_DIR@/public"
+resourceDir = "@OGS_WEB_WORKSPACE_DIR@/resources"
+cacheDir = "@OGS_WEB_WORKSPACE_DIR@/cache"
 
 [module]
 [[module.mounts]]
 excludeFiles = '**/notebook-*.md'
-source = 'content'
+source = '@PROJECT_SOURCE_DIR@/web/content'
 target = 'content'
 [[module.mounts]]
-source = 'static'
+source = '@PROJECT_SOURCE_DIR@/web/static'
 target = 'static'
 [[module.mounts]]
-source = 'dist'
+source = '@OGS_WEB_WORKSPACE_DIR@/static'
 target = 'static'
-[[module.mounts]]
-source = '../../build/release/web/content'
-target = 'content'
-[[module.mounts]]
-source = '../../build/release-petsc/web/content'
-target = 'content'
+@OGS_WEB_GENERATED_CONTENT_MOUNTS@
 
 [markup.goldmark.renderer]
 unsafe = true
@@ -98,10 +96,6 @@ weight = 1
 name = "Troubleshooting"
 identifier = "troubleshooting"
 weight = 2
-[[menu.userguide]]
-name = "Post Processing"
-identifier = "post-processing"
-weight = 3
 [[menu.userguide]]
 name = "Process Dependent Configuration"
 identifier = "process-dependent-configuration"

@@ -1,6 +1,6 @@
 deploy web site:
   stage: package
-  image: $WEB_IMAGE
+  tags: [envinf, shell]
   needs:
     - job: meta
     - job: "build linux arch"
@@ -17,26 +17,9 @@ deploy web site:
         HUGO_PARAMS_CURRENTVERSION: master
         HUGO_BASEURL: $CI_PAGES_URL
   script:
-    # FeatureMatrix prj file links
-    - |
-      find Tests/Data -type f \( -name "*.prj" -o -name "*.md" \) | while IFS= read -r file; do
-        target_dir="web/static/docs/featurematrix/bundle/$(dirname "$file")"
-        mkdir -p "$target_dir"
-        ln -sf "$(realpath "$file")" "$target_dir/$(basename "$file")"
-      done
-    - cd web
-    - python scripts/convert_notebooks.py
-    # Copy notebook pages
-    - cp -rl ../build/*/web/content ./
-    - yarn
-    - |
-      [ -n "$CI_COMMIT_TAG" ] && sed -i 's|https://ogs.ogs.xyz/ogs/doxygen/|https://doxygen.opengeosys.org/'"$CI_COMMIT_TAG"/'|g' config/_default/hugo.toml
-    - yarn build
+    - !reference [.web-setup, script]
   pages:
-    publish: web/public
-  cache:
-    paths:
-      - web/node_modules
+    publish: build/release/web/public
 
 deploy web site tag:
   stage: package
@@ -52,7 +35,7 @@ deploy web site tag:
     - git config --global user.email "gitlab-ci-no-reply@opengeosys.org"
     - git clone https://${CI_SERVER_HOST}/ogs/ogs-web.git
     - cd ogs-web
-    - mv ../web/public $CI_COMMIT_TAG
+    - mv ../build/release/web/public $CI_COMMIT_TAG
     - git add $CI_COMMIT_TAG
     - rm stable && ln -s $CI_COMMIT_TAG stable && git add stable
     - git commit -m "Release $CI_COMMIT_TAG"

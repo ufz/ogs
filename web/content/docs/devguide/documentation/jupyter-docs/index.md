@@ -8,71 +8,11 @@ weight = 1025
 parent = "development-workflows"
 +++
 
-## The big picture
+## Introduction
 
-[Jupyter notebooks](https://jupyter.org) are interactive computing environments where prose and code can be combined. In the OGS project notebooks can be used to define complex benchmark workflows and its results can be converted to be shown on the OGS web page (see an [example here](/docs/benchmarks/small-deformations/linear_disc_with_hole/)). Notebooks can be used in two ways:
+[Jupyter notebooks](https://jupyter.org) are interactive computing environments where prose and code can be combined. In the OGS project notebooks can be used to define complex benchmark workflows and its results can be converted to be shown on the OGS web page (see an [example here](/docs/benchmarks/small-deformations/linear_disc_with_hole/)).
 
-1. To [directly generate a web page](#1-direct-conversion) (direct conversion from notebook to web page).
-2. To be [executed during CI](#2-executed-notebooks) whose results are converted to a web page.
-
-## 1. Direct conversion
-
-Consider direct conversion for the following use cases:
-
-- Execution of the notebook is very time-consuming (too long for regular CI tests).
-- The notebook uses Python packages which are not part of the testing environment (see `Tests/Data/requirements*.txt` for available packages).
-- The notebooks needs other custom tools or environment.
-- The shown functionality is not required to be regularly tested.
-
-### Create a new notebook
-
-Create a new notebook file in `web/contents/docs/[some-section]/my-page/my-page.ipynb`. It is important that the notebook filename is the same as the containing folder name!
-
-If you use additional images put them into the `my-page`-folder.
-
-### Add web meta information
-
-If the notebook result should appear as a page on the web documentation a frontmatter with some meta information (similar to [regular web pages]({{< ref "web-docs.md" >}})) is required as the first cell in the notebook:
-
-- Add a new cell and move it to the first position in the notebook
-- Cell type needs to be `markdown` or `raw`
-- Add meta information e.g.:
-
-  ```md
-  +++
-  title = "BHE Meshing"
-  date = "2023-08-18"
-  author = "Joy Brato Shil, Haibing Shao"
-  +++
-  ```
-
----
-
-Make sure that you execute the cells in the notebook and save the notebook (with generated outputs).
-
-### Preview locally
-
-To get a preview of the web page run the `convert_notebooks`-script:
-
-```bash
-# You need the converter-tool nbconvert installed. Recommended way is to
-# create and activate a virtual environment and install it there:
-python -m venv .venv  # or `python3 -m ...` on some systems
-source .venv/bin/activate # .\.venv\Scripts\Activate.ps1 on Windows
-pip install nbconvert
-
-python web/scripts/convert_notebooks.py
-
-cd web
-hugo server
-# open http://localhost:1313
-```
-
-The notebook needs some meta information (only `title`, `date` and `author` is required) as [outlined below](#add-web-meta-information).
-
-Also make sure that you also provide necessary data files and please don't use machine specific paths (e.g. assume that `ogs` and other tools are in the `PATH`).
-
-## 2. Executed notebooks
+## Executed notebooks
 
 These notebooks are part of the regular CI testing. Please try to keep the notebook execution time low.
 
@@ -193,6 +133,13 @@ Then e.g. run all notebook test (`-R nb`) in parallel (`-j 4`) with:
 ```bash
 # cd into build directory
 ctest -R nb -j 4 --output-on-failure
+```
+
+To view the notebook as a web preview run:
+
+```bash
+ninja preview-web
+# Open http://localhost:1313 in your browser
 ```
 
 ### Advanced topics

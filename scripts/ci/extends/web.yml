@@ -1,0 +1,24 @@
+.web-setup:
+  script:
+    - |
+      shopt -s nullglob
+      build_dir_full=../build/release
+      rm -rf $build_dir_full
+      mkdir -p $build_dir_full build
+    - ln -s `readlink -f $build_dir_full` build/release
+    - cmake --preset release
+    - |
+      mkdir -p build/release/web/content
+      for generated_content_dir in build/*/web/content; do
+        if [ "$generated_content_dir" = "build/release/web/content" ]; then
+          continue
+        fi
+        cp -a "$generated_content_dir"/. build/release/web/content/
+      done
+    - |
+      find Tests/Data -type f \( -name "*.prj" -o -name "*.md" -o -name "*.xml" -o -name "*.include" \) | while IFS= read -r file; do
+        target_dir="build/release/web/static/docs/featurematrix/bundle/$(dirname "$file")"
+        mkdir -p "$target_dir"
+        ln -sf "$(realpath "$file")" "$target_dir/$(basename "$file")"
+      done
+    - cmake --build --preset release -t web

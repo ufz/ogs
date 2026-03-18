@@ -25,30 +25,41 @@ Benchmark documentation can also be given in form of Jupyter Notebooks, see [Jup
 - Download [Hugo](https://github.com/gohugoio/hugo/releases/latest) and put it in your `PATH`. **Attention:** Use the *extended* version: e.g. `hugo_extended_{{< dataFile "versions.minimum_version.hugo" >}}_Windows-64bit.zip`
 - Install [Yarn](https://yarnpkg.com/en/docs/install); for downloading required JavaScript & CSS development packages
 - Install [npm](https://www.npmjs.com) for CSS / JavaScript compilation with [npx](https://www.npmjs.com/package/npx)
+- A [configured build-directory]({{< ref "build-configuration.md" >}})
 
 ## Getting started
 
-- Inside the source-directory `ogs/web`:
-  - Run `yarn` **and** `yarn build` once (this will install required CSS and JavaScript packages)
-  - Optionally run `yarn index` (for creating the search index) once
-  - Run `hugo server`
-  - Open [http://localhost:1313](http://localhost:1313)
+- Inside your build-directory:
+  - Build the `web`-target, this creates the web site in `[build-dir]/web/public`, or
+  - build the `preview-web`-target, which starts a Hugo server where you can preview the site at [http://localhost:1313](http://localhost:1313).
 
-As you make modifications to the site it will be rebuild and the page in the browser gets reloaded.
+As you make modifications to the site it will be rebuild and the page in the browser gets reloaded when then preview server is running.
+
+To manually build the site:
+
+```bash
+cd [build-dir]/web
+yarn
+yarn build
+# OR
+yarn server
+```
+
+To view all available yarn commands run `yarn run`.
+
+[Executed Jupyter notebooks]({{< ref "jupyter-docs.md" >}}) show up in the preview server too, e.g. in your build-directory:
+
+```bash
+ctest -R nb- -j 4 # Runs all available notebooks
+ninja preview-web
+# If not opened automatically, open http://localhost:1313 in your browser
+```
 
 ## How-Tos
 
 ### Create a new page
 
-By using `hugo new` you can create a new page with the correct frontmatter for that kind of page:
-
-```bash
-hugo new --kind benchmark docs/benchmarks/elliptic/groundwater-flow-dirichlet/index.md
-```
-
-- path is relative to `content/` and determines the URL of the page
-
-Or you can simply create a new `index.md`-file in the correct location and fill it by yourself. Prefer to use [page bundles](https://gohugo.io/content-management/page-bundles/) when you want to add other assets, e.g. images, to the page.
+Simply create a new `index.md`-file in the correct location and fill it by yourself. Prefer to use [page bundles](https://gohugo.io/content-management/page-bundles/) when you want to add other assets, e.g. images, to the page.
 
 <div class="note">
 
