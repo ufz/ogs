@@ -85,3 +85,17 @@ build with pip:
 # ctest --test-dir /tmp/ctestfiles
 #
 # although some benchmarks still have the build-dir hard-coded
+
+build in devcontainer:
+  extends:
+    - .rules-master-manual
+  stage: build
+  tags: [shell, envinf]
+  needs: [meta]
+  script:
+    - devcontainer up --workspace-folder .
+    - devcontainer exec --workspace-folder . cmake --preset release-all
+    - devcontainer exec --workspace-folder . cmake --build --preset release-all
+    - devcontainer exec --workspace-folder . cmake --build --preset release-all -t tests
+  after_script:
+    - docker ps --filter "label=devcontainer.local_folder=$(pwd)" --quiet | xargs -r -I {} sh -c ' docker stop {} && docker rm {}'
