@@ -190,6 +190,10 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     {
         return createSaturationVanGenuchten(config);
     }
+    if (boost::iequals(property_type, "SaturationLuMcCartney"))
+    {
+        return createSaturationLuMcCartney(config);
+    }
 
     if (boost::iequals(property_type,
                        "SaturationVanGenuchtenWithVolumetricStrain"))

@@ -25,6 +25,16 @@ constexpr double CelsiusZeroInKelvin = 273.15;
 constexpr double IdealGasConstant = 8.3144621;
 
 /**
+ * Boltzmann constant in SI standard units (J \per{K})
+ */
+constexpr double BoltzmannConstant = 1.3806505e-23;  ///< J/K
+
+/**
+ * Planck constant in SI standard units (J s)
+ */
+constexpr double PlanckConstant = 6.626068e-34;  ///< J s
+
+/**
  * Atomic masses of certain elements and molar masses of chemical compounds
  */
 namespace MolarMass
