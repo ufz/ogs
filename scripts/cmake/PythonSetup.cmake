@@ -79,9 +79,18 @@ if(OGS_USE_PIP)
       "myst": "Jupytext Notebook",
       "python": "Jupytext Notebook"
     }
+  },
+  "@jupyterlab/apputils-extension:announcements": {
+    "enabled": false
   }
 }
 ]=]
+    )
+
+    add_custom_target(jupyter
+        COMMAND direnv exec . ${UV_TOOL_PATH} run jupyter lab ${PROJECT_SOURCE_DIR}/Tests/Data
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+        USES_TERMINAL
     )
 else()
     find_package(Python ${ogs.minimum_version.python}

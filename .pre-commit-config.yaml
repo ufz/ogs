@@ -58,7 +58,7 @@ repos:
     hooks:
       - id: git-diff-check
         name: Run git diff --check
-        entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+        entry: git --no-pager diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
         language: system
         exclude: "Tests/Data/.*|web/static/images/xsd"
         stages: [pre-commit, manual]
