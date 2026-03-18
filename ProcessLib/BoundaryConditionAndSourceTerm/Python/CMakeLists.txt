@@ -41,7 +41,7 @@ target_link_libraries(
         MeshLib
         NumLib
         pybind11::module
-        $<$<TARGET_EXISTS:Python::Python>:Python::Python>
+        $<$<AND:$<TARGET_EXISTS:Python::Python>,$<NOT:$<BOOL:${OGS_BUILD_WHEEL}>>>:Python::Python>
 )
 
 if(BUILD_SHARED_LIBS AND MSVC)
