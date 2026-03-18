@@ -159,10 +159,9 @@ TEST(MaterialPropertyLib, SaturationLuMcCartney)
 
     for (int i = 0; i <= p_steps; ++i)
     {
+        double const lambda = static_cast<double>(i) / p_steps;  // [0, 1]
         for (int j = 0; j <= T_steps; ++j)
         {
-            double const lambda = static_cast<double>(i) / p_steps;  // [0, 1]
-
             double p_L;
             if (lambda <= 1.0 - positive_fraction)
             {
@@ -215,7 +214,7 @@ TEST(MaterialPropertyLib, SaturationLuMcCartney)
             EXPECT_LE(std::abs(dS_p - DS_p), 1e-13)
                 << "for temperature " << T << ", capillary pressure " << -p_L
                 << " and saturation " << S_L << " dS_p " << dS_p << " DS_p "
-                << DS_p << "\n";
+                << DS_p << "eps" << eps << "\n";
 
             eps = 100;
             double const DS2_p =
@@ -225,14 +224,14 @@ TEST(MaterialPropertyLib, SaturationLuMcCartney)
             EXPECT_LE(std::abs(dS2_p - DS2_p), 1e-10)
                 << "for temperature " << T << ", capillary pressure " << -p_L
                 << " and saturation " << S_L << " dS2_p " << dS2_p << " DS2_p "
-                << DS2_p << "\n";
+                << DS2_p << "eps" << eps << "\n";
 
             eps = 1e-3;
             double const DS_T = (S(p_L, T + eps) - S(p_L, T - eps)) / (2 * eps);
             EXPECT_LE(std::abs(dS_T - DS_T), 1e-12)
                 << "for temperature " << T << ", capillary pressure " << -p_L
                 << " and saturation " << S_L << " dS_T " << dS_T << " DS_T "
-                << DS_T << "\n";
+                << DS_T << "eps" << eps << "\n";
 
             double const DS2_T =
                 (S(p_L, T + eps) - 2 * S(p_L, T) + S(p_L, T - eps)) /
@@ -240,7 +239,7 @@ TEST(MaterialPropertyLib, SaturationLuMcCartney)
             EXPECT_LE(std::abs(dS2_T - DS2_T), 1e-9)
                 << "for temperature " << T << ", capillary pressure " << -p_L
                 << " and saturation " << S_L << " dS2_T " << dS2_T << " DS2_T "
-                << DS2_T << "\n";
+                << DS2_T << "eps" << eps << "\n";
 
             double const eps_p = 10;
             double const DS2_pT =
@@ -250,7 +249,8 @@ TEST(MaterialPropertyLib, SaturationLuMcCartney)
             EXPECT_LE(std::abs(dS2_pT - DS2_pT), 1e-11)
                 << "for temperature " << T << ", capillary pressure " << -p_L
                 << " and saturation " << S(p_L, T) << " dS2_pT " << dS2_pT
-                << " DS2_pT " << DS2_pT << "\n";
+                << " DS2_pT " << DS2_pT << "eps" << eps << "eps_p" << eps_p
+                << "\n";
         }
     }
 }
