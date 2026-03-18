@@ -6,6 +6,65 @@
   Announcements<span class="hidden md:inline"> & Discussions</span>
 </h1>
 {{ partial "components/news" . }}
+{{ $publicationPages := where .Site.RegularPages "Section" "publications" }}
+{{ $publicationPagesWithImage := slice }}
+{{ range sort $publicationPages "Date" "desc" }}
+{{ if .Params.image }}
+{{ $publicationPagesWithImage = $publicationPagesWithImage | append . }}
+{{ end }}
+{{ end }}
+{{ $latestPublications := first 3 $publicationPagesWithImage }}
+{{ if gt (len $latestPublications) 0 }}
+<section class="mx-auto mt-10 w-full sm:px-6 lg:max-w-7xl px-0">
+  <div class="mb-6 flex items-end justify-between gap-4">
+    <div>
+      <p class="mt-3 max-w-3xl text-base leading-7 text-gray-500 sm:text-lg">
+        Recent OpenGeoSys publications.
+      </p>
+    </div>
+    <a class="hidden text-sm font-semibold text-brand-700 transition hover:text-brand-800 sm:inline-flex"
+      href="/publications">
+      View all publications
+    </a>
+  </div>
+
+  <div class="grid gap-5 md:grid-cols-3">
+    {{ range $latestPublications }}
+    {{ $image := .Resources.GetMatch (.Params.image | default "") }}
+    <article
+      class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+      <a class="flex h-full flex-col" href="{{ .RelPermalink }}">
+        {{ with $image }}
+        <div class="flex items-center justify-center pt-4">
+          <img class="mx-auto h-44 w-4/5 rounded-xl object-cover" src="{{ .RelPermalink }}"
+            alt="{{ $.Title | emojify }}">
+        </div>
+        {{ end }}
+        <div class="flex flex-1 flex-col p-5">
+          <div class="mb-2 text-sm font-medium text-stone-500">
+            {{ with (.Params.journal | default .Params.publisher) }}{{ . }}{{ end }}
+          </div>
+          <h2 class="mb-3 text-xl font-semibold leading-tight text-stone-900">
+            {{ .Title | emojify }}
+          </h2>
+          {{ with .Params.abstract }}
+          <p class="line-clamp-4 text-sm leading-6 text-stone-700">
+            {{ . }}
+          </p>
+          {{ end }}
+        </div>
+      </a>
+    </article>
+    {{ end }}
+  </div>
+
+  <div class="mt-5 sm:hidden">
+    <a class="inline-flex text-sm font-semibold text-brand-700 transition hover:text-brand-800" href="/publications">
+      View all publications
+    </a>
+  </div>
+</section>
+{{ end }}
 <h1
   class="text-center text-3xl lg:text-5xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 mt-6 md:mt-10 lg:mt-16">
   Features
