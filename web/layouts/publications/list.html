@@ -1,24 +1,68 @@
 {{ define "main" }}
-<div
-  class="flex flex-wrap w-full mb-6 flex-col items-center text-center prose prose-sm lg:prose max-w-none lg:max-w-none">
+<div class="mb-8 flex w-full flex-col items-center text-center prose prose-sm max-w-none lg:prose lg:max-w-none">
   {{ .Content }}
 </div>
-<div class="flex flex-wrap -m-4 p-4">
-  {{ range .Site.Menus.publications }}
-  <div class="xl:w-1/3 md:w-1/2 mt-2 px-4 py-2 md:p-4">
-    <a href="{{ .URL }}">
-      <div class="p-4 bg-gray-100 hover:bg-white rounded-lg shadow h-full">
-        <h3 class="text-xl mb-2 border-b text-blue-800">
-          {{ .Name }}
-          {{ $url_first_char := substr .URL 0 1 }}
-          {{ if not (eq $url_first_char "/") }}
-          <i class="far fa-external-link text-xs align-top"></i>
+
+{{ $paginator := .Paginate (.RegularPagesRecursive.ByDate.Reverse) }}
+{{ if gt (len $paginator.Pages) 0 }}
+<section class="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pb-8 sm:px-6 lg:px-8">
+  {{ range $paginator.Pages }}
+  {{ $page := . }}
+  {{ $authors := .Params.authors | default (slice) }}
+  {{ $hasAuthors := gt (len $authors) 0 }}
+  {{ $venue := .Params.journal | default .Params.publisher }}
+  {{ $imagePath := .Params.image | default "" }}
+  {{ $imageResource := .Resources.GetMatch $imagePath }}
+  <article class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition hover:border-brand-300 hover:shadow-md">
+    <a class="flex h-full flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-6 sm:p-5" href="{{ .Permalink }}">
+      <div class="w-full shrink-0 sm:w-40">
+        {{ with $imageResource }}
+        <img
+          class="h-40 w-full rounded-xl object-cover shadow-sm sm:h-28 sm:w-40"
+          src="{{ .RelPermalink }}"
+          alt="{{ $page.Title | emojify }}" />
+        {{ else }}
+        {{ with $imagePath }}
+        <img
+          class="h-40 w-full rounded-xl object-cover shadow-sm sm:h-28 sm:w-40"
+          src="{{ . }}"
+          alt="{{ $page.Title | emojify }}" />
+        {{ end }}
+        {{ end }}
+      </div>
+
+      <div class="min-w-0 flex-1 text-left">
+        <div class="mb-2 text-sm text-stone-500">
+          {{ if gt (len $authors) 4 }}
+          {{ index $authors 0 }} et al.
+          {{ else if $hasAuthors }}
+          {{ delimit $authors ", " }}
           {{ end }}
+          {{ if and $hasAuthors (or .Params.year $venue) }} · {{ end }}
+          {{ with .Params.year }}{{ . }}{{ end }}
+          {{ if and .Params.year $venue }} · {{ end }}
+          {{ with $venue }}{{ . }}{{ end }}
+        </div>
+        <h2 class="mb-3 text-xl font-semibold leading-tight text-stone-900 sm:text-2xl">
+          {{ .Title | emojify }}
+        </h2>
+        {{ with .Params.abstract }}
+        <p class="line-clamp-4 text-sm leading-6 text-stone-700 sm:text-base">
+          {{ . }}
+        </p>
+        {{ end }}
+      </div>
     </a>
-    </h2>
-    <p class="leading-relaxed text-base">{{ .Post }}</p>
-  </div>
-</div>
+  </article>
+  {{ end }}
+</section>
+
+{{ partial "pagination.html" . }}
+{{ else }}
+<section class="prose mt-10">
+  <p class="border-t py-8">
+    <em>{{ i18n "list.no_articles" | emojify }}</em>
+  </p>
+</section>
 {{ end }}
-</div>
 {{ end }}

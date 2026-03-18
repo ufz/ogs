@@ -1,56 +1,124 @@
 {{ define "main" }}
+{{ $authors := .Params.authors | default (slice) }}
+{{ $venue := .Params.journal | default .Params.publisher }}
+{{ $imagePath := .Params.image | default "" }}
+{{ $image := .Resources.GetMatch $imagePath }}
+{{ $doi := .Params.doi | default "" }}
+{{ $doiUrl := "" }}
+{{ $doiLabel := "" }}
+{{ if $doi }}
+{{ if or (hasPrefix $doi "http://") (hasPrefix $doi "https://") }}
+{{ $doiUrl = $doi }}
+{{ $doiLabel = replaceRE "^https?://(dx\\.)?doi\\.org/" "" $doi }}
+{{ else }}
+{{ $doiUrl = printf "https://doi.org/%s" $doi }}
+{{ $doiLabel = $doi }}
+{{ end }}
+{{ end }}
 
-<div class="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-    <h1 class="text-2xl lg:text-3xl font-bold mb-3 lg:mb-5">{{ .Title }}</h1>
-    <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
-      {{ .Content }}
+<article class="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+  <a class="mb-6 inline-flex text-sm font-medium text-brand-700 hover:underline" href="{{ .Parent.RelPermalink }}">
+    <i class="far fa-arrow-left mr-2 self-center text-xs"></i>
+    Back to Publications
+  </a>
 
-      {{ range where (sort .Site.Data.bib_ogs.entries "year" "desc") "category" "not in" "Book,Tutorial" }}
-      <div class=" rounded-lg">
-        <div class="my-4 mx-4">
-          <div class="py-2" id="{{ .key }}">
-            <div class="mb-2">
-              <span
-                class="px-2 m-0 inline-flex text-xs leading-5 font-semibold rounded-l-full bg-yellow-200 text-gray-800">
-                {{ .year }}
-              </span><span
-                class="px-2 m-0 border-l-2 inline-flex text-xs leading-5 font-semibold rounded-r-full bg-gray-200 text-gray-700">
-                {{ .category }}
-              </span>
-            </div>
-            <h4 style="margin-top: 0.5em;" class="text-xl font-medium text-gray-900 title-font mb-2">
-              <i>{{ .title | safeHTML }}</i>
-            </h4>
-            <p>
-              by
-              {{ $len := (len .author) }}
-              {{ range $index, $element := .author }}
-              {{ $element.last }}, {{ $element.first}}{{ if ne (add $index 1) $len }} and{{ else }}.{{ end }}
-              {{ end }}
-              <br>
-              {{ if isset . "journal" }}{{ .journal }},{{ end }}
-              {{ if isset . "issue" }}Issue {{ .issue }},{{ end }}
-              {{ if isset . "volume" }}vol. {{ .volume }},{{ end }}
-              {{ if isset . "pages" }}p. {{ .pages }},{{ end }}
-              {{ if isset . "isbn" }}ISBN: {{ .isbn }},{{ end }}
-              {{ if isset . "publisher" }}{{ .publisher }},{{ end }}
-              {{ if isset . "doi" }}
-              DOI:<a href="https://doi.org/{{ .doi }}" class="inline-flex items-center mt-4">
-                {{ .doi }}&nbsp; <i class="far fa-external-link text-xs align-top"></i>
-              </a>
-              {{ end }}
-              {{ if isset . "url" }}
-              <a href="{{ .url }}" class="text-indigo-500 inline-flex items-center mt-4">
-                {{ .url }} &nbsp; <i class="far fa-external-link text-xs align-top"></i>
-              </a>
-              {{ end }}
-            </p>
-          </div>
+  <div>
+    <div class="grid gap-8 py-2 lg:grid-cols-[16rem_minmax(0,1fr)] lg:py-4">
+      <div>
+        {{ with $image }}
+        <img class="w-full rounded-2xl object-cover shadow-sm" src="{{ .RelPermalink }}" alt="{{ $.Title | emojify }}">
+        {{ end }}
+      </div>
+
+      <div class="min-w-0">
+        <p class="mb-3 text-sm font-medium uppercase tracking-[0.18em] text-stone-500">
+          {{ with .Params.year }}{{ . }}{{ end }}
+          {{ if and .Params.year $venue }} · {{ end }}
+          {{ with $venue }}{{ . }}{{ end }}
+        </p>
+
+        <h1 class="mb-4 text-3xl font-semibold leading-tight text-stone-900 sm:text-4xl">
+          {{ .Title | emojify }}
+        </h1>
+
+        {{ if gt (len $authors) 0 }}
+        <p class="mb-6 text-base leading-7 text-stone-700 sm:text-lg">
+          {{ delimit $authors ", " }}
+        </p>
+        {{ end }}
+
+        <div class="flex flex-wrap gap-3 text-sm">
+          {{ with $doiUrl }}
+          <a class="rounded-full bg-brand-600 px-4 py-2 font-medium text-white transition hover:bg-brand-700"
+            href="{{ . }}">
+            DOI: {{ $doiLabel }}
+          </a>
+          {{ end }}
+          {{ with .Params.sourceUrl }}
+          <a class="rounded-full border border-stone-300 px-4 py-2 font-medium text-stone-700 transition hover:border-brand-400 hover:text-brand-700"
+            href="{{ . }}">
+            Source
+          </a>
+          {{ end }}
         </div>
       </div>
+    </div>
+
+    <div class="py-8">
+      {{ with .Params.abstract }}
+      <section class="mb-8">
+        <h2 class="mb-3 text-xl font-semibold text-stone-900">Abstract</h2>
+        <p class="text-base leading-7 text-stone-700">{{ . }}</p>
+      </section>
+      {{ end }}
+
+      <section class="grid gap-6 text-sm sm:grid-cols-2">
+        {{ if gt (len $authors) 0 }}
+        <div>
+          <h2 class="mb-2 text-base font-semibold text-stone-900">Authors</h2>
+          <p class="leading-7 text-stone-700">{{ delimit $authors ", " }}</p>
+        </div>
+        {{ end }}
+
+        <div>
+          <h2 class="mb-2 text-base font-semibold text-stone-900">Details</h2>
+          <dl class="space-y-2 text-stone-700">
+            {{ with .Params.year }}
+            <div>
+              <dt class="font-medium text-stone-900">Year</dt>
+              <dd>{{ . }}</dd>
+            </div>
+            {{ end }}
+            {{ with .Params.journal }}
+            <div>
+              <dt class="font-medium text-stone-900">Journal</dt>
+              <dd>{{ . }}</dd>
+            </div>
+            {{ end }}
+            {{ with .Params.publisher }}
+            <div>
+              <dt class="font-medium text-stone-900">Publisher</dt>
+              <dd>{{ . }}</dd>
+            </div>
+            {{ end }}
+            {{ with .Params.citationKey }}
+            <div>
+              <dt class="font-medium text-stone-900">Citation key</dt>
+              <dd><code>{{ . }}</code></dd>
+            </div>
+            {{ end }}
+          </dl>
+        </div>
+      </section>
+
+      {{ with .Content }}
+      {{ if ne (trim . " \n\r\t") "" }}
+      <section class="prose mt-8 max-w-none lg:prose-lg">
+        {{ . }}
+      </section>
+      {{ end }}
       {{ end }}
     </div>
   </div>
-</div>
+</article>
 {{ end }}
