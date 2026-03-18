@@ -13,10 +13,7 @@ class ConfigTree;
 namespace MaterialPropertyLib
 {
 class SaturationLuMcCartney;
-}
 
-namespace MaterialPropertyLib
-{
 std::unique_ptr<SaturationLuMcCartney> createSaturationLuMcCartney(
     BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib
