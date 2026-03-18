@@ -3,7 +3,8 @@
   {{ .Content }}
 </div>
 
-{{ $paginator := .Paginate (.RegularPagesRecursive.ByDate.Reverse) }}
+{{ $pagesWithImage := where .RegularPagesRecursive "Params.image" "ne" nil }}
+{{ $paginator := .Paginate ($pagesWithImage.ByDate.Reverse) }}
 {{ if gt (len $paginator.Pages) 0 }}
 <section class="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pb-8 sm:px-6 lg:px-8">
   {{ range $paginator.Pages }}
