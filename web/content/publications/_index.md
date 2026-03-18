@@ -6,6 +6,7 @@ weight = 3
 
 +++
 
+<!-- markdownlint-disable-next-line -->
 # Publications
 
 If you find OpenGeoSys useful for your research please cite us!
