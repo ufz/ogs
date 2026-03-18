@@ -4,6 +4,8 @@
 {{ $imagePath := .Params.image | default "" }}
 {{ $image := .Resources.GetMatch $imagePath }}
 {{ $doi := .Params.doi | default "" }}
+{{ $bibtex := .Params.bibtex | default "" }}
+{{ $bibtexId := printf "bibtex-%s" .File.UniqueID }}
 {{ $doiUrl := "" }}
 {{ $doiLabel := "" }}
 {{ if $doi }}
@@ -59,6 +61,14 @@
             href="{{ . }}">
             Source
           </a>
+          {{ end }}
+          {{ with $bibtex }}
+          <button
+            class="js-copy-bibtex rounded-full border border-stone-300 px-4 py-2 font-medium text-stone-700 transition hover:border-brand-400 hover:text-brand-700"
+            type="button"
+            data-target="{{ $bibtexId }}">
+            Copy BibTeX
+          </button>
           {{ end }}
         </div>
       </div>
@@ -120,5 +130,30 @@
       {{ end }}
     </div>
   </div>
+  {{ with $bibtex }}
+  <pre id="{{ $bibtexId }}" class="hidden">{{ . }}</pre>
+  {{ end }}
 </article>
+<script>
+  document.querySelectorAll(".js-copy-bibtex").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const target = button.dataset.target ? document.getElementById(button.dataset.target) : null;
+      const bibtex = target ? target.textContent : "";
+      if (!bibtex) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(bibtex);
+        const originalLabel = button.textContent;
+        button.textContent = "Copied BibTeX";
+        window.setTimeout(() => {
+          button.textContent = originalLabel;
+        }, 1500);
+      } catch {
+        button.textContent = "Copy failed";
+      }
+    });
+  });
+</script>
 {{ end }}
