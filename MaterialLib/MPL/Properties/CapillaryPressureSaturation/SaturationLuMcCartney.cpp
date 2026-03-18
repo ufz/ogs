@@ -63,13 +63,15 @@ promote<TemperatureType> SaturationLuMcCartney::theta_a_max(
 template <typename TemperatureType>
 promote<TemperatureType> SaturationLuMcCartney::psi_max(TemperatureType T) const
 {
-    return R * T * c(T) / (3.0 * nu_w);
+    return MaterialLib::PhysicalConstant::IdealGasConstant * T * c(T) /
+           (3.0 * nu_w);
 }
 
 template <typename TemperatureType>
 promote<TemperatureType> SaturationLuMcCartney::c(TemperatureType T) const
 {
-    return exp((E1_minus_EL) / (R * T));
+    return exp((E1_minus_EL) /
+               (MaterialLib::PhysicalConstant::IdealGasConstant * T));
 }
 
 template <typename TemperatureType>
@@ -95,8 +97,11 @@ promote<TemperatureType> SaturationLuMcCartney::A_H(TemperatureType T) const
         pow((epsilon_s - epsilon_w(T)) / (epsilon_s + epsilon_w(T)), 2);
     auto const RI_term =
         pow(n_s * n_s - n_w * n_w, 2) / pow(n_s * n_s + n_w * n_w, 3. / 2.);
-    auto const prefactor_dielectic = (3 * kB * T) / 4.;
-    auto const prefactor_RI = (3 * hp * nu_e) / (16 * sqrt(2));
+    auto const prefactor_dielectic =
+        (3 * MaterialLib::PhysicalConstant::BoltzmannConstant * T) / 4.;
+    auto const prefactor_RI =
+        (3 * MaterialLib::PhysicalConstant::PlanckConstant * nu_e) /
+        (16 * sqrt(2));
     return prefactor_dielectic * dielectric_term + prefactor_RI * RI_term;
 }
 

@@ -125,9 +125,6 @@ private:
     const MaterialLib::Fluid::DimensionLessGibbsFreeEnergyRegion1
         gibbs_free_energy_;
     // constants
-    double const R = 8.31432;         ///< universal gas constant in J/(mol K)
-    double const kB = 1.3806505e-23;  ///< Boltzmann constant in J/K
-    double const hp = 6.626068e-34;   ///< Planck constant in J s
     static constexpr double ref_T_ = 1386;  ///< reference temperature in K.
     static constexpr double ref_p_ = 1.653e7;
 
