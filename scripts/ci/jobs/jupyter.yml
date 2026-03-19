@@ -52,6 +52,7 @@ test linux wheel via notebooks:
       if [[ "$OGS_GROUP" == "ogs-pypi" ]]; then
         git checkout $OGS_LAST_TAG
       fi
+    - rm -rf .venv Tests/Data/.venv ../build/_skbuild  # cleanup build dirs
     - cd Tests/Data
     - uv run --group ${OGS_GROUP} ${UV_ARGS} pytest
     # https://github.com/matplotlib/matplotlib/issues/25306:
