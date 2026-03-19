@@ -3,7 +3,6 @@
 
 #include "CreateBHEUType.h"
 
-#include "BHE_1P.h"
 #include "BHE_1U.h"
 #include "BHE_2U.h"
 #include "BaseLib/ConfigTree.h"
@@ -14,18 +13,15 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-static std::tuple<BoreholeGeometry,
-                  RefrigerantProperties,
-                  GroutParameters,
-                  FlowAndTemperatureControl,
-                  PipeConfigurationUType,
-                  bool>
+static std::tuple<BoreholeGeometry, RefrigerantProperties, GroutParameters,
+                  FlowAndTemperatureControl, PipeConfigurationUType, bool>
 parseBHEUTypeConfig(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes)
 {
     // if the BHE is using python boundary condition
     auto const bhe_if_use_python_bc_conf =
@@ -36,7 +32,8 @@ parseBHEUTypeConfig(
 
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
-        createBoreholeGeometry(config.getConfigSubtree("borehole"));
+        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters,
+                               bhe_nodes);
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes}
     auto const& pipes_config = config.getConfigSubtree("pipes");
@@ -79,9 +76,10 @@ T_BHE createBHEUType(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes)
 {
-    auto UType = parseBHEUTypeConfig(config, parameters, curves);
+    auto UType = parseBHEUTypeConfig(config, parameters, curves, bhe_nodes);
     return {std::get<0>(UType), std::get<1>(UType), std::get<2>(UType),
             std::get<3>(UType), std::get<4>(UType), std::get<5>(UType)};
 }
@@ -91,14 +89,16 @@ template BHE_1U createBHEUType<BHE_1U>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes);
 
 template BHE_2U createBHEUType<BHE_2U>(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

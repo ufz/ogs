@@ -4,6 +4,7 @@
 #include "Pipe.h"
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 
 namespace ProcessLib
 {
@@ -22,6 +23,21 @@ Pipe createPipe(BaseLib::ConfigTree const& config)
     const auto wall_thermal_conductivity =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inlet__wall_thermal_conductivity}
         config.getConfigParameter<double>("wall_thermal_conductivity");
+
+    if (diameter <= 0)
+    {
+        OGS_FATAL("Pipe diameter must be positive, got {:g}.", diameter);
+    }
+    if (wall_thickness < 0)
+    {
+        OGS_FATAL("Pipe wall_thickness must be non-negative, got {:g}.",
+                  wall_thickness);
+    }
+    if (wall_thermal_conductivity <= 0)
+    {
+        OGS_FATAL("Pipe wall_thermal_conductivity must be positive, got {:g}.",
+                  wall_thermal_conductivity);
+    }
 
     return {diameter, wall_thickness, wall_thermal_conductivity};
 }

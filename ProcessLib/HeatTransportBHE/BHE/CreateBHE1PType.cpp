@@ -3,7 +3,6 @@
 
 #include "BHE_1P.h"
 #include "BaseLib/ConfigTree.h"
-#include "CreateBHEUType.h"
 #include "CreateFlowAndTemperatureControl.h"
 
 namespace ProcessLib
@@ -12,18 +11,15 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-static std::tuple<BoreholeGeometry,
-                  RefrigerantProperties,
-                  GroutParameters,
-                  FlowAndTemperatureControl,
-                  PipeConfiguration1PType,
-                  bool>
+static std::tuple<BoreholeGeometry, RefrigerantProperties, GroutParameters,
+                  FlowAndTemperatureControl, PipeConfiguration1PType, bool>
 parseBHE1PTypeConfig(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes)
 {
     // if the BHE is using python boundary condition
     auto const bhe_if_use_python_bc_conf =
@@ -37,7 +33,8 @@ parseBHE1PTypeConfig(
 
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
-        createBoreholeGeometry(config.getConfigSubtree("borehole"));
+        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters,
+                               bhe_nodes);
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes}
     auto const& pipes_config = config.getConfigSubtree("pipes");
@@ -75,9 +72,11 @@ T_BHE createBHE1PType(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes)
 {
-    auto SinglePipeType = parseBHE1PTypeConfig(config, parameters, curves);
+    auto SinglePipeType =
+        parseBHE1PTypeConfig(config, parameters, curves, bhe_nodes);
     return {std::get<0>(SinglePipeType), std::get<1>(SinglePipeType),
             std::get<2>(SinglePipeType), std::get<3>(SinglePipeType),
             std::get<4>(SinglePipeType), std::get<5>(SinglePipeType)};
@@ -88,7 +87,8 @@ template BHE_1P createBHE1PType<BHE_1P>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
