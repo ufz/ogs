@@ -32,8 +32,7 @@ set(DOXYGEN_SORT_BY_SCOPE_NAME YES)
 set(DOXYGEN_SORT_MEMBERS_CTORS_1ST YES)
 set(DOXYGEN_LAYOUT_FILE ${PROJECT_SOURCE_DIR}/Documentation/DoxygenLayout.xml)
 set(DOXYGEN_CITE_BIB_FILES
-    ${PROJECT_SOURCE_DIR}/Documentation/bibliography/ogs
-    ${PROJECT_SOURCE_DIR}/Documentation/bibliography/other
+    ${PROJECT_SOURCE_DIR}/web/content/publications/publications
 )
 set(DOXYGEN_QUIET YES)
 set(DOXYGEN_WARN_LOGFILE ${PROJECT_BINARY_DIR}/DoxygenWarnings.log)

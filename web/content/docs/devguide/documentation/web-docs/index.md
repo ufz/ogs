@@ -138,20 +138,15 @@ Files belonging directly to a page (e.g. images shown on that same page) should 
 
 #### Bibliography references
 
-Bibliography items from *Documentation/bibliography/*.bib can be referenced by their id (always use lowercase ids) with the `bib`-shortcode:
+Bibliography items from any .bib-file in `web/content/publications/` can be referenced by their cite key with the `bib`-shortcode:
 
 ```bash
-{{</* bib "kolditz2012" */>}}
+{{</* bib "Kolditz2012" */>}}
 ```
 
-The bib-file has to be converted into a yaml-file with the [pybtex-convert](https://docs.pybtex.org/cmdline.html)-tool:
+produces
 
-```sh
-uvx --from pybtex pybtex-convert Documentation/bibliography/ogs.bib web/data/bib_ogs.yaml
-uvx --from pybtex pybtex-convert Documentation/bibliography/other.bib web/data/bib_other.yaml
-```
-
-This yaml-file is then used by the shortcode.
+{{< bib "Kolditz2012" >}}
 
 #### Other shortcodes
 

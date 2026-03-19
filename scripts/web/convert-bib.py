@@ -15,6 +15,7 @@ import re
 import shutil
 import sys
 import unicodedata
+from collections import defaultdict
 from pathlib import Path
 
 import bibtexparser
@@ -294,6 +295,36 @@ def find_bib_files(root_dir: Path) -> list[Path]:
     return sorted(path for path in root_dir.rglob("*.bib") if path.is_file())
 
 
+def check_duplicate_citation_keys(bib_files: list[Path]) -> None:
+    keys_to_locations: dict[str, list[tuple[str, Path]]] = defaultdict(list)
+
+    for bib_file in bib_files:
+        for entry in parse_bib_file(bib_file):
+            key = entry["ID"]
+            keys_to_locations[key.lower()].append((key, bib_file))
+
+    duplicates = {
+        folded_key: locations
+        for folded_key, locations in keys_to_locations.items()
+        if len(locations) > 1
+    }
+    if not duplicates:
+        return
+
+    duplicate_lines = []
+    for locations in duplicates.values():
+        original_keys = ", ".join(dict.fromkeys(key for key, _ in locations))
+        files = ", ".join(
+            os.path.relpath(path, Path.cwd()) for _, path in dict.fromkeys(locations)
+        )
+        duplicate_lines.append(f"{original_keys}: {files}")
+
+    msg = "Duplicate citation keys found across BibTeX files:\n" + "\n".join(
+        sorted(duplicate_lines)
+    )
+    raise RuntimeError(msg)
+
+
 def main() -> int:
     args = parse_args()
     section_path = args.section.resolve()
@@ -304,6 +335,8 @@ def main() -> int:
     if not bib_files:
         msg = f"No .bib files found. Use --input or place .bib files in {section_path}"
         raise RuntimeError(msg)
+
+    check_duplicate_citation_keys(bib_files)
 
     total = 0
     for bib_file in bib_files:
