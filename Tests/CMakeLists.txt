@@ -47,6 +47,11 @@ set_source_files_properties(
     ${_unity_disabled} PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
 )
 
+if(TARGET HeatTransportBHE)
+    append_source_and_header_files(
+        _sources _headers _private DIRECTORIES ProcessLib/HeatTransportBHE
+    )
+endif()
 if(OGS_BUILD_PROCESS_TH2M)
     append_source_and_header_files(
         _sources _headers _private DIRECTORIES ProcessLib/TH2M
@@ -114,6 +119,7 @@ target_link_libraries(
         Boost::math # TODO move OGSMFrontThermodynamicForcesView to MathLib?
         $<$<TARGET_EXISTS:LIE>:LIE>
         $<$<TARGET_EXISTS:TH2M>:TH2M>
+        $<$<TARGET_EXISTS:HeatTransportBHE>:HeatTransportBHE>
         $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:MPI::MPI_CXX>>:MPI::MPI_CXX>
         $<$<TARGET_EXISTS:SwmmInterface>:SwmmInterface>
         $<$<TARGET_EXISTS:InSituLib>:InSituLib>
