@@ -1,32 +1,49 @@
 {{ $citationKey := .Get 0 }}
 {{ $publication := false }}
 {{ range where .Site.RegularPages "Section" "publications" }}
-  {{ if eq (lower (.Params.citationKey | default "")) (lower $citationKey) }}
-    {{ $publication = . }}
-  {{ end }}
+{{ if eq (lower (.Params.citationKey | default "")) (lower $citationKey) }}
+{{ $publication = . }}
+{{ end }}
 {{ end }}
 
 {{ if not $publication }}
-  {{ errorf "bib shortcode: publication entry %q not found" $citationKey }}
+{{ errorf "bib shortcode: publication entry %q not found" $citationKey }}
 {{ end }}
 
 {{ $authors := $publication.Params.authors | default (slice) }}
+{{ $authorText := "" }}
+{{ if gt (len $authors) 3 }}
+{{ $authorText = printf "%s et al." (index $authors 0) }}
+{{ else if gt (len $authors) 0 }}
+{{ $authorText = delimit $authors ", " }}
+{{ end }}
 {{ $doi := $publication.Params.doi | default "" }}
+{{ $sourceUrl := $publication.Params.sourceUrl | default "" }}
+{{ $bibtex := $publication.Params.bibtex | default "" }}
+{{ $bibtexId := printf "bibtex-%s" $publication.File.UniqueID }}
 {{ $doiUrl := "" }}
 {{ $doiLabel := "" }}
+{{ $showSourceLink := false }}
 {{ if $doi }}
-  {{ if or (hasPrefix $doi "http://") (hasPrefix $doi "https://") }}
-    {{ $doiUrl = $doi }}
-    {{ $doiLabel = replaceRE "^https?://(dx\\.)?doi\\.org/" "" $doi }}
-  {{ else }}
-    {{ $doiUrl = printf "https://doi.org/%s" $doi }}
-    {{ $doiLabel = $doi }}
-  {{ end }}
+{{ if or (hasPrefix $doi "http://") (hasPrefix $doi "https://") }}
+{{ $doiUrl = $doi }}
+{{ $doiLabel = replaceRE "^https?://(dx\\.)?doi\\.org/" "" $doi }}
+{{ else }}
+{{ $doiUrl = printf "https://doi.org/%s" $doi }}
+{{ $doiLabel = $doi }}
+{{ end }}
+{{ end }}
+{{ if $sourceUrl }}
+{{ $normalisedSourceUrl := lower (replaceRE "/+$" "" $sourceUrl) }}
+{{ $normalisedDoiUrl := lower (replaceRE "/+$" "" $doiUrl) }}
+{{ if ne $normalisedSourceUrl $normalisedDoiUrl }}
+{{ $showSourceLink = true }}
+{{ end }}
 {{ end }}
 
 <span class="bib-entry">
-  {{ if gt (len $authors) 0 }}
-    {{ delimit $authors ", " }}
+  {{ with $authorText }}
+  {{ . }}
   {{ end }}
   {{ with $publication.Params.year }} ({{ . }}){{ end }}:
   <a href="{{ $publication.RelPermalink }}"><span class="italic">{{ $publication.Title | safeHTML }}</span></a>.
@@ -40,12 +57,46 @@
   {{ with $publication.Params.publisher }}{{ . }}, {{ end }}
   {{ with $publication.Params.institution }}{{ . }}, {{ end }}
   {{ with $doiUrl }}
-    DOI:<a href="{{ . }}" class="mt-4">{{ $doiLabel }}</a>
+  DOI:<a href="{{ . }}" class="mt-4">{{ $doiLabel }}</a>
   {{ end }}
-  {{ with $publication.Params.sourceUrl }}
-    <a href="{{ . }}" class="mt-4">{{ . }}</a>
+  {{ if $showSourceLink }}
+  <a href="{{ $sourceUrl }}" class="mt-4">{{ $sourceUrl }}</a>
   {{ end }}
-  <a href="{{ $publication.RelPermalink }}" class="mt-4 inline-flex items-center">
-    Details&nbsp;<i class="far fa-arrow-right text-xs align-top"></i>
-  </a>
+  {{ with $bibtex }}
+  <button
+    class="js-copy-bibtex-source mx-4 inline-flex items-center rounded-full border px-3 py-1 text-xs transition hover:border-brand-400 hover:text-brand-700"
+    type="button" data-target="{{ $bibtexId }}">
+    Copy BibTeX
+  </button>
+  {{ end }}
 </span>
+{{ with $bibtex }}
+<pre id="{{ $bibtexId }}" class="hidden">{{ . }}</pre>
+{{ end }}
+<script>
+  document.querySelectorAll(".js-copy-bibtex-source").forEach((button) => {
+    if (button.dataset.copyBibtexBound === "true") {
+      return;
+    }
+
+    button.dataset.copyBibtexBound = "true";
+    button.addEventListener("click", async () => {
+      const target = button.dataset.target ? document.getElementById(button.dataset.target) : null;
+      const bibtex = target ? target.textContent : "";
+      if (!bibtex) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(bibtex);
+        const originalLabel = button.textContent;
+        button.textContent = "Copied ✓";
+        window.setTimeout(() => {
+          button.textContent = originalLabel;
+        }, 1500);
+      } catch {
+        button.textContent = "Copy failed";
+      }
+    });
+  });
+</script>

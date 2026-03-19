@@ -4,10 +4,12 @@
 {{ $imagePath := .Params.image | default "" }}
 {{ $image := .Resources.GetMatch $imagePath }}
 {{ $doi := .Params.doi | default "" }}
+{{ $sourceUrl := .Params.sourceUrl | default "" }}
 {{ $bibtex := .Params.bibtex | default "" }}
 {{ $bibtexId := printf "bibtex-%s" .File.UniqueID }}
 {{ $doiUrl := "" }}
 {{ $doiLabel := "" }}
+{{ $showSourceButton := false }}
 {{ if $doi }}
 {{ if or (hasPrefix $doi "http://") (hasPrefix $doi "https://") }}
 {{ $doiUrl = $doi }}
@@ -15,6 +17,13 @@
 {{ else }}
 {{ $doiUrl = printf "https://doi.org/%s" $doi }}
 {{ $doiLabel = $doi }}
+{{ end }}
+{{ end }}
+{{ if $sourceUrl }}
+{{ $normalisedSourceUrl := lower (replaceRE "/+$" "" $sourceUrl) }}
+{{ $normalisedDoiUrl := lower (replaceRE "/+$" "" $doiUrl) }}
+{{ if ne $normalisedSourceUrl $normalisedDoiUrl }}
+{{ $showSourceButton = true }}
 {{ end }}
 {{ end }}
 
@@ -56,17 +65,16 @@
             DOI: {{ $doiLabel }}
           </a>
           {{ end }}
-          {{ with .Params.sourceUrl }}
+          {{ if $showSourceButton }}
           <a class="rounded-full border border-stone-300 px-4 py-2 font-medium text-stone-700 transition hover:border-brand-400 hover:text-brand-700"
-            href="{{ . }}">
+            href="{{ $sourceUrl }}">
             Source
           </a>
           {{ end }}
           {{ with $bibtex }}
           <button
             class="js-copy-bibtex rounded-full border border-stone-300 px-4 py-2 font-medium text-stone-700 transition hover:border-brand-400 hover:text-brand-700"
-            type="button"
-            data-target="{{ $bibtexId }}">
+            type="button" data-target="{{ $bibtexId }}">
             Copy BibTeX
           </button>
           {{ end }}
@@ -146,7 +154,7 @@
       try {
         await navigator.clipboard.writeText(bibtex);
         const originalLabel = button.textContent;
-        button.textContent = "Copied BibTeX";
+        button.textContent = "Copied ✓";
         window.setTimeout(() => {
           button.textContent = originalLabel;
         }, 1500);
