@@ -105,26 +105,6 @@ BHE_2U::pipeAdvectionVectors(Eigen::Vector3d const& /*elem_direction*/,
              {0, 0, 0}}};         // g4
 }
 
-double compute_R_gs_2U(double const chi, double const R_g)
-{
-    return (1 - chi) * R_g;
-}
-
-double compute_R_gg_2U(double const chi, double const R_gs, double const R_ar,
-                       double const R_g)
-{
-    double const R_gg = 2.0 * R_gs * (R_ar - 2.0 * chi * R_g) /
-                        (2.0 * R_gs - R_ar + 2.0 * chi * R_g);
-    if (!std::isfinite(R_gg))
-    {
-        OGS_FATAL(
-            "Error!!! Grout Thermal Resistance is an infinite number! The "
-            "simulation will be stopped!");
-    }
-
-    return R_gg;
-}
-
 /// Thermal resistances due to grout-soil exchange.
 ///
 /// Check if constraints regarding negative thermal resistances are violated
@@ -135,10 +115,9 @@ std::array<double, 4> thermalResistancesGroutSoil2U(double const chi,
                                                     double const R_ar_2,
                                                     double const R_g)
 {
-    double R_gs = compute_R_gs_2U(chi, R_g);
-    double R_gg_1 = compute_R_gg_2U(chi, R_gs, R_ar_1, R_g);
-    double R_gg_2 = compute_R_gg_2U(chi, R_gs, R_ar_2,
-                                    R_g);  // Resulting thermal resistances.
+    double R_gs = computeRgs(chi, R_g);
+    double R_gg_1 = computeRgg(chi, R_gs, R_ar_1, R_g);
+    double R_gg_2 = computeRgg(chi, R_gs, R_ar_2, R_g);
     double chi_new = chi;
 
     auto constraint = [&]()
@@ -156,9 +135,9 @@ std::array<double, 4> thermalResistancesGroutSoil2U(double const chi,
             "Warning! Correction procedure was applied due to negative thermal "
             "resistance! Chi = {:f}.\n",
             m_chi);
-        R_gs = compute_R_gs_2U(m_chi, R_g);
-        R_gg_1 = compute_R_gg_2U(m_chi, R_gs, R_ar_1, R_g);
-        R_gg_2 = compute_R_gg_2U(m_chi, R_gs, R_ar_2, R_g);
+        R_gs = computeRgs(m_chi, R_g);
+        R_gg_1 = computeRgg(m_chi, R_gs, R_ar_1, R_g);
+        R_gg_2 = computeRgg(m_chi, R_gs, R_ar_2, R_g);
         chi_new = m_chi;
     }
 

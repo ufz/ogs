@@ -93,26 +93,6 @@ BHE_1U::pipeAdvectionVectors(Eigen::Vector3d const& /*elem_direction*/,
              {0, 0, 0}}};         // g2
 }
 
-double compute_R_gs(double const chi, double const R_g)
-{
-    return (1 - chi) * R_g;
-}
-
-double compute_R_gg(double const chi, double const R_gs, double const R_ar,
-                    double const R_g)
-{
-    double const R_gg = 2.0 * R_gs * (R_ar - 2.0 * chi * R_g) /
-                        (2.0 * R_gs - R_ar + 2.0 * chi * R_g);
-    if (!std::isfinite(R_gg))
-    {
-        OGS_FATAL(
-            "Error!!! Grout Thermal Resistance is an infinite number! The "
-            "simulation will be stopped!");
-    }
-
-    return R_gg;
-}
-
 /// Thermal resistances due to grout-soil exchange.
 ///
 /// Check if constraints regarding negative thermal resistances are violated
@@ -122,9 +102,8 @@ std::array<double, 3> thermalResistancesGroutSoil(double const chi,
                                                   double const R_ar,
                                                   double const R_g)
 {
-    double R_gs = compute_R_gs(chi, R_g);
-    double R_gg =
-        compute_R_gg(chi, R_gs, R_ar, R_g);  // Resulting thermal resistances.
+    double R_gs = computeRgs(chi, R_g);
+    double R_gg = computeRgg(chi, R_gs, R_ar, R_g);
     double new_chi = chi;
 
     auto constraint = [&]()
@@ -143,8 +122,8 @@ std::array<double, 3> thermalResistancesGroutSoil(double const chi,
             "resistance! Chi = {:f}.\n",
             m_chi);
 
-        R_gs = compute_R_gs(m_chi, R_g);
-        R_gg = compute_R_gg(m_chi, R_gs, R_ar, R_g);
+        R_gs = computeRgs(m_chi, R_g);
+        R_gg = computeRgg(m_chi, R_gs, R_ar, R_g);
         new_chi = m_chi;
     }
 

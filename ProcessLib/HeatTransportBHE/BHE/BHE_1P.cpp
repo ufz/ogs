@@ -7,6 +7,7 @@
 
 #include "FlowAndTemperatureControl.h"
 #include "Physics.h"
+#include "ThermalResistanceHelpers.h"
 #include "ThermoMechanicalFlowProperties.h"
 
 namespace ProcessLib
@@ -61,13 +62,14 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::pipeHeatConductions(
     double const porosity_g = grout.porosity_g;
     double const lambda_g = grout.lambda_g;
 
-    double const velocity = getClampedFlowVelocity(section_index);
+    double const velocity_norm =
+        std::abs(getClampedFlowVelocity(section_index));
 
     // Here we calculate the laplace coefficients in the governing
     // equations of the BHE.
     return {{
         // pipe, Eq. 19
-        (lambda_r + rho_r * Cp_r * alpha_L * velocity),
+        (lambda_r + rho_r * Cp_r * alpha_L * velocity_norm),
         // grout, Eq. 21
         (1.0 - porosity_g) * lambda_g,
     }};
@@ -87,11 +89,6 @@ BHE_1P::pipeAdvectionVectors(Eigen::Vector3d const& elem_direction,
             adv_vector,
             // grout, Eq. 21
             {0, 0, 0}};
-}
-
-double BHE_1P::compute_R_gs(double const chi, double const R_g)
-{
-    return (1 - chi) * R_g;
 }
 
 void BHE_1P::updateHeatTransferCoefficients(double const flow_rate)
@@ -141,7 +138,7 @@ std::vector<double> BHE_1P::calcThermalResistances(
     double const R_con_b = chi * R_g;
 
     // thermal resistances due to grout-soil exchange
-    double const R_gs = compute_R_gs(chi, R_g);
+    double const R_gs = computeRgs(chi, R_g);
 
     // Eq. 29 and 30
     double const R_fg = R_adv_i1 + R_con_a + R_con_b;

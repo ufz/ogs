@@ -3,6 +3,9 @@
 
 #pragma once
 
+#include <algorithm>
+
+#include "BaseLib/Error.h"
 #include "HeatTransportBHELocalAssemblerBHE.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -61,8 +64,15 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::
     _R_pi_s_matrix.setZero(bhe_unknowns_size, soil_temperature_size);
     _R_s_matrix.setZero(soil_temperature_size, soil_temperature_size);
     static constexpr int max_num_thermal_exchange_terms = 5;
-    // formulate the local BHE R matrix
-    for (int idx_bhe_unknowns = 0; idx_bhe_unknowns < bhe_unknowns;
+    // Formulate the local BHE R matrix.
+    // Only unknowns with thermal exchange terms need resistance assembly.
+    // In CXA/CXC there are 3 exchange terms (= number of unknowns),
+    // in 1U there are 4 (= number of unknowns),
+    // in 2U there are 5 but 8 unknowns — unknowns 5-7 (extra grout zones)
+    // have no exchange terms. See Diersch (2013) FEFLOW, M.127-M.128.
+    for (int idx_bhe_unknowns = 0;
+         idx_bhe_unknowns <
+         std::min(bhe_unknowns, max_num_thermal_exchange_terms);
          idx_bhe_unknowns++)
     {
         typename ShapeMatricesType::template MatrixType<
@@ -82,21 +92,9 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::
             matBHE_loc_R += N.transpose() * N * (1 / R) * w;
         }  // end of loop over integration point
 
-        // The following assembly action is according to Diersch (2013) FEFLOW
-        // book please refer to M.127 and M.128 on page 955 and 956
-        // The if check is absolutely necessary because
-        // (i) In the CXA and CXC case, there are 3 exchange terms,
-        // and it is the same as the number of unknowns;
-        // (ii) In the 1U case, there are 4 exchange terms,
-        // and it is again same as the number of unknowns;
-        // (iii) In the 2U case, there are 5 exchange terms,
-        // and it is less than the number of unknowns (8).
-        if (idx_bhe_unknowns < max_num_thermal_exchange_terms)
-        {
-            _bhe.template assembleRMatrices<ShapeFunction::NPOINTS>(
-                idx_bhe_unknowns, matBHE_loc_R, _R_matrix, _R_pi_s_matrix,
-                _R_s_matrix);
-        }
+        _bhe.template assembleRMatrices<ShapeFunction::NPOINTS>(
+            idx_bhe_unknowns, matBHE_loc_R, _R_matrix, _R_pi_s_matrix,
+            _R_s_matrix);
     }  // end of loop over BHE unknowns
 
     // debugging

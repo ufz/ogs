@@ -128,8 +128,6 @@ protected:
 private:
     std::vector<double> calcThermalResistances(
         double const Nu, int const section_index = 0) const;
-
-    static double compute_R_gs(double const chi, double const R_g);
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

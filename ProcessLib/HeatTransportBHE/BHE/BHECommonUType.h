@@ -5,6 +5,7 @@
 
 #include "BHECommon.h"
 #include "PipeConfigurationUType.h"
+#include "ThermalResistanceHelpers.h"
 
 namespace ProcessLib
 {
