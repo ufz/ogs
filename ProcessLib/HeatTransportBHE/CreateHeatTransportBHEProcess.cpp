@@ -82,19 +82,42 @@ void createAndInsertBHE(
     }
     for (auto const& id : bhe_ids_of_this_bhe)
     {
+        if (id < 0 || id >= static_cast<int>(bhe_mesh_data.BHE_nodes.size()))
+        {
+            OGS_FATAL(
+                "BHE id {:d} is out of range. The mesh contains {:d} "
+                "BHE(s) (valid ids: 0 to {:d}).",
+                id, bhe_mesh_data.BHE_nodes.size(),
+                static_cast<int>(bhe_mesh_data.BHE_nodes.size()) - 1);
+        }
         std::pair<std::map<int, BHE::BHETypes>::iterator, bool> result;
         if (id == bhe_ids_of_this_bhe[0])
         {
-            auto const& bhe_nodes = bhe_mesh_data.BHE_nodes[id];
+            auto const& bhe_nodes =
+                bhe_mesh_data.BHE_topology_ordered_nodes[id];
             result = bhes_map.try_emplace(
-                id,
-                bhe_creator_it->second(bhe_config, parameters, curves,
-                                       bhe_nodes));
+                id, bhe_creator_it->second(bhe_config, parameters, curves,
+                                           bhe_nodes));
         }
         else
         {
+            // ConfigTree enforces single-read semantics, so we cannot
+            // re-parse the same config block.  Grouped BHEs share all
+            // configuration except the borehole geometry, which is rebuilt
+            // per-ID from each BHE's own node set.
+            auto const& first_bhe =
+                bhes_map.find(bhe_ids_of_this_bhe[0])->second;
+            auto const& bhe_nodes =
+                bhe_mesh_data.BHE_topology_ordered_nodes[id];
             result = bhes_map.try_emplace(
-                id, bhes_map.find(bhe_ids_of_this_bhe[0])->second);
+                id,
+                std::visit(
+                    [&](auto const& bhe) -> BHE::BHETypes
+                    {
+                        return bhe.withGeometry(
+                            bhe.borehole_geometry.rebuildForNodes(bhe_nodes));
+                    },
+                    first_bhe));
         }
         if (!result.second)
         {

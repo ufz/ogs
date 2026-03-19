@@ -34,6 +34,7 @@ struct BHEMeshData
     std::vector<int> BHE_mat_IDs;
     std::vector<std::vector<MeshLib::Element*>> BHE_elements;
     std::vector<std::vector<MeshLib::Node*>> BHE_nodes;
+    std::vector<std::vector<MeshLib::Node*>> BHE_topology_ordered_nodes;
     std::unordered_map<std::size_t, double> BHE_element_distances_from_wellhead;
     std::unordered_map<std::size_t, int> BHE_element_section_indices;
 

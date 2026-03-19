@@ -334,7 +334,7 @@ AddTest(
     EXECUTABLE_ARGS id_out_of_range.xml
     REQUIREMENTS NOT OGS_USE_MPI
     PROPERTIES
-    PASS_REGULAR_EXPRESSION "The maximum given BHE id '100' did not match the number of given BHE definitions '3'. The BHE ids needs to be defined starting from 0, so the maximum BHE id needs to be number of BHE definitions minus 1. After all definitions there are no gaps allowed between the given ids."
+    PASS_REGULAR_EXPRESSION "BHE id 100 is out of range. The mesh contains 3 BHE"
 )
 
 AddTest(

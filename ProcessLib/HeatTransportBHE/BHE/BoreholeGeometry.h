@@ -19,7 +19,9 @@ class Node;
 namespace ParameterLib
 {
 struct ParameterBase;
-}
+template <typename T>
+struct Parameter;
+}  // namespace ParameterLib
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -34,14 +36,18 @@ struct BoreholeGeometry
      */
     double const length;
 
-    /**
-     * Z-coordinate of the wellhead (topmost BHE node) [m].
-     * Used to compute distance from wellhead for multi-section lookup.
-     */
-    double const wellhead_z;
-
     /// Section boundaries and borehole diameters.
     DiameterProfile const sections;
+
+    /// Stored for rebuilding geometry with different BHE nodes
+    /// (grouped BHE definitions).  May be nullptr for test-constructed objects.
+    ParameterLib::Parameter<double> const* diameter_param{nullptr};
+
+    /// Rebuild this geometry for different BHE nodes.
+    /// Used for grouped BHE definitions where config is shared but each BHE
+    /// has its own node set.
+    BoreholeGeometry rebuildForNodes(
+        std::vector<MeshLib::Node*> const& new_nodes) const;
 };
 
 BoreholeGeometry createBoreholeGeometry(

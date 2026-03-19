@@ -41,6 +41,14 @@ public:
            PipeConfigurationUType const& pipes,
            bool const use_python_bcs);
 
+    /// Construct a copy with different borehole geometry.
+    /// Used for grouped BHE definitions.
+    BHE_1U withGeometry(BoreholeGeometry const& g) const
+    {
+        return {g,      refrigerant,   grout, flowAndTemperatureControl,
+                _pipes, use_python_bcs};
+    }
+
     static constexpr int number_of_unknowns = 4;
     static constexpr int number_of_grout_zones = 2;
 

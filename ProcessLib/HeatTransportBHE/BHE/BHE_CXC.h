@@ -50,6 +50,14 @@ public:
         updateHeatTransferCoefficients(values.flow_rate);
     }
 
+    /// Construct a copy with different borehole geometry.
+    /// Used for grouped BHE definitions.
+    BHE_CXC withGeometry(BoreholeGeometry const& g) const
+    {
+        return {g,      refrigerant,   grout, flowAndTemperatureControl,
+                _pipes, use_python_bcs};
+    }
+
     template <int NPoints, typename SingleUnknownMatrixType,
               typename RMatrixType, typename RPiSMatrixType,
               typename RSMatrixType>
