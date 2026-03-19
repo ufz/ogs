@@ -41,76 +41,170 @@ std::vector<int> getUniqueMaterialIds(
     return {begin(unique_material_ids), end(unique_material_ids)};
 }
 
-std::array<MeshLib::Node const*, 2> getElementEndpoints(
-    MeshLib::Element const& element)
+std::array<MeshLib::Node*, 2> getElementEndpoints(MeshLib::Element& element)
 {
-    if (element.getNumberOfBaseNodes() < 2)
+    if (element.getGeomType() != MeshLib::MeshElemType::LINE)
     {
         OGS_FATAL(
-            "Expected a line element with at least two base nodes for BHE "
-            "element id {:d}, but got {:d} base nodes.",
-            element.getID(), element.getNumberOfBaseNodes());
+            "Expected a line element for BHE element id {:d}, but got {:s}.",
+            element.getID(),
+            MeshLib::MeshElemType2String(element.getGeomType()));
     }
 
     return {element.getNode(0), element.getNode(1)};
 }
 
-/// Sorts BHE elements from wellhead (highest z) to bottom (lowest z) so that
-/// a simple linear chain walk gives arc-length distances in order.
-void sortBheElementsFromWellhead(std::vector<MeshLib::Element*>& elements)
+/// Build a node-to-elements adjacency map for a set of BHE elements.
+std::unordered_map<std::size_t, std::vector<MeshLib::Element*>>
+buildNodeToElementMap(std::vector<MeshLib::Element*> const& elements)
 {
-    std::sort(
-        elements.begin(), elements.end(),
-        [](MeshLib::Element const* const a, MeshLib::Element const* const b)
-        {
-            auto const za = ((*a->getNode(0))[2] + (*a->getNode(1))[2]) / 2.0;
-            auto const zb = ((*b->getNode(0))[2] + (*b->getNode(1))[2]) / 2.0;
-            return za > zb;
-        });
-}
-
-MeshLib::Node const& findWellheadNode(
-    std::vector<MeshLib::Element*> const& sorted_elements)
-{
-    if (sorted_elements.empty())
-    {
-        OGS_FATAL("BHE element list is empty while constructing mesh data.");
-    }
-
-    // After sorting, the wellhead is the higher-z endpoint of the first
-    // element.
-    auto const [n0, n1] = getElementEndpoints(*sorted_elements.front());
-    return (*n0)[2] >= (*n1)[2] ? *n0 : *n1;
-}
-
-std::unordered_map<std::size_t, double> computeElementDistancesFromWellhead(
-    std::vector<MeshLib::Element*> const& sorted_bhe_elements)
-{
-    std::unordered_map<std::size_t, double> distances;
-    distances.reserve(sorted_bhe_elements.size());
-
-    if (sorted_bhe_elements.empty())
-    {
-        return distances;
-    }
-
-    // BHE elements form a linear chain. Walking from the wellhead element by
-    // element gives arc-length distances in a single O(N) pass.
-    MeshLib::Node const* prev_node = &findWellheadNode(sorted_bhe_elements);
-    double accumulated_distance = 0.0;
-
-    for (auto* const element : sorted_bhe_elements)
+    std::unordered_map<std::size_t, std::vector<MeshLib::Element*>> map;
+    for (auto* element : elements)
     {
         auto const [n0, n1] = getElementEndpoints(*element);
-        // The exit node is the endpoint not shared with the previous element.
-        MeshLib::Node const* const bottom = (n0 == prev_node) ? n1 : n0;
-        double const len = element->computeVolume();
-        distances[element->getID()] = accumulated_distance + 0.5 * len;
-        accumulated_distance += len;
-        prev_node = bottom;
+        map[n0->getID()].push_back(element);
+        map[n1->getID()].push_back(element);
+    }
+    return map;
+}
+
+/// Find the wellhead node by filtering BHE nodes.
+/// Record the nodes that are connected to only one element.
+/// Then verifying that there are exactly two nodes exist,
+/// and returning the one with the greater z-coordinate.
+MeshLib::Node* findWellheadNode(
+    std::vector<MeshLib::Node*> const& bhe_nodes,
+    std::unordered_map<std::size_t, std::vector<MeshLib::Element*>> const&
+        node_to_elements)
+{
+    if (bhe_nodes.empty())
+    {
+        OGS_FATAL("BHE node list is empty while constructing mesh data.");
     }
 
-    return distances;
+    std::vector<MeshLib::Node*> endpoints;
+    std::copy_if(
+        bhe_nodes.begin(), bhe_nodes.end(), std::back_inserter(endpoints),
+        [&node_to_elements](MeshLib::Node* node)
+        {
+            auto const it = node_to_elements.find(node->getID());
+            return it != node_to_elements.end() && it->second.size() == 1;
+        });
+
+    if (endpoints.size() != 2)
+    {
+        OGS_FATAL(
+            "The BHE mesh must form a single continuous linear chain with "
+            "exactly 2 endpoints. Found {:d} endpoints.",
+            endpoints.size());
+    }
+
+    auto* a = endpoints[0];
+    auto* b = endpoints[1];
+
+    if ((*a)[2] == (*b)[2])
+    {
+        OGS_FATAL(
+            "Both BHE chain endpoints share the same z-coordinate ({:g}). "
+            "The wellhead choice is ambiguous.",
+            (*a)[2]);
+    }
+
+    return ((*a)[2] > (*b)[2]) ? a : b;
+}
+
+/// Walk the BHE element chain starting from the wellhead node using mesh
+/// topology (node-element adjacency).  Returns elements in order from wellhead
+/// to bottom and computes arc-length element distances.
+///
+/// Unlike z-sorting, this works correctly for any BHE orientation (vertical,
+/// inclined, or horizontal).
+struct ChainWalkResult
+{
+    std::vector<MeshLib::Element*> ordered_elements;
+    std::vector<MeshLib::Node*> ordered_nodes;
+    std::unordered_map<std::size_t, double> element_distances_from_wellhead;
+};
+
+ChainWalkResult walkChainFromWellhead(
+    std::vector<MeshLib::Element*> const& bhe_elements,
+    std::vector<MeshLib::Node*> const& bhe_nodes)
+{
+    if (bhe_elements.empty())
+    {
+        return {};
+    }
+
+    auto const node_to_elements = buildNodeToElementMap(bhe_elements);
+    MeshLib::Node* wellhead = findWellheadNode(bhe_nodes, node_to_elements);
+
+    // The wellhead node must be an endpoint of exactly one element.
+    auto const it = node_to_elements.find(wellhead->getID());
+    if (it == node_to_elements.end() || it->second.empty())
+    {
+        OGS_FATAL("Wellhead node {:d} is not connected to any BHE element.",
+                  wellhead->getID());
+    }
+    if (it->second.size() != 1)
+    {
+        OGS_FATAL(
+            "Wellhead node {:d} is connected to {:d} BHE elements; "
+            "expected exactly 1 (chain endpoint).",
+            wellhead->getID(), it->second.size());
+    }
+
+    std::vector<MeshLib::Element*> ordered;
+    ordered.reserve(bhe_elements.size());
+    std::vector<MeshLib::Node*> ordered_nodes;
+    ordered_nodes.reserve(bhe_elements.size() + 1);
+    ordered_nodes.push_back(wellhead);
+    std::unordered_map<std::size_t, double> distances;
+    distances.reserve(bhe_elements.size());
+
+    MeshLib::Node* prev_node = wellhead;
+    MeshLib::Element* current = it->second.front();
+    double accumulated_distance = 0.0;
+
+    while (current != nullptr)
+    {
+        ordered.push_back(current);
+        double const len = current->computeVolume();
+        distances[current->getID()] = accumulated_distance + 0.5 * len;
+        accumulated_distance += len;
+
+        // Find exit node (the endpoint not shared with prev_node).
+        auto const [n0, n1] = getElementEndpoints(*current);
+        MeshLib::Node* exit_node = (n0 == prev_node) ? n1 : n0;
+        ordered_nodes.push_back(exit_node);
+
+        // Find the next element connected to exit_node.
+        auto const exit_it = node_to_elements.find(exit_node->getID());
+        MeshLib::Element* next = nullptr;
+        if (exit_it != node_to_elements.end())
+        {
+            auto const& elems = exit_it->second;
+            auto const next_it =
+                std::find_if(elems.begin(), elems.end(),
+                             [current](auto* e) { return e != current; });
+            if (next_it != elems.end())
+            {
+                next = *next_it;
+            }
+        }
+
+        prev_node = exit_node;
+        current = next;
+    }
+
+    if (ordered.size() != bhe_elements.size())
+    {
+        OGS_FATAL(
+            "BHE chain walk visited {:d} elements but the group has {:d}. "
+            "The BHE mesh must form a single continuous linear chain.",
+            ordered.size(), bhe_elements.size());
+    }
+
+    return {std::move(ordered), std::move(ordered_nodes), std::move(distances)};
 }
 }  // namespace
 
@@ -176,21 +270,31 @@ BHEMeshData getBHEDataInMesh(MeshLib::Mesh const& mesh)
     }
 
     std::unordered_map<std::size_t, double> bhe_element_distances_from_wellhead;
+    std::vector<std::vector<MeshLib::Node*>> bhe_topology_ordered_nodes(
+        bhe_material_ids.size());
 
     std::unordered_map<std::size_t, int> bhe_element_section_indices;
 
     for (unsigned bhe_id = 0; bhe_id < bhe_material_ids.size(); bhe_id++)
     {
-        sortBheElementsFromWellhead(bhe_elements[bhe_id]);
+        auto walk_result =
+            walkChainFromWellhead(bhe_elements[bhe_id], bhe_nodes[bhe_id]);
+
+        bhe_elements[bhe_id] = std::move(walk_result.ordered_elements);
+        bhe_topology_ordered_nodes[bhe_id] =
+            std::move(walk_result.ordered_nodes);
 
         for (auto const& [element_id, distance] :
-             computeElementDistancesFromWellhead(bhe_elements[bhe_id]))
+             walk_result.element_distances_from_wellhead)
         {
             bhe_element_distances_from_wellhead[element_id] = distance;
         }
     }
 
-    return {bhe_material_ids, bhe_elements, bhe_nodes,
+    return {bhe_material_ids,
+            bhe_elements,
+            bhe_nodes,
+            bhe_topology_ordered_nodes,
             std::move(bhe_element_distances_from_wellhead),
             std::move(bhe_element_section_indices)};
 }
