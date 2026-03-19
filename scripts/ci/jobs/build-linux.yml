@@ -61,7 +61,10 @@ build with pip:
   needs: [meta]
   extends:
     - .test-artifacts
+  variables:
+    GIT_DEPTH: 1000
   script:
+    - rm -rf .venv ../build/_skbuild  # cleanup build dirs
     - python -m venv .venv
     - source .venv/bin/activate
     - pip install --upgrade pip
