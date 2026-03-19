@@ -296,7 +296,7 @@ df_time_step_speedups["linear_solver_time"] /= df_time_step_speedups["iteration_
 df_time_step_speedups["dirichlet_time"] /= df_time_step_speedups["iteration_number"]
 
 for col in df_time_step_speedups.columns:
-    c = df_time_step_speedups[col].to_numpy()
+    c = df_time_step_speedups[col].to_numpy().copy()
     # c[:3] = np.max(c[:3]) / c[:3]
     # c[3:] = np.max(c[3:]) / c[3:]
     c[:3] = c[0] / c[:3]
@@ -338,7 +338,7 @@ df_time_step_speedups = df_median_time_step_timings.copy(deep=True)
 assert np.all(df_time_step_speedups.index == [name for name, case in cases])
 
 for col in df_time_step_speedups.columns:
-    c = df_time_step_speedups[col].to_numpy()
+    c = df_time_step_speedups[col].to_numpy().copy()
     # c[:3] = np.max(c[:3]) / c[:3]
     # c[3:] = np.max(c[3:]) / c[3:]
     c[:3] = c[0] / c[:3]
