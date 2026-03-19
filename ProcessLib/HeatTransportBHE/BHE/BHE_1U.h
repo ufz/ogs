@@ -19,8 +19,8 @@ namespace HeatTransportBHE
 namespace BHE
 {
 /**
- * The BHE_1U class is the realization of 1U type of Borehole Heate Exchanger.
- * In this class, the pipe heat capacity, pipe heat conductiion, pie advection
+ * The BHE_1U class is the realization of 1U type of Borehole Heat Exchanger.
+ * In this class, the pipe heat capacity, pipe heat conduction, pipe advection
  * vectors are initialized according to the geometry of 1U type of BHE.
  * For 1U type of BHE, 4 primary unknowns are assigned on the 1D BHE elements.
  * They are the temperature in inflow pipe T_in, temperature in outflow pipe
@@ -46,10 +46,12 @@ public:
 
     std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 
-    std::array<double, number_of_unknowns> pipeHeatConductions() const;
+    std::array<double, number_of_unknowns> pipeHeatConductions(
+        int const section_index = 0) const;
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
-        Eigen::Vector3d const& /*elem_direction*/) const;
+        Eigen::Vector3d const& /*elem_direction*/,
+        int const section_index = 0) const;
 
     template <int NPoints,
               typename SingleUnknownMatrixType,
@@ -115,18 +117,14 @@ public:
                 return;
             default:
                 OGS_FATAL(
-                    "Error!!! In the function BHE_1U::assembleRMatrices, "
-                    "the index of bhe unknowns is out of range! ");
+                    "BHE_1U::assembleRMatrices: unknown index {:d} "
+                    "out of range.",
+                    idx_bhe_unknowns);
         }
     }
 
     /// Return the inflow temperature for the boundary condition.
     double updateFlowRateAndTemperature(double T_out, double current_time);
-
-    double thermalResistance(int const unknown_index) const
-    {
-        return _thermal_resistances[unknown_index];
-    }
 
     static constexpr std::pair<int, int> inflow_outflow_bc_component_ids[] = {
         {0, 1}};
@@ -143,22 +141,14 @@ public:
                                               int const out_component_id);
 
 public:
-    std::array<double, number_of_unknowns> crossSectionAreas() const;
+    std::array<double, number_of_unknowns> crossSectionAreas(
+        int const section_index = 0) const;
 
     void updateHeatTransferCoefficients(double const flow_rate);
 
 private:
-    std::array<double, number_of_unknowns> calcThermalResistances(
-        double const Nu);
-
-private:
-    /// PHI_fig, PHI_fog, PHI_gg, PHI_gs;
-    /// Here we store the thermal resistances needed for computation of the heat
-    /// exchange coefficients in the governing equations of BHE.
-    /// These governing equations can be found in
-    /// 1) Diersch (2013) FEFLOW book on page 958, M.3, or
-    /// 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 90-97.
-    std::array<double, number_of_unknowns> _thermal_resistances;
+    std::vector<double> calcThermalResistances(
+        double const Nu, int const section_index = 0) const;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

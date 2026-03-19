@@ -3,7 +3,6 @@
 
 #include "BHECommonCoaxial.h"
 
-#include "Physics.h"
 #include "ThermalResistancesCoaxial.h"
 #include "ThermoMechanicalFlowProperties.h"
 
@@ -27,10 +26,6 @@ BHECommonCoaxial::BHECommonCoaxial(
     cross_section_area_inner_pipe = _pipes.inner_pipe.area();
     cross_section_area_annulus =
         _pipes.outer_pipe.area() - _pipes.inner_pipe.outsideArea();
-    cross_section_area_grout =
-        borehole_geometry.area() - _pipes.outer_pipe.outsideArea();
-
-    _thermal_resistances.fill(std::numeric_limits<double>::quiet_NaN());
 }
 
 std::array<double, BHECommonCoaxial::number_of_unknowns>
@@ -57,8 +52,9 @@ double BHECommonCoaxial::updateFlowRateAndTemperature(double const T_out,
     return values.temperature;
 }
 std::array<double, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::pipeHeatConductions() const
+BHECommonCoaxial::pipeHeatConductions(int /*section_index*/) const
 {
+    // Pipe dimensions are constant; velocity does not vary by section.
     double const lambda_r = refrigerant.thermal_conductivity;
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
@@ -80,9 +76,10 @@ BHECommonCoaxial::pipeHeatConductions() const
 }
 
 std::array<Eigen::Vector3d, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::pipeAdvectionVectors(
-    Eigen::Vector3d const& elem_direction) const
+BHECommonCoaxial::pipeAdvectionVectors(Eigen::Vector3d const& elem_direction,
+                                       int /*section_index*/) const
 {
+    // Pipe dimensions are constant; velocity does not vary by section.
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
     auto const v = velocities();
@@ -95,9 +92,9 @@ BHECommonCoaxial::pipeAdvectionVectors(
             {0, 0, 0}};
 }
 
-std::array<double, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
-                                         double const Nu_annulus_pipe) const
+std::vector<double> BHECommonCoaxial::calcThermalResistances(
+    double const Nu_inner_pipe, double const Nu_annulus_pipe,
+    int const section_index) const
 {
     // thermal resistances due to advective flow of refrigerant in the pipes
     auto const R_advective = calculateAdvectiveThermalResistance(
@@ -110,7 +107,8 @@ BHECommonCoaxial::calcThermalResistances(double const Nu_inner_pipe,
 
     // thermal resistance due to the grout transition and grout-soil exchange.
     auto const R = calculateGroutAndGroutSoilExchangeThermalResistance(
-        _pipes.outer_pipe, grout, borehole_geometry.diameter);
+        _pipes.outer_pipe, grout,
+        borehole_geometry.sections.diameterAtSection(section_index));
 
     // thermal resistance due to grout-soil exchange
     double const R_gs = R.grout_soil;
@@ -146,23 +144,21 @@ BHECommonCoaxial::getBHEBottomDirichletBCNodesAndComponents(
 
 void BHECommonCoaxial::updateHeatTransferCoefficients(double const flow_rate)
 {
-    auto const tm_flow_properties_annulus =
-        calculateThermoMechanicalFlowPropertiesAnnulus(_pipes.inner_pipe,
-                                                       _pipes.outer_pipe,
-                                                       borehole_geometry.length,
-                                                       refrigerant,
-                                                       flow_rate);
-
-    _flow_velocity_annulus = tm_flow_properties_annulus.velocity;
-
-    auto const tm_flow_properties = calculateThermoMechanicalFlowPropertiesPipe(
+    auto const tm_flow_inner = calculateThermoMechanicalFlowPropertiesPipe(
         _pipes.inner_pipe, borehole_geometry.length, refrigerant, flow_rate);
 
-    _flow_velocity_inner = tm_flow_properties.velocity;
+    auto const tm_flow_annulus = calculateThermoMechanicalFlowPropertiesAnnulus(
+        _pipes.inner_pipe, _pipes.outer_pipe, borehole_geometry.length,
+        refrigerant, flow_rate);
 
-    _thermal_resistances =
-        calcThermalResistances(tm_flow_properties.nusselt_number,
-                               tm_flow_properties_annulus.nusselt_number);
+    assignVelocities(tm_flow_inner.velocity, tm_flow_annulus.velocity);
+
+    recomputeSectionalResistances(
+        [&](int i)
+        {
+            return calcThermalResistances(tm_flow_inner.nusselt_number,
+                                          tm_flow_annulus.nusselt_number, i);
+        });
 }
 }  // namespace BHE
 }  // namespace HeatTransportBHE

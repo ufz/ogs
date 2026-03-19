@@ -16,7 +16,7 @@ namespace BHE
 {
 /**
  * The BHE_CXA class is the realization of Coaxial pipe with Annular type of the
- * Borehole Heate Exchanger. In this class, the pipe heat capacity,
+ * Borehole Heat Exchanger. In this class, the pipe heat capacity,
  * pipe heat conduction, pipe advection vectors are initialized according to the
  * geometry of CXA type of BHE. For CXA type of BHE, 3 primary unknowns are
  * assigned on the 1D BHE elements. They are the temperature in inflow pipe
@@ -98,26 +98,30 @@ public:
                 return;
             default:
                 OGS_FATAL(
-                    "Error!!! In the function BHE_CXA::assembleRMatrices, "
-                    "the index of bhe unknowns is out of range! ");
+                    "BHE_CXA::assembleRMatrices: unknown index {:d} "
+                    "out of range.",
+                    idx_bhe_unknowns);
         }
     }
 
-    std::array<double, number_of_unknowns> crossSectionAreas() const
+    std::array<double, number_of_unknowns> crossSectionAreas(
+        int const section_index = 0) const
     {
         return {cross_section_area_annulus, cross_section_area_inner_pipe,
-                cross_section_area_grout};
+                borehole_geometry.sections.areaAtSection(section_index) -
+                    _pipes.outer_pipe.outsideArea()};
     }
 
 private:
-    std::array<double, 2> velocities() const override
+    void assignVelocities(double inner_vel, double annulus_vel) override
     {
-        return {_flow_velocity_annulus, _flow_velocity_inner};
+        // CXA: unknown 0 = annulus (inflow), unknown 1 = inner pipe (outflow)
+        _flow_velocities = {annulus_vel, inner_vel};
     }
 
-    std::array<double, number_of_unknowns> getThermalResistances(
-        double const& R_gs, double const& R_ff,
-        double const& R_fg) const override
+    std::vector<double> getThermalResistances(double const& R_gs,
+                                              double const& R_ff,
+                                              double const& R_fg) const override
     {
         return {R_fg, R_ff, R_gs};
     }
