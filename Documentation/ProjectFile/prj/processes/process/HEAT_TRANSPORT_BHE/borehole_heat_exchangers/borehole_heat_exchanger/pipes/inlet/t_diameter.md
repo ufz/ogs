@@ -1,1 +1,1 @@
-The diameter of the inlet pipe.
+The inner diameter of the inlet pipe.

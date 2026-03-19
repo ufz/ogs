@@ -1,1 +1,1 @@
-It is the borehole diameter. One of the most important geometric parameters of borehole and needs to be specified here.
+The borehole diameter. Accepts either a numeric value (constant diameter) or a parameter name referencing a `<parameter>` defined in the project-level `<parameters>` block. When a parameter name is given, the parameter is sampled at BHE node positions to determine depth-dependent diameter sections (e.g., using a `Function` parameter with a step function expression).

@@ -3,11 +3,22 @@
 
 #pragma once
 
-#include <numbers>
+#include <memory>
+#include <vector>
+
+#include "DiameterProfile.h"
 
 namespace BaseLib
 {
 class ConfigTree;
+}
+namespace MeshLib
+{
+class Node;
+}
+namespace ParameterLib
+{
+struct ParameterBase;
 }
 namespace ProcessLib
 {
@@ -18,21 +29,25 @@ namespace BHE
 struct BoreholeGeometry
 {
     /**
-     * length/depth of the BHE
+     * Total length/depth of the BHE
      * unit is m
      */
     double const length;
 
     /**
-     * diameter of the BHE
-     * unit is m
+     * Z-coordinate of the wellhead (topmost BHE node) [m].
+     * Used to compute distance from wellhead for multi-section lookup.
      */
-    double const diameter;
+    double const wellhead_z;
 
-    double area() const { return std::numbers::pi * diameter * diameter / 4; }
+    /// Section boundaries and borehole diameters.
+    DiameterProfile const sections;
 };
 
-BoreholeGeometry createBoreholeGeometry(BaseLib::ConfigTree const& config);
+BoreholeGeometry createBoreholeGeometry(
+    BaseLib::ConfigTree const& config,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
+    std::vector<MeshLib::Node*> const& bhe_nodes);
 
 }  // namespace BHE
 }  // namespace HeatTransportBHE

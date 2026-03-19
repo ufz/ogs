@@ -6,7 +6,6 @@
 #include <variant>
 
 #include "BaseLib/Error.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "ParameterLib/Parameter.h"
 #include "PowerWithCOP.h"
 
