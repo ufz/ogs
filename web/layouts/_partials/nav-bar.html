@@ -27,7 +27,7 @@
       </div>
       <div class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
         <div class="lg:w-0 lg:flex-1 text-lg lg:text-xl xl:text-2xl">
-          <a href="{{ .Site.BaseURL }}" class="flex {{ if .IsHome }} hidden{{ end }}">
+          <a href='{{ relURL "" }}' class="flex {{ if .IsHome }} hidden{{ end }}">
             Open<span class="text-brand-500">GeoSys</span>
           </a>
         </div>
@@ -72,7 +72,7 @@
           <div class="pt-5 pb-6 px-5 space-y-6">
             <div class="flex items-center justify-between border-b">
               <div>
-                <a href="/">Open<span class="text-brand-500">GeoSys</span></a>
+                <a href='{{ relURL "" }}'>Open<span class="text-brand-500">GeoSys</span></a>
               </div>
               <div class="-mr-2">
                 <button @click="mobileMenuOpen = false" type="button"

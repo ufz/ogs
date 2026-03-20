@@ -49,7 +49,7 @@
                 <td class="text-center">All</td>
                 <td><a style="text-decoration: none" href="{{ $pypi_url }}">OpenGeoSys + Utilities (Release on
                     PyPI)</a><br> <span class="text-xs"><b>Note:</b> <a
-                      href="/docs/userguide/basics/introduction#installation">Recommended install
+                      href='{{ relURL "docs/userguide/basics/introduction#installation" }}'>Recommended install
                       method</a> for
                     users on all platforms.
                   </span></td>
@@ -132,7 +132,7 @@
                 <td class="text-center">All</td>
                 <td><a style="text-decoration: none" href="{{ $benchmarks_url }}">Benchmark input files</a><br> <span
                     class="text-xs"><b>Note:</b> Large download! You can also <a
-                      href="/docs/userguide/basics/introduction/#download-benchmarks">browse and download individual
+                      href='{{ relURL "docs/userguide/basics/introduction#download-benchmarks" }}'>browse and download individual
                       subdirectories</a>
                     for <a href="https://gitlab.opengeosys.org/ogs/ogs/-/tree/{{ .Params.tag }}/Tests/Data"><i
                         class="far fa-arrow-right"></i> {{ .Params.tag }}</a></span></td>
