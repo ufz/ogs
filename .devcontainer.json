@@ -7,10 +7,37 @@
     "source=${localWorkspaceFolder}/../build,target=${containerWorkspaceFolder}/../build,type=bind"
   ],
   "features": {
-    "common": {},
     "ghcr.io/devcontainers/features/python:1": {},
+    "ghcr.io/devcontainers-extra/features/uv:1": {},
     "ghcr.io/devcontainers/features/common-utils:2": {
       "configureZshAsDefaultShell": true
+    },
+    "ghcr.io/devcontainers-extra/features/zsh-plugins:0": {
+      "plugins": "git",
+      "omzPlugins": "https://github.com/davidde/git"
+    },
+    "ghcr.io/devcontainers-extra/features/ccache-asdf:2": {},
+    "ghcr.io/devcontainers-extra/features/direnv-asdf:2": {},
+    "ghcr.io/devcontainers/features/hugo:1.1.3": {},
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "postCreateCommand": {
+    "fixVolumePerms": "sudo chown -R $(whoami): /opt/cpm /opt/ccache",
+    "installTools": "uv tool install pre-commit && uv tool install ruff",
+    "setupDirenv": "grep -qxF 'eval \"$(direnv hook zsh)\"' ~/.zshrc || echo 'eval \"$(direnv hook zsh)\"' >> ~/.zshrc"
+  },
+  "postStartCommand": "pre-commit install",
+  "containerEnv": {
+    "CMAKE_PRESET_BUILD_DIR_PREFIX": "devcontainer-",
+    "CPM_SOURCE_CACHE": "/opt/cpm",
+    "CCACHE_DIR": "/opt/ccache"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [],
+      "settings": {
+        "cmake.configureOnOpen": false
+      }
     }
   }
 }

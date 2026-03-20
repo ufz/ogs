@@ -58,7 +58,7 @@ repos:
     hooks:
       - id: git-diff-check
         name: Run git diff --check
-        entry: git diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
+        entry: git --no-pager diff --check --cached -- ':!*.md' ':!*.pandoc' ':!*.asc' ':!*.dat' ':!*.ts'
         language: system
         exclude: "Tests/Data/.*|web/static/images/xsd"
         stages: [pre-commit, manual]
@@ -100,14 +100,11 @@ repos:
         types_or: [python, pyi, jupyter]
         args: [--output-format=full, --fix, --exit-non-zero-on-fix]
         stages: [manual]
-  # Enable on demand, run with
-  #     pre-commit run --all-files clang-format
-  #
-  # - repo: https://github.com/pocc/pre-commit-hooks
-  #   rev: master
-  #   hooks:
-  #     - id: clang-format
-  #       args: ["-i"]
+  - repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: v22.1.1
+    hooks:
+    - id: clang-format
+      types_or: [c++]
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.8.18
     hooks:
