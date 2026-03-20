@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
 
