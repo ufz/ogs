@@ -168,7 +168,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e1-fixed_timestepping-fixed_output_times.prj -m ../
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     GLOB square_1e1_ts_*.vtu pressure pressure 1e-15 1e-15
 )

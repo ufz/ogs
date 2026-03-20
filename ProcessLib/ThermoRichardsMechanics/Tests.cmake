@@ -474,13 +474,13 @@ AddTest(
         PASS_REGULAR_EXPRESSION "3D mesh cannot be axially symmetric."
 )
 
-if(OGS_USE_MFRONT)
+if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_basic_mfront_model_ctest.xml)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ctest.xml)
 
-    if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/A2/A2.xml RUNTIME 8)
         AddTest(
             NAME ThermoRichardsMechanics_A2_effective_initial_stress

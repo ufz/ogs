@@ -97,8 +97,10 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Mechanics/CooksMembrane/3D/CooksMembrane_3D.prj RUNTIME 1)
 endif()
 
-OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
-OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 18)
+if (NOT OGS_USE_LIS)
+    OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 18)
+endif()
 
 if (OGS_USE_MPI)
     # OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
@@ -108,7 +110,7 @@ if (OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_SNES.prj)
 endif()
 
-if (OGS_USE_MFRONT)
+if (OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 15
         PROPERTIES PASS_REGULAR_EXPRESSION "The nonlinear solver failed in time step #.* at t = 5.37.* s for process #0"
     )
@@ -140,7 +142,7 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/two_material_ids_single_solid.prj RUNTIME 1)
     OgsTest(PROJECTFILE Mechanics/HoekBrown/load_test_hb_nonassociated.prj RUNTIME 6)
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    if(NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_uniaxial_test.prj)
         # OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxial_test.prj RUNTIME 100) TODO (tnagel) Disabled due to instability.
     endif()
@@ -192,121 +194,122 @@ if (OGS_USE_MFRONT)
 
 endif()
 
-AddTest(
-    NAME Mechanics_m1_1Dload
-    PATH Mechanics/m1_1Dload
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_1Dload.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    m1_1Dload_ts_1_t_1.000000.vtu m1_1Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+if (NOT OGS_USE_LIS)
+    AddTest(
+        NAME Mechanics_m1_1Dload
+        PATH Mechanics/m1_1Dload
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_1Dload.prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        m1_1Dload_ts_1_t_1.000000.vtu m1_1Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-AddTest(
-    NAME Mechanics_m1_1Dlozenge
-    PATH Mechanics/m1_1Dlozenge
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_1Dlozenge.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    m1_1Dlozenge_ts_1_t_1.000000.vtu m1_1Dlozenge_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+    AddTest(
+        NAME Mechanics_m1_1Dlozenge
+        PATH Mechanics/m1_1Dlozenge
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_1Dlozenge.prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        m1_1Dlozenge_ts_1_t_1.000000.vtu m1_1Dlozenge_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-AddTest(
-    NAME Mechanics_m1_2Dload
-    PATH Mechanics/m1_2Dload
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_2Dload.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    m1_2Dload_ts_1_t_1.000000.vtu m1_2Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+    AddTest(
+        NAME Mechanics_m1_2Dload
+        PATH Mechanics/m1_2Dload
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_2Dload.prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        m1_2Dload_ts_1_t_1.000000.vtu m1_2Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-AddTest(
-    NAME Mechanics_m1_3Dbottom
-    PATH Mechanics/m1_3Dbottom
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_3Dbottom.prj
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    m1_3Dbottom_ts_1_t_1.000000.vtu m1_3Dbottom_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+    AddTest(
+        NAME Mechanics_m1_3Dbottom
+        PATH Mechanics/m1_3Dbottom
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_3Dbottom.prj
+        TESTER vtkdiff
+        REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        m1_3Dbottom_ts_1_t_1.000000.vtu m1_3Dbottom_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-AddTest(
-    NAME Mechanics_m1_3Dgravity
-    PATH Mechanics/m1_3Dgravity
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_3Dgravity.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    m1_3Dgravity_ts_1_t_1.000000.vtu m1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+    AddTest(
+        NAME Mechanics_m1_3Dgravity
+        PATH Mechanics/m1_3Dgravity
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_3Dgravity.prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        m1_3Dgravity_ts_1_t_1.000000.vtu m1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-AddTest(
-    NAME Mechanics_m1_3Dload
-    PATH Mechanics/m1_3Dload
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_3Dload.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    m1_3Dload_ts_1_t_1.000000.vtu m1_3Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+    AddTest(
+        NAME Mechanics_m1_3Dload
+        PATH Mechanics/m1_3Dload
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_3Dload.prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        m1_3Dload_ts_1_t_1.000000.vtu m1_3Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-AddTest(
-    NAME Mechanics_m1_3Dsquare
-    PATH Mechanics/m1_3Dsquare
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_3Dsquare.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 9
-    DIFF_DATA
-    m1_3Dsquare_ts_1_t_1.000000.vtu m1_3Dsquare_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+    AddTest(
+        NAME Mechanics_m1_3Dsquare
+        PATH Mechanics/m1_3Dsquare
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_3Dsquare.prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        RUNTIME 9
+        DIFF_DATA
+        m1_3Dsquare_ts_1_t_1.000000.vtu m1_3Dsquare_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-AddTest(
-    NAME Mechanics_m1_3Dtopload
-    PATH Mechanics/m1_3Dtopload
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m1_3Dtopload.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 3
-    DIFF_DATA
-    m1_3Dtopload_ts_1_t_1.000000.vtu m1_3Dtopload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
-)
+    AddTest(
+        NAME Mechanics_m1_3Dtopload
+        PATH Mechanics/m1_3Dtopload
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m1_3Dtopload.prj
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        RUNTIME 3
+        DIFF_DATA
+        m1_3Dtopload_ts_1_t_1.000000.vtu m1_3Dtopload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
+    )
 
-# Tests for Principal Stress Output
-AddTest(
-    NAME Mechanics_hollow_sphere
-    PATH Mechanics/Linear/PrincipalStress
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS sphere.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
-    output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
-)
+    # Tests for Principal Stress Output
+    AddTest(
+        NAME Mechanics_hollow_sphere
+        PATH Mechanics/Linear/PrincipalStress
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS sphere.prj
+        WRAPPER time
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
+        output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
+    )
 
-AddTest(
-    NAME MechanicsTransverseElasticModel
-    PATH Mechanics/TransverseElasticModel
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS m_e_transiso_2D.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    m_e_transiso_2D.vtu  transverse_E_ts_1_t_1.000000.vtu DISPLACEMENT displacement 1e-11 0
-)
+    AddTest(
+        NAME MechanicsTransverseElasticModel
+        PATH Mechanics/TransverseElasticModel
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS m_e_transiso_2D.prj
+        WRAPPER time
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        DIFF_DATA
+        m_e_transiso_2D.vtu  transverse_E_ts_1_t_1.000000.vtu DISPLACEMENT displacement 1e-11 0
+    )
 
 AddTest(
     NAME Mechanics_creep_with_heterogeneous_reference_temperature
@@ -322,49 +325,57 @@ AddTest(
     arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu sigma sigma 1.e-9 5.3e-7
 )
 
-AddTest(
-    NAME Mechanics_AxisymmetryBbar
-    PATH Mechanics/AxisymmetryBbar
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS axisymmetry_bbar.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 1
-    DIFF_DATA
-    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
-    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.5e-5 5.e-7
-    axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
-)
+    AddTest(
+        NAME Mechanics_AxisymmetryBbar
+        PATH Mechanics/AxisymmetryBbar
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS axisymmetry_bbar.prj
+        WRAPPER time
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        RUNTIME 1
+        DIFF_DATA
+        axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
+        axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.5e-5 5.e-7
+        axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
+    )
 
-AddTest(
-    NAME Mechanics_Simple3DBbar
-    PATH Mechanics/Simple3DBbar
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS simple_3d_bbar.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 1
-    DIFF_DATA
-    simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
-    simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.e-5 5.e-7
-    simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
-)
+    AddTest(
+        NAME Mechanics_Simple3DBbar
+        PATH Mechanics/Simple3DBbar
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS simple_3d_bbar.prj
+        WRAPPER time
+        TESTER vtkdiff
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        RUNTIME 1
+        DIFF_DATA
+        simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
+        simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.e-5 5.e-7
+        simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
+    )
 
-AddTest(
-    NAME Mechanics_FailLinearSolverCompute
-    PATH Mechanics/Linear
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e0_fail_lin_solver.xml
-    WRAPPER time
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 1
-    PROPERTIES
-    PASS_REGULAR_EXPRESSION "Time stepper cannot reduce the time step size further[.]"
-)
+    AddTest(
+        NAME Mechanics_FailLinearSolverCompute
+        PATH Mechanics/Linear
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e0_fail_lin_solver.xml
+        WRAPPER time
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+        RUNTIME 1
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "Time stepper cannot reduce the time step size further[.]"
+    )
+    NotebookTest(
+        NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.py
+        RUNTIME 4
+        SKIP_WEB
+    )
+    OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)
+    OgsTest(PROJECTFILE Mechanics/Linear/NormalTraction/normal_traction.prj)
+endif()
 
-if(NOT OGS_USE_PETSC)
+if(NOT OGS_USE_PETSC AND (NOT OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.py RUNTIME 10)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Mechanics/EvaluatingBbarWithSimpleExamples/evaluating_bbbar_with_simple_examples.py RUNTIME 20)
@@ -381,14 +392,6 @@ if(NOT OGS_USE_PETSC)
         endif()
     endif()
 endif()
-
-NotebookTest(
-    NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.py
-    RUNTIME 4
-    SKIP_WEB
-)
-OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)
-OgsTest(PROJECTFILE Mechanics/Linear/NormalTraction/normal_traction.prj)
 
 if(OGS_USE_PETSC)
 NotebookTest(
