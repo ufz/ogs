@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE RichardsMechanics/gravity.prj)
     OgsTest(PROJECTFILE RichardsMechanics/mechanics_linear.prj)
     OgsTest(PROJECTFILE RichardsMechanics/confined_compression_fully_saturated.prj RUNTIME 4)
@@ -28,7 +28,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/restart_w_backfill.prj RUNTIME 1)
 endif()
 
-if (NOT OGS_USE_MPI AND OGS_USE_MFRONT)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS) AND OGS_USE_MFRONT)
     OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part1.prj RUNTIME 1)
     OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part2.xml RUNTIME 1)
     OgsTest(PROJECTFILE RichardsMechanics/DoubleStructureBenchmark/double_porosity_swelling_RM.prj RUNTIME 1)
@@ -42,7 +42,7 @@ AddTest(
     EXECUTABLE_ARGS confined_compression_fully_saturated_restart.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     # Does not exist?
     # PROPERTIES DEPENDS ogs-RichardsMechanics_square_1e2_confined_compression-time-vtkdiff
     DIFF_DATA
@@ -79,7 +79,7 @@ AddTest(
     EXECUTABLE_ARGS A2_total_stress0.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu displacement displacement 1e-16 0
     A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu displacement displacement 1e-16 0

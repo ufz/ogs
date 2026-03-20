@@ -4,7 +4,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS TwoPhase_Lia_quad_short.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 2
     DIFF_DATA
     h2_Liako_20.vtu twophaseflow_ts_290_t_20.000000.vtu saturation saturation 1e-2 1e-4
@@ -17,7 +17,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS TwoPhase_Lia_quad_large.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 6
     DIFF_DATA
     h2_Liako_1198.vtu twophaseflow_ts_1198_t_1000.000000.vtu saturation saturation 1e-2 1e-3
@@ -30,7 +30,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS TwoPhase_mcwt_line.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 5
     DIFF_DATA
     twophaseflow_ts_627_t_1000.000000.vtu twophaseflow_ts_627_t_1000.000000.vtu saturation saturation 1e-3 1e-4

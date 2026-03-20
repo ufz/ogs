@@ -7,7 +7,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}.xml --write-prj
             TESTER vtkdiff
-            REQUIREMENTS NOT OGS_USE_MPI
+            REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
             meshes/${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_0_t_0.000000.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_0_1_ts_0_t_0.000000.vtu pressure pressure 1e-15 1e-15
@@ -49,7 +49,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
             EXECUTABLE ogs
             EXECUTABLE_ARGS cube_${mesh_size}.xml --write-prj
             TESTER vtkdiff
-            REQUIREMENTS NOT OGS_USE_MPI
+            REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
             DIFF_DATA
             cube_1x1x1_hex_${mesh_size}.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
             meshes/${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu ${mesh_size}_cube_1x1x1_geometry_back_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
@@ -96,7 +96,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         # `-m .` just for testing input mesh dir parameter:
         EXECUTABLE_ARGS -m . cube_${mesh_size}_newton.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_newton_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
@@ -107,7 +107,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-1 1e-1
     )
@@ -125,7 +125,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_${mesh_size}.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
     )
@@ -137,7 +137,7 @@ foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-2 1e-2
     )
@@ -153,7 +153,7 @@ foreach(matrix lower upper lowerupper)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e0_${matrix}.xml --write-prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         cube_1x1x1_hex_1e0.vtu 1e0_cube_1x1x1_hex_1e0_${matrix}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
     )
@@ -168,7 +168,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e1-fixed_timestepping-fixed_output_times.prj -m ../
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     GLOB square_1e1_ts_*.vtu pressure pressure 1e-15 1e-15
 )
@@ -180,7 +180,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e0_quadratic_hex.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_hex20_1e0.vtu cube_1e0_quadratic_hex_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
 )
@@ -193,7 +193,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         EXECUTABLE ogs
         EXECUTABLE_ARGS -p square_${mesh_size}.xml square_1e0.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
     )
@@ -204,7 +204,7 @@ foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
         EXECUTABLE ogs
         EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
     )
@@ -222,7 +222,7 @@ foreach(mesh_size 1e5 1e6)
         EXECUTABLE ogs
         EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-02 1e-02
     )
@@ -235,7 +235,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS -p square_1e5.xml square_1e0.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1x1_quad_1e5.vtu square_1e5_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1.2e-13 1e-16
 )
@@ -248,7 +248,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS -p square_1e6.xml square_1e0.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1x1_quad_1e6.vtu square_1e6_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 3e-12 1e-16
 )
@@ -261,7 +261,7 @@ foreach(mesh_size 1e1)
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_${mesh_size}.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         line_1_line_${mesh_size}.vtu line_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     )
@@ -272,11 +272,11 @@ foreach(mesh_size 1e1)
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
     )
-    if (NOT OGS_USE_MPI)
+    if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj)
     endif()
     AddTest(
@@ -285,7 +285,7 @@ foreach(mesh_size 1e1)
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_${mesh_size}_robin_right_picard.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_right_picard_ts_1_t_1.000000.vtu D1_left_N1_right pressure 4e-14 2e-14
     )
@@ -296,7 +296,7 @@ foreach(mesh_size 1e1)
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_${mesh_size}_robin_left_picard.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_left_picard_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
     )
@@ -307,7 +307,7 @@ foreach(mesh_size 1e1)
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_${mesh_size}_time_dep_dirichlet.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
         line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
@@ -320,7 +320,7 @@ foreach(mesh_size 1e1)
         EXECUTABLE ogs
         EXECUTABLE_ARGS line_${mesh_size}_time_dep_neumann.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
         line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
@@ -335,7 +335,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_top_neumann.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1e3_top_neumann.vtu cube_1e3_top_neumann_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
@@ -345,7 +345,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_bottom_neumann.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
@@ -356,7 +356,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_top_neumann_newton.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1e3_top_neumann.vtu cube_1e3_top_neumann_newton_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
@@ -366,7 +366,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_bottom_neumann_newton.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1e3_bottom_neumann.vtu cube_1e3_bottom_neumann_newton_ts_1_t_1.000000.vtu pressure pressure 1e-14 1e-14
 )
@@ -378,7 +378,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_calculatesurfaceflux.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_hex_1e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 6e-15 5e-15
 )
@@ -388,7 +388,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e3_neumann_calculatesurfaceflux.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_hex_1e3_complete_surface_neumann_specific_flux_t_1.000000.vtu cube_1e3_neumann_balance_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 2e-14 2e-14
 )
@@ -398,7 +398,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_left_right.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_prism_2e3_complete_surface_left_right_dirichlet_specific_flux_t_1.000000.vtu cube_2e3_surface_flux_left_right_cube_1x1x1_prism_2e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-14 1e-14
 )
@@ -409,7 +409,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_front_back.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_prism_2e3_complete_surface_front_back_dirichlet_specific_flux_t_1.000000.vtu cube_2e3_surface_flux_front_back_cube_1x1x1_prism_2e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux  1e-14 1e-14
 )
@@ -420,7 +420,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_2e3_prism_surfaceflux_top_bottom.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_prism_2e3_complete_surface_top_bottom_dirichlet_specific_flux_t_1.000000.vtu cube_2e3_surface_flux_top_bottom_cube_1x1x1_prism_2e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-14 1e-14
 )
@@ -431,7 +431,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS wedge_1e3_prism_surfaceflux_diagonal.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     wedge_1x1x1_1e3_prism_complete_surface_specific_flux_t_1.000000.vtu wedge_1e3_surfaceflux_wedge_1x1x1_1e3_prism_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 2e-14 0
 )
@@ -445,7 +445,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e2_axi.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1e2_axi_ts_1_t_1.000000.vtu square_1e2_axi_ts_1_t_1.000000.vtu temperature temperature 3e-15 0
 )
@@ -456,7 +456,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 4e-14 0
 )
@@ -470,7 +470,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS square_1e4_axi.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1e4_axi_ts_1_t_1.000000.vtu square_1e4_axi_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
 )
@@ -481,7 +481,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS wedge_1e4_axi_ang_0.02.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
 )
@@ -625,7 +625,7 @@ AddTest(
     square_1e1_neumann_ts_1_t_1_000000_1.vtu square_1e1_neumann_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
 )
 
-if(NOT OGS_USE_MPI)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE "Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e4_anisotropic.prj")
 endif()
 
@@ -809,7 +809,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS inhomogeneous_permeability.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     inhomogeneous_permeability.vtu inhomogeneous_permeability_ts_1_t_1.000000.vtu mass_flux_ref mass_flux 4e-2 1e-16
 )
@@ -820,7 +820,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS neumann_nonuniform.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_neumann_nonuniform_ts_1_t_1.000000.vtu neumann_nonuniform_ts_1_t_1.000000.vtu pressure pressure 2e-14 0
     expected_neumann_nonuniform_ts_1_t_1.000000.vtu neumann_nonuniform_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-12 0
@@ -832,7 +832,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS dirichlet_nonuniform.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_dirichlet_nonuniform_ts_1_t_1.000000.vtu dirichlet_nonuniform_ts_1_t_1.000000.vtu pressure pressure 1e-14 0
 )
@@ -1032,7 +1032,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e2_GMRES.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_EIGEN_UNSUPPORTED AND NOT OGS_USE_MPI
+    REQUIREMENTS OGS_USE_EIGEN_UNSUPPORTED AND NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1x1_quad_1e2.vtu square_1e2_GMRES_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-14 1e-14
 )
@@ -1043,7 +1043,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e2_3d_submesh_output.xml
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_3d_submesh_output_test_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
     cube_1x1x1_hex_1e2_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e2_3d_submesh_output_test_ts_1_t_1.000000.vtu v v 1e-10 1e-10
@@ -1059,7 +1059,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e2_GMRES_GML_output_xdmf-hdf5.prj
     WRAPPER time
     TESTER xdmfdiff
-    REQUIREMENTS OGS_USE_EIGEN_UNSUPPORTED AND NOT OGS_USE_MPI
+    REQUIREMENTS OGS_USE_EIGEN_UNSUPPORTED AND NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf pressure pressure 1e-14 1e-14 0 0
     square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf pressure pressure 1e-14 1e-14 0 0

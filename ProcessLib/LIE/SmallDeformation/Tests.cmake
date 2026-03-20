@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE LIE/Mechanics/cohesive_zone_load_path.prj RUNTIME 2)
     OgsTest(PROJECTFILE LIE/Mechanics/coulomb_load_path.prj RUNTIME 2)
     OgsTest(PROJECTFILE LIE/Mechanics/elastic_push_pull_two_fractures.prj RUNTIME 1)

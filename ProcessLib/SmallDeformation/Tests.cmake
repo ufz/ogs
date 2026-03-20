@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     if (OGS_USE_MFRONT)
         if(OGS_USE_MKL)
             OgsTest(PROJECTFILE Mechanics/SlopeStabilityAnchors/fault_slip_SD_noniterWP_reference.prj RUNTIME 25)
@@ -140,7 +140,7 @@ if (OGS_USE_MFRONT)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/two_material_ids_single_solid.prj RUNTIME 1)
     OgsTest(PROJECTFILE Mechanics/HoekBrown/load_test_hb_nonassociated.prj RUNTIME 6)
-    if(NOT OGS_USE_MPI)
+    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_uniaxial_test.prj)
         # OgsTest(PROJECTFILE Mechanics/GuentherSalzer/model_triaxial_test.prj RUNTIME 100) TODO (tnagel) Disabled due to instability.
     endif()
@@ -153,7 +153,7 @@ if (OGS_USE_MFRONT)
         EXECUTABLE ogs
         EXECUTABLE_ARGS disc_with_hole.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         disc_with_hole_expected_ts_4_t_1.000000.vtu disc_with_hole_ts_4_t_1.000000.vtu displacement displacement 2e-16 1e-16
     )
@@ -166,7 +166,7 @@ if (OGS_USE_MFRONT)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cube_1e0_dp.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         # The reference solution has been computed by OGS's Ehlers model.
         # See also the prj file.
         DIFF_DATA
@@ -184,7 +184,7 @@ if (OGS_USE_MFRONT)
         EXECUTABLE ogs
         EXECUTABLE_ARGS ring_plane_strain.prj
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
         ../../ring_plane_strain_ts_1_t_1.000000.vtu ring_plane_strain_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
         ../../ring_plane_strain_ts_1_t_1.000000.vtu ring_plane_strain_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
@@ -198,7 +198,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_1Dload.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     m1_1Dload_ts_1_t_1.000000.vtu m1_1Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -209,7 +209,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_1Dlozenge.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     m1_1Dlozenge_ts_1_t_1.000000.vtu m1_1Dlozenge_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -220,7 +220,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_2Dload.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     m1_2Dload_ts_1_t_1.000000.vtu m1_2Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -231,7 +231,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_3Dbottom.prj
     TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MFRONT AND NOT OGS_USE_MPI
+    REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     m1_3Dbottom_ts_1_t_1.000000.vtu m1_3Dbottom_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -242,7 +242,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_3Dgravity.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     m1_3Dgravity_ts_1_t_1.000000.vtu m1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -253,7 +253,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_3Dload.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     m1_3Dload_ts_1_t_1.000000.vtu m1_3Dload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
 )
@@ -264,7 +264,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_3Dsquare.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 9
     DIFF_DATA
     m1_3Dsquare_ts_1_t_1.000000.vtu m1_3Dsquare_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
@@ -276,7 +276,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS m1_3Dtopload.prj
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 3
     DIFF_DATA
     m1_3Dtopload_ts_1_t_1.000000.vtu m1_3Dtopload_ts_1_t_1.000000.vtu displacement displacement 10e-12 0.0
@@ -290,7 +290,7 @@ AddTest(
     EXECUTABLE_ARGS sphere.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu displacement displacement 0 1e-12
     output_ts_1_t_1.000000.vtu output_ts_1_t_1.000000.vtu principal_stress_values principal_stress_values 0 1e-10
@@ -303,7 +303,7 @@ AddTest(
     EXECUTABLE_ARGS m_e_transiso_2D.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     m_e_transiso_2D.vtu  transverse_E_ts_1_t_1.000000.vtu DISPLACEMENT displacement 1e-11 0
 )
@@ -315,7 +315,7 @@ AddTest(
     EXECUTABLE_ARGS arehs-salt-M_gravity_only_element_refT.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 32
     DIFF_DATA
     arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu displacement displacement 1.e-10 1.e-10
@@ -329,7 +329,7 @@ AddTest(
     EXECUTABLE_ARGS axisymmetry_bbar.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 1
     DIFF_DATA
     axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
@@ -344,7 +344,7 @@ AddTest(
     EXECUTABLE_ARGS simple_3d_bbar.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 1
     DIFF_DATA
     simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
@@ -358,7 +358,7 @@ AddTest(
     EXECUTABLE ogs
     EXECUTABLE_ARGS cube_1e0_fail_lin_solver.xml
     WRAPPER time
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 1
     PROPERTIES
     PASS_REGULAR_EXPRESSION "Time stepper cannot reduce the time step size further[.]"

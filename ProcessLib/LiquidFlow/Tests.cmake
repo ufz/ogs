@@ -6,7 +6,7 @@ AddTest(
     EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
     sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticVec v 1e-8 1e-8
@@ -18,12 +18,12 @@ AddTest(
     EXECUTABLE_ARGS pressureBC_at_corner_of_anisotropic_square.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     mesh2D.vtu sat_2D_lflow_ts_1_t_1.000000.vtu OGS5_Results pressure 1e-8 1e-8
 )
 
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/DrainageExcavation/drainage_LiquidFlow.prj)
 endif()
 
@@ -34,7 +34,7 @@ AddTest(
     EXECUTABLE_ARGS gravity_driven.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
     mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu v_ref v 1e-8 1e-8
@@ -48,7 +48,7 @@ AddTest(
     EXECUTABLE_ARGS gravity_driven_XZ.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     mesh2D.vtu gravity_driven_XZ_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
     mesh2D_XZ.vtu gravity_driven_XZ_ts_1_t_1.000000.vtu v v 1e-8 1e-8
@@ -61,7 +61,7 @@ AddTest(
     EXECUTABLE_ARGS axisym_theis.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     axisym_theis.vtu liquid_pcs_ts_30_t_1728.000000.vtu OGS5_pressure pressure 1e-8 1e-8
 )
@@ -72,7 +72,7 @@ AddTest(
     EXECUTABLE_ARGS buildup_test.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     standard_solution_buildup_test_ts_107_t_424800.000000.vtu buildup_test_ts_107_t_424800.000000.vtu pressure pressure 1.7e-5 0.0
     standard_solution_buildup_test_ts_211_t_720000.000000.vtu buildup_test_ts_211_t_720000.000000.vtu pressure pressure 5.8e-5 0.0
@@ -86,7 +86,7 @@ AddTest(
     EXECUTABLE_ARGS anisotropic_gravity_driven3D.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     hex.vtu anisotropic_gravity_driven3D_ts_1_t_1.000000.vtu analytic_pressure pressure 1e-6 1e-6
 )
@@ -99,7 +99,7 @@ AddTest(
     EXECUTABLE_ARGS isotropic_gravity_driven3D.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     hex.vtu isotropic_gravity_driven3D_ts_1_t_1.000000.vtu analytic_pressure pressure 1e-6 1e-6
 )
@@ -111,7 +111,7 @@ AddTest(
     EXECUTABLE_ARGS TimeIntervalDirichletBC.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     mesh2D.vtu dirichlet_bc_wihin_interval_ts_2_t_10.000000.vtu analytical_solution_t_lt_10 pressure 1e-6 1e-12
     mesh2D.vtu dirichlet_bc_wihin_interval_ts_4_t_20.000000.vtu analytical_solution_t_gt_10 pressure 1e-6 1e-12
@@ -124,7 +124,7 @@ AddTest(
     EXECUTABLE_ARGS h1_1Dsource.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     h1_1Dsource_ts_1_t_1.000000.vtu h1_1Dsource_ts_1_t_1.000000.vtu pressure pressure 5e-8 0.0
 )
@@ -136,7 +136,7 @@ AddTest(
     EXECUTABLE_ARGS h1_1Dsteady.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     h1_1Dsteady_ts_1_t_1.000000.vtu h1_1Dsteady_ts_1_t_1.000000.vtu pressure pressure 1e-9 0.0
 )
@@ -148,7 +148,7 @@ AddTest(
     EXECUTABLE_ARGS h1_3Dhydstat.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     h1_3Dhydstat_ts_1_t_1.000000.vtu h1_3Dhydstat_ts_1_t_1.000000.vtu pressure pressure 1e-5 0.0
 )
@@ -160,7 +160,7 @@ AddTest(
     EXECUTABLE_ARGS h2_1D1bt.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     h2_1D1bt_ts_500_t_21600.000000.vtu h2_1D1bt_ts_500_t_21600.000000.vtu pressure pressure 1e-5 0.0
     h2_1D1bt_ts_1000_t_43200.000000.vtu h2_1D1bt_ts_1000_t_43200.000000.vtu pressure pressure 1e-5 0.0
@@ -173,7 +173,7 @@ AddTest(
     EXECUTABLE_ARGS h2_1D2bt.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     h2_1D2bt_ts_1500_t_3888.000000.vtu h2_1D2bt_ts_1500_t_3888.000000.vtu pressure pressure 1e-5 0.0
     h2_1D2bt_ts_3000_t_7776.000000.vtu h2_1D2bt_ts_3000_t_7776.000000.vtu pressure pressure 1e-5 0.0
@@ -281,7 +281,7 @@ AddTest(
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Dupuit_TestSet_01_ts_1_t_8640.000000.vtu TestSet_01_ts_1_t_8640.000000.vtu pressure pressure 5e-10 1e-11
     Dupuit_TestSet_01_ts_2_t_17280.000000.vtu TestSet_01_ts_2_t_17280.000000.vtu pressure pressure 5e-10 1e-11
@@ -302,7 +302,7 @@ AddTest(
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Dupuit_TestSet_01_ts_1_t_8640.000000.vtu TestSet_01_ts_1_t_8640.000000.vtu pressure pressure 2e-10 1e-11
     Dupuit_TestSet_01_ts_2_t_17280.000000.vtu TestSet_01_ts_2_t_17280.000000.vtu pressure pressure 2e-10 1e-11
@@ -323,7 +323,7 @@ AddTest(
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Dupuit_TestSet_01_ts_1_t_8640.000000.vtu TestSet_01_ts_1_t_8640.000000.vtu pressure pressure 5e-10 1.8e-11
     Dupuit_TestSet_01_ts_2_t_17280.000000.vtu TestSet_01_ts_2_t_17280.000000.vtu pressure pressure 5e-10 1.8e-11
@@ -344,7 +344,7 @@ AddTest(
     EXECUTABLE_ARGS TestSet_01.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Dupuit_TestSet_01_ts_1_t_86400.000000.vtu TestSet_01_ts_1_t_86400.000000.vtu pressure pressure 3e-12 2e-13
     Dupuit_TestSet_01_ts_2_t_172800.000000.vtu TestSet_01_ts_2_t_172800.000000.vtu pressure pressure 3e-12 2e-13
@@ -374,7 +374,7 @@ AddTest(
     EXECUTABLE_ARGS TimeDependentHeterogeneousBoundaryConditions.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     time_dependent_heterogeneous_bcs_ts_1_t_10.000000.vtu time_dependent_heterogeneous_bcs_ts_1_t_10.000000.vtu pressure pressure 1e-7 1e-13
     time_dependent_heterogeneous_bcs_ts_118_t_1180.000000.vtu time_dependent_heterogeneous_bcs_ts_118_t_1180.000000.vtu pressure pressure 1e-7 1e-13
@@ -390,7 +390,7 @@ AddTest(
     EXECUTABLE_ARGS TimeDependentHeterogeneousSourceTerm.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     time_dependent_heterogeneous_source_term_ts_1_t_10.000000.vtu time_dependent_heterogeneous_source_term_ts_1_t_10.000000.vtu pressure pressure 1e-7 1e-13
     time_dependent_heterogeneous_source_term_ts_118_t_1180.000000.vtu time_dependent_heterogeneous_source_term_ts_118_t_1180.000000.vtu pressure pressure 1e-7 1e-13
@@ -406,7 +406,7 @@ AddTest(
     EXECUTABLE_ARGS cube_1e3_calculatesurfaceflux.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_0_t_0.000000.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_0_t_0.000000.vtu specific_flux specific_flux 1e-7 1e-13
     LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_0.432000.vtu LF_cube_1e3_calculatesurfaceflux_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_0.432000.vtu specific_flux specific_flux 1e-7 1e-13
@@ -428,7 +428,7 @@ AddTest(
     EXECUTABLE_ARGS cuboid_1x1x1_pyramid_6000_calculatesurfaceflux.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_entire_boundary_ts_0_t_0.000000.vtu LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_entire_boundary_ts_0_t_0.000000.vtu specific_flux specific_flux 1e-7 1e-13
     LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_entire_boundary_ts_1_t_0.432000.vtu LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_entire_boundary_ts_1_t_0.432000.vtu specific_flux specific_flux 1e-7 1e-13
@@ -444,7 +444,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e1_calculatesurfaceflux.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     LF_square_1e1_surfaceflux_square_1x1_quad_1e1_complete_surface_ts_0_t_0.000000.vtu LF_square_1e1_surfaceflux_square_1x1_quad_1e1_complete_surface_ts_0_t_0.000000.vtu specific_flux specific_flux 1e-7 1e-13
     LF_square_1e1_surfaceflux_square_1x1_quad_1e1_complete_surface_ts_1_t_0.432000.vtu LF_square_1e1_surfaceflux_square_1x1_quad_1e1_complete_surface_ts_1_t_0.432000.vtu specific_flux specific_flux 1e-7 1e-13
@@ -460,7 +460,7 @@ AddTest(
     EXECUTABLE_ARGS square_1.8e1_calculatesurfaceflux.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     LF_square_1x1_tri_1.8e1_surfaceflux_square_1x1_tri_1.8e1_complete_boundary_ts_0_t_0.000000.vtu LF_square_1x1_tri_1.8e1_surfaceflux_square_1x1_tri_1.8e1_complete_boundary_ts_0_t_0.000000.vtu specific_flux specific_flux 1e-7 1e-13
     LF_square_1x1_tri_1.8e1_surfaceflux_square_1x1_tri_1.8e1_complete_boundary_ts_1_t_0.432000.vtu LF_square_1x1_tri_1.8e1_surfaceflux_square_1x1_tri_1.8e1_complete_boundary_ts_1_t_0.432000.vtu specific_flux specific_flux 1e-7 1e-13
@@ -469,7 +469,7 @@ AddTest(
     LF_square_1x1_tri_1.8e1_surfaceflux_ts_2_t_0.864000_expected.vtu LF_square_1x1_tri_1.8e1_surfaceflux_square_1x1_tri_1.8e1_ts_2_t_0.864000.vtu pressure pressure 1e-7 1e-13
 )
 
-if(NOT OGS_USE_MPI)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     AddTest(
         NAME LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu
         PATH Parabolic/LiquidFlow/Flux/3D/Hex
@@ -478,7 +478,7 @@ if(NOT OGS_USE_MPI)
             cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml
         WRAPPER time
         TESTER vtkdiff
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         DIFF_DATA
             top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400.000000.vtu
             top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400.000000.vtu
@@ -498,7 +498,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE_ARGS
             cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml
         WRAPPER time
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         TESTER xdmfdiff
         DIFF_DATA
             top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27.xdmf
@@ -519,7 +519,7 @@ if(NOT OGS_USE_MPI)
         EXECUTABLE ogs
         EXECUTABLE_ARGS cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_invalid_multiple_outputs.xml
         WRAPPER time
-        REQUIREMENTS NOT OGS_USE_MPI
+        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         PROPERTIES PASS_REGULAR_EXPRESSION "Output configuration paths are not unique. This will lead to overwritten results or invalid"
     )
 
@@ -578,7 +578,7 @@ AddTest(
     EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
     WRAPPER time
     TESTER xdmfdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13 1 1
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf VolumetricFlowRate VolumetricFlowRate 1e-7 1e-13 2 2
@@ -599,7 +599,7 @@ AddTest(
     EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
     WRAPPER time
     TESTER xdmfdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13 1 1
     square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf VolumetricFlowRate VolumetricFlowRate 1e-7 1e-13 2 2
@@ -692,12 +692,12 @@ endforeach()
 #    EXECUTABLE ogs
 #    EXECUTABLE_ARGS constraint_bc_1e3.prj
 #    TESTER vtkdiff
-#    REQUIREMENTS NOT OGS_USE_MPI
+#    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
 #    DIFF_DATA
 #    GLOB LF_constraint_bc_1e3_ts_*.vtu p p 1e-15 1e-14
 #)
 
-if(NOT OGS_USE_MPI)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_2.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_3.prj)
@@ -714,7 +714,7 @@ AddTest(
     EXECUTABLE_ARGS hydrostatic_flow_in_inclined_2D_plane.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu pressure pressure 1e-07 1e-13
     hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu v v 1e-14 1e-14
@@ -727,7 +727,7 @@ AddTest(
     EXECUTABLE_ARGS transient_flow_in_inclined_2D_plane.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu pressure pressure 1e-14 1e-11
     transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu v v 1e-11 1e-14
@@ -741,7 +741,7 @@ AddTest(
     RUNTIME 3
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
     fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
@@ -755,7 +755,7 @@ AddTest(
     RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
     line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
@@ -769,7 +769,7 @@ AddTest(
     RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu pressure pressure 1e-8 1e-12
 )
@@ -782,7 +782,7 @@ AddTest(
     RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Subsurface.vtu coarse_raster_homogeneous_Subsurface_ts_02_t_2.000000.vtu pressure_constant_1e_minus5 p 1e-14 1e-14
 )
@@ -795,7 +795,7 @@ AddTest(
     RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Subsurface.vtu fine_raster_homogeneous_Subsurface_ts_02_t_2.000000.vtu pressure_constant_1e_minus5 p 1e-14 1e-14
 )
@@ -809,7 +809,7 @@ AddTest(
     RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu coarse_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu p p 1e-14 1e-14
 )
@@ -822,7 +822,7 @@ AddTest(
     RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu p p 1e-14 1e-14
 )
@@ -835,7 +835,7 @@ AddTest(
     RUNTIME 1
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     gas_flow_ts_1000_t_100.000000.vtu gas_flow_ts_1000_t_100.000000.vtu pressure pressure 1e-5 5e-6
 )

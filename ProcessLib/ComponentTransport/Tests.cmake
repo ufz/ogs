@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/InclinedElements/Inclined2DMesh/inclined_2D_mesh_HC.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ClassicalTransportExample/classical_transport_example_full_upwind.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/Theis_Axisymmetric/axisym_theis_CT.prj RUNTIME 1)
@@ -14,7 +14,7 @@ AddTest(
     EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu linear_1_to_0 Si 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu zero pressure 1e-7 1e-10
@@ -28,7 +28,7 @@ AddTest(
     EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu Si Si 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu pressure pressure 1e-7 1e-10
@@ -42,7 +42,7 @@ AddTest(
     EXECUTABLE_ARGS ConcentrationDiffusionOnly_3Components.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu linear_1_to_0 Si 1e-7 1e-10
     DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu linear_1_to_0 Al 1e-7 1e-10
@@ -58,7 +58,7 @@ AddTest(
     EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu concentration Si 1e-7 1e-10
     DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu pressure pressure 1e-7 1e-10
@@ -76,7 +76,7 @@ AddTest(
     EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu Si Si 1e-7 1e-10
     DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu pressure pressure 1e-7 1e-10
@@ -93,7 +93,7 @@ AddTest(
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvection.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 10
     DIFF_DATA
     DiffusionAndStorageAndAdvection_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
@@ -126,7 +126,7 @@ AddTest(
     EXECUTABLE_ARGS mass_conservation.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 18
     DIFF_DATA
     mass_conservation_ogsOutput_ts_0_t_0.000000_expected.vtu mass_conservation_ogsOutput_ts_0_t_0.000000.vtu concentration concentration 1e-7 1e-10
@@ -165,7 +165,7 @@ AddTest(
     EXECUTABLE_ARGS box_flow.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 4
     DIFF_DATA
     box_ogsOutput_ts_0_t_0.000000_expected.vtu box_ogsOutput_ts_0_t_0.000000.vtu concentration concentration 5e-7 5e-10
@@ -183,7 +183,7 @@ AddTest(
     EXECUTABLE_ARGS DiffusionAndStorageAndGravityAndDispersionHalf.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 17
     DIFF_DATA
     DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000.vtu Si Si 1e-5 1e-10
@@ -213,7 +213,7 @@ AddTest(
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersion.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 10
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
@@ -246,7 +246,7 @@ AddTest(
     EXECUTABLE_ARGS open_boundary_component-transport_cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 1
     DIFF_DATA
     DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu OpenBoundaryBC_ts_0_t_0.000000.vtu Si Si 5e-6 5e-6
@@ -276,7 +276,7 @@ AddTest(
     EXECUTABLE_ARGS open_boundary_component-transport_cube_1e3_advective_form.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 1
     DIFF_DATA
     DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu AdvectiveNonAdvectiveComparison_ts_0_t_0.000000.vtu Si Si 5e-6 5e-6
@@ -306,7 +306,7 @@ AddTest(
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDecay.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 9
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
@@ -346,7 +346,7 @@ AddTest(
     EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersionHalf.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 9
     DIFF_DATA
     DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
@@ -379,7 +379,7 @@ AddTest(
     EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_hex_1e3_complete_surface_expected_specificflux.vtu cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
     cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu concentration Si 1e-10 1e-16
@@ -399,7 +399,7 @@ AddTest(
     EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
     WRAPPER time
     TESTER diff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     cube_1x1x1_hex_1e3_right.pvd
     cube_1x1x1_hex_1e3_left.pvd
@@ -414,7 +414,7 @@ AddTest(
     EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     flux_1e3_t_1.000000.vtu cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
     cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
@@ -431,7 +431,7 @@ AddTest(
     EXECUTABLE_ARGS TracerSimulation.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     TracerSimulation_ts_20_t_20000.000000_expected_ogs5.vtu TracerSimulation_ts_20_t_20000.000000.vtu Cs Cs 4e-7 1e-10
     TracerSimulation_ts_40_t_40000.000000_expected_ogs5.vtu TracerSimulation_ts_40_t_40000.000000.vtu Cs Cs 1.3e-7 1e-10
@@ -473,7 +473,7 @@ AddTest(
     EXECUTABLE_ARGS goswami_input.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Goswami_Component_Transport_ts_1185_t_600.000000_expected.vtu Goswami_Component_Transport_ts_1185_t_600.000000.vtu Si Si 1e-1 1e-5
     Goswami_Component_Transport_ts_1785_t_1200.000000_expected.vtu Goswami_Component_Transport_ts_1785_t_1200.000000.vtu Si Si 1e-1 1e-5
@@ -509,7 +509,7 @@ AddTest(
     EXECUTABLE_ARGS elder.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     elder_ts_0_t_0.000000_reference.vtu elder_ts_0_t_0.000000.vtu pressure pressure 1e-1 1e-5
     elder_ts_100_t_26298000.000000_reference.vtu elder_ts_100_t_26298000.000000.vtu pressure pressure 1e-1 1e-5
@@ -573,7 +573,7 @@ AddTest(
     EXECUTABLE_ARGS elder-python.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     elder_ts_0_t_0.000000_reference.vtu            elder_python_ts_0_t_0.000000.vtu            pressure  pressure  1e-1  1e-5
     elder_ts_100_t_26298000.000000_reference.vtu   elder_python_ts_100_t_26298000.000000.vtu   pressure  pressure  1e-1  1e-5
@@ -636,7 +636,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e4_heterogeneity.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu pressure_expected pressure 2e-2 1e-10
     square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu darcy_velocity_expected darcy_velocity 1e-7 1e-10
@@ -649,7 +649,7 @@ AddTest(
     EXECUTABLE_ARGS ogs5_H_2d.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     2D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_1_t_10000000.000000.vtu pressure_OGS5 pressure 1e-1 1e-3
     2D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_1_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 2e-11 0
@@ -662,7 +662,7 @@ AddTest(
     EXECUTABLE_ARGS ogs5_H_3d.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 20
     DIFF_DATA
     3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu pressure_ogs5 pressure 2.4e1 1.4e-2
@@ -676,7 +676,7 @@ AddTest(
     EXECUTABLE_ARGS vdbc_input.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 7
     DIFF_DATA
     vdbc_ts_0_t_0.000000_expected.vtu vdbc_ts_0_t_0.000000.vtu pressure pressure 1e-5 1e-4
@@ -702,7 +702,7 @@ AddTest(
     EXECUTABLE_ARGS theis.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 45
     DIFF_DATA
     theis_ts_0_t_0.000000.vtu
@@ -746,7 +746,7 @@ AddTest(
     EXECUTABLE_ARGS ConTracer_2d.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 12
     DIFF_DATA
     ConTracer_2d_ts_30_t_108000.000000_expected.vtu ConTracer_2d_ts_30_t_108000.000000.vtu pressure pressure 1e-6 1e-10
@@ -773,7 +773,7 @@ AddTest(
     ConTracer_2d_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_ts_329_t_1184400.000000.vtu Cs Cs 1e-10 1e-16
 )
 
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/1D_DiffusionSorptionDecay.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/AdvectionDiffusionSorptionDecay/1D_AdvectionDiffusionSorptionDecay.prj RUNTIME 6)
@@ -905,7 +905,7 @@ AddTest(
     EXECUTABLE_ARGS KineticReactant2_2d.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI AND ("${HOSTNAME}" MATCHES "envinf1" OR APPLE OR MSVC)
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS) AND ("${HOSTNAME}" MATCHES "envinf1" OR APPLE OR MSVC)
     DIFF_DATA
     KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
     KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
@@ -934,7 +934,7 @@ AddTest(
     EXECUTABLE_ARGS Wetland_1d.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu pressure pressure 1e-6 1e-10
     Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu H H 1e-10 1e-16

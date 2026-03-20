@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE LargeDeformation/RigidBody/square_1e0.prj RUNTIME 1)
     if(OGS_BUILD_PROCESS_SmallDeformation)
         NotebookTest(NOTEBOOKFILE LargeDeformation/RigidBody/RigidBody.py RUNTIME 7)
