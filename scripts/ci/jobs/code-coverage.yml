@@ -6,6 +6,10 @@
     BUILD_CTEST: false
     CMAKE_ARGS: >-
       -DOGS_USE_PIP=ON
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: never
+    - when: on_success
   script:
     - !reference [.template-build-linux, script]
     - cmake --build --preset $CMAKE_PRESET -t ctest

@@ -2,6 +2,10 @@ cppcheck:
   stage: check
   needs: [meta]
   tags: [envinf, shell]
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: never
+    - when: on_success
   before_script:
     - rm -rf ../build/cppcheck
     - mkdir -p ../build/cppcheck
@@ -23,6 +27,10 @@ ruff:
   stage: check
   needs: []
   tags: [envinf, shell]
+  rules:
+    - if: '$CI_COMMIT_TAG'
+      when: never
+    - when: on_success
   script:
     - uvx ruff==0.13.1 check --exit-zero --output-format gitlab . > ruff-report.json
     - uvx ruff==0.13.1 check .
