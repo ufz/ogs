@@ -60,12 +60,10 @@ static std::vector<exprtk::expression<T>> compileExpressions(
 }
 
 template <int D>
-class Function::Implementation
+struct Function::Implementation
 {
-public:
     using Expression = exprtk::expression<double>;
 
-public:
     Implementation(
         int num_threads,
         std::vector<std::string> const& variables,

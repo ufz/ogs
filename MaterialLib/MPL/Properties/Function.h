@@ -48,7 +48,7 @@ public:
 
 private:
     template <int D>
-    class Implementation;
+    struct Implementation;
 
     std::unique_ptr<Implementation<2>> impl2_;
     std::unique_ptr<Implementation<3>> impl3_;
