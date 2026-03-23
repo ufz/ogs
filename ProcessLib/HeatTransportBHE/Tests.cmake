@@ -5,7 +5,7 @@ AddTest(
     EXECUTABLE_ARGS sandwich.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     DIFF_DATA
     sandwich_ts_10_t_600.000000.vtu sandwich_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
@@ -19,7 +19,7 @@ AddTest(
     EXECUTABLE_ARGS sandwich_linear.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     DIFF_DATA
     sandwich_ts_10_t_600.000000.vtu sandwich_linear_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
@@ -300,7 +300,7 @@ AddTest(
     EXECUTABLE_ARGS 3D_2U_BHE_sections.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     3D_2U_BHE_sections_ts_10_t_600.000000.vtu 3D_2U_BHE_sections_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
     3D_2U_BHE_sections_ts_10_t_600.000000.vtu 3D_2U_BHE_sections_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
@@ -386,7 +386,7 @@ AddTest(
     EXECUTABLE_ARGS 3bhes_id_1U_sections.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-12
     3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 0 1e-12

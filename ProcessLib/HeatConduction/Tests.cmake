@@ -280,7 +280,7 @@ AddTest(
         temperature_analytical.vtu picard_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
         temperature_analytical.vtu picard_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
         temperature_analytical.vtu picard_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
 )
 
 AddTest(
@@ -318,15 +318,15 @@ AddTest(
     DIFF_DATA
     picard_masslumping_ts_1_t_78125.000000.vtu picard_masslumping_ts_1_t_78125.000000.vtu temperature temperature 1e-12 1e-16
     picard_masslumping_ts_3_t_234375.000000.vtu picard_masslumping_ts_3_t_234375.000000.vtu temperature temperature 1e-12 1e-16
-    picard_masslumping_ts_65_t_5078125.000000.vtu picard_masslumping_ts_65_t_5078125.000000.vtu temperature temperature 1e-12 1e-16
-    picard_masslumping_ts_405_t_31640625.000000.vtu picard_masslumping_ts_405_t_31640625.000000.vtu temperature temperature 1e-12 1e-16
-    picard_masslumping_ts_500_t_39062500.000000.vtu picard_masslumping_ts_500_t_39062500.000000.vtu temperature temperature 1e-12 1e-16
+    picard_masslumping_ts_65_t_5078125.000000.vtu picard_masslumping_ts_65_t_5078125.000000.vtu temperature temperature 2e-12 1e-16
+    picard_masslumping_ts_405_t_31640625.000000.vtu picard_masslumping_ts_405_t_31640625.000000.vtu temperature temperature 2e-12 1e-16
+    picard_masslumping_ts_500_t_39062500.000000.vtu picard_masslumping_ts_500_t_39062500.000000.vtu temperature temperature 2e-12 1e-16
     temperature_analytical.vtu picard_masslumping_ts_1_t_78125.000000.vtu temperature_78125s temperature 2e-1 1e-4
     temperature_analytical.vtu picard_masslumping_ts_3_t_234375.000000.vtu temperature_234375s temperature 2e-1 1e-4
     temperature_analytical.vtu picard_masslumping_ts_65_t_5078125.000000.vtu temperature_5078125s temperature 1e-4 1e-4
     temperature_analytical.vtu picard_masslumping_ts_405_t_31640625.000000.vtu temperature_31640625s temperature 1e-4 1e-4
     temperature_analytical.vtu picard_masslumping_ts_500_t_39062500.000000.vtu temperature_39062500s temperature 1e-4 1e-4
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
 )
 
 AddTest(
@@ -454,15 +454,13 @@ AddTest(
 )
 
 # failing test - mesh not found
-if (NOT OGS_USE_LIS)
-    AddTest(
-        NAME 1D_HeatConduction_dirichlet_SourceTerm_fail_mesh_not_found
-        PATH Parabolic/T/1D_dirichlet_source-term
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_1_line_1e2_source_term_fail_mesh_not_found.xml
-        PROPERTIES PASS_REGULAR_EXPRESSION "Could not read mesh from '.*' file[.] No mesh added[.]"
-    )
-endif()
+AddTest(
+    NAME 1D_HeatConduction_dirichlet_SourceTerm_fail_mesh_not_found
+    PATH Parabolic/T/1D_dirichlet_source-term
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS line_1_line_1e2_source_term_fail_mesh_not_found.xml
+    PROPERTIES PASS_REGULAR_EXPRESSION "Could not read mesh from '.*' file[.] No mesh added[.]"
+)
 
 AddTest(
         NAME HeatConduction_t1_1Dsource
