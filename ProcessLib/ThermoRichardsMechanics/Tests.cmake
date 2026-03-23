@@ -164,7 +164,7 @@ AddTest(
     EXECUTABLE_ARGS cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 5
     DIFF_DATA
     stress_analytical.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-5 1e-12
@@ -264,7 +264,7 @@ AddTest(
     EXECUTABLE_ARGS SimpleAxisymmetricCreep.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 6
     DIFF_DATA
     expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu displacement displacement 1e-13 1e-10
