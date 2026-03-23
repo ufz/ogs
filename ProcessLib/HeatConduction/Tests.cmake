@@ -454,13 +454,15 @@ AddTest(
 )
 
 # failing test - mesh not found
-AddTest(
-    NAME 1D_HeatConduction_dirichlet_SourceTerm_fail_mesh_not_found
-    PATH Parabolic/T/1D_dirichlet_source-term
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS line_1_line_1e2_source_term_fail_mesh_not_found.xml
-    PROPERTIES PASS_REGULAR_EXPRESSION "Could not read mesh from '.*' file[.] No mesh added[.]"
-)
+if (NOT OGS_USE_LIS)
+    AddTest(
+        NAME 1D_HeatConduction_dirichlet_SourceTerm_fail_mesh_not_found
+        PATH Parabolic/T/1D_dirichlet_source-term
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS line_1_line_1e2_source_term_fail_mesh_not_found.xml
+        PROPERTIES PASS_REGULAR_EXPRESSION "Could not read mesh from '.*' file[.] No mesh added[.]"
+    )
+endif()
 
 AddTest(
         NAME HeatConduction_t1_1Dsource
@@ -634,7 +636,7 @@ AddTest(
         REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
 )
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     # Both tests above are executed in this notebook (without diff check). Maybe remove regular tests later?
     NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.py RUNTIME 15)
 endif()

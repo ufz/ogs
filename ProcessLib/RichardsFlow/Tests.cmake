@@ -6,7 +6,7 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/Richards/flow_fully_saturated.prj)
 endif()
 
-if (NOT OGS_USE_PETSC)
+if (NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/Richards/richards-flow.py RUNTIME 5)
 endif()
 

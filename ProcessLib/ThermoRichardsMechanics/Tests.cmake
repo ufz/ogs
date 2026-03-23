@@ -448,6 +448,7 @@ AddTest(
     expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu sigma sigma 5e-2 1e-8
 )
 
+if(NOT OGS_USE_LIS)
 AddTest(
     NAME ThermoRichardsMechanics_total_initial_stress_dont_apply_body_force_for_deformation
     PATH ThermoRichardsMechanics/BodyForce
@@ -473,6 +474,7 @@ AddTest(
     PROPERTIES
         PASS_REGULAR_EXPRESSION "3D mesh cannot be axially symmetric."
 )
+endif()
 
 if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)

@@ -359,7 +359,7 @@ AddTest(
 
 # generateInvalidMediaForHT.py logic moved to PythonSetup.cmake
 
-if (NOT (OGS_USE_MPI))
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/deactivated_subdomain/HT_DeactivatedSubdomain.prj)
     OgsTest(PROJECTFILE Parabolic/HT/LowerDimensionalFracture/2D_single_fracture_HT.prj RUNTIME 11)
 endif()

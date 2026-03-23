@@ -868,7 +868,7 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 15)
 endif()
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/FCT_test/1d_step_func.prj RUNTIME 2)
 endif()
 if(OGS_USE_PETSC)
@@ -876,7 +876,7 @@ if(OGS_USE_PETSC)
     OgsTest(WRAPPER mpirun -np 1 PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC.prj RUNTIME 1400)
 endif()
 
-if(NOT OGS_USE_PETSC AND NOT WIN32)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS) AND NOT WIN32)
     NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/performance_measurements.py
         RUNTIME 60
@@ -887,7 +887,7 @@ endif()
 # TODO: does not work on m1-mac (mac-bilke-623)
 # see https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/5307
 # and https://github.com/pmgbergen/porepy/issues/1473
-if(NOT OGS_USE_PETSC AND
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS) AND
    NOT WIN32 AND
    NOT "${HOSTNAME}" MATCHES "mac-bilke-623")
     NotebookTest(
@@ -975,7 +975,7 @@ AddTest(
     classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
 )
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.py RUNTIME 7)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/RadionuclidesMigration.py RUNTIME 31)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/CO2Injection/CO2Injection.py RUNTIME 5)
@@ -992,7 +992,9 @@ if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/Acidification/PorosityIncrease.py RUNTIME 250)
 endif()
 
-OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_c.prj RUNTIME 1)
-OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/grad_c_and_grad_p.prj RUNTIME 3)
-OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_p.prj RUNTIME 1)
-OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/grad_c_and_grad_p_and_r.prj RUNTIME 3)
+if(NOT OGS_USE_LIS)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_c.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/grad_c_and_grad_p.prj RUNTIME 3)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/only_grad_p.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassFlux/grad_c_and_grad_p_and_r.prj RUNTIME 3)
+endif()

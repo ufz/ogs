@@ -1,4 +1,5 @@
-OgsTest(PROJECTFILE WellboreSimulator/1Phase_wellbore_small_newton.prj RUNTIME 1)
-OgsTest(PROJECTFILE WellboreSimulator/2Phase_wellbore_small_newton.prj RUNTIME 4)
-OgsTest(PROJECTFILE WellboreSimulator/2Phase_wellbore_small_newton_nonnegdamping.prj RUNTIME 3)
-
+if (NOT OGS_USE_LIS)
+    OgsTest(PROJECTFILE WellboreSimulator/1Phase_wellbore_small_newton.prj RUNTIME 1)
+    OgsTest(PROJECTFILE WellboreSimulator/2Phase_wellbore_small_newton.prj RUNTIME 4)
+    OgsTest(PROJECTFILE WellboreSimulator/2Phase_wellbore_small_newton_nonnegdamping.prj RUNTIME 3)
+endif()

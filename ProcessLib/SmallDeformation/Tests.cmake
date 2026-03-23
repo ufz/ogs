@@ -375,7 +375,7 @@ AddTest(
     OgsTest(PROJECTFILE Mechanics/Linear/NormalTraction/normal_traction.prj)
 endif()
 
-if(NOT OGS_USE_PETSC AND (NOT OGS_USE_LIS))
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS) AND (NOT OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Mechanics/CooksMembrane/CooksMembraneBbar.py RUNTIME 10)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Mechanics/EvaluatingBbarWithSimpleExamples/evaluating_bbbar_with_simple_examples.py RUNTIME 20)

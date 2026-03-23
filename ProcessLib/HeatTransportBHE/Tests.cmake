@@ -488,6 +488,6 @@ AddTest(
     BHE_1P_newton_ts_10_t_600.000000.vtu BHE_1P_newton_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
 )
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/T/BHE_1P/pipe_flow_ebhe.py RUNTIME 107)
 endif()

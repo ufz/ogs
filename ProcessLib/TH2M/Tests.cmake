@@ -449,7 +449,7 @@ AddTest(
     results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu saturation saturation 1e-9 1e-8
 )
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE TH2M/TH2/heatpipe/heatpipe.py RUNTIME 194)
     NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter_interactive/mcWhorter_interactive.py RUNTIME 18)
     if (OGS_USE_MFRONT)

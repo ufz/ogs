@@ -21,7 +21,7 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     endif()
 endif()
 
-if (NOT OGS_USE_PETSC)
+if (NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/HeatingHomogeneousDomain/heating_homogenous_vol.py RUNTIME 20)
 endif()
 

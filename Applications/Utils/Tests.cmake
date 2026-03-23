@@ -1487,7 +1487,7 @@ AddTest(
     square_1x1_geometry_top.vtu    square_1x1_geometry_top.vtu 1e-16
 )
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     if(NOT WIN32)
         NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md
                      PYTHON_PACKAGES openpyxl

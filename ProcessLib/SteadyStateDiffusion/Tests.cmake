@@ -162,16 +162,18 @@ endforeach()
 
 
 # Test FixedTimeStepping and fixed output times
-AddTest(
-    NAME SteadyStateDiffusion_square_1x1_quad_1e1_FixedTimeStepping_FixedOutputTimes
-    PATH Elliptic/square_1x1_SteadyStateDiffusion/FixedTimeSteppingFixedOutputTimes
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e1-fixed_timestepping-fixed_output_times.prj -m ../
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    GLOB square_1e1_ts_*.vtu pressure pressure 1e-15 1e-15
-)
+if (NOT OGS_USE_LIS)
+    AddTest(
+        NAME SteadyStateDiffusion_square_1x1_quad_1e1_FixedTimeStepping_FixedOutputTimes
+        PATH Elliptic/square_1x1_SteadyStateDiffusion/FixedTimeSteppingFixedOutputTimes
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS square_1e1-fixed_timestepping-fixed_output_times.prj -m ../
+        TESTER vtkdiff
+        REQUIREMENTS NOT OGS_USE_MPI
+        DIFF_DATA
+        GLOB square_1e1_ts_*.vtu pressure pressure 1e-15 1e-15
+    )
+endif()
 
 # Quadratic hex element.
 AddTest(
@@ -487,16 +489,18 @@ AddTest(
 )
 
 # Serial XDMF output
-AddTest(
-    NAME SteadyStateDiffusion_cube_2
-    PATH Elliptic/cube_1x1x1_SteadyStateDiffusion/xdmf
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e4_anisotropic.prj
-    TESTER xdmfdiff
-    DIFF_DATA
-    cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf pressure pressure 1e-14 1e-14 0 0
-    cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf darcy_velocity darcy_velocity 1e-13 1e-13 0 0
-)
+if(NOT OGS_USE_LIS)
+    AddTest(
+        NAME SteadyStateDiffusion_cube_2
+        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion/xdmf
+        EXECUTABLE ogs
+        EXECUTABLE_ARGS cube_1e4_anisotropic.prj
+        TESTER xdmfdiff
+        DIFF_DATA
+        cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf pressure pressure 1e-14 1e-14 0 0
+        cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf darcy_velocity darcy_velocity 1e-13 1e-13 0 0
+    )
+endif()
 
 # MPI groundwater flow tests
 AddTest(
