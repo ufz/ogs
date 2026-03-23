@@ -10,11 +10,6 @@ if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
 endif()
 
 message(STATUS "Generator: ${CMAKE_GENERATOR}")
-if(WIN32 AND (NOT "${CMAKE_GENERATOR}" MATCHES "Visual Studio")
-   AND "$ENV{CIBUILDWHEEL}"
-)
-    message(FATAL_ERROR "Wheels only build in Visual Studio!")
-endif()
 
 # Set additional CMake modules path
 set(CMAKE_MODULE_PATH
