@@ -68,12 +68,6 @@ repos:
         language: system
         files: '.*\.cpp'
         stages: [pre-commit, manual]
-      - id: git-clang-format
-        name: git-clang-format
-        entry: bash -c 'if command -v git-clang-format &> /dev/null; then git clang-format; else exit 0; fi'
-        language: system
-        pass_filenames: false
-        files: \.(h|cpp)$
   - repo: https://github.com/errata-ai/vale
     rev: v2.24.4
     hooks:
@@ -103,8 +97,22 @@ repos:
   - repo: https://github.com/pre-commit/mirrors-clang-format
     rev: v22.1.1
     hooks:
+    # git commit hook
     - id: clang-format
-      types_or: [c++]
+      entry: git-clang-format
+      language: python
+      pass_filenames: false
+      args: []
+      stages: [pre-commit]
+    # CI-only hook
+    - id: clang-format
+      name: clang-format (CI)
+      entry: bash -c 'git-clang-format --extensions h,cpp ${CI_MERGE_REQUEST_DIFF_BASE_SHA}'
+      language: python
+      pass_filenames: false
+      args: []
+      stages: [manual]
+      always_run: true
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.8.18
     hooks:

@@ -17,19 +17,12 @@ Use [`clang-format`](https://clang.llvm.org/docs/ClangFormat.html). It can be ad
 
 - [Vim](https://github.com/rhysd/vim-clang-format)
 - [Visual Studio](https://devblogs.microsoft.com/cppblog/clangformat-support-in-visual-studio-2017-15-7-preview-1/)
-- [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=xaver.clang-format)
+- [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools) (part of the C++ extension)
+  - **Important**: Set the setting `editor.formatOnSaveMode` to `modificationsIfAvailable` to only format modified lines.
 
 The current style is defined in [.clang-format](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/.clang-format).
 
-You can also run via the command line:
-
-```bash
-clang-format -i path/to/file.cpp
-# OR clang-format on changed lines only:
-git clang-format -i path/to/file.cpp
-# OR run on all files, e.g.:
-find -E . -regex '.*\.(cpp|h)' -exec clang-format -i {} \;
-```
+Runs also automatically (no installation necessary) on `git commit` using [pre-commit](https://pre-commit.com/) which needs to be enabled once with `pre-commit install`.
 
 ## Python
 
@@ -58,6 +51,8 @@ On installation make sure to install with the YAML option:
 ```bash
 pip install cmakelang[YAML]
 ```
+
+Runs also automatically (no installation necessary) on `git commit` using [pre-commit](https://pre-commit.com/) which needs to be enabled once with `pre-commit install`.
 
 ## Build targets
 
