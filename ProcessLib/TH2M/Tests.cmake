@@ -21,8 +21,6 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE TH2M/H/pressure_PengRobinson/pressure_preos.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/compression_PengRobinson/compression_preos.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/H2M/EmbeddedFracturePermeability/IfG.prj RUNTIME 9)
-    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
-    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_fd_jac.xml RUNTIME 4)
     NotebookTest(NOTEBOOKFILE TH2M/H2M/Liakopoulos/ogs-jupyter-lab-h2m-2d-liakopoulos.py RUNTIME 11)
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_newton.xml RUNTIME 2)
@@ -49,6 +47,11 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/p_cap.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/submesh_residuum_assembly/u.xml RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/TotalInitialStress/total_initial_stress_H2M.prj RUNTIME 1)
+endif()
+
+if(NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
+    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_fd_jac.xml RUNTIME 4)
 endif()
 
 # TH2M 1d heat diffusion w/ Dirichlet-BC
@@ -328,7 +331,7 @@ AddTest(
     EXECUTABLE_ARGS Strain_Dependent_Permeability_Test.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     # primary variables
     IfG_ts_110_t_10000.000000.vtu IfG_ts_110_t_10000.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 1e-14 1e-12
