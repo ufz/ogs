@@ -409,6 +409,7 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
+            <lis>-i bicgstab -p ilu -tol 1e-10 -maxiter 3000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
