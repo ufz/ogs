@@ -148,7 +148,7 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i cg -p jacobi -tol 1e-16 -maxiter 10000</lis>
+            <lis>-i cg -p jacobi -tol 1e-12 -maxiter 3000</lis>
             <eigen>
                 <solver_type>CG</solver_type>
                 <precon_type>DIAGONAL</precon_type>
