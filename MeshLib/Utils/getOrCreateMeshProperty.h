@@ -46,21 +46,50 @@ PropertyVector<T>* getOrCreateMeshProperty(Mesh& mesh,
 
     if (mesh.getProperties().existsPropertyVector<T>(property_name))
     {
-        auto result =
+        DBUG("Reusing existing property vector '{}' on mesh '{}'.",
+             property_name, mesh.getName());
+
+        auto* const result =
             mesh.getProperties().template getPropertyVector<T>(property_name);
         assert(result);
+        if (auto const mit = result->getMeshItemType(); mit != item_type)
+        {
+            OGS_FATAL(
+                "Found mesh item type '{}' for mesh property '{}' on mesh "
+                "'{}', but expected a '{}' property.",
+                toString(mit), property_name, mesh.getName(),
+                toString(item_type));
+        }
+        if (auto const ncomp = result->getNumberOfGlobalComponents();
+            ncomp != number_of_components)
+        {
+            OGS_FATAL(
+                "Found {} components for mesh property '{}' on mesh '{}', but "
+                "expected {} components.",
+                ncomp, property_name, mesh.getName(), number_of_components);
+        }
         if (item_type != MeshItemType::IntegrationPoint)
         {
             // Test the size if number of mesh items is known, which is not the
             // case for the integration point data.
-            assert(result->size() ==
-                   numberOfMeshItems() * number_of_components);
+            auto const size = result->size();
+            auto const size_expected =
+                numberOfMeshItems() * number_of_components;
+            if (size != size_expected)
+            {
+                OGS_FATAL(
+                    "Actual and expected size of property '{}' on mesh '{}' do "
+                    "not match: {} != {}.",
+                    property_name, mesh.getName(), size, size_expected);
+            }
         }
         return result;
     }
 
-    auto result = mesh.getProperties().template createNewPropertyVector<T>(
-        property_name, item_type, numberOfMeshItems(), number_of_components);
+    auto* const result =
+        mesh.getProperties().template createNewPropertyVector<T>(
+            property_name, item_type, numberOfMeshItems(),
+            number_of_components);
     assert(result);
     return result;
 }
