@@ -1229,6 +1229,7 @@
     <linear_solvers>
         <linear_solver>
             <name>linear_solver_u</name>
+            <lis>-initx_zeros 1 -i bicg -p ilut -ilut_drop 1e-4 -ilut_rate 10 -tol 1e-10 -maxiter 3000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>

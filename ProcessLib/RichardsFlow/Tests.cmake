@@ -18,7 +18,7 @@ AddTest(
     TESTER vtkdiff
     DIFF_DATA
     h_us_quad_1000.vtu richards_ts_100_t_100.000000.vtu PRESSURE1 pressure 1e-1 1e-1
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
 )
 
 AddTest(
@@ -67,7 +67,7 @@ AddTest(
     richards_pcs_PID_adaptive_dt_t_500.vtu  richards_pcs_PID_adaptive_dt_t_500.vtu saturation saturation 1e-8 1e-9
     richards_pcs_PID_adaptive_dt_t_1000.vtu  richards_pcs_PID_adaptive_dt_t_1000.vtu pressure pressure 1e-8 1e-9
     richards_pcs_PID_adaptive_dt_t_1000.vtu  richards_pcs_PID_adaptive_dt_t_1000.vtu saturation saturation 1e-8 1e-9
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
 )
 
 AddTest(

@@ -6,7 +6,7 @@ AddTest(
     EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
     sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticVec v 1e-8 1e-8
@@ -18,7 +18,7 @@ AddTest(
     EXECUTABLE_ARGS pressureBC_at_corner_of_anisotropic_square.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
     DIFF_DATA
     mesh2D.vtu sat_2D_lflow_ts_1_t_1.000000.vtu OGS5_Results pressure 1e-8 1e-8
 )
