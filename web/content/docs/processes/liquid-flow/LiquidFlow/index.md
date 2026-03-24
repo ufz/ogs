@@ -40,16 +40,18 @@ This variant accounts for compressible (density-dependent) flow. It is selected 
 
 ### Volume balance formulation
 
-Dividing the mass balance equation by $\rho_w$ and assuming density is constant in space (so that $\nabla \cdot (\rho_w \, \cdot) \approx \rho_w \, \nabla \cdot (\cdot)$) gives the volume-balance form. Substituting the OGS storage coefficient $\beta_s = \partial n_e / \partial p_w$:
+Dividing the mass balance equation by $\rho_w$ and assuming density is constant in space (such that $\nabla \cdot (\rho_w \, \cdot) \approx \rho_w \, \nabla \cdot (\cdot)$) gives the volume-balance form. Substituting the OGS storage coefficient $\beta_s = \partial n_e / \partial p_w$ yields:
 
 $$
 \left(\beta_s + \frac{n_e}{\rho_w} \frac{\partial \rho_w }{\partial p_w} \right) \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0.
 $$
 
-In the code, the volume balance mode **enforces a constant (pressure-independent) fluid density**, i.e.\ $\partial \rho_w / \partial p_w \equiv 0$. The equation therefore simplifies to:
+In the code, the volume balance mode **enforces a constant (pressure-independent) fluid density**, i.e. $\partial \rho_w / \partial p_w \equiv 0$. The equation therefore simplifies to:
 
 $$
-\beta_s \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0. \qquad \text{(volume, default)} \quad (1)
+\begin{equation}
+\beta_s \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0. \qquad \text{(volume, default)} 
+\end{equation}
 $$
 
 This is the **default** formulation. To explicitly select it, set the following tag in the project file:
@@ -66,25 +68,27 @@ $$
 \end{equation}
 $$
 
-where the subscript $w$ denotes "water" and in the following table all variables used for the former and further equations are listed:
+where the subscript $w$ denotes "water". 
+The following table lists all variables used in the equations:
 
 | Symbols | Units | SI | Definition |
-|---|---|---|---|
-| $S_0$ | [1/L] | [1/m] | specific storage coefficient in hydrogeology |
-| $\rho_w$ , ($\rho^f$) | [M/L³] | [kg/m³] | fluid density |
-| $g$ | [L/T²] | [m/s²] | gravitational acceleration coefficient |
-| $\beta_s = \partial n_e / \partial p_w$ | [LT²/M] | [1/Pa] |storage coefficient of  OGS |
-| $p_w$ , ($p^f$) | [M/LT²] | [Pa] | liquid phase (i.e. water) pressure |
-| $t$ | [T] | [s] | time |
-| $\nabla$ | [1/L] | [1/m] | divergence, gradient operator |
-| $\mathbf{K_0}$ | [L²] | [m²] | intrinsic permeability |
-| $\mathbf{g}$ | [L/T²] | [m/s²] | gravitational acceleration vector  (0,0,g) |
+| --- | --- | --- | --- |
+| $\beta_s = \partial n_e / \partial p_w$ | [LT²/M] | [1/Pa] | storage coefficient of OGS |
 | $\mu_w$ | [M/LT] | [Pa s] | dynamic fluid viscosity |
-| $n_e$ | [-] | [-] | effective porosity |
+| $\rho_w$ , ($\rho^f$) | [M/L³] | [kg/m³] | fluid density |
+| $\nabla$ | [1/L] | [1/m] | divergence, gradient operator |
+| $g$ | [L/T²] | [m/s²] | gravitational acceleration coefficient |
+| $\mathbf{g}$ | [L/T²] | [m/s²] | gravitational acceleration vector (0,0,g) |
 | $h$ | [L] | [m] | hydraulic head |
+| $\mathbf{K_0}$ | [L²] | [m²] | intrinsic permeability |
+| $\mathbf{K}$ | [L/T¹] | [m/s] | hydraulic conductivity |
+| $n_e$ | [-] | [-] | effective porosity |
+| $p_w$ , ($p^f$) | [M/LT²] | [Pa] | liquid phase (i.e. water) pressure |
+| $S_0$ | [1/L] | [1/m] | specific storage coefficient in hydrogeology |
+| $t$ | [T] | [s] | time |
 | $W_0$ | [1/T] | [1/s] | source/sink term |
 
-Please note that in OGS the gravitational acceleration vector is defined as $\mathbf{b} = - \mathbf{g}$. Thus, if you want to work with the pressure-based variant of groundwater flow, the input for the gravitational acceleration in 3D is:
+Please note that in OGS the gravitational acceleration vector is defined as $\mathbf{b} = - \mathbf{g}$. Thus, if one wants to work with the pressure-based variant of groundwater flow, the input for the gravitational acceleration in 3D is:
 
 ```xml
 <specific_body_force> 0 0 -9.81</specific_body_force>
@@ -94,26 +98,27 @@ Please note that in OGS the gravitational acceleration vector is defined as $\ma
 
 It is important to note that OGS also has a "storage" coefficient, which is defined as such: $\beta_s = \partial n_e / \partial p_w$. One can show that for equation (1) under the assumption $\partial \rho_w / \partial p_w = 0$ the following relation holds: $\beta_s = S_0/(\rho_w g)$, relating the specific storage of hydrogeology to the storage implemented in OGS.
 
-One can use equation (1) to emulate the hydrogeological variant of the groundwater equation by applying the following measures:
+Consequently, the hydrogeological variant of the groundwater equation with hydraulic head $h$ as process variable can be achieved by applying the following measures:
 
-- Ignore the partial derivative $\partial \rho_w / \partial p_w$, then OGS will set it to zero
-- Give $(0,0,0)^T$ as gravitational vector $g$ using the tag "specific\_body\_force"
-- Set $\rho_w = 1$
+- Provide $(0,0,0)^T$ as gravitational vector $g$ using the tag `<specific_body_force>`
+- Set $\rho_w = 1$. Please note that OGS will automatically ignore the partial derivative $\partial \rho_w / \partial p_w$ as $\rho_w$ is set to a constant value.
 - Set $\mu_w=1$
 
 Then:
 
-- The liquid-phase pressure, $p_w$, will be equal to hydraulic head $h$
+- The liquid-phase pressure $p_w$ will be equal to hydraulic head $h$
 - The intrinsic permeability $\mathbf{K}_0$ will be the hydraulic conductivity $\mathbf{K}$
-- The storage of OGS, $\beta_s$, will be equal to the specific storage $S_0$
+- The storage of OGS $\beta_s$ will be equal to the specific storage $S_0$
 
-Thus, you effectively model the groundwater flow equation in the following form:
+Thus, one effectively models the groundwater flow equation in the following form:
 
 $$
-S_0 \frac{\partial h}{\partial t} - \nabla \cdot (\mathbf{K} \nabla h) = W_0. \qquad (2)
+\begin{equation}
+S_0 \frac{\partial h}{\partial t} - \nabla \cdot (\mathbf{K} \nabla h) = W_0.
+\end{equation}
 $$
 
-More details how to use the liquid flow equation see the detailed theory documentation in: https://gitlab.opengeosys.org/ogs/documentation/liquidflow/-/jobs/artifacts/main/raw/main.pdf?job=build
+A detailed derivation of the Liquid-Flow equations and further information on its various formulations can be found in: https://gitlab.opengeosys.org/ogs/documentation/liquidflow/-/jobs/artifacts/main/raw/main.pdf?job=build.
 
 ### Finite Element Discretization
 
@@ -148,7 +153,7 @@ where the element matrices depend on the chosen equation balance type as follows
 
 ## OGS project `prj` file
 
-Liquid Flow process has to be declared in the project file `prj` in the processes block. For example in following way:
+Liquid Flow process has to be declared in the project file `prj` in the processes block. For example in the following way:
 
 ```xml
 <process>
@@ -171,23 +176,25 @@ For Liquid-Flow fluid and porous medium properties need to be specified.
 
 #### Fluid properties
 
-| Property name | Units | SI | Notes |
-|---|---|---|---|
-| `density` | [M/L³] | [kg·m⁻³] | Fluid mass density: functional dependencies can be specified |
-| `viscosity` | [M/LT] | [Pa·s] | Dynamic fluid viscosity: functional dependencies can be specified |
+| Property name | Units  | SI       | Notes                                    |
+| ------------- | ------ | -------- | ---------------------------------------- |
+| `density`     | [M/L³] | [kg·m⁻³] | Fluid mass density $\large^{\star}$      |
+| `viscosity`   | [M/LT] | [Pa·s]   | Dynamic fluid viscosity $\large^{\star}$ |
+$\large^{\star}$ functional dependencies can be specified. See OGS User Guide: https://ogs.ogs.xyz/ogs/docs/userguide/blocks/media/#properties
 
 #### Medium properties
 
-| Property name | Units | SI | Notes |
-|---|---|---|---|
-| `porosity` | [-] | [-] | Porous medium porosity: functional dependencies can be specified |
-| `permeability` | [L²] | [m²] | Intrinsic permeability: functional dependencies can be specified |
-| `reference_temperature` | [T] | [K] | Reference temperature for fluid properties |
-| `storage` | [LT²/M] | [m·s²/kg] | Specific storage coefficient $\beta$ |
+| Property name           | Units        | SI        | Notes                                      |
+| ----------------------- | ------------ | --------- | ------------------------------------------ |
+| `porosity`              | [-]          | [-]       | Porous medium porosity $\large^{\star}$    |
+| `permeability`          | [L²]         | [m²]      | Intrinsic permeability $\large^{\star}$    |
+| `reference_temperature` | [$\Theta$]   | [K]       | Reference temperature for fluid properties |
+| `storage`               | [LT²/M]      | [m·s²/kg] | Specific storage coefficient $\beta_s$     |
+$\large^{\star}$ functional dependencies can be specified. See OGS User Guide: https://ogs.ogs.xyz/ogs/docs/userguide/blocks/media/#properties
 
 ## Benchmarks
 
-Liquid-Flow examples from the OGS benchmark gallery you find here: https://www.opengeosys.org/6.5.7/docs/benchmarks/liquid-flow/
+Liquid-Flow examples from the OGS benchmark gallery can be found here: https://www.opengeosys.org/6.5.7/docs/benchmarks/liquid-flow/
 
 ## Workflows
 
