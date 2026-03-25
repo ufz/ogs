@@ -13,7 +13,9 @@ image = "stress.png"
 We solve a thermo-mechanical homogeneous model in cube domain. The dimensions of
 this cube model are 1 m in all directions. The boundary conditions and
 temperature loadings, as well as the material can refer Chapter 14 in Kolditz et
-al. \cite Kolditz2012 for detailed problem description.
+al. for detailed problem description:
+
+{{< bib "Kolditz2012" >}}
 
 ## Results and evaluation
 

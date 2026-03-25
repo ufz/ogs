@@ -29,7 +29,7 @@
             {{ end }}
             {{ if isset .Params "coupling" }}
             <img style="height: 2em;" class="inline-block mr-1"
-              src="/images/coupling-icons/{{.Params.coupling}}-tet.svg" alt="">
+              src='{{ relURL (printf "images/coupling-icons/%s-tet.svg" .Params.coupling) }}' alt="">
             {{ end }}
             {{ .Title }}
           </h3>

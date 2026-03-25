@@ -1,9 +1,35 @@
-<div>
+{{ if gt .Paginator.TotalPages 1 }}
+<nav class="mx-auto mt-8 flex w-full max-w-6xl items-center justify-center gap-3 px-4 pb-10 text-sm font-medium sm:px-6 lg:px-8" aria-label="Pagination">
   {{ if .Paginator.HasPrev }}
-    <a href="{{ .Paginator.Prev.URL }}">Previous Page</a>
+  <a
+    class="inline-flex items-center rounded-full border border-stone-300 bg-white px-5 py-2 text-stone-700 shadow-sm transition hover:border-brand-400 hover:text-brand-700 hover:shadow"
+    href="{{ .Paginator.Prev.URL }}">
+    <i class="far fa-arrow-left mr-2 text-xs"></i>
+    Previous
+  </a>
+  {{ else }}
+  <span class="inline-flex items-center rounded-full border border-stone-200 bg-stone-100 px-5 py-2 text-stone-400">
+    <i class="far fa-arrow-left mr-2 text-xs"></i>
+    Previous
+  </span>
   {{ end }}
-  {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}
+
+  <span class="inline-flex items-center px-2 py-2 text-stone-600">
+    Page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}
+  </span>
+
   {{ if .Paginator.HasNext }}
-    <a href="{{ .Paginator.Next.URL }}">Next Page</a>
+  <a
+    class="inline-flex items-center rounded-full border border-stone-300 bg-white px-5 py-2 text-stone-700 shadow-sm transition hover:border-brand-400 hover:text-brand-700 hover:shadow"
+    href="{{ .Paginator.Next.URL }}">
+    Next
+    <i class="far fa-arrow-right ml-2 text-xs"></i>
+  </a>
+  {{ else }}
+  <span class="inline-flex items-center rounded-full border border-stone-200 bg-stone-100 px-5 py-2 text-stone-400">
+    Next
+    <i class="far fa-arrow-right ml-2 text-xs"></i>
+  </span>
   {{ end }}
-  </div>
+</nav>
+{{ end }}

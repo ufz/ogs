@@ -7,7 +7,8 @@
         "site:build": "npm run hugo",
         "site:serve": "hugo server --source @PROJECT_SOURCE_DIR@/web --config @OGS_WEB_WORKSPACE_DIR@/hugo.toml --baseURL http://localhost:1313/ --openBrowser",
         "search:index": "cross-env npm_config_yes=true npx pagefind --site public",
-        "build": "npm-run-all css:build site:build search:index",
+        "bib:convert": "uv run --script @PROJECT_SOURCE_DIR@/scripts/web/convert-bib.py --section @PROJECT_SOURCE_DIR@/web/content/publications --output-section @OGS_WEB_WORKSPACE_DIR@/content/publications",
+        "build": "npm-run-all css:build bib:convert site:build search:index",
         "server": "npm-run-all --parallel css:watch site:serve"
     },
     "devDependencies": {

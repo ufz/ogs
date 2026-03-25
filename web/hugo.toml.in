@@ -10,9 +10,9 @@ cacheDir = "@OGS_WEB_WORKSPACE_DIR@/cache"
 
 [module]
 [[module.mounts]]
-excludeFiles = '**/notebook-*.md'
 source = '@PROJECT_SOURCE_DIR@/web/content'
 target = 'content'
+files = ["! **/notebook-*.md", "! img/**", "**"]
 [[module.mounts]]
 source = '@PROJECT_SOURCE_DIR@/web/static'
 target = 'static'
