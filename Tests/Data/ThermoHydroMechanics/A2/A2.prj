@@ -14,6 +14,7 @@
             <name>THM</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>3</integration_order>
+            <equation_balance_type>mass</equation_balance_type>
             <constitutive_relation id="0,1">
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
@@ -214,8 +215,9 @@
                 <variable>epsilon</variable>
                 <variable>velocity</variable>
                 <variable>HeatFlowRate</variable>
-                <variable>VolumetricFlowRate</variable>
+                <variable>MassFlowRate</variable>
                 <variable>NodalForces</variable>
+                <variable>MaterialIDs</variable>
             </variables>
         </output>
     </time_loop>
@@ -421,7 +423,7 @@
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
-            <max_iter>10</max_iter>
+            <max_iter>30</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
@@ -473,7 +475,7 @@
         </vtkdiff>
         <vtkdiff>
             <regex>A2_ts_.*.vtu</regex>
-            <field>VolumetricFlowRate</field>
+            <field>MassFlowRate</field>
             <absolute_tolerance>5e-13</absolute_tolerance>
             <relative_tolerance>1e-15</relative_tolerance>
         </vtkdiff>

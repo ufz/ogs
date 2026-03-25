@@ -259,7 +259,6 @@ struct ConstitutiveRelationsValues
     DimMatrix dlambda_eff_dT;
     DimVector dvelocity_dT = DimVector::Constant(
         DisplacementDim, std::numeric_limits<double>::quiet_NaN());
-
     double eps_v_dot;
     double alpha_biot;
     double beta;
@@ -269,6 +268,14 @@ struct ConstitutiveRelationsValues
     double fluid_compressibility;
     double rho;
     double drho_LR_dT;
+    double drho_LR_dp;
+    /* // TODO(WW): Add these second derivatives in the future once the
+     computation of the secondary derivatives of the corresponding MPL
+     properties are available.
+       double d2rho_LR_dp2;
+       double d2rho_LR_dp_dT;
+    */
+
     double J_TT;
 
     // Freezing related values.

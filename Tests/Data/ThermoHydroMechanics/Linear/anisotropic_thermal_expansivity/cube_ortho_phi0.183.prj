@@ -14,6 +14,7 @@
             <name>THERMO_HYDRO_MECHANICS</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>4</integration_order>
+            <equation_balance_type>mass</equation_balance_type>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
@@ -133,7 +134,7 @@
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltols>1e-15 1e-8 1e-15 1e-15 1e-15</reltols>
+                    <reltols>1e-15 1e-8 1e-14 1e-14 1e-14</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>

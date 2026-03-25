@@ -1,0 +1,1 @@
+\copydoc ProcessLib::ThermoHydroMechanics::ThermoHydroMechanicsProcessData::is_volume_balance_equation_type

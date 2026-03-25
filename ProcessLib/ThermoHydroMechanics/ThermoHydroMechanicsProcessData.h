@@ -41,6 +41,14 @@ struct ThermoHydroMechanicsProcessData
     std::shared_ptr<MaterialLib::Solids::MechanicsBase<DisplacementDim>>
         ice_constitutive_relation;
 
+    /// This indicates whether the governing equation is a volume balance or a
+    /// mass balance. Its value can be `volume` or `mass`. If it is set to
+    /// `volume`, note that the phase density must be constant, and the unit of
+    /// the Neumann boundary condition for the fluid phase is m/s. Otherwise,
+    /// the unit of the Neumann boundary condition is kg/m³·m/s = kg/m²/s.
+    /// Default value is `volume`.
+    bool const is_volume_balance_equation_type;
+
     InitialStress const initial_stress;
 
     /// Specific body forces applied to solid and fluid.

@@ -14,6 +14,7 @@
             <name>THERMO_HYDRO_MECHANICS</name>
             <type>THERMO_HYDRO_MECHANICS</type>
             <integration_order>4</integration_order>
+            <equation_balance_type>mass</equation_balance_type>
             <constitutive_relation>
                 <type>LinearElasticIsotropic</type>
                 <youngs_modulus>E</youngs_modulus>
@@ -316,7 +317,7 @@
             </eigen>
             <petsc>
                 <parameters>
-                    -ksp_type bcgs
+                    -ksp_type gmres
                     -pc_type gamg
                     -ksp_rtol 1.e-12 -ksp_atol 1.e-14
                     -ksp_max_it 4000
