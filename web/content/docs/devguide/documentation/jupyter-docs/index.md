@@ -99,7 +99,15 @@ In CI the notebooks are executed with all dependencies installed into a virtual 
 ```bash
 cmake --preset release -DOGS_USE_PIP=ON    # Creates the virtual environment
 source ../build/release/.venv/bin/activate # Activates the virtual environment
-jupyter lab                                # Starts Jupyter Lab
+jupyter lab [path-to-source-directory]     # Starts Jupyter Lab
+```
+
+Instead of activating the environment and manually running `jupyter lab` you can also just build the `jupyter` target:
+
+```bash
+cmake --preset release -t jupyter
+# or in the build directory:
+ninja jupyter
 ```
 
 ### Register with CTest
