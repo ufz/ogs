@@ -33,8 +33,8 @@ public:
      * @param geo_objects Geometric objects where imported geometry data are
      * added
      */
-    void readFEFLOWFile(const std::string& filename,
-                        GeoLib::GEOObjects& geo_objects);
+    static void readFEFLOWFile(const std::string& filename,
+                               GeoLib::GEOObjects& geo_objects);
 
     /// read points and polylines in Supermesh section
     ///

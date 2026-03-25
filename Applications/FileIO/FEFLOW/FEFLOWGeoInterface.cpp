@@ -22,7 +22,7 @@
 namespace
 {
 
-inline std::string xmlCharToString(xmlChar* v)
+inline std::string xmlCharsToString(xmlChar* v)
 {
     if (!v)
     {
@@ -40,7 +40,7 @@ inline xmlNodePtr firstChild(xmlNodePtr parent, const xmlChar* name)
     {
         return nullptr;
     }
-    for (xmlNodePtr n = parent->children; n; n = n->next)
+    for (xmlNodePtr n = parent->children; n != nullptr; n = n->next)
     {
         if (n->type == XML_ELEMENT_NODE && xmlStrcmp(n->name, name) == 0)
         {
@@ -139,7 +139,7 @@ void FEFLOWGeoInterface::readPoints(xmlNodePtr nodesEle,
         return;
     }
 
-    std::istringstream ss(xmlCharToString(xmlNodeGetContent(xmlEle)));
+    std::istringstream ss(xmlCharsToString(xmlNodeGetContent(xmlEle)));
     std::string line_str;
     while (std::getline(ss, line_str))
     {
@@ -194,6 +194,8 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     xmlNodePtr docElem = xmlDocGetRootElement(doc);
     if (docElem == nullptr)
     {
+        ERR("FEFLOWGeoInterface::readSuperMesh(): Error in getting XML root "
+            "element");
         xmlFreeDoc(doc);
         xmlCleanupParser();
         return;
@@ -203,13 +205,15 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     xmlNodePtr nodesEle = firstChild(docElem, nodes_name);
     if (nodesEle == nullptr)
     {
+        ERR("FEFLOWGeoInterface::readSuperMesh(): Error in getting 'nodes' "
+            "element");
         xmlFreeDoc(doc);
         xmlCleanupParser();
         return;
     }
 
     static constexpr xmlChar count_name[] = "count";
-    const std::string cnt = xmlCharToString(xmlGetProp(nodesEle, count_name));
+    const std::string cnt = xmlCharsToString(xmlGetProp(nodesEle, count_name));
     const std::size_t n_points = cnt.empty() ? 0u : std::stoul(cnt);
 
     // Convert to raw pointer vector for readPoints compatibility
@@ -240,8 +244,6 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
         return;
     }
 
-    std::vector<std::unique_ptr<GeoLib::Polyline>> temp_lines;
-
     for (xmlNodePtr child = polygonsEle->children; child; child = child->next)
     {
         static constexpr xmlChar polygon_name[] = "polygon";
@@ -258,11 +260,11 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
         }
 
         const std::string cnt_nodes =
-            xmlCharToString(xmlGetProp(nodes, count_name));
+            xmlCharsToString(xmlGetProp(nodes, count_name));
         const std::size_t n_pts =
             cnt_nodes.empty() ? 0u
                               : static_cast<std::size_t>(std::stoul(cnt_nodes));
-        std::istringstream ss(xmlCharToString(xmlNodeGetContent(nodes)));
+        std::istringstream ss(xmlCharsToString(xmlNodeGetContent(nodes)));
 
         auto line = std::make_unique<GeoLib::Polyline>(raw_points);
 
@@ -275,7 +277,7 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
         // close the polygon
         line->addPoint(line->getPointID(0));
 
-        temp_lines.push_back(std::move(line));
+        lines.push_back(line.release());
     }
 
     xmlFreeDoc(doc);
@@ -285,10 +287,6 @@ void FEFLOWGeoInterface::readSuperMesh(std::ifstream& in,
     for (auto& pt : temp_points)
     {
         points.push_back(pt.release());
-    }
-    for (auto& line : temp_lines)
-    {
-        lines.push_back(line.release());
     }
 }
 
