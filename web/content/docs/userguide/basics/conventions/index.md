@@ -74,7 +74,7 @@ That applies to all of OpenGeoSys's processes; currently there are no processes 
 * [Neumann BC](https://doxygen.opengeosys.org/stable/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann): Used to apply an external traction at a boundary (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-2}$).
 * [Volumetric ST](https://doxygen.opengeosys.org/stable/d0/d89/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Volumetric): A body force density acting in the model domain. One example is gravity, but gravity can be modeled by other means in OpenGeoSys (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-2}}$, SI: $\mathrm{N} \cdot \mathrm{m}^{-3}$).
 
-**Pressure:**
+**Pressure (mass-based PDE):**
 
 * [Dirichlet BC](https://doxygen.opengeosys.org/stable/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
 * [Neumann BC](https://doxygen.opengeosys.org/stable/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann): Used to impose a mass flux through a domain boundary (Units: $\mathrm{M \cdot L^{-2} \cdot T^{-1}}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
@@ -82,15 +82,17 @@ That applies to all of OpenGeoSys's processes; currently there are no processes 
 * [Nodal ST](https://doxygen.opengeosys.org/stable/d0/d2c/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Nodal): Representing a mass production rate in the model domain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-3} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{kg} \cdot \mathrm{m}^{d-3} \cdot \mathrm{s}^{-1}$).
 * [Line ST](https://doxygen.opengeosys.org/stable/d9/d4a/ogs_file_param__prj__process_variables__process_variable__source_terms__source_term__Line): Representing a mass source on a line shaped subdomain (Units: $\mathrm{M} \cdot \mathrm{L}^{d-4} \cdot \mathrm{T}^{-1}$, SI:  $\mathrm{kg} \cdot \mathrm{m}^{d-4} \cdot \mathrm{s}^{-1}$).
 
-**Pressure (Liquid Flow Process):**
+**Pressure (volume-based PDE):**
 
-The liquid flow process uses either a volume-based or a mass-based PDE, which
- can be selected by setting `equation_balance_type` to `volume` or `mass`
- correspondingly in the project file. For the mass-based PDE, the
- **pressure**-section above applies to the liquid flow process as well. For the
- volume-based formulation, you have to keep in mind that the density must be
- constant, and have to divide all units of natural boundary conditions and
- source terms by density. This leads to the following list:
+Liquid Flow and Thermo-Hydro-Mechanics Processes support both formulations,
+volume- or mass-based.
+The PDE-type can be selected by setting `equation_balance_type` to `volume` or
+`mass` correspondingly in the project file.
+For the mass-based PDE see the **pressure**-section above.
+For the volume-based formulation, you have to keep in mind that the density must
+be constant, and have to divide all units of natural boundary conditions and
+source terms by density.
+This leads to the following list:
 
 * [Dirichlet BC](https://doxygen.opengeosys.org/stable/d5/d71/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Dirichlet): Boundaries held at a fixed pressure (Units: $\mathrm{M \cdot L^{-1} \cdot T^{-2}}$, SI: $\mathrm{Pa}$).
 * [Neumann BC](https://doxygen.opengeosys.org/stable/d1/d2e/ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition__Neumann): Used to impose a volume flux through a domain boundary (Units: $\mathrm{L} \cdot \mathrm{T}^{-1}$, SI: $\mathrm{m} \cdot \mathrm{s}^{-1} = \mathrm{m}^3 \cdot \mathrm{m}^{-2} \cdot \mathrm{s}^{-1}$).
