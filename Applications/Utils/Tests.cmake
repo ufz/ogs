@@ -1727,3 +1727,23 @@ AddTest(
     DIFF_DATA square_1e0_neumann_patched.prj
     REQUIREMENTS NOT WIN32
 )
+
+AddTest(
+    NAME Feflow2Mesh_VTU
+    PATH FileIO/FEFLOW
+    EXECUTABLE Feflow2Mesh
+    EXECUTABLE_ARGS -i ${Data_SOURCE_DIR}/<PATH>/prism_with_material_properties.fem
+        -o prism_with_material_properties.vtu
+    TESTER vtkdiff-mesh
+    DIFF_DATA prism_with_material_properties.vtu prism_with_material_properties.vtu 1e-16
+)
+
+AddTest(
+    NAME Feflow2Mesh_MSH
+    PATH FileIO/FEFLOW
+    EXECUTABLE Feflow2Mesh
+    EXECUTABLE_ARGS -i ${Data_SOURCE_DIR}/<PATH>/prism_with_material_properties.fem
+        -o prism_with_material_properties.msh
+    TESTER diff
+    DIFF_DATA prism_with_material_properties.msh
+)

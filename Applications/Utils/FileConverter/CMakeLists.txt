@@ -12,6 +12,7 @@ set(TOOLS
     Mesh2Raster
     PVD2XDMF
     Raster2ASC
+    Feflow2Mesh
 )
 
 if(OGS_USE_NETCDF)
@@ -19,7 +20,7 @@ if(OGS_USE_NETCDF)
 endif()
 
 if(OGS_BUILD_GUI)
-    list(APPEND TOOLS ConvertSHPToGLI FEFLOW2OGS Mesh2Shape)
+    list(APPEND TOOLS ConvertSHPToGLI Mesh2Shape)
 endif()
 
 foreach(tool ${TOOLS})
