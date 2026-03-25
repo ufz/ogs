@@ -201,4 +201,4 @@ See the OGS benchmark gallery for [Liquid-Flow examples]({{< ref "/docs/benchmar
 
 ## Workflows
 
-Shortly we will provide complete workflows (Jupyter Notebooks) to set up Liquid-Flow examples from the scratch including geometric description, meshing, project generation, simulation and displaying results. See also OGSTools: https://ogstools.opengeosys.org/stable/auto_examples/index.html
+See the [OGSTools documentation](https://ogstools.opengeosys.org/stable/auto_examples/index.html) for complete workflows (Jupyter Notebooks) covering geometric description, meshing, project generation, simulation, and visualization of results.
