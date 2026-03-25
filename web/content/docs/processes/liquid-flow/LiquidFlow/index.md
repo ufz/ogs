@@ -50,7 +50,7 @@ In the code, the volume balance mode **enforces a constant (pressure-independent
 
 $$
 \begin{equation}
-\beta_s \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0. \qquad \text{(volume, default)} 
+\beta_s \frac{\partial p_w}{\partial t}  -\nabla \cdot \left(\frac{\mathbf{K}_0}{\mu_w} \left( \nabla p_w - \rho_w \mathbf{g} \right)\right) = W_0. \qquad \text{(volume, default)}
 \end{equation}
 $$
 
@@ -68,7 +68,7 @@ $$
 \end{equation}
 $$
 
-where the subscript $w$ denotes "water". 
+where the subscript $w$ denotes "water".
 The following table lists all variables used in the equations:
 
 | Symbols | Units | SI | Definition |
@@ -118,7 +118,8 @@ S_0 \frac{\partial h}{\partial t} - \nabla \cdot (\mathbf{K} \nabla h) = W_0.
 \end{equation}
 $$
 
-A detailed derivation of the Liquid-Flow equations and further information on its various formulations can be found in: https://gitlab.opengeosys.org/ogs/documentation/liquidflow/-/jobs/artifacts/main/raw/main.pdf?job=build.
+A detailed derivation of the Liquid-Flow equations and further information on its various formulations can be found in [*Governing Equations for the LiquidFlow-Process
+in OpenGeoSys*](https://gitlab.opengeosys.org/ogs/documentation/liquidflow/-/jobs/artifacts/main/raw/main.pdf?job=build).
 
 ### Finite Element Discretization
 
@@ -180,7 +181,8 @@ For Liquid-Flow fluid and porous medium properties need to be specified.
 | ------------- | ------ | -------- | ---------------------------------------- |
 | `density`     | [M/L³] | [kg·m⁻³] | Fluid mass density $\large^{\star}$      |
 | `viscosity`   | [M/LT] | [Pa·s]   | Dynamic fluid viscosity $\large^{\star}$ |
-$\large^{\star}$ functional dependencies can be specified. See OGS User Guide: https://ogs.ogs.xyz/ogs/docs/userguide/blocks/media/#properties
+
+<small>$\large^{\star}$ functional dependencies can be specified. See the [OGS User Guide]({{< ref "/docs/userguide/blocks/media#properties" >}})</small>
 
 #### Medium properties
 
@@ -190,11 +192,12 @@ $\large^{\star}$ functional dependencies can be specified. See OGS User Guide: h
 | `permeability`          | [L²]         | [m²]      | Intrinsic permeability $\large^{\star}$    |
 | `reference_temperature` | [$\Theta$]   | [K]       | Reference temperature for fluid properties |
 | `storage`               | [LT²/M]      | [m·s²/kg] | Specific storage coefficient $\beta_s$     |
-$\large^{\star}$ functional dependencies can be specified. See OGS User Guide: https://ogs.ogs.xyz/ogs/docs/userguide/blocks/media/#properties
+
+<small>$\large^{\star}$ functional dependencies can be specified. See the [OGS User Guide]({{< ref "/docs/userguide/blocks/media#properties" >}})</small>
 
 ## Benchmarks
 
-Liquid-Flow examples from the OGS benchmark gallery can be found here: https://www.opengeosys.org/6.5.7/docs/benchmarks/liquid-flow/
+See the OGS benchmark gallery for [Liquid-Flow examples]({{< ref "/docs/benchmarks/liquid-flow" >}}).
 
 ## Workflows
 
