@@ -5,7 +5,6 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2_heating.prj RUNTIME 6)
     OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 5)
     OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 15)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
 
@@ -19,6 +18,9 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE ThermoHydroMechanics/RestartMCC/mfront_restart_part1.prj RUNTIME 1)
         OgsTest(PROJECTFILE ThermoHydroMechanics/RestartMCC/mfront_restart_part2.xml RUNTIME 1)
     endif()
+endif()
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 15)
 endif()
 
 if (NOT (OGS_USE_PETSC OR OGS_USE_LIS))
@@ -221,7 +223,7 @@ AddTest(
      EXECUTABLE_ARGS square_ortho_phi0.0.prj
      WRAPPER time
      TESTER vtkdiff
-     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+     REQUIREMENTS NOT OGS_USE_MPI
      DIFF_DATA
      expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
      expected_square_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
@@ -398,7 +400,7 @@ AddTest(
     EXECUTABLE_ARGS total_initial_stress_HM.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     DIFF_DATA
     total_initial_stress_HM_ts_0_t_0.000000.vtu total_initial_stress_HM_ts_0_t_0.000000.vtu pressure pressure 1.0e-10 1.e-10
