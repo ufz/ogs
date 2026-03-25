@@ -259,8 +259,6 @@ struct ConstitutiveRelationsValues
     DimMatrix dlambda_eff_dT;
     DimVector dvelocity_dT = DimVector::Constant(
         DisplacementDim, std::numeric_limits<double>::quiet_NaN());
-    double p_dot;
-    double T_dot;
     double eps_v_dot;
     double alpha_biot;
     double beta;

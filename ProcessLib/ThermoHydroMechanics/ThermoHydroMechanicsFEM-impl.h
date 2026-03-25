@@ -281,9 +281,6 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     vars.liquid_phase_pressure = p_int_pt;
     double const p_prev_int_pt = N.dot(p_prev);
     double const dp_int_pt = p_int_pt - p_prev_int_pt;
-    crv.p_dot = dp_int_pt / dt;
-    crv.T_dot = (T_int_pt - N.dot(T_prev)) / dt;
-
     vars.liquid_saturation = 1.0;
 
     auto const solid_density =
@@ -911,8 +908,10 @@ void ThermoHydroMechanicsLocalAssembler<
             double const storage_p_solid_coeff =
                 (crv.alpha_biot - ip_data.porosity) * crv.beta_SR;
 
-            double const drho_dp_coeff = storage_p_solid_coeff * crv.p_dot +
-                                         storage_T_coeff * crv.T_dot +
+            double const p_dot = N.dot(p - p_prev) / dt;
+            double const T_dot = N.dot(T - T_prev) / dt;
+            double const drho_dp_coeff = storage_p_solid_coeff * p_dot +
+                                         storage_T_coeff * T_dot +
                                          up_coeff * crv.eps_v_dot;
 
             local_Jac
