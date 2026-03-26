@@ -145,7 +145,7 @@
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstols>1e-05 1e-05</abstols>
-                    <reltols>1e-08 1e-08</reltols>
+                    <reltols>1e-08 1e-06</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -243,7 +243,7 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p ilut -tol 1e-18 -maxiter 10000</lis>
+            <lis>-i bicg -p ilut -ilut_drop 1e-4 -ilut_rate 10 -tol 1e-10 -maxiter 3000</lis>
             <eigen>
                 <solver_type>BiCGSTAB</solver_type>
                 <precon_type>ILUT</precon_type>
