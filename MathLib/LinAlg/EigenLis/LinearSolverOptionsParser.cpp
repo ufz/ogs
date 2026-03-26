@@ -25,7 +25,9 @@ LinearSolverOptionsParser<EigenLisLinearSolver>::parseNameAndOptions(
         {
             if (!s->empty())
             {
-                lis_options += " " + *s;
+                lis_options = (s->find("-initx_zeros") == std::string::npos)
+                                  ? lis_options + " " + *s
+                                  : *s;
                 INFO("Lis options: '{:s}'", lis_options);
             }
         }
