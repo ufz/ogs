@@ -12,7 +12,9 @@ weight = 1080
 ## Publication procedure
 
 - Update merge request template (settings / merge_requests) to point to a new changelog wiki page
-- Check for corresponding ogstools release in `web/layouts/_partials/header.html` (`tools_url`).
+- Check if ogstools version in Tests/Data/pyproject.toml is current and compatible
+  - Check for corresponding ogstools release in `web/layouts/_partials/header.html` (`tools_url`).
+- Update `binder_tag` in Python `testrunner.py` and update binder repo accordingly.
 - Run `python scripts/python/do-release.py [NEW_VERSION]`
 - Update `CITATION.cff`, create a commit, tag and push (see script output)
 - A new release is automatically created on GitLab

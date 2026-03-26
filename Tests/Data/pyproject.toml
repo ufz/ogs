@@ -15,6 +15,8 @@ dependencies = [
   "jupyterlab>=3.4.8",
   "matplotlib>=3.6",
   "numpy",
+  # When changing ogstools version, update in testrunner.py
+  # (binder_tag) and header.html ($tools_url) as well!
   "ogstools==0.8.0",
   "pandas>=1.5",
   "pyvista[all]",
