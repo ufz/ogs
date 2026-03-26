@@ -80,3 +80,14 @@ build linux petsc (py-cov):
     ADDITIONAL_TARGETS_POST: "process_coverage_python"
     CTEST_ARGS: "-R nb-|pytest"
   before_script: *common-linux-arch-before-script
+
+# ============================================================
+# LIS
+# ============================================================
+build linux arch lis:
+  <<: *common-linux-arch-base
+  tags: [shell, envinf]
+  rules: *common-arch-cpp-rules
+  variables:
+    CMAKE_PRESET: release-all
+    CMAKE_ARGS: "-DOGS_USE_LIS=ON"
