@@ -142,6 +142,7 @@ function(NotebookTest)
         LABELS
         "${labels}"
         ${timeout}
+        SKIP_REGULAR_EXPRESSION "ZMQError: Address already in use"
         ${NotebookTest_PROPERTIES}
     )
 
