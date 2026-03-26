@@ -100,7 +100,7 @@ AddTest(
     EXECUTABLE_ARGS TRcustom_unsaturated.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     DIFF_DATA
     expected_TRMuni_unsat_ts_10_t_1.000000.vtu TRcustom_unsat_ts_10_t_1.000000.vtu temperature temperature 5e-5 1e-10
@@ -115,7 +115,7 @@ AddTest(
     EXECUTABLE_ARGS TRhyd_saturated.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     DIFF_DATA
     expected_TRMhyd_sat_ts_10_t_1.000000.vtu TRhyd_sat_ts_10_t_1.000000.vtu temperature temperature 5e-5 1e-10
