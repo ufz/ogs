@@ -50,8 +50,6 @@ function(NotebookTest)
     endif()
 
     set(NotebookTest_SOURCE_DIR "${Data_SOURCE_DIR}/${NotebookTest_DIR}")
-    set(_props "")
-
     if(NOT DEFINED NotebookTest_RUNTIME)
         set(NotebookTest_RUNTIME 1)
     elseif(NotebookTest_RUNTIME GREATER 750)
@@ -128,24 +126,27 @@ function(NotebookTest)
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
-    list(
-        APPEND
-        _props
-        COST
-        ${NotebookTest_RUNTIME}
-        DISABLED
-        ${NotebookTest_DISABLED}
+    set_tests_properties(
+        ${TEST_NAME}
+        PROPERTIES
+        COST ${NotebookTest_RUNTIME}
         ENVIRONMENT
         "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};OGS_COVERAGE_PYTHON=${OGS_COVERAGE_PYTHON}"
-        ENVIRONMENT_MODIFICATION
-        PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
-        LABELS
-        "${labels}"
-        ${timeout}
+        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+        LABELS "${labels}"
         SKIP_REGULAR_EXPRESSION "ZMQError: Address already in use"
-        ${NotebookTest_PROPERTIES}
     )
 
-    set_tests_properties(${TEST_NAME} PROPERTIES ${_props})
+    if(NotebookTest_DISABLED)
+        set_tests_properties(${TEST_NAME} PROPERTIES DISABLED TRUE)
+    endif()
+
+    if(DEFINED timeout)
+        set_tests_properties(${TEST_NAME} PROPERTIES ${timeout})
+    endif()
+
+    if(DEFINED NotebookTest_PROPERTIES)
+        set_tests_properties(${TEST_NAME} PROPERTIES ${NotebookTest_PROPERTIES})
+    endif()
 
 endfunction()
