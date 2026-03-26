@@ -131,23 +131,20 @@ function(NotebookTest)
     list(
         APPEND
         _props
+        COST
+        ${NotebookTest_RUNTIME}
+        DISABLED
+        ${NotebookTest_DISABLED}
+        ENVIRONMENT
+        "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};OGS_COVERAGE_PYTHON=${OGS_COVERAGE_PYTHON}"
         ENVIRONMENT_MODIFICATION
         PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+        LABELS
+        "${labels}"
+        ${timeout}
         ${NotebookTest_PROPERTIES}
     )
 
-    set_tests_properties(
-        ${TEST_NAME}
-        PROPERTIES ${_props}
-                   COST
-                   ${NotebookTest_RUNTIME}
-                   DISABLED
-                   ${NotebookTest_DISABLED}
-                   LABELS
-                   "${labels}"
-                   ${timeout}
-                   ENVIRONMENT
-                   "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};OGS_COVERAGE_PYTHON=${OGS_COVERAGE_PYTHON}"
-    )
+    set_tests_properties(${TEST_NAME} PROPERTIES ${_props})
 
 endfunction()
