@@ -4,35 +4,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set compiler helper variables
-if((${CMAKE_CXX_COMPILER_ID} MATCHES "Clang") OR (${CMAKE_CXX_COMPILER_ID}
+if((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID
                                                   MATCHES "IntelLLVM")
 )
-    set(COMPILER_IS_CLANG TRUE CACHE BOOL "")
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-    set(COMPILER_IS_GCC TRUE CACHE BOOL "")
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
-    set(COMPILER_IS_INTEL TRUE CACHE BOOL "")
-elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
-    set(COMPILER_IS_MSVC TRUE CACHE BOOL "")
-endif() # CMAKE_CXX_COMPILER_ID
+    set(COMPILER_IS_CLANG TRUE)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(COMPILER_IS_GCC TRUE)
+endif()
 
-if(APPLE AND "${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "arm64")
-    set(APPLE_ARM TRUE CACHE BOOL "Apple M processors" FORCE)
+if(APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    set(APPLE_ARM TRUE)
 endif()
 
 # GNU-like compiler
-if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
-    # Coloring output
-    option(FORCE_COLORED_OUTPUT
-           "Always produce ANSI-colored output (GNU/Clang only)." ON
-    )
-    if(${FORCE_COLORED_OUTPUT})
-        if(COMPILER_IS_GCC)
-            add_compile_options(-fdiagnostics-color=always)
-        elseif(COMPILER_IS_CLANG)
-            add_compile_options(-fcolor-diagnostics)
-        endif()
-    endif()
+if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
     # Profiling
     if(OGS_PROFILE)
@@ -105,7 +90,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
     endif()
 
     if(COMPILER_IS_CLANG)
-        if(${CMAKE_CXX_COMPILER_ID} MATCHES "AppleClang")
+        if(CMAKE_CXX_COMPILER_ID MATCHES "AppleClang")
             if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS
                ${ogs.minimum_version.apple_clang}
             )
@@ -142,7 +127,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
         endif()
     endif()
 
-    if(COMPILER_IS_INTEL)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
         # Use highest instruction set available on the compilation host
         # processor
         add_compile_options(-xHOST)
@@ -192,8 +177,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
 endif()
 
 if(MSVC)
-    if(${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS
-       ${ogs.minimum_version.msvc.compiler}
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.msvc.compiler}
     )
         message(
             FATAL_ERROR
@@ -202,7 +186,7 @@ if(MSVC)
             ${CMAKE_CXX_COMPILER_VERSION}."
         )
     endif()
-    if(${MSVC_TOOLSET_VERSION} LESS ${ogs.minimum_version.msvc.toolset})
+    if(MSVC_TOOLSET_VERSION LESS ${ogs.minimum_version.msvc.toolset})
         message(
             FATAL_ERROR
                 "Aborting: Visual Studio ${ogs.minimum_version.msvc.year} \
@@ -221,18 +205,20 @@ if(MSVC)
         /wd4267
         /wd4996
         /bigobj
-        -D_CRT_SECURE_NO_WARNINGS
-        -D_CRT_NONSTDC_NO_WARNINGS
-        -D_CRT_XNONSTDC_NO_WARNINGS
-        -D__restrict__=__restrict # this fixes #5
-        # This fixes compile errors with std::numeric_limits<T>::min() / max()
-        -DNOMINMAX
-        -DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE # when VC is newer than Boost
         # Disables all warnings coming from include with <>-syntax
         # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
         /experimental:external
         /external:anglebrackets
         /external:W0
+    )
+    add_compile_definitions(
+        _CRT_SECURE_NO_WARNINGS
+        _CRT_NONSTDC_NO_WARNINGS
+        _CRT_XNONSTDC_NO_WARNINGS
+        __restrict__=__restrict # this fixes #5
+        # This fixes compile errors with std::numeric_limits<T>::min() / max()
+        NOMINMAX
+        BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE # when VC is newer than Boost
     )
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /ignore:4099")
 

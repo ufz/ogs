@@ -78,6 +78,15 @@ option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
 option(OGS_COVERAGE_PYTHON "Enables code coverage measurements in Python code." OFF)
 
+# Profiling
+# Find gnu profiler gprof
+find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
+if(COMPILER_IS_GCC AND GPROF_PATH)
+    option(OGS_PROFILE
+           "Enables compiling with flags set for profiling with gprof." OFF
+    )
+endif()
+
 # ---- CMake includes ----
 include(Versions)
 include(GitSetup)
@@ -99,13 +108,6 @@ include(WebSetup)
 
 # ---- More Options ----
 set(CMAKE_LINK_LIBRARIES_ONLY_TARGETS ON)
-
-# Profiling
-if((CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_GNUCC) AND GPROF_PATH)
-    option(OGS_PROFILE
-           "Enables compiling with flags set for profiling with gprof." OFF
-    )
-endif() # GCC AND GPROF_PATH
 
 option(OGS_BUILD_GUI "Should the Data Explorer be built?" OFF)
 option(OGS_USE_INSITU "Builds OGS with insitu visualization capabilities." OFF)
