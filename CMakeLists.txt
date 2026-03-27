@@ -74,6 +74,10 @@ option(OGS_USE_EIGEN_UNSUPPORTED "Use Eigen unsupported modules" ON)
 option(OGS_EIGEN_INITIALIZE_MATRICES_BY_NAN "" ON)
 option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
+# Code coverage
+option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
+option(OGS_COVERAGE_PYTHON "Enables code coverage measurements in Python code." OFF)
+
 # ---- CMake includes ----
 include(Versions)
 include(GitSetup)
@@ -137,10 +141,6 @@ if(OGS_CMAKE_DEBUG)
     include(ListAllCMakeVariableValues)
     list_all_cmake_variable_values()
 endif()
-
-# Code coverage
-option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
-option(OGS_COVERAGE_PYTHON "Enables code coverage measurements in Python code." OFF)
 
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM 3
