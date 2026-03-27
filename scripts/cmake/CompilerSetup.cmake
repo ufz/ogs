@@ -42,15 +42,16 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
                 to Release."
             )
         endif()
-        set(PROFILE_FLAGS -pg -fno-omit-frame-pointer -O2 -DNDEBUG)
+        set(PROFILE_FLAGS -fno-omit-frame-pointer -O2 -DNDEBUG)
         # clang compiler does not know the following flags
         if(NOT COMPILER_IS_CLANG)
-            set(PROFILE_FLAGS
-                ${PROFILE_FLAGS} -fno-inline-functions-called-once
+            list(APPEND PROFILE_FLAGS
+                -fno-inline-functions-called-once
                 -fno-optimize-sibling-calls
             )
         endif()
-        add_compile_options(${PROFILE_ARGS})
+        add_compile_options(${PROFILE_FLAGS})
+        add_link_options(-pg)
     endif()
 
     if(OGS_CPU_ARCHITECTURE STREQUAL "generic")
