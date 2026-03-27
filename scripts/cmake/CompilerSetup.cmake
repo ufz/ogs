@@ -248,7 +248,4 @@ if(PROJECT_IS_TOP_LEVEL)
     include(Sanitizers)
 endif()
 
-add_compile_options(
-    ${OGS_CXX_FLAGS} # user-given, CMake-option
-    ${CPU_FLAGS}
-)
+add_compile_options(${CPU_FLAGS})

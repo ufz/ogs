@@ -133,9 +133,6 @@ set_property(
 # Debug
 option(OGS_FATAL_ABORT "Abort in OGS_FATAL" OFF)
 
-# Compiler flags
-set(OGS_CXX_FLAGS "" CACHE STRING "Additional C++ compiler flags.")
-
 # Print CMake variable values
 if(OGS_CMAKE_DEBUG)
     include(ListAllCMakeVariableValues)
