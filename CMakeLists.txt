@@ -133,12 +133,6 @@ set_property(
 # Debug
 option(OGS_FATAL_ABORT "Abort in OGS_FATAL" OFF)
 
-# Print CMake variable values
-if(OGS_CMAKE_DEBUG)
-    include(ListAllCMakeVariableValues)
-    list_all_cmake_variable_values()
-endif()
-
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM 3
     CACHE STRING "Maximum dimension of FEM elements to be built."
