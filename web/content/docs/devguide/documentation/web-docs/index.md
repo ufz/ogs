@@ -174,11 +174,11 @@ produces
 
 ```bash
 # Reads the versions.json file outputs values
-{{</* dataFile "versions.minimum_version.git" */>}}
+{{</* dataFile "versions.minimum_version.gcc" */>}}
 ```
 
 ```bash
-{{< dataFile "versions.minimum_version.git" >}}
+{{< dataFile "versions.minimum_version.gcc" >}}
 ```
 
 ---
