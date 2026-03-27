@@ -87,7 +87,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR COMPILER_IS_INTEL)
             )
         endif()
         # Exclude Eigen, system headers, and CPM dependencies from code coverage
-        if(OGS_COVERAGE AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 13)
+        if(OGS_COVERAGE)
             set(_coverage_excludes
                 $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=/usr/include/.*>
                 $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=.*/_deps/.*>
