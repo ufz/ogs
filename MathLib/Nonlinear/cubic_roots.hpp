@@ -70,7 +70,8 @@ std::array<Real, 3> cubic_roots(Real a, Real b, Real c, Real d)
     Real r = d / a;
     Real Q = (p * p - 3 * q) / 9;
     Real R = (2 * p * p * p - 9 * p * q + 27 * r) / 54;
-    if (R * R < Q * Q * Q)
+    Real arg = R * R - Q * Q * Q;
+    if (arg < 0)
     {
         Real rtQ = sqrt(Q);
         Real theta = acos(R / (Q * rtQ)) / 3;
@@ -89,7 +90,6 @@ std::array<Real, 3> cubic_roots(Real a, Real b, Real c, Real d)
         // branch, and we have 3 real roots, two are a double root. Take
         // (x+1)^2(x-2) = x^3 - 3x -2 as an example. This clearly has a double
         // root at x = -1, and it gets sent into this branch.
-        Real arg = std::max(0., R * R - Q * Q * Q);
         Real A = (R >= 0 ? -1 : 1) * cbrt(abs(R) + sqrt(arg));
         Real B = 0;
         if (A != 0)
@@ -132,7 +132,10 @@ std::array<Real, 3> cubic_roots(Real a, Real b, Real c, Real d)
             }
         }
     }
-    std::sort(roots.begin(), roots.end());
+    // std::sort on NaNs may result in undefined behaviour.
+    // Fixes issue on apple-clang 17.
+    std::sort(roots.begin(), roots.end(),
+              [](Real a, Real b) { return std::strong_order(a, b) < 0; });
     return roots;
 }
 
