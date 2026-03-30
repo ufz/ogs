@@ -227,7 +227,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
         bhe_configs.getConfigSubtreeList("borehole_heat_exchanger"))
     {
-        auto bhe_id_string =
+        auto const bhe_id_string =
             //! \ogs_file_attr{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__id}
             bhe_config.getConfigAttribute<std::string>(
                 "id", std::to_string(bhe_iterator));
@@ -236,7 +236,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
         if (bhe_id_string == "*")
         {
-            int size = static_cast<int>(bhe_mesh_data.BHE_mat_IDs.size());
+            int const size = static_cast<int>(bhe_mesh_data.BHE_mat_IDs.size());
             bhe_ids_of_this_bhe.resize(size);
             std::iota(bhe_ids_of_this_bhe.begin(), bhe_ids_of_this_bhe.end(),
                       0);
