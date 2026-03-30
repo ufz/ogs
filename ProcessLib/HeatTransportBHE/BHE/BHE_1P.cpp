@@ -29,7 +29,8 @@ BHE_1P::BHE_1P(BoreholeGeometry const& borehole,
 
     // Initialize thermal resistances.
     auto values = visit(
-        [&](auto const& control) {
+        [&](auto const& control)
+        {
             return control(refrigerant.reference_temperature,
                            0. /* initial time */);
         },

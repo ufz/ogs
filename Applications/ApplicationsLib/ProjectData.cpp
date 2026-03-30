@@ -633,7 +633,7 @@ void ProjectData::parseProcesses(
     [[maybe_unused]] std::unique_ptr<ChemistryLib::ChemicalSolverInterface>&&
         chemical_solver_interface)
 {
-    (void)output_directory;   // to avoid compilation warning
+    (void)output_directory;  // to avoid compilation warning
 
     DBUG("Reading processes:");
     //! \ogs_file_param{prj__processes__process}

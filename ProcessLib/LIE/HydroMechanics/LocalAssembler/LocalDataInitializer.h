@@ -34,12 +34,12 @@ namespace HydroMechanics
 /// order 2, and provides additional template argument DisplacementDim.
 template <
     typename LocalAssemblerInterface,
-    template <typename /* shp u */, typename /* shp p */, int /* global dim */>
-    class LocalAssemblerDataMatrix,
-    template <typename /* shp u */, typename /* shp p */, int /* global dim */>
-    class LocalAssemblerDataMatrixNearFracture,
-    template <typename /* shp u */, typename /* shp p */, int /* global dim */>
-    class LocalAssemblerDataFracture,
+    template <typename /* shp u */, typename /* shp p */,
+              int /* global dim */> class LocalAssemblerDataMatrix,
+    template <typename /* shp u */, typename /* shp p */,
+              int /* global dim */> class LocalAssemblerDataMatrixNearFracture,
+    template <typename /* shp u */, typename /* shp p */,
+              int /* global dim */> class LocalAssemblerDataFracture,
     int DisplacementDim, typename... ConstructorArgs>
 class LocalDataInitializer final
 {

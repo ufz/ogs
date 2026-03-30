@@ -132,7 +132,8 @@ void extract2D3DBoundaryMeshes(MeshLib::Mesh const& mesh,
             auto const* node = boundary_mesh->getNode(node_id);
             return std::abs((*node)[side.axis] - side.value) <= eps;
         };
-        auto const element_not_on_side = [&](auto const* elem) {
+        auto const element_not_on_side = [&](auto const* elem)
+        {
             return !ranges::all_of(elem->nodes() | MeshLib::views::ids,
                                    node_on_side);
         };

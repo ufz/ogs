@@ -6,7 +6,8 @@
 #include <string>
 #include <vector>
 
-namespace MeshLib {
+namespace MeshLib
+{
 
 enum class MeshItemType
 {
@@ -103,8 +104,9 @@ std::string MeshElemType2String(const MeshElemType t);
 /// Given a MeshElemType this returns the appropriate string with a short name.
 std::string MeshElemType2StringShort(const MeshElemType t);
 
-/// Given a string of the shortened name of the element type, this returns the corresponding MeshElemType.
-MeshElemType String2MeshElemType(const std::string &s);
+/// Given a string of the shortened name of the element type, this returns the
+/// corresponding MeshElemType.
+MeshElemType String2MeshElemType(const std::string& s);
 
 /// Returns a vector of all mesh element types
 std::vector<MeshElemType> getMeshElemTypes();

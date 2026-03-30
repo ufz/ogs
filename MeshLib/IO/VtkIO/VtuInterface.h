@@ -11,7 +11,8 @@
 #include <set>
 #include <string>
 
-namespace MeshLib {
+namespace MeshLib
+{
 class Mesh;
 
 namespace IO
@@ -23,9 +24,9 @@ std::string getVtuFileNameForPetscOutputWithoutExtension(
 #endif
 
 /**
- * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS data structures.
- * This class is currently not inherited from Writer because VTK will implement
- * writing to a string from 6.2 onwards.
+ * \brief Reads and writes VtkXMLUnstructuredGrid-files (vtu) to and from OGS
+ * data structures. This class is currently not inherited from Writer because
+ * VTK will implement writing to a string from 6.2 onwards.
  */
 class VtuInterface final
 {

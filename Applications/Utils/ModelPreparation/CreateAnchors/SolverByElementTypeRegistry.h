@@ -19,8 +19,7 @@ namespace ApplicationUtils
  * mesh element.
  */
 template <typename SolverInterface,
-          template <typename ShapeFunction>
-          class SolverImplementationTplTpl>
+          template <typename ShapeFunction> class SolverImplementationTplTpl>
 class SolverByElementTypeRegistry final
 {
     using SolverIntfPtr = std::unique_ptr<SolverInterface>;
@@ -71,8 +70,7 @@ public:
 };
 
 template <typename SolverInterface,
-          template <typename /* shp fct */>
-          class SolverImplementationTplTpl>
+          template <typename /* shp fct */> class SolverImplementationTplTpl>
 const std::unordered_map<std::type_index, std::unique_ptr<SolverInterface>>
     SolverByElementTypeRegistry<SolverInterface,
                                 SolverImplementationTplTpl>::solvers_{

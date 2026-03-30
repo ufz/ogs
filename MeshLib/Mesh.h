@@ -19,13 +19,13 @@
 
 namespace ApplicationUtils
 {
-    class NodeWiseMeshPartitioner;
+class NodeWiseMeshPartitioner;
 }
 
 namespace MeshLib
 {
-    class Node;
-    class Element;
+class Node;
+class Element;
 
 /**
  * A basic mesh.
@@ -55,7 +55,7 @@ public:
          Properties const& properties = Properties());
 
     /// Copy constructor
-    Mesh(const Mesh &mesh);
+    Mesh(const Mesh& mesh);
 
     Mesh(Mesh&& mesh);
 
@@ -75,7 +75,8 @@ public:
     /// Add an element to the mesh.
     void addElement(Element* elem);
 
-    /// Returns the dimension of the mesh (determined by the maximum dimension over all elements).
+    /// Returns the dimension of the mesh (determined by the maximum dimension
+    /// over all elements).
     unsigned getDimension() const { return _mesh_dimension; }
 
     /// Get the node with the given index.
@@ -99,17 +100,18 @@ public:
     /// Get the element-vector for the mesh.
     std::vector<Element*> const& getElements() const { return _elements; }
 
-    /// Resets the IDs of all mesh-elements to their position in the element vector
+    /// Resets the IDs of all mesh-elements to their position in the element
+    /// vector
     void resetElementIDs();
 
     /// Resets the IDs of all mesh-nodes to their position in the node vector
     void resetNodeIDs();
 
     /// Changes the name of the mesh.
-    void setName(const std::string &name) { this->_name = name; }
+    void setName(const std::string& name) { this->_name = name; }
 
     /// Get id of the mesh
-    std::size_t getID() const {return _id; }
+    std::size_t getID() const { return _id; }
 
     /// Get the number of base nodes
     std::size_t computeNumberOfBaseNodes() const;
@@ -126,7 +128,8 @@ public:
     Properties const& getProperties() const { return _properties; }
 
     bool isAxiallySymmetric() const { return _is_axially_symmetric; }
-    void setAxiallySymmetric(bool is_axial_symmetric) {
+    void setAxiallySymmetric(bool is_axial_symmetric)
+    {
         _is_axially_symmetric = is_axial_symmetric;
     }
 
@@ -135,12 +138,14 @@ protected:
     void setDimension();
 
     /// Fills in the neighbor-information for elements.
-    /// Note: Using this implementation, an element e can only have neighbors that have the same dimensionality as e.
+    /// Note: Using this implementation, an element e can only have neighbors
+    /// that have the same dimensionality as e.
     void setElementNeighbors();
 
     std::size_t const _id;
     unsigned _mesh_dimension;
-    /// The minimal and maximal distance of nodes within an element over all elements in the mesh
+    /// The minimal and maximal distance of nodes within an element over all
+    /// elements in the mesh
     std::pair<double, double> _node_distance;
     std::string _name;
     std::vector<Node*> _nodes;

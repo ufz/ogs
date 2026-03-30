@@ -27,10 +27,9 @@ namespace HeatTransportBHE
 /// For example for MeshLib::Quad a local assembler data with template argument
 /// NumLib::ShapeQuad4 is created.
 template <typename LocalAssemblerInterface,
-          template <typename /* shp fct */>
-          class LocalAssemblerDataSoil,
-          template <typename /* shp fct */, typename /* bhe type */>
-          class LocalAssemblerDataBHE,
+          template <typename /* shp fct */> class LocalAssemblerDataSoil,
+          template <typename /* shp fct */,
+                    typename /* bhe type */> class LocalAssemblerDataBHE,
           typename... ConstructorArgs>
 class LocalDataInitializer final
 {

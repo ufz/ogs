@@ -45,8 +45,8 @@ public:
             mesh->getProperties().createNewPropertyVector<double>(
                 cell_prop_name, MeshLib::MeshItemType::Cell,
                 mesh->getNumberOfElements(), 1);
-        std::iota(
-            cell_double_properties->begin(), cell_double_properties->end(), 1);
+        std::iota(cell_double_properties->begin(),
+                  cell_double_properties->end(), 1);
 
         std::string const field_prop_name("FieldDoubleProperty");
         auto* const field_double_properties =
@@ -64,8 +64,8 @@ public:
                 MeshLib::MeshItemType::Node,
                 mesh->getNumberOfNodes(),
                 1);
-        std::iota(
-            point_int_properties->begin(), point_int_properties->end(), 1);
+        std::iota(point_int_properties->begin(), point_int_properties->end(),
+                  1);
 
         std::string const cell_int_prop_name("CellIntProperty");
         auto* const cell_int_properties =
@@ -115,8 +115,8 @@ public:
             mesh->getProperties().createNewPropertyVector<int>(
                 material_ids_name, MeshLib::MeshItemType::Cell,
                 mesh->getNumberOfElements(), 1);
-        std::iota(
-            material_id_properties->begin(), material_id_properties->end(), 1);
+        std::iota(material_id_properties->begin(),
+                  material_id_properties->end(), 1);
     }
 
     ~InSituMesh() override { delete mesh; }

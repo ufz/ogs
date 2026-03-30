@@ -17,7 +17,8 @@
 #include "MeshLib/Properties.h"
 #include "MeshLib/PropertyVector.h"
 
-namespace MeshLib {
+namespace MeshLib
+{
 
 class Mesh;
 
@@ -82,4 +83,4 @@ private:
     vtkNew<vtkFieldData> FieldData;
 };
 
-} // Namespace MeshLib
+}  // Namespace MeshLib

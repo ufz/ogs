@@ -86,8 +86,8 @@ protected:
 };
 
 template <typename ShapeFunction, typename LocalAssemblerInterface,
-          template <typename /* shp fct */, int /* global dim */>
-          class LocalAssemblerImplementation,
+          template <typename /* shp fct */,
+                    int /* global dim */> class LocalAssemblerImplementation,
           NumLib::IntegrationMethodProvider IntegrationMethodProvider,
           int GlobalDim, typename... ConstructorArgs>
 class LocalAssemblerBuilderFactory

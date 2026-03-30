@@ -423,7 +423,8 @@ bool Output::isOutputStep(int const timestep, NumLib::Time const& t) const
 std::vector<std::string> Output::getFileNamesForOutput() const
 {
     auto construct_filename = ranges::views::transform(
-        [&](auto const& output_name) {
+        [&](auto const& output_name)
+        {
             return _output_format->constructFilename(output_name, 0, 0, 0,
                                                      true);
         });

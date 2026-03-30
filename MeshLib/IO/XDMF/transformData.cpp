@@ -328,8 +328,7 @@ ParentDataType getLocalTopologyType(MeshLib::Mesh const& mesh)
     }
     auto const ogs_cell_type = elements[0]->getCellType();
 
-    if (std::any_of(elements.begin(), elements.end(),
-                    [&](auto const& cell)
+    if (std::any_of(elements.begin(), elements.end(), [&](auto const& cell)
                     { return cell->getCellType() != ogs_cell_type; }))
     {
         return ParentDataType::MIXED;
