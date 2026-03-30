@@ -132,7 +132,10 @@ std::array<Real, 3> cubic_roots(Real a, Real b, Real c, Real d)
             }
         }
     }
-    std::sort(roots.begin(), roots.end());
+    // std::sort on NaNs may result in undefined behaviour.
+    // Fixes issue on apple-clang 17.
+    std::sort(roots.begin(), roots.end(),
+              [](Real a, Real b) { return std::strong_order(a, b) < 0; });
     return roots;
 }
 
