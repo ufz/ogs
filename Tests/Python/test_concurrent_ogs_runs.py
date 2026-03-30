@@ -36,7 +36,7 @@ def create_and_wait_and_close(prj_path: Path, output_dir: Path):
 
 
 @pytest.mark.xfail(
-    ogs.OGS_USE_PETSC == "ON" or ogs.OGS_USE_LIS == "ON",
+    ogs.OGS_USE_PETSC == "ON",
     reason="PETSc and Lis parse commandline arguments. Therefore, we exclude them for the time being",
     # code will trigger OGS_FATAL, which throws a std::runtime_error, which in
     # turn is converted to a RuntimeError by pybind11.
