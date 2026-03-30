@@ -108,8 +108,9 @@ public:
         int const section_index = 0) const
     {
         return {cross_section_area_annulus, cross_section_area_inner_pipe,
-                borehole_geometry.sections.areaAtSection(section_index) -
-                    _pipes.outer_pipe.outsideArea()};
+                checkedGroutArea(
+                    borehole_geometry.sections.areaAtSection(section_index),
+                    _pipes.outer_pipe.outsideArea(), section_index)};
     }
 
 private:

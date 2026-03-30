@@ -170,8 +170,9 @@ std::array<double, BHE_1P::number_of_unknowns> BHE_1P::crossSectionAreas(
     int const section_index) const
 {
     return {{_pipe.single_pipe.area(),
-             borehole_geometry.sections.areaAtSection(section_index) -
-                 _pipe.single_pipe.outsideArea()}};
+             checkedGroutArea(
+                 borehole_geometry.sections.areaAtSection(section_index),
+                 _pipe.single_pipe.outsideArea(), section_index)}};
 }
 
 double BHE_1P::updateFlowRateAndTemperature(double const T_out,

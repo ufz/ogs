@@ -3,9 +3,13 @@
 
 #include "CreateBHEUType.h"
 
+#include <algorithm>
+#include <cmath>
+
 #include "BHE_1U.h"
 #include "BHE_2U.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 #include "CreateFlowAndTemperatureControl.h"
 namespace ProcessLib
 {
@@ -51,6 +55,50 @@ parseBHEUTypeConfig(
             "longitudinal_dispersion_length");
     PipeConfigurationUType const pipes{inlet_pipe, outlet_pipe, pipe_distance,
                                        pipe_longitudinal_dispersion_length};
+
+    if (pipe_distance <= 0)
+    {
+        OGS_FATAL(
+            "distance_between_pipes must be positive for U-type BHEs, got "
+            "{:g}.",
+            pipe_distance);
+    }
+
+    double const d0 =
+        std::max(pipes.inlet.outsideDiameter(), pipes.outlet.outsideDiameter());
+    if (pipe_distance < d0)
+    {
+        OGS_FATAL(
+            "distance_between_pipes ({:g}) must be >= pipe outside diameter "
+            "({:g}) for valid U-type thermal resistance formulas.",
+            pipe_distance, d0);
+    }
+
+    for (int section_index = 0;
+         section_index < borehole_geometry.sections.getNumberOfSections();
+         ++section_index)
+    {
+        double const D =
+            borehole_geometry.sections.diameterAtSection(section_index);
+        if (D <= 2.0 * d0)
+        {
+            OGS_FATAL(
+                "Invalid U-type geometry at section {:d}: borehole diameter "
+                "{:g} must be greater than 2*pipe outside diameter {:g}.",
+                section_index, D, 2.0 * d0);
+        }
+
+        double const acosh_argument =
+            (D * D + d0 * d0 - pipe_distance * pipe_distance) / (2.0 * D * d0);
+        if (!std::isfinite(acosh_argument) || acosh_argument < 1.0)
+        {
+            OGS_FATAL(
+                "Invalid U-type geometry at section {:d}: acosh argument "
+                "for grout resistance is {:g}, must be >= 1. "
+                "(D={:g}, d0={:g}, distance_between_pipes={:g})",
+                section_index, acosh_argument, D, d0, pipe_distance);
+        }
+    }
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout}
     auto const grout = createGroutParameters(config.getConfigSubtree("grout"));

@@ -23,6 +23,11 @@ BoreholeGeometry createBoreholeGeometry(
     const auto borehole_length =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole__length}
         config.getConfigParameter<double>("length");
+    if (borehole_length <= 0)
+    {
+        OGS_FATAL("Borehole length must be positive, got {:g}.",
+                  borehole_length);
+    }
 
     auto const diameter_parameter_or_value =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole__diameter}

@@ -3,7 +3,11 @@
 
 #pragma once
 
+#include <cstddef>
+#include <unordered_map>
 #include <vector>
+
+#include "BHETypes.h"
 
 namespace MeshLib
 {
@@ -30,6 +34,10 @@ struct BHEMeshData
     std::vector<int> BHE_mat_IDs;
     std::vector<std::vector<MeshLib::Element*>> BHE_elements;
     std::vector<std::vector<MeshLib::Node*>> BHE_nodes;
+    std::unordered_map<std::size_t, double> BHE_element_distances_from_wellhead;
+    std::unordered_map<std::size_t, int> BHE_element_section_indices;
+
+    void updateElementSectionIndices(std::vector<BHE::BHETypes> const& bhes);
 
     // TODO (naumov) Just an idea: std::vector<BheMeshSubset> mesh_subsets;
 };

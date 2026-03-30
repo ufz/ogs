@@ -34,6 +34,24 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
+/// Validate that a grout cross-sectional area (borehole area fraction minus
+/// pipe outside area) is positive.  Returns the area on success, calls
+/// OGS_FATAL on failure.
+inline double checkedGroutArea(double const borehole_area_fraction,
+                               double const pipe_outside_area,
+                               int const section_index)
+{
+    double const grout_area = borehole_area_fraction - pipe_outside_area;
+    if (grout_area <= 0)
+    {
+        OGS_FATAL(
+            "Non-positive grout cross-sectional area at section {:d}. "
+            "Borehole diameter is too small for the pipe dimensions.",
+            section_index);
+    }
+    return grout_area;
+}
+
 class BHECommon
 {
 public:

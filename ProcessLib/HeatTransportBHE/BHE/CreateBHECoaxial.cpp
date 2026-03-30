@@ -6,6 +6,7 @@
 #include "BHE_CXA.h"
 #include "BHE_CXC.h"
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 #include "CreateFlowAndTemperatureControl.h"
 namespace ProcessLib
 {
@@ -48,6 +49,33 @@ parseBHECoaxialConfig(
             "longitudinal_dispersion_length");
     PipeConfigurationCoaxial const pipes{inner_pipe, outer_pipe,
                                          pipe_longitudinal_dispersion_length};
+
+    double const annulus_diameter =
+        coaxialPipesAnnulusDiameter(pipes.inner_pipe, pipes.outer_pipe);
+    if (annulus_diameter <= 0)
+    {
+        OGS_FATAL(
+            "Invalid coaxial pipe geometry: outer pipe inner diameter ({:g}) "
+            "must be greater than inner pipe outside diameter ({:g}).",
+            pipes.outer_pipe.diameter, pipes.inner_pipe.outsideDiameter());
+    }
+
+    double const outer_pipe_outside_diameter =
+        pipes.outer_pipe.outsideDiameter();
+    for (int section_index = 0;
+         section_index < borehole_geometry.sections.getNumberOfSections();
+         ++section_index)
+    {
+        double const D =
+            borehole_geometry.sections.diameterAtSection(section_index);
+        if (D <= outer_pipe_outside_diameter)
+        {
+            OGS_FATAL(
+                "Invalid coaxial geometry at section {:d}: borehole diameter "
+                "{:g} must be greater than outer pipe outside diameter {:g}.",
+                section_index, D, outer_pipe_outside_diameter);
+        }
+    }
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout}
     auto const grout = createGroutParameters(config.getConfigSubtree("grout"));

@@ -250,10 +250,10 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::crossSectionAreas(
     double const quarter_borehole_area =
         borehole_geometry.sections.areaAtSection(section_index) /
         number_of_grout_zones;
-    double const grout_area_inlet =
-        quarter_borehole_area - _pipes.inlet.outsideArea();
-    double const grout_area_outlet =
-        quarter_borehole_area - _pipes.outlet.outsideArea();
+    double const grout_area_inlet = checkedGroutArea(
+        quarter_borehole_area, _pipes.inlet.outsideArea(), section_index);
+    double const grout_area_outlet = checkedGroutArea(
+        quarter_borehole_area, _pipes.outlet.outsideArea(), section_index);
 
     return {{
         _pipes.inlet.area(),   // i1
