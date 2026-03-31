@@ -362,13 +362,17 @@ void Grid<POINT>::createGridGeometry(GeoLib::GEOObjects* geo_obj) const
 
                 auto* ply0(new GeoLib::Polyline(points));
                 for (std::size_t l(0); l < 4; l++)
+                {
                     ply0->addPoint(l);
+                }
                 ply0->addPoint(0);
                 plys.push_back(ply0);
 
                 auto* ply1(new GeoLib::Polyline(points));
                 for (std::size_t l(4); l < 8; l++)
+                {
                     ply1->addPoint(l);
+                }
                 ply1->addPoint(4);
                 plys.push_back(ply1);
 
@@ -641,7 +645,9 @@ bool Grid<POINT>::calcNearestPointInGridCell(
         typename std::remove_pointer<POINT>::type>::type> const&
         pnts(_grid_cell_nodes_map[grid_idx]);
     if (pnts.empty())
+    {
         return false;
+    }
 
     const std::size_t n_pnts(pnts.size());
     sqr_min_dist =

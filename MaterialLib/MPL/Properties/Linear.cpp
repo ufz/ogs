@@ -39,16 +39,24 @@ double IndependentVariable::valueUnclamped(
     if (auto* str_ptr = std::get_if<std::string>(&type))
     {
         if (*str_ptr == "t")
+        {
             return t;
+        }
 
         if (*str_ptr == "x")
+        {
             return pos.getCoordinates().value()[0];
+        }
 
         if (*str_ptr == "y")
+        {
             return pos.getCoordinates().value()[1];
+        }
 
         if (*str_ptr == "z")
+        {
             return pos.getCoordinates().value()[2];
+        }
 
         OGS_FATAL("Unknown independent variable {:s} for a linear property.",
                   *str_ptr)

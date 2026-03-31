@@ -9,13 +9,21 @@ const char* varTypeToString(int v)
 {
     using V = mgis::behaviour::Variable;
     if (v == V::SCALAR)
+    {
         return "SCALAR";
+    }
     if (v == V::VECTOR)
+    {
         return "VECTOR";
+    }
     if (v == V::STENSOR)
+    {
         return "STENSOR";
+    }
     if (v == V::TENSOR)
+    {
         return "TENSOR";
+    }
 
     OGS_FATAL("Unknown variable type {}.", v);
 }

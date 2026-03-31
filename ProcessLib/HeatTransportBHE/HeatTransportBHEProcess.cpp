@@ -329,7 +329,9 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
 {
     // if the process use python boundary condition
     if (_process_data.py_bc_object == nullptr || !(_process_data._use_tespy))
+    {
         return NumLib::IterationResult::SUCCESS;
+    }
 
     // Here the task is to get current time flowrate and flow temperature from
     // TESPy and determine whether it converges.
@@ -363,7 +365,9 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
     }
     auto const tespy_has_converged = std::get<1>(tespy_result);
     if (tespy_has_converged == true)
+    {
         return NumLib::IterationResult::SUCCESS;
+    }
 
     return NumLib::IterationResult::REPEAT_ITERATION;
 }

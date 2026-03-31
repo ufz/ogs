@@ -138,7 +138,9 @@ public:
     {
         os << "Dictionary size: " << m._dict.size() << "\n";
         for (auto l : m._dict)
+        {
             os << l << "\n";
+        }
         return os;
     }
 #endif  // NDEBUG

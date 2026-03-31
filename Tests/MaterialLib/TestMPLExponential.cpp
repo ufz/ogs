@@ -72,7 +72,9 @@ TEST_F(MaterialPropertyLibExponentialProperty, TestNumericalDerivatives)
 
         if ((std::abs(dv - Dv) > 1e-9 * v) ||
             (std::abs(dv2 - Dv2) > 1.5e-4 * v))
+        {
             INFO("{} {} {}", T, std::abs(dv - Dv) / v, std::abs(dv2 - Dv2) / v);
+        }
 
         return (std::abs(dv - Dv) <= 1e-9 * v) &&
                (std::abs(dv2 - Dv2) <= 1.5e-4 * v);

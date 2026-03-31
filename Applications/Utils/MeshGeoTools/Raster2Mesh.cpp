@@ -80,18 +80,28 @@ int main(int argc, char* argv[])
                                             : MeshLib::MeshElemType::QUAD;
     MeshLib::UseIntensityAs intensity_type;
     if (arg_pixel_type.getValue() == "elevation")
+    {
         intensity_type = MeshLib::UseIntensityAs::ELEVATION;
+    }
     else if (arg_pixel_type.getValue() == "materials")
+    {
         intensity_type = MeshLib::UseIntensityAs::MATERIALS;
+    }
     else
+    {
         intensity_type = MeshLib::UseIntensityAs::DATAVECTOR;
+    }
 
     std::string array_name = "Values";
     if (intensity_type == MeshLib::UseIntensityAs::DATAVECTOR &&
         array_name_arg.isSet())
+    {
         array_name = array_name_arg.getValue().c_str();
+    }
     else if (intensity_type == MeshLib::UseIntensityAs::MATERIALS)
+    {
         array_name = "MaterialIDs";
+    }
 
     std::unique_ptr<MeshLib::Mesh> const mesh(
         MeshToolsLib::RasterToMesh::convert(*raster, elem_type, intensity_type,

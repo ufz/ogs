@@ -434,7 +434,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         // Subtract non-equilibrium initial residuum if set
         if (_r_neq != nullptr)
+        {
             LinAlg::axpy(res, -1, *_r_neq);
+        }
 
         minus_delta_x.setZero();
 

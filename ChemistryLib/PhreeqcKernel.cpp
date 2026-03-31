@@ -312,7 +312,9 @@ void PhreeqcKernel::reset(std::size_t const chemical_system_id)
         for (int j = 0; j < count_unknowns; j++)
         {
             if (x == nullptr || x[j]->type != PP)
+            {
                 continue;
+            }
 
             auto& phase_components = Rxn_pp_assemblage_map[chemical_system_id]
                                          .Get_pp_assemblage_comps();
