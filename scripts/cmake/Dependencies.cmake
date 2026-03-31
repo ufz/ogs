@@ -33,6 +33,7 @@ if(OGS_BUILD_TESTING)
                     "BUILD_SHARED_LIBS OFF"
             EXCLUDE_FROM_ALL YES SYSTEM TRUE
         )
+        list(APPEND DISABLE_WARNINGS_TARGETS gtest gmock gtest_main gmock_main)
         if(googletest_ADDED AND WIN32)
             target_compile_options(gtest PRIVATE /EHsc)
             target_compile_options(gmock PRIVATE /EHsc)
