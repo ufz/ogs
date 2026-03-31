@@ -36,7 +36,7 @@ PropertyDataType AverageMolarMass::value(
         return phase->property(PropertyType::molar_mass)
             .template value<double>(variable_array, pos, t, dt);
     }
-    else if (numberOfComponents > 2)
+    if (numberOfComponents > 2)
     {
         OGS_FATAL(
             "AverageMolarMass::value only allows for phases consisting of up "
@@ -93,7 +93,7 @@ PropertyDataType AverageMolarMass::dValue(
     {
         return 0.;
     }
-    else if (numberOfComponents > 2)
+    if (numberOfComponents > 2)
     {
         OGS_FATAL(
             "AverageMolarMass::dValue is currently implemented two or less "

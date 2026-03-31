@@ -264,10 +264,9 @@ int main(int argc, char* argv[])
             {
                 return v;
             }
-            else
-            {
-                return v1;
-            }
+
+            return v1;
+
         };
         if (generateQuadGeometry(
                 p0, p1, nx.getValue(), eval(nx.getValue(), nx1.getValue()),

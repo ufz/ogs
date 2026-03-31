@@ -25,10 +25,9 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
               {
                   return std::vector<XdmfDimType>{0, 0};
               }
-              else
-              {
-                  return std::vector<XdmfDimType>{0};
-              }
+
+              return std::vector<XdmfDimType>{0};
+
           }()),
       strides(
           [&size_tuple]()
@@ -37,10 +36,9 @@ XdmfData::XdmfData(std::size_t const size_partitioned_dim,
               {
                   return std::vector<XdmfDimType>{1, 1};
               }
-              else
-              {
-                  return std::vector<XdmfDimType>{1};
-              }
+
+              return std::vector<XdmfDimType>{1};
+
           }()),
       data_type(mesh_property_data_type),
       size_partitioned_dim(size_partitioned_dim),

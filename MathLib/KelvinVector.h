@@ -21,7 +21,7 @@ constexpr int kelvin_vector_dimensions(int const displacement_dim)
     {
         return 4;
     }
-    else if (displacement_dim == 3)
+    if (displacement_dim == 3)
     {
         return 6;
     }

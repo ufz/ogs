@@ -44,18 +44,15 @@ void createSecondaryVariables(BaseLib::ConfigTree const& config,
             {
                 return {*name, *name};
             }
-            else
-            {
-                auto const internal_name =
-                    //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__internal_name}
-                    sec_var_config.getConfigAttribute<std::string>(
-                        "internal_name");
-                auto const output_name =
-                    //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__output_name}
-                    sec_var_config.getConfigAttribute<std::string>(
-                        "output_name");
-                return {internal_name, output_name};
-            }
+
+            auto const internal_name =
+                //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__internal_name}
+                sec_var_config.getConfigAttribute<std::string>("internal_name");
+            auto const output_name =
+                //! \ogs_file_attr{prj__processes__process__secondary_variables__secondary_variable__output_name}
+                sec_var_config.getConfigAttribute<std::string>("output_name");
+            return {internal_name, output_name};
+
         }();
 
         secondary_variables.addNameMapping(internal_name, output_name);

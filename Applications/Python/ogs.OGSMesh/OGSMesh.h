@@ -70,40 +70,37 @@ public:
                  fmt::ptr(&(it->second)));
             return it->second;
         }
-        else
+
+        // 2D case: (n_items, n_components)
+        auto const& [it, success] = data_array_mapping.insert(
+            {name,
+             pybind11::array(
+                 pybind11::buffer_info(
+                     property->data(),                          // data pointer
+                     sizeof(T),                                 // item size
+                     pybind11::format_descriptor<T>::format(),  // dtype
+                                                                // format
+                                                                // string
+                     2,                                         // ndim
+                     std::vector<pybind11::ssize_t>{
+                         static_cast<pybind11::ssize_t>(property->size() /
+                                                        n_components),
+                         static_cast<pybind11::ssize_t>(
+                             n_components)},  // shape
+                     std::vector<pybind11::ssize_t>{
+                         static_cast<pybind11::ssize_t>(sizeof(T) *
+                                                        n_components),
+                         static_cast<pybind11::ssize_t>(sizeof(T))}  // strides
+                     ),
+                 capsule)});
+        if (!success)
         {
-            // 2D case: (n_items, n_components)
-            auto const& [it, success] = data_array_mapping.insert(
-                {name,
-                 pybind11::array(
-                     pybind11::buffer_info(
-                         property->data(),  // data pointer
-                         sizeof(T),         // item size
-                         pybind11::format_descriptor<T>::format(),  // dtype
-                                                                    // format
-                                                                    // string
-                         2,                                         // ndim
-                         std::vector<pybind11::ssize_t>{
-                             static_cast<pybind11::ssize_t>(property->size() /
-                                                            n_components),
-                             static_cast<pybind11::ssize_t>(
-                                 n_components)},  // shape
-                         std::vector<pybind11::ssize_t>{
-                             static_cast<pybind11::ssize_t>(sizeof(T) *
-                                                            n_components),
-                             static_cast<pybind11::ssize_t>(sizeof(T))}
-                         // strides
-                         ),
-                     capsule)});
-            if (!success)
-            {
-                OGS_FATAL("Could not insert data array '{}' into internal map.",
-                          name);
-            }
+            OGS_FATAL("Could not insert data array '{}' into internal map.",
+                      name);
+        }
             INFO("insert data array '{}' with address: {}", name,
                  fmt::ptr(&(it->second)));
             return it->second;
-        }
     }
 
     pybind11::object dataArray_dispatch(std::string const& name,

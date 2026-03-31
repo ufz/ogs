@@ -306,13 +306,10 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                                                     h5filename, mesh_name);
                 return component_transform(attr, dataitem);
             }
-            else
-            {
-                // index + 3  0 Time, 1 Geometry 2 Topology
-                std::array<unsigned int, 5> position = {
-                    1, 1, 2, 1, static_cast<unsigned int>(index)};
-                return pointer_transfrom(position);
-            };
+            // index + 3  0 Time, 1 Geometry 2 Topology
+            std::array<unsigned int, 5> position = {
+                1, 1, 2, 1, static_cast<unsigned int>(index)};
+            return pointer_transfrom(position);
         };
     };
 

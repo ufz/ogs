@@ -862,10 +862,9 @@ REAL *h;
     }
   }
   if (hindex == -1) {
-    return 1;
-  } else {
-    return hindex + 1;
+      return 1;
   }
+  return hindex + 1;
 }
 
 /*****************************************************************************/
@@ -1631,16 +1630,14 @@ REAL *pc;
 
   if (detleft > 0.0) {
     if (detright <= 0.0) {
-      return det;
-    } else {
-      detsum = detleft + detright;
+        return det;
     }
+    detsum = detleft + detright;
   } else if (detleft < 0.0) {
     if (detright >= 0.0) {
-      return det;
-    } else {
-      detsum = -detleft - detright;
+        return det;
     }
+    detsum = -detleft - detright;
   } else {
     return det;
   }
