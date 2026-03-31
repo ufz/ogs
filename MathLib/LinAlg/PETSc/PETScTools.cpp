@@ -3,6 +3,8 @@
 
 #include "PETScTools.h"
 
+#include "BaseLib/Error.h"
+
 namespace MathLib
 {
 void applyKnownSolution(PETScMatrix& A, PETScVector& b, PETScVector& x,
