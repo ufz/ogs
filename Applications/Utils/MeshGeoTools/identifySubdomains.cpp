@@ -61,8 +61,8 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> output_prefix_arg(
         "o",
-        "output_prefix (.vtu)",
-        "Output. Prefix the subdomain meshes' filenames with the output "
+        "output_prefix",
+        "Output (.vtu). Prefix the subdomain meshes' filenames with the output "
         "prefix/path.",
         false,
         "",
