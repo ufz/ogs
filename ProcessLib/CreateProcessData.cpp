@@ -50,6 +50,18 @@ static std::unique_ptr<ProcessData> makeProcessData(
     if (auto* nonlinear_solver_petsc =
             dynamic_cast<NumLib::PETScNonlinearSolver*>(&nonlinear_solver))
     {
+        for (auto const& pv : process.getProcessVariables(process_id))
+        {
+            if (pv.get().compensateNonEquilibriumInitialResiduum())
+            {
+                OGS_FATAL(
+                    "The PETSc SNES nonlinear solver does not support "
+                    "'compensate_non_equilibrium_initial_residuum', but it "
+                    "is set for process variable '{}'. Please use the "
+                    "Picard or Newton-Raphson solver instead.",
+                    pv.get().getName());
+            }
+        }
         return std::make_unique<ProcessData>(
             std::move(timestepper), Tag::Newton, *nonlinear_solver_petsc,
             std::move(conv_crit), std::move(time_disc), process_id,
