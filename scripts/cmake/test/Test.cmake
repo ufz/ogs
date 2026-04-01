@@ -48,9 +48,9 @@ set(OGS_OPENMP_PARALLEL_ASM_PROCESSES
 )
 
 option(
-    OGS_SKIP_NON_OMP_DUPLICATE_TESTS
-    "Disable non-OpenMP tests when an OpenMP variant is registered, too."
-    ON
+    OGS_ENABLE_NON_OMP_TEST_VARIANTS
+    "Register non-OpenMP tests in addition to OpenMP variants when both exist."
+    OFF
 )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)

@@ -88,7 +88,14 @@ function(OgsTest)
         set(_has_omp_variant TRUE)
     endif()
 
-    _ogs_add_test(${TEST_NAME})
+    set(_add_non_omp_variant TRUE)
+    if(NOT OGS_ENABLE_NON_OMP_TEST_VARIANTS AND _has_omp_variant)
+        set(_add_non_omp_variant FALSE)
+    endif()
+
+    if(_add_non_omp_variant)
+        _ogs_add_test(${TEST_NAME})
+    endif()
 
     if(_has_omp_variant)
         _ogs_add_test(${TEST_NAME}-omp)
@@ -136,8 +143,6 @@ macro(_ogs_add_test TEST_NAME)
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
-    _set_default_test_disabled(${TEST_NAME} _test_disabled OgsTest_DISABLED)
-
     set_tests_properties(
         ${TEST_NAME}
         PROPERTIES ${OgsTest_PROPERTIES}
@@ -146,7 +151,7 @@ macro(_ogs_add_test TEST_NAME)
                    COST
                    ${OgsTest_RUNTIME}
                    DISABLED
-                   ${_test_disabled}
+                   ${OgsTest_DISABLED}
                    LABELS
                    "${labels}"
                    ${timeout}
