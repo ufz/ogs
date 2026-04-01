@@ -80,12 +80,17 @@ function(OgsTest)
         list(APPEND labels large)
     endif()
 
-    _ogs_add_test(${TEST_NAME})
-
+    set(_has_omp_variant FALSE)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
     if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+        set(_has_omp_variant TRUE)
+    endif()
+
+    _ogs_add_test(${TEST_NAME})
+
+    if(_has_omp_variant)
         _ogs_add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
     endif()
@@ -131,6 +136,8 @@ macro(_ogs_add_test TEST_NAME)
             -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
+    _set_default_test_disabled(${TEST_NAME} _test_disabled OgsTest_DISABLED)
+
     set_tests_properties(
         ${TEST_NAME}
         PROPERTIES ${OgsTest_PROPERTIES}
@@ -139,7 +146,7 @@ macro(_ogs_add_test TEST_NAME)
                    COST
                    ${OgsTest_RUNTIME}
                    DISABLED
-                   ${OgsTest_DISABLED}
+                   ${_test_disabled}
                    LABELS
                    "${labels}"
                    ${timeout}

@@ -274,12 +274,17 @@ function(AddTest)
         list(APPEND labels large)
     endif()
 
-    _add_test(${TEST_NAME})
-
+    set(_has_omp_variant FALSE)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
     if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+        set(_has_omp_variant TRUE)
+    endif()
+
+    _add_test(${TEST_NAME})
+
+    if(_has_omp_variant)
         _add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
     endif()
@@ -290,11 +295,23 @@ function(AddTest)
 
     # Run the tester
     _add_test_tester(${TEST_NAME})
-    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+    if(_has_omp_variant)
         _add_test_tester(${TEST_NAME}-omp)
     endif()
 
 endfunction()
+
+# Set the disabled variable to the source disabled variable. If the test is not
+# an OpenMP variant and OGS_SKIP_NON_OMP_DUPLICATE_TESTS is set, set the
+# disabled variable to TRUE.
+macro(_set_default_test_disabled TEST_NAME DISABLED_VAR SOURCE_DISABLED_VAR)
+    set(${DISABLED_VAR} ${${SOURCE_DISABLED_VAR}})
+    if(OGS_SKIP_NON_OMP_DUPLICATE_TESTS AND _has_omp_variant
+       AND NOT "${TEST_NAME}" MATCHES "-omp$"
+    )
+        set(${DISABLED_VAR} TRUE)
+    endif()
+endmacro()
 
 # Add a ctest and sets properties
 macro(_add_test TEST_NAME)
@@ -357,13 +374,15 @@ macro(_add_test TEST_NAME)
         )
     endif()
 
+    _set_default_test_disabled(${TEST_NAME} _test_disabled AddTest_DISABLED)
+
     set_tests_properties(
         ${TEST_NAME}
         PROPERTIES ${AddTest_PROPERTIES}
                    COST
                    ${AddTest_RUNTIME}
                    DISABLED
-                   ${AddTest_DISABLED}
+                   ${_test_disabled}
                    LABELS
                    "${labels}"
                    ${timeout}
@@ -632,9 +651,10 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             --debug-output
         WORKING_DIRECTORY ${AddTest_SOURCE_PATH}
     )
+    _set_default_test_disabled(${TEST_NAME} _test_disabled AddTest_DISABLED)
     set_tests_properties(
         ${TESTER_NAME} PROPERTIES DEPENDS ${TEST_NAME} DISABLED
-                                  ${AddTest_DISABLED} LABELS "tester;${labels}"
+                                  ${_test_disabled} LABELS "tester;${labels}"
     )
 endmacro()
 
