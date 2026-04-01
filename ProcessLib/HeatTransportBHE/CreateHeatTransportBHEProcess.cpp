@@ -6,6 +6,7 @@
 #include <pybind11/pybind11.h>
 
 #include <algorithm>
+#include <cmath>
 #include <map>
 #include <ranges>
 #include <vector>
@@ -25,50 +26,53 @@ namespace ProcessLib
 {
 namespace HeatTransportBHE
 {
-std::map<std::string_view,
-         std::function<BHE::BHETypes(
-             BaseLib::ConfigTree const&,
-             std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&,
-             std::map<std::string,
-                      std::unique_ptr<
-                          MathLib::PiecewiseLinearInterpolation>> const&)>>
-    bheCreators = {{"1U",
-                    [](auto& config, auto& parameters, auto& curves)
-                    {
-                        return BHE::BHE_1U(BHE::createBHEUType<BHE::BHE_1U>(
-                            config, parameters, curves));
-                    }},
-                   {"2U",
-                    [](auto& config, auto& parameters, auto& curves)
-                    {
-                        return BHE::BHE_2U(BHE::createBHEUType<BHE::BHE_2U>(
-                            config, parameters, curves));
-                    }},
-                   {"CXA",
-                    [](auto& config, auto& parameters, auto& curves)
-                    {
-                        return BHE::BHE_CXA(BHE::createBHECoaxial<BHE::BHE_CXA>(
-                            config, parameters, curves));
-                    }},
-                   {"CXC",
-                    [](auto& config, auto& parameters, auto& curves)
-                    {
-                        return BHE::BHE_CXC(BHE::createBHECoaxial<BHE::BHE_CXC>(
-                            config, parameters, curves));
-                    }},
-                   {"1P", [](auto& config, auto& parameters, auto& curves)
-                    {
-                        return BHE::BHE_1P(BHE::createBHE1PType<BHE::BHE_1P>(
-                            config, parameters, curves));
-                    }}};
+using BHECreatorFunc = std::function<BHE::BHETypes(
+    BaseLib::ConfigTree const&,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&,
+    std::vector<MeshLib::Node*> const&)>;
+
+std::map<std::string_view, BHECreatorFunc> bheCreators = {
+    {"1U",
+     [](auto& config, auto& parameters, auto& curves, auto& bhe_nodes)
+     {
+         return BHE::BHE_1U(BHE::createBHEUType<BHE::BHE_1U>(
+             config, parameters, curves, bhe_nodes));
+     }},
+    {"2U",
+     [](auto& config, auto& parameters, auto& curves, auto& bhe_nodes)
+     {
+         return BHE::BHE_2U(BHE::createBHEUType<BHE::BHE_2U>(
+             config, parameters, curves, bhe_nodes));
+     }},
+    {"CXA",
+     [](auto& config, auto& parameters, auto& curves, auto& bhe_nodes)
+     {
+         return BHE::BHE_CXA(BHE::createBHECoaxial<BHE::BHE_CXA>(
+             config, parameters, curves, bhe_nodes));
+     }},
+    {"CXC",
+     [](auto& config, auto& parameters, auto& curves, auto& bhe_nodes)
+     {
+         return BHE::BHE_CXC(BHE::createBHECoaxial<BHE::BHE_CXC>(
+             config, parameters, curves, bhe_nodes));
+     }},
+    {"1P", [](auto& config, auto& parameters, auto& curves, auto& bhe_nodes)
+     {
+         return BHE::BHE_1P(BHE::createBHE1PType<BHE::BHE_1P>(
+             config, parameters, curves, bhe_nodes));
+     }}};
 
 void createAndInsertBHE(
-    const std::string& bhe_type, const std::vector<int>& bhe_ids_of_this_bhe,
+    const std::string& bhe_type,
+    const std::vector<int>& bhe_ids_of_this_bhe,
     const BaseLib::ConfigTree& bhe_config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves,
+    BHEMeshData const& bhe_mesh_data,
     std::map<int, BHE::BHETypes>& bhes_map)
 {
     auto bhe_creator_it = bheCreators.find(bhe_type);
@@ -78,16 +82,42 @@ void createAndInsertBHE(
     }
     for (auto const& id : bhe_ids_of_this_bhe)
     {
+        if (id < 0 || id >= static_cast<int>(bhe_mesh_data.BHE_nodes.size()))
+        {
+            OGS_FATAL(
+                "BHE id {:d} is out of range. The mesh contains {:d} "
+                "BHE(s) (valid ids: 0 to {:d}).",
+                id, bhe_mesh_data.BHE_nodes.size(),
+                static_cast<int>(bhe_mesh_data.BHE_nodes.size()) - 1);
+        }
         std::pair<std::map<int, BHE::BHETypes>::iterator, bool> result;
         if (id == bhe_ids_of_this_bhe[0])
         {
+            auto const& bhe_nodes =
+                bhe_mesh_data.BHE_topology_ordered_nodes[id];
             result = bhes_map.try_emplace(
-                id, bhe_creator_it->second(bhe_config, parameters, curves));
+                id, bhe_creator_it->second(bhe_config, parameters, curves,
+                                           bhe_nodes));
         }
         else
         {
+            // ConfigTree enforces single-read semantics, so we cannot
+            // re-parse the same config block.  Grouped BHEs share all
+            // configuration except the borehole geometry, which is rebuilt
+            // per-ID from each BHE's own node set.
+            auto const& first_bhe =
+                bhes_map.find(bhe_ids_of_this_bhe[0])->second;
+            auto const& bhe_nodes =
+                bhe_mesh_data.BHE_topology_ordered_nodes[id];
             result = bhes_map.try_emplace(
-                id, bhes_map.find(bhe_ids_of_this_bhe[0])->second);
+                id,
+                std::visit(
+                    [&](auto const& bhe) -> BHE::BHETypes
+                    {
+                        return bhe.withGeometry(
+                            bhe.borehole_geometry.rebuildForNodes(bhe_nodes));
+                    },
+                    first_bhe));
         }
         if (!result.second)
         {
@@ -227,7 +257,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger}
         bhe_configs.getConfigSubtreeList("borehole_heat_exchanger"))
     {
-        auto bhe_id_string =
+        auto const bhe_id_string =
             //! \ogs_file_attr{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__id}
             bhe_config.getConfigAttribute<std::string>(
                 "id", std::to_string(bhe_iterator));
@@ -236,7 +266,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
 
         if (bhe_id_string == "*")
         {
-            int size = static_cast<int>(bhe_mesh_data.BHE_mat_IDs.size());
+            int const size = static_cast<int>(bhe_mesh_data.BHE_mat_IDs.size());
             bhe_ids_of_this_bhe.resize(size);
             std::iota(bhe_ids_of_this_bhe.begin(), bhe_ids_of_this_bhe.end(),
                       0);
@@ -253,7 +283,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
             bhe_config.getConfigParameter<std::string>("type");
 
         createAndInsertBHE(bhe_type, bhe_ids_of_this_bhe, bhe_config,
-                           parameters, curves, bhes_map);
+                           parameters, curves, bhe_mesh_data, bhes_map);
         bhe_iterator++;
     }
 
@@ -271,6 +301,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     std::vector<BHE::BHETypes> bhes;
     bhes.reserve(bhes_map.size());
     std::ranges::copy(bhes_map | std::views::values, std::back_inserter(bhes));
+    bhe_mesh_data.updateElementSectionIndices(bhes);
     //  end of reading BHE parameters
     //  -------------------------------------------
 

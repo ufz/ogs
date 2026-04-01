@@ -54,7 +54,9 @@ To use one BHE definition for multiple BHE, the id notation from the medium is s
 
 ### `<borehole>`
 
-The borehole `<length>` and `<diameter>` are defined here. The unit of these parameters are in $\mathrm{m}$. Here is an example of a borehole with 18 m in length and 0.13 m in diameter.
+The borehole `<length>` and `<diameter>` are defined here. The unit of these parameters are in $\mathrm{m}$. The `<diameter>` accepts either a numeric value (constant diameter) or a parameter name referencing a `<parameter>` defined in the project-level `<parameters>` block.
+
+Here is an example of a borehole with 18 m in length and a constant diameter of 0.13 m:
 
 ```xml
 <borehole>
@@ -63,9 +65,45 @@ The borehole `<length>` and `<diameter>` are defined here. The unit of these par
 </borehole>
 ```
 
+#### Depth-dependent borehole diameter
+
+For boreholes with varying diameters at different depths (e.g., telescoping boreholes), the `<diameter>` can reference a parameter name instead of a numeric value. The referenced parameter defines a depth-dependent step function for the borehole diameter.
+
+Internally, each BHE is composed of 1D line elements. To determine the diameter sections, the code:
+
+1. Sorts all BHE nodes by z-coordinate from top (wellhead) to bottom.
+2. Walks the nodes top-to-bottom, computing the cumulative 3D distance from the wellhead.
+3. At each node, evaluates the referenced parameter at that node's spatial coordinates to obtain a diameter value.
+4. Groups consecutive nodes that share the same diameter into sections. A new section boundary is created at the node where the diameter value first changes.
+
+Here is an example of a borehole with 3 sections of different diameters, using a `Function` parameter:
+
+```xml
+<parameters>
+    <parameter>
+        <name>borehole_diameter</name>
+        <type>Function</type>
+        <expression>if(z > -6, 0.15, if(z > -12, 0.13, 0.11))</expression>
+    </parameter>
+</parameters>
+...
+<borehole>
+    <length>18.0</length>
+    <diameter>borehole_diameter</diameter>
+</borehole>
+```
+
+In this example (assuming the BHE extends from z=0 downward):
+
+* Section 1 (0-6 m depth): diameter 0.15 m
+* Section 2 (6-12 m depth): diameter 0.13 m
+* Section 3 (12-18 m depth): diameter 0.11 m
+
+The thermal resistance calculations are performed separately for each section, accounting for the different borehole geometries along the depth.
+
 ### `<type>`
 
-Currently there are 4 types of BHE available. Following the convention in Diersch et al. (2011a), they are named as 1U，2U，CXA and CXC types. In the OGS .prj file, it is defined as:
+Currently there are 5 types of BHE available. Following the convention in Diersch et al. (2011a), they are named as 1U, 2U, CXA, CXC, and 1P types. In the OGS .prj file, it is defined as:
 
 ```xml
 <type>2U</type>
@@ -74,11 +112,12 @@ Currently there are 4 types of BHE available. Following the convention in Diersc
 * `1U`: means there is only one single U-tube installed in the borehole;
 * `2U`: double U-tubes installed in the borehole;
 * `CXA`: coaxial pipe with annular space as the inlet downwards flow and the centre part as outlet upwards flow;
-* `CXC`: coaxial pipe with a reversed flow direction to CXA type.
+* `CXC`: coaxial pipe with a reversed flow direction to CXA type;
+* `1P`: single coaxial pipe where the fluid flows down through a central pipe and returns upward through the annular space between the pipe and the borehole wall. Only one pipe (the inner pipe) is configured; the grout-filled annulus serves as the return flow path.
 
 Especially in CXA and CXC type, the direction of the borehole itself could be deviated by any angle, which is defined by mesh. The inflow direction will be in accordance with the direction of the line element (represents the BHE borehole) in the mesh. And the outlet direction is the opposite of the inflow direction.
 
-The cross-sections of these 4 types of BHEs are illustrated in the following figures.
+The cross-sections of the U-type and coaxial BHEs are illustrated in the following figures.
 
 {{< figure src="u_type.png" >}}
 
@@ -88,10 +127,11 @@ The cross-sections of these 4 types of BHEs are illustrated in the following fig
 
 The properties of the pipes are defined in this section. For different types of BHE, the pipes are also configured differently.
 
-* For coaxial pipes (`CXA` or `CXC`), `<longitudinal_dispersion_length>` should be given.
-* For `1U` and `2U` type pipe, the `<distance_between_pipes>` must be given, along side with the `<longitudinal_dispersion_length>`.
+* For `1U` and `2U` type, both `<inlet>` and `<outlet>` pipes must be given, along with `<distance_between_pipes>` and `<longitudinal_dispersion_length>`.
+* For coaxial pipes (`CXA` or `CXC`), `<outer>` and `<inner>` pipes must be given along with `<longitudinal_dispersion_length>`. No `<distance_between_pipes>` is needed.
+* For `1P` type, only the `<inlet>` pipe is configured, along with `<longitudinal_dispersion_length>`. There is no separate outlet pipe since the return flow passes through the annulus.
 
-The units of these parameters are all in $\mathrm{m}$. Here is an example of a 2U type BHE. The inlet and outlet pipe are all made of high-density polyethylene (HDPE).
+The units of these parameters are all in $\mathrm{m}$. Here is an example of a 2U type BHE. The inlet and outlet pipes are made of high-density polyethylene (HDPE).
 
 ```xml
 <pipes>
@@ -106,6 +146,19 @@ The units of these parameters are all in $\mathrm{m}$. Here is an example of a 2
         <wall_thermal_conductivity>0.42</wall_thermal_conductivity>
     </outlet>
     <distance_between_pipes>0.053</distance_between_pipes>
+    <longitudinal_dispersion_length>0.001</longitudinal_dispersion_length>
+</pipes>
+```
+
+Here is an example for a `1P` type BHE:
+
+```xml
+<pipes>
+    <inlet>
+        <diameter>0.25826</diameter>
+        <wall_thickness>0.00587</wall_thickness>
+        <wall_thermal_conductivity>1.3</wall_thermal_conductivity>
+    </inlet>
     <longitudinal_dispersion_length>0.001</longitudinal_dispersion_length>
 </pipes>
 ```

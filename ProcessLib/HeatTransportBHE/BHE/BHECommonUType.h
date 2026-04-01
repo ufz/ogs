@@ -3,11 +3,9 @@
 
 #pragma once
 
-#include <Eigen/Core>
-
 #include "BHECommon.h"
-#include "FlowAndTemperatureControl.h"
 #include "PipeConfigurationUType.h"
+#include "ThermalResistanceHelpers.h"
 
 namespace ProcessLib
 {
@@ -32,9 +30,6 @@ public:
 
 protected:
     PipeConfigurationUType const _pipes;
-
-    /// Flow velocity inside the pipes. Depends on the flow_rate.
-    double _flow_velocity = std::numeric_limits<double>::quiet_NaN();
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

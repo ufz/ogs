@@ -12,6 +12,7 @@
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ProcessLib/Deformation/BMatrixPolicy.h"
 #include "ProcessLib/Deformation/LinearBMatrix.h"
+#include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
 #include "SecondaryData.h"
 
@@ -43,7 +44,8 @@ public:
         MeshLib::Element const& e,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        HeatTransportBHEProcessData& process_data);
+        HeatTransportBHEProcessData& process_data,
+        BHEMeshData const& bhe_mesh_data);
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,

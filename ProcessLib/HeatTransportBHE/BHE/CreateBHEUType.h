@@ -7,6 +7,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "BHECommon.h"
 #include "FlowAndTemperatureControl.h"
@@ -15,6 +16,14 @@
 namespace BaseLib
 {
 class ConfigTree;
+}
+namespace MeshLib
+{
+class Node;
+}
+namespace ParameterLib
+{
+struct ParameterBase;
 }
 namespace ProcessLib
 {
@@ -28,7 +37,8 @@ T_BHE createBHEUType(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+        curves,
+    std::vector<MeshLib::Node*> const& bhe_nodes);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

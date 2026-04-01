@@ -293,6 +293,20 @@ AddTest(
 )
 
 AddTest(
+    NAME HeatTransportBHE_3D_2U_BHE_sections
+    PATH Parabolic/T/3D_2U_BHE
+    RUNTIME 14
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 3D_2U_BHE_sections.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    3D_2U_BHE_sections_ts_10_t_600.000000.vtu 3D_2U_BHE_sections_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
+    3D_2U_BHE_sections_ts_10_t_600.000000.vtu 3D_2U_BHE_sections_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+)
+
+AddTest(
     NAME HeatTransportBHE_3D_3BHEs
     PATH Parabolic/T/3D_3BHEs
     RUNTIME 9
@@ -334,7 +348,7 @@ AddTest(
     EXECUTABLE_ARGS id_out_of_range.xml
     REQUIREMENTS NOT OGS_USE_MPI
     PROPERTIES
-    PASS_REGULAR_EXPRESSION "The maximum given BHE id '100' did not match the number of given BHE definitions '3'. The BHE ids needs to be defined starting from 0, so the maximum BHE id needs to be number of BHE definitions minus 1. After all definitions there are no gaps allowed between the given ids."
+    PASS_REGULAR_EXPRESSION "BHE id 100 is out of range. The mesh contains 3 BHE"
 )
 
 AddTest(
@@ -362,6 +376,22 @@ AddTest(
     3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 0 1e-12
     3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 0 1e-12
     3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-12
+)
+
+AddTest(
+    NAME HeatTransportBHE_3D_3BHEs_BHE_id_1U_sections
+    PATH Parabolic/T/3D_3BHEs
+    RUNTIME 14
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS 3bhes_id_1U_sections.prj
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT OGS_USE_MPI
+    DIFF_DATA
+    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-12
+    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 0 1e-12
+    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 0 1e-12
+    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-12
 )
 
 AddTest(
