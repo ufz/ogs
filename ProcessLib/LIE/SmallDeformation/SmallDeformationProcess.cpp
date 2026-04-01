@@ -194,11 +194,10 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
     _mesh_subset_matrix_nodes =
         std::make_unique<MeshLib::MeshSubset>(_mesh, _mesh.getNodes());
     // u jump
-    for (unsigned i = 0; i < _vec_fracture_nodes.size(); i++)
+    for (auto const& nodes : _vec_fracture_nodes)
     {
         _mesh_subset_fracture_nodes.push_back(
-            std::make_unique<MeshLib::MeshSubset const>(
-                _mesh, _vec_fracture_nodes[i]));
+            std::make_unique<MeshLib::MeshSubset const>(_mesh, nodes));
     }
     // enrichment for junctions
     _mesh_subset_junction_nodes =
@@ -224,13 +223,13 @@ void SmallDeformationProcess<DisplacementDim>::constructDofTable()
 
     std::vector<std::vector<MeshLib::Element*> const*> vec_var_elements;
     vec_var_elements.push_back(&_vec_matrix_elements);
-    for (unsigned i = 0; i < _vec_fracture_matrix_elements.size(); i++)
+    for (auto const& element : _vec_fracture_matrix_elements)
     {
-        vec_var_elements.push_back(&_vec_fracture_matrix_elements[i]);
+        vec_var_elements.push_back(&element);
     }
-    for (unsigned i = 0; i < _vec_junction_fracture_matrix_elements.size(); i++)
+    for (auto const& element : _vec_junction_fracture_matrix_elements)
     {
-        vec_var_elements.push_back(&_vec_junction_fracture_matrix_elements[i]);
+        vec_var_elements.push_back(&element);
     }
 
     INFO("[LIE/M] creating a DoF table");

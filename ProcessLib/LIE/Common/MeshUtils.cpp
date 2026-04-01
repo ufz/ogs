@@ -313,16 +313,14 @@ void getFractureMatrixDataInMesh(
                 }
                 auto const& elements_connected_to_node =
                     mesh.getElementsConnectedToNode(*node);
-                for (unsigned j = 0; j < elements_connected_to_node.size(); j++)
+                for (auto e : elements_connected_to_node)
                 {
                     // only matrix elements
-                    if (elements_connected_to_node[j]->getDimension() <
-                        mesh.getDimension())
+                    if (e->getDimension() < mesh.getDimension())
                     {
                         continue;
                     }
-                    vec_ele.push_back(const_cast<MeshLib::Element*>(
-                        elements_connected_to_node[j]));
+                    vec_ele.push_back(const_cast<MeshLib::Element*>(e));
                 }
             }
         }

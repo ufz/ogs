@@ -79,9 +79,9 @@ public:
 
     ~NumLibFemNaturalCoordinatesMappingTest() override
     {
-        for (auto itr = vec_nodes.begin(); itr != vec_nodes.end(); ++itr)
+        for (auto& vec_node : vec_nodes)
         {
-            delete *itr;
+            delete vec_node;
         }
         for (auto itr = vec_eles.begin(); itr != vec_eles.end(); ++itr)
         {

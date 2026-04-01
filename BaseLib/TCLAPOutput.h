@@ -71,11 +71,9 @@ public:
         std::list<TCLAP::ArgGroup*> argSets = _cmd.getArgGroups();
 
         std::list<TCLAP::Arg*> unlabelled;
-        for (std::list<TCLAP::ArgGroup*>::iterator sit = argSets.begin();
-             sit != argSets.end();
-             ++sit)
+        for (auto& argSet : argSets)
         {
-            TCLAP::ArgGroup& argGroup = **sit;
+            TCLAP::ArgGroup& argGroup = *argSet;
 
             int const visible = CountVisibleArgs(argGroup);
             bool const exclusive = visible > 1 && argGroup.isExclusive();
@@ -87,11 +85,9 @@ public:
                            3, 0);
             }
 
-            for (TCLAP::ArgGroup::iterator it = argGroup.begin();
-                 it != argGroup.end();
-                 ++it)
+            for (auto& it : argGroup)
             {
-                TCLAP::Arg& arg = **it;
+                TCLAP::Arg& arg = *it;
 
                 if (!arg.visibleInHelp())
                 {
@@ -114,13 +110,13 @@ public:
                     std::string const identifier = match[1];
 
                     ss << identifier;
-                    tryPrintValue<std::string>(*it, ss, required);
-                    tryPrintValue<int>(*it, ss, required);
-                    tryPrintValue<double>(*it, ss, required);
-                    tryPrintValue<float>(*it, ss, required);
-                    tryPrintValue<size_t>(*it, ss, required);
-                    tryPrintValue<unsigned>(*it, ss, required);
-                    tryPrintValue<unsigned int>(*it, ss, required);
+                    tryPrintValue<std::string>(it, ss, required);
+                    tryPrintValue<int>(it, ss, required);
+                    tryPrintValue<double>(it, ss, required);
+                    tryPrintValue<float>(it, ss, required);
+                    tryPrintValue<size_t>(it, ss, required);
+                    tryPrintValue<unsigned>(it, ss, required);
+                    tryPrintValue<unsigned int>(it, ss, required);
                     ss << ": ";
                 }
                 ss << arg.getDescription(required);

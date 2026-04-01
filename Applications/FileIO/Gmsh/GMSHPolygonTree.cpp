@@ -486,9 +486,9 @@ void GMSHPolygonTree::writeAdditionalPointData(std::size_t& pnt_id_offset,
         std::vector<std::size_t> const& id_map(
             (_geo_objs.getPointVecObj(quad_tree_geo))->getIDMap());
         auto& plys = _geo_objs.getPolylineVecObj(quad_tree_geo)->getVector();
-        for (std::size_t k(0); k < plys.size(); k++)
+        for (auto ply : plys)
         {
-            GeoLib::resetPointIDs(*plys[k], id_map);
+            GeoLib::resetPointIDs(*ply, id_map);
         }
     }
 #endif
