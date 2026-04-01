@@ -134,9 +134,8 @@ int main(int argc, char* argv[])
 
     TCLAP::ValueArg<std::string> output_base_fname(
         "o", "output-base-file-name",
-        "Output (.gli | .bc). The base name of the file the output (geometry (gli) and "
-        "boundary "
-        "condition (bc)) will be written to",
+        "Output (.gli | .bc). The base name of the file the output (geometry "
+        "(gli) and boundary condition (bc)) will be written to",
         true, "", "BASE_FILENAME_OUTPUT");
     cmd.add(output_base_fname);
 
