@@ -7,11 +7,6 @@ if(NOT CPM_SOURCE_CACHE)
                     "see https://www.opengeosys.org/docs/devguide/packages/cpm/.")
 endif()
 
-# Disable clang-tidy for cpm directories
-file(WRITE ${PROJECT_BINARY_DIR}/_deps/.clang-tidy
-    "---\nChecks: '-*,boost-use-to-string'"
-)
-
 if(OGS_BUILD_TESTING)
     if(GUIX_BUILD)
         find_package(GTest REQUIRED)
@@ -65,6 +60,7 @@ else()
         VERSION 1.15.3
         OPTIONS "BUILD_SHARED_LIBS OFF" SYSTEM TRUE
     )
+    list(APPEND DISABLE_WARNINGS_TARGETS spdlog)
 endif()
 
 if(GUIX_BUILD OR CONDA_BUILD)
@@ -216,7 +212,7 @@ if(OGS_USE_MFRONT)
                     "enable-website OFF" "CMAKE_POLICY_VERSION_MINIMUM 3.10" ${_enable_portable_build_option}
             EXCLUDE_FROM_ALL YES SYSTEM TRUE ${_mgis_patch_args}
         )
-        list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface)
+        list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface TFELMaterial TFELMaterialInterface TFELUtilities TFELException)
     endif()
 endif()
 
@@ -412,6 +408,7 @@ if(NOT (GUIX_BUILD OR CONDA_BUILD))
             SYSTEM TRUE
         )
         if(vtkdiff_ADDED)
+            list(APPEND DISABLE_WARNINGS_TARGETS vtkdiff)
             install(PROGRAMS $<TARGET_FILE:vtkdiff> DESTINATION bin)
         endif()
     endif()
@@ -609,6 +606,8 @@ foreach(target ${DISABLE_WARNINGS_TARGETS})
             ${target} PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-w>
                               $<$<CXX_COMPILER_ID:MSVC>:/W0>
         )
+        # Also disable clang-tidy on third-party targets
+        set_target_properties(${target} PROPERTIES CXX_CLANG_TIDY "")
     endif()
 endforeach()
 
