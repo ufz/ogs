@@ -26,8 +26,7 @@ void TRMVaporDiffusionModel<DisplacementDim>::eval(
 
     auto const& medium = media_data.medium;
 
-    MPL::Phase const* gas_phase =
-        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
+    MPL::Phase const* gas_phase = MPL::getOptionalPhase(medium, "Gas");
 
     out.setZero();
 

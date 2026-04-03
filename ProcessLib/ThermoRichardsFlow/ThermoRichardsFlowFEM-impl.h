@@ -214,8 +214,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
-    MPL::Phase const* gas_phase =
-        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
+    MPL::Phase const* gas_phase = getOptionalPhase(medium, "Gas");
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -714,8 +713,7 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& liquid_phase = medium.phase("AqueousLiquid");
     auto const& solid_phase = medium.phase("Solid");
-    MPL::Phase const* gas_phase =
-        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
+    MPL::Phase const* gas_phase = getOptionalPhase(medium, "Gas");
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 

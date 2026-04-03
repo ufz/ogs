@@ -102,4 +102,10 @@ Phase const& fluidPhase(Medium const& medium)
         "Neither Gas nor AqueousLiquid phase is available for the medium, but "
         "a fluid phase was requested.");
 }
+
+Phase const* getOptionalPhase(Medium const& medium,
+                              std::string const& phase_name)
+{
+    return medium.hasPhase(phase_name) ? &medium.phase(phase_name) : nullptr;
+}
 }  // namespace MaterialPropertyLib

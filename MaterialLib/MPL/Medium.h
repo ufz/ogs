@@ -104,4 +104,9 @@ void checkRequiredProperties(
 /// Returns a gas or aqueous liquid phase of the given medium.
 Phase const& fluidPhase(Medium const& medium);
 
+/// Returns a pointer to the phase with the given name, or nullptr if the phase
+/// does not exist in the medium.
+Phase const* getOptionalPhase(Medium const& medium,
+                              std::string const& phase_name);
+
 }  // namespace MaterialPropertyLib
