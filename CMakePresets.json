@@ -170,7 +170,7 @@
       ],
       "cacheVariables": {
         "OGS_USE_MFRONT": "ON",
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy"
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy;--header-filter=^(?!.*\\.cache).*"
       }
     },
     {
@@ -181,7 +181,7 @@
       ],
       "cacheVariables": {
         "OGS_USE_MFRONT": "ON",
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy"
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy;--header-filter=^(?!.*\\.cache).*"
       }
     },
     {
