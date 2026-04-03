@@ -303,8 +303,7 @@ function(AddTest)
     # Run the tester
     if(_add_non_omp_variant)
         _add_test_tester(${TEST_NAME})
-    endif()
-    if(_has_omp_variant)
+    elseif(_has_omp_variant)
         _add_test_tester(${TEST_NAME}-omp)
     endif()
 
