@@ -80,12 +80,24 @@ function(OgsTest)
         list(APPEND labels large)
     endif()
 
-    _ogs_add_test(${TEST_NAME})
-
+    set(_has_omp_variant FALSE)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
     if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+        set(_has_omp_variant TRUE)
+    endif()
+
+    set(_add_non_omp_variant TRUE)
+    if(NOT OGS_ENABLE_NON_OMP_TEST_VARIANTS AND _has_omp_variant)
+        set(_add_non_omp_variant FALSE)
+    endif()
+
+    if(_add_non_omp_variant)
+        _ogs_add_test(${TEST_NAME})
+    endif()
+
+    if(_has_omp_variant)
         _ogs_add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
     endif()

@@ -274,12 +274,24 @@ function(AddTest)
         list(APPEND labels large)
     endif()
 
-    _add_test(${TEST_NAME})
-
+    set(_has_omp_variant FALSE)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
     if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+        set(_has_omp_variant TRUE)
+    endif()
+
+    set(_add_non_omp_variant TRUE)
+    if(NOT OGS_ENABLE_NON_OMP_TEST_VARIANTS AND _has_omp_variant)
+        set(_add_non_omp_variant FALSE)
+    endif()
+
+    if(_add_non_omp_variant)
+        _add_test(${TEST_NAME})
+    endif()
+
+    if(_has_omp_variant)
         _add_test(${TEST_NAME}-omp)
         _set_omp_test_properties()
     endif()
@@ -289,8 +301,9 @@ function(AddTest)
     endif()
 
     # Run the tester
-    _add_test_tester(${TEST_NAME})
-    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+    if(_add_non_omp_variant)
+        _add_test_tester(${TEST_NAME})
+    elseif(_has_omp_variant)
         _add_test_tester(${TEST_NAME}-omp)
     endif()
 
@@ -343,13 +356,19 @@ macro(_add_test TEST_NAME)
     )
 
     if(DEFINED AddTest_DEPENDS)
-        if(NOT (TEST ${AddTest_DEPENDS} OR TARGET ${AddTest_DEPENDS}))
-            message(
-                FATAL_ERROR
-                    "AddTest ${TEST_NAME}: dependency ${AddTest_DEPENDS} does not exist!"
-            )
+        set(_depends ${AddTest_DEPENDS})
+        if(NOT (TEST ${_depends} OR TARGET ${_depends}))
+            # If non-OMP variant was skipped, check if -omp variant exists
+            if(NOT OGS_ENABLE_NON_OMP_TEST_VARIANTS AND TEST ${_depends}-omp)
+                set(_depends ${_depends}-omp)
+            else()
+                message(
+                    FATAL_ERROR
+                        "AddTest ${TEST_NAME}: dependency ${AddTest_DEPENDS} does not exist!"
+                )
+            endif()
         endif()
-        set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${AddTest_DEPENDS})
+        set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${_depends})
     endif()
     if(DEFINED MPI_PROCESSORS)
         set_tests_properties(

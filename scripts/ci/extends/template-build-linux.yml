@@ -25,6 +25,10 @@
         # This covers cpp functionality called by Python.
         CMAKE_ARGS="${CMAKE_ARGS} -DOGS_COVERAGE=ON"
       fi
+      if [[ "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" ]]; then
+        # Run non OpenMP variants as well
+        CMAKE_ARGS="${CMAKE_ARGS} -DOGS_ENABLE_NON_OMP_TEST_VARIANTS=ON"
+      fi
     - echo "########################" + `date` + "########################"
     - cmake --preset=$CMAKE_PRESET --log-level=VERBOSE -Wno-dev $CMAKE_ARGS
     # Activate .venv via .envrc

@@ -47,6 +47,12 @@ set(OGS_OPENMP_PARALLEL_ASM_PROCESSES
     ThermoRichardsMechanics
 )
 
+option(
+    OGS_ENABLE_NON_OMP_TEST_VARIANTS
+    "Register non-OpenMP tests in addition to OpenMP variants when both exist."
+    OFF
+)
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/OgsTest.cmake)
 include(${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake/test/NotebookTest.cmake)

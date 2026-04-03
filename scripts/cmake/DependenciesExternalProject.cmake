@@ -181,11 +181,18 @@ if(OGS_USE_PETSC)
     if(EXISTS ${_petsc_source_file})
         set(_petsc_source URL ${_petsc_source_file})
     elseif(NOT (OGS_PETSC_CONFIG_OPTIONS OR OGS_BUILD_PETSC))
+        # Replace with cmake_pkg_config(IMPORT PETSc REQUIRED)
+        # when cmake min. > 4.1
         find_package(PkgConfig REQUIRED)
         pkg_search_module(PETSc IMPORTED_TARGET PETSc)
     endif()
 
     if(NOT TARGET PkgConfig::PETSc)
+        message(STATUS "Using ogs-compiled PETSc. If you want to find a system "
+        "installation in a non-standard path, try setting CMAKE_PREFIX_PATH to "
+        "the PETSc install location, e.g.\n"
+        "     cmake --preset petsc -DCMAKE_PREFIX_PATH=/path/to/petsc/install/arch-linux-c-opt --fresh OR\n"
+        "     cmake --preset petsc -DCMAKE_PREFIX_PATH=\${PETSC_DIR}/\${PETSC_ARCH} --fresh")
         set(_configure_opts "")
         if(NOT "--download-fc" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
             list(APPEND _configure_opts --with-fc=0)
