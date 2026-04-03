@@ -185,7 +185,9 @@ void EarClippingTriangulation::initLists()
             {
                 _convex_vertex_list.push_back(*it);
                 if (isEar(*prev, *it, *next))
+                {
                     _ear_list.push_back(*it);
+                }
             }
             prev = it;
             it = next;

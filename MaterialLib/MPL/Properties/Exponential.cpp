@@ -32,13 +32,21 @@ PropertyDataType Exponential::value(VariableArray const& variable_array,
     else if (auto* str_ptr = std::get_if<std::string>(&exponent_data_.type))
     {
         if (*str_ptr == "t")
+        {
             v = t;
+        }
         else if (*str_ptr == "x")
+        {
             v = pos.getCoordinates().value()[0];
+        }
         else if (*str_ptr == "y")
+        {
             v = pos.getCoordinates().value()[1];
+        }
         else if (*str_ptr == "z")
+        {
             v = pos.getCoordinates().value()[2];
+        }
         else
             OGS_FATAL(
                 "Unknown independent_variable {:s} for exponential property.",

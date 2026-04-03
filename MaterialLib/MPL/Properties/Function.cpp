@@ -140,7 +140,7 @@ exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
         {
             continue;
         }
-        else if (v == "x" || v == "y" || v == "z")
+        if (v == "x" || v == "y" || v == "z")
         {
             symbol_table.create_variable("x");
             symbol_table.create_variable("y");

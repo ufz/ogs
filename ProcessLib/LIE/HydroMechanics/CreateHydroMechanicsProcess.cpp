@@ -257,7 +257,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         opt_deactivate_matrix_in_flow && *opt_deactivate_matrix_in_flow;
 
     if (deactivate_matrix_in_flow)
+    {
         INFO("Deactivate matrix elements in flow calculation.");
+    }
 
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__use_b_bar}
     auto const use_b_bar = config.getConfigParameter<bool>("use_b_bar", false);

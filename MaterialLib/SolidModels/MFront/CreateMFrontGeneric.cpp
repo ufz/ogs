@@ -15,13 +15,21 @@ const char* btypeToString(int btype)
 {
     using B = mgis::behaviour::Behaviour;
     if (btype == B::GENERALBEHAVIOUR)
+    {
         return "GENERALBEHAVIOUR";
+    }
     if (btype == B::STANDARDSTRAINBASEDBEHAVIOUR)
+    {
         return "STANDARDSTRAINBASEDBEHAVIOUR";
+    }
     if (btype == B::STANDARDFINITESTRAINBEHAVIOUR)
+    {
         return "STANDARDFINITESTRAINBEHAVIOUR";
+    }
     if (btype == B::COHESIVEZONEMODEL)
+    {
         return "COHESIVEZONEMODEL";
+    }
 
     OGS_FATAL("Unknown behaviour type {}.", btype);
 }

@@ -38,12 +38,10 @@ bool LineRule::isPntInElement(Node const* const* nodes,
         // pnt has been projected to the interior of the line
         return distance_from_line < eps;
     }
-    else
-    {
-        // pnt has been projected outside the line segment
-        // corner cases have already been treated in the beginning
-        return false;
-    }
+
+    // pnt has been projected outside the line segment
+    // corner cases have already been treated in the beginning
+    return false;
 }
 
 unsigned LineRule::identifyFace(Node const* const* element_nodes,

@@ -63,9 +63,9 @@ void run_test_SaturationWeightedThermalConductivity1Darithmetic_squareroot(
     // For S <= 0.0
     {
         double const S_less_than_zero[] = {-1, 0.0};
-        for (int i = 0; i < 2; i++)
+        for (double S_L : S_less_than_zero)
         {
-            variable_array.liquid_saturation = S_less_than_zero[i];
+            variable_array.liquid_saturation = S_L;
 
             double const computed_k_T =
                 k_T_property.template value<double>(variable_array, pos, t, dt);
@@ -225,9 +225,9 @@ void run_test_SaturationWeightedThermalConductivity3D(
     // For S <= 0.0
     {
         double const S_less_than_zero[] = {-1, 0.0};
-        for (int i = 0; i < 2; i++)
+        for (double S_L : S_less_than_zero)
         {
-            variable_array.liquid_saturation = S_less_than_zero[i];
+            variable_array.liquid_saturation = S_L;
 
             auto const computed_k_T = MPL::formEigenTensor<3>(
                 k_T_property.value(variable_array, pos, t, dt));

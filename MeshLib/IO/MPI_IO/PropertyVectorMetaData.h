@@ -94,19 +94,30 @@ inline std::optional<PropertyVectorMetaData> readPropertyVectorMetaData(
     pvmd.property_name = std::string(dummy, s);
     delete [] dummy;
 
-    if(!is.read(reinterpret_cast<char*>(&pvmd.is_int_type), sizeof(bool)))
+    if (!is.read(reinterpret_cast<char*>(&pvmd.is_int_type), sizeof(bool)))
+    {
         return std::nullopt;
-    if(!is.read(reinterpret_cast<char*>(&pvmd.is_data_type_signed), sizeof(bool)))
+    }
+    if (!is.read(reinterpret_cast<char*>(&pvmd.is_data_type_signed),
+                 sizeof(bool)))
+    {
         return std::nullopt;
-    if(!is.read(reinterpret_cast<char*>(&pvmd.data_type_size_in_bytes),
-            sizeof(unsigned long)))
+    }
+    if (!is.read(reinterpret_cast<char*>(&pvmd.data_type_size_in_bytes),
+                 sizeof(unsigned long)))
+    {
         return std::nullopt;
-    if(!is.read(reinterpret_cast<char*>(&pvmd.number_of_components),
-            sizeof(unsigned long)))
+    }
+    if (!is.read(reinterpret_cast<char*>(&pvmd.number_of_components),
+                 sizeof(unsigned long)))
+    {
         return std::nullopt;
-    if(!is.read(reinterpret_cast<char*>(&pvmd.number_of_tuples),
-            sizeof(unsigned long)))
+    }
+    if (!is.read(reinterpret_cast<char*>(&pvmd.number_of_tuples),
+                 sizeof(unsigned long)))
+    {
         return std::nullopt;
+    }
     return std::optional<PropertyVectorMetaData>(pvmd);
 }
 

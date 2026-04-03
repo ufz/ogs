@@ -10,20 +10,30 @@ namespace FeTestData
 template <class T_MATRIX, typename ID_TYPE=signed>
 inline void copyUpperToLower(const ID_TYPE dim, T_MATRIX &m)
 {
-    for (ID_TYPE i=0; i<dim; i++)
-        for (ID_TYPE j=0; j<i; j++)
+    for (ID_TYPE i = 0; i < dim; i++)
+    {
+        for (ID_TYPE j = 0; j < i; j++)
+        {
             m(i,j) = m(j,i);
+        }
+    }
 }
 
 // set an identity matrix
 template <class T_MATRIX, typename ID_TYPE=signed>
 inline void setIdentityMatrix(unsigned dim, T_MATRIX &m)
 {
-    for (unsigned i=0; i<dim; i++)
-        for (unsigned j=0; j<dim; j++)
+    for (unsigned i = 0; i < dim; i++)
+    {
+        for (unsigned j = 0; j < dim; j++)
+        {
             m(i,j) = 0.0;
-    for (unsigned i=0; i<dim; i++)
+        }
+    }
+    for (unsigned i = 0; i < dim; i++)
+    {
         m(i,i) = 1.0;
+    }
 }
 
 }  // namespace FeTestData

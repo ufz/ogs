@@ -174,9 +174,8 @@ std::size_t PointVec::uniqueInsert(Point* pnt)
         _oct_tree.reset(GeoLib::OctTree<GeoLib::Point, 16>::createOctTree(
             _aabb.getMinPoint(), _aabb.getMaxPoint(), _rel_eps));
         // add all points that are already in the _data_vec
-        for (std::size_t k(0); k < _data_vec.size(); ++k)
+        for (auto p : _data_vec)
         {
-            GeoLib::Point* const p(_data_vec[k]);
             _oct_tree->addPoint(p, ret_pnt);
         }
         // add the new point

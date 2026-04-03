@@ -70,6 +70,14 @@
       }
     },
     {
+      "name": "_clang",
+      "hidden": true,
+      "environment": {
+        "CC": "clang",
+        "CXX": "clang++"
+      }
+    },
+    {
       "name": "release",
       "inherits": [
         "_ninja",
@@ -155,6 +163,28 @@
       ]
     },
     {
+      "name": "clang-release",
+      "inherits": [
+        "_clang",
+        "release"
+      ],
+      "cacheVariables": {
+        "OGS_USE_MFRONT": "ON",
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy;--header-filter=^(?!.*\\.cache).*"
+      }
+    },
+    {
+      "name": "clang-debug",
+      "inherits": [
+        "_clang",
+        "debug"
+      ],
+      "cacheVariables": {
+        "OGS_USE_MFRONT": "ON",
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy;--header-filter=^(?!.*\\.cache).*"
+      }
+    },
+    {
       "name": "debug-all",
       "inherits": [
         "debug",
@@ -192,14 +222,13 @@
     },
     {
       "name": "ci-iwyu",
-      "inherits": "release-all",
+      "inherits": [
+        "_clang",
+        "release-all"
+      ],
       "cacheVariables": {
         "OGS_INCLUDE_WHAT_YOU_USE": "ON",
         "OGS_USE_UNITY_BUILDS": "OFF"
-      },
-      "environment": {
-        "CC": "clang",
-        "CXX": "clang++"
       }
     },
     {
@@ -216,7 +245,10 @@
     },
     {
       "name": "sanitizer",
-      "inherits": "debug-all",
+      "inherits": [
+        "_clang",
+        "debug-all"
+      ],
       "cacheVariables": {
         "OGS_CXX_FLAGS": "-O3;-fno-var-tracking",
         "OGS_EIGEN_DYNAMIC_SHAPE_MATRICES": "OFF",
@@ -228,8 +260,6 @@
         "OGS_BUILD_HDF5": "ON"
       },
       "environment": {
-        "CC": "clang",
-        "CXX": "clang++",
         "UBSAN_OPTIONS": "print_stacktrace=1",
         "LSAN_OPTIONS": "suppressions=${sourceDir}/scripts/test/leak_sanitizer.suppressions"
       }
@@ -302,6 +332,14 @@
     {
       "name": "release-all",
       "configurePreset": "release-all"
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release"
+    },
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug"
     },
     {
       "name": "debug-all",
@@ -413,6 +451,20 @@
     {
       "name": "release-all",
       "configurePreset": "release-all",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
+      "name": "clang-release",
+      "configurePreset": "clang-release",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
+      "name": "clang-debug",
+      "configurePreset": "clang-debug",
       "inherits": [
         "release"
       ]

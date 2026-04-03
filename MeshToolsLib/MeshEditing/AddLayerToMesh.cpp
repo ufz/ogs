@@ -204,13 +204,12 @@ MeshLib::Mesh* addLayerToMesh(MeshLib::Mesh const& mesh, double const thickness,
                 *sfc_mesh->getProperties().getPropertyVector<int>(
                     "MaterialIDs")};
         }
-        else
-        {
-            int const new_layer_id = layer_id.value_or(next_material_id);
-            auto const n_new_props =
-                subsfc_elements.size() - mesh.getNumberOfElements();
-            return ranges::views::repeat_n(new_layer_id, n_new_props);
-        }
+
+        int const new_layer_id = layer_id.value_or(next_material_id);
+        auto const n_new_props =
+            subsfc_elements.size() - mesh.getNumberOfElements();
+        return ranges::views::repeat_n(new_layer_id, n_new_props);
+
     }();
 
     new_materials->assign(ranges::views::common(

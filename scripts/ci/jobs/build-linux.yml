@@ -99,3 +99,13 @@ build in devcontainer:
     - devcontainer exec --workspace-folder . cmake --build --preset release-all -t tests
   after_script:
     - docker ps --filter "label=devcontainer.local_folder=$(pwd)" --quiet | xargs -r -I {} sh -c ' docker stop {} && docker rm {}'
+
+build linux clang:
+  stage: build
+  extends:
+    - .template-build-linux
+    - .test-artifacts
+  tags: [shell, envinf]
+  needs: [meta]
+  variables:
+    CMAKE_PRESET: clang-release

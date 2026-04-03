@@ -190,7 +190,9 @@ calculateSpectralDegradedStress(
         KelvinVector stress =
             lambda * macaulay(sum_strain) * Invariants::identity2;
         for (int i = 0; i < 3; i++)
+        {
             stress += 2 * mu * macaulay(principal_strain[i]) * M_kelvin[i];
+        }
         return stress;
     };
 
@@ -232,9 +234,11 @@ calculateSpectralDegradedStress(
                                    M_kelvin[i] * M_kelvin[i].transpose();
         C_temp.noalias() = M_kelvin[i] * M_kelvin[i].transpose();
         for (int j = 0; j < 3; j++)
+        {
             C_compressive.noalias() +=
                 mu * evaluateHCompSpectral(i, j, principal_strain) *
                 aOdotB<DisplacementDim>(M_kelvin[i], M_kelvin[j]);
+        }
     }
 
     double const elastic_energy =

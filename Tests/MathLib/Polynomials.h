@@ -53,7 +53,9 @@ std::ostream& operator<<(std::ostream& os, FBase const& f)
     for (std::size_t i = 0; i < f.coeffs.size(); ++i)
     {
         if (i != 0)
+        {
             os << ", ";
+        }
         os << f.coeffs[i];
     }
     os << "}}";

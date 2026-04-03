@@ -122,12 +122,10 @@ std::vector<Output> createOutputs(
     {
         return outputs;
     }
-    else
-    {
-        OGS_FATAL(
-            "Output configuration paths are not unique. This will lead to "
-            "overwritten results or invalid / corrupted data within the "
-            "files.");
-    }
+
+    OGS_FATAL(
+        "Output configuration paths are not unique. This will lead to "
+        "overwritten results or invalid / corrupted data within the "
+        "files.");
 }
 }  // namespace ProcessLib

@@ -435,7 +435,9 @@ void Process::preTimestep(std::vector<GlobalVector*> const& x, const double t,
                           const double delta_t, const int process_id)
 {
     for (auto* const solution : x)
+    {
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
     preTimestepConcreteProcess(x, t, delta_t, process_id);
 
     _boundary_conditions[process_id].preTimestep(t, x, process_id);
@@ -470,7 +472,9 @@ void Process::computeSecondaryVariable(double const t,
                                        int const process_id)
 {
     for (auto const* solution : x)
+    {
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
     MathLib::LinAlg::setLocalAccessibleVector(x_prev);
 
     computeSecondaryVariableConcrete(t, dt, x, x_prev, process_id);
@@ -494,7 +498,9 @@ void Process::preOutput(const double t, double const dt,
                         int const process_id)
 {
     for (auto const* solution : x)
+    {
         MathLib::LinAlg::setLocalAccessibleVector(*solution);
+    }
 
     preOutputConcreteProcess(t, dt, x, x_prev, process_id);
 }

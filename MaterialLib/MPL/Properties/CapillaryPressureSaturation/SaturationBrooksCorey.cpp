@@ -38,7 +38,9 @@ PropertyDataType SaturationBrooksCorey::value(
     const double p_b = entry_pressure_;
 
     if (p_cap <= p_b)
+    {
         return s_L_max;
+    }
 
     const double s_eff = std::pow(p_b / p_cap, lambda);
     return s_eff * (s_L_max - s_L_res) + s_L_res;

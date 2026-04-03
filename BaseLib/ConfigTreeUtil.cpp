@@ -59,10 +59,8 @@ ConfigTree makeConfigTreeFromFile(const std::string& filepath,
 
         return makeConfigTree(filepath, be_ruthless, toplevel_tag, buffer);
     }
-    else
-    {
-        OGS_FATAL("Could not read from file {:s}!", filepath);
-    }
+
+    OGS_FATAL("Could not read from file {:s}!", filepath);
 }
 
 }  // namespace BaseLib

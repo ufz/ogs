@@ -36,7 +36,9 @@ public:
     std::vector<double> const getQualityVector() const
     {
         if (_quality_tester)
+        {
             return _quality_tester->getElementQuality();
+        }
 
         std::vector<double> empty_quality_vec(0);
         return empty_quality_vec;
@@ -48,8 +50,10 @@ public:
     BaseLib::Histogram<double> getHistogram(std::size_t n_bins = 0) const
     {
         if (_quality_tester)
+        {
             return _quality_tester->getHistogram(
                 static_cast<std::size_t>(n_bins));
+        }
 
         return BaseLib::Histogram<double>{{}};
     }
@@ -59,7 +63,9 @@ public:
                        std::size_t n_bins = 0) const
     {
         if (_quality_tester == nullptr)
+        {
             return 1;
+        }
 
         BaseLib::Histogram<double> const histogram(
             _quality_tester->getHistogram(n_bins));
@@ -75,20 +81,30 @@ private:
                                  MeshLib::MeshQualityType t)
     {
         if (t == MeshLib::MeshQualityType::EDGERATIO)
+        {
             _quality_tester =
                 std::make_unique<MeshToolsLib::EdgeRatioMetric>(mesh);
+        }
         else if (t == MeshLib::MeshQualityType::ELEMENTSIZE)
+        {
             _quality_tester =
                 std::make_unique<MeshToolsLib::ElementSizeMetric>(mesh);
+        }
         else if (t == MeshLib::MeshQualityType::SIZEDIFFERENCE)
+        {
             _quality_tester =
                 std::make_unique<MeshToolsLib::SizeDifferenceMetric>(mesh);
+        }
         else if (t == MeshLib::MeshQualityType::EQUIANGLESKEW)
+        {
             _quality_tester =
                 std::make_unique<MeshToolsLib::AngleSkewMetric>(mesh);
+        }
         else if (t == MeshLib::MeshQualityType::RADIUSEDGERATIO)
+        {
             _quality_tester =
                 std::make_unique<MeshToolsLib::RadiusEdgeRatioMetric>(mesh);
+        }
         else
         {
             ERR("ElementQualityInterface::calculateElementQuality(): Unknown "

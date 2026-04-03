@@ -72,15 +72,14 @@ TEST(MaterialPropertyLib, AverageMolarMass)
         0.8487258523827500, 0.9158857855082890, 0.9212465868752240,
         0.9846022661096390, 0.9976737941621020, 1.0000000000000000};
 
-    for (size_t idx = 0; idx < ref_molar_fraction_A.size(); idx++)
+    for (double f : ref_molar_fraction_A)
     {
         std::stringstream m_composition;
 
         m_composition << "<value>"
                       << std::setprecision(
                              std::numeric_limits<double>::max_digits10)
-                      << ref_molar_fraction_A[idx] << " "
-                      << 1. - ref_molar_fraction_A[idx] << "</value>\n";
+                      << f << " " << 1. - f << "</value>\n";
         std::stringstream m;
         m << m_beg.str() << m_composition.str() << m_end.str();
 
@@ -95,8 +94,7 @@ TEST(MaterialPropertyLib, AverageMolarMass)
             gas_phase.property(MaterialPropertyLib::PropertyType::molar_mass)
                 .template value<double>(variable_array, pos, time, dt);
 
-        auto const M_ref = M_Unobtainium * ref_molar_fraction_A[idx] +
-                           M_Vibranium * (1. - ref_molar_fraction_A[idx]);
+        auto const M_ref = M_Unobtainium * f + M_Vibranium * (1. - f);
 
         ASSERT_NEAR(M, M_ref, 1.0e-10);
     }

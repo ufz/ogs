@@ -319,12 +319,16 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
         // 477-507.
         double f = 0.0;
         if (Re > 10 && Re <= 2400)
+        {
             f = 16 / Re;
+        }
         else if (Re > 2400)
+        {
             f = std::pow(std::log(xi / 3.7 / r_i) -
                              5.02 / Re * std::log(xi / 3.7 / r_i + 13 / Re),
                          -2) /
                 16;
+        }
 
         double Q_hx = 0;
         double const T_r_int_pt = N.dot(T_r);
@@ -339,12 +343,16 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
 
             double beta;
             if (t_d < 2.8)
+            {
                 beta = std::pow((pi * t_d), -0.5) + 0.5 -
                        0.25 * std::pow((t_d / pi), 0.5) + 0.125 * t_d;
+            }
             else
+            {
                 beta = 2 * (1 / (std::log(4 * t_d) - 2 * 0.57722) -
                             0.57722 /
                                 std::pow((std::log(4 * t_d) - 2 * 0.57722), 2));
+            }
 
             const double P_c = 2 * pi * r_i;
             Q_hx = P_c * k_r * (T_r_int_pt - T_int_pt) / r_i * beta;

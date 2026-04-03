@@ -19,7 +19,9 @@ PropertyDataType SaturationLiakopoulos::value(
     const double p_cap = variable_array.capillary_pressure;
 
     if (p_cap < 0.)
+    {
         return 1.;
+    }
 
     return std::max(residual_liquid_saturation_,
                     1. - parameter_a_ * std::pow(p_cap, parameter_b_));

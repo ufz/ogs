@@ -52,15 +52,13 @@ CoolingVariant createCoolingVariant(
     {
         return createPowerWithCOPStruct(cooling_config, parameters, curves);
     }
-    else
-    {
-        auto const raw_power =
-            //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling__power}
-            cooling_config->getConfigParameter<std::string>("power");
 
-        return ParameterLib::getNamedOrCreateInlineParameter(
-            raw_power, parameters, "power", "inline");
-    }
+    auto const raw_power =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling__power}
+        cooling_config->getConfigParameter<std::string>("power");
+
+    return ParameterLib::getNamedOrCreateInlineParameter(raw_power, parameters,
+                                                         "power", "inline");
 }
 
 FlowAndTemperatureControl createHeatingHotWaterCooling(
@@ -85,21 +83,19 @@ FlowAndTemperatureControl createHeatingHotWaterCooling(
             flow_rate_min,
             power_min};
     }
-    else
-    {
-        return FlowAndTemperatureControl{
-            std::in_place_type<BuildingPowerHotWaterPassiveCooling>,
-            *heating,
-            *hot_water,
-            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
-                *cooling)
-                .get(),
-            flow_rate_param,
-            refrigerant.specific_heat_capacity,
-            refrigerant.density,
-            flow_rate_min,
-            power_min};
-    }
+
+    return FlowAndTemperatureControl{
+        std::in_place_type<BuildingPowerHotWaterPassiveCooling>,
+        *heating,
+        *hot_water,
+        std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
+            *cooling)
+            .get(),
+        flow_rate_param,
+        refrigerant.specific_heat_capacity,
+        refrigerant.density,
+        flow_rate_min,
+        power_min};
 }
 
 FlowAndTemperatureControl createHeatingCooling(
@@ -123,20 +119,18 @@ FlowAndTemperatureControl createHeatingCooling(
             flow_rate_min,
             power_min};
     }
-    else
-    {
-        return FlowAndTemperatureControl{
-            std::in_place_type<BuildingPowerPassiveCooling>,
-            *heating,
-            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
-                *cooling)
-                .get(),
-            flow_rate_param,
-            refrigerant.specific_heat_capacity,
-            refrigerant.density,
-            flow_rate_min,
-            power_min};
-    }
+
+    return FlowAndTemperatureControl{
+        std::in_place_type<BuildingPowerPassiveCooling>,
+        *heating,
+        std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
+            *cooling)
+            .get(),
+        flow_rate_param,
+        refrigerant.specific_heat_capacity,
+        refrigerant.density,
+        flow_rate_min,
+        power_min};
 }
 
 FlowAndTemperatureControl createHotWaterCooling(
@@ -160,20 +154,18 @@ FlowAndTemperatureControl createHotWaterCooling(
             flow_rate_min,
             power_min};
     }
-    else
-    {
-        return FlowAndTemperatureControl{
-            std::in_place_type<BuildingPowerPassiveCooling>,
-            *hot_water,
-            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
-                *cooling)
-                .get(),
-            flow_rate_param,
-            refrigerant.specific_heat_capacity,
-            refrigerant.density,
-            flow_rate_min,
-            power_min};
-    }
+
+    return FlowAndTemperatureControl{
+        std::in_place_type<BuildingPowerPassiveCooling>,
+        *hot_water,
+        std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
+            *cooling)
+            .get(),
+        flow_rate_param,
+        refrigerant.specific_heat_capacity,
+        refrigerant.density,
+        flow_rate_min,
+        power_min};
 }
 
 FlowAndTemperatureControl createCooling(
@@ -195,19 +187,17 @@ FlowAndTemperatureControl createCooling(
                                          flow_rate_min,
                                          power_min};
     }
-    else
-    {
-        return FlowAndTemperatureControl{
-            std::in_place_type<Power>,
-            std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
-                *cooling)
-                .get(),
-            flow_rate_param,
-            refrigerant.specific_heat_capacity,
-            refrigerant.density,
-            flow_rate_min,
-            power_min};
-    }
+
+    return FlowAndTemperatureControl{
+        std::in_place_type<Power>,
+        std::get<std::reference_wrapper<ParameterLib::Parameter<double>>>(
+            *cooling)
+            .get(),
+        flow_rate_param,
+        refrigerant.specific_heat_capacity,
+        refrigerant.density,
+        flow_rate_min,
+        power_min};
 }
 
 using FactoryAdvancedBuildingPower = std::function<FlowAndTemperatureControl(
