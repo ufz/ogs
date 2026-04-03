@@ -295,8 +295,10 @@ void updateReactantVolumeFraction(Reactant& reactant,
                                   double const porosity, double const t,
                                   double const dt)
 {
-    auto const& solid_phase = medium.phase("Solid");
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
     MaterialPropertyLib::VariableArray vars;
 
@@ -328,7 +330,8 @@ void setPorosityPostReaction(Reactant& reactant,
                              MaterialPropertyLib::Medium const& medium,
                              double& porosity)
 {
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
     auto const& solid_constituent = solid_phase.component(reactant.name);
 
@@ -495,8 +498,10 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
     setAqueousSolution(concentrations, chemical_system_id,
                        *_chemical_system->aqueous_solution);
 
-    auto const& solid_phase = medium.phase("Solid");
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {
@@ -537,8 +542,10 @@ void PhreeqcIO::setChemicalSystemConcrete(
     setAqueousSolution(concentrations, chemical_system_id,
                        *_chemical_system->aqueous_solution);
 
-    auto const& solid_phase = medium->phase("Solid");
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
     for (auto& kinetic_reactant : _chemical_system->kinetic_reactants)
     {

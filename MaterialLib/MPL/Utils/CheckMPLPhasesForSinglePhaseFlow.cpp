@@ -32,10 +32,10 @@ void checkMPLPhasesForSinglePhaseFlow(
 
     assert(!all_phases.empty());
 
-    // ... and check if any of the phases are different by name.
+    // ... and check if any of the phases are different by type.
     if (ranges::any_of(all_phases,
                        [p0 = all_phases.front()](auto const* const p)
-                       { return p->name != p0->name; }))
+                       { return p->phaseName != p0->phaseName; }))
     {
         OGS_FATAL(
             "You are mixing liquid and gas phases in your model domain. OGS "

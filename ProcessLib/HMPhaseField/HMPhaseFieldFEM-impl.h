@@ -8,6 +8,7 @@
 #include <utility>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/GetSymmetricTensor.h"
@@ -68,7 +69,7 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
         local_b_data, displacement_size);
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& solid = medium->phase("Solid");
+    auto const& solid = medium->phase(MaterialPropertyLib::PhaseName::Solid);
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
 
@@ -351,7 +352,7 @@ void HMPhaseFieldLocalAssembler<ShapeFunction, DisplacementDim>::
 
     auto const bulk_modulus = solid_material.getBulkModulus(t, x_position);
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& solid = medium->phase("Solid");
+    auto const& solid = medium->phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::VariableArray vars;
 
     double const k = _process_data.residual_stiffness(t, x_position)[0];

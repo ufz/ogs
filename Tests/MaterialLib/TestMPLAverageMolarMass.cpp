@@ -84,7 +84,8 @@ TEST(MaterialPropertyLib, AverageMolarMass)
         m << m_beg.str() << m_composition.str() << m_end.str();
 
         auto const& medium = Tests::createTestMaterial(m.str());
-        auto const& gas_phase = medium->phase("Gas");
+        auto const& gas_phase =
+            medium->phase(MaterialPropertyLib::PhaseName::Gas);
         MaterialPropertyLib::VariableArray variable_array;
         ParameterLib::SpatialPosition const pos;
         double const time = std::numeric_limits<double>::quiet_NaN();

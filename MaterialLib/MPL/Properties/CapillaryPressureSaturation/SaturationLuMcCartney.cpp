@@ -239,7 +239,7 @@ PropertyDataType SaturationLuMcCartney::value(
     const double T = variable_array.temperature;
 
     auto const& medium = *std::get<Medium*>(scale_);
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& solid_phase = medium.phase(PhaseName::Solid);
     auto const& porosity_property = medium[PropertyType::porosity];
     auto const& solid_denisty_property = solid_phase[PropertyType::density];
 
@@ -282,7 +282,7 @@ PropertyDataType SaturationLuMcCartney::dValue(
     const double T = variable_array.temperature;
 
     auto const& medium = *std::get<Medium*>(scale_);
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& solid_phase = medium.phase(PhaseName::Solid);
     auto const& porosity_property = medium[PropertyType::porosity];
     auto const& solid_denisty_property = solid_phase[PropertyType::density];
 
@@ -347,7 +347,7 @@ PropertyDataType SaturationLuMcCartney::d2Value(
     const double T = variable_array.temperature;
 
     auto const& medium = *std::get<Medium*>(scale_);
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& solid_phase = medium.phase(PhaseName::Solid);
     auto const& porosity_property = medium[PropertyType::porosity];
     auto const& solid_denisty_property = solid_phase[PropertyType::density];
 

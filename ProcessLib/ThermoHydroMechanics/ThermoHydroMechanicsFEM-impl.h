@@ -6,6 +6,7 @@
 #include <typeinfo>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVector.h"
@@ -64,14 +65,16 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     // Consistency check: if frozen liquid phase is given, then the constitutive
     // relation for ice must also be given, and vice versa.
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    if (medium->hasPhase("FrozenLiquid") !=
+    if (medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid) !=
         (_process_data.ice_constitutive_relation != nullptr))
     {
         OGS_FATAL(
             "Frozen liquid phase is {:s} and the solid material constitutive "
             "relation for ice is {:s}. But both must be given (or both "
             "omitted).",
-            medium->hasPhase("FrozenLiquid") ? "specified" : "not specified",
+            medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid)
+                ? "specified"
+                : "not specified",
             _process_data.ice_constitutive_relation != nullptr
                 ? "specified"
                 : "not specified");
@@ -183,9 +186,10 @@ void ThermoHydroMechanicsLocalAssembler<
 
     MPL::VariableArray vars;
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto* const frozen_liquid_phase = medium->hasPhase("FrozenLiquid")
-                                          ? &medium->phase("FrozenLiquid")
-                                          : nullptr;
+    auto* const frozen_liquid_phase =
+        medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid)
+            ? &medium->phase(MaterialPropertyLib::PhaseName::FrozenLiquid)
+            : nullptr;
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -244,11 +248,14 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             _element.getID());
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
-    auto* const frozen_liquid_phase = medium->hasPhase("FrozenLiquid")
-                                          ? &medium->phase("FrozenLiquid")
-                                          : nullptr;
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
+    auto* const frozen_liquid_phase =
+        medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid)
+            ? &medium->phase(MaterialPropertyLib::PhaseName::FrozenLiquid)
+            : nullptr;
     MaterialPropertyLib::VariableArray vars;
 
     auto const& N_u = ip_data.N_u;
@@ -739,7 +746,8 @@ void ThermoHydroMechanicsLocalAssembler<
     }
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    bool const has_frozen_liquid_phase = medium->hasPhase("FrozenLiquid");
+    bool const has_frozen_liquid_phase =
+        medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();

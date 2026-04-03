@@ -22,8 +22,9 @@ void checkMPLProperties(
 {
     for (auto const& m : media)
     {
-        checkRequiredProperties(m.second->phase("Solid"),
-                                {{MaterialPropertyLib::density}});
+        checkRequiredProperties(
+            m.second->phase(MaterialPropertyLib::PhaseName::Solid),
+            {{MaterialPropertyLib::density}});
     }
 }
 

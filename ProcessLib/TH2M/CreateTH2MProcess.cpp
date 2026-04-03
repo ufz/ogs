@@ -34,9 +34,12 @@ createPhaseTransitionModel(
     // Fluid phases are always defined in the first medium of the media vector,
     // thus media.begin() points to the right medium.
     const bool phase_transition =
-        (media.begin()->second->phase("Gas").numberOfComponents() > 1) &&
-        (media.begin()->second->phase("AqueousLiquid").numberOfComponents() >
-         1);
+        (media.begin()
+             ->second->phase(MaterialPropertyLib::PhaseName::Gas)
+             .numberOfComponents() > 1) &&
+        (media.begin()
+             ->second->phase(MaterialPropertyLib::PhaseName::AqueousLiquid)
+             .numberOfComponents() > 1);
     // Only if both fluids consist of more than one component, the model
     // phase_transition is returned.
     if (phase_transition)

@@ -219,15 +219,17 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     // The uniqueness of phase has already been checked in
     // `checkMPLPhasesForSinglePhaseFlow`.
     MaterialPropertyLib::Variable const phase_variable =
-        (*ranges::begin(media_map.media()))->hasPhase("Gas")
+        (*ranges::begin(media_map.media()))
+                ->hasPhase(MaterialPropertyLib::PhaseName::Gas)
             ? MaterialPropertyLib::Variable::gas_phase_pressure
             : MaterialPropertyLib::Variable::liquid_phase_pressure;
     for (auto const& medium : media_map.media())
     {
         checkRequiredProperties(*medium, requiredMediumProperties);
         checkRequiredProperties(fluidPhase(*medium), requiredFluidProperties);
-        checkRequiredProperties(medium->phase("Solid"),
-                                requiredSolidProperties);
+        checkRequiredProperties(
+            medium->phase(MaterialPropertyLib::PhaseName::Solid),
+            requiredSolidProperties);
     }
     DBUG("Media properties verified.");
 

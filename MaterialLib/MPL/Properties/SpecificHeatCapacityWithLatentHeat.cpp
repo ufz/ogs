@@ -36,24 +36,23 @@ void SpecificHeatCapacityWithLatentHeat::setProperties(
                 "One of the required phases (AqueousLiquid/FrozenLiquid/Solid) "
                 "does not exist!");
         }
-        std::string const& phase_name = phase->name;
 
         auto const& density_property =
             phase->property(MaterialPropertyLib::PropertyType::density);
         auto const& specific_heat_capacity_property = phase->property(
             MaterialPropertyLib::PropertyType::specific_heat_capacity);
 
-        if (phase_name == "AqueousLiquid")
+        if (phase->phaseName == PhaseName::AqueousLiquid)
         {
             densities_.liquid = &density_property;
             spec_heat_capacities_.liquid = &specific_heat_capacity_property;
         }
-        else if (phase_name == "FrozenLiquid")
+        else if (phase->phaseName == PhaseName::FrozenLiquid)
         {
             densities_.frozen = &density_property;
             spec_heat_capacities_.frozen = &specific_heat_capacity_property;
         }
-        else if (phase_name == "Solid")
+        else if (phase->phaseName == PhaseName::Solid)
         {
             densities_.porous = &density_property;
             spec_heat_capacities_.porous = &specific_heat_capacity_property;

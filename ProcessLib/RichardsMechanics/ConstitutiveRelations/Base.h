@@ -33,8 +33,8 @@ struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
         : medium{medium},
-          liquid{medium.phase("AqueousLiquid")},
-          solid{medium.phase("Solid")}
+          liquid{medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid)},
+          solid{medium.phase(MaterialPropertyLib::PhaseName::Solid)}
     {
     }
 

@@ -120,7 +120,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         // TODO (naumov) Temporary value not used by current material models.
         // Need extension of secondary variables interface.
@@ -172,7 +173,8 @@ protected:
     {
         auto const& medium =
             *_process_data.media_map.getMedium(this->_element.getID());
-        auto const& solid_phase = medium.phase("Solid");
+        auto const& solid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
         auto const specific_heat_capacity_solid =
             solid_phase
@@ -258,7 +260,8 @@ protected:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         auto const& Ns =
             _process_data.shape_matrix_cache

@@ -13,7 +13,8 @@ int numberOfComponents(
 {
     // Always the first (begin) medium that holds fluid phases.
     auto const& medium = media.begin()->second;
-    return medium->phase(phase_name).numberOfComponents();
+    return medium->phase(MaterialPropertyLib::fromString(phase_name))
+        .numberOfComponents();
 }
 
 int findComponentIndex(
@@ -23,7 +24,8 @@ int findComponentIndex(
 {
     // It is always the first (begin) medium that holds fluid phases.
     auto const& medium = media.begin()->second;
-    auto const& phase = medium->phase(phase_name);
+    auto const& phase =
+        medium->phase(MaterialPropertyLib::fromString(phase_name));
 
     // find the component for which the property 'property_type' is defined
     for (std::size_t c = 0; c < phase.numberOfComponents(); c++)
@@ -84,8 +86,9 @@ PhaseTransition::PhaseTransition(
 
     // It is always the first (begin) medium that holds fluid phases.
     auto const medium = media.begin()->second;
-    auto const& gas_phase = medium->phase("Gas");
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& gas_phase = medium->phase(MaterialPropertyLib::PhaseName::Gas);
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
     // check for required medium properties
     std::array const required_medium_properties = {

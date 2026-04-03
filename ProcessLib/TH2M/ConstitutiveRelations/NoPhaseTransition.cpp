@@ -24,10 +24,12 @@ NoPhaseTransition::NoPhaseTransition(
 
     for (auto const& m : media)
     {
-        checkRequiredProperties(m.second->phase("Gas"),
-                                required_gas_properties);
-        checkRequiredProperties(m.second->phase("AqueousLiquid"),
-                                required_liquid_properties);
+        checkRequiredProperties(
+            m.second->phase(MaterialPropertyLib::PhaseName::Gas),
+            required_gas_properties);
+        checkRequiredProperties(
+            m.second->phase(MaterialPropertyLib::PhaseName::AqueousLiquid),
+            required_liquid_properties);
     }
 }
 

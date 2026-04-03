@@ -3,6 +3,7 @@
 
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "RichardsComponentTransportFEM.h"
@@ -84,7 +85,8 @@ void LocalAssemblerData<ShapeFunction, GlobalDim>::assemble(
 
     // Get material properties
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& phase = medium.phase("AqueousLiquid");
+    auto const& phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
     auto const& component =
         phase.component(_transport_process_variable.getName());
 
@@ -248,7 +250,8 @@ LocalAssemblerData<ShapeFunction, GlobalDim>::getIntPtDarcyVelocity(
 
     // Get material properties
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& phase = medium.phase("AqueousLiquid");
+    auto const& phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
     auto const p_nodal_values = Eigen::Map<const NodalVectorType>(
         &local_x[ShapeFunction::NPOINTS], ShapeFunction::NPOINTS);

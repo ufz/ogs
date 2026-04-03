@@ -4,6 +4,7 @@
 #pragma once
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
@@ -167,9 +168,12 @@ void ThermalTwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::
 
         auto const& medium =
             *_process_data.media_map.getMedium(this->_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
-        auto const& solid_phase = medium.phase("Solid");
-        auto const& gas_phase = medium.phase("Gas");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+        auto const& solid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::Solid);
+        auto const& gas_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::Gas);
 
         auto const& water_vapour_component = gas_phase.component("w");
         auto const& dry_air_component = gas_phase.component("a");

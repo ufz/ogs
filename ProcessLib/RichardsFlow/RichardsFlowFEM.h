@@ -152,7 +152,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
         MaterialPropertyLib::VariableArray vars;
         vars.temperature =
             medium
@@ -293,7 +294,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         MaterialPropertyLib::VariableArray vars;
         vars.temperature =
