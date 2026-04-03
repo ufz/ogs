@@ -13,9 +13,22 @@
 namespace MaterialPropertyLib
 {
 class Property;
-}
-namespace MaterialPropertyLib
+
+/// Enumeration of phase types.
+enum class PhaseName
 {
+    Solid,
+    AqueousLiquid,
+    Gas,
+    FrozenLiquid
+};
+
+/// Convert phase enum to its string representation.
+[[nodiscard]] std::string_view toString(PhaseName phase_name);
+
+/// Convert string to phase enum. Throws if invalid phase name.
+[[nodiscard]] PhaseName fromString(std::string const& phase_name);
+
 /// This class defines material phases.
 ///
 /// The Phase class consists of a vector of components and an array of
@@ -23,8 +36,8 @@ namespace MaterialPropertyLib
 class Phase final
 {
 public:
-    /// The Phase constructor is called with the optional phase name.
-    Phase(std::string&& phase_name,
+    /// The Phase constructor is called with the phase type enum.
+    Phase(PhaseName phase_name,
           std::vector<std::unique_ptr<Component>>&& components,
           std::unique_ptr<PropertyArray>&& properties);
 
@@ -51,7 +64,7 @@ public:
     std::string description() const;
 
 public:
-    std::string const name;
+    PhaseName const phaseName;
 
 private:
     std::vector<std::unique_ptr<Component>> const components_;

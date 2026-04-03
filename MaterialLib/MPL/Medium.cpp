@@ -26,20 +26,24 @@ Phase const& Medium::phase(std::size_t const index) const
     return *phases_[index];
 }
 
-Phase const& Medium::phase(std::string const& phase_name) const
+Phase const& Medium::phase(PhaseName phase_name) const
 {
     return *BaseLib::findElementOrError(
         phases_,
-        [&phase_name](std::unique_ptr<MaterialPropertyLib::Phase> const& phase)
-        { return phase->name == phase_name; },
-        [&]() { OGS_FATAL("Could not find phase named '{:s}.'", phase_name); });
+        [phase_name](std::unique_ptr<MaterialPropertyLib::Phase> const& phase)
+        { return phase->phaseName == phase_name; },
+        [phase_name]()
+        {
+            OGS_FATAL("Could not find phase named '{:s}.'",
+                      toString(phase_name));
+        });
 }
 
-bool Medium::hasPhase(std::string const& phase_name) const
+bool Medium::hasPhase(PhaseName phase_name) const
 {
     return std::any_of(begin(phases_), end(phases_),
-                       [&phase_name](auto const& phase)
-                       { return phase->name == phase_name; });
+                       [phase_name](auto const& phase)
+                       { return phase->phaseName == phase_name; });
 }
 
 Property const& Medium::property(PropertyType const& p) const
@@ -90,21 +94,20 @@ void checkRequiredProperties(
 
 Phase const& fluidPhase(Medium const& medium)
 {
-    if (medium.hasPhase("Gas"))
+    if (medium.hasPhase(PhaseName::Gas))
     {
-        return medium.phase("Gas");
+        return medium.phase(PhaseName::Gas);
     }
-    if (medium.hasPhase("AqueousLiquid"))
+    if (medium.hasPhase(PhaseName::AqueousLiquid))
     {
-        return medium.phase("AqueousLiquid");
+        return medium.phase(PhaseName::AqueousLiquid);
     }
     OGS_FATAL(
         "Neither Gas nor AqueousLiquid phase is available for the medium, but "
         "a fluid phase was requested.");
 }
 
-Phase const* getOptionalPhase(Medium const& medium,
-                              std::string const& phase_name)
+Phase const* getOptionalPhase(Medium const& medium, PhaseName phase_name)
 {
     return medium.hasPhase(phase_name) ? &medium.phase(phase_name) : nullptr;
 }
