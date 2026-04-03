@@ -250,7 +250,6 @@
         "debug-all"
       ],
       "cacheVariables": {
-        "OGS_CXX_FLAGS": "-O3;-fno-var-tracking",
         "OGS_EIGEN_DYNAMIC_SHAPE_MATRICES": "OFF",
         "ENABLE_ASAN": "ON",
         "ENABLE_UBSAN": "ON",
@@ -261,7 +260,8 @@
       },
       "environment": {
         "UBSAN_OPTIONS": "print_stacktrace=1",
-        "LSAN_OPTIONS": "suppressions=${sourceDir}/scripts/test/leak_sanitizer.suppressions"
+        "LSAN_OPTIONS": "suppressions=${sourceDir}/scripts/test/leak_sanitizer.suppressions",
+        "CXXFLAGS": "-O3 -fno-var-tracking"
       }
     }
   ],

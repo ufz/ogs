@@ -38,7 +38,7 @@ function(dont_strip_pybind11_init_function target_name module_name)
             target_link_options(${target_name} PRIVATE
                 "LINKER:--undefined=${pybind11_init_function}")
         endif()
-    elseif(COMPILER_IS_MSVC)
+    elseif(MSVC)
         target_link_options(${target_name} PRIVATE
             "/INCLUDE:${pybind11_init_function}")
     else()

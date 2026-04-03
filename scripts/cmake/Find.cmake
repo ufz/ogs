@@ -14,9 +14,6 @@ if(TARGET Doxygen::dot)
     )
 endif()
 
-# Find gnu profiler gprof
-find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
-
 find_program(CPPCHECK_TOOL_PATH cppcheck)
 
 # Find bash itself ...

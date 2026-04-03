@@ -41,7 +41,6 @@ CMake switches to enable / disable parts of OGS.
 
 - `CMAKE_BUILD_TYPE` - Defaults to `Debug` which builds with debugging information, set to `Release` for an optimized build.
 - `OGS_PROFILE` - Builds with profiling flags (`-pg`).
-- `OGS_CMAKE_DEBUG` - Prints out the values of all defined CMake variables at CMake configuration time.
 
 ### Optimization
 
@@ -53,8 +52,6 @@ CMake switches to enable / disable parts of OGS.
 
 ### Advanced options
 
-- `OGS_CXX_FLAGS` - Appends user-given compiler flags. Note that existing (CMake-given) flags are not replaced.
-- `OGS_PACKAGE_ADDITIONAL_BINARIES` - Package additional binaries (given as a `;`-separated list with relative paths to `CMAKE_BINARY_DIR`) into redistributables. Is used for bundling the OGS File Converter with the Data Explorer.
 - `OGS_CPU_ARCHITECTURE` - Optimizes for the given CPU architecture see [-march](https://gcc.gnu.org/onlinedocs/gcc-4.5.3/gcc/i386-and-x86_002d64-Options.html)-flag. Defaults to `native`. For redistributable binaries set to `generic` on Linux and `core2` on Mac OS. Can be disabled when set to `OFF`.
 - `CMAKE_LIBRARY_SEARCH_PATH` - Additional library installation path, e.g. `/opt/local` or `C:/libs`
 - `OGS_DEPENDENCY_VERSIONS` - Overwrite individual entries in `web/data/versions.json`. Should be quoted and `;`-separated, e.g.: `-DOGS_DEPENDENCY_VERSIONS="minimum_version.petsc=3.16.2;ctest.large_runtime=120"`.

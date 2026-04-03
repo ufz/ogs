@@ -14,7 +14,7 @@ weight = 2
 The minimum prerequisites to build OGS are:
 
 - An 64-bit operating system (Linux, Windows 7 and up, macOS)
-- Git (version control tool, at least version {{< dataFile "versions.minimum_version.git" >}})
+- Git (version control tool)
 - CMake (build configuration tool, at least version {{< dataFile "versions.minimum_version.cmake" >}})
 - A compiler with [C++23](http://en.wikipedia.org/wiki/C%2B%2B23)-support
 - Python interpreter and libraries (and optionally the `uv` virtual environment management tool)
@@ -166,7 +166,7 @@ Please check if Git is already installed:
 
 ```bash
 $ git --version
-git version {{< dataFile "versions.minimum_version.git" >}}
+git version 2.xx.x
 ```
 
 Otherwise please install Git with your favorite package manager:
