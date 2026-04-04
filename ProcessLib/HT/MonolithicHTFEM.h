@@ -169,6 +169,14 @@ public:
                     .template value<double>(vars, pos, t, dt);
 
             vars.density = fluid_density;
+            const double dfluid_density_dp =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template dValue<double>(
+                        vars,
+                        MaterialPropertyLib::Variable::liquid_phase_pressure,
+                        pos, t, dt);
+
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
                 liquid_phase
@@ -201,13 +209,14 @@ public:
                                  vars, porosity, fluid_density,
                                  specific_heat_capacity_fluid, pos, t, dt) *
                              N.transpose() * N;
-            Mpp.noalias() += w * N.transpose() * specific_storage * N;
+            Mpp.noalias() += w *
+                             (porosity * dfluid_density_dp / fluid_density +
+                              specific_storage) *
+                             N.transpose() * N;
             if (process_data.has_gravity)
             {
                 Bp += w * fluid_density * dNdx.transpose() * K_over_mu * b;
             }
-            /* with Oberbeck-Boussing assumption density difference only exists
-             * in buoyancy effects */
 
             if (process_data.has_fluid_thermal_expansion)
             {
