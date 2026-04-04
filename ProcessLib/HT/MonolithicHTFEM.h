@@ -60,7 +60,7 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& /*local_x_prev*/,
+                  std::vector<double> const& local_x_prev,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -208,6 +208,30 @@ public:
             }
             /* with Oberbeck-Boussing assumption density difference only exists
              * in buoyancy effects */
+
+            if (process_data.has_fluid_thermal_expansion)
+            {
+                double const solid_thermal_expansion =
+                    process_data.solid_thermal_expansion(t, pos)[0];
+                double const dfluid_density_dT =
+                    liquid_phase
+                        .property(MaterialPropertyLib::PropertyType::density)
+                        .template dValue<double>(
+                            vars, MaterialPropertyLib::Variable::temperature,
+                            pos, t, dt);
+                double const Tdot_int_pt =
+                    (T_int_pt -
+                     Eigen::Map<const NodalVectorType>(
+                         &local_x_prev[temperature_index], temperature_size)
+                         .dot(N)) /
+                    dt;
+                double const biot_constant =
+                    process_data.biot_constant(t, pos)[0];
+                double const eff_thermal_expansion =
+                    3.0 * (biot_constant - porosity) * solid_thermal_expansion -
+                    porosity * dfluid_density_dT / fluid_density;
+                Bp.noalias() += eff_thermal_expansion * Tdot_int_pt * w * N;
+            }
         }
 
         NumLib::assembleAdvectionMatrix<typename ShapeFunction::MeshElement>(
