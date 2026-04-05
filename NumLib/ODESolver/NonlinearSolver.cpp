@@ -389,6 +389,8 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
     _convergence_criterion->preFirstIteration();
 
+    NewtonStepContext step_ctx{sys, x_prev, process_id};
+
     int iteration = 1;
 #if !defined(USE_PETSC) && !defined(USE_LIS)
     int next_iteration_inv_jacobian_recompute = 1;
@@ -490,20 +492,24 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             x_new[process_id] =
                 &NumLib::GlobalVectorProvider::provider.getVector(
                     *x[process_id], _x_new_id);
-            double damping = _damping;
-            if (_convergence_criterion->hasNonNegativeDamping())
+            auto const step_result =
+                _step_strategy->applyStep(*x[process_id], minus_delta_x, res, J,
+                                          *x_new[process_id], ctx, iteration);
+
+            if (step_result.step_length != 1.0)
             {
-                damping = _convergence_criterion->getDampingFactor(
-                    minus_delta_x, *x[process_id], _damping);
+                INFO("Step length: {:g}", step_result.step_length);
             }
-            if (_damping_reduction)
+
+            if (!step_result.success)
             {
-                damping =
-                    damping +
-                    (1 - damping) *
-                        std::clamp(iteration / *_damping_reduction, 0.0, 1.0);
+                ERR("Newton: step strategy failed.");
+                iteration_succeeded = false;
             }
-            LinAlg::axpy(*x_new[process_id], -damping, minus_delta_x);
+            else if (!step_result.x_new_is_set)
+            {
+                LinAlg::axpy(*x_new[process_id], -1.0, minus_delta_x);
+            }
 
             if (postIterationCallback)
             {

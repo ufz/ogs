@@ -3,12 +3,14 @@
 
 #include "CreateNonlinearSolver.h"
 
-#include <algorithm>
+#include <spdlog/fmt/ranges.h>
+
 #include <boost/algorithm/string.hpp>
+#include <memory>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "ConvergenceCriterion.h"
+#include "NonnegativeDampingAndDampingReductionStrategy.h"
 #include "PETScNonlinearSolver.h"
 
 namespace NumLib
@@ -19,6 +21,7 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
 {
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__type}
     auto const type = config.getConfigParameter<std::string>("type");
+
     //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__max_iter}
     auto const max_iter = config.getConfigParameter<int>("max_iter");
 
@@ -40,19 +43,23 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
         if (damping <= 0)
         {
             OGS_FATAL(
-                "The damping factor for the Newon method must be positive, got "
+                "The damping factor for the Newton method must be positive, "
+                "got "
                 "{:g}.",
                 damping);
         }
         auto const damping_reduction =
             //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping_reduction}
             config.getConfigParameterOptional<double>("damping_reduction");
+        auto standard_newton =
+            std::make_unique<FixedDampingStrategy>(damping, damping_reduction);
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
-        return std::make_pair(std::make_unique<ConcreteNLS>(
-                                  linear_solver, max_iter, recompute_jacobian,
-                                  damping, damping_reduction),
-                              tag);
+        return std::make_pair(
+            std::make_unique<ConcreteNLS>(linear_solver, max_iter,
+                                          std::move(standard_newton),
+                                          recompute_jacobian),
+            tag);
     }
 #ifdef USE_PETSC
     if (boost::iequals(type, "PETScSNES"))
@@ -66,9 +73,13 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
                                   linear_solver, max_iter, std::move(prefix)),
                               tag);
     }
-
+    static constexpr std::array valid_types = {"PETScSNES", "Newton", "Picard"};
+#else
+    static constexpr std::array valid_types = {"Newton", "Picard"};
 #endif
-    OGS_FATAL("Unsupported nonlinear solver type '{:s}'.", type.c_str());
+
+    OGS_FATAL("Invalid non-linear solver type '{}'. Supported values: {}.",
+              type, fmt::join(valid_types, ", "));
 }
 
 }  // namespace NumLib

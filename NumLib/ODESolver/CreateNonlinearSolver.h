@@ -12,10 +12,6 @@ namespace BaseLib
 class ConfigTree;
 }
 
-// TODO Document in the ODE solver lib, which matrices and vectors that are
-// passed around as method arguments are guaranteed to be of the right size
-// (and zeroed out) and which are not.
-
 namespace NumLib
 {
 /*! Creates a new nonlinear solver from the given configuration.
@@ -31,7 +27,5 @@ namespace NumLib
 std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>
 createNonlinearSolver(GlobalLinearSolver& linear_solver,
                       BaseLib::ConfigTree const& config);
-
-//! @}
 
 }  // namespace NumLib
