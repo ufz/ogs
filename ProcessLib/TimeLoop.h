@@ -6,7 +6,7 @@
 #include <functional>
 #include <memory>
 
-#include "NumLib/ODESolver/NonlinearSolver.h"
+#include "NumLib/ODESolver/CreateNonlinearSolver.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 #include "NumLib/TimeStepping/TimeIncrement.h"
 #include "Process.h"
