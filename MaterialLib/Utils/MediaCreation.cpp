@@ -3,12 +3,13 @@
 
 #include <spdlog/fmt/ranges.h>
 
+#include <charconv>
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/iota.hpp>
 #include <range/v3/view/unique.hpp>
 
-#include "BaseLib/Algorithm.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
 #include "MeshLib/PropertyVector.h"
@@ -16,52 +17,111 @@
 namespace MaterialLib
 {
 
+/// Parses a trimmed string as an integer with validation.
+/// Throws OGS_FATAL on invalid input.
+int parseInteger(std::string_view str)
+{
+    int result = 0;
+    auto const [ptr, ec] =
+        std::from_chars(str.data(), str.data() + str.size(), result);
+
+    if (ec == std::errc::invalid_argument)
+    {
+        OGS_FATAL("Could not parse material ID from '{}' to a valid integer.",
+                  str);
+    }
+    if (ec == std::errc::result_out_of_range)
+    {
+        OGS_FATAL(
+            "Could not parse material ID from '{}'. The integer value "
+            "exceeds the permitted range.",
+            str);
+    }
+
+    std::size_t const chars_consumed = std::distance(str.data(), ptr);
+    if (chars_consumed != str.size())
+    {
+        auto const non_ws_it = std::find_if_not(
+            str.begin() + chars_consumed, str.end(),
+            [](unsigned char const c) { return std::isspace(c); });
+        if (non_ws_it != str.end())
+        {
+            OGS_FATAL(
+                "Could not parse material ID from '{}'. Invalid character: "
+                "'{}' at position {}.",
+                str, *non_ws_it, std::distance(str.begin(), non_ws_it));
+        }
+    }
+
+    return result;
+}
+
+/// Checks that a string part contains no whitespace.
+/// Throws OGS_FATAL if any whitespace is found.
+void checkForWhitespaces(std::string_view part)
+{
+    if (std::ranges::any_of(
+            part,
+            [](char c) { return std::isspace(static_cast<unsigned char>(c)); }))
+    {
+        OGS_FATAL(
+            "Whitespace is not allowed in ranges. Use 'start:end' without "
+            "spaces around the colon.");
+    }
+}
+
+/// Creates a range of integers from start to end (inclusive).
+/// Throws OGS_FATAL if end < start.
+auto expandRange(int start, int end)
+{
+    if (end < start)
+    {
+        OGS_FATAL(
+            "Invalid range '{}:{}'. The end must be greater than or equal "
+            "to the start.",
+            start, end);
+    }
+    return ranges::views::iota(start, end + 1);
+}
+
 std::vector<int> splitMaterialIdString(std::string const& material_id_string)
 {
     auto const material_ids_strings =
         BaseLib::splitString(material_id_string, ',');
 
+    // Pre-allocate with estimated capacity (simplified heuristic)
     std::vector<int> material_ids;
-    for (auto& mid_str : material_ids_strings)
+    material_ids.reserve(material_ids_strings.size());
+
+    for (std::string mid_str : material_ids_strings)
     {
-        std::size_t num_chars_processed = 0;
-        int material_id;
-        try
+        // Trim leading and trailing whitespace
+        BaseLib::trim(mid_str);
+
+        auto const parts =
+            BaseLib::splitString(mid_str, ':') | ranges::to_vector;
+        if (parts.size() == 2)
         {
-            material_id = std::stoi(mid_str, &num_chars_processed);
+            checkForWhitespaces(parts[0]);
+            auto const start_id = parseInteger(parts[0]);
+            checkForWhitespaces(parts[1]);
+            auto const end_id = parseInteger(parts[1]);
+            ranges::copy(expandRange(start_id, end_id),
+                         std::back_inserter(material_ids));
         }
-        catch (std::invalid_argument&)
+        else if (parts.size() == 1)
+        {
+            auto const material_id = parseInteger(mid_str);
+            material_ids.push_back(material_id);
+        }
+        else
         {
             OGS_FATAL(
-                "Could not parse material ID from '{}' to a valid integer.",
+                "Could not parse material ID from '{}'. Invalid range format. "
+                "Use 'start:end' for ranges or a single integer.",
                 mid_str);
         }
-        catch (std::out_of_range&)
-        {
-            OGS_FATAL(
-                "Could not parse material ID from '{}'. The integer value of "
-                "the given string exceeds the permitted range.",
-                mid_str);
-        }
-
-        if (num_chars_processed != mid_str.size())
-        {
-            // Not the whole string has been parsed. Check the rest.
-            if (auto const it = std::find_if_not(
-                    begin(mid_str) + num_chars_processed, end(mid_str),
-                    [](unsigned char const c) { return std::isspace(c); });
-                it != end(mid_str))
-            {
-                OGS_FATAL(
-                    "Could not parse material ID from '{}'. Please separate "
-                    "multiple material IDs by comma only. Invalid character: "
-                    "'{}' at position {}.",
-                    mid_str, *it, distance(begin(mid_str), it));
-            }
-        }
-
-        material_ids.push_back(material_id);
-    };
+    }
 
     return material_ids;
 }
@@ -88,7 +148,7 @@ std::vector<int> parseMaterialIdString(
         return material_ids_of_this_medium;
     }
 
-    // Usual case of ids separated by comma.
+    // Usual case of ids or ranges separated by comma.
     return splitMaterialIdString(material_id_string);
 }
 
