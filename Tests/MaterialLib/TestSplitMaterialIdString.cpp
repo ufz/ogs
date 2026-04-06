@@ -4,9 +4,12 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <algorithm>
+#include <memory>
+#include <range/v3/algorithm/fill.hpp>
 
 #include "MaterialLib/Utils/MediaCreation.h"
+#include "MeshLib/Mesh.h"
+#include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 
 using namespace MaterialLib;
 
@@ -144,4 +147,126 @@ TEST(MaterialLib_SplitIntegerList, RangeFail)
 
     // invalid character in range
     EXPECT_THROW(splitMaterialIdString("1:?5"), std::runtime_error);
+}
+
+// Test fixture for parseMaterialIdString with real PropertyVector
+class MaterialLib_ParseMaterialIdStringTest : public ::testing::Test
+{
+protected:
+    std::unique_ptr<MeshLib::Mesh> mesh;
+    MeshLib::PropertyVector<int>* material_ids_vector = nullptr;
+
+    void SetUp() override
+    {
+        // Create a minimal mesh with elements
+        mesh = std::unique_ptr<MeshLib::Mesh>(
+            MeshToolsLib::MeshGenerator::generateRegularTriMesh(3, 3));
+        ASSERT_NE(nullptr, mesh);
+
+        // Create PropertyVector with material IDs
+        material_ids_vector =
+            mesh->getProperties().createNewPropertyVector<int>(
+                "MaterialIDs", MeshLib::MeshItemType::Cell,
+                mesh->getNumberOfElements(), 1);
+        ASSERT_NE(nullptr, material_ids_vector);
+    }
+};
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, WildcardWithoutMaterialIds)
+{
+    // Should throw OGS_FATAL when material_ids is nullptr and input is "*"
+    EXPECT_THROW(parseMaterialIdString("*", nullptr), std::runtime_error);
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, WildcardWithMaterialIds)
+{
+    using namespace testing;
+
+    // Populate vector with values spanning 0, 1, 2
+    ranges::fill(*material_ids_vector, 0);
+    (*material_ids_vector)[0] = 1;
+    (*material_ids_vector)[1] = 2;
+
+    auto result = parseMaterialIdString("*", material_ids_vector);
+
+    // Should return unique, sorted material IDs
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{0, 1, 2}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, WildcardWithDuplicatesAndUnsorted)
+{
+    using namespace testing;
+
+    // Populate with duplicates and unsorted values, tiled to fill the vector
+    std::vector<int> pattern{3, 1, 2, 1, 0, 3, 2};
+    for (std::size_t i = 0; i < material_ids_vector->size(); ++i)
+    {
+        (*material_ids_vector)[i] = pattern[i % pattern.size()];
+    }
+
+    auto result = parseMaterialIdString("*", material_ids_vector);
+
+    // Should return unique, sorted material IDs
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{0, 1, 2, 3}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, WildcardWithNegativeIds)
+{
+    using namespace testing;
+
+    // Populate with negative and positive values, tiled to fill the vector
+    std::vector<int> pattern{-2, 1, -1, 0, 1, -2};
+    for (std::size_t i = 0; i < material_ids_vector->size(); ++i)
+    {
+        (*material_ids_vector)[i] = pattern[i % pattern.size()];
+    }
+
+    auto result = parseMaterialIdString("*", material_ids_vector);
+
+    // Should return unique, sorted material IDs including negatives
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{-2, -1, 0, 1}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, RegularIdPassthrough)
+{
+    using namespace testing;
+
+    // Single ID should work without PropertyVector
+    auto result = parseMaterialIdString("5", nullptr);
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{5}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, RangePassthrough)
+{
+    using namespace testing;
+
+    // Range should work without PropertyVector
+    auto result = parseMaterialIdString("1:3", nullptr);
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{1, 2, 3}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, MixedListPassthrough)
+{
+    using namespace testing;
+
+    // Mixed list of IDs and ranges should work without PropertyVector
+    auto result = parseMaterialIdString("1:2,5,7:9", nullptr);
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{1, 2, 5, 7, 8, 9}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, WildcardWithMultipleElements)
+{
+    using namespace testing;
+
+    // Resize and fill PropertyVector with repeated pattern
+    material_ids_vector->resize(5);
+    (*material_ids_vector)[0] = 1;
+    (*material_ids_vector)[1] = 2;
+    (*material_ids_vector)[2] = 1;
+    (*material_ids_vector)[3] = 3;
+    (*material_ids_vector)[4] = 2;
+
+    // When using "*", return unique, sorted material IDs from PropertyVector
+    auto result = parseMaterialIdString("*", material_ids_vector);
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{1, 2, 3}));
 }
