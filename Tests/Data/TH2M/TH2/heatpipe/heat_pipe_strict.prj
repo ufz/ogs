@@ -17,7 +17,7 @@
             </constitutive_relation>
             <jacobian_assembler>
                 <type>CentralDifferences</type>
-                <epsilons>0.01 0.01 3e-06</epsilons>
+                <epsilons>0.01 0.0001 3e-03</epsilons>
             </jacobian_assembler>
             <reference_temperature>T0</reference_temperature>
             <process_variables>
@@ -114,21 +114,12 @@
                             <name>density</name>
                             <type>IdealGasLawBinaryMixture</type>
                         </property>
-                        <!-- <property>
-                            <name>viscosity</name>
-                            <type>Constant</type>
-                            <value>1.8e-5</value>
-                        </property> -->
                         <property>
                             <name>viscosity</name>
                             <type>Function</type>
                             <value>
                                 <expression>21.94e-6 * molar_fraction + (1.-molar_fraction)*12.27e-6</expression>
                             </value>
-                            <!-- <dvalue>
-                                <variable_name>liquid_saturation</variable_name>
-                                <expression>-1</expression>
-                            </dvalue> -->
                         </property>
                     </properties>
                 </phase>
@@ -276,16 +267,10 @@
         <processes>
             <process ref="TH2M">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
-                <!-- <convergence_criterion>
-                    <type>DeltaX</type>
-                    <norm_type>NORM2</norm_type>
-                    <reltol>1.e-10</reltol>
-                </convergence_criterion> -->
                 <convergence_criterion>
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstols>1e-06 1e-06 1e-06 1e-6 1e-6</abstols>
-                    <!-- <reltols>1e-8 1e-8 1e-8 1e-8 1e-8</reltols> -->
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -468,7 +453,6 @@
             <name>timeRamp_temperature</name>
             <coords>0  100000 1.0e99 </coords>
             <values>1. 1. 1. </values>
-            <!-- 1.1705611461709 1.1705611461709 </values> -->
         </curve>
         <curve>
             <name>timeRamp_pressure</name>
@@ -489,28 +473,6 @@
             <order>1</order>
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
-                <!--
-                <boundary_condition>
-                    <mesh>boundary_bottom</mesh>
-                    <type>Dirichlet</type>
-                    <component>1</component>
-                    <parameter>dirichlet0</parameter>
-                </boundary_condition>
-
-                <boundary_condition>
-                    <mesh>boundary_left_len_1m</mesh>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>dirichlet0</parameter>
-                </boundary_condition>
-
-                <boundary_condition>
-                    <mesh>boundary_right_len_1m</mesh>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>dirichlet0</parameter>
-                </boundary_condition>
--->
                 <boundary_condition>
                     <mesh>domain</mesh>
                     <type>Dirichlet</type>
@@ -589,12 +551,6 @@
         <linear_solver>
             <name>general_linear_solver</name>
             <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
-            <!--            <eigen>
-                <solver_type>BiCGSTAB</solver_type>
-                <precon_type>DIAGONAL</precon_type>
-                <max_iteration_step>10000</max_iteration_step>
-                <error_tolerance>1e-25</error_tolerance>
-            </eigen>-->
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
