@@ -28,7 +28,7 @@
         </process>
     </processes>
     <media>
-        <medium id="0,1,2,3">
+        <medium id="0:3">
             <properties>
                 <property>
                     <name>diffusion</name>
