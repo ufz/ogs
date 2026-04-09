@@ -60,7 +60,7 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& local_x_prev,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -85,7 +85,11 @@ public:
             pressure_index, pressure_index);
         auto Mpp = local_M.template block<pressure_size, pressure_size>(
             pressure_index, pressure_index);
+        auto MpT = local_M.template block<pressure_size, temperature_size>(
+            pressure_index, temperature_index);
         auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
+
+        typename ShapeMatricesType::NodalMatrixType NtN;
 
         auto const& process_data = this->_process_data;
 
@@ -196,11 +200,13 @@ public:
                                         specific_heat_capacity_fluid);
             average_velocity_norm += velocity.norm();
 
-            MTT.noalias() += w *
-                             this->getHeatEnergyCoefficient(
-                                 vars, porosity, fluid_density,
-                                 specific_heat_capacity_fluid, pos, t, dt) *
-                             N.transpose() * N;
+            NtN.noalias() = N.transpose() * N;
+
+            MTT.noalias() +=
+                (w * this->getHeatEnergyCoefficient(
+                         vars, porosity, fluid_density,
+                         specific_heat_capacity_fluid, pos, t, dt)) *
+                NtN;
 
             double const scaling_factor =
                 process_data.is_volume_balance_equation_type ? 1.0
@@ -220,7 +226,7 @@ public:
             Mpp.noalias() += (scaling_factor * w *
                               (porosity * dfluid_density_dp / fluid_density +
                                specific_storage)) *
-                             N.transpose() * N;
+                             NtN;
             if (process_data.has_gravity)
             {
                 Bp += (scaling_factor * w * fluid_density) * dNdx.transpose() *
@@ -229,28 +235,22 @@ public:
 
             if (process_data.has_fluid_thermal_expansion)
             {
-                double const solid_thermal_expansion =
+                auto const solid_thermal_expansion =
                     process_data.solid_thermal_expansion(t, pos)[0];
-                double const dfluid_density_dT =
+                const double dfluid_density_dT =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template dValue<double>(
                             vars, MaterialPropertyLib::Variable::temperature,
                             pos, t, dt);
-                double const Tdot_int_pt =
-                    (T_int_pt -
-                     Eigen::Map<const NodalVectorType>(
-                         &local_x_prev[temperature_index], temperature_size)
-                         .dot(N)) /
-                    dt;
-                double const biot_constant =
+                auto const biot_constant =
                     process_data.biot_constant(t, pos)[0];
-                double const eff_thermal_expansion =
+                const double eff_thermal_expansion =
                     3.0 * (biot_constant - porosity) * solid_thermal_expansion -
                     porosity * dfluid_density_dT / fluid_density;
-                Bp.noalias() +=
-                    (scaling_factor * eff_thermal_expansion * Tdot_int_pt * w) *
-                    N;
+
+                MpT.noalias() -=
+                    (scaling_factor * w * eff_thermal_expansion) * NtN;
             }
         }
 
