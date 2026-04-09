@@ -169,13 +169,6 @@ public:
                     .template value<double>(vars, pos, t, dt);
 
             vars.density = fluid_density;
-            const double dfluid_density_dp =
-                liquid_phase
-                    .property(MaterialPropertyLib::PropertyType::density)
-                    .template dValue<double>(
-                        vars,
-                        MaterialPropertyLib::Variable::liquid_phase_pressure,
-                        pos, t, dt);
 
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
@@ -203,19 +196,35 @@ public:
                                         specific_heat_capacity_fluid);
             average_velocity_norm += velocity.norm();
 
-            Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
             MTT.noalias() += w *
                              this->getHeatEnergyCoefficient(
                                  vars, porosity, fluid_density,
                                  specific_heat_capacity_fluid, pos, t, dt) *
                              N.transpose() * N;
-            Mpp.noalias() += w *
-                             (porosity * dfluid_density_dp / fluid_density +
-                              specific_storage) *
+
+            double const scaling_factor =
+                process_data.is_volume_balance_equation_type ? 1.0
+                                                             : fluid_density;
+
+            Kpp.noalias() +=
+                (scaling_factor * w) * dNdx.transpose() * K_over_mu * dNdx;
+
+            const double dfluid_density_dp =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template dValue<double>(
+                        vars,
+                        MaterialPropertyLib::Variable::liquid_phase_pressure,
+                        pos, t, dt);
+
+            Mpp.noalias() += (scaling_factor * w *
+                              (porosity * dfluid_density_dp / fluid_density +
+                               specific_storage)) *
                              N.transpose() * N;
             if (process_data.has_gravity)
             {
-                Bp += w * fluid_density * dNdx.transpose() * K_over_mu * b;
+                Bp += (scaling_factor * w * fluid_density) * dNdx.transpose() *
+                      K_over_mu * b;
             }
 
             if (process_data.has_fluid_thermal_expansion)
@@ -239,7 +248,9 @@ public:
                 double const eff_thermal_expansion =
                     3.0 * (biot_constant - porosity) * solid_thermal_expansion -
                     porosity * dfluid_density_dT / fluid_density;
-                Bp.noalias() += eff_thermal_expansion * Tdot_int_pt * w * N;
+                Bp.noalias() +=
+                    (scaling_factor * eff_thermal_expansion * Tdot_int_pt * w) *
+                    N;
             }
         }
 

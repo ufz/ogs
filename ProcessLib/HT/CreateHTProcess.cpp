@@ -14,6 +14,7 @@
 #include "NumLib/NumericalStability/CreateNumericalStabilization.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydraulicProcess/checkVolumeBalanceEquationSetting.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -201,6 +202,27 @@ std::unique_ptr<Process> createHTProcess(
                    [&specific_body_force](const auto& R)
                    { return R * R.transpose() * specific_body_force; });
 
+    auto const equation_balance_type_str =
+        //! \ogs_file_param{prj__processes__process__HT__equation_balance_type}
+        config.getConfigParameter<std::string>("equation_balance_type",
+                                               "volume");
+    if (equation_balance_type_str != "volume" &&
+        equation_balance_type_str != "mass")
+    {
+        OGS_FATAL(
+            "Invalid equation_balance_type '{}'. Supported values: 'volume' or "
+            "'mass'.",
+            equation_balance_type_str);
+    }
+    bool const is_volume_balance_equation_type =
+        (equation_balance_type_str == "volume");
+
+    if (is_volume_balance_equation_type)
+    {
+        ProcessLib::Common::HydraulicProcess::checkVolumeBalanceEquationSetting(
+            media_map);
+    }
+
     HTProcessData process_data{std::move(media_map),
                                has_fluid_thermal_expansion,
                                *solid_thermal_expansion,
@@ -212,6 +234,7 @@ std::unique_ptr<Process> createHTProcess(
                                projected_specific_body_force_vectors,
                                mesh_space_dimension,
                                *aperture_size_parameter,
+                               is_volume_balance_equation_type,
                                NumLib::ShapeMatrixCache{integration_order}};
 
     SecondaryVariableCollection secondary_variables;

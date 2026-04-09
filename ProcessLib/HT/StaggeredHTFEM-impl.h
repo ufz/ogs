@@ -131,23 +131,27 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         GlobalDimMatrixType const K_over_mu =
             intrinsic_permeability / viscosity;
 
-        // matrix assembly
-        local_M.noalias() +=
-            w *
-            (porosity * dfluid_density_dp / fluid_density + specific_storage) *
-            N.transpose() * N;
+        double const scaling_factor =
+            process_data.is_volume_balance_equation_type ? 1.0 : fluid_density;
 
-        local_K.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
+        // matrix assembly
+        local_M.noalias() += (scaling_factor * w *
+                              (porosity * dfluid_density_dp / fluid_density +
+                               specific_storage)) *
+                             N.transpose() * N;
+
+        local_K.noalias() +=
+            (scaling_factor * w) * dNdx.transpose() * K_over_mu * dNdx;
 
         if (process_data.has_gravity)
         {
-            local_b.noalias() +=
-                w * fluid_density * dNdx.transpose() * K_over_mu * b;
+            local_b.noalias() += (scaling_factor * w * fluid_density) *
+                                 dNdx.transpose() * K_over_mu * b;
         }
 
         if (!process_data.has_fluid_thermal_expansion)
         {
-            return;
+            continue;
         }
 
         // Add the thermal expansion term
@@ -165,7 +169,8 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
             const double eff_thermal_expansion =
                 3.0 * (biot_constant - porosity) * solid_thermal_expansion -
                 porosity * dfluid_density_dT / fluid_density;
-            local_b.noalias() += eff_thermal_expansion * Tdot_int_pt * w * N;
+            local_b.noalias() +=
+                (scaling_factor * eff_thermal_expansion * Tdot_int_pt * w) * N;
         }
     }
 }
