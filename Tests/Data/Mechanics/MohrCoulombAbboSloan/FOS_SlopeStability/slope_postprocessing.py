@@ -9,6 +9,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 from slope_utils import ssr_params, ssr_schedule
 
 DEFAULT_MPL_RC = {
@@ -187,7 +188,7 @@ def _read_time_stepping_type(prj_path: Path) -> str | None:
 
 
 def _plot_contourf_compat(
-    mesh: ot.Mesh,
+    mesh: pv.UnstructuredGrid,
     fig: plt.Figure,
     ax: plt.Axes,
     var,
@@ -214,9 +215,9 @@ def _plot_contourf_compat(
     if cb_label is not None:
         kwargs_full["cb_label"] = cb_label
     try:
-        mesh.plot_contourf(var, fig, ax, **kwargs_full)
+        ot.plot.contourf(mesh, var, fig, ax, **kwargs_full)
     except TypeError:
-        mesh.plot_contourf(var, fig, ax, cmap=cmap, vmin=vmin, vmax=vmax)
+        ot.plot.contourf(mesh, var, fig, ax, cmap=cmap, vmin=vmin, vmax=vmax)
 
     if cb_label is not None and fig.axes:
         cax = fig.axes[-1]
@@ -260,7 +261,7 @@ def plot_point_disp_vs_time(
     idx = int(np.argmin(np.linalg.norm(pts[:, :2] - p[:2], axis=1)))
     snap = pts[idx]
 
-    probe = ot.MeshSeries.extract_probe(ms, [snap])
+    probe = ot.MeshSeries.probe(ms, [snap])
     times = np.asarray(probe.timevalues)
 
     disp = np.asarray(ot.variables.displacement.transform(probe))[:, 0, :]
@@ -286,7 +287,9 @@ def plot_point_disp_vs_time(
     _savefig(fig, out_png)
 
 
-def _select_stress_mesh(mesh: ot.Mesh, *, prefer_ip: bool) -> tuple[ot.Mesh, str]:
+def _select_stress_mesh(
+    mesh: pv.UnstructuredGrid, *, prefer_ip: bool
+) -> tuple[pv.UnstructuredGrid, str]:
     pd = mesh.point_data or {}
     cd = mesh.cell_data or {}
     has_ip = ("sigma_ip" in pd) or ("sigma_ip" in cd)
@@ -308,7 +311,9 @@ def find_vtu_at_time(
     return min(vtus, key=lambda x: abs(x[1] - tt))
 
 
-def displacement_norm_relative_mm(mesh_end: ot.Mesh, mesh_t0: ot.Mesh) -> np.ndarray:
+def displacement_norm_relative_mm(
+    mesh_end: pv.UnstructuredGrid, mesh_t0: pv.UnstructuredGrid
+) -> np.ndarray:
     u = ot.variables.displacement
     u_end = np.asarray(u.transform(mesh_end))
     u_0 = np.asarray(u.transform(mesh_t0))
@@ -343,10 +348,12 @@ def plot_baseline_stress_row_t0(
     mesh0 = ot.MeshSeries(str(vtu_t0))[-1]
     s_mesh, data_name = _select_stress_mesh(mesh0, prefer_ip=prefer_ip_stress)
 
-    p_mean = ot.variables.stress.mean.replace(data_name=data_name, output_unit="kPa")
+    p_mean = ot.variables.stress.tensor_mean.replace(
+        data_name=data_name, output_unit="kPa"
+    )
     s = ot.variables.stress.replace(data_name=data_name, output_unit="kPa")
 
-    def _principal_min_index(s_var, mesh: ot.Mesh) -> int:
+    def _principal_min_index(s_var, mesh: pv.UnstructuredGrid) -> int:
         l0 = np.asarray(s_var.eigenvalues[0].transform(mesh)).reshape(-1)
         l1 = np.asarray(s_var.eigenvalues[1].transform(mesh)).reshape(-1)
         l2 = np.asarray(s_var.eigenvalues[2].transform(mesh)).reshape(-1)
