@@ -28,7 +28,7 @@ class Component;
  *
  * Original source: Lu, Y., McCartney, J.S. Temperature effects on adsorption
 and capillarity water retention mechanisms in constrained unsaturated soils.
-Acta Geotech. 19, 6467–6482 (2024).
+Acta Geotech. 19, 6467-6482 (2024).
  * https://doi.org/10.1007/s11440-024-02341-9
  * and Guo, G., Zheng, L., Lu, Y., Behbehani, F., & McCartney, J. (2026).
 Coupled THM modeling of bentonite heating and hydration in tank TemperatureTypes

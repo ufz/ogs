@@ -64,7 +64,7 @@ namespace LiquidFlow
  *          \cdot \mathbf n = q_v [\text{m/s}]: &
  *          \mbox{ for the volume balance equation,}\\
  *       & -\rho\frac{\mathbf K}{\mu}(\nabla p + \rho g \nabla z)
- *          \cdot \mathbf n = q_f [\text{kg/m²/s}]: &
+ *          \cdot \mathbf n = q_f [\text{kg/m^2/s}]: &
  *            \mbox{for the mass balance equation,}
  *    \f}
  *   with \f$ \mathbf n \f$ the outer normal of the boundary.

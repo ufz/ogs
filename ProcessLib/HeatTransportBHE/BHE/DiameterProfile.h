@@ -76,7 +76,7 @@ struct DiameterProfile
 
     /// \brief Get cross-sectional area at a given distance from wellhead.
     /// \param distance_from_wellhead Distance from wellhead [m].
-    /// \return Cross-sectional area [m²] for the corresponding section.
+    /// \return Cross-sectional area [m^2] for the corresponding section.
     double areaAtDistance(double distance_from_wellhead) const
     {
         return circleArea(diameterAtDistance(distance_from_wellhead));

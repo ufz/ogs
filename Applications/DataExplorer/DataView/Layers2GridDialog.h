@@ -37,9 +37,9 @@ private slots:
     void reject() override { this->done(QDialog::Rejected); };
     /// Instructions if the ">>" button has been pressed.
     void on_deleteMeshButton_pressed();
-    /// Instructions if the "↑"-button has been pressed.
+    /// Instructions if the "up"-button has been pressed.
     void on_upOrderButton_pressed();
-    /// Instructions if the "↓"-button has been pressed.
+    /// Instructions if the "down"-button has been pressed.
     void on_downOrderButton_pressed();
     /// Instructions if the "order mesh"-button has been pressed.
     void on_orderButton_pressed();

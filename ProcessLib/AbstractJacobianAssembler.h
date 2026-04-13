@@ -74,7 +74,7 @@ public:
         int const max_non_deformation_dofs_per_node) const
     {
         if (absolute_epsilons_.empty())
-        {  // No epsilons specified — this assembler is used for the Picard
+        {  // No epsilons specified - this assembler is used for the Picard
            // nonlinear solver or for the Newton nonlinear solver with
            // analytical Jacobian, so there is nothing to do.
             return;
@@ -104,7 +104,7 @@ public:
         // Repeated in checkPerturbationSize to cover staggered scheme in TH2M
         // and THM, which may be supported in future.
         if (absolute_epsilons_.empty())
-        {  // No epsilons specified — this assembler is used for the Picard
+        {  // No epsilons specified - this assembler is used for the Picard
            // nonlinear solver or for the Newton nonlinear solver with
            // analytical Jacobian, so there is nothing to do.
             return;

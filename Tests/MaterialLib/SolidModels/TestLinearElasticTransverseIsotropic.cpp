@@ -432,7 +432,7 @@ TEST_F(LinearElasticTransverseIsotropic, test_Rotation_ElasticOrthotropic)
         checkRotationElasticOrthotropic<2>(coordinate_system);
     }
     {  // 3D
-       // x: 15.3° y: 35° z: 44.9°
+       // x: 15.3 deg y: 35 deg z: 44.9 deg
         ParameterLib::ConstantParameter<double> const e1{
             "e1", {0.5802380261233806, 0.5782161401269231, -0.573576436351046}};
         ParameterLib::ConstantParameter<double> const e2{

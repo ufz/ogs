@@ -80,7 +80,7 @@ public:
 
     /**
      * Computes the saturation that gives the minimum relative permeability by
-     * using the Regula–Falsi Method.
+     * using the Regula-Falsi Method.
      * @return \f$ S^L\f$ that gives the minimum relative permeability.
      */
     double computeSaturationForMinimumRelativePermeability() const;

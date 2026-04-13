@@ -44,8 +44,8 @@ auto localDOFImpl(ElementDOFVector const& x,
 }  // namespace detail
 
 //! Decomposes the passed d.o.f.s of an entire finite element into d.o.f.s
-//! belonging to individual unknowns—such as pressure, temperature, or
-//! displacement—via the passed shape functions.
+//! belonging to individual unknowns - such as pressure, temperature, or
+//! displacement - via the passed shape functions.
 //!
 //! \attention The order of the passed shape functions indicates the order of
 //! the primary unknowns in the element d.o.f.s, and the order of the returned

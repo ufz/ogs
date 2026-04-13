@@ -25,7 +25,7 @@ class Phase;
  *  \f$D_{vr}\f$ is the the relative
  * diffusion coefficient, and \f$T\f$ is the temperature.
  *
- *  The Penman–Millington–Quirk (PMQ) model \cite moldrup1997modeling is given
+ *  The Penman-Millington-Quirk (PMQ) model \cite moldrup1997modeling is given
  *  as
  *  \f[
  *     D_{vr}=0.66 \phi \left(\frac{\kappa}{\phi}\right)^{\frac{12-m}{3}},

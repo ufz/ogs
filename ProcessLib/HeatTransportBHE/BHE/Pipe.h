@@ -25,7 +25,7 @@ struct Pipe
     /// Wall thickness [m].
     double const wall_thickness;
 
-    /// Wall thermal conductivity [W/(m·K)].
+    /// Wall thermal conductivity [W/(m*K)].
     double const wall_thermal_conductivity;
 
     double outsideDiameter() const { return diameter + 2 * wall_thickness; }

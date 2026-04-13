@@ -45,7 +45,7 @@ double evaluateHCompSpectral(
 }
 
 /**
- * Double–minor symmetrized tensor product
+ * Double-minor symmetrized tensor product
  *
  * aOdotB computes the symmetric 4th-order tensor product
  * \f[
@@ -58,7 +58,7 @@ double evaluateHCompSpectral(
  *
  * Reference
  * Mehrabadi, M.M., & Cowin, S.C. (1990). *Eigentensors of linear anisotropic
- * elastic materials.* Q. J. Mech. Appl. Math., 43(1), 15–41.
+ * elastic materials.* Q. J. Mech. Appl. Math., 43(1), 15-41.
  */
 
 template <>

@@ -69,7 +69,7 @@ public:
         auto const precision = os.precision();
         return os << std::setprecision(
                          std::numeric_limits<double>::max_digits10)
-                  << x.value() << " (± " << x.correction_ << ')'
+                  << x.value() << " (+/- " << x.correction_ << ')'
                   << std::setprecision(precision);
     }
 
