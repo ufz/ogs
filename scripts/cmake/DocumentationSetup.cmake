@@ -165,3 +165,5 @@ if(Python_EXECUTABLE)
         VERBATIM
     )
 endif()
+
+file(COPY ${PROJECT_SOURCE_DIR}/scripts/doc/_redirects DESTINATION ${DOXYGEN_HTML_OUTPUT})
