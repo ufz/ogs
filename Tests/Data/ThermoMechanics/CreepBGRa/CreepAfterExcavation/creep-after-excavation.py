@@ -97,21 +97,21 @@ model.write_input()
 model.run_model(logfile=out_dir / "log.txt", args=f"-o {out_dir} -m .")
 
 # %%
-ms = ot.MeshSeries(out_dir / "CreepAfterExcavation.pvd").scale(time=("s", "d"))
+ms = ot.MeshSeries(out_dir / "CreepAfterExcavation.pvd").scale(time="d")
 
 ts_109d = np.where(np.round(ms.timevalues) == 109)[0].item()  # 109 days
 ts_409d = np.where(np.round(ms.timevalues) == 409)[0].item()  # 409 days
 ts_1000d = np.where(np.round(ms.timevalues) == 1000)[0].item()  # 1000 days
 
-ms_109d = ms.mesh(ts_109d)
-ms_409d = ms.mesh(ts_409d)
-ms_1000d = ms.mesh(ts_1000d)
+mesh_109d = ms.mesh(ts_109d)
+mesh_409d = ms.mesh(ts_409d)
+mesh_1000d = ms.mesh(ts_1000d)
 
 
 # %%
 def plot_stress_dist(day, mesh):
     obs_pts = np.array([150.0, -600, 0])
-    ms_pts = ot.MeshSeries.extract_probe(ms, obs_pts)
+    ms_pts = ot.MeshSeries.probe(ms, obs_pts)
 
     fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(25, 10))
     ot.plot.line(
@@ -133,8 +133,8 @@ def plot_stress_dist(day, mesh):
     )
     ax[0].axvline(day, color="green")
 
-    mesh.plot_contourf(ot.variables.stress["xx"], fig=fig, ax=ax[1], fontsize=15)
-    mesh.plot_contourf(ot.variables.stress["yy"], fig=fig, ax=ax[2], fontsize=15)
+    ot.plot.contourf(mesh, ot.variables.stress["xx"], fig=fig, ax=ax[1], fontsize=15)
+    ot.plot.contourf(mesh, ot.variables.stress["yy"], fig=fig, ax=ax[2], fontsize=15)
 
     fig.suptitle(f"Stress distribution at the time of {day} days", fontsize=20)
     plt.tight_layout()
@@ -146,15 +146,15 @@ def plot_stress_dist(day, mesh):
 
 # %%
 # Stress distrubtion at 109 days
-plot_stress_dist(109, ms_109d)
+plot_stress_dist(109, mesh_109d)
 
 # %%
 # Stress distrubtion at 409 days
-plot_stress_dist(409, ms_409d)
+plot_stress_dist(409, mesh_409d)
 
 # %%
 # Stress distrubtion at 1000 days
-plot_stress_dist(1000, ms_1000d)
+plot_stress_dist(1000, mesh_1000d)
 
 # %% [markdown]
 # The above three figures show that the absolute value of the horizontal
@@ -168,8 +168,12 @@ plot_stress_dist(1000, ms_1000d)
 # %%
 fig_strain, ax = plt.subplots(nrows=1, ncols=2, figsize=(15, 6))
 
-ms_1000d.plot_contourf(ot.variables.strain["xx"], fig=fig_strain, ax=ax[0], fontsize=15)
-ms_1000d.plot_contourf(ot.variables.strain["yy"], fig=fig_strain, ax=ax[1], fontsize=15)
+ot.plot.contourf(
+    mesh_1000d, ot.variables.strain["xx"], fig=fig_strain, ax=ax[0], fontsize=15
+)
+ot.plot.contourf(
+    mesh_1000d, ot.variables.strain["yy"], fig=fig_strain, ax=ax[1], fontsize=15
+)
 
 fig_strain.suptitle("Strain distribution at the time of 1000 days")
 plt.tight_layout()
@@ -181,7 +185,7 @@ plt.show()
 # %%
 fig_temp, ax = plt.subplots(figsize=(10, 6))
 
-ms_1000d.plot_contourf(ot.variables.temperature, fig=fig_temp, ax=ax, fontsize=15)
+ot.plot.contourf(mesh_1000d, ot.variables.temperature, fig=fig_temp, ax=ax, fontsize=15)
 ax.set_title("Temperature distribution at the time of 1000 days.")
 
 plt.tight_layout()
