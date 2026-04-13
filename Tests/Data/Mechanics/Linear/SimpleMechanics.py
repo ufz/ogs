@@ -40,7 +40,7 @@ out_dir.mkdir(parents=True, exist_ok=True)
 # %%
 prj_name = "SimpleMechanics"
 model = ot.Project(output_file=(out_dir / f"{prj_name}.prj"))
-model.geometry.add_geometry(filename="./square_1x1.gml")
+model.geometry.add_geometry("./square_1x1.gml")
 model.mesh.add_mesh(filename="./square_1x1_quad_1e2.vtu")
 model.processes.set_process(
     name="SD",
@@ -158,7 +158,7 @@ except Exception as inst:
 print(datetime.now())
 
 # %%
-ms = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd").scale(time=("s", "a"))
+ms = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd").scale(time="a")
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 points_labels = ["pt0", "pt1"]
 
@@ -172,9 +172,9 @@ for component in ["x", "y"]:
     for interp_method in ["linear", "nearest"]:
         labels = [f"$u_{component}$ {label} {interp_method}" for label in points_labels]
 
-        ms_pts = ot.MeshSeries.extract_probe(
+        ms_pts = ot.MeshSeries.probe(
             ms, points_coords, interp_method=interp_method
-        ).scale(time=("s", "a"))
+        ).scale(time="a")
         ot.plot.line(
             ms_pts,
             "time",

@@ -111,7 +111,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import ogstools as ot
-from ogstools.meshlib import MeshSeries
 
 # %%
 # creating output path if it doesn't exist already.
@@ -138,10 +137,10 @@ model.run_model(logfile=out_dir / "log.txt", args=f"-o {out_dir} -m .")
 # permeability change in EDZ.
 
 # %%
-ms = MeshSeries(out_dir / "quad_with_half_hole.pvd").mesh(1)
+mesh_1 = ot.MeshSeries(out_dir / "quad_with_half_hole.pvd").mesh(1)
 
 fig_perm, ax = plt.subplots(figsize=(8, 6))
-ms.plot_contourf("permeability", fig=fig_perm, ax=ax, fontsize=15)
+ot.plot.contourf(mesh_1, "permeability", fig=fig_perm, ax=ax, fontsize=15)
 ax.set_title("Figure 1: Calculated permeability distribution in [m$^2$].")
 plt.tight_layout()
 plt.show()
@@ -154,8 +153,10 @@ plt.show()
 pressure = ot.variables.pressure.replace(data_name="pressure_interpolated")
 fig_stress, ax = plt.subplots(nrows=1, ncols=2, figsize=(20, 8))
 
-ms.plot_contourf(ot.variables.stress["xx"], fig=fig_stress, ax=ax[0], fontsize=15)
-ms.plot_contourf(pressure, fig=fig_stress, ax=ax[1], fontsize=15)
+ot.plot.contourf(
+    mesh_1, ot.variables.stress["xx"], fig=fig_stress, ax=ax[0], fontsize=15
+)
+ot.plot.contourf(mesh_1, pressure, fig=fig_stress, ax=ax[1], fontsize=15)
 plt.suptitle(
     "Figure 2: Calculated distributions of horizontal stress (left) and pore pressure (right), in [MPa] respectively",
     fontsize=20,

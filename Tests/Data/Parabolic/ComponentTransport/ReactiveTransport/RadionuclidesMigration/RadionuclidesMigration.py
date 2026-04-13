@@ -156,7 +156,7 @@ def plot_results(var: ot.variables.Scalar, x_max: float) -> plt.Figure:
     full_ms = ot.MeshSeries(f"{nucl}_full_simulation/out.pvd")[1:]
     mesh_list = list(this_ms) + list(full_ms)
     timevalues = np.append(this_ms.timevalues, full_ms.timevalues)
-    ms = ot.MeshSeries.from_data(mesh_list, timevalues).scale(time=("s", "a"))
+    ms = ot.MeshSeries.from_data(mesh_list, timevalues).scale(time="a")
     difference = ms[nucl][:-1] <= ms[nucl][1:]
     assert np.all((difference >= 0.0) | np.isclose(difference, 0.0))
     labels = [f"{tv:.1e} years" for tv in ms.timevalues]

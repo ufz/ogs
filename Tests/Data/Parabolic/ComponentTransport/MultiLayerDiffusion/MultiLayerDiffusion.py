@@ -145,7 +145,7 @@ model.write_input()
 model.run_model(logfile=out_dir / "out.txt", args=f"-o {out_dir} -m .")
 
 # %% Read simulation results
-ms_MLD = ot.MeshSeries(out_dir / f"{name}.pvd").scale(time=("s", "a"))[1:]
+ms_MLD = ot.MeshSeries(out_dir / f"{name}.pvd").scale(time="a")[1:]
 HTO_var = ot.variables.Scalar("HTO", "mol/L", "mol/L", "HTO concentration")
 fig = plot_results(ms_MLD, HTO_var)
 

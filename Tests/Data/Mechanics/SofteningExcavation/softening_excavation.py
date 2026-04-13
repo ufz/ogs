@@ -57,9 +57,7 @@ results = ot.MeshSeries(f"{out_dir}/SD_softening_excavation.pvd")
 fig, ax = plt.subplots(figsize=[8, 4])
 
 tunnel_top = [0.0, -898.0, 0.0]
-probe = ot.MeshSeries.extract_probe(results, tunnel_top, "displacement").scale(
-    time=("s", "d")
-)
+probe = ot.MeshSeries.probe(results, tunnel_top, "displacement").scale(time=("s", "d"))
 ot.plot.line(probe, "time", "displacement", ax=ax, fontsize=10, marker=".")
 assert np.isclose(probe[-1]["displacement"][:, 1], -0.10548506)
 

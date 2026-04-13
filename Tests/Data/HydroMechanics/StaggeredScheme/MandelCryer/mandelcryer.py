@@ -102,7 +102,7 @@ print(ms[0].point_data.keys())
 # %%
 # Plot soil temperature at observation points
 center_point = [0, 0, 0]
-ms_pts = ot.MeshSeries.extract_probe(ms, center_point)
+ms_pts = ot.MeshSeries.probe(ms, center_point)
 fig = ot.plot.line(ms_pts, "time", ot.variables.pressure, labels=["Center"])
 
 

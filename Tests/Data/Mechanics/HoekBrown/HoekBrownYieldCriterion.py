@@ -858,9 +858,7 @@ model_hb = ot.Project(
 model_hb.write_input()
 
 # %%
-model_hb.run_model(
-    logfile=str(out_dir / "out.txt"), write_prj_to_pvd=False, args=f"-o {out_dir} -m ."
-)
+model_hb.run_model(logfile=str(out_dir / "out.txt"), args=f"-o {out_dir} -m .")
 
 # %%
 pvd_hb = vtuIO.PVDIO(f"{out_dir}/load_test_hb.pvd", dim=2)

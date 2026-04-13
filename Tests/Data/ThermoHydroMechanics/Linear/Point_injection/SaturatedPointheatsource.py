@@ -520,7 +520,7 @@ def plot_over_time(
     axs[0].plot(t, ana_sol, "k", label="analytical")
 
     for key, ms in results.items():
-        values = var.transform(ms.probe(pt, data_names[key][var_key])).ravel()
+        values = var.transform(ms.probe_values(pt, data_names[key][var_key]))
         error = values - np.interp(ms.timevalues, t, ana_sol)
         assert np.all((error > err_bounds[0]) & (error < err_bounds[1]))
 

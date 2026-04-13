@@ -116,7 +116,7 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 # %%
 # Read the results and compare them with the reference data
 ms = ot.MeshSeries(f"{out_dir}/result_bourgeat_domain.xdmf")
-ms = ms.scale(time=("s", "a"))
+ms = ms.scale(time="a")
 
 saturation = ot.variables.Scalar("saturation", "", "%", symbol="s_{G}")
 gas_pressure = ot.variables.Scalar("gas_pressure", "Pa", "MPa", symbol="p_{GR}")
@@ -132,7 +132,7 @@ def plot_results(var: ot.variables.Scalar, ref: str, max_err: float) -> None:
 
     # === Test for valid results ========================================
     df_refs = pd.read_csv(f"references/bourgeat_{ref}.csv")
-    num_vals = var_OGS.transform(ms.probe([0, 0, 0], var.data_name))
+    num_vals = var_OGS.transform(ms.probe_values([0, 0, 0], var.data_name))
     mean_ref_vals = var.transform(df_refs.drop(columns="time").aggregate("mean", 1))
     num_vals_interp = np.interp(df_refs["time"], ms.timevalues, num_vals)
     mean_rel_err = mean_ref_vals - num_vals_interp
@@ -160,7 +160,7 @@ def plot_results(var: ot.variables.Scalar, ref: str, max_err: float) -> None:
     # === Timeslice=====================================================
     pts = np.linspace([0, 0, 0], [200, 0, 0], num=500)
     ot.plot.setup.time_unit = "ka"
-    ms_line = ot.MeshSeries.extract_probe(ms, pts).scale(time=("a", "ka"))
+    ms_line = ot.MeshSeries.probe(ms, pts).scale(time="ka")
     fig3 = ms_line.plot_time_slice("x", "time", var_OGS, figsize=[20, 7], fontsize=20)
     fig3.suptitle(f"{var.output_name} over time and x", fontsize=20)
     fig3.tight_layout()

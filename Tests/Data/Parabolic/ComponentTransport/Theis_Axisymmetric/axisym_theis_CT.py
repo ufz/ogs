@@ -138,7 +138,7 @@ pressure = ot.variables.pressure.replace(
     data_unit="m", output_unit="m", output_name="hydraulic head", symbol=""
 )
 
-ms_probe = ot.MeshSeries.extract_probe(ms, xaxis)
+ms_probe = ot.MeshSeries.probe(ms, xaxis)
 
 ms_trial = ot.MeshSeries(f"{out_dir}/CT_hydraulic_head_ts_30_t_1728.000000.vtu")
 

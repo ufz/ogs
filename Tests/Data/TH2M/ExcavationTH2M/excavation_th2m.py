@@ -441,7 +441,7 @@ pvd = runBenchmark(
 )
 
 # %%
-ms_e = ot.MeshSeries(pvd).scale(time=("s", "d"))
+ms_e = ot.MeshSeries(pvd).scale(time="d")
 ms_e_last = ms_e[-1]
 
 # %% [markdown]
@@ -493,7 +493,7 @@ pvd_pls = runBenchmark(
 )
 
 # %%
-ms_pls = ot.MeshSeries(pvd_pls).scale(time=("s", "d"))
+ms_pls = ot.MeshSeries(pvd_pls).scale(time="d")
 ms_pls_last = ms_pls[-1]
 
 # %% [markdown]
@@ -547,7 +547,7 @@ ax[0].set_ylabel("Equivalent plastic strain")
 ax[0].set_title("Profile at the bottom")
 ax[0].grid()
 
-ms_pts_pls = ot.MeshSeries.extract_probe(ms_pls, points)
+ms_pts_pls = ot.MeshSeries.probe(ms_pls, points)
 ot.plot.line(
     ms_pts_pls,
     "time",
@@ -607,7 +607,7 @@ plot_profile.plot(
 # ### 4.2 Variable variations at bottom points
 
 # %%
-ms_pts_e = ot.MeshSeries.extract_probe(ms_e, points)
+ms_pts_e = ot.MeshSeries.probe(ms_e, points)
 vv = VariableVariations(ms_pts_e, ms_pts_pls)
 
 # %% [markdown]
