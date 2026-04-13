@@ -454,7 +454,7 @@ msh_file = mesh_GreatCell_intact(
 
 # %% vscode={"languageId": "python"}
 msh_path = Path(mesh_path, f"{meshname}.msh")
-meshes = ot.meshes_from_gmsh(filename=msh_path, dim=[1], reindex=True, log=False)
+meshes = ot.Meshes.from_gmsh(filename=msh_path, dim=[1], reindex=True, log=False)
 
 for name, mesh in meshes.items():
     print(f"{name}: {mesh.n_cells} cells")
@@ -514,7 +514,7 @@ msh_file = mesh_GreatCell_intact(
 
 # %% vscode={"languageId": "python"}
 msh_path = Path(mesh_path, f"{meshname}.msh")
-meshes_volume = ot.meshes_from_gmsh(
+meshes_volume = ot.Meshes.from_gmsh(
     filename=msh_path, dim=[1, 2], reindex=True, log=False
 )
 
@@ -880,7 +880,7 @@ msh_file_VPF = mesh_GreatCell_VPF(
 
 # %% vscode={"languageId": "python"}
 msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
-meshes_volume_VPF = ot.meshes_from_gmsh(
+meshes_volume_VPF = ot.Meshes.from_gmsh(
     filename=msh_path_VPF, dim=[0, 1], reindex=True, log=False
 )
 
@@ -943,7 +943,7 @@ msh_file_VPF = mesh_GreatCell_VPF(
 
 # %% vscode={"languageId": "python"}
 msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
-meshes_volume_VPF = ot.meshes_from_gmsh(
+meshes_volume_VPF = ot.Meshes.from_gmsh(
     filename=msh_path_VPF, dim=[2], reindex=True, log=False
 )
 

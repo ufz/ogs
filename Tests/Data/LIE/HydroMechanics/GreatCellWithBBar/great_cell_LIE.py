@@ -96,6 +96,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 
 ot.plot.setup.show_region_bounds = False
 
@@ -126,11 +127,11 @@ for b_bar in ["false", "true"]:
 
 
 # %%
-def inner_mesh(filename: str) -> ot.Mesh:
+def inner_mesh(filename: str) -> pv.UnstructuredGrid:
     "Return submesh inside a radius of 0.065."
     mesh = ot.MeshSeries(Path(out_dir, filename))[-1]
     radii = np.asarray([np.linalg.norm(cell.center) for cell in mesh.cell])
-    return ot.Mesh(mesh.extract_cells(radii < 0.065))
+    return mesh.extract_cells(radii < 0.065)
 
 
 plt.rcParams.update(
@@ -274,10 +275,10 @@ def plot_mesh_compare(
         axs = np.array([axs])
 
     for i, (title, var, key) in enumerate(rows):
-        mesh_true.plot_contourf(var, fig, axs[i, 0], **colorbar_opts[key])
+        ot.plot.contourf(mesh_true, var, fig, axs[i, 0], **colorbar_opts[key])
         axs[i, 0].set_title(f"{title} (bbar_true)", fontsize=22)
 
-        mesh_false.plot_contourf(var, fig, axs[i, 1], **colorbar_opts[key])
+        ot.plot.contourf(mesh_false, var, fig, axs[i, 1], **colorbar_opts[key])
         axs[i, 1].set_title(f"{title} (bbar_false)", fontsize=22)
 
     for ax in axs.ravel():

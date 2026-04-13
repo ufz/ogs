@@ -27,30 +27,23 @@
 # %% vscode={"languageId": "python"}
 import os
 from pathlib import Path
-from subprocess import run
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
 from external_data_dict import external_data
-from matplotlib import colormaps
+
+mpl.use("Agg")
 
 # Local modules
 from mesh_generator import (
-    mesh_GreatCell_embeddedFracture,
-    mesh_GreatCell_fullFracture,
-    mesh_GreatCell_intact,
+    mesh_GreatCell_embeddedFracture_meshes,
+    mesh_GreatCell_fullFracture_meshes,
+    mesh_GreatCell_intact_meshes,
 )
 from ogs_model_runner import SingleOGSModel
 from Plotter import Plotter
-
-
-# %% vscode={"languageId": "python"}
-def truncated_cmap(name, minval=0.3, maxval=0.9, n=6):
-    base = colormaps.get_cmap(name)
-    return lambda i: base(minval + (maxval - minval) * i / (n - 1))
-
 
 mpl.rcdefaults()
 mpl.rcParams.update(
@@ -500,78 +493,23 @@ plt.show()
 # %% vscode={"languageId": "python"}
 h = 0.0025
 meshname = "GreatCell"
-mesh_path = Path(out_dir, "mesh_intact").resolve()
-print(mesh_path)
-
-# %% [markdown]
-# ### Boundary meshes
-
-# %% [markdown]
-# #### Gmsh (boundary meshes)
 
 # %% vscode={"languageId": "python"}
-msh_file = mesh_GreatCell_intact(
+mesh_id = "mesh_intact"
+meshes_intact = mesh_GreatCell_intact_meshes(
     lc=0.005,
     lc2=h,
     r0=0.097,
     r1=0.094,
     r2=0.090,
     r3=0.065,
-    out_dir=mesh_path,
+    out_dir=(out_dir / "gmsh" / mesh_id).resolve(),
     meshname=meshname,
-    mode="BC",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.9,
 )
 
-
-# %% [markdown]
-# ### Computational domain mesh
-# #### Gmsh
-
-# %% vscode={"languageId": "python"}
-msh_file = mesh_GreatCell_intact(
-    lc=0.005,
-    lc2=h,
-    r0=0.097,
-    r1=0.094,
-    r2=0.090,
-    r3=0.065,
-    out_dir=mesh_path,
-    meshname=meshname,
-    mode="domain",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.8,
-)
-
-
-# %% vscode={"languageId": "python"}
-run(
-    "identifySubdomains -f -m domain.vtu -- "
-    "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
-    "physical_group_DSS2.vtu physical_group_DSS2a.vtu "
-    "physical_group_DSS3.vtu physical_group_DSS3a.vtu "
-    "physical_group_DSS4.vtu physical_group_DSS4a.vtu "
-    "physical_group_DSS5.vtu physical_group_DSS5a.vtu "
-    "physical_group_DSS6.vtu physical_group_DSS6a.vtu "
-    "physical_group_DSS7.vtu physical_group_DSS7a.vtu "
-    "physical_group_DSS8.vtu physical_group_DSS8a.vtu "
-    "physical_group_PEE1.vtu physical_group_PEE1a.vtu "
-    "physical_group_PEE2.vtu physical_group_PEE2a.vtu "
-    "physical_group_PEE3.vtu physical_group_PEE3a.vtu "
-    "physical_group_PEE4.vtu physical_group_PEE4a.vtu "
-    "physical_group_PEE5.vtu physical_group_PEE5a.vtu "
-    "physical_group_PEE6.vtu physical_group_PEE6a.vtu "
-    "physical_group_PEE7.vtu physical_group_PEE7a.vtu "
-    "physical_group_PEE8.vtu physical_group_PEE8a.vtu "
-    "physical_group_p_bottom.vtu physical_group_p_left.vtu "
-    "physical_group_p_right.vtu physical_group_p_top.vtu ",
-    shell=True,
-    check=True,
-    cwd=mesh_path,
-)
+# plot
+#    cmap="viridis",
+meshes_intact.save(out_dir / f"Meshes/{mesh_id}", overwrite=True)
 
 # %% [markdown]
 # ## Run the simulation
@@ -594,30 +532,15 @@ PEE_load_values = {
 }
 
 prj_file = Path("M1_SD.prj")
-# Create a Project object
-prj = ot.Project(input_file=prj_file, output_file=Path(out_dir, f"{output_prefix}.prj"))
 
 # %% [markdown]
 # ### Run OGS
 
 # %% vscode={"languageId": "python"}
-# Create SingleOGSModel
-sing_ogs_model = SingleOGSModel(
-    model=prj,
-    out_dir=out_dir,
-    mesh_path=mesh_path,
-    output_prefix=output_prefix,
-    method="LIE",
-    n_fracture_p_ncs=n_fracture_p_ncs,
-    model_type=model_type,
-    materials=materials,
-)
-
-# Run simulations
-vtu_files_dict = sing_ogs_model.run_simulations_with_fracture(
+vtu_files_dict = SingleOGSModel.run_simulations_with_fracture(
     times=times,
     base_project_file=prj_file,
-    mesh_path=mesh_path,
+    mesh_path=meshes_intact.active_target.resolve(),
     load_cases=PEE_load_values,
     material_names=material_names,
     materials=materials,
@@ -704,82 +627,25 @@ plotter.plot_field_variables(vtu_files_dict, inner=True, r=0.065)
 # %% [markdown]
 # ## Mesh Generation
 
-# %% [markdown]
-# ### Input
-
 # %% vscode={"languageId": "python"}
-h = 0.0025
-meshname = "GreatCell"
-mesh_path_embedded = Path(out_dir, "mesh_GreatCell_embeddedFracture").resolve()
-
-# %% [markdown]
-# ### Boundary meshes
-
-# %% [markdown]
-# #### Gmsh (boundary meshes)
-
-# %% vscode={"languageId": "python"}
-msh_file_embedded = mesh_GreatCell_embeddedFracture(
+mesh_id = "embedded_fracture"
+meshes_embedded = mesh_GreatCell_embeddedFracture_meshes(
     lc=0.005,
     lc2=h,
     r0=0.097,
     r1=0.094,
     r2=0.090,
     r3=0.065,
-    out_dir=mesh_path_embedded,
+    out_dir=(out_dir / "gmsh" / mesh_id).resolve(),
     meshname=meshname,
-    mode="BC",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.8,
 )
 
-# %% [markdown]
-# ### Computational domain mesh
-# #### Gmsh (computational domain mesh)
+# plot
+#    cmap="viridis",
+#    opacity=0.8,
 
-# %% vscode={"languageId": "python"}
-msh_file_volume_embedded = mesh_GreatCell_embeddedFracture(
-    lc=0.005,
-    lc2=h,
-    r0=0.097,
-    r1=0.094,
-    r2=0.090,
-    r3=0.065,
-    out_dir=mesh_path_embedded,
-    meshname=meshname,
-    mode="domain",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.8,
-)
 
-# %% vscode={"languageId": "python"}
-# !pwd
-run(
-    "identifySubdomains -f -m domain.vtu -- "
-    "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
-    "physical_group_DSS2.vtu physical_group_DSS2a.vtu "
-    "physical_group_DSS3.vtu physical_group_DSS3a.vtu "
-    "physical_group_DSS4.vtu physical_group_DSS4a.vtu "
-    "physical_group_DSS5.vtu physical_group_DSS5a.vtu "
-    "physical_group_DSS6.vtu physical_group_DSS6a.vtu "
-    "physical_group_DSS7.vtu physical_group_DSS7a.vtu "
-    "physical_group_DSS8.vtu physical_group_DSS8a.vtu "
-    "physical_group_PEE1.vtu physical_group_PEE1a.vtu "
-    "physical_group_PEE2.vtu physical_group_PEE2a.vtu "
-    "physical_group_PEE3.vtu physical_group_PEE3a.vtu "
-    "physical_group_PEE4.vtu physical_group_PEE4a.vtu "
-    "physical_group_PEE5.vtu physical_group_PEE5a.vtu "
-    "physical_group_PEE6.vtu physical_group_PEE6a.vtu "
-    "physical_group_PEE7.vtu physical_group_PEE7a.vtu "
-    "physical_group_PEE8.vtu physical_group_PEE8a.vtu "
-    "physical_group_p_bottom.vtu physical_group_p_left.vtu "
-    "physical_group_p_right.vtu physical_group_p_top.vtu ",
-    shell=True,
-    check=True,
-    cwd=mesh_path_embedded,
-)
+meshes_embedded.save(out_dir / f"Meshes/{mesh_id}", overwrite=True)
 
 # %% [markdown]
 # ## Run the simulation
@@ -802,27 +668,15 @@ PEE_load_values = {
 
 # Project file
 prj_file = Path("M2_LIE.prj")
-prj = ot.Project(input_file=prj_file, output_file=Path(out_dir, f"{output_prefix}.prj"))
 
 # %% [markdown]
 # ### Run OGS
 
 # %% vscode={"languageId": "python"}
-sing_ogs_model = SingleOGSModel(
-    model=prj,
-    out_dir=out_dir,
-    mesh_path=mesh_path_embedded,
-    output_prefix=output_prefix,
-    method="LIE",
-    n_fracture_p_ncs=n_fracture_p_ncs,
-    model_type=model_type,
-    materials=materials,
-)
-
-vtu_files_dict_embedded = sing_ogs_model.run_simulations_with_fracture(
+vtu_files_dict_embedded = SingleOGSModel.run_simulations_with_fracture(
     times=times,
     base_project_file=prj_file,
-    mesh_path=mesh_path_embedded,
+    mesh_path=meshes_embedded.active_target.resolve(),
     load_cases=PEE_load_values,
     material_names=material_names,
     materials=materials,
@@ -870,79 +724,23 @@ plotter.plot_field_variables(vtu_files_dict_embedded)
 # ### Input
 
 # %% vscode={"languageId": "python"}
-h = 0.0025
-meshname = "GreatCell"
-mesh_path_full = Path(".", out_dir, "mesh_GreatCell_fullFracture").resolve()
-
-# %% [markdown] jp-MarkdownHeadingCollapsed=true
-# ### Boundary meshes
-
-# %% [markdown]
-# #### Gmsh (boundary meshes)
-
-# %% vscode={"languageId": "python"}
-msh_file_full = mesh_GreatCell_fullFracture(
+mesh_id = "fullFracture"
+meshes_full = mesh_GreatCell_fullFracture_meshes(
     lc=0.005,
     lc2=h,
     r0=0.097,
     r1=0.094,
     r2=0.090,
     r3=0.065,
-    out_dir=mesh_path_full,
+    out_dir=(out_dir / "gmsh" / mesh_id).resolve(),
     meshname=meshname,
-    mode="BC",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.8,
 )
 
+# plot
+# cmap="viridis",
+# opacity=0.8,
+meshes_full.save(out_dir / f"Meshes/{mesh_id}", overwrite=True)
 
-# %% [markdown]
-# ### Computational domain mesh
-# #### Gmsh (computational domain mesh)
-
-# %% vscode={"languageId": "python"}
-msh_file_full = mesh_GreatCell_fullFracture(
-    lc=0.005,
-    lc2=h,
-    r0=0.097,
-    r1=0.094,
-    r2=0.090,
-    r3=0.065,
-    out_dir=mesh_path_full,
-    meshname=meshname,
-    mode="domain",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.8,
-)
-
-
-# %% vscode={"languageId": "python"}
-run(
-    "identifySubdomains -f -m domain.vtu -- "
-    "physical_group_DSS1.vtu physical_group_DSS1a.vtu "
-    "physical_group_DSS2.vtu physical_group_DSS2a.vtu "
-    "physical_group_DSS3.vtu physical_group_DSS3a.vtu "
-    "physical_group_DSS4.vtu physical_group_DSS4a.vtu "
-    "physical_group_DSS5.vtu physical_group_DSS5a.vtu "
-    "physical_group_DSS6.vtu physical_group_DSS6a.vtu "
-    "physical_group_DSS7.vtu physical_group_DSS7a.vtu "
-    "physical_group_DSS8.vtu physical_group_DSS8a.vtu "
-    "physical_group_PEE1.vtu physical_group_PEE1a.vtu "
-    "physical_group_PEE2.vtu physical_group_PEE2a.vtu "
-    "physical_group_PEE3.vtu physical_group_PEE3a.vtu "
-    "physical_group_PEE4.vtu physical_group_PEE4a.vtu "
-    "physical_group_PEE5.vtu physical_group_PEE5a.vtu "
-    "physical_group_PEE6.vtu physical_group_PEE6a.vtu "
-    "physical_group_PEE7.vtu physical_group_PEE7a.vtu "
-    "physical_group_PEE8.vtu physical_group_PEE8a.vtu "
-    "physical_group_p_bottom.vtu physical_group_p_left.vtu "
-    "physical_group_p_right.vtu physical_group_p_top.vtu ",
-    shell=True,
-    check=True,
-    cwd=mesh_path_full,
-)
 
 # %% [markdown]
 # ## Run the simulation
@@ -964,29 +762,15 @@ PEE_load_values = {
 
 # Project file
 prj_file = Path("M2_LIE.prj")
-prj = ot.Project(input_file=prj_file, output_file=Path(out_dir, f"{output_prefix}.prj"))
 
 # %% [markdown]
 # ### Run OGS
 
 # %% vscode={"languageId": "python"}
-# Create SingleOGSModel
-sing_ogs_model = SingleOGSModel(
-    model=prj,
-    out_dir=out_dir,
-    mesh_path=mesh_path_full,
-    output_prefix=output_prefix,
-    method="LIE",
-    n_fracture_p_ncs=n_fracture_p_ncs,
-    model_type=model_type,
-    materials=materials,
-)
-
-# Run simulations
-vtu_files_dict_full = sing_ogs_model.run_simulations_with_fracture(
+vtu_files_dict_full = SingleOGSModel.run_simulations_with_fracture(
     times=times,
     base_project_file=prj_file,
-    mesh_path=mesh_path_full,
+    mesh_path=meshes_full.active_target.resolve(),
     load_cases=PEE_load_values,
     material_names=material_names,
     materials=materials,
