@@ -7,8 +7,7 @@ requires-python = ">=3.11,<3.15"
 dependencies = [
   ### nb environment ###
   # Use no-X11 version on Linux:
-  "gmsh==4.13.1.dev1; platform_system == 'Linux'",
-  "gmsh>=4.12.0; platform_system != 'Linux'",
+  "gmsh>=4.13.1.dev1,<5",
   "h5py>=3.8",
   "heatsource-py @ git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c",
   "ipywidgets",
@@ -17,11 +16,12 @@ dependencies = [
   "numpy",
   # When changing ogstools version, update in testrunner.py
   # (binder_tag) and header.html ($tools_url) as well!
-  "ogstools==0.8.0",
+  "ogstools @ git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@ogs_notebook_fixes",
   "pandas>=1.5",
   "pyvista[all]",
   "seaborn>=0.12",
   "VTUinterface>=0.704",
+  "lxml>=6.0.2",
   ### dev tools ###
   "jupytext>=1.14.5",
   "nbconvert>=7.16.5",
