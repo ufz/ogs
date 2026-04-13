@@ -40,7 +40,6 @@ import ogstools as ot
 import pyvista as pv
 from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
-from ogstools.meshlib import MeshSeries
 
 ot.plot.setup.show_region_bounds = False
 
@@ -956,8 +955,8 @@ def plot_2d_meshes(meshes_2d):
         fig = plt.figure(figsize=(10, 3.0), dpi=150)
         ax = fig.add_subplot(111)
 
-        domain_mesh.plot_contourf(
-            "MaterialIDs", ax=ax, cbar=True, linewidth=0.2, cmap="viridis"
+        ot.plot.contourf(
+            domain_mesh, "MaterialIDs", ax=ax, cbar=True, linewidth=0.2, cmap="viridis"
         )
 
         ax.set_aspect("equal")
@@ -1219,13 +1218,13 @@ def generate_vtu_meshes_from_Gmsh(msh_file: Path, target_dim: int):
     out_dir = msh_file.parent
     figures = []
     if target_dim == 2:
-        meshes = ot.meshes_from_gmsh(msh_file, dim=[2], log=False)
+        meshes = ot.Meshes.from_gmsh(msh_file, dim=[2], log=False)
         for name, mesh in meshes.items():
             pv.save_meshio(out_dir / f"{name}.vtu", mesh)
         if meshes:
             figures.extend(plot_2d_meshes(meshes))
     elif target_dim == 1:
-        meshes = ot.meshes_from_gmsh(msh_file, dim=[1], log=False)
+        meshes = ot.Meshes.from_gmsh(msh_file, dim=[1], log=False)
         for name, mesh in meshes.items():
             pv.save_meshio(out_dir / f"{name}.vtu", mesh)
         if meshes:
@@ -1343,7 +1342,7 @@ def pre_processing_chemo_by_params(
     m.save(str(mesh_path))
 
     if save_reactive_submesh:
-        reactive_mesh_path = mesh_path.with_name("physical_group_Reactive_domain.vtu")
+        reactive_mesh_path = mesh_path.with_name("Reactive_domain.vtu")
         if reactive_mesh_path.exists():
             r = pv.read(str(reactive_mesh_path))
             if r.n_points > 0:
@@ -1386,12 +1385,12 @@ def identify_subdomains(dim: str):
 
     names = [
         "domain.vtu",
-        "physical_group_Computational_domain.vtu",
-        "physical_group_domain1.vtu",
-        "physical_group_domain2.vtu",
-        "physical_group_Left.vtu",
-        "physical_group_Reactive_domain.vtu",
-        "physical_group_Right.vtu",
+        "Computational_domain.vtu",
+        "domain1.vtu",
+        "domain2.vtu",
+        "Left.vtu",
+        "Reactive_domain.vtu",
+        "Right.vtu",
     ]
 
     cwd = Path.cwd()
@@ -2018,7 +2017,7 @@ compare_with_other_dim(
 # ## Verification of mesh and porosity against reference solution
 
 # %%
-ms = MeshSeries(PVD_PATH)
+ms = ot.MeshSeries(PVD_PATH)
 mesh_new = ms[-1]
 mesh_ref = pv.read(
     Path("expected") / "hc_porosity_change_1d_ts_3000_t_360000.000000.vtu"
