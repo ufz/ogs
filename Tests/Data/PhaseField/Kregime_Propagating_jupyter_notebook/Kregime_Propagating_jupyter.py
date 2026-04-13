@@ -248,8 +248,8 @@ def mesh_generation(lc, lc_fine):
 
 
 # %%
-def pre_processing(h, a0):
-    mesh = pv.read(f"{out_dir}/mesh_full_pf_domain.vtu")
+def pre_processing(mesh, h, a0):
+    # mesh = pv.read(f"{out_dir}/mesh_full_pf_domain.vtu")
     phase_field = np.ones((len(mesh.points), 1))
     pv.set_plot_theme("document")
 
@@ -283,34 +283,36 @@ def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
     mesh_generation(0.1, h)
     # Convert GMSH (.msh) meshes to VTU meshes appropriate for OGS simulation.
     input_file = f"{out_dir}/" + meshname + ".msh"
-    meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
-    for name, mesh in meshes.items():
-        pv.save_meshio(f"{out_dir}/mesh_full_pf_{name}.vtu", mesh)
-    run(
-        "identifySubdomains -f -m mesh_full_pf_domain.vtu -- mesh_full_pf_physical_group_*.vtu",
-        shell=True,
-        check=True,
-        cwd=out_dir,
-    )
+    meshes = ot.Meshes.from_gmsh(filename=input_file, log=False)
+    pre_processing(meshes.domain, h, a0)
+    meshes.save(f"{out_dir}/meshes", overwrite=True)
+    #    for name, mesh in meshes.items():
+    #        pv.save_meshio(f"{out_dir}/mesh_full_pf_{name}.vtu", mesh)
+    #    run(
+    #        "identifySubdomains -f -m mesh_full_pf_domain.vtu -- mesh_full_pf_physical_group_*.vtu",
+    #        shell=True,
+    #        check=True,
+    #        cwd=out_dir,
+    #    )
 
     # As a preprocessing step, define the initial phase-field (crack).
-    pre_processing(h, a0)
+
     # change properties in prj file #For more information visit: https://ogstools.opengeosys.org/stable/reference/ogstools.ogs6py.html
-    model = ot.Project(
+    prj = ot.Project(
         input_file=prj_name,
         output_file=f"{out_dir}/{prj_name}",
         MKL=True,
         args=f"-o {out_dir}",
     )
-    model.replace_parameter_value(name="ls", value=ls)
-    model.replace_text(phasefield_model, xpath="./processes/process/phasefield_model")
-    model.replace_text(filename, xpath="./time_loop/output/prefix")
-    model.write_input()
+    prj.replace_parameter_value(name="ls", value=ls)
+    prj.replace_text(phasefield_model, xpath="./processes/process/phasefield_model")
+    prj.replace_text(filename, xpath="./time_loop/output/prefix")
+    prj.write_input()
     # run simulation with ogs
     t0 = time.time()
     print(">>> OGS started execution ... <<<")
     run(
-        f"ogs {out_dir}/{prj_name} -o {out_dir} > {out_dir}/log.txt",
+        f"ogs {out_dir}/{prj_name} -m {out_dir}/meshes -o {out_dir} > {out_dir}/log.txt",
         shell=True,
         check=True,
     )

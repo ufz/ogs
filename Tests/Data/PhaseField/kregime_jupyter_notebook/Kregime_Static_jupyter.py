@@ -243,7 +243,7 @@ def sneddon_numerical(h):
     mesh_generation(0.1, h)
     # Convert GMSH (.msh) meshes to VTU meshes appropriate for OGS simulation.
     input_file = f"{out_dir}/" + meshname + ".msh"
-    meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
+    meshes = ot.Meshes.from_gmsh(filename=input_file, log=False)
     for name, mesh in meshes.items():
         pv.save_meshio(f"{out_dir}/{name}.vtu", mesh)
     # As a preprocessing step, define the initial phase-field (crack).
