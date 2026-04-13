@@ -106,10 +106,11 @@ run(
 
 # %%
 pvd = Path(out_dir, f"{output_prefix}.pvd")
-ms = ot.MeshSeries(pvd).scale(time=("s", "d"))
+ms = ot.MeshSeries(pvd).scale(time="d")
 print(pvd)
 mesh_last = ms[-1]
-fig = mesh_last.plot_contourf(
+fig = ot.plot.contourf(
+    mesh_last,
     ot.variables.displacement["x"],
     figsize=(6, 4),
     fontsize=8,
@@ -117,18 +118,18 @@ fig = mesh_last.plot_contourf(
 )
 
 # %%
-fig = mesh_last.plot_contourf(
-    ot.variables.displacement["y"], figsize=(6, 4), fontsize=8, cmap="jet"
+fig = ot.plot.contourf(
+    mesh_last, ot.variables.displacement["y"], figsize=(6, 4), fontsize=8, cmap="jet"
 )
 
 # %%
-fig = mesh_last.plot_contourf(
-    ot.variables.stress["xx"], figsize=(6, 4), fontsize=8, cmap="jet"
+fig = ot.plot.contourf(
+    mesh_last, ot.variables.stress["xx"], figsize=(6, 4), fontsize=8, cmap="jet"
 )
 
 # %%
-fig = mesh_last.plot_contourf(
-    ot.variables.stress["yy"], figsize=(6, 4), fontsize=8, cmap="jet"
+fig = ot.plot.contourf(
+    mesh_last, ot.variables.stress["yy"], figsize=(6, 4), fontsize=8, cmap="jet"
 )
 
 # %% [markdown]

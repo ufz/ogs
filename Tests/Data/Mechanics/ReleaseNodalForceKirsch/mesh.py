@@ -150,9 +150,7 @@ class MeshGenerator:
         gmsh.write(str(mesh_file_name))
 
         # `dim` is ommitted for converting all meshes
-        meshes = ot.meshes_from_gmsh(
-            filename=str(mesh_file_name), reindex=True, log=False
-        )
+        meshes = ot.Meshes.from_gmsh(mesh_file_name)
 
         vtu_names = []
         for name, mesh in meshes.items():
