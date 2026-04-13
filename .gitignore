@@ -18,7 +18,6 @@ tags
 Tests/**/*.md5
 Tests/Data/Parabolic/HT/InvalidProjectFiles/*.prj
 Tests/Data/_out
-web/.netlify
 
 CMakeUserPresets.json
 scripts/cmake/vtk-*.patch
