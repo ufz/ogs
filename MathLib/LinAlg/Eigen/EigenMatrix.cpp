@@ -30,4 +30,13 @@ void EigenMatrix::write(std::ostream& os) const
     }
     os << std::endl;
 }
+
+void EigenMatrix::addToDiagonal(double const value)
+{
+    // Add value to all diagonal entries
+    for (IndexType i = 0; i < mat_.rows(); ++i)
+    {
+        mat_.coeffRef(i, i) += value;
+    }
+}
 }  // namespace MathLib

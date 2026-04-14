@@ -163,4 +163,19 @@ bool finalizeMatrixAssembly(PETScMatrix& mat, const MatAssemblyType asm_type)
     return true;
 }
 
+void PETScMatrix::addToDiagonal(const PetscScalar value)
+{
+    // MatShift computes A_ = A_ + value * I, i.e. adds value to every diagonal
+    // entry (creating missing ones). Correct in both serial and parallel.
+    // Temporarily allow new nonzero entries so a diagonal entry missing from
+    // the preallocated sparsity pattern doesn't abort the run.
+    PetscCallAbort(
+        PETSC_COMM_WORLD,
+        MatSetOption(A_, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_FALSE));
+    PetscCallAbort(PETSC_COMM_WORLD, MatShift(A_, value));
+    PetscCallAbort(
+        PETSC_COMM_WORLD,
+        MatSetOption(A_, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_TRUE));
+}
+
 }  // namespace MathLib

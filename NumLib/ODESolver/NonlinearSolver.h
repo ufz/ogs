@@ -127,6 +127,12 @@ public:
         _compensate_non_equilibrium_initial_residuum = value;
     }
 
+    void setTikhonovLambda(double const lambda, int const starting_iteration)
+    {
+        _tikhonov_lambda = lambda;
+        _tikhonov_starting_iteration = starting_iteration;
+    }
+
 private:
     GlobalLinearSolver& _linear_solver;
     System* _equation_system = nullptr;
@@ -157,6 +163,9 @@ private:
     /// During the simulation the new residuum reads \f$ \tilde r = r - r_{\rm
     /// neq} \f$.
     bool _compensate_non_equilibrium_initial_residuum = false;
+    double _tikhonov_lambda = 0.0;  //!< Tikhonov regularization parameter.
+    int _tikhonov_starting_iteration =
+        0;  //!< Starting iteration for Tikhonov regularization.
 };
 
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration

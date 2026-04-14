@@ -83,6 +83,10 @@ public:
         return 0;
     }
 
+    /// Add a constant value to all diagonal entries of the matrix.
+    /// \param value The value to add to each diagonal entry.
+    void addToDiagonal(double const value);
+
     /// Add sub-matrix at positions \c row_pos and same column positions as the
     /// given row positions. If the entry doesn't exist, the value is inserted.
     template <class T_DENSE_MATRIX>

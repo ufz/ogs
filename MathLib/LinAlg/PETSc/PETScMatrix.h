@@ -118,6 +118,13 @@ public:
     }
 
     /*!
+       \brief Add a constant value to all diagonal entries of the matrix.
+       \param value The value to add to each diagonal entry.
+       \note This is more efficient than calling add(i, i, value) in a loop.
+       */
+    void addToDiagonal(const PetscScalar value);
+
+    /*!
        \brief Add sub-matrix at positions given by global \c indices, in which
        negative index indicates ghost entry.
 

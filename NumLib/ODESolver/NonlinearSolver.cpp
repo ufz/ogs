@@ -431,6 +431,10 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         }
         sys.getResidual(*x[process_id], *x_prev[process_id], res);
         sys.getJacobian(J);
+        if (_tikhonov_lambda > 0.0 && iteration >= _tikhonov_starting_iteration)
+        {
+            J.addToDiagonal(_tikhonov_lambda);
+        }
         INFO("[time] Assembly took {:g} s.", time_assembly.elapsed());
 
         // Subtract non-equilibrium initial residuum if set
@@ -461,6 +465,15 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE;
             next_iteration_inv_jacobian_recompute =
                 next_iteration_inv_jacobian_recompute + _recompute_jacobian;
+        }
+        else if (_tikhonov_lambda > 0.0 &&
+                 iteration == _tikhonov_starting_iteration)
+        {
+            // Force a refactorization so the newly added regularization term
+            // is actually used by the linear solve instead of being
+            // discarded by a reused, unregularized factorization.
+            linear_solver_behaviour =
+                MathLib::LinearSolverBehaviour::RECOMPUTE_AND_STORE;
         }
 
         bool iteration_succeeded = false;
