@@ -27,16 +27,18 @@ The package definitions for OGS are defined in [this repo](https://gitlab.openge
 
 ```bash
 # builds ogs serial config and starts isolated shell (like in a container)
-guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-serial.scm
+guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-serial.scm \
+  -L scripts/guix/packages
 # ogs petsc config
-guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-petsc.scm
+guix time-machine -C scripts/guix/channels.scm -- shell -C -m scripts/guix/manifest-petsc.scm \
+  -L scripts/guix/packages
 ```
 
 To create an archivable Apptainer container:
 
 ```bash
 guix time-machine -C scripts/guix/channels.scm -- pack -m scripts/guix/manifest-serial.scm \
-  -RR --format=squashfs
+  -L scripts/guix/packages -RR --format=squashfs
 ```
 
 To get the dependency tree:
@@ -49,8 +51,8 @@ guix time-machine -C scripts/guix/channels.scm -- graph ogs-serial | dot -Tpdf >
 
 ```bash
 wget https://gitlab.opengeosys.org/ogs/ogs/-/raw/master/scripts/guix/channels.scm
-guix time-machine -C ./channels.scm -- build ogs \
-  --with-source=ogs@6.4.4-testing=https://gitlab.opengeosys.org/ogs/ogs/-/archive/master/ogs-master.tar.bz2
+guix time-machine -C ./channels.scm -- build ogs-serial \
+  --with-source=ogs@6.5.7-testing=https://gitlab.opengeosys.org/ogs/ogs/-/archive/master/ogs-master.tar.bz2
 ```
 
 ## Developing
