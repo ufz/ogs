@@ -114,9 +114,9 @@ def plot_results_and_errors(ms: ot.MeshSeries, analytical_func):
 
     ms.point_data[var.anasol.data_name] = ref_vals
     ms.point_data[var.abs_error.data_name] = abs_err
-    ot.plot.line(ms, var, ax=axs[0], marker="o", labels=labels)
-    ot.plot.line(ms, var.anasol, ax=axs[0], ls="--")
-    ot.plot.line(ms, var.abs_error, ax=axs[1])
+    ot.plot.line(ms, "x", var, ax=axs[0], marker="o", labels=labels)
+    ot.plot.line(ms, "x", var.anasol, ax=axs[0], ls="--")
+    ot.plot.line(ms, "x", var.abs_error, ax=axs[1])
     axs[0].plot([], [], "-ok", ms=3, label="OGS-numerical")
     axs[0].plot([], [], "--k", label="analytical")
     axs[0].legend(fontsize=10)

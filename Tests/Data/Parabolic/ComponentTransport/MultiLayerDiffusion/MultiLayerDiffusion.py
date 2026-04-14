@@ -97,7 +97,7 @@ def plot_results(ms: ot.MeshSeries, var: ot.variables.Variable) -> plt.Figure:
     fig_res, axs_ = plt.subplots(1, n_cols, figsize=figsize)
     axs: list[plt.Axes] = [axs_] if n_cols == 1 else axs_
     labels = [f"{tv:.0e} a" for tv in ms.timevalues]
-    ot.plot.line(ms, var, ax=axs[0], labels=labels)
+    ot.plot.line(ms, "x", var, ax=axs[0], labels=labels)
     axs[0].plot([], [], "-k", label="OGS-numerical")
 
     if n_cols == 2:
@@ -109,8 +109,8 @@ def plot_results(ms: ot.MeshSeries, var: ot.variables.Variable) -> plt.Figure:
 
         ms.point_data["ref_vals"] = ref_vals
         ms.point_data[var.abs_error.data_name] = abs_err
-        ot.plot.line(ms, "ref_vals", ax=axs[0], ls="--")
-        ot.plot.line(ms, var.abs_error, ax=axs[1])
+        ot.plot.line(ms, "x", "ref_vals", ax=axs[0], ls="--")
+        ot.plot.line(ms, "x", var.abs_error, ax=axs[1])
         axs[1].set_yscale("symlog", linthresh=0.001)
 
         max_errors = [2e-1, 2e-2, 4e-3, 5e-4]  # per timevalue
@@ -129,7 +129,6 @@ def plot_results(ms: ot.MeshSeries, var: ot.variables.Variable) -> plt.Figure:
 
 # %% [markdown]
 # **Numerical solution**
-
 # %% [markdown]
 # Correspondingly, the OGS input files of this 1D mass transport benchmark can be found <a href="https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/MultiLayerDiffusion/1D_MultiLayerDiffusion.prj">here</a>.
 #

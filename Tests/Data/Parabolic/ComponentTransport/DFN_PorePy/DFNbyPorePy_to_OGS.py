@@ -834,10 +834,10 @@ ms_days = mesh_series.scale(time="d")
 var = ot.variables.Scalar("Si")
 
 ms_probe = ms_days.probe(points=observation_points)
-fig_si = ms_probe.plot_line(var, labels=labels)
+fig_si = ms_probe.plot_line("time", var, labels=labels)
 fig_si.axes[0].set_xscale("log")
 
-fig_cs = ms_probe.plot_line("Cs", labels=labels)
+fig_cs = ms_probe.plot_line("time", "Cs", labels=labels)
 fig_cs.axes[0].set_xscale("log")
 
 
