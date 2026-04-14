@@ -64,13 +64,16 @@ void checkMPLProperties(
 
     for (auto const& m : media)
     {
-        auto const& gas_phase = m.second->phase("Gas");
-        auto const& liquid_phase = m.second->phase("AqueousLiquid");
+        auto const& gas_phase =
+            m.second->phase(MaterialPropertyLib::PhaseName::Gas);
+        auto const& liquid_phase =
+            m.second->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
         checkRequiredProperties(*m.second, required_property_medium);
         checkRequiredProperties(gas_phase, required_property_gas_phase);
         checkRequiredProperties(liquid_phase, required_property_liquid_phase);
-        checkRequiredProperties(m.second->phase("Solid"),
-                                required_property_solid_phase);
+        checkRequiredProperties(
+            m.second->phase(MaterialPropertyLib::PhaseName::Solid),
+            required_property_solid_phase);
 
         // TODO (BM): should use index to identify components (same for impl.h)
         checkRequiredProperties(gas_phase.component("w"),

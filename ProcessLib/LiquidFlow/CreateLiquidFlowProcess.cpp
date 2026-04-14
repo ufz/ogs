@@ -156,7 +156,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
     // The uniqueness of phase has already been checked in
     // `checkMPLProperties`.
     MaterialPropertyLib::Variable const phase_variable =
-        (*ranges::begin(media_map.media()))->hasPhase("Gas")
+        (*ranges::begin(media_map.media()))
+                ->hasPhase(MaterialPropertyLib::PhaseName::Gas)
             ? MaterialPropertyLib::Variable::gas_phase_pressure
             : MaterialPropertyLib::Variable::liquid_phase_pressure;
 

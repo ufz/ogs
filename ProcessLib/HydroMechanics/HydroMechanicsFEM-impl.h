@@ -8,6 +8,7 @@
 #include "HydroMechanicsFEM.h"
 #include "HydroMechanicsProcessData.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/GetFluidDensityAndViscosity.h"
@@ -173,11 +174,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& b = _process_data.specific_body_force;
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& solid = medium->phase("Solid");
+    auto const& solid = medium->phase(MaterialPropertyLib::PhaseName::Solid);
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
-    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
-                                                   : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium->hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
@@ -393,8 +395,9 @@ std::vector<double> const& HydroMechanicsLocalAssembler<
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
-    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
-                                                   : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium->hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
     // TODO (naumov) Temporary value not used by current material models. Need
     // extension of secondary variables interface.
@@ -507,8 +510,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
-    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
-                                                   : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium->hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
@@ -661,11 +665,12 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     x_position.setElementID(_element.getID());
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& solid = medium->phase("Solid");
+    auto const& solid = medium->phase(MaterialPropertyLib::PhaseName::Solid);
     auto const& fluid = fluidPhase(*medium);
     MPL::VariableArray vars;
-    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
-                                                   : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium->hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
@@ -1124,8 +1129,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium = _process_data.media_map.getMedium(elem_id);
     MPL::VariableArray vars;
-    auto& phase_pressure = medium->hasPhase("Gas") ? vars.gas_phase_pressure
-                                                   : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium->hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
     SymmetricTensor k_sum = SymmetricTensor::Zero(KelvinVectorSize);
     auto sigma_eff_sum = MathLib::KelvinVector::tensorToKelvin<DisplacementDim>(

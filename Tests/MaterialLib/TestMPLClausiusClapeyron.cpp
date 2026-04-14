@@ -65,7 +65,7 @@ std::string mediumDefinition()
 TEST(MaterialPropertyLib, ClausiusClapeyron)
 {
     auto const& medium = Tests::createTestMaterial(mediumDefinition());
-    auto const& gas_phase = medium->phase("Gas");
+    auto const& gas_phase = medium->phase(MaterialPropertyLib::PhaseName::Gas);
     auto const& vapour_component = gas_phase.component(0);
 
     MPL::VariableArray vars;

@@ -39,13 +39,11 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::value(
 {
     auto const& medium = std::get<Medium*>(scale_);
     // Assuming there is either a gas phase or a liquid phase or both.
-    auto const gas_phase =
-        medium->hasPhase("Gas") ? &medium->phase("Gas") : nullptr;
-    auto const liquid_phase = medium->hasPhase("AqueousLiquid")
-                                  ? &medium->phase("AqueousLiquid")
-                                  : nullptr;
+    auto const gas_phase = getOptionalPhase(*medium, PhaseName::Gas);
+    auto const liquid_phase =
+        getOptionalPhase(*medium, PhaseName::AqueousLiquid);
     // Assuming there is always a solid phase.
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase = medium->phase(PhaseName::Solid);
 
     auto const gas_thermal_conductivity =
         gas_phase
@@ -127,13 +125,11 @@ PropertyDataType EffectiveThermalConductivityPorosityMixing<GlobalDim>::dValue(
 
     auto const& medium = std::get<Medium*>(scale_);
     // Assuming there is either a gas phase or a liquid phase or both.
-    auto const gas_phase =
-        medium->hasPhase("Gas") ? &medium->phase("Gas") : nullptr;
-    auto const liquid_phase = medium->hasPhase("AqueousLiquid")
-                                  ? &medium->phase("AqueousLiquid")
-                                  : nullptr;
+    auto const gas_phase = getOptionalPhase(*medium, PhaseName::Gas);
+    auto const liquid_phase =
+        getOptionalPhase(*medium, PhaseName::AqueousLiquid);
     // Assuming there is always a solid phase.
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase = medium->phase(PhaseName::Solid);
 
     auto const gas_thermal_conductivity =
         gas_phase

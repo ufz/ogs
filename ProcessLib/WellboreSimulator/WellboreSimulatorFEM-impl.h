@@ -6,6 +6,7 @@
 #include <Eigen/Dense>
 #include <vector>
 
+#include "MaterialLib/MPL/Phase.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -70,8 +71,9 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
 
     // Get material properties
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& gas_phase = medium.phase("Gas");
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& gas_phase = medium.phase(MaterialPropertyLib::PhaseName::Gas);
 
     // Get wellbore parameters
     // casing thickness

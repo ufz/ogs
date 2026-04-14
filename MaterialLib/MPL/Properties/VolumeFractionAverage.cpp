@@ -38,24 +38,24 @@ void VolumeFractionAverage::setProperties(
                 "One of the required phases (AqueousLiquid/FrozenLiquid/Solid) "
                 "does not exist!");
         }
-        std::string const& phase_name = phase->name;
 
         if (!phase->hasProperty(prop_type_))
         {
             OGS_FATAL(
                 "The phase '{}' does not have the required property '{}'!",
-                phase_name, property_enum_to_string[prop_type_]);
+                toString(phase->phaseName),
+                property_enum_to_string[prop_type_]);
         }
         auto const& property = phase->property(prop_type_);
-        if (phase_name == "AqueousLiquid")
+        if (phase->phaseName == PhaseName::AqueousLiquid)
         {
             properties_.liquid = &property;
         }
-        else if (phase_name == "FrozenLiquid")
+        else if (phase->phaseName == PhaseName::FrozenLiquid)
         {
             properties_.frozen = &property;
         }
-        else if (phase_name == "Solid")
+        else if (phase->phaseName == PhaseName::Solid)
         {
             properties_.porous = &property;
         }

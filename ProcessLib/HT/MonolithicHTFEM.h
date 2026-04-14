@@ -94,8 +94,10 @@ public:
 
         auto const& medium =
             *process_data.media_map.getMedium(this->_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
-        auto const& solid_phase = medium.phase("Solid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+        auto const& solid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
         auto const& b =
             process_data

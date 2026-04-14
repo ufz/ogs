@@ -14,7 +14,8 @@ using namespace ProcessLib::ConstitutiveRelations;
 struct MediaData
 {
     explicit MediaData(MaterialPropertyLib::Medium const& medium)
-        : medium{medium}, solid{medium.phase("Solid")}
+        : medium{medium},
+          solid{medium.phase(MaterialPropertyLib::PhaseName::Solid)}
     {
     }
 

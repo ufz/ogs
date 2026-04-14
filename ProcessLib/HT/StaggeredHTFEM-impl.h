@@ -6,6 +6,7 @@
 #include <typeinfo>
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
@@ -57,8 +58,10 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
     auto const& process_data = this->_process_data;
     auto const& medium =
         *this->_process_data.media_map.getMedium(this->_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
     auto const& b =
         process_data
@@ -188,7 +191,8 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHeatTransportEquation(
     auto const& process_data = this->_process_data;
     auto const& medium =
         *process_data.media_map.getMedium(this->_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
     auto const& b =
         process_data

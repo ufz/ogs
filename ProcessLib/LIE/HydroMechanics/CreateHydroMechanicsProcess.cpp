@@ -281,8 +281,9 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     {
         checkRequiredProperties(*medium, requiredMediumProperties);
         checkRequiredProperties(fluidPhase(*medium), requiredFluidProperties);
-        checkRequiredProperties(medium->phase("Solid"),
-                                requiredSolidProperties);
+        checkRequiredProperties(
+            medium->phase(MaterialPropertyLib::PhaseName::Solid),
+            requiredSolidProperties);
     }
 
     // Check whether fracture permeability is given as a scalar value.

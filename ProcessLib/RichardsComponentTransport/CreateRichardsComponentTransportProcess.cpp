@@ -46,7 +46,8 @@ void checkMPLProperties(
 
         // check if liquid phase definition and the corresponding properties
         // exist
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
         checkRequiredProperties(liquid_phase, required_properties_liquid_phase);
 
         // check if components and the corresponding properties exist

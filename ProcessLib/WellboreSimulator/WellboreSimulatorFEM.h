@@ -79,7 +79,8 @@ public:
         pos.setElementID(_element.getID());
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {

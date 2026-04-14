@@ -586,7 +586,8 @@ public:
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
         // Select the only valid for component transport liquid phase.
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         // Assume that the component name is the same as the process variable
         // name. Components are shifted by one because the first one is always
@@ -777,7 +778,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
@@ -880,7 +882,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
@@ -1007,7 +1010,8 @@ public:
         auto const& process_data = this->_process_data;
         auto const& medium =
             *process_data.media_map.getMedium(this->_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         auto const& b =
             _process_data
@@ -1169,7 +1173,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
         auto const component_id =
             transport_process_id - (_process_data.isothermal ? 1 : 2);
         auto const& component = phase.component(
@@ -1368,7 +1373,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
@@ -1494,7 +1500,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
 
@@ -1771,7 +1778,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         auto const& Ns =
             _process_data.shape_matrix_cache
@@ -1906,7 +1914,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         auto const& Ns =
             _process_data.shape_matrix_cache
@@ -1994,7 +2003,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         // local_x contains the local concentration and pressure values
         double c_int_pt;
@@ -2135,7 +2145,8 @@ public:
 
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
-        auto const& phase = medium.phase("AqueousLiquid");
+        auto const& phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
         auto const& component = phase.component(
             _transport_process_variables[component_id].get().getName());
@@ -2225,7 +2236,8 @@ private:
     {
         auto const& medium =
             *_process_data.media_map.getMedium(this->_element.getID());
-        auto const& solid_phase = medium.phase("Solid");
+        auto const& solid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
         auto const specific_heat_capacity_solid =
             solid_phase

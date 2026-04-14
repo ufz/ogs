@@ -93,8 +93,10 @@ public:
             x[process_id]->get(indices_enthalpy);
 
         auto const& medium = *_data.media_map.getMedium(_element.getID());
-        auto const& liquid_phase = medium.phase("AqueousLiquid");
-        auto const& gas_phase = medium.phase("Gas");
+        auto const& liquid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+        auto const& gas_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::Gas);
 
         ParameterLib::SpatialPosition pos;
         pos.setElementID(_element.getID());

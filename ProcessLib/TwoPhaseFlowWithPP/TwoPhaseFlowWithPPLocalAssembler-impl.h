@@ -4,6 +4,7 @@
 #pragma once
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Fem/Interpolation.h"
@@ -107,8 +108,9 @@ void TwoPhaseFlowWithPPLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         local_b.template segment<cap_pressure_size>(cap_pressure_matrix_index);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& gas_phase = medium.phase("Gas");
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& gas_phase = medium.phase(MaterialPropertyLib::PhaseName::Gas);
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();

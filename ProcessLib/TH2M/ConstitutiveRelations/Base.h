@@ -18,9 +18,12 @@ using namespace ProcessLib::ConstitutiveRelations;
 struct MediaData
 {
     MaterialPropertyLib::Medium const& medium;
-    MaterialPropertyLib::Phase const& solid = medium.phase("Solid");
-    MaterialPropertyLib::Phase const& liquid = medium.phase("AqueousLiquid");
-    MaterialPropertyLib::Phase const& gas = medium.phase("Gas");
+    MaterialPropertyLib::Phase const& solid =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
+    MaterialPropertyLib::Phase const& liquid =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    MaterialPropertyLib::Phase const& gas =
+        medium.phase(MaterialPropertyLib::PhaseName::Gas);
 
     MaterialPropertyLib::Property const& saturation_prop =
         medium[MaterialPropertyLib::PropertyType::saturation];

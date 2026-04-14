@@ -10,6 +10,7 @@
 #include "ConstitutiveRelations/ConstitutiveModels.h"
 #include "IntegrationPointData.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/EigenBlockMatrixView.h"
@@ -217,7 +218,8 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         this->process_data_.media_map.getMedium(this->element_.getID());
     MPL::VariableArray variables;
 
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -400,8 +402,10 @@ void RichardsMechanicsLocalAssembler<
 
     auto const& medium =
         this->process_data_.media_map.getMedium(this->element_.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -795,8 +799,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ProcessLib::ThermoRichardsMechanics::MaterialStateData<DisplacementDim>&
             material_state_data)
 {
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
 
     auto const& identity2 = MathLib::KelvinVector::Invariants<
         MathLib::KelvinVector::kelvin_vector_dimensions(
@@ -1147,8 +1153,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium =
         this->process_data_.media_map.getMedium(this->element_.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -1549,8 +1557,10 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& medium =
         this->process_data_.media_map.getMedium(this->element_.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 

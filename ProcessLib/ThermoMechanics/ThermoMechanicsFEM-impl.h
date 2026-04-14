@@ -4,6 +4,7 @@
 #pragma once
 
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVector.h"
@@ -186,7 +187,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     x_position.setElementID(_element.getID());
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -407,7 +409,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)
     {
@@ -547,7 +550,8 @@ void ThermoMechanicsLocalAssembler<ShapeFunction, DisplacementDim>::
         _integration_method.getNumberOfPoints();
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::VariableArray variables;
 
     for (unsigned ip = 0; ip < n_integration_points; ip++)

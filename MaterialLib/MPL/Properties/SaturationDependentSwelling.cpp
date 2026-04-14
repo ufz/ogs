@@ -38,12 +38,12 @@ void SaturationDependentSwelling::checkScale() const
             "'phase' scales only.");
     }
     auto const phase = std::get<Phase*>(scale_);
-    if (phase->name != "Solid")
+    if (phase->phaseName != PhaseName::Solid)
     {
         OGS_FATAL(
             "The property 'SaturationDependentSwelling' must be given in the "
             "'Solid' phase, not in '{:s}' phase.",
-            phase->name);
+            toString(phase->phaseName));
     }
 }
 

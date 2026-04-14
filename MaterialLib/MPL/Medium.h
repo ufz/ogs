@@ -30,11 +30,11 @@ public:
     /// A get-function for a particular phase. The ul argument specifies the
     /// index within the phases_ vector.
     Phase const& phase(std::size_t index) const;
-    /// A get-function for a particular phase by phase name.
-    Phase const& phase(std::string const& phase_name) const;
+    /// A get-function for a particular phase by phase type.
+    Phase const& phase(PhaseName phase_name) const;
 
-    /// A query for a named phase.
-    bool hasPhase(std::string const& phase_name) const;
+    /// A query for a particular phase type.
+    bool hasPhase(PhaseName phase_name) const;
 
     /// A get-function for a property. The argument refers to the name of the
     /// property.
@@ -103,5 +103,9 @@ void checkRequiredProperties(
 
 /// Returns a gas or aqueous liquid phase of the given medium.
 Phase const& fluidPhase(Medium const& medium);
+
+/// Returns a pointer to the phase with the given type, or nullptr if the phase
+/// does not exist in the medium.
+Phase const* getOptionalPhase(Medium const& medium, PhaseName phase_name);
 
 }  // namespace MaterialPropertyLib

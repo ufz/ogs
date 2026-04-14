@@ -7,6 +7,7 @@
 
 #include "ConstitutiveRelations/ConstitutiveData.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/PhysicalConstant.h"
@@ -865,7 +866,8 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
         *this->process_data_.media_map.getMedium(this->element_.getID());
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
     ConstitutiveRelations::ConstitutiveModels<DisplacementDim> const models{
         this->solid_material_, *this->process_data_.phase_transition_model_};

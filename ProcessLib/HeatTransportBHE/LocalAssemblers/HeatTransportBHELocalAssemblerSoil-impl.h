@@ -7,6 +7,7 @@
 
 #include "HeatTransportBHEProcessAssemblerInterface.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -72,8 +73,10 @@ void HeatTransportBHELocalAssemblerSoil<ShapeFunction>::assemble(
         local_K_data, ShapeFunction::NPOINTS, ShapeFunction::NPOINTS);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& solid_phase = medium.phase("Solid");
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
 
     MaterialPropertyLib::VariableArray vars;
 

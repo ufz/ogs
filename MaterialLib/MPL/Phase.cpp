@@ -10,10 +10,47 @@
 
 namespace MaterialPropertyLib
 {
-Phase::Phase(std::string&& phase_name,
+std::string_view toString(PhaseName phase_name)
+{
+    switch (phase_name)
+    {
+        case PhaseName::Solid:
+            return "Solid";
+        case PhaseName::AqueousLiquid:
+            return "AqueousLiquid";
+        case PhaseName::Gas:
+            return "Gas";
+        case PhaseName::FrozenLiquid:
+            return "FrozenLiquid";
+    }
+    OGS_FATAL("Unknown phase name");
+}
+
+PhaseName fromString(std::string const& phase_name)
+{
+    if (phase_name == "Solid")
+    {
+        return PhaseName::Solid;
+    }
+    if (phase_name == "AqueousLiquid")
+    {
+        return PhaseName::AqueousLiquid;
+    }
+    if (phase_name == "Gas")
+    {
+        return PhaseName::Gas;
+    }
+    if (phase_name == "FrozenLiquid")
+    {
+        return PhaseName::FrozenLiquid;
+    }
+    OGS_FATAL("Unknown phase name '{}'", phase_name);
+}
+
+Phase::Phase(PhaseName phase_name,
              std::vector<std::unique_ptr<Component>>&& components,
              std::unique_ptr<PropertyArray>&& properties)
-    : name(std::move(phase_name)), components_(std::move(components))
+    : phaseName(phase_name), components_(std::move(components))
 {
     if (properties)
     {
@@ -69,7 +106,7 @@ std::size_t Phase::numberOfComponents() const
 
 std::string Phase::description() const
 {
-    return "phase '" + name + "'";
+    return "phase '" + std::string(toString(phaseName)) + "'";
 }
 
 void checkRequiredProperties(
@@ -80,7 +117,7 @@ void checkRequiredProperties(
         if (!phase.hasProperty(p))
         {
             OGS_FATAL("The property '{:s}' is missing in the {:s} phase.",
-                      property_enum_to_string[p], phase.name);
+                      property_enum_to_string[p], toString(phase.phaseName));
         }
     }
 }

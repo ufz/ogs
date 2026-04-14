@@ -34,10 +34,12 @@ void checkMPLProperties(
     for (auto const& m : media)
     {
         checkRequiredProperties(*m.second, requiredMediumProperties);
-        checkRequiredProperties(m.second->phase("AqueousLiquid"),
-                                requiredFluidProperties);
-        checkRequiredProperties(m.second->phase("Solid"),
-                                requiredSolidProperties);
+        checkRequiredProperties(
+            m.second->phase(MaterialPropertyLib::PhaseName::AqueousLiquid),
+            requiredFluidProperties);
+        checkRequiredProperties(
+            m.second->phase(MaterialPropertyLib::PhaseName::Solid),
+            requiredSolidProperties);
     }
 }
 

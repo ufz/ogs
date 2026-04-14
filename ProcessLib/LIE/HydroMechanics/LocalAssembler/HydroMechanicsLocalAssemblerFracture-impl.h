@@ -7,6 +7,7 @@
 
 #include "HydroMechanicsLocalAssemblerFracture.h"
 #include "MaterialLib/FractureModels/FractureIdentity2.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/PropertyType.h"
 #include "MathLib/KelvinVector.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
@@ -210,7 +211,8 @@ void HydroMechanicsLocalAssemblerFracture<
 
     MPL::VariableArray variables;
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
             .template value<double>(variables, x_position, t, dt);

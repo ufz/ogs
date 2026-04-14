@@ -7,6 +7,7 @@
 
 #include "HydroMechanicsLocalAssemblerMatrix.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/PhysicalConstant.h"
@@ -190,8 +191,10 @@ void HydroMechanicsLocalAssemblerMatrix<
     x_position.setElementID(_element.getID());
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
-    auto const& solid_phase = medium->phase("Solid");
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::Solid);
 
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
@@ -395,7 +398,8 @@ void HydroMechanicsLocalAssemblerMatrix<
     unsigned const n_integration_points = _ip_data.size();
 
     auto const& medium = _process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium->phase("AqueousLiquid");
+    auto const& liquid_phase =
+        medium->phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
     auto const T_ref =
         medium->property(MPL::PropertyType::reference_temperature)
             .template value<double>(variables, x_position, t, dt);

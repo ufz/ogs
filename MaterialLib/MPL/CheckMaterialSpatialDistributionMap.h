@@ -32,18 +32,19 @@ void checkMaterialSpatialDistributionMap(
         if (!required_properties_liquid_phase.empty())
         {
             MaterialPropertyLib::checkRequiredProperties(
-                medium.phase("AqueousLiquid"),
+                medium.phase(PhaseName::AqueousLiquid),
                 required_properties_liquid_phase);
         }
         if (!required_properties_gas_phase.empty())
         {
             MaterialPropertyLib::checkRequiredProperties(
-                medium.phase("Gas"), required_properties_gas_phase);
+                medium.phase(PhaseName::Gas), required_properties_gas_phase);
         }
         if (!required_properties_solid_phase.empty())
         {
             MaterialPropertyLib::checkRequiredProperties(
-                medium.phase("Solid"), required_properties_solid_phase);
+                medium.phase(PhaseName::Solid),
+                required_properties_solid_phase);
         }
     }
 }

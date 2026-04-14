@@ -5,6 +5,7 @@
 
 #include "LiquidFlowLocalAssembler.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/GetFluidDensityAndViscosity.h"
 #include "MaterialLib/MPL/VariableType.h"
@@ -138,8 +139,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const& fluid_phase = fluidPhase(medium);
 
     MaterialPropertyLib::VariableArray vars;
-    auto& phase_pressure = medium.hasPhase("Gas") ? vars.gas_phase_pressure
-                                                  : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium.hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
     GlobalDimVectorType const projected_body_force_vector =
         _process_data.element_rotation_matrices[_element.getID()] *
@@ -306,8 +308,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
     auto const& fluid_phase = fluidPhase(medium);
 
     MaterialPropertyLib::VariableArray vars;
-    auto& phase_pressure = medium.hasPhase("Gas") ? vars.gas_phase_pressure
-                                                  : vars.liquid_phase_pressure;
+    auto& phase_pressure = medium.hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
     GlobalDimVectorType const projected_body_force_vector =
         _process_data.element_rotation_matrices[_element.getID()] *

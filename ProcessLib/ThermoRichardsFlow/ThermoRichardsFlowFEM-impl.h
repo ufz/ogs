@@ -8,6 +8,7 @@
 #include "HydrostaticElasticityModel.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormEigenVector.h"
@@ -212,10 +213,12 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         ShapeMatricesType::NodalMatrixType::Zero(pressure_size, pressure_size);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::Phase const* gas_phase =
-        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
+        getOptionalPhase(medium, MaterialPropertyLib::PhaseName::Gas);
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -712,10 +715,12 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         local_rhs_data, local_matrix_dim);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::Phase const* gas_phase =
-        medium.hasPhase("Gas") ? &medium.phase("Gas") : nullptr;
+        getOptionalPhase(medium, MaterialPropertyLib::PhaseName::Gas);
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
@@ -1202,8 +1207,10 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         local_x_prev.template segment<pressure_size>(pressure_index);
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
-    auto const& liquid_phase = medium.phase("AqueousLiquid");
-    auto const& solid_phase = medium.phase("Solid");
+    auto const& liquid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
+    auto const& solid_phase =
+        medium.phase(MaterialPropertyLib::PhaseName::Solid);
     MPL::VariableArray variables;
     MPL::VariableArray variables_prev;
 
