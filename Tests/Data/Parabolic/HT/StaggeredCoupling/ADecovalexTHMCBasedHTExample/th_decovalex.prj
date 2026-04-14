@@ -7,6 +7,7 @@
             <name>th_decovalex</name>
             <type>HT</type>
             <coupling_scheme>staggered</coupling_scheme>
+            <equation_balance_type>mass</equation_balance_type>
             <integration_order>2</integration_order>
             <process_variables>
                 <temperature>T</temperature>
@@ -58,7 +59,7 @@
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>0.0</value>
+                            <value>1.0e-11</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -74,6 +75,11 @@
                             <name>specific_heat_capacity</name>
                             <type>Parameter</type>
                             <parameter_name>c_p</parameter_name>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>1e-5</value>
                         </property>
                     </properties>
                 </phase>
@@ -102,6 +108,11 @@
                 <property>
                     <name>thermal_conductivity</name>
                     <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.6</value>
                 </property>
             </properties>
         </medium>
@@ -149,7 +160,7 @@
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>0.0</value>
+                            <value>2.0e-11</value>
                         </property>
                         <property>
                             <name>thermal_conductivity</name>
@@ -160,6 +171,11 @@
                             <name>specific_heat_capacity</name>
                             <type>Parameter</type>
                             <parameter_name>c_p</parameter_name>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>1e-5</value>
                         </property>
                     </properties>
                 </phase>
@@ -194,6 +210,11 @@
                     <name>thermal_conductivity</name>
                     <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1.0</value>
+                </property>
             </properties>
         </medium>
     </media>
@@ -222,6 +243,7 @@
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-6</abstol>
+                    <reltol>1.e-15</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -292,6 +314,7 @@
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-6</abstol>
+                    <reltol>1.e-15</reltol>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
@@ -799,4 +822,19 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+
+    <test_definition>
+        <vtkdiff>
+            <regex>th_decovalex_ts.*.vtu</regex>
+            <field>p</field>
+            <absolute_tolerance>5.0e-6</absolute_tolerance>
+            <relative_tolerance>5.0e-13</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>th_decovalex_ts_.*.vtu</regex>
+            <field>T</field>
+            <absolute_tolerance>8e-12</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

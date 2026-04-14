@@ -14,6 +14,7 @@
             <name>ThermalConvection</name>
             <type>HT</type>
             <integration_order>2</integration_order>
+            <equation_balance_type>mass</equation_balance_type>
             <process_variables>
                 <temperature>T</temperature>
                 <pressure>p</pressure>
@@ -42,13 +43,7 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Linear</type>
-                            <reference_value>1.0e+3</reference_value>
-                            <independent_variable>
-                                <variable_name>temperature</variable_name>
-                                <slope>-4.3e-4</slope>
-                                <reference_condition>20</reference_condition>
-                            </independent_variable>
+                            <type>WaterDensityIAPWSIF97Region1</type>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -57,7 +52,7 @@
                             <reference_value>1.0e-3</reference_value>
                             <exponent>
                                 <variable_name>temperature</variable_name>
-                                <reference_condition>20</reference_condition>
+                                <reference_condition>293.1</reference_condition>
                                 <factor>-0.01333333</factor>
                             </exponent>
                         </property>
@@ -69,7 +64,7 @@
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>0.0</value>
+                            <value>1.0e-11</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -85,6 +80,11 @@
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value>0</value>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>4.5e-6</value>
                         </property>
                     </properties>
                 </phase>
@@ -114,6 +114,11 @@
                     <name>thermal_conductivity</name>
                     <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>0.6</value>
+                </property>
             </properties>
         </medium>
         <medium id="1">
@@ -133,13 +138,7 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Linear</type>
-                            <reference_value>1.0e+3</reference_value>
-                            <independent_variable>
-                                <variable_name>temperature</variable_name>
-                                <slope>-4.3e-4</slope>
-                                <reference_condition>20</reference_condition>
-                            </independent_variable>
+                            <type>WaterDensityIAPWSIF97Region1</type>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -148,7 +147,7 @@
                             <reference_value>1.0e-3</reference_value>
                             <exponent>
                                 <variable_name>temperature</variable_name>
-                                <reference_condition>20</reference_condition>
+                                <reference_condition>293.15</reference_condition>
                                 <factor>-0.01333333</factor>
                             </exponent>
                         </property>
@@ -160,7 +159,7 @@
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>0.0</value>
+                            <value>2.0e-11</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -176,6 +175,11 @@
                             <name>specific_heat_capacity</name>
                             <type>Constant</type>
                             <value>0</value>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Constant</type>
+                            <value>4.8e-6</value>
                         </property>
                     </properties>
                 </phase>
@@ -204,6 +208,11 @@
                 <property>
                     <name>thermal_conductivity</name>
                     <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Constant</type>
+                    <value>1.6</value>
                 </property>
             </properties>
         </medium>
@@ -412,12 +421,12 @@
         <parameter>
             <name>t_Dirichlet_bottom</name>
             <type>Constant</type>
-            <value>170</value>
+            <value>443.15</value>
         </parameter>
         <parameter>
             <name>t_Dirichlet_top</name>
             <type>Constant</type>
-            <value>20</value>
+            <value>293.15</value>
         </parameter>
         <parameter>
             <name>kappa1</name>
