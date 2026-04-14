@@ -1,5 +1,5 @@
 +++
-author = "Thomas Fisher, Dmitri Naumov, Fabien Magri, Marc Walther, Tianyuan Zheng, Olaf Kolditz"
+author = "Thomas Fischer, Dmitri Naumov, Fabien Magri, Marc Walther, Tianyuan Zheng, Olaf Kolditz, Wenqing Wang"
 date = "2026-04-04"
 title = "Hydro-Thermal Process (HT)"
 weight = 3
@@ -8,7 +8,7 @@ weight = 3
 ## Introduction
 
 The Hydro-Thermal (HT) process models coupled groundwater flow and heat transport in porous media.
-Both sub-processes are described by parabolic partial differential equations that are coupled through temperature-dependent fluid properties (density, viscosity) and the advective heat transport term.
+Both subprocesses are governed by coupled parabolic partial differential equations, linked via temperature dependent fluid properties and advective heat transport.
 
 ### Key features
 
@@ -27,64 +27,52 @@ Both sub-processes are described by parabolic partial differential equations tha
 
 ## Theoretical background
 
-### Balance equation framework
+Both the flow and heat transport processes are derived from integral conservation laws.
 
-Both the flow and heat transport processes are derived from integral conservation laws. Starting with the conservation of mass (or energy), we write:
-
-$$
-\frac{\partial}{\partial t} \int_{\Omega} S(u) \, d\Omega = -\int_{\Gamma} \mathbf{J} \cdot \mathbf{n} \, d\sigma + \int_{\Omega} Q \, d\Omega
-$$
-
-where $S(u)$ is the volume density of the conserved quantity, $\mathbf{J}$ is the flux, $\mathbf{n}$ is the outward normal, and $Q$ represents sources/sinks.
-
-Applying the divergence theorem (Gauss) to convert the boundary integral to a volume integral:
-
-$$
-\int_{\Omega} \left[ \frac{\partial S(u)}{\partial t} + \nabla \cdot \mathbf{J} - Q \right] d\Omega = 0
-$$
-
-Since this holds for any domain $\Omega$, the strong form follows:
-
-$$
-\frac{\partial S(u)}{\partial t} + \nabla \cdot \mathbf{J} - Q = 0
-$$
-
-Substituting constitutive laws for flux $\mathbf{J}$ (such as Darcy's law for groundwater and Fourier's law for heat) yields the specific governing equations.
-
-### Groundwater flow equation
+### Mass balance equation
 
 The Darcy velocity is given by:
 
 $$
-\mathbf{q} = -\frac{\boldsymbol{\kappa}}{\mu(T)} \left( \nabla p + \varrho_f(T) g \mathbf{e}_z \right)
+\mathbf{q} = -\frac{\boldsymbol{\kappa}}{\mu} \left( \nabla p - \varrho_f  \mathbf g \right),
 $$
+where $\boldsymbol{\kappa}$ is the permeability, $p$ is the pore pressure, $\varrho_f$ is the liquid density, and $\mathbf{g}$ is the gravitational force.  
 
-The pressure equation including fluid compressibility reads:
-
+The mass balance equation reads:
 $$
-\left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) \frac{\partial p}{\partial t} - \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu(T)} \nabla \Psi \right] - Q = 0
+ \frac{\partial }{\partial t} (\phi \varrho_f) + \nabla \cdot ({\varrho_f} \mathbf{q}) = Q_H,
 $$
+where $Q_H$ is the sink or source term.
 
-where $\Psi = p + \varrho_f(T) g z$ is the piezometric head, $S$ is the storage coefficient, $\phi$ is the porosity, and $Q$ is a source/sink term.
-
-**Derivation of the storage term:** Applying the balance equation framework with $S(p) = \phi \varrho_f(p,T)$ (fluid mass per unit volume) yields:
-
-$$
-\frac{\partial \phi \varrho_f}{\partial t} - \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \right] - Q = 0
-$$
-
-Assuming the solid matrix is incompressible ($\partial \phi/\partial t = 0$), the storage term expands as:
+Assuming the solid matrix is compressible (i.e., $\frac{\partial \phi }{\partial t}\neq0$), the mass balance equation can be expanded as
 
 $$
-\frac{\partial \phi \varrho_f}{\partial t} = \phi \left( \frac{\partial \varrho_f}{\partial p} \frac{\partial p}{\partial t} + \frac{\partial \varrho_f}{\partial T} \frac{\partial T}{\partial t} \right)
+\begin{align*}
+\left(\phi  \frac{\partial \varrho_f}{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t}
+&-\overbrace{\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\varrho_f\frac{\partial T}{\partial t}}^{\text{Thermal expansion}} \\
+&+ \nabla \cdot ({\varrho_f} \mathbf{q}) = Q_H
+\end{align*},
 $$
 
-Under the Boussinesq approximation, the temperature dependence of density in storage is neglected, and fluid compressibility $\partial \varrho_f/\partial p$ is assumed constant, allowing the definition of an effective storage coefficient $S = \phi \frac{\partial \varrho_f}{\partial p}$. Temperature dependence is retained only in the buoyancy term through $\varrho_f(T)$ in the piezometric head.
+where $S_s$ is the solid compressibility, $\alpha_B$ is the Biot coefficient, $\alpha_T^s$ is the linear solid thermal expansivity, and $T$ is the temperature.
+
+The value of $S_s$ can be computed as $(1 - \phi) / K_s$, where $K_s$ is the intrinsic bulk modulus of the solid phase.
+
+In certain scenarios, such as far-field simulations, the fluid density is often assumed constant. Consequently, the volume balance equation can be derived by scaling the mass balance equation by the constant fluid density:
+$$
+\begin{align*}
+\left(\phi \frac{1}{\varrho_f} \frac{\partial }{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t}
+&-\overbrace{\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\frac{\partial T}{\partial t}}^{\text{Thermal expansion}} \\
+&+ \nabla \cdot ( \mathbf{q}) = Q_H/{\varrho_f}
+\end{align*},
+$$
+
+**Note:** In OGS, the thermal expansion term is optional.
 
 ### Heat transport equation
 
 $$
-c_p \frac{\partial T}{\partial t} - \nabla \cdot (\boldsymbol{\lambda} \nabla T) + \varrho_f c_f \langle \mathbf{q}, \nabla T \rangle = 0
+c_p \frac{\partial T}{\partial t} - \nabla \cdot (\boldsymbol{\lambda} \nabla T) + \varrho_f c_f \langle \mathbf{q}, \nabla T \rangle = Q_T,
 $$
 
 where:
@@ -96,58 +84,68 @@ where:
 | $\boldsymbol{\lambda}^{\mathrm{cond}}$ | Effective thermal conductivity (from the medium's `thermal_conductivity` MPL property, e.g. `EffectiveThermalConductivityPorosityMixing`) |
 | $\boldsymbol{\lambda}^{\mathrm{disp}} = \varrho_f c_f \left[ \alpha_T \lVert\mathbf{q}\rVert \mathbf{I} + (\alpha_L - \alpha_T) \frac{\mathbf{q} \mathbf{q}^T}{\lVert\mathbf{q}\rVert} \right]$ | Thermal dispersivity |
 | $\alpha_L$, $\alpha_T$ | Longitudinal and transversal thermo-dispersivities |
+| $Q_T$ | Source or sink term |
 
-### Coupling
+### Weak formulation
 
-The fluid density $\varrho_f(T, p)$ and viscosity $\mu(T)$ couple the hydraulic and thermal equations.
-Fluid compressibility $\partial\varrho_f/\partial p$ enters the storage term, and temperature-dependent density drives buoyancy.
+The weak form is obtained by multiplying the strong form by a test function $v \in H_0^1(\Omega)$ and integrating over the domain.
 
-**Note:** The classical Boussinesq (Oberbeck--Boussinesq) approximation, where density variations appear only in the buoyancy term, can be recovered by choosing a density model with no pressure dependence (i.e. $\partial\varrho_f/\partial p = 0$, e.g. a constant or temperature-only dependent density) and omitting the `solid_thermal_expansion` configuration.
+For the pressure field, the weak form is:
+$$
+\begin{align*}
+\int_{\Omega}  \left(\phi  \frac{\partial \varrho_f}{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t} v \mathrm{d}\Omega
+&-\int_{\Omega}\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\varrho_f\frac{\partial T}{\partial t}v \mathrm{d}\Omega \\
+&- \int_{\Omega} {\varrho_f} \nabla v \cdot  \mathbf{q} \mathrm{d}\Omega+ \int_{\Gamma} {\varrho_f} \mathbf{q}\cdot\mathbf{n}v \partial\Omega = \int_{\Omega}Q_H v \mathrm{d}\Omega
+\end{align*},
+$$
+for the mass balance, and
+$$
+\begin{align*}
+\int_{\Omega}  \left(\phi \frac{1}{\varrho_f} \frac{\partial }{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t} v \mathrm{d}\Omega
+&-\int_{\Omega}\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\frac{\partial T}{\partial t}v \mathrm{d}\Omega \\
+&- \int_{\Omega}  \nabla v \cdot  \mathbf{q} \mathrm{d}\Omega+ \int_{\Gamma}  \mathbf{q}\cdot\mathbf{n}v \partial\Omega = \int_{\Omega}Q_H v/\varrho_f \mathrm{d}\Omega
+\end{align*},
+$$
+for the volume balance, where $\mathbf{n}$ is the outward unit normal to the domain boundary $\Gamma$.
+
+For the temperature field, the weak form is:
+$$
+\begin{align*}
+\int_{\Omega}  c_p \frac{\partial T}{\partial t}v \mathrm{d}\Omega + &
+\int_{\Omega}  \boldsymbol{\lambda} \nabla T \cdot \nabla  v\mathrm{d}\Omega
++\int_{\Gamma} \boldsymbol{\lambda} \nabla T \cdot \mathbf{n} v\partial\Omega \\
++& \int_{\Omega}  \varrho_f c_f \langle \mathbf{q}, \nabla T \rangle v\mathrm{d}\Omega = \int_{\Omega}  Q_T v\mathrm{d}\Omega.
+\end{align*}
+$$
 
 ### Finite element discretization
 
-Both equations are discretized into the standard form $\mathbf{M} \dot{\mathbf{u}} + \mathbf{K} \mathbf{u} = \mathbf{f}$.
+Both equations are discretized into the standard form $\mathbf{M} \dot{\mathbf{u}} + \mathbf{K} \mathbf{u} = \mathbf{f}$ by substituting the Galerkin discretization $p \approx \sum_j N_j a_j$ and choosing $v = N_i$.
 
 #### Pressure equation
 
+For the mass balance equation, the resulting discretized matrices and vectors are:
 $$
-\mathbf{M}^p_{ij} = \int_{\Omega} N_i \left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) N_j \, d\Omega, \qquad
-\mathbf{K}^p_{ij} = \int_{\Omega} \nabla N_i^T \frac{\boldsymbol{\kappa}}{\mu} \nabla N_j \, d\Omega
-$$
-
-$$
-\mathbf{f}^p_i = -\int_{\Omega} \nabla N_i^T \frac{\boldsymbol{\kappa} \varrho_f g}{\mu} \mathbf{e}_z \, d\Omega + \int_{\Omega} N_i \, Q \, d\Omega + \int_{\Gamma_N} N_i \, g_N \, d\sigma
+\mathbf{M}^p_{ij} = \int_{\Omega}  \varrho_f\left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S_s \right) N_i N_j \, \mathrm{d}\Omega, \qquad
+\mathbf{K}^p_{ij} = \int_{\Omega} \varrho_f\nabla N_i^T \frac{\boldsymbol{\kappa}}{\mu} \nabla N_j \, \mathrm{d}\Omega
 $$
 
-#### Weak formulation
-
-The weak form is obtained by multiplying the strong form by a test function $v \in H_0^1(\Omega)$ and integrating over the domain:
-
 $$
-\int_{\Omega} v \left[ \left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) \frac{\partial p}{\partial t} - \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \right] - Q \right] d\Omega + \int_{\Gamma_N} v g_N \, d\sigma = 0
+\mathbf{f}^p_i = \int_{\Omega} \varrho_f^2 \nabla N_i^T \frac{\boldsymbol{\kappa} }{\mu} \mathbf{g} \, \mathrm{d}\Omega + \int_{\Omega}  Q_H \, N_i \, \mathrm{d}\Omega + \int_{\Gamma} \varrho_f \mathbf{q}\cdot\mathbf{n}N_i \partial\Omega
 $$
 
-Integration by parts applied to the diffusion term:
+In OGS, the thermal expansion term is optional. When configured, it is added to the right hand vector for the staggered scheme as
 
 $$
-\int_{\Omega} v \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \right] d\Omega = -\int_{\Omega} \nabla v^T \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \, d\Omega + \int_{\Gamma} v \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \cdot \mathbf{n} \, d\sigma
+\mathbf{f}^p_{\mathrm{therm},i} = \int_{\Omega} \varrho_f \left[ 3(\alpha_B - \phi)\alpha_T^s - \frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T} \right] \dot{T} \, N_i \, d\Omega,
 $$
 
-Applying the Neumann boundary condition and setting $v=0$ on Dirichlet boundaries yields the weak form:
-
+and it is added to the mass matrix for the monolithic scheme as
 $$
-\int_{\Omega} v \left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) \frac{\partial p}{\partial t} d\Omega + \int_{\Omega} \nabla v^T \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \, d\Omega - \int_{\Omega} v Q \, d\Omega - \int_{\Gamma_N} v g_N \, d\sigma = 0
-$$
-
-Substituting the Galerkin discretization $p \approx \sum_j N_j a_j$ and choosing $v = N_i$ recovers the matrix form $\mathbf{M}^p \dot{\mathbf{a}} + \mathbf{K}^p \mathbf{a} = \mathbf{f}^p$ presented above.
-
-When `solid_thermal_expansion` is configured, an additional thermal expansion source term is added to the load vector:
-
-$$
-\mathbf{f}^p_{\mathrm{therm},i} = \int_{\Omega} \left[ 3(\alpha_B - \phi)\alpha_s - \frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T} \right] \dot{T} \, N_i \, d\Omega
+\mathbf{M}^{pT}_{ij} = -\int_{\Omega}\varrho_f \left[ 3(\alpha_B - \phi)\alpha_T^s - \frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T} \right] N_i  N_j \, \mathrm{d}\Omega.
 $$
 
-where $\alpha_B$ is the Biot constant, $\alpha_s$ is the solid thermal expansion coefficient, and $\dot{T}$ is approximated by backward finite differences.
+The corresponding terms for the volume balance equation are obtained by scaling all the above integrals by the fluid density.
 
 #### Temperature equation
 
@@ -156,7 +154,20 @@ $$
 $$
 
 $$
-\mathbf{K}^T_{ij} = \int_{\Omega} \nabla N_i^T \boldsymbol{\lambda} \nabla N_j \, d\Omega + \int_{\Omega} N_i \, \varrho_f c_f \, \mathbf{q}^T \nabla N_j \, d\Omega
+\mathbf{K}^T_{ij} =
+\begin{cases}
+\int_{\Omega} \nabla N_i^T \boldsymbol{\lambda} \nabla N_j \, d\Omega + \int_{\Omega} N_i \, \varrho_f c_f \, \mathbf{q}^T \nabla N_j \, d\Omega, \quad\text{for the monolithic scheme}\\
+\int_{\Omega} \nabla N_i^T \boldsymbol{\lambda} \nabla N_j \, d\Omega, \quad\text{for the staggered scheme}
+\end{cases}
+$$
+
+The right hand side vector is given by
+$$
+\mathbf{f}^T_{i} =
+\begin{cases}
+\int_{\Omega} Q_T \, N_i \, d\Omega, \quad\text{for the monolithic scheme}\\
+\int_{\Omega} Q_T \, N_i \, d\Omega -  \int_{\Omega}  \varrho_f c_f \langle \mathbf{q}, \nabla T \rangle \, N_i \, d\Omega, \quad\text{for the staggered scheme}
+\end{cases}
 $$
 
 ## Definition in the project file
@@ -180,6 +191,29 @@ The HT process is declared in the `<processes>` block of the project file.
     </secondary_variables>
 </process>
 ```
+
+### Balance equation type: mass or volume
+
+Similar to other hydraulics-related processes, HT supports an optional `<equation_balance_type>` tag with values `mass` or `volume` to select the balance equation type for the hydraulics process. For example:
+
+```xml
+<process>
+    <name>HydroThermal</name>
+    <type>HT</type>
+    <integration_order>2</integration_order>
+    <equation_balance_type>mass</equation_balance_type>
+    ...
+</process>
+```
+
+By default, the value is `volume`. If the project file uses a nonlinear fluid density model without specifying this tag, OGS will issue a fatal error prompting the user to add the tag. In such cases, the input values for Neumann boundary conditions and source/sink terms must be adjusted accordingly, for example:
+
+- Neumann condition: from volume rate per area (SI unit: $\text{m}\cdot\text{s}^{-1}$) to mass rate per area (SI unit: $\text{kg}\cdot\text{m}^{-2}\text{s}^{-1}$).
+- source/sink: from volume rate (SI unit: $\text{m}^{3}\text{s}^{-1}$) to mass rate (SI unit: $\text{kg}\cdot\text{s}^{-1}$).
+
+### Thermal expansion in the mass/volume balance equation
+
+The computation of the thermal expansion term is enabled only if the linear solid thermal expansivity (property name: `thermal_expansivity`) and the Biot's coefficient (property name: `biot_coefficient`) are defined in the input project file. If linear solid thermal expansivity is anisotropic, the average of its components can be used.  
 
 ### Staggered scheme
 
@@ -210,6 +244,7 @@ The HT process requires properties for the porous medium, the liquid phase, and 
 | `thermal_conductivity` | [M$\cdot$L/(T$^3\cdot\Theta$)] | [W/(m$\cdot$K)] | Effective thermal conductivity of the medium |
 | `thermal_longitudinal_dispersivity` | [L] | [m] | Longitudinal thermo-dispersivity $\alpha_L$ |
 | `thermal_transversal_dispersivity` | [L] | [m] | Transversal thermo-dispersivity $\alpha_T$ |
+| `biot_coefficient` | - | - |Only for the thermal expansion computation |
 
 ### Liquid phase properties
 
@@ -230,6 +265,7 @@ The HT process requires properties for the porous medium, the liquid phase, and 
 | `specific_heat_capacity` | [L$^2$/(T$^2\cdot\Theta$)] | [J/(kg$\cdot$K)] | Specific heat capacity of the solid |
 | `thermal_conductivity` | [M$\cdot$L/(T$^3\cdot\Theta$)] | [W/(m$\cdot$K)] | Thermal conductivity of the solid |
 | `storage` | [L$\cdot$T$^2$/M] | [1/Pa] | Storage coefficient |
+| `thermal_expansivity` | [1/T] | [1/K] | Only  the thermal expansion computation |
 
 ## Features
 
@@ -240,19 +276,6 @@ The gravity vector is specified as:
 ```xml
 <specific_body_force>0 -9.81</specific_body_force>
 ```
-
-### Solid thermal expansion
-
-Optional coupling of thermal expansion effects on the pore pressure:
-
-```xml
-<solid_thermal_expansion>
-    <thermal_expansion>alpha_s</thermal_expansion>
-    <biot_constant>biot</biot_constant>
-</solid_thermal_expansion>
-```
-
-where `alpha_s` and `biot` are parameter names defined in the `<parameters>` block.
 
 ### Aperture size
 
