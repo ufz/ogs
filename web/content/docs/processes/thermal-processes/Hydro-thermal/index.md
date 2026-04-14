@@ -1,440 +1,283 @@
 +++
 author = "Thomas Fisher, Dmitri Naumov, Fabien Magri, Marc Walther, Tianyuan Zheng, Olaf Kolditz"
-date = "2025-10-13"
-title = "Hydro-Thermal Process"
+date = "2026-04-04"
+title = "Hydro-Thermal Process (HT)"
 weight = 3
 +++
 
-The content of this webpage was taken from [this document](/docs/benchmarks/hydro-thermal/constant-viscosity/HT-Process.pdf).
+## Introduction
 
-## $1 H T$ process
+The Hydro-Thermal (HT) process models coupled groundwater flow and heat transport in porous media.
+Both sub-processes are described by parabolic partial differential equations that are coupled through temperature-dependent fluid properties (density, viscosity) and the advective heat transport term.
 
-The hydro-thermal ( $H T$ ) process in porous media consists of the coupling of groundwater and thermal flow processes.
-Both processes are described using partial differential equations (PDE) of parabolic type.
+### Key features
 
-Sec. 1.1 is a general motivation to parabolic PDEs which is very similar to 1 .
-Further reading: (4) [5] [2]
+- Monolithic and staggered coupling schemes.
+- Fluid compressibility and optional solid thermal expansion coupling.
+- Hydrodynamic thermal dispersion (longitudinal and transversal dispersivities).
+- Numerical stabilisation for advection-dominated problems.
+- Fracture flow support via aperture size parameter.
+- Optional solid thermal expansion with Biot constant.
+- Surface flux calculation.
 
-### 1.1 Balance Equations
+### Physical variables
 
-Let $\Omega$ be a domain, $\Gamma$ the boundary of the domain and let $u$ be an intrinsic quantity (for instance mass or heat) and the volume density is described by a function $S(u)$.
-The amount of the quantity in the domain can vary within time by two reasons.
-Firstly, new quantity can accumulate by flow over $\Gamma$ or secondly it can be generated due to the presence of sources or sinks within $\Omega$.
-Consequently, the balance reads
+- **Primary variables**: pressure $p$ and temperature $T$.
+- **Secondary variable**: Darcy velocity $\mathbf{q}$.
 
-$$
-\begin{equation*}
-\frac{\partial}{\partial t} \int_{\Omega} S(u(x, t)) \mathrm{d} x=-\int_{\Gamma}\langle J(x, t) \mid n(x)\rangle \mathrm{d} \sigma+\int_{\Omega} Q(x, t) \mathrm{d} x \tag{1.1}
-\end{equation*}
-$$
-
-where $J(x, t)$ is the flow over the boundary, $n$ is normal vector pointing outside of $\Omega, \mathrm{d} \sigma$ is an infinitesimal small surface element and $Q(x, t)$ describes sources and sinks within $\Omega$.
-Further mathematical manipulations leads to
-
-$$
-\begin{equation*}
-\int_{\Omega} \frac{\partial S(u(x, t))}{\partial t} \mathrm{~d} x+\int_{\Gamma}\langle J(x, t) \mid n(x)\rangle \mathrm{d} \sigma-\int_{\Omega} Q(x, t) \mathrm{d} x=0 \tag{1.2}
-\end{equation*}
-$$
-
-Applying the theorem of Gauss yields to
-
-$$
-\begin{equation*}
-\int_{\Omega} \frac{\partial S(u(x, t))}{\partial t} \mathrm{~d} x+\int_{\Omega} \operatorname{div} J(x, t) \mathrm{d} x-\int_{\Omega} Q(x, t) \mathrm{d} x=0 \tag{1.3}
-\end{equation*}
-$$
-
-Finally,
-
-$$
-\begin{equation*}
-\int_{\Omega}\left[\frac{\partial S(u(x, t))}{\partial t}+\operatorname{div} J(x, t)-Q(x, t)\right] \mathrm{d} x=0 \tag{1.4}
-\end{equation*}
-$$
-
-Since the domain is arbitrary it holds:
+## Theoretical background
 
-$$
-\begin{equation*}
-\frac{\partial S(u(x, t))}{\partial t}+\operatorname{div} J(x, t)-Q(x, t)=0 \tag{1.5}
-\end{equation*}
-$$
+### Balance equation framework
 
-Depending on the constitutive law that describes the flow $J$, we obtain the balance equation of the considered process.
-Important practical laws are
+Both the flow and heat transport processes are derived from integral conservation laws. Starting with the conservation of mass (or energy), we write:
 
 $$
-\begin{equation*}
-J^{(1)}=-\boldsymbol{K} \boldsymbol{g} \mathbf{r a d} u=-\boldsymbol{K} \nabla u \tag{1.6}
-\end{equation*}
+\frac{\partial}{\partial t} \int_{\Omega} S(u) \, d\Omega = -\int_{\Gamma} \mathbf{J} \cdot \mathbf{n} \, d\sigma + \int_{\Omega} Q \, d\Omega
 $$
-
-which describes diffusive flow and
 
-$$
-\begin{equation*}
-J^{(2)}=c u \quad \text { (where } c \text { is a velocity vector) } \tag{1.7}
-\end{equation*}
-$$
+where $S(u)$ is the volume density of the conserved quantity, $\mathbf{J}$ is the flux, $\mathbf{n}$ is the outward normal, and $Q$ represents sources/sinks.
 
-which describes advective flow or a combination of (1.6) and (1.7).
-For instance, substituting (1.6) in (1.5) leads to the following parabolic partial differential equation:
+Applying the divergence theorem (Gauss) to convert the boundary integral to a volume integral:
 
 $$
-\begin{equation*}
-\frac{\partial S(u(x, t))}{\partial t}-\nabla \cdot[\boldsymbol{K}(x, t) \nabla u(x, t)]-Q(x, t)=0 \tag{1.8}
-\end{equation*}
+\int_{\Omega} \left[ \frac{\partial S(u)}{\partial t} + \nabla \cdot \mathbf{J} - Q \right] d\Omega = 0
 $$
 
-while the description of the flow by a combination of (1.6) and (1.7) yields to
+Since this holds for any domain $\Omega$, the strong form follows:
 
 $$
-\begin{equation*}
-\frac{\partial S(u(x, t))}{\partial t}-\nabla \cdot[\boldsymbol{K}(x, t) \nabla u(x, t)-c u(x, t)]-Q(x, t)=0 . \tag{1.9}
-\end{equation*}
+\frac{\partial S(u)}{\partial t} + \nabla \cdot \mathbf{J} - Q = 0
 $$
 
-### 1.2 Groundwater Flow
+Substituting constitutive laws for flux $\mathbf{J}$ (such as Darcy's law for groundwater and Fourier's law for heat) yields the specific governing equations.
 
-### 1.2.1 Constitutive Law: Darcy Flow
+### Groundwater flow equation
 
-In the modeling of groundwater flow we assume the validity of the Darcy law:
+The Darcy velocity is given by:
 
 $$
-\begin{equation*}
-q=-\frac{\boldsymbol{\kappa}}{\mu(T)}\left(\boldsymbol{\operatorname { g r a d }} p+\varrho_{f}(T) \cdot g \cdot e_{z}\right)=-\frac{\boldsymbol{\kappa}}{\mu(T)}(\boldsymbol{\operatorname { g r a d }}(\underbrace{p+\varrho_{f}(T) \cdot g \cdot z}_{\Psi}))=-\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \tag{1.10}
-\end{equation*}
+\mathbf{q} = -\frac{\boldsymbol{\kappa}}{\mu(T)} \left( \nabla p + \varrho_f(T) g \mathbf{e}_z \right)
 $$
-
-where
-
-- $T$ is the temperature in $[\Theta]$
-- $q(x, t, T)$ is the Darcy velocity in $\left[\frac{L}{T}\right]$
-- $p(x, t)$ is the pressure $\left[\frac{M L}{T^{2}} \frac{1}{L^{2}}\right]$,
-- $\kappa$ is the anisotropic intrinsic permeability tensor of the porous medium (that can depend on the saturation $S\left[L^{2}\right]$ which will lead to Richards flow)
-- $\mu(T, p)$ is the temperature and pressure dependent dynamic viscosity $\left[\frac{M L}{T^{2}} \cdot T\right]$,
-- $\varrho_{f}(x, t, T, p)$ is the temperature and pressure dependent mass density of the fluid $\left[\frac{M}{L^{3}}\right]$,
-- $g$ the gravitation constant $\left[\frac{L}{T^{2}}\right]$
 
-### 1.2.2 Balance Equation
+The pressure equation including fluid compressibility reads:
 
-In the groundwater flow the function $S$ in the balance equations (1.8) or (1.9) is replaced by $\phi \rho(x, t, p)$ :
-
 $$
-\begin{equation*}
-\frac{\partial \phi \rho(p, T)}{\partial t}-\operatorname{div} \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi-Q(x, t)=0 \tag{1.11}
-\end{equation*}
+\left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) \frac{\partial p}{\partial t} - \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu(T)} \nabla \Psi \right] - Q = 0
 $$
-
-where
 
-- $\phi$ is the porosity of the solid
-- $Q(x, t)$ describes the inner sources or sinks, in coupled processes sources and sinks $Q$ can also result from changes of the other primary variable, for instance through the changing of temperature sources and sinks can arise
-
-For the implementation it is assumed that the medium is incompressible, i.e., the porosity does not change and thus $\frac{\partial \phi}{\partial t}=0$. Therefore, the first term of 1.12 is
-
-$$
-\frac{\partial \phi \rho(p, T)}{\partial t}=\underbrace{\frac{\partial \phi}{\partial t}}_{=0} \varrho(p, T)+\phi \frac{\partial \varrho(p, T)}{\partial t}=\phi\left(\frac{\partial \varrho}{\partial p} \frac{\partial p}{\partial t}+\frac{\partial \varrho}{\partial T} \frac{\partial T}{\partial t}\right)
-$$
+where $\Psi = p + \varrho_f(T) g z$ is the piezometric head, $S$ is the storage coefficient, $\phi$ is the porosity, and $Q$ is a source/sink term.
 
-As a part of the Boussinesq approximation it is assumed that the last term of the above equation $\frac{\partial \varrho}{\partial T} \frac{\partial T}{\partial t}$ vanishes.
-Furthermore, it is assumed that the density depends linearly on the pressure, i.e. $\frac{\partial \varrho}{\partial p}$ is constant.
-Under this assumptions it is possible to summarize the (constant) porosity and the constant derivation $\frac{\partial \varrho}{\partial p}$ into a new constant $S$ and (1.11) changes to
+**Derivation of the storage term:** Applying the balance equation framework with $S(p) = \phi \varrho_f(p,T)$ (fluid mass per unit volume) yields:
 
 $$
-\begin{equation*}
-S \frac{\partial p}{\partial t}-\operatorname{div}\left[\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right]-Q(x, t)=0 \tag{1.12}
-\end{equation*}
+\frac{\partial \phi \varrho_f}{\partial t} - \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \right] - Q = 0
 $$
 
-### 1.2.3 Boundary Conditions
+Assuming the solid matrix is incompressible ($\partial \phi/\partial t = 0$), the storage term expands as:
 
 $$
-\begin{array}{rll}
-p-g_{D, p}=0 & \text { on } \quad \Gamma_{D} & \text { (Dirichlet type boundary conditions) } \\
-\left\langle\left.\frac{\boldsymbol{\kappa}}{\mu(T)} \operatorname{grad} \Psi \right\rvert\, n\right\rangle+g_{N}=0 \quad \text { on } \quad \Gamma_{N} & \text { (Neumann type boundary conditions) } \tag{1.14}
-\end{array}
+\frac{\partial \phi \varrho_f}{\partial t} = \phi \left( \frac{\partial \varrho_f}{\partial p} \frac{\partial p}{\partial t} + \frac{\partial \varrho_f}{\partial T} \frac{\partial T}{\partial t} \right)
 $$
-
-### 1.2.4 Weak Formulation
 
-Multiplying (1.12) with -1 and summing up with (1.14) leads to
-
-$$
-\begin{equation*}
--S \frac{\partial p}{\partial t}+\operatorname{div}\left[\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right]+Q(x, t)+\left\langle\left.\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle+g_{N}=0 . \tag{1.15}
-\end{equation*}
-$$
+Under the Boussinesq approximation, the temperature dependence of density in storage is neglected, and fluid compressibility $\partial \varrho_f/\partial p$ is assumed constant, allowing the definition of an effective storage coefficient $S = \phi \frac{\partial \varrho_f}{\partial p}$. Temperature dependence is retained only in the buoyancy term through $\varrho_f(T)$ in the piezometric head.
 
-Since (1.15) holds true for arbitrary points of the domain, the equation stays valid if it is multiplied by test functions $v, \bar{v} \in H_{0}^{1}(\Omega)$ and the integration over the domain $\Omega$ and the Neumann boundary $\Gamma_{N, p}$, respectively:
+### Heat transport equation
 
 $$
-\begin{equation*}
-\int_{\Omega} v\left(-S \frac{\partial p}{\partial t}+\operatorname{div}\left[\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right]+Q(x, t)\right) \mathrm{d} x+\int_{\Gamma_{N}} \bar{v}\left(\left\langle\left.\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle+g_{N}\right) \mathrm{d} \sigma=0 \tag{1.16}
-\end{equation*}
+c_p \frac{\partial T}{\partial t} - \nabla \cdot (\boldsymbol{\lambda} \nabla T) + \varrho_f c_f \langle \mathbf{q}, \nabla T \rangle = 0
 $$
 
-or equivalently
-(1.17)
-$-\int_{\Omega} v S \frac{\partial p}{\partial t} \mathrm{~d} x+\int_{\Omega} v\left(\operatorname{div}\left[\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right]\right) \mathrm{d} x+\int_{\Omega} v Q(x, t) \mathrm{d} x+\int_{\Gamma_{N}} \bar{v}\left\langle\left.\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle \mathrm{d} \sigma+\int_{\Gamma_{N}} \bar{v} g_{N} \mathrm{~d} \sigma=0$
-Integration by parts of the second term of 1.17 results in
+where:
 
-$$
-\begin{equation*}
-\int_{\Omega} v\left(\operatorname{div}\left[\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right]\right) \mathrm{d} x=-\int_{\Omega}\left\langle\boldsymbol{\operatorname { g r a d }} v \left\lvert\, \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right.\right\rangle \mathrm{d} x+\int_{\Omega} \operatorname{div}\left(v\left[\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right]\right) \mathrm{d} x \tag{1.18}
-\end{equation*}
-$$
+| Symbol | Definition |
+|---|---|
+| $c_p = \varrho_f \phi c_f + \varrho_s (1 - \phi) c_s$ | Volumetric heat capacity of the mixture |
+| $\boldsymbol{\lambda} = \boldsymbol{\lambda}^{\mathrm{cond}} + \boldsymbol{\lambda}^{\mathrm{disp}}$ | Hydrodynamic thermo-dispersion tensor |
+| $\boldsymbol{\lambda}^{\mathrm{cond}}$ | Effective thermal conductivity (from the medium's `thermal_conductivity` MPL property, e.g. `EffectiveThermalConductivityPorosityMixing`) |
+| $\boldsymbol{\lambda}^{\mathrm{disp}} = \varrho_f c_f \left[ \alpha_T \lVert\mathbf{q}\rVert \mathbf{I} + (\alpha_L - \alpha_T) \frac{\mathbf{q} \mathbf{q}^T}{\lVert\mathbf{q}\rVert} \right]$ | Thermal dispersivity |
+| $\alpha_L$, $\alpha_T$ | Longitudinal and transversal thermo-dispersivities |
 
-Using Green's formula for the last term of the above expression
-
-$$
-\begin{array}{rl}
-\int_{\Omega} \operatorname{div}\left(v\left[\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right]\right) \mathrm{d} & x=\oint_{\Gamma}\left\langle\left. v \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle \mathrm{d} \sigma  \tag{1.19}\\
-& =\int_{\Gamma_{D}}\left\langle\left. v \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle \mathrm{d} \sigma+\int_{\Gamma_{N}}\left\langle\left. v \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle \mathrm{d} \sigma
-\end{array}
-$$
+### Coupling
 
-and the integral on the Dirichlet boundary $\Gamma_{D}$ vanishes because $v=0$ holds.
-Finally, the expression (1.18) takes the form
+The fluid density $\varrho_f(T, p)$ and viscosity $\mu(T)$ couple the hydraulic and thermal equations.
+Fluid compressibility $\partial\varrho_f/\partial p$ enters the storage term, and temperature-dependent density drives buoyancy.
 
-$$
-\begin{equation*}
-\int_{\Omega} v\left[\operatorname{div}\left(\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right)\right] \mathrm{d} x=-\int_{\Omega}\langle\boldsymbol{\operatorname { g r a d }} v \mid \boldsymbol{K} \boldsymbol{\operatorname { g r a d }} \Psi\rangle \mathrm{d} x+\int_{\Gamma_{N}}\left\langle\left. v \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle \mathrm{d} \sigma \tag{1.20}
-\end{equation*}
-$$
+**Note:** The classical Boussinesq (Oberbeck--Boussinesq) approximation, where density variations appear only in the buoyancy term, can be recovered by choosing a density model with no pressure dependence (i.e. $\partial\varrho_f/\partial p = 0$, e.g. a constant or temperature-only dependent density) and omitting the `solid_thermal_expansion` configuration.
 
-Putting (1.20) in (1.17) yields to
+### Finite element discretization
 
-$$
-\begin{aligned}
-0= & -\int_{\Omega} v S \frac{\partial p}{\partial t} \mathrm{~d} x-\int_{\Omega}\left\langle\boldsymbol{\operatorname { g r a d }} v \left\lvert\, \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right.\right\rangle \mathrm{d} x+\int_{\Gamma_{N}}\left\langle\left. v \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle \mathrm{d} \sigma \\
-& +\int_{\Omega} v Q(x, t) \mathrm{d} x+\int_{\Gamma_{N}} \bar{v}\left\langle\left.\frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi \right\rvert\, n\right\rangle \mathrm{d} \sigma+\int_{\Gamma_{N}} \bar{v} g_{N} \mathrm{~d} \sigma
-\end{aligned}
-$$
+Both equations are discretized into the standard form $\mathbf{M} \dot{\mathbf{u}} + \mathbf{K} \mathbf{u} = \mathbf{f}$.
 
-Since the test functions are arbitrary, by setting $v=-\bar{v}$ the second and fourth term cancel each other.
-Multiplying by -1 results in
+#### Pressure equation
 
 $$
-\begin{equation*}
-0=\int_{\Omega} v S \frac{\partial p}{\partial t} \mathrm{~d} x+\int_{\Omega}\left\langle\boldsymbol{\operatorname { g r a d }} v \left\lvert\, \frac{\boldsymbol{\kappa}}{\mu(T)} \boldsymbol{\operatorname { g r a d }} \Psi\right.\right\rangle \mathrm{d} x-\int_{\Omega} v Q(x, t) \mathrm{d} x-\int_{\Gamma_{N}} v g_{N} \mathrm{~d} \sigma \tag{1.21}
-\end{equation*}
+\mathbf{M}^p_{ij} = \int_{\Omega} N_i \left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) N_j \, d\Omega, \qquad
+\mathbf{K}^p_{ij} = \int_{\Omega} \nabla N_i^T \frac{\boldsymbol{\kappa}}{\mu} \nabla N_j \, d\Omega
 $$
 
-### 1.2.5 Finite Element Discretization
-
 $$
-\begin{equation*}
-p \approx \sum N_{j} a_{j}=N a, \quad \Psi \approx \sum N_{j} a_{j}+\varrho_{f} g z \tag{1.22}
-\end{equation*}
+\mathbf{f}^p_i = -\int_{\Omega} \nabla N_i^T \frac{\boldsymbol{\kappa} \varrho_f g}{\mu} \mathbf{e}_z \, d\Omega + \int_{\Omega} N_i \, Q \, d\Omega + \int_{\Gamma_N} N_i \, g_N \, d\sigma
 $$
-
-where $N_{i}(x, y, z)$ are the shape functions and $a_{i}$ are coefficients. Galerkin principle:
 
-$$
-\begin{equation*}
-v=N_{i} \tag{1.23}
-\end{equation*}
-$$
+#### Weak formulation
 
-Substituting (1.22) and (1.23) in (1.21) leads to
+The weak form is obtained by multiplying the strong form by a test function $v \in H_0^1(\Omega)$ and integrating over the domain:
 
 $$
-\begin{equation*}
-\left[\int_{\Omega} N_{i} S N_{j} \mathrm{~d} x\right] \frac{\partial a_{j}}{\partial t}+\left[\int_{\Omega} \nabla^{T} N_{i} \frac{\boldsymbol{\kappa}}{\mu(T)} \nabla N \mathrm{~d} x\right] a+\int_{\Omega} \nabla^{T} N_{i} \frac{\boldsymbol{\kappa} \varrho_{f} g}{\mu(T)} e_{z} \mathrm{~d} x-\int_{\Omega} N_{i} Q(x, t) \mathrm{d} x-\int_{\Gamma_{N}} N_{i} g_{N} \mathrm{~d} \sigma=0, \tag{1.24}
-\end{equation*}
+\int_{\Omega} v \left[ \left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) \frac{\partial p}{\partial t} - \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \right] - Q \right] d\Omega + \int_{\Gamma_N} v g_N \, d\sigma = 0
 $$
 
-$i, j=1, \ldots, n$, which is a set of linear equations of the form
+Integration by parts applied to the diffusion term:
 
 $$
-\begin{equation*}
-\boldsymbol{C} \dot{a}+\boldsymbol{K} a+f=0 \tag{1.25}
-\end{equation*}
+\int_{\Omega} v \nabla \cdot \left[ \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \right] d\Omega = -\int_{\Omega} \nabla v^T \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \, d\Omega + \int_{\Gamma} v \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \cdot \mathbf{n} \, d\sigma
 $$
-
-with
 
-$$
-\begin{align*}
-\boldsymbol{C}_{i j} & =\int_{\Omega} N_{i} S N_{j} \mathrm{~d} x  \tag{1.26}\\
-\boldsymbol{K}_{i j} & =\int_{\Omega} \nabla^{T} N_{i} \frac{\boldsymbol{\kappa}}{\mu(T)} \nabla N_{j} \mathrm{~d} x  \tag{1.27}\\
-f_{i} & =-\int_{\Omega} N_{i} Q(x, t) \mathrm{d} x-\int_{\Gamma_{N}} N_{i} g_{N} \mathrm{~d} \sigma+\int_{\Omega} \nabla^{T} N_{i} \frac{\boldsymbol{\kappa} \varrho_{f} g}{\mu(T)} e_{z} \mathrm{~d} x \tag{1.28}
-\end{align*}
-$$
+Applying the Neumann boundary condition and setting $v=0$ on Dirichlet boundaries yields the weak form:
 
-### 1.3 Heat Conduction Equation
-<!-- vale off -->
-### 1.3.1 Fick's Law
-<!-- vale on -->
 $$
-\begin{equation*}
-J=-\lambda \boldsymbol{g r a d} T \tag{1.29}
-\end{equation*}
+\int_{\Omega} v \left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S \right) \frac{\partial p}{\partial t} d\Omega + \int_{\Omega} \nabla v^T \frac{\boldsymbol{\kappa}}{\mu} \nabla \Psi \, d\Omega - \int_{\Omega} v Q \, d\Omega - \int_{\Gamma_N} v g_N \, d\sigma = 0
 $$
 
-where $T$ is the temperature, $\lambda$ is the hydrodynamic thermo-dispersion tensor and $J$ the heat flow
+Substituting the Galerkin discretization $p \approx \sum_j N_j a_j$ and choosing $v = N_i$ recovers the matrix form $\mathbf{M}^p \dot{\mathbf{a}} + \mathbf{K}^p \mathbf{a} = \mathbf{f}^p$ presented above.
 
-### 1.3.2 Balance Equation
+When `solid_thermal_expansion` is configured, an additional thermal expansion source term is added to the load vector:
 
-The heat conduction equation is also known as the advection-diffusion or convection-diffusion equation.
-
 $$
-\begin{equation*}
-\underbrace{\left[\varrho_{f}(x) \phi c_{f}+\varrho_{s}(x)(1-\phi) c_{s}\right]}_{:=c_{p}} \cdot \frac{\partial T}{\partial t}-\operatorname{div}(\lambda \boldsymbol{\operatorname { g r a d }} T)+\varrho_{f} \cdot c_{f}(x) \cdot\langle q \mid \boldsymbol{\operatorname { g r a d }} T\rangle=0 \tag{1.30}
-\end{equation*}
+\mathbf{f}^p_{\mathrm{therm},i} = \int_{\Omega} \left[ 3(\alpha_B - \phi)\alpha_s - \frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T} \right] \dot{T} \, N_i \, d\Omega
 $$
 
-where
+where $\alpha_B$ is the Biot constant, $\alpha_s$ is the solid thermal expansion coefficient, and $\dot{T}$ is approximated by backward finite differences.
 
-- $q$ is the Darcy velocity defined by
-- $\varrho_{s}$ is the solid density $\left[\frac{M}{L^{3}}\right]$
-- $\lambda$ hydrodynamic thermo-dispersion tensor,
+#### Temperature equation
 
 $$
-\lambda=\lambda^{\text {cond }}+\lambda^{\text {disp }}
+\mathbf{M}^T_{ij} = \int_{\Omega} N_i \, c_p \, N_j \, d\Omega
 $$
-
-- $\lambda^{\text {cond }}(\phi)=\phi \lambda_{f}+(1-\phi) \lambda_{s}$ is the thermal conductivity
-- $\lambda^{\operatorname{disp}}\left(\alpha_{T}, \alpha_{L}\right)=\varrho_{f} c_{f}\left[\alpha_{T}\|q\|_{2} \boldsymbol{I}+\left(\alpha_{L}-\alpha_{T}\right) \frac{q q^{T}}{\|q\|_{2}}\right]$ is the thermal dispersivity, where $\alpha_{T}$ is the transverse thermo-dispersivity and $\alpha_{L}$ is the longitudinal thermo-dispersivity of the fluid
-- $\phi$ is the porosity
 
-### 1.3.3 Boundary Conditions
-
 $$
-\begin{array}{rlll}
-T & =g_{D}^{T} & \text { on } & \Gamma_{D}
-\end{array} \quad \text { (Dirichlet type boundary conditions) }
+\mathbf{K}^T_{ij} = \int_{\Omega} \nabla N_i^T \boldsymbol{\lambda} \nabla N_j \, d\Omega + \int_{\Omega} N_i \, \varrho_f c_f \, \mathbf{q}^T \nabla N_j \, d\Omega
 $$
-
-### 1.3.4 Weak Formulation
 
-The integration of the reformulated Neumann type boundary condition, i.e., $\langle\lambda \boldsymbol{\operatorname { g r a d }} T \mid n\rangle+g_{N}^{T}=0$, into (1.30), multiplying with arbitrary test functions $v, \bar{v} \in H_{0}^{1}(\Omega)$ and integration over $\Omega$ results in
+## Definition in the project file
 
-$$
-\begin{align*}
-& -\int_{\Omega} v \cdot \operatorname{div}(\lambda \boldsymbol{\operatorname { g r a d }} T) \mathrm{d} \Omega+\int_{\Omega} v \cdot \varrho_{f} \cdot c_{f}(x)\langle q \mid \boldsymbol{\operatorname { g r a d }} T\rangle \mathrm{d} \Omega  \tag{1.33}\\
-& +\int_{\Omega} v \cdot c_{p}(x) \cdot \frac{\partial T}{\partial t} \mathrm{~d} \Omega+\int_{\Gamma_{N}} \bar{v} \cdot\left[\langle\lambda \boldsymbol{\operatorname { g r a d }} T \mid n\rangle+g_{N}^{T}\right] \mathrm{d} \sigma=0
-\end{align*}
-$$
+The HT process is declared in the `<processes>` block of the project file.
 
-Integration by parts of the first term in the above equation yields:
+### Monolithic scheme (default)
 
-$$
-\begin{equation*}
-\int_{\Omega} v \operatorname{div}[\lambda \boldsymbol{\operatorname { g r a d }} T] \mathrm{d} \Omega=-\int_{\Omega}\langle\boldsymbol{\operatorname { g r a d }} v \mid[\lambda \boldsymbol{\operatorname { g r a d }} T]\rangle \mathrm{d} \Omega+\int_{\Omega} \operatorname{div}[v \lambda \boldsymbol{\operatorname { g r a d }} T] \mathrm{d} \Omega \tag{1.34}
-\end{equation*}
-$$
+```xml
+<process>
+    <name>HydroThermal</name>
+    <type>HT</type>
+    <integration_order>2</integration_order>
+    <process_variables>
+        <temperature>T</temperature>
+        <pressure>p</pressure>
+    </process_variables>
+    <specific_body_force>0 -9.81</specific_body_force>
+    <secondary_variables>
+        <secondary_variable name="darcy_velocity"/>
+    </secondary_variables>
+</process>
+```
 
-Using Green's formulae for the last term of the above expression
+### Staggered scheme
 
-$$
-\begin{equation*}
-\int_{\Omega} \operatorname{div}[v \lambda \boldsymbol{\operatorname { g r a d }} T] \mathrm{d} \Omega=\oint_{\Gamma}\langle v \lambda \boldsymbol{\operatorname { g r a d }} T \mid n\rangle \mathrm{d} \sigma=\int_{\Gamma_{D}}\langle v \lambda \boldsymbol{\operatorname { g r }} \boldsymbol{a} \boldsymbol{d} T \mid n\rangle \mathrm{d} \sigma+\int_{\Gamma_{N}}\langle v \lambda \boldsymbol{\operatorname { g r }} \boldsymbol{a} \boldsymbol{d} T \mid n\rangle \mathrm{d} \sigma \tag{1.35}
-\end{equation*}
-$$
+To use the staggered coupling scheme, add:
 
-and since $v$ vanishes on $\Gamma_{D}$ the integral over $\Gamma_{D}$ also vanishes, this leads to
+```xml
+<coupling_scheme>staggered</coupling_scheme>
+```
 
-$$
-\begin{equation*}
-\int_{\Omega} v[\operatorname{div}(\lambda \boldsymbol{\operatorname { g r a d }} T)] \mathrm{d} \Omega=-\int_{\Omega}\langle\boldsymbol{\operatorname { g r a d }} v \mid \lambda \boldsymbol{\operatorname { g r a d }} T\rangle \mathrm{d} \Omega+\int_{\Gamma_{N}}\langle v \lambda \boldsymbol{\operatorname { g r a d }} T \mid n\rangle \mathrm{d} \sigma \tag{1.36}
-\end{equation*}
-$$
+In the staggered scheme, the heat transport equation (process ID 0) and the hydraulic equation (process ID 1) are solved sequentially.
 
-Thus (1.33) reads:
+### Process variables
 
-$$
-\begin{align*}
-0=- & \int_{\Omega}\langle\boldsymbol{\operatorname { g r a d }} v \mid \lambda \boldsymbol{\operatorname { g r a d }} T\rangle \mathrm{d} \Omega+\int_{\Gamma_{N}}\langle v \lambda \boldsymbol{\operatorname { g r a d }} T \mid n\rangle \mathrm{d} \sigma+\int_{\Omega} v \cdot \varrho_{f} \cdot c_{f}(x)\langle q \mid \boldsymbol{\operatorname { g r a d }} T\rangle \mathrm{d} \Omega \\
-& +\int_{\Omega} v \cdot c_{p}(x) \cdot \frac{\partial T}{\partial t} \mathrm{~d} \Omega+\int_{\Gamma_{N}} \bar{v} \cdot\langle\lambda \boldsymbol{\operatorname { g r a d }} T \mid n\rangle \mathrm{d} \sigma+\int_{\Gamma_{N}} \bar{v} \cdot g_{N}^{T} \mathrm{~d} \sigma \tag{1.37}
-\end{align*}
-$$
+The HT process requires two process variables: `temperature` and `pressure`.
+Each should have 1 component.
+For more details, see [Process variables]({{< ref "process_variables" >}}).
 
-Setting $v=-\bar{v}$ and multiplying by -1 :
-(1.38)
-$\int_{\Omega}\langle\boldsymbol{\operatorname { g r a d }} v \mid \lambda \boldsymbol{\operatorname { g r a d }} T\rangle \mathrm{d} \Omega-\int_{\Omega} v \cdot \varrho_{f} \cdot c_{f}(x)\langle q \mid \boldsymbol{\operatorname { g r a d }} T\rangle \mathrm{d} \Omega-\int_{\Omega} v \cdot c_{p}(x) \cdot \frac{\partial T}{\partial t} \mathrm{~d} \Omega+\int_{\Gamma_{N}} v \cdot g_{N}^{T} \mathrm{~d} \sigma=0$
+## Media properties
 
-### 1.3.5 Finite Element Discretization
+The HT process requires properties for the porous medium, the liquid phase, and the solid phase.
 
-Analogously to the approximation (1.22) the temperature is approximated by:
+### Medium properties
 
-$$
-\begin{equation*}
-T \approx \sum N_{i} b_{i}=N b \tag{1.39}
-\end{equation*}
-$$
+| Property name | Units | SI | Notes |
+|---|---|---|---|
+| `permeability` | [L$^2$] | [m$^2$] | Intrinsic permeability tensor |
+| `porosity` | [-] | [-] | Porous medium porosity |
+| `thermal_conductivity` | [M$\cdot$L/(T$^3\cdot\Theta$)] | [W/(m$\cdot$K)] | Effective thermal conductivity of the medium |
+| `thermal_longitudinal_dispersivity` | [L] | [m] | Longitudinal thermo-dispersivity $\alpha_L$ |
+| `thermal_transversal_dispersivity` | [L] | [m] | Transversal thermo-dispersivity $\alpha_T$ |
 
-using the same shape functions $N_{i}$ and time dependent coefficients $b_{i}$.
-Using the shape functions again as test functions (Galerkin principle (1.23) the discretization of (1.38)) takes the following form
+### Liquid phase properties
 
-$$
-\begin{align*}
-& 0=\left[\int_{\Omega} \nabla^{T} N_{i} \lambda \nabla N \mathrm{~d} \Omega-\int_{\Omega} N_{i} \cdot \varrho_{f} \cdot c_{f}(x) \cdot q^{T} \cdot \nabla N \mathrm{~d} \Omega\right] b  \tag{1.40}\\
-& +\left[\int_{\Omega} N_{i} \cdot c_{p}(x) N \mathrm{~d} \Omega\right] \frac{\mathrm{d} b}{\mathrm{~d} t}+\int_{\Gamma_{N}} N_{i} g_{N}^{T} \mathrm{~d} \sigma \quad(i=1, \ldots, n)
-\end{align*}
-$$
+| Property name | Units | SI | Notes |
+|---|---|---|---|
+| `density` | [M/L$^3$] | [kg/m$^3$] | Fluid mass density $\large^{\star}$ |
+| `viscosity` | [M/(L$\cdot$T)] | [Pa$\cdot$s] | Dynamic fluid viscosity $\large^{\star}$ |
+| `specific_heat_capacity` | [L$^2$/(T$^2\cdot\Theta$)] | [J/(kg$\cdot$K)] | Specific heat capacity of the fluid |
+| `thermal_conductivity` | [M$\cdot$L/(T$^3\cdot\Theta$)] | [W/(m$\cdot$K)] | Thermal conductivity of the fluid |
 
-This is again a set of equations of the form
+<small>$\large^{\star}$ Functional dependencies (e.g. on temperature) can be specified. See the [OGS User Guide]({{< ref "/docs/userguide/blocks/media#properties" >}}).</small>
 
-$$
-\begin{equation*}
-\boldsymbol{C} \dot{b}+\boldsymbol{K} b+f=0 \tag{1.41}
-\end{equation*}
-$$
+### Solid phase properties
 
-with
+| Property name | Units | SI | Notes |
+|---|---|---|---|
+| `density` | [M/L$^3$] | [kg/m$^3$] | Solid mass density |
+| `specific_heat_capacity` | [L$^2$/(T$^2\cdot\Theta$)] | [J/(kg$\cdot$K)] | Specific heat capacity of the solid |
+| `thermal_conductivity` | [M$\cdot$L/(T$^3\cdot\Theta$)] | [W/(m$\cdot$K)] | Thermal conductivity of the solid |
+| `storage` | [L$\cdot$T$^2$/M] | [1/Pa] | Storage coefficient |
 
-$$
-\begin{align*}
-\boldsymbol{K}_{i j} & =\int_{\Omega} \nabla^{T} N_{i} \lambda \nabla N_{j} \mathrm{~d} \Omega-\int_{\Omega} N_{i} \varrho_{f} c_{f}\left\langle q \mid \nabla N_{j}\right\rangle \mathrm{d} \Omega  \tag{1.42}\\
-f_{i} & =-\int_{\Omega} N_{i} Q(x, t) \mathrm{d} \Omega-\int_{\Gamma_{N}} N_{i} g_{N}^{T} \mathrm{~d} \sigma  \tag{1.43}\\
-\boldsymbol{C}_{i j} & =\int_{\Omega} N_{i} c_{p} N_{j} \mathrm{~d} \Omega \tag{1.44}
-\end{align*}
-$$
+## Features
 
-### 1.4 Coupling the Processes
+### Specific body force
 
-The heat conduction process is coupled with the confined groundwater flow process by the advective term in 1.30.
+The gravity vector is specified as:
 
-The fluid density $\varrho_{f}$ as well as the viscosity $\mu$ used in (1.10) (and respectively (1.12)) are coupled to the heat conduction process by their temperature dependencies.
+```xml
+<specific_body_force>0 -9.81</specific_body_force>
+```
 
-For the fluid density the following linear dependency
+### Solid thermal expansion
 
-$$
-\begin{equation*}
-\varrho_{f}(T)=\varrho_{\mathrm{ref}}\left(1-\beta(x)\left(T-T_{\mathrm{ref}}\right)\right) \tag{1.45}
-\end{equation*}
-$$
+Optional coupling of thermal expansion effects on the pore pressure:
 
-is implemented, where the fluid thermal expansion coefficient $\beta(x)\left[K^{-1}\right]$ depends on the medium and $T_{\text {ref }}$ is the reference temperature.
+```xml
+<solid_thermal_expansion>
+    <thermal_expansion>alpha_s</thermal_expansion>
+    <biot_constant>biot</biot_constant>
+</solid_thermal_expansion>
+```
 
-The temperature dependency of the fluid viscosity is implemented by the function:
+where `alpha_s` and `biot` are parameter names defined in the `<parameters>` block.
 
-$$
-\begin{equation*}
-\mu(T)=\mu_{0} \mathrm{e}^{-\frac{T-T_{c}}{T_{\nu}}} \tag{1.46}
-\end{equation*}
-$$
+### Aperture size
 
-There is not implemented any coupling by source and sink terms in OGS-6, i.e., the density changes due to temperature changes affects only the buoyancy term $\varrho_{f}(T) \cdot g \cdot z$ in (1.10).
-The currently implemented coupling schema is referred to as the Boussinesq approximation.
+For lower-dimensional fracture elements, an aperture size parameter can be specified:
 
-These simplified EOS are those used in the large-scale benchmark allowing to apply linear stability analysis of HT problem [6].
+```xml
+<aperture_size>
+    <parameter>fracture_aperture</parameter>
+</aperture_size>
+```
 
-The IAPWS EOS for fluid density and viscosity are also implemented into OGS.
+### Surface flux calculation
 
-## Bibliography
-<!-- vale off -->
-[1] Lutz Angermann and Peter Knabner. Numerical Methods for Elliptic and Parabolic Partial Differential Equations, volume 44 of Texts in Applied Mathematics. Springer New York, 2003.
+Surface flux output can be configured:
 
-[2] H.-J.G. Diersch and O. Kolditz. Coupled groundwater flow and transport: 2. thermohaline and 3d convection systems. Advances in Water Resources, 21(5):401-425, 1998.
+```xml
+<calculatesurfaceflux>
+    ...
+</calculatesurfaceflux>
+```
 
-[3] H.-J.G. Diersch and O. Kolditz. Variable-density flow and transport in porous media: approaches and challenges. Advances in Water Resources, 25(8-12):899-944, 2002.
+### Numerical stabilisation
 
-[4] P. Knabner, Ch. Tapp, and K. Thiele. Adaptivity in the finite volume discretization of variable density flows in porous media. Physics and Chemistry of the Earth, Part B: Hydrology, Oceans and Atmosphere, 26(4):319-324, 2001.
+The HT process supports numerical stabilisation methods for advection-dominated transport.
 
-[5] Olaf Kolditz, Rainer Ratke, Hans-Jörg G. Diersch, and Werner Zielke. Coupled groundwater flow and transport: 1. verification of variable density flow and transport models. Advances in Water Resources, 21(1):27-46, 1998.
+## Benchmarks
 
-[6] V.I. Malkovsky and F. Magri. Thermal convection of temperature-dependent viscous fuids within three-dimensional faulted geothermal systems: Estimation from linear and numerical analyses. Water Resources Research, (52):2855-2867, 2016.
+See the OGS benchmark gallery for [Hydro-Thermal examples]({{< ref "/docs/benchmarks/hydro-thermal" >}}).
