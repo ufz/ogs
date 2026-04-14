@@ -62,6 +62,8 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
     auto const& solid_phase =
         medium.phase(MaterialPropertyLib::PhaseName::Solid);
+    bool const has_thermal_expansivity = solid_phase.hasProperty(
+        MaterialPropertyLib::PropertyType::thermal_expansivity);
 
     auto const& b =
         process_data
@@ -149,15 +151,18 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
                                  dNdx.transpose() * K_over_mu * b;
         }
 
-        if (!process_data.has_fluid_thermal_expansion)
+        if (!has_thermal_expansivity)
         {
             continue;
         }
 
         // Add the thermal expansion term
         {
-            auto const solid_thermal_expansion =
-                process_data.solid_thermal_expansion(t, pos)[0];
+            auto const linear_solid_thermal_expansivity =
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .template value<double>(vars, pos, t, dt);
             const double dfluid_density_dT =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
@@ -165,9 +170,14 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
                         vars, MaterialPropertyLib::Variable::temperature, pos,
                         t, dt);
             double const Tdot_int_pt = (T_int_pt - local_T_prev.dot(N)) / dt;
-            auto const biot_constant = process_data.biot_constant(t, pos)[0];
+            auto const biot_constant =
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::biot_coefficient)
+                    .template value<double>(vars, pos, t, dt);
             const double eff_thermal_expansion =
-                3.0 * (biot_constant - porosity) * solid_thermal_expansion -
+                3.0 * (biot_constant - porosity) *
+                    linear_solid_thermal_expansivity -
                 porosity * dfluid_density_dT / fluid_density;
             local_b.noalias() +=
                 (scaling_factor * eff_thermal_expansion * Tdot_int_pt * w) * N;

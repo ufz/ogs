@@ -19,9 +19,6 @@ namespace HT
 struct HTProcessData final
 {
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
-    bool const has_fluid_thermal_expansion;
-    ParameterLib::Parameter<double> const& solid_thermal_expansion;
-    ParameterLib::Parameter<double> const& biot_constant;
 
     bool const has_gravity;
     int const heat_transport_process_id;

@@ -103,6 +103,9 @@ public:
         auto const& solid_phase =
             medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
+        bool const has_thermal_expansivity = solid_phase.hasProperty(
+            MaterialPropertyLib::PropertyType::thermal_expansivity);
+
         auto const& b =
             process_data
                 .projected_specific_body_force_vectors[this->_element.getID()];
@@ -215,7 +218,7 @@ public:
             Kpp.noalias() +=
                 (scaling_factor * w) * dNdx.transpose() * K_over_mu * dNdx;
 
-            const double dfluid_density_dp =
+            double const dfluid_density_dp =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template dValue<double>(
@@ -233,20 +236,33 @@ public:
                       K_over_mu * b;
             }
 
-            if (process_data.has_fluid_thermal_expansion)
+            if (!has_thermal_expansivity)
             {
-                auto const solid_thermal_expansion =
-                    process_data.solid_thermal_expansion(t, pos)[0];
-                const double dfluid_density_dT =
+                continue;
+            }
+
+            // Add the thermal expansion term
+            {
+                auto const linear_solid_thermal_expansivity =
+                    solid_phase
+                        .property(MaterialPropertyLib::PropertyType::
+                                      thermal_expansivity)
+                        .template value<double>(vars, pos, t, dt);
+                double const dfluid_density_dT =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template dValue<double>(
                             vars, MaterialPropertyLib::Variable::temperature,
                             pos, t, dt);
                 auto const biot_constant =
-                    process_data.biot_constant(t, pos)[0];
-                const double eff_thermal_expansion =
-                    3.0 * (biot_constant - porosity) * solid_thermal_expansion -
+                    medium
+                        .property(
+                            MaterialPropertyLib::PropertyType::biot_coefficient)
+                        .template value<double>(vars, pos, t, dt);
+
+                double const eff_thermal_expansion =
+                    3.0 * (biot_constant - porosity) *
+                        linear_solid_thermal_expansivity -
                     porosity * dfluid_density_dT / fluid_density;
 
                 MpT.noalias() -=
@@ -262,7 +278,7 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocity(
-        const double t,
+        double const t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override
