@@ -60,6 +60,24 @@ def _post_process_mesh(
     return meshes
 
 
+def plot_contourf_with_annotations(meshes: ot.Meshes):
+    fig = ot.plot.contourf(meshes.domain, "MaterialIDs")
+    for name, mesh in meshes.subdomains.items():
+        center = np.asarray(mesh.center)[:2]
+        direction = center / (np.linalg.norm(center) + 1e-8)
+        text_pos = center - 0.01 * direction
+        box = {"boxstyle": "round", "fc": "w", "ec": "k", "lw": 2}
+        fig.axes[0].annotate(
+            name,
+            text_pos,
+            va="center",
+            fontsize=12,
+            annotation_clip=False,
+            ha="center",
+            bbox=box,
+        )
+
+
 def _add_outer_boundary(point_fn, lc: float, *, first_line_id: int = 101):
     outer_coords = [
         (1, 0.0989400395497483, -0.0145213144685405),

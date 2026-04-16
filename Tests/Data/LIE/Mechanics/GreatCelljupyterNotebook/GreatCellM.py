@@ -34,13 +34,12 @@ import numpy as np
 import ogstools as ot
 from external_data_dict import external_data
 
-mpl.use("Agg")
-
 # Local modules
 from mesh_generator import (
     mesh_GreatCell_embeddedFracture_meshes,
     mesh_GreatCell_fullFracture_meshes,
     mesh_GreatCell_intact_meshes,
+    plot_contourf_with_annotations,
 )
 from ogs_model_runner import SingleOGSModel
 from Plotter import Plotter
@@ -506,10 +505,10 @@ meshes_intact = mesh_GreatCell_intact_meshes(
     out_dir=(out_dir / "gmsh" / mesh_id).resolve(),
     meshname=meshname,
 )
-
-# plot
-#    cmap="viridis",
 meshes_intact.save(out_dir / f"Meshes/{mesh_id}", overwrite=True)
+
+# %%
+plot_contourf_with_annotations(meshes_intact)
 
 # %% [markdown]
 # ## Run the simulation
@@ -640,9 +639,7 @@ meshes_embedded = mesh_GreatCell_embeddedFracture_meshes(
     meshname=meshname,
 )
 
-# plot
-#    cmap="viridis",
-#    opacity=0.8,
+plot_contourf_with_annotations(meshes_embedded)
 
 
 meshes_embedded.save(out_dir / f"Meshes/{mesh_id}", overwrite=True)
@@ -736,9 +733,9 @@ meshes_full = mesh_GreatCell_fullFracture_meshes(
     meshname=meshname,
 )
 
-# plot
-# cmap="viridis",
-# opacity=0.8,
+plot_contourf_with_annotations(meshes_full)
+
+
 meshes_full.save(out_dir / f"Meshes/{mesh_id}", overwrite=True)
 
 
