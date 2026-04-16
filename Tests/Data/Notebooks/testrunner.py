@@ -176,10 +176,10 @@ for notebook_file in args.notebooks:
     os.environ["OGS_TESTRUNNER_OUT_DIR"] = str(notebook_output_path)
     os.environ["TQDM_DISABLE"] = "1"  # Disable progress bars
     os.environ["OGS_TESTRUNNER"] = "1"
+    os.environ["PYVISTA_OFF_SCREEN"] = "true"
 
     if coverage_enabled() and notebook_file_path.suffix != ".md":
         os.environ["MPLBACKEND"] = "AGG"
-        os.environ["PYVISTA_OFF_SCREEN"] = "1"
         coverage_path = Path(build_dir / "coverage")
         coverage_path.mkdir(exist_ok=True)
         print(f"[Start]  {notebook_file}")
