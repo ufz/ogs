@@ -112,8 +112,6 @@ if "MaterialIDs" not in DFN_2D.cell_data:
     DFN_2D["MaterialIDs"] = (
         DFN_2D["subdomain_id"] - DFN_2D["subdomain_id"].min()
     ).astype(np.int32)
-# ot.mesh.save(DFN_2D, f"{out_dir}/mixed_dimensional_grid_2.vtu")
-# DFN_2D = ot.mesh.read(f"{out_dir}/mixed_dimensional_grid_2.vtu")
 
 for key in list(DFN_2D.cell_data):
     if key != "MaterialIDs":

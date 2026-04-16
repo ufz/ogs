@@ -659,14 +659,6 @@ def mesh_GreatCell_fullFracture(
         gmsh.write(str(msh_file))
     finally:
         gmsh.finalize()
-    #    if post_process:
-    #        dims = [1] if mode == "BC" else [1, 2]
-    #        _post_process_mesh(
-    #            msh_path=msh_file,
-    #            output_dir=out_path,
-    #            dimensions=dims,
-    #            **post_process_kwargs,
-    #        )
     return msh_file
 
 

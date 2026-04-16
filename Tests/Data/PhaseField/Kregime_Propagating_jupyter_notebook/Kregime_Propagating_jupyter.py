@@ -249,7 +249,6 @@ def mesh_generation(lc, lc_fine):
 
 # %%
 def pre_processing(mesh, h, a0):
-    # mesh = pv.read(f"{out_dir}/mesh_full_pf_domain.vtu")
     phase_field = np.ones((len(mesh.points), 1))
     pv.set_plot_theme("document")
 
@@ -286,14 +285,6 @@ def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
     meshes = ot.Meshes.from_gmsh(filename=input_file, log=False)
     pre_processing(meshes.domain, h, a0)
     meshes.save(f"{out_dir}/meshes", overwrite=True)
-    #    for name, mesh in meshes.items():
-    #        pv.save_meshio(f"{out_dir}/mesh_full_pf_{name}.vtu", mesh)
-    #    run(
-    #        "identifySubdomains -f -m mesh_full_pf_domain.vtu -- mesh_full_pf_physical_group_*.vtu",
-    #        shell=True,
-    #        check=True,
-    #        cwd=out_dir,
-    #    )
 
     # As a preprocessing step, define the initial phase-field (crack).
 
