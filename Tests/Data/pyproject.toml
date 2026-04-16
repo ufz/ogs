@@ -16,7 +16,7 @@ dependencies = [
   "numpy",
   # When changing ogstools version, update in testrunner.py
   # (binder_tag) and header.html ($tools_url) as well!
-  "ogstools @ git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@ogs_notebook_fixes",
+  "ogstools @ git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@0.8.1.RC0",
   "pandas>=1.5",
   "pyvista[all]",
   "seaborn>=0.12",
