@@ -156,11 +156,13 @@ def plot_results(var: ot.variables.Scalar, x_max: float) -> plt.Figure:
     full_ms = ot.MeshSeries(f"{nucl}_full_simulation/out.pvd")[1:]
     mesh_list = list(this_ms) + list(full_ms)
     timevalues = np.append(this_ms.timevalues, full_ms.timevalues)
-    ms = ot.MeshSeries.from_data(mesh_list, timevalues).scale(time=("s", "a"))
+    ms = ot.MeshSeries.from_data(mesh_list, timevalues).scale(time="a")
     difference = ms[nucl][:-1] <= ms[nucl][1:]
     assert np.all((difference >= 0.0) | np.isclose(difference, 0.0))
     labels = [f"{tv:.1e} years" for tv in ms.timevalues]
-    fig = ot.plot.line(ms, var, marker="o", labels=labels, figsize=[8, 6], fontsize=10)
+    fig = ot.plot.line(
+        ms, "x", var, marker="o", labels=labels, figsize=[8, 6], fontsize=10
+    )
     fig.axes[0].set_xlim((0.0, x_max))
     fig.axes[0].set_yscale("log")
     return fig

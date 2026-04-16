@@ -59,12 +59,13 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
 
-def run(bbar: bool, n: int, homo: bool, nu: float) -> ot.Mesh:
+def run(bbar: bool, n: int, homo: bool, nu: float) -> pv.UnstructuredGrid:
     name = f"{homo=}_{bbar=}_{nu=}".replace("=", "_").lower()
     model = ot.Project(
         input_file="simple_b_bar_test.prj", output_file=out_dir / "modified.prj"
@@ -81,12 +82,14 @@ def run(bbar: bool, n: int, homo: bool, nu: float) -> ot.Mesh:
     return ot.MeshSeries(out_dir / (name + ".pvd"))[-1]
 
 
-def multi_run(bbar: bool, n: list[int], homo: bool, nu: float) -> list[ot.Mesh]:
+def multi_run(
+    bbar: bool, n: list[int], homo: bool, nu: float
+) -> list[pv.UnstructuredGrid]:
     return [run(homo=homo, nu=nu, bbar=bbar, n=n_i) for n_i in n]
 
 
 def contourplots(
-    results: dict[bool, list[ot.Mesh]], var: ot.variables.Variable
+    results: dict[bool, list[pv.UnstructuredGrid]], var: ot.variables.Variable
 ) -> plt.Figure:
     fig, axs = plt.subplots(1, 2, figsize=[8, 3], sharey=True)
     for (bbar, meshes), ax in zip(results.items(), axs, strict=True):
@@ -96,14 +99,18 @@ def contourplots(
     return fig
 
 
-def center_data(meshes: list[ot.Mesh], var: ot.variables.Variable) -> np.ndarray:
+def center_data(
+    meshes: list[pv.UnstructuredGrid], var: ot.variables.Variable
+) -> np.ndarray:
     center_ids = [mesh.find_closest_point(mesh.center) for mesh in meshes]
     return np.asarray(
         [var.transform(mesh)[idx] for idx, mesh in zip(center_ids, meshes, strict=True)]
     )
 
 
-def plot_center_per_refinement(results: dict[bool, list[ot.Mesh]]) -> plt.Figure:
+def plot_center_per_refinement(
+    results: dict[bool, list[pv.UnstructuredGrid]],
+) -> plt.Figure:
     fig, axs = plt.subplots(1, 3, figsize=(9, 3))
     ax: plt.Axes
     for bbar, meshes in results.items():
@@ -117,7 +124,9 @@ def plot_center_per_refinement(results: dict[bool, list[ot.Mesh]]) -> plt.Figure
     return fig
 
 
-def compare_data(results: dict[bool, list[ot.Mesh]], var: ot.variables.Variable):
+def compare_data(
+    results: dict[bool, list[pv.UnstructuredGrid]], var: ot.variables.Variable
+):
     for bbar, meshes in results.items():
         vals = var.transform(meshes[-1], strip_unit=False)
         print(f"{var.output_name}, {bbar=}:", end="\t")
@@ -126,7 +135,10 @@ def compare_data(results: dict[bool, list[ot.Mesh]], var: ot.variables.Variable)
 
 
 def compare_with_analytical_solution(
-    results: dict[bool, list[ot.Mesh]], nu: float, E: float = 1e10, p: float = -10e6
+    results: dict[bool, list[pv.UnstructuredGrid]],
+    nu: float,
+    E: float = 1e10,
+    p: float = -10e6,
 ):
     def eps_ref(nu: float):
         lambd = nu * E / (1 + nu) / (1 - 2.0 * nu)
@@ -153,7 +165,7 @@ def compare_with_analytical_solution(
 
 
 def test_center_difference_below(
-    results: dict[bool, list[ot.Mesh]],
+    results: dict[bool, list[pv.UnstructuredGrid]],
     var: ot.variables.Variable,
     atols: tuple[float, float],
 ):

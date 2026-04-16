@@ -86,9 +86,9 @@ model.write_input()
 model.run_model(logfile=Path(out_dir) / "log.txt", args=f"-o {out_dir} -m .")
 
 # %%
-ms = ot.MeshSeries(out_dir / "hex.pvd").scale(time=("s", "d"))
+ms = ot.MeshSeries(out_dir / "hex.pvd").scale(time="d")
 obs_pts = np.array([0.5, 0.5, 0.5])
-ms_pts = ot.MeshSeries.extract_probe(ms, obs_pts)
+ms_pts = ot.MeshSeries.probe(ms, obs_pts)
 
 # %%
 output_variable_names = [

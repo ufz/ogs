@@ -97,8 +97,8 @@ model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 # %% Read the results and plot the data
 ms = ot.MeshSeries(f"{out_dir}/result_diffusion_domain.xdmf")
 
-def plot_results_errors(x: np.ndarray, y: np.ndarray, y_ref: np.ndarray,
-         labels: list, x_label: str, colors: list):  # fmt: skip
+
+def plot_results_errors(x: np.ndarray, y: np.ndarray, y_ref: np.ndarray,labels: list, x_label: str, colors: list):  # fmt: skip
     "Plot numerical results against analytical solution"
     rel_errors = (np.asarray(y_ref) - np.asarray(y)) / np.asarray(y_ref)
     assert np.all(np.abs(rel_errors) <= 0.3)
@@ -123,7 +123,7 @@ def plot_results_errors(x: np.ndarray, y: np.ndarray, y_ref: np.ndarray,
 # ### Concentration vs. time at different locations
 # %%
 obs_pts = np.asarray([(x, 0, 0) for x in [0.01, 0.05, 0.1, 0.2, 0.5, 1.0]])
-num_values = concentration(ms.probe(obs_pts, "xmWL").T)
+num_values = concentration(ms.probe_values(obs_pts, "xmWL").T)
 ref_values = [Diffusion(x, ms.timevalues) for x in obs_pts[:, 0]]
 leg_labels = [f"x={pt[0]} m" for pt in obs_pts]
 reds = ["#4a001e", "#731331", "#9f2945", "#cc415a", "#e06e85", "#ed9ab0"]
@@ -157,7 +157,7 @@ plot_results_errors(xs, num_values, ref_values, leg_labels, "$x$ / m", blues)
 pts = np.linspace([0.0, 0.0, 0.0], [0.3, 0.0, 0.0], 500)
 var = ot.variables.Scalar("xmWL", func=concentration)
 ot.plot.setup.time_unit = "days"
-fig = ms.scale(time=("s", "days")).plot_time_slice(
+fig = ms.scale(time="days").plot_time_slice(
     "time", "x", var, figsize=[10, 4], fontsize=12
 )
 fig.axes[1].set_ylabel("$c$ / mol m$^{-3}$")

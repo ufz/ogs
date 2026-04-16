@@ -266,11 +266,11 @@ pvd = runBenchmark(
 )
 
 # %%
-ms = ot.MeshSeries(pvd).scale(time=("s", "d"))
+ms = ot.MeshSeries(pvd).scale(time="d")
 ms_last = ms[-1]
 xs = np.asarray(list(np.linspace(6.5, 70.0, 35)))
 probes = np.asarray([[i, -857.0, 0] for i in xs])  #  all probes are along the x_axis
-extracted_ms = ot.MeshSeries.extract_probe(ms, probes)
+extracted_ms = ot.MeshSeries.probe(ms, probes)
 
 # %%
 pvd_linear = runBenchmark(
@@ -282,11 +282,12 @@ pvd_linear = runBenchmark(
 )
 
 # %%
-ms_linear = ot.MeshSeries(pvd_linear).scale(time=("s", "d"))
-extracted_ms_linear = ot.MeshSeries.extract_probe(ms_linear, probes)
+ms_linear = ot.MeshSeries(pvd_linear).scale(time="d")
+extracted_ms_linear = ot.MeshSeries.probe(ms_linear, probes)
 
 # %%
-fig = ms_last.plot_contourf(
+fig = ot.plot.contourf(
+    ms_last,
     ot.variables.displacement["x"],
     figsize=(6, 4),
     fontsize=8,
@@ -294,18 +295,18 @@ fig = ms_last.plot_contourf(
 )
 
 # %%
-fig = ms_last.plot_contourf(
-    ot.variables.displacement["y"], figsize=(6, 4), fontsize=8, cmap="jet"
+fig = ot.plot.contourf(
+    ms_last, ot.variables.displacement["y"], figsize=(6, 4), fontsize=8, cmap="jet"
 )
 
 # %%
-fig = ms_last.plot_contourf(
-    ot.variables.stress["xx"], figsize=(6, 4), fontsize=8, cmap="jet"
+fig = ot.plot.contourf(
+    ms_last, ot.variables.stress["xx"], figsize=(6, 4), fontsize=8, cmap="jet"
 )
 
 # %%
-fig = ms_last.plot_contourf(
-    ot.variables.stress["yy"], figsize=(6, 4), fontsize=8, cmap="jet"
+fig = ot.plot.contourf(
+    ms_last, ot.variables.stress["yy"], figsize=(6, 4), fontsize=8, cmap="jet"
 )
 
 # %% [markdown]
@@ -322,8 +323,8 @@ pvd_std = runBenchmark(
 )
 
 # %%
-ms_std = ot.MeshSeries(pvd_std).scale(time=("s", "d"))
-extracted_ms_std = ot.MeshSeries.extract_probe(ms_std, probes)
+ms_std = ot.MeshSeries(pvd_std).scale(time="d")
+extracted_ms_std = ot.MeshSeries.probe(ms_std, probes)
 
 # %%
 pvd_std_linear = runBenchmark(
@@ -336,8 +337,8 @@ pvd_std_linear = runBenchmark(
 )
 
 # %%
-ms_std_linear = ot.MeshSeries(pvd_std_linear).scale(time=("s", "d"))
-extracted_ms_std_linear = ot.MeshSeries.extract_probe(ms_std_linear, probes)
+ms_std_linear = ot.MeshSeries(pvd_std_linear).scale(time="d")
+extracted_ms_std_linear = ot.MeshSeries.probe(ms_std_linear, probes)
 
 # %% [markdown]
 # #### 5. Result comparison
@@ -493,10 +494,10 @@ plt.show()
 # %%
 ys = np.asarray(list(np.linspace(-857 + 6.5, -787.0, 35)))
 y_axis = np.asarray([[0, y, 0] for y in ys])
-extracted_ms_y = ot.MeshSeries.extract_probe(ms, y_axis)
-extracted_ms_y_linear = ot.MeshSeries.extract_probe(ms_linear, y_axis)
-extracted_ms_std_y = ot.MeshSeries.extract_probe(ms_std, y_axis)
-extracted_ms_std_y_linear = ot.MeshSeries.extract_probe(ms_std_linear, y_axis)
+extracted_ms_y = ot.MeshSeries.probe(ms, y_axis)
+extracted_ms_y_linear = ot.MeshSeries.probe(ms_linear, y_axis)
+extracted_ms_std_y = ot.MeshSeries.probe(ms_std, y_axis)
+extracted_ms_std_y_linear = ot.MeshSeries.probe(ms_std_linear, y_axis)
 
 # %%
 fig, ax = plt.subplots(1, 2, figsize=(12, 4))
@@ -752,7 +753,7 @@ spoints = np.asarray(
 labels = [f"r = {point[1] -h:.1f} m" for i, point in enumerate(spoints)]
 
 # %%
-extracted_sp = ot.MeshSeries.extract_probe(ms, spoints)
+extracted_sp = ot.MeshSeries.probe(ms, spoints)
 ot.plot.line(
     extracted_sp,
     "time",
@@ -824,13 +825,14 @@ pvd_ed = runBenchmark(
 )
 
 # %%
-ms_ed = ot.MeshSeries(pvd_ed).scale(time=("s", "d"))
+ms_ed = ot.MeshSeries(pvd_ed).scale(time="d")
 
-extracted_ms_ed_x = ot.MeshSeries.extract_probe(ms_ed, probes)
-extracted_ms_ed_y = ot.MeshSeries.extract_probe(ms_ed, y_axis)
+extracted_ms_ed_x = ot.MeshSeries.probe(ms_ed, probes)
+extracted_ms_ed_y = ot.MeshSeries.probe(ms_ed, y_axis)
 
 # %%
-fig = ms_ed[-1].plot_contourf(
+fig = ot.plot.contourf(
+    ms_ed[-1],
     ot.variables.displacement["x"],
     figsize=(6, 4),
     fontsize=8,
@@ -838,7 +840,8 @@ fig = ms_ed[-1].plot_contourf(
 )
 
 # %%
-fig = ms_ed[-1].plot_contourf(
+fig = ot.plot.contourf(
+    ms_ed[-1],
     ot.variables.stress["xx"],
     figsize=(6, 4),
     fontsize=8,

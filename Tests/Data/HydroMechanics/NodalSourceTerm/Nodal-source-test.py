@@ -44,7 +44,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import ogstools as ot
-from ogstools.meshlib import MeshSeries
 
 # %%
 # creating output path if it doesn't exist already.
@@ -68,17 +67,19 @@ model.run_model(logfile=out_dir / "log.txt", args=f"-o {out_dir} -m .")
 
 # %%
 # Plotting
-mesh = MeshSeries(out_dir / "HM_NodalSourceTem.pvd").mesh(20)
+mesh = ot.MeshSeries(out_dir / "HM_NodalSourceTem.pvd").mesh(20)
 
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(20, 6))
 
-mesh.plot_contourf(
+ot.plot.contourf(
+    mesh,
     ot.variables.pressure.replace(data_name="pressure_interpolated"),
     fig=fig,
     ax=ax1,
     fontsize=15,
 )
-mesh.plot_contourf(ot.variables.displacement, fig=fig, ax=ax2, fontsize=15)
+
+ot.plot.contourf(mesh, ot.variables.displacement, fig=fig, ax=ax2, fontsize=15)
 
 plt.subplots_adjust(wspace=0.3)  # increase horizontal space
 plt.tight_layout()

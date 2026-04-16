@@ -85,7 +85,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import ogstools as ot
-from ogstools.meshlib import MeshSeries
 
 # %%
 # creating output path if it doesn't exist already.
@@ -126,18 +125,18 @@ model_conc.run_model(logfile=Path(out_dir) / "log2.txt", args=f"-o {out_dir} -m 
 # Recall that isotropic diffusion is assumed in this example.
 
 # %%
-mesh = MeshSeries(out_dir / "TemperatureField.pvd").mesh(5)
-mesh2 = MeshSeries(out_dir / "TemperatureField_transport.pvd").mesh(5)
+mesh = ot.MeshSeries(out_dir / "TemperatureField.pvd").mesh(5)
+mesh2 = ot.MeshSeries(out_dir / "TemperatureField_transport.pvd").mesh(5)
 
 # %%
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 10))
 
-mesh.plot_contourf("T", fig=fig, ax=ax1, fontsize=15)
+ot.plot.contourf(mesh, "T", fig=fig, ax=ax1, fontsize=15)
 ax1.set_ylabel("Borehole heated lateral / m")
 cbar1 = fig.axes[-1]
 cbar1.set_ylabel("Temperature / K", fontsize=15)
 
-mesh2.plot_contourf("Cs", fig=fig, ax=ax2, fontsize=15, vmin=0)
+ot.plot.contourf(mesh2, "Cs", fig=fig, ax=ax2, fontsize=15, vmin=0)
 ax2.set_ylabel("Tracer diffusion boundary / m", fontsize=15)
 cbar2 = fig.axes[-1]
 cbar2.set_ylabel(r"Tracer concentration / $mol/m^3$", fontsize=15)

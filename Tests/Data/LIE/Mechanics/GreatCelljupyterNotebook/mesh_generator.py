@@ -11,8 +11,7 @@ import pyvista as pv
 
 
 def _post_process_mesh(
-    msh_path: Path,
-    output_dir: Path,
+    meshes: ot.Meshes,
     *,
     dimensions: list | None = None,
     plot: bool = True,
@@ -23,15 +22,6 @@ def _post_process_mesh(
 ) -> dict[str, pv.UnstructuredGrid]:
     if dimensions is None:
         dimensions = [1]
-
-    meshes = ot.meshes_from_gmsh(
-        filename=str(msh_path), dim=dimensions, reindex=True, log=False
-    )
-
-    for name, mesh in meshes.items():
-        vtu_path = output_dir / f"{name}.vtu"
-        pv.save_meshio(vtu_path, mesh)
-        print(f"Saved: {vtu_path} ({mesh.n_cells} cells)")
 
     if plot:
         pv.set_jupyter_backend("static")
@@ -68,6 +58,24 @@ def _post_process_mesh(
         plotter.show()
 
     return meshes
+
+
+def plot_contourf_with_annotations(meshes: ot.Meshes):
+    fig = ot.plot.contourf(meshes.domain, "MaterialIDs")
+    for name, mesh in meshes.subdomains.items():
+        center = np.asarray(mesh.center)[:2]
+        direction = center / (np.linalg.norm(center) + 1e-8)
+        text_pos = center - 0.01 * direction
+        box = {"boxstyle": "round", "fc": "w", "ec": "k", "lw": 2}
+        fig.axes[0].annotate(
+            name,
+            text_pos,
+            va="center",
+            fontsize=12,
+            annotation_clip=False,
+            ha="center",
+            bbox=box,
+        )
 
 
 def _add_outer_boundary(point_fn, lc: float, *, first_line_id: int = 101):
@@ -155,8 +163,6 @@ def mesh_GreatCell_intact(
     out_dir=".",
     meshname="Greatcell_mesh",
     mode="domain",
-    post_process: bool = True,
-    **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -190,7 +196,12 @@ def mesh_GreatCell_intact(
 
         for i, (rk, rad) in enumerate(sorted(rid.items(), key=lambda item: item[1])):
             start = offset + i * 10
-            tags = {"E": start + 1, "N": start + 2, "W": start + 3, "S": start + 4}
+            tags = {
+                "E": start + 1,
+                "N": start + 2,
+                "W": start + 3,
+                "S": start + 4,
+            }
 
             p(rad * cth, rad * sth, lc2, tags["E"])
             p(-rad * sth, rad * cth, lc2, tags["N"])
@@ -249,7 +260,10 @@ def mesh_GreatCell_intact(
         for i in range(1, len(radii_sorted)):
             surface_id += 1
             gmsh.model.geo.addPlaneSurface(
-                [circle_loops[radii_sorted[i]], circle_loops[radii_sorted[i - 1]]],
+                [
+                    circle_loops[radii_sorted[i]],
+                    circle_loops[radii_sorted[i - 1]],
+                ],
                 surface_id,
             )
 
@@ -290,19 +304,11 @@ def mesh_GreatCell_intact(
             gmsh.model.addPhysicalGroup(2, [201, 202, 203], name="OuterPart_sample")
             gmsh.model.addPhysicalGroup(2, [204], name="Rubber_sheath")
 
-        msh_file = Path(out_path, f"{meshname}.msh")
+        msh_file = Path(out_path, f"{meshname}_{mode}.msh")
         gmsh.write(str(msh_file))
     finally:
         gmsh.finalize()
 
-    if post_process:
-        dims = [1] if mode == "BC" else [1, 2]
-        _post_process_mesh(
-            msh_path=msh_file,
-            output_dir=out_path,
-            dimensions=dims,
-            **post_process_kwargs,
-        )
     return msh_file
 
 
@@ -317,8 +323,6 @@ def mesh_GreatCell_embeddedFracture(
     out_dir=".",
     meshname="Greatcell_mesh",
     mode="domain",
-    post_process: bool = True,
-    **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -352,7 +356,12 @@ def mesh_GreatCell_embeddedFracture(
 
         for i, (rk, rad) in enumerate(sorted(rid.items(), key=lambda item: item[1])):
             start = offset + i * 10
-            tags = {"E": start + 1, "N": start + 2, "W": start + 3, "S": start + 4}
+            tags = {
+                "E": start + 1,
+                "N": start + 2,
+                "W": start + 3,
+                "S": start + 4,
+            }
 
             p(rad * cth, rad * sth, lc2, tags["E"])
             p(-rad * sth, rad * cth, lc2, tags["N"])
@@ -411,7 +420,10 @@ def mesh_GreatCell_embeddedFracture(
         for i in range(1, len(radii_sorted)):
             surface_id += 1
             gmsh.model.geo.addPlaneSurface(
-                [circle_loops[radii_sorted[i]], circle_loops[radii_sorted[i - 1]]],
+                [
+                    circle_loops[radii_sorted[i]],
+                    circle_loops[radii_sorted[i - 1]],
+                ],
                 surface_id,
             )
 
@@ -458,15 +470,6 @@ def mesh_GreatCell_embeddedFracture(
         gmsh.write(str(msh_file))
     finally:
         gmsh.finalize()
-
-    if post_process:
-        dims = [1] if mode == "BC" else [1, 2]
-        _post_process_mesh(
-            msh_path=msh_file,
-            output_dir=out_path,
-            dimensions=dims,
-            **post_process_kwargs,
-        )
     return msh_file
 
 
@@ -481,8 +484,6 @@ def mesh_GreatCell_fullFracture(
     out_dir=".",
     meshname="Greatcell_mesh",
     mode="domain",
-    post_process: bool = True,
-    **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -676,14 +677,6 @@ def mesh_GreatCell_fullFracture(
         gmsh.write(str(msh_file))
     finally:
         gmsh.finalize()
-    if post_process:
-        dims = [1] if mode == "BC" else [1, 2]
-        _post_process_mesh(
-            msh_path=msh_file,
-            output_dir=out_path,
-            dimensions=dims,
-            **post_process_kwargs,
-        )
     return msh_file
 
 
@@ -1308,3 +1301,108 @@ def mesh_GreatCell_Borehole_VPF(
             **post_process_kwargs,
         )
     return msh_file
+
+
+def mesh_GreatCell_intact_meshes(
+    lc=0.005,
+    lc2=0.0025,
+    r0=0.097,
+    r1=0.094,
+    r2=0.09,
+    r3=0.065,
+    fracture_angle_deg=0.0,
+    out_dir=".",
+    meshname="Greatcell_mesh",
+) -> ot.Meshes:
+
+    common = {
+        "lc": lc,
+        "lc2": lc2,
+        "r0": r0,
+        "r1": r1,
+        "r2": r2,
+        "r3": r3,
+        "fracture_angle_deg": fracture_angle_deg,
+        "out_dir": out_dir,
+        "meshname": meshname,
+    }
+
+    msh_bc = mesh_GreatCell_intact(mode="BC", **common)
+    _meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
+
+    msh_domain = mesh_GreatCell_intact(mode="domain", **common)
+    _meshes_domain = ot.Meshes.from_gmsh(
+        msh_domain, dim=[1, 2], reindex=True, log=False
+    )
+
+    return ot.Meshes({"domain": _meshes_domain.domain, **_meshes_bc.subdomains})
+
+
+def mesh_GreatCell_embeddedFracture_meshes(
+    lc=0.0025,
+    lc2=0.0025,
+    r0=0.097,
+    r1=0.094,
+    r2=0.09,
+    r3=0.065,
+    fracture_angle_deg=0.0,
+    out_dir=".",
+    meshname="Greatcell_mesh",
+) -> ot.Meshes:
+
+    common = {
+        "lc": lc,
+        "lc2": lc2,
+        "r0": r0,
+        "r1": r1,
+        "r2": r2,
+        "r3": r3,
+        "fracture_angle_deg": fracture_angle_deg,
+        "out_dir": out_dir,
+        "meshname": meshname,
+    }
+
+    msh_bc = mesh_GreatCell_embeddedFracture(mode="BC", **common)
+    _meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
+
+    msh_domain = mesh_GreatCell_embeddedFracture(mode="domain", **common)
+    _meshes_domain = ot.Meshes.from_gmsh(
+        msh_domain, dim=[1, 2], reindex=True, log=False
+    )
+
+    return ot.Meshes({"domain": _meshes_domain.domain, **_meshes_bc.subdomains})
+
+
+def mesh_GreatCell_fullFracture_meshes(
+    lc=0.0025,
+    lc2=0.0025,
+    r0=0.097,
+    r1=0.094,
+    r2=0.09,
+    r3=0.065,
+    fracture_angle_deg=0.0,
+    out_dir=".",
+    meshname="Greatcell_mesh",
+) -> ot.Meshes:
+
+    common = {
+        "lc": lc,
+        "lc2": lc2,
+        "r0": r0,
+        "r1": r1,
+        "r2": r2,
+        "r3": r3,
+        "fracture_angle_deg": fracture_angle_deg,
+        "out_dir": out_dir,
+        "meshname": meshname,
+    }
+
+    msh_bc = mesh_GreatCell_fullFracture(mode="BC", **common)
+    _meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
+
+    msh_domain = mesh_GreatCell_fullFracture(mode="domain", **common)
+    _meshes_domain = ot.Meshes.from_gmsh(
+        msh_domain, dim=[1, 2], reindex=True, log=False
+    )
+
+    return ot.Meshes({"domain": _meshes_domain.domain, **_meshes_bc.subdomains})

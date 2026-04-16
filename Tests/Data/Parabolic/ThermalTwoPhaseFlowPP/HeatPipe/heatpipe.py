@@ -109,10 +109,10 @@ probe_points = np.column_stack(
 )
 
 ms = ot.MeshSeries("ref_t_10000.000000.vtu")
-ms_saturation = ot.MeshSeries.extract_probe(
+ms_saturation = ot.MeshSeries.probe(
     ms, probe_points, saturation.replace(output_unit="")
 )
-ms_temperature = ot.MeshSeries.extract_probe(ms, probe_points, temperature)
+ms_temperature = ot.MeshSeries.probe(ms, probe_points, temperature)
 
 fig, ax = plt.subplots(figsize=(18, 10), ncols=2)
 
@@ -131,10 +131,10 @@ fig.tight_layout()
 
 # %%
 ms = ot.MeshSeries("ref_t_1400000.000000.vtu")
-ms_saturation = ot.MeshSeries.extract_probe(
+ms_saturation = ot.MeshSeries.probe(
     ms, probe_points, saturation.replace(output_unit="")
 )
-ms_temperature = ot.MeshSeries.extract_probe(ms, probe_points, temperature)
+ms_temperature = ot.MeshSeries.probe(ms, probe_points, temperature)
 
 fig, ax = plt.subplots(figsize=(18, 8), ncols=2)
 
@@ -168,7 +168,7 @@ semi_ana_solution = pd.read_csv(
 results = ot.MeshSeries("ref_steady_status.vtu")
 
 # %%
-results_saturation = ot.MeshSeries.extract_probe(
+results_saturation = ot.MeshSeries.probe(
     results, probe_points, saturation.replace(output_unit="")
 )
 
@@ -225,7 +225,7 @@ patch, pp1, pp2 = mark_inset(ax[0], ax_inset, loc1=3, loc2=4, fc="none", ec="0.5
 pp1.loc2, pp2.loc2 = 2, 1
 
 # %%
-results_temperature = ot.MeshSeries.extract_probe(results, probe_points, temperature)
+results_temperature = ot.MeshSeries.probe(results, probe_points, temperature)
 
 abs_error = np.abs(
     semi_ana_solution["temperature"] - results_temperature.point_data[temperature][0]
@@ -266,7 +266,7 @@ _ = [a.set_xlim(0, 2.4) for a in ax]
 fig.tight_layout()
 
 # %%
-results_pressure = ot.MeshSeries.extract_probe(results, probe_points, pressure)
+results_pressure = ot.MeshSeries.probe(results, probe_points, pressure)
 
 abs_error = np.abs(
     semi_ana_solution["pressure"] - results_pressure.point_data[pressure][0]

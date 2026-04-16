@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-    <mesh>mesh_full_pf_OGS_pf_ic.vtu</mesh>
-    <mesh>mesh_full_pf_physical_group_Bottom.vtu</mesh>
-    <mesh>mesh_full_pf_physical_group_Top.vtu</mesh>
-    <mesh>mesh_full_pf_physical_group_Left.vtu</mesh>
-    <mesh>mesh_full_pf_physical_group_Right.vtu</mesh>
-    <mesh>mesh_full_pf_physical_group_P1.vtu</mesh>
-    <mesh>mesh_full_pf_physical_group_P2.vtu</mesh>
+    <mesh>domain.vtu</mesh>
+    <mesh>Bottom.vtu</mesh>
+    <mesh>Top.vtu</mesh>
+    <mesh>Left.vtu</mesh>
+    <mesh>Right.vtu</mesh>
+    <mesh>P1.vtu</mesh>
+    <mesh>P2.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -214,19 +214,19 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_P1</mesh>
+                    <mesh>P1</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_P1</mesh>
+                    <mesh>P1</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_P2</mesh>
+                    <mesh>P2</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>
@@ -240,31 +240,31 @@
             <initial_condition>phasefield_ic</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_Left</mesh>
+                    <mesh>Left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_Right</mesh>
+                    <mesh>Right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_Top</mesh>
+                    <mesh>Top</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_Bottom</mesh>
+                    <mesh>Bottom</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>phasefield_bc</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_full_pf_physical_group_Bottom</mesh>
+                    <mesh>Bottom</mesh>
                     <type>PhaseFieldIrreversibleDamageOracleBoundaryCondition</type>
                     <component>0</component>
                 </boundary_condition>

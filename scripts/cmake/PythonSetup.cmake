@@ -28,8 +28,7 @@ if(OGS_USE_PIP)
     # Prefer unix location over frameworks (Apple-only)
     set(Python_FIND_FRAMEWORK LAST)
 
-    # vtk is missing wheels for 3.14
-    set(_python_version_range ${ogs.minimum_version.python}...<3.14)
+    set(_python_version_range ${ogs.minimum_version.python}...<3.15)
 
     if(NOT EXISTS ${LOCAL_VIRTUALENV_DIR})
         # Don't use venv

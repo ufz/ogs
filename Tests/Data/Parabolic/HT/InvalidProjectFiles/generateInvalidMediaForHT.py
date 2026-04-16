@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 # SPDX-License-Identifier: BSD-3-Clause
 
-import ogstools.ogs6py as ogs6py
+import ogstools as ot
 
 
 def addSolidPropertiesForHT(omit=""):
@@ -130,7 +130,7 @@ for solid_property in solid_properties:
                 and medium_property == ""
             ):
                 continue
-            model = ogs6py.Project(
+            model = ot.Project(
                 output_file="HT_"
                 + solid_property
                 + "_"
@@ -140,7 +140,7 @@ for solid_property in solid_properties:
                 + ".prj"
             )
             model.mesh.add_mesh(filename="square_1x1_quad_1e3.vtu")
-            model.geometry.add_geometry(filename="square_1x1.gml")
+            model.geometry.add_geometry("square_1x1.gml")
             model.processes.set_process(
                 name="HT", type="HT", integration_order="2", specific_body_force="0 0"
             )

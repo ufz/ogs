@@ -225,7 +225,7 @@ pressure = ot.variables.pressure.replace(
     data_unit="m", output_unit="m", output_name="hydraulic head", symbol=""
 )
 
-ms_probe = ot.MeshSeries.extract_probe(ms, xaxis)
+ms_probe = ot.MeshSeries.probe(ms, xaxis)
 
 # %%
 labels = [f"$t={np.round(x, 2)}s$" for x in ms_probe[1:].timevalues]

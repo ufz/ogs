@@ -309,34 +309,27 @@ def msh_to_vtus_for_template_prj(
     mesh_dir = Path(mesh_dir)
     mesh_dir.mkdir(parents=True, exist_ok=True)
 
-    meshes2 = ot.meshes_from_gmsh(msh_file, dim=[2], log=False)
-    meshes1 = ot.meshes_from_gmsh(msh_file, dim=[1], log=False)
-    if not meshes2:
-        msg = "No 2D mesh found in .msh"
+    meshes = ot.Meshes.from_gmsh(msh_file, log=False)
+    if "domain" not in meshes:
+        msg = "No domain mesh found in .msh"
         raise RuntimeError(msg)
 
-    def _n_cells(m) -> int:
-        if hasattr(m, "n_cells"):
-            return int(m.n_cells)
-        try:
-            return int(sum(len(cb.data) for cb in m.cells))
-        except Exception:
-            return 0
-
-    _, bulk_mesh = max(meshes2.items(), key=lambda kv: _n_cells(kv[1]))
+    bulk_mesh = meshes["domain"]
     bulk_filename = read_template_bulk_mesh_filename(template_prj)
 
     written: dict[str, Path] = {}
 
     bulk_path = mesh_dir / bulk_filename
     if overwrite or not bulk_path.exists():
-        ot.Mesh(bulk_mesh).save(str(bulk_path))
+        ot.mesh.save(bulk_mesh, str(bulk_path))
     written["__bulk__"] = bulk_path
 
-    for name, m in meshes1.items():
+    for name, m in meshes.items():
+        if name == "domain":
+            continue
         p = mesh_dir / f"{name}.vtu"
         if overwrite or not p.exists():
-            ot.Mesh(m).save(str(p))
+            ot.mesh.save(m, str(p))
         written[name] = p
 
     expected = _all_vtu_mesh_names_in_prj(template_prj)
@@ -522,7 +515,7 @@ def plot_mesh_from_msh(
     fig, ax = plt.subplots(figsize=(10, 3.2), dpi=150)
     ax.triplot(pts[:, 0], pts[:, 1], tris, linewidth=0.25, alpha=domain_alpha)
 
-    meshes1 = ot.meshes_from_gmsh(msh_path, dim=[1], log=False)
+    meshes1 = ot.Meshes.from_gmsh(msh_path, dim=[1], log=False)
 
     def _pts2(mesh_obj) -> np.ndarray:
         p = getattr(mesh_obj, "points", None)

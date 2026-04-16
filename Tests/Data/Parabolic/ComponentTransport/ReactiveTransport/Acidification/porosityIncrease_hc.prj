@@ -2,9 +2,9 @@
 <OpenGeoSysProject>
     <meshes>
         <mesh>domain.vtu</mesh>
-        <mesh>physical_group_Left.vtu</mesh>
-        <mesh>physical_group_Right.vtu</mesh>
-        <mesh>physical_group_Reactive_domain.vtu</mesh>
+        <mesh>Left.vtu</mesh>
+        <mesh>Right.vtu</mesh>
+        <mesh>Reactive_domain.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -972,12 +972,12 @@
           <initial_condition>p_initial</initial_condition>
           <boundary_conditions>
               <boundary_condition>
-                  <mesh>physical_group_Left</mesh>
+                  <mesh>Left</mesh>
                   <type>Neumann</type>
                   <parameter>q_inlet</parameter>
               </boundary_condition>
               <boundary_condition>
-                  <mesh>physical_group_Right</mesh>
+                  <mesh>Right</mesh>
                   <type>Dirichlet</type>
                   <parameter>p_outlet</parameter>
               </boundary_condition>
@@ -991,7 +991,7 @@
             <initial_condition>S6_initial</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_Left</mesh>
+                    <mesh>Left</mesh>
                     <type>Dirichlet</type>
                     <parameter>S6_inlet</parameter>
                 </boundary_condition>
@@ -1005,7 +1005,7 @@
             <initial_condition>C_initial</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_Left</mesh>
+                    <mesh>Left</mesh>
                     <type>Dirichlet</type>
                     <parameter>C_inlet</parameter>
                 </boundary_condition>
@@ -1019,7 +1019,7 @@
             <initial_condition>Ca_initial</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_Left</mesh>
+                    <mesh>Left</mesh>
                     <type>Dirichlet</type>
                     <parameter>Ca_inlet</parameter>
                 </boundary_condition>
@@ -1033,7 +1033,7 @@
             <initial_condition>NaCl_initial</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_Left</mesh>
+                    <mesh>Left</mesh>
                     <type>Dirichlet</type>
                     <parameter>NaCl_inlet</parameter>
                 </boundary_condition>
@@ -1047,7 +1047,7 @@
             <initial_condition>NaCl_initial</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_Left</mesh>
+                    <mesh>Left</mesh>
                     <type>Dirichlet</type>
                     <parameter>NaCl_inlet</parameter>
                 </boundary_condition>
@@ -1061,7 +1061,7 @@
             <initial_condition>H_initial</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>physical_group_Left</mesh>
+                    <mesh>Left</mesh>
                     <type>Dirichlet</type>
                     <parameter>H_inlet</parameter>
                 </boundary_condition>

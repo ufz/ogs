@@ -11,6 +11,7 @@ from typing import ClassVar
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 
 
 class Plotter:
@@ -100,7 +101,7 @@ class Plotter:
         return color, marker, linestyle
 
     def _plot_mesh(self, filename, save_file=None, r=0.065, inner=False):
-        mesh = self.get_mesh(filename, r, inner)
+        mesh = self.get_mesh(Path(filename).resolve(), r, inner)
         displacement = ot.variables.displacement.replace(output_unit="mm")
 
         has_pressure = "pressure" in mesh.point_data
@@ -109,10 +110,11 @@ class Plotter:
         fig, axs = plt.subplots(nrows=1, ncols=ncols, figsize=(12 * ncols, 10))
 
         axs[0].set_title(r"$\mathbf{u}$ [mm]", fontsize=24)
-        mesh.plot_contourf(displacement, fig, axs[0], **self.colorbar_opts["u"])
+        ot.plot.contourf(mesh, displacement, fig, axs[0], **self.colorbar_opts["u"])
 
         axs[1].set_title(r"$\mathrm{tr}(\sigma)$ [MPa]", fontsize=24)
-        mesh.plot_contourf(
+        ot.plot.contourf(
+            mesh,
             ot.variables.stress.trace,
             fig,
             axs[1],
@@ -120,7 +122,8 @@ class Plotter:
         )
 
         axs[2].set_title(r"$\mathrm{tr}(\varepsilon)$", fontsize=24)
-        mesh.plot_contourf(
+        ot.plot.contourf(
+            mesh,
             ot.variables.strain.trace,
             fig,
             axs[2],
@@ -130,7 +133,8 @@ class Plotter:
         col_idx = 3
         if has_pressure:
             axs[col_idx].set_title(r"$p$ [MPa]", fontsize=24)
-            mesh.plot_contourf(
+            ot.plot.contourf(
+                mesh,
                 ot.variables.pressure,
                 fig,
                 axs[col_idx],
@@ -141,7 +145,8 @@ class Plotter:
         if has_phasefield:
             var_name = "phasefield" if "phasefield" in mesh.point_data else "d"
             axs[col_idx].set_title(r"$v$ (Phase Field)", fontsize=24)
-            mesh.plot_contourf(
+            ot.plot.contourf(
+                mesh,
                 var_name,
                 fig,
                 axs[col_idx],
@@ -251,7 +256,7 @@ class Plotter:
         r=0.065,
         inner=False,
         series_prefix: str | None = None,
-    ) -> ot.Mesh:
+    ) -> pv.UnstructuredGrid:
         path = (
             self.output_dir / Path(filename)
             if not Path(filename).is_absolute()
@@ -261,12 +266,12 @@ class Plotter:
         mesh = ot.MeshSeries(vtu_path)[-1]
         if inner:
             radii = np.asarray([np.linalg.norm(cell.center) for cell in mesh.cell])
-            return ot.Mesh(mesh.extract_cells(radii < float(r)))
+            return mesh.extract_cells(radii < float(r))
         return mesh
 
     def inner_mesh(
         self, filename: str | Path, r: float = 0.065, series_prefix: str | None = None
-    ) -> ot.Mesh:
+    ) -> pv.UnstructuredGrid:
         path = (
             self.output_dir / Path(filename)
             if not Path(filename).is_absolute()
@@ -275,7 +280,7 @@ class Plotter:
         vtu_path = self._resolve_to_vtu(path, series_prefix=series_prefix)
         mesh = ot.MeshSeries(vtu_path)[-1]
         radii = np.asarray([np.linalg.norm(cell.center) for cell in mesh.cell])
-        return ot.Mesh(mesh.extract_cells(radii < float(r)))
+        return mesh.extract_cells(radii < float(r))
 
     def sorted_angles_eps_trace(self, filename: str) -> tuple[np.ndarray, np.ndarray]:
         edge = self.inner_mesh(filename).extract_feature_edges()
@@ -494,7 +499,9 @@ class Plotter:
             print(f"Error adjusting shade for color {hex_color}: {e}")
             return "#000000"
 
-    def get_sub_mesh_by_material(self, mesh: ot.Mesh, material_id: int) -> ot.Mesh:
+    def get_sub_mesh_by_material(
+        self, mesh: pv.UnstructuredGrid, material_id: int
+    ) -> pv.UnstructuredGrid:
         if "MaterialIDs" not in mesh.cell_data:
             msg = f"Mesh missing 'MaterialIDs' in cell_data; cannot extract material {material_id}."
             raise KeyError(msg)
@@ -632,10 +639,7 @@ class Plotter:
                     sigma_yy = node_sigma[:, 1]
                     tau_xy = node_sigma[:, 3]
                     vm = np.sqrt(
-                        sigma_xx**2
-                        + sigma_yy**2
-                        - sigma_xx * sigma_yy
-                        + 3 * tau_xy**2
+                        sigma_xx**2 + sigma_yy**2 - sigma_xx * sigma_yy + 3 * tau_xy**2
                     )
                     stress_list.append(np.mean(vm))
                 else:
@@ -909,8 +913,9 @@ class Plotter:
         markevery: int | None = None,
         ylim: tuple[float, float] | None = None,
         method_label: str = "FEM",
-        external_data: dict[str, dict[str, dict[str, dict[str, list[float]]]]]
-        | None = None,
+        external_data: (
+            dict[str, dict[str, dict[str, dict[str, list[float]]]]] | None
+        ) = None,
     ) -> None:
         self.setup_plot_style()
         for load_case, mat_prof in widthProfile.items():
@@ -1161,9 +1166,9 @@ class Plotter:
                 if materials_to_include and material not in materials_to_include:
                     continue
 
-                ms = ot.MeshSeries(self.output_dir / pvd).scale(time=("s", "s"))
+                ms = ot.MeshSeries(self.output_dir / pvd)
                 for obs_label, pts in obs_points.items():
-                    probe = ot.MeshSeries.extract_probe(ms, pts)
+                    probe = ot.MeshSeries.probe(ms, pts)
                     times = probe.timevalues
                     values = var.transform(probe)
 

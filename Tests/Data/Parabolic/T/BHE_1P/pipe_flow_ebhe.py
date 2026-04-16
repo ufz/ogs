@@ -358,7 +358,7 @@ outlet = (0.0, 10.0, -30.0)
 
 # Read the time series of point field 'temperature_BHE1'
 bhe_temp = ot.variables.temperature_BHE[1, 0].replace(data_unit="°C")
-temperature_BHE1_tube = ms.probe(outlet, bhe_temp, interp_method="nearest")
+temperature_BHE1_tube = ms.probe_values(outlet, bhe_temp, interp_method="nearest")
 
 # %%
 # Compute analytical solution again but at timesteps of numerical solution for error calculation
@@ -429,7 +429,7 @@ x_axis = [(0, 10, i) for i in length]
 
 # At timestep i
 i = -1
-temp = ms.probe(x_axis, bhe_temp, interp_method="linear")[i]
+temp = ms.probe_values(x_axis, bhe_temp, interp_method="linear")[i]
 # Plot
 fig, ax1 = plt.subplots(figsize=(10, 8))
 ax1.set_xlabel("Distance (m)", fontsize=20)

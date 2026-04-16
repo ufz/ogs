@@ -477,7 +477,7 @@ generate_mesh_axb(200, 100, 25, 45, 1.07)
 
 # %%
 input_file = f"{out_dir}/square_200x100.msh"
-meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
+meshes = ot.Meshes.from_gmsh(filename=input_file, log=False)
 for name, mesh in meshes.items():
     pv.save_meshio(f"{out_dir}/square_200x100_{name}.vtu", mesh)
 

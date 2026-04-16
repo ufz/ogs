@@ -46,11 +46,11 @@ print(command)
 run(command, shell=True, check=True)
 
 # %%
-mesh_series = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd").scale(time=("s", "a"))
+mesh_series = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd").scale(time="a")
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 labels = [f"{label} linear interpolated" for label in ["pt0", "pt1"]]
 
-ms_pts = ot.MeshSeries.extract_probe(mesh_series, points_coords)
+ms_pts = ot.MeshSeries.probe(mesh_series, points_coords)
 fig = ot.plot.line(
     ms_pts, "time", ot.variables.pressure, labels=labels, colors=["b", "r"]
 )

@@ -60,6 +60,7 @@
 # %%
 import matplotlib.pyplot as plt
 import ogstools as ot
+import pyvista as pv
 from IPython.display import HTML
 
 # %%
@@ -72,7 +73,7 @@ ot.plot.setup.fontsize = 30
 # First, we are going to load the dataset produces by the simulation:
 
 # %%
-mesh_series = ot.meshlib.MeshSeries("../elder/elder_reference.pvd")
+mesh_series = ot.MeshSeries("../elder/elder_reference.pvd")
 
 # %% [markdown]
 # Next, the data at the 1st time step is read:
@@ -123,7 +124,7 @@ fig = ot.plot.contourf(ms_2D[0], ot.variables.saturation, vmin=0, vmax=100, dpi=
 fig.axes[0].set_title(f"{0} yrs", fontsize=32)
 
 
-def plot_contourf(timevalue: float, mesh: ot.Mesh) -> None:
+def plot_contourf(timevalue: float, mesh: pv.UnstructuredGrid) -> None:
     fig.axes[0].clear()
     ot.plot.contourf(mesh, ot.variables.saturation, ax=fig.axes[0], dpi=50)
     fig.axes[0].set_title(f"{timevalue:.1f} yrs", fontsize=32)

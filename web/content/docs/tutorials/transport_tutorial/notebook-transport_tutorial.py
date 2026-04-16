@@ -85,7 +85,6 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
-from ogstools.meshlib import MeshSeries
 
 # %% [markdown]
 # Next, we define the paths and specify the OGS project file, which is an XML file that contains the complete simulation setup, including geometry, material properties, processes, and boundary and initial conditions.
@@ -150,7 +149,7 @@ I129Flux = ot.variables.Vector(
 
 # %%
 # Here `Iodide129_GIA_ts_1021_t_31557600000000.000000.vtu` corresponds to the output file at 1e6 years
-ms = MeshSeries(out_dir / "Iodide129_GIA_ts_1021_t_31557600000000.000000.vtu")
+ms = ot.MeshSeries(out_dir / "Iodide129_GIA_ts_1021_t_31557600000000.000000.vtu")
 
 # %% [markdown]
 # You can get more details about the `MeshSeries` by printing its metadata:
@@ -200,19 +199,19 @@ fig.tight_layout()
 # The `.PVD` file, which references all corresponding `.VTU` files, contains time values ranging from $0$ years to just under $10^6$ years.
 
 # %%
-ms_pvd = MeshSeries(out_dir / "Iodide129_GIA.pvd").scale(time=("s", "yrs"))
+ms_pvd = ot.MeshSeries(out_dir / "Iodide129_GIA.pvd").scale(time="yrs")
 
 # %% [markdown]
 # As stated earlier, our repository is located at a depth of $420 \mathrm{m}$.
 #
-# In this section, we will probe the Iodide-129 concentration at two nearby points using the `ogstools` method `MeshSeries.extract_probe`.
+# In this section, we will probe the Iodide-129 concentration at two nearby points using the `ogstools` method `MeshSeries.probe`.
 # Let the points be: $p_0 = (0, 0, 419.4\,\mathrm{m})$ and $p_1 = (0, 0, 420.7\,\mathrm{m})$
 
 # %%
 points = np.array([(0.0, 0.0, 419.4), (0.0, 0.0, 420.7)])
 labels = [rf"$p_{i}$, $z = {pt[2]}\,$m" for i, pt in enumerate(points)]
 
-ms_pts = [ot.MeshSeries.extract_probe(ms_pvd, pts, I129) for pts in points]
+ms_pts = [ot.MeshSeries.probe(ms_pvd, pts, I129) for pts in points]
 
 # %%
 fig, ax = plt.subplots(figsize=(16, 10))
@@ -232,8 +231,6 @@ fig.tight_layout()
 # The `.PVD` file contains 21 time steps ranging from $0$ to $10^6$ years. We will now plot the profile at multiple time steps.
 
 # %%
-style_cycler = ot.plot.utils.get_style_cycler(min_number_of_styles=4)
-
 timevalues = ms_pvd.timevalues
 timesteps_to_probe = ms_pvd.timesteps[2::6]
 
@@ -241,16 +238,8 @@ meshes = [ms_pvd.mesh(ts) for ts in timesteps_to_probe]
 labels = [f"{np.round(timevalues[ts], 0):.0f} years" for ts in timesteps_to_probe]
 
 fig, ax = plt.subplots(ncols=1, figsize=(16, 10))
-for mesh, label, style in zip(meshes, labels, style_cycler, strict=True):
-    ot.plot.line(
-        mesh,
-        "z",
-        I129,
-        label=label,
-        ax=ax,
-        color=style["color"],
-        linestyle=style["linestyle"],
-    )
+for mesh, label in zip(meshes, labels, strict=True):
+    ot.plot.line(mesh, "z", I129, label=label, ax=ax)
 
 ax.set_xlim(z_points.min(), z_points.max())
 ax.set_yscale("log")
@@ -267,15 +256,13 @@ fig.tight_layout()
 # %%
 fig, ax = plt.subplots(figsize=(16, 10))
 
-for mesh, label, style in zip(meshes, labels, style_cycler, strict=True):
+for mesh, label in zip(meshes, labels, strict=True):
     ot.plot.line(
         mesh,
         "z",
         I129Flux["z"],
         label=label,
         ax=ax,
-        color=style["color"],
-        linestyle=style["linestyle"],
         loc="lower right",
     )
 
@@ -381,7 +368,7 @@ for _ in range(no_of_parameter_variations):
 # ### Comparing the original model with the altered one
 
 # %%
-ms_altered = MeshSeries(out_dir_modified / "Iodide129_GIA.pvd").scale(time=("s", "yrs"))
+ms_altered = ot.MeshSeries(out_dir_modified / "Iodide129_GIA.pvd").scale(time="yrs")
 ms_altered.mesh(0)
 
 # %% [markdown]
@@ -438,5 +425,5 @@ fig.tight_layout()
 # The code below acts like a simple test by matching the outputs `I-129` concentration data at 1 million years.
 
 # %%
-ms_ref = MeshSeries(project_dir / "vtu/Iodide129_GIA_1e6yrs_reference_output.vtu")
+ms_ref = ot.MeshSeries(project_dir / "vtu/Iodide129_GIA_1e6yrs_reference_output.vtu")
 np.testing.assert_allclose(ms_ref.point_data[I129], ms.point_data[I129])

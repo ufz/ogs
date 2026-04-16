@@ -55,6 +55,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
@@ -78,13 +79,13 @@ def run_single_test(n: int, fbar: bool) -> ot.MeshSeries:
     return ot.MeshSeries(out_dir / (prefix + ".pvd"))
 
 
-def get_top_uy(mesh: ot.Mesh) -> np.ndarray:
+def get_top_uy(mesh: pv.UnstructuredGrid) -> np.ndarray:
     top_point = (48.0e-3, 60.0e-3, 0)
     p_id = mesh.find_closest_point(top_point)
     return mesh.point_data["displacement"][p_id, 1]
 
 
-def compare(mesh_a: ot.Mesh, mesh_b: ot.Mesh) -> plt.Figure:
+def compare(mesh_a: pv.UnstructuredGrid, mesh_b: pv.UnstructuredGrid) -> plt.Figure:
     fig, axs = plt.subplots(2, 2, figsize=[8, 6], sharex=True, sharey=True)
     u = ot.variables.displacement["y"].replace(output_unit="mm")
     sig_tr = ot.variables.stress.trace

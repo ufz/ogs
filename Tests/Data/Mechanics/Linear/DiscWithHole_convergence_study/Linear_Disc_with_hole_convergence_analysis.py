@@ -56,9 +56,7 @@
 # %% jupyter={"source_hidden": true}
 import logging
 import os
-import shutil
 from pathlib import Path
-from subprocess import run
 
 import matplotlib.pyplot as plt
 import mesh_quarter_of_rectangle_with_hole
@@ -106,12 +104,11 @@ def read_last_timestep_mesh(study_idx):
     # ATTENTION: The finest resolution (240) is rather expensive to simulate.
     #            Therefore it is tracked in git and might be in a different
     #            directory.
-    d = "out" if study_idx == 240 else out_dir
-
-    reader = pv.PVDReader(f"{d}/disc_with_hole_idx_is_{study_idx}.pvd")
-    reader.set_active_time_point(-1)  # go to last timestep
-
-    return reader.read()[0]
+    if study_idx == 240:
+        reader = pv.PVDReader(f"out/disc_with_hole_idx_is_{study_idx}.pvd")
+        reader.set_active_time_point(-1)  # go to last timestep
+        return reader.read()[0]
+    return sim_dict[study_idx].meshseries[-1]
 
 
 def slice_along_line(mesh, start_point, end_point):
@@ -235,6 +232,7 @@ def resample_mesh_to_240_resolution(idx):
 # Parameter $R$ describes the area for a further refinement in the vicinity of the hole. This additional refinement is needed for better capturing the stress and strain gradients near the hole. Because the fine resolution of the mesh is only needed in the area around the hole, the size of $R$ is half the size of the plate.
 
 # %% jupyter={"source_hidden": true}
+meshes_dict = {}
 for idx in STUDY_indices:
     """
     a and b seem to be the sizes of the rectangular plate,
@@ -255,28 +253,13 @@ for idx in STUDY_indices:
         Nr=idx,
         P=1,
     )
+    meshes = ot.Meshes.from_gmsh(output_file, log=False)
+    meshes.save(f"{out_dir}/meshes/idx_{idx}", overwrite=True)
+    meshes_dict[idx] = meshes
 
 
 # %% [markdown]
 # ## Transform to VTU meshes suitable for OGS
-
-# %% jupyter={"source_hidden": true}
-
-for idx in STUDY_indices:
-    input_file = f"{out_dir}/disc_with_hole_idx_is_{idx}.msh"
-    msh2vtu_out_dir = Path(f"{out_dir}/disc_with_hole_idx_is_{idx}")
-    msh2vtu_out_dir.mkdir(parents=True, exist_ok=True)
-    meshes = ot.meshes_from_gmsh(filename=input_file, log=False)
-    for name, mesh in meshes.items():
-        filename = f"disc_with_hole_idx_is_{idx}_{name}.vtu"
-        pv.save_meshio(msh2vtu_out_dir / filename, mesh)
-    run(
-        f"identifySubdomains -f -m disc_with_hole_idx_is_{idx}_domain.vtu -- disc_with_hole_idx_is_{idx}_physical_group_*.vtu",
-        shell=True,
-        check=True,
-        cwd=out_dir / f"disc_with_hole_idx_is_{idx}",
-    )
-
 
 # %% [markdown]
 # ## Visualize the meshes
@@ -290,13 +273,11 @@ pv.set_jupyter_backend("static")
 
 
 # %% jupyter={"source_hidden": true}
-domain_8 = pv.read(
-    f"{out_dir}/disc_with_hole_idx_is_8/disc_with_hole_idx_is_8_domain.vtu"
-)
-domain_80 = pv.read(
-    f"{out_dir}/disc_with_hole_idx_is_80/disc_with_hole_idx_is_80_domain.vtu"
-)
+domain_8 = meshes_dict[8].domain
+domain_80 = meshes_dict[80].domain
 
+
+# %%
 p = pv.Plotter(shape=(1, 2), border=False)
 p.subplot(0, 0)
 p.add_mesh(domain_8, show_edges=True, show_scalar_bar=False, color=None, scalars=None)
@@ -320,18 +301,12 @@ p.show()
 # %% jupyter={"source_hidden": true}
 # ATTENTION: We exclude the last study index, because its simulation takes
 #            too long to be included in the OGS CI pipelines.
+sim_dict = {}
 for idx in STUDY_indices[:-1]:
-    prj_file = f"disc_with_hole_idx_is_{idx}.prj"
-
-    shutil.copy2(prj_file, out_dir)
-
-    prj_path = out_dir / prj_file
-
-    model = ot.Project(input_file=prj_path, output_file=prj_path)
-    model.run_model(
-        logfile=f"{out_dir}/out.txt",
-        args=f"-o {out_dir} -m {out_dir}/disc_with_hole_idx_is_{idx}",
-    )
+    prj = ot.Project(f"disc_with_hole_idx_is_{idx}.prj")
+    model = ot.Model(prj, meshes_dict[idx])
+    sim_dict[idx] = model.run(f"{out_dir}/sim/idx_{idx}", overwrite=True)
+    assert sim_dict[idx].status == ot.Simulation.Status.done
 
 
 # %% [markdown]

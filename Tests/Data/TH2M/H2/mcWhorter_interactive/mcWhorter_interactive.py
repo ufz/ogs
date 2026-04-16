@@ -337,6 +337,8 @@ prj_files = [r"mcWhorter_TwoPhasePP.prj", r"mcWhorter_TH2M.prj"]
 
 for prj_file in prj_files:
     prj = ogs.Project(input_file=prj_file, output_file=out_dir / prj_file)
+    if prj_file == "mcWhorter_TwoPhasePP.prj":
+        prj.geometry.add_geometry(out_dir / "mcwt.gml")
     for key, paramvalue in params.items():
         try:
             if replace_info[key] == "Parameter":

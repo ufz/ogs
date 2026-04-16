@@ -3,26 +3,25 @@ name = "OGS-Test-Environment"
 version = "0.1.0"
 description = "Test environment for Notebook-based tests"
 readme = "README.md"
-# pyvista depends on vtk which is not available for 3.14 yet
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.11,<3.15"
 dependencies = [
   ### nb environment ###
   # Use no-X11 version on Linux:
-  "gmsh==4.13.1.dev1; platform_system == 'Linux'",
-  "gmsh>=4.12.0; platform_system != 'Linux'",
+  "gmsh>=4.13.1.dev1,<5",
   "h5py>=3.8",
   "heatsource-py @ git+https://github.com/joergbuchwald/heatsource_thm@bbd5bab17fc2ec228c773e087dc847e1ad5f9a4c",
   "ipywidgets",
   "jupyterlab>=3.4.8",
   "matplotlib>=3.6",
   "numpy",
-  # because ogstools depends on pyvista depends on vtk which is not available for 3.14 yet
-  "ogstools==0.7.0; python_version < '3.14'",
+  # When changing ogstools version, update in testrunner.py
+  # (binder_tag) and header.html ($tools_url) as well!
+  "ogstools @ git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@0.8.1.RC0",
   "pandas>=1.5",
-  # TODO: Implement fix for PyVista 0.46 in ogstools:
-  "pyvista[all]==0.45",
+  "pyvista[all]",
   "seaborn>=0.12",
   "VTUinterface>=0.704",
+  "lxml>=6.0.2",
   ### dev tools ###
   "jupytext>=1.14.5",
   "nbconvert>=7.16.5",

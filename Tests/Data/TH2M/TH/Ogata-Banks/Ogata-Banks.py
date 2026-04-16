@@ -153,10 +153,10 @@ def plot_results_errors(
 
 # %%
 obs_pts = np.asarray([[x, 0, 0] for x in [1, 5, 10, 20, 50]])
-num_values = ms.probe(obs_pts, "temperature").T
+num_values = ms.probe_values(obs_pts, "temperature").T
 ref_values = [ogata_banks_analytical(ms.timevalues, x) for x in obs_pts[:, 0]]
 leg_labels = [f"x={pt[0]} m" for pt in obs_pts]
-ms = ms.scale(time=("s", "days"))
+ms = ms.scale(time="days")
 time = ms.timevalues
 plot_results_errors(time, num_values, ref_values, leg_labels, "$t$ / d")
 
