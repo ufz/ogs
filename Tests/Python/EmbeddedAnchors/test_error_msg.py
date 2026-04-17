@@ -53,7 +53,7 @@ def run(data, tmp_path):
 )
 def test_error_msg(tmp_path):
     bulk_mesh_gmsh = tmp_path / "rect.msh"
-    ot.meshlib.rect(
+    ot.gmsh_tools.rect(
         lengths=1.0,
         n_edge_cells=3,
         n_layers=1,
@@ -66,7 +66,7 @@ def test_error_msg(tmp_path):
         layer_ids=None,
     )
 
-    ms = ot.meshlib.meshes_from_gmsh(bulk_mesh_gmsh, dim=2, reindex=True, log=True)
+    ms = ot.Meshes.from_gmsh(bulk_mesh_gmsh, dim=2, reindex=True, log=True)
     ms["domain"].save(tmp_path / "rect_3x3.vtu")
 
     data = {

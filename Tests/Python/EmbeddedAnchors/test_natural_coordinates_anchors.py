@@ -22,7 +22,7 @@ import ogstools as ot
     reason="remove skip if ogstools version is updated to 0.7.2",
 )
 def test_natural_coordinates(tmp_path, order):
-    ot.meshlib.rect(
+    ot.gmsh_tools.rect(
         lengths=1.0,
         n_edge_cells=2,
         n_layers=1,
@@ -35,9 +35,7 @@ def test_natural_coordinates(tmp_path, order):
         layer_ids=None,
     )
 
-    ms = ot.meshlib.meshes_from_gmsh(
-        tmp_path / "rect.msh", dim=2, reindex=True, log=True
-    )
+    ms = ot.Meshes.from_gmsh(tmp_path / "rect.msh", dim=2, reindex=True, log=True)
     ms["domain"].save(tmp_path / "rect_2x2.vtu")
 
     for _ in range(10):
@@ -81,7 +79,7 @@ def test_natural_coordinates(tmp_path, order):
             check=True,
         )
 
-        anchor_mesh = ot.Mesh(anchor_mesh)
+        anchor_mesh = ot.mesh.read(anchor_mesh)
         cell_data = [
             "initial_anchor_stress",
             "maximum_anchor_stress",

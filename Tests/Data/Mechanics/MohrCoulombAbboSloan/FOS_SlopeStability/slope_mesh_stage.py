@@ -518,9 +518,7 @@ def plot_mesh_from_msh(
     meshes1 = ot.Meshes.from_gmsh(msh_path, dim=[1], log=False)
 
     def _pts2(mesh_obj) -> np.ndarray:
-        p = getattr(mesh_obj, "points", None)
-        if p is None:
-            p = ot.Mesh(mesh_obj).points
+        p = mesh_obj.points
         return np.asarray(p)[:, :2]
 
     handles, labels = [], []

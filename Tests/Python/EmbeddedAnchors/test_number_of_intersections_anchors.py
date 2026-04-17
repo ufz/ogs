@@ -32,7 +32,7 @@ import ogstools as ot
 def test_number_intersection(tmp_path, order_intersections):
     order, intersections = order_intersections
     bulk_mesh_gmsh = tmp_path / "rect.msh"
-    ot.meshlib.rect(
+    ot.gmsh_tools.rect(
         lengths=1.0,
         n_edge_cells=3,
         n_layers=1,
@@ -45,7 +45,7 @@ def test_number_intersection(tmp_path, order_intersections):
         layer_ids=None,
     )
 
-    ms = ot.meshlib.meshes_from_gmsh(bulk_mesh_gmsh, dim=2, reindex=True, log=True)
+    ms = ot.Meshes.from_gmsh(bulk_mesh_gmsh, dim=2, reindex=True, log=True)
     bulk_mesh = tmp_path / f"rect_3x3_{order}.vtu"
     ms["domain"].save(bulk_mesh)
 
@@ -96,6 +96,6 @@ def test_number_intersection(tmp_path, order_intersections):
             capture_output=True,
             check=True,
         )
-        anchor_mesh = ot.Mesh(anchor_mesh)
+        anchor_mesh = ot.mesh.read(anchor_mesh)
         assert intersections[i] == anchor_mesh.n_points
         assert intersections[i] == 2 * anchor_mesh.n_cells
