@@ -432,7 +432,7 @@ def test_bhe_advanced_building_power_curves(temp_test_dir, case_gen):
     bhe_vector = ot.variables.temperature_BHE
     bhe_vector.output_unit = "K"
 
-    bhe_temperatures = results.probe(
+    bhe_temperatures = results.probe_values(
         bhe_top_point, bhe_vector[1, ["in", "out"]], interp_method="nearest"
     )
     timevalues = results.timevalues
