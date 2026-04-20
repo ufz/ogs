@@ -68,7 +68,7 @@ test linux wheel via notebooks:
         # Glacier tutorial
         cd ../../web/content/docs/tutorials/advancing-glacier
         uv run --project ../../../../../Tests/Data python mesh_basin.py
-        uv run --project ../../../../../Tests/Data msh2vtu mesh_basin.msh --reindex
+        uv run --project ../../../../../Tests/Data msh2vtu mesh_basin.msh --reindex -o .
         uv run --project ../../../../../Tests/Data --group ${OGS_GROUP} ${UV_ARGS} ogs OGSinput_basin.prj
         cd -
         echo "Running on all .py files (master branch)..."
