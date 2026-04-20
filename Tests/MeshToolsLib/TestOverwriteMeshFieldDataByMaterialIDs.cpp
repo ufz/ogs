@@ -387,10 +387,7 @@ void setupIntegrationPointMetaData(MeshLib::Mesh& mesh,
     auto& dictionary = *MeshLib::getOrCreateMeshProperty<char>(
         mesh, "IntegrationPointMetaData",
         MeshLib::MeshItemType::IntegrationPoint, 1);
-    dictionary.clear();
-    std::string const json_string = ip_meta_data.toJsonString();
-    std::copy(json_string.begin(), json_string.end(),
-              std::back_inserter(dictionary));
+    dictionary.assign(ip_meta_data.toJsonString());
 }
 
 // Test fixture for integration point data tests

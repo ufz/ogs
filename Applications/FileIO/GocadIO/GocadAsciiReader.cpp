@@ -273,6 +273,31 @@ bool parseNodes(std::ifstream& in,
                 std::map<std::size_t, std::size_t>& node_id_map,
                 MeshLib::Properties const& mesh_prop)
 {
+    // temporary data structure to use push_back() of std::vector
+    std::map<std::string, std::vector<double>> mesh_properties;
+    for (auto const& [name, property] : mesh_prop)
+    {
+        if (name == mat_id_name)
+        {
+            continue;
+        }
+        if (dynamic_cast<MeshLib::PropertyVector<double>*>(property))
+        {
+            mesh_properties[name] = std::vector<double>{};
+        }
+    }
+    auto const assign_property_vectors = [&mesh_properties, &mesh_prop]()
+    {
+        for (auto const& [name, property] : mesh_prop)
+        {
+            if (auto* const p =
+                    dynamic_cast<MeshLib::PropertyVector<double>*>(property))
+            {
+                p->assign(mesh_properties[name]);
+            }
+        }
+    };
+
     NodeType t = NodeType::UNSPECIFIED;
     std::streampos pos = in.tellg();
     std::string line;
@@ -282,6 +307,7 @@ bool parseNodes(std::ifstream& in,
         if (line.substr(0, 3) == "SEG" || line.substr(0, 4) == "TRGL")
         {
             in.seekg(pos);
+            assign_property_vectors();
             return true;
         }
 
@@ -292,6 +318,7 @@ bool parseNodes(std::ifstream& in,
                 ERR("File ended while parsing Atom Region Indicators...");
                 return false;
             }
+            assign_property_vectors();
             return true;
         }
 
@@ -317,19 +344,16 @@ bool parseNodes(std::ifstream& in,
         {
             t = NodeType::PVRTX;
             nodes.push_back(createNode(sstr));
-            for (auto [name, property] : mesh_prop)
+            for (auto& [name, property] : mesh_properties)
             {
                 if (name == mat_id_name)
                 {
                     continue;
                 }
-                if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(
-                        property))
-                {
-                    double value;
-                    sstr >> value;
-                    p->push_back(value);
-                }
+                // ToDo check data type 'double'
+                double value;
+                sstr >> value;
+                property.push_back(value);
             }
         }
         else if (line.substr(0, 4) == "ATOM")
@@ -344,6 +368,7 @@ bool parseNodes(std::ifstream& in,
         pos = in.tellg();
     }
     ERR("{:s}", eof_error);
+
     return false;
 }
 
@@ -356,6 +381,11 @@ bool parseLineSegments(std::ifstream& in,
 {
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
+    // std::vector allows for push_back(), create temporary mat_ids_vec and copy
+    // values
+    std::vector<int> mat_ids_vec;
+    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
+
     int current_mat_id(0);
     if (!mat_ids.empty())
     {
@@ -389,11 +419,12 @@ bool parseLineSegments(std::ifstream& in,
                 elem_nodes[i] = nodes[it->second];
             }
             elems.push_back(new MeshLib::Line(elem_nodes, id++));
-            mat_ids.push_back(current_mat_id);
+            mat_ids_vec.push_back(current_mat_id);
         }
         else
         {
             in.seekg(pos);
+            mat_ids.assign(mat_ids_vec);
             return true;
         }
         pos = in.tellg();
@@ -447,11 +478,17 @@ bool parseElements(std::ifstream& in,
 {
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
+    // std::vector allows for push_back(), create temporary mat_ids_vec and copy
+    // values
+    std::vector<int> mat_ids_vec;
+    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
+
     int current_mat_id(0);
     if (!mat_ids.empty())
     {
         current_mat_id = (*std::max_element(mat_ids.begin(), mat_ids.end()))++;
     }
+
     std::streampos pos = in.tellg();
     std::size_t id(0);
     std::string line;
@@ -480,11 +517,12 @@ bool parseElements(std::ifstream& in,
                 elem_nodes[i] = nodes[it->second];
             }
             elems.push_back(new MeshLib::Tri(elem_nodes, id++));
-            mat_ids.push_back(current_mat_id);
+            mat_ids_vec.push_back(current_mat_id);
         }
         else
         {
             in.seekg(pos);
+            mat_ids.assign(mat_ids_vec);
             return true;
         }
         pos = in.tellg();

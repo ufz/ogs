@@ -283,11 +283,12 @@ TEST_F(MeshLibProperties, AddDoublePropertiesTupleSize2)
     ASSERT_EQ(0u, pv->getNumberOfTuples());
     ASSERT_EQ(0u, pv->size());
 
-    // push some values (2 tuples) into the vector
+    // Two components per tuple, so the flat size is twice the tuple count.
+    pv->resize(number_of_tuples * 2);
     for (std::size_t k(0); k < number_of_tuples; k++)
     {
-        pv->push_back(static_cast<double>(k));
-        pv->push_back(static_cast<double>(k));
+        (*pv)[2 * k] = static_cast<double>(k);
+        (*pv)[2 * k + 1] = static_cast<double>(k);
     }
     // check the number of tuples
     ASSERT_EQ(number_of_tuples, pv->getNumberOfTuples());

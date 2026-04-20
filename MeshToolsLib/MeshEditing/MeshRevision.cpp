@@ -892,14 +892,17 @@ void fillNodeProperty(MeshLib::PropertyVector<T>& new_prop,
                       std::vector<size_t> const& node_ids)
 {
     std::size_t const n_nodes = node_ids.size();
+    std::vector<T> values;
+    values.reserve(n_nodes);
     for (std::size_t i = 0; i < n_nodes; ++i)
     {
         if (node_ids[i] != i)
         {
             continue;
         }
-        new_prop.push_back(old_prop[i]);
+        values.push_back(old_prop[i]);
     }
+    new_prop.assign(values);
 }
 
 template <typename T>

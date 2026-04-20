@@ -199,11 +199,9 @@ int main(int argc, char* argv[])
     }
 
     auto const& elems = mesh->getElements();
-    MeshLib::Properties props;
-    auto new_mat_ids = props.createNewPropertyVector<int>(
-        "MaterialIDs", MeshLib::MeshItemType::Cell);
-    std::copy(mat_ids->cbegin(), mat_ids->cend(),
-              std::back_inserter(*new_mat_ids));
+
+    std::vector<int> new_mat_ids(mat_ids->begin(), mat_ids->end());
+
     int const max_id = *std::max_element(mat_ids->begin(), mat_ids->end());
     std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(nodes);
     std::size_t const n_points = points.size();
@@ -224,9 +222,13 @@ int main(int argc, char* argv[])
             new_elems.push_back(new MeshLib::Line(
                 {new_nodes[line_nodes[j]], new_nodes[line_nodes[j + 1]]},
                 elems.size()));
-            new_mat_ids->push_back(max_id + i + 1);
+            new_mat_ids.push_back(max_id + i + 1);
         }
     }
+    MeshLib::Properties props;
+    auto* const new_mat_id_property_vec = props.createNewPropertyVector<int>(
+        "MaterialIDs", MeshLib::MeshItemType::Cell);
+    new_mat_id_property_vec->assign(new_mat_ids);
 
     MeshLib::Mesh const result("result", new_nodes, new_elems,
                                true /* compute_element_neighbors */, props);

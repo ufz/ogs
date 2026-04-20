@@ -47,12 +47,15 @@ bool projectToNodes(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Node, 1);
     double const no_data = raster.getHeader().no_data;
-    std::transform(nodes.cbegin(), nodes.cend(), std::back_inserter(*vec),
+    std::vector<double> values;
+    values.reserve(nodes.size());
+    std::transform(nodes.cbegin(), nodes.cend(), std::back_inserter(values),
                    [&](auto const node)
                    {
                        return evaluatePixel(raster.getValueAtPoint(*node),
                                             no_data, default_replacement);
                    });
+    vec->assign(values);
     return true;
 }
 
@@ -72,13 +75,16 @@ bool projectToElements(MeshLib::Mesh& mesh, GeoLib::Raster const& raster,
     auto vec = props.createNewPropertyVector<double>(
         name, MeshLib::MeshItemType::Cell, 1);
     double const no_data = raster.getHeader().no_data;
-    std::transform(elems.cbegin(), elems.cend(), std::back_inserter(*vec),
+    std::vector<double> values;
+    values.reserve(elems.size());
+    std::transform(elems.cbegin(), elems.cend(), std::back_inserter(values),
                    [&](auto const elem)
                    {
                        auto node = getCenterOfGravity(*elem);
                        return evaluatePixel(raster.getValueAtPoint(node),
                                             no_data, default_replacement);
                    });
+    vec->assign(values);
     return true;
 }
 
