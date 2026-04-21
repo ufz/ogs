@@ -1,4 +1,4 @@
 +++
 title = "OpenGeoSys Features"
-weight = 3 
+weight = 3
 +++

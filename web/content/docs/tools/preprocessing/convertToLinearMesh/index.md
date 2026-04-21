@@ -5,17 +5,19 @@ author = "Julian Heinze"
 +++
 
 ## Description
+
 This tool allows to convert a non-linear mesh to a linear mesh.
 All additional nodes from higher order elements in the non-linear mesh are removed when writing the linear mesh, so the meshes can be simplified.
-This way, simulation results from non-linear approaches to linear ones can be compared. 
+This way, simulation results from non-linear approaches to linear ones can be compared.
 
 ## Usage
+
 ```bash
-USAGE: 
+USAGE:
    convertToLinearMesh  -o <string> -i <string> [--] [--version] [-h]
 
 
-Where: 
+Where:
    -o <string>,  --output-mesh-file <string>
      (required)  output mesh file
 
@@ -28,11 +30,11 @@ Where:
    --version
      Displays version information and exits.
 
-   -h,  --help
-     Displays usage information and exits.
+    -h,  --help
+      Displays usage information and exits.
 ```
 
-## Example:
+## Example
 
 ```bash
 convertToLinearMesh -i non-linear.vtu -o linear.vtu

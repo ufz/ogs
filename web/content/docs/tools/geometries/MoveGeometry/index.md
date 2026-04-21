@@ -6,16 +6,19 @@ weight = 2
 +++
 
 ## Description
-This tool is used to translate a geometry along a displacement vector. 
+
+This tool is used to translate a geometry along a displacement vector.
 The displacement vector is defined via input parameters -x,-y,-z.
+
 ## Usage
+
 ```bash
-   MoveGeometry  -i <input file> -o <output file> 
-                [-x <x-displacement>] [-y <y-displacement>] 
+   MoveGeometry  -i <input file> -o <output file>
+                [-x <x-displacement>] [-y <y-displacement>]
                 [-z <z-displacement>] [--] [--version] [-h]
 
 
-Where: 
+Where:
 
    -i <input file>,  --input <input file>
      (required)  input geometry file (*.gml)
@@ -38,21 +41,21 @@ Where:
    --version
      Displays version information and exits.
 
-   -h,  --help
-     Displays usage information and exits.
+    -h,  --help
+      Displays usage information and exits.
 ```
 
-## Example:
+## Example
+
 In this example we move a line by the displacement vector v = (2,3,0).
 
- ```bash
+```bash
 MoveGeometry -i line.gml -o moved_line.gml -x 2 -y 3 -z 0
- ```
+```
 
 <p align='center'>
- <img src = moved_line.png width = "50%" height = "50%">
+ <img src = moved_line.png width = "50%" height = "50%" alt="Visualization of moved line along z-axis">
 </p>
 <p align = "center">
 Fig.1 Visualization of a line and the moved line viewed along the z-axis.
- </p>
-
+</p>
