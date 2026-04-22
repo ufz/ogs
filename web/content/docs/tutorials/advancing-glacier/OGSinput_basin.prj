@@ -2,10 +2,10 @@
 <OpenGeoSysProject>
     <meshes>
         <mesh>mesh_basin_domain.vtu</mesh>
-        <mesh>mesh_basin_physical_group_Left.vtu</mesh>
-        <mesh>mesh_basin_physical_group_Right.vtu</mesh>
-        <mesh>mesh_basin_physical_group_Bottom.vtu</mesh>
-        <mesh>mesh_basin_physical_group_Top.vtu</mesh>
+        <mesh>mesh_basin_Left.vtu</mesh>
+        <mesh>mesh_basin_Right.vtu</mesh>
+        <mesh>mesh_basin_Bottom.vtu</mesh>
+        <mesh>mesh_basin_Top.vtu</mesh>
     </meshes>
     <python_script>timeBCs_glacier.py</python_script>
     <processes>
@@ -175,26 +175,26 @@
             <initial_condition>displacement0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>mesh_basin_physical_group_Left</mesh>
+                    <mesh>mesh_basin_Left</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_basin_physical_group_Right</mesh>
+                    <mesh>mesh_basin_Right</mesh>
                     <type>Dirichlet</type>
                     <component>0</component>
                     <parameter>dirichlet0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_basin_physical_group_Top</mesh>
+                    <mesh>mesh_basin_Top</mesh>
                     <type>Python</type>
                     <component>1</component>
                     <bc_object>bc_y</bc_object>                    <!--the python object is created using timeBCs_glacier.py (see L. 10)-->
                     <flush_stdout>true</flush_stdout>                    <!-- for debugging: false -->
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>mesh_basin_physical_group_Bottom</mesh>
+                    <mesh>mesh_basin_Bottom</mesh>
                     <type>Dirichlet</type>
                     <component>1</component>
                     <parameter>dirichlet0</parameter>

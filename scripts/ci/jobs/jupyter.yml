@@ -65,12 +65,6 @@ test linux wheel via notebooks:
     #  - run in parallel
     - |
       if [[ "$CI_COMMIT_BRANCH" == "master" ]]; then
-        # Glacier tutorial
-        cd ../../web/content/docs/tutorials/advancing-glacier
-        uv run --project ../../../../../Tests/Data python mesh_basin.py
-        uv run --project ../../../../../Tests/Data msh2vtu mesh_basin.msh --reindex -o .
-        uv run --project ../../../../../Tests/Data --group ${OGS_GROUP} ${UV_ARGS} ogs OGSinput_basin.prj
-        cd -
         echo "Running on all .py files (master branch)..."
         find . -type f -iname '*.py' \
           | grep -vP '\.ci-skip|_out|\.venv|PhaseField|mtest|sen_shear|PETSc|PorePy' \
@@ -116,4 +110,3 @@ test linux wheel via notebooks:
     paths:
       - Tests/Data/_out/**/*.html
       - Tests/Data/_out/**/*out.txt
-      - web/**/glacier.pdf

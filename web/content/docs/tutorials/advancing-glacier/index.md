@@ -57,5 +57,5 @@ After installation the tool can be applied as described in the first video-tutor
 To apply msh2vtu on the mesh_basin.msh the command should look like:
 
 ```bash
-msh2vtu --ogs --rdcd mesh_basin.msh
+msh2vtu --reindex mesh_basin.msh -o .
 ```
