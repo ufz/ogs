@@ -158,7 +158,7 @@ except Exception as inst:
 print(datetime.now())
 
 # %%
-ms = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd").scale(time="a")
+ms = ot.MeshSeries(f"{out_dir}/{prj_name}.pvd")
 points_coords = np.array([[0.3, 0.5, 0.0], [0.24, 0.21, 0.0]])
 points_labels = ["pt0", "pt1"]
 
@@ -172,17 +172,16 @@ for component in ["x", "y"]:
     for interp_method in ["linear", "nearest"]:
         labels = [f"$u_{component}$ {label} {interp_method}" for label in points_labels]
 
-        ms_pts = ot.MeshSeries.probe(
-            ms, points_coords, interp_method=interp_method
-        ).scale(time="a")
+        ms_pts = ot.MeshSeries.probe(ms, points_coords, interp_method=interp_method)
         ot.plot.line(
             ms_pts,
-            "time",
             ot.variables.displacement[component],
             labels=labels,
             ax=fig.axes[0],
             colors=colors[component],
             linestyle=linestyles[interp_method],
+            fontsize=12,
+            outer_legend=True,
         )
 
 # %%
