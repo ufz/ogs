@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 # SPDX-License-Identifier: BSD-3-Clause
 
+import platform
 import runpy
 import shutil
 import subprocess
@@ -24,6 +25,9 @@ def _run(program, args):
 
 
 @pytest.mark.skipif(ogs.OGS_USE_PETSC == "ON", reason="Not supported")
+@pytest.mark.skipif(
+    platform.system() == "Windows", reason="TODO: NodeReordering(.exe) not found"
+)
 def test_glacier_tutorial(tmp_path, ogs_src_dir, monkeypatch):
     monkeypatch.setenv("CI", "1")
 
