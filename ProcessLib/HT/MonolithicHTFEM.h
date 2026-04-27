@@ -151,6 +151,12 @@ public:
             auto const specific_storage =
                 solid_phase.property(MaterialPropertyLib::PropertyType::storage)
                     .template value<double>(vars, pos, t, dt);
+#ifndef NDEBUG
+            if (has_thermal_expansivity)
+            {
+                assert(std::fabs(specific_storage) > 0.0);
+            }
+#endif
 
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
