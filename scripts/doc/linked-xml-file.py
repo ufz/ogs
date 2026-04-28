@@ -312,6 +312,10 @@ for file in files:
         subpages["/".join(path_parts[0:i])].update(
             ["__".join(["ogs_ctest_prj", *path_parts[0 : i + 1]]).replace(".", "__")]
         )
+    # Root CTest project-file index: link to top-level folders/files.
+    subpages["."].update(
+        ["__".join(["ogs_ctest_prj", path_parts[0]]).replace(".", "__")]
+    )
 
     os.makedirs(outdirpath, exist_ok=True)
     # write linked prj file, cf. https://doxygen.opengeosys.org/d6/de3/ogs_ctest_prj__elliptic__circle_radius_1__circle_1e6_axi__prj
@@ -341,7 +345,10 @@ for path in subpages.keys():
 
     os.makedirs(outdirpath, exist_ok=True)
 
-    pagename = "ogs_ctest_prj__" + str(path).replace("/", "__").replace(".", "__")
+    if str(path) == ".":
+        pagename = "ogs_ctest_prj"
+    else:
+        pagename = "ogs_ctest_prj__" + str(path).replace("/", "__").replace(".", "__")
     pagetitle = os.path.split(str(path))[1]
 
     if pagetitle == ".":
