@@ -998,6 +998,8 @@ public:
         auto const local_p =
             local_x.template segment<pressure_size>(pressure_index);
         auto const local_T = getLocalTemperature(t, local_x);
+        auto const local_C = local_x.template segment<concentration_size>(
+            first_concentration_index);
 
         auto local_M = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_M_data, temperature_size, temperature_size);
@@ -1048,6 +1050,7 @@ public:
             NumLib::shapeFunctionInterpolate(local_p, N, p_at_xi);
             double T_at_xi = 0.;
             NumLib::shapeFunctionInterpolate(local_T, N, T_at_xi);
+            double const C_int_pt = N.dot(local_C);
 
             vars.temperature = T_at_xi;
             vars.liquid_phase_pressure = p_at_xi;
@@ -1058,6 +1061,7 @@ public:
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
                     .template value<double>(vars, pos, t, dt);
             vars.porosity = porosity;
+            vars.concentration = C_int_pt;
 
             // Use the fluid density model to compute the density
             auto const fluid_density =
