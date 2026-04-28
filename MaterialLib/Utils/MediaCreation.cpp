@@ -3,7 +3,6 @@
 
 #include <spdlog/fmt/ranges.h>
 
-#include <charconv>
 #include <range/v3/action/sort.hpp>
 #include <range/v3/action/unique.hpp>
 #include <range/v3/range/conversion.hpp>
@@ -16,45 +15,6 @@
 
 namespace MaterialLib
 {
-
-/// Parses a trimmed string as an integer with validation.
-/// Throws OGS_FATAL on invalid input.
-int parseInteger(std::string_view str)
-{
-    int result = 0;
-    auto const [ptr, ec] =
-        std::from_chars(str.data(), str.data() + str.size(), result);
-
-    if (ec == std::errc::invalid_argument)
-    {
-        OGS_FATAL("Could not parse material ID from '{}' to a valid integer.",
-                  str);
-    }
-    if (ec == std::errc::result_out_of_range)
-    {
-        OGS_FATAL(
-            "Could not parse material ID from '{}'. The integer value "
-            "exceeds the permitted range.",
-            str);
-    }
-
-    std::size_t const chars_consumed = std::distance(str.data(), ptr);
-    if (chars_consumed != str.size())
-    {
-        auto const non_ws_it = std::find_if_not(
-            str.begin() + chars_consumed, str.end(),
-            [](unsigned char const c) { return std::isspace(c); });
-        if (non_ws_it != str.end())
-        {
-            OGS_FATAL(
-                "Could not parse material ID from '{}'. Invalid character: "
-                "'{}' at position {}.",
-                str, *non_ws_it, std::distance(str.begin(), non_ws_it));
-        }
-    }
-
-    return result;
-}
 
 /// Checks that a string part contains no whitespace.
 /// Throws OGS_FATAL if any whitespace is found.
@@ -103,16 +63,29 @@ std::vector<int> splitMaterialIdString(std::string const& material_id_string)
         if (parts.size() == 2)
         {
             checkForWhitespaces(parts[0]);
-            auto const start_id = parseInteger(parts[0]);
+            auto const start_id = BaseLib::parseInteger(parts[0]);
+            if (!start_id)
+            {
+                OGS_FATAL("Could not parse material ID: {}", start_id.error());
+            }
             checkForWhitespaces(parts[1]);
-            auto const end_id = parseInteger(parts[1]);
-            ranges::copy(expandRange(start_id, end_id),
+            auto const end_id = BaseLib::parseInteger(parts[1]);
+            if (!end_id)
+            {
+                OGS_FATAL("Could not parse material ID: {}", end_id.error());
+            }
+            ranges::copy(expandRange(*start_id, *end_id),
                          std::back_inserter(material_ids));
         }
         else if (parts.size() == 1)
         {
-            auto const material_id = parseInteger(mid_str);
-            material_ids.push_back(material_id);
+            auto const material_id = BaseLib::parseInteger(mid_str);
+            if (!material_id)
+            {
+                OGS_FATAL("Could not parse material ID: {}",
+                          material_id.error());
+            }
+            material_ids.push_back(*material_id);
         }
         else
         {

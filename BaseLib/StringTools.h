@@ -4,6 +4,7 @@
 #pragma once
 
 #include <cstddef>
+#include <expected>
 #include <list>
 #include <optional>
 #include <range/v3/range/conversion.hpp>
@@ -102,5 +103,9 @@ std::optional<std::vector<T>> tryParseVector(std::string const& raw,
     }
     return out;
 }
+
+/// Parses a trimmed string as an integer.
+/// Returns the value, or an error message string on invalid input.
+std::expected<int, std::string> parseInteger(std::string_view str);
 
 }  // end namespace BaseLib
