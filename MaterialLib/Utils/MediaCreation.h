@@ -17,15 +17,19 @@ class PropertyVector;
 namespace MaterialLib
 {
 
-/// Parses a comma separated list of integers.
+/// Parses a comma separated list of integers and/or ranges.
 /// Such lists occur in the medium definition in the OGS prj file.
+/// Range syntax is supported with colon separator, e.g., "1:5" expands to
+/// "1,2,3,4,5". Multiple entries are separated by comma, e.g., "-1:2,5,7:9"
+/// expands to "-1,0,1,2,5,7,8,9".
 /// Error messages in this function refer to this specific purpose.
 std::vector<int> splitMaterialIdString(std::string const& material_id_string);
 
 /// Parses a comma separated list of integers or "*" string.
 /// Such lists occur in the medium definition in the OGS prj file.
-/// For the "*" input a vector of all (unique) material ids is returned.
-/// Error messages in this function refer to this specific purpose.
+/// Range syntax is supported with colon separator, e.g., "1:5" expands to
+/// "1,2,3,4,5". For the "*" input a vector of all (unique) material ids is
+/// returned. Error messages in this function refer to this specific purpose.
 std::vector<int> parseMaterialIdString(
     std::string const& material_id_string,
     MeshLib::PropertyVector<int> const* const material_ids);

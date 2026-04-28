@@ -3,15 +3,17 @@
 
 #include "StringTools.h"
 
+#include <spdlog/fmt/fmt.h>
+
 #include <algorithm>
 #include <boost/algorithm/string/replace.hpp>
+#include <charconv>
 #include <chrono>
 #include <cstdarg>
 #include <cstdio>
+#include <expected>
 #include <iterator>
 #include <random>
-
-#include "Error.h"
 
 namespace BaseLib
 {
@@ -121,4 +123,40 @@ std::string getUniqueName(std::vector<std::string> const& existing_names,
     }
     return result_name;
 }
+std::expected<int, std::string> parseInteger(std::string_view str)
+{
+    int result = 0;
+    auto const [ptr, ec] =
+        std::from_chars(str.data(), str.data() + str.size(), result);
+
+    if (ec == std::errc::invalid_argument)
+    {
+        return std::unexpected(
+            fmt::format("Could not parse '{}' to a valid integer.", str));
+    }
+    if (ec == std::errc::result_out_of_range)
+    {
+        return std::unexpected(fmt::format(
+            "Could not parse '{}'. The integer value exceeds the permitted "
+            "range.",
+            str));
+    }
+
+    std::size_t const chars_consumed = std::distance(str.data(), ptr);
+    if (chars_consumed != str.size())
+    {
+        auto const non_ws_it = std::find_if_not(
+            str.begin() + chars_consumed, str.end(),
+            [](unsigned char const c) { return std::isspace(c); });
+        if (non_ws_it != str.end())
+        {
+            return std::unexpected(fmt::format(
+                "Could not parse '{}'. Invalid character: '{}' at position {}.",
+                str, *non_ws_it, std::distance(str.begin(), non_ws_it)));
+        }
+    }
+
+    return result;
+}
+
 }  // end namespace BaseLib
