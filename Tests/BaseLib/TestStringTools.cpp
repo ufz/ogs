@@ -106,3 +106,52 @@ TEST(BaseLibStringTools, TryParseVector_CommaSeparatedFailsAt2)
     EXPECT_FALSE(v.has_value());
     EXPECT_EQ(bad, 2u);  // error at token 2
 }
+
+TEST(BaseLibStringTools, ParseInteger_ValidPositive)
+{
+    auto result = BaseLib::parseInteger("42");
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(*result, 42);
+}
+
+TEST(BaseLibStringTools, ParseInteger_ValidNegative)
+{
+    auto result = BaseLib::parseInteger("-7");
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(*result, -7);
+}
+
+TEST(BaseLibStringTools, ParseInteger_Zero)
+{
+    auto result = BaseLib::parseInteger("0");
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(*result, 0);
+}
+
+TEST(BaseLibStringTools, ParseInteger_TrailingWhitespaceAllowed)
+{
+    auto result = BaseLib::parseInteger("5 ");
+    ASSERT_TRUE(result.has_value());
+    EXPECT_EQ(*result, 5);
+}
+
+TEST(BaseLibStringTools, ParseInteger_InvalidArgument)
+{
+    auto result = BaseLib::parseInteger("abc");
+    ASSERT_FALSE(result.has_value());
+    EXPECT_THAT(result.error(), testing::HasSubstr("abc"));
+}
+
+TEST(BaseLibStringTools, ParseInteger_TrailingNonWhitespace)
+{
+    auto result = BaseLib::parseInteger("12x");
+    ASSERT_FALSE(result.has_value());
+    EXPECT_THAT(result.error(), testing::HasSubstr("12x"));
+}
+
+TEST(BaseLibStringTools, ParseInteger_OutOfRange)
+{
+    auto result = BaseLib::parseInteger("99999999999999999999");
+    ASSERT_FALSE(result.has_value());
+    EXPECT_THAT(result.error(), testing::HasSubstr("99999999999999999999"));
+}
