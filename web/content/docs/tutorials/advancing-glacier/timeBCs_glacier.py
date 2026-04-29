@@ -1,12 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
+
 try:
     import ogs.callbacks as OpenGeoSys
 except ModuleNotFoundError:
     import OpenGeoSys
 
-import glacierclass as glc
+from glaciationBCs import glacierclass as glc
 
 L_dom = 120000  # m
 L_max = 0.7 * L_dom  # m
@@ -21,8 +23,9 @@ class BC_Y(OpenGeoSys.BoundaryCondition):
         super().__init__()
         # instantiate the glacier member object
         self.glacier = glc.glacier(L_dom, L_max, H_max, x_0, t_0, t_1)
-        self.glacier.printMaxLoads()
-        self.glacier.plotEvolution()
+        self.glacier.print_max_load()
+        if "CI" not in os.environ:
+            self.glacier.plot_evolution()
 
     def getFlux(
         self, t, coords, _primary_vars

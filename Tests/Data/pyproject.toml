@@ -14,6 +14,7 @@ dependencies = [
   "jupyterlab>=3.4.8",
   "matplotlib>=3.6",
   "numpy",
+  "glaciationBCs @ git+https://github.com/cbsilver/glaciationBCs.git@1a7feb2ce1e019e242fecd8d94d8633474042e97",
   # When changing ogstools version, update in testrunner.py
   # (binder_tag) and header.html ($tools_url) as well!
   "ogstools @ git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@0.8.1.RC0",

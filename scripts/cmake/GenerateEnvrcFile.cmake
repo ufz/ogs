@@ -10,6 +10,7 @@ if(WIN32)
             "$Env:UV_PROJECT = \"${PROJECT_SOURCE_DIR}/Tests/Data\""
             "$Env:UV_PROJECT_ENVIRONMENT = \"${PROJECT_BINARY_DIR}/.venv\""
             "$Env:UV_FROZEN = \"1\""
+            "Invoke-Expression \"${PROJECT_BINARY_DIR}/.venv/Scripts/Activate.ps1\""
         )
     endif()
     if(OGS_USE_MKL)

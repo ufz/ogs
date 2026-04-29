@@ -1034,6 +1034,16 @@ wheels = [
 ]
 
 [[package]]
+name = "glaciationbcs"
+version = "1.2.3"
+source = { git = "https://github.com/cbsilver/glaciationBCs.git?rev=1a7feb2ce1e019e242fecd8d94d8633474042e97#1a7feb2ce1e019e242fecd8d94d8633474042e97" }
+dependencies = [
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "pandas" },
+]
+
+[[package]]
 name = "gmsh"
 version = "4.15.0.dev1+nox"
 source = { registry = "https://gmsh.info/python-packages-dev-nox" }
@@ -2528,6 +2538,7 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "coverage" },
+    { name = "glaciationbcs" },
     { name = "gmsh", version = "4.15.0.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "gmsh", version = "4.15.2", source = { registry = "https://pypi.org/simple" }, marker = "sys_platform != 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
     { name = "h5py" },
@@ -2565,6 +2576,7 @@ ogs-pypi = [
 [package.metadata]
 requires-dist = [
     { name = "coverage", specifier = ">=7.13" },
+    { name = "glaciationbcs", git = "https://github.com/cbsilver/glaciationBCs.git?rev=1a7feb2ce1e019e242fecd8d94d8633474042e97" },
     { name = "gmsh", marker = "sys_platform != 'linux'", specifier = ">=4.13.1.dev1,<5" },
     { name = "gmsh", marker = "sys_platform == 'linux'", specifier = ">=4.13.1.dev1,<5", index = "https://gmsh.info/python-packages-dev-nox" },
     { name = "h5py", specifier = ">=3.8" },
